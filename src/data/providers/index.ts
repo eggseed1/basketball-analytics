@@ -30,7 +30,7 @@ export function getDataProvider(): BasketballDataProvider {
   return cachedProvider;
 }
 
-/** Test helper — clears the singleton between suites. */
+/** Test helper - clears the singleton between suites. */
 export function resetDataProvider(): void {
   cachedProvider = null;
 }

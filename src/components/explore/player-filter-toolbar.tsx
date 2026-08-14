@@ -3,12 +3,15 @@
 import { useCallback, useMemo, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
+import { TeamLogo } from "@/components/brand/team-logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
@@ -30,6 +33,15 @@ const MIN_MINUTES_OPTIONS = [
   { value: "1500", label: "1,500+" },
   { value: "2000", label: "2,000+" },
 ];
+
+function TeamOption({ team }: { team: Team }) {
+  return (
+    <span className="flex min-w-0 items-center gap-2">
+      <TeamLogo teamKey={team.abbreviation || team.id} size="xs" />
+      <span className="truncate">{team.fullName}</span>
+    </span>
+  );
+}
 
 export interface PlayerFilterToolbarProps {
   seasons: string[];
@@ -88,9 +100,30 @@ export function PlayerFilterToolbar({
     [defaultSeason, pathname, router, searchParams]
   );
 
-  const sortedTeams = useMemo(
-    () => [...teams].sort((a, b) => a.fullName.localeCompare(b.fullName)),
-    [teams]
+  const { east, west, flat, groupByConference } = useMemo(() => {
+    const byName = (a: Team, b: Team) => a.fullName.localeCompare(b.fullName);
+    const eastTeams = teams
+      .filter((t) => t.conference === "East")
+      .sort(byName);
+    const westTeams = teams
+      .filter((t) => t.conference === "West")
+      .sort(byName);
+    // Only split when both conferences are meaningfully represented.
+    const group =
+      eastTeams.length >= 5 &&
+      westTeams.length >= 5 &&
+      eastTeams.length + westTeams.length >= teams.length * 0.8;
+    return {
+      east: eastTeams,
+      west: westTeams,
+      flat: [...teams].sort(byName),
+      groupByConference: group,
+    };
+  }, [teams]);
+
+  const selectedTeam = useMemo(
+    () => teams.find((t) => t.id === team || t.abbreviation === team),
+    [teams, team]
   );
 
   return (
@@ -133,15 +166,48 @@ export function PlayerFilterToolbar({
           }}
         >
           <SelectTrigger id="filter-team" className="w-full">
-            <SelectValue placeholder="Team" />
+            <SelectValue placeholder="Team">
+              {selectedTeam ? (
+                <TeamOption team={selectedTeam} />
+              ) : team === "ALL" ? (
+                "All teams"
+              ) : (
+                team
+              )}
+            </SelectValue>
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="min-w-[16rem]">
             <SelectItem value="ALL">All teams</SelectItem>
-            {sortedTeams.map((t) => (
-              <SelectItem key={t.id} value={t.id}>
-                {t.abbreviation} — {t.fullName}
-              </SelectItem>
-            ))}
+            {groupByConference ? (
+              <>
+                <SelectGroup>
+                  <SelectLabel className="px-2 pt-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    Eastern Conference
+                  </SelectLabel>
+                  {east.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      <TeamOption team={t} />
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+                <SelectGroup>
+                  <SelectLabel className="px-2 pt-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    Western Conference
+                  </SelectLabel>
+                  {west.map((t) => (
+                    <SelectItem key={t.id} value={t.id}>
+                      <TeamOption team={t} />
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </>
+            ) : (
+              flat.map((t) => (
+                <SelectItem key={t.id} value={t.id}>
+                  <TeamOption team={t} />
+                </SelectItem>
+              ))
+            )}
           </SelectContent>
         </Select>
       </div>

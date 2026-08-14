@@ -30,4 +30,12 @@ export interface PlayerSeason {
   offensiveRating: number;
   defensiveRating: number;
   netRating: number;
+  /** Optional impact overlays (joined from DARKO / LEBRON feeds). */
+  darkoDpm?: number;
+  darkoOff?: number;
+  darkoDef?: number;
+  lebron?: number;
+  oLebron?: number;
+  dLebron?: number;
+  winsAdded?: number;
 }

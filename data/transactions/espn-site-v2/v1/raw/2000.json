@@ -1,0 +1,1142 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2000,
+  "fetchedAt": "2026-08-14T20:06:13.271Z",
+  "apiCount": 103,
+  "rows": [
+    {
+      "date": "2000-12-29T08:00Z",
+      "description": "Activated forward Popeye Jones; placed guard Laron Profit on the injured list with back spasms.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2000-12-28T08:00Z",
+      "description": "Suspended guard Rod Strickland one game for an unspecified violation of team rules.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2000-12-28T08:00Z",
+      "description": "Suspended guard John Starks one game for an unspecified violation of team rules.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2000-12-28T08:00Z",
+      "description": "Activated forward Carlos Rogers from the injured list; waived forward Anthony \"Pig\" Miller.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2000-12-28T08:00Z",
+      "description": "Activated forward Jerome Williams from the injured list; placed forward Brian Cardinal on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2000-12-28T08:00Z",
+      "description": "Activated forward Mark Blount from the injured list; placed forward Jerome Moiso on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-12-27T08:00Z",
+      "description": "Placed forward Grant Hill on the injured list with a broken bone in his left ankle.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2000-12-26T08:00Z",
+      "description": "Placed center Zydrunas Ilgauskas on the injured list with a broken foot; activated center Chris Mihm.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-12-26T08:00Z",
+      "description": "Activated forward-center Derrick Coleman off the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-12-26T08:00Z",
+      "description": "Activated guard Jim Jackson from the injured list; placed forward Chris Crawford on the injured list with a sprained left ankle.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-12-25T08:00Z",
+      "description": "Placed center Bruno Sundov on the injured list with a strained right groin; activated guard Tyus Edney.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2000-12-23T08:00Z",
+      "description": "Placed guard Erick Barkley on the injured list with left knee tendinitis; activated guard Gary Grant from the injured list.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2000-12-23T08:00Z",
+      "description": "Activated guard Brevin Knight from the injured list; placed guard-forward Wesley Person on the injured list with an ulnar nerve contusion in his right elbow.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-12-22T08:00Z",
+      "description": "Signed guard Kevin Ollie; waived guard Vernon Maxwell.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2000-12-21T08:00Z",
+      "description": "Placed forward Eddie Robinson on the injured list with a bruised tailbone.   Fargo/Moorhead Beez (IBA) -- Released forward Mike Chadwick.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-12-20T08:00Z",
+      "description": "Signed free agent center John Coker to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2000-12-20T08:00Z",
+      "description": "Placed guard Tariq Abdul-Wahad on the injured list with a peritonsillar abcess; activated guard-forward Calbert Cheaney from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2000-12-19T08:00Z",
+      "description": "Placed guard Mario Elie on the injured list with a broken left hand; activated forward Ruben Garces from the injued list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2000-12-19T08:00Z",
+      "description": "Waived forward Ademola Okulaja.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2000-12-19T08:00Z",
+      "description": "Placed forward Tom Hammonds on the injured list with bilateral synovitis; activated forward Reggie Slater from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2000-12-19T08:00Z",
+      "description": "Placed forward Alan Henderson on the injured list with a sprained left shoulder.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-12-17T08:00Z",
+      "description": "Activated forward John Wallace from the injured list; placed forward Jud Buechler on the injured list with a chip fracture of his right ankle.    HOCKEY ------",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2000-12-17T08:00Z",
+      "description": "Activated forward Gary Trent from the injured list; placed forwards Eduardo Najera on the injured list with a strained right groin.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2000-12-16T08:00Z",
+      "description": "Activated center Kelvin Cato from the injured list; placed forward Carlos Rogers on the injured list with a  left knee sprain.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2000-12-15T08:00Z",
+      "description": "Signed center Vladimir Stepania; waived guard Kevin Ollie.    FOOTBALL --------",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2000-12-15T08:00Z",
+      "description": "Placed guard Todd Day on the injured list with a hyperextended left knee; activated guard Sam Jacobsen.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2000-12-15T08:00Z",
+      "description": "Placed center Chris Mihm on the injured list with a high righ ankle sprain; activated forward-center J.R. Reid from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-12-15T08:00Z",
+      "description": "Placed center Jake Voskuhl on the injured list with left foot tendonitis; activated guard Bryce Drew from the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2000-12-15T08:00Z",
+      "description": "Placed guard Jim Jackson on the injured list with a sprained right knee; activated forward Roshown McLeod from the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-12-14T08:00Z",
+      "description": "Activated forward Kornel David from the injured list; placed center Garth Joseph on the injured list with a right groin strain.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2000-12-14T08:00Z",
+      "description": "Placed guard Avery Johnson on the injured list with a left quadriceps contusion; activated guard Derrick Dial from the injured list.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2000-12-13T08:00Z",
+      "description": "Placed forward Terry Mills on the injured list with a sprained right ankle; activated center Bruno Sundov from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2000-12-13T08:00Z",
+      "description": "Activated forward Otis Thorpe from from the injured list; placed forward Terrance Roberson on the injured list with right knee tendinitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-12-12T08:00Z",
+      "description": "Placed guard Brevin Knight on the injured list with a sore right knee; activated Michael Hawkins from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-12-12T08:00Z",
+      "description": "Placed forward Chris Crawford on the injured list with a sprained left ankle.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-12-10T08:00Z",
+      "description": "Activated guard Kenny Anderson; placed guard Chris Carr on the injured list with a sprained left ankle.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-12-09T08:00Z",
+      "description": "Placed guard Eric Snow on the injured list with a stress fracture in his right ankle; activated guard Pepe Sanchez.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2000-12-09T08:00Z",
+      "description": "Placed forward Jerome Williams on the injured list with a sprained right ankle; activated forward Brian Cardinal.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2000-12-08T08:00Z",
+      "description": "Placed center Jake Tsakalidis on the injured list after dental surgery; signed guard Elliot Perry.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2000-12-08T08:00Z",
+      "description": "Announced vice president of basketball operations Kevin McHale has taken a leave of absence through July 31, stemming from a secret contract agreement with forward Joe Smith.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2000-12-08T08:00Z",
+      "description": "Signed forward Anthony \"Pig\" Miller.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2000-12-08T08:00Z",
+      "description": "Placed guard Greg Buckner on the injured list with a sprained right foot; activated forward Donnell Harvey from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2000-12-07T08:00Z",
+      "description": "Waived guard Rex Chapman; activated center Chris Dudley from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2000-12-07T08:00Z",
+      "description": "Signed guard Milt Palacio; waived guard Doug Overton.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-12-06T08:00Z",
+      "description": "Activated guard Vonteego Cummings; placed forward Chris Mullin on the injured list with inflammation and cartilage damage to the left knee.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2000-12-05T08:00Z",
+      "description": "Placed forward Kornel David on the injured list; activated center Garth Joseph.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2000-12-04T08:00Z",
+      "description": "Placed guard Mitch Richmond on the injured list with a partially torn ligament in his left knee; activated guard Laron Profit from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2000-12-03T08:00Z",
+      "description": "Placed guard Chris Herren on the injured list; activated guard Adrian Griffin from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-12-02T08:00Z",
+      "description": "Activated center Scott Williams from the injured list; placed guard Michael Redd on the injured list.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2000-12-01T08:00Z",
+      "description": "Claimed forward Obinna Ekezie off waivers from the Los Angeles Clippers.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2000-12-01T08:00Z",
+      "description": "Placed forward Reggie Slater on the injured list with tendinitis in his right knee; activated forward Tom Hammonds from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2000-12-01T08:00Z",
+      "description": "Signed general manager Carroll Dawson to a contract extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2000-12-01T08:00Z",
+      "description": "Placed guard A.J. Guyton on the injured list with a right knee sprain; activated center Jake Voskuhl from the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2000-11-30T08:00Z",
+      "description": "Waived guard Elliot Perry.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2000-11-29T08:00Z",
+      "description": "Placed forward Samaki Walker on the injured list with a sprained ankle and removed center Shawnelle Scott from the injured list.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2000-11-29T08:00Z",
+      "description": "Waived forward Obinna Ekezie; activated forward Brian Skinner from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Acquired forward-center Cherokee Parks and forward Obinna Ekezie from the Washington Wizards for guard Tyrone Nesby; placed guard Earl Boykins on the injured list with a bruised right knee.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Named J. William Kingston director of the Pacers foundation for Pacers Sports and Information.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Waived forward Bill Curley; signed forward Mark Bryant.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Activated guard Wesley Person from the injured list; placed forward J.R. Reid on the injured list with patellar tendinitis in both knees.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Activated guard Randy Brown from the injured list and placed center Mark Blount on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-11-28T08:00Z",
+      "description": "Activated guard Dion Glover from the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-11-27T08:00Z",
+      "description": "Fired coach Paul Westphal; named Nate McMillan interim coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2000-11-27T08:00Z",
+      "description": "Placed guard Charlie Ward on the injured list; claimed guard Rick Brunson off waivers; released forward Jonathan Kerner.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2000-11-26T08:00Z",
+      "description": "Waived swingman Jamal Robinson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2000-11-26T08:00Z",
+      "description": "Traded forward Cedric Ceballos to Miami for a conditional second-round pick.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2000-11-25T08:00Z",
+      "description": "Activated center Luc Longley from the injured list; placed center Felton Spencer on the injured list with a sprained right knee.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2000-11-24T08:00Z",
+      "description": "Signed forward Jerome Kersey.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2000-11-24T08:00Z",
+      "description": "Placed guard Jim Jackson on the injured list with a sprained right MCL.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-11-23T08:00Z",
+      "description": "Placed forward Sam Perkins on the injured list with back spasms; activated forward Terry Mills from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2000-11-22T08:00Z",
+      "description": "Suspended guard Gary Payton for a minimum of one game for conduct detrimental to the team.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2000-11-22T08:00Z",
+      "description": "Placed guard Jaren Jackson on the injured list with a sprained left ankle; activated forward Ira Newble from the injured list.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2000-11-22T08:00Z",
+      "description": "Placed guard Bimbo Coles on the injured list with an inflamed left knee; signed guard Michael Hawkins.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-11-22T08:00Z",
+      "description": "Activated forward Jerome Moiso from the injured list; placed guard Adrian Griffin on the injured list with lower back pain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-11-21T08:00Z",
+      "description": "Placed guard Tyus Edney on the injured list  with plantar fasciatis in his left foot; activated center Bruno  Sundov from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2000-11-21T08:00Z",
+      "description": "Activated guard Bob Sura on the injured list; waived guard Randy Livingston.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2000-11-21T08:00Z",
+      "description": "Activated center Dalibor Bagaric from the injured list; placed center Jake Voskuhl on the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2000-11-21T08:00Z",
+      "description": "Signed guard Doug Overton; waived guard Rick Brunson.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-11-20T08:00Z",
+      "description": "Placed guard Michael Dickerson on the injured list with a sprained left ankle; activated guard Doug West from the injured list.",
+      "team": {
+        "id": "29",
+        "abbreviation": "VAN",
+        "displayName": "Vancouver Grizzlies",
+        "location": "Vancouver",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2000-11-20T08:00Z",
+      "description": "Guard Rex Chapman announced his retirement.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2000-11-20T08:00Z",
+      "description": "Activated center Matt Geiger from the injured list; placed center Todd MacCulloch on the injured list with left ankle tendinitis.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2000-11-20T08:00Z",
+      "description": "Activated guard Earl Boykins from the injured list; placed forward Zendon Hamilton on the injured list with a strained lower back.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2000-11-20T08:00Z",
+      "description": "Signed free agent forward Joe Smith, who had been with the Minnesota Timberwolves, to a one-year contract; waived forward Torraye Braggs; placed forward Billy Owens on the injured list with back spasms.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2000-11-18T08:00Z",
+      "description": "Activated center Michael Stewart from the injured list; placed center Garth Joseph on the injured list with bruised ribs.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2000-11-18T08:00Z",
+      "description": "Placed forward Brian Skinner on the injured list with a sprained right ankle; activated forward Zendon Hamilton from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2000-11-18T08:00Z",
+      "description": "Placed forward Derrick Coleman on the injured list for conditioning purposes; activated forward Terrance Roberson from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-11-17T08:00Z",
+      "description": "Activated forward Tom Gugliotta from the injured list; placed center Chris Dudley on the injured list with an ankle sprain.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2000-11-16T08:00Z",
+      "description": "Named Harry Hutt executive vice president and chief operating officer.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2000-11-16T08:00Z",
+      "description": "Activated forward Lee Nailon from the injured list; placed forward-center Otis Thorpe on the injured list with a strained left foot.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-11-15T08:00Z",
+      "description": "Named Harry Hutt executive vice president and chief operating officer.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2000-11-15T08:00Z",
+      "description": "Placed forward Danny Fortson on the injured list with soreness in his right foot; signed free agent guard Randy Livingston.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2000-11-15T08:00Z",
+      "description": "Waived forward-center Mark Bryant.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-11-14T08:00Z",
+      "description": "Activated center Arvydas Sabonis from the injured list; placed forward Antonio Harvey on the injured list with pain in his right knee.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2000-11-14T08:00Z",
+      "description": "Placed guard Wesley Person on the injured list with a bruised right elbow; activated forward J.R. Reid from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2000-11-11T08:00Z",
+      "description": "Activated forward Chris Mullin from the injured list; placed guard Vonteego Cummings on the injured list with a fractured right cheek.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2000-11-11T08:00Z",
+      "description": "Activated guard Corey Benjamin and center Jake Voskuhl from the injured list; placed guard Bryce Drew and center Brad Miller on the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2000-11-09T08:00Z",
+      "description": "Placed center Kelvin Cato on the injured list; activated forward Dan Langhi from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2000-11-08T08:00Z",
+      "description": "Placed forward Popeye Jones on the injured list with a broken finger; activated center Calvin Booth from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2000-11-08T08:00Z",
+      "description": "Activated center Dikembe Mutombo from the injured list; waived forward Anthony Miller.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2000-11-06T08:00Z",
+      "description": "Placed forward Grant Hill on the injured list with a sore left ankle.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2000-11-06T08:00Z",
+      "description": "Signed forward Jamal Mashburn to a contract extension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2000-11-06T08:00Z",
+      "description": "Waived guard Greg Minor; placed guard Kenny Anderson on the injured list; signed guard Rick Brunson.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2000-11-02T08:00Z",
+      "description": "Placed forward-center Andrew DeClerq on injured reserve with a strained left hamstring; signed free agent guard Elliott Perry.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    }
+  ]
+}

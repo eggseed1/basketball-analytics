@@ -25,6 +25,8 @@ export interface BasketballDataProvider {
     playerId: string,
     season: string
   ): Promise<PlayerSeason | null>;
+  /** Every season row for one player (career). */
+  getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]>;
   getPlayerGameLog(
     playerId: string,
     season: string

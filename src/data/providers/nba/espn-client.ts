@@ -5,13 +5,19 @@ type CacheEntry<T> = {
 
 const memoryCache = new Map<string, CacheEntry<unknown>>();
 
-const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour — season snapshots change slowly
+const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
 const DEFAULT_RETRIES = 3;
 
 export interface EspnFetchOptions {
   ttlMs?: number;
   retries?: number;
   signal?: AbortSignal;
+}
+
+function statusFromError(error: unknown): number | null {
+  if (!(error instanceof Error)) return null;
+  const m = /ESPN request failed \((\d+)\)/.exec(error.message);
+  return m ? Number(m[1]) : null;
 }
 
 export async function espnFetchJson<T>(
@@ -39,7 +45,14 @@ export async function espnFetchJson<T>(
       });
 
       if (!response.ok) {
-        throw new Error(`ESPN request failed (${response.status}): ${url}`);
+        const err = new Error(
+          `ESPN request failed (${response.status}): ${url}`
+        );
+        // 4xx will not succeed on retry - fail fast (esp. 404 box scores).
+        if (response.status >= 400 && response.status < 500) {
+          throw err;
+        }
+        throw err;
       }
 
       const value = (await response.json()) as T;
@@ -47,7 +60,13 @@ export async function espnFetchJson<T>(
       return value;
     } catch (error) {
       lastError = error;
-      await delay(400 * (attempt + 1));
+      const status = statusFromError(error);
+      if (status != null && status >= 400 && status < 500) {
+        break;
+      }
+      if (attempt < retries - 1) {
+        await delay(400 * (attempt + 1));
+      }
     }
   }
 

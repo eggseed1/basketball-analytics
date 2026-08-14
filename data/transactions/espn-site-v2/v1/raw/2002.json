@@ -1,0 +1,5696 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2002,
+  "fetchedAt": "2026-08-14T20:06:15.687Z",
+  "apiCount": 517,
+  "rows": [
+    {
+      "date": "2002-12-31T08:00Z",
+      "description": "Named Mark Stornes chief executive officer of the team's Gund Arena Company.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-12-30T08:00Z",
+      "description": "Placed guard Wesley Person on the injured list with a fractured right index finger; activated forward Robert Archibald from the injured list.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-12-30T08:00Z",
+      "description": "Activated guard Emanuel Ginobili from the injured list; waived guard Anthony Goldwire.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-12-28T08:00Z",
+      "description": "Activated forward Lamar Odom from the injured list; placed rookie Marko Jaric on the injured list with a high left  ankle sprain.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-12-28T08:00Z",
+      "description": "Activated forward Corie Blount from the injured  list; placed center Dalibor Bagaric on the injured list with  left knee tendinitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-12-27T08:00Z",
+      "description": "Re-signed forward Bobby Simmons.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-12-27T08:00Z",
+      "description": "Activated guard Randy Brown from the injured list; placed forward Alton Ford on the injured list with a right ankle sprain.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-12-26T08:00Z",
+      "description": "Placed forward Jared Jeffries on the injured list with a torn right ACL.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-12-26T08:00Z",
+      "description": "Placed guard Eric Piatkowski on the injured list with activated forward Corey Maggette from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-12-26T08:00Z",
+      "description": "Activated guard Bob Sura from the injured list; waived guard Oscar Torres.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-12-26T08:00Z",
+      "description": "Fired coach Lon Kruger and assistant Gar Heard;  named Terry Stotts interim coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-12-24T08:00Z",
+      "description": "Placed guard Emanual Davis on the injured list; signed guard Mike Wilks.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-12-23T08:00Z",
+      "description": "Claimed guard Kenny Satterfield off waivers from the Denver Nuggets.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-12-22T08:00Z",
+      "description": "Placed center-forward Ken Johnson on the injured list with a lower back strain; activated center-forward Sean Marks from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-12-20T08:00Z",
+      "description": "Waived forward Art Long; placed guard Chris Whitney on the injured list with a bruised left ankle;  activated guard Predrag Savovic from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-12-19T08:00Z",
+      "description": "Activated guard Mike Bibby from the injured  list; placed guard Mateen Cleaves on the injured list with a lower  back strain.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-12-18T08:00Z",
+      "description": "Traded forwards Art Long and Mark Bryant and a future first-round pick to the Denver Nuggets and acquired forward Kenny Thomas from the Houston Rockets as part of a three-team deal.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-12-18T08:00Z",
+      "description": "Traded forward Kenny Thomas to the Philadelphia 76ers and acquired guard James Posey from the Denver Nuggets as part of a three-team deal.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-12-18T08:00Z",
+      "description": "Traded guard James Posey to the Houston Rockets for a future second-round pick and acquired forwards Art Long and Mark Bryant and a future first-round pick from the Philadelphia 76ers as part of a three-team deal; waived guard  Kenny Satterfield.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-12-16T08:00Z",
+      "description": "Activated center-forward Vitaly  Potapenko from the injured list.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-12-16T08:00Z",
+      "description": "Activated center Dalibor Bagaric from the injured list; placed forward Corie Blunt on the injured list with a left hip contusion.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-12-13T08:00Z",
+      "description": "Activated swingman Hedo Turkoglu from the injured list; placed ceneter Scot Pollard on the injured list with a stress fracture of the lower back.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-12-13T08:00Z",
+      "description": "Activated center Olumide Oyedeji from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-12-13T08:00Z",
+      "description": "Placed guard Eddie House on the injured list with a stress reaction on the right fibula; activated center Ken Johnson from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-12-13T08:00Z",
+      "description": "Activated center Michael Olowokandi from the injured list; placed forward-center Cherokee Parks on the injured list with back spasms.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-12-13T08:00Z",
+      "description": "Hired Quinn Buckner as special consultant to president Donnie Walsh.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-12-11T08:00Z",
+      "description": "Waived forward Horace Grant.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-12-09T08:00Z",
+      "description": "Placed guard Bimbo Coles on the injured list with a left quad contusion; activated forward Darius Miles from the injure list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-12-07T08:00Z",
+      "description": "Waived center Ratko Varda.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-12-07T08:00Z",
+      "description": "Activated guard Cuttino Mobley from the injured list; placed guard Tito Maddox on the injured list with left foot plantar fasciitis.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-12-07T08:00Z",
+      "description": "Activated forward Chris Mills from the injured list.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-12-06T08:00Z",
+      "description": "Placed guard Emanuel Ginobli on the injured list with a sprained right ankle; activated center Mengke Bateer  from the injured list.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-12-06T08:00Z",
+      "description": "Placed forward Tom Gugliotta on the injured list with a right foot contusion; activated center Jake Tsakalidis from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-12-05T08:00Z",
+      "description": "Named Dee Brown director of player development; promoted Chris D'Orso to vice president of marketing.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-12-05T08:00Z",
+      "description": "Activated guard Ray Allen from the injured list.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-12-04T08:00Z",
+      "description": "Activated forward Horace Grant from injured list; placed forward Olumide Oyedeji on the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-12-04T08:00Z",
+      "description": "Activated guard Bryce Drew from the injured list; placed forward Jerome Moiso on the injured list with tendinitis in his left knee.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-12-03T08:00Z",
+      "description": "Activated forward Monty Williams from the injured list; placed forward Efthimios Rentzias on injured list with a lower back strain.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-12-03T08:00Z",
+      "description": "Placed guard Kerry Kittles on the injured list with a sprained left knee; activated guard Brandon Armstrong from the injured list; transferred guard Chris Childs from the suspended list to the injured list with tendinitis in his right Achilles.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-12-03T08:00Z",
+      "description": "Placed forward Chris Andersen on the injured list  with a fractured right thumb; activated forward Vincent Yarbrough  from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-12-02T08:00Z",
+      "description": "Placed guard Juan Dixon on the  injured list with a sprained left elbow; activated  forward Brian Cardinal.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-12-02T08:00Z",
+      "description": "Activated guard-forward Lavor Postell  from the injured list; placed guard Frank Williams on  the injured list with tendinitis in his left Achilles'  tendon.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-12-01T08:00Z",
+      "description": "PLaced swingman Hedo Turkoglu on the  injured list with a sprained right wrist; signed guard Jim  Jackson.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-12-01T08:00Z",
+      "description": "Placed guard Jannero Pargo on the  injured list with tendinitis in his right knee; activated forward Devean George.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-12-01T08:00Z",
+      "description": "Placed center Michael Olowokandi on  the injured list with a sore left knee; activated forward Tremaine Fowlkes from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-11-29T08:00Z",
+      "description": "Activated forward Sean Lampley from the injured list;  placed center Ken Johnson on the injured list with left patella  tendinitis.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-11-29T08:00Z",
+      "description": "Activated guard Chris Whitney from the injured  list; placed guard Predrag Savovic on the injured list with a  sprained right ankle.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-11-29T08:00Z",
+      "description": "Placed forward Mark Strickland on waivers.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-11-27T08:00Z",
+      "description": "Named Tony Barone, Jr. director of scouting.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-11-27T08:00Z",
+      "description": "Placed center Jake Tsakalidis on the injured list with a bulging disk of the lower spine; activated forward Alton Ford from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-11-27T08:00Z",
+      "description": "Activated center Joel Przybilla from the  injured list.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-11-27T08:00Z",
+      "description": "Signed guard Earl Boykins.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-11-26T08:00Z",
+      "description": "Placed forward-center Samaki Walker on the  injured list with a strained lower back; activated forward Mark  Madsen from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-11-26T08:00Z",
+      "description": "Placed forward Corey Maggette on the injured list with torn cartilage in his right knee; activated forward Melvin  Ely from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-11-26T08:00Z",
+      "description": "Activated guard Reggie Miller from the injured list; placed guard Erick Strickland on the injured list with right Achilles tendinitis.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-11-26T08:00Z",
+      "description": "Waived guard A.J. Guyton.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-11-25T08:00Z",
+      "description": "Placed guard Ray Allen on the injured list with sprained right ankle.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-11-22T08:00Z",
+      "description": "Activated center Shaquille O'Neal from the  injured list; placed forward Devean George on the injured list  with right ankle tendinitis.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-11-22T08:00Z",
+      "description": "Placed forward Tremaine Fowlkes on the injured list with a sprained right knee; activated guard Quentin Richardson from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-11-22T08:00Z",
+      "description": "Placed guard Cuttino Mobley on the injured  list with a left ankle sprain and center Jason Collier on the  injured list with medial tibial periostitis; activated guard  Tito Maddox and forward Terence Morris from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-11-22T08:00Z",
+      "description": "Activated center Elden Campbell from the injured list; placed guard Bryce Drew on the injured list with an orbital wall fracture.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-11-21T08:00Z",
+      "description": "Signed guard Matt Maloney; placed guard Dan Dickau on injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-11-20T08:00Z",
+      "description": "Signed guard Jermaine Jackson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-11-20T08:00Z",
+      "description": "Signed guard Anthony Goldwire.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-11-20T08:00Z",
+      "description": "Placed guard Chris Whitney on the injured list with a sprained left ankle; activated guard Predrag Savovic from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-11-19T08:00Z",
+      "description": "Placed guard Wally Szczerbiak on the  injured list with a sprained toe; activated forward Joe Smith  from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-11-19T08:00Z",
+      "description": "Activated forward-center Corie Blount from the  injured list; placed center Dalibor Bargaric on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-11-18T08:00Z",
+      "description": "Signed guard A.J. Guyton.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-11-16T08:00Z",
+      "description": "Activated guard Latrell Sprewell from the injured list; placed forward Mark Pope on the injured list with lower back pain.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-11-16T08:00Z",
+      "description": "Signed forward Mark Strickland.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-11-16T08:00Z",
+      "description": "Placed forward Darius Miles on the  injured list with left knee patellar tendinitis; activated guard Dajuan Wagner.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-11-15T08:00Z",
+      "description": "Placed forward Robert Archibald on the  injured list with a sprained back; activated center Cezary  Trybanski.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-11-15T08:00Z",
+      "description": "Placed center-forward Sean Marks on the injured list following right foot surgery; activated center Ken Johnson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-11-13T08:00Z",
+      "description": "Named Tony Barone, Brendan Brown and Hal  Wissel assistant coaches.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-11-12T08:00Z",
+      "description": "Announced the resignation of coach Sidney Lowe; named Hubie Brown coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-11-12T08:00Z",
+      "description": "Placed guard Quentin Richardson on injured  list; activated forward Tremaine Fowlkes.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-11-12T08:00Z",
+      "description": "Activated forward Kedrick Brown from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-11-11T08:00Z",
+      "description": "Placed guard Nick Van Exel on the injured list  with torn cartilage in his right knee; activated guard Adam  Harrington from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-11-09T08:00Z",
+      "description": "Placed center Raef LaFrenz on the injured list with a sprained right ankle; activated forward Popeye  Jones.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-11-09T08:00Z",
+      "description": "Released center Antonio Harvey; activated forward Chris Crawford.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-11-08T08:00Z",
+      "description": "Activated center-forward Olumide Oyedeji; placed forward Horace Grant on the injured list with a  sore left knee.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-11-08T08:00Z",
+      "description": "Activated center Dalibor Bagaric; placed  forward-center Corie Blount on injured reserve with a left hamstring strain.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-11-07T08:00Z",
+      "description": "Signed guard Devin Brown.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-11-06T08:00Z",
+      "description": "Signed center Greg Foster.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-10-31T08:00Z",
+      "description": "Signed center Jonathan Bender and forward Ron Artest to contract extensions.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-10-31T08:00Z",
+      "description": "Signed free agent forward Guy Rucker.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-10-31T08:00Z",
+      "description": "Placed center Nazr Mohammed on the injured list with a stress fracture to the fifth metatarsal on his right foot; signed center Amal McCaskill.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-30T08:00Z",
+      "description": "Placed forward Tony Massenburg on waivers; exercised the fourth-year option on forward Stromile Swift.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-10-30T08:00Z",
+      "description": "Placed guard Kedrick Brown on the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Jeff Myers; placed centers Hakeem Olajuwon and Eric Montross and forward Lamond Murray on the injured list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived forwards George McCloud and Bobby Simmons; placed center Jahidi White, forward Ratko Varda and forward Brian Cardinal on the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed center Curtis Borchard and guard Raul Lopez on the injured list.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed centers Ruben Boumtje Boumtje and Chris Dudley and guard Charles Smith on the injured list.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed center Jake Voskuhl and forward Alton Ford on the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived center Olden Polynice; placed forwards Monty Williams, Sam Clancy and center Samuel Dalembert on the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed centers Steven Hunter and Olumide Oyedeji on the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed forwards Antonio McDyess and Latrell Sprewell and guard Lavor Postell on the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived forward Donny Marshall; placed guard Brandon Armstrong on the injured list with a lower back strain; placed forward Jamie Feick on the injured list with a left Achilles injury.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Randy Livingston; placed guards Terrell Brandon, Felipe Lopez and forward Joe Smith on the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Michael Wilks; placed centers Joel Przybilla and Jamal Sampson on the injured list.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Luke Recker; placed centers Alonzo Mourning and Ken Johnson and forward Sean Lampley on the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed center Shaquille O'Neal on the injured list with an injured right foot; waived center Guy Rucker; placed forward Mark Madsen on the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Bryant Stith and forward Mike Batiste; placed forward-center Melvin Ely on the injured list with a sprained left foot; placed forward Tremaine Fowlkes on the injured list with a sprained right knee; placed forward Lamar Odom on the injured list with a sore right wrist and sore right ankle.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Waived guard Tierre Brown; placed guard Tito Maddox and forwards Pete Mickeal and Terence Morris on the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed forward Don Reid and guard Pepe Sanchez on the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed center Marcus Camby, guard Predrag Savovic and guard-forward Vincent Yarbrough on the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed forward Popeye Jones, guard Tariq Abdul-Wahad and guard Adam Harrington on the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Exercised the option on the contract of center Chris Mihm; placed guard Dajuan Wagner on the injured list with a bladder infection.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Excercised the contract options on forward Marcus Fizer, guard Jamal Crawford and center Dalibor Bagaric; placed Bagaric, and guards Rick Brunson and Roger Mason Jr. on the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-10-28T08:00Z",
+      "description": "Placed forwards DerMarr Johnson and Chris Crawford on the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-26T07:00Z",
+      "description": "Waived guard-forward Nick Anderson and forward Harold Jamison.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Waived guard Jermaine Jackson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Signed guard Anthony Johnson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Promoted Keith Jones to vice president of  basketball operations-athletic trainer and Dennis Lindsey to vice  president of basketball operations-player personnel.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Waived guard Ricky Moore and forward Gabe Muoneke.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Waived forward Derek Hood.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-10-25T07:00Z",
+      "description": "Acquired guard Erick Barkley and cash from the San Antonio Spurs for future considerations; waived Barkley.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guard Eddie Gill.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Acquired forward George McCloud and cash from the Denver Nuggets for guard Chris Whitney.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guard Danny Johnson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guards John Celestand and Danny Earl.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guards Maurice Evans and Marcus Taylor.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived center Ernest Brown.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guard A.J. Guyton.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived forward Bennett Davison and center Eric Chenowith.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived center Steve Goodrich and guard Oscar Torres.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived forward Zendon Hamilton.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guard Tommy Adams, center Jay Locklier and forward Byron Mouton.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-10-24T07:00Z",
+      "description": "Waived guards Maurice Carter and Rod Grizzard and center Paul Shirley.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Signed free agent guard Voshon Lenard, who had  been with the Denver Nuggets.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived guard Richie Frahm.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived forward Damone Brown and center  Ron Rollerson.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived forward-center Obinna Ekezie and center Peter Cornell.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived guard Jemeil Rich.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived center Lonnie Jones.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived guard Rafer Alston and forward  Anthony Miller.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived guard Anthony Johnson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-23T07:00Z",
+      "description": "Waived guard Terrell McIntyre and forward  Lee Nailon.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-10-22T07:00Z",
+      "description": "Suspended guard Chris Childs indefinitely for  failure to be in playing condition.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-21T07:00Z",
+      "description": "Waived forward Jermaine Walker.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-10-21T07:00Z",
+      "description": "Waived center Todd Lindeman; suspended guard-forward Latrell Sprewell one game for not adhering to his rehabilitation program.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-10-21T07:00Z",
+      "description": "Waived center Jason Lawson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-21T07:00Z",
+      "description": "Waived guards Doug Overton and David Graves.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-10-21T07:00Z",
+      "description": "Waived forward Frantz-Pierre Louis.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-10-19T07:00Z",
+      "description": "Waived guard Vonteego Cummings.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-18T07:00Z",
+      "description": "Signed free agent guard Damon Jones, who had been with the Detroit Pistons.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-10-18T07:00Z",
+      "description": "Signed free agent center Wang Zhizhi, who had been with the Dallas Mavericks.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-18T07:00Z",
+      "description": "Signed free agent swingman Walt Williams, who  had been with the Houston Rockets.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-10-18T07:00Z",
+      "description": "Placed forward Matt Barnes and center Ike Nwankwo on waivers.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-18T07:00Z",
+      "description": "Released guard Fred House and forward George Williams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-17T07:00Z",
+      "description": "Waived guard Cory Bradford and forward Tang Hamilton.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-10-17T07:00Z",
+      "description": "Released guards Sean Chen and Kiwane Garris and  center Casey Shaw.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-10-17T07:00Z",
+      "description": "Waived guard Larry Reid.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-17T07:00Z",
+      "description": "Named John S. Brody executive vice president  of marketing.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-10-17T07:00Z",
+      "description": "Signed free agent Ron Grizzard.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-15T07:00Z",
+      "description": "Signed center Lonnie Jones.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-10-14T07:00Z",
+      "description": "Signed center Olden Polynice.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-10-14T07:00Z",
+      "description": "Signed guard Michael Redd to a multi-year  contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-10-14T07:00Z",
+      "description": "Released guard Khalid El-Amin.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-10-13T07:00Z",
+      "description": "Released guard Robert Conley and forwards Gioannis Giannoulus and Jerod Ward.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-10-13T07:00Z",
+      "description": "Waived forward Horacio Llamas.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-10-12T07:00Z",
+      "description": "Signed forward Charles Oakley.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-10-12T07:00Z",
+      "description": "Signed center Ron Rollerson.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-10-12T07:00Z",
+      "description": "Waived guard Jason Crowe and forward James Head; signed guard Larry Reid, forward Bennett Davison and center Eric Chenowith.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-10-11T07:00Z",
+      "description": "Waived guard Rod Gizzard.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-10-11T07:00Z",
+      "description": "Waived guard William Avery and center Alvin Jones.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-10-11T07:00Z",
+      "description": "Waived guard Omar Cook.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-10-11T07:00Z",
+      "description": "Released center Mario Bennett.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-10-10T07:00Z",
+      "description": "Named Campy Russell outer market event specialist.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-10-09T07:00Z",
+      "description": "Agreed to terms with center Yao Ming.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-10-07T07:00Z",
+      "description": "Waived center Robb Dryden and forward Mark Vershaw.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-10-07T07:00Z",
+      "description": "Waived guard Corey Benjamin and forward-center Jabari Smith.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-10-07T07:00Z",
+      "description": "Fined forward Latrell Sprewell $250,000 for failing to inform the team of an injury; promoted Peter Feigin to vice president of marketing.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-10-07T07:00Z",
+      "description": "Waived free agent center Lonnie Jones and free agent forward Mark Sanford",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-09-30T07:00Z",
+      "description": "Signed free agent forwards Tang Hamilton and Mark  Vershaw, center Rob Dryden and guard Cory Bradford.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-09-30T07:00Z",
+      "description": "Signed free agents center Todd Lindeman, forwards  Jim James and Mark Pope, and guards Toby Bailey, Danny Johnson and  Jemeil Rich.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-09-30T07:00Z",
+      "description": "Signed forward Sean Lampley.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-09-28T07:00Z",
+      "description": "Re-signed free agent forward Eduardo Najera.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-09-27T07:00Z",
+      "description": "Signed free agent forwards Cherokee Parks and Tremaine Fowlkes.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-09-27T07:00Z",
+      "description": "Waived guard Mark Jackson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-09-27T07:00Z",
+      "description": "Announced that Boston Basketball Partners, L.P. signed an agreement to purchase the team.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-09-26T07:00Z",
+      "description": "Signed center Ken Johnson and guard Khalid El-Amin.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-09-25T07:00Z",
+      "description": "Signed forward-center Pat Burke.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-09-25T07:00Z",
+      "description": "Re-signed guard Eddie House.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-09-25T07:00Z",
+      "description": "Signed center Steve Goodrich and forward Pete Mickeal to non-guaranteed contracts.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-09-25T07:00Z",
+      "description": "Acquired center Michael Stewart and a future first-round draft pick from the Toronto Raptors for forward Lamond Murray and a future second-round draft pick; signed forward Matt Barnes and guard William Parker.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-09-24T07:00Z",
+      "description": "Promoted Rob Babcock to vice president of player personnel.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-09-23T07:00Z",
+      "description": "Named Dick Helm and Jay Triano assistant coaches; announced that assistant coach Jim Brewer has left the team.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-09-23T07:00Z",
+      "description": "Signed free agent guards Omar Cook and Corey Benjamin and forward Obinna Ekezie.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-09-23T07:00Z",
+      "description": "Announced that center Michael Olowokandi has accepted a one-year qualifying offer.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-09-20T07:00Z",
+      "description": "Signed free agent center Arvydas Sabonis.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-09-20T07:00Z",
+      "description": "Signed free agent forwartd Popeye Jones, who had been with the Washington Wizards.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-09-18T07:00Z",
+      "description": "Signed forward Jermaine Walker.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-09-18T07:00Z",
+      "description": "Signed guards Rick Brunson and Doug Overton",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-09-17T07:00Z",
+      "description": "Named Patrick Ewing assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-09-17T07:00Z",
+      "description": "Rescinded the September 10 trade that sent  forward Jumaine Jones to the Sacramento Kings for guard Mateen  Cleaves; acquired guard Milt Palacio from the Phoenix Suns for a  future second-round pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-09-16T07:00Z",
+      "description": "Named Steven Young as a European scout.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-09-16T07:00Z",
+      "description": "Named Sean McCloskey coordinator of  basketball communications.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-09-16T07:00Z",
+      "description": "Signed forward Ruben Wolkowyski.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-09-13T07:00Z",
+      "description": "Signed guard-forward Rod Grizzard to a  two-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-09-12T07:00Z",
+      "description": "Exercised the option on the contract of forward  Hedo Turkoglu for the 2003-2004 season.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-09-12T07:00Z",
+      "description": "Signed free agent forward Jabari Smith and free agent center Peter Cornell.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-09-12T07:00Z",
+      "description": "Signed guard Tito Maddox, their second-round pick.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-09-11T07:00Z",
+      "description": "Traded guards Richard Hamilton and Hubert  Davis and forward Bobby Simmons to the Detroit Pistons for guard  Jerry Stackhouse and forwards Brian Cardinal and Ratko Varda.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-09-11T07:00Z",
+      "description": "Signed free agent guard Erick Strickland, who had been with the Boston Celtics.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-09-11T07:00Z",
+      "description": "Re-signed free agent forward Ira Newble.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-09-10T07:00Z",
+      "description": "Signed free agent forward Bryon Russell, who had been with the Utah Jazz, to a two-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-09-10T07:00Z",
+      "description": "Announced that restricted free agent center Rasho Nesterovic has accepted a one-year qualifying offer; signed guard Igor Rakocevic to a multi-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-09-10T07:00Z",
+      "description": "Traded forward Jumaine Jones to the  Sacramento Kings for guard Mateen Cleaves.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-09-09T07:00Z",
+      "description": "Named Karin Buchholz vice president, community relations and fan development.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-09-06T07:00Z",
+      "description": "Named P.J. Carlesimo assistant coach.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-09-05T07:00Z",
+      "description": "Signed free agent forward Shawn Kemp, who had  been with the Portland Trail Blazers.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-09-05T07:00Z",
+      "description": "Signed free agent guard Travis Best, who had been with the Chicago Bulls.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-09-05T07:00Z",
+      "description": "Named Mike Wilhelm assistant coach-advance scout.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-09-05T07:00Z",
+      "description": "Named Harold Ellis scout.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-09-04T07:00Z",
+      "description": "Signed forward-center Melvin Ely, their first-round pick, to a three-year contract with a club option.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-08-27T07:00Z",
+      "description": "Signed free agent forward Brian Skinner, who  had been with the Cleveland Cavaliers.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-08-26T07:00Z",
+      "description": "Signed free agent center-forward Kevin Willis, who had been with the Houston Rockets.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-08-26T07:00Z",
+      "description": "Signed guard Steve Francis to a multi-year contract extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-08-26T07:00Z",
+      "description": "Named T.R. Dunn assistant coach.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-08-23T07:00Z",
+      "description": "Named Mark Hughes assistant coach; exercised the option on forward-guard Mike Miller for the 2003-04 season; extended the contracts of assistant coaches Dave Wohl, Johnny Davis and Paul Pressey.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-08-22T07:00Z",
+      "description": "Promoted Travis Stanley to executive vice president, team marketing.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-08-21T07:00Z",
+      "description": "Exercised contract option on forward Kenyon Martin through the 2003-04 season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-08-21T07:00Z",
+      "description": "Signed forward Mehmet Okur.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-08-21T07:00Z",
+      "description": "Matched offer sheet given by the  Minnesota Timberwolves to guard Ricky Davis.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-08-20T07:00Z",
+      "description": "Waived forward Shawn Kemp.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-08-16T07:00Z",
+      "description": "Re-signed restricted free agent forward Mike Bibby to a multi-year contract extension.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-08-16T07:00Z",
+      "description": "Signed free agent forward Donyell Marshall, who had been with the Utah Jazz.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-08-14T07:00Z",
+      "description": "Signed free agent forward Keon Clark, who had been with the Toronto Raptors.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-08-14T07:00Z",
+      "description": "Signed free agent forward Rodney Rogers, who  had been with the Boston Celtics.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-08-13T07:00Z",
+      "description": "Named Chris Mullin special assistant.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-08-13T07:00Z",
+      "description": "Signed guard Roger Mason.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-08-12T07:00Z",
+      "description": "Signed free agent guard Jeff McInnis,  who had been with the Los Angeles Clippers.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-08-09T07:00Z",
+      "description": "Signed forward Corsley Edwards, their  second-round draft pick.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-08-09T07:00Z",
+      "description": "Signed forward Ryan Humphrey.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-08-09T07:00Z",
+      "description": "Re-signed forward Walter McCarty.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-08-08T07:00Z",
+      "description": "Named Tom Sterner assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-08-08T07:00Z",
+      "description": "Signed free agent center Mark Blount, who had been with the Boston Celtics.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-08-07T07:00Z",
+      "description": "Signed free agent center Michael Doleac, who had been with the Cleveland Cavaliers.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-08-07T07:00Z",
+      "description": "Signed forward Carlos Boozer.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-08-06T07:00Z",
+      "description": "Traded center Dikembe Mutombo to the New  Jersey Nets for forward Keith Van Horn and center Todd  MacCulloch.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-08-06T07:00Z",
+      "description": "Named Vinnie Hudson physical therapist.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-08-06T07:00Z",
+      "description": "Named Hank Egan assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-08-05T07:00Z",
+      "description": "Acquired guards Antonio Daniels,  Charles Smith and center Amal McCaskill from the San Antonio  Spurs for guards Steve Kerr, Erick Barkley and a second-round pick in the 2003 draft.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-08-05T07:00Z",
+      "description": "Negotiated a buyout with center Mikki Moore,  making him a free agent.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-08-02T07:00Z",
+      "description": "Acquired forward Glenn Robinson from the Milwaukee Bucks for forwards Toni Kukoc, Leon Smith and a first-round pick  in 2003.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-08-01T07:00Z",
+      "description": "Traded center Don Reid and future draft considerations to the Denver Nuggets for a future second-round pick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-08-01T07:00Z",
+      "description": "Signed free agent guard Chris Childs, who had  been with the Toronto Raptors.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-08-01T07:00Z",
+      "description": "Signed forward Chris Wilcox, the first of their two first-round picks in the 2002 draft, to a multi-year contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-08-01T07:00Z",
+      "description": "Named Marc Boff strength and conditioning  coach and physical therapist and Wes Wilcox video coordinator.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-07-31T07:00Z",
+      "description": "Signed free agent forward Corie Blount, who had been with the Philadelphia 76ers.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-07-30T07:00Z",
+      "description": "Signed forward Tamar Slay.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-07-30T07:00Z",
+      "description": "Acquired guards Andre Miller and Bryant Stith from the Cleveland Cavaliers for forwards Darius Miles and Harold Jamison.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-07-30T07:00Z",
+      "description": "Re-signed free agent forward Raef LaFrentz; Named Robert Hackett strength and conditioning coach.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-07-30T07:00Z",
+      "description": "Signed guard Baron Davis to a multi-year contract extension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-07-29T07:00Z",
+      "description": "Named Terry Porter assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-07-29T07:00Z",
+      "description": "Named Otis Smith executive director of basketball operations.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-07-27T07:00Z",
+      "description": "Signed forward Nikoloz Tskitishvili, their first-round pick in the 2002 draft, to a three-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-07-26T07:00Z",
+      "description": "Signed free agent center Nate Huffman.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-07-26T07:00Z",
+      "description": "Re-signed forward Malik Rose to a multi-year contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-07-26T07:00Z",
+      "description": "Named Eric Musselman coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-07-25T07:00Z",
+      "description": "Agreed to terms with free agent guard Calbert  Cheaney, who had been with the Denver Nuggets.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-07-25T07:00Z",
+      "description": "Named Brett Brown director of player development.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-07-25T07:00Z",
+      "description": "Signed free agent guard Greg Buckner, who had been with the Dallas Mavericks; signed free agent forward Monty Williams, who had been with the Orlando Magic.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-24T07:00Z",
+      "description": "Re-signed forward-center Jarron Collins to a two-year contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-07-24T07:00Z",
+      "description": "Rescinded their qualifying offer to forward Matt Harpring, making him an unrestricted free agent.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-24T07:00Z",
+      "description": "Re-signed free agent forward Pat Garrity;  waived swingman Jud Buechler.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-07-23T07:00Z",
+      "description": "Re-signed forward Bruce Bowen.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-07-23T07:00Z",
+      "description": "Signed forward Nene Hilario to a three-year  contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-07-23T07:00Z",
+      "description": "Named Kurt Fedders public relations assistant.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-07-22T07:00Z",
+      "description": "Signed center Cezary Trybanski.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-07-22T07:00Z",
+      "description": "Rescinded their qualifying offer to forward-center Keon Clark, making his an unrestricted free agent.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-07-22T07:00Z",
+      "description": "Re-signed forward Danny Ferry.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-07-22T07:00Z",
+      "description": "Acquired forward Vin Baker and guard Shammond Williams from the Seattle SuperSonics for guards Kenny Anderson and Joseph Forte and center Vitaly Potapenko.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-07-21T07:00Z",
+      "description": "Signed free agent forward-center Olumide Oyedeji, who had been with the Seattle SuperSonics.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-07-20T07:00Z",
+      "description": "Signed forward Nikoloz Tskitishvili, their first-round pick in the 2002 draft, to a three-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-07-19T07:00Z",
+      "description": "Signed forward-center Scott Williams, who had been with the Denver Nuggets.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-07-19T07:00Z",
+      "description": "Signed forward Marcus Haislip, their  first-round draft pick, to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-07-19T07:00Z",
+      "description": "Waived forward Obinna Ekezie.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-07-19T07:00Z",
+      "description": "Signed free agent center Bruno Sundov, who had been with the Indiana Pacers.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Re-Signed free agent center Jerome  James.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Signed guard Emanuel Ginobili.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Signed forward Sam Clancy.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Re-Signed free agent forward Devean George to a four-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Signed guard Marko Jaric to a  multi-year contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-07-18T07:00Z",
+      "description": "Signed guard-forward Vincent Yarbrough, guard Predrag Savovic and Lorinza Harrington.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-07-17T07:00Z",
+      "description": "Signed guard Gordan Giricek.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-07-17T07:00Z",
+      "description": "Signed free agent guard Jacque Vaughn, who had been with the Atlanta Hawks.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-07-17T07:00Z",
+      "description": "Signed free agent guard Chauncey Billups, who had been with the Minnesota Timberwolves, to a multi-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-07-17T07:00Z",
+      "description": "Re-signed forward Ryan Bowen.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-07-17T07:00Z",
+      "description": "Signed rookie free agent guard J.R. Bremer.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-07-16T07:00Z",
+      "description": "Signed guard Dajuan Wagner, their first-round pick, to a three-year contract with a club option.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-07-12T07:00Z",
+      "description": "Signed guard-forward John Salmons to a three-year contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-11T07:00Z",
+      "description": "Signed guard Juan Dixon to a three-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-07-11T07:00Z",
+      "description": "Named Bob Bender assistant coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-11T07:00Z",
+      "description": "Signed forward Bostjan Nachbar, the second of their two first round picks, to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-07-11T07:00Z",
+      "description": "Signed guard Dan Dickau, a first-round pick in  the 2002 draft, to a multi-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-07-10T07:00Z",
+      "description": "Signed forward Jared Jeffries, one of their first-round picks, to a three-year contract with a club option.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-07-10T07:00Z",
+      "description": "Signed guard Jay Williams, their first-round pick, to a three-year contract with a club open.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-07-08T07:00Z",
+      "description": "Signed guard Frank Williams, a first-round pick, to a multi-year contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-07-08T07:00Z",
+      "description": "Signed forward Mike Dunleavy Jr., their first-round-pick, to a multi-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-07-08T07:00Z",
+      "description": "Named Bob Thornton assistant coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-07-05T07:00Z",
+      "description": "Promoted Jim LaBumbard to director of media relations.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-07-05T07:00Z",
+      "description": "Signed forward Amare Stoudamire and  guard-forward Casey Jacobsen, their first-round picks in the 2002 draft.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-07-05T07:00Z",
+      "description": "Signed guard Freddy Jones, their first-round pick in the 2002 draft.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-07-03T07:00Z",
+      "description": "Signed center Efthimos Rentzias.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-02T07:00Z",
+      "description": "Signed center Efthimos Rentzias.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-07-02T07:00Z",
+      "description": "Named Matthew Yatsko assistant director of media relations.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-07-01T07:00Z",
+      "description": "Named Donnie Nelson president of basketball operations.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-06-30T07:00Z",
+      "description": "Named Lionel Hollins assistant coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-06-28T07:00Z",
+      "description": "Exercised their option on the contract of guard Eddie Gill for the 2002-03 season; announced they will not exercise the options on the contracts of forward Antonio Fotsis and guard Will Solomon.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-06-28T07:00Z",
+      "description": "Traded the rights to guard Gordan Giricek  to the Memphis Grizzlies for a 2004 second-round draft pick and cash.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-06-28T07:00Z",
+      "description": "Waived guard Earl Boykins.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-06-27T07:00Z",
+      "description": "Traded the draft rights to center Mario Kasun to the Orlando Magic for future considerations.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Traded guard Nick Anderson and the rights to forward Matt Barnes to the Cleveland Cavaliers for guard Wesley Person; acquired the rights to forward Chris Owens from the Milwaukee Bucks for a 2003 second-round pick.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Traded the rights to guard Dan Dickau for a future first-round pick.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Traded guard Speedy Claxton to the San Antonio Spurs for forward Mark Bryant, the rights to guard John Salmons and the rights to forward Randy Holcomb; traded the rights to guard Jiri Welsch to the Golden State Warriors for a 2005 first-round pick and a future first-round pick; traded 2004 and 2006 second-round picks to the Atlanta Hawks for the rights to center Efthimios Rentzias.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Traded the rights to center Curtis Borchardt to the Utah Jazz for the rights to Ryan Humphrey and the rights to Jamal Sampson; acquired the rights to center Mario Kasun from the Los Angeles Clippers for future considerations; acquired the rights to center Rashard Griffith from the Milwaukee Bucks for the rights to center Jamal Sampson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Acquired forward Tracy Murray and the rights to guard Kareem Rush from the Toronto Raptors for guard Lindsey Hunter and the rights to forward Chris Jefferies.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-06-26T07:00Z",
+      "description": "Acquired forward-center Marcus Camby, guard Mark Jackson and the rights to forward Nene Hilario from the New York Knicks for forward Antonio McDyess, the rights to guard Frank Williams and a 2003 second-round pick.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-06-25T07:00Z",
+      "description": "Traded guard Courtney Alexander to the New Orleans Hornets for the 17th overall pick in the 2002 draft.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-06-25T07:00Z",
+      "description": "Waived guard Tim Hardaway.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-06-24T07:00Z",
+      "description": "Named Rich Welts president and chief operating  officer.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-06-24T07:00Z",
+      "description": "Waived forward Danny Manning.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-06-21T07:00Z",
+      "description": "Named Pete Carril special assistant to the president.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-06-14T07:00Z",
+      "description": "Named John Welch assistant coach-workout coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-06-10T07:00Z",
+      "description": "Named Marc Iavaroni assistant coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-06-09T07:00Z",
+      "description": "Placed center Todd MacCulloch on the injured list with plantar fasciatis in his left foot;  activated forward Donny Marshall from the injured list.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-06-04T07:00Z",
+      "description": "Promoted John Hammond vice president of basketball operations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-06-04T07:00Z",
+      "description": "Named Joe Gallagher assistant coach.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-06-03T07:00Z",
+      "description": "Named Joe Gallagher assistant coach.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-05-29T07:00Z",
+      "description": "Promoted Scott Perry to director of player personnel and George David to director of scouting.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-05-28T07:00Z",
+      "description": "Announced the retirement of assistant coach Hank Egan.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-05-28T07:00Z",
+      "description": "Announced in conjunction with the Minnesota Lynx of the WNBA the hiring of Rod Johnson as the organization's sales executive for southern Minnesota.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-05-21T07:00Z",
+      "description": "Waived center Nevriye Yilmaz.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-05-21T07:00Z",
+      "description": "Promoted John Hammond to vice president of  basketball operations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-05-15T07:00Z",
+      "description": "Announced resignation of assistant coaches Bob Staak and Michael Adams.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-05-15T07:00Z",
+      "description": "Named Billy Knight director of basketball operations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-05-13T07:00Z",
+      "description": "Promoted Anucha Browne to senior vice president marketing and business operations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-04-30T07:00Z",
+      "description": "Named Jerry West director of basketball  operations.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-04-19T07:00Z",
+      "description": "Fired general manager Billy Knight.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-04-17T07:00Z",
+      "description": "Placed forward Corie Blount on the injured list  with a right knee contusion; activated forward Damone Brown.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-04-17T07:00Z",
+      "description": "Placed center Patrick Ewing on the injured list with strept throat; activated guard Jeryl Sasser from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-04-17T07:00Z",
+      "description": "Signed guard Omar Cook.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-04-16T07:00Z",
+      "description": "Placed center David Robinson on the  injured list; activated center Amal McCaskill from the injured list.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-04-16T07:00Z",
+      "description": "Placed guard-forward Mike Miller on the  injured list with a sprained left ankle; activated forward Jud Buechler from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-04-15T07:00Z",
+      "description": "Placed forward Derrick Coleman on the injured list with a hyperextended left knee; activated center Jabari Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-04-14T07:00Z",
+      "description": "Placed center Todd MacCulloch on the injured list with plantar fasciatis in his left foot;  activated forward Donny Marshall from the injured list.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-04-12T07:00Z",
+      "description": "Activated guard-forward Larry Robinson from the injured list; placed guard-forward Lavor Postell on the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-04-12T07:00Z",
+      "description": "Activated guard Dana Barros; placed center Mikki Moore on the injured list with back spasms.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-04-08T07:00Z",
+      "description": "Activated forward Vladimir Radmanovic   from the injured list; placed guard Randy Livingston on the  injured list with a sprained right ankle; signed forward Ansu Sesay.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-04-08T07:00Z",
+      "description": "Placed center Sean Rooks on the  injured list with a sprained left elbow; activated  forward-center Obinna Ekezie from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-04-07T08:00Z",
+      "description": "Signed guard Derrick Dial for remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-04-05T08:00Z",
+      "description": "Fined center Michael Olowokandi $50,000 for conduct detrimental to the team.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-04-05T08:00Z",
+      "description": "Activated guard Kenny Anderson from the injured list; placed guard Joe Forte on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-04-04T08:00Z",
+      "description": "Fined center Michael Olowokandi  $50,000 for conduct detrimental to the team.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-04-04T08:00Z",
+      "description": "Activated guard Kenny Anderson from the  injured list; placed guard Joe Forte on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-04-03T08:00Z",
+      "description": "Placed guard Michael Jordan on the injured list with inflammation in his right knee; activated forward Bobby Simmons.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-04-03T08:00Z",
+      "description": "Placed forward Stephen Jackson on the injured  list with a sprained left thumb; activated guard Jason Hart.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-04-03T08:00Z",
+      "description": "Placed guard A.J. Guyton on the injured list with a  shoulder bruise; activated guard Norman Richardson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-04-01T08:00Z",
+      "description": "Placed guard Michael Jordan on the injured list with inflammation in his right knee; activated forward Bobby Simmons.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-04-01T08:00Z",
+      "description": "Signed guard Jaren Jackson to a 10-day  contract; placed forward Jud Buechler on the injured list with  a low back strain.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-04-01T08:00Z",
+      "description": "Placed guard A.J. Guyton on the injured list with a  shoulder bruise; activated guard Norman Richardson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-03-31T08:00Z",
+      "description": "Activated guard Lucious Harris from the  injured list; placed guard-forward Donny Marshall on the  injured list with left knee tendinitis.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-03-29T08:00Z",
+      "description": "Signed guard Randy Livingston for the remainder of the season; signed forward Ansu Sesay to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-03-29T08:00Z",
+      "description": "Activated forward Mike Miller from the injured list; waived guard Dee Brown.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-03-29T08:00Z",
+      "description": "Placed swingman Jim Jackson on the injured list  with a sprained right ankle; activated forward Malik Allen  from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-03-29T08:00Z",
+      "description": "Activated forward Corey Maggette from the injured list; placed forward Obinna Ekezie on the  injured list with left knee tendinitis.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-03-28T08:00Z",
+      "description": "Signed guard Derrick Dial to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-03-28T08:00Z",
+      "description": "Signed guard Robert Pack to a contract for the remainder of the season.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-03-28T08:00Z",
+      "description": "Placed guard Michael Redd on the injured list with a sprained MCL in his left knee.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-03-28T08:00Z",
+      "description": "Placed forward Walt Williams on the injured  list with right ankle spurs; activated forward-center Kevin Willis from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-03-25T08:00Z",
+      "description": "Placed guard Terry Porter on the injured list with a strained right calf; activated guard-forward Stephen Jackson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-03-25T08:00Z",
+      "description": "Placed guard Kenny Anderson on the injured  list with a left ankle sprain; activated guard Joseph Forte from  the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-03-24T08:00Z",
+      "description": "Placed guard Allen Iverson on the injured  list with a broken left hand; activated center Samuel Dalembert  from the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-03-24T08:00Z",
+      "description": "Signed guard Doug Overton for the rest of the season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-03-23T08:00Z",
+      "description": "Placed forward Brian Cardinal on injured  reserve; activated center Zeljko Rebraca.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-03-22T08:00Z",
+      "description": "Signed guard Dee Brown to a 10-day contract.   FOOTBALL   --------",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-03-19T08:00Z",
+      "description": "Signed guard Randy Livingston to a second 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-03-19T08:00Z",
+      "description": "Placed guard William Avery on the  injured list with tendinitis in his right knee.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-03-19T08:00Z",
+      "description": "Placed center Malik Allen on the injured list with knee tendinitis; activated forward LaPhonso Ellis from the  injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-03-18T08:00Z",
+      "description": "Signed guard Robert Pack to a 10-day  contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-03-17T08:00Z",
+      "description": "Placed center Michael Stewart on the injured list with a hernia; activated forward Michael Bradley from the injured list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-03-16T08:00Z",
+      "description": "Placed forward Brian Cardinal on injured  reserve; activated center Zeljko Rebraca.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-03-15T08:00Z",
+      "description": "Signed forward Tremaine Fowlkes for the remainder of the season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-03-14T08:00Z",
+      "description": "Signed guard Doug Overton to a second 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-03-13T08:00Z",
+      "description": "Activated forward-center Chris Mihm from the injured list; placed guard Jeff Trepagnier on the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-03-12T08:00Z",
+      "description": "Signed guard Dee Brown to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-03-12T08:00Z",
+      "description": "Placed forward-center Kevin Willis on the  injured list with a sprained left wrist; activated guard Oscar  Torres from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-03-10T08:00Z",
+      "description": "Placed guard Rafer Alston on the injured list  with a sore right Achilles heel; activated forward-center Greg  Foster.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-03-08T08:00Z",
+      "description": "Signed guard Randy Livingston to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-03-08T08:00Z",
+      "description": "Signed forward Chucky Brown to a second  10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-03-07T08:00Z",
+      "description": "Placed center Zeljko Rebraca on the injured  list with a fractured right orbit bone; activated forward Brian  Cardinal from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-03-06T08:00Z",
+      "description": "Activated guard Eddie House off injured list; placed  guard Mike James on injured list with bilateral patella tendinitis.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-03-06T08:00Z",
+      "description": "Signed center Leon Smith.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-03-05T08:00Z",
+      "description": "Named scout Walker D. Russell as an assistant coach for the remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-03-05T08:00Z",
+      "description": "Extended the contract of coach Don Chaney.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-03-05T08:00Z",
+      "description": "Signed G Greg Anthony for the remainder of the season; placed F/C Mark Pope on injured list with back spasms.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-03-05T08:00Z",
+      "description": "Signed forward Tremaine Fowlkes to a  second 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-03-05T08:00Z",
+      "description": "Activated center Shawn Bradley and guard Greg  Buckner from the injured list; placed forward Danny Manning on the  injured list with a lower back strain; placed forward Tariq Abdul-Wahad on the injured list with a sore left knee/",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-03-04T08:00Z",
+      "description": "Signed guard Eddie Gill.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-03-04T08:00Z",
+      "description": "Activated forward Shawn Kemp from the  suspended list; placed guard Erick Barkley on the injured list with left knee patella tendonitis.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-03-03T08:00Z",
+      "description": "Signed guard Isaac Fontaine to a 10-day  contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-03-03T08:00Z",
+      "description": "Activated guard Jamal Crawford from the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-03-02T08:00Z",
+      "description": "Placed guard Oscar Torres on the injured list with  a right ankle sprain; activated forward Walt Williams.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-03-01T08:00Z",
+      "description": "Activated forward Zach Randolph from the  injured list; placed center Ruben Boumtje Boumtje on the injured list with a sprained left ankle.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-03-01T08:00Z",
+      "description": "Activated forward Derrick McKey and center  Alvin Jones from injured list; placed forward Jabari Smith and center Samuel Dalembert on injured list with sprained left ankle and left knee bruise, respectively.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-03-01T08:00Z",
+      "description": "Waived guard Greg Anthony and agreed to a contract settlement for the 2002-03 season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-02-28T08:00Z",
+      "description": "Placed center DeSagana Diop on the injured list with a right plantar fascia strain; activated guard Jeff Trepagnier  from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-02-28T08:00Z",
+      "description": "Activated guard David Wesley from the injured  list; placed forward Jerome Moiso on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-02-26T08:00Z",
+      "description": "Placed forward Michael Jordan on the injured list with an injured right knee; activated forward Kwame Brown from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-02-26T08:00Z",
+      "description": "Placed guard Mateen Cleaves on the injured list with  a strained right plantar fascia muscle; signed forward Chucky Brown to a  10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2002-02-26T08:00Z",
+      "description": "Placed center Chris Mihm on the injured list with a contusion of the right knee; activated center Brian Skinner from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-02-24T08:00Z",
+      "description": "Activated guard-forward Vince Carter and center Hakeem Olajuwon from the injured list; placed forward Tracy Murray on the injured list due to back spasms; placed forward Michael Bradley on the injured list due to a sprained right ankle.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-02-23T08:00Z",
+      "description": "Signed guard Eddie Gill to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-02-23T08:00Z",
+      "description": "Activated guard Erick Barkley from  the injured list.     COLLEGE -------",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2002-02-23T08:00Z",
+      "description": "Signed forward Tremaine Fowlkes to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-02-22T08:00Z",
+      "description": "Placed center Mamadou N'diaye on the injured list with right foot plantar fasciitis; activated forward  Jerome Williams from the injured list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-02-22T08:00Z",
+      "description": "Placed forward Vin Baker on the injured list with dislocated toes on his left foot.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-02-22T08:00Z",
+      "description": "Activated center Alton Ford from the injured list; placed guard Randy Brown on the injured list with  a strained right abductor muscle.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-02-22T08:00Z",
+      "description": "Placed center Todd MacCulloch on the injured list with plantar fasciitis of the left foot; activated forward Donny Marshall.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-02-22T08:00Z",
+      "description": "Placed forward Corey Maggette on the injured list with a fractured right hand.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-02-21T08:00Z",
+      "description": "Signed guard Rusty LaRue to a contract for the remainder of the season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-02-21T08:00Z",
+      "description": "Acquired center Dean Garrett and a future second-round pick from the Minnesota Timberwolves for center Marc Jackson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-02-21T08:00Z",
+      "description": "Acquired guards Nick Van Exel, Avery Johnson and Tariq Abdul-Wahad and center Raef LaFrentz from the Denver Nuggets for forwards Juwan Howard and Donnell Harvey, guard Tim Hardaway and a 2002 first-round pick; placed center Shawn Bradley on the injured list with a sore right knee; placed guard Adrian Griffin on the injured list with back spasms; waived guard Charlie Bell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-02-20T08:00Z",
+      "description": "Activated guard Greg Anthony; placed guard Norman Richardson on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-02-19T08:00Z",
+      "description": "Placed forward Samaki Walker on the injured list with a hyperextended right elbow; activated center Shaquille O'Neal from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-02-19T08:00Z",
+      "description": "Acquired forward Jalen Rose, guards Travis Best and Norm Richardson and a conditional second-round pick from the Indiana Pacers for guards Ron Mercer and Kevin Ollie, forward Ron Artest and center Brad Miller.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-02-19T08:00Z",
+      "description": "Activated forward Kedrick Brown from the injured list; placed guard Joseph Forte on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-02-18T08:00Z",
+      "description": "Placed forward Derrick McKey on the injured  list with a strained left calf muscle; activated center Jabari Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-02-18T08:00Z",
+      "description": "Activated forward Jamal Mashburn from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-02-17T08:00Z",
+      "description": "Coach Scott Skiles announced his resignation; named Frank Johnson coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-02-17T08:00Z",
+      "description": "Placed forward Theo Ratliff on the injured list with a right hip strain; activated forward Toni Kukoc from the  injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-02-16T08:00Z",
+      "description": "Activated center Evan Eschmeyer from the  injured list; placed guard Greg Buckner on the injured list  with a strained left calf muscle.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-02-16T08:00Z",
+      "description": "Activated forward Tyrone Hill from the injured list; placed forward Brian Skinner on the injured list due to neck spasms.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-02-15T08:00Z",
+      "description": "Activated guard Dean Oliver; placed forward Cedric Henderson on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-02-15T08:00Z",
+      "description": "Placed guard Bimbo Coles on the injured list with a left knee sprain; activated guard Trajan Langdon from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-02-14T08:00Z",
+      "description": "Placed center Isaac Austin on the injured list with tendinitis in his right knee; activated center Lorenzen Wright from the injured list.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-02-14T08:00Z",
+      "description": "Activated guard Keyon Dooling from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-02-13T08:00Z",
+      "description": "Placed forward Nick Anderson on the  injured list with a sprained left wrist; signed guard Elliott Perry to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-02-13T08:00Z",
+      "description": "Activated forward Tom Gugliotta from the injured;  placed center Alton Ford on the injured list with back spasms.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-02-13T08:00Z",
+      "description": "Placed guard Terrell Brandon on the injured list with synovitis in his left knee; activated guard William Avery from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-02-13T08:00Z",
+      "description": "Placed forward Carlos Rogers on the suspended list for failure to re-join the team following the All-Star break.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-02-13T08:00Z",
+      "description": "Placed forward Matt Bullard on the injured list with back spasms.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Placed forwards Vince Carter and Jerome Williams on the injured list; activated center Mamadou N'diaye.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Activated forward Christian Laettner from the injured list; placed forward Kwame Brown on the injured list with a right thigh contusion.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Suspended center Greg Ostertag one game.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Activated center Patrick Ewing; placed guard Jeryl Sasser on the injured list due to patella tendinitis in his right knee.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Suspended forward Carlos Rogers for failing to report to the team following the all-star break.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2002-02-12T08:00Z",
+      "description": "Activated center Ratko Varda and forward Rodney White from the injured list; placed forward Brian Cardinal on the injured list with bilateral patella tendinitis and forward-center Victor Alexander on the injured list with back spasms.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-02-11T08:00Z",
+      "description": "Signed forward Ira Newble for the remainder of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-02-07T08:00Z",
+      "description": "Signed guard Sam Cassell to a multi-year  contract extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2002-02-05T08:00Z",
+      "description": "Activated center Travis Knight from the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-02-05T08:00Z",
+      "description": "Placed guard David Wesley on the injured list with a cracked bone in his left foot; activated forward-center Robert Traylor and forward Jerome Moiso from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-02-02T08:00Z",
+      "description": "Suspended center Marc Jackson two games without pay for conduct detrimental to the team.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-02-02T08:00Z",
+      "description": "Activated forward Lamond Murray from the injured list; placed guard Trajan Langdon on the injured list with a right ankle sprain.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-02-01T08:00Z",
+      "description": "Activated forward Gary Trent from the injured list; placed guard Maurice Evans on the injured list with tendinitis in his left knee.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-02-01T08:00Z",
+      "description": "Activated center Sean Marks from the injured list; placed center Malik Allen on the injured list with right knee tendinitis.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2002-01-31T08:00Z",
+      "description": "Activated center Michael Stewart from the injured list; placed center Hakeem Olajuwon on the injured list with a right quadriceps strain.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-31T08:00Z",
+      "description": "Activated forward Brian Scalabrine from the injured list; placed guard Brandon Armstrong on the injured list with patella tendinitis of the left knee.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-01-30T08:00Z",
+      "description": "Signed guard Jermaine Jackson for the remainder  of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-30T08:00Z",
+      "description": "Activated guard Richard Hamilton from the injured list; placed guard-forward Bobby Simmons on the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-01-29T08:00Z",
+      "description": "Announced the retirement of center Bryant Reeves.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2002-01-29T08:00Z",
+      "description": "Signed guard Anthony Johnson and forward Donny Marshall for the remainder of the season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-01-29T08:00Z",
+      "description": "Activated forward Michael Finley from the injured list; placed guard Charlie Bell on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-01-29T08:00Z",
+      "description": "Signed forward Mark Strickland for the remainder of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-28T08:00Z",
+      "description": "Placed guard John Crotty on the injured list with left knee tendinitis; signed guard Rusty LaRue to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-01-26T08:00Z",
+      "description": "Placed guard Dean Oliver on the injured list; activated forward Cedric Henderson from the injured list.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-01-26T08:00Z",
+      "description": "Placed guard Jeff Trepagnier on the injured list; activated center Michael Doleac from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-01-26T08:00Z",
+      "description": "Placed guards Greg Anthony and Ron Mercer on the injured list; activated center  Dalibor Bagaric and guard A.J. Guyton from the injured list.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-01-25T08:00Z",
+      "description": "Activated guard Tony Parker from the injured list; placed guard Jason Hart on the injured list with patella  tendinitis.   FOOTBALL --------",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-01-25T08:00Z",
+      "description": "Placed guard-forward Kedrick Brown on the injured list with a sprained right ankle; activated guard Joseph Forte from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2002-01-24T08:00Z",
+      "description": "Placed forward Christian Laettner on the injured list with a deep right thigh contusion; activated guard Courtney Alexander from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-01-24T08:00Z",
+      "description": "Placed forward Lamar Odom on the injured list with a sprained ligament in his right wrist; activated forward Harold Jamison from the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-01-24T08:00Z",
+      "description": "Signed forward Leon Smith to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-23T08:00Z",
+      "description": "Placed forward Donyell Marshall on the injured list with a bruised hip; activated forward Quincy Lewis from the injured list.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2002-01-23T08:00Z",
+      "description": "Placed forward Robert Traylor on the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-01-22T08:00Z",
+      "description": "Activated guard Jeryl Sasser from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-01-22T08:00Z",
+      "description": "Placed guard Emanual Davis on the injured list; signed forward Ira Newble to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-21T08:00Z",
+      "description": "Signed guard Eldridge Recasner to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-01-21T08:00Z",
+      "description": "Placed forward Lamond Murray on the injured list with a broken nose; activated guard Trajan Langdon from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-01-19T08:00Z",
+      "description": "Activated forward Clarence Weatherspoon from the injured list; placed swingman Larry Robinson on the injured list with right patella tendinitis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2002-01-19T08:00Z",
+      "description": "Activated guard Terrell Brandon from the injured list; placed guard Will Avery on the injured list with patellar tendinitis in his right knee.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-01-19T08:00Z",
+      "description": "Signed forward Mark Strickland to a 10-day  contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-18T08:00Z",
+      "description": "Activated forward Christian Laettner from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-01-17T08:00Z",
+      "description": "Re-signed guard Anthony Johnson and forward Donny Marshall to 10-day contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-01-17T08:00Z",
+      "description": "Placed forward Walt Williams on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2002-01-15T08:00Z",
+      "description": "Activated guard Jason Hart from the injured list; placed guard Tony Parker on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2002-01-15T08:00Z",
+      "description": "Activated forward Eddie Robinson from the injured list; placed guard A.J. Guyton on the injured list with left elbow bursitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-01-15T08:00Z",
+      "description": "Activated forward George Lynch from the injured list; placed forward Jerome Moiso on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2002-01-14T08:00Z",
+      "description": "Signed forward Derrick McKey; placed center Jabari Smith on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2002-01-14T08:00Z",
+      "description": "Placed guard Mookie Blaylock on the injured list; activated guard Dean Oliver.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-01-14T08:00Z",
+      "description": "Signed center Leon Smith to a 10-day contract; placed guard Emanual Davis on the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-12T08:00Z",
+      "description": "Placed guard Courtney Alexander on the  injured list with a sprained left ankle.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2002-01-12T08:00Z",
+      "description": "Placed forward Gary Trent on the  injured list with a high left ankle sprain; activated guard  Maurice Evans from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2002-01-10T08:00Z",
+      "description": "Signed guard Jermaine Jackson, who had been with Flint of the CBA.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-10T08:00Z",
+      "description": "Signed guard Eldridge Recasner to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-01-10T08:00Z",
+      "description": "Placed guard Dana Barros on the injured list with a pulled left hamstring; activated forward-center Victor Alexander from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-01-09T08:00Z",
+      "description": "Placed center Patrick Ewing on the injured list with right calf/right Achilles tendinitis.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-01-09T08:00Z",
+      "description": "Signed forward Mark Strickland to a 10-day contract; placed forward Chris Crawford on the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2002-01-08T08:00Z",
+      "description": "Activated center Hakeem Olajuwon from the injured list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-08T08:00Z",
+      "description": "Placed forward Tom Gugliotta on the injured list with left quadricep tendinitis; activated center Jake  Tsakalidis.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-01-08T08:00Z",
+      "description": "Placed guard Michael Finley on the injured  list with a left hamstring strain; activated center Shawn  Bradley from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2002-01-07T08:00Z",
+      "description": "Waived guard Carlos Arroyo.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-07T08:00Z",
+      "description": "Signed guard Joe Crispin; waived center Daniel Santiago.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2002-01-07T08:00Z",
+      "description": "Signed guards Anthony Johnson and Donny Marshall to 10-day contracts; waived guard Derrick Dial and forward Steve Goodrich.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2002-01-07T08:00Z",
+      "description": "Waived guard Eldridge Recasner.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2002-01-06T08:00Z",
+      "description": "Waived center Shawnelle Scott; activated forward Chris Anderson from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2002-01-05T08:00Z",
+      "description": "Placed forward Rodney White on the injured  list with a sprained left ankle; activated forward Brian  Cardinal from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2002-01-04T08:00Z",
+      "description": "Placed forward Morris Peterson on the injured list with a broken right index finger; activated center Mamadou N'diaye from the injured list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2002-01-04T08:00Z",
+      "description": "Activated center Jerome James from the injured list.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2002-01-04T08:00Z",
+      "description": "Activated forward-center Steven Hunter; placed guard Jeryl Sasser on the injured list with right knee patella tendinitits.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2002-01-04T08:00Z",
+      "description": "Activated center Shaquille O'Neal from  the injured list; placed center Jelnai McCoy on the injured  list with a bone bruise in his right foot.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2002-01-04T08:00Z",
+      "description": "Activated guard Jeff Trepagnier from the injured list; placed guard Trajan Langdon on the injured list with a right ankle sprain.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2002-01-03T08:00Z",
+      "description": "Activated guard A.J. Guyton from the injured list; placed center Dalibor Bagaric on the injured list with lower back pain.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2002-01-02T08:00Z",
+      "description": "Activated guard Gilbert Arenas from the injured list; placed forward Cedric Henderson on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2002-01-01T08:00Z",
+      "description": "Activated forward Scottie Pippen from the injured list; placed forward Zach Randolph on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    }
+  ]
+}

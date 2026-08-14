@@ -118,7 +118,7 @@ export function GameFilterToolbar({
             <SelectItem value="ALL">All teams</SelectItem>
             {sortedTeams.map((t) => (
               <SelectItem key={t.id} value={t.id}>
-                {t.abbreviation} — {t.fullName}
+                {t.abbreviation} - {t.fullName}
               </SelectItem>
             ))}
           </SelectContent>

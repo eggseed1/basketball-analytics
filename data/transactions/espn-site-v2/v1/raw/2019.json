@@ -1,0 +1,3177 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2019,
+  "fetchedAt": "2026-08-14T20:06:32.146Z",
+  "apiCount": 288,
+  "rows": [
+    {
+      "date": "2019-12-30T08:00Z",
+      "description": "Transferred F Charlie Brown Jr. from College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-12-26T08:00Z",
+      "description": "Signed F Johnathan Williams.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-12-24T08:00Z",
+      "description": "Signed coach Michael Malone to a contract extension through the 2022-23 season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2019-12-24T08:00Z",
+      "description": "Traded G Jordan Clarkson to Utah for G Dante Exum and second-round draft picks in 2022 and 2023.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-12-23T08:00Z",
+      "description": "Signed G Gary Payton II.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-12-17T08:00Z",
+      "description": "Signed C Anzejs Pasecniks to a two-way contract. Waived G Chris Chiozza.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-12-14T08:00Z",
+      "description": "Waived G Tyrone Wallace.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-12-11T08:00Z",
+      "description": "Recalled F Wenyen Gabriel from Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-12-11T08:00Z",
+      "description": "Recalled F Alen Smailagic from Santa Cruz (NBAGL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-12-06T08:00Z",
+      "description": "Fired David Fizdale coach. Promoted Mike Miller to interim head coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-12-05T08:00Z",
+      "description": "Transferred Gs Charlie Brown Jr. and Brandon Goodwin to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-12-04T08:00Z",
+      "description": "Called up Gs Brandon Goodwin and Charlie Brown, Jr. from College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-12-03T08:00Z",
+      "description": "Transferred G Brandon Goodwin to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-11-30T08:00Z",
+      "description": "Recalled Fs Wenyen Gabriel and Caleb Swanigan from Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-11-23T08:00Z",
+      "description": "Recalled F Sekou Doumbouya from Grand Rapids (NBAGL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-11-20T08:00Z",
+      "description": "Recalled F Admiral Schofield and G Justin Robinson from Capital City (NBAGL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-11-20T08:00Z",
+      "description": "Assigned F Charlie Brown Jr. to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-11-19T08:00Z",
+      "description": "Signed F Carmelo Anthony to a contract through January.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-11-12T08:00Z",
+      "description": "Assigned G Victor Oladipo to Fort Wayne (NBAGL).",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-11-11T08:00Z",
+      "description": "Assigned F Ignas Brazdeikis to Westchester (NBAGL).",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-11-10T08:00Z",
+      "description": "Suspended G Dion Waiters 10 games for conduct detrimental to the team.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-11-07T08:00Z",
+      "description": "Recalled G-F Allen Crabbe from College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-11-06T08:00Z",
+      "description": "Transferred G Brandon Goodwin to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-11-05T08:00Z",
+      "description": "Assigned F Admiral Schofield and G Justin Robinson to Capital City (NBAGL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-11-01T07:00Z",
+      "description": "Signed general manager Koby Altman to a multiyear contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-11-01T07:00Z",
+      "description": "Transferred G Brandon Goodwin to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-31T07:00Z",
+      "description": "Exercised its 2020-21 options on F Marvin Bagley III and G De'Aaron Fox.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-10-31T07:00Z",
+      "description": "Exercised the third-year contract options on G Jacob Evans III and F Omari Spellman.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-10-30T07:00Z",
+      "description": "Assigned F Kyle Kuzma to South Bay (NBAGL) for a rehab assignment.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-29T07:00Z",
+      "description": "Promoted Alex McKechnie to vice president/player health and performance.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2019-10-29T07:00Z",
+      "description": "Assigned Gs Justin Robinson and Admiral Schofield to Capital City (NBAGL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-10-29T07:00Z",
+      "description": "Reinstated G Dion Waiters from suspension.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-10-29T07:00Z",
+      "description": "Exercised G Collin Sexton's third-year contract option.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-10-28T07:00Z",
+      "description": "Transferred Gs Charlie Brown Jr. and Brandon Goodwin to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-26T07:00Z",
+      "description": "Agreed to terms with F Cedi Osman on a four-year contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-10-23T07:00Z",
+      "description": "Claimed G Tyrone Wallace off waivers.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Exercised their contract options on F Jaren Jackson Jr. and G Grayson Allen.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Signed G Chris Chiozza to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Signed G Dejounte Murray to a contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Extended the contract of G Buddy Hield.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Exercised their contract options on Gs Frank Ntilikina, Dennis Smith Jr. and Kevin Knox.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Signed G Taurean Prince to a multiyear contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Waived F Devontae Cacok and G Demetrius Jackson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Signed F Domantas Sabonis to a four-year contract extension.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Waived F Joe Johnson.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Exercised their contract options on F Lauri Markkanen, C Wendell Carter Jr. and F Chandler Hutchison.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-10-21T07:00Z",
+      "description": "Signed F Jaylen Brown to a contract extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2019-10-19T07:00Z",
+      "description": "Waived F/C Ivan Rabb, C Miles Plumlee and F Bennie Boatwright.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-19T07:00Z",
+      "description": "Requested waivers on G Marcus Allen.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-19T07:00Z",
+      "description": "Waived Gs Milton Doyle and Justin Simon and F Simisola Shittu.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-10-19T07:00Z",
+      "description": "Requested waivers on F Kenny Gabriel. Signed G Mark Ogden Jr. and requested waivers on him. Exercised the fourth-year option on F John Collins and third-year options on Gs Kevin Huerter and Trae Young.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-18T07:00Z",
+      "description": "Signed F Bennie Boatwright. Waived G Shaq Buchanan.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-18T07:00Z",
+      "description": "Signed F Tre'Shawn Thurman. Waived G Craig Sword.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-10-18T07:00Z",
+      "description": "Signed F Kenny Gabriel. Placed F Marcus Derrickson and Gs Armoni Brooks, Tahjere McCall and Jordan Sibert on waivers.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-17T07:00Z",
+      "description": "Signed G Matt Morgan. Waived F Sagaba Konate.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2019-10-17T07:00Z",
+      "description": "Agreed to terms with G Bradley Beal on a two-year extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-10-17T07:00Z",
+      "description": "Exercised their contract option on F Kyle Kuzma for the 2020-21 season.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-17T07:00Z",
+      "description": "Exercised their team option on F Luke Kennard for the 2020-21 season. Signed G Craig Sword. Waived F Todd Withers.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-10-17T07:00Z",
+      "description": "Signed F Luol Deng who announced his retirement.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-10-16T07:00Z",
+      "description": "Waived G Ahmad Caver. Signed F Jarrod Uthoff.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-16T07:00Z",
+      "description": "Waived Fs Justin Anderson and Jemerrio Jones and G Phil Booth. Signed F Jalen Jones and C Anzejs Pasecniks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-10-15T07:00Z",
+      "description": "Waived G Dusty Hannahs. Signed G Ahmad Caver.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-15T07:00Z",
+      "description": "Waived G David Stockton. Signed G Reggie Hearn.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-14T07:00Z",
+      "description": "Waived G Matt Mooney. Signed G Dusty Hannahs.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-10-11T07:00Z",
+      "description": "Waived C Erik Mika and F Isaiah Pineiro.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-10-10T07:00Z",
+      "description": "Named Craig Slaunwhite head of performance, Tommy Brice and Aisling Toolan physical therapists, Wes Bohn advance scout and Alexander Sigua director, media relations. Promoted Teena Murray vice president, health and performance, Greg Stratton director of scouting, Melanie Stocking director, team travel and logistics, Mark Toyoda director, basketball administration, Analise Langford basketball facility operations manager, Robbie Lemons manager of basketball administration, Akachi Okugo player development manager and Michael Martinez media relations coordinator.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-10-10T07:00Z",
+      "description": "Exercised contract options on F TJ Leaf and G Aaron Holiday. Signed G Walt Lemon Jr.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-10-08T07:00Z",
+      "description": "Waived F Ray Spalding. Signed G Jordan Sibert.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-10-07T07:00Z",
+      "description": "Signed C Kavion Pippen.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-10-04T07:00Z",
+      "description": "Signed G David Stockton. Waived F Jordan Caroline.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-10-04T07:00Z",
+      "description": "Signed C Simisola Shittu.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-10-01T07:00Z",
+      "description": "Named Rod Thorn senior advisor to the general manager.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-09-30T07:00Z",
+      "description": "Signed Gs Perrion Callandret, Milton Doyle and Justin Simon.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-09-26T07:00Z",
+      "description": "Named Teresa Weatherspoon and AJ Diggs assistant coaches.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2019-09-25T07:00Z",
+      "description": "Signed G Tyler Ulis.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-09-25T07:00Z",
+      "description": "Named Joe Branch assistant general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-09-20T07:00Z",
+      "description": "Promoted Mitch Johnson to assistant coach and Darius Songalia to player development assistant. Named Brandon James vice president of basketball administration and deputy general counsel, Dave Telep director of player personnel, Adam Glessner senior director of basketball intelligence, Phil Cullen director of basketball operations and innovation, Niraj Mulji director of basketball strategy, Nick Repole director of research and development, Landry Fields general manager of Austin (NBAGL) and Tyler Self assistant general manager of Austin and Keon Weise performance informatic scout.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-09-20T07:00Z",
+      "description": "Re-signed G/F Vince Carter.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-09-09T07:00Z",
+      "description": "Waived G Antonio Blakeney.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-09-04T07:00Z",
+      "description": "Signed G Matt Mooney.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-08-29T07:00Z",
+      "description": "Promoted Kirk Lacob to executive vice president/basketball operations, Mike Dunleavy to assistant general manager, Kent Lacob to director/team development and Jacob Rubin to assistant video coordinator. Named Zaza Pachulia consultant and Ralph Walker director/team security.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-08-27T07:00Z",
+      "description": "Signed G Armoni Brooks.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-08-26T07:00Z",
+      "description": "Signed C Dwight Howard. Waived F Aric Holman.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-08-24T07:00Z",
+      "description": "Waived C Dwight Howard.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-08-20T07:00Z",
+      "description": "Signed Gs Jaylen Adams and Rayjon Tucker.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-08-19T07:00Z",
+      "description": "Named Mike Miller assistant coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-08-19T07:00Z",
+      "description": "Promoted Travis Schlenk to president of basketball operations and general manager; Chelsea Lane to vice president of athletic performance and sports medicine; Dan Martinez to vice president of team operations; Derek Pierce to vice president of player personnel; Dotun Akinwale Jr. to director of scouting; Mike McNeive to director of player personnel, Daniel Starkman to senior manager of basketball operations; Nick Ressler to manager of basketball operations; Paul Jesperson to assistant video coordinator; Chris Mast to data scientist, athletic performance and sports medicine and Connor Smith to assistant athletic trainer. Named Stephen Giles pro player personnel scout.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-08-15T07:00Z",
+      "description": "Waived G Tarik Phillip.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-08-15T07:00Z",
+      "description": "Promoted player development coach Aaron Miles to assistant coach. Named Kris Weems coach of Santa Cruz (NBAGL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-08-14T07:00Z",
+      "description": "Named Antawn Jamison director of pro personnel and Laron Profit and John Carideo pro scouts.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-08-14T07:00Z",
+      "description": "Named Matt Pitman public address announcer.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-08-13T07:00Z",
+      "description": "Signed C Justin Patton.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-08-13T07:00Z",
+      "description": "Signed G Demetrius Jackson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-08-07T07:00Z",
+      "description": "Promoted Nina Hsieh to head trainer.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-08-06T07:00Z",
+      "description": "Signed F Udonis Haslem.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-08-06T07:00Z",
+      "description": "Signed G Brandon Goodwin to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-08-05T07:00Z",
+      "description": "Named Niele Ivey, Brad Jones, David McClure, Scoonie Penn, Vitaly Potapenko and Neven Spahija assistant coaches and Jason March coach of Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-08-02T07:00Z",
+      "description": "Named Johnny Rogers vice president of pro personnel; and Mike Longabardi, Dean Oliver and Jarell Christian assistant coaches. Promoted Jarell Christian to assistant coach and Ryan Richman to coach of Capital City (G League)",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-08-02T07:00Z",
+      "description": "Agreed to terms with F Vlatko Cancara on a multiyear contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2019-08-01T07:00Z",
+      "description": "Waived F Patrick Patterson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-07-31T07:00Z",
+      "description": "Signed G Marko Guduric to a multi-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-07-31T07:00Z",
+      "description": "Named Jason Kidd, Lionel Hollins, Phil Handy, Miles Simon, Mike Penberthy and Quinton Crawford assistant coaches and Greg St. Jean, Dru Anthrop and Jon Pastorek player development coaches.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-31T07:00Z",
+      "description": "Signed Gs Damion Lee and Ky Bowman to two-way contracts.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-07-31T07:00Z",
+      "description": "Signed F Ray Spalding.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-30T07:00Z",
+      "description": "Signed F Dragan Bender.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-07-30T07:00Z",
+      "description": "Promoted Tori Miller to assistant general manager of College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-25T07:00Z",
+      "description": "Signed G Cameron Payne.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2019-07-25T07:00Z",
+      "description": "Waived F Donte Grantham.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-07-25T07:00Z",
+      "description": "Signed G Kyle Korver.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-07-24T07:00Z",
+      "description": "Signed G Jamal Murray to the five-year contract extension, through the 2024-25 season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2019-07-23T07:00Z",
+      "description": "Named David Akinyooye, Dave Bliss, Mark Daigneault, Brian Keefe and Mike Wilks assistant coaches.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-07-23T07:00Z",
+      "description": "Promoted RC Buford to CEO, effective Sept. 3; Brian Wright to general manager; and Lori Warren and Bobby Perez to executive vice presidents.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-07-23T07:00Z",
+      "description": "Signed F Cheick Diallo to a multi-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-07-22T07:00Z",
+      "description": "Named Tommy Sheppard general manager.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-22T07:00Z",
+      "description": "Named Tim Duncan assistant coach.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-07-22T07:00Z",
+      "description": "Claimed F Kostas Antetokounmpo off waivers from Dallas.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-19T07:00Z",
+      "description": "Named Stacey Augmon and Rico Hines assistant coaches and Lindsey Harding assistant coach and player development coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-07-18T07:00Z",
+      "description": "Signed G Shaquille Harrison and C Luke Kornet.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-17T07:00Z",
+      "description": "Signed C Enes Kanter. Re-signed F Daniel Theis and G Brad Wanamaker.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2019-07-16T07:00Z",
+      "description": "Signed F Richaun Holmes.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-07-16T07:00Z",
+      "description": "Re-signed F Kelly Oubre Jr.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-07-16T07:00Z",
+      "description": "Agreed to terms with G Ben Simmons on a five-year contract extension.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2019-07-16T07:00Z",
+      "description": "Signed F Marcus Morris and G/F Reggie Bullock.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-07-15T07:00Z",
+      "description": "Waived G J.R. Smith.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-07-15T07:00Z",
+      "description": "Waived C Christian Woo",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2019-07-13T07:00Z",
+      "description": "Signed G Talen Horton-Tucker.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-13T07:00Z",
+      "description": "Waived G Jaylen Adams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-12T07:00Z",
+      "description": "Signed F/C Jordan Bell.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-07-12T07:00Z",
+      "description": "Signed C Robin Lopez and G Wesley Matthews.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-07-12T07:00Z",
+      "description": "Re-signed F Kristaps Porzingis.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-07-11T07:00Z",
+      "description": "Signed G Tyus Jones.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-07-11T07:00Z",
+      "description": "Re-signed F Khris Middleton.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-07-11T07:00Z",
+      "description": "Re-signed F Dorian Finney-Smith to a three-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-07-11T07:00Z",
+      "description": "Re-signed G Ryan Arcidiacono.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-11T07:00Z",
+      "description": "Signed F Jabari Parker.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-10T07:00Z",
+      "description": "Signed G Isaiah Thomas.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-10T07:00Z",
+      "description": "Traded F Paul George to the L.A. Clippers for G Shai Gilgeous-Alexander, F Danilo Gallinari and first-round draft picks from 2021-24 and 2026.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-07-10T07:00Z",
+      "description": "Signed Fs Tobias Harris and Al Horford.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2019-07-10T07:00Z",
+      "description": "Declined to match Memphis' offer sheet to G Tyus Jones.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-07-10T07:00Z",
+      "description": "Signed G Seth Curry. Re-signed F Maxi Kleber.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-07-09T07:00Z",
+      "description": "Signed G Ish Smith.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-09T07:00Z",
+      "description": "Signed G Avery Bradley, F Devontae Caco and F Aric Holman.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Re-signed C Thomas Bryant.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Re-signed F Rudy Gay. Signed G Quinndary Weatherspoon to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Signed G D'Angelo Russell to a four-year contract and traded him, G Treveon Graham and G Shabazz Napier to Golden State for F Kevin Durant and a protected first-round draft pick.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Re-signed G Rajon Rondo.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Signed G Jordan Bone to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Obtained F Jerami Grant from the Oklahoma City Thunder for a 2020 first round pick.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Signed F Daniel Gafford.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-08T07:00Z",
+      "description": "Traded F/C Omari Spellman to Golden State for C Damian Jones and a 2026 second-round draft pick.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Signed G Tomas Satoransky and traded him to Chicago for future draft considerations.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Traded F Davis Bertans to Washington, which sent the draft rights to F Aaron White to Brooklyn. Brooklyn sent F DeMarre Carroll to San Antonio. Agreed to terms with Carroll on a two-year contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Re-signed G/F Rodney Hood.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Traded Fs Josh Jackson and De'Anthony Melton, a 2020 and 2021 second-round draft picks to Memphis for Gs Jevon Carter and Kyle Korver.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Signed G Kyrie Irving and C DeAndre Jordan.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Traded C Moritz Wagner, F Jemerrio Jones, G Isaac Bonga and a 2022 second-round draft pick to Washington, which sent cash to New Orleans. New Orleans sent C Anthony Davis to the Lakers for Gs Lonzo Ball and Josh Hart and F Brandon Ingram. Re-signed G Kentavious Caldwell-Pope, G Alex Caruso and C JaVale McGee. Signed G Quinn Cook, C DeMarcus Cousins, F/G Danny Green, G Troy Daniels and F Jared Dudley.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Signed G Jeremy Lamb.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Traded G/F Andre Iguodala and a protected first-round draft pick to Memphis for F Julian Washburn.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Signed G Derrick Rose.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Signed F/C Dwight Powell to a contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-07-07T07:00Z",
+      "description": "Traded Fs Solomon Hill and C/F Miles Plumlee to Memphis for F Chandler Parsons. Signed F D'Andre Hunter and C Bruno Fernando.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Traded C Dwight Howard to Memphis for F CJ Miles.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Re-signed G Damian Lillard to a four-year contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Re-signed G Terrence Ross and F-C Nikola Vucevic to four-year contracts. Signed F Al-Farouq Aminu to a three-year contract. Waived C Timofey Mozgov.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Acquired G Jimmy Butler from Philadelphia, F Meyers Leonard from Portland and cash from the Los Angeles Clippers. Miami sent F Hassan Whiteside to Portland. Philadelphia received G Josh Richardson from Miami. The L.A. Clippers received F Moe Harkless from Portland and a protected first-round draft pick from Miami. Waived G Ryan Anderson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Acquired G Malcolm Brogdon from Milwaukee for a 2020 first-round draft pick and two future second-round draft picks, and signed him to a five-year contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Signed F Markieff Morris and G Tim Frazier.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Signed F Thaddeus Young.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Traded C Aron Baynes and the draft rights to Ty Jerome to Phoenix for a future protected first-round draft pick.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2019-07-06T07:00Z",
+      "description": "Acquired G Allen Crabbe, a conditional 2020 first-round draft pick and the draft rights to G Nickeil Alexander-Walker from Brooklyn for F forward Taurean Prince and a 2021 second-round draft pick.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-07-05T07:00Z",
+      "description": "Named Bryan Gates assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-07-04T07:00Z",
+      "description": "Waived G Frank Mason III.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-07-03T07:00Z",
+      "description": "Signed Fs Mario Hezonja and Anthony Tolliver.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-07-03T07:00Z",
+      "description": "Named Chris Fleming and Roy Rogers assistant coaches and Paul Miller assistant to the head coach. Promoted coaching intern Chris Kent to video coordinator.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-02T07:00Z",
+      "description": "Agreed to terms with F Jared Dudley on a one-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-02T07:00Z",
+      "description": "Signed G Adam Mokoka to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-01T07:00Z",
+      "description": "Signed G Zach Norvell Jr.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-07-01T07:00Z",
+      "description": "Signed F JaKeenan Gant and Gs Brian Bowen II, C.J. Wilcox.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-07-01T07:00Z",
+      "description": "Signed G Coby White.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-07-01T07:00Z",
+      "description": "Signed F Cam Reddish.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-06-29T07:00Z",
+      "description": "G Darren Collison announced his retirement.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-06-25T07:00Z",
+      "description": "Named Pablo Prigioni assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-06-20T07:00Z",
+      "description": "Traded the 41st pick in Thursday's draft to Golden State for a 2024 second-round pick and cash.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-06-14T07:00Z",
+      "description": "Named Igor Kokoskov, Bob Beyer, Jesse Mermuys and Roy Rana assistant coaches; Bobby Jackson assistant player development coach; Jonah Herscu advance scout; and Will Scott head video coordinator and player development coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-06-12T07:00Z",
+      "description": "Named Lindsay Gottlieb assistant coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-06-11T07:00Z",
+      "description": "Named Taylor Jenkins coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-06-10T07:00Z",
+      "description": "G Tony Parker announced his retirement.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2019-06-07T07:00Z",
+      "description": "Signed general manager Jon Horst to a multiyear extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-05-30T07:00Z",
+      "description": "Named Gianluca Pascucci assistant general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-05-24T07:00Z",
+      "description": "Signed coach Terry Stotts to a contract extension through the 2021-22 season and president of basketball operations Neil Olshey through the 2023-24 season.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-05-20T07:00Z",
+      "description": "Announced interim coach Ryan Saunders will be retained.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-05-20T07:00Z",
+      "description": "Named J.B. Bickerstaff associate head coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-05-13T07:00Z",
+      "description": "Named Frank Vogel coach.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-05-13T07:00Z",
+      "description": "Named John Beilein coach and signed him to a five-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-05-08T07:00Z",
+      "description": "Named Aaron Nelson vice president of player care and performance.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2019-05-03T07:00Z",
+      "description": "Named Monty Williams coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-05-03T07:00Z",
+      "description": "Signed coach Jim Boylen to a contract extension.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-05-02T07:00Z",
+      "description": "Named Nicolet Lewis vice president of human resources.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-04-22T07:00Z",
+      "description": "Fired Igor Kokoskov, coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-04-17T07:00Z",
+      "description": "Named Rich Cho vice president of basketball strategy and Glen Grunwald senior adviser within the basketball operations department.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-04-15T07:00Z",
+      "description": "Named Luke Walton coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-04-12T07:00Z",
+      "description": "Announced coach Luke Walton and the team have mutually agreed to part ways.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-04-11T07:00Z",
+      "description": "Fired coach JB Bickerstaff. Demoted general manager Chris Wallace to scout.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-04-11T07:00Z",
+      "description": "Fired coach Dave Joerger. Signed general manager Vlade Divac to a contract extension through the 2022-23 season.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-04-11T07:00Z",
+      "description": "Removed the interim tag from general manager James Jones. Named Jeff Bower senior vice president of basketball operations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-04-11T07:00Z",
+      "description": "Fired coach Larry Drew.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-04-10T07:00Z",
+      "description": "Announced the resignation of president of basketball operations Magic Johnson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-04-09T07:00Z",
+      "description": "Signed Gs Jordan McRae and Tarik Phillips.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-04-09T07:00Z",
+      "description": "Announced the retirement of F Dirk Nowitzki.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-04-08T07:00Z",
+      "description": "Signed F Deyonta Davis to a multiyear contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-04-05T07:00Z",
+      "description": "Signed C Tyler Zeller for the remainder of the season. Waived G Dusty Hannahs.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-04-04T07:00Z",
+      "description": "Signed F Donatas Motiejunas.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-04-03T07:00Z",
+      "description": "Recalled G BJ Johnson from Lakeland (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-04-02T07:00Z",
+      "description": "Fired president Ernie Grunfeld.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-04-01T07:00Z",
+      "description": "Signed C Isaac Humphries for the remainder of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-31T07:00Z",
+      "description": "Signed F Jemerrio Jones.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-03-31T07:00Z",
+      "description": "Signed F JaKarr Sampson to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-03-30T07:00Z",
+      "description": "Signed G Dusty Hannahs to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-03-29T07:00Z",
+      "description": "Signed G Walt Lemon Jr.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-03-29T07:00Z",
+      "description": "Signed F Deyonta Davis to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-28T07:00Z",
+      "description": "Recalled G Cody Demps and F Caleb Swanigan from Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-03-27T07:00Z",
+      "description": "Suspended F Jordan Bell one game for conduct detrimental to the team.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-03-22T07:00Z",
+      "description": "Signed G Jimmer Fredette for the remainder of the season.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2019-03-21T07:00Z",
+      "description": "Signed G Scott Machado to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-03-20T07:00Z",
+      "description": "Assigned Gs Khyri Thomas and Svi Mykhailiuk to Grand Rapids (NBAGL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-03-19T07:00Z",
+      "description": "Assigned F Caleb Swanigan to Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-03-19T07:00Z",
+      "description": "Signed G Tim Frazier.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-03-19T07:00Z",
+      "description": "Signed F Deyonta Davis to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-12T07:00Z",
+      "description": "Assigned G Chasson Randle to Capital City (NBAGL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-03-12T07:00Z",
+      "description": "Signed F B.J. Johnson to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-08T08:00Z",
+      "description": "Signed C Tyler Zeller to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-06T08:00Z",
+      "description": "Signed C Andrew Bogut.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2019-03-03T08:00Z",
+      "description": "Signed C Pau Gasol.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-03-02T08:00Z",
+      "description": "Transferred F Alex Poythress from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-03-01T08:00Z",
+      "description": "Announced a buyout agreement with C Pau Gasol.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2019-03-01T08:00Z",
+      "description": "Signed F B.J. Johnson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-28T08:00Z",
+      "description": "Assigned G Jordan Sibert to Erie (NBAGL). Transferred F Alex Poythress to Erie.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-24T08:00Z",
+      "description": "Transferred F Alex Poythress from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Signed Guard Jodie Meeks to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Signed F Markieff Morris.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Assigned F Caleb Swanigan to Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Signed G John Jenkins.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Signed F Emanuel Terry to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-02-20T08:00Z",
+      "description": "Signed G Jaylen Adams to a multiyear contract and G Jordan Sibert to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-19T08:00Z",
+      "description": "Transferred F Alex Poythress to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-15T08:00Z",
+      "description": "Extended the contracts of president of basketball operations Tim Connelly.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2019-02-15T08:00Z",
+      "description": "Fired general manager Dell Demps.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2019-02-14T08:00Z",
+      "description": "Transferred F Alex Poythress from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-13T08:00Z",
+      "description": "Signed F Bruno Caboclo to a multi-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-02-13T08:00Z",
+      "description": "Signed C Enes Kanter.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2019-02-11T08:00Z",
+      "description": "Signed G John Jenkins to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-02-10T08:00Z",
+      "description": "Signed G Wesley Matthews.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2019-02-09T08:00Z",
+      "description": "Acquired G Kevin Olekaibe from Westchester (NBAGL). Waived G Tyrius Walker.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-02-09T08:00Z",
+      "description": "Signed G Wayne Ellington. Waived G Henry Ellenson.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2019-02-09T08:00Z",
+      "description": "Transferred G Jaylen Adams from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-08T08:00Z",
+      "description": "Acquired F Nikola Mirotic from New Orleans. Sent Forward Thon Maker to Detroit and C Jason Smith and four future second-round draft picks to New Orleans. Detroit sent F Stanley Johnson to New Orleans to complete the three-team trade.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-02-08T08:00Z",
+      "description": "Waived C Zach Randolph.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-02-08T08:00Z",
+      "description": "Waived Gs Jabari Bird and Shelvin Mack.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-07T08:00Z",
+      "description": "Traded C Marc Gasol to Toronto for C Jonas Valanciunias, F CJ Miles and G Delon Wright and a 2024 second-round draft pick.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-02-07T08:00Z",
+      "description": "Acquired F Caleb Swanigan from Portland for F Skal Labissiere.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2019-02-07T08:00Z",
+      "description": "Waived C Enes Kanter and G-F Wesley Matthews.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-02-07T08:00Z",
+      "description": "Traded F Harrison Barnes to the Sacramento Kings for Fs Zach Randolph and Justin Jackson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2019-02-07T08:00Z",
+      "description": "Acquired G Brandon Knight, F Marquese Chriss, a 2019 first- and a 2022 second-round draft pick from Houston for Gs Nik Stauskas and Wade Baldwin IV and a 2021 second-round draft pick. Cleveland sent G Alec Burks to Sacramento and Houston sent a 2020 second-round draft pick to Sacramento, which sent G Iman Shumpert to Houston to complete the three-team trade.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-02-06T08:00Z",
+      "description": "Acquired Fs Bobby Portis and Jabari Parker and a 2023 second round pick from the Chicago Bulls for F Otto Porter Jr.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-02-06T08:00Z",
+      "description": "Acquired Fs Tobias Harris, C Boban Marjanovic and F Mike Scott from the Los Angeles Clippers for G Landry Shamet, F Wilson Chandler and Mike Muscala, a lottery-protected 2020 first-round draft pick, a 2021 first-, 2021 second- and 2023 second-round picks.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2019-02-06T08:00Z",
+      "description": "Acquired G-F Reggie Bullock from Detroit for G Svi Mykhailiuk and a future second-round draft pick.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2019-02-04T08:00Z",
+      "description": "Traded G Rodney Hood to Portland for Gs Nik Stauskas and Wade Baldwin and 2021 and 2023 second-round draft pick. Released G Kobi Simmons.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2019-02-03T08:00Z",
+      "description": "Transferred G Jaylen Adams and F Alex Poythress from Erie (NBADL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-02-01T08:00Z",
+      "description": "Waived F Carmelo Anthony. Traded a protected 2020 second-round draft pick to Oklahoma City for G-F Timoth? Luwawu-Cabarrot and cash.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-01-31T08:00Z",
+      "description": "Signed G John Jenkins to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-01-31T08:00Z",
+      "description": "Traded C Kristaps Porzingis, Gs Tim Hardaway Jr., Trey Burke and Courtney Lee to Dallas for G Dennis Smith Jr., C DeAndre Jordan, G-F Wesley Matthews and two future first-round picks.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-01-24T08:00Z",
+      "description": "Signed F Bruno Caboclo to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-01-22T08:00Z",
+      "description": "Traded the draft rights of F Tadiji Dragicevic to Houston for F Carmelo Anthony, the draft rights to G Jon Diebler and cash.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-01-21T08:00Z",
+      "description": "Signed G Gary Payton II to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-01-20T08:00Z",
+      "description": "Transferred G Jaylen Adams and F Alex Poythress from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-01-18T08:00Z",
+      "description": "Transferred G Jaylen Adams to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-01-17T08:00Z",
+      "description": "Fined G Dion Waiters an undisclosed amount for his expletive-laden comments about playing time after a Jan. 15 game at Milwaukee.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2019-01-17T08:00Z",
+      "description": "Recalled G Tyler Dorsey from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-01-16T08:00Z",
+      "description": "Assigned G Tyler Dorsey to Erie (NBAGL). Transferred F Alex Poythress to Erie.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-01-15T08:00Z",
+      "description": "Waived F/C Jarnell Stokes. Signed F Julian Wallace to a two-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2019-01-15T08:00Z",
+      "description": "Signed F Bonzie Colson to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2019-01-14T08:00Z",
+      "description": "Signed G Kadeem Allen to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2019-01-07T08:00Z",
+      "description": "Waived G Ron Baker.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2019-01-07T08:00Z",
+      "description": "Traded G Michael Carter-Williams and cash to Chicago for a protected 2020 second-round draft pick.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2019-01-07T08:00Z",
+      "description": "Waived Gs MarShon Brooks and Michael Carter-Williams.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2019-01-06T08:00Z",
+      "description": "Fired coach Tom Thibodeau. Named assistant coach Ryan Saunders interim head coach for the remainder of the season.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2019-01-06T08:00Z",
+      "description": "Recalled F Omari Spellman from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2019-01-03T08:00Z",
+      "description": "Traded F Justin Holiday t the Memphis Grizzlies for G MarShon Brooks and G/F Wayne Selden Jr. and Memhis' 2019 and 2020 second-round draft picks. Waived G Cameron Payne.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    }
+  ]
+}

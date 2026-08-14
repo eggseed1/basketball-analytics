@@ -1,0 +1,4013 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2009,
+  "fetchedAt": "2026-08-14T20:06:23.994Z",
+  "apiCount": 364,
+  "rows": [
+    {
+      "date": "2009-12-30T08:00Z",
+      "description": "Signed F Shavlik Randolph.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-12-29T08:00Z",
+      "description": "Signed president of basketball operations Geoff Petrie to a three-year contract extension.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-12-29T08:00Z",
+      "description": "Waived F Anthony Tolliver. Assigned G Patty Mills to Idaho (NBADL).",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-12-29T08:00Z",
+      "description": "Reassigned F Taylor Griffin to Iowa (NBADL). Waived G Jason Hart.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-12-29T08:00Z",
+      "description": "Acquired F Alando Tucker, a second-round draft pick and cash from Phoenix for G Jason Hart.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-12-25T08:00Z",
+      "description": "Activated F Glen Davis from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-12-23T08:00Z",
+      "description": "Agreed to terms with F Pau Gasol on a three-year contract extension through the 2013-14 season.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-12-22T08:00Z",
+      "description": "Acquired G Eric Maynor from the Utah Jazz for the rights to 2002 draft pick Peter Fehse. Agreed to take on the contract of injured F Matt Harpring. Waived G Shaun Livingston and G Mike Wilks.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-12-17T08:00Z",
+      "description": "Called up F Anthony Tolliver from the NBA Development League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-12-15T08:00Z",
+      "description": "Assigned G Lester Hudson to Maine (NBADL).",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-12-14T08:00Z",
+      "description": "Recalled F Taylor Griffin from Iowa (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-12-14T08:00Z",
+      "description": "Waived F Shavlik Randolph.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-12-13T08:00Z",
+      "description": "Signed F Jonathan Bender.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-12-07T08:00Z",
+      "description": "Sent F Taylor Griffin to Iowa (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-12-02T08:00Z",
+      "description": "Extended the contract of coach Jerry Sloan through the 2010-11 season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-12-02T08:00Z",
+      "description": "Agreed to terms with G Allen Iverson.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-12-01T08:00Z",
+      "description": "Named general manager Kiki Vandeweghe coach for the remainder of the season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-11-30T08:00Z",
+      "description": "Assigned C Alexis Ajinca to Maine (NBADL).",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-11-29T08:00Z",
+      "description": "Fired coach Lawrence Frank.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-11-26T08:00Z",
+      "description": "Signed G Mike Wilks.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-11-25T08:00Z",
+      "description": "Waived F Ryan Bowen.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-11-24T08:00Z",
+      "description": "Recalled G Kyle Weaver from Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-11-20T08:00Z",
+      "description": "Signed F/C Chris Hunter.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-11-17T08:00Z",
+      "description": "Waived G Allen Iverson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-11-16T08:00Z",
+      "description": "Ended the one-year contract with G Allen Iverson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-11-16T08:00Z",
+      "description": "Traded G-F Stephen Jackson and G Acie Law to Charlotte for G Raja Bell and F Vladimir Radmanovic.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-11-14T08:00Z",
+      "description": "Signed G Jamaal Tinsley.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-11-13T08:00Z",
+      "description": "Waived F Pops Mensah-Bonsu.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-11-12T08:00Z",
+      "description": "Released G Quincy Douby.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-11-12T08:00Z",
+      "description": "Fired coach Byron Scott. Named Jeff Bower coach.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2009-11-11T08:00Z",
+      "description": "Signed G Earl Boykins. Waived C Paul Davis.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-11-10T08:00Z",
+      "description": "Named Mark Gullett vice president of marketing.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-11-05T08:00Z",
+      "description": "Waived F Trey Gilder.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-11-05T08:00Z",
+      "description": "Named Darrick Martin assistant director of player development.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-11-02T08:00Z",
+      "description": "Exercised their contract 2010 options on F Corey Brewer and F Kevin Love. Declined their 2010 option on F Oleksiy Pecherov.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-11-02T08:00Z",
+      "description": "Signed G Rajon Rondo to a multiyear contract extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-11-01T07:00Z",
+      "description": "Exercised contract options on C Roy Hibbert and G Brandon Rush.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-10-31T07:00Z",
+      "description": "Activated G Delonte West.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-10-30T07:00Z",
+      "description": "Exercised the 2010-11 contract options on G Nick Young and C JaVale McGee for the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-10-30T07:00Z",
+      "description": "Exercised their options on the contracts of F Jared Dudley and C Robin Lopez for the 2010-11 season. Declined the option on the contract of G-F Alando Tucker.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-10-29T07:00Z",
+      "description": "Exercised their third-year contract option on C Alexis Ajinca.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-10-29T07:00Z",
+      "description": "Exercised their fourth-year contract option on G Marco Belinelli.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-10-28T07:00Z",
+      "description": "Exercised the option on G George Hill's contract for next season.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-10-28T07:00Z",
+      "description": "Waived F Linton Johnson III.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-10-26T07:00Z",
+      "description": "Announced the team was awarded the rights to C Jarron Collins.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-10-26T07:00Z",
+      "description": "Exercised the 2010-11 contract option on F J.J. Hickson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-10-26T07:00Z",
+      "description": "Exercised the 2010-11 contract options for G Derrick Rose and F-C Joakim Noah.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-10-26T07:00Z",
+      "description": "Exercised the 2010-11 contract option on G-F Julian Wright.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2009-10-23T07:00Z",
+      "description": "Waived F Mike Harris. Exercised the fourth-year contract options on Kevin Durant and Jeff Green.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-10-23T07:00Z",
+      "description": "Waived G John Lucas.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-10-23T07:00Z",
+      "description": "Waived G Brent Barry.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-10-23T07:00Z",
+      "description": "Named Tyronn Lue director of basketball development on Friday.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G Dontell Jefferson and G Antonio Anderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G-F Vincent Grier.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived F Ronald Dupree and G Paul Harris.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived F Michael Ruffin.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Signed F LaMarcus Aldridge to a five-year contract extension. Waived F Ime Udoka and C Jarron Collins.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Exercised the third-year contract option on F Marreese Speights and fourth-year contract options on C Jason Smith and F Thaddeus Young.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G Joe Crawford and F Chris Hunter.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G Will Blalock, F Bennet Davis and F Brian Hamilton.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G Will Conroy.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived C Jake Voskuhl.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived G Andre Barrett, G Russell Robinson and C Darryl Watkins.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived F Chris Richard.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-10-22T07:00Z",
+      "description": "Waived F Mike Sweetney.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived F-C Goran Suton, F Spencer Nelson and F Alexander Johnson.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived G Tre Kelley.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived C-F Melvin Ely and G Lanny Smith.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived G Dan Dickau and F Carlos Powell.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived F Brandon Bowman and G Dionte Christmas.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived C Jared Reiner.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived G Thomas Kelati.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived G Romel Beck and G Garrett Temple.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived F Maceo Baston.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-10-21T07:00Z",
+      "description": "Waived G Mario West, C Garret Siler and C Courtney Sims.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-10-20T07:00Z",
+      "description": "Acquired F Nathan Jawai and cash from the Dallas Mavericks for a conditional second-round draft pick in 2012.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-10-20T07:00Z",
+      "description": "Exercised the third-year contract option on F Michal Beasley and fourth-year contract option on G Daequan Cook. Waived F Anthony Tolliver.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-10-20T07:00Z",
+      "description": "Released G Mike Wilks and G Juan Dixon.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-10-19T07:00Z",
+      "description": "Waived G Devin Green and G Mustafa Shakur.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-10-19T07:00Z",
+      "description": "Waived G Jerel McNeal and G Anthony Roberson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-10-16T07:00Z",
+      "description": "Signed G Patrick Mills. Exercised options on C Greg Oden, F Nicolas Batum, F Rudy Fernandez and G Jerryd Bayless.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-10-13T07:00Z",
+      "description": "Released F Dwayne Jones.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-10-13T07:00Z",
+      "description": "Exercised their third-year contract option on G Eric Gordon and the fourth-year option on F Al Thornton.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-10-13T07:00Z",
+      "description": "Waived G Aaron Miles and G Frank Robinson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-10-12T07:00Z",
+      "description": "Released F Dwayne Jones.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-10-12T07:00Z",
+      "description": "Waived G Sean Singletary and F-C Stromile Swift.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-10-12T07:00Z",
+      "description": "Signed G Carlos Arroyo.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-10-12T07:00Z",
+      "description": "Exercised their third-year contract option on G Eric Gordon and the fourth-year option on F Al Thornton.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-10-12T07:00Z",
+      "description": "Waived G Aaron Miles and G Frank Robinson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-10-10T07:00Z",
+      "description": "Waived F Mickael Gelabale, F David Monds and F-C Michael Fey.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-10-10T07:00Z",
+      "description": "Suspended G Stephen Jackson for two exhibition games for conduct detrimental to the team.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-10-08T07:00Z",
+      "description": "Waived F Taj Gray.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-10-08T07:00Z",
+      "description": "Named Gersson Rosas general manager of Rio Grande Valley (NBDL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-10-07T07:00Z",
+      "description": "Waived F Warren Carter, G Ron Howard, G Gabe Pruitt and G Sun Yue.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-10-06T07:00Z",
+      "description": "Exercised the contract option for the 2010-11 season for G D.J. Augustin.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-10-05T07:00Z",
+      "description": "Waived F Rashad Jones-Jennings.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-10-05T07:00Z",
+      "description": "Waived F Keith Brumbaugh.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-10-02T07:00Z",
+      "description": "Cut G Dominic James and F Charles Gaines.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-10-02T07:00Z",
+      "description": "Waived G Curtis Stinson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-09-30T07:00Z",
+      "description": "Signed F Rashad Jones-Jennings.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-09-30T07:00Z",
+      "description": "Signed G Thomas Kelati.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-09-28T07:00Z",
+      "description": "Signed G Antonio Anderson and F Stephen Graham.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-09-28T07:00Z",
+      "description": "Signed G Thomas Gardner, F Leon Rodgers and F Mike Taylor.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-09-28T07:00Z",
+      "description": "Signed F Brandon Bowman, G Dionte Christmas, G Sean Singletary and F Stromile Swift.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-09-28T07:00Z",
+      "description": "Signed F Tony Gaffney, F David Monds, F Mickael Gelebale and F Michael Fey.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-09-26T07:00Z",
+      "description": "Signed F Ime Udoka.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-09-26T07:00Z",
+      "description": "Promoted Fred Hoiberg to vice president of basketball operations. Demoted assistant general manager Jim Stack to a scout. Named Jerry Sichting director of pro player personnel and Rob Babcock will be the director of scouting/administration.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-09-26T07:00Z",
+      "description": "Signed F Joey Graham.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-09-25T07:00Z",
+      "description": "Signed C Paul Davis and G-F Vincent Grier.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-09-25T07:00Z",
+      "description": "Re-signed F David Lee and G Nate Robinson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-09-25T07:00Z",
+      "description": "Signed coach Jim O'Brien to a contract extension through the 2010-11 season.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-09-24T07:00Z",
+      "description": "Re-signed F David Lee to a one-year contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-09-24T07:00Z",
+      "description": "Named Alonzo Mourning vice president of player programs.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-09-23T07:00Z",
+      "description": "Signed G Raymond Felton to a one-year contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-09-22T07:00Z",
+      "description": "Waived G Chucky Atkins.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-09-22T07:00Z",
+      "description": "Acquired G-F James White from Houston for the draft rights to F Axel Hervelle.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-09-22T07:00Z",
+      "description": "Re-signed C Aaron Gray.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-09-18T07:00Z",
+      "description": "Named John Lucas assistant coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-09-17T07:00Z",
+      "description": "Signed G-F Desmond Mason to a one-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-09-17T07:00Z",
+      "description": "Signed G Sun Yue.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-09-17T07:00Z",
+      "description": "Signed G Sasha Pavlovic to a one-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-09-17T07:00Z",
+      "description": "Promoted director of player personnel Gersson Rosas to vice president of player personnel.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-09-16T07:00Z",
+      "description": "Re-signed F Brian Skinner.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-09-15T07:00Z",
+      "description": "Signed F Jon Brockman.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-09-15T07:00Z",
+      "description": "Agreed to terms on a contract buyout with G-F Sasha Pavlovic.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-09-15T07:00Z",
+      "description": "Signed G-F Rodney Carney.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-09-14T07:00Z",
+      "description": "Agreed to terms on a contract buyout with G-F Sasha Pavlovic.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-09-14T07:00Z",
+      "description": "Signed G-F Rodney Carney.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-09-14T07:00Z",
+      "description": "Re-signed F James Singleton. Released G Greg Buckner.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-09-11T07:00Z",
+      "description": "Signed G Ramon Sessions to a four-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-09-11T07:00Z",
+      "description": "Re-signed F Steve Novak.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-09-10T07:00Z",
+      "description": "Signed G Allen Iverson. Withdrew their qualifying offer to G Juan Carlos Navarro, making him an unrestricted free agent.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-09-09T07:00Z",
+      "description": "Resigned C.J. Watson, Terms not Disclosed",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-09-08T07:00Z",
+      "description": "Jeff Pendergraph signed contract, Terms not Disclosed",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-09-03T07:00Z",
+      "description": "Bruce Bowen announced retirement.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-09-03T07:00Z",
+      "description": "Rookie Free Agent A.J. Price signed contract, Terms not Disclosed",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-09-03T07:00Z",
+      "description": "Free Agent Pops Mensah-Bonsu signed contract, Terms not Disclosed",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-09-02T07:00Z",
+      "description": "Free Agent Mikki Moore signed contract, Terms not Disclosed",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-09-02T07:00Z",
+      "description": "Free Agent Jason Collins signed contract, Terms not Disclosed",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-09-01T07:00Z",
+      "description": "Free Agent Marquis Daniels signed contract, Terms not Disclosed",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-08-28T07:00Z",
+      "description": "Jason Richardson has been suspended 2 games by the League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-08-28T07:00Z",
+      "description": "J.R. Smith has been suspended 7 games by the League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-08-25T07:00Z",
+      "description": "Signed guard/forward Danny Green.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-08-25T07:00Z",
+      "description": "Signed forward Joe Smith.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-08-19T07:00Z",
+      "description": "Signed guard Jason Williams.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-08-18T07:00Z",
+      "description": "Acquired guard/forward Carlos Delfino and guard Roko Ukic from the Toronto Raptors for forward Amir Johnson and guard/forward Sonny Weems.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-08-18T07:00Z",
+      "description": "Named Calbert Cheaney special assistant.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-08-17T07:00Z",
+      "description": "Signed forward Taylor Griffin.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-08-14T07:00Z",
+      "description": "Named Maurice Cheeks and Rex Kalamian  assistant coaches.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-08-14T07:00Z",
+      "description": "Re-signed guard Anthony Carter.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-08-13T07:00Z",
+      "description": "Signed center Primoz Brezec.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-08-12T07:00Z",
+      "description": "Acquired guard/forward Rasual Butler and cash from the New Orleans Hornets for a conditional second round draft pick in 2016.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-08-12T07:00Z",
+      "description": "Signed center Ben Wallace.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-08-12T07:00Z",
+      "description": "Signed forward Leon Powe.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-08-11T07:00Z",
+      "description": "Signed forward/center Fabricio Oberto.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-08-10T07:00Z",
+      "description": "Re-signed guard Royal Ivey.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-08-10T07:00Z",
+      "description": "Named Kurt Rambis coach; signed center  Ryan Hollins,",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-08-10T07:00Z",
+      "description": "Nameed Brian Hill assistant coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-08-10T07:00Z",
+      "description": "Re-signed forward Glen Davis.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-08-07T07:00Z",
+      "description": "Signed forwards Austin Daye, DaJuan Summers, and  Jonas Jerebko.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-08-07T07:00Z",
+      "description": "Re-signed forward Marvin Williams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-08-05T07:00Z",
+      "description": "Signed guard Jermaine Taylor to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-08-04T07:00Z",
+      "description": "Signed guard Kevin Ollie.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-08-04T07:00Z",
+      "description": "Signed center Ryan Hollins.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-08-04T07:00Z",
+      "description": "Waived forward Bruce Bowen and guard Salim Stoudamire.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-08-04T07:00Z",
+      "description": "Waived guard Mike Taylor.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-08-03T07:00Z",
+      "description": "Signed forward Sean May.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-08-01T07:00Z",
+      "description": "Signed guard Kevin Ollie.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-07-31T07:00Z",
+      "description": "Traded forward Malik Allen to the Denver Nuggets for forward Walter Sharpe, guard/forward Sonny Weems, and cash  considerations; requested waviers on guard Salim Stoudamire.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-07-31T07:00Z",
+      "description": "Waived guard Sun Yue.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-07-30T07:00Z",
+      "description": "Signed center Rasho Nesterovic; acquired  guard Marco Belinelli from the Golden State Warriors for  forward Devean George and cash.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-07-30T07:00Z",
+      "description": "Signed forward Solomon Jones to a multi-year  contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-07-30T07:00Z",
+      "description": "Waived forward Linton Johnson III and guard DeMarcus Nelson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-07-29T07:00Z",
+      "description": "Waived guard Tarence Kinsey.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-07-28T07:00Z",
+      "description": "Acquired center Tyson Chandler from the  New Orleans Hornets for forward/center Emeka Okafor.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-07-28T07:00Z",
+      "description": "Signed guard Brandon Jennings",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-07-28T07:00Z",
+      "description": "Signed guard Earl Watson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-07-28T07:00Z",
+      "description": "Signed forward Tim Thomas.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-07-27T07:00Z",
+      "description": "Acquired center Etan Thomas, a second round selection and a conditional second round selection in the 2010 NBA Draft from the Minnesota Timberwolves for guards Chucky Atkins and Damien Wilkins.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-07-27T07:00Z",
+      "description": "Waived forward Jermareo Davidson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-07-25T07:00Z",
+      "description": "Signed center Theo Ratliff.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-07-24T07:00Z",
+      "description": "Signed guard Andre Miller to a multi-year  contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-07-24T07:00Z",
+      "description": "Agreed to terms with forward Jamario Moon.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-07-23T07:00Z",
+      "description": "Signed forward Matt Barnes.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-07-23T07:00Z",
+      "description": "Agreed to terms with forward Ersan Ilyasova on a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-07-22T07:00Z",
+      "description": "Re-signed forward Josh McRoberts to a multi-year  contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-07-22T07:00Z",
+      "description": "Signed forward Chris Wilcox.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-07-21T07:00Z",
+      "description": "Signed guard Jarret Jack.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-07-21T07:00Z",
+      "description": "Agreed to terms with forward Sean May.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-07-21T07:00Z",
+      "description": "Signed guard Jrue Holiday.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-07-20T07:00Z",
+      "description": "Re-signed center Joel Anthony.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-07-20T07:00Z",
+      "description": "Acquired guard Sebastian Telfair, forward  Craig Smith and forward Mark Madsen from the Minnesota Timberwolves  for forward Quentin Richardson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-07-20T07:00Z",
+      "description": "Waived guard Anthony Roberson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-07-20T07:00Z",
+      "description": "Signed rookie guard Jeff Teague.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-07-19T07:00Z",
+      "description": "Signed center Hasheem Thabeet to a multi-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-07-17T07:00Z",
+      "description": "Waived guard Earl Watson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-07-17T07:00Z",
+      "description": "Acquired guard/forward Quentin Richardson from the Memphis Grizzlies for forward Zach Randolph.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-07-16T07:00Z",
+      "description": "Signed forward DeJuan Blair.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-07-15T07:00Z",
+      "description": "Signed guard Ty Lawson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-07-14T07:00Z",
+      "description": "Signed center Channing Frye.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-07-14T07:00Z",
+      "description": "Signed guard/forward Dahntay Jones to a  multi-year contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2009-07-14T07:00Z",
+      "description": "Waived forward Tim Thomas.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-07-14T07:00Z",
+      "description": "Traded the rights of forward David Andersen to  the Houston Rockets for a future second-round pick, cash and  future considerations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Signed forward Derrick Brown.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Exercised its right of first refusal and retained  center Marcin Gortat.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Acquired a future second round draft choice from the Denver Nuggets for guard Arron Afflalo, forward Walter Sharpe and cash considerations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Signed guard/forward Anthony Parker.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Signed guard Jannero Pargo.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-07-13T07:00Z",
+      "description": "Re-signed guard Mike Bibby and center/forward Zaza Pachulia.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-07-12T07:00Z",
+      "description": "Named Tony Brown assistant coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-07-11T07:00Z",
+      "description": "Signed guard James Harden, center Byron Mullens and forward Serge Ibaka",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-07-11T07:00Z",
+      "description": "Signed forward Jordan Hill.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-07-11T07:00Z",
+      "description": "Re-signed guard Jason Kidd.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Waived guard/forward Jerry Stackhouse.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed center Mehmet Okur to a multi-year contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed forward/center Antonio McDyess.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed forward Omir Casspi.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Exercised option on coach Nate McMillan, extending his contract through the 2010-11 season.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed forward Earl Clark.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed forward Brandon Bass.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-07-10T07:00Z",
+      "description": "Signed guards Jonny Flynn and Wayne Ellington.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Traded forwards Shawn Marion, Kris Humphries,  center Nathan Jawai and cash considerations to the Dallas Mavericks; acquired forwards Devean George and Antoine Wright from Dallas and forward Hedu Turkoglu from the Orlando Magic; sent cash considerations to Orlando and a 2016 second-round pick to the  Memphis Grizzlies as part of a four-team deal; signed foward DeMar DeRozan.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Traded forward Hedu Turkoglu to the Toronto Raptors  for cash considerations and acquired cash considerations from the Dallas Mavericks as part of a four-team deal.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Signed guard Toney Douglas.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Signed forward Blake Griffin.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Named John Kuester coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Traded guard Jerry Stackhouse and cash  considerations to the Memphis Grizzlies for guard Greg Buckner; traded forwards Devean George and Antoine Wright to the Toronto Raptors for forwards Shawn Marion, Kris Humphries, center Nathan  Jawai and cash considerations as part of a four-team deal.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Agreed to terms with forward/center  Anderson Varejao to a multi-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-07-09T07:00Z",
+      "description": "Signed forwards James Johnson and Taj Gibson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed guard Gerald Henderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed forward/center Andrea Bargnani.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed forward Marcus Haislip and  guard/forward Malik Hairston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed guard Tyreke Evans.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed guard Jodie Meeks.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed forward Ron Artest and guard Shannon Brown.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed guard Ben Gordon and forward Charlie Villanueva.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed forward Quinton Ross.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-07-08T07:00Z",
+      "description": "Signed center/forward Rasheed Wallace.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-07-07T07:00Z",
+      "description": "Signed guard Rodrigue Beaubois.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2009-07-06T07:00Z",
+      "description": "Signed guard/forward Terrence Williams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-07-01T07:00Z",
+      "description": "Signed guard Eric Maynor.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-07-01T07:00Z",
+      "description": "Named Mike O'Koren as associate head coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2009-07-01T07:00Z",
+      "description": "Named Randy Brown director of player development.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-06-30T07:00Z",
+      "description": "Fired coach Michael Curry.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-06-26T07:00Z",
+      "description": "Acquired the draft rights to forward Emir  Preldzic from the Phoenix Suns for cash considerations.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-06-25T07:00Z",
+      "description": "Acquired guard Vince Carter and forward Ryan Anderson from the New Jersey Nets for guards Rafer Alston, Courtney Lee, and center Tony Battie.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-06-25T07:00Z",
+      "description": "Acquired center Darko Milicic from the Memphis  for guard/forward Quentin Richardson and cash considerations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-06-25T07:00Z",
+      "description": "Acquired guards Acie Law and Speedy Claxton  from the Atlanta Hawks for guard Jamal Crawford.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-06-25T07:00Z",
+      "description": "Acquired center Shaquille O'Neal from the Phoenix Suns for forward/center Ben Wallace, a second-round selection in the 2010 NBA draft and cash considerations.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-06-24T07:00Z",
+      "description": "Acquired the 22nd selection in the 2009 NBA draft from the Dallas Mavericks for the 24th and 56th selections and a second-round selection in the 2010 draft.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-06-24T07:00Z",
+      "description": "Acquired the fifth selection in the  2009 NBA draft, center Etan Thomas and forwards Darius Songaila  and Oleksiy Pecherov from the Washington Wizards for guards  Randy Foye and Mike Miller.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-06-17T07:00Z",
+      "description": "Fired head coach Kevin McHale.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-06-09T07:00Z",
+      "description": "Acquired forward Reggie Evans from the  Philadelphia 76ers for guard-forward Jason Kapono.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-06-05T07:00Z",
+      "description": "Named Marc Iavaroni and Alex English assistant coaches.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-06-04T07:00Z",
+      "description": "Announced guard Kevin Brown exercised his 2009-10 contract option.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2009-06-03T07:00Z",
+      "description": "Named Don Zierden assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-06-01T07:00Z",
+      "description": "Promoted Brian Basloe to vice president of ticket sales.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-05-22T07:00Z",
+      "description": "Named David Kahn president of basketball operations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-05-21T07:00Z",
+      "description": "Named Randy Wittman and Sam Cassell assistant coaches.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-05-18T07:00Z",
+      "description": "Promoted Tom Penn to vice president  of basketball operations.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2009-05-14T07:00Z",
+      "description": "Decided not to pick up option on head coach Kenny Natt's contract, relieving him of his coaching duties. Assistant coaches Rex Kalamian, Jason Hamm, Randy Brown and  Bubba Burrage were also relieved of their existing coaching  responsibilities.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-05-11T07:00Z",
+      "description": "Promoted Jay Triano to head coach and signed him to a three-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-05-11T07:00Z",
+      "description": "Fired executive vice president of basketball operations Chris Mullin; promoted Larry Riley to general manager.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-04-29T07:00Z",
+      "description": "Excercised the the 2009-10 option on the contract of  guard Will Bynum.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2009-04-25T07:00Z",
+      "description": "Recalled guard/forward Sonny Weems from Colorado 14ers of the NBA Development League (NBDL).",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-04-23T07:00Z",
+      "description": "Decided not to pick up option on head coach Kenny Natt's contract, relieving him of his coaching duties. Assistant coaches Rex Kalamian, Jason Hamm, Randy Brown and  Bubba Burrage were also relieved of their existing coaching  responsibilities.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-04-22T07:00Z",
+      "description": "Named Flip Saunders coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-04-17T07:00Z",
+      "description": "Announced interim coach Ed Tapscott  will not return as coach but will remain with the organization.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2009-04-17T07:00Z",
+      "description": "Recalled center Kosta Koufos from Utah of the  NBA Development League (D-League).",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-04-15T07:00Z",
+      "description": "Assigned forward Marcus Williams to Austin  of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-04-13T07:00Z",
+      "description": "Signed guard Quincy Douby.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-04-10T07:00Z",
+      "description": "Assigned guard Sonny Weems to Colorado of the  D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-04-09T07:00Z",
+      "description": "Signed forward Jawad Williams.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-04-09T07:00Z",
+      "description": "Signed guard DeMarcus Nelson for the remainder  of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-04-08T07:00Z",
+      "description": "Signed guard Marcus Williams; waived forward Malik Hairston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-04-04T07:00Z",
+      "description": "Recalled forward D.J. White and guard  Kyle Weaver from Tulsa of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-04-03T07:00Z",
+      "description": "Signed guard Quincy Douby to a 10-day  contract; assigned forward Nathan jawai to Idaho of the  D-League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-04-03T07:00Z",
+      "description": "Signed guard Salim Stoudamire to a multi-year  contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-04-02T07:00Z",
+      "description": "Assigned center Ian Mahinmi to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-03-31T07:00Z",
+      "description": "Recalled guard Sonny Weems from Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-03-29T07:00Z",
+      "description": "Assigned forward D.J. White to Tulsa of  the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-03-27T07:00Z",
+      "description": "Agreed to terms with WOAI 1200 AM on a  multi-year broadcasting contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-03-27T07:00Z",
+      "description": "Signed guard Joe Crawford to a 10-day  contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-03-26T07:00Z",
+      "description": "Assigned center Kosta Koufos to Utah of the  D-League; recalled center Kyrylo Fesenko from Utah.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-03-25T07:00Z",
+      "description": "Assigned guard Malik Hairston to Austin of  the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-03-24T07:00Z",
+      "description": "Signed guard Quincy Douby to a 10-day  contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-03-24T07:00Z",
+      "description": "Signed guard Quincy Douby to a 10-day  contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-03-23T07:00Z",
+      "description": "Recalled forward D.J. White from Tulsa  of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-03-23T07:00Z",
+      "description": "Re-signed center Adonal Foyle.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-03-21T07:00Z",
+      "description": "Signed guard Dontell Jefferson to a second  10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-03-20T07:00Z",
+      "description": "Re-signed forward Linton Johnson III to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-03-20T07:00Z",
+      "description": "Assigned guard J.R. Giddens to Utah of the  D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-03-18T07:00Z",
+      "description": "Assigned forward D.J. White to Tulsa of  the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-03-18T07:00Z",
+      "description": "Suspended forward Sean Williams two games.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-03-16T07:00Z",
+      "description": "Recalled guard Sun Yue from Los Angeles of  the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2009-03-12T07:00Z",
+      "description": "Signed center Cheikh Samb to a second 10-day  contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-03-11T07:00Z",
+      "description": "Signed forward Linton Johnson III to a 10-day  contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-03-10T07:00Z",
+      "description": "Waived guard Marcus Williams.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-03-09T07:00Z",
+      "description": "Assigned center Alexis Ajinca and guard Sean Singletary to Sioux Falls of the D-League.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-03-07T08:00Z",
+      "description": "Assigned guard Morris Almond to the Utah Flash of  the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-03-06T08:00Z",
+      "description": "Assigned guard-forward Sonny Weems to Colorado  of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-03-05T08:00Z",
+      "description": "Signed forward Joe Smith.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-03-03T08:00Z",
+      "description": "Recalled guard-forward James White from  Arsenal of the D-League.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2009-03-03T08:00Z",
+      "description": "Signed guard Jason Hart for the remainder of  the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-03-02T08:00Z",
+      "description": "Signed center Cheikh Samb to a 10-day  contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-02-27T08:00Z",
+      "description": "Waived guard Jason Hart.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-02-27T08:00Z",
+      "description": "Signed guard Stephon Marbury; suspended guard  Gabe Pruitt two games for conduct detrimental to the team.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-02-26T08:00Z",
+      "description": "Assigned forward-center Nathan Jawai to Idaho  of the Developmental League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-02-25T08:00Z",
+      "description": "Signed forward Pops Mensah-Bonsu to a 10-day contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-02-24T08:00Z",
+      "description": "Signed forward Mikki Moore.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-02-23T08:00Z",
+      "description": "Recalled guard Thomas Gardner and forward  Othello Hunter from Anaheim of the D-League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-02-20T08:00Z",
+      "description": "Signed guard Eddie Gill to a second 10-day  contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-02-20T08:00Z",
+      "description": "Recalled guard Trey Johnson from  Bakersfield of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-02-20T08:00Z",
+      "description": "Assigned guard Thomas Gardner to Anaheim of  D-League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired forwards Adonal Foyle, Mike Wilks  and first round pick in 2009 from Orlando for guard Kyle Lowry.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired center Patrick O'Bryant from the  Boston Celtics for a conditional second round pick in 2014.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired forward Malik Rose and cash  considerations from the New York Knicks for forward Chris  Wilcox.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired guard Will Solomon from the Toronto  Raptors for cash.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired guard Rafer Alston from the Houston  Rockets for forward Brian Cook.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired guard Larry Hughes from the Chicago  Bulls for guard Anthony Roberson and forwards Jerome James and  Tim Thomas; acquired forward Chris Wilcox from Oklahoma City for forward Malik Rose.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Acquired forward/center Shelden  Williams and guard Bobby Brown from the Sacramento Kings for  center Calvin Booth and guard Rashad McCants.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2009-02-19T08:00Z",
+      "description": "Traded guard Thabo Sefolosha to Oklahoma City  for a conditional draft pick in 2009.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2009-02-18T08:00Z",
+      "description": "Signed forward Cartier Martin for the  remainder of the season.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-02-18T08:00Z",
+      "description": "Acquired center Chris Mihm from the Los  Angeles Lakers for a conditional second-round pick in 2013.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-02-17T08:00Z",
+      "description": "Acquired center Tyson Chandler from the  New Orleans Hornets for forward Chris Wilcox, forward Joe Smith  and the draft rights to center DeVon Hardin.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2009-02-17T08:00Z",
+      "description": "Acquired guard Sam Cassell from the Boston  Celtics for cash considerations and a future conditional second  round draft pick.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2009-02-17T08:00Z",
+      "description": "Assigned forward Othello Hunter to Anaheim of  the Developmental League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2009-02-16T08:00Z",
+      "description": "Fired coach Terry Porter; named Alvin Gentry  interim coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-02-16T08:00Z",
+      "description": "Acquired guard Alex Acker and a  second-round draft selection in 2011 from the Detroit Pistons  for a conditional second-round selection in 2013; waived center  Cheikh Samb.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-02-13T08:00Z",
+      "description": "Acquired forward Shawn Marion, guard Marcus  Banks and cash from the Miami Heat for forward-center Jermaine  O'Neal, forward Jamario Moon and a conditional draft pick.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2009-02-10T08:00Z",
+      "description": "Recalled forward Darnell Jackson from Erie of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-02-09T08:00Z",
+      "description": "Signed Eddie Gill from Colorado of the  D-League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-02-09T08:00Z",
+      "description": "Assigned forward Darnell Jackson to Erie  of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-02-07T08:00Z",
+      "description": "Acquired forward Vladimir Radmanovic from  the Charlotte Bobcats for forward Adam Morrison and guard  Shannon Brown.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-02-05T08:00Z",
+      "description": "Acquired guard Tyronn Lue from the Milwaukee  Bucks for guard-forward Keith Bogans and cash considerations.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2009-02-05T08:00Z",
+      "description": "Assigned guard J.R. Giddens to Utah of the  D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2009-02-03T08:00Z",
+      "description": "Signed guard Trey Johnson to a 10-day  contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-01-31T08:00Z",
+      "description": "Recalled forward Malik Hairston from Austin  of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-01-29T08:00Z",
+      "description": "Signed forward Cartier Martin to a 10-day  contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-01-29T08:00Z",
+      "description": "Signed guard Fred Jones for the remainder of the season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-01-25T08:00Z",
+      "description": "Named Lionel Hollins coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-01-25T08:00Z",
+      "description": "Signed forward Jermareo Davidson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-01-23T08:00Z",
+      "description": "Fired coach Marc Iavaroni; named Johnny  Davis interim coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-01-23T08:00Z",
+      "description": "Signed forward Jawad Williams to a second  10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-01-22T08:00Z",
+      "description": "Recalled center Sean Williams from Colorado of the D-League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2009-01-22T08:00Z",
+      "description": "Announced the retirement of center Alonzo Mourning.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-01-21T08:00Z",
+      "description": "Signed forward Anthony Tolliver.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2009-01-20T08:00Z",
+      "description": "Signed forward Darius Miles to a 10-day  contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2009-01-20T08:00Z",
+      "description": "Signed center Courtney Sims to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2009-01-18T08:00Z",
+      "description": "Agreed with head coach Jerry Sloan on a one-year  contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-01-16T08:00Z",
+      "description": "Acquired center DeSagana Diop from the  Dallas Mavericks for guard Matt Carroll and center Ryan Hollins.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2009-01-16T08:00Z",
+      "description": "Signed forward Austin Croshere to a 10-day  contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-01-15T08:00Z",
+      "description": "Signed forward Jermareo Davidson to a  second 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-01-12T08:00Z",
+      "description": "Signed forward Jawad Williams to a 10-day  contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-01-07T08:00Z",
+      "description": "Waived forward Anthony Tolliver.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2009-01-07T08:00Z",
+      "description": "Traded guard Shaun Livingston and cash  considerations to the Memphis Grizzles for a 2012 second-round  draft pick.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2009-01-07T08:00Z",
+      "description": "Acquired forward Hassan Adams and cash  considerations from the Toronto Raptors for a future conditional second-round draft pick; waived forward Hassan Adams.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-01-07T08:00Z",
+      "description": "Waived forward Jawad Williams.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2009-01-06T08:00Z",
+      "description": "Assigned center Kyrylo Fesenko to the Utah of the  D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2009-01-06T08:00Z",
+      "description": "Waived forward Austin Croshere.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2009-01-06T08:00Z",
+      "description": "Recalled guard-forward Sonny Weems from  Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2009-01-05T08:00Z",
+      "description": "Waived forward Paul Davis and guard Fred  Jones; acquired a future conditional second-round draft pick  from the Los Angeles Clippers for center Cheikh Samb.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2009-01-05T08:00Z",
+      "description": "Signed forward Jermareo Davidson to a  10-day contract; waived guard DeMarcus Nelson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2009-01-02T08:00Z",
+      "description": "Assigned guard Alex Acker and forward Walter  Sharpe to Fort Wayne of the D-League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    }
+  ]
+}

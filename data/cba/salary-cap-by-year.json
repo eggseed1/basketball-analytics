@@ -1,0 +1,31 @@
+{
+  "_comment": "Official NBA salary cap / tax / aprons by season-end year (e.g. 2025 = 2024-25). Figures in millions USD. Sources: RealGM / Spotrac CBA history.",
+  "bySeasonEndYear": {
+    "2001": { "salaryCapM": 35.5, "luxuryTaxM": 0, "minSalaryM": 0.316, "maxSalaryM": 12.4 },
+    "2002": { "salaryCapM": 42.5, "luxuryTaxM": 0, "minSalaryM": 0.333, "maxSalaryM": 14.9 },
+    "2003": { "salaryCapM": 40.271, "luxuryTaxM": 52.88, "minSalaryM": 0.349, "maxSalaryM": 14.1 },
+    "2004": { "salaryCapM": 43.84, "luxuryTaxM": 54.557, "minSalaryM": 0.367, "maxSalaryM": 15.3 },
+    "2005": { "salaryCapM": 43.87, "luxuryTaxM": 54.6, "minSalaryM": 0.385, "maxSalaryM": 15.4 },
+    "2006": { "salaryCapM": 49.5, "luxuryTaxM": 61.7, "minSalaryM": 0.398, "maxSalaryM": 17.3 },
+    "2007": { "salaryCapM": 53.135, "luxuryTaxM": 65.42, "minSalaryM": 0.412, "maxSalaryM": 18.6 },
+    "2008": { "salaryCapM": 55.63, "luxuryTaxM": 67.865, "minSalaryM": 0.428, "maxSalaryM": 19.5 },
+    "2009": { "salaryCapM": 58.68, "luxuryTaxM": 71.15, "minSalaryM": 0.442, "maxSalaryM": 20.5 },
+    "2010": { "salaryCapM": 57.7, "luxuryTaxM": 69.92, "minSalaryM": 0.457, "maxSalaryM": 20.2 },
+    "2011": { "salaryCapM": 58.04, "luxuryTaxM": 70.307, "minSalaryM": 0.473, "maxSalaryM": 20.3 },
+    "2012": { "salaryCapM": 58.044, "luxuryTaxM": 70.307, "minSalaryM": 0.473, "maxSalaryM": 16.4 },
+    "2013": { "salaryCapM": 58.044, "luxuryTaxM": 70.307, "minSalaryM": 0.473, "maxSalaryM": 17.9 },
+    "2014": { "salaryCapM": 58.679, "luxuryTaxM": 71.748, "minSalaryM": 0.507, "maxSalaryM": 19.3 },
+    "2015": { "salaryCapM": 63.065, "luxuryTaxM": 76.829, "minSalaryM": 0.525, "maxSalaryM": 22.1 },
+    "2016": { "salaryCapM": 70.0, "luxuryTaxM": 84.74, "minSalaryM": 0.525, "maxSalaryM": 24.5 },
+    "2017": { "salaryCapM": 94.143, "luxuryTaxM": 113.287, "minSalaryM": 0.543, "maxSalaryM": 30.96 },
+    "2018": { "salaryCapM": 99.093, "luxuryTaxM": 119.266, "minSalaryM": 0.815, "maxSalaryM": 34.68 },
+    "2019": { "salaryCapM": 101.869, "luxuryTaxM": 123.733, "minSalaryM": 0.838, "maxSalaryM": 35.65 },
+    "2020": { "salaryCapM": 109.14, "luxuryTaxM": 132.627, "minSalaryM": 0.898, "maxSalaryM": 38.2 },
+    "2021": { "salaryCapM": 109.14, "luxuryTaxM": 132.627, "minSalaryM": 0.925, "maxSalaryM": 38.2 },
+    "2022": { "salaryCapM": 112.414, "luxuryTaxM": 136.606, "minSalaryM": 0.925, "maxSalaryM": 39.3 },
+    "2023": { "salaryCapM": 123.655, "luxuryTaxM": 150.267, "firstApronM": 156.983, "minSalaryM": 1.019, "maxSalaryM": 43.3 },
+    "2024": { "salaryCapM": 136.021, "luxuryTaxM": 165.294, "firstApronM": 172.346, "secondApronM": 182.794, "minSalaryM": 1.116, "maxSalaryM": 47.6 },
+    "2025": { "salaryCapM": 140.588, "luxuryTaxM": 170.814, "firstApronM": 178.132, "secondApronM": 188.931, "minSalaryM": 1.157, "maxSalaryM": 49.2 },
+    "2026": { "salaryCapM": 154.647, "luxuryTaxM": 187.895, "firstApronM": 195.945, "secondApronM": 207.824, "minSalaryM": 1.2, "maxSalaryM": 54.1 }
+  }
+}

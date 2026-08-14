@@ -20,7 +20,7 @@ import {
 } from "./sample/local-sample-data";
 
 /**
- * LocalDataProvider — loads the marked sample dataset and runs it through
+ * LocalDataProvider - loads the marked sample dataset and runs it through
  * transformers so the rest of the app never sees raw column names.
  *
  * Swap this for NBADataProvider / Supabase by changing DATA_PROVIDER env.
@@ -71,6 +71,12 @@ export class LocalDataProvider implements BasketballDataProvider {
         (s) => s.playerId === playerId && s.season === season
       ) ?? null
     );
+  }
+
+  async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
+    return this.playerSeasons
+      .filter((s) => s.playerId === playerId)
+      .sort((a, b) => b.season.localeCompare(a.season));
   }
 
   async getPlayerGameLog(

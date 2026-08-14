@@ -1,0 +1,3441 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2022,
+  "fetchedAt": "2026-08-14T20:06:33.828Z",
+  "apiCount": 312,
+  "rows": [
+    {
+      "date": "2022-12-30T08:00Z",
+      "description": "Waived G Justin Champagnie.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-12-16T08:00Z",
+      "description": "Waived F Kostas Antetokounmpo. Signed G Carlik Jones to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-12-08T08:00Z",
+      "description": "Signed F Matt Ryan to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-12-07T08:00Z",
+      "description": "Waived G A.J. Lawson.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-12-01T08:00Z",
+      "description": "Waived F Matt Ryan.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-12-01T08:00Z",
+      "description": "Re-signed C Al Horford to a veteran extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-11-29T08:00Z",
+      "description": "Signed F Alize Johnson to a rest-of-season contract. Waived G Jordan Hall.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-11-29T08:00Z",
+      "description": "Waived F Feron Hunt. Signed G DaQuan Jeffries to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-11-29T08:00Z",
+      "description": "Signed G Kemba Walker to a rest-of-season contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-11-28T08:00Z",
+      "description": "Named James Jones president of basketball operations and general manager.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-11-28T08:00Z",
+      "description": "Waived G Facundo Campazzo.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-11-16T08:00Z",
+      "description": "Signed G A.J. Lawson to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-11-13T08:00Z",
+      "description": "Waived G Dru Smith.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-11-03T07:00Z",
+      "description": "Suspended G Kyrie Irving at least five games without pay for harmful impact of his conduct.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-11-02T07:00Z",
+      "description": "Signed G Jordan Hall to a rest-of-season contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-11-01T07:00Z",
+      "description": "Announced head coach Steve Nash has mutually agreed to part ways. Named Jacque Vaughn interim head coach.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-10-27T07:00Z",
+      "description": "Exercised it's fouth-year option on G LaMelo Ball and it's third-year on G James Bouknight and F/C Kai Jones.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-10-24T07:00Z",
+      "description": "Signed C Charles Bassey to a two-way contract. Waived G Jordan Hall.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-10-20T07:00Z",
+      "description": "Signed F John Butler Jr. to a two-way contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2022-10-19T07:00Z",
+      "description": "Waived F Eric Paschall.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-10-18T07:00Z",
+      "description": "Signed general manager Justin Zanik to a multi-year contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-10-18T07:00Z",
+      "description": "Re-signed G Facundo Campazzo.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-10-18T07:00Z",
+      "description": "Signed G Facundo Campazzo.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Signed G Theo Maledon to a two-way contract. Signed free agent G Ty-Shon Alexander then waived him. Waived G LiAngelo Ball and F Xavier Sneed.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Converted the contract of G Jordan Goodwin to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Waived Gs Adonis Arms and Saben Lee and F Timothe Luwawu-Cabarrot.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Waived G Chris Chiozza and F RaiQuan Gray.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Waived Gs P.J. Dozier and A.J. Lawson and F C.J. Elleby. Converted the contract of C Luka Garza to a two-way contract. Signed Gs Matt Lewis and Emmanuel Mudiay and F Phillip Wheeler then waived all of them. Exercised the fouth-year options on G Anthony Edwards and F Jaden McDaniels.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Re-signed F Andrew Wiggins to a veteran extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Converted the contract of G McKinley Wright IV to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Waived Gs Eric Demers and Marial Shayok and F Jake Layman.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-10-15T07:00Z",
+      "description": "Claimed G Jared Rhoden of waivers from Portland.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-10-14T07:00Z",
+      "description": "Waived F Anthony Duruji and G Jaylen Sims.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived Makur Maker.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Signed C Micah Potter to a two-way contract. Waived G Jeenathan Williams.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived g Drake Jeffries.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived G Noah Kirkwood.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Picked up the fourth-year option of Gs Tyrese Haliburton and Aaron Nesmith, and the third-year option of G Chris Duarte and F Isaiah Jackson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived G Trhae Mitchell.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived D Marcus Bingham Jr., F Mouhamadou Gueye and Gs Tyler Hall and D.J. Stewart.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived G Ethan Thompson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-10-12T07:00Z",
+      "description": "Waived C Reginald Kissoonlal and G Brodric Thomas.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived G Darryl Morsell.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived F Chaundee Brown Jr.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived G Frank Jackson. Signed Gs Adonis Arms and Saben Lee.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived G Bryce Hamilton.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Claimed F Darius Days off waivers. Waived F Maurice Harkless and G Theo Maledon.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived G Kellan Grady.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived F Henri Drell.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-10-11T07:00Z",
+      "description": "Waived G A.J. Reeves.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived F Justin Bean and G Jacob Gilyard.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived G Tommy Kuhse.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived G Mac McClung and F Justin Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived G Alex Morales.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived G L.J. Figueroa.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived C John Butler Jr. and G John Petty Jr.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-10-10T07:00Z",
+      "description": "Waived F Luka Samanic.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-10-06T07:00Z",
+      "description": "Waived F Isaiah Whaley. Signed F Xavier Sneed.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-10-03T07:00Z",
+      "description": "Re-signed F Larry Nance Jr. to a veteran contract extension. Converted the contract of C John Butler Jr. to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-10-03T07:00Z",
+      "description": "Signed F Blake Griffin.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-09-30T07:00Z",
+      "description": "Converted the contract of F Bruno Fernando to a two-way contract. Acquired Gs Theo Maledon, Ty Jerome, Fs Maurice Harkless, Derrick Favors and draft consideration from Oklahoma City in exchange for Gs Sterling Brown, David Nwaba, Trey Burke and F Marquese Chriss.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-09-30T07:00Z",
+      "description": "Waived G Denzel Valentine.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-09-29T07:00Z",
+      "description": "Waived G Marcus Zegarowski.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-09-27T07:00Z",
+      "description": "Waived G Davion Mintz.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-09-27T07:00Z",
+      "description": "Re-signed F Dean Wade to a veteran contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-09-26T07:00Z",
+      "description": "Signed G LiAngelo Ball.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-09-26T07:00Z",
+      "description": "Re-signed F Jordan Nwora.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-09-26T07:00Z",
+      "description": "Re-signed G C.J. McCollum to a veteran contract etension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-09-24T07:00Z",
+      "description": "Signed G Frank Jackson and F Timothe Luwawu-Cabarrot.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-09-23T07:00Z",
+      "description": "Signed G Dennis Smith Jr.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-09-23T07:00Z",
+      "description": "Named Sammy Gelfand senior director of basketball analytics, Ryan Pannone assistant coach, Jordan Kincaide assistant strength and conditioning coach. Promoted Ryan Frazier to assistant coach, Corey Brewer and Darnell Lazare to assistant coach/player development coach, Jordan McGuire player development assistant/assistant shooting coach and D'Or Fischer development assistant coach.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Acquired G Saban Lee and F Kelly Olynk from Detroit in exchange for F Bogan Bogdanovic.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Waived F RaiQuan Gray.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Waived G Dusty Hannahs.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Acquired F Bogan Bogdanovic from Utah Jazz for G Saban Lee and F Kelly Olynk.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Suspended head coach Ime Udoka the entire 2022-23 season for violations of team policies.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-09-22T07:00Z",
+      "description": "Signed G Armoni Brooks.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-09-20T07:00Z",
+      "description": "Waived C Ibou Badji.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-09-20T07:00Z",
+      "description": "Waived G Chandler Vaudrin.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-09-20T07:00Z",
+      "description": "Waived F Bruno Caboclo.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-09-19T07:00Z",
+      "description": "Waived G Iverson Molinar.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-09-16T07:00Z",
+      "description": "Re-signed G David Duke Jr. to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-09-14T07:00Z",
+      "description": "Signed F KZ Okpala.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-09-13T07:00Z",
+      "description": "Signed F Montrezl Harrell.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-09-12T07:00Z",
+      "description": "Signed Gs Jalen Crutcher and Jaylen Sims and Fs Anthony Duruji and Isaiah Whaley.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-09-09T07:00Z",
+      "description": "Signed G Dereon Seabron to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-09-07T07:00Z",
+      "description": "Signed F Markieff Morris.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-09-07T07:00Z",
+      "description": "Signed F Malcolm Hill to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-09-01T07:00Z",
+      "description": "Re-signed F R.J. Barrett to a rookie scale extension.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-08-31T07:00Z",
+      "description": "Signed G Josh Jackson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-08-25T07:00Z",
+      "description": "Acquired G Talen Horton-Tucker and F Stanley Johnson from Los Angeles Lakers for G Patrick Beverley.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-08-25T07:00Z",
+      "description": "Acquired G Patrick Beverley from Utah in exchange for G Talen Horton-Tucker and F Stanley Johnson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-08-24T07:00Z",
+      "description": "Re-signed G Joe Wieskamp.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-08-24T07:00Z",
+      "description": "Named Jonathan Wallace director of player personnel and Iowa Wolves general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-08-23T07:00Z",
+      "description": "Signed F C.J. Elleby and F/C Luka Garza.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-08-18T07:00Z",
+      "description": "Re-signed F LeBron James to a veteran extension.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-08-12T07:00Z",
+      "description": "Signed G Sam Merrill.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-08-11T07:00Z",
+      "description": "Signed G Jordan Hall to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-08-09T07:00Z",
+      "description": "Signed C Gorgui Dieng.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-08-04T07:00Z",
+      "description": "Re-signed F Ish Wainright to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-08-03T07:00Z",
+      "description": "Signed G Duane Washington Jr.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-08-02T07:00Z",
+      "description": "Waived G Rayjon Tucker.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-08-02T07:00Z",
+      "description": "Signed G Goran Dragic.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-07-30T07:00Z",
+      "description": "Signed F Eric Paschall to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-27T07:00Z",
+      "description": "Signed F Simone Fontecchio.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-07-27T07:00Z",
+      "description": "Agreed to terms with head coach Monty Williams on a multi-year contract extension.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-07-27T07:00Z",
+      "description": "Re-signed G James Harden.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-07-27T07:00Z",
+      "description": "Signed G A.J. Lawson to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-25T07:00Z",
+      "description": "Signed F Josh Minott. Re-signed F Nathan Knight.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-22T07:00Z",
+      "description": "Signed F Josh Minott to a contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-22T07:00Z",
+      "description": "Signed G Andrew Nembhard to a contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-07-21T07:00Z",
+      "description": "Signed G Austin Rivers.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-20T07:00Z",
+      "description": "Re-signed G Kenrich Williams to a veteran extension Waived F JaMychal Green.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-07-20T07:00Z",
+      "description": "Named Kyle Korver director of player affairs and development.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-07-19T07:00Z",
+      "description": "Signed G Jeff Dowtin to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-07-19T07:00Z",
+      "description": "Signed F Taj Gibson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-07-19T07:00Z",
+      "description": "Signed F Jaylin Williams.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-07-19T07:00Z",
+      "description": "Re-signed F Serge Ibaka.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-18T07:00Z",
+      "description": "Re-signed F Keldon Johnson to a rookie scale extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-07-18T07:00Z",
+      "description": "Re-signed C Deandre Ayton to a multi-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-07-18T07:00Z",
+      "description": "Re-signed G Pat Connaughton to a veteran contract extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-15T07:00Z",
+      "description": "Signed G Johnny Juzang to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-07-14T07:00Z",
+      "description": "Signed F Ron Harper Jr. to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-07-12T07:00Z",
+      "description": "Signed Cs Isaiah Hartenstein and Mitchell Robinson and G Jalen Brunson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-07-12T07:00Z",
+      "description": "Signed G Bryn Forbes.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-12T07:00Z",
+      "description": "Signed F Danilo Gallinaro.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-07-12T07:00Z",
+      "description": "Signed C Frank Kaminsky.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-07-11T07:00Z",
+      "description": "Acquired a draft consideration from Detroit Pistons for C Nerlens Noel and G Alec Burks and a draft consideration.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-07-11T07:00Z",
+      "description": "Acquired C Nerlens Noel and G Alec Burks and a draft consideration from New York Knicks in exchange for a draft consideration.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-07-09T07:00Z",
+      "description": "Signed C Walker Kessler to a rookie contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-07-09T07:00Z",
+      "description": "Re-signed G Davon Reed.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-07-09T07:00Z",
+      "description": "Re-signed F Sam Hauser and C Luke Kornet. Acquired G Malcolm Brogdon from Indiana in exchange for Fs Malik Fitts, Juwan Morgan and Daniel Theis and Gs Aaron Nesmith and Nik Stauskas and a 2023 first round draft pick.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Signed F Malakai Branham to a rookie contract. Waived F Danilo Gallinari.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Waived F Taj Gibson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Signed G Edmond Sumner.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Signed F Kyle Anderson. Signed G Wendell Moore Jr.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Signed G Donte DiVincenzo.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2022-07-08T07:00Z",
+      "description": "Re-signed C Nikola Jokic to a veteran extension.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Re-signed G John Konchar to a veteran extension.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Re-signed F Chris Boucher.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed F Drew Eubanks. Waived G Eric Bledsoe.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Re-signed C Bol Bol.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed F T.J. Warren. Re-signed F Nic Claxton.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed G Wendell Moore Jr. to a rookie contract. Signed C Karl-Anthony Towns to a multi-year contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed F MarJon Beauchamp to a rookie contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed C Jalen Duren to a rookie contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Re-signed F Vlatko Cancar. Signed G Bruce Brown.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Signed C Robin Lopez.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-07-07T07:00Z",
+      "description": "Re-signed G Zach LaVine. Signed Gs Dalen Terry, Javon Freeman-Liberty and Justin Lewis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Re-signed F Cody Martin.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed F Otto Porter Jr.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed G Delon Wright. Re-signed G Bradley Beal.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed G Malik Monk. Acquired G Kevin Huerter from Atlanta in exchange for Fs Justin Holiday and Maurice Harkless.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Acquired F Jerami Grant from Detroit in exchange for a draft consideration.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Acquired C Jock Landale from Atlanta in exchange for cash considerations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Re-signed F Kessler Edwards. Named Igor Kokoskov, Adam Caporn and Trevor Hendry assistant coaches.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Acquired C Rudy Gobert from Utah in exchange for Gs Patrick Beverley, Malik Beasley and Leandro Bolmaro, F Jarrod Vanderbilt, draft rights to C Walker Kessler and 2023, 2025, 2027 and 2029 first-round draft picks and a 2026 first-round pick swap.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Re-signed Gs Wesley Matthews and Jevon Carter and F Bobby Portis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed G Lonnie Walker IV and F Marvin Bagley III.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Re-signed F Jalen Smith.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Re-signed F Jae'Sean Tatte.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Acquired Gs Kentavious Caldwell-Pope and Ish Smith from Washington in exchange for Gs Monte Morris and Will Barton.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed C Andre Drummond. Re-signed F Derrick Jones Jr..",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-07-06T07:00Z",
+      "description": "Signed G Aaron Holiday.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-07-05T07:00Z",
+      "description": "Signed G Blake Wesley to a rookie contract. Claimed F Isaiah Roby off waivers.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-07-05T07:00Z",
+      "description": "Re-signed C Bismack Biyombo. Signed Gs Damion Lee and Josh Okogie.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-07-05T07:00Z",
+      "description": "Waived Gs Rayjon Tucker and Luca Vildoza.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-04T07:00Z",
+      "description": "Signed G Alondes Williams to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-07-03T07:00Z",
+      "description": "Waived F Isaiah Roby.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-07-03T07:00Z",
+      "description": "Re-signed C Bismarck Biyombo.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-07-03T07:00Z",
+      "description": "Signed G Bennedict Mathurin to a rookie scale contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-07-03T07:00Z",
+      "description": "Signed G Collin Gillespie to a two-way contract. Signed Gs Peyton Watson and Christian Braun to rookie scale contracts.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-07-03T07:00Z",
+      "description": "Signed F AJ Griffin to a rookie scale contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed C Mark Williams to a rookie scale contract. Signed G Bryce McGowens to a two-way contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed G Vince Williams to a two-way contract. Waived G Tyrell Terry.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed F Eugene Omoruyi to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed F Keegan Murray to a rooke scale contract. Re-signed C Neemias Queta and G Keon Ellis to two-way contracts.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed F Nikola Jovic to a rookie scale contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Signed G Jaden Ivey to a rookie scale contract. Signed F Buddy Boeheim to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-07-02T07:00Z",
+      "description": "Re-signed G RJ Nembhard to a two-way contract. Signed F Isaiah Mobley to a two-way contract. Signed G Ochai Agbaji to a rookie scale contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Re-signed F Anthony Gill. Signed G Johnny Davis to a rookie scale contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed G Jalen Williams and C Chet Holmgren to rookie scale contracts.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed G Shaedon Sharpe to a rookie scale contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed G Trevelin Queen.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed F Paolo Banchero to a rookie scale contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed G A.J. Green to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed G Scotty Pippen Jr. and F Cole Swider to two-way contracts. Signed F Juan Toscano-Anderson. Signed G Troy Brown Jr. and C Damian Jones.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Signed F Trevor Hudgins to a two-way contract. Signed G TyTy Washington Jr., Fs Tari Eason and Jabari Smith Jr. to rookie scale contracts.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-07-01T07:00Z",
+      "description": "Named Landry Fields general manager, Dwight Lutz vice president of basketball strategy and analytics, Stephen Giles director of pro scouting, Justin Eaddy basketball operations coordinator/scout, Rod Higgins senior advisor, Larry Riley college scout and Grant Liffmann pro personnel scout.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-06-30T07:00Z",
+      "description": "Waived F Juancho Hernangomez.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-06-30T07:00Z",
+      "description": "Acquired F Royce O'Neale from Utah in exchange for a 2023 first-round pick.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-06-30T07:00Z",
+      "description": "Re-signed F Taurean Prince to a veteran extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-06-30T07:00Z",
+      "description": "Acquired G Dejounte Murray and C Jock Landale from the San Antonio in exchange for F Danilo Gallinari, a conditional 2023 first round pick (from Charlotte via New York), Atlanta's 2025 and 2027 first round picks and a 2026 first round pick swap.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-06-28T07:00Z",
+      "description": "Named Patrick Mutombo assistant coach. Announced Randy Ayers was promoted from assistant coach to coaching advisor on the team's staff.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-06-05T07:00Z",
+      "description": "Announced the resignation of head coach Quin Snyder.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-05-23T07:00Z",
+      "description": "Named Tim Connelly as president of basketball operations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-03-28T07:00Z",
+      "description": "Signed F Juwan Morgan to a 10-day contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-03-24T07:00Z",
+      "description": "Signed F Braxton Key to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-03-23T07:00Z",
+      "description": "Signed F Anthony Lamb to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-03-22T07:00Z",
+      "description": "Signed G Isaiah Thomas to a rest-of-season contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-03-22T07:00Z",
+      "description": "Signed G Jeff Dowtin to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-03-21T07:00Z",
+      "description": "Signed C Moses Brown to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-03-18T07:00Z",
+      "description": "Signed F Feron Hunt to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-03-17T07:00Z",
+      "description": "Signed F Justin Anderson to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-03-16T07:00Z",
+      "description": "Signed G Armoni Brooks to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-03-12T08:00Z",
+      "description": "Signed G Isaiah Thomas to a 10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-03-12T08:00Z",
+      "description": "Signed G Iffe Lundberg.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-03-12T08:00Z",
+      "description": "Signed F Alize Johnson to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-03-11T08:00Z",
+      "description": "Signed G Tyrone Wallace to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-03-10T08:00Z",
+      "description": "Signed C Moses Brown to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-03-09T08:00Z",
+      "description": "Signed G Jordan Schakel to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-03-08T08:00Z",
+      "description": "Waived G Joel Ayayi.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-03-08T08:00Z",
+      "description": "Signed F Haywood Highsmith to a rest-of-season contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-03-05T08:00Z",
+      "description": "Signed Fs Kelan Martin and Malik Fitts to 10-day contracts.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-03-04T08:00Z",
+      "description": "Converted the contracts of G Joe Wieskamp and F Devontae Cacok to NBA contracts.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-03-04T08:00Z",
+      "description": "Signed F Drew Eubanks to a 10-day contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2022-03-02T08:00Z",
+      "description": "Signed G Isaiah Thomas to a 10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-03-02T08:00Z",
+      "description": "Signed F Alize Johnson to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-03-01T08:00Z",
+      "description": "Waived D DeAndre Jordan and F Sekou Doumbouya. Signed F Wenyen Gabriel to a two-way contract. Signed G D.J. Augustin to a rest-of-season contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-02-28T08:00Z",
+      "description": "Signed F D.J. Wilson to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-02-28T08:00Z",
+      "description": "Signed F Matt Ryan to a two-way contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-02-27T08:00Z",
+      "description": "Fined G Hamidou Diallo $20,000 for making contact with an official during a Feb. 26 game against Boston.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-02-26T08:00Z",
+      "description": "Waived G Tomas Satoransky.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-02-26T08:00Z",
+      "description": "Signed F Haywood Highsmith to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-02-26T08:00Z",
+      "description": "Signed G Tim Frazier to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-02-24T08:00Z",
+      "description": "Signed C Willie Cauley-Stein to a ten-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-02-23T08:00Z",
+      "description": "Signed Fs Kelvin Martin and Malik Fitts to 10-day contracts.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-02-22T08:00Z",
+      "description": "Signed G Goran Dragic to a rest-of-season contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-02-19T08:00Z",
+      "description": "Waived G Kevin Pangos.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-02-17T08:00Z",
+      "description": "Waived F Louis King.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-02-17T08:00Z",
+      "description": "Waived C Tristan Thompson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-02-16T08:00Z",
+      "description": "Signed F Xavier Sneed to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-02-16T08:00Z",
+      "description": "Signed G Patrick Beverley to a contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-02-16T08:00Z",
+      "description": "Signed G DeAndre Bembry to a rest-of-season contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-02-15T08:00Z",
+      "description": "Signed F Haywood Highsmith to a 10-day contract and F Caleb Martin to an end-of-season contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Signed F Danuel House Jr. to a rest-of-season contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Waived F K.Z. Okpala.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Waived G Jahmi'us Ramsey and F Robert Woodard II.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Waived F Abdel Nader.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Waived G DeAndre Bembry.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Waived g D.J. Augustin.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-02-11T08:00Z",
+      "description": "Signed C Luke Kornet to a rest-of-season contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired C Montrezl Harrell from Washington.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired Fs Drew Eubanks and Thaddeus Young from San Antonio in exchange for G Goran Dragic and draft considerations, then waived Eubanks.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired F Vernon Carey Jr, G Ish Smith and draft consideration from Charlotte.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Waived G Paul Watson. Signed F Lindy Waters to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired G Aaron Holiday from Washington. Acquired F Torrey Craig from Indiana.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired G P.J. Dozier and C Bol Bol from Boston for draft considerations. Waived Gs Michael Carter-Williams, P.J. Dozier and E'Twaun Moore.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Traded G James Harden and F Paul Millsap to Philadelphia in exchange for Gs Ben Simmons, Seth Curry, C Andre Drummond and two first-round picks.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Traded G Rodney Hood and F Semi Ojeleye to Los Angeles in exchange for C Serge Ibaka along with two second-round picks and cash.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Acquired F Jalen Smith and draft consideration from Pho",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Waived G Armoni Brook. Acquired G Dennis Schroder, C Enes Freedom and F Bruno Fernando. Waived C Enes Freedom.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Signed C DeMarcus Cousins to a 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Recalled C Moses Brown from Texas (G League). Traded C Kristaps Porzingis and a second-round pick to Washington in exchange for G Spencer Dinwiddie and C Davis Bertans.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2022-02-10T08:00Z",
+      "description": "Traded G Josh Richardson and a first-round pick to San Antonio in exchange for G Derrick White. Also sent G Romeo Langford to San Antonio. Acquired F Daniel Theis from Houston.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-02-09T08:00Z",
+      "description": "Acquired F K.Z. Okpala from Miami for draft considerations.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-02-07T08:00Z",
+      "description": "Traded G Ricky Rubio to Indiana in exchange for G Caris LeVert.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-02-04T08:00Z",
+      "description": "Signed F Reggie Perry to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-02-04T08:00Z",
+      "description": "Signed G Miye Oni and F Zylan Cheatham to 10-day contracts.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-02-03T08:00Z",
+      "description": "Signed F Lance Stephenson to a rest-of-season contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-02-01T08:00Z",
+      "description": "Signed F Justin Jackson to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-28T08:00Z",
+      "description": "Signed F Danuel House Jr. to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-28T08:00Z",
+      "description": "Signed C DeMarcus Cousins to a 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-01-27T08:00Z",
+      "description": "Signed F Stanley Johnson to a rest-of-the-season contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-01-25T08:00Z",
+      "description": "Agreed to terms with general manager James Jones on a contract extension.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-21T08:00Z",
+      "description": "Signed F Chris Silva to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2022-01-21T08:00Z",
+      "description": "Signed G Cassius Stanley to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-01-21T08:00Z",
+      "description": "Signed C DeMarcus Cousins to a 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-01-19T08:00Z",
+      "description": "Acquired F Juancho Hernangomez from Boston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2022-01-19T08:00Z",
+      "description": "Signed G Ryan Arcidiacono to a 10-day contract. Waived F Solomon Hill.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-01-19T08:00Z",
+      "description": "Acquired G Bryn Forbes from San Antonio for a draft consideration.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2022-01-19T08:00Z",
+      "description": "Signed F Malcolm Hill to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-01-19T08:00Z",
+      "description": "Acquired C Bol Bol and G P.J. Dozier from Denver.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-01-18T08:00Z",
+      "description": "Signed F Danuel House Jr. to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-14T08:00Z",
+      "description": "Signed G Dakota Mathias to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2022-01-14T08:00Z",
+      "description": "Signed F Lance Stephenson to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-01-14T08:00Z",
+      "description": "Signed F Malcolm Hill to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2022-01-13T08:00Z",
+      "description": "Waived F Malik Fitts.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-13T08:00Z",
+      "description": "Signed G Lindell Wigginton to a two-way contract. Waived G Javonte Smart.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-01-13T08:00Z",
+      "description": "Rescinded the Monday trade sending G Rodney McGruder and a 2022-second round pick to Denver for C Bol Bol after he failed to recieve medical clearance with Detroit.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-01-13T08:00Z",
+      "description": "Acquired F Kevin Knox II and a conditional future first-round pick from New York in exchange for F Cam Reddish and Solomon Hill as well as a 2025 second-round pick and cash considerations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2022-01-12T08:00Z",
+      "description": "Signed F Zylan Cheatham to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-12T08:00Z",
+      "description": "Signed F Paris Bass to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-12T08:00Z",
+      "description": "Named Marquise Watts chief experience officer (CXO).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2022-01-12T08:00Z",
+      "description": "Signed F Sekou Doumbouya to a two-way contract. Waived F Jay Huff.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-01-11T08:00Z",
+      "description": "Signed F Mamadi Diakite to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-01-11T08:00Z",
+      "description": "Signed C Bismarck Biyombo to a rest-of-season contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-11T08:00Z",
+      "description": "Signed G Charlie Brown to a two-way contract. Waived F Aaron Henry.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-01-11T08:00Z",
+      "description": "Signed F Lance Stephenson to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2022-01-10T08:00Z",
+      "description": "Acquired F Bol Bol from Denver in exchange for G Rodney McGruder and draft consideration.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-01-09T08:00Z",
+      "description": "Signed C Olivier Sarr to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-01-08T08:00Z",
+      "description": "Signed G Cassius Stanley to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Signed F D.J. Wilson to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Signed C Norvel Pelle to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Waived G Miye Oni.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Signed G Langston Galloway to a 10-day contract. Signed G Jeff Dowtin to a 10-day contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Waived F Gary Clark.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2022-01-07T08:00Z",
+      "description": "Waived F Jabari Parker.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2022-01-06T08:00Z",
+      "description": "Signed F Greg Monroe to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2022-01-06T08:00Z",
+      "description": "Signed F Danuel House Jr. to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2022-01-06T08:00Z",
+      "description": "Signed F Admiral Schofield to a two-way contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2022-01-06T08:00Z",
+      "description": "Signed G Ryan Arcidiacono to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-01-06T08:00Z",
+      "description": "Signed F Stanley Johnson to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2022-01-05T08:00Z",
+      "description": "Signed F Braxton Key to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2022-01-05T08:00Z",
+      "description": "Waived G Denzel Valentine.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2022-01-04T08:00Z",
+      "description": "Signed G Tyrell Terry to a two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2022-01-04T08:00Z",
+      "description": "Signed F Justin Jackson to a 10-day contract. Waived F Chandler Hutchison.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-03T08:00Z",
+      "description": "Signed C Luke Kornet to a 10-day contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2022-01-03T08:00Z",
+      "description": "Signed G Quinndary Weatherspoon to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2022-01-03T08:00Z",
+      "description": "Traded G Denzel Valentine to New York Knicks in exchange for G Rajon Rondo.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2022-01-01T08:00Z",
+      "description": "Signed C Bismack Biyombo to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2022-01-01T08:00Z",
+      "description": "Signed G Mac McClung to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    }
+  ]
+}

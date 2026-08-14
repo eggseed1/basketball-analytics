@@ -1,19 +1,24 @@
 import { Suspense } from "react";
 
-import { PlayerUsageTsScatter } from "@/components/charts/player-usage-ts-scatter";
 import { PlayerFilterToolbar } from "@/components/explore/player-filter-toolbar";
+import {
+  parsePlayerSeasonSortKey,
+} from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import {
   getAvailableSeasons,
   getFilteredPlayerSeasons,
   getTeams,
 } from "@/data/queries";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 import { filtersFromSearchParams } from "@/lib/search-params";
 
 export const metadata = {
-  title: "Explore Players | Basketball Analytics",
-  description:
-    "Filterable player exploration with usage vs true shooting scatter and searchable table.",
+  title: "Players",
+  description: "NBA player leaderboard with seasons from 1960 to present.",
 };
 
 interface ExplorePlayersPageProps {
@@ -25,12 +30,14 @@ export default async function ExplorePlayersPage({
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  const defaultSeason = seasons[0] ?? "2024-25";
+  const defaultSeason =
+    seasons[0] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
 
   const filters = filtersFromSearchParams({
     ...params,
     season: params.season ?? defaultSeason,
   });
+  const initialSortKey = parsePlayerSeasonSortKey(params.sort);
 
   const [players, teams] = await Promise.all([
     getFilteredPlayerSeasons(filters),
@@ -38,19 +45,24 @@ export default async function ExplorePlayersPage({
   ]);
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">Explore</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Players</h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Compare player efficiency and usage. Filters run once in the data
-          layer and drive both the chart and the table.
+    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <header className="flex flex-col gap-1">
+        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          Players
         </p>
+        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+          Leaderboard
+        </h1>
+        {initialSortKey ? (
+          <p className="text-[13px] text-muted-foreground">
+            Sorted by {initialSortKey} - change any column header to re-rank.
+          </p>
+        ) : null}
       </header>
 
       <Suspense
         fallback={
-          <div className="h-28 animate-pulse rounded-xl border border-border bg-muted/40" />
+          <div className="h-20 animate-pulse rounded-md bg-secondary" />
         }
       >
         <PlayerFilterToolbar
@@ -60,8 +72,12 @@ export default async function ExplorePlayersPage({
         />
       </Suspense>
 
-      <PlayerUsageTsScatter players={players} />
-      <PlayerSeasonTable players={players} />
+      <div className="pb-8">
+        <PlayerSeasonTable
+          players={players}
+          initialSortKey={initialSortKey}
+        />
+      </div>
     </main>
   );
 }

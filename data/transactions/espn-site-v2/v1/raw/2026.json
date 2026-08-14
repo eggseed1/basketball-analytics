@@ -1,0 +1,3001 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2026,
+  "fetchedAt": "2026-08-14T20:06:37.152Z",
+  "apiCount": 272,
+  "rows": [
+    {
+      "date": "2026-08-13T07:00Z",
+      "description": "Waived G Ethan Thompson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-08-12T07:00Z",
+      "description": "Waived F Harwood Highsmith.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-08-08T07:00Z",
+      "description": "Re-signed G Dillon Brooks to a veteran extension.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-08-05T07:00Z",
+      "description": "Waived G JD Davison.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Signed F Moritz Wagner to a contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Re-signed G De'Anthony Melton to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Signed F Spencer Jones to a contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-07-31T07:00Z",
+      "description": "Signed F Mario Hezonja to a contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-07-30T07:00Z",
+      "description": "Waived F Mouhamadou Gueye.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-07-27T07:00Z",
+      "description": "Waived G Isaiah Stevens.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-07-26T07:00Z",
+      "description": "Waived G Kentavious Caldwell-Pope.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-07-26T07:00Z",
+      "description": "Signed F LeBron James to a contract. Waived F Dalen Terry.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-07-23T07:00Z",
+      "description": "Re-signed F Jae'Sean Tate to a contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-07-23T07:00Z",
+      "description": "Re-signed G Jordan Walsh to a veteran extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-07-22T07:00Z",
+      "description": "Re-signed G David Jones Garcia to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-07-22T07:00Z",
+      "description": "Re-signed F Jalen Slawson to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-07-22T07:00Z",
+      "description": "Signed C Moussa Cisse to a contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-22T07:00Z",
+      "description": "Signed F Jalen Wilson to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-07-20T07:00Z",
+      "description": "Waived G Taelon Peter.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-07-20T07:00Z",
+      "description": "Waived F Tyler Smigh.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-19T07:00Z",
+      "description": "Signed F Ziairie Williams to a contrac.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-07-19T07:00Z",
+      "description": "Acquired G Ryan Nembhard from Dallas and G Luguentz Dort from Oklahoma City in a three-team trade that sent F Zaccharie Risacher to Dallas. Dallas received draft consideration from Atlanta, while Oklahoma City received draft considerations from Atlanta and Dallas.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-07-16T07:00Z",
+      "description": "Re-signed G Gary Trent Jr. to a contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-16T07:00Z",
+      "description": "Re-signed C Vladislav Goldin to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-07-14T07:00Z",
+      "description": "Signed G Luke Kennard to a multi-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-07-14T07:00Z",
+      "description": "Re-signed G Tyus Jones to a contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-07-13T07:00Z",
+      "description": "Acquired G Grayson Allen, F Royce O'Neale and draft considerations from Phoenix Suns for F Miles Bridges and draft considerations.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-07-13T07:00Z",
+      "description": "Signed F Cameron Boozer to a rookie scale contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-07-13T07:00Z",
+      "description": "Re-signed G Jordan McLaughlin to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-07-13T07:00Z",
+      "description": "Acquired F Miles Bridges and draft considerations from Charlotte in exchange for G Grayson Allen, F Royce O'Neale and draft considerations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-07-12T07:00Z",
+      "description": "Signed G Isaiah Evans to a contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-07-12T07:00Z",
+      "description": "Re-signed G Austin Reaves to a contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-07-11T07:00Z",
+      "description": "Signed F Isaiah Evans.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Acquired F Naz Reid and draft considerations from Minnesota Timberwolves for Gs LaMelo Ball and Josh Green.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Signed C Jaxson Hayes and G Josh Okogie to contracts. Signed C Mo Bamba to a contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Re-signed G Jordan Clarkson to a contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Acquired F Julius Randle from Minnesota. Waived G Malachi Smith. Signed F Joshua Jefferson to a rookie scale contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Acquired Gs LaMelo Ball and Josh Green from Charlotte in exchange for F Naz Reid and draft considerations. Re-signed Gs Jaylen Clark and Ayo Dosunmo to a contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Signed G Marcus Smart to a contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Signed F Trevon Brazile to a contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Signed F Tarik Biberovic to a contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-10T07:00Z",
+      "description": "Acquired C Nic Claxton from Brooklyn.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Re-signed C Jusuf Nurkic to a contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Signed F Pete Nance to a contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Signed F Larry Nance Jr. to a contract. Re-signed F Kobe Brown to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Re-signed F Tari Eason to a contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Re-signed C Charles Bassey to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-07-09T07:00Z",
+      "description": "Waived F Dalano Banton.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired G AJ Johnson and draft consideration from Dallas. Acquired G D'Angelo Russell and draft consideration from Washington. Acquired F Isaiah Stewart from Detroit.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired F Khris Middleton and draft consideration from Dallas.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired draft consideration from Los Angeles Lakers for C Walker Kessler.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Re-signed F Harrison Barnes to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired G Caris Levert from Detroit.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired C Walker Kessler from Utah in exchange for draft consideration.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Waived C Micah Potter.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired F John Collins from the L.A. Clippers. Acquired F Taurean Prince and G Garry Harris from Milwaukee. Acquired draft consideration from Memphis.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Waived C Jonas Valanciunas.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-07-08T07:00Z",
+      "description": "Acquired F Santi Aldama from Memphis. Acquired G Marcus Sasser from Detroit.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Signed C Felix Okpara to a two-way contract. Acquired C Deandre Ayton from Los Angeles Lakers.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Signed G Trey Alexander to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Re-signed F Precious Achiuwa to a contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Re-signed C Mark Williams and G Jordan Goodwin and Collin Gillespie to multi-year contracts.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Acquired G Jaden Hardy from Washington in exchange for draft considerations.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Re-signed G Kobe Sanders to a contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Signed G Bruce Thornton to a contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Re-signed C Thomas Bryant to a contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-07-07T07:00Z",
+      "description": "Re-signed G Trey Alexander to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed F Hannes Steinbach and G Christian Anderson to rookie scale contracts. Re-signed G Coby White to a contract. Signed Gs Michael Ajayi and Kylan Boswell to two-way contracts. Waived F Tosan Evbuomwan. Acquired F Dorian Finney-Smith and three second-round picks from Houston in exchange for cash considerations.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed F Kyle Anderson to a contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Acquired draft considerations from Atlanta Hawks for G Aaron Wiggins.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed F Tobias Harris to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Waived G DeMar DeRozan.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Re-signed G Koby Brea to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed G Anfernee Simons and F Dean Wade to contracts. Acquired G Jaylen Brown from the Boston Celtics. Signed C Ariel Hukporti to a contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Re-signed G Jose Alvarado, F Mohamed Diawara to contracts. Signed C Andre Drummond to a contract. Resigned G Landry Shamet to a contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed C Day'Ron Sharpe, G Keon Ellis and F Josh Minott to contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed G Kam Jones to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Re-signed F Andrew Wiggins to a veteran extension. Acquired Fs Giannis Antetokounmpo and Bobby Portis from the Milwaukee Bucks in exchange for Gs Tyler Herro, Jaime Jaquez Jr. and Kasparas Jakucionis, C Kel'el Ware and draft considerations. Signed G Tim Hardaway Jr. to a contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Re-signed C Al Horford to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Signed G Ebuka Okorie to a rookie scale contract. Acquired G Isaiah Joe from the Oklahoma City Thunder in exchange for draft considerations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Re-signed G Ron Harper Jr. to a contract. Re-signed C Neemias Queta to a veteran extension. Acquired F Paul George from the Philadelphia 76ers in exchange for draft considerations. Signed C Mitchell Robinson to a contract. Signed G Mike Conley to a contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-07-06T07:00Z",
+      "description": "Acquired G Aaron Wiggins from the Oklahoma City Thunder in exchange for draft considerations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-07-05T07:00Z",
+      "description": "Signed G Caleb Love to a two-eay contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-07-05T07:00Z",
+      "description": "Signed F Christopher Cenac Jr. to a rookie scale contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-07-04T07:00Z",
+      "description": "Signed G Jaden Bradley to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-07-04T07:00Z",
+      "description": "Signed G Pat Spencer to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Re-signed G Alijah Martin to a contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed G Tamar Bates to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed Gs Otega Oweh and Josh Dix to two-way contracts. Re-signed G Brooks Barnhizer to a two-way contract. Signed G Bennett Stirtz and C Aday Mara to rookie scale contracts.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed F Maliq Brown and G Ja'Kobi Gillespie to two-way contracts. Signed C Tarris Reed Jr. and F Jayden Quaintance to rookie scale contracts.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed G Labaron Philon to a rookie scale contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Re-signed G Bones Hyland. Signed F Enrique Freeman to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Waived F Pete Nance.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed Tre Donaldson to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed G Sergio De Larrea to a rookie scale contract. Signed F Tobi Lawal to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-03T07:00Z",
+      "description": "Signed F Tobe Awaka to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed F Allen Graves to a rookie scale contract. Re-signed G Alijah Martin.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed F Anicet Dybantsa to a rookie scale contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Waived F Payton Sandfort.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed F Jonathan Mogbo to a two-way contract. Re-signed G Daeqwon Plowden.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Re-signed F Enrique Freeman to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Re-signed F Simone Fontecchio to a contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed C Ugonna Onyenso to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed F Morez Johnson to a rookie scale contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-07-02T07:00Z",
+      "description": "Signed G Kingston Flemings to a rookie scale contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Re-signed F Jamir Watkins to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed C Branden Carlson to a contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed F Jonathan Isaac and C Nikola Vucevic to contracts. Re-signed G Jevon Carter to a contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed F Bogoljub Markovic to a contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed F Yaxel Lendeborg to a rookie scale contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed G Meleek Thomas to a contract. Signed C Ernest Udeh Jr. to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-07-01T07:00Z",
+      "description": "Signed F Zuby Ejiofor to a rookie scale contract. Signed C Henri Veesaar to a contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-06-30T07:00Z",
+      "description": "Acquired draft consideration from Atlanta Hawks for G Devin Carter.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-06-30T07:00Z",
+      "description": "Re-signed C Robert Williams III to a veteran extension.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-06-30T07:00Z",
+      "description": "Re-signed F Kristaps Porzingas to a veteran extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-06-30T07:00Z",
+      "description": "Acquired G Devin Carter and draft consideration from Sacramento.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-06-29T07:00Z",
+      "description": "Re-signed F Julian Champagnie to a veteran extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-06-29T07:00Z",
+      "description": "Signed G Chaney Johnson to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-06-23T07:00Z",
+      "description": "Hired Micah Nori as head coach.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-05-18T07:00Z",
+      "description": "Hired Jamahl Mosley as head coach.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-05-07T07:00Z",
+      "description": "Signed head coach Charles Lee to a contract extension.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-05-04T07:00Z",
+      "description": "Fired head coach Jamahl Mosley.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2026-05-04T07:00Z",
+      "description": "Hired Masai Ujiri as president and alternate governor.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-05-04T07:00Z",
+      "description": "Hired Bryson Graham as executive vice president of basketball operations.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-04-21T07:00Z",
+      "description": "Announced the resignation of head coach Billy Donovan.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-04-12T07:00Z",
+      "description": "Signed F Trevon Scott to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-04-12T07:00Z",
+      "description": "Re-signed G Nick Smith Jr. to a contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-04-11T07:00Z",
+      "description": "Converted the contract of G A.J. Lawson to an NBA contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-04-11T07:00Z",
+      "description": "Signed G Hayden Gray to a rest-of-season contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-04-11T07:00Z",
+      "description": "Re-signed G Jahmir Young to a rest-of-season contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-04-11T07:00Z",
+      "description": "Signed F Dalano Banton to a rest-of-season contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-04-10T07:00Z",
+      "description": "Signed G Lucas Williamson to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-04-10T07:00Z",
+      "description": "Waived G Tyreke Key.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-04-10T07:00Z",
+      "description": "Waived G Cameron Payne.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-04-10T07:00Z",
+      "description": "Waived G Terry Rozier.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-04-10T07:00Z",
+      "description": "Waived G Kobe Bufkin.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-04-07T07:00Z",
+      "description": "Signed G Adama Bal to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-04-07T07:00Z",
+      "description": "Re-signed G JD Davison to a contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-04-07T07:00Z",
+      "description": "Re-signed F Tolu might to a rest-of-season contract. Waived F Bobi Klintman.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-04-06T07:00Z",
+      "description": "Signed G Tyreke Key to a rest-of-season contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-04-06T07:00Z",
+      "description": "Fired executive vice president of basketball operations Arturas Karnisovas and general manager Marc Eversley.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-04-06T07:00Z",
+      "description": "Signed C Tony Bradley to a rest-of-season contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-04-05T07:00Z",
+      "description": "Signed C Charles Bassey to a Rest-of-Season contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-04-04T07:00Z",
+      "description": "Signed G Malachi Smith to a rest-of-season contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-04-03T07:00Z",
+      "description": "Signed G Dariq Whitehead and F Toby Okani to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-04-03T07:00Z",
+      "description": "Signed G Bez Mbeng to a rest-of-season contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-04-02T07:00Z",
+      "description": "Signed F Trevon Scott to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-04-01T07:00Z",
+      "description": "Signed G Kennedy Chandler to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-03-30T07:00Z",
+      "description": "Waived G Jaden Ivey.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-03-26T07:00Z",
+      "description": "Signed G DaQuan Jeffries to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-03-25T07:00Z",
+      "description": "Signed G Malachi Smith to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-03-25T07:00Z",
+      "description": "Signed C Omer Yurtseven to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-03-25T07:00Z",
+      "description": "Signed C Charles Bassey to a 10-day contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-03-23T07:00Z",
+      "description": "Signed F Tyler Burton and G DeJon Jarreau to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-03-23T07:00Z",
+      "description": "Signed G Markelle Fultz to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-03-23T07:00Z",
+      "description": "Signed G Bez Mbeng to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-03-21T07:00Z",
+      "description": "Signed G Kennedy Chandler to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-03-15T07:00Z",
+      "description": "Signed G Killian Hayes to a rest-of-season contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-03-15T07:00Z",
+      "description": "Signed C Omer Yurtseven to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-03-14T07:00Z",
+      "description": "Signed G Malachi Smith to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-03-13T07:00Z",
+      "description": "Signed G DeJon Jarreau to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-03-13T07:00Z",
+      "description": "Signed G Bez Mbeng to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-03-12T07:00Z",
+      "description": "Signed F Tyler Burton to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-03-11T07:00Z",
+      "description": "Signed F Andersson Garcia to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-03-05T08:00Z",
+      "description": "Signed G Killian Hayes to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-03-05T08:00Z",
+      "description": "Signed G Tyus Jones to a rest-of-season contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-03-04T08:00Z",
+      "description": "Re-signed F Olivier-Maxence Prosper to a rest-of-season contract. Signed G Rayan Rupert to a two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-03-04T08:00Z",
+      "description": "Waived G Tamar Bates.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-03-04T08:00Z",
+      "description": "Signed C Josh Oduro to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-03-04T08:00Z",
+      "description": "Signed G Keshon Gilbert to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-03-03T08:00Z",
+      "description": "Signed G Chris Youngblood and F Jayson Kent to two-way contracts.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-03-03T08:00Z",
+      "description": "Waived G Darius Brown.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-03-02T08:00Z",
+      "description": "Signed F Payton Sandfort to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-03-02T08:00Z",
+      "description": "Waived G Javonte Cooke.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-03-02T08:00Z",
+      "description": "Re-signed G Jamaree Bouyea to a rest-of-season contract. Signed F CJ Huntley to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-03-02T08:00Z",
+      "description": "Signed G Zyon Pullin to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-03-01T08:00Z",
+      "description": "Signed G Zyon Pullin to a Two-Way Contract",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-03-01T08:00Z",
+      "description": "Placed G Miles Kelly on waivers.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-03-01T08:00Z",
+      "description": "Signed G John Tonje to a Two-Way Contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-02-28T08:00Z",
+      "description": "Signed F Julian Reese to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-02-28T08:00Z",
+      "description": "Waived G Jules Bernard.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-02-28T08:00Z",
+      "description": "Re-signed G Quenton Jackson to a rest-of-season contract. Signed F Jalen Slawson to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-02-28T08:00Z",
+      "description": "Re-signed F Gui Santos to a veteran extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-02-28T08:00Z",
+      "description": "Waived G Tyus Jones.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-02-27T08:00Z",
+      "description": "Waived F Kyle Anderson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-02-27T08:00Z",
+      "description": "Signed F Mason Plumlee to a rest-of-season contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-02-27T08:00Z",
+      "description": "Signed F Grant Nelson to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-02-26T08:00Z",
+      "description": "Signed F Jamir Watkins to a rest-of-season contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-02-26T08:00Z",
+      "description": "Signed C Mo Bamba to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-02-26T08:00Z",
+      "description": "Signed G Cormac Ryan to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-02-25T08:00Z",
+      "description": "Signed G Jules Bernard to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-02-23T08:00Z",
+      "description": "Signed F Emanuel Miller to a two-way contract. Waived G Stanley Umude.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-02-23T08:00Z",
+      "description": "Signed G Killian Hayes to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-02-20T08:00Z",
+      "description": "Re-signed G Sidy Cissoko to a rest-of-season contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2026-02-20T08:00Z",
+      "description": "Signed G Darius Brown to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-02-20T08:00Z",
+      "description": "Re-signed G Bryce McGowens to a rest-of-season contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-02-19T08:00Z",
+      "description": "Re-signed F Jabari Walker to a rest-of-season contract. Signed F Tyrese Martin to a two-way contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-02-19T08:00Z",
+      "description": "Converted the contract of F Spencer Jones to an NBA contract. Signed G KJ Simpson to a two-way contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-02-19T08:00Z",
+      "description": "Signed G John Tonje and F Dalano Banton to 10-day contracts.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-02-19T08:00Z",
+      "description": "Converted the contract of G Caleb Houstan to an NBA contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-02-18T08:00Z",
+      "description": "Signed F Haywood Highsmith to a rest-of-season contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-02-18T08:00Z",
+      "description": "Signed G Cameron Payne to a rest-of-season contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-02-18T08:00Z",
+      "description": "Waived G Johnny Juzang.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-02-18T08:00Z",
+      "description": "Signed F Myron Gardner to a rest-of-season contract and G Trevor Keels to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-02-18T08:00Z",
+      "description": "Waived G Nikola Djurisic.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-02-17T08:00Z",
+      "description": "Waived C Orlando Robinson. Signed G Alex Morales to a two-way contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2026-02-17T08:00Z",
+      "description": "Signed G Mike Conley to a rest-of-season contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-02-17T08:00Z",
+      "description": "Signed G Nate Williams to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-02-13T08:00Z",
+      "description": "Waived G Chris Paul.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-02-13T08:00Z",
+      "description": "Signed F Jeremy Sochan to a rest-of-season contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2026-02-13T08:00Z",
+      "description": "Signed F Riley Minix to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-02-11T08:00Z",
+      "description": "Signed G Kadary Richmond to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-02-11T08:00Z",
+      "description": "Waived F Jeremy Sochan.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2026-02-11T08:00Z",
+      "description": "Re-signed F Nae’Qwan Tomlin to a rest-of-season contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-02-10T08:00Z",
+      "description": "Signed F Dalen Terry to a two-way contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-02-09T08:00Z",
+      "description": "Signed G Pat Connaughton to a rest-of-season contract. Waived F Malaki Branham.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-02-09T08:00Z",
+      "description": "Signed C Lawson Lovering to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-02-09T08:00Z",
+      "description": "Re-signed G Daniss Jenkins to a rest-of-season contract. Waived F Dario Šarić.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-02-08T08:00Z",
+      "description": "Signed G Cam Thomas off waivers after getting waived by Brooklyn.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-02-07T08:00Z",
+      "description": "Converted the contract of G Pat Spencer to an NBA contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Waived G KJ Simpson. Signed F Tosan Evbuomwan to a two-way contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Waived G Eric Gordon.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Signed G Keshon Gilbert to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Signed F Buddy Boeheim to a two-way contract. Waived G Chris Youngblood.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Waived F Nigel Hayes-Davis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-02-06T08:00Z",
+      "description": "Waived F Dalen Terry.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Waived Gs Pat Connaughton and Mike Conley. Acquired G Malaki Branham from Washington and sent G Tyus Jones to Dallas as part of a three-team trade. Acquired F Xaiver Tillman from Boston in exchange for cash and draft considerations.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Waived F Georges Niang. Acquired G Eric Gordon from Philadelphia in exchange for a second-round pick swap.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Chris Paul from the L.A. Clippers. Acquired C Trayce Jackson-Davis from Golden State in exchange for a 2026 second-round pick.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Lonzo Ball and draft consideration from Cleveland. Acquired F Chris Boucher and draft consideration from Boston. Waived G Lonzo Ball and F Chris Boucher.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Waived F Mason Plumlee.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Signed C Charles Bassey and F Patrick Baldwin Jr. to 10-day contracts.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Jose Alvarado from New Orleans in exchange for F Dalen Terry and draft considerations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Ochai Agbaji and draft consideration from Toronto. Waived F Haywood Highsmith. Acquired F Hunter Tyson from Denver and F Josh Minott from Boston in exchange for draft considerations to both teams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Ayo Dosunmu and F Julian Phillips from Chicago in exchange for G Rob Dillingham, F Leonard Miller and four second-round picks.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired F Ousmane Dieng from Chicago and F Nigel Hayes-Davis from Phoenix in exchange for Gs Cole Anthony and Amir Coffey from Phoenix.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Luke Kennard from Atlanta in exchange for G Gabe Vincent and a 2032 second-round pick.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired C Ivica Zubac and F Kobe Brown from the L.A. Clippers in exchange for G Bennedict Mathurin, F Isaiah Jackson a 2026 first-round pick, a 2029 first-round pick and a 2028 second-round pick.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired a 2026 second-round pick from Toronto Raptors for C Trayce Jackson-Davis.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G AJ Johnson, Fs Khris Middleton and Marvin Bagley III, and draft considerations from Washington in exchange Gs Jaden Hardy, Dante Exum and D'Angelo Russel and F Anthony Davis in a three team trade.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Rob Dillingham, F Leonard Miller and four second-round picks from Minnesota Timberwolves for G Ayo Dosunmu and F Julian Phillips.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired F Dalen Terry and draft considerations from New York Knicks for G Jose Alvarado.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired C Nikola Vucevic and draft consideration from Chicago in exchange for G Anfernee Simons and draft consideration. Signed F Amari Williams to a rest-of-season contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-02-05T08:00Z",
+      "description": "Acquired G Gabe Vincent and a 2032 second-round pick from Los Angeles Lakers for G Luke Kennard.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-02-04T08:00Z",
+      "description": "Acquired F Ousmane Dieng and a second-round draft pick from Oklahoma City in exchange for C Mason Plumlee. Acquired Gs Mike Conley and Coby White from Chicago in exchange for F Ousmane Dieng, G Collin Sexton and three second-round picks.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-02-04T08:00Z",
+      "description": "Acquired G Jaren McCain from Philadelphia in exchange for a 2026 first-round pick and three second round picks.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2026-02-04T08:00Z",
+      "description": "Acquired a 2026 first-round pick and three second round picks from Oklahoma City Thunder for G Jaren McCain.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-02-04T08:00Z",
+      "description": "Acquired G James Harden from the Los Angeles Clippers in exchange for G Darius Garland and draft considerations.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-02-04T08:00Z",
+      "description": "Acquired F Ousmane Dieng, G Collin Sexton and three second-round picks from Charlotte Hornets for Gs Mike Conley and Coby White.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-02-03T08:00Z",
+      "description": "Acquired G Walter Clayton Jr., Fs Taylor Hendricks, Georges Niang and Kyle Anderson and draft considerations from Utah in exchange for Gs Vince Williams Jr. and John Konchar, C Jock Landale and F Jaren Jackson Jr.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-02-03T08:00Z",
+      "description": "Acquired G Kevin Huerter and F Dario Saric from Chicago and draft consideration from Minnesota in a three-team trade.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-02-03T08:00Z",
+      "description": "Acquired Minnesota G Mike Conley Jr. and Detroit G Jaden Ivey in a three-team trade.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-02-01T08:00Z",
+      "description": "Acquired F De’Andre Hunter from Cleveland and sent Gs Keon Ellis and Dennis Schroder to Cleveland and F Dario Saric and draft consideration to Chicago in a three-team trade.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2026-02-01T08:00Z",
+      "description": "Acquired Gs Keon Ellis and Dennis Schroder from Sacramento and sent F De’Andre Hunter to Sacramento in a three-team trade. Waived G Luke Travers.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-02-01T08:00Z",
+      "description": "Acquired F Dario Saric and draft consideration from Sacramento and draft consideration from Cleveland in a three-team trade. Waived G Jevon Carter.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2026-02-01T08:00Z",
+      "description": "Acquired C Duop Reath from Portland and 2nd round picks in 2027 and 2030.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-01-28T08:00Z",
+      "description": "Signed F Tristan Enaruna to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-01-27T08:00Z",
+      "description": "Signed F Skal Labissiere to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-01-27T08:00Z",
+      "description": "Waived F Chris Livingston.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-01-26T08:00Z",
+      "description": "Signed C Charles Bassey to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2026-01-16T08:00Z",
+      "description": "Signed C Christian Koloko to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-01-15T08:00Z",
+      "description": "Signed F Jeremiah Robinson-Earl to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-01-13T08:00Z",
+      "description": "Signed G Kobe Bufkin to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2026-01-09T08:00Z",
+      "description": "Acquired G Trae Young from the Atlanta Hawks in exchange for G CJ McCollum and F Corey Kispert.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-01-09T08:00Z",
+      "description": "Acquired G CJ McCollum and F Corey Kispert from Washington Wizards for G Trae Young.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-01-08T08:00Z",
+      "description": "Signed C Tony Bradley to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-01-07T08:00Z",
+      "description": "Waived F Tosan Evbuomwan.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2026-01-07T08:00Z",
+      "description": "Waived G Mark Sears.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2026-01-07T08:00Z",
+      "description": "Waived C Malik Williams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-01-05T08:00Z",
+      "description": "Waived C Tony Bradley.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-01-03T08:00Z",
+      "description": "Signed G Tristen Newton to a two-way contract. Waived F Tyler Smith.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-01-02T08:00Z",
+      "description": "Signed C Christian Koloko to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    }
+  ]
+}

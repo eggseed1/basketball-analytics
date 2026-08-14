@@ -11,7 +11,7 @@ function toPosition(value: string): Position | undefined {
 
 /**
  * Maps messy local JSON / CSV-shaped rows into canonical PlayerSeason.
- * Keep all field remapping here — never in UI components.
+ * Keep all field remapping here - never in UI components.
  */
 export function transformLocalPlayerSeason(
   raw: RawLocalPlayerSeason

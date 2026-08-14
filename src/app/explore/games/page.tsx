@@ -3,17 +3,22 @@ import { Suspense } from "react";
 import { GameScoringScatter } from "@/components/charts/game-scoring-scatter";
 import { GameFilterToolbar } from "@/components/explore/game-filter-toolbar";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
+import { DecadeChips } from "@/components/sports/decade-chips";
+import { GameScoreCard } from "@/components/sports/game-score-card";
 import {
   getAvailableSeasons,
   getFilteredGames,
   getTeams,
 } from "@/data/queries";
 import { filtersFromSearchParams } from "@/lib/search-params";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 
 export const metadata = {
-  title: "Explore Games | Basketball Analytics",
-  description:
-    "Filterable game exploration with scoring vs margin scatter and searchable table.",
+  title: "Games",
+  description: "NBA games from 1960 to present with score cards and filters.",
 };
 
 interface ExploreGamesPageProps {
@@ -25,7 +30,12 @@ export default async function ExploreGamesPage({
 }: ExploreGamesPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  const defaultSeason = seasons[0] ?? "2024-25";
+  // Prefer a classic 1960s season when opening Games with no season param.
+  const defaultSeason =
+    seasons.find((s) => s.startsWith("1969")) ??
+    seasons.find((s) => s.startsWith("1960")) ??
+    seasons[0] ??
+    canonicalSeasonFromStartYear(currentNbaStartYear());
 
   const filters = filtersFromSearchParams({
     ...params,
@@ -37,20 +47,26 @@ export default async function ExploreGamesPage({
     getTeams(),
   ]);
 
+  const cards = games.slice(0, 12);
+
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">Explore</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Games</h1>
-        <p className="max-w-2xl text-muted-foreground">
-          Analyze completed games by total scoring and home margin. Filters run
-          once in the data layer and drive both the chart and the table.
+    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <header className="flex flex-col gap-1">
+        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          Games
         </p>
+        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+          Explore
+        </h1>
       </header>
+
+      <Suspense fallback={null}>
+        <DecadeChips seasons={seasons} />
+      </Suspense>
 
       <Suspense
         fallback={
-          <div className="h-28 animate-pulse rounded-xl border border-border bg-muted/40" />
+          <div className="h-20 animate-pulse rounded-md bg-secondary" />
         }
       >
         <GameFilterToolbar
@@ -60,8 +76,22 @@ export default async function ExploreGamesPage({
         />
       </Suspense>
 
-      <GameScoringScatter games={games} />
-      <GameSeasonTable games={games} />
+      <section className="flex flex-col gap-1">
+        {cards.length === 0 ? (
+          <div className="sports-card px-4 py-8 text-center text-sm text-muted-foreground">
+            No games for this season filter.
+          </div>
+        ) : (
+          cards.map((game) => <GameScoreCard key={game.id} game={game} />)
+        )}
+      </section>
+
+      <div className="pb-8">
+        <GameScoringScatter games={games} />
+        <div className="mt-4">
+          <GameSeasonTable games={games} />
+        </div>
+      </div>
     </main>
   );
 }

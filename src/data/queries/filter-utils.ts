@@ -7,7 +7,7 @@ import type {
 
 /**
  * Single source of truth for PlayerSeason filtering.
- * Chart and table both consume query results — never re-filter in UI.
+ * Chart and table both consume query results - never re-filter in UI.
  */
 export function applyPlayerSeasonFilters(
   seasons: PlayerSeason[],

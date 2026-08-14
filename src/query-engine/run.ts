@@ -1,0 +1,214 @@
+import { getPlayer } from "@/data/queries/players";
+import { getPlayerCareerSeasons } from "@/data/queries/players";
+import { resolveTeamBrand } from "@/lib/nba-brand";
+import { interpretAskQuery } from "./interpret";
+import { resolveQueryEntities } from "./entities";
+import { validateBasketballQuery } from "./validate";
+import { executeBasketballQuery } from "./execute";
+import { buildFollowUpLinks, buildQueryPlan } from "./followups";
+import type { AskDrblResult, BasketballQueryAst } from "./types";
+import { ASK_DRBL_VERSION } from "./types";
+
+export type RunAskDrblOptions = {
+  /** Continue after ambiguity — force-resolve the player entity. */
+  playerId?: string;
+};
+
+async function enrichAmbiguousCandidates(
+  ast: BasketballQueryAst
+): Promise<BasketballQueryAst> {
+  if (!ast.ambiguous?.length) return ast;
+  const next = {
+    ...ast,
+    ambiguous: await Promise.all(
+      ast.ambiguous.map(async (group) => {
+        if (group.kind !== "player") return group;
+        const candidates = await Promise.all(
+          group.candidates.map(async (c) => {
+            try {
+              const [player, career] = await Promise.all([
+                getPlayer(c.id),
+                getPlayerCareerSeasons(c.id),
+              ]);
+              const teamId = player?.currentTeamId ?? career[0]?.teamId;
+              const brand = teamId ? resolveTeamBrand(teamId) : null;
+              const seasons = career
+                .map((r) => r.season)
+                .filter(Boolean)
+                .sort();
+              const years =
+                seasons.length > 0
+                  ? `${seasons[0]}–${seasons[seasons.length - 1]}`
+                  : undefined;
+              const bits = [
+                brand?.abbr,
+                player?.position,
+                years,
+              ].filter(Boolean);
+              return {
+                ...c,
+                name: player?.fullName ?? c.name,
+                subtitle: bits.length ? bits.join(" · ") : c.subtitle,
+              };
+            } catch {
+              return c;
+            }
+          })
+        );
+        return { ...group, candidates };
+      })
+    ),
+  };
+  return next;
+}
+
+function applyPlayerIdOverride(
+  ast: BasketballQueryAst,
+  playerId: string
+): BasketballQueryAst {
+  const entities = ast.entities.map((e) => {
+    if (e.kind !== "player") return e;
+    return { ...e, id: playerId, name: e.name };
+  });
+  // If no player entity yet, inject one
+  const hasPlayer = entities.some((e) => e.kind === "player");
+  return {
+    ...ast,
+    entities: hasPlayer
+      ? entities
+      : [{ kind: "player", id: playerId }, ...entities],
+    ambiguous: undefined,
+  };
+}
+
+function withPlanAndFollowUps(result: AskDrblResult): AskDrblResult {
+  const queryPlan = result.queryPlan ?? buildQueryPlan(result.ast);
+  const links = buildFollowUpLinks(result.ast, result.links);
+  return { ...result, queryPlan, links };
+}
+
+/**
+ * Full ASK DRBL pipeline:
+ * language → AST → entity resolve → validate → trusted execute.
+ */
+export async function runAskDrbl(
+  rawQuery: string,
+  options: RunAskDrblOptions = {}
+): Promise<AskDrblResult> {
+  const trimmed = rawQuery.trim();
+  if (!trimmed) {
+    const ast: BasketballQueryAst = {
+      version: 1,
+      operation: "season_stat",
+      entities: [],
+      interpretation: ["Empty query"],
+      rawQuery: "",
+    };
+    return {
+      status: "invalid",
+      version: ASK_DRBL_VERSION,
+      rawQuery: "",
+      ast,
+      interpretation: ["Empty query"],
+      errors: ["Enter a basketball question to ask DRBL."],
+      queryPlan: buildQueryPlan(ast),
+    };
+  }
+
+  let ast = interpretAskQuery(trimmed);
+
+  if (options.playerId && !ast.unsupported?.length) {
+    ast = applyPlayerIdOverride(ast, options.playerId);
+    // Resolve name for the forced id
+    try {
+      const player = await getPlayer(options.playerId);
+      if (player) {
+        ast = {
+          ...ast,
+          entities: ast.entities.map((e) =>
+            e.kind === "player"
+              ? { ...e, id: options.playerId!, name: player.fullName }
+              : e
+          ),
+          interpretation: [
+            player.fullName,
+            ...ast.interpretation.filter(
+              (line) =>
+                !/player/i.test(line) ||
+                line.toLowerCase() === player.fullName.toLowerCase()
+            ),
+          ],
+        };
+      }
+    } catch {
+      /* keep id */
+    }
+  } else if (!ast.unsupported?.length && !ast.partialSupportedQuery) {
+    ast = await resolveQueryEntities(ast);
+  }
+
+  const validation = validateBasketballQuery(ast);
+  if (!validation.ok) {
+    let failedAst = validation.ast;
+    if (validation.status === "ambiguous" && failedAst.ambiguous?.length) {
+      failedAst = await enrichAmbiguousCandidates(failedAst);
+    }
+
+    const base: AskDrblResult = {
+      status: validation.status,
+      version: ASK_DRBL_VERSION,
+      rawQuery: trimmed,
+      ast: failedAst,
+      interpretation: [
+        ...failedAst.interpretation,
+        ...(failedAst.seasonNotes ?? []),
+      ],
+      errors: validation.errors,
+      limitations: failedAst.unsupportedReason
+        ? [failedAst.unsupportedReason]
+        : undefined,
+      queryPlan: buildQueryPlan(failedAst),
+      payload:
+        validation.status === "ambiguous"
+          ? { ambiguous: failedAst.ambiguous }
+          : validation.status === "partial"
+            ? {
+                partialSupportedQuery: failedAst.partialSupportedQuery,
+                partialSupportedSummary: failedAst.partialSupportedSummary,
+                unsupported: failedAst.unsupported,
+              }
+            : undefined,
+    };
+
+    if (validation.status === "partial" && failedAst.partialSupportedQuery) {
+      base.headline = "Partially supported";
+      base.detailLines = [
+        failedAst.partialSupportedSummary
+          ? `Supported portion: ${failedAst.partialSupportedSummary}`
+          : null,
+        "The following require possession-level PBP and are not answered here:",
+        ...(failedAst.unsupported ?? []).map((c) => `• ${c}`),
+      ].filter(Boolean) as string[];
+      base.links = [
+        {
+          label: "Answer the supported portion →",
+          href: `/ask?q=${encodeURIComponent(failedAst.partialSupportedQuery)}`,
+        },
+        {
+          label: "Why the rest is unavailable →",
+          href: "/learn",
+        },
+      ];
+      base.methodology = [
+        "ASK DRBL does not silently simplify unsupported clauses.",
+        "Run the supported rewrite explicitly if you want that answer.",
+      ];
+      base.source = "ASK DRBL partial decomposition";
+    }
+
+    return withPlanAndFollowUps(base);
+  }
+
+  const executed = await executeBasketballQuery(validation.ast);
+  return withPlanAndFollowUps(executed);
+}

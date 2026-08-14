@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 
+import { TeamLogo } from "@/components/brand/team-logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -13,12 +14,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export interface GameSeasonTableProps {
   games: GameSummary[];
 }
+
+type SortKey = "gameDate" | "matchup" | "totalPoints" | "margin";
 
 function matchupLabel(game: GameSummary): string {
   const away = game.awayTeamAbbr ?? game.awayTeamId;
@@ -26,8 +31,15 @@ function matchupLabel(game: GameSummary): string {
   return `${away} @ ${home}`;
 }
 
+function defaultDir(key: SortKey): "asc" | "desc" {
+  if (key === "matchup") return "asc";
+  return "desc";
+}
+
 export function GameSeasonTable({ games }: GameSeasonTableProps) {
   const [query, setQuery] = useState("");
+  const [sortKey, setSortKey] = useState<SortKey>("gameDate");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
 
   const rows = useMemo(() => {
     const needle = query.trim().toLowerCase();
@@ -49,8 +61,30 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
         })
       : games;
 
-    return [...filtered].sort((a, b) => b.gameDate.localeCompare(a.gameDate));
-  }, [games, query]);
+    return [...filtered].sort((a, b) => {
+      let cmp = 0;
+      if (sortKey === "gameDate") {
+        cmp = a.gameDate.localeCompare(b.gameDate);
+      } else if (sortKey === "matchup") {
+        cmp = matchupLabel(a).localeCompare(matchupLabel(b));
+      } else if (sortKey === "totalPoints") {
+        cmp = (a.totalPoints ?? -1) - (b.totalPoints ?? -1);
+      } else {
+        cmp = Math.abs(a.margin ?? -1) - Math.abs(b.margin ?? -1);
+      }
+      if (cmp === 0) cmp = b.gameDate.localeCompare(a.gameDate);
+      return sortDir === "asc" ? cmp : -cmp;
+    });
+  }, [games, query, sortKey, sortDir]);
+
+  const toggleSort = (key: SortKey) => {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortKey(key);
+    setSortDir(defaultDir(key));
+  };
 
   return (
     <section
@@ -59,12 +93,15 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <h2 id="game-table-heading" className="text-lg font-semibold">
+          <h2
+            id="game-table-heading"
+            className="font-bold tracking-tight text-xl"
+          >
             Game table
           </h2>
           <p className="text-sm text-muted-foreground">
-            {rows.length} game{rows.length === 1 ? "" : "s"} shown. Same
-            filtered set as the chart.
+            {rows.length} game{rows.length === 1 ? "" : "s"} · click a column to
+            sort
           </p>
         </div>
         <div className="flex w-full max-w-xs flex-col gap-1.5">
@@ -79,15 +116,43 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Date</TableHead>
-              <TableHead>Matchup</TableHead>
-              <TableHead className="text-right">Score</TableHead>
-              <TableHead className="text-right">Total</TableHead>
-              <TableHead className="text-right">Margin</TableHead>
+      <div className="overflow-x-auto rounded-md border border-border bg-card">
+        <Table container={false}>
+          <TableHeader className="sticky top-0 z-20 bg-card">
+            <TableRow className="hover:bg-transparent">
+              <SortableTableHead
+                active={sortKey === "gameDate"}
+                dir={sortDir}
+                onClick={() => toggleSort("gameDate")}
+                align="left"
+              >
+                Date
+              </SortableTableHead>
+              <SortableTableHead
+                active={sortKey === "matchup"}
+                dir={sortDir}
+                onClick={() => toggleSort("matchup")}
+                align="left"
+              >
+                Matchup
+              </SortableTableHead>
+              <TableHead className="h-10 px-2 text-right text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+                Score
+              </TableHead>
+              <SortableTableHead
+                active={sortKey === "totalPoints"}
+                dir={sortDir}
+                onClick={() => toggleSort("totalPoints")}
+              >
+                Total
+              </SortableTableHead>
+              <SortableTableHead
+                active={sortKey === "margin"}
+                dir={sortDir}
+                onClick={() => toggleSort("margin")}
+              >
+                Margin
+              </SortableTableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -98,32 +163,75 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                 </TableCell>
               </TableRow>
             ) : (
-              rows.map((game) => (
-                <TableRow key={game.id}>
-                  <TableCell className="tabular-nums">{game.gameDate}</TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/games/${game.id}`}
-                      className="font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    >
-                      {matchupLabel(game)}
-                    </Link>
-                    <span className="sr-only">
-                      {game.awayTeamName} at {game.homeTeamName}
-                    </span>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {game.awayScore}–{game.homeScore}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(game.totalPoints)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {game.margin > 0 ? "+" : ""}
-                    {formatNumber(game.margin)}
-                  </TableCell>
-                </TableRow>
-              ))
+              rows.map((game) => {
+                const homeBrand = resolveTeamBrand(
+                  game.homeTeamAbbr ?? game.homeTeamId
+                );
+                return (
+                  <TableRow
+                    key={game.id}
+                    className="team-stripe hover:bg-muted/40"
+                    style={
+                      {
+                        "--team-primary":
+                          homeBrand?.primary ?? "var(--primary)",
+                      } as CSSProperties
+                    }
+                  >
+                    <TableCell className="tabular-nums">
+                      <Link
+                        href={`/games/${game.id}`}
+                        className="underline-offset-4 hover:underline"
+                      >
+                        {game.gameDate}
+                      </Link>
+                    </TableCell>
+                    <TableCell>
+                      <Link
+                        href={`/games/${game.id}`}
+                        className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      >
+                        <span className="inline-flex items-center gap-1">
+                          <TeamLogo
+                            teamKey={game.awayTeamAbbr ?? game.awayTeamId}
+                            size="xs"
+                          />
+                          <span className="text-xs font-semibold uppercase">
+                            {game.awayTeamAbbr ?? game.awayTeamId}
+                          </span>
+                        </span>
+                        <span className="text-muted-foreground">@</span>
+                        <span className="inline-flex items-center gap-1">
+                          <TeamLogo
+                            teamKey={game.homeTeamAbbr ?? game.homeTeamId}
+                            size="xs"
+                          />
+                          <span className="text-xs font-semibold uppercase">
+                            {game.homeTeamAbbr ?? game.homeTeamId}
+                          </span>
+                        </span>
+                      </Link>
+                      <span className="sr-only">
+                        {matchupLabel(game)} - {game.awayTeamName} at{" "}
+                        {game.homeTeamName}
+                      </span>
+                    </TableCell>
+                    <TableCell className="text-right font-semibold tabular-nums">
+                      {game.awayScore != null && game.homeScore != null
+                        ? `${game.awayScore}-${game.homeScore}`
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {game.totalPoints != null
+                        ? formatNumber(game.totalPoints)
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
+                      {game.margin != null ? formatNumber(game.margin) : "-"}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

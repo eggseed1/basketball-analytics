@@ -1,0 +1,911 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2020,
+  "fetchedAt": "2026-08-14T20:06:32.236Z",
+  "apiCount": 82,
+  "rows": [
+    {
+      "date": "2020-12-23T08:00Z",
+      "description": "Exercised their option to extend the contracts of Fs P.J. Washington and Miles Bridges.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2020-12-23T08:00Z",
+      "description": "Exercised their option to extend the contracts of F Dylan Windler, Gs Collin Sexton, Kevin Porter Jr. and Darius Garland.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2020-12-21T08:00Z",
+      "description": "Signed G Derrick White to a contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2020-12-21T08:00Z",
+      "description": "Exercised fourth-year contract options on G's Kevin Huerter and Trae Young, along with the third-year options on Fs De'Andre Hunter and Cam Reddish.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Placed the contracts of Fs Alize Johnson and Henry Ellenson and G OShae Brisset on waivers.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Placed the contract of G Justin Anderson on waivers.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Placed the contracts of G Treveon Graham and G Nik Stauskas on waivers.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Signed G Max Strus to a two-way contract with Sioux Falls.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Waived F Simi Shittu and G Zach Norvell. Exercised the third-year option on guard Coby White, and fourth-year options on center Wendell Carter Jr. and forward Chandler Hutchison.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-12-19T08:00Z",
+      "description": "Placed the contracts of Fs Jarrod Uthoff and Ike Anigbogu, Gs Tony Carr and Rawle Alkins on waivers.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2020-12-18T08:00Z",
+      "description": "Waived Fs T.J. Leaf and Admiral Schofield.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-12-18T08:00Z",
+      "description": "Waived Fs Dwayne Sutton, Axel Toupane and Kaleb Wesson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-12-17T08:00Z",
+      "description": "Signed F Trey Mourning to a training camp deal.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2020-12-16T08:00Z",
+      "description": "Signed G Christian Vital and Shaq Buchanan to an undisclosed contract. Waived G Zhaire Smith.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-12-16T08:00Z",
+      "description": "Waived the contracts of G Breein Tyree and F Paul Eboua.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2020-12-15T08:00Z",
+      "description": "Signed G Zhaire Smith and F Bennie Boatwright. Waived Gs Jahill Tripp and Marko Guduric.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-12-11T08:00Z",
+      "description": "Signed G Ahmad Caver. Waived F Mario Hezonja.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-12-09T08:00Z",
+      "description": "Agreed to terms with G Theo Maledon and F Aleksej Pokusevski. Signed F Josh Hall and C Moses Brown to two-way contracts.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-12-09T08:00Z",
+      "description": "Named Tim Sinclair public address announcer for all home games.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-12-08T08:00Z",
+      "description": "Acquired Gs Terrance Ferguson and Danny Green and C Vincent Poirier from Oklahoma City in exchange for C Al Horford, draft rights to Gs Theo Maledon and Vasilje Micic and a conditional 2025 first-round pick.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2020-12-04T08:00Z",
+      "description": "Signed G Frank Jackson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-12-04T08:00Z",
+      "description": "Named Calbert Cheaney and Tyler Marsh assistant coaches/player developement, Dylan DeBusk video coordinator, Maurice Baker, Earl Barron and Moses Ehambe as video/player developement assistants.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2020-12-01T08:00Z",
+      "description": "Signed F Anthony Gill.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-12-01T08:00Z",
+      "description": "Waived G Josh Gray.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-12-01T08:00Z",
+      "description": "Signed C/F Mason Plumlee, C Jahlil Okafor, G/F's Josh Jackson and Deividas Sirvydis.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2020-11-30T08:00Z",
+      "description": "Signed F Anthony Gill.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-11-30T08:00Z",
+      "description": "Signed G's Killian Hayes and Saben Lee and F's Isaiah Stewart and Saben Lee.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2020-11-29T08:00Z",
+      "description": "Signed F Keita Bates-Diop to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2020-11-28T08:00Z",
+      "description": "Signed G Jahlil Tripp.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-11-28T08:00Z",
+      "description": "Signed G Cassius Winston to a two-way contract. Signed F Yoeli Childs, G Caleb Homesley and G Marlon Taylor to exhibit 10 contracts.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-11-28T08:00Z",
+      "description": "Signed G D.J. Augustin.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2020-11-27T08:00Z",
+      "description": "Acquired F Trevor Ariza from Detroit and F Justin Jackson, a 2023 second-round draft pick (best from either Dallas or Miami) and a 2026 second-round draft pick from Dallas in a three-team trade in exchange for sending F James Johnson to Dallas.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-11-27T08:00Z",
+      "description": "Signed 2020 first-round pick G Devin Vassell.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2020-11-27T08:00Z",
+      "description": "Signed F Torrey Craig, G Bryn Forbes and F Bobby Portis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2020-11-26T08:00Z",
+      "description": "Signed F Torrey Craig, G Bryn Forbes and F Bobby Portis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2020-11-25T08:00Z",
+      "description": "Announced Mike Miller as assistant coach, Zach Perterson and David Akinyooye as player development coaches. Acquired F TJ Leaf and a 2027 second-round pick from Indiana in exchange for G Jalen Lecque.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2020-11-25T08:00Z",
+      "description": "Signed G Jared Harper to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2020-11-25T08:00Z",
+      "description": "Signed F Solomon Hill from free agency with agreements undisclosed.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-10-02T07:00Z",
+      "description": "Named Landry Fields assistant general manager.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-09-29T07:00Z",
+      "description": "Named Todd Campbell head athletic trainer.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-09-13T07:00Z",
+      "description": "Named Darko Rajakovic assistant coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-08-24T07:00Z",
+      "description": "Fired coach Brett Brown.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2020-08-14T07:00Z",
+      "description": "Announced that Vlade Divac has stepped down as general manager of the Sacramento Kings and will be replaced on an interim basis by Joe Dumars.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2020-08-14T07:00Z",
+      "description": "Announced head coach Jim Boylen has been relieved of his duties as head coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-07-17T07:00Z",
+      "description": "Signed F Jarrod Uthoff.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-07-07T07:00Z",
+      "description": "Named Calvin Booth as General Manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2020-07-01T07:00Z",
+      "description": "Signed G Jerian Grant.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-06-25T07:00Z",
+      "description": "Signed C Tyler Zeller.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2020-06-23T07:00Z",
+      "description": "Signed F Anthony Tolliver for the remainder of the 2019-2020 season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2020-05-06T07:00Z",
+      "description": "Named Pat Connelly as Vice President of Player Personnel and J.J. Polk as Assistant General Manager.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-05-01T07:00Z",
+      "description": "Hired Marc Eversley as General Manager.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-04-13T07:00Z",
+      "description": "Relieved general mangager Gar Forman of his duties. Named Arturas Karnisovas executive vice president of basketball operations. Named John Paxson senior advisor of basketball operations.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2020-02-18T08:00Z",
+      "description": "Waived F DeMarre Carroll.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2020-02-18T08:00Z",
+      "description": "Transferred F Charlie Brown Jr. to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-02-08T08:00Z",
+      "description": "Waived Fs Michael Kidd-Gilchrist and Marvin Williams.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2020-02-08T08:00Z",
+      "description": "Signed Gs Zach Norvell Jr. and Jeremy Pargo to 10-day contracts.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-02-07T08:00Z",
+      "description": "Waived G Gerald Green.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2020-02-06T08:00Z",
+      "description": "Acquired G Shabazz Napier from Denver for G Jordan McRae.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-02-06T08:00Z",
+      "description": "Acquired G D'Angelo Russell, G Jacob Evans and F Omari Spellman for G Andrew Wiggins and Minnesota's first-rounder and second-round 2021 draft picks, unless the first-rounder is in the top three.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2020-02-06T08:00Z",
+      "description": "Waived C Nene. Acquired G Derrick Walton, Jr. and cash considerations from the Los Angeles Clippers for the Hawks' 2022 second-round draft pick. Acquired F/C Skal Labissiere and cash considerations from the Portland Trail Blazers for the Hawks' 2024 second-round draft pick. Acquired C Dewayne Dedmon and two second-round picks from the Sacramento Kings for C Alex Len and F Jabari Parker.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-02-05T08:00Z",
+      "description": "Waived C Chandler Parsons.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-02-04T08:00Z",
+      "description": "Fired president Steve Mills. Announced general manager Scott Perry will take over control of basketball operations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2020-01-25T08:00Z",
+      "description": "Acquired C Willie Cauley-Stein from Golden State for a 2020 second-round draft pick. Waived C Justin Patton.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2020-01-23T08:00Z",
+      "description": "Assigned G Jacob Evans III to Santa Cruz of the NBA G League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-01-22T08:00Z",
+      "description": "Announced Larry Fitzgerald has purchased a minority stake in the club.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2020-01-21T08:00Z",
+      "description": "Traded Fs Trevor Ariza, Wenyen Gabriel and Caleb Swanigan to Portland for G Kent Bazemore, F Anthony Tolliver and two second-round draft picks.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2020-01-19T08:00Z",
+      "description": "Transferred F Charlie Brown Jr. to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-17T08:00Z",
+      "description": "Assigned F Alen Smailagic to Santa Cruz (NBAGL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-01-16T08:00Z",
+      "description": "Acquired G Treveon Graham and Jeff Teague from Minnesota for G-F Allen Crabbe. Recalled F Bruno Fernando from College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-15T08:00Z",
+      "description": "Signed F Tariq Owens to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2020-01-15T08:00Z",
+      "description": "Signed G Damion Lee to a multiyear contract. Signed F Marquese Chriss.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-01-14T08:00Z",
+      "description": "Signed F Kenny Wooten to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2020-01-14T08:00Z",
+      "description": "Released F Paul Watson Jr.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-12T08:00Z",
+      "description": "Waived F CJ Miles. Signed C Anzejs Pasecniks to a multi-year contract and F Johnathan Williams to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-01-11T08:00Z",
+      "description": "Assigned Fs Wenyen Gabriel and Caleb Swanigan and G Justin James to Stockton (NBAGL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2020-01-08T08:00Z",
+      "description": "Signed G Gabe Vincent. Waived G Daryl Macon.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2020-01-07T08:00Z",
+      "description": "Waived F Marquese Chriss.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2020-01-06T08:00Z",
+      "description": "Signed F Paul Watson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-05T08:00Z",
+      "description": "Waived G Justin Robinson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2020-01-05T08:00Z",
+      "description": "Transferred F Charlie Brown Jr. to College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-04T08:00Z",
+      "description": "Transferred F Charlie Brown Jr. from College Park (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2020-01-03T08:00Z",
+      "description": "Waived G-F David Nwaba.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    }
+  ]
+}

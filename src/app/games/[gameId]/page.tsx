@@ -1,16 +1,10 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { getGameBoxScore, getTeam } from "@/data/queries";
-import { formatNumber } from "@/lib/format";
+import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
+import { GameLabView } from "@/components/games/game-lab-view";
+import { getGameAnalysis, getGameBoxScore } from "@/data/queries";
+import type { PlayerGame } from "@/data/types";
 
 interface GamePageProps {
   params: Promise<{ gameId: string }>;
@@ -29,29 +23,28 @@ export async function generateMetadata({ params }: GamePageProps) {
 
 export default async function GamePage({ params }: GamePageProps) {
   const { gameId } = await params;
-  const box = await getGameBoxScore(gameId);
-  if (!box) notFound();
+  const payload = await getGameAnalysis(gameId);
+  if (!payload) notFound();
 
-  const { game, players } = box;
-  const [homeTeam, awayTeam] = await Promise.all([
-    getTeam(game.homeTeamId),
-    getTeam(game.awayTeamId),
-  ]);
+  const { analysis, game, players } = payload;
+  const { outcome } = analysis;
 
-  const homePlayers = players
-    .filter((p) => p.teamId === game.homeTeamId)
-    .sort((a, b) => b.points - a.points);
-  const awayPlayers = players
-    .filter((p) => p.teamId === game.awayTeamId)
-    .sort((a, b) => b.points - a.points);
+  const sortPlayers = (rows: PlayerGame[]) =>
+    [...rows].sort((a, b) => {
+      const scoreDiff = (b.gameScore ?? b.points) - (a.gameScore ?? a.points);
+      if (scoreDiff !== 0) return scoreDiff;
+      return b.minutes - a.minutes;
+    });
 
-  const awayLabel =
-    game.awayTeamAbbr ?? awayTeam?.abbreviation ?? game.awayTeamId;
-  const homeLabel =
-    game.homeTeamAbbr ?? homeTeam?.abbreviation ?? game.homeTeamId;
+  const homePlayers = sortPlayers(
+    players.filter((p) => p.teamId === game.homeTeamId)
+  );
+  const awayPlayers = sortPlayers(
+    players.filter((p) => p.teamId === game.awayTeamId)
+  );
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
+    <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
       <p>
         <Link
           href="/explore/games"
@@ -61,146 +54,24 @@ export default async function GamePage({ params }: GamePageProps) {
         </Link>
       </p>
 
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">{game.gameDate}</p>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {awayLabel} {game.awayScore} @ {homeLabel} {game.homeScore}
-        </h1>
-        <p className="text-muted-foreground">
-          {game.awayTeamName ?? awayTeam?.fullName ?? "Away"} at{" "}
-          {game.homeTeamName ?? homeTeam?.fullName ?? "Home"} · {game.season}
-        </p>
-      </header>
-
-      <section
-        aria-labelledby="game-summary-heading"
-        className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-3"
-      >
-        <h2 id="game-summary-heading" className="sr-only">
-          Game summary
-        </h2>
-        <div>
-          <p className="text-xs text-muted-foreground">Total points</p>
-          <p className="text-xl font-medium tabular-nums">
-            {formatNumber(game.homeScore + game.awayScore)}
+      <GameLabView analysis={analysis}>
+        {players.length === 0 ? (
+          <p className="rounded-xl border border-border p-4 text-muted-foreground">
+            No box score available for this game yet. Try another final, or
+            upgrade BallDontLie for historical box scores.
           </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Home margin</p>
-          <p className="text-xl font-medium tabular-nums">
-            {game.homeScore - game.awayScore > 0 ? "+" : ""}
-            {formatNumber(game.homeScore - game.awayScore)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Status</p>
-          <p className="text-xl font-medium capitalize">
-            {game.status ?? "final"}
-          </p>
-        </div>
-      </section>
-
-      <BoxScoreSection
-        heading={`${awayLabel} box score`}
-        players={awayPlayers}
-      />
-      <BoxScoreSection
-        heading={`${homeLabel} box score`}
-        players={homePlayers}
-      />
+        ) : (
+          <GameBoxScoreTables
+            awayLabel={outcome.awayLabel}
+            homeLabel={outcome.homeLabel}
+            awayTeamId={game.awayTeamId}
+            homeTeamId={game.homeTeamId}
+            awayPlayers={awayPlayers}
+            homePlayers={homePlayers}
+            contextIndex={analysis.boxScoreContext}
+          />
+        )}
+      </GameLabView>
     </main>
-  );
-}
-
-function BoxScoreSection({
-  heading,
-  players,
-}: {
-  heading: string;
-  players: Array<{
-    id: string;
-    playerId: string;
-    playerName?: string;
-    minutes: number;
-    points: number;
-    rebounds: number;
-    assists: number;
-    steals: number;
-    blocks: number;
-    turnovers: number;
-    plusMinus: number;
-  }>;
-}) {
-  const headingId = heading.replace(/\s+/g, "-").toLowerCase();
-  return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3">
-      <h2 id={headingId} className="text-lg font-semibold">
-        {heading}
-      </h2>
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Player</TableHead>
-              <TableHead className="text-right">MIN</TableHead>
-              <TableHead className="text-right">PTS</TableHead>
-              <TableHead className="text-right">REB</TableHead>
-              <TableHead className="text-right">AST</TableHead>
-              <TableHead className="text-right">STL</TableHead>
-              <TableHead className="text-right">BLK</TableHead>
-              <TableHead className="text-right">TO</TableHead>
-              <TableHead className="text-right">+/-</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {players.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-muted-foreground">
-                  No box-score rows available for this team.
-                </TableCell>
-              </TableRow>
-            ) : (
-              players.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell>
-                    <Link
-                      href={`/players/${p.playerId}`}
-                      className="underline-offset-4 hover:underline"
-                    >
-                      {p.playerName ?? p.playerId}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.minutes)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.points)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.rebounds)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.assists)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.steals)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.blocks)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.turnovers)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {p.plusMinus > 0 ? "+" : ""}
-                    {formatNumber(p.plusMinus)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </section>
   );
 }

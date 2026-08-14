@@ -1,0 +1,5652 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2001,
+  "fetchedAt": "2026-08-14T20:06:14.485Z",
+  "apiCount": 513,
+  "rows": [
+    {
+      "date": "2001-12-31T08:00Z",
+      "description": "Named Clyde Drexler assistant coach.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-12-30T08:00Z",
+      "description": "Activated center Chris Dudley; placed G/F Mitchell Butler on the injured list with a sprained left knee.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-12-30T08:00Z",
+      "description": "Placed forward Damone Brown on the injured list with a strained lower back; signed center Jabari Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-12-30T08:00Z",
+      "description": "Named Herb Williams assistant coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-12-28T08:00Z",
+      "description": "Placed center Hakeem Olajuwon on the injured list with an infected toe; activated center Michael Stewart.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-12-28T08:00Z",
+      "description": "Activated guard Speedy Claxton from the injured list, waived forward Michael Ruffin.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-12-28T08:00Z",
+      "description": "Activated guard Steve Francis from the injured list; placed forward Dan Langhi on the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-12-28T08:00Z",
+      "description": "Waived guard Omar Cook.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-12-28T08:00Z",
+      "description": "Named Bill Cartwright coach; named Pete Myers assistant coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-12-27T08:00Z",
+      "description": "Placed center Jake Tsakalidis on the injured list with a sprained right hand; activated center Daniel Santiago from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-12-26T08:00Z",
+      "description": "Placed guard Richard Hamilton on the injured list with a pulled right groin; activated guard Courtney Alexander from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-12-26T08:00Z",
+      "description": "Announced the resignation of president and coach Dan Issel.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-12-25T08:00Z",
+      "description": "Placed center Shaquille O'Neal on the injured list with a sore left toe; activated forward Jelani McCoy from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-12-24T08:00Z",
+      "description": "Announced the resignation of coach Tim Floyd; named Bill Berry interim coach.   FOOTBALL --------",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-12-22T08:00Z",
+      "description": "Placed forward/center Steven Hunter on the injured list with plantar fasciaitis in his right foot; activated guard Jeryl Sasser.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-12-22T08:00Z",
+      "description": "Signed guard Eldridge Recasner; placed  forward Harold Jamison on the injured list with ha left shin  contusion.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-12-21T08:00Z",
+      "description": "Activated forward Bryon Russell from the injured list; placed forward Quincy Lewis on the injured list with left achilles tendinitis.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-12-21T08:00Z",
+      "description": "Placed guard Jason Hart on the injured list with a lower back strain; activated forward Mark Bryant.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-12-21T08:00Z",
+      "description": "Placed guard Anthony Carter on the injured list with an abdominal strain; activated forward Malik Allen from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-12-20T08:00Z",
+      "description": "Signed guard Eldridge Recasner; placed forward Harold Jamison on the injured list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-12-20T08:00Z",
+      "description": "Activated forward Ron Artest from the injured list; placed guard A.J. Guyton on the injured list with a left hamstring strain.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-12-19T08:00Z",
+      "description": "Signed guard Jason Hart.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-12-18T08:00Z",
+      "description": "Activated forward Lawrence Funderburke from the injured list; waived forward Jabari Smith.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-12-18T08:00Z",
+      "description": "Placed guard Terrell Brandon on the injured list with a loose body in his left knee; activated guard Maurice Evans from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-12-18T08:00Z",
+      "description": "Signed guard Mike James; placed forward Sean Marks on the injured list with a cervical strain.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-12-15T08:00Z",
+      "description": "Fired coach Dave Cowens; named Brian Winters interim coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-12-13T08:00Z",
+      "description": "Signed general manager John Gabriel to a contract extension through the 2005 season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-12-13T08:00Z",
+      "description": "Activated forward Carlos Rogers from the injured list; placed forward Primoz Brezec on the injured list with a severe right ankle sprain.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-12-13T08:00Z",
+      "description": "Signed forward Reggie Slater.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-12-12T08:00Z",
+      "description": "Placed guard Felipe Lopez on the injured list with a bruised left hip; activated guard William Avery from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-12-12T08:00Z",
+      "description": "Suspended coach Dan Issel for four games without pay for making a racially explicit insult at a fan after Tuesday's game with the Charlotte Hornets.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-12-11T08:00Z",
+      "description": "Activated forward Tyrone Nesby from the injured list; placed guard Courtney Alexander on the injured list with contusions of the left leg and a left ankle sprain.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-12-11T08:00Z",
+      "description": "Activated forward Antonio Harvey from the injured list.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-12-11T08:00Z",
+      "description": "Waived guard Charlie Bell.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-12-10T08:00Z",
+      "description": "Placed guard Speedy Claxton on the injured list with a left ankle sprain; activated guard Eric Snow from the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-12-10T08:00Z",
+      "description": "Named Don Chaney coach for the remainder of the 2001-02 season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-12-09T08:00Z",
+      "description": "Activated forward Michael Bradley from the injured list; placed guard Carlos Arroyo on the injured list with right Achilles tendinitis.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-12-09T08:00Z",
+      "description": "Activated forward Chris Webber from the  injured list; placed forward Lawrence Funderburke on the injured list with right achilles tendonitis.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-12-08T08:00Z",
+      "description": "Announced the resignation of coach Jeff Van Gundy.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-12-07T08:00Z",
+      "description": "Placed forward Grant Hill on the injured list with a sore left foot; activated forward Monty Williams from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-12-07T08:00Z",
+      "description": "Named Chuck Person associate coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-12-07T08:00Z",
+      "description": "Placed guard Randy Brown on the injured list with a right adductor strain; activated forward Walter McCarty from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-12-06T08:00Z",
+      "description": "Placed center Lorenzen Wright on the injured list with a fractured knee; activated forward Antonis Fotsis.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-12-05T08:00Z",
+      "description": "Activated guard Randy Brown from the injured list; placed guard Joseph Forte on the injured list with a right ankle sprain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-12-04T08:00Z",
+      "description": "Placed guard Desmond Mason on the injured list.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-12-03T08:00Z",
+      "description": "Activated center Brendan Haywood from the injured list; placed forward Bobby Simmons on the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-12-03T08:00Z",
+      "description": "Activated center Samuel Dalembert from the injured list; waived forward Tim James.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-12-03T08:00Z",
+      "description": "Activated center Marcus Camby from the injured list; placed guard-forward Larry Robinson on the injured list with right patella tendinitis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-12-03T08:00Z",
+      "description": "Waived forward Reggie Slater.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-12-03T08:00Z",
+      "description": "Activated center Zydrunas Ilgauskas from the injured list; placed guard Jeff Trepagnier on the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-12-01T08:00Z",
+      "description": "Placed center Michael Doleac on the  injured list with a fractured left ankle; activated guard  Bryant Stith from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-11-28T08:00Z",
+      "description": "Activated guard Tyronn Lue from the injured list; placed guard Tyrone Nesby on the injured list with a lower back strain.    FOOTBALL --------",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-11-27T08:00Z",
+      "description": "Placed guard Steve Francis on the injured list with a ruptured left plantar fascia; activated guard Tierre Brown from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-11-27T08:00Z",
+      "description": "Signed forward Johnny Newman; waived center Ruben Wolkowyski; placed guard Greg Buckner on the injured list with a sore left knee.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-11-27T08:00Z",
+      "description": "Activated forward Eric Williams from the injured list; placed forward Walter McCarty on the injured list with a sprained big left toe.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-11-26T08:00Z",
+      "description": "Activated center Brendan Haywood from the injured list; placed forward Bobby Simmons on the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-11-26T08:00Z",
+      "description": "Activated center Marcus Camby from the injured list; placed guard-forward Larry Robinson on the injured list with right patella tendinitis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-11-26T08:00Z",
+      "description": "Waived forward Reggie Slater.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-11-25T08:00Z",
+      "description": "Placed forward Antonio Harvey on the injured list with right patella tendinitis; activated forward Vin Baker from the injured list.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-11-25T08:00Z",
+      "description": "Waived guard Joe Crispin; placed forward Jelani McCoy on the injured list with a bone bruise in his right foot; activated guard Deek Fisher and forward Mark Madsen from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-11-24T08:00Z",
+      "description": "Placed forward Clarence Weatherspoon on the injured list with a partial tear of the peroneal tendon in his right foot; activated swingman Larry Robinson from the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-11-23T08:00Z",
+      "description": "Activated guard Damon Stoudamire from the injured list; placed center Ruben Boumtje Boumtje on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-11-23T08:00Z",
+      "description": "Signed forward Michael Ruffin; placed center Alvin Jones on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-11-23T08:00Z",
+      "description": "Placed guard-forward Tariq Abdul-Wahad on the injured list with left knee chondromalacia; activated guard Kenny Satterfield from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-11-23T08:00Z",
+      "description": "Placed forward Wang Zhizhi on the injured list with right achilles tendinitis; activated forward Eduardo Najera from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-11-23T08:00Z",
+      "description": "Activated forward Kirk Haston from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-11-22T08:00Z",
+      "description": "Activated forward Jerome Williams from the injured list; placed forward Michael Bradley on the injured  list.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-11-21T08:00Z",
+      "description": "Waived center Matt Geiger, who announced his retirement.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-11-21T08:00Z",
+      "description": "Activated forward Lamar Odom from the suspended list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-11-21T08:00Z",
+      "description": "Signed forward Chris Anderson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-11-21T08:00Z",
+      "description": "Placed forward Eddie Robinson on injured reserve; activated guard A.J. Guyton.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-11-20T08:00Z",
+      "description": "Waived guard Isaiah Rider; activated swingman Calbert Cheaney from the injured list.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-11-20T08:00Z",
+      "description": "Signed free agent guard Omar Cook and  placed him on the injured list with left knee tendinitis;  waived guard Darrick Martin; activated center Evan Eschmeyer  from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-11-20T08:00Z",
+      "description": "Placed forward Jamal Mashburn on the injured list with a pulled right groin.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-11-19T08:00Z",
+      "description": "Announced the retirement of forward Tom Hammonds; waived Hammonds.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-11-19T08:00Z",
+      "description": "Activated guard Jamison Brewer.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-11-19T08:00Z",
+      "description": "Waived guard Eldridge Recasner; activated forward Jerome Moiso from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-11-17T08:00Z",
+      "description": "Placed Bryon Russell on the injured list with a  strained groin; activated center Jarron Collins from the injured  list.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-11-17T08:00Z",
+      "description": "Placed guard Travis Best on the injured list with a strained right hamstring; activated guard Jamison Brewer from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-11-17T08:00Z",
+      "description": "Placed guard Tierre Brown on the injured list with plantar fasciatis in his left foot; activated forward Dan Langhi from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-11-17T08:00Z",
+      "description": "Placed forward Roshown McLeod on the injured  list with lower left leg nerve damage; activated guard Joseph  Forte from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-11-16T08:00Z",
+      "description": "Activated guard Hubert Davis; placed guard Tyronn Lue on the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-11-16T08:00Z",
+      "description": "Acquired forward Bo Outlaw, a first-round pick in 2002 and cash from the Orlando Magic and sent guard-forward Jud Buechler to the Magic and guard Vinny Del Negro to the Los Angeles Clippers in a three-team trade.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-11-16T08:00Z",
+      "description": "Acquired guard-forward Jud Buechler from the Phoenix Suns and an option to swap second-round picks in 2005 with the Los Angeles Clippers and sent forward Bo Outlaw, a first-round pick in 2002 and cash to the Phoenix Suns in a three-team trade.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-11-16T08:00Z",
+      "description": "Acquired guard Vinny Del Negro from the Phoenix Suns and cash from the Orlando Magic and sent an option to swap second-round picks with the Magic in the 2005 draft in a three-team trade.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-11-15T08:00Z",
+      "description": "Placed guard Keyon Dooling on the injured list with a high left ankle sprain.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-11-14T08:00Z",
+      "description": "Placed forward Eric Williams on the injured list with left knee tendinitis; activated forward Roshown McLeod from the injured list.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-11-14T08:00Z",
+      "description": "Signed forward Dickey Simpkins.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-11-13T08:00Z",
+      "description": "Placed forward Vin Baker on the injured list with a bone contusion of the left knee; activated guard Shammond Williams.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-11-13T08:00Z",
+      "description": "Placed guard Damon Stoudamire on the injured list with right knee tendinitis; activated guard Rick Brunson.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-11-13T08:00Z",
+      "description": "Activated forward Shareef Abdur-Rahim from the injured list; placed forward Chris Crawford on the injured list with a torn left ACL; signed forward Mark Strickland.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-11-10T08:00Z",
+      "description": "Placed guard Kendall Gill on the injured list with a broken left pinky; activated forward Chris Gatling from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-11-10T08:00Z",
+      "description": "Placed forward Victor Alexander on the injured list with left knee tendinitis; activated guard Damon Jones from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-11-10T08:00Z",
+      "description": "Activated forward Eddie Robinson from the injured list; placed guard A.J. Guyton on the injured list with left ankle tendinitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-11-09T08:00Z",
+      "description": "Placed guard Michael Dickerson on the injured list; activated forward Antonsis Fotsis from the injured list.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-11-09T08:00Z",
+      "description": "Placed center Matt Geiger on the injured list with arthritis in both knees; activated center Alvin Jones from the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-11-09T08:00Z",
+      "description": "Activated forward-guard Mike Miller from the injured list; placed forward Monty Williams on the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-11-09T08:00Z",
+      "description": "Activated forward Cedric Henderson from the injured list; placed guard Gilbert Arenas on the injured list with a strained lower back.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-11-08T08:00Z",
+      "description": "Activated guard Vinny Del Negro from the injured list; placed guard Charlie Bell on the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-11-08T08:00Z",
+      "description": "Activated forward Eduardo Najera from the injured list; placed center Evan Eschmeyer on the injured list with a sprained left ankle.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-11-07T08:00Z",
+      "description": "Waived forward Loy Vaught.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-11-07T08:00Z",
+      "description": "Placed forward Lamar Odom on the  suspended list.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-11-07T08:00Z",
+      "description": "Placed guard Bryant Stith on the injured list with a right hip flexor; activated guard Jeff Trepagnier from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-11-06T08:00Z",
+      "description": "Signed forward Tim James; waived guard Ira Bowman.    FOOTBALL --------",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-11-06T08:00Z",
+      "description": "Named Joe Favorito vice president of public relations; promoted Jonathan Supranowitz to director of media relations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-11-05T08:00Z",
+      "description": "Placed center Theo Ratliff on the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-11-04T08:00Z",
+      "description": "Re-signed guard Brian Shaw.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-11-01T08:00Z",
+      "description": "Signed forward Al Harrington.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-11-01T08:00Z",
+      "description": "Signed guard Erick Strickland; placed guard Joseph Forte on the injured list with lower back spasms.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-10-31T08:00Z",
+      "description": "Waived guard Brian Shaw.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-10-31T08:00Z",
+      "description": "Exercised the fourth-year option on guard-forward Jumane Jones.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-10-30T08:00Z",
+      "description": "Signed guard Michael Dickerson to a contract extension.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-10-26T07:00Z",
+      "description": "Named Gene Bartow special advisor.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-10-26T07:00Z",
+      "description": "Acquired forward Don MacLean from the Miami Heat.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-10-26T07:00Z",
+      "description": "Acquired forward-center Chris Gatling from the Cleveland Cavaliers.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-10-26T07:00Z",
+      "description": "Acquired guard Ricky Davis from the Miami Heat and forward-center Brian Skinner from the Toronto Raptors; waived forward Makhtar Ndiaye and guard-forward Rodrick Rhodes.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-10-26T07:00Z",
+      "description": "Waived forward Chris Porter.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived guards James Collins and Bryant Notree.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived forward Shelly Clark.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Acquired forward Derrick Coleman from the Charlotte Hornets and forward Corie Blount and guard Vonteego Cummings from the Golden State Warriors; waived forwards Corey Benjamin and Michawl Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived forward Michael Wright.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived forward Donny Marshall and center Steve Goodrich.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waives forward Bill Curley.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Signed free agent forward Anthony Mason, who  had been with the Miami Heat, to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived guards Damon Jones and Darren Kelly and center Ike Nwankwo.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Acquired forward Cedric Henderson and a conditional first-round draft pick in 2005 from the Philadelphia 76ers.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived guard Reggie Geary.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived forward Reggie Slater.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Waived forward Michael Ruffin.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-10-25T07:00Z",
+      "description": "Acquired forwards George Lynch, Jerome Moiso and Robert Traylor from the Philadelphia 76ers and forward Chris Porter from the Golden State Warriors.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-10-24T07:00Z",
+      "description": "Released forward Mark Davis.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-10-24T07:00Z",
+      "description": "Released forward Kornel David.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-10-23T07:00Z",
+      "description": "Waived guard Ricky Moore.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-10-22T07:00Z",
+      "description": "Waived guard Maurice Jeffers and forward  Torraye Braggs.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-10-22T07:00Z",
+      "description": "Waived guards David Vanterpool and Danny Earl.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-10-22T07:00Z",
+      "description": "Signed free agent guard Rod Strickland, who had been with the Portland Trail Blazers.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-10-22T07:00Z",
+      "description": "Acquired forward-center Kevin Willis from the Milwaukee Bucks for a second-round pick in the 2002 draft.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-10-22T07:00Z",
+      "description": "Acquired center-forward Scott Williams and a  future first-round draft pick from the Milwaukee Bucks for  forward-center Kevin Willis and center Aleksandar Radojevic.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-10-19T07:00Z",
+      "description": "Signed guard Jason Williams.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-10-19T07:00Z",
+      "description": "Matched the offer sheet made by the Houston Rockets to restricted free agent center Marc Jackson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-10-18T07:00Z",
+      "description": "Waived forward Gerard King.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-10-17T07:00Z",
+      "description": "Named Dee Brown special assistant to operations.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-10-17T07:00Z",
+      "description": "Waived center Jim McIlvaine.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-10-17T07:00Z",
+      "description": "Re-signed forward Dirk Nowitzki to multi-year contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-10-15T07:00Z",
+      "description": "Waived guard Laron Profit.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-10-15T07:00Z",
+      "description": "Waived center Will Cunningham and guard Galen Young.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-10-15T07:00Z",
+      "description": "Waived guards Nate Green and Ricky Price.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-10-12T07:00Z",
+      "description": "Waived guard Ed Cota and guard-forward Michael Hicks.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-10-12T07:00Z",
+      "description": "Exercised the fourth-year contract option on forward Ron Artest for 2002-03.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-10-11T07:00Z",
+      "description": "Waived guard Kendrick Johnson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-10-10T07:00Z",
+      "description": "Released forward David Benoit, forward Kaniel Dickens and forward Jamel Thomas.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-10-10T07:00Z",
+      "description": "Waived forward Larry Johnson, who announced his retirement.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-10-10T07:00Z",
+      "description": "Signed center Steve Goodrich.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-10-04T07:00Z",
+      "description": "Released cemter Thomas Hamilton.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-10-04T07:00Z",
+      "description": "Named Caldwell Jones and Herb Brown assistant coaches.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-10-04T07:00Z",
+      "description": "Exercised their option on forward Wally Szczerbiak through the 2002-03 season.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-10-04T07:00Z",
+      "description": "Waived center Lorenzo Coleman and guard-forward Cory Hightower.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-10-03T07:00Z",
+      "description": "Exercised the fourth-year contract option on forward Shawn Marion.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-10-03T07:00Z",
+      "description": "Named Barry Hecker director of player personnel.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-10-03T07:00Z",
+      "description": "Named John Mason public address announcer.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-10-03T07:00Z",
+      "description": "Signed center Trevor Winter.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-10-03T07:00Z",
+      "description": "Named Red Auerbach vice chairman of the board and president.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-09-28T07:00Z",
+      "description": "Re-signed center Felton Spencer.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-09-28T07:00Z",
+      "description": "Signed free agent guard MileS Simon, free agent forwards Ansu Sesay, Harold Jamison and Obinna Ekezie, and free agent center Neil Edwards.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-09-28T07:00Z",
+      "description": "Signed free agent guards Reggie Geary, Nate Green and Ricky Price.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-09-28T07:00Z",
+      "description": "Signed second-round pick guard Trenton Hassell.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-09-28T07:00Z",
+      "description": "Re-signed forward Lee Nailon.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-09-27T07:00Z",
+      "description": "Re-signed free agent guard John Stockton.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-09-27T07:00Z",
+      "description": "Named Mo McHone assistant coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-09-27T07:00Z",
+      "description": "Signed guard Darren Kelly to a qualifying offer.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-09-27T07:00Z",
+      "description": "Named David Fredman and Jeff Weltman assistant general managers; named John MacLeod basketball consultant and Clyde Drexler special assistant to the general manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-09-25T07:00Z",
+      "description": "Signed guard Michael Jordan to a two-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-09-25T07:00Z",
+      "description": "Waived center Luc Longley.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-09-25T07:00Z",
+      "description": "Traded the rights of Kenny Satterfield to the Denver Nuggets for a future second round draft pick or future considerations.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-09-25T07:00Z",
+      "description": "Signed free agent guard Kevin Ollie, who had been with the Philadelphia 76ers.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-09-20T07:00Z",
+      "description": "Re-signed forward Mike Smith.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-09-20T07:00Z",
+      "description": "Named Bill Laimbeer television color analyst.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-09-19T07:00Z",
+      "description": "Signed forward Eddie Griffin to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-09-18T07:00Z",
+      "description": "Waived forward Sam Perkins.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-09-13T07:00Z",
+      "description": "Signed free agent forward-center Carlos Rogers.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-09-07T07:00Z",
+      "description": "Signed forward Vladimir Radmanovic, their first-round pick in the 2001 draft, to a three-year contract with a club option.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-09-07T07:00Z",
+      "description": "Acquired guard Mateen Cleaves from the Detroit Pistons for guard Jon Barry and a future first-round draft pick.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-09-07T07:00Z",
+      "description": "Exercised their option on guard Steve Francis; signed forward Terence Morris to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-09-06T07:00Z",
+      "description": "Signed free agent forward-center Carlos Rogers.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-09-05T07:00Z",
+      "description": "Named Nelson Luis director of team  communications.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-09-04T07:00Z",
+      "description": "Named Sean Elliott television analyst and Bill Schoening radio play-by-play voice.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-08-29T07:00Z",
+      "description": "Announced the retirement of guard Dee Brown.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-08-29T07:00Z",
+      "description": "Signed guard/forward Cory Hightower.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-08-28T07:00Z",
+      "description": "Signed forward Antawn Jamison to a seven-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-08-24T07:00Z",
+      "description": "Signed forward Tang Hamilton.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-08-24T07:00Z",
+      "description": "Signed guard Jason Richardson and forward Troy Murphy, their first-round picks, to multi-year contracts.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-08-23T07:00Z",
+      "description": "Named Jerry Eaves assistant coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-08-22T07:00Z",
+      "description": "Acquired guard Tim Hardaway from the Miami Heat for a second-round pick.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-08-17T07:00Z",
+      "description": "Announced it has been granted future considerations from the Dallas Mavericks and New York Knicks as part of a three-team trade announced August 12.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-08-16T07:00Z",
+      "description": "Promoted Bob Zuffelato to assistant general manager, Randy Wilkens to regional scout and Micah Nori to advance scout.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-08-15T07:00Z",
+      "description": "Waived center Chris Dudley.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-08-10T07:00Z",
+      "description": "Acquired guard Howard Eisley from the Dallas Mavericks for guard Muggsy Bogues; acquired forward Shandon Anderson from the Houston Rockets for forward Glen Rice.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-08-10T07:00Z",
+      "description": "Acquired the rights to guard Kyle Hill from the Dallas Mavericks as part of a three-team trade involving the New York Knicks.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-08-09T07:00Z",
+      "description": "Named Kiki Vandeweghe general manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-08-08T07:00Z",
+      "description": "Re-signed free agent center Shawn Bradley; signed restricted free agent center Evan Eschmeyer, who had been with the New Jersey Nets, to an offer sheet.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-08-07T07:00Z",
+      "description": "Signed free agent center Todd MacCulloch, who had been with the Philadelphia 76ers, to a multi-year contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-08-07T07:00Z",
+      "description": "Re-signed free agent forward Sam Mitchell.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-08-07T07:00Z",
+      "description": "Signed free agent swingman Eddie Robinson, who had been with the Charlotte Hornets.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-08-06T07:00Z",
+      "description": "Signed centers Samuel Dalembert and Alvin Jones.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-08-06T07:00Z",
+      "description": "Named Andy Greer assistant coach-scout; named Steve Clifford assistant coach-scout",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-08-06T07:00Z",
+      "description": "Named Gregg Polinsky as an assistant to the scouting director.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-08-06T07:00Z",
+      "description": "Signed guard Jeff Trepagnier; promoted Mike Bratz to director of pro personnel.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-08-05T07:00Z",
+      "description": "Signed free agent guard Kendall Gill, who had been  with the New Jersey Nets.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-08-03T07:00Z",
+      "description": "Signed center Brendan Haywood to a three-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-08-03T07:00Z",
+      "description": "Signed forward-center Cherokee Parks, who had been with the Los Angeles Clippers, to a one-year contract; signed center Amal McCaskill.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-08-03T07:00Z",
+      "description": "Elected not to match the offer sheet center Todd MacCulloch signed with the New Jersey Nets.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-08-03T07:00Z",
+      "description": "Acquired forwards Tyrone Hill and Jumaine Jones from the Philadelphia 76ers for forwards Matt Harpring, Robert Traylor and Cedric Henderson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-08-03T07:00Z",
+      "description": "Acquired forward Roshown McLeod and a future first-round draft pick from the Philadelphia 76ers for forward Jerome Moiso.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-08-02T07:00Z",
+      "description": "Acquired center Hakeem Olajuwon from the Houston Rockets for 2001 first- and second-round picks.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-08-02T07:00Z",
+      "description": "Signed free agent forward Stephen Jackson, who had been with the New Jersey Nets, and guard Charles Smith.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-08-02T07:00Z",
+      "description": "Re-signed guard Felipe Lopez to a multi-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-08-02T07:00Z",
+      "description": "Signed forward Rodney White, their first-round pick, to a three-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-08-01T07:00Z",
+      "description": "Signed guard Vince Carter to a six-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-08-01T07:00Z",
+      "description": "Acquired the draft rights to center Brendan Haywood from the Orlando Magic for guard Laron Profit and a future first-round pick.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-08-01T07:00Z",
+      "description": "Signed restricted free agent center Calvin Booth, who had been with the Dallas Mavericks, to an offer sheet.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-08-01T07:00Z",
+      "description": "Signed forward Paul Pierce to a multi-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-07-31T07:00Z",
+      "description": "Signed free agent swingman Bruce Bowen, who had been with the Miami Heat.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-07-30T07:00Z",
+      "description": "Signed restricted free agent forward Ruben Patterson, who had been with the Seattle SuperSonics, to an offer sheet.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-07-30T07:00Z",
+      "description": "Signed free agent forward Joe Smith, who had been with with Detroit Pistons, to a multi-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-07-30T07:00Z",
+      "description": "Named Brian Hill assistant coach.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-30T07:00Z",
+      "description": "Signed free agent guard Jacque Vaughn, who had been with the Utah Jazz.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-07-27T07:00Z",
+      "description": "Signed free agent guard Adrian Griffin.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-07-25T07:00Z",
+      "description": "Waived forward Michael Smith.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-07-25T07:00Z",
+      "description": "Acquired guards Derek Anderson and Steve Kerr from the San Antonio Spurs for guard Steve Smith.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-07-25T07:00Z",
+      "description": "Announced minority owner Pat Croce has stepped down as president to serve as an adviser and coach Larry Brown will return.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-07-25T07:00Z",
+      "description": "Re-signed free agent centers Andrew DeClercq and Don Reid.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-07-25T07:00Z",
+      "description": "Signed free agent swingman Stacey Augmon, who had been with the Portland Trail Blazers.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-24T07:00Z",
+      "description": "Signed forward Michael Bradley.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-07-24T07:00Z",
+      "description": "Re-signed free agent forward Corliss Williamson to a multi-year contract; signed free agent centers Zelijko Rebraca and Ratko Varda to multi-year contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-07-24T07:00Z",
+      "description": "Named Ron Ekker assistant coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-07-24T07:00Z",
+      "description": "Signed free agent guard Bryce Drew, who had been with the Chicago Bulls.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-23T07:00Z",
+      "description": "Re-signed free agent guard Allan Houston to a multi-year contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-07-23T07:00Z",
+      "description": "Signed free agent guard Maurice Evans.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-07-23T07:00Z",
+      "description": "Re-signed forward Michael Finley.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-07-23T07:00Z",
+      "description": "Signed coach Paul Silas to a contract extension; named Bob Donewald Jr. assistant coach.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-21T07:00Z",
+      "description": "Signed free agent forward Chris Webber to a seven-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-07-20T07:00Z",
+      "description": "Re-signed center Antonio Davis and guard Alvin Williams to multi-year contracts.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-07-20T07:00Z",
+      "description": "Agreed to terms with free agent center John Amaechi, who had been with the Orlando Magic, on a multi-year contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-07-20T07:00Z",
+      "description": "Signed free agent forward Clarence Weatherspoon, who had been with the Cleveland Cavaliers.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-07-20T07:00Z",
+      "description": "Signed free agent guard Mitch Richmond, who had been with the Washington Wizards; signed free agent forward Samaki Walker, who had been with the San Antonio Spurs.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-07-20T07:00Z",
+      "description": "Acquired guard Greg Anthony from the Portland Trail Blazers for a second-round pick in the 2002 draft.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Re-signed free agent forward Christian Laettner to a multi-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Agreed in principle with free agent center John  Amaechi, who had been with the Orlando Magic, on a multi-year  contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Signed free agent guard Dan Majerle, who had been with the Miami Heat; named Mark West assistant general manager; promoted David Griffin to assistant director of player personnel.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Re-signed free agent center Dikembe Mutombo to a multi-year contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Signed restricted free agent center Todd MacCulloch to an offer sheet.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Re-signed free agent guard Anthony Carter.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Signed guard Jamaal Tinsley to a three-year contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Signed free agent guard Avery Johnson, who had been with the San Antonio Spurs.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-07-19T07:00Z",
+      "description": "Re-signed free agent center Nazr Mohammed to a multi-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Re-signed free agent forward Jerome Williams.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Signed free agent guard Tyronn Lue, who had been with the Los Angeles Lakers; re-signed center-forward Popeye Jones.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Re-signed free agent guard Doug Christie to a multi-year deal.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Acquired forwards Jud Buechler and John Wallace from the Detroit Pistons for forward Cliff Robinson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Re-signed free agent guard Aaron McKie to a multi-year contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Signed free agent center Patrick Ewing, who had been with the Seattle SuperSonics, and free agent forward Horace  Grant, who had been with the Los Angeles Lakers.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Announced they have acquired guard Jason Kidd and center Chris Dudley from the Phoenix Suns for guard Stephon Marbury, forward Johnny Newman and center Soumaila Samake.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Signed guard Jamaal Tinsley to a three-year  contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Signed free agent guard Avery Johnson, who had  been with the San Antonio Spurs.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Signed restricted free agent forward Eddie Robinson, who had been with the Charlotte Hornets, to an offer sheet; renounced the rights to guard Corey Benjamin, forward Steve Goodrich and center Dragan Tarlac.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-07-18T07:00Z",
+      "description": "Re-signed free agent guard Milt Palacio to a multi-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-07-16T07:00Z",
+      "description": "Agreed in principle to trade the rights to acquire forward Zeljko Rebraca to the Detroit Pistons for a 2002 second-round draft pick.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-07-14T07:00Z",
+      "description": "Named Jim Lynam assistant coach.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-07-13T07:00Z",
+      "description": "Signed forward Kwame Brown to a three-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-07-13T07:00Z",
+      "description": "Signed forward Richard Jefferson, center Jason Collins and guard Brandon Armstrong to three-year contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-07-13T07:00Z",
+      "description": "Acquired forward Charles Oakley and a 2002 second-round draft pick from the Toronto Raptors for forward Brian Skinner.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-07-10T07:00Z",
+      "description": "Signed forward Kirk Haston, their 2001  first-round draft pick, to a three-year contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-10T07:00Z",
+      "description": "Signed forwards Joe Johnson and Kedrick Brown and guard Joseph Forte, their 2001 first-round draft picks, to  three-year contracts.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-07-09T07:00Z",
+      "description": "Named Tony Brown assistant coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-07-03T07:00Z",
+      "description": "Announced that contract of assistant coach Jerry Eaves will not be renewed.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-07-02T07:00Z",
+      "description": "Waived guard Mitch Richmond.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-07-02T07:00Z",
+      "description": "Announced they will not exercise the contract option on forward Carlos Rogers for next season; announced that forwards Shandon Anderson and Maurice Taylor have decided not to exercise player options for next season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-07-02T07:00Z",
+      "description": "Named Max Benton trainer, Earl Patton assistant director of player relations-player development and Mark Cashman equipment manager-travel coordinator.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-06-29T07:00Z",
+      "description": "Named Lance Blanks scout; placed forward Samaki Walker on waivers.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-06-29T07:00Z",
+      "description": "Announced they will acquire forward Cliff Robinson from the Phoenix Suns for forwards John Wallace and Jud Buechler on July 18.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-06-29T07:00Z",
+      "description": "Exercised the contract option for the 2001-02 season on forward Edward Najera.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded the rights to swingman Bobby Simmons to the Washington Wizards for the rights to forward Predrag Drobnjak.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded guards Jason Williams and Nick  Anderson to the Vancouver Grizzlies for guards Mike Bibby and  Brent Price.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Named Maurice Cheeks coach.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded center Michael Doleac to the Cleveland Cavaliers for the rights to center Brendan Haywood.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded the rights to forward Eddie Griffin to the Houston Rockets for the rights to swingman Richard Jefferson, center Jason Collins and guard Brandon Armstrong.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded a future first-round pick to the Atlanta Hawks for the rights to guard Jamaal Tinsley.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded a future first-round pick to the Atlanta Hawks for the rights to forward Terence Morris.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded a future first-round pick to the Orlando Magic for the rights to guard Omar Cook.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded forward Elton Brand to the Los Angeles Clippers for forward Brian Skinner and the rights to forward-center Tyson Chandler.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-06-27T07:00Z",
+      "description": "Traded forward-center Lorenzen Wright, guard Brevin Knight and the rights to forward Pau Gasol to the Vancouver Grizzlies for forward Shareef Abdur-Rahim and the rights to guard Jamaal Tinsley.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-06-26T07:00Z",
+      "description": "Traded a 2001 second-round pick to the Philadelphia 76ers for an undisclosed amount of cash.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-06-26T07:00Z",
+      "description": "Exercised the 2001-02 contract option on center Mark Blount.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-06-21T07:00Z",
+      "description": "Announced that forward Don MacLean has exercised his 2001-02 contract option.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-06-20T07:00Z",
+      "description": "Announced forward Darvin Ham has exercised his one-year contract option for the 2001-02 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2001-06-19T07:00Z",
+      "description": "Announced that guard Michael Finley will exercise his option to become a free agent, effective July 1.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-06-19T07:00Z",
+      "description": "Named John Lucas coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-06-15T07:00Z",
+      "description": "Announced forward Rodney Rogers has exercised an option to remain with the team for the 2000-01 season.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-06-15T07:00Z",
+      "description": "Announced the resignation of assistant coach Lee Rose.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-06-14T07:00Z",
+      "description": "Acquired the rights to center Roberto Duenas from the Chicago Bulls for a second-round pick, 45th overall, in the 2001 draft.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-06-13T07:00Z",
+      "description": "Named David S. Carlock vice president of  business development.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-06-12T07:00Z",
+      "description": "Announced they will exercise the option on the Denver Nuggets' first-round pick, 11th overall, in the 2001 draft.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-06-11T07:00Z",
+      "description": "Named James Hughes and Debi Ketay strength and conditioning coaches.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-06-07T07:00Z",
+      "description": "Named Brian James assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-06-04T07:00Z",
+      "description": "Promoted Jeff Bower to general manager.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-06-01T07:00Z",
+      "description": "Named Rick Sund general manager.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-06-01T07:00Z",
+      "description": "Picked up the fourth-year option on the contract of guard Baron Davis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-05-31T07:00Z",
+      "description": "Renewed their broadcasting agreement with The Fan 590 through the 2003-04 season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-05-25T07:00Z",
+      "description": "Named Rick Carlisle coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-05-21T07:00Z",
+      "description": "Exercised their option to claim the Indiana Pacers' first-round pick in the 2001 draft.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-05-15T07:00Z",
+      "description": "Named John Hammond director of player personnel.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-05-09T07:00Z",
+      "description": "Named Steven Stricker athletic trainer.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-05-08T07:00Z",
+      "description": "Fired coach Mike Dunleavy.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-05-04T07:00Z",
+      "description": "Waived center Keith Closs.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-05-01T07:00Z",
+      "description": "Promoted Robert Rowell to chief operating officer.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-04-24T07:00Z",
+      "description": "Promoted Jim O'Brien from interim coach to coach.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-04-20T07:00Z",
+      "description": "Signed coach Doc Rivers to a contract extension through the 2004-05 season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-04-18T07:00Z",
+      "description": "Announced the resignation of coach  Leonard Hamilton.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-04-18T07:00Z",
+      "description": "Placed center Dikembe Mutombo on the injured list with a sprained left fifth toe; activated guard Pepe Sanchez from the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-04-18T07:00Z",
+      "description": "Placed center Marcus Camby on the injured  list with a bruised left hip; activated guard Lavor Postell  from the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-04-18T07:00Z",
+      "description": "Placed forward Kevin Garnett on the injured list with a bruised left calf; activated forward Tom Hammonds from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-04-18T07:00Z",
+      "description": "Placed forward Anthony Mason on the injured list with a sprained left ankle; activated forward Don Maclean from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-04-17T07:00Z",
+      "description": "Placed guard Allen Iverson on the injured list with bursitis of the right elbow; activated forward Roshown McLeod from the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-04-17T07:00Z",
+      "description": "Placed guard Sam Cassell on the injured list  with a strained right hip flexor and forward Jason Caffey on the  injured list with left knee tendinitis; activated guards Michael  Redd and Jason Hart from the injured list.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2001-04-17T07:00Z",
+      "description": "Placed forward Derrick McKey on the injured  list with a strained lower back and Sam Perkins on the injured  list with a sprained left ankle; activated forward Terry Mills  and center Bruno Sundove from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-04-16T07:00Z",
+      "description": "Suspended forward Rasheed Wallace for one game.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-04-16T07:00Z",
+      "description": "Signed guard Raja Bell to a multi-year contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-04-16T07:00Z",
+      "description": "Placed forward Corey Maggette on the injured list with a strained right groin; activated center Zendon Hamilton.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-04-16T07:00Z",
+      "description": "Re-signed guard Chris Garner for the rest of the season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-04-16T07:00Z",
+      "description": "Placed guard Bimbo Coles on the injured list with a sprained right thumb; activated guard-forward Jim Jackson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-04-15T07:00Z",
+      "description": "Placed guard Tim Hardaway on the injured list with a bruised left foot; activated center Duane Causwell from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-04-13T07:00Z",
+      "description": "Exercised the 2002-03 contract options  on forwards Lamar Odom and Corey Maggette and the 2001-02  contract option on guard Jeff McInnis.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-04-13T07:00Z",
+      "description": "Activated center Dragan Tarlac from the injured list and placed guard Jamal Crawford on the injured list with a hyperextended left knee.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-04-11T07:00Z",
+      "description": "Re-signed guard Doug Overton for the remainder of the season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-04-10T07:00Z",
+      "description": "Activated guard Eddie Jones from the injured list; placed center Todd Fuller on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-04-10T07:00Z",
+      "description": "Placed guard Isaiah Rider on the injured list with back spasms; activated center Stanislav Medvedenko from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-04-10T07:00Z",
+      "description": "Signed free agent guard-forward Scott Burrell; placed forward Tim James on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-04-09T07:00Z",
+      "description": "Placed forward Billy Owens on the injured list with back spasms; activated forward Brian Cardinal from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Placed forward Shawn Kemp on the  injured list; activated forward Antonio Harvey from the  injured list.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Placed guard Pepe Sanchez on the injured list with right knee tendinitis; signed forward Raja Bell to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Activated guard Dee Brown from the injured  list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Signed guard Jamel Thomas to a 10-day  contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Placed guard Sam Jacobson on the injured list with patellar tendinitis in his right knee; activated guard Anthony Peeler from the injured list.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-04-06T07:00Z",
+      "description": "Signed guard Chris Garner to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-04-05T07:00Z",
+      "description": "Activated guard-forward Nick Anderson; placed forward Art Long on the injured list with tendinitis of the right knee.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-04-05T07:00Z",
+      "description": "Reached a five-year agreement with radio station WWZN, beginning with the 2001-02 season.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-04-04T07:00Z",
+      "description": "Placed guard Mitch Richmond on the injured list with a sprained right knee; activated forward Tyrone Nesby.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-04-04T07:00Z",
+      "description": "Placed guard Darrell Armstrong on the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-04-04T07:00Z",
+      "description": "Placed forward-center Terry Davis on the injured list with a strained left calf; signed center Dan McClintock for the remainder of the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-04-03T07:00Z",
+      "description": "Suspended forward Rasheed Wallace one game for inappropriate conduct in Sunday's game against Minnesota.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-04-02T07:00Z",
+      "description": "Activated forward-center Derrick Coleman off the injured list; placed forward Lee Nailon on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-04-01T08:00Z",
+      "description": "Signed guard Doug Overton to a second 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-03-31T08:00Z",
+      "description": "Announced that broadcaster John Saunders will not return to the team for the 2001-2002 season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-03-31T08:00Z",
+      "description": "Re-assigned Brendan Suhr to a special consultant to the basketball operations department.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-03-30T08:00Z",
+      "description": "Placed forward Cedric Henderson on the injured list with a strained left groin; activated forward-center Robert Traylor from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-03-30T08:00Z",
+      "description": "Activated center Tony Battie from injured list; placed forward Jerome Moiso on the injured list with right infrapatella tendinitis.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-03-29T08:00Z",
+      "description": "Signed forward Mark Strickland and guard Eddie Gill to 10-day contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-03-29T08:00Z",
+      "description": "Activated center Jake Voskuhl from injured list; placed center Dragan Tarlac on the injured list with a left ankle sprain.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-03-28T08:00Z",
+      "description": "Signed coach George Karl to a two-year contract extension through the 2003-04 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2001-03-27T08:00Z",
+      "description": "Signed coach Nate McMillan to a four-year contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-03-27T08:00Z",
+      "description": "Activated center Alonzo Mourning; placed forward Don MacLean on the injured list with left knee quadriceps tendinitis.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-03-26T08:00Z",
+      "description": "Signed guard David Vanterpool for the remainder of the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-03-26T08:00Z",
+      "description": "Placed guard-forward Jim Jackson on the injured list with plantar fasciaitis in his left foot; activated forward Cedric Henderson from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-03-24T08:00Z",
+      "description": "Placed guard Michael Curry on the injured list with a dislocated right thumb; activated forward Kornel David from the injured list.    FOOTBALL --------",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-03-23T08:00Z",
+      "description": "Suspended forward Michael Smith two games for conduct detrimental to the team.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-03-23T08:00Z",
+      "description": "Signed guard Doug Overton to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-03-23T08:00Z",
+      "description": "Placed guard Tyronn Lue on the injured list with a sprained left ankle; activated guard Mike Penberthy from the injured list.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-03-22T08:00Z",
+      "description": "Signed guard Doug Overton to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-03-22T08:00Z",
+      "description": "Activated guard-forward Calbert Cheaney; waived forward Mark Strickland.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-03-21T08:00Z",
+      "description": "Activated center Calvin Booth from the injured list; placed guard Gary Trent on the injured list with a sprained left toe.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-03-21T08:00Z",
+      "description": "Activated guard Eldridge Recasner from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-03-20T08:00Z",
+      "description": "Signed guard Sean Colson for the remainder of the season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-03-20T08:00Z",
+      "description": "Placed center Robert Traylor on the injured list with lower back spasms; activated forward Chucky Brown from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-03-20T08:00Z",
+      "description": "Waived guard Khalid El-Amin.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-03-19T08:00Z",
+      "description": "Activated center-forward Lorenzen Wright from the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-03-16T08:00Z",
+      "description": "Activated guard Greg Anthony from the injured list; placed guard Erick Barkley on the injured list with left knee pain.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-03-16T08:00Z",
+      "description": "Placed center Lari Ketner on the injured list with lower back spasms; activated guard Tyus Edney from the injured list.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-03-16T08:00Z",
+      "description": "Activated guard Anthony Johnson from the injured list; placed forward Cedric Henderson on the injured list with a strained left groin.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-03-16T08:00Z",
+      "description": "Activated center Dragan Tarlac from the injured list; placed forward-center Michael Ruffin on the injured list with a fractured left hand.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-03-15T08:00Z",
+      "description": "Re-signed guard Pepe Sanchez; waived forward Anthony Miller.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-03-15T08:00Z",
+      "description": "Placed center Akeem Olajuwon on the injured list with a blood clot in his left leg; activated forward Matt Bullard from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-03-13T08:00Z",
+      "description": "Activated guard Derek Fisher from the  injured list; placed guard Mike Penberthy on the injured list  with a strained right shoulder.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-03-12T08:00Z",
+      "description": "Placed guard Eldridge Recasner on the injured list with back spasms.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-03-07T08:00Z",
+      "description": "Signed forward Anthony Miller to a 10-day contract; placed forward Roshown McLeod on the injured list with a left leg injury.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-03-07T08:00Z",
+      "description": "Placed guard Eddie Jones on the injured list with a dislocated left shoulder; activated guard Ricky Davis from the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-03-07T08:00Z",
+      "description": "Activated forward Terry Mills from the injured list; placed center Bruno Sundov on the injured list with a strained left groin.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-03-06T08:00Z",
+      "description": "Placed guard Chris Whitney on the injured list with a sprained left ankle; signed guard David Vanterpol from Kansas City of the ABA to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-03-06T08:00Z",
+      "description": "Placed center Luc Longley on the injured list with a sore back and left ankle pain, placed guard Rick Brunson on the injured list with right plantar fasciatis; activated centers Travis Knight and Felton Spencer from the injured list.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-03-05T08:00Z",
+      "description": "Activated guard Kevin Edwards from the injured list; placed guard Brent Price on the injured list with osteoarthritis of the right knee.",
+      "team": {
+        "id": "29",
+        "abbreviation": "VAN",
+        "displayName": "Vancouver Grizzlies",
+        "location": "Vancouver",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2001-03-05T08:00Z",
+      "description": "Activated forward Shawnelle Scott from the  injured list; placed Jaren Jackson on the injured list with a  strained right calf.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-03-05T08:00Z",
+      "description": "Signed guard Rod Strickland for the rest of the season.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-03-05T08:00Z",
+      "description": "Activated center Travis Knight from the injured list; placed guard Rick Brunson on the injured list with right plantar fasciitis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-03-05T08:00Z",
+      "description": "Activated forward Jud Buechler from the injured list; placed forward Brian Cardinal on the injured list with patella tendinitis in both knees.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-03-02T08:00Z",
+      "description": "Placed forward Tyrone Nesby on the injured list with a sprained right ankle; re-signed forward Mike Smith.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-03-02T08:00Z",
+      "description": "Activated forward Pat Garrity from the injured list.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-03-02T08:00Z",
+      "description": "Activated forward Michael Ruffin from the injured list; placed center Dragan Tarlac on the injured list with left ankle tendinitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-03-01T08:00Z",
+      "description": "Waived guard Rod Strickland.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-03-01T08:00Z",
+      "description": "Activated forward Darvin Ham; placed forward Jerome Kersey on the injured list with plantar fasciitis of the left foot.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Signed guard Felipe Lopez to a contract for the remainder of the season.   Memphis Houn'Dawgs (ABA 2000) -- Signed forward Jamel Thomas.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Placed forward Matt Bullard on the injured list with a stress fracture in his back; signed guard Sean Colson to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Activated center Erick Dampier from the injuerd list; placed forward Chris Mullin on the injured list with a strained lower back; waived forward Ruben Garces.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Activated forward-center Terry Davis from the  injured list; placed guard Anthony Goldwire on the injured list  with a sprained right wrist.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Signed guard Vernon Maxwell for the remainder of the season.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-02-28T08:00Z",
+      "description": "Activated guard A.J. Guyton from the injured list; placed guard Khalid El-Amin on the injured list with left knee tendinitis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2001-02-27T08:00Z",
+      "description": "Waived guard-forward Todd Day.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-02-27T08:00Z",
+      "description": "Placed forward Obinna Ekezie on the injured list with a sprained right ankle.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-02-26T08:00Z",
+      "description": "Activated guards Randy Brown and Adrian Griffin from the injured list; placed guard Kenny Anderson on the IL with a sprained right ankle and forward Jerome Moiso on the IL with right infrapatella tendinitis.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-02-25T08:00Z",
+      "description": "Activated guard Rick Brunson from the injured list; placed guard Muggsy Bogues on the injured list with a sore right knee.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-02-25T08:00Z",
+      "description": "Placed forward Chucky Brown on the injured list with a sprained right ankle; activated forward Matt Harpring from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-02-23T08:00Z",
+      "description": "Placed center Mamadou N'diaye on the injured list with a strained groin.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-02-23T08:00Z",
+      "description": "Signed guard Cory Alexander for the remainder of the season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-02-23T08:00Z",
+      "description": "Activated forwards Billy Owens and Brian Cardinal from the injured list; placed forward Kornel David on the injured list with back spasms; waived forward Tyrone Corbin.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-02-23T08:00Z",
+      "description": "Activated forward Lee Nailon from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Traded forwards Corliss Williamson, Tyrone Corbin and Kornel David and a future first-round pick to the Detroit Pistons for forward Jerome Williams and center Eric Montross.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Traded forward Juwan Howard and centers Calvin Booth and Obinna Ekezie to the Dallas Mavericks for forwards Christian Laettner, Loy Vaught and Etan Thomas and guards Hubert Davis and Courtney Alexander; waived forward Gerard King and guards Felipe Lopez and Mike Smith.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Activated forward Scottie Pippen from  the injured list.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Acquired center Dikembe Mutombo and forward Roshown McLeod from the Atlanta Hawks for forward Toni Kukoc, centers Theo Ratliff and Nazr Mohammed and guard Pepe Sanchez.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Traded guard Chris Childs and a 2001 first-round pick to the Toronto Raptors for guards Mark Jackson and Muggsy Bogues.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Activated forwards Donnell Harvey and  Eduardo Najera from the injured list.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Signed forward Chucky Brown for the remainder of the season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-02-22T08:00Z",
+      "description": "Acquired forward Toni Kukoc, centers Theo Ratliff and Nazr Mohammed and guard Pepe Sanchez from the Philadelphia 76ers for center Dikembe Mutombo and forward Roshown McLeod; released guards Larry Robinson and Ira Bowman from their 10-day contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-21T08:00Z",
+      "description": "Activated forward Sean Elliott from the injured list; placed forward Ira Newble on the injured list with left patella tendinitis.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-02-20T08:00Z",
+      "description": "Placed forward Pat Garrity on the injured list following arthroscopic repair of the medial meniscus in his left knee.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-02-18T08:00Z",
+      "description": "Signed forward Art Long to a 10-day contract; plced guard Nick Anderson on the injured list with lower back spasms.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-02-18T08:00Z",
+      "description": "Placed guard Ron Harper on the injured list with a sore left knee; activated guard Mike Penberthy.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2001-02-16T08:00Z",
+      "description": "Placed center Jason Collier on the injured  list with quadriceps tendinitis; activated center Kelvin Cato  from the injured list.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-02-16T08:00Z",
+      "description": "Placed forward Derrick Coleman on the injured  list with a strained left calf.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-02-16T08:00Z",
+      "description": "Signed guard Ira Bowman to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-15T08:00Z",
+      "description": "Activated guard-forward Wesley Person from the injured list; placed guard Anthony Johnson on the injured list with left patellar tendinitis.   Memphis Houn'Dawgs (ABA) -- Signed guard Chris Garner and center John Coker.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-02-15T08:00Z",
+      "description": "Signed guard Larry Robinson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-14T08:00Z",
+      "description": "Placed guard Matt Maloney on the injured list with pain in his right hand.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-13T08:00Z",
+      "description": "Placed forward Malik Rose on the injured list with a sore right hip; activated forward Ira Newble from the IL.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-02-13T08:00Z",
+      "description": "Activated guard Eric Snow and center Matt Geiger from the injured list; placed guard Pepe Sanchez on the injured list with a back strain and center Theo Ratliff on the IL with a broken wrist.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-02-13T08:00Z",
+      "description": "Placed forward Hanno Mottola on the injured list with a sprained left elbow.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-12T08:00Z",
+      "description": "Signed guard Cory Alexander to a second 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-02-12T08:00Z",
+      "description": "Signed forward Chucky Brown to a second  10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-02-08T08:00Z",
+      "description": "Activated guard Avery Johnson from the injured list; placed center Shawnelle Scott on the injured list with left patellar tendinitis.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-02-08T08:00Z",
+      "description": "Placed guard Kendall Gill on the injured list; activated forward Jamie Feick.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-02-08T08:00Z",
+      "description": "Placed forward Lee Nailon on the injured list with lower back spasms; activated forward Tim James from the injured list.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-02-07T08:00Z",
+      "description": "Placed guard Jon Barry on the injured list with a broken left hand; activated forward Jabari Smith from the injured list.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2001-02-05T08:00Z",
+      "description": "Activated guard Eldridge Recasner from the injured list; elected not to re-sign guard Doug Overton, who had been on a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-02-05T08:00Z",
+      "description": "Activated guard Matt Maloney; elected not to re-sign guard Tony Smith, who had been on a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-02T08:00Z",
+      "description": "Activated center Eric Montross from the injured list; placed forward Billy Owens on the injured list with back spasms.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-02-02T08:00Z",
+      "description": "Activated guard Brevin Knight from the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-02-01T08:00Z",
+      "description": "Activated forward Detlef Schrempf; placed forward Antonio Harvey on the injured list with soreness of the right knee.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-02-01T08:00Z",
+      "description": "Activated forward Tom Gugliotta from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-02-01T08:00Z",
+      "description": "Placed center Felton Spencer on the injured list with a sore right knee; activated guard Lavor Postell.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-01-31T08:00Z",
+      "description": "Announced executive vice president of  corporate development M.L. Carr is no longer with the team.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-01-30T08:00Z",
+      "description": "Acquired forward Othella Harrington from the Vancouver Grizzlies for guard Erick Strickland and 2001  first- and second-round draft picks.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-01-30T08:00Z",
+      "description": "Activated forward Don MacLean from the injured list; placed center Todd Fuller on the injured list with tendinitis  in his left knee.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-01-30T08:00Z",
+      "description": "Placed center Sam Perkins on the injured list with a sprained neck; activated center Bruno Sundov.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2001-01-29T08:00Z",
+      "description": "Signed guard Cory Alexander to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-01-29T08:00Z",
+      "description": "Activated forward Corey Maggette from the injured list; placed guard Earl Boykins on the injured list with plantar fasciaitis in his left foot.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-01-29T08:00Z",
+      "description": "Signed guard Anthony Goldwire to a 10-day contract; waived center Garth Joseph; placed forward Calbert Cheaney on the injured list with a strained left hamstring.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-01-29T08:00Z",
+      "description": "Signed forward Chucky Brown to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-26T08:00Z",
+      "description": "Acquired guard Vinny Del Negro from the Golden State Warriors in exchange for forwards Corie Blount, Ruben Garces and guard Paul McPherson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-26T08:00Z",
+      "description": "Named James Lloyd physical conditioning coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-01-26T08:00Z",
+      "description": "Released forward Chucky Brown.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-01-26T08:00Z",
+      "description": "Signed guard Doug Overton to a 10-day contract; placed guard Eldridge Recasner on the injured list with bronchitis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-01-26T08:00Z",
+      "description": "Placed guard Brevin Knight on the injured list with a strained groin.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-25T08:00Z",
+      "description": "Activated guard Mitch Richmond from the injured list; placed guard Laron Profit on the injured list with back spasms.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-01-25T08:00Z",
+      "description": "Placed forward David Benoit on the injured list  with a strained right deltoid muscle; activated forward Scott  Padgett from the injured list.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-01-25T08:00Z",
+      "description": "Named Eric Woolworth president of business operations.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-01-25T08:00Z",
+      "description": "Signed guard Tony Smith to a 10-day contract; waived guard Sean Colson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-24T08:00Z",
+      "description": "Placed forward Tom Gugliotta on the injured list with a sore left knee; activated center Daniel Santiago.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-24T08:00Z",
+      "description": "Placed center Eric Montross on the injured list with a hyperextended left elbow; activated forward Jerome Williams from the injured list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-01-23T08:00Z",
+      "description": "Activated guard Muggsy Bogues from the injured list; placed center Mamadou N'diaye on the IL with a strained right groin.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2001-01-23T08:00Z",
+      "description": "Activated guard John Crotty from the injured list; placed forward Quincy Lewis on the IL with right knee tendinitis.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-01-23T08:00Z",
+      "description": "Placed center Jim McIlvaine on the injured list; activated center Soumaila Samake.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-01-23T08:00Z",
+      "description": "Signed free agent forward Chucky Brown to a second 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-01-22T08:00Z",
+      "description": "Placed guard Gary Grant on the injured list with a right knee effusion; activated guard Erick Barkley from the injured list.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-01-22T08:00Z",
+      "description": "Placed forward Matt Harpring on the injured list following left ankle surgery; activated guard Bimbo Coles from the injured list.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-19T08:00Z",
+      "description": "Activated center Felton Spencer from the injured list; placed guard-forward Lavor Postell on the injured list with a lower back strain.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-01-18T08:00Z",
+      "description": "Suspended guard Gary Payton for at least one game for conduct detrimental to the team.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-01-18T08:00Z",
+      "description": "Signed guard James Robinson to a second 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-01-18T08:00Z",
+      "description": "Signed forward Etdrick Bohannon to a second 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-18T08:00Z",
+      "description": "Signed guard Sean Colson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-17T08:00Z",
+      "description": "Placed forward Obinna Ekezie on the injured list with a sprained left knee; activated guard Laron Profit from the injured list.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2001-01-17T08:00Z",
+      "description": "Signed guard Elliot Perry to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-17T08:00Z",
+      "description": "Placed guard Matt Maloney on the injured list with a right hand ailment.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-16T08:00Z",
+      "description": "Placed guard Penny Hardaway on the injured list with acute inflammation of the soft tissue and soreness in his left knee.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-14T08:00Z",
+      "description": "Activated guard Mario Elie from the injured list; placed center Daniel Santiago on the injured list with plantar fasciatis in his left foot.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-13T08:00Z",
+      "description": "Signed forward Chucky Brown to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-01-13T08:00Z",
+      "description": "Activated forward Chris Crawford from the injured list; waived forward Andy Panko.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-12T08:00Z",
+      "description": "Announced the resignation of physical conditioning coach John Croce.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-01-12T08:00Z",
+      "description": "Acquired forward Kevin Willis, centers Aleksander Radojevic and Garth Joseph and a second-round draft choice in 2001 or 2002 from the Toronto Raptors for forward Keon Clark, forward Tracy Murray and center Mamadou N'diaye.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2001-01-11T08:00Z",
+      "description": "Announced sale of the team from the Ackerley Group to a group headed by Howard Schultz.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2001-01-11T08:00Z",
+      "description": "Named Monica Spoelstra vice president of marketing.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2001-01-10T08:00Z",
+      "description": "Activated forward Jerome Moiso from the injured list; placed guard Adrian Griffin on the injured list with lower back pain.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-01-09T08:00Z",
+      "description": "Placed forward Sean Elliott on the injured list with a small rotator cuff tear of the right shoulder; activated guard Jaren Jackson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2001-01-09T08:00Z",
+      "description": "Placed center Hakeem Olajuwon on the injured list with a swollen right knee; activated center Jason Collier.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Activated guard Penny Hardaway from the injured list.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Signed guard James Robinson to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Activated guard Charlie Ward from the injured list; placed guard Rick Brunson on the injured list with plantar fasciatis in his right foot.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Activated guard Todd Day from the injured list; placed guard Sam Jacobson on the injured list with patella tendinitis in his right knee.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Activated guard Earl Boykins from the injured list; placed guard Keyon Dooling on the injured list with an undisclosed illness.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "Los Angeles Clippers",
+        "location": "Los Angeles",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2001-01-07T08:00Z",
+      "description": "Signed forward Etdrick Bohannon to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-06T08:00Z",
+      "description": "Activated forward Alan Henderson from the injured list.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Waived guard Elliot Perry.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Placed center Matt Geiger on the injured  list with a sore right knee; activated guard Pepe Sanchez from  the injured list.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Waived forward Pete Mickeal.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Activated Keith Van Horn from the injured list; placed ceneter Soumaila Samake on the injured lift with left knee tendinitis.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Re-signed forward Billy Curley to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Waived guard Larry Robinson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Placed forward Tim James on the injured list with tendinitis in both knees; activated forward Eddie Robinson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Waived guard Milt Palacio.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-01-05T08:00Z",
+      "description": "Signed forward Andy Panko to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2001-01-04T08:00Z",
+      "description": "Suspended guard John Starks two games for a violation of team rules.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2001-01-04T08:00Z",
+      "description": "Activated guard Anthony Carter from the injured list; placed forward Don MacLean on the injured list.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2001-01-03T08:00Z",
+      "description": "Activated guard Jud Buechler from the injured list; placed forward Jerome Williams on the injured list with with a sprained right ankle.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2001-01-02T08:00Z",
+      "description": "Placed forward J.R. Reid and guard Michael Hawkins on waivers.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2001-01-02T08:00Z",
+      "description": "Activated forward Walter McCarty from the  injured list; placed forward-center Tony Battie on the injured  list with a sprained left ankle.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2001-01-02T08:00Z",
+      "description": "Acquired guard Brevin Knight from the Cleveland Cavaliers for guards Jim Jackson, Anthony Johnson and Larry Robinson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    }
+  ]
+}

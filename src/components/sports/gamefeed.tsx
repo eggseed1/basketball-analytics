@@ -1,0 +1,554 @@
+import Link from "next/link";
+
+import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  GameMatchupRow,
+} from "@/components/sports/game-score-card";
+import type { GameSummary } from "@/data/types";
+import {
+  addDaysIso,
+  shiftMonthKey,
+  startOfWeekSundayIso,
+} from "@/data/queries";
+import { resolveTeamBrand } from "@/lib/nba-brand";
+import { cn } from "@/lib/utils";
+
+export type GamefeedView = "week" | "month" | "list";
+
+const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+function daysInMonth(year: number, month: number) {
+  return new Date(Date.UTC(year, month, 0)).getUTCDate();
+}
+
+function monthLabel(monthKey: string) {
+  const [y, m] = monthKey.split("-").map(Number);
+  return new Date(Date.UTC(y!, (m ?? 1) - 1, 1)).toLocaleDateString("en-US", {
+    month: "long",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+function weekRangeLabel(weekStart: string, weekEnd: string) {
+  const start = new Date(`${weekStart}T12:00:00Z`);
+  const end = new Date(`${weekEnd}T12:00:00Z`);
+  const opts: Intl.DateTimeFormatOptions = {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  };
+  const left = start.toLocaleDateString("en-US", opts);
+  const right = end.toLocaleDateString("en-US", {
+    ...opts,
+    year: start.getUTCFullYear() === end.getUTCFullYear() ? undefined : "numeric",
+  });
+  return `${left} - ${right}`;
+}
+
+function dayHeading(iso: string) {
+  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+    weekday: "long",
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+function groupByDate(games: GameSummary[]) {
+  const map = new Map<string, GameSummary[]>();
+  for (const g of games) {
+    const list = map.get(g.gameDate) ?? [];
+    list.push(g);
+    map.set(g.gameDate, list);
+  }
+  return map;
+}
+
+function abbr(game: GameSummary, side: "away" | "home") {
+  if (side === "away") {
+    return (
+      game.awayTeamAbbr ??
+      resolveTeamBrand(game.awayTeamId)?.abbr ??
+      String(game.awayTeamId).slice(0, 3).toUpperCase()
+    );
+  }
+  return (
+    game.homeTeamAbbr ??
+    resolveTeamBrand(game.homeTeamId)?.abbr ??
+    String(game.homeTeamId).slice(0, 3).toUpperCase()
+  );
+}
+
+function tipLabel(game: GameSummary): string {
+  if (game.status === "final") return "Final";
+  if (game.status === "in_progress") return "Live";
+  if (game.statusDetail) {
+    const tip = game.statusDetail.split(" - ").slice(1).join(" - ").trim();
+    if (tip) return tip;
+    return game.statusDetail;
+  }
+  if (game.tipOffAt) {
+    try {
+      return new Date(game.tipOffAt).toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        timeZoneName: "short",
+      });
+    } catch {
+      // fall through
+    }
+  }
+  return "TBD";
+}
+
+function scoresHref(params: {
+  view: GamefeedView;
+  month?: string;
+  week?: string;
+}) {
+  const sp = new URLSearchParams();
+  sp.set("view", params.view);
+  if (params.view === "month" && params.month) sp.set("month", params.month);
+  if (params.view === "week" && params.week) sp.set("week", params.week);
+  return `/scores?${sp.toString()}`;
+}
+
+function ViewTabs({
+  view,
+  monthKey,
+  weekStart,
+}: {
+  view: GamefeedView;
+  monthKey: string;
+  weekStart: string;
+}) {
+  const tabs: { id: GamefeedView; label: string; href: string }[] = [
+    {
+      id: "week",
+      label: "Weekly",
+      href: scoresHref({ view: "week", week: weekStart }),
+    },
+    {
+      id: "month",
+      label: "Monthly",
+      href: scoresHref({ view: "month", month: monthKey }),
+    },
+    {
+      id: "list",
+      label: "List",
+      href: scoresHref({ view: "list" }),
+    },
+  ];
+
+  return (
+    <div className="inline-flex rounded-md border border-border bg-secondary/40 p-0.5">
+      {tabs.map((tab) => (
+        <Link
+          key={tab.id}
+          href={tab.href}
+          className={cn(
+            "rounded-sm px-3 py-1.5 text-[13px] font-semibold transition-colors",
+            view === tab.id
+              ? "bg-card text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {tab.label}
+        </Link>
+      ))}
+    </div>
+  );
+}
+
+function MonthGrid({
+  monthKey,
+  games,
+}: {
+  monthKey: string;
+  games: GameSummary[];
+}) {
+  const [year, month] = monthKey.split("-").map(Number) as [number, number];
+  const byDate = groupByDate(games);
+  const dim = daysInMonth(year, month);
+  const firstWeekday = new Date(Date.UTC(year, month - 1, 1)).getUTCDay();
+  const cells: Array<{ iso: string | null; day: number | null }> = [];
+  for (let i = 0; i < firstWeekday; i++) cells.push({ iso: null, day: null });
+  for (let d = 1; d <= dim; d++) {
+    const iso = `${year}-${String(month).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+    cells.push({ iso, day: d });
+  }
+  while (cells.length % 7 !== 0) cells.push({ iso: null, day: null });
+  const todayIso = new Date().toISOString().slice(0, 10);
+
+  return (
+    <>
+      <div className="grid grid-cols-7 gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-2">
+        {WEEKDAYS.map((d) => (
+          <div key={d} className="px-1 py-1 text-center">
+            {d}
+          </div>
+        ))}
+      </div>
+      <div className="grid grid-cols-7 gap-1 sm:gap-2">
+        {cells.map((cell, idx) => {
+          if (!cell.iso || cell.day == null) {
+            return (
+              <div
+                key={`empty-${idx}`}
+                className="min-h-[72px] rounded-md bg-transparent sm:min-h-[110px]"
+              />
+            );
+          }
+          const dayGames = byDate.get(cell.iso) ?? [];
+          const isToday = cell.iso === todayIso;
+          return (
+            <div
+              key={cell.iso}
+              className={cn(
+                "flex min-h-[72px] flex-col gap-1 rounded-md border border-border bg-card p-1 sm:min-h-[110px] sm:p-1.5",
+                isToday && "border-foreground/40 ring-1 ring-foreground/20"
+              )}
+            >
+              <p
+                className={cn(
+                  "px-0.5 text-[11px] font-bold tabular-nums",
+                  isToday ? "text-foreground" : "text-muted-foreground"
+                )}
+              >
+                {cell.day}
+              </p>
+              <div className="flex flex-col gap-0.5">
+                {dayGames.slice(0, 4).map((g) => {
+                  const away = abbr(g, "away");
+                  const home = abbr(g, "home");
+                  const finalish =
+                    g.status === "final" || g.status === "in_progress";
+                  return (
+                    <Link
+                      key={g.id}
+                      href={`/games/${g.id}`}
+                      className="rounded-sm bg-secondary/70 px-1 py-0.5 transition-colors hover:bg-secondary"
+                      title={`${away} @ ${home}`}
+                    >
+                      <span className="flex items-center gap-1">
+                        <TeamLogo
+                          teamKey={g.awayTeamAbbr ?? g.awayTeamId}
+                          size="xs"
+                        />
+                        <span className="min-w-0 flex-1 truncate text-[10px] font-semibold sm:text-[11px]">
+                          {away}
+                          {finalish ? (
+                            <span className="tabular-nums text-muted-foreground">
+                              {" "}
+                              {g.awayScore}
+                            </span>
+                          ) : null}
+                          <span className="text-muted-foreground"> @ </span>
+                          {home}
+                          {finalish ? (
+                            <span className="tabular-nums text-muted-foreground">
+                              {" "}
+                              {g.homeScore}
+                            </span>
+                          ) : null}
+                        </span>
+                      </span>
+                    </Link>
+                  );
+                })}
+                {dayGames.length > 4 ? (
+                  <p className="px-1 text-[10px] font-semibold text-muted-foreground">
+                    +{dayGames.length - 4} more
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </>
+  );
+}
+
+function WeekBoard({
+  weekStart,
+  games,
+}: {
+  weekStart: string;
+  games: GameSummary[];
+}) {
+  const byDate = groupByDate(games);
+  const todayIso = new Date().toISOString().slice(0, 10);
+  const days = Array.from({ length: 7 }, (_, i) => addDaysIso(weekStart, i));
+
+  return (
+    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-7">
+      {days.map((iso) => {
+        const dayGames = byDate.get(iso) ?? [];
+        const isToday = iso === todayIso;
+        const label = new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+          timeZone: "UTC",
+        });
+        return (
+          <div
+            key={iso}
+            className={cn(
+              "flex min-h-[140px] flex-col gap-2 rounded-md border border-border bg-card p-2.5",
+              isToday && "border-foreground/40 ring-1 ring-foreground/20"
+            )}
+          >
+            <p
+              className={cn(
+                "text-[12px] font-bold",
+                isToday ? "text-foreground" : "text-muted-foreground"
+              )}
+            >
+              {label}
+            </p>
+            {dayGames.length === 0 ? (
+              <p className="text-[11px] text-muted-foreground">No games</p>
+            ) : (
+              <div className="flex flex-col gap-1.5">
+                {dayGames.map((g) => {
+                  const away = abbr(g, "away");
+                  const home = abbr(g, "home");
+                  const finalish =
+                    g.status === "final" || g.status === "in_progress";
+                  return (
+                    <Link
+                      key={g.id}
+                      href={`/games/${g.id}`}
+                      className="rounded-sm bg-secondary/70 px-2 py-1.5 transition-colors hover:bg-secondary"
+                    >
+                      <p className="text-[12px] font-semibold leading-tight">
+                        {away}
+                        {finalish ? ` ${g.awayScore}` : ""}
+                        <span className="text-muted-foreground"> @ </span>
+                        {home}
+                        {finalish ? ` ${g.homeScore}` : ""}
+                      </p>
+                      <p className="mt-0.5 text-[10px] text-muted-foreground">
+                        {tipLabel(g)}
+                      </p>
+                    </Link>
+                  );
+                })}
+              </div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function ListBoard({
+  games,
+  hasMore,
+  nextHref,
+}: {
+  games: GameSummary[];
+  hasMore?: boolean;
+  nextHref?: string | null;
+}) {
+  const byDate = groupByDate(games);
+  const dates = [...byDate.keys()].sort();
+
+  if (!dates.length) {
+    return (
+      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+        No upcoming games on the ESPN scoreboard yet.
+      </p>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-4">
+      {dates.map((iso) => (
+        <div key={iso} className="flex flex-col gap-1.5">
+          <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground">
+            {dayHeading(iso)}
+          </h3>
+          <div className="flex flex-col gap-1">
+            {(byDate.get(iso) ?? []).map((game) => (
+              <GameMatchupRow key={game.id} game={game} />
+            ))}
+          </div>
+        </div>
+      ))}
+      {hasMore && nextHref ? (
+        <Link
+          href={nextHref}
+          className="self-center rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold hover:bg-secondary/80"
+        >
+          Show more upcoming
+        </Link>
+      ) : null}
+    </div>
+  );
+}
+
+/** Gamefeed with weekly, monthly, and upcoming list views (ESPN scoreboard). */
+export function Gamefeed({
+  view,
+  season,
+  monthKey,
+  weekStart,
+  weekEnd,
+  monthGames,
+  weekGames,
+  upcomingGames,
+  upcomingHasMore = false,
+  upcomingNextHref = null,
+}: {
+  view: GamefeedView;
+  season: string;
+  monthKey: string;
+  weekStart: string;
+  weekEnd: string;
+  monthGames: GameSummary[];
+  weekGames: GameSummary[];
+  upcomingGames: GameSummary[];
+  upcomingHasMore?: boolean;
+  upcomingNextHref?: string | null;
+}) {
+  const prevMonth = shiftMonthKey(monthKey, -1);
+  const nextMonth = shiftMonthKey(monthKey, 1);
+  const prevWeek = addDaysIso(weekStart, -7);
+  const nextWeek = addDaysIso(weekStart, 7);
+  // Keep month tab aligned with the week being viewed.
+  const weekMonthKey = weekStart.slice(0, 7);
+
+  const subtitle =
+    view === "list"
+      ? `Upcoming tip-offs from ESPN - ${season}`
+      : view === "week"
+        ? `Weekly slate - ${season}`
+        : `Monthly calendar - ${season}`;
+
+  return (
+    <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div>
+          <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+            Scores
+          </h1>
+          <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
+        </div>
+        <ViewTabs
+          view={view}
+          monthKey={view === "week" ? weekMonthKey : monthKey}
+          weekStart={
+            view === "month"
+              ? startOfWeekSundayIso(`${monthKey}-01`)
+              : weekStart
+          }
+        />
+      </div>
+
+      {view === "month" ? (
+        <div className="flex items-center gap-2">
+          <Link
+            href={scoresHref({ view: "month", month: prevMonth })}
+            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          >
+            Prev
+          </Link>
+          <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+            {monthLabel(monthKey)}
+          </p>
+          <Link
+            href={scoresHref({ view: "month", month: nextMonth })}
+            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          >
+            Next
+          </Link>
+        </div>
+      ) : null}
+
+      {view === "week" ? (
+        <div className="flex items-center gap-2">
+          <Link
+            href={scoresHref({ view: "week", week: prevWeek })}
+            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          >
+            Prev
+          </Link>
+          <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+            {weekRangeLabel(weekStart, weekEnd)}
+          </p>
+          <Link
+            href={scoresHref({ view: "week", week: nextWeek })}
+            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          >
+            Next
+          </Link>
+        </div>
+      ) : null}
+
+      {view === "month" ? (
+        <>
+          <MonthGrid monthKey={monthKey} games={monthGames} />
+          {monthGames.length === 0 ? (
+            <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+              No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
+              <Link href={scoresHref({ view: "list" })} className="underline">
+                List
+              </Link>{" "}
+              for upcoming tip-offs.
+            </p>
+          ) : (
+            <p className="text-[12px] text-muted-foreground">
+              {monthGames.length} game{monthGames.length === 1 ? "" : "s"} this
+              month
+            </p>
+          )}
+        </>
+      ) : null}
+
+      {view === "week" ? (
+        <>
+          <WeekBoard weekStart={weekStart} games={weekGames} />
+          {weekGames.length === 0 ? (
+            <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+              No games this week.{" "}
+              <Link href={scoresHref({ view: "list" })} className="underline">
+                See all upcoming
+              </Link>
+              .
+            </p>
+          ) : (
+            <p className="text-[12px] text-muted-foreground">
+              {weekGames.length} game{weekGames.length === 1 ? "" : "s"} this week
+            </p>
+          )}
+        </>
+      ) : null}
+
+      {view === "list" ? (
+        <>
+          <ListBoard
+            games={upcomingGames}
+            hasMore={upcomingHasMore}
+            nextHref={upcomingNextHref}
+          />
+          {upcomingGames.length ? (
+            <p className="text-[12px] text-muted-foreground">
+              Showing {upcomingGames.length} upcoming game
+              {upcomingGames.length === 1 ? "" : "s"}
+              {upcomingHasMore ? " · more available" : ""}
+            </p>
+          ) : null}
+        </>
+      ) : null}
+    </section>
+  );
+}
+
+/** @deprecated Prefer Gamefeed */
+export { Gamefeed as GamefeedCalendar };

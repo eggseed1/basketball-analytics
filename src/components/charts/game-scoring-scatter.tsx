@@ -52,7 +52,7 @@ function AccessibleTooltip({
       <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 tabular-nums">
         <dt className="text-muted-foreground">Score</dt>
         <dd className="text-right">
-          {g.awayScore}–{g.homeScore}
+          {g.awayScore}-{g.homeScore}
         </dd>
         <dt className="text-muted-foreground">Total points</dt>
         <dd className="text-right">{formatNumber(g.totalPoints)}</dd>
@@ -101,7 +101,7 @@ export function GameScoringScatter({ games }: GameScoringScatterProps) {
         <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
           Each marker is a completed game. X is combined scoring; Y is home
           margin (positive = home win). Shape encodes blowouts vs one-possession
-          games — color is not required.
+          games - color is not required.
         </p>
       </div>
 
@@ -119,7 +119,7 @@ export function GameScoringScatter({ games }: GameScoringScatterProps) {
           <svg width="14" height="14" aria-hidden>
             <rect x="3" y="3" width="8" height="8" fill="currentColor" />
           </svg>
-          Competitive (4–10)
+          Competitive (4-10)
         </li>
         <li className="inline-flex items-center gap-1.5">
           <svg width="14" height="14" aria-hidden>

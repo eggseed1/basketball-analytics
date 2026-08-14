@@ -1,0 +1,4882 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2008,
+  "fetchedAt": "2026-08-14T20:06:23.118Z",
+  "apiCount": 443,
+  "rows": [
+    {
+      "date": "2008-12-31T08:00Z",
+      "description": "Named Ron Adams assistant coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-12-30T08:00Z",
+      "description": "Signed center Nenad Krstic.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-12-29T08:00Z",
+      "description": "Assigned center Sean Williams to Colorado of  the D-League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-12-29T08:00Z",
+      "description": "Suspended guard Ricky Davis five games  for violating the terms of the NBA's anti-drug program.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-12-28T08:00Z",
+      "description": "Signed guard Fred Jones.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-12-26T08:00Z",
+      "description": "Assigned forward Malik Hairston to Austin of the NBA D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-12-26T08:00Z",
+      "description": "Assigned forward Alando Tucker to Iowa of the NBA D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-12-26T08:00Z",
+      "description": "Assigned forward Joey Dorsey to Rio Grande  Valley of the NBA D-League.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-12-22T08:00Z",
+      "description": "Signed center Nenad Krstic to an offer  sheet.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-12-22T08:00Z",
+      "description": "Signed guard/forward Malik Hairston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-12-19T08:00Z",
+      "description": "Recalled forward Anthony Tolliver from  Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-12-18T08:00Z",
+      "description": "Transferred guard Monta Ellis to the  inactive list from the suspended list; waived forward Richard  Hendrix.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-12-16T08:00Z",
+      "description": "Recalled guard DeMarcus Nelson from the  Bakersfield Jam of the developmental league.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-12-15T08:00Z",
+      "description": "Waived guard Blake Ahearn.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-12-15T08:00Z",
+      "description": "Fired coach Reggie Theus; named Kenny Natt  interim coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2008-12-14T08:00Z",
+      "description": "Signed center Jake Voskuhl.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-12-13T08:00Z",
+      "description": "Fired coach Maurice Cheeks; named Tony  DiLeo interim coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-12-12T08:00Z",
+      "description": "Signed forward Juwan Howard; waived forward  Dwayne Jones.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-12-12T08:00Z",
+      "description": "Re-signed guard Jeremy Richardson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-12-11T08:00Z",
+      "description": "Recalled center Steven Hill from Tulsa  of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-12-10T08:00Z",
+      "description": "Acquired guards Raja Bell and Sean  Singletary and forward Boris Diaw from the Phoenix Suns for  guard Jason Richardson, forward Jared Dudley and a 2010  conditional second-round pick.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-12-10T08:00Z",
+      "description": "Acquired guard Javaris Crittenton from the  Memphis Grizzlies for a conditional first-round pick; acquired  guard Mike James from the New Orleans Hornets for guard Antonio  Daniels.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-12-10T08:00Z",
+      "description": "Assigned center Cheikh Samb and guard-forward  Sonny Weems to Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-12-10T08:00Z",
+      "description": "Acquired a conditional second-round pick  from the Memphis Grizzlies as part of a three-team trade  involving the Washington Wizards.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2008-12-09T08:00Z",
+      "description": "Signed forward Antonio McDyess.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-12-08T08:00Z",
+      "description": "Fired head coach Randy Whittman; named  former vice president of basketball operations Kevin McHale as  head coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-12-07T08:00Z",
+      "description": "Fired head coach Randy Whittman; named  former vice president of basketball operations Kevin McHale as  head coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-12-06T08:00Z",
+      "description": "Waived forward Jeremy Richardson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-12-03T08:00Z",
+      "description": "Fired coach Sam Mitchell; named Jay Triano  interim coach.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-12-02T08:00Z",
+      "description": "Recalled forward Ian Mahinmi from Austin of  the D-League; assigned forward Anthony Tolliver to Austin.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-11-30T08:00Z",
+      "description": "Assigned guard Blake Ahearn to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-11-25T08:00Z",
+      "description": "Assigned center Hamed Haddadi to Dakota of  the D-League.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2008-11-24T08:00Z",
+      "description": "Signed forward Dwayne Jones.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-11-24T08:00Z",
+      "description": "Fired coach Eddie Jordan and assistant  coach Mike O'Koren; named Ed Tapscott interim coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-11-22T08:00Z",
+      "description": "Fired coach P.J. Carlesimo and assistant coach Paul Westhead; promoted Scott Brooks to interim coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-11-21T08:00Z",
+      "description": "Assigned center Steven Hill to the Tulsa of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-11-21T08:00Z",
+      "description": "Acquired forward Zach Randolph and guard  Mardy Collins from the New York Knicks for forward Tim Thomas  and guarad Cuttino Mobley.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-11-21T08:00Z",
+      "description": "Acquired guard Jamal Crawford from the  New York Knicks for forward Al Harrington.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-11-21T08:00Z",
+      "description": "Assigned guard-forward Bill Walker to Utah of  the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-11-17T08:00Z",
+      "description": "Waived forward Demetris Nichols.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-11-16T08:00Z",
+      "description": "Signed guard Blake Ahearn; waived guard  Desmon Farmer.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-11-14T08:00Z",
+      "description": "Assigned center Ian Mahinmi to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-11-14T08:00Z",
+      "description": "Assigned forward Richard Hendrix and  guard DeMarcus Nelson to Bakersfield of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-11-13T08:00Z",
+      "description": "Signed guard Lindsey Hunter.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-11-11T08:00Z",
+      "description": "Named Larry Harris assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-11-07T08:00Z",
+      "description": "Named Larry Riley assistant general  manager.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-11-04T08:00Z",
+      "description": "Signed center Steven Hill.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-11-03T08:00Z",
+      "description": "Waived guard John Lucas III.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-11-03T08:00Z",
+      "description": "Acquired guard Allen Iverson from the Denver  Nuggets for guard Chauncey Billups, forward Antonio McDyess and  center Cheikh Samb.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-11-03T08:00Z",
+      "description": "Waived forward Juwan Howard.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-10-31T07:00Z",
+      "description": "Signed guard-forward Martell Webster to a multi-year contract extension.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-10-31T07:00Z",
+      "description": "Exercised the third-year contract  options on guard Marco Belinelli and forward Brandon Wright;  declined the fourth-year contract option on guard Marcus  Williams.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-10-31T07:00Z",
+      "description": "Signed forward Jason Maxiell to a contract  extension.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-10-31T07:00Z",
+      "description": "Exercised the fourth-year contract option on  guard Rajon Rondo.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-10-30T07:00Z",
+      "description": "Exercised the fourth-year contract option on  center Josh Boone and the third-year contract options on center  Sean Williams and forward Yi Jianlian; declined the fourth-year  contract option on guard Maurice Ager.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-10-30T07:00Z",
+      "description": "Signed center Andrew Bynum to a multi-year  contract extension.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-10-29T07:00Z",
+      "description": "Exercised the third-year contract option on  center Ian Mahinmi.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-10-29T07:00Z",
+      "description": "Exercised the third-year contract  option on forward Corey Brewer and the fourth-year contract  option on guard Randy Foye.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-10-29T07:00Z",
+      "description": "Signed coach Don Nelson to a contract  extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-10-29T07:00Z",
+      "description": "Exercised the fourth-year contract option on  forward Renaldo Balkman.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-10-27T07:00Z",
+      "description": "Excercised the third-year contract options  on forward-center Oleksiy Pecherov and guard Nick Young.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-10-27T07:00Z",
+      "description": "Waived forward Patrick Ewing Jr.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-10-27T07:00Z",
+      "description": "Waived guard Coby Karl.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-10-27T07:00Z",
+      "description": "Signed forward-center Michael Ruffin.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-10-26T07:00Z",
+      "description": "Waived guard-forward Malik Hairston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-10-26T07:00Z",
+      "description": "Waived center David Padgett and guard Jason  Richards.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-10-24T07:00Z",
+      "description": "Waived guards Eddie Gill and Julius Hodge and  forwards Brian Hamilton and Keith Van Horn.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-10-24T07:00Z",
+      "description": "Waived forward Matt Freije.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-10-24T07:00Z",
+      "description": "Announced they have picked up the 2009-10  contract options on forward Tyrus Thomas, Joakim Noah and guard  Thabo Sefolosha.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Justin Williams.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived guard-forward Devin Green, guard  Salim Stoudamire and center Darryl Watkins.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Jared Reiner.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Dwayne Jones.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Exercised the third-year contract option on  forward Wilson Chandler and the fourth-year contract option on  guard Mardy Collins.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Jelani McCoy.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forwards Austin Croshere and Josh Davis.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived guards Mateen Cleaves and Smush Parker  and forwards Nick Fazekas,  James Mays,and Ruben Patterson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived guard Keith McLeod.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Ronald Dupree.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-10-23T07:00Z",
+      "description": "Waived forward Roger Powell and forward-center  Michael Ruffin.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-10-22T07:00Z",
+      "description": "Waived center Jamal Sampson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-10-22T07:00Z",
+      "description": "Waived guard Joe Crawford and forward C.J.  Giles.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-10-21T07:00Z",
+      "description": "Waived forwards DerMarr Johnson and Linton  Johnson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-10-21T07:00Z",
+      "description": "Waived center Chris Alexander and guard  Derrick Byars.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived forward Charles Gaines.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived forward Antywane Robinson.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived guards Ron Howard and Kevin Kruger.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived guard Brandon Heath.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived guard Vernon Hamilton.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-10-20T07:00Z",
+      "description": "Waived forward Elton Brown and guard Darius  Washington.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-10-19T07:00Z",
+      "description": "Waived guard Dan Dickau.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-10-17T07:00Z",
+      "description": "Waived guard Jamaal Tatum.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-10-16T07:00Z",
+      "description": "Exercised the 2009-10 contract options  on forward Jeff Green and guard-forward Kevin Durant.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2008-10-15T07:00Z",
+      "description": "Exercised the 2009-10 contract options on  forwards Adam Morrison and Jared Dudley.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-10-14T07:00Z",
+      "description": "Waived guards Donell Taylor and Marcus  Williams.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-10-14T07:00Z",
+      "description": "Waived center Marcus Hubbard and guard Frank  Robinson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-10-11T07:00Z",
+      "description": "Suspended guard Monta Ellis 30 games for violating terms of his contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-10-10T07:00Z",
+      "description": "Waived forward Taj McCullough.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-10-10T07:00Z",
+      "description": "Acquired guard Eddie Jones, two future  second-round picks and cash considerations from the Dallas  Mavericks for forward Shawne Williams; signed center Jeff Foster to a contract extension.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-10-09T07:00Z",
+      "description": "Signed center David Harrison.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-10-09T07:00Z",
+      "description": "Waived guard-forward Dion Dowell and  center Justin Williams.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-10-08T07:00Z",
+      "description": "Waived guard Dwayne Mitchell.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-10-08T07:00Z",
+      "description": "Released center Lance Allred and guard  Michael Dickerson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-10-07T07:00Z",
+      "description": "Exercised the 2009-10 contract option on guard  J.J. Redick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-10-07T07:00Z",
+      "description": "Named Mike Dunleavy general manager;  promoted Neil Olshey to assistant general manager.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-10-06T07:00Z",
+      "description": "Waived guards Andre Emmett and Maureece  Rice and forward Cory Underwood.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-10-03T07:00Z",
+      "description": "Signed guard Shaun Livingston; waived guard Tre  Kelley.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-10-03T07:00Z",
+      "description": "Signed forward Juwan Howard.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-10-01T07:00Z",
+      "description": "Signed forward Charles Gaines.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-10-01T07:00Z",
+      "description": "Signed guard Dan Dickau.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-09-30T07:00Z",
+      "description": "Signed center Jamal Sampson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-09-30T07:00Z",
+      "description": "Signed guards Mateen Cleaves, William \"Smush\"  Parker and forwards Nick Fazekas, James Mays and Ruben Patterson .",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-09-29T07:00Z",
+      "description": "Exercised the contract option on guard Ronnie Brewer for the 2009-10 season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-09-29T07:00Z",
+      "description": "Signed forward Cory Underwood.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-09-29T07:00Z",
+      "description": "Signed guard Blake Ahearn, center  Rafael Araujo and forward Chris Richard.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-09-29T07:00Z",
+      "description": "Announced the resignation of general manager Randy  Pfund.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-09-29T07:00Z",
+      "description": "Signed guard Alex Acker.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-09-27T07:00Z",
+      "description": "Signed guards Eddie Gill and Julius Hodge and  forwards Brian Hamilton and Awvee Storey.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-09-27T07:00Z",
+      "description": "Signed center Justin Williams.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-09-26T07:00Z",
+      "description": "Signed guard Gerry McNamara and forwards Britton  Johnsen and Kevin Lyde.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-09-26T07:00Z",
+      "description": "Signed guards Eddie Basden and Tre Kelley and  forwards Omar Barlett and Matt Walsh.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-09-26T07:00Z",
+      "description": "Signed guards Dontell Jefferson, David  Noel and forwards Jelani McCoy, and Curtis Sumpter.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-09-25T07:00Z",
+      "description": "Signed guards Jeremy Richardson and Mike Wilks  and forward Dwayne Jones.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-09-24T07:00Z",
+      "description": "Signed guards Salim Stoudamire and George  Hill.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-09-24T07:00Z",
+      "description": "Named Gregg Polinsky director of player  personnel.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-09-24T07:00Z",
+      "description": "Re-signed center D.J. Mbenga.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-09-24T07:00Z",
+      "description": "Named Mark Price shooting consultant and Duane  Ferrell player relations and programs manager.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-09-23T07:00Z",
+      "description": "Signed guard Juan Dixon.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-09-22T07:00Z",
+      "description": "Signed forwards DerMarr Johnson, Linton  Johnson and Taj McCullough.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-09-12T07:00Z",
+      "description": "Signed forward C.J. Giles.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-09-12T07:00Z",
+      "description": "Waived center Kosta Perovic.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-09-12T07:00Z",
+      "description": "Signed guard Delonte West.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-09-11T07:00Z",
+      "description": "Re-signed center Robert Swift.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-09-11T07:00Z",
+      "description": "Announced the retirement of forward Pat Garrity.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-09-11T07:00Z",
+      "description": "Signed guard Chris Quinn.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-09-06T07:00Z",
+      "description": "Signed running back Darnell Jackson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-09-05T07:00Z",
+      "description": "Signed center Lorenzen Wright.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-09-03T07:00Z",
+      "description": "Waived forward Stephane Lasme.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-09-02T07:00Z",
+      "description": "Signed forward Donyell Marshall.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-09-02T07:00Z",
+      "description": "Signed center Jamaal Magloire.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-08-29T07:00Z",
+      "description": "Acquired forward Patrick Ewing Jr. from the Houston Rockets for the draft rights to center Frederic Weis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-08-27T07:00Z",
+      "description": "Signed guard Kyle Weaver to a multi-year contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-08-27T07:00Z",
+      "description": "Signed forward Luke Jackson, center Steven Hill and guard Jamaal Tatum.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-08-27T07:00Z",
+      "description": "Signed guard Joe Crawford.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-08-25T07:00Z",
+      "description": "Signed guard Sun Yue.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-08-25T07:00Z",
+      "description": "Re-signed forward Devean George.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-08-22T07:00Z",
+      "description": "Re-signed guard Michael Finley.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-08-22T07:00Z",
+      "description": "Named Jeff Ruland assistant coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-08-22T07:00Z",
+      "description": "Signed guard J.R. Smith to a multi-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-08-22T07:00Z",
+      "description": "Signed forward Darius Miles.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-08-21T07:00Z",
+      "description": "Re-signed forward Dorell Wright.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-08-20T07:00Z",
+      "description": "Waived forward Donyell Marshall.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-08-20T07:00Z",
+      "description": "Signed center Theo Ratliff.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-08-18T07:00Z",
+      "description": "Re-signed guard/forward Andre Iguodala.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-08-18T07:00Z",
+      "description": "Signed center Paul Davis.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-08-15T07:00Z",
+      "description": "Waived forward Bobby Jones.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-08-14T07:00Z",
+      "description": "Signed center Francisco Elson.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-08-14T07:00Z",
+      "description": "Signed forward Josh Powell.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-08-13T07:00Z",
+      "description": "Acquired forward Desmond Mason from the Milwaukee Bucks and forward Joe Smith from the Cleveland Cavaliers in a three-team trade.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-08-13T07:00Z",
+      "description": "Acquired guard Luke Ridnour and guard-forward Adrian Griffin from Oklahoma City and guard Damon Jones from the Cleveland Cavaliers in a three-team trade.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-08-13T07:00Z",
+      "description": "Acquired guard Mo Williams from the Milwaukee Bucks in a three-team trade involving Oklahoma City.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-08-11T07:00Z",
+      "description": "Traded the draft rights to guard Kyle Weaver to Oklahoma City for a 2009 second-round pick.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-08-11T07:00Z",
+      "description": "Signed guard Thomas Gardner and center Othello Hunter.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-08-07T07:00Z",
+      "description": "Signed forward Yakhouba Diawara.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-08-07T07:00Z",
+      "description": "Signed guard Jason Williams.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-08-06T07:00Z",
+      "description": "Signed guard Shannon Brown.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-08-06T07:00Z",
+      "description": "Signed forward Walter Sharpe.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-08-05T07:00Z",
+      "description": "Exercised the contract options on guards Rodney Stuckey and Arron Afflalo.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-08-04T07:00Z",
+      "description": "Signed center Kwame Brown.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-08-04T07:00Z",
+      "description": "Signed guard Tarence Kinsey.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-08-01T07:00Z",
+      "description": "Signed guard Dwayne Mitchell.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-07-31T07:00Z",
+      "description": "Named Dean Cooper assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-31T07:00Z",
+      "description": "Signed forward Brian Skinner.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-31T07:00Z",
+      "description": "Signed forward Luol Deng to a multi-year contract extension; waived guard JamesOn Curry.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-07-30T07:00Z",
+      "description": "Named Roy Rogers assistant coach.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-07-30T07:00Z",
+      "description": "Waived forward Josh Powell.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-30T07:00Z",
+      "description": "Signed guard Will Bynum.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-07-30T07:00Z",
+      "description": "Signed guard-forward Dahntay Jones.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-07-30T07:00Z",
+      "description": "Signed center Randolph Morris.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-07-29T07:00Z",
+      "description": "Signed guard Kareem Rush.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-07-29T07:00Z",
+      "description": "Waived forward James Augustine.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-07-29T07:00Z",
+      "description": "Re-signed forward Ryan Gomes.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-28T07:00Z",
+      "description": "Signed guard Will Solomon.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-28T07:00Z",
+      "description": "Signed guard Royal Ivey.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-07-28T07:00Z",
+      "description": "Re-signed guard Sasha Vujacic to a multi-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-07-28T07:00Z",
+      "description": "Re-signed center Andris Biedrins to a multi-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-28T07:00Z",
+      "description": "Acquired forward Renaldo Balkman from  the New York Knicks for guard Taurean Green, forward Bobby  Jones and a 2010 second round draft pick.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-07-25T07:00Z",
+      "description": "Re-signed center Ryan Hollins.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-07-25T07:00Z",
+      "description": "Named Chad Kammerer assistant coach.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-07-24T07:00Z",
+      "description": "Signed guard Anthony Roberson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-07-24T07:00Z",
+      "description": "Signed forward Richard Hendrix; re-signed guard Monta Ellis to a multi-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-24T07:00Z",
+      "description": "Signed forward Chris Anderson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-07-23T07:00Z",
+      "description": "Acquired guard Brevin Knight from the Los Angeles Clippers for guard Jason Hart.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-07-23T07:00Z",
+      "description": "Signed forward Anthony Tolliver.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-07-22T07:00Z",
+      "description": "Promoted Maurizio Gherardini to senior vice president of basketball operations, Marc Eversley to assistant general manager of player development, Masai Ujiri to assistant general manager of player personnel, Jim Kelly to senior director of player personnel, Steve Fruitman to senior director of basketball administration and Micah Nori to director of NBA scouting.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-22T07:00Z",
+      "description": "Re-signed center Kurt Thomas.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-07-22T07:00Z",
+      "description": "Signed forward-guard Nicolas Batum.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-07-22T07:00Z",
+      "description": "Agreed to terms with point guard Sebastian Telfair.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-22T07:00Z",
+      "description": "Acquired guard Marcus Williams from the New Jersey Nets for a conditional first-round pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-21T07:00Z",
+      "description": "Acquired guard Keyon Dooling from the Orlando Magic for cash considerations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-07-19T07:00Z",
+      "description": "Signed forward Ronny Turiaf to a four-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-18T07:00Z",
+      "description": "Signed guard Deron Williams to a multi-year contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-07-18T07:00Z",
+      "description": "Signed forward Marreese Speights.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-07-17T07:00Z",
+      "description": "Re-signed forward Craig Smith.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-17T07:00Z",
+      "description": "Signed guard Tyronn Lue and forward Malik Allen.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-07-16T07:00Z",
+      "description": "Signed guard Roko Ukic to a three-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-16T07:00Z",
+      "description": "Signed guard Daniel Gibson to a multi-year contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-07-16T07:00Z",
+      "description": "Signed center Patrick O'Bryant.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-07-15T07:00Z",
+      "description": "Announced the resignation of chief operating officer Mike Golub.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-07-15T07:00Z",
+      "description": "Signed guard Anthony Johnson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-07-15T07:00Z",
+      "description": "Acquired forward Marcus Camby from the Denver Nuggets for the right to switch second-round picks in 2010; signed center DeAndre Jordan and guard Mike Taylor.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-15T07:00Z",
+      "description": "Signed guard Brandon Rush and center Roy Hibbert.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-07-15T07:00Z",
+      "description": "Signed forward Anthony Randolph.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-13T07:00Z",
+      "description": "Re-signed guard Gilbert Arenas.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-07-12T07:00Z",
+      "description": "Named Gord Herbert an assistant coach.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Signed center Nathan Jawai to a two-year deal.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Signed guard Roger Mason.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Agreed to terms with forward Eduardo Najera and guard-forward Jarvis Hayes.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Signed forward Kevin Love.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Signed center Andrew Bogut to a five-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-07-11T07:00Z",
+      "description": "Re-signed guard Antoine Wright; signed guard Keith McLeod and forward James Singleton.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-07-10T07:00Z",
+      "description": "Signed forward Kosta Koufos.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-07-10T07:00Z",
+      "description": "Signed guard Mickael Pietrus.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-07-10T07:00Z",
+      "description": "Signed guard Baron Davis to a multi-year contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-10T07:00Z",
+      "description": "Signed guard Brent Barry to a two-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-07-10T07:00Z",
+      "description": "Signed forward Corey Maggette.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Re-signed guard Jose Calderon to a multi-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed center JaVale McGee.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed guard Beno Udrih to a multi-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed forward Elton Brand to a five-year contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed guard Chris Duhon.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed guard Chris Douglas-Roberts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Acquired center Calvin Booth, forward Rodney Carney, a conditional first-round pick and cash considerations from the Philadelphia 76ers for a 2010 second-round pick.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed forward Luc Richard Mbah A Moute to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Signed guard-forward James Jones and guard Mario Chalmers.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Renounced the rights to free agents guards Shaun Livingston, Dan Dickau, Smush Parker, forward James Singleton and center Boniface N'Dong.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Acquired guard T.J. Ford, centers Rasho Nesterovic and Roy Hibbert and forward Maceo Baston from the Toronto Raptors for forwards Jermaine O'Neal and Nathan Jawai; acquired guards Jarrett Jack and Brandon Rush and forward Josh McRoberts from the Portland Trail Blazers for guard Jerryd Bayless and forward Ike Diogu.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-07-09T07:00Z",
+      "description": "Re-signed guard Jose Juan Barea; signed center DeSagana Diop.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed guard D.J. Augustin and center Alexis Ajinca.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed guard O.J. Mayo and forward Darrell Arthur.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed guard-forward Hassan Adams to a two-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed forward Jason Thompson to a multi-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed forward Danilo Gallinari to a multi-year contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-07-08T07:00Z",
+      "description": "Signed forward Joe Alexander to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-07-07T07:00Z",
+      "description": "Named Herb Brown assistant coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-07-07T07:00Z",
+      "description": "Named Joe Prunty assistant coach.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-07-05T07:00Z",
+      "description": "Waived guard Tyrelle Blair and forward Pete  Campbell.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-07-04T07:00Z",
+      "description": "Signed guard Russell Westbrook and forward D.J. White to multi-year contracts.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-07-03T07:00Z",
+      "description": "Promoted Richard Smith to director of basketball operations; named David Fredman scout.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-07-03T07:00Z",
+      "description": "Signed guard Courtney Lee.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-07-03T07:00Z",
+      "description": "Signed guard Gerald Green.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-07-03T07:00Z",
+      "description": "Named Del Harris, Bernie Bickerstaff and Bob Ociepka assistant coaches.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-07-02T07:00Z",
+      "description": "Signed center Brook Lopez and forward Ryan Anderson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-07-02T07:00Z",
+      "description": "Signed forward Michael Beasley, center David Padgett and guard Jason Richards.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-07-02T07:00Z",
+      "description": "Signed guard Eric Gordon.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-07-01T07:00Z",
+      "description": "Extended qualifying contract offers to centers Emeka Okafor and Ryan Hollins; exercised the contract option on forward Jermareo Davidson; declined the contract option on forward Othella Harrington.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-07-01T07:00Z",
+      "description": "Signed guard Rudy Fernandez.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-07-01T07:00Z",
+      "description": "Named John Nash pro personnel scout.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-06-30T07:00Z",
+      "description": "Extended qualifying offers to forwards Ryan Gomes, Chris Richard and Craig Smith.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-06-30T07:00Z",
+      "description": "Extended qualifying offers to guard Sasha Vujacic and forward Ronny Turiaf.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-06-28T07:00Z",
+      "description": "Exercised its option on forward Paul Millsap; tendered a qualifying offer to guard C.J. Miles.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired guards Marko Jaric and Greg  Buckner, forward Antoine Walker and the draft rights to guard O.J. Mayo from the Minnesota Timberwolves for guard Mike Miller, forward Brian Cardinal, center Jason Collins and the draft  rights to forward Kevin Love; acquired the draft rights to  forward Darrell Arthur from the Portland Trail Blazers.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired a second-round draft pick in  2009 from the Denver Nuggets and two future second-round draft  picks from the Chicago Bulls; acquired the draft rights to  forward Nicolad Batum from the Houston Rockets.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired forwards Yi Jianlian and Bobby Simmons from the New Jersey Nets for forward Richard  Jefferson.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to guard Mario Chalmers from the Minnesota Timberwolves for two future second-round  draft picks and cash considerations.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to guard Mike Taylor from the Portland Trail Blazers for a second-round draft pick in 2009.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to forward Donte  Greene and a second-round draft pick in 2009 from the Memphis Grizzlies; acquired the draft rights to forward Joey Dorsey from the Portland Trail Blazers.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to forwards Trent Plaisted and Walter Sharpe from the Seattle SuperSonics for the draft rights to forward D.J. White.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to guard Sonny Weems from the Chicago Bulls.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to forward  Darnell Jackson from the Miami Heat for a second-round draft pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to center Omer Asik from the Portland Trail Blazers for two future second-round draft picks.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-06-26T07:00Z",
+      "description": "Acquired the draft rights to forward Bill  Walker from the Washington Wizards for cash considerations.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-06-25T07:00Z",
+      "description": "Acquired the 20th pick in the NBA draft from the Denver Nuggets for a future protected first-round pick.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-06-25T07:00Z",
+      "description": "Extended qualifying offers to forward Andre Iguodala and guard Lou Williams.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-06-25T07:00Z",
+      "description": "Extended qualifying offers to forwards Dorell Wright, Kasib Powell and guard Chris Quinn.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-06-20T07:00Z",
+      "description": "Named Phil Weber and Dan D'Antoni assistant coaches.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-06-20T07:00Z",
+      "description": "Announced forward Trevor Ariza exercised the player option on his contract for the 2008-09 season.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-06-18T07:00Z",
+      "description": "Released forward Jorge Garbajosa.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-06-13T07:00Z",
+      "description": "Named David Fizdale assistant coach.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-06-13T07:00Z",
+      "description": "Re-signed coach Mike Woodson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-06-11T07:00Z",
+      "description": "Named Vinny Del Negro coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-06-10T07:00Z",
+      "description": "Named Billy McKinney director of scouting.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-06-10T07:00Z",
+      "description": "Named Michael Curry coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-06-09T07:00Z",
+      "description": "Signed senior vice president Tony DiLeo and director of player personnel Courtney Witte to contract extensions.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-06-09T07:00Z",
+      "description": "Named Sam Perkins vice president of player relations.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-06-06T07:00Z",
+      "description": "Announced center Calvin Booth has exercised the player option on his contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-06-04T07:00Z",
+      "description": "Named Dave Hanners, Phil Ford and Jeff Capel assistant coaches, LaSalle Thompson strength and conditioning coach and Steve Stricker athletic trainer.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-06-03T07:00Z",
+      "description": "Fired coach Flip Saunders.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-06-02T07:00Z",
+      "description": "Signed general manager Otis Smith to a multi-year contract extension and assistant general manager Dave Twardzik to a contract extension.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2008-05-28T07:00Z",
+      "description": "Named Rick Sund general manager.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-05-14T07:00Z",
+      "description": "Exercised the contract option on forward Jamario Moon.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-05-14T07:00Z",
+      "description": "Named Jim Boylan, Lionel Hollins, Kelvin Sampson and Joe Wolf assistant coaches.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-05-13T07:00Z",
+      "description": "Named Mike D'Antoni coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-05-13T07:00Z",
+      "description": "Named Marc Boff head athletic trainer; Jon Horst director of basketball operations and Dave Dean director of basketball administration.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-05-12T07:00Z",
+      "description": "Exercised the contract option on forward Stephen Graham.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-05-10T07:00Z",
+      "description": "Named Rick Carlisle coach.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-05-08T07:00Z",
+      "description": "Promoted Kiki Vandeweghe to general manager.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-04-30T07:00Z",
+      "description": "Fired coach Avery Johnson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-04-29T07:00Z",
+      "description": "Named Larry Brown coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-04-28T07:00Z",
+      "description": "Named Scott Hall senior director of communications; promoted Brian Sereno to director of public relations.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-04-28T07:00Z",
+      "description": "Announced the resignation of coach Pat Riley; promoted Erik Spoelstra to coach.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-04-26T07:00Z",
+      "description": "Fired coach Sam Vincent.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-04-24T07:00Z",
+      "description": "Announced the resignation of executive vice president Larry Brown.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-04-21T07:00Z",
+      "description": "Named Scott Skiles coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-04-21T07:00Z",
+      "description": "Named Scott Perry vice president of basketball operations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-04-18T07:00Z",
+      "description": "Fired coach Isiah Thomas.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-04-18T07:00Z",
+      "description": "Named Jeff Weltman assistant general manager.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-04-16T07:00Z",
+      "description": "Recalled guard Taurean Green from Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-04-16T07:00Z",
+      "description": "Signed guard Billy Thomas for the remainder of the season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-04-13T07:00Z",
+      "description": "Re-signed forward Ronald Dupree.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-04-11T07:00Z",
+      "description": "Named John Hammond general manager.  San Antonio Spurs -Signed forward DerMarr Johnson.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-04-11T07:00Z",
+      "description": "Signed guard Blake Ahearn for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-04-11T07:00Z",
+      "description": "Signed center Loren Woods for the remainder of the season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-04-11T07:00Z",
+      "description": "Signed guard-forward Bobby Jones for the remainder of the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-04-10T07:00Z",
+      "description": "Signed forward Stephane Lasme for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-04-08T07:00Z",
+      "description": "Signed forward Kasib Powell for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-04-08T07:00Z",
+      "description": "Recalled center Patrick O'Bryant from Bakersfield of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-04-07T07:00Z",
+      "description": "Assigned guard Morris Almond to Utah of the  D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-04-07T07:00Z",
+      "description": "Recalled forward Josh McRoberts from Idaho of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-04-07T07:00Z",
+      "description": "Recalled guard Alando Tucker from Albuquerque of the D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-04-05T07:00Z",
+      "description": "Assigned guard Coby Karl to Los Angeles of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-04-05T07:00Z",
+      "description": "Assigned guard Taurean Green to Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-04-04T07:00Z",
+      "description": "Signed center Lance Allred for the remainder of the season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-04-03T07:00Z",
+      "description": "Signed guard Ronald DuPree to a 10-day contract; assigned center Mouhamed Sene to Idaho of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-04-02T07:00Z",
+      "description": "Named Donnie Walsh president of basketball operations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2008-04-01T07:00Z",
+      "description": "Signed forward Bobby Jones to a 10-day contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-04-01T07:00Z",
+      "description": "Signed forward Ira Newble.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-04-01T07:00Z",
+      "description": "Signed center Loren Woods to a second 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-04-01T07:00Z",
+      "description": "Recalled guard Shannon Brown and forward Cedric Simmons from Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-03-31T07:00Z",
+      "description": "Signed guard Blake Ahearn and forward Stephane Lasme to second 10-day contracts.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-03-29T07:00Z",
+      "description": "Recalled guard Morris Almond and center Kyrylo Fesenko from Utah of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-03-28T07:00Z",
+      "description": "Signed forward Marcus Williams; waived forward Aaron Williams.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-03-27T07:00Z",
+      "description": "Signed forward Linton Johnson to a 10-day contract; waived guard Darrick Martin.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-03-26T07:00Z",
+      "description": "Announced the retirement of forward Chris Webber.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-03-24T07:00Z",
+      "description": "Signed free agent guard Chris Whitney, who had been with the Orlando Magic.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2008-03-24T07:00Z",
+      "description": "Signed guard Brent Barry.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-03-24T07:00Z",
+      "description": "Announced the resignation of president and CEO Donnie Walsh, effective at the end of the season.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-03-21T07:00Z",
+      "description": "Signed forward Stephane Lasme and guard Blake Ahearn to 10-day contracts.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-03-21T07:00Z",
+      "description": "Signed forward Ira Newble to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-03-21T07:00Z",
+      "description": "Signed center Loren Woods to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-03-18T07:00Z",
+      "description": "Re-signed forward Nick Fazekas.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-03-17T07:00Z",
+      "description": "Assigned forward Josh McRoberts to Idaho of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-03-14T07:00Z",
+      "description": "Recalled center Mouhamed Sene from Idaho of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-03-14T07:00Z",
+      "description": "Waived forward David Noel.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-03-14T07:00Z",
+      "description": "Assigned forwards Shannon Brown and Cedric Simmons to Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-03-13T07:00Z",
+      "description": "Signed center Lance Allred to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-03-12T07:00Z",
+      "description": "Signed forward Bobby Jones to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-03-12T07:00Z",
+      "description": "Signed guard Smush Parker.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-03-11T07:00Z",
+      "description": "Signed guard Mike Wilks to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-03-11T07:00Z",
+      "description": "Exercised the 2008-09 contract option for coach Don Nelson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-03-10T07:00Z",
+      "description": "Recalled center Kosta Perovic from Bakersfield of the D-League; assigned center Patrick O'Bryant to Bakersfield.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-03-10T07:00Z",
+      "description": "Signed guard Jeremy Richardson for remainder of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-03-08T08:00Z",
+      "description": "Recalled guard Daequan Cook and center Joel Anthony from the D-League.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-03-08T08:00Z",
+      "description": "Signed forward Nick Fazekas to a second 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-03-07T08:00Z",
+      "description": "Suspended center David Harrison one game for conduct detrimental to the team.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-03-07T08:00Z",
+      "description": "Signed center Justin Williams to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-03-05T08:00Z",
+      "description": "Signed forward Chris Andersen.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2008-03-04T08:00Z",
+      "description": "Signed guard Gordan Giricek",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-03-04T08:00Z",
+      "description": "Signed center Theo Ratliff.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-03-04T08:00Z",
+      "description": "Signed guard Tyronn Lue.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-03-04T08:00Z",
+      "description": "Assigned guard Gabe Pruitt to Utah of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-03-03T08:00Z",
+      "description": "Assigned center Kosta Perovic to Bakersfield of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-03-03T08:00Z",
+      "description": "Signed forward Kaniel Dickens and guard Billy Thomas to 10-day contracts.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-03-01T08:00Z",
+      "description": "Signed guard Andre Barrett to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-03-01T08:00Z",
+      "description": "Signed guard Ronald Murray.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Named John Lucas development consultant for the remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Waived forward Ira Newble.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Waived guard Gordan Giricek.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Waived center Theo Ratliff.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Assigned forward Demetris Nichols to Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-02-29T08:00Z",
+      "description": "Signed guard-forward Jeremy Richardson to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-02-28T08:00Z",
+      "description": "Waived guard Sam Cassell.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-02-27T08:00Z",
+      "description": "Assigned guard Daequan Cook and center Joel Anthony to Iowa of the D-League.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2008-02-27T08:00Z",
+      "description": "Signed forward Nick Fazekas to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-02-27T08:00Z",
+      "description": "Signed forward P.J. Brown.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2008-02-26T08:00Z",
+      "description": "Signed guard-forward Bobby Jones to a 10-day contract; waived guard Adam Haluska.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-02-26T08:00Z",
+      "description": "Signed center Jamaal Magloire.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-02-22T08:00Z",
+      "description": "Waived guard Ronald Murray.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-02-22T08:00Z",
+      "description": "Signed forward Kaniel Dickens and guard Billy Thomas.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired forward Marcus Vinicius from the New Orleans Hornets and the draft rights to forward Malick Badiane from the Houston Rockets in a three-team trade.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired forward Donyell Marshall and guard Ira Newble from the Cleveland Cavaliers and forward Adrian Griffin from the Chicago Bulls in a three-team trade; waived guard Brent Barry.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired guard Von Wafer from the Denver Nuggets for guard Taurean Green.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired guard-forward Gerald Green from the Minnesota Timberwolves for guard Kirk Snyder; acquired guards Bobby Jackson and Adam Haluska and a 2008 second-round pick from the New Orleans Hornets and the draft rights to forward Sergei Lishouk from the Memphis Grizzlies in a three-team trade.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired guard Juan Dixon from the Toronto Raptors for center Primoz Brezec.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired forwards-centers Ben Wallace and Joe Smith and a 2009 second-round pick from the Chicago Bulls and guard-forward Wally Szczerbiak and guard Delonte West from the Seattle SuperSonics in a three-team trade.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired forward-center Drew Gooden, forward Cedric Simmons and guards Larry Hughes and Shannon Brown from the Cleveland Cavaliers in a three-team trade.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-02-21T08:00Z",
+      "description": "Acquired guard Mike James and guard-forward Bonzi Wells from the Houston Rockets in a three-team trade.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2008-02-20T08:00Z",
+      "description": "Acquired forward Kurt Thomas from the Seattle SuperSonics for center Francisco Elson, guard Brent Barry and a 2009 first-round pick.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-02-19T08:00Z",
+      "description": "Acquired guards Devin Harris, Trenton Hassell and Maurice Ager, center DeSagana Diop, forward Keith Van Horn, first-round picks in 2008 and 2010 and cash considerations from the Dallas Mavericks for guard Jason Kidd and forwards Antoine Wright and Malik Allen.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-02-19T08:00Z",
+      "description": "Recalled guard Coby Karl from Los Angeles of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-02-19T08:00Z",
+      "description": "Waived forward Nick Fazekas.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-02-18T08:00Z",
+      "description": "Recalled center Chris Richard from Sioux Falls of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-02-18T08:00Z",
+      "description": "Signed guard Jeremy Richardson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-02-16T08:00Z",
+      "description": "Acquired guard Mike Bibby from the Sacramento Kings for guards Anthony Johnson and Tyronn Lue, forwards Lorenzen Wright and Shelden Williams and a 2008 second-round pick.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-02-14T08:00Z",
+      "description": "Assigned guard Coby Karl to Los Angeles of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-02-13T08:00Z",
+      "description": "Recalled forward Nick Fazekas from Tulsa of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-02-12T08:00Z",
+      "description": "Recalled guard Mickael Gelabale from Idaho of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-02-11T08:00Z",
+      "description": "Signed center D.J. Mbenga.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-02-08T08:00Z",
+      "description": "Recalled forward Jermareo Davidson from Sioux Falls of the D-League.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-02-07T08:00Z",
+      "description": "Waived forward Viktor Khryapa.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-02-06T08:00Z",
+      "description": "Acquired center Shaquille O'Neal from the Miami Heat for forward Shawn Marion and guard Marcus Banks.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-02-04T08:00Z",
+      "description": "Acquired forward Stromile Swift from the Memphis Grizzlies for center Jason Collins and cash  considerations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-02-03T08:00Z",
+      "description": "Signed guard Damon Stoudamire.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-02-03T08:00Z",
+      "description": "Recalled forward Josh McRoberts from Idaho of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-02-01T08:00Z",
+      "description": "Assigned center Ian Mahinmi to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-02-01T08:00Z",
+      "description": "Recalled guard Ramon Sessions from Tulsa of the D-League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-02-01T08:00Z",
+      "description": "Acquired forward-center Pau Gasol and a 2010 second-round pick from the Memphis Grizzlies for center Kwame Brown, guards Aaron McKie and Javaris Crittenton, the draft rights to Marc Gasol and first-round picks in 2008 and 2010; signed C D.J. Mbenga to second 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-01-31T08:00Z",
+      "description": "Signed guard Earl Boykins for the remainder of the season.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-01-30T08:00Z",
+      "description": "Named Michael Brown assistant coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-01-29T08:00Z",
+      "description": "Signed forward Chris Webber; waived guard Troy Hudson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-01-29T08:00Z",
+      "description": "Assigned center Cheikh Samb to Fort Wayne of the D-League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2008-01-28T08:00Z",
+      "description": "Assigned guard Mickael Gelabale to Idaho of the D-League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2008-01-28T08:00Z",
+      "description": "Recalled forward Ian Mahinmi from Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-01-28T08:00Z",
+      "description": "Assigned center Chris Richard to Sioux Falls of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2008-01-25T08:00Z",
+      "description": "Assigned guard Morris Almond to Utah of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-01-24T08:00Z",
+      "description": "Assigned forward Jermareo Davidson to Sioux Falls of the D-League.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2008-01-22T08:00Z",
+      "description": "Suspended center-forward Zaza Pachulia one game for conduct detrimental to the team.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2008-01-21T08:00Z",
+      "description": "Recalled swingman Alando Tucker from Albuquerque of the D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-01-21T08:00Z",
+      "description": "Signed center D.J. Mbenga to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-01-20T08:00Z",
+      "description": "Signed guard Jeremy Richardson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-01-20T08:00Z",
+      "description": "Assigned guard-forward David Noel to Tulsa of the D-League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2008-01-20T08:00Z",
+      "description": "Signed center D.J. Mbenga to a 10-day  contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2008-01-18T08:00Z",
+      "description": "Signed guard Guillermo Diaz to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-01-18T08:00Z",
+      "description": "Signed guard C.J. Watson to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-01-17T08:00Z",
+      "description": "Recalled guard Shannon Brown from Rio Grande Valley of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-01-14T08:00Z",
+      "description": "Signed coach Mike Brown to a contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-01-11T08:00Z",
+      "description": "Assigned forward Alando Tucker to Albuquerque of the D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2008-01-11T08:00Z",
+      "description": "Recalled forward Cedric Simmons from Rio Grande Valley of the D-League; assigned guard Shannon Brown to Rio Grande Valley.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-01-10T08:00Z",
+      "description": "Signed forward Bobby Jones to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2008-01-10T08:00Z",
+      "description": "Signed swingman Jeremy Richardson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-01-10T08:00Z",
+      "description": "Recalled forward Cedric Simmons from  Rio Grande Valley of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2008-01-09T08:00Z",
+      "description": "Assigned forward Josh McRoberts to Idaho of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2008-01-08T08:00Z",
+      "description": "Recalled guard Morris Almond from Utah of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2008-01-08T08:00Z",
+      "description": "Signed guard Guillermo Diaz to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-01-08T08:00Z",
+      "description": "Signed guard C.J. Watson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-01-07T08:00Z",
+      "description": "Waived guards DerMarr Johnson and Keith Langford.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2008-01-07T08:00Z",
+      "description": "Waived guard Billy Thomas.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2008-01-07T08:00Z",
+      "description": "Waived guard Richie Frahm.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2008-01-07T08:00Z",
+      "description": "Waived guard-forward Bobby Jones.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2008-01-07T08:00Z",
+      "description": "Recalled forward Demetris Nichols from Iowa of the D-League; assigned guard JamesOn Curry to Iowa.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2008-01-06T08:00Z",
+      "description": "Recalled center Kosta Perovic from Bakersfield of the D-League; waived center D.J. Mbenga.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2008-01-06T08:00Z",
+      "description": "Recalled guard Maurice Ager from Tulsa of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2008-01-02T08:00Z",
+      "description": "Assigned forward Cedric Simmons to Rio Grande Valley of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    }
+  ]
+}

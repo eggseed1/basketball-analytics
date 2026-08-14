@@ -31,6 +31,13 @@ import {
   type EspnTeamStatsRow,
   type TeamSeasonTotals,
 } from "@/data/transformers/espn";
+import {
+  aggregatePlayerSeasonFromGames,
+  transformEspnAthleteCareerStats,
+  transformEspnAthleteProfile,
+  type EspnAthleteCareerStatsResponse,
+  type EspnAthleteProfileResponse,
+} from "@/data/transformers/espn-career";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 const SITE_API = "https://site.api.espn.com";
@@ -59,6 +66,13 @@ interface TeamsResponse {
 interface GameLogResponse {
   names?: string[];
   events?: Record<string, EspnGameLogEvent>;
+  seasonTypes?: Array<{
+    displayName?: string;
+    categories?: Array<{
+      displayName?: string;
+      events?: Array<{ eventId?: string; stats?: string[] }>;
+    }>;
+  }>;
   filters?: Array<{
     name?: string;
     options?: Array<{ value?: string; displayValue?: string }>;
@@ -84,6 +98,7 @@ export class NBADataProvider implements BasketballDataProvider {
   readonly name = "nba";
 
   private playerSeasonCache = new Map<string, Promise<PlayerSeason[]>>();
+  private careerCache = new Map<string, Promise<PlayerSeason[]>>();
   private teamTotalsCache = new Map<
     string,
     Promise<Map<string, TeamSeasonTotals>>
@@ -113,15 +128,25 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   async getPlayer(playerId: string): Promise<Player | null> {
+    // Prefer ESPN athlete profile so height/weight/DOB/draft populate.
+    try {
+      const url = `${SITE_WEB}/apis/common/v3/sports/basketball/nba/athletes/${playerId}`;
+      const payload = await espnFetchJson<EspnAthleteProfileResponse>(url, {
+        ttlMs: 1000 * 60 * 60 * 12,
+        retries: 1,
+      });
+      const profile = transformEspnAthleteProfile(payload, playerId);
+      if (profile) return profile;
+    } catch {
+      // fall through
+    }
+
     const players = await this.getPlayers();
     const hit = players.find((p) => p.id === playerId);
     if (hit) return hit;
 
-    // Fallback: load gamelog metadata season list via a lightweight season pull.
-    const season = defaultCanonicalSeasons(1)[0];
-    const row = (await this.getPlayerSeasons(season)).find(
-      (p) => p.playerId === playerId
-    );
+    const career = await this.getPlayerCareerSeasons(playerId);
+    const row = career[0];
     if (!row) return null;
     return {
       id: row.playerId,
@@ -157,8 +182,33 @@ export class NBADataProvider implements BasketballDataProvider {
     playerId: string,
     season: string
   ): Promise<PlayerSeason | null> {
-    const rows = await this.loadPlayerSeasonsForSeason(season);
-    return rows.find((row) => row.playerId === playerId) ?? null;
+    const [career, boardRows] = await Promise.all([
+      this.getPlayerCareerSeasons(playerId),
+      this.loadPlayerSeasonsForSeason(season).catch(() => [] as PlayerSeason[]),
+    ]);
+    const fromCareer = career.find((row) => row.season === season) ?? null;
+    const fromBoard =
+      boardRows.find((row) => row.playerId === playerId) ?? null;
+
+    if (fromCareer || fromBoard) {
+      return mergeCareerWithBoard(fromCareer, fromBoard);
+    }
+
+    const games = await this.getPlayerGameLog(playerId, season);
+    const player = await this.getPlayer(playerId);
+    return aggregatePlayerSeasonFromGames(
+      games,
+      player?.fullName ?? playerId
+    );
+  }
+
+  async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
+    const existing = this.careerCache.get(playerId);
+    if (existing) return existing;
+
+    const promise = this.fetchPlayerCareerSeasons(playerId);
+    this.careerCache.set(playerId, promise);
+    return promise;
   }
 
   async getPlayerGameLog(
@@ -169,16 +219,51 @@ export class NBADataProvider implements BasketballDataProvider {
     const url = `${SITE_WEB}/apis/common/v3/sports/basketball/nba/athletes/${playerId}/gamelog?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
     const payload = await espnFetchJson<GameLogResponse>(url);
     const names = payload.names ?? [];
-    const events = Object.values(payload.events ?? {});
+    const metaById = payload.events ?? {};
 
-    const seasonRow = await this.getPlayerSeason(playerId, season);
+    const preferred =
+      payload.seasonTypes?.filter((st) =>
+        /regular season/i.test(st.displayName ?? "")
+      ) ?? [];
+    const seasonBlocks =
+      preferred.length > 0 ? preferred : payload.seasonTypes ?? [];
+
+    const rows: PlayerGame[] = [];
+    const seasonRow = await this.getPlayerSeasonLite(playerId, season);
     const teamId = seasonRow?.teamId ?? "";
 
-    return events
-      .map((event) =>
-        transformEspnPlayerGame(event, names, playerId, teamId, season)
-      )
-      .sort((a, b) => b.gameDate.localeCompare(a.gameDate));
+    for (const block of seasonBlocks) {
+      for (const category of block.categories ?? []) {
+        for (const entry of category.events ?? []) {
+          const eventId = entry.eventId;
+          if (!eventId) continue;
+          const meta = metaById[eventId] ?? { id: eventId };
+          const event: EspnGameLogEvent = {
+            ...meta,
+            id: eventId,
+            stats: entry.stats ?? meta.stats,
+          };
+          const game = transformEspnPlayerGame(
+            event,
+            names,
+            playerId,
+            teamId,
+            season
+          );
+          const denom =
+            2 * (game.fieldGoalsAttempted + 0.44 * game.freeThrowsAttempted);
+          const trueShootingPct = denom > 0 ? game.points / denom : 0;
+          const effectiveFieldGoalPct =
+            game.fieldGoalsAttempted > 0
+              ? (game.fieldGoalsMade + 0.5 * game.threePointersMade) /
+                game.fieldGoalsAttempted
+              : 0;
+          rows.push({ ...game, trueShootingPct, effectiveFieldGoalPct });
+        }
+      }
+    }
+
+    return rows.sort((a, b) => b.gameDate.localeCompare(a.gameDate));
   }
 
   async getGames(season?: string): Promise<Game[]> {
@@ -213,6 +298,34 @@ export class NBADataProvider implements BasketballDataProvider {
     return [];
   }
 
+  private async getPlayerSeasonLite(
+    playerId: string,
+    season: string
+  ): Promise<PlayerSeason | null> {
+    const career = await this.getPlayerCareerSeasons(playerId);
+    return career.find((row) => row.season === season) ?? null;
+  }
+
+  private async fetchPlayerCareerSeasons(
+    playerId: string
+  ): Promise<PlayerSeason[]> {
+    const profileUrl = `${SITE_WEB}/apis/common/v3/sports/basketball/nba/athletes/${playerId}`;
+    const statsUrl = `${SITE_WEB}/apis/common/v3/sports/basketball/nba/athletes/${playerId}/stats`;
+
+    const [profile, stats] = await Promise.all([
+      espnFetchJson<EspnAthleteProfileResponse>(profileUrl).catch(
+        (): EspnAthleteProfileResponse => ({})
+      ),
+      espnFetchJson<EspnAthleteCareerStatsResponse>(statsUrl),
+    ]);
+
+    const playerName =
+      profile.athlete?.displayName ??
+      `Player ${playerId}`;
+
+    return transformEspnAthleteCareerStats(playerId, playerName, stats);
+  }
+
   private loadGamesForSeason(season: string): Promise<Game[]> {
     const existing = this.gamesCache.get(season);
     if (existing) return existing;
@@ -227,7 +340,7 @@ export class NBADataProvider implements BasketballDataProvider {
     const byId = new Map<string, Game>();
 
     // Bound concurrency so we do not stampede ESPN.
-    const concurrency = 6;
+    const concurrency = 10;
     for (let i = 0; i < teamIds.length; i += concurrency) {
       const chunk = teamIds.slice(i, i + concurrency);
       const schedules = await Promise.all(
@@ -262,9 +375,12 @@ export class NBADataProvider implements BasketballDataProvider {
     gameId: string
   ): Promise<GameBoxScore | null> {
     const url = `${SITE_API}/apis/site/v2/sports/basketball/nba/summary?event=${gameId}`;
-    const summary = await espnFetchJson<EspnSummaryResponse & { gameInfo?: { date?: string } }>(
-      url
-    );
+    let summary: EspnSummaryResponse & { gameInfo?: { date?: string } };
+    try {
+      summary = await espnFetchJson(url, { retries: 1 });
+    } catch {
+      return null;
+    }
 
     const known = await this.findCachedGame(gameId);
     const season =
@@ -284,6 +400,10 @@ export class NBADataProvider implements BasketballDataProvider {
       homeScore: known?.homeScore || transformed.game.homeScore,
       awayScore: known?.awayScore || transformed.game.awayScore,
       status: known?.status ?? transformed.game.status ?? "final",
+      homePeriodScores:
+        transformed.game.homePeriodScores ?? known?.homePeriodScores,
+      awayPeriodScores:
+        transformed.game.awayPeriodScores ?? known?.awayPeriodScores,
     };
 
     const players = transformed.players.map((p) => ({
@@ -390,6 +510,37 @@ export class NBADataProvider implements BasketballDataProvider {
     }
     return map;
   }
+}
+
+function mergeCareerWithBoard(
+  career: PlayerSeason | null,
+  board: PlayerSeason | null
+): PlayerSeason | null {
+  if (!career && !board) return null;
+  if (!career) return board;
+  if (!board) return career;
+  return {
+    ...career,
+    // League board has team-relative usage; career ESPN table does not.
+    usagePct: board.usagePct > 0 ? board.usagePct : career.usagePct,
+    minutes: career.minutes > 0 ? career.minutes : board.minutes,
+    gamesPlayed:
+      career.gamesPlayed > 0 ? career.gamesPlayed : board.gamesPlayed,
+    trueShootingPct:
+      career.trueShootingPct > 0
+        ? career.trueShootingPct
+        : board.trueShootingPct,
+    effectiveFieldGoalPct:
+      career.effectiveFieldGoalPct > 0
+        ? career.effectiveFieldGoalPct
+        : board.effectiveFieldGoalPct,
+    position: career.position ?? board.position,
+    teamId: career.teamId || board.teamId,
+    teamName:
+      career.teamName && career.teamName !== "Unknown"
+        ? career.teamName
+        : board.teamName,
+  };
 }
 
 export { canonicalSeasonFromEspnYear, defaultCanonicalSeasons } from "./nba/season";

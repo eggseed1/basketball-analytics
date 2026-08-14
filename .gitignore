@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# historical game caches (BallDontLie pulls)
+/data/cache/
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

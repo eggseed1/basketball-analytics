@@ -274,3 +274,37 @@ URL searchParams
 
 Interactive controls update the URL; the server component re-runs the query.
 No duplicated filter logic between chart and table.
+
+## 8. Historical API (1960–present) + DARKO / LEBRON
+
+HTTP route handlers under `src/app/api/` expose historical games, box scores,
+advanced stats, and impact metrics:
+
+| Route | Source |
+| --- | --- |
+| `GET /api/seasons` | Canonical `1960-61` … current |
+| `GET /api/games` | BallDontLie games (free tier with `BALLDONTLIE_API_KEY`) |
+| `GET /api/games/[id]/box-score` | BallDontLie box scores (GOAT) or ESPN summary fallback |
+| `GET /api/stats/players` | ESPN season counting + derived TS%/eFG%/USG% + impact join |
+| `GET /api/stats/games` | BallDontLie `/nba/v1/stats` (ALL-STAR+) |
+| `GET /api/stats/advanced` | BallDontLie `/nba/v2/stats/advanced` (GOAT) or derived rates |
+| `GET /api/impact/darko` | Live scrape of public [darko.app](https://www.darko.app/) DPM board |
+| `GET /api/impact/lebron` | `data/impact/lebron.csv` override, else seed snapshot |
+
+Service facade: `HistoricalNbaService`
+(`src/data/providers/historical/historical-nba-service.ts`).
+
+```bash
+# .env.local
+BALLDONTLIE_API_KEY=...   # https://app.balldontlie.io
+```
+
+Tier notes (BallDontLie):
+
+- **Free** — teams, players, games back to 1946 (we expose from 1960).
+- **ALL-STAR** — per-game player stats (`/api/stats/games`).
+- **GOAT** — box scores + advanced (`/api/games/.../box-score`, `/api/stats/advanced`).
+
+DARKO / LEBRON are third-party impact metrics (pts/100). DARKO is mirrored from
+the public leaderboard; LEBRON has no public API — drop BBall Index exports into
+`data/impact/lebron.csv` (see that folder’s README).
