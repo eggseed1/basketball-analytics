@@ -121,7 +121,16 @@ export async function getRecentGameSummaries(
 
 /** Home week strip: this week's slate, or upcoming previews when quiet. */
 export async function getHomeWeekStripSummaries(
-  options: { season?: string; limit?: number } = {}
+  options: {
+    season?: string;
+    limit?: number;
+    /**
+     * Starter headshots are client islands + remote images. On the homepage
+     * strip they can enqueue 80–100 requests and keep the tab “loading”.
+     * Default off for home; game pages can still attach starters themselves.
+     */
+    includeStarters?: boolean;
+  } = {}
 ): Promise<{
   mode: "week" | "upcoming";
   games: Array<
@@ -133,10 +142,21 @@ export async function getHomeWeekStripSummaries(
 }> {
   const season =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const limit = options.limit ?? 10;
+  const limit = options.limit ?? 8;
+  const includeStarters = options.includeStarters === true;
 
   try {
     const strip = await fetchHomeWeekStrip({ season, limit });
+    if (!includeStarters) {
+      return {
+        mode: strip.mode,
+        games: strip.games.map((g) => ({
+          ...toGameSummary(g),
+          awayStarters: [],
+          homeStarters: [],
+        })),
+      };
+    }
     const withStarters = await attachStartersToGames(strip.games);
     return {
       mode: strip.mode,

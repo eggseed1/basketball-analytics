@@ -3,6 +3,7 @@ import { WeekGameCalendar } from "@/components/home/week-game-calendar";
 import { OffseasonPulsePanel } from "@/components/home/offseason-pulse-panel";
 import { getHomeAnalytics } from "@/data/queries/home";
 import { fetchAnalyticsNews } from "@/data/providers/insights/analytics-news";
+import type { AnalyticsArticle } from "@/data/providers/insights/analytics-news";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -34,7 +35,13 @@ async function HomeCalendar({ season }: { season: string }) {
 }
 
 async function HomeNews() {
-  const articles = await fetchAnalyticsNews({ limit: 6 }).catch(() => []);
+  // Bound the desk so a slow RSS crawl cannot leave the Suspense skeleton up.
+  const articles = await Promise.race([
+    fetchAnalyticsNews({ limit: 6 }).catch(() => [] as AnalyticsArticle[]),
+    new Promise<AnalyticsArticle[]>((resolve) =>
+      setTimeout(() => resolve([]), 2500)
+    ),
+  ]);
   return <AnalyticsDesk articles={articles} embedded />;
 }
 

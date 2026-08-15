@@ -99,6 +99,7 @@ export function PlayerHeadshot({
         width={px}
         height={px}
         priority={priority}
+        loading={priority ? "eager" : "lazy"}
         className="object-cover object-top"
         onError={() => {
           setIndex((i) => {

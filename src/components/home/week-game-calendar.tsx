@@ -14,7 +14,13 @@ export async function WeekGameCalendar({ season }: { season: string }) {
   let mode: "week" | "upcoming" = "week";
   let games: StripGame[] = [];
   try {
-    const strip = await getHomeWeekStripSummaries({ season, limit: 10 });
+    // Skip starter headshots on the home strip — they flood the network and
+    // hydrate dozens of client islands, which feels like an infinite load.
+    const strip = await getHomeWeekStripSummaries({
+      season,
+      limit: 8,
+      includeStarters: false,
+    });
     mode = strip.mode;
     games = strip.games;
   } catch {
