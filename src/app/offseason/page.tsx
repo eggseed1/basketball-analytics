@@ -2,24 +2,29 @@ import Link from "next/link";
 
 import {
   OffseasonFilters,
-  TimelineByMonth,
+  TimelineFeedByMonth,
   TransactionEventDetail,
   TransactionEventRow,
+  RelatedEventClusterCard,
 } from "@/components/offseason/transaction-event-ui";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   getOffseasonPulse,
   getOffseasonTimeline,
   getTeamOffseasonActivity,
-  getTransactionEvent,
+  getTransactionEventWithRelations,
   getTransactionEventCoverage,
   listAvailableOffseasonYears,
 } from "@/data/queries/offseason-tracker";
+import { buildOffseasonFeedItems } from "@/data/providers/transactions/transaction-event-clusters";
+import { buildTransactionEventIndex } from "@/data/providers/transactions/transaction-event-index";
 import {
   currentOffseasonLabelYear,
   offseasonWindowForYear,
 } from "@/data/providers/transactions/offseason-window";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
+import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
+import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { parseSeasonParam } from "@/data/providers/historical/season-range";
 import {
@@ -49,6 +54,27 @@ function resolveTeamFilter(raw?: string): string | undefined {
   if (!raw?.trim()) return undefined;
   const brand = resolveTeamBrand(raw.trim());
   return brand?.espnTeamId ?? raw.trim();
+}
+
+function collectEventsForResolution(options: {
+  timelineEvents: NbaTransactionEvent[];
+  latestFeed: ReturnType<typeof buildOffseasonFeedItems>;
+  detailBundle: {
+    event: NbaTransactionEvent;
+    relatedEvents: NbaTransactionEvent[];
+  } | null;
+}): NbaTransactionEvent[] {
+  const byId = new Map<string, NbaTransactionEvent>();
+  for (const e of options.timelineEvents) byId.set(e.id, e);
+  for (const item of options.latestFeed) {
+    if (item.kind === "source_event") byId.set(item.event.id, item.event);
+    else for (const e of item.events) byId.set(e.id, e);
+  }
+  if (options.detailBundle) {
+    byId.set(options.detailBundle.event.id, options.detailBundle.event);
+    for (const e of options.detailBundle.relatedEvents) byId.set(e.id, e);
+  }
+  return [...byId.values()];
 }
 
 export default async function OffseasonPage({ searchParams }: PageProps) {
@@ -89,16 +115,47 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     q: q || undefined,
   };
 
-  const [pulse, timeline, activity, coverage, detail] = await Promise.all([
-    getOffseasonPulse({ offseasonYear }),
-    getOffseasonTimeline(filters, { page, pageSize: 50 }),
-    getTeamOffseasonActivity(
-      { offseasonYear: season ? undefined : offseasonYear, season, teamId },
-      { limit: 8 }
-    ),
-    getTransactionEventCoverage({ force: true }),
-    eventId ? getTransactionEvent(eventId) : Promise.resolve(null),
-  ]);
+  const [pulse, timeline, activity, coverage, detailBundle, index] =
+    await Promise.all([
+      getOffseasonPulse({ offseasonYear }),
+      getOffseasonTimeline(filters, { page, pageSize: 50 }),
+      getTeamOffseasonActivity(
+        { offseasonYear: season ? undefined : offseasonYear, season, teamId },
+        { limit: 8 }
+      ),
+      getTransactionEventCoverage({ force: true }),
+      eventId
+        ? getTransactionEventWithRelations(eventId)
+        : Promise.resolve(null),
+      buildTransactionEventIndex({ force: true }),
+    ]);
+
+  const latestFeed = buildOffseasonFeedItems(
+    timeline.page.events.slice(0, 12),
+    index.clusters,
+    index.byId
+  ).slice(0, 8);
+
+  const eventsToResolve = collectEventsForResolution({
+    timelineEvents: timeline.page.events,
+    latestFeed,
+    detailBundle: detailBundle
+      ? {
+          event: detailBundle.event,
+          relatedEvents: detailBundle.relatedEvents ?? [],
+        }
+      : null,
+  });
+  const resolutionMap = await resolvePlayersForTransactionEvents(
+    eventsToResolve
+  ).catch(() => new Map());
+  const playerResolutionsByEventId: Record<
+    string,
+    import("@/lib/transaction-player-resolution").TransactionPlayerResolution[]
+  > = {};
+  for (const [id, rows] of resolutionMap) {
+    playerResolutionsByEventId[id] = rows;
+  }
 
   const teamOptions = Object.entries(ESPN_TEAM_META)
     .map(([id]) => {
@@ -110,7 +167,6 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     })
     .sort((a, b) => a.label.localeCompare(b.label));
 
-  const latest = timeline.page.events.slice(0, 8);
   const brandFor = (id: string, abbr?: string) =>
     resolveTeamBrand(id) ?? resolveTeamBrand(abbr);
 
@@ -125,8 +181,8 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         </h1>
         <p className="max-w-2xl text-[15px] text-muted-foreground">
           What was recorded from {window.startDate} to {window.endDate} (into{" "}
-          {window.upcomingSeason}). Free-text ESPN events — not a structured
-          trade ledger.
+          {window.upcomingSeason}). Free-text ESPN source events — not a
+          structured trade ledger.
         </p>
       </header>
 
@@ -184,20 +240,41 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         season={season}
       />
 
-      {detail ? (
+      {detailBundle ? (
         <section className="flex flex-col gap-2">
           <h2 className="text-[15px] font-bold tracking-tight">Event detail</h2>
-          <TransactionEventDetail event={detail} />
+          <TransactionEventDetail
+            event={detailBundle.event}
+            cluster={detailBundle.cluster}
+            relatedEvents={detailBundle.relatedEvents}
+            playerResolutionsByEventId={playerResolutionsByEventId}
+          />
         </section>
       ) : null}
 
       <section className="flex flex-col gap-2">
         <h2 className="text-[15px] font-bold tracking-tight">Latest</h2>
         <div className="sports-card px-4 py-2 sm:px-5">
-          {latest.length ? (
-            latest.map((e) => (
-              <TransactionEventRow key={e.id} event={e} compact />
-            ))
+          {latestFeed.length ? (
+            latestFeed.map((item) =>
+              item.kind === "related_event_cluster" ? (
+                <RelatedEventClusterCard
+                  key={item.cluster.id}
+                  cluster={item.cluster}
+                  events={item.events}
+                  playerResolutionsByEventId={playerResolutionsByEventId}
+                />
+              ) : (
+                <TransactionEventRow
+                  key={item.event.id}
+                  event={item.event}
+                  compact
+                  playerResolutions={
+                    playerResolutionsByEventId[item.event.id]
+                  }
+                />
+              )
+            )
           ) : (
             <p className="py-6 text-center text-[13px] text-muted-foreground">
               No events in this view.
@@ -219,11 +296,11 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
             const brand = brandFor(t.teamId, t.teamAbbr);
             const tradeRelated = t.bySourceTextCategory.trade ?? 0;
             return (
-              <li
-                key={t.teamId}
-                className="flex items-center gap-3 py-3"
-              >
-                <TeamLogo teamKey={brand?.abbr ?? t.teamAbbr ?? t.teamId} size="sm" />
+              <li key={t.teamId} className="flex items-center gap-3 py-3">
+                <TeamLogo
+                  teamKey={brand?.abbr ?? t.teamAbbr ?? t.teamId}
+                  size="sm"
+                />
                 <div className="min-w-0 flex-1">
                   <Link
                     href={`/offseason?year=${offseasonYear}&team=${t.teamId}`}
@@ -261,14 +338,17 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
             Offseason timeline
           </h2>
           <p className="text-[12px] text-muted-foreground">
-            {timeline.page.total} events · page {timeline.page.page}/
-            {timeline.page.pageCount}
+            {timeline.page.total} source events · {timeline.feedTotal} feed
+            groups · page {timeline.feedPage}/{timeline.feedPageCount}
           </p>
         </div>
-        <TimelineByMonth byMonth={timeline.byMonth} />
-        {timeline.page.pageCount > 1 ? (
+        <TimelineFeedByMonth
+          byMonth={timeline.feedByMonth}
+          playerResolutionsByEventId={playerResolutionsByEventId}
+        />
+        {timeline.feedPageCount > 1 ? (
           <div className="flex flex-wrap gap-2">
-            {timeline.page.page > 1 ? (
+            {timeline.feedPage > 1 ? (
               <Link
                 href={`/offseason?${new URLSearchParams({
                   year: String(offseasonYear),
@@ -277,14 +357,14 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                   ...(dateFrom ? { from: dateFrom } : {}),
                   ...(dateTo ? { to: dateTo } : {}),
                   ...(season ? { season } : {}),
-                  page: String(timeline.page.page - 1),
+                  page: String(timeline.feedPage - 1),
                 }).toString()}`}
                 className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
               >
                 Previous
               </Link>
             ) : null}
-            {timeline.page.page < timeline.page.pageCount ? (
+            {timeline.feedPage < timeline.feedPageCount ? (
               <Link
                 href={`/offseason?${new URLSearchParams({
                   year: String(offseasonYear),
@@ -293,7 +373,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                   ...(dateFrom ? { from: dateFrom } : {}),
                   ...(dateTo ? { to: dateTo } : {}),
                   ...(season ? { season } : {}),
-                  page: String(timeline.page.page + 1),
+                  page: String(timeline.feedPage + 1),
                 }).toString()}`}
                 className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
               >
@@ -310,13 +390,14 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         </h2>
         <p className="mt-2">
           Source: {coverage.source} v{coverage.datasetVersion ?? "?"} ·{" "}
-          {coverage.eventCount.toLocaleString()} events ·{" "}
+          {coverage.sourceEventCount.toLocaleString()} source events ·{" "}
+          {coverage.relatedClusterCount.toLocaleString()} related clusters ·{" "}
+          {coverage.structuredTransactionCount} structured transactions ·{" "}
+          {coverage.ownershipEdgeCount} ownership edges ·{" "}
           {coverage.earliestDate} → {coverage.latestDate}
         </p>
         <p className="mt-1">
-          Data format: ESPN transaction events (date, team, description).
-          Structured assets / ownership: not available. Genealogy UI ready:{" "}
-          {coverage.genealogyUiReady ? "yes" : "no"}.
+          Genealogy UI ready: {coverage.genealogyUiReady ? "yes" : "no"}.
         </p>
         <ul className="mt-2 list-disc space-y-1 pl-4">
           {coverage.notes.map((n) => (

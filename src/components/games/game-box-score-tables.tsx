@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { Fragment, useState, type ReactNode } from "react";
 
 import type {
@@ -12,6 +11,8 @@ import {
   BoxScoreContextBody,
   BoxScoreStatContextPanel,
 } from "@/components/games/box-score-stat-context";
+import { MetricHelp } from "@/components/learn/metric-help";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import {
   Table,
   TableBody,
@@ -22,6 +23,7 @@ import {
 } from "@/components/ui/table";
 import type { PlayerGame } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
+import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { cn } from "@/lib/utils";
 
 export function GameBoxScoreTables({
@@ -95,7 +97,7 @@ export function GameBoxScoreTables({
       <p className="text-[12px] text-muted-foreground">
         Tap <span className="font-semibold text-foreground">i</span> for
         player-self context (vs season average · in-game rank). No PBP or
-        fabricated impact.
+        fabricated impact. Column headers explain advanced abbreviations.
       </p>
     </div>
   );
@@ -127,6 +129,19 @@ function TeamScoringCard({
         </p>
       )}
     </div>
+  );
+}
+
+function HeaderLabel({ label }: { label: string }) {
+  const conceptId = conceptIdForColumnLabel(label);
+  if (!conceptId) return <>{label}</>;
+  return (
+    <MetricHelp
+      conceptId={conceptId}
+      labelClassName="font-medium uppercase tracking-wide"
+    >
+      {label}
+    </MetricHelp>
   );
 }
 
@@ -194,7 +209,7 @@ function BoxScoreSection({
                   key={label}
                   className={label === "Player" ? undefined : "text-right"}
                 >
-                  {label}
+                  <HeaderLabel label={label} />
                 </TableHead>
               ))}
             </TableRow>
@@ -263,12 +278,17 @@ function TraditionalRow({
     <TableRow className={cn(open && "bg-secondary/30")}>
       <TableCell className="overflow-visible">
         <div className="flex min-w-[9rem] items-center gap-1">
-          <Link
-            href={`/players/${p.playerId}?season=${encodeURIComponent(p.season)}`}
-            className="min-w-0 truncate font-medium underline-offset-4 hover:underline"
+          <PlayerIdentity
+            playerId={p.playerId}
+            name={p.playerName ?? p.playerId}
+            teamKey={p.teamId}
+            season={p.season}
+            variant="compact"
+            className="min-w-0 flex-1"
+            nameClassName="truncate text-[13px]"
           >
-            {p.playerName ?? p.playerId}
-          </Link>
+            <span className="truncate">{p.playerName ?? p.playerId}</span>
+          </PlayerIdentity>
           {context && context.lines.length > 0 ? (
             <BoxScoreStatContextPanel
               context={context}
@@ -308,13 +328,17 @@ function TraditionalRow({
 function AdvancedRow({ player: p }: { player: PlayerGame }) {
   return (
     <TableRow>
-      <TableCell>
-        <Link
-          href={`/players/${p.playerId}?season=${encodeURIComponent(p.season)}`}
-          className="underline-offset-4 hover:underline"
+      <TableCell className="overflow-visible">
+        <PlayerIdentity
+          playerId={p.playerId}
+          name={p.playerName ?? p.playerId}
+          teamKey={p.teamId}
+          season={p.season}
+          variant="compact"
+          nameClassName="truncate text-[13px]"
         >
-          {p.playerName ?? p.playerId}
-        </Link>
+          <span className="truncate">{p.playerName ?? p.playerId}</span>
+        </PlayerIdentity>
       </TableCell>
       <Num>{formatNumber(p.minutes, 0)}</Num>
       <Num>{formatNumber(p.points)}</Num>

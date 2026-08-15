@@ -15,6 +15,8 @@ import {
   usagePct,
 } from "@/data/providers/nba/compute-advanced";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
+import { normalizeEspnStatusType } from "@/lib/game-status";
+import { mapEspnBroadcasts } from "@/lib/game-watch";
 
 export interface EspnStatCategorySchema {
   name: string;
@@ -334,20 +336,39 @@ export interface EspnScheduleEvent {
       state?: string;
       completed?: boolean;
       name?: string;
+      description?: string;
       shortDetail?: string;
       detail?: string;
+      id?: string;
     };
   };
   competitions?: Array<{
     status?: {
+      clock?: number;
+      displayClock?: string;
+      period?: number;
       type?: {
         state?: string;
         completed?: boolean;
         name?: string;
+        description?: string;
         shortDetail?: string;
         detail?: string;
+        id?: string;
       };
     };
+    broadcasts?: Array<{
+      market?: string;
+      names?: string[];
+      type?: { shortName?: string; type?: string };
+    }>;
+    geoBroadcasts?: Array<{
+      type?: { shortName?: string; type?: string };
+      market?: { type?: string; id?: string };
+      media?: { shortName?: string; longName?: string };
+      lang?: string;
+      region?: string;
+    }>;
     competitors?: Array<{
       homeAway?: string;
       score?: unknown;
@@ -398,9 +419,12 @@ export function transformEspnScheduleEvent(
   if (!home || !away) return null;
 
   const statusType = competition.status?.type ?? event.status?.type;
-  let status: Game["status"] = "scheduled";
-  if (statusType?.completed || statusType?.state === "post") status = "final";
-  else if (statusType?.state === "in") status = "in_progress";
+  const homeScore = parseEspnScore(home.score);
+  const awayScore = parseEspnScore(away.score);
+  const status = normalizeEspnStatusType(statusType, {
+    home: homeScore,
+    away: awayScore,
+  });
 
   const tipOffAt = event.date?.trim() || undefined;
   const statusDetail =
@@ -408,6 +432,15 @@ export function transformEspnScheduleEvent(
 
   const homePeriodScores = parseEspnLinescores(home.linescores);
   const awayPeriodScores = parseEspnLinescores(away.linescores);
+  const broadcasts = mapEspnBroadcasts({
+    broadcasts: competition.broadcasts,
+    geoBroadcasts: competition.geoBroadcasts,
+  });
+  const period =
+    typeof competition.status?.period === "number"
+      ? competition.status.period
+      : undefined;
+  const displayClock = competition.status?.displayClock?.trim() || undefined;
 
   return {
     id: event.id,
@@ -421,13 +454,17 @@ export function transformEspnScheduleEvent(
     awayTeamAbbr: away.team?.abbreviation,
     homeTeamName: home.team?.displayName,
     awayTeamName: away.team?.displayName,
-    homeScore: parseEspnScore(home.score),
-    awayScore: parseEspnScore(away.score),
+    homeScore,
+    awayScore,
     ...(homePeriodScores && awayPeriodScores
       ? { homePeriodScores, awayPeriodScores }
       : {}),
     gameType: "regular",
     status,
+    ...(period != null ? { period } : {}),
+    ...(displayClock ? { displayClock } : {}),
+    ...(broadcasts.length ? { broadcasts } : {}),
+    retrievedAt: new Date().toISOString(),
   };
 }
 

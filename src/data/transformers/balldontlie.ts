@@ -236,9 +236,17 @@ function mapStatus(
 ): Game["status"] | undefined {
   if (!status) return undefined;
   const lower = status.toLowerCase();
+  if (lower.includes("postpon")) return "postponed";
+  if (lower.includes("cancel")) return "cancelled";
+  if (lower.includes("suspend")) return "suspended";
+  if (lower.includes("delay")) return "delayed";
+  if (lower.includes("halftime")) return "halftime";
   if (lower.includes("final")) return "final";
-  if (lower.includes("in progress") || lower.includes("halftime")) {
+  if (lower.includes("in progress") || lower.includes("in_progress")) {
     return "in_progress";
   }
-  return "scheduled";
+  if (lower.includes("scheduled") || lower.includes("tip")) {
+    return "scheduled";
+  }
+  return "unknown";
 }

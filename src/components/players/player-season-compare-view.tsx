@@ -11,6 +11,7 @@ import type {
 } from "@/analytics/compare-player-seasons";
 import { edgeLabel } from "@/analytics/compare-player-seasons";
 import { ComparisonDimensionRow } from "@/components/compare/player-compare-view";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import { cn } from "@/lib/utils";
 
 function CoverageDots({
@@ -224,12 +225,13 @@ export function PlayerSeasonCompareView({
           Best season lab · Regular season
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          <Link
-            href={`/players/${result.playerId}`}
-            className="underline-offset-2 hover:underline"
+          <PlayerIdentity
+            playerId={result.playerId}
+            name={result.playerName}
+            nameClassName="text-[28px] font-bold tracking-tight sm:text-[32px] no-underline hover:underline"
           >
-            {result.playerName}
-          </Link>
+            <span>{result.playerName}</span>
+          </PlayerIdentity>
         </h1>
         <p className="text-[20px] font-bold tracking-tight">
           {seasonA}{" "}

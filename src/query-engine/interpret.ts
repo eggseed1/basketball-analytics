@@ -1,7 +1,7 @@
 import { resolveMetric, metricById } from "./metrics";
 import { resolveSeasonPhrases } from "./seasons";
 import { detectUnsupportedClauses } from "./unsupported";
-import { resolveTeamFromText, PLAYER_ALIASES } from "./entities";
+import { resolveTeamFromText, resolveTeamsFromText, PLAYER_ALIASES } from "./entities";
 import { planPartialSupport } from "./partial";
 import {
   detectVagueCompetitiveLanguage,
@@ -78,15 +78,59 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
     };
   }
 
-  // --- Season compare ---
+  // --- Team / player season compare ---
   if (
     /\bcompare\b/i.test(text) ||
     /\bwhich\s+was\s+better\b/i.test(text) ||
-    (/\bvs\.?\b/i.test(lower) && seasons.length >= 2 && /season/i.test(lower))
+    (/\bvs\.?\b/i.test(lower) && seasons.length >= 1)
   ) {
-    const playerHint = possessivePlayerHint(text) ?? extractPlayerNameLoose(text);
+    const teams = resolveTeamsFromText(text);
     const a = seasons[0];
     const b = seasons[1];
+
+    // Two teams → team vs team (default shared season).
+    if (teams.length >= 2) {
+      const seasonList =
+        a && b ? [a, b] : a ? [a, a] : undefined;
+      return {
+        ...base,
+        operation: "team_season_compare",
+        entities: [
+          { kind: "team", id: teams[0]!.id, name: teams[0]!.name },
+          { kind: "team", id: teams[1]!.id, name: teams[1]!.name },
+        ],
+        when: seasonList ? { seasons: seasonList } : undefined,
+        interpretation: [
+          `${teams[0]!.name} vs ${teams[1]!.name}`,
+          seasonList
+            ? `Team compare ${seasonList[0]}${
+                seasonList[0] !== seasonList[1] ? ` / ${seasonList[1]}` : ""
+              }`
+            : "Team compare (season unresolved)",
+          "Existing team-season comparison methodology",
+        ],
+      };
+    }
+
+    // One team + two seasons → same-team season compare.
+    if (teams.length === 1 && a && b) {
+      return {
+        ...base,
+        operation: "team_season_compare",
+        entities: [
+          { kind: "team", id: teams[0]!.id, name: teams[0]!.name },
+          { kind: "team", id: teams[0]!.id, name: teams[0]!.name },
+        ],
+        when: { seasons: [a, b] },
+        interpretation: [
+          teams[0]!.name,
+          `Team season compare ${a} vs ${b}`,
+          "Existing team-season comparison methodology",
+        ],
+      };
+    }
+
+    const playerHint = possessivePlayerHint(text) ?? extractPlayerNameLoose(text);
     if (playerHint && a && b) {
       const metric = resolveMetric(text, "player_season");
       return {
@@ -133,13 +177,76 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
     }
   }
 
-  // --- Season rank / "best season" ---
+  // --- Team season game evidence (descriptive schedule games → Game Lab) ---
+  if (
+    /\b(biggest|largest)\s+wins?\b/i.test(text) ||
+    /\bbest\s+games?\b/i.test(text) ||
+    /\brepresentative\s+games?\b/i.test(text) ||
+    /\bseason\s+evidence\b/i.test(text) ||
+    /\bhighest[-\s]?scoring\s+games?\b/i.test(text) ||
+    /\bbest\s+defensive\s+(games?|results?)\b/i.test(text) ||
+    (/\bgames?\b/i.test(text) &&
+      /\b(biggest|largest|highest|lowest)\b/i.test(text) &&
+      !/\bdown\s+\d+\b/i.test(text) &&
+      !/\bq[1-4]\b/i.test(text) &&
+      !/\bcame\s+back\b/i.test(text))
+  ) {
+    const teams = resolveTeamsFromText(text);
+    if (teams.length >= 1) {
+      const team = teams[0]!;
+      const season = seasons[0];
+      return {
+        ...base,
+        operation: "team_season_game_evidence",
+        entities: [{ kind: "team", id: team.id, name: team.name }],
+        when: season ? { seasons: [season] } : seasons.length ? { seasons } : undefined,
+        interpretation: [
+          team.name,
+          season
+            ? `Season evidence for ${season}`
+            : "Season evidence (default recent season)",
+          "Descriptive schedule-score games — not “most important” or PBP filters",
+        ],
+      };
+    }
+  }
+
+  // --- Season rank / "best season" (team preferred when franchise resolved) ---
   if (
     /\brank\b/i.test(text) ||
     /\bbest\s+seasons?\b/i.test(text) ||
-    /\bbest\s+season\s+according\b/i.test(text)
+    /\bbest\s+team\s+season\b/i.test(text) ||
+    /\bbest\s+season\s+according\b/i.test(text) ||
+    (/\bbest\s+season\b/i.test(text) && !/\bpeak\s+production\b/i.test(text))
   ) {
+    const teams = resolveTeamsFromText(text);
     const playerHint = possessivePlayerHint(text) ?? extractPlayerNameLoose(text);
+    const knownPlayer =
+      playerHint != null &&
+      Boolean(
+        PLAYER_ALIASES[playerHint.toLowerCase()] ||
+          Object.values(PLAYER_ALIASES).some(
+            (a) => a.name.toLowerCase() === playerHint.toLowerCase()
+          )
+      );
+
+    if (teams.length >= 1 && (!knownPlayer || /\bteam\b/i.test(text))) {
+      const team = teams[0]!;
+      return {
+        ...base,
+        operation: "team_season_rank",
+        entities: [{ kind: "team", id: team.id, name: team.name }],
+        when: seasons.length ? { seasons } : undefined,
+        interpretation: [
+          team.name,
+          seasons.length
+            ? `Rank team seasons (${seasons[0]} → ${seasons[seasons.length - 1]})`
+            : "Rank recent team seasons (eligible set)",
+          "I interpreted “best season” using DRBL's current Team Season Ranking methodology",
+        ],
+      };
+    }
+
     if (playerHint) {
       return {
         ...base,
@@ -178,6 +285,26 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
         "NBA leaderboard",
         season ?? "season unresolved",
         metric?.label ?? "metric unresolved",
+      ],
+    };
+  }
+
+  // --- Trade package / consideration questions (no structured ledger yet) ---
+  if (
+    /\bwhat\s+did\b/i.test(text) &&
+    /\b(receive|get|acquire|return)\b/i.test(text) &&
+    /\bfor\b/i.test(text)
+  ) {
+    const team = resolveTeamFromText(text);
+    return {
+      ...base,
+      operation: "offseason_summary",
+      entities: team
+        ? [{ kind: "team", id: team.id, name: team.name }]
+        : [{ kind: "team", id: "", name: "league" }],
+      interpretation: [
+        team ? team.name : "Transaction question",
+        "Related ESPN source events may exist — no verified structured trade ledger",
       ],
     };
   }

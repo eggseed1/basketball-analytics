@@ -4,16 +4,19 @@
 
 import {
   aggregateTeamActivity,
+  buildFilteredOffseasonFeed,
   buildOffseasonPulse,
   buildTransactionEventCoverage,
   buildTransactionEventIndex,
   clearTransactionEventIndexCache,
   filterTransactionEvents,
+  getRelatedClusterForEvent,
   groupEventsByDate,
   groupEventsByMonth,
   listOffseasonYearsWithEvents,
   paginateEvents,
 } from "@/data/providers/transactions/transaction-event-index";
+import type { OffseasonFeedItem } from "@/data/providers/transactions/transaction-event-clusters";
 import {
   currentOffseasonLabelYear,
   currentOffseasonWindow,
@@ -22,6 +25,7 @@ import {
 import type {
   NbaTransactionEvent,
   OffseasonPulse,
+  RelatedTransactionEventCluster,
   TeamOffseasonActivity,
   TransactionEventCoverage,
   TransactionEventFilters,
@@ -31,11 +35,14 @@ import type {
 export type {
   NbaTransactionEvent,
   OffseasonPulse,
+  RelatedTransactionEventCluster,
   TeamOffseasonActivity,
   TransactionEventCoverage,
   TransactionEventFilters,
   TransactionEventPage,
 };
+
+export type { OffseasonFeedItem };
 
 export {
   clearTransactionEventIndexCache,
@@ -84,6 +91,25 @@ export async function getTransactionEvent(
   return index.byId.get(id) ?? null;
 }
 
+export async function getTransactionEventWithRelations(
+  id: string,
+  options?: { force?: boolean }
+): Promise<{
+  event: NbaTransactionEvent;
+  cluster: RelatedTransactionEventCluster | null;
+  relatedEvents: NbaTransactionEvent[];
+} | null> {
+  const index = await buildTransactionEventIndex({ force: options?.force });
+  const event = index.byId.get(id);
+  if (!event) return null;
+  const related = getRelatedClusterForEvent(index, id);
+  return {
+    event,
+    cluster: related?.cluster ?? null,
+    relatedEvents: related?.events ?? [],
+  };
+}
+
 export async function getTeamOffseasonActivity(
   filters: TransactionEventFilters = {},
   options?: { force?: boolean; limit?: number }
@@ -102,12 +128,24 @@ export async function getOffseasonTimeline(
   page: TransactionEventPage;
   byDate: Array<{ date: string; events: NbaTransactionEvent[] }>;
   byMonth: Array<{ monthKey: string; events: NbaTransactionEvent[] }>;
+  feedByMonth: Array<{ monthKey: string; items: OffseasonFeedItem[] }>;
+  feedTotal: number;
+  feedPage: number;
+  feedPageCount: number;
 }> {
-  const page = await listTransactionEvents(filters, options);
+  const index = await buildTransactionEventIndex({ force: options?.force });
+  const built = buildFilteredOffseasonFeed(index, filters, {
+    page: options?.page ?? 1,
+    pageSize: options?.pageSize ?? 40,
+  });
   return {
-    page,
-    byDate: groupEventsByDate(page.events),
-    byMonth: groupEventsByMonth(page.events),
+    page: built.page,
+    byDate: groupEventsByDate(built.page.events),
+    byMonth: groupEventsByMonth(built.page.events),
+    feedByMonth: built.byMonth,
+    feedTotal: built.feed.total,
+    feedPage: built.feed.page,
+    feedPageCount: built.feed.pageCount,
   };
 }
 

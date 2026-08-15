@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 
 import { SportsShell } from "@/components/sports/sports-shell";
+import { DataProviderDevBadge } from "@/components/sports/data-provider-dev-badge";
 import { SmoothScroll } from "@/components/smooth-scroll";
 
 import "./globals.css";
@@ -38,6 +39,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <div id="main-content" className="flex min-h-screen flex-col">
+          <DataProviderDevBadge />
           <SportsShell>{children}</SportsShell>
         </div>
       </body>

@@ -1,47 +1,43 @@
 /**
- * Metric pedagogy links. Full copy lives on /learn/[slug].
- * Keep this registry small and data-backed.
+ * Metric pedagogy — derived from the canonical Learn registry + guides.
+ * Keep UI short; full copy lives on /learn/[slug].
  */
+
+import { getLearnConcept, listLearnConcepts } from "@/content/learn/registry";
+import { getStatGuide } from "@/content/stats/guides";
 
 export type MetricExplanation = {
   id: string;
   label: string;
-  /** One-line plain English. */
+  /** One-line plain English (tooltip). */
   plain: string;
-  learnHref: string;
-};
-
-const REGISTRY: Record<string, MetricExplanation> = {
-  darko: {
-    id: "darko",
-    label: "DARKO",
-    plain: "Estimated points per 100 possessions above or below average.",
-    learnHref: "/learn/darko",
-  },
-  trueShooting: {
-    id: "trueShooting",
-    label: "True shooting",
-    plain: "Scoring efficiency that folds in twos, threes, and free throws.",
-    learnHref: "/learn/true-shooting",
-  },
-  usage: {
-    id: "usage",
-    label: "Usage",
-    plain: "Share of team possessions used while the player is on the floor.",
-    learnHref: "/learn/usage",
-  },
-  lebron: {
-    id: "lebron",
-    label: "LEBRON",
-    plain: "Plus-minus style impact estimate with offensive and defensive splits.",
-    learnHref: "/learn/lebron",
-  },
+  learnHref: string | null;
 };
 
 export function explainMetric(id: string): MetricExplanation | null {
-  return REGISTRY[id] ?? null;
+  const concept = getLearnConcept(id);
+  if (!concept) return null;
+
+  // Prefer guide blurb when the Learn page is a STAT_GUIDE.
+  const guide = concept.learnSlug ? getStatGuide(concept.learnSlug) : undefined;
+  const plain = guide?.blurb ?? concept.tooltip;
+
+  return {
+    id: concept.id,
+    label: concept.shortName,
+    plain,
+    learnHref: concept.learnSlug ? `/learn/${concept.learnSlug}` : null,
+  };
 }
 
 export function listExplainedMetrics(): MetricExplanation[] {
-  return Object.values(REGISTRY);
+  return listLearnConcepts()
+    .filter((c) => c.showTooltip || c.learnSlug)
+    .map((c) => explainMetric(c.id)!)
+    .filter(Boolean);
+}
+
+/** Concepts that should offer MetricHelp in UI. */
+export function listTooltipConcepts() {
+  return listLearnConcepts().filter((c) => c.showTooltip);
 }

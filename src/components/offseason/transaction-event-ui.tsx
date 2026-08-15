@@ -4,27 +4,45 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
-import type { NbaTransactionEvent } from "@/data/types/transaction-event";
+import type {
+  NbaTransactionEvent,
+  RelatedTransactionEventCluster,
+} from "@/data/types/transaction-event";
+import type { OffseasonFeedItem } from "@/data/providers/transactions/transaction-event-clusters";
+import type { TransactionPlayerResolution } from "@/lib/transaction-player-resolution";
+import {
+  transactionEventRecordStatusLabel,
+} from "@/data/providers/transactions/transaction-event-clusters";
 import {
   sourceTextCategoryLabel,
-  type TransactionType,
 } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { TransactionDescription } from "@/components/offseason/transaction-description";
+import { AppLink } from "@/components/ui/app-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { monthLabel } from "@/data/providers/transactions/offseason-window";
 import { cn } from "@/lib/utils";
 
 export { sourceTextCategoryLabel };
 
+function teamAbbr(event: NbaTransactionEvent): string {
+  const brand =
+    resolveTeamBrand(event.teamId) ?? resolveTeamBrand(event.teamAbbr);
+  return brand?.abbr ?? event.teamAbbr ?? event.teamId;
+}
+
 export function TransactionEventRow({
   event,
   compact,
+  hideClusterHint,
+  playerResolutions,
 }: {
   event: NbaTransactionEvent;
   compact?: boolean;
+  hideClusterHint?: boolean;
+  playerResolutions?: TransactionPlayerResolution[];
 }) {
-  const brand = resolveTeamBrand(event.teamId) ?? resolveTeamBrand(event.teamAbbr);
-  const abbr = brand?.abbr ?? event.teamAbbr ?? event.teamId;
+  const abbr = teamAbbr(event);
   return (
     <article
       className={cn(
@@ -48,31 +66,175 @@ export function TransactionEventRow({
             href={`/teams/${event.teamId}`}
             className="text-[13px] font-bold underline-offset-2 hover:underline"
           >
-            {brand?.id ? abbr : abbr}
+            {abbr}
           </Link>
           <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            {sourceTextCategoryLabel(event.sourceTextCategory)}
+            Source event
+          </span>
+          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            · {sourceTextCategoryLabel(event.sourceTextCategory)}
           </span>
         </div>
-        <p
+        <p className="mt-1 text-[11px] font-semibold text-muted-foreground">
+          ESPN transaction note
+        </p>
+        <TransactionDescription
+          description={event.description}
+          resolutions={playerResolutions}
           className={cn(
-            "mt-1 text-[14px] leading-relaxed text-foreground",
+            "mt-0.5 text-[14px] leading-relaxed text-foreground",
             compact && "text-[13px]"
           )}
-        >
-          {event.description}
-        </p>
+        />
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Season {event.season} · ESPN transaction archive ·{" "}
+          Season {event.season} · ESPN transaction archive
+          {!hideClusterHint && event.relatedClusterId
+            ? " · part of a related-event cluster"
+            : ""}{" "}
+          ·{" "}
           <Link
             href={`/offseason?event=${encodeURIComponent(event.id)}`}
             className="font-semibold underline-offset-2 hover:underline"
           >
             Detail
           </Link>
+          {event.sourceUrl ? (
+            <>
+              {" · "}
+              <AppLink
+                href={event.sourceUrl}
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                ESPN source
+              </AppLink>
+            </>
+          ) : null}
         </p>
       </div>
     </article>
+  );
+}
+
+export function RelatedEventClusterCard({
+  cluster,
+  events,
+  defaultOpen,
+  playerResolutionsByEventId,
+}: {
+  cluster: RelatedTransactionEventCluster;
+  events: NbaTransactionEvent[];
+  defaultOpen?: boolean;
+  playerResolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
+}) {
+  const [open, setOpen] = useState(Boolean(defaultOpen));
+  const abbrs = cluster.teamIds.map(
+    (id) => resolveTeamBrand(id)?.abbr ?? id
+  );
+
+  return (
+    <article className="border-b border-border/70 py-3 last:border-0">
+      <div className="flex flex-wrap items-start gap-3">
+        <div className="flex -space-x-2 pt-0.5">
+          {events.slice(0, 3).map((e) => (
+            <TeamLogo key={e.id} teamKey={teamAbbr(e)} size="sm" />
+          ))}
+        </div>
+        <div className="min-w-0 flex-1">
+          <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
+            <time className="text-[12px] font-semibold tabular-nums text-muted-foreground">
+              {cluster.date}
+            </time>
+            <p className="text-[14px] font-bold tracking-tight">
+              {abbrs.join(" ↔ ")}
+            </p>
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              {transactionEventRecordStatusLabel("related_event_cluster")}
+            </span>
+          </div>
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            {events.length} related ESPN event records — assembled from source
+            events, not a verified structured trade ledger.
+          </p>
+          <button
+            type="button"
+            onClick={() => setOpen((v) => !v)}
+            className="mt-2 text-[12px] font-semibold underline-offset-2 hover:underline"
+            aria-expanded={open}
+          >
+            {open ? "Hide source events" : "Show source events"}
+          </button>
+          {open ? (
+            <div className="mt-3 rounded-md border border-border/80 bg-secondary/20 px-3">
+              {events.map((e) => (
+                <TransactionEventRow
+                  key={e.id}
+                  event={e}
+                  compact
+                  hideClusterHint
+                  playerResolutions={playerResolutionsByEventId?.[e.id]}
+                />
+              ))}
+              <div className="border-t border-border/70 py-3 text-[12px] leading-relaxed text-muted-foreground">
+                <p className="font-semibold text-foreground">
+                  Event interpretation
+                </p>
+                <p className="mt-1">
+                  These source events appear to describe the same{" "}
+                  {abbrs.join("–")} transaction.
+                </p>
+                <p className="mt-2 font-semibold text-foreground">
+                  Assembled from related transaction events
+                </p>
+                <ul className="mt-1 list-disc space-y-0.5 pl-4">
+                  {cluster.evidence.map((line) => (
+                    <li key={line}>{line}</li>
+                  ))}
+                </ul>
+                <p className="mt-2">
+                  <span className="font-semibold text-foreground">
+                    Structured asset ledger:
+                  </span>{" "}
+                  not currently available. Exact pick identities are not
+                  claimed from free text.
+                </p>
+                <p className="mt-2">
+                  <Link
+                    href={`/offseason?event=${encodeURIComponent(events[0]!.id)}`}
+                    className="font-semibold underline-offset-2 hover:underline"
+                  >
+                    Open cluster detail →
+                  </Link>
+                </p>
+              </div>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+export function OffseasonFeedItemRow({
+  item,
+  playerResolutionsByEventId,
+}: {
+  item: OffseasonFeedItem;
+  playerResolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
+}) {
+  if (item.kind === "related_event_cluster") {
+    return (
+      <RelatedEventClusterCard
+        cluster={item.cluster}
+        events={item.events}
+        playerResolutionsByEventId={playerResolutionsByEventId}
+      />
+    );
+  }
+  return (
+    <TransactionEventRow
+      event={item.event}
+      playerResolutions={playerResolutionsByEventId?.[item.event.id]}
+    />
   );
 }
 
@@ -198,7 +360,8 @@ export function OffseasonFilters({
       </div>
       <p className="text-[11px] text-muted-foreground">
         Search matches free-text ESPN descriptions — not entity-aware player
-        lookup.
+        lookup. One-sided notes are shown as source events; reciprocal notes
+        may appear as related-event clusters.
       </p>
     </div>
   );
@@ -206,8 +369,10 @@ export function OffseasonFilters({
 
 export function TimelineByMonth({
   byMonth,
+  playerResolutionsByEventId,
 }: {
   byMonth: Array<{ monthKey: string; events: NbaTransactionEvent[] }>;
+  playerResolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
 }) {
   if (!byMonth.length) {
     return (
@@ -225,7 +390,51 @@ export function TimelineByMonth({
           </h3>
           <div className="mt-2">
             {events.map((e) => (
-              <TransactionEventRow key={e.id} event={e} />
+              <TransactionEventRow
+                key={e.id}
+                event={e}
+                playerResolutions={playerResolutionsByEventId?.[e.id]}
+              />
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  );
+}
+
+export function TimelineFeedByMonth({
+  byMonth,
+  playerResolutionsByEventId,
+}: {
+  byMonth: Array<{ monthKey: string; items: OffseasonFeedItem[] }>;
+  playerResolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
+}) {
+  if (!byMonth.length) {
+    return (
+      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+        No transaction events for these filters.
+      </p>
+    );
+  }
+  return (
+    <div className="flex flex-col gap-6">
+      {byMonth.map(({ monthKey, items }) => (
+        <section key={monthKey}>
+          <h3 className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            {monthLabel(monthKey)}
+          </h3>
+          <div className="mt-2">
+            {items.map((item) => (
+              <OffseasonFeedItemRow
+                key={
+                  item.kind === "source_event"
+                    ? item.event.id
+                    : item.cluster.id
+                }
+                item={item}
+                playerResolutionsByEventId={playerResolutionsByEventId}
+              />
             ))}
           </div>
         </section>
@@ -236,11 +445,22 @@ export function TimelineByMonth({
 
 export function TransactionEventDetail({
   event,
+  cluster,
+  relatedEvents,
+  playerResolutionsByEventId,
 }: {
   event: NbaTransactionEvent;
+  cluster?: RelatedTransactionEventCluster | null;
+  relatedEvents?: NbaTransactionEvent[];
+  playerResolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
 }) {
   const brand = resolveTeamBrand(event.teamId) ?? resolveTeamBrand(event.teamAbbr);
   const abbr = brand?.abbr ?? event.teamAbbr ?? event.teamId;
+  const related = (relatedEvents ?? []).filter((e) => e.id !== event.id);
+  const clusterAbbrs = cluster?.teamIds.map(
+    (id) => resolveTeamBrand(id)?.abbr ?? id
+  );
+
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex items-center gap-3">
@@ -257,7 +477,79 @@ export function TransactionEventDetail({
           </Link>
         </div>
       </div>
-      <p className="text-[15px] leading-relaxed">{event.description}</p>
+
+      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+        {cluster
+          ? transactionEventRecordStatusLabel("related_event_cluster")
+          : transactionEventRecordStatusLabel("source_event")}
+      </p>
+
+      <div>
+        <p className="text-[12px] font-semibold text-muted-foreground">
+          ESPN transaction note
+        </p>
+        <TransactionDescription
+          description={event.description}
+          resolutions={playerResolutionsByEventId?.[event.id]}
+          className="mt-1 text-[15px] leading-relaxed"
+        />
+      </div>
+
+      {cluster && related.length ? (
+        <div className="rounded-md border border-border bg-secondary/30 px-3 py-3">
+          <p className="text-[13px] font-bold tracking-tight">
+            {clusterAbbrs?.join(" ↔ ") ?? "Related teams"}
+          </p>
+          <p className="mt-1 text-[12px] text-muted-foreground">
+            Related ESPN transaction events
+          </p>
+          <ul className="mt-3 flex flex-col gap-3">
+            {[event, ...related].map((e) => (
+              <li key={e.id}>
+                <p className="text-[12px] font-bold">{teamAbbr(e)}</p>
+                <TransactionDescription
+                  description={e.description}
+                  resolutions={playerResolutionsByEventId?.[e.id]}
+                  className="text-[13px] leading-relaxed text-muted-foreground"
+                />
+              </li>
+            ))}
+          </ul>
+          <div className="mt-3 border-t border-border/70 pt-3 text-[12px] leading-relaxed text-muted-foreground">
+            <p className="font-semibold text-foreground">Event interpretation</p>
+            <p className="mt-1">
+              This appears to describe the same{" "}
+              {clusterAbbrs?.join("–") ?? "multi-team"} transaction.
+            </p>
+            <p className="mt-2 font-semibold text-foreground">
+              Assembled from related transaction events
+            </p>
+            <ul className="mt-1 list-disc space-y-0.5 pl-4">
+              {cluster.evidence.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+            <p className="mt-2">
+              <span className="font-semibold text-foreground">Data status:</span>{" "}
+              Source-event reconstruction
+            </p>
+            <p className="mt-1">
+              <span className="font-semibold text-foreground">
+                Structured asset ledger:
+              </span>{" "}
+              not currently available.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <p className="text-[12px] text-muted-foreground">
+          This is a single-team ESPN source event. One-sided wording (for
+          example “acquired X for draft considerations”) is shown exactly as
+          recorded — DRBL does not invent the other side of the deal from free
+          text.
+        </p>
+      )}
+
       <dl className="grid gap-2 text-[12px] text-muted-foreground sm:grid-cols-2">
         <div>
           <dt className="font-semibold text-foreground">Source</dt>
@@ -268,8 +560,8 @@ export function TransactionEventDetail({
             Source-text category
           </dt>
           <dd>
-            {sourceTextCategoryLabel(event.sourceTextCategory)} (keyword
-            classification — not an official ESPN type)
+            {sourceTextCategoryLabel(event.sourceTextCategory)} — classifies
+            wording only; not a complete package claim
           </dd>
         </div>
         <div>

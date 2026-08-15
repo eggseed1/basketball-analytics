@@ -11,6 +11,10 @@ import {
   buildBoxScoreGameContext,
   type BoxScoreGameContextIndex,
 } from "@/analytics/box-score-context";
+import {
+  buildGameSeasonContext,
+  type GameSeasonContext,
+} from "@/analytics/game-season-context";
 import { buildStatContext } from "@/analytics/context";
 import type { StatContext } from "@/analytics/types";
 import type { Game, PlayerGame } from "@/data/types";
@@ -18,7 +22,7 @@ import type { TeamSeasonStats } from "@/data/types/team-season";
 import { formatNumber, formatPct } from "@/lib/format";
 import { getPbpCapability } from "@/pbp";
 
-export const GAME_LAB_VERSION = 1;
+export const GAME_LAB_VERSION = 1.1;
 
 export const GAME_LAB_METHODOLOGY = {
   version: GAME_LAB_VERSION,
@@ -29,6 +33,8 @@ export const GAME_LAB_METHODOLOGY = {
     "Each metric compares home vs away totals (or rates). A difference counts only when |delta| meets the metric tolerance. Overall edge is a plurality of meaningful advantages — not an opaque game score.",
   teamContextRule:
     `Team game values compare to that team's same-season board averages when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
+  gameSeasonContextRule:
+    "Game Lab V1.1 adds How Unusual / What Stood Out — scoreboard points and box rates vs same-season baselines with explicit direction and tolerances. Descriptive only; not a game grade.",
   flowRule:
     "Period flow uses ESPN linescores when present. End-of-period cumulative scores and period scoring margins are reported; mid-period largest lead / possession runs are not inferred.",
   playerHighlightsRule:
@@ -58,6 +64,14 @@ export const GAME_LAB_TOLERANCE = {
 } as const;
 
 export type GameLabDepth = "minimal" | "partial" | "full";
+
+/**
+ * How much game detail Game Lab actually has.
+ * - full: usable player box lines + team totals
+ * - partial: some box/linescore depth but incomplete
+ * - scoreboard: schedule/score only (no player box)
+ */
+export type GameLabAvailability = "full" | "partial" | "scoreboard";
 
 export type GameLabSide = "home" | "away" | "even" | "unavailable";
 
@@ -167,6 +181,8 @@ export type GamePlayerHighlights = {
 
 export type GameLabDataCoverage = {
   depth: GameLabDepth;
+  /** Scoreboard vs box vs full — missing box ≠ missing game. */
+  availability: GameLabAvailability;
   hasBoxScore: boolean;
   hasTeamTotals: boolean;
   hasPeriodScores: boolean;
@@ -182,11 +198,18 @@ export type GameAnalysisSummary = {
   season: string;
   gameDate: string;
   status: string;
+  /** Tip-off ISO when known — for countdown UI only. */
+  tipOffAt?: string;
+  period?: number;
+  displayClock?: string;
+  broadcasts?: import("@/lib/game-status").GameBroadcastOption[];
   outcome: {
     homeLabel: string;
     awayLabel: string;
     homeName: string;
     awayName: string;
+    homeTeamId: string;
+    awayTeamId: string;
     homeScore: number;
     awayScore: number;
     winner: GameLabSide;
@@ -211,6 +234,8 @@ export type GameAnalysisSummary = {
   overallEdgeDisplay: string;
   overallReason: string;
   teamContext: GameTeamContextMetric[];
+  /** V1.1 — how unusual vs same-season baselines (descriptive). */
+  gameSeasonContext: GameSeasonContext;
   playerHighlights: GamePlayerHighlights;
   boxScoreContext: BoxScoreGameContextIndex;
   coverage: GameLabDataCoverage;
@@ -846,7 +871,7 @@ export function analyzeGame(options: {
   let overallReason: string;
   if (!home || !away) {
     overallReason =
-      "Not enough box-score team totals to compare statistical advantages.";
+      "Statistical winning-factor analysis unavailable for this game because detailed team box-score data is not available.";
   } else if (!winningFactors.length) {
     overallEdge = "even";
     overallReason =
@@ -875,6 +900,18 @@ export function analyzeGame(options: {
     ...(home ? teamContextMetrics("home", home, homeSeason, game.season) : []),
     ...(away ? teamContextMetrics("away", away, awaySeason, game.season) : []),
   ];
+
+  const gameSeasonContext = buildGameSeasonContext({
+    game,
+    homeLabel,
+    awayLabel,
+    homeName,
+    awayName,
+    homeTotals: home,
+    awayTotals: away,
+    homeSeason,
+    awaySeason,
+  });
 
   const boxScoreContext = buildBoxScoreGameContext({
     gameId: game.id,
@@ -911,9 +948,18 @@ export function analyzeGame(options: {
     depth = "partial";
   }
 
+  let availability: GameLabAvailability = "scoreboard";
+  if (hasBoxScore && hasTeamTotals) {
+    availability = hasPeriodScores ? "full" : "partial";
+  } else if (hasBoxScore || hasTeamTotals || hasPeriodScores) {
+    availability = "partial";
+  }
+
   const coverageNotes: string[] = [];
   if (!hasBoxScore) {
-    coverageNotes.push("No usable player box-score lines for this game.");
+    coverageNotes.push(
+      "Scoreboard data available · detailed box score unavailable."
+    );
   }
   if (!hasPeriodScores) {
     coverageNotes.push("Period linescores unavailable — game flow is limited.");
@@ -932,7 +978,13 @@ export function analyzeGame(options: {
   const heroMetrics: GameAnalysisSummary["heroMetrics"] = [
     {
       id: "margin",
-      label: `${winner === "even" ? "Final" : winnerLabel} margin`,
+      label: `${
+        winner === "even"
+          ? game.status === "final"
+            ? "Final"
+            : "Current"
+          : winnerLabel
+      } margin`,
       display:
         winner === "even" ? "0" : signed(Math.abs(margin), 0),
     },
@@ -985,12 +1037,18 @@ export function analyzeGame(options: {
     gameId: game.id,
     season: game.season,
     gameDate: game.gameDate,
-    status: game.status ?? "final",
+    status: game.status ?? "unknown",
+    tipOffAt: game.tipOffAt,
+    period: game.period,
+    displayClock: game.displayClock,
+    broadcasts: game.broadcasts,
     outcome: {
       homeLabel,
       awayLabel,
       homeName,
       awayName,
+      homeTeamId: game.homeTeamId,
+      awayTeamId: game.awayTeamId,
       homeScore: game.homeScore,
       awayScore: game.awayScore,
       winner,
@@ -1011,10 +1069,12 @@ export function analyzeGame(options: {
     overallEdgeDisplay,
     overallReason,
     teamContext,
+    gameSeasonContext,
     playerHighlights,
     boxScoreContext,
     coverage: {
       depth,
+      availability,
       hasBoxScore,
       hasTeamTotals,
       hasPeriodScores,

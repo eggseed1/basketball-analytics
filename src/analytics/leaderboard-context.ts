@@ -42,74 +42,74 @@ function dimensionsForSort(sortKey: PlayerSeasonSortKey): Dim[] {
         { id: "overall", label: "Overall", metricId: "darko", explainId: "darko" },
         { id: "offense", label: "Offense", metricId: "darko-off", explainId: "darko" },
         { id: "defense", label: "Defense", metricId: "darko-def", explainId: "darko" },
-        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
+        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "ts" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];
     case "lebron":
       return [
         { id: "overall", label: "Overall", metricId: "lebron", explainId: "lebron" },
         { id: "offense", label: "Offense", metricId: "olebron", explainId: "lebron" },
         { id: "defense", label: "Defense", metricId: "dlebron", explainId: "lebron" },
-        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
+        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "ts" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];
     case "trueShootingPct":
       return [
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "efg", label: "Effective FG%", metricId: "efg" },
-        { id: "fg3", label: "3P%", metricId: "fg3" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
+        { id: "efg", label: "Effective FG%", metricId: "efg", explainId: "efg" },
+        { id: "fg3", label: "3P%", metricId: "fg3", explainId: "fg3" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
         { id: "scoring", label: "Scoring", metricId: "pts" },
       ];
     case "effectiveFieldGoalPct":
       return [
-        { id: "efg", label: "Effective FG%", metricId: "efg" },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "fg", label: "FG%", metricId: "fg" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
+        { id: "efg", label: "Effective FG%", metricId: "efg", explainId: "efg" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
+        { id: "fg", label: "FG%", metricId: "fg", explainId: "fg" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];
     case "usagePct":
       return [
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
         { id: "scoring", label: "Scoring", metricId: "pts" },
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
         { id: "overall", label: "Overall", metricId: "darko", explainId: "darko" },
       ];
     case "offensiveRating":
       return [
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
-        { id: "net", label: "Net rating", metricId: "net" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
+        { id: "net", label: "Net rating", metricId: "net", explainId: "net" },
       ];
     case "defensiveRating":
       return [
-        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true },
+        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true, explainId: "drtg" },
         { id: "stocks", label: "Steals", metricId: "stl" },
         { id: "blocks", label: "Blocks", metricId: "blk" },
         { id: "overall", label: "Overall", metricId: "darko", explainId: "darko" },
       ];
     case "netRating":
       return [
-        { id: "net", label: "Net rating", metricId: "net" },
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
-        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true },
+        { id: "net", label: "Net rating", metricId: "net", explainId: "net" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
+        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true, explainId: "drtg" },
         { id: "overall", label: "Overall", metricId: "darko", explainId: "darko" },
       ];
     case "ppg":
       return [
         { id: "scoring", label: "Scoring", metricId: "pts" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
       ];
     case "apg":
       return [
         { id: "playmaking", label: "Assists", metricId: "ast" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
       ];
     case "rpg":
       return [
@@ -135,18 +135,24 @@ function dimensionsForSort(sortKey: PlayerSeasonSortKey): Dim[] {
               : sortKey === "threePointPct"
                 ? "fg3"
                 : "ft",
+          explainId:
+            sortKey === "fieldGoalPct"
+              ? "fg"
+              : sortKey === "threePointPct"
+                ? "fg3"
+                : undefined,
         },
-        { id: "ts", label: "True shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "efg", label: "Effective FG%", metricId: "efg" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
+        { id: "ts", label: "True shooting", metricId: "ts", explainId: "ts" },
+        { id: "efg", label: "Effective FG%", metricId: "efg", explainId: "efg" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];
     default:
       return [
         { id: "overall", label: "Overall", metricId: "darko", explainId: "darko" },
-        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "trueShooting" },
-        { id: "usage", label: "Usage", metricId: "usg", explainId: "usage" },
-        { id: "offense", label: "Offensive rating", metricId: "ortg" },
-        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true },
+        { id: "shooting", label: "Shooting", metricId: "ts", explainId: "ts" },
+        { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
+        { id: "offense", label: "Offensive rating", metricId: "ortg", explainId: "ortg" },
+        { id: "defense", label: "Defensive rating", metricId: "drtg", invert: true, explainId: "drtg" },
       ];
   }
 }
@@ -222,7 +228,7 @@ export function buildLeaderboardRowContext(
       percentile,
       display,
       primary: lines.length === 0,
-      learnHref: explanation?.learnHref,
+      learnHref: explanation?.learnHref ?? undefined,
       context: buildStatContext({
         display,
         value,
@@ -231,7 +237,7 @@ export function buildLeaderboardRowContext(
         populationLabel: "players on this board",
         sampleSize: pool.length,
         timeframe: player.season,
-        learnHref: explanation?.learnHref,
+        learnHref: explanation?.learnHref ?? undefined,
         sourceLabel: dim.label,
       }),
     });

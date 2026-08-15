@@ -1,12 +1,18 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
 
 import type { AskDrblResult } from "@/query-engine/types";
 import { ASK_DRBL_EXAMPLE_PROMPTS } from "@/query-engine/types";
-import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { MetricHelp } from "@/components/learn/metric-help";
+import { PlayerIdentity } from "@/components/players/player-identity";
+import { AppLink } from "@/components/ui/app-link";
+import {
+  conceptIdForAskMetric,
+  conceptIdForAskStatus,
+} from "@/lib/learn-column-concepts";
+import { assertInternalHref } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
 const RECENT_KEY = "ask-drbl-recent-v1.1";
@@ -97,20 +103,32 @@ function AmbiguityPicker({ result }: { result: AskDrblResult }) {
       <ul className="flex flex-col gap-2">
         {groups.flatMap((a) =>
           a.candidates.map((c) => (
-            <li key={`${a.kind}-${c.id}`}>
-              <Link
-                href={`/ask?q=${encodeURIComponent(result.rawQuery)}&playerId=${encodeURIComponent(c.id)}`}
-                className="flex items-center gap-3 rounded-md border border-border px-3 py-2.5 transition-colors hover:bg-secondary/60"
-              >
-                {a.kind === "player" ? (
-                  <PlayerHeadshot
-                    playerId={c.id}
-                    espnId={c.id}
-                    name={c.name}
-                    size="sm"
-                  />
-                ) : null}
-                <span className="flex min-w-0 flex-col">
+            <li
+              key={`${a.kind}-${c.id}`}
+              className="flex items-center gap-3 rounded-md border border-border px-3 py-2.5"
+            >
+              {a.kind === "player" ? (
+                <PlayerIdentity
+                  playerId={c.id}
+                  name={c.name}
+                  teamLabel={c.subtitle}
+                  variant="compact"
+                  className="min-w-0 flex-1"
+                  nameClassName="no-underline hover:underline"
+                >
+                  <span className="flex min-w-0 flex-col">
+                    <span className="text-[14px] font-bold tracking-tight">
+                      {c.name}
+                    </span>
+                    {c.subtitle ? (
+                      <span className="text-[12px] text-muted-foreground">
+                        {c.subtitle}
+                      </span>
+                    ) : null}
+                  </span>
+                </PlayerIdentity>
+              ) : (
+                <span className="flex min-w-0 flex-1 flex-col">
                   <span className="text-[14px] font-bold tracking-tight">
                     {c.name}
                   </span>
@@ -120,10 +138,13 @@ function AmbiguityPicker({ result }: { result: AskDrblResult }) {
                     </span>
                   ) : null}
                 </span>
-                <span className="ml-auto text-[12px] font-semibold text-muted-foreground">
-                  Continue →
-                </span>
-              </Link>
+              )}
+              <AppLink
+                href={`/ask?q=${encodeURIComponent(result.rawQuery)}&playerId=${encodeURIComponent(c.id)}`}
+                className="shrink-0 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Continue →
+              </AppLink>
             </li>
           ))
         )}
@@ -157,11 +178,20 @@ function QueryPlanDisclosure({ result }: { result: AskDrblResult }) {
 function StatusBanner({ result }: { result: AskDrblResult }) {
   if (result.status === "ok") return null;
   const meta = statusMeta(result.status);
+  const statusConcept = conceptIdForAskStatus(result.status);
   return (
     <section
       className={cn("rounded-md border px-4 py-3", meta.className)}
     >
-      <h2 className="text-[15px] font-bold tracking-tight">{meta.title}</h2>
+      <h2 className="text-[15px] font-bold tracking-tight">
+        {statusConcept ? (
+          <MetricHelp conceptId={statusConcept} labelClassName="font-bold">
+            {meta.title}
+          </MetricHelp>
+        ) : (
+          meta.title
+        )}
+      </h2>
       <ul className="mt-2 flex flex-col gap-1.5 text-[14px] text-muted-foreground">
         {(result.errors ?? result.limitations ?? []).map((e) => (
           <li key={e}>{e}</li>
@@ -176,6 +206,47 @@ function StatusBanner({ result }: { result: AskDrblResult }) {
       ) : null}
       {result.status === "ambiguous" ? <AmbiguityPicker result={result} /> : null}
     </section>
+  );
+}
+
+function AskResultEntities({ result }: { result: AskDrblResult }) {
+  const players = result.ast.entities.filter(
+    (e): e is { kind: "player"; id: string; name?: string } =>
+      e.kind === "player" && Boolean(e.id)
+  );
+  if (!players.length) return null;
+  return (
+    <ul className="flex flex-wrap gap-3">
+      {players.map((p) => (
+        <li key={p.id}>
+          <PlayerIdentity
+            playerId={p.id}
+            name={p.name ?? p.id}
+            variant="compact"
+            nameClassName="text-[14px] font-semibold"
+          />
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function AskMetricChip({ result }: { result: AskDrblResult }) {
+  const metricId = result.ast.metricId;
+  const conceptId = conceptIdForAskMetric(metricId);
+  if (!conceptId || !metricId) return null;
+  const label =
+    metricId === "ts_pct"
+      ? "TS%"
+      : metricId === "efg_pct"
+        ? "eFG%"
+        : metricId === "usg_pct"
+          ? "USG%"
+          : metricId.replace(/_/g, " ").toUpperCase();
+  return (
+    <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <MetricHelp conceptId={conceptId}>{label}</MetricHelp>
+    </p>
   );
 }
 
@@ -228,7 +299,9 @@ export function AskDrblView({
     const trimmed = q.trim();
     if (!trimmed) return;
     startTransition(() => {
-      router.push(`/ask?q=${encodeURIComponent(trimmed)}`);
+      router.push(
+        assertInternalHref(`/ask?q=${encodeURIComponent(trimmed)}`)
+      );
     });
   }
 
@@ -244,7 +317,9 @@ export function AskDrblView({
           DRBL · Analytical search
         </p>
         <h1 className="text-[34px] font-bold tracking-tight sm:text-[40px]">
-          ASK DRBL
+          <MetricHelp conceptId="ask_drbl" labelClassName="font-bold tracking-tight">
+            ASK DRBL
+          </MetricHelp>
         </h1>
         <p className="max-w-2xl text-[15px] text-muted-foreground">
           A search engine for basketball intelligence — natural language to a
@@ -370,6 +445,8 @@ export function AskDrblView({
 
           {result.status === "ok" ? (
             <section className="sports-card flex flex-col gap-3 px-4 py-5 sm:px-5">
+              <AskResultEntities result={result} />
+              <AskMetricChip result={result} />
               {result.headline ? (
                 <h2 className="text-[18px] font-bold tracking-tight">
                   {result.headline}
@@ -424,13 +501,13 @@ export function AskDrblView({
               </h2>
               <div className="flex flex-wrap gap-3">
                 {result.links.map((l) => (
-                  <Link
+                  <AppLink
                     key={l.href + l.label}
                     href={l.href}
                     className="rounded-md bg-foreground px-3 py-2 text-[13px] font-bold text-background"
                   >
                     {l.label}
-                  </Link>
+                  </AppLink>
                 ))}
               </div>
             </section>

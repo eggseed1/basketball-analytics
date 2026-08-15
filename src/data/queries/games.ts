@@ -4,13 +4,15 @@ import type {
   Game,
   GameBoxScore,
   GameSummary,
+  PlayerGame,
 } from "@/data/types";
 import { applyGameFilters, toGameSummary } from "./filter-utils";
-import { getHistoricalBoxScore, getHistoricalGames } from "./historical";
+import { getHistoricalBoxScore, getHistoricalGame, getHistoricalGames } from "./historical";
 import {
   addDaysIso,
   fetchHomeWeekStrip,
   fetchRecentScoreboardGames,
+  fetchScoreboardDay,
   fetchScoreboardMonth,
   fetchScoreboardWeek,
   fetchUpcomingScoreboardGames,
@@ -37,7 +39,20 @@ export async function getGames(season?: string): Promise<Game[]> {
 }
 
 export async function getGame(gameId: string): Promise<Game | null> {
-  return getDataProvider().getGame(gameId);
+  const fromProvider = await getDataProvider().getGame(gameId);
+  if (fromProvider) return fromProvider;
+
+  // BallDontLie / schedule ids (e.g. Season Evidence) are not ESPN 40… events.
+  if (!looksLikeEspnEventId(gameId)) {
+    try {
+      const historical = await getHistoricalGame(gameId);
+      if (historical) return historical;
+    } catch {
+      // fall through
+    }
+  }
+
+  return null;
 }
 
 export async function getGameBoxScore(
@@ -58,11 +73,101 @@ export async function getGameBoxScore(
   } catch {
     // fall through
   }
-  try {
-    return await getDataProvider().getGameBoxScore(gameId);
-  } catch {
+
+  // Non-ESPN schedule ids (e.g. BallDontLie) must not retry the ESPN box path —
+  // different id spaces; the ESPN call only adds latency.
+  return null;
+}
+
+/**
+ * Best-available canonical game for Game Lab.
+ * A known schedule/scoreboard game is never treated as "not found" merely
+ * because the box score is missing.
+ */
+export type GameShellAvailability = "full" | "partial" | "scoreboard";
+
+export type GameShell = {
+  game: Game;
+  players: PlayerGame[];
+  availability: GameShellAvailability;
+  /** Where the Game row came from when box was absent. */
+  source: "box" | "historical" | "provider";
+  hasBoxScore: boolean;
+  hasPeriodScores: boolean;
+};
+
+function shellFromBox(box: GameBoxScore): GameShell {
+  const hasBoxScore = box.players.some(
+    (p) => p.minutes > 0 || p.points > 0 || p.fieldGoalsAttempted > 0
+  );
+  const hasPeriodScores = Boolean(
+    box.game.homePeriodScores?.length && box.game.awayPeriodScores?.length
+  );
+  let availability: GameShellAvailability = "scoreboard";
+  if (hasBoxScore) {
+    availability = hasPeriodScores ? "full" : "partial";
+  } else if (hasPeriodScores) {
+    availability = "partial";
+  }
+  return {
+    game: box.game,
+    players: box.players,
+    availability,
+    source: "box",
+    hasBoxScore,
+    hasPeriodScores,
+  };
+}
+
+function shellFromGame(
+  game: Game,
+  source: "historical" | "provider"
+): GameShell {
+  const hasPeriodScores = Boolean(
+    game.homePeriodScores?.length && game.awayPeriodScores?.length
+  );
+  return {
+    game,
+    players: [],
+    availability: hasPeriodScores ? "partial" : "scoreboard",
+    source,
+    hasBoxScore: false,
+    hasPeriodScores,
+  };
+}
+
+export async function getGameShell(gameId: string): Promise<GameShell | null> {
+  // ESPN event ids: box is the primary source.
+  if (looksLikeEspnEventId(gameId)) {
+    const box = await getGameBoxScore(gameId);
+    if (box?.game) return shellFromBox(box);
+
+    const fromProvider = await getDataProvider().getGame(gameId);
+    if (fromProvider) return shellFromGame(fromProvider, "provider");
     return null;
   }
+
+  // Schedule / BallDontLie ids: resolve the scoreboard row first (lightweight).
+  // Only attempt box when we may upgrade — never 404 solely for a missing box.
+  let historical: Game | null = null;
+  try {
+    historical = await getHistoricalGame(gameId);
+  } catch {
+    historical = null;
+  }
+
+  const box = await getGameBoxScore(gameId);
+  if (box?.game) {
+    const fromBox = shellFromBox(box);
+    if (fromBox.hasBoxScore || fromBox.hasPeriodScores || !historical) {
+      return fromBox;
+    }
+  }
+
+  if (historical) return shellFromGame(historical, "historical");
+
+  // Do not fan out ESPN season schedules for non-event ids — different id space.
+  return null;
 }
 
 /**
@@ -246,6 +351,39 @@ export async function getUpcomingGameSummaries(
   } catch {
     return { season, games: [], hasMore: false };
   }
+}
+
+/**
+ * Batched live scoreboard snapshot for today (ET).
+ * Short provider TTL; force bypasses memory cache for visibility wakes.
+ */
+export async function getLiveScoreboardSummaries(options: {
+  season?: string;
+  force?: boolean;
+  /** When set, only return these ids (still one provider day fetch). */
+  gameIds?: string[];
+  signal?: AbortSignal;
+} = {}): Promise<{
+  season: string;
+  retrievedAt: string;
+  games: GameSummary[];
+}> {
+  const season = options.season ?? upcomingScheduleSeason();
+  const games = await fetchScoreboardDay({
+    season,
+    force: options.force,
+    signal: options.signal,
+  });
+  const retrievedAt = new Date().toISOString();
+  let mapped = games.map((g) => ({
+    ...toGameSummary(g),
+    retrievedAt: g.retrievedAt ?? retrievedAt,
+  }));
+  if (options.gameIds?.length) {
+    const want = new Set(options.gameIds);
+    mapped = mapped.filter((g) => want.has(g.id));
+  }
+  return { season, retrievedAt, games: mapped };
 }
 
 export {

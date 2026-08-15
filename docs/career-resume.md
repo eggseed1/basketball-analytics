@@ -64,6 +64,10 @@ Rules:
 | **Longevity** | CPI ≥ **70%** of peak |
 | **Contiguous prime** | Longest run of prime-band seasons unbroken by a non-prime qualifying season |
 
+**Overlap (not mutually exclusive):** Peak ⊂ Prime band ⊂ Longevity band. Seasons at 70–89% of peak are **longevity-only**. Longevity can continue after the contiguous prime ends.
+
+See `/learn/peak-prime-longevity` and `/learn/career-arc` for plain-English education. Formal **Development Season** scoring is **not** part of Career Resume v1.0 (trajectory may say “Development → rise” descriptively).
+
 ## Trajectory
 
 Phases are labeled only from measured CPI shape (early/rise, prime, late/decline/sustained, current). No causal claims.

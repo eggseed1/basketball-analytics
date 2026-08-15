@@ -10,6 +10,7 @@ import os from "node:os";
 import {
   clearTransactionEventIndexCache,
   buildTransactionEventIndex,
+  buildTransactionEventCoverage,
   filterTransactionEvents,
   paginateEvents,
   aggregateTeamActivity,
@@ -225,7 +226,140 @@ async function main() {
         (sample as { playerId?: string }).playerId,
         undefined
       );
+      assert.equal(sample.recordStatus, "source_event");
     }
+  }
+
+  // Related-event clusters + Boston / Philadelphia regression
+  {
+    const {
+      buildRelatedTransactionEventClusters,
+      buildOffseasonFeedItems,
+    } = await import(
+      "../src/data/providers/transactions/transaction-event-clusters"
+    );
+
+    const bosPhi: CanonicalTransaction[] = [
+      tx({
+        id: "espn-tx-06d295f8e48f2709",
+        date: "2026-07-06",
+        season: "2026-27",
+        type: "trade",
+        teamIds: ["2"],
+        parties: [{ teamId: "2", teamAbbr: "BOS" }],
+        description:
+          "Re-signed G Ron Harper Jr. to a contract. Re-signed C Neemias Queta to a veteran extension. Acquired F Paul George from the Philadelphia 76ers in exchange for draft considerations. Signed C Mitchell Robinson to a contract. Signed G Mike Conley to a contract.",
+      }),
+      tx({
+        id: "espn-tx-d088aa46c3eef731",
+        date: "2026-07-06",
+        season: "2026-27",
+        type: "signing",
+        teamIds: ["20"],
+        parties: [{ teamId: "20", teamAbbr: "PHI" }],
+        description:
+          "Signed G Anfernee Simons and F Dean Wade to contracts. Acquired G Jaylen Brown from the Boston Celtics. Signed C Ariel Hukporti to a contract.",
+      }),
+      // Unrelated same-day signing — must NOT cluster
+      tx({
+        id: "espn-tx-unrelated-ny",
+        date: "2026-07-06",
+        season: "2026-27",
+        type: "signing",
+        teamIds: ["18"],
+        parties: [{ teamId: "18", teamAbbr: "NY" }],
+        description: "Signed C Andre Drummond to a contract.",
+      }),
+      // One-sided trade note with no reciprocal — stays source event
+      tx({
+        id: "espn-tx-mia-one-side",
+        date: "2026-07-06",
+        season: "2026-27",
+        type: "trade",
+        teamIds: ["14"],
+        parties: [{ teamId: "14", teamAbbr: "MIA" }],
+        description:
+          "Acquired Fs Giannis Antetokounmpo and Bobby Portis from the Milwaukee Bucks in exchange for draft considerations.",
+      }),
+      tx({
+        id: "espn-tx-mil-signing",
+        date: "2026-07-06",
+        season: "2026-27",
+        type: "signing",
+        teamIds: ["15"],
+        parties: [{ teamId: "15", teamAbbr: "MIL" }],
+        description: "Signed G Kam Jones to a two-way contract.",
+      }),
+    ];
+
+    await withTempArchive(bosPhi, async (cwd) => {
+      const index = await buildTransactionEventIndex({ force: true, cwd });
+      assert.equal(index.events.length, 5);
+
+      // Source event status + no invented assets
+      for (const e of index.events) {
+        assert.equal(e.recordStatus, "source_event");
+        assert.equal((e as { assets?: unknown[] }).assets, undefined);
+      }
+
+      const bos = index.byId.get("espn-tx-06d295f8e48f2709")!;
+      const phi = index.byId.get("espn-tx-d088aa46c3eef731")!;
+      assert.ok(bos.description.includes("Paul George"));
+      assert.ok(phi.description.includes("Jaylen Brown"));
+      // No inference: BOS blurb must not invent Jaylen Brown
+      assert.equal(bos.description.includes("Jaylen Brown"), false);
+
+      const clusters = index.clusters.clusters;
+      assert.equal(clusters.length, 1);
+      const cluster = clusters[0]!;
+      assert.equal(cluster.status, "related_event_cluster");
+      assert.equal(cluster.structuredLedgerAvailable, false);
+      assert.ok(cluster.eventIds.includes(bos.id));
+      assert.ok(cluster.eventIds.includes(phi.id));
+      assert.equal(cluster.eventIds.includes("espn-tx-unrelated-ny"), false);
+      assert.equal(cluster.eventIds.includes("espn-tx-mia-one-side"), false);
+
+      // Duplicate safety — rebuild yields same single cluster
+      const again = buildRelatedTransactionEventClusters(index.events);
+      assert.equal(again.clusters.length, 1);
+      assert.equal(again.clusters[0]!.id, cluster.id);
+
+      // Feed collapses to cluster + leftover source events
+      const feed = buildOffseasonFeedItems(
+        index.events,
+        index.clusters,
+        index.byId
+      );
+      const clusterItems = feed.filter(
+        (i) => i.kind === "related_event_cluster"
+      );
+      assert.equal(clusterItems.length, 1);
+      assert.equal(
+        feed.filter((i) => i.kind === "source_event").length,
+        3
+      );
+
+      // Search Jaylen Brown finds PHI side; feed still surfaces cluster siblings
+      const hit = filterTransactionEvents(index, { q: "Jaylen Brown" });
+      assert.equal(hit.length, 1);
+      assert.equal(hit[0]!.id, phi.id);
+      const feedFromSearch = buildOffseasonFeedItems(
+        hit,
+        index.clusters,
+        index.byId
+      );
+      assert.equal(feedFromSearch[0]?.kind, "related_event_cluster");
+      if (feedFromSearch[0]?.kind === "related_event_cluster") {
+        assert.equal(feedFromSearch[0].events.length, 2);
+      }
+
+      const coverage = await buildTransactionEventCoverage(index);
+      assert.equal(coverage.sourceEventCount, 5);
+      assert.equal(coverage.relatedClusterCount, 1);
+      assert.equal(coverage.structuredTransactionCount, 0);
+      assert.equal(coverage.ownershipEdgeCount, 0);
+      assert.equal(coverage.genealogyUiReady, false);
+    });
   }
 
   console.log("offseason-tracker checks passed");

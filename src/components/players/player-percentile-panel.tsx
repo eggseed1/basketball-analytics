@@ -10,7 +10,7 @@ import {
   type CareerSeriesPoint,
 } from "@/components/players/career-team-trend-chart";
 import { formatOrdinal } from "@/lib/format";
-import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
+import { resolveTeamBrand, teamBrandBarColor, teamChartColor } from "@/lib/nba-brand";
 import type { StatComp } from "@/lib/player-stat-comps";
 import { cn } from "@/lib/utils";
 
@@ -266,11 +266,11 @@ function CompComparePanel({
                         : Math.round(row.delta)
                   }`;
             const rowBrand = resolveTeamBrand(row.teamKey);
-            // Self bar follows the same grade key as percentile rankings;
-            // comps keep team primary for identity.
-            const barColor = row.isSelf
-              ? BAND_FILL[grade.band]
-              : (rowBrand?.primary ?? "rgba(29,29,31,0.35)");
+            // Similarity bars use canonical TEAM_BRANDS — not percentile grade greens.
+            // Grade bands remain on the percentile metric list (legend), not identity.
+            const barColor = rowBrand
+              ? teamBrandBarColor(row.teamKey)
+              : "rgba(29,29,31,0.35)";
             const inner = (
               <>
                 <div className="mb-1 flex items-baseline justify-between gap-2">

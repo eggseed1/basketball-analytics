@@ -1,9 +1,10 @@
 "use client";
 
-import Link from "next/link";
-
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { MetricHelp } from "@/components/learn/metric-help";
+import { PlayerIdentity } from "@/components/players/player-identity";
+import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { cn } from "@/lib/utils";
 
 function EdgeLabel({
@@ -20,9 +21,16 @@ function EdgeLabel({
   bName: string;
 }) {
   if (edgeDisplay) {
+    const even =
+      edgeDisplay.toLowerCase() === "even" ||
+      edgeDisplay.toLowerCase() === "essentially even";
     return (
       <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        {edgeDisplay}
+        {even ? (
+          <MetricHelp conceptId="essentially_even">{edgeDisplay}</MetricHelp>
+        ) : (
+          edgeDisplay
+        )}
       </span>
     );
   }
@@ -33,7 +41,7 @@ function EdgeLabel({
   ) {
     return (
       <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-        Even
+        <MetricHelp conceptId="essentially_even">Even</MetricHelp>
       </span>
     );
   }
@@ -116,7 +124,16 @@ export function ComparisonDimensionRow({
         <p className="text-[11px] text-muted-foreground">{aName}</p>
       </div>
       <div className="flex flex-col items-center gap-0.5 px-2">
-        <p className="text-[12px] font-semibold">{dimension.label}</p>
+        <p className="text-[12px] font-semibold">
+          {(() => {
+            const conceptId = conceptIdForColumnLabel(dimension.label);
+            return conceptId ? (
+              <MetricHelp conceptId={conceptId}>{dimension.label}</MetricHelp>
+            ) : (
+              dimension.label
+            );
+          })()}
+        </p>
         <EdgeLabel
           delta={dimension.delta}
           evenThreshold={evenThreshold}
@@ -149,9 +166,12 @@ export function PlayerCompareView({
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col items-center gap-4 sm:flex-row sm:justify-center sm:gap-8">
-        <Link
-          href={`/players/${result.aId}${result.season ? `?season=${result.season}` : ""}`}
-          className="flex flex-col items-center gap-2 text-center"
+        <PlayerIdentity
+          playerId={result.aId}
+          name={result.aName}
+          season={result.season}
+          className="flex flex-col items-center"
+          nameClassName="flex flex-col items-center gap-2 text-center no-underline hover:underline"
         >
           <PlayerHeadshot
             playerId={result.aId}
@@ -161,13 +181,16 @@ export function PlayerCompareView({
           <span className="text-[16px] font-bold tracking-tight">
             {result.aName}
           </span>
-        </Link>
+        </PlayerIdentity>
         <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
           vs
         </p>
-        <Link
-          href={`/players/${result.bId}${result.season ? `?season=${result.season}` : ""}`}
-          className="flex flex-col items-center gap-2 text-center"
+        <PlayerIdentity
+          playerId={result.bId}
+          name={result.bName}
+          season={result.season}
+          className="flex flex-col items-center"
+          nameClassName="flex flex-col items-center gap-2 text-center no-underline hover:underline"
         >
           <PlayerHeadshot
             playerId={result.bId}
@@ -177,12 +200,14 @@ export function PlayerCompareView({
           <span className="text-[16px] font-bold tracking-tight">
             {result.bName}
           </span>
-        </Link>
+        </PlayerIdentity>
       </header>
 
       {result.season ? (
         <p className="text-center text-[13px] text-muted-foreground">
-          Season {result.season} · percentiles among qualified peers
+          Season {result.season} ·{" "}
+          <MetricHelp conceptId="percentiles">percentiles</MetricHelp> among
+          qualified peers
         </p>
       ) : null}
 

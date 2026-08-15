@@ -68,10 +68,15 @@ export function applyGameFilters(
   games: Game[],
   filters: BasketballFilters = {}
 ): GameSummary[] {
+  const teamAbbr = filters.teamAbbr?.trim().toUpperCase();
   return games
     .filter((game) => {
       if (filters.season && game.season !== filters.season) return false;
-      if (
+      if (teamAbbr) {
+        const home = (game.homeTeamAbbr ?? "").toUpperCase();
+        const away = (game.awayTeamAbbr ?? "").toUpperCase();
+        if (home !== teamAbbr && away !== teamAbbr) return false;
+      } else if (
         filters.team &&
         game.homeTeamId !== filters.team &&
         game.awayTeamId !== filters.team

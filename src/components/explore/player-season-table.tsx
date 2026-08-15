@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   Fragment,
   useMemo,
@@ -19,6 +18,7 @@ import {
   LeaderboardRowContextPanel,
 } from "@/components/explore/leaderboard-row-context";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -294,6 +294,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "tov"}
                   dir={sortDir}
                   onClick={() => toggleSort("tov")}
+                  helpConceptId="tov"
                 >
                   TOV
                 </SortableTableHead>
@@ -301,6 +302,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "fieldGoalPct"}
                   dir={sortDir}
                   onClick={() => toggleSort("fieldGoalPct")}
+                  helpConceptId="fg"
                 >
                   FG%
                 </SortableTableHead>
@@ -308,6 +310,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "threePointPct"}
                   dir={sortDir}
                   onClick={() => toggleSort("threePointPct")}
+                  helpConceptId="fg3"
                 >
                   3P%
                 </SortableTableHead>
@@ -315,6 +318,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "freeThrowPct"}
                   dir={sortDir}
                   onClick={() => toggleSort("freeThrowPct")}
+                  helpConceptId="ft"
                 >
                   FT%
                 </SortableTableHead>
@@ -322,6 +326,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "effectiveFieldGoalPct"}
                   dir={sortDir}
                   onClick={() => toggleSort("effectiveFieldGoalPct")}
+                  helpConceptId="efg"
                 >
                   eFG%
                 </SortableTableHead>
@@ -329,6 +334,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "trueShootingPct"}
                   dir={sortDir}
                   onClick={() => toggleSort("trueShootingPct")}
+                  helpConceptId="ts"
                 >
                   TS%
                 </SortableTableHead>
@@ -336,6 +342,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "usagePct"}
                   dir={sortDir}
                   onClick={() => toggleSort("usagePct")}
+                  helpConceptId="usg"
                 >
                   USG%
                 </SortableTableHead>
@@ -343,6 +350,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "offensiveRating"}
                   dir={sortDir}
                   onClick={() => toggleSort("offensiveRating")}
+                  helpConceptId="ortg"
                 >
                   ORtg
                 </SortableTableHead>
@@ -350,6 +358,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "defensiveRating"}
                   dir={sortDir}
                   onClick={() => toggleSort("defensiveRating")}
+                  helpConceptId="drtg"
                 >
                   DRtg
                 </SortableTableHead>
@@ -357,6 +366,7 @@ export function PlayerSeasonTable({
                   active={sortKey === "netRating"}
                   dir={sortDir}
                   onClick={() => toggleSort("netRating")}
+                  helpConceptId="net"
                 >
                   NET
                 </SortableTableHead>
@@ -365,6 +375,7 @@ export function PlayerSeasonTable({
                     active={sortKey === "darkoDpm"}
                     dir={sortDir}
                     onClick={() => toggleSort("darkoDpm")}
+                    helpConceptId="darko"
                   >
                     DARKO
                   </SortableTableHead>
@@ -374,6 +385,7 @@ export function PlayerSeasonTable({
                     active={sortKey === "lebron"}
                     dir={sortDir}
                     onClick={() => toggleSort("lebron")}
+                    helpConceptId="lebron"
                   >
                     LEBRON
                   </SortableTableHead>
@@ -414,9 +426,15 @@ export function PlayerSeasonTable({
                       >
                         <TableCell className="sticky left-0 z-10 overflow-visible bg-card">
                           <div className="flex min-w-[11.5rem] items-center gap-1.5">
-                            <Link
-                              href={`/players/${player.playerId}?season=${encodeURIComponent(player.season)}`}
-                              className="flex min-w-0 flex-1 items-center gap-2 font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                            <PlayerIdentity
+                              playerId={player.playerId}
+                              name={player.playerName}
+                              teamKey={player.teamId}
+                              teamLabel={brand?.abbr ?? player.teamId}
+                              position={player.position}
+                              season={player.season}
+                              variant="compact"
+                              className="min-w-0 flex-1"
                             >
                               <span className="relative inline-flex shrink-0">
                                 <PlayerHeadshot
@@ -435,16 +453,14 @@ export function PlayerSeasonTable({
                               <span className="truncate">
                                 {player.playerName}
                               </span>
-                            </Link>
+                            </PlayerIdentity>
                             {rowContext ? (
                               <LeaderboardRowContextPanel
                                 context={rowContext}
                                 open={open}
-                                onToggle={() =>
-                                  setOpenContextId((id) =>
-                                    id === player.playerId
-                                      ? null
-                                      : player.playerId
+                                onOpenChange={(next) =>
+                                  setOpenContextId(
+                                    next ? player.playerId : null
                                   )
                                 }
                               />

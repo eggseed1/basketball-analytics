@@ -9,6 +9,7 @@ import {
   transformEspnScheduleEvent,
   type EspnScheduleEvent,
 } from "@/data/transformers/espn";
+import { LIVE_SCOREBOARD_TTL_MS } from "@/lib/live-refresh-policy";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -343,7 +344,16 @@ export async function fetchUpcomingScoreboardGames(options: {
     return pool
       .filter((g) => {
         if (g.gameDate < fromDate) return false;
-        if (g.status !== "scheduled" && g.status !== "in_progress") return false;
+        if (
+          g.status !== "scheduled" &&
+          g.status !== "pregame" &&
+          g.status !== "delayed" &&
+          g.status !== "in_progress" &&
+          g.status !== "halftime" &&
+          g.status !== "period_break"
+        ) {
+          return false;
+        }
         const tip = g.tipOffAt ?? `${g.gameDate}T00:00:00Z`;
         if (afterTip) {
           if (tip < afterTip) return false;
@@ -394,4 +404,51 @@ export async function fetchUpcomingScoreboardGames(options: {
 
   const hasMore = unique.length > limit;
   return { games: unique.slice(0, limit), hasMore };
+}
+
+/** America/New_York calendar day as ESPN `dates=YYYYMMDD`. */
+export function espnScoreboardDateKey(now = new Date()): string {
+  const parts = new Intl.DateTimeFormat("en-CA", {
+    timeZone: "America/New_York",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).formatToParts(now);
+  const y = parts.find((p) => p.type === "year")?.value;
+  const m = parts.find((p) => p.type === "month")?.value;
+  const d = parts.find((p) => p.type === "day")?.value;
+  return `${y}${m}${d}`;
+}
+
+/**
+ * Lightweight day scoreboard for live refresh — short TTL, optional bypass.
+ * One ESPN request covers all games that day (batch, not N per game).
+ */
+export async function fetchScoreboardDay(options: {
+  /** YYYYMMDD or omit for today (ET). */
+  dateKey?: string;
+  season?: string;
+  force?: boolean;
+  signal?: AbortSignal;
+}): Promise<Game[]> {
+  const season =
+    options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
+  const dateKey = options.dateKey ?? espnScoreboardDateKey();
+  const payload = await espnFetchJson<ScoreboardResponse>(
+    `${SITE_API}/apis/site/v2/sports/basketball/nba/scoreboard?dates=${dateKey}&limit=100`,
+    {
+      ttlMs: LIVE_SCOREBOARD_TTL_MS,
+      retries: 1,
+      bypassCache: options.force === true,
+      signal: options.signal,
+    }
+  ).catch(() => ({ events: [] }) as ScoreboardResponse);
+
+  const byId = new Map<string, Game>();
+  for (const event of payload.events ?? []) {
+    const game = transformEspnScheduleEvent(event, season);
+    if (!game) continue;
+    if (!byId.has(game.id)) byId.set(game.id, game);
+  }
+  return [...byId.values()];
 }

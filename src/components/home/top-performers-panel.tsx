@@ -5,6 +5,8 @@ import { useMemo, useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { MetricHelp } from "@/components/learn/metric-help";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import type { HomeDarkoLeader } from "@/data/queries/home";
 import type { PlayerSeason } from "@/data/types";
 import { normalizePlayerName } from "@/lib/player-name";
@@ -127,7 +129,10 @@ export function TopPerformersPanel({
             Top performers
           </h2>
           <p className="text-[13px] text-muted-foreground">
-            Overview with DARKO, TS%, and USG - sort to reorder.
+            Overview with{" "}
+            <MetricHelp conceptId="darko">DARKO</MetricHelp>,{" "}
+            <MetricHelp conceptId="ts">TS%</MetricHelp>, and{" "}
+            <MetricHelp conceptId="usg">USG</MetricHelp> — sort to reorder.
           </p>
         </div>
         <div className="flex flex-wrap gap-1">
@@ -158,34 +163,63 @@ export function TopPerformersPanel({
       <div className="overflow-hidden rounded-md border border-border bg-card">
         <div className="grid grid-cols-[minmax(0,1fr)_52px_52px_52px] gap-1 border-b border-border bg-secondary/50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
           <span>Player</span>
-          <span className="text-right">DPM</span>
-          <span className="text-right">TS%</span>
-          <span className="text-right">USG</span>
+          <span className="text-right">
+            <MetricHelp
+              conceptId="darko"
+              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
+            >
+              DPM
+            </MetricHelp>
+          </span>
+          <span className="text-right">
+            <MetricHelp
+              conceptId="ts"
+              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
+            >
+              TS%
+            </MetricHelp>
+          </span>
+          <span className="text-right">
+            <MetricHelp
+              conceptId="usg"
+              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
+            >
+              USG
+            </MetricHelp>
+          </span>
         </div>
         <ol className="divide-y divide-black/5">
           {rows.map((row) => (
             <li key={row.key}>
-              <Link
-                href={`/players/${row.id}`}
-                className="grid grid-cols-[minmax(0,1fr)_52px_52px_52px] items-center gap-1 px-3 py-2.5 transition-colors hover:bg-secondary/50"
-              >
+              <div className="grid grid-cols-[minmax(0,1fr)_52px_52px_52px] items-center gap-1 px-3 py-2.5">
                 <span className="flex min-w-0 items-center gap-2">
                   <span className="w-4 shrink-0 text-[12px] font-bold tabular-nums text-muted-foreground">
                     {row.rank}
                   </span>
-                  <PlayerHeadshot
+                  <PlayerIdentity
                     playerId={row.id}
-                    nbaId={row.nbaId}
                     name={row.name}
+                    nbaId={row.nbaId}
                     teamKey={row.teamKey}
-                    size="xs"
-                  />
-                  <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
-                    {row.name}
-                  </span>
-                  {row.teamKey ? (
-                    <TeamLogo teamKey={row.teamKey} size="xs" />
-                  ) : null}
+                    teamLabel={row.teamKey}
+                    variant="compact"
+                    className="min-w-0 flex-1"
+                    nameClassName="w-full gap-2 no-underline hover:underline"
+                  >
+                    <PlayerHeadshot
+                      playerId={row.id}
+                      nbaId={row.nbaId}
+                      name={row.name}
+                      teamKey={row.teamKey}
+                      size="xs"
+                    />
+                    <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
+                      {row.name}
+                    </span>
+                    {row.teamKey ? (
+                      <TeamLogo teamKey={row.teamKey} size="xs" />
+                    ) : null}
+                  </PlayerIdentity>
                 </span>
                 <Metric
                   value={
@@ -201,7 +235,7 @@ export function TopPerformersPanel({
                   value={row.usg != null ? formatPct(row.usg) : "-"}
                   emphasize={sort === "usage"}
                 />
-              </Link>
+              </div>
             </li>
           ))}
           {rows.length === 0 ? (

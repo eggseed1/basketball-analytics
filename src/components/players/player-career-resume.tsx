@@ -1,11 +1,12 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
 import type { CareerResume } from "@/analytics";
 import { formatCpi, formatOfPeak, formatTsContext } from "@/analytics";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
+import { MetricHelp } from "@/components/learn/metric-help";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -17,6 +18,7 @@ export function PlayerCareerResume({
   teamKey,
   careerStartTeamKey,
   evolutionAnchorId = "player-evolution",
+  seasonsAnchorId = "seasons",
 }: {
   resume: CareerResume;
   /** Current / viewing season team. */
@@ -25,6 +27,8 @@ export function PlayerCareerResume({
   careerStartTeamKey?: string | null;
   /** In-page anchor for the evolution panel. */
   evolutionAnchorId?: string;
+  /** In-page anchor for the season explorer. */
+  seasonsAnchorId?: string;
 }) {
   const [showWhy, setShowWhy] = useState(false);
   const [showMethod, setShowMethod] = useState(false);
@@ -39,10 +43,24 @@ export function PlayerCareerResume({
     >
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Career resume</h2>
+          <h2 className="text-[17px] font-bold tracking-tight">
+            <MetricHelp
+              conceptId="career_resume"
+              labelClassName="font-bold tracking-tight"
+            >
+              Career resume
+            </MetricHelp>
+          </h2>
           <p className="text-[13px] text-muted-foreground">
-            Peak · Prime · Longevity — relative to this player&apos;s own peak
-            production
+            <MetricHelp conceptId="career_peak">Peak</MetricHelp>
+            {" · "}
+            <MetricHelp conceptId="career_prime">Prime</MetricHelp>
+            {" · "}
+            <MetricHelp conceptId="career_longevity">Longevity</MetricHelp>
+            {" — "}
+            <MetricHelp conceptId="career_self_comparison">
+              relative to this player&apos;s own peak
+            </MetricHelp>
           </p>
         </div>
         <button
@@ -75,11 +93,14 @@ export function PlayerCareerResume({
           </ul>
           <p className="mt-2">{m.populationNote}</p>
           <p className="mt-1">{m.impactCaveat}</p>
-          <p className="mt-2 text-muted-foreground">
-            Full write-up:{" "}
-            <span className="font-semibold text-foreground">
-              docs/career-resume.md
-            </span>
+          <p className="mt-2">
+            Bands overlap: Peak ⊂ Prime ⊂ Longevity.{" "}
+            <Link
+              href="/learn/peak-prime-longevity"
+              className="font-semibold text-foreground underline-offset-2 hover:underline"
+            >
+              Learn Peak, Prime &amp; Longevity →
+            </Link>
           </p>
         </div>
       ) : null}
@@ -91,7 +112,14 @@ export function PlayerCareerResume({
       {peak ? (
         <div className="grid gap-3 sm:grid-cols-3">
           <ResumeStat
-            label="Peak"
+            label={
+              <MetricHelp
+                conceptId="career_peak"
+                labelClassName="font-bold uppercase tracking-wide"
+              >
+                Peak
+              </MetricHelp>
+            }
             primary={peak.season}
             secondary={`CPI ${formatCpi(peak.cpi)}`}
             tertiary={
@@ -103,7 +131,14 @@ export function PlayerCareerResume({
             hrefLabel="View season →"
           />
           <ResumeStat
-            label="Prime"
+            label={
+              <MetricHelp
+                conceptId="career_prime"
+                labelClassName="font-bold uppercase tracking-wide"
+              >
+                Prime
+              </MetricHelp>
+            }
             primary={
               resume.prime
                 ? resume.prime.contiguousFrom && resume.prime.contiguousTo
@@ -120,7 +155,14 @@ export function PlayerCareerResume({
             }
           />
           <ResumeStat
-            label="Longevity"
+            label={
+              <MetricHelp
+                conceptId="career_longevity"
+                labelClassName="font-bold uppercase tracking-wide"
+              >
+                Longevity
+              </MetricHelp>
+            }
             primary={
               resume.longevity
                 ? `${resume.longevity.seasonCount} season${resume.longevity.seasonCount === 1 ? "" : "s"}`
@@ -148,7 +190,12 @@ export function PlayerCareerResume({
       {resume.trajectory.phases.length ? (
         <div>
           <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-            Career arc
+            <MetricHelp
+              conceptId="career_arc"
+              labelClassName="font-bold uppercase tracking-wide"
+            >
+              Career arc
+            </MetricHelp>
           </p>
           <p className="mt-1 text-[13px] leading-relaxed text-foreground">
             {resume.trajectory.phases
@@ -160,7 +207,10 @@ export function PlayerCareerResume({
               : null}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            {resume.trajectory.summary}
+            {resume.trajectory.summary} Trajectory phases describe arc shape —
+            not separate scoring thresholds.{" "}
+            <MetricHelp conceptId="career_development">Development</MetricHelp>{" "}
+            is descriptive in Career Resume v1.
           </p>
         </div>
       ) : null}
@@ -201,6 +251,17 @@ export function PlayerCareerResume({
           aria-expanded={showWhy}
         >
           {showWhy ? "Hide qualifying seasons" : "Show qualifying seasons"}
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            document
+              .getElementById(seasonsAnchorId)
+              ?.scrollIntoView({ behavior: "smooth", block: "start" });
+          }}
+          className="text-[12px] font-semibold underline-offset-2 hover:underline"
+        >
+          Explore career →
         </button>
         <button
           type="button"
@@ -318,23 +379,34 @@ export function PlayerCareerResume({
                           !s.inLongevityBand && "text-muted-foreground"
                         )}
                       >
-                        {s.season === peak?.season
-                          ? "Peak"
-                          : s.inPrimeBand
-                            ? "Prime"
-                            : s.inLongevityBand
-                              ? "Longevity"
-                              : "Below"}
+                        {bandLabel(s, peak?.season)}
                       </span>
                     </td>
                   </tr>
                 ))}
             </tbody>
           </table>
+          <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
+            Bands overlap (Peak ⊂ Prime ⊂ Longevity).{" "}
+            <MetricHelp conceptId="longevity_only">Longevity-only</MetricHelp>{" "}
+            means 70–89% of peak.
+          </p>
         </div>
       ) : null}
     </TeamWashCard>
   );
+}
+
+function bandLabel(
+  s: CareerResume["qualifyingSeasons"][number],
+  peakSeason?: string
+): string {
+  if (peakSeason && s.season === peakSeason) {
+    return "Peak · Prime · Longevity";
+  }
+  if (s.inPrimeBand) return "Prime · Longevity";
+  if (s.inLongevityBand) return "Longevity-only";
+  return "Below longevity";
 }
 
 function ResumeStat({
@@ -345,7 +417,7 @@ function ResumeStat({
   href,
   hrefLabel,
 }: {
-  label: string;
+  label: ReactNode;
   primary: string;
   secondary: string;
   tertiary?: string;

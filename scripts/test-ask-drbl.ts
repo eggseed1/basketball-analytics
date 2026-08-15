@@ -287,4 +287,18 @@ function assertJsonSafe(value: unknown) {
   assert.equal(ast.entities.filter((e) => e.kind === "team").length, 2);
 }
 
+// --- Team entity can be force-resolved (team page deep link shape) ---
+{
+  const ast = interpretAskQuery(
+    "Boston Celtics point differential 2025-26"
+  );
+  assert.equal(ast.operation, "team_season_stat");
+  const forced = {
+    ...ast,
+    entities: [{ kind: "team" as const, id: "2", name: "BOS" }],
+    ambiguous: undefined,
+  };
+  assert.equal(validateBasketballQuery(forced).ok, true);
+}
+
 console.log("test-ask-drbl: all assertions passed");

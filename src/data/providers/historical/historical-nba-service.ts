@@ -227,7 +227,11 @@ export class HistoricalNbaService {
         }
       }
     }
-    return this.espn.getGame(gameId);
+    // ESPN event ids only — do not fan out schedule lookups for foreign ids.
+    if (/^40\d{7,}$/.test(gameId)) {
+      return this.espn.getGame(gameId);
+    }
+    return null;
   }
 
   async getGameBoxScore(gameId: string): Promise<GameBoxScore | null> {
@@ -286,7 +290,7 @@ export class HistoricalNbaService {
           }
         }
       } catch (error) {
-        // ESPN and BallDontLie use different numeric id spaces. 401/404 → ESPN.
+        // ESPN and BallDontLie use different numeric id spaces. 401/404 → stop.
         if (
           !(
             error instanceof BallDontLieError &&
@@ -298,7 +302,8 @@ export class HistoricalNbaService {
       }
     }
 
-    return this.espn.getGameBoxScore(gameId);
+    // Do not call ESPN with a BallDontLie / non-event id — different id space.
+    return null;
   }
 
   async getPlayerSeasons(season: string): Promise<PlayerSeason[]> {

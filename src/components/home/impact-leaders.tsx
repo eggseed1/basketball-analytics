@@ -5,7 +5,9 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { MetricHelp } from "@/components/learn/metric-help";
 import type { HomeDarkoLeader } from "@/data/queries/home";
 import type { PlayerSeason } from "@/data/types";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
@@ -33,12 +35,9 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
         <div>
           <div className="flex items-baseline gap-2">
             <h2 className="text-[17px] font-bold tracking-tight">Impact</h2>
-            <Link
-              href="/learn/darko"
-              className="text-[12px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
-            >
+            <MetricHelp conceptId="darko" labelClassName="text-[12px] font-semibold text-muted-foreground">
               DARKO
-            </Link>
+            </MetricHelp>
           </div>
           <p className="text-[13px] text-muted-foreground">
             Who moves the needle most per 100 possessions.
@@ -65,30 +64,37 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
       <ol className="sports-card divide-y divide-black/5">
         {visible.map((p, i) => (
           <li key={`${p.profileId}-${p.playerName}`}>
-            <Link
-              href={`/players/${p.profileId}`}
-              className="flex gap-3 px-4 py-3 transition-colors hover:bg-secondary/50"
-            >
+            <div className="flex gap-3 px-4 py-3 transition-colors hover:bg-secondary/50">
               <span className="w-5 pt-2 text-[13px] font-bold tabular-nums text-muted-foreground">
                 {i + 1}
               </span>
-              <PlayerHeadshot
+              <PlayerIdentity
                 playerId={p.profileId}
-                nbaId={p.nbaPlayerId}
                 name={p.playerName}
+                nbaId={p.nbaPlayerId}
                 teamKey={p.teamAbbr ?? p.teamName}
-                size="sm"
-              />
-              <div className="min-w-0 flex-1 pt-1">
-                <div className="flex items-center gap-2">
-                  <p className="truncate text-[15px] font-semibold underline-offset-2 group-hover:underline">
-                    {p.playerName}
-                  </p>
-                  {p.teamAbbr || p.teamName ? (
-                    <TeamLogo teamKey={p.teamAbbr ?? p.teamName} size="xs" />
-                  ) : null}
+                teamLabel={p.teamAbbr ?? p.teamName}
+                className="min-w-0 flex-1"
+                nameClassName="w-full gap-3 no-underline hover:no-underline"
+              >
+                <PlayerHeadshot
+                  playerId={p.profileId}
+                  nbaId={p.nbaPlayerId}
+                  name={p.playerName}
+                  teamKey={p.teamAbbr ?? p.teamName}
+                  size="sm"
+                />
+                <div className="min-w-0 flex-1 pt-1">
+                  <div className="flex items-center gap-2">
+                    <p className="truncate text-[15px] font-semibold">
+                      {p.playerName}
+                    </p>
+                    {p.teamAbbr || p.teamName ? (
+                      <TeamLogo teamKey={p.teamAbbr ?? p.teamName} size="xs" />
+                    ) : null}
+                  </div>
                 </div>
-              </div>
+              </PlayerIdentity>
               <div className="text-right">
                 <p className="score-num text-[1.35rem] font-bold tabular-nums">
                   {formatImpact(p.impact)}
@@ -97,7 +103,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                   DPM
                 </p>
               </div>
-            </Link>
+            </div>
           </li>
         ))}
       </ol>
@@ -113,7 +119,7 @@ function EfficiencyCard({
   rows,
   renderMeta,
 }: {
-  title: string;
+  title: ReactNode;
   learnHref: string;
   boardHref: string;
   boardLabel: string;
@@ -145,22 +151,24 @@ function EfficiencyCard({
       </div>
       <ul className="mt-1 flex flex-col gap-2">
         {visible.map((p) => (
-          <li key={p.playerId}>
-            <Link
-              href={`/players/${p.playerId}`}
-              className="flex items-center gap-2 rounded-lg px-1 py-0.5 transition-colors hover:bg-secondary/60"
+          <li
+            key={p.playerId}
+            className="flex items-center gap-2 rounded-lg px-1 py-0.5"
+          >
+            <PlayerIdentity
+              playerId={p.playerId}
+              name={p.playerName}
+              teamKey={p.teamName}
+              teamLabel={p.teamName}
+              variant="compact"
+              className="min-w-0 flex-1"
+              nameClassName="w-full gap-2 no-underline hover:underline"
             >
-              <PlayerHeadshot
-                playerId={p.playerId}
-                name={p.playerName}
-                teamKey={p.teamName}
-                size="xs"
-              />
               <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
                 {p.playerName}
               </span>
-              {renderMeta(p)}
-            </Link>
+            </PlayerIdentity>
+            {renderMeta(p)}
           </li>
         ))}
         {rows.length === 0 ? (
@@ -190,7 +198,11 @@ export function EfficiencyLeaders({
   return (
     <section className="grid gap-3 sm:grid-cols-2">
       <EfficiencyCard
-        title="True shooting"
+        title={
+          <MetricHelp conceptId="ts" labelClassName="text-[15px] font-bold">
+            True shooting
+          </MetricHelp>
+        }
         learnHref="/learn/true-shooting"
         boardHref="/explore/players?sort=trueShootingPct"
         boardLabel="Full board"
@@ -202,7 +214,17 @@ export function EfficiencyLeaders({
         )}
       />
       <EfficiencyCard
-        title="Usage × TS%"
+        title={
+          <>
+            <MetricHelp conceptId="usg" labelClassName="text-[15px] font-bold">
+              Usage
+            </MetricHelp>
+            {" × "}
+            <MetricHelp conceptId="ts" labelClassName="text-[15px] font-bold">
+              TS%
+            </MetricHelp>
+          </>
+        }
         learnHref="/learn/usage"
         boardHref="/explore/players?sort=usagePct"
         boardLabel="Full board"

@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
@@ -58,14 +59,14 @@ function PlayerSearchField({
       <Label>{label}</Label>
       {selectedId && selectedName ? (
         <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
-          <PlayerHeadshot
+          <PlayerIdentity
             playerId={selectedId}
             name={selectedName}
-            size="xs"
+            teamKey={undefined}
+            variant="compact"
+            className="min-w-0 flex-1"
+            nameClassName="text-[13px] font-semibold no-underline hover:underline"
           />
-          <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
-            {selectedName}
-          </span>
           <button
             type="button"
             className="text-[12px] font-semibold text-muted-foreground hover:text-foreground"

@@ -7,12 +7,20 @@ export type QueryPlanRow = { label: string; value: string };
 export function buildQueryPlan(ast: BasketballQueryAst): QueryPlanRow[] {
   const rows: QueryPlanRow[] = [];
   const player = ast.entities.find((e) => e.kind === "player");
-  const team = ast.entities.find((e) => e.kind === "team");
+  const teams = ast.entities.filter((e) => e.kind === "team");
   if (player) {
     rows.push({ label: "Player", value: player.name ?? player.id });
   }
-  if (team) {
-    rows.push({ label: "Team", value: team.name ?? team.id });
+  if (teams.length === 1) {
+    rows.push({ label: "Team", value: teams[0]!.name ?? teams[0]!.id });
+  } else if (teams.length >= 2) {
+    rows.push({
+      label: "Teams",
+      value: teams
+        .slice(0, 2)
+        .map((t) => t.name ?? t.id)
+        .join(" vs "),
+    });
   }
   if (ast.when?.seasons?.length) {
     rows.push({
@@ -54,6 +62,12 @@ function operationLabel(op: QueryOperation): string {
       return "Qualified leaderboard";
     case "season_compare":
       return "Player season comparison";
+    case "team_season_compare":
+      return "Team season / team vs team comparison";
+    case "team_season_rank":
+      return "Rank Team Seasons (Copeland)";
+    case "team_season_game_evidence":
+      return "Team season game evidence";
     case "season_rank":
       return "Rank My Seasons (Copeland)";
     case "career_resume":
@@ -79,7 +93,11 @@ function populationFor(op: QueryOperation): string {
     case "career_resume":
       return "Qualified player-season row(s)";
     case "team_season_stat":
+    case "team_season_compare":
+    case "team_season_rank":
       return "Team-season board row";
+    case "team_season_game_evidence":
+      return "Final regular-season GameSummary rows (scores only)";
     case "game_lab":
       return "Game box score + team totals";
     case "offseason_summary":
@@ -180,6 +198,57 @@ export function buildFollowUpLinks(
           `/teams/${team.id}${seasons[0] ? `?season=${encodeURIComponent(seasons[0])}` : ""}`
         );
         add("Team leaderboard →", `/explore/teams`);
+      }
+      break;
+    case "team_season_compare": {
+      const teams = ast.entities.filter((e) => e.kind === "team");
+      const a = teams[0];
+      const b = teams[1] ?? teams[0];
+      const sa = seasons[0];
+      const sb = seasons[1] ?? sa;
+      if (a?.id && b?.id && sa && sb) {
+        add(
+          "Open full comparison →",
+          `/compare?mode=teams&teamA=${encodeURIComponent(a.id)}&teamB=${encodeURIComponent(b.id)}&seasonA=${encodeURIComponent(sa)}&seasonB=${encodeURIComponent(sb)}`
+        );
+      }
+      if (a?.id) {
+        add(
+          "Rank this team's seasons →",
+          `/compare?mode=teams&view=rank&teamId=${encodeURIComponent(a.id)}`
+        );
+      }
+      break;
+    }
+    case "team_season_rank":
+      if (team?.id) {
+        const seasonQs = seasons.length
+          ? `&seasons=${encodeURIComponent(seasons.join(","))}`
+          : "";
+        add(
+          "Open Team Season Ranking →",
+          `/compare?mode=teams&view=rank&teamId=${encodeURIComponent(team.id)}${seasonQs}`
+        );
+        add(
+          "View team →",
+          `/teams/${team.id}${seasons[0] ? `?season=${encodeURIComponent(seasons[0])}` : ""}`
+        );
+        add(
+          "Compare seasons →",
+          `/compare?mode=teams&teamA=${encodeURIComponent(team.id)}&teamB=${encodeURIComponent(team.id)}`
+        );
+      }
+      break;
+    case "team_season_game_evidence":
+      if (team?.id) {
+        add(
+          "Rank this team's seasons →",
+          `/compare?mode=teams&view=rank&teamId=${encodeURIComponent(team.id)}`
+        );
+        add(
+          "View team →",
+          `/teams/${team.id}${seasons[0] ? `?season=${encodeURIComponent(seasons[0])}` : ""}`
+        );
       }
       break;
     case "game_lab":

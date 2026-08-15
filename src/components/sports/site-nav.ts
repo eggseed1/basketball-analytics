@@ -130,7 +130,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     subnav: [
       {
         href: "/franchises",
-        label: "Franchises",
+        label: "Franchise History",
         match: (p) => p.startsWith("/franchises"),
       },
     ],
@@ -139,4 +139,9 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
 
 export function activePrimaryNav(pathname: string): PrimaryNavItem | undefined {
   return PRIMARY_NAV.find((item) => item.match(pathname));
+}
+
+/** Deterministic active-domain checks for tests / debugging. */
+export function primaryNavLabelForPath(pathname: string): string | null {
+  return activePrimaryNav(pathname)?.label ?? null;
 }

@@ -1,4 +1,9 @@
 import type { AskMetricDef, AskMetricId } from "./types";
+import { learnHrefFor } from "@/content/learn/registry";
+
+function href(id: string): string | undefined {
+  return learnHrefFor(id) ?? undefined;
+}
 
 export const ASK_METRICS: AskMetricDef[] = [
   {
@@ -83,7 +88,7 @@ export const ASK_METRICS: AskMetricDef[] = [
       "true-shooting",
     ],
     scope: "either",
-    learnHref: "/learn/true-shooting",
+    learnHref: href("ts"),
     format: "pct",
   },
   {
@@ -91,6 +96,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Effective FG%",
     synonyms: ["efg%", "efg", "effective fg", "effective field goal", "effective fg%"],
     scope: "either",
+    learnHref: href("efg"),
     format: "pct",
   },
   {
@@ -98,7 +104,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Usage rate",
     synonyms: ["usg%", "usg", "usage", "usage rate", "usage%"],
     scope: "player_season",
-    learnHref: "/learn/usage",
+    learnHref: href("usg"),
     format: "pct",
   },
   {
@@ -106,7 +112,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "DARKO DPM",
     synonyms: ["darko", "darko dpm", "dpm"],
     scope: "player_season",
-    learnHref: "/learn/darko",
+    learnHref: href("darko"),
     format: "impact",
   },
   {
@@ -114,7 +120,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "LEBRON",
     synonyms: ["lebron metric", "lebron rating", "lebron impact"],
     scope: "player_season",
-    learnHref: "/learn/lebron",
+    learnHref: href("lebron"),
     format: "impact",
   },
   {
@@ -122,6 +128,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Career Production Index",
     synonyms: ["cpi", "career production", "production index"],
     scope: "derived",
+    learnHref: href("cpi"),
     format: "number",
   },
   {
@@ -136,6 +143,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Opponent points per game",
     synonyms: ["opp ppg", "opponent ppg", "defensive scoring"],
     scope: "team_season",
+    learnHref: href("opp_ppg"),
     format: "per_game",
   },
   {
@@ -151,6 +159,7 @@ export const ASK_METRICS: AskMetricDef[] = [
       "margin",
     ],
     scope: "team_season",
+    learnHref: href("diff"),
     format: "number",
   },
   {
@@ -158,6 +167,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Team effective FG%",
     synonyms: ["team efg", "efg%", "effective fg%"],
     scope: "team_season",
+    learnHref: href("efg"),
     format: "pct",
   },
   {
@@ -165,6 +175,7 @@ export const ASK_METRICS: AskMetricDef[] = [
     label: "Team true shooting %",
     synonyms: ["team ts", "team true shooting", "ts%"],
     scope: "team_season",
+    learnHref: href("ts"),
     format: "pct",
   },
   {

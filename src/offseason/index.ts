@@ -73,17 +73,21 @@ export function statusLabel(status: TransactionStatus): string {
 }
 
 const SOURCE_TEXT_CATEGORY_LABELS: Record<TransactionType, string> = {
-  signing: "Signing",
-  trade: "Trade-related",
-  waive: "Waiver",
-  draft: "Draft-related",
-  extension: "Extension",
-  option: "Option",
-  release: "Release",
-  other: "Other",
+  signing: "Signing (source text)",
+  trade: "Trade-related (source text)",
+  waive: "Waiver (source text)",
+  draft: "Draft-related (source text)",
+  extension: "Extension (source text)",
+  option: "Option (source text)",
+  release: "Release (source text)",
+  other: "Other (source text)",
 };
 
-/** Display label for ESPN free-text category (server + client safe). */
+/**
+ * Display label for ESPN free-text category (server + client safe).
+ * These labels classify source wording — they do not mean DRBL has a
+ * complete structured transaction package.
+ */
 export function sourceTextCategoryLabel(cat: TransactionType): string {
   return SOURCE_TEXT_CATEGORY_LABELS[cat] ?? cat;
 }

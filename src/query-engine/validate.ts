@@ -151,6 +151,50 @@ export function validateBasketballQuery(
     };
   }
 
+  if (ast.operation === "team_season_compare") {
+    const teams = ast.entities.filter((e) => e.kind === "team");
+    if (teams.length < 1) {
+      return {
+        ok: false,
+        status: "invalid",
+        errors: ["Team compare needs at least one team."],
+        ast,
+      };
+    }
+    if ((ast.when?.seasons?.length ?? 0) < 1) {
+      return {
+        ok: false,
+        status: "invalid",
+        errors: ["Team compare needs at least one season."],
+        ast,
+      };
+    }
+  }
+
+  if (ast.operation === "team_season_rank") {
+    const teams = ast.entities.filter((e) => e.kind === "team");
+    if (teams.length < 1) {
+      return {
+        ok: false,
+        status: "invalid",
+        errors: ["Team season rank needs a team."],
+        ast,
+      };
+    }
+  }
+
+  if (ast.operation === "team_season_game_evidence") {
+    const teams = ast.entities.filter((e) => e.kind === "team");
+    if (teams.length < 1) {
+      return {
+        ok: false,
+        status: "invalid",
+        errors: ["Team season evidence needs a team."],
+        ast,
+      };
+    }
+  }
+
   if (
     ast.operation === "game_lab" &&
     ast.entities.filter((e) => e.kind === "team").length < 1

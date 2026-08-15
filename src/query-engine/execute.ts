@@ -9,6 +9,8 @@ import {
   isCareerQualifyingSeason,
   seasonComparePath,
   seasonRankPath,
+  teamComparePath,
+  teamSeasonRankPath,
 } from "@/analytics";
 import { careerProductionIndex } from "@/analytics/career-resume";
 import { getGameAnalysis } from "@/data/queries/game-lab";
@@ -20,9 +22,17 @@ import {
 } from "@/data/queries/players";
 import { getPlayerSeasonComparison } from "@/data/queries/player-season-compare";
 import { getPlayerSeasonRanking } from "@/data/queries/player-season-rank";
+import { getTeamSeasonComparison } from "@/data/queries/team-season-compare";
+import { getTeamSeasonRanking } from "@/data/queries/team-season-rank";
+import { getTeamSeasonEvidence } from "@/data/queries/team-season-evidence";
+import {
+  getProviderTeamId,
+  resolveCanonicalTeam,
+} from "@/data/identity/team-map";
 import {
   getOffseasonPulse,
   getTeamOffseasonActivity,
+  getTransactionEventWithRelations,
   listTransactionEvents,
   currentOffseasonLabelYear,
 } from "@/data/queries/offseason-tracker";
@@ -34,6 +44,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { metricById } from "./metrics";
 import { metricSeasonAvailability, coverageForMetric } from "./coverage";
 import { buildQueryPlan } from "./followups";
@@ -143,6 +154,12 @@ export async function executeBasketballQuery(
       return execLeaderboard(ast);
     case "season_compare":
       return execSeasonCompare(ast);
+    case "team_season_compare":
+      return execTeamSeasonCompare(ast);
+    case "team_season_rank":
+      return execTeamSeasonRank(ast);
+    case "team_season_game_evidence":
+      return execTeamSeasonGameEvidence(ast);
     case "season_rank":
       return execSeasonRank(ast);
     case "career_resume":
@@ -506,6 +523,240 @@ async function execSeasonCompare(
   };
 }
 
+async function execTeamSeasonCompare(
+  ast: BasketballQueryAst
+): Promise<AskDrblResult> {
+  const teams = ast.entities.filter((e) => e.kind === "team");
+  const seasons = ast.when?.seasons ?? [];
+  const teamA = teams[0];
+  const teamB = teams[1] ?? teams[0];
+  if (!teamA?.id) {
+    return emptyResult(ast, "invalid", ["Missing team."]);
+  }
+
+  const seasonA = seasons[0];
+  const seasonB =
+    seasons[1] ??
+    (teamB && teamB.id !== teamA.id
+      ? seasonA
+      : seasonA
+        ? shiftCanonicalSeason(seasonA, -1)
+        : undefined);
+
+  if (!seasonA || !seasonB) {
+    return emptyResult(ast, "invalid", ["Missing season(s) for team compare."]);
+  }
+
+  const wrapped = await getTeamSeasonComparison({
+    teamA: teamA.id,
+    teamB: (teamB ?? teamA).id,
+    seasonA,
+    seasonB,
+  });
+  const result = wrapped.comparison;
+  if (!result) {
+    return emptyResult(ast, "no_result", [
+      wrapped.error ?? "Could not compare those team seasons.",
+    ]);
+  }
+
+  const labelA = `${result.sideA.abbreviation} ${result.sideA.season}`;
+  const labelB = `${result.sideB.abbreviation} ${result.sideB.season}`;
+  const edge =
+    result.overall.edge === "a"
+      ? labelA
+      : result.overall.edge === "b"
+        ? labelB
+        : result.overall.edge === "even"
+          ? "Essentially even"
+          : "Insufficient evidence";
+
+  return {
+    status: "ok",
+    version: ASK_DRBL_VERSION,
+    rawQuery: ast.rawQuery ?? "",
+    ast,
+    interpretation: [
+      result.mode === "same_team"
+        ? `${result.sideA.fullName} season compare`
+        : `${result.sideA.fullName} vs ${result.sideB.fullName}`,
+      `${labelA} vs ${labelB}`,
+      "Existing team-season comparison methodology",
+    ],
+    headline:
+      result.mode === "same_team"
+        ? `${result.sideA.fullName}: ${result.sideA.season} vs ${result.sideB.season}`
+        : `${labelA} vs ${labelB}`,
+    valueDisplay:
+      typeof edge === "string" && edge.includes(" ")
+        ? edge === "Essentially even" || edge === "Insufficient evidence"
+          ? edge
+          : `${edge} leads overall`
+        : String(edge),
+    detailLines: [result.overall.reason],
+    methodology: [
+      `Methodology v${result.methodology.version}`,
+      result.methodology.overallRule,
+    ],
+    source: "Team season compare",
+    queryPlan: buildQueryPlan(ast),
+    links: [
+      {
+        label: "Open full comparison →",
+        href: teamComparePath({
+          teamA: result.sideA.teamId,
+          teamB: result.sideB.teamId,
+          seasonA: result.sideA.season,
+          seasonB: result.sideB.season,
+        }),
+      },
+      {
+        label: `View ${result.sideA.abbreviation} →`,
+        href: `/teams/${encodeURIComponent(result.sideA.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideA.season)}`,
+      },
+    ],
+    payload: { overall: result.overall, mode: result.mode },
+  };
+}
+
+async function execTeamSeasonGameEvidence(
+  ast: BasketballQueryAst
+): Promise<AskDrblResult> {
+  const team = ast.entities.find((e) => e.kind === "team");
+  if (!team?.id) {
+    return emptyResult(ast, "invalid", ["Missing team."]);
+  }
+
+  const season =
+    ast.when?.seasons?.[0] ??
+    canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
+
+  const evidence = await getTeamSeasonEvidence({
+    teamId: team.id,
+    season,
+    fullName: team.name,
+  });
+
+  if (evidence.error && evidence.games.length === 0) {
+    return emptyResult(ast, "insufficient_data", [
+      evidence.error,
+    ]);
+  }
+
+  const lines = evidence.games.flatMap((g) => {
+    const reasons = g.findings.map((f) => f.label).join(", ");
+    return [
+      `${g.gameDate} ${g.isHome ? "vs" : "@"} ${g.opponentLabel} · ${g.result} ${g.teamScore}–${g.opponentScore} · ${reasons}`,
+    ];
+  });
+
+  return {
+    status: "ok",
+    version: ASK_DRBL_VERSION,
+    rawQuery: ast.rawQuery ?? "",
+    ast,
+    interpretation: [
+      evidence.subject.fullName,
+      `Season evidence for ${season}`,
+      "Descriptive schedule-score games under DRBL Season Evidence — not “most important”",
+      ...(ast.seasonNotes ?? []),
+    ],
+    headline: `${evidence.subject.fullName} · ${season} evidence`,
+    valueDisplay: evidence.games[0]
+      ? `${evidence.games[0].findings[0]?.label ?? "Game"} · ${evidence.games[0].findings[0]?.valueDisplay ?? ""}`
+      : "No games",
+    detailLines: [
+      ...lines.slice(0, 6),
+      "Open a game link for Game Lab. Efficiency / rebounding / PBP categories are not available from schedule rows.",
+    ],
+    methodology: [
+      evidence.methodology.selectionRule,
+      evidence.methodology.languageRule,
+      evidence.methodology.unsupportedNote,
+    ],
+    source: "Team Season Evidence",
+    queryPlan: buildQueryPlan(ast),
+    links: [
+      ...evidence.games.slice(0, 3).map((g) => ({
+        label: `${g.gameDate} Game Lab →`,
+        href: g.href,
+      })),
+      {
+        label: "Rank this team's seasons →",
+        href: `/compare?mode=teams&view=rank&teamId=${encodeURIComponent(evidence.subject.teamId)}`,
+      },
+    ],
+  };
+}
+
+async function execTeamSeasonRank(
+  ast: BasketballQueryAst
+): Promise<AskDrblResult> {
+  const team = ast.entities.find((e) => e.kind === "team");
+  if (!team?.id) {
+    return emptyResult(ast, "invalid", ["Missing team."]);
+  }
+
+  const wrapped = await getTeamSeasonRanking({
+    teamId: team.id,
+    seasons: ast.when?.seasons,
+  });
+  const ranking = wrapped.ranking;
+  if (!ranking) {
+    return emptyResult(ast, "insufficient_data", [
+      wrapped.error ?? "Not enough eligible team seasons to rank.",
+    ]);
+  }
+
+  const top = ranking.ranking.filter((e) => e.eligible).slice(0, 5);
+  if (!top.length) {
+    return emptyResult(ast, "insufficient_data", [
+      "Not enough eligible team seasons to rank.",
+    ]);
+  }
+
+  return {
+    status: "ok",
+    version: ASK_DRBL_VERSION,
+    rawQuery: ast.rawQuery ?? "",
+    ast,
+    interpretation: [
+      ranking.fullName,
+      "I interpreted “best season” using DRBL's current Team Season Ranking methodology",
+      ...(ast.seasonNotes ?? []),
+    ],
+    headline: `${ranking.fullName} · team season ranking`,
+    valueDisplay: `#1 ${top[0]!.season}`,
+    detailLines: [
+      `Under DRBL’s current Team Season Ranking methodology, ${top[0]!.season} ranks first.`,
+      ...top.map(
+        (e) =>
+          `#${e.rank} ${e.season} · ${e.copelandPoints} Copeland pts (${e.pairwiseWins}W-${e.pairwiseLosses}L)`
+      ),
+      ...ranking.topSeasonWhy.slice(0, 2),
+    ],
+    methodology: [
+      ranking.methodology.rankingRule,
+      "“Best season” here means Team Season Ranking — not a universal best-team score.",
+    ],
+    source: "Rank Team Seasons",
+    queryPlan: buildQueryPlan(ast),
+    links: [
+      {
+        label: "Open Team Season Ranking →",
+        href: teamSeasonRankPath(
+          ranking.teamId,
+          ranking.seasons
+        ),
+      },
+      {
+        label: `View ${ranking.abbreviation} →`,
+        href: `/teams/${encodeURIComponent(ranking.abbreviation.toLowerCase())}`,
+      },
+    ],
+  };
+}
+
 async function execSeasonRank(ast: BasketballQueryAst): Promise<AskDrblResult> {
   const player = ast.entities.find((e) => e.kind === "player");
   if (!player?.id) {
@@ -659,40 +910,64 @@ async function execGameLab(ast: BasketballQueryAst): Promise<AskDrblResult> {
   const season =
     ast.when?.seasons?.[0] ??
     canonicalSeasonFromStartYear(currentNbaStartYear());
+
+  const primary = resolveCanonicalTeam(teams[0]!.id);
+  const primaryAbbr =
+    primary.status === "resolved"
+      ? primary.team.abbr
+      : resolveTeamBrand(teams[0]!.id)?.abbr;
+  const primaryBdl =
+    primary.status === "resolved"
+      ? getProviderTeamId("bdl", primary.team.canonicalTeamId)
+      : null;
+
   let games = await getFilteredGames({
     season,
-    team: teams[0]!.id,
+    ...(primaryBdl
+      ? { team: primaryBdl }
+      : primaryAbbr
+        ? { teamAbbr: primaryAbbr }
+        : {}),
   });
   if (!games.length) {
     games = await getRecentGameSummaries({ season, limit: 40 });
   }
 
+  const teamAbbrs = teams.map((t) => {
+    const r = resolveCanonicalTeam(t.id);
+    return (
+      (r.status === "resolved" ? r.team.abbr : null) ??
+      resolveTeamBrand(t.id)?.abbr ??
+      ""
+    ).toLowerCase();
+  });
+
   const match =
     teams.length >= 2
-      ? games.find(
-          (g) =>
-            (g.homeTeamId === teams[0]!.id && g.awayTeamId === teams[1]!.id) ||
-            (g.awayTeamId === teams[0]!.id && g.homeTeamId === teams[1]!.id) ||
-            (g.homeTeamId === teams[1]!.id && g.awayTeamId === teams[0]!.id) ||
-            (g.awayTeamId === teams[1]!.id && g.homeTeamId === teams[0]!.id)
-        )
-      : games[0];
+      ? games.find((g) => {
+          const ga = (g.awayTeamAbbr ?? "").toLowerCase();
+          const gh = (g.homeTeamAbbr ?? "").toLowerCase();
+          return (
+            teamAbbrs.includes(ga) &&
+            teamAbbrs.includes(gh) &&
+            ga !== gh
+          );
+        })
+      : games.find((g) => {
+          const ga = (g.awayTeamAbbr ?? "").toLowerCase();
+          const gh = (g.homeTeamAbbr ?? "").toLowerCase();
+          return teamAbbrs[0] && (ga === teamAbbrs[0] || gh === teamAbbrs[0]);
+        }) ?? games[0];
 
   // Also match by abbr on game headers
   const match2 =
     match ??
     games.find((g) => {
       if (teams.length < 2) return false;
-      const ids = new Set(teams.map((t) => t.id));
-      const abbrs = new Set(
-        teams.map((t) => resolveTeamBrand(t.id)?.abbr?.toLowerCase())
-      );
+      const abbrs = new Set(teamAbbrs.filter(Boolean));
       const ga = (g.awayTeamAbbr ?? "").toLowerCase();
       const gh = (g.homeTeamAbbr ?? "").toLowerCase();
-      return (
-        (ids.has(g.homeTeamId) && ids.has(g.awayTeamId)) ||
-        (abbrs.has(ga) && abbrs.has(gh))
-      );
+      return abbrs.has(ga) && abbrs.has(gh);
     });
 
   const game = match2 ?? match;
@@ -751,6 +1026,67 @@ async function execGameLab(ast: BasketballQueryAst): Promise<AskDrblResult> {
 async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
   const team = ast.entities.find((e) => e.kind === "team");
   const year = currentOffseasonLabelYear();
+  const raw = ast.rawQuery ?? "";
+  const asksPackage =
+    /\bwhat\s+did\b/i.test(raw) &&
+    /\b(receive|get|acquire|return)\b/i.test(raw) &&
+    /\bfor\b/i.test(raw);
+
+  if (asksPackage) {
+    const page = team?.id
+      ? await listTransactionEvents(
+          { teamId: team.id, offseasonYear: year },
+          { page: 1, pageSize: 12 }
+        )
+      : await listTransactionEvents(
+          { offseasonYear: year, q: "acquired" },
+          { page: 1, pageSize: 8 }
+        );
+    const clustered = page.events.find((e) => e.relatedClusterId);
+    const related = clustered
+      ? await getTransactionEventWithRelations(clustered.id)
+      : null;
+    const brand = team?.id ? resolveTeamBrand(team.id) : null;
+    return {
+      status: "ok",
+      version: ASK_DRBL_VERSION,
+      rawQuery: raw,
+      ast,
+      interpretation: [
+        brand?.abbr ?? team?.name ?? "Transaction",
+        "Related ESPN transaction events may exist — no verified structured trade ledger",
+      ],
+      headline: "No verified structured trade ledger",
+      valueDisplay: "Source-event reconstruction only",
+      detailLines: [
+        "DRBL has related ESPN transaction events for some moves, but does not yet have a verified structured trade ledger.",
+        "Free-text notes are not parsed into player/pick assets.",
+        ...(related?.relatedEvents ?? page.events)
+          .slice(0, 3)
+          .map((e) => e.description),
+      ],
+      methodology: [
+        "ESPN archive = source events. Related-event clusters group reciprocal blurbs by date + team mentions.",
+        "Structured transactions / ownership edges remain unavailable.",
+      ],
+      source: "Offseason transaction event archive",
+      queryPlan: buildQueryPlan(ast),
+      limitations: [
+        "Do not treat one-sided ESPN wording as a complete trade package.",
+        "Genealogy UI remains blocked.",
+      ],
+      links: [
+        {
+          label: "Open related Offseason events →",
+          href: related
+            ? `/offseason?event=${encodeURIComponent(related.event.id)}&year=${year}`
+            : team?.id
+              ? `/offseason?team=${encodeURIComponent(team.id)}&year=${year}`
+              : "/offseason",
+        },
+      ],
+    };
+  }
 
   if (team && team.name !== "league" && team.id) {
     const page = await listTransactionEvents(

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import type { ComputedInsight } from "@/data/queries/home";
 import type { AnalyticsArticle } from "@/data/providers/insights/analytics-news";
+import { AppLink } from "@/components/ui/app-link";
 
 export function FindingsSection({ insights }: { insights: ComputedInsight[] }) {
   if (!insights.length) return null;
@@ -60,10 +61,8 @@ export function AnalyticsDesk({
         >
           {articles.map((a) => (
             <li key={a.id} className="bg-card">
-              <a
+              <AppLink
                 href={a.url}
-                target="_blank"
-                rel="noopener noreferrer"
                 className="flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40"
               >
                 <div className="flex flex-col gap-0.5">
@@ -82,7 +81,7 @@ export function AnalyticsDesk({
                     {a.publishedAt}
                   </p>
                 ) : null}
-              </a>
+              </AppLink>
             </li>
           ))}
         </ul>
@@ -145,20 +144,20 @@ function InsightCard({ insight }: { insight: ComputedInsight }) {
       </p>
       <div className="mt-2 flex flex-wrap gap-x-3 gap-y-1">
         {insight.boardHref ? (
-          <Link
+          <AppLink
             href={insight.boardHref}
             className="text-[12px] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             Full board
-          </Link>
+          </AppLink>
         ) : null}
         {insight.learnHref ? (
-          <Link
+          <AppLink
             href={insight.learnHref}
             className="text-[12px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
           >
             How it works
-          </Link>
+          </AppLink>
         ) : null}
       </div>
     </article>

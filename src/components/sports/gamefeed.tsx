@@ -1,21 +1,57 @@
+"use client";
+
 import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   GameMatchupRow,
 } from "@/components/sports/game-score-card";
+import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 import type { GameSummary } from "@/data/types";
 import {
-  addDaysIso,
-  shiftMonthKey,
-  startOfWeekSundayIso,
-} from "@/data/queries";
+  isFinalStatus,
+  isLiveLikeStatus,
+  shouldDisplayScores,
+  statusHeadline,
+} from "@/lib/game-status";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 export type GamefeedView = "week" | "month" | "list";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
+/** Local date helpers — keep Gamefeed client-safe (no data/queries import). */
+function toIsoDate(d: Date): string {
+  return d.toISOString().slice(0, 10);
+}
+
+function startOfWeekSundayIso(input: Date | string = new Date()): string {
+  const d =
+    typeof input === "string"
+      ? new Date(`${input.slice(0, 10)}T12:00:00Z`)
+      : new Date(
+          Date.UTC(input.getUTCFullYear(), input.getUTCMonth(), input.getUTCDate())
+        );
+  d.setUTCDate(d.getUTCDate() - d.getUTCDay());
+  return toIsoDate(d);
+}
+
+function addDaysIso(isoDate: string, n: number): string {
+  const d = new Date(`${isoDate.slice(0, 10)}T12:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return toIsoDate(d);
+}
+
+function shiftMonthKey(monthKey: string, delta: number): string {
+  const [ys, ms] = monthKey.split("-");
+  const y = Number(ys);
+  const m = Number(ms);
+  const idx = y * 12 + (m - 1) + delta;
+  const ny = Math.floor(idx / 12);
+  const nm = (idx % 12) + 1;
+  return `${ny}-${String(nm).padStart(2, "0")}`;
+}
 
 function daysInMonth(year: number, month: number) {
   return new Date(Date.UTC(year, month, 0)).getUTCDate();
@@ -82,8 +118,16 @@ function abbr(game: GameSummary, side: "away" | "home") {
 }
 
 function tipLabel(game: GameSummary): string {
-  if (game.status === "final") return "Final";
-  if (game.status === "in_progress") return "Live";
+  if (isFinalStatus(game.status)) return "Final";
+  if (isLiveLikeStatus(game.status)) return statusHeadline(game.status);
+  if (
+    game.status === "postponed" ||
+    game.status === "cancelled" ||
+    game.status === "suspended" ||
+    game.status === "delayed"
+  ) {
+    return statusHeadline(game.status);
+  }
   if (game.statusDetail) {
     const tip = game.statusDetail.split(" - ").slice(1).join(" - ").trim();
     if (tip) return tip;
@@ -223,8 +267,11 @@ function MonthGrid({
                 {dayGames.slice(0, 4).map((g) => {
                   const away = abbr(g, "away");
                   const home = abbr(g, "home");
-                  const finalish =
-                    g.status === "final" || g.status === "in_progress";
+                  const finalish = shouldDisplayScores({
+                    status: g.status,
+                    homeScore: g.homeScore,
+                    awayScore: g.awayScore,
+                  });
                   return (
                     <Link
                       key={g.id}
@@ -317,8 +364,11 @@ function WeekBoard({
                 {dayGames.map((g) => {
                   const away = abbr(g, "away");
                   const home = abbr(g, "home");
-                  const finalish =
-                    g.status === "final" || g.status === "in_progress";
+                  const finalish = shouldDisplayScores({
+                    status: g.status,
+                    homeScore: g.homeScore,
+                    awayScore: g.awayScore,
+                  });
                   return (
                     <Link
                       key={g.id}
@@ -356,10 +406,12 @@ function ListBoard({
   hasMore?: boolean;
   nextHref?: string | null;
 }) {
-  const byDate = groupByDate(games);
+  const live = games.filter((g) => isLiveLikeStatus(g.status));
+  const upcoming = games.filter((g) => !isLiveLikeStatus(g.status));
+  const byDate = groupByDate(upcoming);
   const dates = [...byDate.keys()].sort();
 
-  if (!dates.length) {
+  if (!games.length) {
     return (
       <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
         No upcoming games on the ESPN scoreboard yet.
@@ -368,19 +420,38 @@ function ListBoard({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      {dates.map((iso) => (
-        <div key={iso} className="flex flex-col gap-1.5">
-          <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground">
-            {dayHeading(iso)}
-          </h3>
+    <div className="flex flex-col gap-5">
+      {live.length ? (
+        <div className="flex flex-col gap-2">
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+            Live now
+          </h2>
           <div className="flex flex-col gap-1">
-            {(byDate.get(iso) ?? []).map((game) => (
+            {live.map((game) => (
               <GameMatchupRow key={game.id} game={game} />
             ))}
           </div>
         </div>
-      ))}
+      ) : null}
+
+      <div className="flex flex-col gap-4">
+        <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+          Upcoming
+        </h2>
+        {dates.map((iso) => (
+          <div key={iso} className="flex flex-col gap-1.5">
+            <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground">
+              {dayHeading(iso)}
+            </h3>
+            <div className="flex flex-col gap-1">
+              {(byDate.get(iso) ?? []).map((game) => (
+                <GameMatchupRow key={game.id} game={game} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+
       {hasMore && nextHref ? (
         <Link
           href={nextHref}
@@ -513,37 +584,52 @@ export function Gamefeed({
 
       {view === "week" ? (
         <>
-          <WeekBoard weekStart={weekStart} games={weekGames} />
-          {weekGames.length === 0 ? (
-            <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-              No games this week.{" "}
-              <Link href={scoresHref({ view: "list" })} className="underline">
-                See all upcoming
-              </Link>
-              .
-            </p>
-          ) : (
-            <p className="text-[12px] text-muted-foreground">
-              {weekGames.length} game{weekGames.length === 1 ? "" : "s"} this week
-            </p>
-          )}
+          <LiveScoreboardScope games={weekGames} season={season}>
+            {(games) => (
+              <>
+                <WeekBoard weekStart={weekStart} games={games} />
+                {games.length === 0 ? (
+                  <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+                    No games this week.{" "}
+                    <Link href={scoresHref({ view: "list" })} className="underline">
+                      See all upcoming
+                    </Link>
+                    .
+                  </p>
+                ) : (
+                  <p className="text-[12px] text-muted-foreground">
+                    {games.length} game{games.length === 1 ? "" : "s"} this week
+                    · live scores refresh automatically
+                  </p>
+                )}
+              </>
+            )}
+          </LiveScoreboardScope>
         </>
       ) : null}
 
       {view === "list" ? (
         <>
-          <ListBoard
-            games={upcomingGames}
-            hasMore={upcomingHasMore}
-            nextHref={upcomingNextHref}
-          />
-          {upcomingGames.length ? (
-            <p className="text-[12px] text-muted-foreground">
-              Showing {upcomingGames.length} upcoming game
-              {upcomingGames.length === 1 ? "" : "s"}
-              {upcomingHasMore ? " · more available" : ""}
-            </p>
-          ) : null}
+          <LiveScoreboardScope games={upcomingGames} season={season}>
+            {(games) => (
+              <>
+                <ListBoard
+                  games={games}
+                  hasMore={upcomingHasMore}
+                  nextHref={upcomingNextHref}
+                />
+                {games.length ? (
+                  <p className="text-[12px] text-muted-foreground">
+                    Showing {games.length} upcoming game
+                    {games.length === 1 ? "" : "s"}
+                    {upcomingHasMore ? " · more available" : ""}
+                    {" · "}
+                    live games refresh without reloading
+                  </p>
+                ) : null}
+              </>
+            )}
+          </LiveScoreboardScope>
         </>
       ) : null}
     </section>

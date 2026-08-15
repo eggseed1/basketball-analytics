@@ -1,5 +1,6 @@
 import type { Game } from "@/data/types";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
+import { isLiveLikeStatus } from "@/lib/game-status";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -125,7 +126,7 @@ export async function attachStartersToGames(
 
   return Promise.all(
     games.map(async (game) => {
-      if (game.status === "final" || game.status === "in_progress") {
+      if (game.status === "final" || isLiveLikeStatus(game.status)) {
         const { home, away } = await fetchBoxScoreStarters({
           gameId: game.id,
           homeTeamId: game.homeTeamId,

@@ -12,6 +12,8 @@ import { ASK_DRBL_VERSION } from "./types";
 export type RunAskDrblOptions = {
   /** Continue after ambiguity — force-resolve the player entity. */
   playerId?: string;
+  /** Force-resolve the team entity (e.g. deep link from a team page). */
+  teamId?: string;
 };
 
 async function enrichAmbiguousCandidates(
@@ -81,6 +83,29 @@ function applyPlayerIdOverride(
   };
 }
 
+function applyTeamIdOverride(
+  ast: BasketballQueryAst,
+  teamId: string
+): BasketballQueryAst {
+  const brand = resolveTeamBrand(teamId);
+  const canonicalId = brand?.espnTeamId ?? teamId;
+  const displayName = brand?.abbr ?? teamId;
+  const entities = ast.entities.map((e) => {
+    if (e.kind !== "team") return e;
+    // Keep a distinct second team in cross-team compares.
+    if (e.id && e.id !== canonicalId) return e;
+    return { ...e, id: canonicalId, name: displayName };
+  });
+  const hasTeam = entities.some((e) => e.kind === "team");
+  return {
+    ...ast,
+    entities: hasTeam
+      ? entities
+      : [{ kind: "team", id: canonicalId, name: displayName }, ...entities],
+    ambiguous: undefined,
+  };
+}
+
 function withPlanAndFollowUps(result: AskDrblResult): AskDrblResult {
   const queryPlan = result.queryPlan ?? buildQueryPlan(result.ast);
   const links = buildFollowUpLinks(result.ast, result.links);
@@ -117,6 +142,10 @@ export async function runAskDrbl(
 
   let ast = interpretAskQuery(trimmed);
 
+  const forcedEntity = Boolean(
+    (options.playerId || options.teamId) && !ast.unsupported?.length
+  );
+
   if (options.playerId && !ast.unsupported?.length) {
     ast = applyPlayerIdOverride(ast, options.playerId);
     // Resolve name for the forced id
@@ -143,7 +172,35 @@ export async function runAskDrbl(
     } catch {
       /* keep id */
     }
-  } else if (!ast.unsupported?.length && !ast.partialSupportedQuery) {
+  }
+
+  if (options.teamId && !ast.unsupported?.length) {
+    ast = applyTeamIdOverride(ast, options.teamId);
+    const brand = resolveTeamBrand(options.teamId);
+    if (brand) {
+      const canonicalId = brand.espnTeamId;
+      ast = {
+        ...ast,
+        entities: ast.entities.map((e) => {
+          if (e.kind !== "team") return e;
+          if (e.id && e.id !== canonicalId) return e;
+          return { ...e, id: canonicalId, name: brand.abbr };
+        }),
+        interpretation: [
+          brand.abbr,
+          ...ast.interpretation.filter(
+            (line) => line.toLowerCase() !== brand.abbr.toLowerCase()
+          ),
+        ],
+      };
+    }
+  }
+
+  if (
+    !forcedEntity &&
+    !ast.unsupported?.length &&
+    !ast.partialSupportedQuery
+  ) {
     ast = await resolveQueryEntities(ast);
   }
 

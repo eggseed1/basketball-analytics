@@ -2,10 +2,18 @@
 
 import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { FormEvent, Suspense, useMemo, useState } from "react";
+import {
+  FormEvent,
+  Suspense,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { Menu, Search, X } from "lucide-react";
 
 import { cn } from "@/lib/utils";
+import { assertInternalHref } from "@/lib/navigation";
 import {
   PRIMARY_NAV,
   activePrimaryNav,
@@ -21,10 +29,14 @@ function SiteSearch() {
     e.preventDefault();
     const term = q.trim();
     if (!term) {
-      router.push("/explore/players");
+      router.push(assertInternalHref("/explore/players"));
       return;
     }
-    router.push(`/explore/players?player=${encodeURIComponent(term)}`);
+    router.push(
+      assertInternalHref(
+        `/explore/players?player=${encodeURIComponent(term)}`
+      )
+    );
   };
 
   return (
@@ -146,11 +158,50 @@ const MOBILE_PINNED_IDS = new Set([
 export function SportsShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const [moreOpenedAt, setMoreOpenedAt] = useState<string | null>(null);
+  const moreRef = useRef<HTMLDivElement>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
+  const isMoreOpen = moreOpen && moreOpenedAt === pathname;
 
   const mobilePinned = PRIMARY_NAV.filter((t) => MOBILE_PINNED_IDS.has(t.id));
   const mobileMore = PRIMARY_NAV.filter((t) => !MOBILE_PINNED_IDS.has(t.id));
   const moreActive = mobileMore.some((t) => t.match(pathname));
+
+  function closeMore() {
+    setMoreOpen(false);
+    setMoreOpenedAt(null);
+  }
+
+  function toggleMore() {
+    if (isMoreOpen) {
+      closeMore();
+      return;
+    }
+    setMoreOpen(true);
+    setMoreOpenedAt(pathname);
+  }
+
+  useEffect(() => {
+    if (!isMoreOpen) return;
+    const onPointer = (e: MouseEvent | TouchEvent) => {
+      const el = moreRef.current;
+      if (!el) return;
+      if (e.target instanceof Node && !el.contains(e.target)) {
+        closeMore();
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeMore();
+    };
+    document.addEventListener("mousedown", onPointer);
+    document.addEventListener("touchstart", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      document.removeEventListener("touchstart", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [isMoreOpen, pathname]);
 
   return (
     <div className="flex min-h-full flex-1 flex-col bg-background">
@@ -206,27 +257,27 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                 />
               ))}
             </nav>
-            <div className="relative shrink-0">
+            <div className="relative shrink-0" ref={moreRef}>
               <button
                 type="button"
-                aria-expanded={moreOpen}
+                aria-expanded={isMoreOpen}
                 aria-controls="mobile-more-nav"
-                onClick={() => setMoreOpen((v) => !v)}
+                onClick={toggleMore}
                 className={cn(
                   "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold",
-                  moreActive || moreOpen
+                  moreActive || isMoreOpen
                     ? "bg-foreground text-background"
                     : "text-muted-foreground hover:bg-secondary hover:text-foreground"
                 )}
               >
-                {moreOpen ? (
+                {isMoreOpen ? (
                   <X className="size-3.5" aria-hidden />
                 ) : (
                   <Menu className="size-3.5" aria-hidden />
                 )}
                 More
               </button>
-              {moreOpen ? (
+              {isMoreOpen ? (
                 <div
                   id="mobile-more-nav"
                   className="absolute right-0 top-full z-50 mt-1 min-w-[11rem] rounded-md border border-border bg-background p-1 shadow-md"
@@ -235,7 +286,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     <Link
                       key={tab.id}
                       href={tab.href}
-                      onClick={() => setMoreOpen(false)}
+                      onClick={closeMore}
                       className={cn(
                         "block rounded-md px-3 py-2 text-[14px] font-semibold",
                         tab.match(pathname)
@@ -248,7 +299,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   ))}
                   <Link
                     href="/gm"
-                    onClick={() => setMoreOpen(false)}
+                    onClick={closeMore}
                     className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[13px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
                   >
                     GM mode

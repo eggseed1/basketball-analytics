@@ -3,30 +3,43 @@ import { notFound } from "next/navigation";
 
 import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
 import { GameLabView } from "@/components/games/game-lab-view";
-import { getGameAnalysis, getGameBoxScore } from "@/data/queries";
+import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
+import { getGameAnalysis, getGameShell } from "@/data/queries";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { PlayerGame } from "@/data/types";
 
 interface GamePageProps {
   params: Promise<{ gameId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata({ params }: GamePageProps) {
   const { gameId } = await params;
-  const box = await getGameBoxScore(gameId);
-  if (!box) return { title: "Game | Basketball Analytics" };
-  const away = box.game.awayTeamAbbr ?? box.game.awayTeamId;
-  const home = box.game.homeTeamAbbr ?? box.game.homeTeamId;
+  const shell = await getGameShell(gameId);
+  if (!shell) return { title: "Game | Basketball Analytics" };
+  const awayBrand =
+    resolveTeamBrand(shell.game.awayTeamId) ??
+    resolveTeamBrand(shell.game.awayTeamAbbr);
+  const homeBrand =
+    resolveTeamBrand(shell.game.homeTeamId) ??
+    resolveTeamBrand(shell.game.homeTeamAbbr);
+  const away =
+    awayBrand?.abbr ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
+  const home =
+    homeBrand?.abbr ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   return {
     title: `${away} @ ${home} | Basketball Analytics`,
   };
 }
 
-export default async function GamePage({ params }: GamePageProps) {
+export default async function GamePage({ params, searchParams }: GamePageProps) {
   const { gameId } = await params;
+  const sp = await searchParams;
+  const arrival = parseSeasonEvidenceArrival(sp);
   const payload = await getGameAnalysis(gameId);
   if (!payload) notFound();
 
-  const { analysis, game, players } = payload;
+  const { analysis, game, players, availability } = payload;
   const { outcome } = analysis;
 
   const sortPlayers = (rows: PlayerGame[]) =>
@@ -54,12 +67,21 @@ export default async function GamePage({ params }: GamePageProps) {
         </Link>
       </p>
 
-      <GameLabView analysis={analysis}>
-        {players.length === 0 ? (
-          <p className="rounded-xl border border-border p-4 text-muted-foreground">
-            No box score available for this game yet. Try another final, or
-            upgrade BallDontLie for historical box scores.
-          </p>
+      <GameLabView
+        analysis={analysis}
+        arrival={arrival ? { label: arrival.label } : null}
+      >
+        {availability === "scoreboard" || players.length === 0 ? (
+          <div className="rounded-xl border border-border p-4">
+            <p className="text-[14px] font-semibold tracking-tight">
+              Box score unavailable
+            </p>
+            <p className="mt-1 text-[13px] text-muted-foreground">
+              Detailed player and team box-score data is not currently available
+              for this game. Scoreboard and season context above still reflect
+              the known result — player lines are not fabricated.
+            </p>
+          </div>
         ) : (
           <GameBoxScoreTables
             awayLabel={outcome.awayLabel}

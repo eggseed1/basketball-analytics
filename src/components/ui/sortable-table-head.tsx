@@ -3,12 +3,14 @@
 import { ArrowDown, ArrowUp, ArrowUpDown } from "lucide-react";
 import type { ReactNode } from "react";
 
+import { MetricHelp } from "@/components/learn/metric-help";
 import { TableHead } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
 
 /**
  * Full-cell sortable column header - large hit target, works inside
  * horizontally scrolled boards.
+ * Optional MetricHelp sits beside the sort control (not nested in the button).
  */
 export function SortableTableHead({
   children,
@@ -19,6 +21,7 @@ export function SortableTableHead({
   sticky,
   title,
   className,
+  helpConceptId,
 }: {
   children: ReactNode;
   active: boolean;
@@ -28,6 +31,8 @@ export function SortableTableHead({
   sticky?: boolean;
   title?: string;
   className?: string;
+  /** Canonical Learn concept for header-level explanation. */
+  helpConceptId?: string | null;
 }) {
   const Icon = !active ? ArrowUpDown : dir === "asc" ? ArrowUp : ArrowDown;
 
@@ -40,27 +45,46 @@ export function SortableTableHead({
       )}
       aria-sort={active ? (dir === "asc" ? "ascending" : "descending") : "none"}
     >
-      <button
-        type="button"
-        title={title}
-        onClick={onClick}
+      <div
         className={cn(
-          "flex h-10 w-full min-w-max items-center gap-1 px-2 text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors",
-          align === "right" ? "justify-end" : "justify-start",
-          active
-            ? "text-foreground"
-            : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+          "flex h-10 w-full min-w-max items-center gap-0.5 px-1",
+          align === "right" ? "justify-end" : "justify-start"
         )}
       >
-        <span>{children}</span>
-        <Icon
+        {helpConceptId ? (
+          <MetricHelp
+            conceptId={helpConceptId}
+            labelClassName="text-[11px] font-semibold uppercase tracking-[0.06em]"
+          >
+            {children}
+          </MetricHelp>
+        ) : null}
+        <button
+          type="button"
+          title={title}
+          onClick={onClick}
           className={cn(
-            "size-3.5 shrink-0",
-            active ? "opacity-100" : "opacity-45"
+            "flex h-10 items-center gap-1 px-1 text-[11px] font-semibold uppercase tracking-[0.06em] transition-colors",
+            active
+              ? "text-foreground"
+              : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
           )}
-          aria-hidden
-        />
-      </button>
+        >
+          {!helpConceptId ? <span>{children}</span> : null}
+          <Icon
+            className={cn(
+              "size-3.5 shrink-0",
+              active ? "opacity-100" : "opacity-45"
+            )}
+            aria-hidden
+          />
+          <span className="sr-only">
+            {active
+              ? `Sorted ${dir === "asc" ? "ascending" : "descending"}`
+              : "Sort"}
+          </span>
+        </button>
+      </div>
     </TableHead>
   );
 }

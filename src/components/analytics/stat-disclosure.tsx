@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import type { StatContext } from "@/analytics";
 import { contextBlurb } from "@/analytics";
+import { MetricHelp } from "@/components/learn/metric-help";
 import { formatOrdinal } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -14,10 +15,13 @@ import { cn } from "@/lib/utils";
 export function StatDisclosure({
   label,
   context,
+  conceptId,
   className,
 }: {
   label?: string;
   context: StatContext;
+  /** Optional Learn registry id for MetricHelp on the label. */
+  conceptId?: string;
   className?: string;
 }) {
   const blurb = contextBlurb(context);
@@ -25,7 +29,16 @@ export function StatDisclosure({
     <div className={cn("flex flex-col gap-1", className)}>
       {label ? (
         <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-          {label}
+          {conceptId ? (
+            <MetricHelp
+              conceptId={conceptId}
+              labelClassName="uppercase tracking-wide"
+            >
+              {label}
+            </MetricHelp>
+          ) : (
+            label
+          )}
         </p>
       ) : null}
       <p className="text-[28px] font-bold tracking-tight tabular-nums leading-none">
@@ -33,7 +46,9 @@ export function StatDisclosure({
       </p>
       {context.percentile != null ? (
         <p className="text-[13px] font-semibold text-foreground">
-          {formatOrdinal(Math.round(context.percentile))} percentile
+          <MetricHelp conceptId="percentiles" labelClassName="font-semibold">
+            {formatOrdinal(Math.round(context.percentile))} percentile
+          </MetricHelp>
           {context.populationLabel ? (
             <span className="font-normal text-muted-foreground">
               {" "}

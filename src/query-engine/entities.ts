@@ -45,6 +45,11 @@ export const PLAYER_ALIASES: Record<string, { id: string; name: string }> = {
 };
 
 export function resolveTeamFromText(text: string): EntityHit | null {
+  return resolveTeamsFromText(text)[0] ?? null;
+}
+
+/** Up to two team hits for compare / matchup language (order of appearance). */
+export function resolveTeamsFromText(text: string): EntityHit[] {
   const cityNick: Array<{ re: RegExp; id: string }> = [
     { re: /\b(boston|celtics)\b/i, id: "bos" },
     { re: /\b(oklahoma\s+city|thunder|okc)\b/i, id: "okc" },
@@ -78,34 +83,49 @@ export function resolveTeamFromText(text: string): EntityHit | null {
     { re: /\b(new\s+orleans|pelicans)\b/i, id: "no" },
   ];
 
-  for (const row of cityNick) {
-    if (row.re.test(text)) {
-      const brand = resolveTeamBrand(row.id);
-      if (!brand) continue;
-      return {
-        id: brand.espnTeamId,
-        name: `${brand.abbr}`,
-        kind: "team",
-        subtitle: brand.abbr,
-      };
-    }
-  }
+  const hits: EntityHit[] = [];
+  const seen = new Set<string>();
+  const ranked: Array<{ index: number; hit: EntityHit }> = [];
 
-  // bare abbr
-  const abbrHit = /\b([A-Z]{2,3})\b/.exec(text);
-  if (abbrHit) {
-    const brand = resolveTeamBrand(abbrHit[1]);
-    if (brand) {
-      return {
+  for (const row of cityNick) {
+    const m = row.re.exec(text);
+    if (!m || m.index == null) continue;
+    const brand = resolveTeamBrand(row.id);
+    if (!brand) continue;
+    if (seen.has(brand.espnTeamId)) continue;
+    seen.add(brand.espnTeamId);
+    ranked.push({
+      index: m.index,
+      hit: {
         id: brand.espnTeamId,
         name: brand.abbr,
         kind: "team",
         subtitle: brand.abbr,
-      };
-    }
+      },
+    });
   }
 
-  return null;
+  ranked.sort((a, b) => a.index - b.index);
+  for (const r of ranked.slice(0, 2)) hits.push(r.hit);
+
+  if (hits.length >= 2) return hits;
+
+  // bare abbr fallback for a second team
+  for (const m of text.matchAll(/\b([A-Z]{2,3})\b/g)) {
+    const brand = resolveTeamBrand(m[1]);
+    if (!brand) continue;
+    if (seen.has(brand.espnTeamId)) continue;
+    seen.add(brand.espnTeamId);
+    hits.push({
+      id: brand.espnTeamId,
+      name: brand.abbr,
+      kind: "team",
+      subtitle: brand.abbr,
+    });
+    if (hits.length >= 2) break;
+  }
+
+  return hits;
 }
 
 export async function searchNbaEntities(

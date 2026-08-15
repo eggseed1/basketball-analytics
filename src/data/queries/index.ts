@@ -7,26 +7,35 @@ export {
   getPlayersBySeason,
   getTeamPlayers,
   getFilteredPlayerSeasons,
+  getFilteredPlayerSeasonsDetailed,
   getAvailableSeasons,
 } from "./players";
+export {
+  getPlayerSeasonBoardSnapshot,
+  getActiveProviderChip,
+} from "./player-data-health";
+export type { PlayerSeasonBoardSnapshot } from "./player-data-health";
 export { getTeams, getTeam } from "./teams";
 export { getShots } from "./shots";
 export {
   getGames,
   getGame,
   getGameBoxScore,
+  getGameShell,
   getFilteredGames,
   getRecentGameSummaries,
   getHomeWeekStripSummaries,
   getScoreboardMonthSummaries,
   getScoreboardWeekSummaries,
   getUpcomingGameSummaries,
+  getLiveScoreboardSummaries,
   defaultScoreboardMonthKey,
   shiftMonthKey,
   startOfWeekSundayIso,
   addDaysIso,
   upcomingScheduleSeason,
 } from "./games";
+export type { GameShell, GameShellAvailability } from "./games";
 export {
   applyPlayerSeasonFilters,
   applyGameFilters,
@@ -51,12 +60,25 @@ export { getHomeAnalytics } from "./home";
 export type { HomeAnalytics, ComputedInsight, HomeDarkoLeader } from "./home";
 export { getLeagueStandings } from "./standings";
 export { getTeamSeasonStats, getTeamExploreSeasons } from "./team-seasons";
+export {
+  getTeamSeasonArc,
+  listTeamArcCandidateSeasons,
+  teamArcDefaultWindow,
+  TEAM_ARC_DEFAULT_WINDOW,
+  TEAM_ARC_EARLIEST_SEASON,
+} from "./team-arc";
+export { getTeamSeasonComparison } from "./team-season-compare";
+export {
+  getTeamSeasonRanking,
+  parseSeasonListParam as parseTeamSeasonListParam,
+} from "./team-season-rank";
+export { getTeamSeasonEvidence } from "./team-season-evidence";
 export { getPlayerSeasonComparison } from "./player-season-compare";
 export {
   getPlayerSeasonRanking,
   parseSeasonListParam,
 } from "./player-season-rank";
-export { getGameAnalysis } from "./game-lab";
+export { getGameAnalysis, getGameSeasonContext } from "./game-lab";
 export type { GameAnalysisPayload, GameAnalysisSummary } from "./game-lab";
 export { getAskDrblAnswer } from "./ask-drbl";
 export type { AskDrblResult } from "./ask-drbl";
@@ -118,3 +140,14 @@ export type {
   TransactionLineageCoverageReport,
   TransactionLineageQueryOptions,
 } from "./transaction-lineage";
+export {
+  getTeamAssets,
+  getTradeExceptionFits,
+} from "./team-assets";
+export type {
+  CapFitTier,
+  TeamAssetLedger,
+  TeamPlayerAsset,
+  TeamTradeExceptionAsset,
+  TradeExceptionFitResult,
+} from "@/data/types/team-assets";

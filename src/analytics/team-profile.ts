@@ -1,5 +1,6 @@
 import type { AnalyticalFinding, StatContext } from "@/analytics/types";
 import { buildStatContext } from "@/analytics/context";
+import { learnHrefFor } from "@/content/learn/registry";
 import type { TeamSeasonStats } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 
@@ -160,6 +161,16 @@ export function analyzeTeamProfile(options: {
         sampleSize: league.length,
         timeframe: team.season,
         sourceLabel: def.label,
+        learnHref:
+          learnHrefFor(
+            def.id === "3par"
+              ? "three_par"
+              : def.id === "asttov"
+                ? "ast_to"
+                : def.id === "opp"
+                  ? "opp_ppg"
+                  : def.id
+          ) ?? undefined,
       }),
     });
   }

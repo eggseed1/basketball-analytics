@@ -129,7 +129,19 @@ export async function getTeamPlayers(
 export async function getFilteredPlayerSeasons(
   filters: BasketballFilters = {}
 ): Promise<PlayerSeason[]> {
+  const { rows } = await getFilteredPlayerSeasonsDetailed(filters);
+  return rows;
+}
+
+/**
+ * Same board load as getFilteredPlayerSeasons, plus the first load error
+ * (if any) so diagnostics can distinguish failure from empty/unsupported.
+ */
+export async function getFilteredPlayerSeasonsDetailed(
+  filters: BasketballFilters = {}
+): Promise<{ rows: PlayerSeason[]; error: unknown | null }> {
   let seasons: PlayerSeason[] = [];
+  let error: unknown | null = null;
   const start = filters.season
     ? (() => {
         try {
@@ -163,7 +175,8 @@ export async function getFilteredPlayerSeasons(
           };
         });
       }
-    } catch {
+    } catch (e) {
+      error = e;
       seasons = [];
     }
   }
@@ -171,14 +184,25 @@ export async function getFilteredPlayerSeasons(
   if (seasons.length === 0 && filters.season) {
     try {
       seasons = await getHistoricalPlayerSeasons(filters.season);
-    } catch {
+      if (seasons.length > 0) error = null;
+    } catch (e) {
+      if (!error) error = e;
       seasons = [];
     }
   }
   if (seasons.length === 0) {
-    seasons = await getDataProvider().getPlayerSeasons(filters.season);
+    try {
+      seasons = await getDataProvider().getPlayerSeasons(filters.season);
+      if (seasons.length > 0) error = null;
+    } catch (e) {
+      if (!error) error = e;
+      seasons = [];
+    }
   }
-  return applyPlayerSeasonFilters(seasons, filters);
+  return {
+    rows: applyPlayerSeasonFilters(seasons, filters),
+    error,
+  };
 }
 
 export async function getAvailableSeasons(): Promise<string[]> {

@@ -8,14 +8,15 @@ export const metadata = {
 };
 
 interface AskPageProps {
-  searchParams: Promise<{ q?: string; playerId?: string }>;
+  searchParams: Promise<{ q?: string; playerId?: string; teamId?: string }>;
 }
 
 export default async function AskPage({ searchParams }: AskPageProps) {
   const sp = await searchParams;
   const q = (sp.q ?? "").trim();
   const playerId = (sp.playerId ?? "").trim() || undefined;
-  const result = q ? await getAskDrblAnswer(q, { playerId }) : null;
+  const teamId = (sp.teamId ?? "").trim() || undefined;
+  const result = q ? await getAskDrblAnswer(q, { playerId, teamId }) : null;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">

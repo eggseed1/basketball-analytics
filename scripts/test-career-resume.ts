@@ -322,4 +322,75 @@ function assertFinite(n: number, label: string) {
   assert.ok(Math.abs(careerProductionIndex(r) - 38.1) < 1e-6);
 }
 
+// --- Prime ⊆ Longevity (overlap) + longevity-only band ---
+{
+  // Peak CPI ≈ driven by points; keep other counting zeros for clarity.
+  const career = [
+    row({
+      season: "2018-19",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 20, // below longevity vs peak 30
+    }),
+    row({
+      season: "2019-20",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 24, // 80% — longevity-only
+    }),
+    row({
+      season: "2020-21",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 28, // ~93% — prime
+    }),
+    row({
+      season: "2021-22",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 30, // peak
+    }),
+    row({
+      season: "2022-23",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 22, // gap below prime
+    }),
+    row({
+      season: "2023-24",
+      gamesPlayed: 70,
+      minutes: 70 * 30,
+      points: 70 * 27, // prime again — shorter contiguous than earlier? 1 season
+    }),
+  ];
+  const resume = computeCareerResume({
+    playerId: "p1",
+    playerName: "Overlap",
+    career,
+  });
+  assert.equal(resume.peak?.season, "2021-22");
+  for (const s of resume.qualifyingSeasons) {
+    if (s.inPrimeBand) {
+      assert.equal(
+        s.inLongevityBand,
+        true,
+        `${s.season}: prime must be subset of longevity`
+      );
+      assert.ok(s.ofPeak + 1e-9 >= CAREER_PRIME_OF_PEAK);
+    }
+    if (s.inLongevityBand) {
+      assert.ok(s.ofPeak + 1e-9 >= CAREER_LONGEVITY_OF_PEAK);
+    }
+  }
+  const longevityOnly = resume.qualifyingSeasons.filter(
+    (s) => s.inLongevityBand && !s.inPrimeBand
+  );
+  assert.ok(longevityOnly.length >= 1, "expected longevity-only seasons");
+  assert.ok(longevityOnly.every((s) => s.ofPeak < CAREER_PRIME_OF_PEAK));
+  // Contiguous prime should prefer the longer ≥90% run ending at peak (2020-21 → 2021-22)
+  assert.equal(resume.prime?.contiguousFrom, "2020-21");
+  assert.equal(resume.prime?.contiguousTo, "2021-22");
+  assert.equal(resume.prime?.contiguousCount, 2);
+}
+
 console.log("career-resume checks passed");

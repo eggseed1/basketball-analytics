@@ -399,11 +399,18 @@ export class NBADataProvider implements BasketballDataProvider {
       awayTeamName: known?.awayTeamName ?? transformed.game.awayTeamName,
       homeScore: known?.homeScore || transformed.game.homeScore,
       awayScore: known?.awayScore || transformed.game.awayScore,
-      status: known?.status ?? transformed.game.status ?? "final",
+      status: known?.status ?? transformed.game.status ?? "unknown",
       homePeriodScores:
         transformed.game.homePeriodScores ?? known?.homePeriodScores,
       awayPeriodScores:
         transformed.game.awayPeriodScores ?? known?.awayPeriodScores,
+      period: transformed.game.period ?? known?.period,
+      displayClock: transformed.game.displayClock ?? known?.displayClock,
+      broadcasts: transformed.game.broadcasts?.length
+        ? transformed.game.broadcasts
+        : known?.broadcasts,
+      tipOffAt: known?.tipOffAt ?? transformed.game.tipOffAt,
+      retrievedAt: transformed.game.retrievedAt ?? new Date().toISOString(),
     };
 
     const players = transformed.players.map((p) => ({

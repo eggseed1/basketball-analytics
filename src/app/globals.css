@@ -130,14 +130,76 @@
   }
 }
 
-/* Soft dual-team wash for score cards (light mode) */
+/* Soft dual-team wash for score / brand cards (light mode).
+   Neutral fallbacks — never Apple chart blue/purple. */
 .score-card-wash {
   background:
     linear-gradient(
       105deg,
-      color-mix(in oklab, var(--away-color, #0071e3) 14%, white) 0%,
-      white 42%,
-      color-mix(in oklab, var(--home-color, #af52de) 14%, white) 100%
+      color-mix(in oklab, var(--away-color, #8e8e93) 14%, var(--card, white)) 0%,
+      var(--card, white) 42%,
+      color-mix(in oklab, var(--home-color, #aeaeb2) 14%, var(--card, white)) 100%
+    );
+}
+
+.dark .score-card-wash {
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--away-color, #8e8e93) 20%, var(--card, #1c1c1e))
+        0%,
+      var(--card, #1c1c1e) 42%,
+      color-mix(in oklab, var(--home-color, #636366) 20%, var(--card, #1c1c1e))
+        100%
+    );
+}
+
+/* Game matchup wash — away (left) → home (right) */
+.matchup-wash {
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--away-color, #8e8e93) 18%, var(--card, white)) 0%,
+      color-mix(in oklab, var(--card, white) 92%, transparent) 38%,
+      var(--card, white) 50%,
+      color-mix(in oklab, var(--card, white) 92%, transparent) 62%,
+      color-mix(in oklab, var(--home-color, #aeaeb2) 18%, var(--card, white))
+        100%
+    );
+}
+
+.matchup-wash--subtle {
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--away-color, #8e8e93) 9%, var(--card, white)) 0%,
+      var(--card, white) 45%,
+      color-mix(in oklab, var(--home-color, #aeaeb2) 9%, var(--card, white))
+        100%
+    );
+}
+
+.dark .matchup-wash {
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--away-color, #8e8e93) 24%, var(--card, #1c1c1e))
+        0%,
+      var(--card, #1c1c1e) 48%,
+      color-mix(in oklab, var(--home-color, #636366) 24%, var(--card, #1c1c1e))
+        100%
+    );
+}
+
+.dark .matchup-wash--subtle {
+  background:
+    linear-gradient(
+      105deg,
+      color-mix(in oklab, var(--away-color, #8e8e93) 12%, var(--card, #1c1c1e))
+        0%,
+      var(--card, #1c1c1e) 48%,
+      color-mix(in oklab, var(--home-color, #636366) 12%, var(--card, #1c1c1e))
+        100%
     );
 }
 

@@ -74,6 +74,18 @@ ESPN v1 fails ownership / pick / player-asset criteria by design.
 - No name-parsing players out of ESPN blurbs  
 - No Franchise Lab sim trades in the real-world graph  
 - No trade evaluation mixed into factual lineage  
+- No promoting ESPN free-text (or related-event clusters) into structured transactions  
+
+## Related-event clusters (Offseason Tracker)
+
+The Offseason Tracker may **group** reciprocal ESPN blurbs (same date + mutual team brand mentions) as a **related event cluster**. That projection:
+
+- preserves each raw description verbatim
+- does **not** create player/pick assets or ownership edges
+- does **not** set `genealogyUiReady`
+- is documented in `docs/offseason-tracker.md` (Transaction Event Semantics)
+
+Multi-team deals remain separate rows in the canonical archive; clustering is a read-time / index projection only.
 
 ## Query API
 

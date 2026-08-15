@@ -1,12 +1,29 @@
 "use client";
 
 import Link from "next/link";
+import { Popover } from "@base-ui/react/popover";
+import { useRef } from "react";
 
 import {
   formatLeaderboardPercentile,
   type LeaderboardRowContext,
 } from "@/analytics/leaderboard-context";
 import { cn } from "@/lib/utils";
+
+/** Shared with PlayerIdentity floating policy (PreviewCard) — same Floating UI knobs. */
+export const LEADERBOARD_CONTEXT_COLLISION = {
+  preferredSide: "bottom" as const,
+  align: "start" as const,
+  sideOffset: 6,
+  collisionPadding: 8,
+  positionMethod: "fixed" as const,
+  sticky: false as const,
+  collisionAvoidance: {
+    side: "flip" as const,
+    align: "shift" as const,
+    fallbackAxisSide: "end" as const,
+  },
+};
 
 /** Shared body for desktop popover + mobile expanded row. */
 export function LeaderboardContextBody({
@@ -70,54 +87,88 @@ export function LeaderboardContextBody({
 /**
  * Compact accessible Level-2 context for a leaderboard row.
  * Keyboard + tap friendly — not hover-only.
- * Desktop: floating panel. Mobile: sibling expanded row renders the same body.
+ * Desktop (sm+): portaled Popover with viewport collision (same Floating UI family as PlayerIdentity).
+ * Mobile: trigger only — sibling expanded row in the table renders LeaderboardContextBody.
  */
 export function LeaderboardRowContextPanel({
   context,
   open,
-  onToggle,
+  onOpenChange,
   className,
 }: {
   context: LeaderboardRowContext;
   open: boolean;
-  onToggle: () => void;
+  onOpenChange: (open: boolean) => void;
   className?: string;
 }) {
   const panelId = `lb-ctx-${context.playerId}`;
+  const closingForHiddenRef = useRef(false);
 
   return (
-    <div className={cn("relative", className)}>
-      <button
-        type="button"
-        className={cn(
-          "inline-flex size-7 shrink-0 items-center justify-center rounded-md",
-          "text-[11px] font-bold text-muted-foreground",
-          "hover:bg-secondary hover:text-foreground",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          open && "bg-secondary text-foreground"
-        )}
-        aria-expanded={open}
-        aria-controls={panelId}
-        aria-label={`Analytical context for ${context.playerName}`}
-        onClick={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          onToggle();
-        }}
-      >
-        i
-      </button>
-
-      {open ? (
-        <div
-          id={panelId}
-          role="region"
-          aria-label={`${context.playerName} context`}
-          className="absolute left-0 top-full z-30 mt-1 hidden w-72 rounded-md border border-border bg-card px-3 py-3 shadow-sm sm:block"
+    <Popover.Root
+      open={open}
+      onOpenChange={onOpenChange}
+      modal={false}
+    >
+      <div className={cn("inline-flex shrink-0", className)}>
+        <Popover.Trigger
+          type="button"
+          className={cn(
+            "inline-flex size-7 shrink-0 items-center justify-center rounded-md",
+            "text-[11px] font-bold text-muted-foreground",
+            "hover:bg-secondary hover:text-foreground",
+            "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            open && "bg-secondary text-foreground"
+          )}
+          aria-expanded={open}
+          aria-controls={panelId}
+          aria-label={`Analytical context for ${context.playerName}`}
+          onClick={(e) => {
+            // Keep toggle on the button; don't bubble into row/link handlers.
+            e.stopPropagation();
+          }}
         >
-          <LeaderboardContextBody context={context} />
-        </div>
-      ) : null}
-    </div>
+          i
+        </Popover.Trigger>
+      </div>
+
+      <Popover.Portal>
+        <Popover.Positioner
+          side={LEADERBOARD_CONTEXT_COLLISION.preferredSide}
+          align={LEADERBOARD_CONTEXT_COLLISION.align}
+          sideOffset={LEADERBOARD_CONTEXT_COLLISION.sideOffset}
+          positionMethod={LEADERBOARD_CONTEXT_COLLISION.positionMethod}
+          collisionBoundary="clipping-ancestors"
+          collisionPadding={LEADERBOARD_CONTEXT_COLLISION.collisionPadding}
+          collisionAvoidance={LEADERBOARD_CONTEXT_COLLISION.collisionAvoidance}
+          sticky={LEADERBOARD_CONTEXT_COLLISION.sticky}
+          className={(state) => {
+            if (state.anchorHidden && open && !closingForHiddenRef.current) {
+              closingForHiddenRef.current = true;
+              queueMicrotask(() => {
+                onOpenChange(false);
+                closingForHiddenRef.current = false;
+              });
+            }
+            // Desktop floating only — mobile keeps the inline expanded row.
+            return "z-50 hidden outline-none sm:block";
+          }}
+        >
+          <Popover.Popup
+            id={panelId}
+            role="region"
+            aria-label={`${context.playerName} context`}
+            className={cn(
+              "w-72 max-w-[min(18rem,calc(100vw-1rem))] origin-(--transform-origin) rounded-lg border border-border bg-card px-3 py-3 text-card-foreground shadow-md outline-none",
+              "motion-safe:data-open:animate-in motion-safe:data-open:fade-in-0 motion-safe:data-open:zoom-in-95",
+              "motion-safe:data-closed:animate-out motion-safe:data-closed:fade-out-0 motion-safe:data-closed:zoom-out-95",
+              "motion-safe:data-[side=bottom]:slide-in-from-top-1 motion-safe:data-[side=top]:slide-in-from-bottom-1"
+            )}
+          >
+            <LeaderboardContextBody context={context} />
+          </Popover.Popup>
+        </Popover.Positioner>
+      </Popover.Portal>
+    </Popover.Root>
   );
 }

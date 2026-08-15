@@ -12,6 +12,8 @@ export interface EspnFetchOptions {
   ttlMs?: number;
   retries?: number;
   signal?: AbortSignal;
+  /** Skip memory cache read (still writes on success unless ttlMs is 0). */
+  bypassCache?: boolean;
 }
 
 function statusFromError(error: unknown): number | null {
@@ -25,9 +27,13 @@ export async function espnFetchJson<T>(
   options: EspnFetchOptions = {}
 ): Promise<T> {
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-  const cached = memoryCache.get(url);
-  if (cached && cached.expiresAt > Date.now()) {
-    return cached.value as T;
+  if (options.bypassCache) {
+    memoryCache.delete(url);
+  } else {
+    const cached = memoryCache.get(url);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.value as T;
+    }
   }
 
   const retries = options.retries ?? DEFAULT_RETRIES;

@@ -14,6 +14,8 @@ import {
   seasonComparePath,
   seasonRankPath,
 } from "@/analytics";
+import { MetricHelp } from "@/components/learn/metric-help";
+import { PlayerIdentity } from "@/components/players/player-identity";
 import { cn } from "@/lib/utils";
 
 function CoverageLine({ entry }: { entry: SeasonRankEntry }) {
@@ -164,25 +166,39 @@ export function PlayerSeasonRankView({
           Rank my seasons · Regular season
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          <Link
-            href={`/players/${result.playerId}`}
-            className="underline-offset-2 hover:underline"
+          <PlayerIdentity
+            playerId={result.playerId}
+            name={result.playerName}
+            nameClassName="text-[28px] font-bold tracking-tight sm:text-[32px] no-underline hover:underline"
           >
-            {result.playerName}
-          </Link>
+            <span>{result.playerName}</span>
+          </PlayerIdentity>
         </h1>
         <p className="text-[14px] text-muted-foreground">
           Each selected season is compared head-to-head with every other; seasons
-          earn Copeland points from those matchups. This is not a single
-          universal “best season” score.
+          earn{" "}
+          <MetricHelp conceptId="copeland">Copeland</MetricHelp> points from
+          those matchups. This is not a single universal “best season” score.
         </p>
       </header>
 
       {(result.contested || result.closeTop) && (
         <section className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-[13px] text-muted-foreground">
-          {result.closeTopNote ? <p>{result.closeTopNote}</p> : null}
+          {result.closeTopNote ? (
+            <p>
+              <MetricHelp conceptId="close_top" labelClassName="font-semibold">
+                Close top
+              </MetricHelp>
+              {" · "}
+              {result.closeTopNote}
+            </p>
+          ) : null}
           {result.contestedNote ? (
             <p className={result.closeTopNote ? "mt-1" : undefined}>
+              <MetricHelp conceptId="contested" labelClassName="font-semibold">
+                Contested
+              </MetricHelp>
+              {" · "}
               {result.contestedNote}
             </p>
           ) : null}
@@ -194,8 +210,10 @@ export function PlayerSeasonRankView({
           Season ranking
         </h2>
         <p className="mt-1 text-[12px] text-muted-foreground">
-          Order by Copeland points from head-to-head season comparisons (win =
-          1, even = 0.5).
+          Order by{" "}
+          <MetricHelp conceptId="copeland">Copeland</MetricHelp> points from
+          head-to-head season comparisons (win = 1,{" "}
+          <MetricHelp conceptId="essentially_even">even</MetricHelp> = 0.5).
         </p>
         <ol className="mt-3 flex flex-col gap-3">
           {result.ranking.map((entry) => (

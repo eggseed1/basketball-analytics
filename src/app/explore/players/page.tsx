@@ -1,15 +1,11 @@
 import { Suspense } from "react";
 
 import { PlayerFilterToolbar } from "@/components/explore/player-filter-toolbar";
-import {
-  parsePlayerSeasonSortKey,
-} from "@/lib/player-season-sort";
+import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
+import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import {
-  getAvailableSeasons,
-  getFilteredPlayerSeasons,
-  getTeams,
-} from "@/data/queries";
+import { getAvailableSeasons, getTeams } from "@/data/queries";
+import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -39,10 +35,11 @@ export default async function ExplorePlayersPage({
   });
   const initialSortKey = parsePlayerSeasonSortKey(params.sort);
 
-  const [players, teams] = await Promise.all([
-    getFilteredPlayerSeasons(filters),
+  const [board, teams] = await Promise.all([
+    getPlayerSeasonBoardSnapshot(filters),
     getTeams(),
   ]);
+  const { rows: players, health } = board;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
@@ -60,6 +57,8 @@ export default async function ExplorePlayersPage({
         ) : null}
       </header>
 
+      <PlayerBoardHealthBanner health={health} />
+
       <Suspense
         fallback={
           <div className="h-20 animate-pulse rounded-md bg-secondary" />
@@ -73,10 +72,22 @@ export default async function ExplorePlayersPage({
       </Suspense>
 
       <div className="pb-8">
-        <PlayerSeasonTable
-          players={players}
-          initialSortKey={initialSortKey}
-        />
+        {players.length === 0 ? (
+          <section className="sports-card px-4 py-8 text-center text-[14px] text-muted-foreground">
+            {health.status === "provider_failure"
+              ? "Live NBA player data could not be loaded."
+              : health.status === "sample_dataset"
+                ? "This environment is using the local sample dataset."
+                : health.status === "season_unsupported"
+                  ? "Player-season board data is unavailable for this season from the current provider."
+                  : "No qualifying player-season rows found."}
+          </section>
+        ) : (
+          <PlayerSeasonTable
+            players={players}
+            initialSortKey={initialSortKey}
+          />
+        )}
       </div>
     </main>
   );

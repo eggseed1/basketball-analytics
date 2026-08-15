@@ -12,6 +12,9 @@ export const ASK_DRBL_EXAMPLE_PROMPTS = [
   "Rank LeBron's best seasons from 2008-09 to 2015-16.",
   "Who led the NBA in TS% in 2025-26?",
   "What was Boston's point differential in 2025-26?",
+  "Compare Boston's 2024-25 and 2025-26 seasons.",
+  "Compare Boston and Oklahoma City in 2025-26.",
+  "What were Boston's biggest wins in 2023-24?",
   "What happened to Boston this offseason?",
   "Who led Boston in scoring against Brooklyn?",
 ] as const;
@@ -76,6 +79,9 @@ export type QueryOperation =
   | "team_season_stat"
   | "leaderboard"
   | "season_compare"
+  | "team_season_compare"
+  | "team_season_rank"
+  | "team_season_game_evidence"
   | "season_rank"
   | "career_resume"
   | "game_lab"
