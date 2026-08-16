@@ -21,6 +21,17 @@ export function PlayerBoardHealthBanner({
     );
   }
 
+  if (health.status === "cached_board") {
+    return (
+      <p
+        className="border-l-2 border-border pl-2 text-[12px] text-muted-foreground"
+        role="status"
+      >
+        {health.message}
+      </p>
+    );
+  }
+
   const tone =
     health.status === "sample_dataset"
       ? "border-border bg-secondary/50"

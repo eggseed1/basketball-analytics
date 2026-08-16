@@ -89,7 +89,7 @@ import {
     error: new Error("ESPN request failed (500)"),
   });
   assert.equal(h.status, "provider_failure");
-  assert.match(h.message, /could not be loaded/i);
+  assert.match(h.message, /temporarily unavailable/i);
 }
 
 // --- Historical ESPN failure → unsupported (not generic outage) ---

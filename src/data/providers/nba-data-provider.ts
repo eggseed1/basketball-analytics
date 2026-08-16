@@ -462,7 +462,11 @@ export class NBADataProvider implements BasketballDataProvider {
     const existing = this.playerSeasonCache.get(season);
     if (existing) return existing;
 
-    const promise = this.fetchPlayerSeasons(season);
+    const promise = this.fetchPlayerSeasons(season).catch((error) => {
+      // Do not poison the season cache with a rejected promise.
+      this.playerSeasonCache.delete(season);
+      throw error;
+    });
     this.playerSeasonCache.set(season, promise);
     return promise;
   }

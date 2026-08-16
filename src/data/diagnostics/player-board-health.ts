@@ -15,6 +15,7 @@ import { startYearFromCanonicalSeason } from "@/data/providers/historical/season
 
 export type PlayerBoardHealthStatus =
   | "healthy"
+  | "cached_board"
   | "sample_dataset"
   | "sample_sized_unexpected"
   | "empty_qualifying"
@@ -48,6 +49,11 @@ export type AssessPlayerBoardHealthInput = {
   error?: unknown;
   /** Optional: ignored game cache presence (not a PlayerSeason board). */
   historicalGamesCachePresent?: boolean | null;
+  /**
+   * When rows come from process-local last-good real board after a live miss.
+   * Never set for sample/local corpora.
+   */
+  fromCachedRealBoard?: boolean;
 };
 
 function seasonStartYear(season: string): number | null {
@@ -104,14 +110,36 @@ export function assessPlayerBoardHealth(
         message: `Player-season board data is unavailable for ${input.season} from the current provider (${errorMessage(input.error)}).${cacheNote}`,
       };
     }
+    // Live failed but we still have a verified real board snapshot.
+    if (input.fromCachedRealBoard && input.rowCount > 0) {
+      return {
+        ...base,
+        isSampleData: false,
+        status: "cached_board",
+        label: "Cached board",
+        message:
+          "Live player data temporarily unavailable; showing the most recent verified data.",
+      };
+    }
     return {
       ...base,
       isSampleData: meta.isSample,
       status: "provider_failure",
       label: "Provider failure",
       message: meta.isLive
-        ? `Live NBA player data could not be loaded. ${errorMessage(input.error)}`
+        ? "Live player data is temporarily unavailable. Please try again shortly."
         : `Player data could not be loaded. ${errorMessage(input.error)}`,
+    };
+  }
+
+  if (input.fromCachedRealBoard && input.rowCount > 0) {
+    return {
+      ...base,
+      isSampleData: false,
+      status: "cached_board",
+      label: "Cached board",
+      message:
+        "Live player data temporarily unavailable; showing the most recent verified data.",
     };
   }
 

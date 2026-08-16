@@ -78,12 +78,14 @@ export default async function ExplorePlayersPage({
         {players.length === 0 ? (
           <section className="sports-card px-4 py-8 text-center text-[14px] text-muted-foreground">
             {health.status === "provider_failure"
-              ? "Live NBA player data could not be loaded."
+              ? "Live player data is temporarily unavailable. Please try again shortly."
               : health.status === "sample_dataset"
                 ? "This environment is using the local sample dataset."
                 : health.status === "season_unsupported"
                   ? "Player-season board data is unavailable for this season from the current provider."
-                  : "No qualifying player-season rows found."}
+                  : health.status === "board_unavailable"
+                    ? "Live player data could not be loaded for this season."
+                    : "No qualifying player-season rows found."}
           </section>
         ) : (
           <PlayerSeasonTable

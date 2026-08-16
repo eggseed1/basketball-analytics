@@ -14,16 +14,22 @@ export {
   getPlayerSeasonBoardSnapshot,
   getActiveProviderChip,
 } from "./player-data-health";
-export type { PlayerSeasonBoardSnapshot } from "./player-data-health";
+export type {
+  PlayerBoardSource,
+  PlayerSeasonBoardSnapshot,
+} from "./player-data-health";
+export { getTeams, getTeam } from "./teams";
 export {
-  getTeams,
-  getTeam,
   getTeamsCatalog,
   getTeamsWithSource,
   teamsFromCanonicalIdentity,
   resolveTeamFilterAgainstCatalog,
 } from "./teams";
 export type { TeamCatalogSource, TeamsCatalogResult } from "./teams";
+export type {
+  ScoreboardFeedSource,
+  ScoreboardFeedResult,
+} from "./scoreboard-feed";
 export { getShots } from "./shots";
 export {
   getGames,

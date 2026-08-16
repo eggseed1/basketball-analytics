@@ -147,6 +147,35 @@ canonical team identity map            → source = canonical-fallback
 See `src/data/queries/teams-catalog.ts` and
 `npm run test:teams-catalog-resilience`.
 
+### Player board resilience (Explore players)
+
+```
+fresh ESPN byathlete board
+        │
+        ▼ (on 403 / 429 / 5xx / timeout)
+process-local last-good REAL board   → source = cached-espn
+        │
+        ▼ (if none)
+honest degraded empty state          → source = unavailable
+```
+
+Production **never** substitutes `LocalDataProvider` / sample rows for a live
+board outage. `getPlayerSeasonBoardSnapshot()` exposes `source` + `warnings`.
+
+### Scoreboard / Gamefeed resilience
+
+```
+fresh ESPN scoreboard
+        │
+        ▼
+process-local last-good scoreboard   → source = cached-espn (labeled stale)
+        │
+        ▼
+unavailable notice                   → source = unavailable
+```
+
+Cached scores are never presented as live. Home week strip degrades in-place.
+
 ### Filtering rule
 
 `applyPlayerSeasonFilters` in `filter-utils.ts` is the **single** filter

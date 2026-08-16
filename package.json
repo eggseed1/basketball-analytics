@@ -23,6 +23,8 @@
     "test:ask-recent-store": "tsx scripts/test-ask-recent-store.ts",
     "test:site-nav": "tsx scripts/test-site-nav.ts",
     "test:player-data-health": "tsx scripts/test-player-data-health.ts",
+    "test:player-board-resilience": "tsx scripts/test-player-board-resilience.ts",
+    "test:scoreboard-resilience": "tsx scripts/test-scoreboard-resilience.ts",
     "test:production-provider-guard": "tsx scripts/test-production-provider-guard.ts",
     "test:pbp-capability": "tsx scripts/test-pbp-capability.ts",
     "test:player-career-explorer": "tsx scripts/test-player-career-explorer.ts",
