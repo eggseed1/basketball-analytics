@@ -1,10 +1,34 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useEffect, useMemo, useState, useTransition } from "react";
+import {
+  FormEvent,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  useSyncExternalStore,
+  useTransition,
+} from "react";
 
 import type { AskDrblResult } from "@/query-engine/types";
-import { ASK_DRBL_EXAMPLE_PROMPTS } from "@/query-engine/types";
+import {
+  daySeed,
+  pickAskExamples,
+  type AskExample,
+} from "@/query-engine/ask-examples";
+import {
+  askBuilderHref,
+  composeAskBuilderQuery,
+  defaultAskBuilderState,
+  parseAskBuilderParams,
+  validateAskBuilderState,
+  type AskBuilderState,
+  type AskInputMode,
+} from "@/query-engine/ask-builder";
+import {
+  AskBuilderForm,
+} from "@/components/ask/ask-builder-form";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { AppLink } from "@/components/ui/app-link";
@@ -24,6 +48,8 @@ type RecentEntry = {
   at: number;
 };
 
+const RECENT_EVENT = "ask-drbl-recent";
+
 function loadRecent(): RecentEntry[] {
   if (typeof window === "undefined") return [];
   try {
@@ -36,6 +62,11 @@ function loadRecent(): RecentEntry[] {
   }
 }
 
+function notifyRecent() {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(new Event(RECENT_EVENT));
+}
+
 function pushRecent(entry: RecentEntry) {
   if (typeof window === "undefined") return;
   const next = [
@@ -43,11 +74,23 @@ function pushRecent(entry: RecentEntry) {
     ...loadRecent().filter((x) => x.q !== entry.q),
   ].slice(0, 8);
   window.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
+  notifyRecent();
 }
 
 function clearRecent() {
   if (typeof window === "undefined") return;
   window.localStorage.removeItem(RECENT_KEY);
+  notifyRecent();
+}
+
+function subscribeRecent(onStoreChange: () => void) {
+  if (typeof window === "undefined") return () => {};
+  window.addEventListener(RECENT_EVENT, onStoreChange);
+  window.addEventListener("storage", onStoreChange);
+  return () => {
+    window.removeEventListener(RECENT_EVENT, onStoreChange);
+    window.removeEventListener("storage", onStoreChange);
+  };
 }
 
 function statusMeta(status: AskDrblResult["status"]): {
@@ -180,9 +223,7 @@ function StatusBanner({ result }: { result: AskDrblResult }) {
   const meta = statusMeta(result.status);
   const statusConcept = conceptIdForAskStatus(result.status);
   return (
-    <section
-      className={cn("rounded-md border px-4 py-3", meta.className)}
-    >
+    <section className={cn("rounded-md border px-4 py-3", meta.className)}>
       <h2 className="text-[15px] font-bold tracking-tight">
         {statusConcept ? (
           <MetricHelp conceptId={statusConcept} labelClassName="font-bold">
@@ -204,7 +245,9 @@ function StatusBanner({ result }: { result: AskDrblResult }) {
           ))}
         </ul>
       ) : null}
-      {result.status === "ambiguous" ? <AmbiguityPicker result={result} /> : null}
+      {result.status === "ambiguous" ? (
+        <AmbiguityPicker result={result} />
+      ) : null}
     </section>
   );
 }
@@ -263,36 +306,207 @@ function formatRecentTime(at: number): string {
   }
 }
 
+function ExamplesList({
+  examples,
+  onPick,
+  compact,
+}: {
+  examples: AskExample[];
+  onPick: (prompt: string) => void;
+  compact?: boolean;
+}) {
+  return (
+    <ul className={cn("flex flex-col gap-1.5", compact && "gap-1")}>
+      {examples.map((ex) => (
+        <li key={ex.id}>
+          <button
+            type="button"
+            onClick={() => onPick(ex.prompt)}
+            className={cn(
+              "text-left font-semibold underline-offset-2 hover:underline",
+              compact ? "text-[13px]" : "text-[14px]"
+            )}
+          >
+            {ex.prompt}
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+function AskResultBlock({ result }: { result: AskDrblResult }) {
+  const quietInterpretation = result.interpretation.slice(0, 4);
+  return (
+    <div
+      id="result"
+      tabIndex={-1}
+      className="flex scroll-mt-20 flex-col gap-4 outline-none"
+    >
+      <StatusBanner result={result} />
+
+      {result.status === "ok" ? (
+        <section
+          aria-labelledby="ask-result-heading"
+          className="sports-card flex flex-col gap-3 px-4 py-5 sm:px-5"
+        >
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+            Result
+          </p>
+          <AskResultEntities result={result} />
+          <AskMetricChip result={result} />
+          {result.headline ? (
+            <h2
+              id="ask-result-heading"
+              className="text-[18px] font-bold tracking-tight"
+            >
+              {result.headline}
+            </h2>
+          ) : (
+            <h2 id="ask-result-heading" className="sr-only">
+              ASK DRBL result
+            </h2>
+          )}
+          {result.valueDisplay ? (
+            <p className="text-[36px] font-bold tabular-nums tracking-tight sm:text-[44px]">
+              {result.valueDisplay}
+            </p>
+          ) : null}
+          {result.detailLines?.length ? (
+            <ul className="flex flex-col gap-1.5 text-[14px] text-muted-foreground">
+              {result.detailLines.map((line) => (
+                <li key={line}>{line}</li>
+              ))}
+            </ul>
+          ) : null}
+        </section>
+      ) : null}
+
+      {quietInterpretation.length ? (
+        <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+            What DRBL understood
+          </h2>
+          <ul className="flex flex-col gap-1">
+            {quietInterpretation.map((line) => (
+              <li
+                key={line}
+                className="text-[15px] font-semibold tracking-tight"
+              >
+                {line}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      <QueryPlanDisclosure result={result} />
+
+      {(result.source || result.methodology?.length) && (
+        <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
+          {result.source ? (
+            <p className="text-[13px]">
+              <span className="font-bold">Source</span> · {result.source}
+            </p>
+          ) : null}
+          {result.methodology?.length ? (
+            <div className="flex flex-col gap-1">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+                How is this calculated?
+              </p>
+              {result.methodology.map((m) => (
+                <p key={m} className="text-[12px] text-muted-foreground">
+                  {m}
+                </p>
+              ))}
+            </div>
+          ) : null}
+          {result.limitations?.map((m) => (
+            <p key={m} className="text-[12px] text-muted-foreground">
+              Limitation: {m}
+            </p>
+          ))}
+        </section>
+      )}
+
+      {result.links?.length ? (
+        <section className="flex flex-col gap-2">
+          <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+            Explore further
+          </h2>
+          <div className="flex flex-wrap gap-3">
+            {result.links.map((l) => (
+              <AppLink
+                key={l.href + l.label}
+                href={l.href}
+                className="rounded-md bg-foreground px-3 py-2 text-[13px] font-bold text-background"
+              >
+                {l.label}
+              </AppLink>
+            ))}
+          </div>
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 export function AskDrblView({
   initialQuery,
   result,
+  initialMode = "natural",
+  initialBuilder,
+  exampleSeed,
 }: {
   initialQuery: string;
   result: AskDrblResult | null;
+  initialMode?: AskInputMode;
+  initialBuilder?: AskBuilderState;
+  exampleSeed?: string;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
+  const [mode, setMode] = useState<AskInputMode>(initialMode);
   const [value, setValue] = useState(initialQuery);
-  const [recent, setRecent] = useState<RecentEntry[]>([]);
+  const [builder, setBuilder] = useState<AskBuilderState>(
+    () => initialBuilder ?? defaultAskBuilderState()
+  );
+  const recent = useSyncExternalStore(subscribeRecent, loadRecent, () => []);
+  const [examplesOpen, setExamplesOpen] = useState(!result);
+  const resultRef = useRef<HTMLDivElement>(null);
+  const hasResult = Boolean(result);
+  const lastPushedQuery = useRef<string | null>(null);
 
-  useEffect(() => {
-    setRecent(loadRecent());
-  }, [result?.rawQuery, result?.status]);
+  const examples = useMemo(
+    () => pickAskExamples(exampleSeed ?? daySeed(), 8),
+    [exampleSeed]
+  );
 
   useEffect(() => {
     if (!result?.rawQuery) return;
+    const key = `${result.rawQuery}|${result.status}`;
+    if (lastPushedQuery.current === key) return;
+    lastPushedQuery.current = key;
     pushRecent({
       q: result.rawQuery,
       title: result.headline ?? result.interpretation[0] ?? result.rawQuery,
       status: result.status,
       at: Date.now(),
     });
-    setRecent(loadRecent());
   }, [result]);
 
-  const quietInterpretation = useMemo(() => {
-    if (!result) return [];
-    return result.interpretation.slice(0, 4);
+  useEffect(() => {
+    if (!result) return;
+    // Defer UI/focus work so we don't sync-set state in the effect body.
+    const id = window.setTimeout(() => {
+      setExamplesOpen(false);
+      document.getElementById("result")?.focus({ preventScroll: true });
+      document.getElementById("result")?.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }, 40);
+    return () => window.clearTimeout(id);
   }, [result]);
 
   function submit(q: string) {
@@ -300,8 +514,17 @@ export function AskDrblView({
     if (!trimmed) return;
     startTransition(() => {
       router.push(
-        assertInternalHref(`/ask?q=${encodeURIComponent(trimmed)}`)
+        assertInternalHref(`/ask?q=${encodeURIComponent(trimmed)}#result`)
       );
+    });
+  }
+
+  function submitBuilder() {
+    const v = validateAskBuilderState(builder);
+    if (!v.ok) return;
+    const href = askBuilderHref(builder, true);
+    startTransition(() => {
+      router.push(assertInternalHref(`${href}#result`));
     });
   }
 
@@ -317,203 +540,196 @@ export function AskDrblView({
           DRBL · Analytical search
         </p>
         <h1 className="text-[34px] font-bold tracking-tight sm:text-[40px]">
-          <MetricHelp conceptId="ask_drbl" labelClassName="font-bold tracking-tight">
+          <MetricHelp
+            conceptId="ask_drbl"
+            labelClassName="font-bold tracking-tight"
+          >
             ASK DRBL
           </MetricHelp>
         </h1>
         <p className="max-w-2xl text-[15px] text-muted-foreground">
-          A search engine for basketball intelligence — natural language to a
-          trusted analytical result. Not a chatbot.
+          {hasResult
+            ? "Ask another question, or refine with the structured builder."
+            : "Natural language or a guided builder — both use the same trusted query engine. Not a chatbot."}
         </p>
       </header>
 
-      <form onSubmit={onSubmit} className="flex flex-col gap-3">
-        <label className="sr-only" htmlFor="ask-drbl-input">
-          Ask DRBL
-        </label>
-        <textarea
-          id="ask-drbl-input"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          rows={3}
-          placeholder="Ask a basketball analytics question…"
-          className="w-full resize-y rounded-md border border-border bg-background px-4 py-3 text-[16px] font-medium outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+      <div
+        className="inline-flex w-fit rounded-md border border-border bg-secondary/30 p-0.5"
+        role="tablist"
+        aria-label="ASK input mode"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "natural"}
+          onClick={() => setMode("natural")}
+          className={cn(
+            "rounded px-3 py-1.5 text-[12px] font-bold",
+            mode === "natural"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground"
+          )}
+        >
+          Ask naturally
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={mode === "builder"}
+          onClick={() => setMode("builder")}
+          className={cn(
+            "rounded px-3 py-1.5 text-[12px] font-bold",
+            mode === "builder"
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground"
+          )}
+        >
+          Build a query
+        </button>
+      </div>
+
+      {mode === "natural" ? (
+        <form onSubmit={onSubmit} className="flex flex-col gap-3">
+          <label className="sr-only" htmlFor="ask-drbl-input">
+            Ask DRBL
+          </label>
+          <textarea
+            id="ask-drbl-input"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            rows={hasResult ? 2 : 3}
+            placeholder="Ask a basketball analytics question…"
+            className="w-full resize-y rounded-md border border-border bg-background px-4 py-3 text-[16px] font-medium outline-none ring-offset-background placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+          />
+          <div className="flex flex-wrap items-center gap-2">
+            <button
+              type="submit"
+              disabled={pending || !value.trim()}
+              className="rounded-md bg-foreground px-4 py-2.5 text-[13px] font-bold text-background disabled:opacity-50"
+            >
+              {pending ? "Running…" : hasResult ? "Ask another" : "Run query"}
+            </button>
+            <p className="text-[12px] text-muted-foreground">
+              Results are shareable via the URL.
+            </p>
+          </div>
+        </form>
+      ) : (
+        <AskBuilderForm
+          state={builder}
+          onChange={setBuilder}
+          onSubmit={submitBuilder}
+          pending={pending}
         />
-        <div className="flex flex-wrap items-center gap-2">
-          <button
-            type="submit"
-            disabled={pending || !value.trim()}
-            className="rounded-md bg-foreground px-4 py-2.5 text-[13px] font-bold text-background disabled:opacity-50"
-          >
-            {pending ? "Running…" : "Run query"}
-          </button>
-          <p className="text-[12px] text-muted-foreground">
-            Results are shareable via the URL.
-          </p>
+      )}
+
+      {hasResult && result ? (
+        <div ref={resultRef}>
+          <AskResultBlock result={result} />
         </div>
-      </form>
+      ) : null}
 
-      <section className="flex flex-col gap-2">
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-          Examples ASK DRBL can answer
-        </h2>
-        <ul className="flex flex-col gap-1.5">
-          {ASK_DRBL_EXAMPLE_PROMPTS.map((p) => (
-            <li key={p}>
-              <button
-                type="button"
-                onClick={() => {
-                  setValue(p);
-                  submit(p);
-                }}
-                className="text-left text-[14px] font-semibold underline-offset-2 hover:underline"
-              >
-                {p}
-              </button>
-            </li>
-          ))}
-        </ul>
-      </section>
+      {!hasResult ? (
+        <>
+          <section className="flex flex-col gap-2">
+            <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+              Try asking
+            </h2>
+            <ExamplesList examples={examples} onPick={submit} />
+          </section>
 
-      {recent.length ? (
-        <section className="flex flex-col gap-2">
+          {recent.length ? (
+            <RecentSection
+              recent={recent}
+              onPick={submit}
+              onClear={clearRecent}
+            />
+          ) : null}
+        </>
+      ) : (
+        <section className="flex flex-col gap-2 border-t border-border pt-4">
           <div className="flex items-center justify-between gap-2">
             <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-              Recent
+              Try another question
             </h2>
             <button
               type="button"
-              onClick={() => {
-                clearRecent();
-                setRecent([]);
-              }}
+              onClick={() => setExamplesOpen((v) => !v)}
               className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
             >
-              Clear
+              {examplesOpen ? "Hide" : "Show examples"}
             </button>
           </div>
-          <ul className="flex flex-col gap-1.5">
-            {recent.map((entry) => (
-              <li key={`${entry.q}-${entry.at}`}>
-                <button
-                  type="button"
-                  onClick={() => {
-                    setValue(entry.q);
-                    submit(entry.q);
-                  }}
-                  className="flex w-full flex-col items-start rounded-md bg-secondary/50 px-2.5 py-1.5 text-left"
-                >
-                  <span className="text-[13px] font-semibold">
-                    {entry.title.length > 64
-                      ? `${entry.title.slice(0, 64)}…`
-                      : entry.title}
-                  </span>
-                  <span className="text-[11px] text-muted-foreground">
-                    {entry.status ? `${entry.status} · ` : ""}
-                    {formatRecentTime(entry.at)}
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
+          {examplesOpen ? (
+            <ExamplesList examples={examples} onPick={submit} compact />
+          ) : null}
+          {recent.length ? (
+            <RecentSection
+              recent={recent}
+              onPick={submit}
+              onClear={clearRecent}
+              compact
+            />
+          ) : null}
         </section>
-      ) : null}
-
-      {result ? (
-        <div className="flex flex-col gap-4">
-          <StatusBanner result={result} />
-
-          {quietInterpretation.length ? (
-            <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
-              <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-                Interpreted as
-              </h2>
-              <ul className="flex flex-col gap-1">
-                {quietInterpretation.map((line) => (
-                  <li
-                    key={line}
-                    className="text-[15px] font-semibold tracking-tight"
-                  >
-                    {line}
-                  </li>
-                ))}
-              </ul>
-            </section>
-          ) : null}
-
-          <QueryPlanDisclosure result={result} />
-
-          {result.status === "ok" ? (
-            <section className="sports-card flex flex-col gap-3 px-4 py-5 sm:px-5">
-              <AskResultEntities result={result} />
-              <AskMetricChip result={result} />
-              {result.headline ? (
-                <h2 className="text-[18px] font-bold tracking-tight">
-                  {result.headline}
-                </h2>
-              ) : null}
-              {result.valueDisplay ? (
-                <p className="text-[36px] font-bold tabular-nums tracking-tight sm:text-[44px]">
-                  {result.valueDisplay}
-                </p>
-              ) : null}
-              {result.detailLines?.length ? (
-                <ul className="flex flex-col gap-1.5 text-[14px] text-muted-foreground">
-                  {result.detailLines.map((line) => (
-                    <li key={line}>{line}</li>
-                  ))}
-                </ul>
-              ) : null}
-            </section>
-          ) : null}
-
-          {(result.source || result.methodology?.length) && (
-            <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
-              {result.source ? (
-                <p className="text-[13px]">
-                  <span className="font-bold">Source</span> · {result.source}
-                </p>
-              ) : null}
-              {result.methodology?.length ? (
-                <div className="flex flex-col gap-1">
-                  <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-                    How is this calculated?
-                  </p>
-                  {result.methodology.map((m) => (
-                    <p key={m} className="text-[12px] text-muted-foreground">
-                      {m}
-                    </p>
-                  ))}
-                </div>
-              ) : null}
-              {result.limitations?.map((m) => (
-                <p key={m} className="text-[12px] text-muted-foreground">
-                  Limitation: {m}
-                </p>
-              ))}
-            </section>
-          )}
-
-          {result.links?.length ? (
-            <section className="flex flex-col gap-2">
-              <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-                Continue exploring
-              </h2>
-              <div className="flex flex-wrap gap-3">
-                {result.links.map((l) => (
-                  <AppLink
-                    key={l.href + l.label}
-                    href={l.href}
-                    className="rounded-md bg-foreground px-3 py-2 text-[13px] font-bold text-background"
-                  >
-                    {l.label}
-                  </AppLink>
-                ))}
-              </div>
-            </section>
-          ) : null}
-        </div>
-      ) : null}
+      )}
     </div>
   );
 }
+
+function RecentSection({
+  recent,
+  onPick,
+  onClear,
+  compact,
+}: {
+  recent: RecentEntry[];
+  onPick: (q: string) => void;
+  onClear: () => void;
+  compact?: boolean;
+}) {
+  return (
+    <section className="flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+          Recent
+        </h2>
+        <button
+          type="button"
+          onClick={onClear}
+          className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+        >
+          Clear
+        </button>
+      </div>
+      <ul className="flex flex-col gap-1.5">
+        {recent.map((entry) => (
+          <li key={`${entry.q}-${entry.at}`}>
+            <button
+              type="button"
+              onClick={() => onPick(entry.q)}
+              className={cn(
+                "flex w-full flex-col items-start rounded-md bg-secondary/50 px-2.5 py-1.5 text-left",
+                compact && "py-1"
+              )}
+            >
+              <span className="text-[13px] font-semibold">
+                {entry.title.length > 64
+                  ? `${entry.title.slice(0, 64)}…`
+                  : entry.title}
+              </span>
+              <span className="text-[11px] text-muted-foreground">
+                {entry.status ? `${entry.status} · ` : ""}
+                {formatRecentTime(entry.at)}
+              </span>
+            </button>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+/** Re-export for tests / URL parsing on the page. */
+export { parseAskBuilderParams, composeAskBuilderQuery };

@@ -5,18 +5,16 @@
 
 export const ASK_DRBL_VERSION = 1;
 
+/** @deprecated Prefer pickAskExamples() — kept for older imports. */
 export const ASK_DRBL_EXAMPLE_PROMPTS = [
-  "What was LeBron's TS% in 2012-13?",
-  "What was LeBron's peak production season?",
-  "Compare LeBron's 2008-09 and 2012-13 seasons.",
-  "Rank LeBron's best seasons from 2008-09 to 2015-16.",
-  "Who led the NBA in TS% in 2025-26?",
-  "What was Boston's point differential in 2025-26?",
-  "Compare Boston's 2024-25 and 2025-26 seasons.",
-  "Compare Boston and Oklahoma City in 2025-26.",
-  "What were Boston's biggest wins in 2023-24?",
-  "What happened to Boston this offseason?",
-  "Who led Boston in scoring against Brooklyn?",
+  "What was Jokic's TS% in 2024-25?",
+  "What was Denver's point differential in 2023-24?",
+  "Who led the NBA in TS% in 2024-25?",
+  "Compare Jokic's 2023-24 and 2024-25 seasons.",
+  "Rank Jokic's seasons.",
+  "Compare Minnesota and Oklahoma City in 2024-25.",
+  "What were Denver's biggest wins in 2023-24?",
+  "What happened to Phoenix this offseason?",
 ] as const;
 
 export type QueryEntity =
