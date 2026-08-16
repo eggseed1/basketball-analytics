@@ -14,12 +14,25 @@ export interface Game {
   tipOffAt?: string;
   /** ESPN short status line, e.g. "10/3 - 7:00 PM EDT". */
   statusDetail?: string;
+  /**
+   * Canonical DRBL team id (ESPN team id string) when the transform resolved
+   * identity. Prefer this for links, filters, and branding.
+   */
   homeTeamId: string;
   awayTeamId: string;
   homeTeamAbbr?: string;
   awayTeamAbbr?: string;
   homeTeamName?: string;
   awayTeamName?: string;
+  /**
+   * Provider namespace for retained raw team ids.
+   * Present on rows that passed through provider transforms.
+   */
+  teamIdProvider?: "espn" | "bdl";
+  /** Raw provider team id for the home side (traceability). */
+  homeProviderTeamId?: string;
+  /** Raw provider team id for the away side (traceability). */
+  awayProviderTeamId?: string;
   homeScore: number;
   awayScore: number;
   /**

@@ -26,6 +26,7 @@ import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { normalizeTeamParam } from "@/lib/team-identity";
 import { parseSeasonParam } from "@/data/providers/historical/season-range";
 import {
   sourceTextCategoryLabel,
@@ -52,8 +53,9 @@ function one(
 
 function resolveTeamFilter(raw?: string): string | undefined {
   if (!raw?.trim()) return undefined;
-  const brand = resolveTeamBrand(raw.trim());
-  return brand?.espnTeamId ?? raw.trim();
+  const normalized = normalizeTeamParam(raw.trim());
+  // Offseason archive is ESPN-scoped — canonical id is the ESPN team id.
+  return normalized?.canonicalTeamId ?? raw.trim();
 }
 
 function collectEventsForResolution(options: {

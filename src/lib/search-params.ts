@@ -1,5 +1,6 @@
 import type { BasketballFilters, Position } from "@/data/types";
 import { parseMinimumNumber } from "@/data/queries";
+import { normalizeTeamParam } from "@/lib/team-identity";
 
 const POSITIONS: Position[] = ["PG", "SG", "SF", "PF", "C"];
 
@@ -13,12 +14,15 @@ function first(
 /**
  * Maps Next.js searchParams into the shared BasketballFilters type.
  * Used by server pages so chart + table share one filtered query result.
+ *
+ * `?team=` accepts canonical ESPN id, abbreviation, brand slug, or
+ * namespaced `espn:` / `bdl:` keys. Normalized to canonical id + abbr.
  */
 export function filtersFromSearchParams(
   params: Record<string, string | string[] | undefined>
 ): BasketballFilters {
   const season = first(params.season);
-  const team = first(params.team);
+  const teamRaw = first(params.team);
   const player = first(params.player);
   const positionRaw = first(params.position);
   const minimumMinutes = parseMinimumNumber(params.minimumMinutes);
@@ -33,9 +37,14 @@ export function filtersFromSearchParams(
         ? "ALL"
         : undefined;
 
+  const normalized =
+    teamRaw && teamRaw !== "ALL" ? normalizeTeamParam(teamRaw) : null;
+
   return {
     season,
-    team: team && team !== "ALL" ? team : undefined,
+    // Canonical ESPN id when resolvable; otherwise preserve raw for diagnostics.
+    team: normalized?.canonicalTeamId ?? (teamRaw && teamRaw !== "ALL" ? teamRaw : undefined),
+    teamAbbr: normalized?.abbr,
     player: player || undefined,
     position,
     minimumMinutes,

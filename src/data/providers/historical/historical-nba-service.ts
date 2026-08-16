@@ -30,6 +30,7 @@ import {
 } from "@/data/transformers/balldontlie";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
 import {
+  findCachedGame,
   readGamesCache,
   writeGamesCache,
 } from "@/data/providers/historical/games-cache";
@@ -223,9 +224,16 @@ export class HistoricalNbaService {
         return transformBdlGame(game);
       } catch (error) {
         if (!(error instanceof BallDontLieError && error.status === 404)) {
+          const cached = await findCachedGame(gameId);
+          if (cached) return cached;
           throw error;
         }
       }
+    }
+    // Disk cache covers historical BDL ids when the live client is unavailable.
+    if (/^\d+$/.test(gameId) && !/^40\d{7,}$/.test(gameId)) {
+      const cached = await findCachedGame(gameId);
+      if (cached) return cached;
     }
     // ESPN event ids only — do not fan out schedule lookups for foreign ids.
     if (/^40\d{7,}$/.test(gameId)) {

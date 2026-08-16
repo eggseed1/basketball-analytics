@@ -14,6 +14,7 @@ import {
   shouldDisplayScores,
   statusHeadline,
 } from "@/lib/game-status";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
@@ -103,17 +104,11 @@ function groupByDate(games: GameSummary[]) {
 }
 
 function abbr(game: GameSummary, side: "away" | "home") {
-  if (side === "away") {
-    return (
-      game.awayTeamAbbr ??
-      resolveTeamBrand(game.awayTeamId)?.abbr ??
-      String(game.awayTeamId).slice(0, 3).toUpperCase()
-    );
-  }
+  const key = gameSideBrandKey(game, side);
   return (
-    game.homeTeamAbbr ??
-    resolveTeamBrand(game.homeTeamId)?.abbr ??
-    String(game.homeTeamId).slice(0, 3).toUpperCase()
+    resolveTeamBrand(key)?.abbr ??
+    (side === "away" ? game.awayTeamAbbr : game.homeTeamAbbr) ??
+    String(key).slice(0, 3).toUpperCase()
   );
 }
 

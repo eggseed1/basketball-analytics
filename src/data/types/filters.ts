@@ -7,9 +7,10 @@ import type { Position } from "./player";
 export interface BasketballFilters {
   season?: string;
   /**
-   * Provider-scoped team id for the schedule source being filtered.
-   * For historical/BDL rows this must be a BDL team id — never a bare ESPN id.
-   * Prefer resolving via `@/data/identity/team-map` before setting this.
+   * Team identity for filters — prefer canonical ESPN id after URL normalization
+   * (`filtersFromSearchParams` / `normalizeTeamParam`).
+   * Player boards match ESPN ids; game filters also expand to BDL via identity
+   * or prefer `teamAbbr` when set.
    */
   team?: string;
   /** Cross-provider-safe franchise filter when game rows include abbreviations. */

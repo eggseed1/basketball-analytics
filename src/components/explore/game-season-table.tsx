@@ -17,6 +17,7 @@ import {
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export interface GameSeasonTableProps {
@@ -26,8 +27,8 @@ export interface GameSeasonTableProps {
 type SortKey = "gameDate" | "matchup" | "totalPoints" | "margin";
 
 function matchupLabel(game: GameSummary): string {
-  const away = game.awayTeamAbbr ?? game.awayTeamId;
-  const home = game.homeTeamAbbr ?? game.homeTeamId;
+  const away = gameSideBrandKey(game, "away");
+  const home = gameSideBrandKey(game, "home");
   return `${away} @ ${home}`;
 }
 
@@ -164,9 +165,9 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
               </TableRow>
             ) : (
               rows.map((game) => {
-                const homeBrand = resolveTeamBrand(
-                  game.homeTeamAbbr ?? game.homeTeamId
-                );
+                const awayKey = gameSideBrandKey(game, "away");
+                const homeKey = gameSideBrandKey(game, "home");
+                const homeBrand = resolveTeamBrand(homeKey);
                 return (
                   <TableRow
                     key={game.id}
@@ -192,22 +193,16 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                         className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
                         <span className="inline-flex items-center gap-1">
-                          <TeamLogo
-                            teamKey={game.awayTeamAbbr ?? game.awayTeamId}
-                            size="xs"
-                          />
+                          <TeamLogo teamKey={awayKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {game.awayTeamAbbr ?? game.awayTeamId}
+                            {resolveTeamBrand(awayKey)?.abbr ?? awayKey}
                           </span>
                         </span>
                         <span className="text-muted-foreground">@</span>
                         <span className="inline-flex items-center gap-1">
-                          <TeamLogo
-                            teamKey={game.homeTeamAbbr ?? game.homeTeamId}
-                            size="xs"
-                          />
+                          <TeamLogo teamKey={homeKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {game.homeTeamAbbr ?? game.homeTeamId}
+                            {homeBrand?.abbr ?? homeKey}
                           </span>
                         </span>
                       </Link>

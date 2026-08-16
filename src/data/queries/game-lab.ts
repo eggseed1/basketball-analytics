@@ -15,7 +15,9 @@ import { getTeam } from "@/data/queries/teams";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
 
 export type { GameAnalysisSummary };
 
@@ -51,28 +53,44 @@ function matchTeamSeason(
 
 /**
  * Prefer schedule abbreviation for brand identity.
- * BallDontLie numeric team ids collide with ESPN ids (e.g. BDL 25 = POR,
- * ESPN 25 = OKC). Abbr/name on the Game row are the trustworthy labels.
+ * Never resolve branding from a bare numeric id when the provider namespace
+ * is required (BDL ids collide with ESPN — e.g. BDL 25 = POR, ESPN 25 = OKC).
  */
 async function resolveSideLabels(
-  teamId: string,
-  abbr: string | null | undefined,
-  name: string | null | undefined
+  game: Game,
+  side: "home" | "away"
 ): Promise<{ label: string; name: string; themeKey: string }> {
-  const brand =
-    resolveTeamBrand(abbr) ??
-    resolveTeamBrand(teamId) ??
-    // last resort: try first word of full name ("Portland Trail Blazers")
-    (name ? resolveTeamBrand(name.split(/\s+/)[0] ?? "") : undefined);
-
-  const lookupId = brand?.espnTeamId ?? brand?.id ?? teamId;
+  const teamId = side === "home" ? game.homeTeamId : game.awayTeamId;
+  const abbr = side === "home" ? game.homeTeamAbbr : game.awayTeamAbbr;
+  const name = side === "home" ? game.homeTeamName : game.awayTeamName;
+  const brandKey = gameSideBrandKey(game, side);
+  const brand = resolveTeamBrand(brandKey);
+  const canonical = resolveCanonicalTeam(brandKey);
+  const lookupId =
+    (canonical.status === "resolved"
+      ? canonical.team.canonicalTeamId
+      : undefined) ??
+    brand?.espnTeamId ??
+    brand?.id ??
+    teamId;
   const team = await getTeam(lookupId).catch(() => null);
-  const label = brand?.abbr ?? team?.abbreviation ?? abbr ?? teamId;
-  const displayName = team?.fullName ?? name ?? label;
+  const label =
+    brand?.abbr ??
+    (canonical.status === "resolved" ? canonical.team.abbr : undefined) ??
+    team?.abbreviation ??
+    abbr ??
+    teamId;
+  const displayName =
+    team?.fullName ??
+    name ??
+    (canonical.status === "resolved"
+      ? canonical.team.displayName
+      : undefined) ??
+    label;
   return {
     label,
     name: displayName,
-    themeKey: brand?.espnTeamId ?? brand?.id ?? abbr ?? teamId,
+    themeKey: lookupId,
   };
 }
 
@@ -90,8 +108,8 @@ export async function getGameAnalysis(
 
   const needPlayerBoard = players.length > 0;
   const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([
-    resolveSideLabels(game.homeTeamId, game.homeTeamAbbr, game.homeTeamName),
-    resolveSideLabels(game.awayTeamId, game.awayTeamAbbr, game.awayTeamName),
+    resolveSideLabels(game, "home"),
+    resolveSideLabels(game, "away"),
     needPlayerBoard
       ? getFilteredPlayerSeasons({
           season: game.season,

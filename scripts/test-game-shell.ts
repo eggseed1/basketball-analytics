@@ -307,6 +307,9 @@ async function liveRegression() {
   // Abbrs are trustworthy; BDL numeric team ids collide with ESPN.
   assert.equal(shell!.game.homeTeamAbbr, "POR");
   assert.equal(shell!.game.awayTeamAbbr, "CHA");
+  assert.equal(shell!.game.homeTeamId, "22"); // canonical ESPN POR
+  assert.equal(shell!.game.teamIdProvider, "bdl");
+  assert.equal(shell!.game.homeProviderTeamId, "25");
 
   const payload = await getGameAnalysis("15908541");
   assert.ok(payload, "Game Lab must not 404 for known schedule game");

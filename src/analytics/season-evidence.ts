@@ -200,7 +200,12 @@ function matchesTeam(game: GameSummary, subject: SeasonEvidenceSubject): boolean
 
   // Id fallback only when schedule rows lack abbreviations.
   const ids = new Set(subject.matchTeamIds.map(String));
-  return ids.has(game.homeTeamId) || ids.has(game.awayTeamId);
+  return (
+    ids.has(game.homeTeamId) ||
+    ids.has(game.awayTeamId) ||
+    (!!game.homeProviderTeamId && ids.has(game.homeProviderTeamId)) ||
+    (!!game.awayProviderTeamId && ids.has(game.awayProviderTeamId))
+  );
 }
 
 function perspective(
@@ -218,7 +223,9 @@ function perspective(
     isHome = !!homeAbbr && abbrs.has(homeAbbr);
   } else {
     const ids = new Set(subject.matchTeamIds.map(String));
-    isHome = ids.has(game.homeTeamId);
+    isHome =
+      ids.has(game.homeTeamId) ||
+      (!!game.homeProviderTeamId && ids.has(game.homeProviderTeamId));
   }
 
   const teamScore = isHome ? game.homeScore : game.awayScore;

@@ -274,6 +274,17 @@ export function resolveCanonicalTeam(
     if (team) return { status: "resolved", team };
   }
 
+  // Display name / nickname (deterministic exact match only).
+  for (const team of CANONICAL_TEAMS) {
+    if (team.displayName.toLowerCase() === lower) {
+      return { status: "resolved", team };
+    }
+    const nick = NICKNAMES[team.abbr];
+    if (nick && nick.toLowerCase() === lower) {
+      return { status: "resolved", team };
+    }
+  }
+
   return {
     status: "unresolved",
     reason: `No canonical team for input "${raw}"`,

@@ -4,6 +4,7 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import type { StandingRow } from "@/data/types";
 import { formatNumber } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { playersExploreTeamHref } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 
 export function StandingsConferenceTable({
@@ -72,7 +73,7 @@ export function StandingsConferenceTable({
                   <td className="px-2 py-2">
                     {linkTeamsToPlayers ? (
                       <Link
-                        href={`/explore/players?team=${row.abbreviation}`}
+                        href={playersExploreTeamHref(row.teamId)}
                         className="hover:underline"
                       >
                         {teamCell}

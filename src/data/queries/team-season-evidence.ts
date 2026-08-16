@@ -2,8 +2,9 @@
  * Query: team season evidence from lightweight game summaries.
  * Does NOT call getGameAnalysis / getGameBoxScore during selection.
  *
- * Identity: canonical team → BDL team id for historical schedule filter.
- * Never pass ESPN team ids into BDL/historical game id filters.
+ * Identity: canonical team for matching; historical schedule filter may still
+ * use provider ids at the boundary. After transform normalization, game rows
+ * carry canonical homeTeamId/awayTeamId plus provider ids for traceability.
  */
 
 import {
@@ -19,6 +20,7 @@ import {
   getProviderTeamId,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
+import { teamMatchIds } from "@/lib/team-identity";
 
 export async function getTeamSeasonEvidence(options: {
   teamId: string;
@@ -64,26 +66,32 @@ export async function getTeamSeasonEvidence(options: {
     options.abbreviation?.toUpperCase() ?? team.abbr;
   const fullName = options.fullName ?? team.displayName;
 
-  // Historical schedule rows use BDL team ids — never ESPN ids.
   const scheduleProvider = HISTORICAL_SCHEDULE_TEAM_PROVIDER;
   const scheduleTeamId = getProviderTeamId(
     scheduleProvider,
     team.canonicalTeamId
   );
 
-  const matchTeamIds = scheduleTeamId ? [scheduleTeamId] : [];
+  // Match both canonical and provider ids so pre- and post-normalization rows work.
+  const matchTeamIds = teamMatchIds(team);
   const matchAbbrs = Array.from(
     new Set([abbreviation, team.abbr].map((a) => a.toUpperCase()))
   );
 
-  let games = scheduleTeamId
-    ? await getFilteredGames({
-        season: options.season,
-        team: scheduleTeamId,
-      }).catch(() => [])
-    : [];
+  let games = await getFilteredGames({
+    season: options.season,
+    team: team.canonicalTeamId,
+    teamAbbr: abbreviation,
+  }).catch(() => []);
 
-  // If provider map missing or filter empty, load season and match by abbr only.
+  // Legacy path: provider-scoped id filter when abbr filter returned nothing.
+  if (games.length === 0 && scheduleTeamId) {
+    games = await getFilteredGames({
+      season: options.season,
+      team: scheduleTeamId,
+    }).catch(() => []);
+  }
+
   if (games.length === 0) {
     games = await getFilteredGames({ season: options.season }).catch(() => []);
   }

@@ -21,6 +21,7 @@ import {
   trueShootingPct,
 } from "@/data/providers/nba/compute-advanced";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
+import { normalizeGameTeamSide } from "@/lib/game-team-identity";
 
 export function transformBdlTeam(raw: BdlTeam): Team {
   const fullName = raw.full_name ?? raw.name ?? String(raw.id);
@@ -63,16 +64,31 @@ export function transformBdlPlayer(raw: BdlPlayer): Player {
 export function transformBdlGame(raw: BdlGame): Game {
   const season = canonicalSeasonFromStartYear(raw.season);
   const status = mapStatus(raw.status);
+  const home = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(raw.home_team.id),
+    abbr: raw.home_team.abbreviation,
+    name: raw.home_team.full_name ?? raw.home_team.name,
+  });
+  const away = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(raw.visitor_team.id),
+    abbr: raw.visitor_team.abbreviation,
+    name: raw.visitor_team.full_name ?? raw.visitor_team.name,
+  });
   return {
     id: String(raw.id),
     season,
     gameDate: (raw.date ?? "").slice(0, 10),
-    homeTeamId: String(raw.home_team.id),
-    awayTeamId: String(raw.visitor_team.id),
-    homeTeamAbbr: raw.home_team.abbreviation,
-    awayTeamAbbr: raw.visitor_team.abbreviation,
-    homeTeamName: raw.home_team.full_name ?? raw.home_team.name,
-    awayTeamName: raw.visitor_team.full_name ?? raw.visitor_team.name,
+    homeTeamId: home.canonicalTeamId,
+    awayTeamId: away.canonicalTeamId,
+    homeTeamAbbr: home.abbr,
+    awayTeamAbbr: away.abbr,
+    homeTeamName: home.name,
+    awayTeamName: away.name,
+    teamIdProvider: "bdl",
+    homeProviderTeamId: home.providerTeamId,
+    awayProviderTeamId: away.providerTeamId,
     homeScore: raw.home_team_score ?? 0,
     awayScore: raw.visitor_team_score ?? 0,
     gameType: raw.postseason ? "playoff" : "regular",
@@ -123,18 +139,33 @@ export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
 
 export function transformBdlBoxScore(raw: BdlBoxScore): GameBoxScore {
   const season = canonicalSeasonFromStartYear(raw.season);
-  const home = raw.home_team.team;
-  const away = raw.visitor_team.team;
+  const homeRaw = raw.home_team.team;
+  const awayRaw = raw.visitor_team.team;
+  const home = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(homeRaw.id),
+    abbr: homeRaw.abbreviation,
+    name: homeRaw.full_name ?? homeRaw.name,
+  });
+  const away = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(awayRaw.id),
+    abbr: awayRaw.abbreviation,
+    name: awayRaw.full_name ?? awayRaw.name,
+  });
   const game: Game = {
-    id: `${raw.date}-${home.id}-${away.id}`,
+    id: `${raw.date}-${homeRaw.id}-${awayRaw.id}`,
     season,
     gameDate: raw.date.slice(0, 10),
-    homeTeamId: String(home.id),
-    awayTeamId: String(away.id),
-    homeTeamAbbr: home.abbreviation,
-    awayTeamAbbr: away.abbreviation,
-    homeTeamName: home.full_name ?? home.name,
-    awayTeamName: away.full_name ?? away.name,
+    homeTeamId: home.canonicalTeamId,
+    awayTeamId: away.canonicalTeamId,
+    homeTeamAbbr: home.abbr,
+    awayTeamAbbr: away.abbr,
+    homeTeamName: home.name,
+    awayTeamName: away.name,
+    teamIdProvider: "bdl",
+    homeProviderTeamId: home.providerTeamId,
+    awayProviderTeamId: away.providerTeamId,
     homeScore: raw.home_team_score ?? 0,
     awayScore: raw.visitor_team_score ?? 0,
     gameType: raw.postseason ? "playoff" : "regular",

@@ -8,6 +8,7 @@ import type {
 } from "@/data/types";
 import { applyGameFilters, toGameSummary } from "./filter-utils";
 import { getHistoricalBoxScore, getHistoricalGame, getHistoricalGames } from "./historical";
+import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 import {
   addDaysIso,
   fetchHomeWeekStrip,
@@ -110,7 +111,11 @@ function shellFromBox(box: GameBoxScore): GameShell {
     availability = "partial";
   }
   return {
-    game: box.game,
+    game: ensureGameTeamIdentity(
+      box.game,
+      box.game.teamIdProvider ??
+        (looksLikeEspnEventId(box.game.id) ? "espn" : "bdl")
+    ),
     players: box.players,
     availability,
     source: "box",
@@ -126,8 +131,9 @@ function shellFromGame(
   const hasPeriodScores = Boolean(
     game.homePeriodScores?.length && game.awayPeriodScores?.length
   );
+  const fallback = source === "historical" ? "bdl" : "espn";
   return {
-    game,
+    game: ensureGameTeamIdentity(game, game.teamIdProvider ?? fallback),
     players: [],
     availability: hasPeriodScores ? "partial" : "scoreboard",
     source,

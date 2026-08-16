@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
 import type { Game } from "@/data/types";
+import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 
 const CACHE_DIR = path.join(process.cwd(), "data", "cache", "games");
 
@@ -27,7 +28,11 @@ export async function readGamesCache(
     const raw = await readFile(gamesCachePath(season), "utf8");
     const parsed = JSON.parse(raw) as GamesCachePayload;
     if (!Array.isArray(parsed.games) || parsed.games.length === 0) return null;
-    return parsed;
+    // Legacy cache rows may still carry raw BDL team ids — normalize cheaply.
+    return {
+      ...parsed,
+      games: parsed.games.map((g) => ensureGameTeamIdentity(g, "bdl")),
+    };
   } catch {
     return null;
   }
@@ -82,4 +87,29 @@ export async function cacheExists(season: string): Promise<boolean> {
   } catch {
     return false;
   }
+}
+
+/**
+ * Resolve a single game id from season disk caches (normalized on read).
+ * Prefer newer seasons first. Sync identity only — no network.
+ */
+export async function findCachedGame(gameId: string): Promise<Game | null> {
+  const id = String(gameId).trim();
+  if (!id) return null;
+  try {
+    await mkdir(CACHE_DIR, { recursive: true });
+    const files = await readdir(CACHE_DIR);
+    const seasons = files
+      .filter((f) => f.endsWith(".json"))
+      .map((f) => f.replace(/\.json$/, ""))
+      .sort((a, b) => b.localeCompare(a));
+    for (const season of seasons) {
+      const cached = await readGamesCache(season);
+      const hit = cached?.games.find((g) => g.id === id);
+      if (hit) return hit;
+    }
+  } catch {
+    return null;
+  }
+  return null;
 }

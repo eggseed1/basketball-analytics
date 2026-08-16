@@ -8,9 +8,11 @@ import { buildStatContext } from "@/analytics";
 import type { GameSummary, PlayerSeason, TeamSeasonStats } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { StandingRow } from "@/data/types/standings";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { formatNumber, formatPct } from "@/lib/format";
 import { isPreTipStatus } from "@/lib/game-status";
 import type { TeamBrand } from "@/lib/nba-brand";
+import { teamMatchIds, teamProfileHref } from "@/lib/team-identity";
 
 export type TeamCoverageLevel = "full" | "partial" | "minimal";
 
@@ -194,6 +196,16 @@ export function teamIdsForMatch(
   ids.add(team.teamId);
   if (brand?.espnTeamId) ids.add(brand.espnTeamId);
   if (brand?.id) ids.add(brand.id);
+  // Include BDL schedule ids so historical game rows match the same franchise.
+  const resolved = resolveCanonicalTeam(team.teamId);
+  if (resolved.status === "resolved") {
+    for (const id of teamMatchIds(resolved.team)) ids.add(id);
+  } else if (brand?.espnTeamId) {
+    const byBrand = resolveCanonicalTeam(brand.espnTeamId);
+    if (byBrand.status === "resolved") {
+      for (const id of teamMatchIds(byBrand.team)) ids.add(id);
+    }
+  }
   return ids;
 }
 
@@ -214,6 +226,17 @@ export function gameInvolvesTeam(
 ): boolean {
   const ids = teamIdsForMatch(team, brand);
   if (ids.has(game.homeTeamId) || ids.has(game.awayTeamId)) return true;
+  // Optional provider ids when historical rows are normalized (forward-compatible).
+  const homeProvider = (game as { homeProviderTeamId?: string })
+    .homeProviderTeamId;
+  const awayProvider = (game as { awayProviderTeamId?: string })
+    .awayProviderTeamId;
+  if (
+    (homeProvider && ids.has(homeProvider)) ||
+    (awayProvider && ids.has(awayProvider))
+  ) {
+    return true;
+  }
   const abbrs = teamAbbrsForMatch(team, brand);
   if (game.homeTeamAbbr && abbrs.has(game.homeTeamAbbr.toLowerCase())) {
     return true;
@@ -481,11 +504,23 @@ export function resolveTeamFromBoard(
   key: string
 ): TeamSeasonStats | undefined {
   const needle = key.trim().toLowerCase();
-  return rows.find(
+  const direct = rows.find(
     (t) =>
       t.teamId === key ||
       t.abbreviation.toLowerCase() === needle ||
       t.fullName.toLowerCase() === needle
+  );
+  if (direct) return direct;
+
+  const resolved = resolveCanonicalTeam(key);
+  if (resolved.status !== "resolved") return undefined;
+  const canonical = resolved.team;
+  // Board rows use canonical ESPN team ids (and abbrs) — never match bare
+  // teamId against a BDL provider id (ESPN 25 = OKC ≠ BDL 25 = POR).
+  return rows.find(
+    (t) =>
+      t.teamId === canonical.canonicalTeamId ||
+      t.abbreviation.toUpperCase() === canonical.abbr
   );
 }
 
@@ -494,11 +529,13 @@ export function transactionTeamFilterId(
   team: TeamSeasonStats,
   brand?: TeamBrand | null
 ): string {
+  const resolved = resolveCanonicalTeam(brand?.espnTeamId ?? team.teamId);
+  if (resolved.status === "resolved") return resolved.team.canonicalTeamId;
   return brand?.espnTeamId ?? team.teamId;
 }
 
 export function seasonChipHref(teamKey: string, season: string): string {
-  return `/teams/${encodeURIComponent(teamKey)}?season=${encodeURIComponent(season)}`;
+  return teamProfileHref(teamKey, season);
 }
 
 /** Display-only: keep unused import honest for formatPct in tests/docs. */

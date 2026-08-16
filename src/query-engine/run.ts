@@ -1,6 +1,7 @@
 import { getPlayer } from "@/data/queries/players";
 import { getPlayerCareerSeasons } from "@/data/queries/players";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { interpretAskQuery } from "./interpret";
 import { resolveQueryEntities } from "./entities";
 import { validateBasketballQuery } from "./validate";
@@ -87,9 +88,15 @@ function applyTeamIdOverride(
   ast: BasketballQueryAst,
   teamId: string
 ): BasketballQueryAst {
-  const brand = resolveTeamBrand(teamId);
-  const canonicalId = brand?.espnTeamId ?? teamId;
-  const displayName = brand?.abbr ?? teamId;
+  const resolved = resolveCanonicalTeam(teamId);
+  const canonicalId =
+    resolved.status === "resolved"
+      ? resolved.team.canonicalTeamId
+      : teamId.trim();
+  const displayName =
+    resolved.status === "resolved"
+      ? resolved.team.abbr
+      : (resolveTeamBrand(teamId)?.abbr ?? teamId);
   const entities = ast.entities.map((e) => {
     if (e.kind !== "team") return e;
     // Keep a distinct second team in cross-team compares.

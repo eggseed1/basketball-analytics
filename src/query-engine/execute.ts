@@ -378,7 +378,7 @@ async function execTeamSeasonStat(
     links: [
       {
         label: "View team →",
-        href: `/teams/${brand?.id ?? row.teamId}?season=${encodeURIComponent(season)}`,
+        href: `/teams/${row.teamId}?season=${encodeURIComponent(season)}`,
       },
       {
         label: "Team leaderboard →",

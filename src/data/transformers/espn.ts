@@ -17,6 +17,7 @@ import {
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
 import { normalizeEspnStatusType } from "@/lib/game-status";
 import { mapEspnBroadcasts } from "@/lib/game-watch";
+import { normalizeGameTeamSide } from "@/lib/game-team-identity";
 
 export interface EspnStatCategorySchema {
   name: string;
@@ -442,18 +443,34 @@ export function transformEspnScheduleEvent(
       : undefined;
   const displayClock = competition.status?.displayClock?.trim() || undefined;
 
+  const homeSide = normalizeGameTeamSide({
+    provider: "espn",
+    providerTeamId: String(home.team?.id ?? home.id ?? ""),
+    abbr: home.team?.abbreviation,
+    name: home.team?.displayName,
+  });
+  const awaySide = normalizeGameTeamSide({
+    provider: "espn",
+    providerTeamId: String(away.team?.id ?? away.id ?? ""),
+    abbr: away.team?.abbreviation,
+    name: away.team?.displayName,
+  });
+
   return {
     id: event.id,
     season,
     gameDate: (event.date ?? "").slice(0, 10),
     tipOffAt,
     statusDetail,
-    homeTeamId: String(home.team?.id ?? home.id ?? ""),
-    awayTeamId: String(away.team?.id ?? away.id ?? ""),
-    homeTeamAbbr: home.team?.abbreviation,
-    awayTeamAbbr: away.team?.abbreviation,
-    homeTeamName: home.team?.displayName,
-    awayTeamName: away.team?.displayName,
+    homeTeamId: homeSide.canonicalTeamId,
+    awayTeamId: awaySide.canonicalTeamId,
+    homeTeamAbbr: homeSide.abbr,
+    awayTeamAbbr: awaySide.abbr,
+    homeTeamName: homeSide.name,
+    awayTeamName: awaySide.name,
+    teamIdProvider: "espn",
+    homeProviderTeamId: homeSide.providerTeamId,
+    awayProviderTeamId: awaySide.providerTeamId,
     homeScore,
     awayScore,
     ...(homePeriodScores && awayPeriodScores

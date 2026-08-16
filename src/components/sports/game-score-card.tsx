@@ -9,6 +9,7 @@ import { LiveFreshness } from "@/components/sports/live-freshness";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import type { GameSummary } from "@/data/types";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import {
   isLiveLikeStatus,
   isPreTipStatus,
@@ -165,8 +166,8 @@ export function GameMatchupRow({
   game: GameSummary;
   className?: string;
 }) {
-  const awayKey = game.awayTeamAbbr ?? game.awayTeamId;
-  const homeKey = game.homeTeamAbbr ?? game.homeTeamId;
+  const awayKey = gameSideBrandKey(game, "away");
+  const homeKey = gameSideBrandKey(game, "home");
   const away = resolveTeamBrand(awayKey);
   const home = resolveTeamBrand(homeKey);
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
@@ -235,8 +236,8 @@ export function GameScoreCard({
   homeStarters?: GameCardStarter[];
   className?: string;
 }) {
-  const awayKey = game.awayTeamAbbr ?? game.awayTeamId;
-  const homeKey = game.homeTeamAbbr ?? game.homeTeamId;
+  const awayKey = gameSideBrandKey(game, "away");
+  const homeKey = gameSideBrandKey(game, "home");
   const away = resolveTeamBrand(awayKey);
   const home = resolveTeamBrand(homeKey);
   const matchup = buildGameMatchupTheme(awayKey, homeKey);

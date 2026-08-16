@@ -5,6 +5,7 @@ import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis, getGameShell } from "@/data/queries";
+import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { PlayerGame } from "@/data/types";
 
@@ -17,12 +18,8 @@ export async function generateMetadata({ params }: GamePageProps) {
   const { gameId } = await params;
   const shell = await getGameShell(gameId);
   if (!shell) return { title: "Game | Basketball Analytics" };
-  const awayBrand =
-    resolveTeamBrand(shell.game.awayTeamId) ??
-    resolveTeamBrand(shell.game.awayTeamAbbr);
-  const homeBrand =
-    resolveTeamBrand(shell.game.homeTeamId) ??
-    resolveTeamBrand(shell.game.homeTeamAbbr);
+  const awayBrand = resolveTeamBrand(gameSideBrandKey(shell.game, "away"));
+  const homeBrand = resolveTeamBrand(gameSideBrandKey(shell.game, "home"));
   const away =
     awayBrand?.abbr ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
   const home =
