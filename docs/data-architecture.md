@@ -36,14 +36,38 @@ Canonical types live under `src/data/types/`:
 
 Providers implement `BasketballDataProvider` (`src/data/providers/types.ts`):
 
-- `LocalDataProvider` — sample / JSON / CSV-backed adapter (default)
-- `NBADataProvider` — stub for a live NBA Stats / CDN / warehouse source
+- `LocalDataProvider` — sample / JSON / CSV-backed adapter (offline demos)
+- `NBADataProvider` — live ESPN-backed NBA data (production)
 
 Resolve the active provider through `getDataProvider()`:
 
 ```ts
-// DATA_PROVIDER=local (default) | nba
+// DATA_PROVIDER=local | nba
 import { getDataProvider } from "@/data/providers";
+```
+
+### Required production configuration
+
+| Environment | Required `DATA_PROVIDER` | Notes |
+| --- | --- | --- |
+| **Vercel Production** | `nba` | Must be set in the Vercel project env. Sample data is not a substitute. |
+| **Vercel Preview** | `nba` | Same as production so preview player pages match live careers. |
+| **Vercel Development** | `nba` (recommended) | Matches preview/production. |
+| **Local with `.env.local`** | usually `nba` | Matches production validation. |
+| **Local offline / sample** | `local` | Explicit only — slug ids (`jokic`), not ESPN athlete ids. |
+
+**Defaults (when unset):**
+
+- On Vercel (`VERCEL` set): falls back to `nba` (see `bcb6834`).
+- Elsewhere: falls back to `local` for offline demos.
+
+**Invariant:** production/preview must never silently serve the local sample dataset for canonical ESPN player pages. Sample ids (`jokic`) do not match ESPN athlete ids (`3112335`); careers appear empty while bios still resolve from ESPN.
+
+Diagnose:
+
+```bash
+npm run diagnose:player-data
+npm run test:production-provider-guard
 ```
 
 Providers **must** return canonical types. They may load raw rows internally,

@@ -15,6 +15,7 @@ import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerAskLinks, askDrblHref } from "@/components/players/player-ask-links";
+import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerResume } from "@/components/players/player-career-resume";
 import { PlayerContextStrip } from "@/components/players/player-context-strip";
 import { PlayerEvolutionPanel } from "@/components/players/player-evolution-panel";
@@ -28,6 +29,8 @@ import {
   type PercentileMetric,
 } from "@/components/players/player-percentile-panel";
 import { defaultRankSeasons } from "@/analytics/rank-player-seasons";
+import { assessProductionProviderGuard } from "@/data/diagnostics/production-provider-guard";
+import { getDataProvider } from "@/data/providers";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -548,6 +551,11 @@ export default async function PlayerPage({
   const { playerId } = await params;
   const sp = await searchParams;
   const career = await getPlayerCareerSeasons(playerId);
+  const careerDataGuard = assessProductionProviderGuard({
+    providerName: getDataProvider().name,
+    playerId,
+    careerRowCount: career.length,
+  });
   const seasonOptions = [
     ...new Set(career.map((row) => row.season)),
   ].sort((a, b) => b.localeCompare(a));
@@ -755,6 +763,8 @@ export default async function PlayerPage({
 
       <PlayerPageNav />
 
+      <PlayerCareerDataGuardBanner guard={careerDataGuard} />
+
       {/* WHO / VALUE */}
       <section
         id="overview"
@@ -909,7 +919,9 @@ export default async function PlayerPage({
                 </div>
                 {recentSeasons.length === 0 ? (
                   <p className="py-4 text-[13px] text-muted-foreground">
-                    No season rows yet.
+                    {careerDataGuard.isSilentEmptyCareerRisk
+                      ? "Career seasons unavailable — data provider misconfiguration (see notice above)."
+                      : "No season rows yet."}
                   </p>
                 ) : (
                   <div className="overflow-x-auto">
@@ -1106,7 +1118,9 @@ export default async function PlayerPage({
             </div>
             {career.length === 0 ? (
               <p className="text-[13px] text-muted-foreground">
-                No career season rows available.
+                {careerDataGuard.isSilentEmptyCareerRisk
+                  ? "Career seasons unavailable — data provider misconfiguration (see notice above)."
+                  : "No career season rows available."}
               </p>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-border bg-white/40">

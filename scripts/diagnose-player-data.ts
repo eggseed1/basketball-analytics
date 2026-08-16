@@ -70,6 +70,28 @@ async function main() {
         (rows[0] ? ` · latest ${rows[0]!.season}` : "")
     );
   }
+
+  const { assessProductionProviderGuard, assertLiveNbaProviderOrThrow } =
+    await import("../src/data/diagnostics/production-provider-guard");
+  const jokicRows = await getPlayerCareerSeasons("3112335").catch(() => []);
+  const guard = assessProductionProviderGuard({
+    providerName: provider.name,
+    playerId: "3112335",
+    careerRowCount: jokicRows.length,
+  });
+  console.log(
+    `\nProduction guard: ${guard.status} · silentEmptyRisk=${guard.isSilentEmptyCareerRisk}`
+  );
+  if (guard.status !== "ok") {
+    console.log(`  ${guard.message}`);
+  }
+  // Fail loudly in CI/ops when this process is marked as a Vercel-like deploy.
+  if (process.env.VERCEL || process.env.DRBL_REQUIRE_LIVE_NBA === "1") {
+    assertLiveNbaProviderOrThrow({ providerName: provider.name });
+    if (guard.isSilentEmptyCareerRisk) {
+      throw new Error(guard.message);
+    }
+  }
 }
 
 main().catch((e) => {
