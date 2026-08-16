@@ -116,7 +116,9 @@ const league = [
 assert.equal(resolveTeamFromBoard(league, "BOS")?.teamId, "2");
 assert.equal(resolveTeamFromBoard(league, "boston celtics")?.abbreviation, "BOS");
 assert.equal(resolveTeamFromBoard(league, "2")?.fullName, "Boston Celtics");
-assert.equal(seasonChipHref("bos", "2024-25"), "/teams/bos?season=2024-25");
+// Season chips write canonical ESPN team ids into the public URL.
+assert.equal(seasonChipHref("bos", "2024-25"), "/teams/2?season=2024-25");
+assert.equal(seasonChipHref("BOS", "2024-25"), "/teams/2?season=2024-25");
 
 // --- profile + strengths / trends ---
 const prior = team({
@@ -310,5 +312,18 @@ const emptyBoard = assessTeamCoverage({
   transactionCount: 0,
 });
 assert.equal(emptyBoard.level, "minimal");
+
+console.log("canonical team board resolution…");
+{
+  const okc = team({
+    teamId: "25",
+    abbreviation: "OKC",
+    fullName: "Oklahoma City Thunder",
+  });
+  assert.equal(resolveTeamFromBoard([okc], "okc")?.abbreviation, "OKC");
+  assert.equal(resolveTeamFromBoard([okc], "25")?.abbreviation, "OKC");
+  // OKC / POR collision: bare "25" is ESPN OKC, not BDL POR.
+  assert.notEqual(resolveTeamFromBoard([okc], "bdl:25")?.abbreviation, "OKC");
+}
 
 console.log("test-team-intelligence: all assertions passed");

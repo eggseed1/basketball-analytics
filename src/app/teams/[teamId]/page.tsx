@@ -346,6 +346,27 @@ export default async function TeamProfilePage({
           </div>
 
           <div className="mt-4 flex flex-wrap gap-3 text-[13px] font-semibold">
+            <a
+              href="#performance"
+              className="underline-offset-2 hover:underline"
+            >
+              Performance →
+            </a>
+            <a
+              href="#identity"
+              className="underline-offset-2 hover:underline"
+            >
+              How they win →
+            </a>
+            <a
+              href="#roster"
+              className="underline-offset-2 hover:underline"
+            >
+              Roster →
+            </a>
+            <a href="#games" className="underline-offset-2 hover:underline">
+              Games →
+            </a>
             <Link
               href={askDrblTeamHref(
                 `${team.fullName} point differential ${season}`,
@@ -355,12 +376,6 @@ export default async function TeamProfilePage({
             >
               Ask DRBL →
             </Link>
-            <a
-              href="#arc"
-              className="underline-offset-2 hover:underline"
-            >
-              Team Arc →
-            </a>
             <Link
               href={teamComparePath({
                 teamA: askTeamId,
@@ -370,14 +385,8 @@ export default async function TeamProfilePage({
               })}
               className="underline-offset-2 hover:underline"
             >
-              Compare team →
+              Compare seasons →
             </Link>
-            <a
-              href="#evidence"
-              className="underline-offset-2 hover:underline"
-            >
-              See season evidence →
-            </a>
             <Link
               href={`/compare?mode=teams&view=rank&teamId=${encodeURIComponent(askTeamId)}`}
               className="underline-offset-2 hover:underline"
@@ -388,7 +397,7 @@ export default async function TeamProfilePage({
               href={`/offseason?team=${encodeURIComponent(txTeamId)}`}
               className="underline-offset-2 hover:underline"
             >
-              Offseason activity →
+              Offseason →
             </Link>
           </div>
 

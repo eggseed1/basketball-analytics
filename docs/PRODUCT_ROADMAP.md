@@ -18,7 +18,7 @@
 | Player Intelligence | **Partial** | Bio, career, gamelog, percentiles, similar comps |
 | Player Comparison | **Partial** | Metric comps only; no dedicated compare route |
 | Career Resume | **Missing** | GM FO types only; no public thresholds |
-| Team Intelligence | **Partial** | Efficiency board + franchises; no team profile |
+| Team Intelligence | **V2** | `/teams/[teamId]` narrative: overview → performance → identity → arc → roster → games → evidence → transactions → Ask. See `docs/team-intelligence.md`. |
 | Lineup Lab | **Missing** | GM lineup only |
 | Game Lab | **Partial** | Box score + explore games; no flow / possessions |
 | Historical Time Machine | **Partial** | Explore/games + BDL cache; no discovery product |
