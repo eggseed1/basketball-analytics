@@ -26,9 +26,15 @@ import {
   type AskBuilderState,
   type AskInputMode,
 } from "@/query-engine/ask-builder";
+import { AskBuilderForm } from "@/components/ask/ask-builder-form";
 import {
-  AskBuilderForm,
-} from "@/components/ask/ask-builder-form";
+  clearAskRecent,
+  getAskRecentSnapshot,
+  getServerAskRecent,
+  pushAskRecent,
+  subscribeAskRecent,
+  type AskRecentEntry,
+} from "@/components/ask/ask-recent-store";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { AppLink } from "@/components/ui/app-link";
@@ -38,60 +44,6 @@ import {
 } from "@/lib/learn-column-concepts";
 import { assertInternalHref } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
-
-const RECENT_KEY = "ask-drbl-recent-v1.1";
-
-type RecentEntry = {
-  q: string;
-  title: string;
-  status?: string;
-  at: number;
-};
-
-const RECENT_EVENT = "ask-drbl-recent";
-
-function loadRecent(): RecentEntry[] {
-  if (typeof window === "undefined") return [];
-  try {
-    const raw = window.localStorage.getItem(RECENT_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as RecentEntry[];
-    return Array.isArray(parsed) ? parsed.slice(0, 8) : [];
-  } catch {
-    return [];
-  }
-}
-
-function notifyRecent() {
-  if (typeof window === "undefined") return;
-  window.dispatchEvent(new Event(RECENT_EVENT));
-}
-
-function pushRecent(entry: RecentEntry) {
-  if (typeof window === "undefined") return;
-  const next = [
-    entry,
-    ...loadRecent().filter((x) => x.q !== entry.q),
-  ].slice(0, 8);
-  window.localStorage.setItem(RECENT_KEY, JSON.stringify(next));
-  notifyRecent();
-}
-
-function clearRecent() {
-  if (typeof window === "undefined") return;
-  window.localStorage.removeItem(RECENT_KEY);
-  notifyRecent();
-}
-
-function subscribeRecent(onStoreChange: () => void) {
-  if (typeof window === "undefined") return () => {};
-  window.addEventListener(RECENT_EVENT, onStoreChange);
-  window.addEventListener("storage", onStoreChange);
-  return () => {
-    window.removeEventListener(RECENT_EVENT, onStoreChange);
-    window.removeEventListener("storage", onStoreChange);
-  };
-}
 
 function statusMeta(status: AskDrblResult["status"]): {
   title: string;
@@ -471,7 +423,11 @@ export function AskDrblView({
   const [builder, setBuilder] = useState<AskBuilderState>(
     () => initialBuilder ?? defaultAskBuilderState()
   );
-  const recent = useSyncExternalStore(subscribeRecent, loadRecent, () => []);
+  const recent = useSyncExternalStore(
+    subscribeAskRecent,
+    getAskRecentSnapshot,
+    getServerAskRecent
+  );
   const [examplesOpen, setExamplesOpen] = useState(!result);
   const resultRef = useRef<HTMLDivElement>(null);
   const hasResult = Boolean(result);
@@ -487,7 +443,7 @@ export function AskDrblView({
     const key = `${result.rawQuery}|${result.status}`;
     if (lastPushedQuery.current === key) return;
     lastPushedQuery.current = key;
-    pushRecent({
+    pushAskRecent({
       q: result.rawQuery,
       title: result.headline ?? result.interpretation[0] ?? result.rawQuery,
       status: result.status,
@@ -643,7 +599,7 @@ export function AskDrblView({
             <RecentSection
               recent={recent}
               onPick={submit}
-              onClear={clearRecent}
+              onClear={clearAskRecent}
             />
           ) : null}
         </>
@@ -668,7 +624,7 @@ export function AskDrblView({
             <RecentSection
               recent={recent}
               onPick={submit}
-              onClear={clearRecent}
+              onClear={clearAskRecent}
               compact
             />
           ) : null}
@@ -684,7 +640,7 @@ function RecentSection({
   onClear,
   compact,
 }: {
-  recent: RecentEntry[];
+  recent: AskRecentEntry[];
   onPick: (q: string) => void;
   onClear: () => void;
   compact?: boolean;
