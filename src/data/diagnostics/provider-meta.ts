@@ -52,5 +52,6 @@ export function describeProvider(providerName: string): ProviderStatus {
 }
 
 export function configuredDataProviderKey(): string {
-  return (process.env.DATA_PROVIDER ?? "local").toLowerCase();
+  const fallback = process.env.VERCEL ? "nba" : "local";
+  return (process.env.DATA_PROVIDER ?? fallback).toLowerCase();
 }

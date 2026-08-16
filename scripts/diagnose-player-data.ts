@@ -45,8 +45,31 @@ async function main() {
   console.log(
     formatPlayerBoardHealthReport(health, { lebron, jokic })
   );
-  console.log(`Configured DATA_PROVIDER: ${process.env.DATA_PROVIDER ?? "(unset → local)"}`);
+  console.log(
+    `Configured DATA_PROVIDER: ${process.env.DATA_PROVIDER ?? `(unset → ${process.env.VERCEL ? "nba on Vercel" : "local"})`}`
+  );
   console.log(`Resolved provider: ${provider.name} — ${meta.description}`);
+
+  // Career-season probe: distinguishes “player page shell OK, seasons empty”
+  // (typical when DATA_PROVIDER=local) from live ESPN careers.
+  const probes: Array<[string, string]> = [
+    ["LeBron", "1966"],
+    ["Jokic", "3112335"],
+    ["Durant", "3202"],
+    ["Cade", "4432166"],
+    ["Wemby", "4433626"],
+  ];
+  const { getPlayerCareerSeasons } = await import(
+    "../src/data/queries/players"
+  );
+  console.log("\nCareer season probe (ESPN athlete ids):");
+  for (const [label, id] of probes) {
+    const rows = await getPlayerCareerSeasons(id).catch(() => []);
+    console.log(
+      `  ${label} (${id}): ${rows.length} seasons` +
+        (rows[0] ? ` · latest ${rows[0]!.season}` : "")
+    );
+  }
 }
 
 main().catch((e) => {
