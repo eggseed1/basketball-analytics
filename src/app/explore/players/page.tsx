@@ -2,9 +2,10 @@ import { Suspense } from "react";
 
 import { PlayerFilterToolbar } from "@/components/explore/player-filter-toolbar";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
+import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import { getAvailableSeasons, getTeams } from "@/data/queries";
+import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
 import {
   canonicalSeasonFromStartYear,
@@ -35,11 +36,12 @@ export default async function ExplorePlayersPage({
   });
   const initialSortKey = parsePlayerSeasonSortKey(params.sort);
 
-  const [board, teams] = await Promise.all([
+  const [board, teamCatalog] = await Promise.all([
     getPlayerSeasonBoardSnapshot(filters),
-    getTeams(),
+    getTeamsCatalog(),
   ]);
   const { rows: players, health } = board;
+  const { teams, source, warnings } = teamCatalog;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
@@ -58,6 +60,7 @@ export default async function ExplorePlayersPage({
       </header>
 
       <PlayerBoardHealthBanner health={health} />
+      <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 
       <Suspense
         fallback={

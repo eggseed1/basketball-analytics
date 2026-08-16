@@ -15,7 +15,15 @@ export {
   getActiveProviderChip,
 } from "./player-data-health";
 export type { PlayerSeasonBoardSnapshot } from "./player-data-health";
-export { getTeams, getTeam } from "./teams";
+export {
+  getTeams,
+  getTeam,
+  getTeamsCatalog,
+  getTeamsWithSource,
+  teamsFromCanonicalIdentity,
+  resolveTeamFilterAgainstCatalog,
+} from "./teams";
+export type { TeamCatalogSource, TeamsCatalogResult } from "./teams";
 export { getShots } from "./shots";
 export {
   getGames,

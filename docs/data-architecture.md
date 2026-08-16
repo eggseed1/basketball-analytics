@@ -116,8 +116,36 @@ Query functions in `src/data/queries/` are the only API pages should call:
 - `getTeamPlayers(teamId, season, filters?)`
 - `getFilteredPlayerSeasons(filters)`
 - `getShots(filters)`
-- `getTeams()` / `getTeam(teamId)`
+- `getTeams()` / `getTeam(teamId)` / **`getTeamsCatalog()`** (soft-fail)
 - `getAvailableSeasons()`
+
+### Team metadata resilience (Explore)
+
+Explore filters (`/explore/players`, `/explore/games`) need a `Team[]` catalog for
+dropdowns. That used to depend solely on live ESPN `…/nba/teams`, which can
+return **403** from some datacenter IPs and crash the page with HTTP 500.
+
+**Policy:** live freshness first; never 500 for optional team metadata.
+
+```
+fresh ESPN /nba/teams  (provider + espnFetchJson memory cache)
+        │
+        ▼ (on 403 / 429 / 5xx / timeout / empty)
+process-local last-good ESPN catalog   → source = cached-espn
+        │
+        ▼ (if none)
+canonical team identity map            → source = canonical-fallback
+  (listCanonicalTeams / ESPN_TEAM_META)
+```
+
+- Canonical team identity remains authoritative for ids, abbrs, and branding.
+- Catalog results expose `source` + `warnings` so diagnostics can distinguish
+  live metadata from verified fallback (UI shows a subtle notice only).
+- Provider outage ≠ “team not found” — invalid `?team=` tokens still resolve
+  through `resolveCanonicalTeam` as unresolved.
+
+See `src/data/queries/teams-catalog.ts` and
+`npm run test:teams-catalog-resilience`.
 
 ### Filtering rule
 

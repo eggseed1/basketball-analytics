@@ -3,12 +3,13 @@ import { Suspense } from "react";
 import { GameScoringScatter } from "@/components/charts/game-scoring-scatter";
 import { GameFilterToolbar } from "@/components/explore/game-filter-toolbar";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
+import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { DecadeChips } from "@/components/sports/decade-chips";
 import { GameScoreCard } from "@/components/sports/game-score-card";
 import {
   getAvailableSeasons,
   getFilteredGames,
-  getTeams,
+  getTeamsCatalog,
 } from "@/data/queries";
 import { filtersFromSearchParams } from "@/lib/search-params";
 import {
@@ -42,10 +43,11 @@ export default async function ExploreGamesPage({
     season: params.season ?? defaultSeason,
   });
 
-  const [games, teams] = await Promise.all([
+  const [games, teamCatalog] = await Promise.all([
     getFilteredGames(filters),
-    getTeams(),
+    getTeamsCatalog(),
   ]);
+  const { teams, source, warnings } = teamCatalog;
 
   const cards = games.slice(0, 12);
 
@@ -59,6 +61,8 @@ export default async function ExploreGamesPage({
           Explore
         </h1>
       </header>
+
+      <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 
       <Suspense fallback={null}>
         <DecadeChips seasons={seasons} />

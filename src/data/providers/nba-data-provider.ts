@@ -160,7 +160,11 @@ export class NBADataProvider implements BasketballDataProvider {
 
   async getTeams(): Promise<Team[]> {
     if (!this.teamsPromise) {
-      this.teamsPromise = this.loadTeams();
+      this.teamsPromise = this.loadTeams().catch((error) => {
+        // Do not poison the cache with a rejected promise — allow retry / soft-fail.
+        this.teamsPromise = null;
+        throw error;
+      });
     }
     return this.teamsPromise;
   }
@@ -432,7 +436,11 @@ export class NBADataProvider implements BasketballDataProvider {
 
   private async loadTeams(): Promise<Team[]> {
     const url = `${SITE_API}/apis/site/v2/sports/basketball/nba/teams`;
-    const payload = await espnFetchJson<TeamsResponse>(url);
+    const payload = await espnFetchJson<TeamsResponse>(url, {
+      // Explore only needs this for filter metadata — fail fast on outage.
+      retries: 1,
+      signal: AbortSignal.timeout(5_000),
+    });
     const rawTeams =
       payload.sports?.[0]?.leagues?.[0]?.teams?.map((entry) => entry.team) ??
       [];
