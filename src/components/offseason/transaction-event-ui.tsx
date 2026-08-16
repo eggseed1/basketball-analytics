@@ -6,16 +6,15 @@ import { useState, useTransition } from "react";
 
 import type {
   NbaTransactionEvent,
+  OffseasonFeedItem,
   RelatedTransactionEventCluster,
 } from "@/data/types/transaction-event";
-import type { OffseasonFeedItem } from "@/data/providers/transactions/transaction-event-clusters";
 import type { TransactionPlayerResolution } from "@/lib/transaction-player-resolution";
 import {
-  transactionEventRecordStatusLabel,
-} from "@/data/providers/transactions/transaction-event-clusters";
-import {
-  sourceTextCategoryLabel,
-} from "@/offseason";
+  presentationForRelatedCluster,
+  presentationForSourceEvent,
+} from "@/lib/transaction-event-presentation";
+import { sourceTextCategoryLabel } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { AppLink } from "@/components/ui/app-link";
@@ -43,6 +42,9 @@ export function TransactionEventRow({
   playerResolutions?: TransactionPlayerResolution[];
 }) {
   const abbr = teamAbbr(event);
+  const presentation = presentationForSourceEvent(event);
+  const isTradeRelated = presentation.kind === "trade_related_transaction";
+
   return (
     <article
       className={cn(
@@ -69,14 +71,19 @@ export function TransactionEventRow({
             {abbr}
           </Link>
           <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Source event
+            {presentation.title}
           </span>
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            · {sourceTextCategoryLabel(event.sourceTextCategory)}
-          </span>
+          {!isTradeRelated ? (
+            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              · {sourceTextCategoryLabel(event.sourceTextCategory)}
+            </span>
+          ) : null}
         </div>
         <p className="mt-1 text-[11px] font-semibold text-muted-foreground">
-          ESPN transaction note
+          {presentation.sourceCountLabel}
+          {isTradeRelated
+            ? " · ESPN transaction archive"
+            : " · ESPN transaction note"}
         </p>
         <TransactionDescription
           description={event.description}
@@ -87,7 +94,8 @@ export function TransactionEventRow({
           )}
         />
         <p className="mt-1 text-[11px] text-muted-foreground">
-          Season {event.season} · ESPN transaction archive
+          Season {event.season}
+          {!isTradeRelated ? " · ESPN transaction archive" : ""}
           {!hideClusterHint && event.relatedClusterId
             ? " · part of a related-event cluster"
             : ""}{" "}
@@ -130,6 +138,8 @@ export function RelatedEventClusterCard({
   const abbrs = cluster.teamIds.map(
     (id) => resolveTeamBrand(id)?.abbr ?? id
   );
+  const presentation = presentationForRelatedCluster(events);
+  const isTradeRelated = presentation.kind === "trade_related_transaction";
 
   return (
     <article className="border-b border-border/70 py-3 last:border-0">
@@ -148,12 +158,14 @@ export function RelatedEventClusterCard({
               {abbrs.join(" ↔ ")}
             </p>
             <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {transactionEventRecordStatusLabel("related_event_cluster")}
+              {presentation.title}
             </span>
           </div>
           <p className="mt-1 text-[13px] text-muted-foreground">
-            {events.length} related ESPN event records — assembled from source
-            events, not a verified structured trade ledger.
+            {presentation.sourceCountLabel}
+            {isTradeRelated
+              ? " — source evidence from the ESPN transaction archive (not a verified structured trade ledger)."
+              : " — assembled from source events, not a verified structured trade ledger."}
           </p>
           <button
             type="button"
@@ -161,7 +173,13 @@ export function RelatedEventClusterCard({
             className="mt-2 text-[12px] font-semibold underline-offset-2 hover:underline"
             aria-expanded={open}
           >
-            {open ? "Hide source events" : "Show source events"}
+            {open
+              ? presentation.sourceCount === 1
+                ? "Hide source event"
+                : "Hide source events"
+              : presentation.sourceCount === 1
+                ? "Show source event"
+                : "Show source events"}
           </button>
           {open ? (
             <div className="mt-3 rounded-md border border-border/80 bg-secondary/20 px-3">
@@ -360,8 +378,9 @@ export function OffseasonFilters({
       </div>
       <p className="text-[11px] text-muted-foreground">
         Search matches free-text ESPN descriptions — not entity-aware player
-        lookup. One-sided notes are shown as source events; reciprocal notes
-        may appear as related-event clusters.
+        lookup. Same-day activity stays separate unless reciprocal evidence
+        shows one underlying transaction (then source-record count explains
+        the evidence).
       </p>
     </div>
   );
@@ -460,6 +479,11 @@ export function TransactionEventDetail({
   const clusterAbbrs = cluster?.teamIds.map(
     (id) => resolveTeamBrand(id)?.abbr ?? id
   );
+  const detailEvents =
+    cluster && related.length ? [event, ...related] : [event];
+  const presentation = cluster
+    ? presentationForRelatedCluster(detailEvents)
+    : presentationForSourceEvent(event);
 
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
@@ -478,11 +502,14 @@ export function TransactionEventDetail({
         </div>
       </div>
 
-      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-        {cluster
-          ? transactionEventRecordStatusLabel("related_event_cluster")
-          : transactionEventRecordStatusLabel("source_event")}
-      </p>
+      <div>
+        <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          {presentation.title}
+        </p>
+        <p className="mt-0.5 text-[12px] font-semibold text-muted-foreground">
+          {presentation.sourceCountLabel}
+        </p>
+      </div>
 
       <div>
         <p className="text-[12px] font-semibold text-muted-foreground">

@@ -26,6 +26,7 @@ import {
   type CanonicalTransaction,
 } from "../src/data/types/transaction-lineage";
 import { isTransactionGenealogyUiReady } from "../src/data/queries/transaction-lineage";
+import type { NbaTransactionEvent } from "../src/data/types/transaction-event";
 
 function tx(
   partial: Partial<CanonicalTransaction> &
@@ -360,6 +361,283 @@ async function main() {
       assert.equal(coverage.ownershipEdgeCount, 0);
       assert.equal(coverage.genealogyUiReady, false);
     });
+  }
+
+  console.log("conservative clustering: same day ≠ same transaction…");
+  {
+    const {
+      buildRelatedTransactionEventClusters,
+      buildOffseasonFeedItems,
+      areReciprocalSameTransactionCandidates,
+    } = await import(
+      "../src/data/providers/transactions/transaction-event-clusters"
+    );
+
+    const day = "2026-07-01";
+    const mk = (
+      partial: Partial<NbaTransactionEvent> &
+        Pick<NbaTransactionEvent, "id" | "teamId" | "description" | "sourceTextCategory">
+    ): NbaTransactionEvent => ({
+      date: day,
+      season: "2026-27",
+      teamAbbr: partial.teamAbbr,
+      source: "espn-site-v2-transactions",
+      recordStatus: "source_event",
+      ...partial,
+    });
+
+    // Same team, same day: trade + signing + signing + waiver → 4 independent events
+    const bosBusyDay = [
+      mk({
+        id: "bos-trade",
+        teamId: "2",
+        teamAbbr: "BOS",
+        sourceTextCategory: "trade",
+        description:
+          "Acquired F Paul George from the Philadelphia 76ers in exchange for draft considerations.",
+      }),
+      mk({
+        id: "bos-sign-a",
+        teamId: "2",
+        teamAbbr: "BOS",
+        sourceTextCategory: "signing",
+        description: "Signed G Mike Conley to a contract.",
+      }),
+      mk({
+        id: "bos-sign-b",
+        teamId: "2",
+        teamAbbr: "BOS",
+        sourceTextCategory: "signing",
+        description: "Signed C Mitchell Robinson to a contract.",
+      }),
+      mk({
+        id: "bos-waive",
+        teamId: "2",
+        teamAbbr: "BOS",
+        sourceTextCategory: "waive",
+        description: "Waived F Torrey Craig.",
+      }),
+    ];
+    const busyClusters = buildRelatedTransactionEventClusters(bosBusyDay);
+    assert.equal(busyClusters.clusters.length, 0);
+    const busyFeed = buildOffseasonFeedItems(
+      bosBusyDay,
+      busyClusters,
+      new Map(bosBusyDay.map((e) => [e.id, e]))
+    );
+    assert.equal(busyFeed.length, 4);
+    assert.ok(busyFeed.every((i) => i.kind === "source_event"));
+
+    // Same day, different types across teams — never merge on date alone
+    const mixedTypes = [
+      mk({
+        id: "den-trade",
+        teamId: "7",
+        teamAbbr: "DEN",
+        sourceTextCategory: "trade",
+        description:
+          "Acquired G Jamal Murray from the Oklahoma City Thunder in exchange for draft considerations.",
+      }),
+      mk({
+        id: "okc-sign",
+        teamId: "25",
+        teamAbbr: "OKC",
+        sourceTextCategory: "signing",
+        description: "Signed G Free Agent to a contract.",
+      }),
+      mk({
+        id: "okc-waive",
+        teamId: "25",
+        teamAbbr: "OKC",
+        sourceTextCategory: "waive",
+        description: "Waived F Bench Player.",
+      }),
+      mk({
+        id: "okc-draft",
+        teamId: "25",
+        teamAbbr: "OKC",
+        sourceTextCategory: "draft",
+        description: "Selected F Prospect in the NBA Draft.",
+      }),
+    ];
+    assert.equal(
+      buildRelatedTransactionEventClusters(mixedTypes).clusters.length,
+      0
+    );
+
+    // Reciprocal trade sides → one transaction event with 2 source records
+    const bosTrade = mk({
+      id: "bos-phi-a",
+      teamId: "2",
+      teamAbbr: "BOS",
+      sourceTextCategory: "trade",
+      description:
+        "Acquired F Paul George from the Philadelphia 76ers in exchange for draft considerations.",
+    });
+    const phiTrade = mk({
+      id: "bos-phi-b",
+      teamId: "20",
+      teamAbbr: "PHI",
+      sourceTextCategory: "trade",
+      description:
+        "Acquired G Jaylen Brown from the Boston Celtics in exchange for F Paul George.",
+    });
+    assert.equal(
+      areReciprocalSameTransactionCandidates(bosTrade, phiTrade),
+      true
+    );
+    const reciprocal = buildRelatedTransactionEventClusters([
+      bosTrade,
+      phiTrade,
+      ...bosBusyDay.slice(1), // same-day BOS signings stay out
+    ]);
+    assert.equal(reciprocal.clusters.length, 1);
+    assert.equal(reciprocal.clusters[0]!.eventIds.length, 2);
+    assert.ok(reciprocal.clusters[0]!.eventIds.includes("bos-phi-a"));
+    assert.ok(reciprocal.clusters[0]!.eventIds.includes("bos-phi-b"));
+    assert.equal(reciprocal.byEventId.has("bos-sign-a"), false);
+
+    // Ambiguous: one BOS note reciprocally pairs with both PHI and MIA → under-group
+    const bosHub = mk({
+      id: "bos-hub",
+      teamId: "2",
+      teamAbbr: "BOS",
+      sourceTextCategory: "trade",
+      description:
+        "Acquired F Paul George from the Philadelphia 76ers in exchange for draft considerations. Acquired F Jimmy Butler from the Miami Heat in exchange for draft considerations.",
+    });
+    const phiOnly = mk({
+      id: "phi-side",
+      teamId: "20",
+      teamAbbr: "PHI",
+      sourceTextCategory: "trade",
+      description:
+        "Acquired draft considerations from the Boston Celtics in exchange for F Paul George.",
+    });
+    const miaOnly = mk({
+      id: "mia-side",
+      teamId: "14",
+      teamAbbr: "MIA",
+      sourceTextCategory: "trade",
+      description:
+        "Acquired draft considerations from the Boston Celtics in exchange for F Jimmy Butler.",
+    });
+    assert.equal(
+      areReciprocalSameTransactionCandidates(bosHub, phiOnly),
+      true
+    );
+    assert.equal(
+      areReciprocalSameTransactionCandidates(bosHub, miaOnly),
+      true
+    );
+    const ambiguous = buildRelatedTransactionEventClusters([
+      bosHub,
+      phiOnly,
+      miaOnly,
+    ]);
+    // BOS hub degree=2 → prefer under-grouping; no false mega-cluster
+    assert.equal(ambiguous.clusters.length, 0);
+
+    // One-sided trade note alone → no cluster
+    assert.equal(
+      buildRelatedTransactionEventClusters([bosTrade]).clusters.length,
+      0
+    );
+  }
+
+  console.log("trade-related presentation normalization…");
+  {
+    const {
+      presentationForSourceEvent,
+      presentationForRelatedCluster,
+      presentationForOffseasonFeedItem,
+      isTradeRelatedSourceCategory,
+    } = await import("../src/lib/transaction-event-presentation");
+    const { isTransactionGenealogyUiReady } = await import(
+      "../src/data/queries/transaction-lineage"
+    );
+
+    const minCha: import("../src/data/types/transaction-event").NbaTransactionEvent =
+      {
+        id: "min-cha-1",
+        date: "2025-07-01",
+        season: "2025-26",
+        teamId: "16",
+        teamAbbr: "MIN",
+        description:
+          "Acquired Gs LaMelo Ball and Josh Green from Charlotte in exchange for Naz Reid and draft considerations.",
+        sourceTextCategory: "trade",
+        source: "espn-site-v2-transactions",
+        recordStatus: "source_event",
+      };
+    const single = presentationForSourceEvent(minCha);
+    assert.equal(single.kind, "trade_related_transaction");
+    assert.equal(single.title, "Trade-related transaction");
+    assert.equal(single.sourceCount, 1);
+    assert.equal(single.hasSourceCluster, false);
+    assert.equal(single.sourceCountLabel, "1 ESPN source event");
+
+    const bos: typeof minCha = {
+      ...minCha,
+      id: "bos-1",
+      teamId: "2",
+      teamAbbr: "BOS",
+      description: "Traded Guerschon Yabusele to Philadelphia.",
+    };
+    const phi: typeof minCha = {
+      ...minCha,
+      id: "phi-1",
+      teamId: "20",
+      teamAbbr: "PHI",
+      description: "Acquired Guerschon Yabusele from Boston.",
+    };
+    const cluster = presentationForRelatedCluster([bos, phi]);
+    assert.equal(cluster.kind, "trade_related_transaction");
+    assert.equal(cluster.title, "Trade-related transaction");
+    assert.equal(cluster.sourceCount, 2);
+    assert.equal(cluster.hasSourceCluster, true);
+    assert.equal(cluster.sourceCountLabel, "2 ESPN source events");
+
+    const signing: typeof minCha = {
+      ...minCha,
+      id: "sign-1",
+      sourceTextCategory: "signing",
+      description: "Signed F Free Agent.",
+    };
+    const nonTrade = presentationForSourceEvent(signing);
+    assert.equal(nonTrade.kind, "source_event");
+    assert.equal(nonTrade.title, "Source event");
+    assert.equal(isTradeRelatedSourceCategory("signing"), false);
+    assert.equal(isTradeRelatedSourceCategory("trade"), true);
+
+    const feedSingle = presentationForOffseasonFeedItem({
+      kind: "source_event",
+      event: minCha,
+      status: "source_event",
+    });
+    assert.equal(feedSingle.kind, "trade_related_transaction");
+    assert.equal(feedSingle.sourceCount, 1);
+
+    const feedCluster = presentationForOffseasonFeedItem({
+      kind: "related_event_cluster",
+      cluster: {
+        id: "c1",
+        date: "2025-07-01",
+        eventIds: [bos.id, phi.id],
+        teamIds: ["2", "20"],
+        evidence: ["same date", "reciprocal teams"],
+        status: "related_event_cluster",
+        structuredLedgerAvailable: false,
+        methodologyVersion: "1.0",
+      },
+      events: [bos, phi],
+      status: "related_event_cluster",
+    });
+    assert.equal(feedCluster.kind, "trade_related_transaction");
+    assert.equal(feedCluster.sourceCount, 2);
+    assert.equal(feedCluster.hasSourceCluster, true);
+
+    assert.equal(await isTransactionGenealogyUiReady(), false);
   }
 
   console.log("offseason-tracker checks passed");

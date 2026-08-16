@@ -1,44 +1,42 @@
 /**
  * Related Transaction Event clustering.
  *
- * Groups ESPN free-text source events that appear to describe the same
- * real-world move — WITHOUT promoting them to structured transactions.
+ * Groups ESPN free-text source records that appear to describe the SAME
+ * underlying real-world transaction — WITHOUT promoting them to a structured
+ * ledger.
  *
- * Safe evidence only:
- * - same calendar date
+ * Hierarchy:
+ *   Calendar day  → many transaction events
+ *   Transaction event → one or more ESPN source records
+ *
+ * CORE RULE: same date / same team / same category alone NEVER justifies a merge.
+ * Prefer under-grouping over false merging.
+ *
+ * Safe evidence for a 2-record cluster (all required):
+ * - same calendar date (candidate window only — not identity)
  * - distinct teamIds (structured source fields)
- * - reciprocal mentions of the counterpart team's known brand aliases
- * - counterparty language (from / to / traded / acquired / in exchange)
+ * - reciprocal counterparty trade context (from/to/traded/acquired + brand aliases)
+ * - exactly one reciprocal partner each (ambiguous multi-partner same-day → no merge)
  *
  * Does NOT parse player names, pick identities, or invent asset ledgers.
  */
 
 import { createHash } from "node:crypto";
 
-import type { NbaTransactionEvent } from "@/data/types/transaction-event";
+import type {
+  NbaTransactionEvent,
+  OffseasonFeedItem,
+  RelatedTransactionEventCluster,
+} from "@/data/types/transaction-event";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { TEAM_BRANDS, resolveTeamBrand } from "@/lib/nba-brand";
 
-export const TRANSACTION_EVENT_CLUSTER_VERSION = "1.0";
+export type { TransactionEventRecordStatus } from "@/lib/transaction-event-status";
+export { transactionEventRecordStatusLabel } from "@/lib/transaction-event-status";
+export type { OffseasonFeedItem, RelatedTransactionEventCluster };
 
-/** Data maturity status for Offseason Tracker rows. */
-export type TransactionEventRecordStatus =
-  | "source_event"
-  | "related_event_cluster"
-  | "structured_transaction";
-
-export type RelatedTransactionEventCluster = {
-  id: string;
-  date: string;
-  eventIds: string[];
-  teamIds: string[];
-  /** Evidence summary — never an asset ledger. */
-  evidence: string[];
-  status: "related_event_cluster";
-  /** Always false for ESPN archive clusters. */
-  structuredLedgerAvailable: false;
-  methodologyVersion: string;
-};
+/** Bump when clustering rules change (feeds coverage / diagnostics). */
+export const TRANSACTION_EVENT_CLUSTER_VERSION = "1.1";
 
 export type TransactionEventClusterIndex = {
   clusters: RelatedTransactionEventCluster[];
@@ -140,6 +138,23 @@ export function hasCounterpartyTradeContext(
   return false;
 }
 
+/**
+ * High-confidence pairwise check: two source records may describe the same
+ * underlying trade. Does not use date/team alone as identity.
+ */
+export function areReciprocalSameTransactionCandidates(
+  a: NbaTransactionEvent,
+  b: NbaTransactionEvent
+): boolean {
+  if (a.id === b.id) return false;
+  if (a.date !== b.date) return false;
+  if (a.teamId === b.teamId) return false;
+  // Reciprocal trade language is required. Category alone is never enough.
+  const aTrade = hasCounterpartyTradeContext(a.description, b.teamId);
+  const bTrade = hasCounterpartyTradeContext(b.description, a.teamId);
+  return aTrade && bTrade;
+}
+
 function clusterIdFor(date: string, eventIds: string[]): string {
   const key = `${date}|${[...eventIds].sort().join("|")}`;
   const hash = createHash("sha1").update(key).digest("hex").slice(0, 16);
@@ -148,12 +163,17 @@ function clusterIdFor(date: string, eventIds: string[]): string {
 
 /**
  * Build related-event clusters for an event list.
- * Each event appears in at most one cluster. Clusters require ≥2 events.
+ *
+ * Conservative rules:
+ * - Pairwise only (exactly 2 source records per cluster)
+ * - Reciprocal counterparty trade context required
+ * - If a record has multiple reciprocal partners the same day → ambiguous → no merge
+ * - Same team / same date alone never clusters
  */
 export function buildRelatedTransactionEventClusters(
   events: NbaTransactionEvent[]
 ): TransactionEventClusterIndex {
-  // Group by date for O(n_day²) pairwise checks — not full archive².
+  // Group by date for O(n_day²) pairwise checks — date is a search window only.
   const byDate = new Map<string, NbaTransactionEvent[]>();
   for (const e of events) {
     const list = byDate.get(e.date) ?? [];
@@ -161,78 +181,56 @@ export function buildRelatedTransactionEventClusters(
     byDate.set(e.date, list);
   }
 
-  type Edge = { a: string; b: string };
+  type Edge = { a: string; b: string; date: string };
   const edges: Edge[] = [];
 
-  for (const [, dayEvents] of byDate) {
+  for (const [date, dayEvents] of byDate) {
     if (dayEvents.length < 2) continue;
     for (let i = 0; i < dayEvents.length; i++) {
       for (let j = i + 1; j < dayEvents.length; j++) {
         const a = dayEvents[i]!;
         const b = dayEvents[j]!;
-        if (a.teamId === b.teamId) continue;
-        const aMentionsB = hasCounterpartyTradeContext(a.description, b.teamId);
-        const bMentionsA = hasCounterpartyTradeContext(b.description, a.teamId);
-        if (aMentionsB && bMentionsA) {
-          edges.push({ a: a.id, b: b.id });
-        }
+        if (!areReciprocalSameTransactionCandidates(a, b)) continue;
+        edges.push({ a: a.id, b: b.id, date });
       }
     }
   }
 
-  // Union-find over reciprocal edges (same date already enforced).
-  const parent = new Map<string, string>();
-  const find = (x: string): string => {
-    const p = parent.get(x) ?? x;
-    if (p !== x) {
-      const root = find(p);
-      parent.set(x, root);
-      return root;
-    }
-    return x;
-  };
-  const union = (x: string, y: string) => {
-    const rx = find(x);
-    const ry = find(y);
-    if (rx === ry) return;
-    // Deterministic: smaller id is parent.
-    if (rx < ry) parent.set(ry, rx);
-    else parent.set(rx, ry);
-  };
-
+  // Degree: records with >1 reciprocal partner same day are ambiguous.
+  const degree = new Map<string, number>();
   for (const e of edges) {
-    if (!parent.has(e.a)) parent.set(e.a, e.a);
-    if (!parent.has(e.b)) parent.set(e.b, e.b);
-    union(e.a, e.b);
-  }
-
-  const groups = new Map<string, Set<string>>();
-  for (const id of parent.keys()) {
-    const root = find(id);
-    const set = groups.get(root) ?? new Set();
-    set.add(id);
-    groups.set(root, set);
+    degree.set(e.a, (degree.get(e.a) ?? 0) + 1);
+    degree.set(e.b, (degree.get(e.b) ?? 0) + 1);
   }
 
   const byId = new Map(events.map((e) => [e.id, e]));
   const clusters: RelatedTransactionEventCluster[] = [];
   const byEventId = new Map<string, string>();
   const byClusterId = new Map<string, RelatedTransactionEventCluster>();
+  const used = new Set<string>();
 
-  for (const memberIds of groups.values()) {
-    if (memberIds.size < 2) continue;
-    const members = [...memberIds]
-      .map((id) => byId.get(id))
-      .filter((e): e is NbaTransactionEvent => Boolean(e))
-      .sort(
-        (a, b) =>
-          a.teamId.localeCompare(b.teamId) || a.id.localeCompare(b.id)
-      );
-    if (members.length < 2) continue;
+  // Deterministic edge order.
+  edges.sort(
+    (x, y) =>
+      x.date.localeCompare(y.date) ||
+      x.a.localeCompare(y.a) ||
+      x.b.localeCompare(y.b)
+  );
 
-    // Guard: all members must share a date.
-    const dates = new Set(members.map((m) => m.date));
-    if (dates.size !== 1) continue;
+  for (const edge of edges) {
+    if (used.has(edge.a) || used.has(edge.b)) continue;
+    // Ambiguous multi-partner same day → keep separate (under-group).
+    if ((degree.get(edge.a) ?? 0) !== 1 || (degree.get(edge.b) ?? 0) !== 1) {
+      continue;
+    }
+
+    const members = [byId.get(edge.a), byId.get(edge.b)].filter(
+      (e): e is NbaTransactionEvent => Boolean(e)
+    );
+    if (members.length !== 2) continue;
+    members.sort(
+      (a, b) => a.teamId.localeCompare(b.teamId) || a.id.localeCompare(b.id)
+    );
 
     const date = members[0]!.date;
     const eventIds = members.map((m) => m.id);
@@ -248,9 +246,10 @@ export function buildRelatedTransactionEventClusters(
       eventIds,
       teamIds,
       evidence: [
-        `Same transaction date (${date}).`,
-        `Reciprocal counterparty team mentions between ${abbrs.join(" and ")}.`,
-        "Cluster groups source events only — not a verified structured trade ledger.",
+        "Reciprocal counterparty trade language between distinct teams.",
+        `Teams: ${abbrs.join(" ↔ ")}.`,
+        `Shared calendar date (${date}) used only as a candidate window — not transaction identity.`,
+        "Cluster groups ESPN source records for one underlying transaction event — not a verified structured trade ledger.",
       ],
       status: "related_event_cluster",
       structuredLedgerAvailable: false,
@@ -258,7 +257,10 @@ export function buildRelatedTransactionEventClusters(
     };
     clusters.push(cluster);
     byClusterId.set(id, cluster);
-    for (const eid of eventIds) byEventId.set(eid, id);
+    for (const eid of eventIds) {
+      byEventId.set(eid, id);
+      used.add(eid);
+    }
   }
 
   clusters.sort(
@@ -270,19 +272,6 @@ export function buildRelatedTransactionEventClusters(
 
 /** Ensure TEAM_BRANDS is referenced so tree-shaking keeps brand resolution. */
 void TEAM_BRANDS;
-
-export type OffseasonFeedItem =
-  | {
-      kind: "source_event";
-      event: NbaTransactionEvent;
-      status: "source_event";
-    }
-  | {
-      kind: "related_event_cluster";
-      cluster: RelatedTransactionEventCluster;
-      events: NbaTransactionEvent[];
-      status: "related_event_cluster";
-    };
 
 /**
  * Collapse filtered events into feed items (clusters + leftover source events).
@@ -330,17 +319,4 @@ export function buildOffseasonFeedItems(
   }
 
   return items;
-}
-
-export function transactionEventRecordStatusLabel(
-  status: TransactionEventRecordStatus
-): string {
-  switch (status) {
-    case "source_event":
-      return "Source event";
-    case "related_event_cluster":
-      return "Related event cluster";
-    case "structured_transaction":
-      return "Structured transaction";
-  }
 }

@@ -16,7 +16,7 @@ import {
   listOffseasonYearsWithEvents,
   paginateEvents,
 } from "@/data/providers/transactions/transaction-event-index";
-import type { OffseasonFeedItem } from "@/data/providers/transactions/transaction-event-clusters";
+import type { OffseasonFeedItem } from "@/data/types/transaction-event";
 import {
   currentOffseasonLabelYear,
   currentOffseasonWindow,

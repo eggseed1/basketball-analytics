@@ -6,12 +6,41 @@
  */
 
 import type { TransactionType } from "@/offseason";
-import type {
-  RelatedTransactionEventCluster,
-  TransactionEventRecordStatus,
-} from "@/data/providers/transactions/transaction-event-clusters";
+import type { TransactionEventRecordStatus } from "@/lib/transaction-event-status";
 
 export const TRANSACTION_EVENT_ARCHIVE_VERSION = "1.1";
+
+export type { TransactionEventRecordStatus };
+
+/**
+ * Related-event cluster projection (not a structured trade ledger).
+ * Defined in types so client UI never imports the Node clustering module.
+ */
+export type RelatedTransactionEventCluster = {
+  id: string;
+  date: string;
+  eventIds: string[];
+  teamIds: string[];
+  /** Evidence summary — never an asset ledger. */
+  evidence: string[];
+  status: "related_event_cluster";
+  /** Always false for ESPN archive clusters. */
+  structuredLedgerAvailable: false;
+  methodologyVersion: string;
+};
+
+export type OffseasonFeedItem =
+  | {
+      kind: "source_event";
+      event: NbaTransactionEvent;
+      status: "source_event";
+    }
+  | {
+      kind: "related_event_cluster";
+      cluster: RelatedTransactionEventCluster;
+      events: NbaTransactionEvent[];
+      status: "related_event_cluster";
+    };
 
 /**
  * One provenance-backed free-text transaction event.
@@ -46,8 +75,6 @@ export type NbaTransactionEvent = {
   /** When this event belongs to a precomputed related-event cluster. */
   relatedClusterId?: string;
 };
-
-export type { RelatedTransactionEventCluster, TransactionEventRecordStatus };
 
 export type OffseasonWindow = {
   /** Summer calendar year label, e.g. 2026 for "2026 NBA Offseason". */

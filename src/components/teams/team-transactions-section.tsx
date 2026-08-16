@@ -37,6 +37,9 @@ export function TeamTransactionsSection({
               <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {e.date}
                 {e.teamAbbr ? ` · ${e.teamAbbr}` : null}
+                {e.sourceTextCategory === "trade"
+                  ? " · Trade-related transaction"
+                  : null}
               </p>
               <TransactionDescription
                 description={e.description}

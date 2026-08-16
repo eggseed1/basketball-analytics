@@ -3,6 +3,9 @@
  * Run: npm run test:transaction-player-resolve
  */
 import assert from "node:assert/strict";
+import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 import {
   ALL_TEAM_ABBRS,
@@ -146,5 +149,50 @@ assert.equal(
   normalizePlayerName("De'Anthony Melton"),
   normalizePlayerName("DeAnthony Melton")
 );
+
+console.log("client import boundary — no Node queries in Transactions UI…");
+{
+  const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
+  const read = (rel: string) => fs.readFileSync(path.join(root, rel), "utf8");
+
+  const description = read(
+    "src/components/offseason/transaction-description.tsx"
+  );
+  assert.match(description, /"use client"/);
+  assert.doesNotMatch(description, /data\/queries/);
+  assert.doesNotMatch(description, /player-season-resolve\.server/);
+  assert.doesNotMatch(description, /transaction-player-resolve/);
+  assert.match(description, /transaction-player-link/);
+  assert.match(description, /transaction-player-resolution/);
+
+  const link = read("src/lib/transaction-player-link.ts");
+  assert.doesNotMatch(link, /data\/queries/);
+  assert.doesNotMatch(
+    link,
+    /getPlayerCareerSeasons|getPlayerPageHref|server-only/
+  );
+  assert.match(link, /player-season-resolve/);
+
+  const seasonResolve = read("src/lib/player-season-resolve.ts");
+  assert.doesNotMatch(seasonResolve, /data\/queries|node:fs|server-only/);
+  assert.match(seasonResolve, /export function playerPageHref/);
+
+  const seasonServer = read("src/lib/player-season-resolve.server.ts");
+  assert.match(seasonServer, /import "server-only"/);
+  assert.match(seasonServer, /getPlayerCareerSeasons/);
+
+  const eventUi = read("src/components/offseason/transaction-event-ui.tsx");
+  assert.match(eventUi, /"use client"/);
+  // Value or type import of clusters would risk pulling node:crypto into the browser graph.
+  assert.doesNotMatch(
+    eventUi,
+    /transaction-event-clusters/
+  );
+  assert.ok(
+    eventUi.includes("@/lib/transaction-event-status") ||
+      eventUi.includes("@/lib/transaction-event-presentation"),
+    "event UI must use client-safe status/presentation helpers"
+  );
+}
 
 console.log("OK — transaction-player-resolve / team brands");

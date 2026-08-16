@@ -1,9 +1,10 @@
 /**
- * Resolve the most useful season for player deep links from Transactions / Assets.
- * Prefer the first career season option (newest-first lists from the provider).
+ * Client-safe player deep-link helpers.
+ * Sync only — never import data queries or Node filesystem here.
+ *
+ * Async season resolution lives in `player-season-resolve.server.ts`.
  */
 
-import { getPlayerCareerSeasons } from "@/data/queries/players";
 import type { PlayerSeason } from "@/data/types";
 import {
   canonicalSeasonFromStartYear,
@@ -33,30 +34,4 @@ export function playerPageHref(
   const base = `/players/${encodeURIComponent(playerId)}`;
   if (!season) return base;
   return `${base}?season=${encodeURIComponent(season)}`;
-}
-
-/**
- * Async resolver for deep links when only playerId is known.
- * Returns null season only if the player cannot be loaded (href still valid).
- */
-export async function getPlayerDefaultSeason(
-  playerId: string
-): Promise<string> {
-  try {
-    const career = await getPlayerCareerSeasons(playerId);
-    const sorted = [...career].sort((a, b) =>
-      b.season.localeCompare(a.season)
-    );
-    return resolvePlayerDefaultSeason(sorted);
-  } catch {
-    return canonicalSeasonFromStartYear(currentNbaStartYear());
-  }
-}
-
-export async function getPlayerPageHref(
-  playerId: string,
-  season?: string | null
-): Promise<string> {
-  const resolved = season ?? (await getPlayerDefaultSeason(playerId));
-  return playerPageHref(playerId, resolved);
 }
