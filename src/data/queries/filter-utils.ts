@@ -5,7 +5,10 @@ import type {
   PlayerSeason,
 } from "@/data/types";
 import { expandTeamFilterMatchIds } from "@/lib/team-identity";
-import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
+import {
+  ensureGameTeamIdentity,
+  inferGameTeamProvider,
+} from "@/lib/game-team-identity";
 
 /**
  * Single source of truth for PlayerSeason filtering.
@@ -61,7 +64,10 @@ export function applyPlayerSeasonFilters(
 }
 
 export function toGameSummary(game: Game): GameSummary {
-  const normalized = ensureGameTeamIdentity(game);
+  const normalized = ensureGameTeamIdentity(
+    game,
+    game.teamIdProvider ?? inferGameTeamProvider(game)
+  );
   const margin = normalized.homeScore - normalized.awayScore;
   return {
     ...normalized,
@@ -85,7 +91,12 @@ export function applyGameFilters(
   const teamAbbr = filters.teamAbbr?.trim().toUpperCase();
 
   return games
-    .map((game) => ensureGameTeamIdentity(game))
+    .map((game) =>
+      ensureGameTeamIdentity(
+        game,
+        game.teamIdProvider ?? inferGameTeamProvider(game)
+      )
+    )
     .filter((game) => {
       if (filters.season && game.season !== filters.season) return false;
       if (teamAbbr) {

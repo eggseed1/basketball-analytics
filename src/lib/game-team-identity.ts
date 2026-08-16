@@ -21,6 +21,22 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export type GameTeamProvider = Extract<TeamDataProviderId, "espn" | "bdl">;
 
+/**
+ * Infer provider namespace for legacy rows that lack `teamIdProvider`.
+ * Numeric non-ESPN ids are treated as BallDontLie (historical cache / schedule).
+ */
+export function inferGameTeamProvider(
+  game: Pick<Game, "id" | "teamIdProvider">
+): GameTeamProvider | undefined {
+  if (game.teamIdProvider === "espn" || game.teamIdProvider === "bdl") {
+    return game.teamIdProvider;
+  }
+  const id = String(game.id ?? "").trim();
+  if (/^40\d{6,}$/.test(id)) return "espn";
+  if (/^\d+$/.test(id)) return "bdl";
+  return undefined;
+}
+
 export type NormalizedGameTeamSide = {
   /** Canonical DRBL team id (ESPN string) when resolved; else raw provider id. */
   canonicalTeamId: string;
@@ -217,7 +233,8 @@ export function ensureGameTeamIdentity(
   game: Game,
   fallbackProvider?: GameTeamProvider
 ): Game {
-  const provider = game.teamIdProvider ?? fallbackProvider;
+  const provider =
+    game.teamIdProvider ?? fallbackProvider ?? inferGameTeamProvider(game);
   let next = game;
 
   if (provider) {

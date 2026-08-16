@@ -15,6 +15,11 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // Historical BDL season JSON lives under data/cache (gitignored locally but
+  // required at runtime for Explore Games / Game Lab when present).
+  outputFileTracingIncludes: {
+    "/**": ["./data/cache/games/**/*"],
+  },
 };
 
 export default nextConfig;

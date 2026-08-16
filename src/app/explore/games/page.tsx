@@ -17,6 +17,8 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "Games",
   description: "NBA games from 1960 to present with score cards and filters.",

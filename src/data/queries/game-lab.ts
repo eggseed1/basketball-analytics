@@ -14,7 +14,12 @@ import { getTeam } from "@/data/queries/teams";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
-import { gameSideBrandKey } from "@/lib/game-team-identity";
+import { teamEraDisplay } from "@/data/identity/team-era";
+import {
+  ensureGameTeamIdentity,
+  gameSideBrandKey,
+  inferGameTeamProvider,
+} from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
 
@@ -78,14 +83,22 @@ async function resolveSideLabels(
     brand?.id ??
     teamId;
   const team = await getTeam(lookupId).catch(() => null);
-  // Prefer stamped team-era display on the game row over current branding.
+  // Season-aware era wins over stored anachronistic provider labels.
+  const era = game.season
+    ? teamEraDisplay(lookupId, game.season, {
+        abbr: abbr ?? undefined,
+        displayName: name ?? undefined,
+      })
+    : null;
   const label =
+    (era?.fromEra ? era.abbr : undefined) ||
     abbr?.trim() ||
     brand?.abbr ||
     team?.abbreviation ||
     (canonical.status === "resolved" ? canonical.team.abbr : undefined) ||
     teamId;
   const displayName =
+    (era?.fromEra ? era.displayName : undefined) ||
     name?.trim() ||
     team?.fullName ||
     (canonical.status === "resolved"
@@ -109,7 +122,11 @@ export async function getGameAnalysis(
   const shell = await getGameShell(gameId);
   if (!shell) return null;
 
-  const { game, players, availability } = shell;
+  const game = ensureGameTeamIdentity(
+    shell.game,
+    shell.game.teamIdProvider ?? inferGameTeamProvider(shell.game)
+  );
+  const { players, availability } = shell;
 
   const needPlayerBoard = players.length > 0;
   const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([
