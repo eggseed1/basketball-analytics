@@ -30,6 +30,9 @@ export async function GET(request: Request) {
       season: data.season,
       count: data.games.length,
       data: data.games,
+      source: data.source ?? "live-espn",
+      warnings: data.warnings ?? [],
+      isStale: data.isStale ?? false,
     });
   } catch (error) {
     return jsonError(error);

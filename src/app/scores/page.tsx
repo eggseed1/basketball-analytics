@@ -4,6 +4,7 @@ import {
   type GamefeedView,
 } from "@/components/sports/gamefeed";
 import { GameScoreCard } from "@/components/sports/game-score-card";
+import { ScoreboardFeedNotice } from "@/components/sports/scoreboard-feed-notice";
 import {
   addDaysIso,
   defaultScoreboardMonthKey,
@@ -14,6 +15,7 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/queries";
+import type { ScoreboardFeedSource } from "@/data/queries/scoreboard-feed";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -70,6 +72,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   let upcomingHasMore = false;
   let upcomingNextHref: string | null = null;
   let feedSeason = scheduleSeason;
+  let feedSource: ScoreboardFeedSource | undefined;
+  let feedWarnings: string[] = [];
 
   const recentPromise = getRecentGameSummaries({
     season: statsSeason,
@@ -86,6 +90,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     monthGames = month.games;
     recent = recentGames;
     feedSeason = month.season;
+    feedSource = month.source;
+    feedWarnings = month.warnings ?? [];
   } else if (view === "week") {
     const [week, recentGames] = await Promise.all([
       getScoreboardWeekSummaries({ weekStart, season: scheduleSeason }),
@@ -95,6 +101,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     weekEnd = week.weekEnd;
     recent = recentGames;
     feedSeason = week.season;
+    feedSource = week.source;
+    feedWarnings = week.warnings ?? [];
   } else {
     const fromDate =
       afterTip && afterTip.length >= 10
@@ -116,6 +124,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     upcomingHasMore = upcoming.hasMore;
     feedSeason = upcoming.season;
     recent = recentGames;
+    feedSource = upcoming.source;
+    feedWarnings = upcoming.warnings ?? [];
 
     if (upcomingHasMore && upcomingGames.length) {
       const last = upcomingGames[upcomingGames.length - 1]!;
@@ -129,6 +139,8 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:gap-6 sm:py-7">
+      <ScoreboardFeedNotice source={feedSource} warnings={feedWarnings} />
+
       <Gamefeed
         view={view}
         season={feedSeason}

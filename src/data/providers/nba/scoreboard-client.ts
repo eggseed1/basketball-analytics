@@ -65,7 +65,7 @@ export async function fetchScoreboardMonth(options: {
   const payload = await espnFetchJson<ScoreboardResponse>(
     `${SITE_API}/apis/site/v2/sports/basketball/nba/scoreboard?dates=${dates}&limit=400`,
     { ttlMs: 1000 * 60 * 10, retries: 1 }
-  ).catch(() => ({ events: [] }) as ScoreboardResponse);
+  );
 
   const byId = new Map<string, Game>();
   for (const event of payload.events ?? []) {
@@ -152,19 +152,26 @@ export async function fetchHomeWeekStrip(options: {
   const weekStartIso = toIsoDate(weekStart);
   const weekEndIso = toIsoDate(weekEnd);
 
-  const monthKeys = new Set<string>([
-    monthKeyFromDate(weekStart),
-    monthKeyFromDate(weekEnd),
-    monthKeyFromDate(now),
-  ]);
+  const monthKeys = [
+    ...new Set([
+      monthKeyFromDate(weekStart),
+      monthKeyFromDate(weekEnd),
+      monthKeyFromDate(now),
+    ]),
+  ];
 
-  const weekPool = (
-    await Promise.all(
-      [...monthKeys].map((monthKey) =>
-        fetchScoreboardMonth({ monthKey, season }).catch(() => [] as Game[])
-      )
-    )
-  ).flat();
+  const weekSettled = await Promise.allSettled(
+    monthKeys.map((monthKey) => fetchScoreboardMonth({ monthKey, season }))
+  );
+  const weekPool = weekSettled.flatMap((r) =>
+    r.status === "fulfilled" ? r.value : []
+  );
+  if (
+    weekPool.length === 0 &&
+    weekSettled.every((r) => r.status === "rejected")
+  ) {
+    // Fall through to upcoming path; if that also fails entirely, throw.
+  }
 
   const byId = new Map<string, Game>();
   for (const g of weekPool) byId.set(g.id, g);
@@ -190,15 +197,26 @@ export async function fetchHomeWeekStrip(options: {
     cursor = shiftMonthKey(cursor, 1);
   }
 
-  const upcomingPool = (
-    await Promise.all(
-      upcomingMonths.map((monthKey) =>
-        fetchScoreboardMonth({ monthKey, season: upcomingSeason }).catch(
-          () => [] as Game[]
-        )
-      )
+  const upcomingSettled = await Promise.allSettled(
+    upcomingMonths.map((monthKey) =>
+      fetchScoreboardMonth({ monthKey, season: upcomingSeason })
     )
-  ).flat();
+  );
+  const upcomingPool = upcomingSettled.flatMap((r) =>
+    r.status === "fulfilled" ? r.value : []
+  );
+  if (
+    upcomingPool.length === 0 &&
+    weekPool.length === 0 &&
+    [...weekSettled, ...upcomingSettled].every((r) => r.status === "rejected")
+  ) {
+    const first = [...weekSettled, ...upcomingSettled].find(
+      (r) => r.status === "rejected"
+    );
+    throw first && first.status === "rejected"
+      ? first.reason
+      : new Error("Home week strip unavailable");
+  }
 
   const todayIso = toIsoDate(now);
   const upcoming = upcomingPool
@@ -273,18 +291,21 @@ export async function fetchScoreboardWeek(options: {
   );
   const weekEnd = addDaysIso(weekStart, 6);
 
-  const monthKeys = new Set<string>([
+  const monthKeys = [...new Set([
     monthKeyFromDate(new Date(`${weekStart}T12:00:00Z`)),
     monthKeyFromDate(new Date(`${weekEnd}T12:00:00Z`)),
-  ]);
+  ])];
 
-  const pool = (
-    await Promise.all(
-      [...monthKeys].map((monthKey) =>
-        fetchScoreboardMonth({ monthKey, season }).catch(() => [] as Game[])
-      )
-    )
-  ).flat();
+  const settled = await Promise.allSettled(
+    monthKeys.map((monthKey) => fetchScoreboardMonth({ monthKey, season }))
+  );
+  const pool = settled.flatMap((r) => (r.status === "fulfilled" ? r.value : []));
+  if (pool.length === 0 && settled.every((r) => r.status === "rejected")) {
+    const first = settled.find((r) => r.status === "rejected");
+    throw first && first.status === "rejected"
+      ? first.reason
+      : new Error("Scoreboard week unavailable");
+  }
 
   const byId = new Map<string, Game>();
   for (const g of pool) {
@@ -333,13 +354,18 @@ export async function fetchUpcomingScoreboardGames(options: {
   }
 
   const collect = async (monthKeys: string[]) => {
-    const pool = (
-      await Promise.all(
-        monthKeys.map((monthKey) =>
-          fetchScoreboardMonth({ monthKey, season }).catch(() => [] as Game[])
-        )
-      )
-    ).flat();
+    const settled = await Promise.allSettled(
+      monthKeys.map((monthKey) => fetchScoreboardMonth({ monthKey, season }))
+    );
+    const pool = settled.flatMap((r) =>
+      r.status === "fulfilled" ? r.value : []
+    );
+    if (pool.length === 0 && settled.every((r) => r.status === "rejected")) {
+      const first = settled.find((r) => r.status === "rejected");
+      throw first && first.status === "rejected"
+        ? first.reason
+        : new Error("Upcoming scoreboard unavailable");
+    }
 
     return pool
       .filter((g) => {
@@ -442,7 +468,7 @@ export async function fetchScoreboardDay(options: {
       bypassCache: options.force === true,
       signal: options.signal,
     }
-  ).catch(() => ({ events: [] }) as ScoreboardResponse);
+  );
 
   const byId = new Map<string, Game>();
   for (const event of payload.events ?? []) {

@@ -11,12 +11,7 @@ import { getHistoricalBoxScore, getHistoricalGame, getHistoricalGames } from "./
 import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 import {
   addDaysIso,
-  fetchHomeWeekStrip,
   fetchRecentScoreboardGames,
-  fetchScoreboardDay,
-  fetchScoreboardMonth,
-  fetchScoreboardWeek,
-  fetchUpcomingScoreboardGames,
   monthKeyFromDate,
   shiftMonthKey,
   startOfWeekSundayIso,
@@ -241,13 +236,14 @@ export async function getHomeWeekStripSummaries(
       homeStarters: Array<{ id: string; name: string }>;
     }
   >;
+  source?: import("./scoreboard-feed").ScoreboardFeedSource;
+  warnings?: string[];
+  isStale?: boolean;
 }> {
-  const season =
-    options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const limit = options.limit ?? 10;
-
+  const { getHomeWeekStripFeed } = await import("./scoreboard-feed");
+  const feed = await getHomeWeekStripFeed(options);
+  const strip = feed.data;
   try {
-    const strip = await fetchHomeWeekStrip({ season, limit });
     const withStarters = await attachStartersToGames(strip.games);
     return {
       mode: strip.mode,
@@ -256,9 +252,22 @@ export async function getHomeWeekStripSummaries(
         awayStarters: g.awayStarters,
         homeStarters: g.homeStarters,
       })),
+      source: feed.source,
+      warnings: feed.warnings,
+      isStale: feed.isStale,
     };
   } catch {
-    return { mode: "upcoming", games: [] };
+    return {
+      mode: strip.mode,
+      games: strip.games.map((g) => ({
+        ...toGameSummary(g),
+        awayStarters: [],
+        homeStarters: [],
+      })),
+      source: feed.source,
+      warnings: feed.warnings,
+      isStale: feed.isStale,
+    };
   }
 }
 
@@ -284,16 +293,25 @@ export function defaultScoreboardMonthKey(season?: string): string {
 export async function getScoreboardMonthSummaries(options: {
   monthKey?: string;
   season?: string;
-}): Promise<{ monthKey: string; season: string; games: GameSummary[] }> {
+}): Promise<{
+  monthKey: string;
+  season: string;
+  games: GameSummary[];
+  source?: import("./scoreboard-feed").ScoreboardFeedSource;
+  warnings?: string[];
+  isStale?: boolean;
+}> {
   const season =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const monthKey = options.monthKey ?? defaultScoreboardMonthKey(season);
-  try {
-    const games = await fetchScoreboardMonth({ monthKey, season });
-    return { monthKey, season, games: games.map(toGameSummary) };
-  } catch {
-    return { monthKey, season, games: [] };
-  }
+  const { getScoreboardMonthFeed } = await import("./scoreboard-feed");
+  const feed = await getScoreboardMonthFeed({ monthKey, season });
+  return {
+    ...feed.data,
+    source: feed.source,
+    warnings: feed.warnings,
+    isStale: feed.isStale,
+  };
 }
 
 export async function getScoreboardWeekSummaries(options: {
@@ -304,28 +322,18 @@ export async function getScoreboardWeekSummaries(options: {
   weekEnd: string;
   season: string;
   games: GameSummary[];
+  source?: import("./scoreboard-feed").ScoreboardFeedSource;
+  warnings?: string[];
+  isStale?: boolean;
 }> {
-  const season =
-    options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const weekStart = startOfWeekSundayIso(
-    options.weekStart ?? new Date().toISOString().slice(0, 10)
-  );
-  try {
-    const result = await fetchScoreboardWeek({ weekStartIso: weekStart, season });
-    return {
-      weekStart: result.weekStart,
-      weekEnd: result.weekEnd,
-      season,
-      games: result.games.map(toGameSummary),
-    };
-  } catch {
-    return {
-      weekStart,
-      weekEnd: addDaysIso(weekStart, 6),
-      season,
-      games: [],
-    };
-  }
+  const { getScoreboardWeekFeed } = await import("./scoreboard-feed");
+  const feed = await getScoreboardWeekFeed(options);
+  return {
+    ...feed.data,
+    source: feed.source,
+    warnings: feed.warnings,
+    isStale: feed.isStale,
+  };
 }
 
 /** Paginated upcoming tip-offs from ESPN monthly scoreboards. */
@@ -342,54 +350,47 @@ export async function getUpcomingGameSummaries(
   season: string;
   games: GameSummary[];
   hasMore: boolean;
+  source?: import("./scoreboard-feed").ScoreboardFeedSource;
+  warnings?: string[];
+  isStale?: boolean;
 }> {
-  const season = options.season ?? upcomingScheduleSeason();
-  try {
-    const { games, hasMore } = await fetchUpcomingScoreboardGames({
-      season,
-      fromDate: options.fromDate,
-      afterTipOffAt: options.afterTipOffAt,
-      afterId: options.afterId,
-      monthCount: options.monthCount ?? 8,
-      limit: options.limit ?? 60,
-    });
-    return { season, games: games.map(toGameSummary), hasMore };
-  } catch {
-    return { season, games: [], hasMore: false };
-  }
+  const { getUpcomingScoreboardFeed } = await import("./scoreboard-feed");
+  const feed = await getUpcomingScoreboardFeed(options);
+  return {
+    ...feed.data,
+    source: feed.source,
+    warnings: feed.warnings,
+    isStale: feed.isStale,
+  };
 }
 
 /**
  * Batched live scoreboard snapshot for today (ET).
- * Short provider TTL; force bypasses memory cache for visibility wakes.
+ * Soft-fails with stale cache labeling — never throws for provider outage.
  */
 export async function getLiveScoreboardSummaries(options: {
   season?: string;
   force?: boolean;
-  /** When set, only return these ids (still one provider day fetch). */
   gameIds?: string[];
   signal?: AbortSignal;
 } = {}): Promise<{
   season: string;
   retrievedAt: string;
   games: GameSummary[];
+  source?: import("./scoreboard-feed").ScoreboardFeedSource;
+  warnings?: string[];
+  isStale?: boolean;
 }> {
-  const season = options.season ?? upcomingScheduleSeason();
-  const games = await fetchScoreboardDay({
-    season,
-    force: options.force,
-    signal: options.signal,
-  });
-  const retrievedAt = new Date().toISOString();
-  let mapped = games.map((g) => ({
-    ...toGameSummary(g),
-    retrievedAt: g.retrievedAt ?? retrievedAt,
-  }));
-  if (options.gameIds?.length) {
-    const want = new Set(options.gameIds);
-    mapped = mapped.filter((g) => want.has(g.id));
-  }
-  return { season, retrievedAt, games: mapped };
+  const { getLiveScoreboardFeed } = await import("./scoreboard-feed");
+  const feed = await getLiveScoreboardFeed(options);
+  return {
+    season: feed.data.season,
+    retrievedAt: feed.data.retrievedAt ?? new Date().toISOString(),
+    games: feed.data.games,
+    source: feed.source,
+    warnings: feed.warnings,
+    isStale: feed.isStale,
+  };
 }
 
 export {
