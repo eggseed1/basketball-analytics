@@ -17,7 +17,7 @@ import {
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
-import { gameSideBrandKey } from "@/lib/game-team-identity";
+import { gameSideBrandKey, gameSideDisplayName } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export interface GameSeasonTableProps {
@@ -195,22 +195,20 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                         <span className="inline-flex items-center gap-1">
                           <TeamLogo teamKey={awayKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {game.awayTeamAbbr ??
-                              resolveTeamBrand(awayKey)?.abbr ??
-                              awayKey}
+                            {awayKey}
                           </span>
                         </span>
                         <span className="text-muted-foreground">@</span>
                         <span className="inline-flex items-center gap-1">
                           <TeamLogo teamKey={homeKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {game.homeTeamAbbr ?? homeBrand?.abbr ?? homeKey}
+                            {homeKey}
                           </span>
                         </span>
                       </Link>
                       <span className="sr-only">
-                        {matchupLabel(game)} - {game.awayTeamName} at{" "}
-                        {game.homeTeamName}
+                        {matchupLabel(game)} - {gameSideDisplayName(game, "away")}{" "}
+                        at {gameSideDisplayName(game, "home")}
                       </span>
                     </TableCell>
                     <TableCell className="text-right font-semibold tabular-nums">

@@ -154,18 +154,30 @@ export function applyHistoricalTeamEraToGame(game: Game): Game {
 }
 
 /**
- * Branding / logo key: era abbreviation first, then canonical id.
+ * Branding / logo key for a game side.
+ *
+ * Order:
+ * 1. Team-era abbr when `teamIdProvider` confirms canonical ESPN ids + season
+ * 2. Stored schedule abbr (safe for bare BDL/ESPN numeric collisions)
+ * 3. Era / canonical fallbacks
+ *
  * Historical abbrs (SEA, NJN, …) intentionally do not resolve to modern logos
- * via TEAM_BRANDS — UI should show text identity rather than anachronistic marks.
+ * via TEAM_BRANDS — UI shows text identity rather than anachronistic marks.
  */
 export function gameSideBrandKey(
   game: GameTeamFields,
   side: "home" | "away"
 ): string {
   const abbr = side === "home" ? game.homeTeamAbbr : game.awayTeamAbbr;
+  const canonicalId = gameSideCanonicalTeamId(game, side);
+
+  if (game.season && game.teamIdProvider) {
+    const era = teamEraDisplay(canonicalId, game.season);
+    if (era.fromEra) return era.abbr;
+  }
+
   if (abbr?.trim()) return abbr.trim();
 
-  const canonicalId = side === "home" ? game.homeTeamId : game.awayTeamId;
   if (game.season) {
     const era = teamEraDisplay(canonicalId, game.season);
     if (era.fromEra) return era.abbr;
@@ -213,9 +225,13 @@ export function gameSideDisplayName(
   game: GameTeamFields,
   side: "home" | "away"
 ): string {
+  const id = gameSideCanonicalTeamId(game, side);
+  if (game.season && game.teamIdProvider) {
+    const era = teamEraDisplay(id, game.season);
+    if (era.fromEra) return era.displayName;
+  }
   const stored = side === "home" ? game.homeTeamName : game.awayTeamName;
   if (stored?.trim()) return stored.trim();
-  const id = gameSideCanonicalTeamId(game, side);
   if (game.season) {
     return teamEraDisplay(id, game.season).displayName;
   }
@@ -250,28 +266,20 @@ export function ensureGameTeamIdentity(
       abbr: game.awayTeamAbbr,
       name: game.awayTeamName,
     });
-    if (
-      !(
-        game.teamIdProvider === provider &&
-        game.homeTeamId === home.canonicalTeamId &&
-        game.awayTeamId === away.canonicalTeamId &&
-        game.homeProviderTeamId === home.providerTeamId &&
-        game.awayProviderTeamId === away.providerTeamId
-      )
-    ) {
-      next = {
-        ...game,
-        homeTeamId: home.canonicalTeamId,
-        awayTeamId: away.canonicalTeamId,
-        homeTeamAbbr: home.abbr ?? game.homeTeamAbbr,
-        awayTeamAbbr: away.abbr ?? game.awayTeamAbbr,
-        homeTeamName: home.name ?? game.homeTeamName,
-        awayTeamName: away.name ?? game.awayTeamName,
-        teamIdProvider: provider,
-        homeProviderTeamId: home.providerTeamId,
-        awayProviderTeamId: away.providerTeamId,
-      };
-    }
+    // Always rewrite identity fields when a provider namespace is known so
+    // anachronistic cached names cannot skip era stamping via early-exit.
+    next = {
+      ...game,
+      homeTeamId: home.canonicalTeamId,
+      awayTeamId: away.canonicalTeamId,
+      homeTeamAbbr: home.abbr ?? game.homeTeamAbbr,
+      awayTeamAbbr: away.abbr ?? game.awayTeamAbbr,
+      homeTeamName: home.name ?? game.homeTeamName,
+      awayTeamName: away.name ?? game.awayTeamName,
+      teamIdProvider: provider,
+      homeProviderTeamId: home.providerTeamId,
+      awayProviderTeamId: away.providerTeamId,
+    };
   }
 
   return applyHistoricalTeamEraToGame(next);
