@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 
 import type { GameAnalysisSummary, GameWinningFactor } from "@/analytics/game-lab";
@@ -182,10 +183,12 @@ export function GameLabView({
     displayClock: liveOverlay?.displayClock ?? analysis.displayClock,
   });
 
+  // Prefer era abbr/label for chrome (logos/wash). Never key historical SEA off
+  // franchise id 25 alone — that resolves to modern OKC branding.
   const awayThemeKey =
-    outcome.awayTeamId || analysis.away?.teamId || outcome.awayLabel;
+    outcome.awayLabel || analysis.away?.teamId || outcome.awayTeamId;
   const homeThemeKey =
-    outcome.homeTeamId || analysis.home?.teamId || outcome.homeLabel;
+    outcome.homeLabel || analysis.home?.teamId || outcome.homeTeamId;
 
   return (
     <div className="flex flex-col gap-6">
@@ -259,12 +262,15 @@ export function GameLabView({
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2">
               <TeamLogo
-                teamKey={outcome.awayTeamId || outcome.awayLabel}
+                teamKey={outcome.awayLabel || outcome.awayTeamId}
                 size="md"
               />
-              <span className="text-[18px] font-bold tracking-tight sm:text-[22px]">
+              <Link
+                href={`/teams/${encodeURIComponent(outcome.awayTeamId)}?season=${encodeURIComponent(analysis.season)}`}
+                className="text-[18px] font-bold tracking-tight underline-offset-4 hover:underline sm:text-[22px]"
+              >
                 {outcome.awayLabel}
-              </span>
+              </Link>
               {showScores ? (
                 <span className="text-[28px] font-bold tabular-nums tracking-tight sm:text-[36px]">
                   {awayScore}
@@ -280,11 +286,14 @@ export function GameLabView({
                   {homeScore}
                 </span>
               ) : null}
-              <span className="text-[18px] font-bold tracking-tight sm:text-[22px]">
+              <Link
+                href={`/teams/${encodeURIComponent(outcome.homeTeamId)}?season=${encodeURIComponent(analysis.season)}`}
+                className="text-[18px] font-bold tracking-tight underline-offset-4 hover:underline sm:text-[22px]"
+              >
                 {outcome.homeLabel}
-              </span>
+              </Link>
               <TeamLogo
-                teamKey={outcome.homeTeamId || outcome.homeLabel}
+                teamKey={outcome.homeLabel || outcome.homeTeamId}
                 size="md"
               />
             </div>

@@ -9,6 +9,7 @@
 
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { ALL_TEAM_ABBRS, TEAM_BRANDS, resolveTeamBrand } from "@/lib/nba-brand";
+import { HISTORICAL_ABBR_ALIASES } from "@/data/identity/historical-abbr-aliases";
 
 /** Known schedule / scoreboard team-id providers. Extensible for future PBP, etc. */
 export type TeamDataProviderId = "espn" | "bdl" | (string & {});
@@ -256,6 +257,11 @@ export function resolveCanonicalTeam(
   const upper = raw.toUpperCase();
   if (BY_ABBR.has(upper)) {
     return { status: "resolved", team: BY_ABBR.get(upper)! };
+  }
+
+  const historicalCurrent = HISTORICAL_ABBR_ALIASES[upper];
+  if (historicalCurrent && BY_ABBR.has(historicalCurrent)) {
+    return { status: "resolved", team: BY_ABBR.get(historicalCurrent)! };
   }
 
   const lower = raw.toLowerCase();

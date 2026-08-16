@@ -6,7 +6,6 @@
 
 import { analyzeGame, type GameAnalysisSummary } from "@/analytics/game-lab";
 import {
-  buildGameSeasonContext,
   type GameSeasonContext,
 } from "@/analytics/game-season-context";
 import { getGameShell } from "@/data/queries/games";
@@ -65,27 +64,33 @@ async function resolveSideLabels(
   const name = side === "home" ? game.homeTeamName : game.awayTeamName;
   const brandKey = gameSideBrandKey(game, side);
   const brand = resolveTeamBrand(brandKey);
-  const canonical = resolveCanonicalTeam(brandKey);
+  const canonical = resolveCanonicalTeam(teamId);
+  const fromBrandKey = resolveCanonicalTeam(brandKey);
+  // themeKey = franchise/canonical id for board joins — not historical abbr.
   const lookupId =
     (canonical.status === "resolved"
       ? canonical.team.canonicalTeamId
+      : undefined) ??
+    (fromBrandKey.status === "resolved"
+      ? fromBrandKey.team.canonicalTeamId
       : undefined) ??
     brand?.espnTeamId ??
     brand?.id ??
     teamId;
   const team = await getTeam(lookupId).catch(() => null);
+  // Prefer stamped team-era display on the game row over current branding.
   const label =
-    brand?.abbr ??
-    (canonical.status === "resolved" ? canonical.team.abbr : undefined) ??
-    team?.abbreviation ??
-    abbr ??
+    abbr?.trim() ||
+    brand?.abbr ||
+    team?.abbreviation ||
+    (canonical.status === "resolved" ? canonical.team.abbr : undefined) ||
     teamId;
   const displayName =
-    team?.fullName ??
-    name ??
+    name?.trim() ||
+    team?.fullName ||
     (canonical.status === "resolved"
       ? canonical.team.displayName
-      : undefined) ??
+      : undefined) ||
     label;
   return {
     label,

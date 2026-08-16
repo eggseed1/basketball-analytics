@@ -171,8 +171,8 @@ export function GameMatchupRow({
   const away = resolveTeamBrand(awayKey);
   const home = resolveTeamBrand(homeKey);
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayAbbr = teamAbbr(awayKey, away?.abbr);
-  const homeAbbr = teamAbbr(homeKey, home?.abbr);
+  const awayAbbr = game.awayTeamAbbr ?? teamAbbr(awayKey, away?.abbr);
+  const homeAbbr = game.homeTeamAbbr ?? teamAbbr(homeKey, home?.abbr);
   const showScores = shouldDisplayScores({
     status: game.status,
     homeScore: game.homeScore,
@@ -249,8 +249,8 @@ export function GameScoreCard({
     awayScore,
   });
 
-  const awayAbbr = teamAbbr(awayKey, away?.abbr);
-  const homeAbbr = teamAbbr(homeKey, home?.abbr);
+  const awayAbbr = game.awayTeamAbbr ?? teamAbbr(awayKey, away?.abbr);
+  const homeAbbr = game.homeTeamAbbr ?? teamAbbr(homeKey, home?.abbr);
   const hasStarters = awayStarters.length > 0 || homeStarters.length > 0;
   const watch = broadcastHint(game);
 

@@ -18,12 +18,14 @@ export async function generateMetadata({ params }: GamePageProps) {
   const { gameId } = await params;
   const shell = await getGameShell(gameId);
   if (!shell) return { title: "Game | Basketball Analytics" };
-  const awayBrand = resolveTeamBrand(gameSideBrandKey(shell.game, "away"));
-  const homeBrand = resolveTeamBrand(gameSideBrandKey(shell.game, "home"));
   const away =
-    awayBrand?.abbr ?? shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
+    shell.game.awayTeamAbbr ??
+    resolveTeamBrand(gameSideBrandKey(shell.game, "away"))?.abbr ??
+    shell.game.awayTeamId;
   const home =
-    homeBrand?.abbr ?? shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
+    shell.game.homeTeamAbbr ??
+    resolveTeamBrand(gameSideBrandKey(shell.game, "home"))?.abbr ??
+    shell.game.homeTeamId;
   return {
     title: `${away} @ ${home} | Basketball Analytics`,
   };

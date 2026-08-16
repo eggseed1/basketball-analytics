@@ -195,14 +195,16 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                         <span className="inline-flex items-center gap-1">
                           <TeamLogo teamKey={awayKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {resolveTeamBrand(awayKey)?.abbr ?? awayKey}
+                            {game.awayTeamAbbr ??
+                              resolveTeamBrand(awayKey)?.abbr ??
+                              awayKey}
                           </span>
                         </span>
                         <span className="text-muted-foreground">@</span>
                         <span className="inline-flex items-center gap-1">
                           <TeamLogo teamKey={homeKey} size="xs" />
                           <span className="text-xs font-semibold uppercase">
-                            {homeBrand?.abbr ?? homeKey}
+                            {game.homeTeamAbbr ?? homeBrand?.abbr ?? homeKey}
                           </span>
                         </span>
                       </Link>

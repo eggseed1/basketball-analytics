@@ -17,7 +17,7 @@ import {
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
 import { normalizeEspnStatusType } from "@/lib/game-status";
 import { mapEspnBroadcasts } from "@/lib/game-watch";
-import { normalizeGameTeamSide } from "@/lib/game-team-identity";
+import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
 
 export interface EspnStatCategorySchema {
   name: string;
@@ -456,7 +456,7 @@ export function transformEspnScheduleEvent(
     name: away.team?.displayName,
   });
 
-  return {
+  return applyHistoricalTeamEraToGame({
     id: event.id,
     season,
     gameDate: (event.date ?? "").slice(0, 10),
@@ -482,7 +482,7 @@ export function transformEspnScheduleEvent(
     ...(displayClock ? { displayClock } : {}),
     ...(broadcasts.length ? { broadcasts } : {}),
     retrievedAt: new Date().toISOString(),
-  };
+  });
 }
 
 export interface EspnBoxScoreAthlete {

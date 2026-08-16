@@ -21,7 +21,7 @@ import {
   trueShootingPct,
 } from "@/data/providers/nba/compute-advanced";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
-import { normalizeGameTeamSide } from "@/lib/game-team-identity";
+import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
 
 export function transformBdlTeam(raw: BdlTeam): Team {
   const fullName = raw.full_name ?? raw.name ?? String(raw.id);
@@ -76,7 +76,7 @@ export function transformBdlGame(raw: BdlGame): Game {
     abbr: raw.visitor_team.abbreviation,
     name: raw.visitor_team.full_name ?? raw.visitor_team.name,
   });
-  return {
+  return applyHistoricalTeamEraToGame({
     id: String(raw.id),
     season,
     gameDate: (raw.date ?? "").slice(0, 10),
@@ -93,7 +93,7 @@ export function transformBdlGame(raw: BdlGame): Game {
     awayScore: raw.visitor_team_score ?? 0,
     gameType: raw.postseason ? "playoff" : "regular",
     status,
-  };
+  });
 }
 
 export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
@@ -153,7 +153,7 @@ export function transformBdlBoxScore(raw: BdlBoxScore): GameBoxScore {
     abbr: awayRaw.abbreviation,
     name: awayRaw.full_name ?? awayRaw.name,
   });
-  const game: Game = {
+  const game: Game = applyHistoricalTeamEraToGame({
     id: `${raw.date}-${homeRaw.id}-${awayRaw.id}`,
     season,
     gameDate: raw.date.slice(0, 10),
@@ -170,7 +170,7 @@ export function transformBdlBoxScore(raw: BdlBoxScore): GameBoxScore {
     awayScore: raw.visitor_team_score ?? 0,
     gameType: raw.postseason ? "playoff" : "regular",
     status: mapStatus(raw.status),
-  };
+  });
 
   const players: PlayerGame[] = [
     ...raw.home_team.players.map((line, index) =>

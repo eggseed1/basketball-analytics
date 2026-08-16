@@ -40,6 +40,8 @@
     "test:team-assets": "tsx scripts/test-team-assets.ts",
     "test:transaction-player-resolve": "tsx scripts/test-transaction-player-resolve.ts",
     "test:team-identity": "tsx scripts/test-team-identity.ts",
+    "test:historical-team-era": "tsx scripts/test-historical-team-era.ts",
+    "report:historical-team-identity": "tsx scripts/report-historical-team-identity.ts",
     "test:teams-catalog-resilience": "tsx scripts/test-teams-catalog-resilience.ts",
     "test:player-identity-preview": "tsx scripts/test-player-identity-preview.ts",
     "test:leaderboard-context-panel": "tsx scripts/test-leaderboard-context-panel.ts",

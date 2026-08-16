@@ -144,6 +144,38 @@ canonical team identity map            → source = canonical-fallback
 - Provider outage ≠ “team not found” — invalid `?team=` tokens still resolve
   through `resolveCanonicalTeam` as unresolved.
 
+### Historical team-era identity (Explore Games / Game Lab)
+
+Provider normalization answers: *same franchise across ESPN vs BDL?*
+
+Team-era identity answers: *what was this franchise called in this season?*
+
+```
+canonical franchise id (ESPN) + season
+        →
+team-era map (SEA SuperSonics, NJN, Bullets, …)
+        →
+Game.homeTeamAbbr / homeTeamName (display)
+```
+
+A 1969–70 SuperSonics game must never render as Oklahoma City Thunder merely
+because the modern franchise id is OKC. Filters may still use the franchise id
+(`?team=OKC` / `?team=SEA` both resolve to canonical `25`).
+
+Game Lab / Explore brand keys prefer **era abbreviation** over franchise id so
+logos do not resolve SEA→OKC CDN marks. When no historical logo exists, UI
+falls back to a text pill (abbr) rather than inventing era art.
+
+Team links on Game Lab use `/teams/{canonicalId}?season={season}` — franchise
+route with season context, while the visible label stays team-era.
+
+Known gaps (documented, not invented):
+- Original 1988–02 Charlotte Hornets continuity is tabulated under ESPN `3`
+  (NOP lineage); some BDL rows may land on ESPN `30` with Hornets naming.
+
+See `src/data/identity/team-era.ts`, `npm run test:historical-team-era`,
+`npm run report:historical-team-identity`.
+
 See `src/data/queries/teams-catalog.ts` and
 `npm run test:teams-catalog-resilience`.
 
@@ -175,6 +207,23 @@ unavailable notice                   → source = unavailable
 ```
 
 Cached scores are never presented as live. Home week strip degrades in-place.
+
+### Production baseline (provider guard + known risks)
+
+When `DATA_PROVIDER=nba` (production):
+
+```
+live ESPN → cached real data → honest unavailable
+```
+
+Never silently substitute local sample rows for a live ESPN outage
+(`test:production-provider-guard`).
+
+Surfaces hardened in this baseline: Explore team catalog, Explore player board,
+scoreboard/Gamefeed, ASK recent-store stability, historical team-era display.
+
+Still ESPN-dependent without the same soft-fail depth (separate audits):
+player careers, player search, standings, transactions, box scores.
 
 ### Filtering rule
 
