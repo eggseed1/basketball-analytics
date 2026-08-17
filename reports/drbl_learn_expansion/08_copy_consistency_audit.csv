@@ -1,0 +1,9 @@
+term,surfaces_checked,risk,notes
+R1,"player first view, Learn, ASK, glossary",LOW,Not required on first view; Learn/r1 deeper
+replacement,Wins Above R1 copy,LOW,Explicitly not conventional replacement / not WAR
+WAR,public labels,LOW,Wins Above R1 never called traditional WAR
+off-ball,DRBL-LN Learn,LOW,LN ≠ proven off-ball; UIR research-only
+gravity,DRBL-B Learn/glossary,LOW,Not optical tracking gravity
+additivity,P/LN/B pages + Advanced,LOW,P+LN+B ≠ DRBL/100 stated
+shrinkage,DRBL/100 deep mode,LOW,Plain first; k=1600 in technical
+uncertainty,limitations only,LOW,Not shipped as public confidence UI

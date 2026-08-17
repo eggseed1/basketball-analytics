@@ -1,0 +1,15 @@
+topic,route,kind,exists
+DRBL overview,/learn/drbl,portal,YES
+DRBL/100,/learn/drbl-100,guide,YES
+Wins Above R1,/learn/wins-above-r1,guide,YES
+DRBL-O,/learn/drbl-o,guide,YES
+DRBL-D,/learn/drbl-d,guide,YES
+DRBL-P,/learn/drbl-p,guide,YES
+DRBL-LN,/learn/drbl-ln,guide,YES
+DRBL-B,/learn/drbl-b,guide,YES
+R1,/learn/r1,guide,YES
+R1 Points,/learn/r1-points,guide,YES
+How DRBL works,/learn/how-drbl-works,topic,YES
+Validation,/learn/drbl-validation,topic,YES
+Historical data,/learn/drbl-historical-data,topic,YES
+Limitations,/learn/drbl-limitations,topic,YES

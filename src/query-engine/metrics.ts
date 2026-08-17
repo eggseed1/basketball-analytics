@@ -6,6 +6,17 @@ function href(id: string): string | undefined {
   return learnHrefFor(id) ?? undefined;
 }
 
+const VOCAB_TO_CONCEPT: Record<(typeof DRBL_VOCABULARY)[number]["id"], string> = {
+  drbl100: "drbl",
+  r1_points: "r1_points",
+  r1_win_eq: "r1_win_eq",
+  drbl_o: "drbl_o",
+  drbl_d: "drbl_d",
+  drbl_p: "drbl_p",
+  drbl_ln: "drbl_ln",
+  drbl_b: "drbl_b",
+};
+
 function drblMetric(
   id: AskMetricId,
   vocabId: (typeof DRBL_VOCABULARY)[number]["id"],
@@ -17,7 +28,7 @@ function drblMetric(
     label: v.label,
     synonyms: [...v.synonyms],
     scope: "player_season",
-    learnHref: href("drbl") ?? "/learn/drbl",
+    learnHref: href(VOCAB_TO_CONCEPT[vocabId]) ?? "/learn/drbl",
     format: "impact",
     ...extra,
   };

@@ -145,6 +145,28 @@ function main() {
   assert.equal(a, b);
   assert.equal(a, c);
 
+  assert.equal(learnHrefFor("drbl"), "/learn/drbl-100");
+  assert.equal(learnHrefFor("r1_win_eq"), "/learn/wins-above-r1");
+  assert.equal(learnHrefFor("drbl_p"), "/learn/drbl-p");
+  assert.ok(resolveLearnPage("drbl")?.kind === "portal");
+  for (const slug of [
+    "drbl-100",
+    "wins-above-r1",
+    "drbl-o",
+    "drbl-d",
+    "drbl-p",
+    "drbl-ln",
+    "drbl-b",
+    "r1",
+    "r1-points",
+    "how-drbl-works",
+    "drbl-validation",
+    "drbl-historical-data",
+    "drbl-limitations",
+  ]) {
+    assert.ok(resolveLearnPage(slug), `missing DRBL learn page ${slug}`);
+  }
+
   console.log("test-learn-explanations: all assertions passed");
 }
 

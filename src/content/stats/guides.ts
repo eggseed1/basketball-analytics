@@ -3,6 +3,8 @@
  * Plain copy is short and concrete. Deep mode covers formulas and analyst craft.
  */
 
+import { DRBL_STAT_GUIDES } from "./drbl-guides";
+
 export type StatGuide = {
   id: string;
   slug: string;
@@ -557,6 +559,7 @@ export const STAT_GUIDES: StatGuide[] = [
       ],
     },
   },
+  ...DRBL_STAT_GUIDES,
 ];
 
 export function getStatGuide(slug: string): StatGuide | undefined {

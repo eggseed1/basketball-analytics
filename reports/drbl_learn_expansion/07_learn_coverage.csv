@@ -1,0 +1,10 @@
+field,public_label,short_explanation,tooltip,Learn_destination,covered
+drbl100,DRBL/100,YES,YES,/learn/drbl-100,YES
+r1WinEquivalents,Wins Above R1,YES,YES,/learn/wins-above-r1,YES
+drblO,Offense,YES,YES,/learn/drbl-o,YES
+drblD,Defense,YES,YES,/learn/drbl-d,YES
+drblP,DRBL-P,YES,YES,/learn/drbl-p,YES
+drblLn,DRBL-LN,YES,YES,/learn/drbl-ln,YES
+drblB,DRBL-B,YES,YES,/learn/drbl-b,YES
+r1,R1,YES,YES,/learn/r1,YES
+r1Points,R1 Points,YES,YES,/learn/r1-points,YES

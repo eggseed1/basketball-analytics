@@ -1,0 +1,32 @@
+﻿M17c PROVENANCE COMMIT GRAPH
+============================
+Generated: 2026-08-17T18:50:01.5113042-04:00
+
+Commits:
+  a229b076f85efe88c5e980b43cd1d471a60ac34d  product: complete DRBL integration and provider identity routing
+  5614ce3e54d46354adc41fc269a37a07db49d896  product: fix temporal player-season team branding (P17.3)
+  4e998d0                                  docs(p17.3): record P17_3_FINAL_COMMIT as M17c starting tree
+  6bc55d7a71937615de8e1951cda85b640b93ce52  product: prefer Wins Above R1 over R1 Points on public surfaces
+
+Ancestry checks (merge-base --is-ancestor):
+  is 5614ce3 descendant of a229?     YES (exit 0)
+  is 6bc55d7 descendant of 5614ce3?  YES (exit 0)
+  is 6bc55d7 descendant of a229?     YES (exit 0)
+
+Linear chain:
+  a229b076
+      |
+      v
+  5614ce3   (P17.3 temporal player-season team branding)
+      |
+      v
+  4e998d0   (docs: supersede M17c start pointer in docs)
+      |
+      v
+  6bc55d7   (R1 public-value simplification)
+
+LATEST_PRE_M17C_PRODUCT_COMMIT = 6bc55d7a71937615de8e1951cda85b640b93ce52
+  Contains BOTH P17.3 (via ancestry) AND R1 public simplification (tip).
+
+M17c reported starting commit = a229b076f85efe88c5e980b43cd1d471a60ac34d
+  (ancestor of LATEST_PRE_M17C_PRODUCT_COMMIT; product-only commits sit between)

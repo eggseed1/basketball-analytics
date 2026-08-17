@@ -1,0 +1,11 @@
+{
+  "milestone": "drbl_simple_surface_deep_learn",
+  "frozenAt": "2026-08-17T22:44:06.968Z",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "DRBL_VALUES_CHANGED": "NO",
+  "R1_VALUES_CHANGED": "NO",
+  "P1_POINTS_PER_WIN": 37.490662671779255,
+  "k": 1600,
+  "designReference": "origin/drbl-ia-and-ask@7e764ceb5c834a19696dad84ed6696e7e3289a6a",
+  "M17C_STARTED": "NO"
+}

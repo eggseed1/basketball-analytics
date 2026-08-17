@@ -250,7 +250,7 @@ export function buildPlayerPercentileMetrics(
         push({
           id: "drblO",
           category: "value",
-          label: "DRBL-O",
+          label: "Offense",
           value: seasonStats.drblO,
           values: oPool,
           display: formatNumber(seasonStats.drblO, 1),
@@ -270,12 +270,73 @@ export function buildPlayerPercentileMetrics(
         push({
           id: "drblD",
           category: "value",
-          label: "DRBL-D",
+          label: "Defense",
           value: seasonStats.drblD,
           values: dPool,
           display: formatNumber(seasonStats.drblD, 1),
           series: careerSeries((r) =>
             hasValidDrblEstimate(r) ? r.drblD : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    // Diagnostics live under Advanced — not first-view Value/Overview.
+    if (Number.isFinite(seasonStats.drblP)) {
+      const pPool = pool
+        .filter(hasValidDrblEstimate)
+        .map((p) => p.drblP)
+        .filter((n): n is number => Number.isFinite(n));
+      if (pPool.length) {
+        push({
+          id: "drblP",
+          category: "advanced",
+          label: "DRBL-P",
+          value: seasonStats.drblP,
+          values: pPool,
+          display: formatNumber(seasonStats.drblP, 1),
+          series: careerSeries((r) =>
+            hasValidDrblEstimate(r) ? r.drblP : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    if (Number.isFinite(seasonStats.drblLn)) {
+      const lnPool = pool
+        .filter(hasValidDrblEstimate)
+        .map((p) => p.drblLn)
+        .filter((n): n is number => Number.isFinite(n));
+      if (lnPool.length) {
+        push({
+          id: "drblLn",
+          category: "advanced",
+          label: "DRBL-LN",
+          value: seasonStats.drblLn,
+          values: lnPool,
+          display: formatNumber(seasonStats.drblLn, 1),
+          series: careerSeries((r) =>
+            hasValidDrblEstimate(r) ? r.drblLn : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    if (Number.isFinite(seasonStats.drblB)) {
+      const bPool = pool
+        .filter(hasValidDrblEstimate)
+        .map((p) => p.drblB)
+        .filter((n): n is number => Number.isFinite(n));
+      if (bPool.length) {
+        push({
+          id: "drblB",
+          category: "advanced",
+          label: "DRBL-B",
+          value: seasonStats.drblB,
+          values: bPool,
+          display: formatNumber(seasonStats.drblB, 1),
+          series: careerSeries((r) =>
+            hasValidDrblEstimate(r) ? r.drblB : null
           ),
           interpretation: "higher_is_better",
         });

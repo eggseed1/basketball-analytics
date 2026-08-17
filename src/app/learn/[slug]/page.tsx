@@ -21,7 +21,7 @@ export async function generateMetadata({
 }) {
   const { slug } = await params;
   const page = resolveLearnPage(slug);
-  if (!page) return { title: "Learn" };
+  if (!page || page.kind === "portal") return { title: "Learn" };
   if (page.kind === "guide") {
     return { title: page.guide.shortName, description: page.guide.blurb };
   }
@@ -39,6 +39,7 @@ export default async function LearnStatPage({
   const { slug } = await params;
   const page = resolveLearnPage(slug);
   if (!page) notFound();
+  if (page.kind === "portal") notFound();
 
   const concept = getLearnConcept(
     page.kind === "guide" ? page.guide.id : page.topic.id
@@ -54,7 +55,7 @@ export default async function LearnStatPage({
     .slice(0, 8)
     .map((s) => {
       const resolved = resolveLearnPage(s);
-      if (!resolved) return null;
+      if (!resolved || resolved.kind === "portal") return null;
       const label =
         resolved.kind === "guide"
           ? resolved.guide.shortName

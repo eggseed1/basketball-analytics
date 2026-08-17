@@ -1,0 +1,10 @@
+{
+  "current_drbl_mismatches": 0,
+  "current_r1_mismatches": 0,
+  "current_wins_above_r1_mismatches": 0,
+  "historical_mismatches": 0,
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "DRBL_VALUES_CHANGED": "NO",
+  "R1_VALUES_CHANGED": "NO",
+  "notes": "UI/Learn-only milestone; no Approach-B / k / P1 / precomputed overlay edits."
+}

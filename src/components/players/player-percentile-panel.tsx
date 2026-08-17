@@ -17,6 +17,10 @@ import {
   type PercentileCategory,
   type PercentileMetric,
 } from "@/lib/player-percentile-metrics";
+import {
+  gradeFromPercentile,
+  type GradeBand,
+} from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
 
 export type { StatComp, CareerSeriesPoint };
@@ -25,21 +29,14 @@ export type {
   PercentileCategory,
   PercentileMetric,
 };
-
-export type GradeBand =
-  | "poor"
-  | "below"
-  | "average"
-  | "good"
-  | "great"
-  | "elite";
+export { gradeFromPercentile, type GradeBand };
 
 const CATEGORY_META: Array<{
   id: PercentileCategory;
   label: string;
   blurb: string;
 }> = [
-  { id: "value", label: "Value", blurb: "Overall impact" },
+  { id: "value", label: "Overview", blurb: "How good — rate, value, O/D" },
   { id: "offense", label: "Offense", blurb: "Creation & scoring volume" },
   { id: "shooting", label: "Shooting", blurb: "Efficiency" },
   { id: "defense", label: "Defense", blurb: "Stocks & impact" },
@@ -51,7 +48,7 @@ const CATEGORY_META: Array<{
   {
     id: "advanced",
     label: "Advanced",
-    blurb: "Normalized rates & ratings when available",
+    blurb: "DRBL diagnostics & ratings when available",
   },
 ];
 
@@ -59,19 +56,6 @@ function shortSeason(season: string) {
   const m = /^(\d{4})-(\d{2})$/.exec(season);
   if (!m) return season;
   return `${m[1].slice(2)}-${m[2]}`;
-}
-
-export function gradeFromPercentile(percentile: number): {
-  band: GradeBand;
-  label: string;
-} {
-  const p = Math.max(0, Math.min(100, percentile));
-  if (p < 20) return { band: "poor", label: "Poor" };
-  if (p < 40) return { band: "below", label: "Below avg" };
-  if (p < 55) return { band: "average", label: "Average" };
-  if (p < 75) return { band: "good", label: "Good" };
-  if (p < 90) return { band: "great", label: "Great" };
-  return { band: "elite", label: "Elite" };
 }
 
 const BAND_FILL: Record<GradeBand, string> = {

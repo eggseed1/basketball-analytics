@@ -1,0 +1,10 @@
+metric,status,display_name,short_definition,Learn_route,unit,higher_is_better,tier
+drbl100,PRIMARY,DRBL/100,Estimated impact per 100 possessions — DRBL’s primary ability-rate ranking number.,/learn/drbl-100,rate_or_reference,YES,primary
+r1WinEquivalents,PRIMARY,Wins Above R1,"How much season value the player accumulated, in win-equivalent units. Not traditional WAR.",/learn/wins-above-r1,season_value,YES,primary
+drblO,DIAGNOSTIC,Offense,DRBL’s offensive split (DRBL-O) — how much value came on offense vs the role-matched reference. Not a substitute for DRBL/100.,/learn/drbl-o,rate_or_reference,YES,deeper
+drblD,DIAGNOSTIC,Defense,DRBL’s defensive split (DRBL-D) — how much value came on defense vs the role-matched reference. Not a substitute for DRBL/100.,/learn/drbl-d,rate_or_reference,YES,deeper
+drblP,DIAGNOSTIC,DRBL-P,Diagnostic possession attribution. Does not sum with LN and B into DRBL/100.,/learn/drbl-p,rate_or_reference,YES,deeper
+drblLn,DIAGNOSTIC,DRBL-LN,Diagnostic lineup-context signal. Not proven off-ball value; does not sum with P and B into DRBL/100.,/learn/drbl-ln,rate_or_reference,YES,deeper
+drblB,DIAGNOSTIC,DRBL-B,Diagnostic box/behavior component — not optical tracking. Does not sum with P and LN into DRBL/100.,/learn/drbl-b,rate_or_reference,YES,deeper
+r1,ADVANCED / ACCOUNTING,R1,DRBL’s contextual role-matched reference baseline — what “Above R1” compares against. Not conventional replacement.,/learn/r1,rate_or_reference,YES,deeper
+r1Points,ADVANCED / ACCOUNTING,R1 Points,Advanced accounting: point-equivalent attribution above R1. Public boards prefer Wins Above R1 (same ordering).,/learn/r1-points,season_value,YES,deeper

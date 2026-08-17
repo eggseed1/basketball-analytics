@@ -33,8 +33,7 @@ import {
 } from "@/data/queries";
 import { getPlayerSeasonCached } from "@/data/queries/request-cache";
 import type { PlayerSeason } from "@/data/types";
-import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
-import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
+import { formatMinutes, formatNumber, formatOrdinal, formatPct } from "@/lib/format";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { buildPlayerPercentileMetrics } from "@/lib/player-percentile-metrics";
@@ -56,6 +55,14 @@ import { isDrblSeason } from "@/data/drbl/season-registry";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { resolvePlayerIdentity } from "@/data/identity/player-identity";
 import Link from "next/link";
+import { gradeFromPercentile } from "@/lib/player-grade";
+
+function formatSignedImpact(value: number, digits = 1): string {
+  const abs = formatNumber(Math.abs(value), digits);
+  if (value > 0) return `+${abs}`;
+  if (value < 0) return `-${abs}`;
+  return abs;
+}
 
 export type PlayerCoreIslandProps = {
   playerId: string;
@@ -222,21 +229,25 @@ export async function PlayerCoreIsland({
 
   const careerAvg = careerSeasonAverages(careerDeduped);
 
+  const identitySeasonLabel = (() => {
+    if (!seasonStats) return season;
+    if (isMultiTeamSeasonRow(seasonStats)) {
+      return `${season} · ${multiTeamDisplayLabel(seasonStats)}`;
+    }
+    const key = brandableTeamKeyFromRow(seasonStats);
+    const abbr =
+      (useHistoricalBranding && key
+        ? resolveHistoricalTeamBrand(key, season, "era")?.abbreviation
+        : null) ??
+      resolveTeamBrand(key)?.abbr ??
+      seasonStats.teamName;
+    return `${season} · ${abbr}`;
+  })();
+
   const resumeBits = [
-    headlineMetric
-      ? `${Math.round(headlineMetric.percentile)}th pct · ${headlineMetric.label}`
-      : null,
+    identitySeasonLabel,
     careerResume.peak ? `Peak ${careerResume.peak.season}` : null,
-    careerResume.prime
-      ? careerResume.prime.contiguousFrom && careerResume.prime.contiguousTo
-        ? `Prime ${careerResume.prime.contiguousFrom}→${careerResume.prime.contiguousTo}`
-        : `Prime ${careerResume.prime.seasonCount} seasons`
-      : null,
-    careerResume.longevity
-      ? `${careerResume.longevity.seasonCount} longevity seasons`
-      : careerChrono.length
-        ? `${careerChrono.length} seasons`
-        : null,
+    careerChrono.length ? `${careerChrono.length} seasons` : null,
   ].filter(Boolean);
 
   const rowTeamMark = (teamId: string, rowSeason: string) => {
@@ -281,7 +292,7 @@ export async function PlayerCoreIsland({
               </p>
             ) : null}
 
-            {/* DRBL Snapshot — primary analytical card */}
+            {/* DRBL Snapshot — simple surface: interpretation + two headlines + O/D */}
             <div
               className={
                 resumeBits.length
@@ -291,113 +302,129 @@ export async function PlayerCoreIsland({
             >
               <div className="mb-2 flex items-baseline justify-between gap-2">
                 <h2 className="text-[13px] font-bold tracking-tight">
-                  DRBL Snapshot
+                  DRBL
                 </h2>
                 <Link
                   href="/learn/drbl"
                   className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
-                  Learn DRBL →
+                  Learn →
                 </Link>
               </div>
               {hasDrbl && seasonStats ? (
-                <>
-                  <p className="mb-3 text-[11px] text-muted-foreground">
-                    Ability rate vs realized season value — DRBL/100 ranks
-                    ability; Wins Above R1 is accumulated value.
-                  </p>
-                  <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                    <MiniStat
-                      label="DRBL/100"
-                      value={formatNumber(seasonStats.drbl100, 1)}
-                    />
-                    <MiniStat
-                      label="Rank"
-                      value={
-                        seasonStats.drblRank != null
-                          ? `#${seasonStats.drblRank}`
-                          : "—"
-                      }
-                    />
-                    <MiniStat
-                      label="Percentile"
-                      value={
-                        drbl100Metric?.showPercentile
-                          ? `${Math.round(drbl100Metric.percentile)}th`
-                          : "—"
-                      }
-                    />
-                    <MiniStat
-                      label="Wins Above R1"
-                      value={
-                        seasonStats.r1WinEquivalents != null
-                          ? formatNumber(seasonStats.r1WinEquivalents, 1)
-                          : "—"
-                      }
-                    />
-                  </dl>
-                  <details className="mt-3 text-[11px] text-muted-foreground">
-                    <summary className="cursor-pointer font-medium text-foreground/80">
-                      How this is calculated · R1 Points
-                    </summary>
-                    <p className="mt-1.5 leading-relaxed">
-                      Wins Above R1 = R1 Points ÷ {P1_POINTS_PER_WIN} (frozen
-                      P1). R1 Points are the underlying point-equivalent
-                      accounting quantity — same ranking as Wins Above R1.
-                      Not traditional WAR.
-                    </p>
-                    <dl className="mt-2 grid grid-cols-2 gap-2">
-                      <MiniStat
-                        label="R1 Points"
-                        value={
-                          seasonStats.r1Points != null
-                            ? formatNumber(seasonStats.r1Points, 1)
-                            : "—"
-                        }
-                      />
-                      <MiniStat
-                        label="P1"
-                        value={formatNumber(P1_POINTS_PER_WIN, 3)}
-                      />
-                    </dl>
-                  </details>
-                  <details className="mt-3 text-[11px] text-muted-foreground">
-                    <summary className="cursor-pointer font-medium text-foreground/80">
-                      Diagnostics P / LN / B
-                    </summary>
-                    <p className="mt-1.5 leading-relaxed">
-                      Scale warning: P, LN, and B are non-additive diagnostics —
-                      they do not sum to DRBL/100. DRBL-O and DRBL-D are halves of
-                      P, not of DRBL/100.
-                    </p>
-                    <dl className="mt-2 grid grid-cols-3 gap-2">
-                      <MiniStat
-                        label="DRBL-P"
-                        value={formatNumber(seasonStats.drblP, 1)}
-                      />
-                      <MiniStat
-                        label="DRBL-LN"
-                        value={formatNumber(seasonStats.drblLn, 1)}
-                      />
-                      <MiniStat
-                        label="DRBL-B"
-                        value={formatNumber(seasonStats.drblB, 1)}
-                      />
-                    </dl>
-                  </details>
-                </>
+                (() => {
+                  const pct = drbl100Metric?.showPercentile
+                    ? Math.round(drbl100Metric.percentile)
+                    : null;
+                  const grade =
+                    pct != null ? gradeFromPercentile(pct) : null;
+                  return (
+                    <>
+                      {grade ? (
+                        <p className="text-[18px] font-bold tracking-tight leading-tight">
+                          {grade.label}
+                        </p>
+                      ) : null}
+                      <p className="mt-1 text-[12px] text-muted-foreground">
+                        Estimated impact per 100 possessions
+                        {pct != null ? (
+                          <>
+                            {" "}
+                            · {formatOrdinal(pct)} percentile
+                          </>
+                        ) : null}
+                      </p>
+                      <dl className="mt-3 grid grid-cols-2 gap-3">
+                        <div>
+                          <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            <Link
+                              href="/learn/drbl-100"
+                              className="underline-offset-2 hover:underline"
+                            >
+                              DRBL/100
+                            </Link>
+                          </dt>
+                          <dd className="mt-0.5 text-[22px] font-bold tabular-nums leading-none">
+                            {formatSignedImpact(seasonStats.drbl100, 1)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            <Link
+                              href="/learn/wins-above-r1"
+                              className="underline-offset-2 hover:underline"
+                            >
+                              Wins Above R1
+                            </Link>
+                          </dt>
+                          <dd className="mt-0.5 text-[22px] font-bold tabular-nums leading-none">
+                            {seasonStats.r1WinEquivalents != null
+                              ? formatSignedImpact(
+                                  seasonStats.r1WinEquivalents,
+                                  1
+                                )
+                              : "—"}
+                          </dd>
+                        </div>
+                      </dl>
+                      <dl className="mt-3 grid grid-cols-2 gap-3 border-t border-border/60 pt-3">
+                        <div>
+                          <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            <Link
+                              href="/learn/drbl-o"
+                              className="underline-offset-2 hover:underline"
+                            >
+                              Offense
+                            </Link>
+                          </dt>
+                          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums">
+                            {formatSignedImpact(seasonStats.drblO, 1)}
+                          </dd>
+                        </div>
+                        <div>
+                          <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                            <Link
+                              href="/learn/drbl-d"
+                              className="underline-offset-2 hover:underline"
+                            >
+                              Defense
+                            </Link>
+                          </dt>
+                          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums">
+                            {formatSignedImpact(seasonStats.drblD, 1)}
+                          </dd>
+                        </div>
+                      </dl>
+                      <p className="mt-3 text-[12px]">
+                        <Link
+                          href="/learn/how-drbl-works"
+                          className="font-semibold text-foreground underline-offset-2 hover:underline"
+                        >
+                          Why does DRBL rate him this way? →
+                        </Link>
+                      </p>
+                    </>
+                  );
+                })()
               ) : (
                 <p className="text-[13px] leading-relaxed text-muted-foreground">
                   {drblEmptyReason === "UNSUPPORTED"
-                    ? `DRBL is not published for ${season} (registry unsupported). Box-score stats may still load.`
+                    ? `DRBL is not published for ${season} yet. Box-score stats may still load.`
                     : drblEmptyReason === "IDENTITY_UNRESOLVED"
-                      ? "DRBL is available for this season, but this player id is not resolved to an NBA Stats id for the precomputed overlay (identity unresolved)."
-                      : `DRBL estimate missing for this player-season in the precomputed overlay.`}
+                      ? "DRBL is available for this season, but this player id is not resolved for the precomputed overlay."
+                      : `DRBL estimate missing for this player-season.`}{" "}
+                  <Link
+                    href="/learn/drbl-historical-data"
+                    className="font-semibold underline-offset-2 hover:underline"
+                  >
+                    Why? →
+                  </Link>
                 </p>
               )}
             </div>
 
-            {headlineContext ? (
+            {/* Non-DRBL headline only — avoid duplicating DRBL/100 from the snapshot */}
+            {headlineContext && !(hasDrbl && headlineMetric?.id === "drbl100") ? (
               <div className="mt-5 border-t border-border pt-4">
                 <StatDisclosure
                   label={headlineMetric?.label ?? "Season value"}

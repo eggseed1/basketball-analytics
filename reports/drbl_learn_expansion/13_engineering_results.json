@@ -1,0 +1,19 @@
+{
+  "tests": {
+    "test-learn-explanations": "PASS",
+    "test-learn-drbl-page": "PASS",
+    "test-player-percentile-metrics": "PASS",
+    "test-r1-wins-sort-equivalence": "PASS",
+    "test-player-destination-merge": "PASS",
+    "test-player-team-context": "PASS",
+    "test-compare-drbl": "PASS",
+    "test-explore-players-board": "PASS",
+    "report-drbl-learn-expansion": "PASS (9/9 coverage)"
+  },
+  "typecheck": "PASS",
+  "learn_coverage": "9/9 public keep-YES metrics with Learn destinations",
+  "nav": "Learn routes registered via STAT_GUIDES + LEARN_TOPICS + /learn/drbl portal",
+  "build": "PASS",
+  "MODEL_CHANGED": "NO",
+  "M17C_STARTED": "NO"
+}

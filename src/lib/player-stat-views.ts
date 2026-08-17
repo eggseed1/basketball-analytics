@@ -595,12 +595,12 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   },
   {
     key: "drblO",
-    label: "DRBL-O",
+    label: "Offense",
     format: (r) => formatNumber(r.drblO, 1),
   },
   {
     key: "drblD",
-    label: "DRBL-D",
+    label: "Defense",
     format: (r) => formatNumber(r.drblD, 1),
   },
   {

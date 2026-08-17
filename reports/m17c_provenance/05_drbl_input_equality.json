@@ -1,0 +1,11 @@
+{
+  "manifest_rows": 1743,
+  "players_compared_inter_commit": 2738,
+  "DRBL_INPUT_MISMATCHES": 0,
+  "teamId_mismatches_inter_commit": 0,
+  "r1Points_mismatches_inter_commit": 0,
+  "sealed_DRBL_pred_vs_a229_precomputed_mismatches": 0,
+  "max_abs_residual": 0,
+  "missing_players_in_precomputed": 0,
+  "RESULT": "EQUAL"
+}

@@ -966,6 +966,151 @@ export const LEARN_TOPICS: LearnTopic[] = [
     seeInAction: [{ label: "Team assets", href: "/teams/bos" }],
     sources: ["docs/trade-builder-architecture.md"],
   },
+
+  // --- DRBL rabbit hole (systems / methodology) ---
+  {
+    id: "how_drbl_works",
+    slug: "how-drbl-works",
+    name: "How DRBL works",
+    shortName: "How DRBL works",
+    category: "systems",
+    oneSentence:
+      "DRBL follows a possession from expected scoring value through observable actions, attribution, shrinkage, and season totals.",
+    whyItMatters: [
+      "The player page answers “how good?” without teaching the model — this page is for fans who want the story of a possession.",
+      "Formulas make more sense after the basketball sequence is clear.",
+    ],
+    howToInterpret: [
+      "A possession begins with an expected scoring value.",
+      "Actions (shots, passes, turnovers, fouls, and more) change that expectation.",
+      "DRBL attributes observable changes in expected value to players when the public play-by-play supports it.",
+      "Attributed value accumulates; ability rates are shrunk for small samples; season value is the realized total above R1.",
+    ],
+    howDrblUses: [
+      "Approach-B attribution vs a role-matched R1 expected-points baseline.",
+      "Validated DRBL/100 = EB1600 shrinkage of the raw ability rate (k = 1600, prior mean 0).",
+      "Wins Above R1 converts accumulated R1 Points by the frozen P1 constant.",
+    ],
+    calculation: [
+      "Possession begins → expected scoring value is set.",
+      "Actions occur → expected value changes.",
+      "Credit is attributed for observable contributions.",
+      "Possessions accumulate into a raw ability rate.",
+      "Small samples are shrunk toward zero (EB1600).",
+      "Season value accumulates as R1 Points → Wins Above R1.",
+    ],
+    caveats: [
+      "Public PBP does not observe every spatial or off-ball action.",
+      "Attribution is not a full causal claim about roster replacement.",
+      "Diagnostics P / LN / B do not rebuild DRBL/100 by addition.",
+    ],
+    relatedIds: ["drbl", "r1_win_eq", "drbl_p", "r1", "drbl_validation", "drbl_limitations"],
+    seeInAction: [
+      { label: "DRBL overview", href: "/learn/drbl" },
+      { label: "Explore by DRBL/100", href: "/explore/players?sort=drbl100" },
+    ],
+    sources: ["/learn/drbl", "src/content/stats/drbl-guides.ts"],
+  },
+  {
+    id: "drbl_validation",
+    slug: "drbl-validation",
+    name: "DRBL validation",
+    shortName: "Validation",
+    category: "systems",
+    oneSentence:
+      "Does DRBL actually work? Reserved and out-of-time tests (including M16j / M17b lineage) check predictive usefulness without claiming external superiority.",
+    whyItMatters: [
+      "Casual fans deserve to know estimates were stress-tested, not invented for the UI.",
+      "Advanced users need the research trail without treating unfinished external comparisons as product claims.",
+    ],
+    howToInterpret: [
+      "Reserved testing holds out data the model did not tune against.",
+      "Out-of-time testing checks whether earlier seasons help later ones.",
+      "M16j and M17b are research milestones in that lineage — not public ranking knobs.",
+    ],
+    howDrblUses: [
+      "Published ability rates use the validated EB1600 path sealed in research.",
+      "Product boards do not claim DRBL beats DARKO, BPM, or other externals until that comparison is authorized and complete.",
+    ],
+    calculation: [
+      "Review reserved / out-of-time protocols from the sealed research reports.",
+      "Inspect sample sizes, RMSE-style summaries, bootstrap checks, team-changer slices, and exposure bins where published.",
+    ],
+    caveats: [
+      "External common-target superiority is not an established product claim (M17c not authorized here).",
+      "Individual predictive uncertainty intervals are not currently shipped.",
+      "Validation does not erase PBP observability limits.",
+    ],
+    relatedIds: ["drbl", "how_drbl_works", "drbl_limitations", "drbl_historical"],
+    seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],
+    sources: ["reports/m16j/", "reports/m17b/"],
+  },
+  {
+    id: "drbl_historical",
+    slug: "drbl-historical-data",
+    name: "DRBL historical data",
+    shortName: "Historical data",
+    category: "systems",
+    oneSentence:
+      "Raw play-by-play can exist farther back than the seasons DRBL currently supports as a reliable product estimate.",
+    whyItMatters: [
+      "Fans often ask why older seasons show box scores but not DRBL.",
+      "Clear coverage boundaries prevent treating missing DRBL as a zero.",
+    ],
+    howToInterpret: [
+      "Raw PBP archive coverage is broader than validated DRBL publication.",
+      "Currently supported historical frozen-v1 seasons and current production seasons are listed on the DRBL overview and season registry.",
+      "Unsupported seasons are not fabricated with placeholder DRBL.",
+    ],
+    howDrblUses: [
+      "Player pages show an explicit unsupported / missing reason when DRBL is not published.",
+      "Explore filters respect DRBL season registry coverage.",
+    ],
+    caveats: [
+      "raw data availability ≠ DRBL support.",
+      "Cross-era comparability is not fully established even inside supported windows.",
+      "M17d-style historical expansion is a future product/research track, not an automatic unlock.",
+    ],
+    relatedIds: ["drbl", "drbl_validation", "drbl_limitations"],
+    seeInAction: [
+      { label: "DRBL overview", href: "/learn/drbl" },
+      { label: "Explore players", href: "/explore/players" },
+    ],
+    sources: ["src/data/drbl/season-registry.ts"],
+  },
+  {
+    id: "drbl_limitations",
+    slug: "drbl-limitations",
+    name: "DRBL limitations",
+    shortName: "Limitations",
+    category: "systems",
+    oneSentence:
+      "DRBL is useful impact estimation — not causal player value, complete off-ball measurement, traditional WAR, or proven cross-era superiority.",
+    whyItMatters: [
+      "Honest limits deepen trust more than burying caveats.",
+      "Advanced diagnostics (especially LN and B) are easy to over-read.",
+    ],
+    howToInterpret: [
+      "Not causal roster-replacement value.",
+      "Standard PBP misses some spatial / off-ball behavior.",
+      "Lineup context can retain system effects — LN is not proven off-ball value.",
+      "Individual predictive uncertainty is not currently shipped.",
+      "R1 is not conventional replacement; Wins Above R1 is not traditional WAR.",
+      "Cross-era comparability and external superiority are not established product claims.",
+    ],
+    howDrblUses: [
+      "Primary surfaces stay on DRBL/100 and Wins Above R1.",
+      "P / LN / B remain diagnostic disclosures with Learn links.",
+      "Retired WAR / uncertainty framing stays out of public ranking.",
+    ],
+    caveats: [
+      "UIR and related off-ball research remain behind the research boundary.",
+      "Do not add P + LN + B and call it DRBL/100.",
+    ],
+    relatedIds: ["drbl", "drbl_ln", "drbl_b", "r1", "drbl_validation", "drbl_historical"],
+    seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],
+    sources: ["/learn/drbl"],
+  },
 ];
 
 export function getLearnTopic(slug: string): LearnTopic | undefined {

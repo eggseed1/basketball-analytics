@@ -1,0 +1,29 @@
+{
+  "M17C_RERUN_REQUIRED": "NO",
+  "classification": "DOCUMENTATION_PRODUCT_ONLY_PROVENANCE_DEBT",
+  "reported_starting_commit": "a229b076f85efe88c5e980b43cd1d471a60ac34d",
+  "P17_3_commit": "5614ce3e54d46354adc41fc269a37a07db49d896",
+  "R1_simplification_commit": "6bc55d7a71937615de8e1951cda85b640b93ce52",
+  "LATEST_PRE_M17C_PRODUCT_COMMIT": "6bc55d7a71937615de8e1951cda85b640b93ce52",
+  "scientifically_relevant_deps_changed": 0,
+  "product_files_changed": 72,
+  "class_counts": {
+    "TEST": 6,
+    "REPORT/DOCS": 35,
+    "PLAYER_IDENTITY_PRESENTATION": 10,
+    "PUBLIC_METRIC_LABEL": 14,
+    "LEARN/COPY": 6,
+    "PRODUCT_PRESENTATION": 1
+  },
+  "reason": "All M17c scientifically relevant repository inputs (precomputed DRBL overlays, m18 lineup engine, evaluation loaders, prior seals) are byte-identical between a229 and 6bc55d7. Product commits only altered display identity, Learn/copy, and public R1 labeling. Sealed Target-A hash and DRBL predictors remain transportable.",
+  "existing_seals_retained": {
+    "M17C_PROTOCOL_FREEZE_HASH": "2900c8bcbfd184fb7b119cacbeffe44c3f71b0cfd557ed0771fde1599dad59a2",
+    "M17C_TARGET_FREEZE_HASH": "9004b7ae8b16d237356885b6049255ef725527c033606fd52002c7196fdeff56",
+    "M17C_RESULT_SEAL": "ed5def7810c4cb24e2c9056e4e425b2c5d293e9eb46f856741b54264b8530b69"
+  },
+  "NEXT_PRIMARY_MILESTONE": "M17d_FULL_HISTORICAL_PBP_PRODUCTIZATION",
+  "external_source_acquisition": "PARALLEL_OPPORTUNISTIC",
+  "M17C_VERDICT_RETAINED": "BLOCKED_INSUFFICIENT_EXTERNAL_DATA",
+  "DRBL_CHANGED": "NO",
+  "PRODUCT_CHANGED_THIS_MILESTONE": "NO"
+}

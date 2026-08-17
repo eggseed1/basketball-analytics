@@ -1,0 +1,13 @@
+field,public_label,surface,status,Learn_route,tooltip,keep_public
+drbl100,DRBL/100,"player left rail, Overview, explore, ASK",PRIMARY,/learn/drbl-100,Estimated impact per 100 possessions — DRBL’s primary ability-rate ranking number.,YES
+r1WinEquivalents,Wins Above R1,"player left rail, Overview, explore, ASK",PRIMARY,/learn/wins-above-r1,"How much season value the player accumulated, in win-equivalent units. Not traditional WAR.",YES
+drblO,Offense,"player left rail, Overview, ASK",DIAGNOSTIC,/learn/drbl-o,DRBL’s offensive split (DRBL-O) — how much value came on offense vs the role-matched reference. Not a substitute for DRBL/100.,YES
+drblD,Defense,"player left rail, Overview, ASK",DIAGNOSTIC,/learn/drbl-d,DRBL’s defensive split (DRBL-D) — how much value came on defense vs the role-matched reference. Not a substitute for DRBL/100.,YES
+drblP,DRBL-P,"player Advanced tab, explore advanced, ASK",DIAGNOSTIC,/learn/drbl-p,Diagnostic possession attribution. Does not sum with LN and B into DRBL/100.,YES
+drblLn,DRBL-LN,"player Advanced tab, explore advanced, ASK",DIAGNOSTIC,/learn/drbl-ln,Diagnostic lineup-context signal. Not proven off-ball value; does not sum with P and B into DRBL/100.,YES
+drblB,DRBL-B,"player Advanced tab, explore advanced, ASK",DIAGNOSTIC,/learn/drbl-b,Diagnostic box/behavior component — not optical tracking. Does not sum with P and LN into DRBL/100.,YES
+r1,R1,Learn only (not player headline),ADVANCED / ACCOUNTING,/learn/r1,DRBL’s contextual role-matched reference baseline — what “Above R1” compares against. Not conventional replacement.,YES
+r1Points,R1 Points,Learn / accounting rabbit hole (not primary UI),ADVANCED / ACCOUNTING,/learn/r1-points,Advanced accounting: point-equivalent attribution above R1. Public boards prefer Wins Above R1 (same ordering).,YES
+drblL,DRBL-L,legacy column defs — not player first view,RETIRED,/learn/drbl-limitations,"What DRBL is not: causal WAR, complete off-ball measurement, or shipped individual uncertainty.",NO
+drblDisagreement,DRBL Δ,legacy column defs — not player first view,RETIRED,/learn/drbl-limitations,"What DRBL is not: causal WAR, complete off-ball measurement, or shipped individual uncertainty.",NO
+drblSeasonalImpact,DRBL impact,legacy companion — prefer Wins Above R1,RETIRED,/learn/wins-above-r1,"How much season value the player accumulated, in win-equivalent units. Not traditional WAR.",NO

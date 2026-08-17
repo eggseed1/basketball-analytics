@@ -29,7 +29,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL/100",
     tier: "canonical",
     glossary:
-      "DRBL/100 is the validated ability rate (impact per 100 combined possession appearances versus the role-matched R1 reference). It is the canonical ranking statistic — not DARKO, WAR, or a box-score composite.",
+      "DRBL/100 estimates impact per 100 possessions — the primary ability-rate ranking number.",
     synonyms: [
       "drbl/100",
       "drbl 100",
@@ -43,9 +43,9 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
   {
     id: "r1_points",
     label: "R1 Points",
-    tier: "canonical",
+    tier: "diagnostic",
     glossary:
-      "R1 Points are the underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. They power accounting, stint conservation, and research. Wins Above R1 is the preferred public display of the same ordering (R1 Points ÷ frozen P1).",
+      "R1 Points are advanced accounting behind Wins Above R1 (same ranking). Prefer Wins Above R1 on public boards.",
     synonyms: ["r1 points", "r1 pts", "r1 point"],
   },
   {
@@ -53,7 +53,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "Wins Above R1",
     tier: "canonical",
     glossary:
-      "Wins Above R1 converts accumulated R1-relative value into win-equivalent units (R1 Points ÷ frozen P1). It is not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline.",
+      "Wins Above R1 is how much season value the player accumulated, in win-equivalent units. Not traditional WAR.",
     synonyms: [
       "wins above r1",
       "war1",
@@ -67,26 +67,26 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
   },
   {
     id: "drbl_o",
-    label: "DRBL-O",
+    label: "Offense",
     tier: "canonical",
     glossary:
-      "DRBL-O is the offensive split of validated DRBL ability. It is not a substitute for DRBL/100 overall.",
-    synonyms: ["drbl-o", "drbl o", "drblo", "drbl offense"],
+      "Offense (DRBL-O) is DRBL’s offensive split. It is not a substitute for overall DRBL/100.",
+    synonyms: ["drbl-o", "drbl o", "drblo", "drbl offense", "offense"],
   },
   {
     id: "drbl_d",
-    label: "DRBL-D",
+    label: "Defense",
     tier: "canonical",
     glossary:
-      "DRBL-D is the defensive split of validated DRBL ability. It is not a substitute for DRBL/100 overall.",
-    synonyms: ["drbl-d", "drbl d", "drbld", "drbl defense"],
+      "Defense (DRBL-D) is DRBL’s defensive split. It is not a substitute for overall DRBL/100.",
+    synonyms: ["drbl-d", "drbl d", "drbld", "drbl defense", "defense"],
   },
   {
     id: "drbl_p",
     label: "DRBL-P",
     tier: "diagnostic",
     glossary:
-      "DRBL-P is a diagnostic possession-attribution component. It is not additive with LN and B into DRBL/100.",
+      "DRBL-P is a diagnostic possession-attribution component. It is not additive with LN and B into DRBL/100. Learn: /learn/drbl-p",
     synonyms: ["drbl-p", "drbl p", "drblp"],
   },
   {
@@ -94,7 +94,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL-LN",
     tier: "diagnostic",
     glossary:
-      "DRBL-LN is a diagnostic lineup-context component. It is not additive with P and B into DRBL/100.",
+      "Some value shows up in lineup results even when box scores miss it. DRBL-LN is that lineup diagnostic — not proven off-ball value, and not additive with P and B into DRBL/100. Learn: /learn/drbl-ln",
     synonyms: ["drbl-ln", "drbl ln", "drblln"],
   },
   {
@@ -102,7 +102,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL-B",
     tier: "diagnostic",
     glossary:
-      "DRBL-B is a diagnostic behavior/shot-decision component. It is not additive with P and LN into DRBL/100.",
+      "DRBL-B is a box/behavior diagnostic — not optical tracking. It is not additive with P and LN into DRBL/100. Learn: /learn/drbl-b",
     synonyms: ["drbl-b", "drbl b", "drblb"],
   },
 ];
