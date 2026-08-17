@@ -1,10 +1,33 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 
-/** Build a shareable ASK DRBL URL with a supported structured-query example. */
-export function askDrblHref(query: string, playerId?: string): string {
+export type AskDrblHrefOptions = {
+  playerId?: string;
+  teamId?: string;
+  /** Canonical season context (Time Machine / shareable). */
+  season?: string;
+  /** Display-only date context — not applied to season-level ASK. */
+  date?: string;
+  /** Marks context as originating from Time Machine. */
+  fromHistory?: boolean;
+};
+
+/** Build a shareable ASK DRBL URL with optional historical context. */
+export function askDrblHref(
+  query: string,
+  playerIdOrOptions?: string | AskDrblHrefOptions
+): string {
+  const opts: AskDrblHrefOptions =
+    typeof playerIdOrOptions === "string"
+      ? { playerId: playerIdOrOptions }
+      : playerIdOrOptions ?? {};
+
   const params = new URLSearchParams();
   params.set("q", query);
-  if (playerId) params.set("playerId", playerId);
+  if (opts.playerId) params.set("playerId", opts.playerId);
+  if (opts.teamId) params.set("teamId", opts.teamId);
+  if (opts.season) params.set("season", opts.season);
+  if (opts.date) params.set("date", opts.date);
+  if (opts.fromHistory) params.set("from", "history");
   return `/ask?${params.toString()}`;
 }
 
@@ -22,28 +45,29 @@ export function PlayerAskLinks({
   season: string;
   peakSeason?: string | null;
 }) {
+  const ctx = { playerId, season };
   const links = [
     {
       label: `Ask DRBL about ${playerName}`,
       href: askDrblHref(
         `What was ${playerName}'s peak production?`,
-        playerId
+        ctx
       ),
       hint: "Career Resume · peak CPI",
     },
     {
       label: `Rank ${playerName}'s seasons`,
-      href: askDrblHref(`Rank ${playerName}'s seasons`, playerId),
+      href: askDrblHref(`Rank ${playerName}'s seasons`, ctx),
       hint: "Rank My Seasons methodology",
     },
     {
       label: `${season} true shooting`,
-      href: askDrblHref(`${playerName} true shooting ${season}`, playerId),
+      href: askDrblHref(`${playerName} true shooting ${season}`, ctx),
       hint: "Season board metric",
     },
     {
       label: `${season} points per game`,
-      href: askDrblHref(`${playerName} ppg ${season}`, playerId),
+      href: askDrblHref(`${playerName} ppg ${season}`, ctx),
       hint: "Counting rate",
     },
   ];
@@ -53,7 +77,7 @@ export function PlayerAskLinks({
       label: `Compare ${season} to ${peakSeason}`,
       href: askDrblHref(
         `Compare ${playerName} ${season} vs ${peakSeason}`,
-        playerId
+        ctx
       ),
       hint: "Season compare when supported",
     });
@@ -61,17 +85,19 @@ export function PlayerAskLinks({
 
   return (
     <ul className="flex flex-col gap-2">
-      {links.map((link) => (
-        <li key={link.href}>
-          <Link
-            href={link.href}
-            className="group flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 sm:px-4"
+      {links.map((l) => (
+        <li key={l.href}>
+          <TransitionLink
+            href={l.href}
+            className="text-[13px] font-semibold underline-offset-4 hover:underline"
           >
-            <span className="text-[14px] font-semibold underline-offset-2 group-hover:underline">
-              {link.label} →
+            {l.label}
+          </TransitionLink>
+          {l.hint ? (
+            <span className="ml-2 text-[11px] text-muted-foreground">
+              {l.hint}
             </span>
-            <span className="text-[12px] text-muted-foreground">{link.hint}</span>
-          </Link>
+          ) : null}
         </li>
       ))}
     </ul>

@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -91,8 +91,11 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: p.teamName,
         darko: null,
-        ts: p.trueShootingPct,
-        usg: p.usagePct,
+        ts:
+          p.trueShootingPct != null && p.trueShootingPct > 0
+            ? p.trueShootingPct
+            : null,
+        usg: p.usagePct != null && p.usagePct > 0 ? p.usagePct : null,
       });
     }
 
@@ -104,8 +107,11 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: p.teamName,
         darko: null,
-        ts: p.trueShootingPct,
-        usg: p.usagePct,
+        ts:
+          p.trueShootingPct != null && p.trueShootingPct > 0
+            ? p.trueShootingPct
+            : null,
+        usg: p.usagePct != null && p.usagePct > 0 ? p.usagePct : null,
       });
     }
 
@@ -246,7 +252,7 @@ export function TopPerformersPanel({
         </ol>
       </div>
 
-      <Link
+      <TransitionLink
         href={
           sort === "ts"
             ? "/explore/players?sort=trueShootingPct"
@@ -257,7 +263,7 @@ export function TopPerformersPanel({
         className="self-center text-[13px] font-semibold underline-offset-4 hover:underline"
       >
         See all leaderboard
-      </Link>
+      </TransitionLink>
     </section>
   );
 }

@@ -156,6 +156,15 @@ export type BasketballQueryAst = {
   rawQuery?: string;
   /** Season phrases that were mapped (e.g. last season → 2025-26). */
   seasonNotes?: string[];
+  /**
+   * How the active season(s) were chosen.
+   * Precedence: explicit query > builder (via composed text) > Time Machine/URL > default.
+   */
+  seasonSource?: "explicit" | "time_machine" | "url" | "default";
+  /** Time Machine date on the shareable URL — display only until date-capable executors exist. */
+  contextDate?: string;
+  /** Always false in v1 — date is never applied to season-level executors. */
+  contextDateApplied?: boolean;
   /** When partial: deterministic rewrite for the supported clause. */
   partialSupportedQuery?: string;
   partialSupportedSummary?: string;

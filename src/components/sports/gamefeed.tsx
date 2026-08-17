@@ -4,6 +4,10 @@ import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
+  QueryNavProvider,
+  TransitionLink,
+} from "@/components/continuity/query-nav";
+import {
   GameMatchupRow,
 } from "@/components/sports/game-score-card";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
@@ -184,9 +188,10 @@ function ViewTabs({
   return (
     <div className="inline-flex rounded-md border border-border bg-secondary/40 p-0.5">
       {tabs.map((tab) => (
-        <Link
+        <TransitionLink
           key={tab.id}
           href={tab.href}
+          scroll={false}
           className={cn(
             "rounded-sm px-3 py-1.5 text-[13px] font-semibold transition-colors",
             view === tab.id
@@ -195,7 +200,7 @@ function ViewTabs({
           )}
         >
           {tab.label}
-        </Link>
+        </TransitionLink>
       ))}
     </div>
   );
@@ -448,12 +453,13 @@ function ListBoard({
       </div>
 
       {hasMore && nextHref ? (
-        <Link
+        <TransitionLink
           href={nextHref}
+          scroll={false}
           className="self-center rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold hover:bg-secondary/80"
         >
           Show more upcoming
-        </Link>
+        </TransitionLink>
       ) : null}
     </div>
   );
@@ -498,136 +504,152 @@ export function Gamefeed({
         : `Monthly calendar - ${season}`;
 
   return (
-    <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-            Scores
-          </h1>
-          <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
+    <QueryNavProvider className="gap-0">
+      <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+              Scores
+            </h1>
+            <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
+          </div>
+          <ViewTabs
+            view={view}
+            monthKey={view === "week" ? weekMonthKey : monthKey}
+            weekStart={
+              view === "month"
+                ? startOfWeekSundayIso(`${monthKey}-01`)
+                : weekStart
+            }
+          />
         </div>
-        <ViewTabs
-          view={view}
-          monthKey={view === "week" ? weekMonthKey : monthKey}
-          weekStart={
-            view === "month"
-              ? startOfWeekSundayIso(`${monthKey}-01`)
-              : weekStart
-          }
-        />
-      </div>
 
-      {view === "month" ? (
-        <div className="flex items-center gap-2">
-          <Link
-            href={scoresHref({ view: "month", month: prevMonth })}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-          >
-            Prev
-          </Link>
-          <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
-            {monthLabel(monthKey)}
-          </p>
-          <Link
-            href={scoresHref({ view: "month", month: nextMonth })}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-          >
-            Next
-          </Link>
-        </div>
-      ) : null}
+        <div className="query-updating-content flex flex-col gap-4">
+          {view === "month" ? (
+            <div className="flex items-center gap-2">
+              <TransitionLink
+                href={scoresHref({ view: "month", month: prevMonth })}
+                scroll={false}
+                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+              >
+                Prev
+              </TransitionLink>
+              <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+                {monthLabel(monthKey)}
+              </p>
+              <TransitionLink
+                href={scoresHref({ view: "month", month: nextMonth })}
+                scroll={false}
+                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+              >
+                Next
+              </TransitionLink>
+            </div>
+          ) : null}
 
-      {view === "week" ? (
-        <div className="flex items-center gap-2">
-          <Link
-            href={scoresHref({ view: "week", week: prevWeek })}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-          >
-            Prev
-          </Link>
-          <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
-            {weekRangeLabel(weekStart, weekEnd)}
-          </p>
-          <Link
-            href={scoresHref({ view: "week", week: nextWeek })}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-          >
-            Next
-          </Link>
-        </div>
-      ) : null}
+          {view === "week" ? (
+            <div className="flex items-center gap-2">
+              <TransitionLink
+                href={scoresHref({ view: "week", week: prevWeek })}
+                scroll={false}
+                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+              >
+                Prev
+              </TransitionLink>
+              <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+                {weekRangeLabel(weekStart, weekEnd)}
+              </p>
+              <TransitionLink
+                href={scoresHref({ view: "week", week: nextWeek })}
+                scroll={false}
+                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+              >
+                Next
+              </TransitionLink>
+            </div>
+          ) : null}
 
-      {view === "month" ? (
-        <>
-          <MonthGrid monthKey={monthKey} games={monthGames} />
-          {monthGames.length === 0 ? (
-            <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-              No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
-              <Link href={scoresHref({ view: "list" })} className="underline">
-                List
-              </Link>{" "}
-              for upcoming tip-offs.
-            </p>
-          ) : (
-            <p className="text-[12px] text-muted-foreground">
-              {monthGames.length} game{monthGames.length === 1 ? "" : "s"} this
-              month
-            </p>
-          )}
-        </>
-      ) : null}
+          {view === "month" ? (
+            <>
+              <MonthGrid monthKey={monthKey} games={monthGames} />
+              {monthGames.length === 0 ? (
+                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+                  No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
+                  <TransitionLink
+                    href={scoresHref({ view: "list" })}
+                    scroll={false}
+                    className="underline"
+                  >
+                    List
+                  </TransitionLink>{" "}
+                  for upcoming tip-offs.
+                </p>
+              ) : (
+                <p className="text-[12px] text-muted-foreground">
+                  {monthGames.length} game
+                  {monthGames.length === 1 ? "" : "s"} this month
+                </p>
+              )}
+            </>
+          ) : null}
 
-      {view === "week" ? (
-        <>
-          <LiveScoreboardScope games={weekGames} season={season}>
-            {(games) => (
-              <>
-                <WeekBoard weekStart={weekStart} games={games} />
-                {games.length === 0 ? (
-                  <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-                    No games this week.{" "}
-                    <Link href={scoresHref({ view: "list" })} className="underline">
-                      See all upcoming
-                    </Link>
-                    .
-                  </p>
-                ) : (
-                  <p className="text-[12px] text-muted-foreground">
-                    {games.length} game{games.length === 1 ? "" : "s"} this week
-                    · live scores refresh automatically
-                  </p>
+          {view === "week" ? (
+            <>
+              <LiveScoreboardScope games={weekGames} season={season}>
+                {(games) => (
+                  <>
+                    <WeekBoard weekStart={weekStart} games={games} />
+                    {games.length === 0 ? (
+                      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+                        No games this week.{" "}
+                        <TransitionLink
+                          href={scoresHref({ view: "list" })}
+                          scroll={false}
+                          className="underline"
+                        >
+                          See all upcoming
+                        </TransitionLink>
+                        .
+                      </p>
+                    ) : (
+                      <p className="text-[12px] text-muted-foreground">
+                        {games.length} game{games.length === 1 ? "" : "s"} this
+                        week · live scores refresh automatically
+                      </p>
+                    )}
+                  </>
                 )}
-              </>
-            )}
-          </LiveScoreboardScope>
-        </>
-      ) : null}
+              </LiveScoreboardScope>
+            </>
+          ) : null}
 
-      {view === "list" ? (
-        <>
-          <LiveScoreboardScope games={upcomingGames} season={season}>
-            {(games) => (
-              <>
-                <ListBoard
-                  games={games}
-                  hasMore={upcomingHasMore}
-                  nextHref={upcomingNextHref}
-                />
-                {games.length ? (
-                  <p className="text-[12px] text-muted-foreground">
-                    Showing {games.length} upcoming game
-                    {games.length === 1 ? "" : "s"}
-                    {upcomingHasMore ? " · more available" : ""}
-                    {" · "}
-                    live games refresh without reloading
-                  </p>
-                ) : null}
-              </>
-            )}
-          </LiveScoreboardScope>
-        </>
-      ) : null}
-    </section>
+          {view === "list" ? (
+            <>
+              <LiveScoreboardScope games={upcomingGames} season={season}>
+                {(games) => (
+                  <>
+                    <ListBoard
+                      games={games}
+                      hasMore={upcomingHasMore}
+                      nextHref={upcomingNextHref}
+                    />
+                    {games.length ? (
+                      <p className="text-[12px] text-muted-foreground">
+                        Showing {games.length} upcoming game
+                        {games.length === 1 ? "" : "s"}
+                        {upcomingHasMore ? " · more available" : ""}
+                        {" · "}
+                        live games refresh without reloading
+                      </p>
+                    ) : null}
+                  </>
+                )}
+              </LiveScoreboardScope>
+            </>
+          ) : null}
+        </div>
+      </section>
+    </QueryNavProvider>
   );
 }
 

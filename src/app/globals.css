@@ -231,3 +231,198 @@
 .site-prose {
   @apply mx-auto w-full max-w-3xl;
 }
+
+/* ─── NBA Time Machine — era theme layer (CSS variables only) ───
+   Immersion without costume: no CRT, scanlines, or grain overlays.
+   Applied via [data-era-theme] on a scoped wrapper. */
+
+.tm-scope {
+  transition:
+    background-color 280ms ease,
+    color 280ms ease,
+    border-color 280ms ease;
+}
+
+.tm-scope[data-era-theme="early"] {
+  --background: #ebe4d4;
+  --foreground: #1a1510;
+  --card: #f7f1e4;
+  --card-foreground: #1a1510;
+  --popover: #f7f1e4;
+  --popover-foreground: #1a1510;
+  --primary: #2c241b;
+  --primary-foreground: #f7f1e4;
+  --secondary: #ddd3bf;
+  --secondary-foreground: #1a1510;
+  --muted: #ddd3bf;
+  --muted-foreground: #5c5348;
+  --accent: #ddd3bf;
+  --accent-foreground: #1a1510;
+  --border: #c4b8a1;
+  --input: #ddd3bf;
+  --ring: #8b4513;
+  --radius: 0.15rem;
+  --font-heading: Georgia, "Times New Roman", Times, serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgb(139 69 19 / 6%), transparent 55%),
+    linear-gradient(180deg, rgb(0 0 0 / 2%), transparent 40%);
+  color: var(--foreground);
+}
+
+.tm-scope[data-era-theme="1980s"] {
+  --background: #f3ebe3;
+  --foreground: #1f1814;
+  --card: #fff8f2;
+  --card-foreground: #1f1814;
+  --popover: #fff8f2;
+  --popover-foreground: #1f1814;
+  --primary: #1f1814;
+  --primary-foreground: #fff8f2;
+  --secondary: #e8d9cc;
+  --secondary-foreground: #1f1814;
+  --muted: #e8d9cc;
+  --muted-foreground: #6b5a4c;
+  --accent: #e8d9cc;
+  --accent-foreground: #1f1814;
+  --border: #d2bfae;
+  --input: #e8d9cc;
+  --ring: #c45c26;
+  --radius: 0.25rem;
+  --font-heading: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at 80% 10%, rgb(196 92 38 / 8%), transparent 50%);
+  color: var(--foreground);
+}
+
+.tm-scope[data-era-theme="1990s"] {
+  --background: #e8eaee;
+  --foreground: #14161a;
+  --card: #f4f5f8;
+  --card-foreground: #14161a;
+  --popover: #f4f5f8;
+  --popover-foreground: #14161a;
+  --primary: #14161a;
+  --primary-foreground: #f4f5f8;
+  --secondary: #d5d8e0;
+  --secondary-foreground: #14161a;
+  --muted: #d5d8e0;
+  --muted-foreground: #5a6070;
+  --accent: #d5d8e0;
+  --accent-foreground: #14161a;
+  --border: #b8bdc8;
+  --input: #d5d8e0;
+  --ring: #2a4a7f;
+  --radius: 0.2rem;
+  --font-heading: Arial Narrow, "Arial", Helvetica, sans-serif;
+  background-color: var(--background);
+  background-image:
+    linear-gradient(135deg, rgb(42 74 127 / 5%) 0%, transparent 45%);
+  color: var(--foreground);
+}
+
+.tm-scope[data-era-theme="2000s"] {
+  --background: #e6e9ef;
+  --foreground: #12141a;
+  --card: #f7f8fb;
+  --card-foreground: #12141a;
+  --popover: #f7f8fb;
+  --popover-foreground: #12141a;
+  --primary: #12141a;
+  --primary-foreground: #f7f8fb;
+  --secondary: #d3d7e2;
+  --secondary-foreground: #12141a;
+  --muted: #d3d7e2;
+  --muted-foreground: #5c6478;
+  --accent: #d3d7e2;
+  --accent-foreground: #12141a;
+  --border: #b4bac8;
+  --input: #d3d7e2;
+  --ring: #1a6fb5;
+  --radius: 0.35rem;
+  --font-heading: Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--background);
+  background-image:
+    radial-gradient(ellipse at 50% -10%, rgb(26 111 181 / 7%), transparent 48%);
+  color: var(--foreground);
+}
+
+.tm-scope[data-era-theme="2010s"] {
+  --background: #eef0f3;
+  --foreground: #1a1b1e;
+  --card: #ffffff;
+  --card-foreground: #1a1b1e;
+  --popover: #ffffff;
+  --popover-foreground: #1a1b1e;
+  --primary: #1a1b1e;
+  --primary-foreground: #ffffff;
+  --secondary: #e2e5ea;
+  --secondary-foreground: #1a1b1e;
+  --muted: #e2e5ea;
+  --muted-foreground: #636870;
+  --accent: #e2e5ea;
+  --accent-foreground: #1a1b1e;
+  --border: #cfd3d9;
+  --input: #e2e5ea;
+  --ring: #2563eb;
+  --radius: 0.4rem;
+  --font-heading: system-ui, -apple-system, "Segoe UI", sans-serif;
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.tm-scope[data-era-theme="modern"] {
+  /* Inherit root DRBL tokens — no override. */
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.tm-scope .tm-heading {
+  font-family: var(--font-heading, var(--font-sans));
+}
+
+.tm-scope[data-era-theme="early"] .sports-card,
+.tm-scope[data-era-theme="1990s"] .sports-card {
+  box-shadow: none;
+  border-width: 1px;
+}
+
+.tm-scope[data-era-theme="early"] .sports-pill {
+  border-radius: 0.1rem;
+}
+
+.tm-mode-banner {
+  @apply border-b border-border/80 bg-card/80 px-4 py-2 text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground backdrop-blur-sm;
+}
+
+/* Continuity: query transitions keep content visible */
+.query-updating-bar {
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--ring),
+    var(--foreground),
+    var(--ring),
+    transparent
+  );
+  background-size: 200% 100%;
+  animation: query-updating-slide 1.1s linear infinite;
+}
+
+@keyframes query-updating-slide {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+[data-updating="true"] .query-updating-content {
+  opacity: 0.72;
+  transition: opacity 160ms ease;
+  pointer-events: none;
+}

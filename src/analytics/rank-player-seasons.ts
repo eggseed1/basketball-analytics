@@ -384,7 +384,7 @@ export function rankPlayerSeasons(options: {
           row.season === nowSeason &&
           row.gamesPlayed < CAREER_RESUME_MIN_GAMES,
         production: row.gamesPlayed > 0,
-        efficiency: row.trueShootingPct > 0,
+        efficiency: row.trueShootingPct != null && row.trueShootingPct > 0,
         historicalImpact: Boolean(options.impacts?.get(row.season)),
         teamContext: Boolean(options.teams?.get(row.season)),
       } satisfies SeasonCoverageSnapshot);

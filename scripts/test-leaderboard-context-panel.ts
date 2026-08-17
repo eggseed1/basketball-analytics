@@ -50,7 +50,7 @@ function main() {
   assert.equal(LEADERBOARD_CONTEXT_COLLISION.sticky, false);
   assert.equal(LEADERBOARD_CONTEXT_COLLISION.collisionAvoidance.side, "flip");
   assert.equal(LEADERBOARD_CONTEXT_COLLISION.collisionAvoidance.align, "shift");
-  assert.equal(LEADERBOARD_CONTEXT_COLLISION.collisionPadding, 8);
+  assert.equal(LEADERBOARD_CONTEXT_COLLISION.collisionPadding, 16);
 
   console.log("last-row flips above…");
   assert.equal(

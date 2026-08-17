@@ -159,7 +159,9 @@ const STAT_DEFS: StatDef[] = [
         ? g.trueShootingPct
         : null,
     pickSeasonAvg: (s) =>
-      s.trueShootingPct > 0 ? s.trueShootingPct : null,
+      s.trueShootingPct != null && s.trueShootingPct > 0
+        ? s.trueShootingPct
+        : null,
     formatGame: (v) => formatPct(v),
     formatAvg: (v) => formatPct(v),
     formatDelta: (d) => {

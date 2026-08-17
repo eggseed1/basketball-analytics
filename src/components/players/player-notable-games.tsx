@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 
 import type { PlayerGame } from "@/data/types";
 import { formatNumber } from "@/lib/format";
@@ -107,7 +107,7 @@ export function PlayerNotableGames({
       <ul className="grid gap-2 sm:grid-cols-2">
         {notables.map((n) => (
           <li key={`${n.kind}-${n.game.id}`}>
-            <Link
+            <TransitionLink
               href={`/games/${n.game.gameId}`}
               className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
             >
@@ -118,7 +118,7 @@ export function PlayerNotableGames({
               <span className="text-[12px] text-muted-foreground">
                 {n.game.gameDate} → Game Lab
               </span>
-            </Link>
+            </TransitionLink>
           </li>
         ))}
       </ul>

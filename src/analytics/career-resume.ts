@@ -188,7 +188,10 @@ function breakdownOf(row: PlayerSeason): CareerProductionBreakdown {
     spg: perGame(row, "steals"),
     bpg: perGame(row, "blocks"),
     tov: perGame(row, "turnovers"),
-    ts: row.trueShootingPct > 0 ? row.trueShootingPct : null,
+    ts:
+      row.trueShootingPct != null && row.trueShootingPct > 0
+        ? row.trueShootingPct
+        : null,
     mpg: perGame(row, "minutes"),
   };
 }

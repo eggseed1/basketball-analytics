@@ -1,9 +1,9 @@
 "use client";
 
-import { useCallback, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { useQueryNav } from "@/components/continuity/query-nav";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -54,10 +54,7 @@ export function PlayerFilterToolbar({
   teams,
   defaultSeason,
 }: PlayerFilterToolbarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { pending, replaceParams, searchParams } = useQueryNav();
 
   const season = searchParams.get("season") ?? defaultSeason;
   const team = searchParams.get("team") ?? "ALL";
@@ -68,37 +65,37 @@ export function PlayerFilterToolbar({
   const [playerDraft, setPlayerDraft] = useState(playerQuery);
   const [draftSource, setDraftSource] = useState(playerQuery);
 
-  // Keep the draft input aligned when URL search changes (e.g. back/forward).
   if (playerQuery !== draftSource) {
     setDraftSource(playerQuery);
     setPlayerDraft(playerQuery);
   }
 
-  const updateParams = useCallback(
-    (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(patch)) {
-        if (
-          value === null ||
-          value === "" ||
-          value === "ALL" ||
-          (key === "minimumMinutes" && value === "0")
-        ) {
-          next.delete(key);
-        } else {
-          next.set(key, value);
-        }
+  function updateParams(patch: Record<string, string | null>) {
+    const normalized: Record<string, string | null> = { ...patch };
+    for (const [key, value] of Object.entries(normalized)) {
+      if (
+        value === "ALL" ||
+        (key === "minimumMinutes" && value === "0")
+      ) {
+        normalized[key] = null;
       }
-      if (!next.get("season")) {
-        next.set("season", defaultSeason);
-      }
-      const qs = next.toString();
-      startTransition(() => {
-        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
-      });
-    },
-    [defaultSeason, pathname, router, searchParams]
-  );
+    }
+    if (
+      "season" in patch ||
+      "team" in patch ||
+      "position" in patch ||
+      "player" in patch ||
+      "minimumMinutes" in patch
+    ) {
+      normalized.page = null;
+    }
+    if (!("season" in normalized) && !searchParams.get("season")) {
+      normalized.season = defaultSeason;
+    } else if (normalized.season === null) {
+      normalized.season = defaultSeason;
+    }
+    replaceParams(normalized);
+  }
 
   const { east, west, flat, groupByConference } = useMemo(() => {
     const byName = (a: Team, b: Team) => a.fullName.localeCompare(b.fullName);
@@ -108,7 +105,6 @@ export function PlayerFilterToolbar({
     const westTeams = teams
       .filter((t) => t.conference === "West")
       .sort(byName);
-    // Only split when both conferences are meaningfully represented.
     const group =
       eastTeams.length >= 5 &&
       westTeams.length >= 5 &&
@@ -134,7 +130,7 @@ export function PlayerFilterToolbar({
         event.preventDefault();
         updateParams({ player: playerDraft.trim() || null });
       }}
-      data-pending={isPending ? "true" : "false"}
+      data-pending={pending ? "true" : "false"}
     >
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="filter-season">Season</Label>
@@ -270,7 +266,7 @@ export function PlayerFilterToolbar({
       </div>
 
       <p className="sr-only" aria-live="polite">
-        {isPending ? "Updating player results…" : "Player results updated."}
+        {pending ? "Updating player results…" : "Player results updated."}
       </p>
     </form>
   );

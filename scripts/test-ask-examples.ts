@@ -220,14 +220,15 @@ const CLASS_TO_OPS: Record<string, string[]> = {
     "../src/components/ask/ask-drbl-view.tsx"
   );
   const view = fs.readFileSync(viewPath, "utf8");
-  const resultIdx = view.indexOf("{hasResult && result ?");
+  const resultIdx = view.indexOf("{hasResult && displayResult ?");
   const examplesAfterIdx = view.indexOf("Try another question");
   const examplesBeforeIdx = view.indexOf("Try asking");
-  assert.ok(resultIdx > 0);
+  assert.ok(resultIdx > 0, "result block uses displayResult (stale-safe)");
   assert.ok(examplesBeforeIdx > 0);
   assert.ok(examplesAfterIdx > resultIdx, "post-query examples below result");
   assert.ok(view.includes('id="result"'));
   assert.ok(view.includes("Explore further"));
+  assert.ok(view.includes("staleResult"), "keeps prior ASK result while pending");
 }
 
 // --- Hash stability ---

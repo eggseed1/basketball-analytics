@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -204,7 +204,7 @@ export function FranchiseHistoryTable({
                   }
                 >
                   <TableCell className="sticky left-0 z-10 bg-card">
-                    <Link
+                    <TransitionLink
                       href={`/franchises/${f.id}`}
                       className="flex items-center gap-2 font-semibold hover:underline"
                     >
@@ -212,7 +212,7 @@ export function FranchiseHistoryTable({
                       <span className="whitespace-nowrap">
                         {f.city} {f.name}
                       </span>
-                    </Link>
+                    </TransitionLink>
                   </TableCell>
                   <TableCell className="text-right tabular-nums font-bold">
                     {titles}

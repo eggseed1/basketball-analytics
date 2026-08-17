@@ -140,7 +140,9 @@ function categoryWinsFor(
 function dataCoverageFromRow(row: TeamSeasonStats): TeamSeasonDataCoverage {
   return {
     performance: Number.isFinite(row.avgDiff) || row.ppg > 0 || row.oppPpg > 0,
-    efficiency: row.trueShootingPct > 0 || row.effectiveFieldGoalPct > 0,
+    efficiency:
+      (row.trueShootingPct != null && row.trueShootingPct > 0) ||
+      (row.effectiveFieldGoalPct != null && row.effectiveFieldGoalPct > 0),
     shooting:
       row.threePointPct > 0 ||
       (row.fieldGoalsAttempted > 0 && row.threePointersAttempted > 0),

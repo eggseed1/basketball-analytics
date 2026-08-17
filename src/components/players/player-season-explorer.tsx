@@ -173,7 +173,14 @@ function SeasonList({
 
             <dl className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
               <Mini label="CPI" value={cpi != null ? formatCpi(cpi) : "—"} />
-              <Mini label="TS%" value={formatPct(row.trueShootingPct)} />
+              <Mini
+                label="TS%"
+                value={
+                  row.trueShootingPct != null && row.trueShootingPct > 0
+                    ? formatPct(row.trueShootingPct)
+                    : "—"
+                }
+              />
               <Mini label="USG%" value={usg != null ? formatPct(usg) : "—"} />
               <Mini label="GP" value={formatNumber(row.gamesPlayed)} />
               <Mini label="MIN" value={formatMinutes(row.minutes)} />

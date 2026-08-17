@@ -47,6 +47,16 @@ export { executeBasketballQuery } from "./execute";
 export { resolveQueryEntities, searchNbaEntities } from "./entities";
 export { runAskDrbl, type RunAskDrblOptions } from "./run";
 export {
+  parseAskContextFromSearchParams,
+  applyAskContext,
+  operationAcceptsSeasonContext,
+  askContextSourceLabel,
+  withAskContextParams,
+  historyReturnHref,
+  type AskContext,
+  type AskContextSource,
+} from "./ask-context";
+export {
   ASK_EXAMPLE_POOL,
   ASK_EXAMPLE_DISPLAY_CLASSES,
   displayClassesForSeed,

@@ -119,6 +119,7 @@ export {
   buildLeaderboardContextIndex,
   buildLeaderboardRowContext,
   formatLeaderboardPercentile,
+  leaderboardContextIndexFromPools,
   type LeaderboardContextIndex,
   type LeaderboardContextLine,
   type LeaderboardRowContext,

@@ -5,8 +5,10 @@ import {
   useCallback,
   useEffect,
   useId,
+  useLayoutEffect,
   useRef,
   useState,
+  type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
@@ -15,9 +17,13 @@ import { explainMetric } from "@/analytics/explanations";
 import { getLearnConcept } from "@/content/learn/registry";
 import { cn } from "@/lib/utils";
 
+const PANEL_PAD = 8;
+const PANEL_WIDTH = 288; // ~18rem
+
 /**
  * Compact Level-1 metric/status help — hover, focus, or tap.
  * Full pedagogy lives on Learn; tooltips stay short.
+ * Position is clamped to the viewport so right-edge columns (DARKO, etc.) stay on-screen.
  */
 export function MetricHelp({
   conceptId,
@@ -36,9 +42,58 @@ export function MetricHelp({
   const explanation = explainMetric(conceptId);
   const panelId = useId();
   const rootRef = useRef<HTMLSpanElement>(null);
+  const panelRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
+  const [panelStyle, setPanelStyle] = useState<CSSProperties>({
+    left: 0,
+    top: "100%",
+    marginTop: 4,
+  });
 
   const close = useCallback(() => setOpen(false), []);
+
+  const clampPanel = useCallback(() => {
+    const root = rootRef.current;
+    const panel = panelRef.current;
+    if (!root || !panel) return;
+    const anchor = root.getBoundingClientRect();
+    const height = panel.offsetHeight || 120;
+    const width = Math.min(PANEL_WIDTH, window.innerWidth - PANEL_PAD * 2);
+
+    let left = 0;
+    const rightOverflow = anchor.left + width + PANEL_PAD - window.innerWidth;
+    if (rightOverflow > 0) left = -rightOverflow;
+    const leftEdge = anchor.left + left;
+    if (leftEdge < PANEL_PAD) left += PANEL_PAD - leftEdge;
+
+    const spaceBelow = window.innerHeight - anchor.bottom - PANEL_PAD;
+    const placeAbove = spaceBelow < height + 4 && anchor.top > height + PANEL_PAD;
+
+    setPanelStyle(
+      placeAbove
+        ? {
+            left,
+            bottom: "100%",
+            top: "auto",
+            marginBottom: 4,
+            marginTop: 0,
+            width,
+          }
+        : {
+            left,
+            top: "100%",
+            bottom: "auto",
+            marginTop: 4,
+            marginBottom: 0,
+            width,
+          }
+    );
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!open) return;
+    clampPanel();
+  }, [open, clampPanel]);
 
   useEffect(() => {
     if (!open) return;
@@ -48,13 +103,20 @@ export function MetricHelp({
     function onKey(e: globalThis.KeyboardEvent) {
       if (e.key === "Escape") close();
     }
+    function onReposition() {
+      clampPanel();
+    }
     document.addEventListener("mousedown", onDoc);
     document.addEventListener("keydown", onKey);
+    window.addEventListener("resize", onReposition);
+    window.addEventListener("scroll", onReposition, true);
     return () => {
       document.removeEventListener("mousedown", onDoc);
       document.removeEventListener("keydown", onKey);
+      window.removeEventListener("resize", onReposition);
+      window.removeEventListener("scroll", onReposition, true);
     };
-  }, [open, close]);
+  }, [open, close, clampPanel]);
 
   if (!concept || !concept.showTooltip || !explanation) {
     return (
@@ -95,9 +157,11 @@ export function MetricHelp({
       </button>
       {open ? (
         <span
+          ref={panelRef}
           id={panelId}
           role="tooltip"
-          className="absolute left-0 top-full z-40 mt-1 w-[min(18rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-3 text-left shadow-md"
+          style={panelStyle}
+          className="absolute z-50 max-w-[min(18rem,calc(100vw-1rem))] rounded-lg border border-border bg-card p-3 text-left shadow-md"
         >
           <span className="block text-[12px] font-bold tracking-tight text-foreground">
             {concept.label}
@@ -131,7 +195,11 @@ export function MetricHelpIcon({
   const concept = getLearnConcept(conceptId);
   if (!concept?.showTooltip) return null;
   return (
-    <MetricHelp conceptId={conceptId} className={className} labelClassName="text-[11px] font-semibold text-muted-foreground">
+    <MetricHelp
+      conceptId={conceptId}
+      className={className}
+      labelClassName="text-[11px] font-semibold text-muted-foreground"
+    >
       <span aria-hidden>?</span>
     </MetricHelp>
   );

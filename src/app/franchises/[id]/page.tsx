@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 
@@ -130,12 +130,12 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
   return (
     <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
       <p>
-        <Link
+        <TransitionLink
           href="/franchises"
           className="text-[13px] font-semibold text-muted-foreground"
         >
           ← Franchises
-        </Link>
+        </TransitionLink>
       </p>
 
       <header
@@ -167,18 +167,18 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
             </div>
           </div>
           <div className="flex flex-wrap gap-2">
-            <Link
+            <TransitionLink
               href="/explore/teams"
               className="rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold"
             >
               This season
-            </Link>
-            <Link
+            </TransitionLink>
+            <TransitionLink
               href="/gm"
               className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
             >
               Franchise Lab
-            </Link>
+            </TransitionLink>
           </div>
         </div>
       </header>

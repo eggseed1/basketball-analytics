@@ -71,8 +71,10 @@ function resolvePicker(spec: DimSpec): {
 function fallbackOverall(row: PlayerSeason): number | null {
   if (row.darkoDpm != null) return row.darkoDpm;
   if (row.lebron != null) return row.lebron;
-  if (row.netRating !== 0) return row.netRating;
-  if (row.trueShootingPct > 0) return row.trueShootingPct;
+  if (row.netRating != null && Number.isFinite(row.netRating)) return row.netRating;
+  if (row.trueShootingPct != null && row.trueShootingPct > 0) {
+    return row.trueShootingPct;
+  }
   return null;
 }
 
@@ -153,20 +155,23 @@ export function buildPlayerComparison(options: {
 
   // Ensure shooting shows raw TS if percentiles missing
   if (!dimensions.some((d) => d.id === "shooting")) {
-    if (a.trueShootingPct > 0 || b.trueShootingPct > 0) {
+    const aTs =
+      a.trueShootingPct != null && a.trueShootingPct > 0
+        ? a.trueShootingPct
+        : null;
+    const bTs =
+      b.trueShootingPct != null && b.trueShootingPct > 0
+        ? b.trueShootingPct
+        : null;
+    if (aTs != null || bTs != null) {
       dimensions.push({
         id: "shooting",
         label: "Shooting",
-        aDisplay:
-          a.trueShootingPct > 0 ? formatPct(a.trueShootingPct) : "—",
-        bDisplay:
-          b.trueShootingPct > 0 ? formatPct(b.trueShootingPct) : "—",
-        aValue: a.trueShootingPct || undefined,
-        bValue: b.trueShootingPct || undefined,
-        delta:
-          a.trueShootingPct > 0 && b.trueShootingPct > 0
-            ? a.trueShootingPct - b.trueShootingPct
-            : undefined,
+        aDisplay: aTs != null ? formatPct(aTs) : "—",
+        bDisplay: bTs != null ? formatPct(bTs) : "—",
+        aValue: aTs ?? undefined,
+        bValue: bTs ?? undefined,
+        delta: aTs != null && bTs != null ? aTs - bTs : undefined,
       });
     }
   }

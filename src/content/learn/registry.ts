@@ -141,7 +141,8 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Turnovers",
     shortName: "TOV",
     category: "basics",
-    tooltip: "Possessions lost without a shot attempt.",
+    tooltip:
+      "Possessions lost without a shot attempt. Raw turnovers per game are volume — they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
     showTooltip: true,
     learnSlug: "turnovers",
     relatedIds: ["ast_to", "usg"],
@@ -152,8 +153,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Minutes",
     shortName: "MIN",
     category: "basics",
-    tooltip: "Playing time. MPG is minutes per game.",
-    showTooltip: false,
+    tooltip:
+      "Playing time. MPG measures availability and role size, not shooting or defensive skill.",
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -278,7 +280,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "USG%",
     category: "usage",
     tooltip:
-      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor.",
+      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor. Higher usage means more on-ball responsibility — not automatically better play.",
     showTooltip: true,
     learnSlug: "usage",
     relatedIds: ["ts", "tov"],
@@ -289,7 +291,8 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Assist-to-turnover ratio",
     shortName: "AST/TO",
     category: "usage",
-    tooltip: "Assists divided by turnovers. Higher usually means cleaner creation.",
+    tooltip:
+      "Assists divided by turnovers. Higher usually means cleaner creation when the sample is adequate.",
     showTooltip: true,
     learnSlug: "assist-to-turnover",
     relatedIds: ["ast", "tov"],
@@ -314,7 +317,8 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Offensive rating",
     shortName: "ORtg",
     category: "team",
-    tooltip: "Points scored per 100 possessions.",
+    tooltip:
+      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate — missing ratings stay unavailable rather than fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],

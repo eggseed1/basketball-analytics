@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import {
@@ -99,7 +99,7 @@ export function LearnIndexClient({
                 <ul className="sports-card divide-y divide-black/5">
                   {items.map((g) => (
                     <li key={g.id}>
-                      <Link
+                      <TransitionLink
                         href={`/learn/${g.learnSlug}`}
                         className="flex items-baseline justify-between gap-3 px-4 py-3 hover:bg-secondary/50"
                       >
@@ -114,7 +114,7 @@ export function LearnIndexClient({
                         <span className="shrink-0 text-[13px] font-semibold text-muted-foreground">
                           Learn
                         </span>
-                      </Link>
+                      </TransitionLink>
                     </li>
                   ))}
                 </ul>

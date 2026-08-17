@@ -33,9 +33,6 @@ function row(
     trueShootingPct: 0.58,
     effectiveFieldGoalPct: 0.52,
     usagePct: 0,
-    offensiveRating: 110,
-    defensiveRating: 0,
-    netRating: 0,
     ...partial,
   };
 }

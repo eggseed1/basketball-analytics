@@ -5,17 +5,23 @@
 import assert from "node:assert/strict";
 
 import {
+  applyAskContext,
+  askContextSourceLabel,
   buildFollowUpLinks,
   buildQueryPlan,
   detectUnsupportedClauses,
+  historyReturnHref,
   interpretAskQuery,
   metricSeasonAvailability,
+  parseAskContextFromSearchParams,
   planPartialSupport,
   resolveMetric,
   resolveSeasonPhrases,
   validateBasketballQuery,
+  withAskContextParams,
 } from "../src/query-engine";
 import { PLAYER_ALIASES } from "../src/query-engine/entities";
+import { askDrblHref } from "../src/components/players/player-ask-links";
 
 function assertJsonSafe(value: unknown) {
   const json = JSON.stringify(value);
@@ -299,6 +305,135 @@ function assertJsonSafe(value: unknown) {
     ambiguous: undefined,
   };
   assert.equal(validateBasketballQuery(forced).ok, true);
+}
+
+// --- Time Machine / ASK context inheritance ---
+{
+  // Context from Time Machine URL
+  const ctx = parseAskContextFromSearchParams({
+    season: "1978-79",
+    from: "history",
+    date: "1979-01-15",
+  });
+  assert.ok(ctx);
+  assert.equal(ctx!.season, "1978-79");
+  assert.equal(ctx!.source, "time_machine");
+  assert.equal(ctx!.date, "1979-01-15");
+
+  // Inherit when query omits season
+  const bare = interpretAskQuery("Who led the NBA in scoring?");
+  assert.equal(bare.operation, "leaderboard");
+  assert.equal(bare.metricId, "ppg");
+  assert.ok(!bare.when?.seasons?.length);
+  const inherited = applyAskContext(bare, ctx);
+  assert.deepEqual(inherited.when?.seasons, ["1978-79"]);
+  assert.equal(inherited.seasonSource, "time_machine");
+  assert.equal(inherited.contextDate, "1979-01-15");
+  assert.equal(inherited.contextDateApplied, false);
+  assert.ok(
+    inherited.seasonNotes?.some((n) => /Time Machine/i.test(n))
+  );
+  const plan = buildQueryPlan(inherited);
+  assert.ok(plan.some((r) => r.label === "Season" && r.value === "1978-79"));
+  assert.ok(
+    plan.some(
+      (r) =>
+        r.label === "Source of context" &&
+        r.value === askContextSourceLabel("time_machine")
+    )
+  );
+  assert.ok(plan.some((r) => r.label === "Date context" && /not applied/i.test(r.value)));
+
+  // Explicit season in query wins over Time Machine
+  const explicit = interpretAskQuery(
+    "Who led the NBA in scoring in 1995-96?"
+  );
+  const overridden = applyAskContext(explicit, ctx);
+  assert.deepEqual(overridden.when?.seasons, ["1995-96"]);
+  assert.equal(overridden.seasonSource, "explicit");
+
+  // No context → default source marker when seasons absent
+  const none = applyAskContext(bare, null);
+  assert.equal(none.seasonSource, "default");
+  assert.ok(!none.when?.seasons?.length);
+
+  // Invalid season ignored
+  assert.equal(
+    parseAskContextFromSearchParams({ season: "not-a-season", from: "history" }),
+    null
+  );
+
+  // Offseason must not inherit historical season
+  const off = interpretAskQuery("What happened to Boston this offseason?");
+  const offCtx = applyAskContext(off, ctx);
+  assert.equal(off.operation, "offseason_summary");
+  assert.ok(!offCtx.when?.seasons?.length);
+  assert.equal(offCtx.seasonSource, "default");
+
+  // Unsupported metric for historical season (existing coverage gate)
+  const darkoAvail = metricSeasonAvailability("darko", "1978-79");
+  assert.equal(darkoAvail.ok, false);
+
+  // Follow-up links preserve inherited season
+  const withPlayer = {
+    ...inherited,
+    entities: [
+      {
+        kind: "player" as const,
+        id: "1966",
+        name: "Example",
+      },
+    ],
+    operation: "season_stat" as const,
+    metricId: "ppg" as const,
+    when: { seasons: ["1978-79"] },
+    seasonSource: "time_machine" as const,
+  };
+  const links = buildFollowUpLinks(withPlayer);
+  assert.ok(
+    links.some((l) => /season=1978-79/.test(l.href)),
+    `expected season in follow-ups: ${links.map((l) => l.href).join(", ")}`
+  );
+
+  // Shareable URL reconstruction
+  const href = withAskContextParams("/ask?q=Who%20led%20scoring", {
+    season: "1978-79",
+    date: "1979-01-15",
+    fromHistory: true,
+  });
+  assert.ok(href.includes("season=1978-79"));
+  assert.ok(href.includes("from=history"));
+  assert.ok(href.includes("date=1979-01-15"));
+
+  const tmAsk = askDrblHref("Who led the NBA in scoring?", {
+    season: "1978-79",
+    fromHistory: true,
+  });
+  assert.ok(tmAsk.includes("season=1978-79"));
+  assert.ok(tmAsk.includes("from=history"));
+
+  assert.equal(
+    historyReturnHref(ctx),
+    "/history?season=1978-79&date=1979-01-15"
+  );
+  assert.equal(historyReturnHref({ season: "1978-79", source: "url" }), null);
+
+  // Clear-context shape: URL without season/from
+  const cleared = parseAskContextFromSearchParams({ q: "Who led scoring?" });
+  assert.equal(cleared, null);
+
+  // Builder override: seasons in composed text are explicit
+  const builderQ = "Who led the NBA in PPG in 1995-96?";
+  const builderAst = applyAskContext(interpretAskQuery(builderQ), ctx);
+  assert.deepEqual(builderAst.when?.seasons, ["1995-96"]);
+  assert.equal(builderAst.seasonSource, "explicit");
+
+  // Validate inherited leaderboard
+  const v = validateBasketballQuery({
+    ...inherited,
+    metricId: "ppg",
+  });
+  assert.equal(v.ok, true);
 }
 
 console.log("test-ask-drbl: all assertions passed");

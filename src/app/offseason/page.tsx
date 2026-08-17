@@ -1,4 +1,3 @@
-import Link from "next/link";
 
 import {
   OffseasonFilters,
@@ -7,6 +6,8 @@ import {
   TransactionEventRow,
   RelatedEventClusterCard,
 } from "@/components/offseason/transaction-event-ui";
+import { OffseasonClientShell } from "@/components/offseason/offseason-client-shell";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   getOffseasonPulse,
@@ -81,7 +82,8 @@ function collectEventsForResolution(options: {
 
 export default async function OffseasonPage({ searchParams }: PageProps) {
   const sp = await searchParams;
-  const years = await listAvailableOffseasonYears({ force: true });
+  // Use cached index (do not force-rebuild on every page view).
+  const years = await listAvailableOffseasonYears();
   const defaultYear = currentOffseasonLabelYear();
   const yearRaw = one(sp, "year");
   const offseasonYear = yearRaw
@@ -117,6 +119,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     q: q || undefined,
   };
 
+  // One index build (or cache hit); derive coverage/pulse/timeline from shared TTL.
   const [pulse, timeline, activity, coverage, detailBundle, index] =
     await Promise.all([
       getOffseasonPulse({ offseasonYear }),
@@ -125,11 +128,11 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         { offseasonYear: season ? undefined : offseasonYear, season, teamId },
         { limit: 8 }
       ),
-      getTransactionEventCoverage({ force: true }),
+      getTransactionEventCoverage(),
       eventId
         ? getTransactionEventWithRelations(eventId)
         : Promise.resolve(null),
-      buildTransactionEventIndex({ force: true }),
+      buildTransactionEventIndex(),
     ]);
 
   const latestFeed = buildOffseasonFeedItems(
@@ -231,160 +234,169 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         </div>
       </section>
 
-      <OffseasonFilters
-        offseasonYear={offseasonYear}
-        years={years.length ? years : [offseasonYear]}
-        teamId={teamId}
-        teams={teamOptions}
-        q={q}
-        dateFrom={dateFrom}
-        dateTo={dateTo}
-        season={season}
-      />
-
-      {detailBundle ? (
-        <section className="flex flex-col gap-2">
-          <h2 className="text-[15px] font-bold tracking-tight">Event detail</h2>
-          <TransactionEventDetail
-            event={detailBundle.event}
-            cluster={detailBundle.cluster}
-            relatedEvents={detailBundle.relatedEvents}
-            playerResolutionsByEventId={playerResolutionsByEventId}
-          />
-        </section>
-      ) : null}
-
-      <section className="flex flex-col gap-2">
-        <h2 className="text-[15px] font-bold tracking-tight">Latest</h2>
-        <div className="sports-card px-4 py-2 sm:px-5">
-          {latestFeed.length ? (
-            latestFeed.map((item) =>
-              item.kind === "related_event_cluster" ? (
-                <RelatedEventClusterCard
-                  key={item.cluster.id}
-                  cluster={item.cluster}
-                  events={item.events}
-                  playerResolutionsByEventId={playerResolutionsByEventId}
-                />
-              ) : (
-                <TransactionEventRow
-                  key={item.event.id}
-                  event={item.event}
-                  compact
-                  playerResolutions={
-                    playerResolutionsByEventId[item.event.id]
-                  }
-                />
-              )
-            )
-          ) : (
-            <p className="py-6 text-center text-[13px] text-muted-foreground">
-              No events in this view.
-            </p>
-          )}
-        </div>
-      </section>
-
-      <section className="flex flex-col gap-2">
-        <h2 className="text-[15px] font-bold tracking-tight">
-          Most active teams
-        </h2>
-        <p className="text-[12px] text-muted-foreground">
-          Counts are transaction events recorded for each team. Categories are
-          source-text classifications, not official trade tallies.
-        </p>
-        <ul className="sports-card divide-y divide-border/70 px-4 py-1 sm:px-5">
-          {activity.map((t) => {
-            const brand = brandFor(t.teamId, t.teamAbbr);
-            const tradeRelated = t.bySourceTextCategory.trade ?? 0;
-            return (
-              <li key={t.teamId} className="flex items-center gap-3 py-3">
-                <TeamLogo
-                  teamKey={brand?.abbr ?? t.teamAbbr ?? t.teamId}
-                  size="sm"
-                />
-                <div className="min-w-0 flex-1">
-                  <Link
-                    href={`/offseason?year=${offseasonYear}&team=${t.teamId}`}
-                    className="text-[14px] font-bold underline-offset-2 hover:underline"
-                  >
-                    {brand?.abbr ?? t.teamAbbr ?? t.teamId}
-                  </Link>
-                  <p className="text-[12px] text-muted-foreground">
-                    {t.eventCount} events · {t.activeDays} active days
-                    {tradeRelated
-                      ? ` · ${tradeRelated} classified as trade-related by source text`
-                      : ""}
-                  </p>
-                </div>
-                <Link
-                  href={`/teams/${t.teamId}`}
-                  className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-                >
-                  Profile
-                </Link>
-              </li>
-            );
-          })}
-          {!activity.length ? (
-            <li className="py-6 text-center text-[13px] text-muted-foreground">
-              No team activity for these filters.
-            </li>
-          ) : null}
-        </ul>
-      </section>
-
-      <section className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-end justify-between gap-2">
-          <h2 className="text-[15px] font-bold tracking-tight">
-            Offseason timeline
-          </h2>
-          <p className="text-[12px] text-muted-foreground">
-            {timeline.page.total} source events · {timeline.feedTotal} feed
-            groups · page {timeline.feedPage}/{timeline.feedPageCount}
-          </p>
-        </div>
-        <TimelineFeedByMonth
-          byMonth={timeline.feedByMonth}
-          playerResolutionsByEventId={playerResolutionsByEventId}
+      <OffseasonClientShell>
+        <OffseasonFilters
+          offseasonYear={offseasonYear}
+          years={years.length ? years : [offseasonYear]}
+          teamId={teamId}
+          teams={teamOptions}
+          q={q}
+          dateFrom={dateFrom}
+          dateTo={dateTo}
+          season={season}
         />
-        {timeline.feedPageCount > 1 ? (
-          <div className="flex flex-wrap gap-2">
-            {timeline.feedPage > 1 ? (
-              <Link
-                href={`/offseason?${new URLSearchParams({
-                  year: String(offseasonYear),
-                  ...(teamId ? { team: teamId } : {}),
-                  ...(q ? { q } : {}),
-                  ...(dateFrom ? { from: dateFrom } : {}),
-                  ...(dateTo ? { to: dateTo } : {}),
-                  ...(season ? { season } : {}),
-                  page: String(timeline.feedPage - 1),
-                }).toString()}`}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-              >
-                Previous
-              </Link>
+
+        <div className="query-updating-content flex flex-col gap-5">
+          {detailBundle ? (
+            <section className="flex flex-col gap-2">
+              <h2 className="text-[15px] font-bold tracking-tight">
+                Event detail
+              </h2>
+              <TransactionEventDetail
+                event={detailBundle.event}
+                cluster={detailBundle.cluster}
+                relatedEvents={detailBundle.relatedEvents}
+                playerResolutionsByEventId={playerResolutionsByEventId}
+              />
+            </section>
+          ) : null}
+
+          <section className="flex flex-col gap-2">
+            <h2 className="text-[15px] font-bold tracking-tight">Latest</h2>
+            <div className="sports-card px-4 py-2 sm:px-5">
+              {latestFeed.length ? (
+                latestFeed.map((item) =>
+                  item.kind === "related_event_cluster" ? (
+                    <RelatedEventClusterCard
+                      key={item.cluster.id}
+                      cluster={item.cluster}
+                      events={item.events}
+                      playerResolutionsByEventId={playerResolutionsByEventId}
+                    />
+                  ) : (
+                    <TransactionEventRow
+                      key={item.event.id}
+                      event={item.event}
+                      compact
+                      playerResolutions={
+                        playerResolutionsByEventId[item.event.id]
+                      }
+                    />
+                  )
+                )
+              ) : (
+                <p className="py-6 text-center text-[13px] text-muted-foreground">
+                  No events in this view.
+                </p>
+              )}
+            </div>
+          </section>
+
+          <section className="flex flex-col gap-2">
+            <h2 className="text-[15px] font-bold tracking-tight">
+              Most active teams
+            </h2>
+            <p className="text-[12px] text-muted-foreground">
+              Counts are transaction events recorded for each team. Categories
+              are source-text classifications, not official trade tallies.
+            </p>
+            <ul className="sports-card divide-y divide-border/70 px-4 py-1 sm:px-5">
+              {activity.map((t) => {
+                const brand = brandFor(t.teamId, t.teamAbbr);
+                const tradeRelated = t.bySourceTextCategory.trade ?? 0;
+                return (
+                  <li key={t.teamId} className="flex items-center gap-3 py-3">
+                    <TeamLogo
+                      teamKey={brand?.abbr ?? t.teamAbbr ?? t.teamId}
+                      size="sm"
+                    />
+                    <div className="min-w-0 flex-1">
+                      <TransitionLink
+                        href={`/offseason?year=${offseasonYear}&team=${t.teamId}`}
+                        scroll={false}
+                        className="text-[14px] font-bold underline-offset-2 hover:underline"
+                      >
+                        {brand?.abbr ?? t.teamAbbr ?? t.teamId}
+                      </TransitionLink>
+                      <p className="text-[12px] text-muted-foreground">
+                        {t.eventCount} events · {t.activeDays} active days
+                        {tradeRelated
+                          ? ` · ${tradeRelated} classified as trade-related by source text`
+                          : ""}
+                      </p>
+                    </div>
+                    <TransitionLink
+                      href={`/teams/${t.teamId}`}
+                      className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                    >
+                      Profile
+                    </TransitionLink>
+                  </li>
+                );
+              })}
+              {!activity.length ? (
+                <li className="py-6 text-center text-[13px] text-muted-foreground">
+                  No team activity for these filters.
+                </li>
+              ) : null}
+            </ul>
+          </section>
+
+          <section className="flex flex-col gap-3">
+            <div className="flex flex-wrap items-end justify-between gap-2">
+              <h2 className="text-[15px] font-bold tracking-tight">
+                Offseason timeline
+              </h2>
+              <p className="text-[12px] text-muted-foreground">
+                {timeline.page.total} source events · {timeline.feedTotal} feed
+                groups · page {timeline.feedPage}/{timeline.feedPageCount}
+              </p>
+            </div>
+            <TimelineFeedByMonth
+              byMonth={timeline.feedByMonth}
+              playerResolutionsByEventId={playerResolutionsByEventId}
+            />
+            {timeline.feedPageCount > 1 ? (
+              <div className="flex flex-wrap gap-2">
+                {timeline.feedPage > 1 ? (
+                  <TransitionLink
+                    href={`/offseason?${new URLSearchParams({
+                      year: String(offseasonYear),
+                      ...(teamId ? { team: teamId } : {}),
+                      ...(q ? { q } : {}),
+                      ...(dateFrom ? { from: dateFrom } : {}),
+                      ...(dateTo ? { to: dateTo } : {}),
+                      ...(season ? { season } : {}),
+                      page: String(timeline.feedPage - 1),
+                    }).toString()}`}
+                    scroll={false}
+                    className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                  >
+                    Previous
+                  </TransitionLink>
+                ) : null}
+                {timeline.feedPage < timeline.feedPageCount ? (
+                  <TransitionLink
+                    href={`/offseason?${new URLSearchParams({
+                      year: String(offseasonYear),
+                      ...(teamId ? { team: teamId } : {}),
+                      ...(q ? { q } : {}),
+                      ...(dateFrom ? { from: dateFrom } : {}),
+                      ...(dateTo ? { to: dateTo } : {}),
+                      ...(season ? { season } : {}),
+                      page: String(timeline.feedPage + 1),
+                    }).toString()}`}
+                    scroll={false}
+                    className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                  >
+                    Next
+                  </TransitionLink>
+                ) : null}
+              </div>
             ) : null}
-            {timeline.feedPage < timeline.feedPageCount ? (
-              <Link
-                href={`/offseason?${new URLSearchParams({
-                  year: String(offseasonYear),
-                  ...(teamId ? { team: teamId } : {}),
-                  ...(q ? { q } : {}),
-                  ...(dateFrom ? { from: dateFrom } : {}),
-                  ...(dateTo ? { to: dateTo } : {}),
-                  ...(season ? { season } : {}),
-                  page: String(timeline.feedPage + 1),
-                }).toString()}`}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
-              >
-                Next
-              </Link>
-            ) : null}
-          </div>
-        ) : null}
-      </section>
+          </section>
+        </div>
+      </OffseasonClientShell>
 
       <section className="sports-card px-4 py-4 text-[12px] leading-relaxed text-muted-foreground sm:px-5">
         <h2 className="text-[13px] font-bold text-foreground">

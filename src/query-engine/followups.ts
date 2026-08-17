@@ -1,5 +1,6 @@
 import { metricById } from "./metrics";
 import type { AskDrblResult, BasketballQueryAst, QueryOperation } from "./types";
+import { askContextSourceLabel } from "./ask-context";
 
 export type QueryPlanRow = { label: string; value: string };
 
@@ -26,6 +27,20 @@ export function buildQueryPlan(ast: BasketballQueryAst): QueryPlanRow[] {
     rows.push({
       label: ast.when.seasons.length > 1 ? "Seasons" : "Season",
       value: ast.when.seasons.join(" · "),
+    });
+  }
+  if (ast.seasonSource) {
+    rows.push({
+      label: "Source of context",
+      value: askContextSourceLabel(ast.seasonSource),
+    });
+  }
+  if (ast.contextDate) {
+    rows.push({
+      label: "Date context",
+      value: ast.contextDateApplied
+        ? ast.contextDate
+        : `${ast.contextDate} (not applied — season-level ASK only)`,
     });
   }
   if (ast.metricId) {

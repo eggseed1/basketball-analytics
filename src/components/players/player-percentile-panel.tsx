@@ -12,29 +12,18 @@ import {
 import { formatOrdinal } from "@/lib/format";
 import { resolveTeamBrand, teamBrandBarColor, teamChartColor } from "@/lib/nba-brand";
 import type { StatComp } from "@/lib/player-stat-comps";
+import {
+  type MetricInterpretation,
+  type PercentileCategory,
+  type PercentileMetric,
+} from "@/lib/player-percentile-metrics";
 import { cn } from "@/lib/utils";
 
 export type { StatComp, CareerSeriesPoint };
-
-export type PercentileCategory =
-  | "value"
-  | "offense"
-  | "shooting"
-  | "defense"
-  | "advanced";
-
-export type PercentileMetric = {
-  id: string;
-  category: PercentileCategory;
-  label: string;
-  /** 0-100 (higher = better) */
-  percentile: number;
-  display: string;
-  /** Raw metric value used for comps. */
-  value: number;
-  series?: CareerSeriesPoint[];
-  leagueComps: StatComp[];
-  historicalComps: StatComp[];
+export type {
+  MetricInterpretation,
+  PercentileCategory,
+  PercentileMetric,
 };
 
 export type GradeBand =
@@ -54,7 +43,16 @@ const CATEGORY_META: Array<{
   { id: "offense", label: "Offense", blurb: "Creation & scoring volume" },
   { id: "shooting", label: "Shooting", blurb: "Efficiency" },
   { id: "defense", label: "Defense", blurb: "Stocks & impact" },
-  { id: "advanced", label: "Advanced", blurb: "Rates & ratings" },
+  {
+    id: "role",
+    label: "Role",
+    blurb: "Usage, minutes, and availability — not skill grades",
+  },
+  {
+    id: "advanced",
+    label: "Advanced",
+    blurb: "Normalized rates & ratings when available",
+  },
 ];
 
 function shortSeason(season: string) {
@@ -85,6 +83,8 @@ const BAND_FILL: Record<GradeBand, string> = {
   elite: "#0a7d3e",
 };
 
+const NEUTRAL_FILL = "rgba(29, 29, 31, 0.28)";
+
 function MetricRow({
   metric,
   selected,
@@ -94,10 +94,20 @@ function MetricRow({
   selected: boolean;
   onSelect: () => void;
 }) {
-  const grade = gradeFromPercentile(metric.percentile);
-  // Grade-band colors must match the legend key (not team theme wash).
-  const fill = BAND_FILL[grade.band];
-  const width = Math.max(6, Math.min(100, metric.percentile));
+  const grade = metric.showGrade
+    ? gradeFromPercentile(metric.percentile)
+    : null;
+  const fill = grade ? BAND_FILL[grade.band] : NEUTRAL_FILL;
+  const width = metric.showPercentile
+    ? Math.max(6, Math.min(100, metric.percentile))
+    : 0;
+
+  const caption =
+    metric.interpretation === "descriptive"
+      ? "Volume · not a skill grade"
+      : metric.interpretation === "role"
+        ? "Role context"
+        : null;
 
   return (
     <button
@@ -114,22 +124,34 @@ function MetricRow({
           {metric.display}
         </span>
       </div>
-      <div className="relative h-2.5 overflow-hidden rounded-full bg-black/[0.06]">
-        <div
-          className="absolute inset-y-0 left-0 rounded-full transition-[width]"
-          style={{ width: `${width}%`, backgroundColor: fill }}
-        />
-      </div>
+      {metric.showPercentile ? (
+        <div className="relative h-2.5 overflow-hidden rounded-full bg-black/[0.06]">
+          <div
+            className="absolute inset-y-0 left-0 rounded-full transition-[width]"
+            style={{ width: `${width}%`, backgroundColor: fill }}
+          />
+        </div>
+      ) : null}
       <div className="mt-1 flex items-center justify-between gap-2">
-        <span
-          className="text-[11px] font-bold uppercase tracking-wide"
-          style={{ color: fill }}
-        >
-          {grade.label}
-        </span>
-        <span className="text-[11px] tabular-nums text-muted-foreground">
-          {formatOrdinal(metric.percentile)} pctile
-        </span>
+        {grade ? (
+          <span
+            className="text-[11px] font-bold uppercase tracking-wide"
+            style={{ color: fill }}
+          >
+            {grade.label}
+          </span>
+        ) : (
+          <span className="text-[11px] font-medium text-muted-foreground">
+            {caption ?? "—"}
+          </span>
+        )}
+        {metric.showPercentile ? (
+          <span className="text-[11px] tabular-nums text-muted-foreground">
+            {formatOrdinal(metric.percentile)} pctile
+          </span>
+        ) : (
+          <span className="text-[11px] text-muted-foreground"> </span>
+        )}
       </div>
     </button>
   );
@@ -190,7 +212,18 @@ function CompComparePanel({
     0.0001
   );
 
-  const grade = gradeFromPercentile(metric.percentile);
+  const grade = metric.showGrade
+    ? gradeFromPercentile(metric.percentile)
+    : null;
+
+  const subtitleParts = [
+    grade?.label,
+    metric.showPercentile ? formatOrdinal(metric.percentile) : null,
+    metric.showPercentile || grade
+      ? "closest matches on this stat"
+      : "closest matches by raw value",
+    mode === "trend" ? "line color follows team by season" : null,
+  ].filter(Boolean);
 
   return (
     <TeamWashCard teamKey={teamKey} className="flex flex-col gap-3 p-4 sm:p-5">
@@ -199,9 +232,7 @@ function CompComparePanel({
           Similar · {metric.label}
         </h2>
         <p className="text-[13px] text-muted-foreground">
-          {grade.label} · {formatOrdinal(metric.percentile)} · closest matches
-          on this stat
-          {mode === "trend" ? " · line color follows team by season" : ""}
+          {subtitleParts.join(" · ")}
         </p>
       </div>
 
@@ -266,8 +297,6 @@ function CompComparePanel({
                         : Math.round(row.delta)
                   }`;
             const rowBrand = resolveTeamBrand(row.teamKey);
-            // Similarity bars use canonical TEAM_BRANDS — not percentile grade greens.
-            // Grade bands remain on the percentile metric list (legend), not identity.
             const barColor = rowBrand
               ? teamBrandBarColor(row.teamKey)
               : "rgba(29,29,31,0.35)";
@@ -334,7 +363,6 @@ export function PlayerPercentilePanel({
   playerName,
   teamKey,
   metrics,
-  /** Canonical season → teamId for timeline coloring. */
   seasonTeams,
 }: {
   season: string;
@@ -362,6 +390,11 @@ export function PlayerPercentilePanel({
     [metrics, categoryId]
   );
 
+  const showGradeLegend = useMemo(
+    () => visible.some((m) => m.showGrade),
+    [visible]
+  );
+
   const active = useMemo(
     () =>
       metrics.find((m) => m.id === activeId) ??
@@ -383,7 +416,8 @@ export function PlayerPercentilePanel({
             {season} percentile ranking
           </h2>
           <p className="text-[13px] text-muted-foreground">
-            Value, offense, shooting, defense, and advanced vs qualified peers.
+            Value, offense, shooting, defense, role, and advanced vs qualified
+            peers. Grades apply only to directional skill metrics.
           </p>
         </div>
 
@@ -483,38 +517,54 @@ export function PlayerPercentilePanel({
           <div className="flex flex-col gap-2">
             <p className="text-[12px] text-muted-foreground">
               {CATEGORY_META.find((c) => c.id === categoryId)?.blurb}
+              {categoryId === "advanced" && visible.length === 0
+                ? " Advanced rating coverage varies by season."
+                : null}
             </p>
-            <ul className="flex max-h-[420px] flex-col gap-2 overflow-y-auto pr-1">
-              {visible.map((m) => (
-                <li key={m.id}>
-                  <MetricRow
-                    metric={m}
-                    selected={active?.id === m.id}
-                    onSelect={() => setActiveId(m.id)}
-                  />
-                </li>
-              ))}
-            </ul>
-            <div className="flex flex-wrap gap-x-3 gap-y-1 pt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              {(
-                [
-                  ["poor", "Poor"],
-                  ["below", "Below"],
-                  ["average", "Avg"],
-                  ["good", "Good"],
-                  ["great", "Great"],
-                  ["elite", "Elite"],
-                ] as const
-              ).map(([band, label]) => (
-                <span key={band} className="inline-flex items-center gap-1">
-                  <span
-                    className="inline-block size-2 rounded-full"
-                    style={{ backgroundColor: BAND_FILL[band] }}
-                  />
-                  {label}
-                </span>
-              ))}
-            </div>
+            {visible.length === 0 ? (
+              <p className="py-6 text-center text-[13px] text-muted-foreground">
+                No verified advanced rates for this season. Missing ratings stay
+                unavailable rather than fabricated.
+              </p>
+            ) : (
+              <ul className="flex max-h-[420px] flex-col gap-2 overflow-y-auto pr-1">
+                {visible.map((m) => (
+                  <li key={m.id}>
+                    <MetricRow
+                      metric={m}
+                      selected={active?.id === m.id}
+                      onSelect={() => setActiveId(m.id)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )}
+            {showGradeLegend ? (
+              <div className="flex flex-wrap gap-x-3 gap-y-1 pt-1 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {(
+                  [
+                    ["poor", "Poor"],
+                    ["below", "Below"],
+                    ["average", "Avg"],
+                    ["good", "Good"],
+                    ["great", "Great"],
+                    ["elite", "Elite"],
+                  ] as const
+                ).map(([band, label]) => (
+                  <span key={band} className="inline-flex items-center gap-1">
+                    <span
+                      className="inline-block size-2 rounded-full"
+                      style={{ backgroundColor: BAND_FILL[band] }}
+                    />
+                    {label}
+                  </span>
+                ))}
+              </div>
+            ) : (
+              <p className="pt-1 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                No skill grades in this category
+              </p>
+            )}
           </div>
         )}
       </TeamWashCard>

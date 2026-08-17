@@ -1,7 +1,7 @@
 import { WatchlistPanel } from "@/components/home/watchlist-panel";
 import { WeekGameCalendar } from "@/components/home/week-game-calendar";
 import { OffseasonPulsePanel } from "@/components/home/offseason-pulse-panel";
-import { getHomeAnalytics } from "@/data/queries/home";
+import { getHomeAnalyticsCached } from "@/data/queries/request-cache";
 import { fetchAnalyticsNews } from "@/data/providers/insights/analytics-news";
 import {
   canonicalSeasonFromStartYear,
@@ -39,12 +39,12 @@ async function HomeNews() {
 }
 
 async function HomeFindings() {
-  const data = await getHomeAnalytics();
+  const data = await getHomeAnalyticsCached();
   return <FindingsSection insights={data.insights} />;
 }
 
 async function HomeRightRail({ season }: { season: string }) {
-  const data = await getHomeAnalytics();
+  const data = await getHomeAnalyticsCached();
   return (
     <>
       <HomeStandingsPanel season={season} />

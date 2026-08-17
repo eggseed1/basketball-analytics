@@ -252,7 +252,9 @@ function coverageFor(
     qualifying: isCareerQualifyingSeason(row),
     incomplete: isIncompleteSeason(row, nowSeason),
     production: row.gamesPlayed > 0 && row.points >= 0,
-    efficiency: row.trueShootingPct > 0 || row.effectiveFieldGoalPct > 0,
+    efficiency:
+      (row.trueShootingPct != null && row.trueShootingPct > 0) ||
+      (row.effectiveFieldGoalPct != null && row.effectiveFieldGoalPct > 0),
     historicalImpact: impact != null && Number.isFinite(impact.value),
     teamContext: team != null && Number.isFinite(team.avgDiff),
   };

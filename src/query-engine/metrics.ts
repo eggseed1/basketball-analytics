@@ -9,7 +9,7 @@ export const ASK_METRICS: AskMetricDef[] = [
   {
     id: "ppg",
     label: "Points per game",
-    synonyms: ["ppg", "points per game", "scoring average", "points average", "points"],
+    synonyms: ["ppg", "points per game", "scoring average", "points average", "points", "scoring"],
     scope: "player_season",
     format: "per_game",
   },

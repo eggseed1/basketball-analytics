@@ -88,11 +88,16 @@ function readPlayerMetric(
     case "ft_pct":
       return row.freeThrowPct > 0 ? row.freeThrowPct : null;
     case "ts_pct":
-      return row.trueShootingPct > 0 ? row.trueShootingPct : null;
+      return row.trueShootingPct != null && row.trueShootingPct > 0
+        ? row.trueShootingPct
+        : null;
     case "efg_pct":
-      return row.effectiveFieldGoalPct > 0 ? row.effectiveFieldGoalPct : null;
+      return row.effectiveFieldGoalPct != null &&
+        row.effectiveFieldGoalPct > 0
+        ? row.effectiveFieldGoalPct
+        : null;
     case "usg_pct":
-      return row.usagePct > 0 ? row.usagePct : null;
+      return row.usagePct != null && row.usagePct > 0 ? row.usagePct : null;
     case "darko":
       return row.darkoDpm ?? null;
     case "lebron":
@@ -247,7 +252,9 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     contextLines.push(
       `FG% ${formatPct(row.fieldGoalPct)} · 3P% ${formatPct(row.threePointPct)} · FT% ${formatPct(row.freeThrowPct)}`
     );
-    if (row.usagePct > 0) contextLines.push(`USG% ${formatPct(row.usagePct)}`);
+    if (row.usagePct != null && row.usagePct > 0) {
+      contextLines.push(`USG% ${formatPct(row.usagePct)}`);
+    }
   }
 
   return {

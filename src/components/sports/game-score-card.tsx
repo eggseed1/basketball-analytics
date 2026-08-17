@@ -1,15 +1,22 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import type { CSSProperties } from "react";
 
+import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { TeamLogo } from "@/components/brand/team-logo";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import { LiveFreshness } from "@/components/sports/live-freshness";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import type { GameSummary } from "@/data/types";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
-import { gameSideBrandKey } from "@/lib/game-team-identity";
+import {
+  gameSideBrandKey,
+  gameSideCanonicalTeamId,
+} from "@/lib/game-team-identity";
+import {
+  resolveHistoricalTeamBrand,
+  type HistoricalBrandPresentation,
+} from "@/lib/historical-team-brand";
 import {
   isLiveLikeStatus,
   isPreTipStatus,
@@ -17,12 +24,8 @@ import {
   shouldDisplayScores,
   statusHeadline,
 } from "@/lib/game-status";
-import { resolveTeamBrand, teamLogoUrl } from "@/lib/nba-brand";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
-
-function teamAbbr(key: string | number, brandAbbr?: string) {
-  return brandAbbr ?? String(key).toUpperCase();
-}
 
 export type GameCardStarter = {
   id: string;
@@ -84,31 +87,37 @@ function StarterRow({
 
 /** Tiny server-safe logo (no client hydration) for dense lists. */
 function StaticTeamMark({
-  teamKey,
-  abbr,
+  brand,
 }: {
-  teamKey: string | number;
-  abbr: string;
+  brand: NonNullable<ReturnType<typeof resolveHistoricalTeamBrand>>;
 }) {
-  const src = teamLogoUrl(String(teamKey));
-  if (!src) {
-    return (
-      <span className="inline-flex size-7 shrink-0 items-center justify-center rounded-full bg-secondary text-[10px] font-bold">
-        {abbr.slice(0, 3)}
-      </span>
-    );
-  }
-  return (
-    // eslint-disable-next-line @next/next/no-img-element
-    <img
-      src={src}
-      alt=""
-      width={28}
-      height={28}
-      className="size-7 shrink-0 object-contain"
-      loading="lazy"
-    />
+  return <HistoricalTeamMark brand={brand} size="sm" />;
+}
+
+function resolveSideBrand(
+  game: GameSummary,
+  side: "home" | "away",
+  presentation: HistoricalBrandPresentation
+) {
+  const canonicalId = gameSideCanonicalTeamId(game, side);
+  const brand = resolveHistoricalTeamBrand(
+    canonicalId,
+    game.season,
+    presentation
   );
+  if (brand) return brand;
+  const key = gameSideBrandKey(game, side);
+  return {
+    displayName: key,
+    abbreviation: key.slice(0, 3).toUpperCase(),
+    logoUrl: null as string | null,
+    source: "text_fallback" as const,
+    isHistorical: false,
+    canonicalTeamId: canonicalId,
+    city: "",
+    nickname: "",
+    palette: null,
+  };
 }
 
 function GameStatusAside({ game }: { game: GameSummary }) {
@@ -162,17 +171,19 @@ function broadcastHint(game: GameSummary): string | null {
 export function GameMatchupRow({
   game,
   className,
+  brandPresentation = "era",
 }: {
   game: GameSummary;
   className?: string;
+  brandPresentation?: HistoricalBrandPresentation;
 }) {
+  const awayBrand = resolveSideBrand(game, "away", brandPresentation);
+  const homeBrand = resolveSideBrand(game, "home", brandPresentation);
   const awayKey = gameSideBrandKey(game, "away");
   const homeKey = gameSideBrandKey(game, "home");
-  const away = resolveTeamBrand(awayKey);
-  const home = resolveTeamBrand(homeKey);
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayAbbr = teamAbbr(awayKey, away?.abbr);
-  const homeAbbr = teamAbbr(homeKey, home?.abbr);
+  const awayAbbr = awayBrand.abbreviation;
+  const homeAbbr = homeBrand.abbreviation;
   const showScores = shouldDisplayScores({
     status: game.status,
     homeScore: game.homeScore,
@@ -181,7 +192,7 @@ export function GameMatchupRow({
   const watch = broadcastHint(game);
 
   return (
-    <Link
+    <TransitionLink
       href={`/games/${game.id}`}
       className={cn(
         "sports-card matchup-wash matchup-wash--subtle flex flex-col gap-1 px-3 py-2.5 transition hover:brightness-[0.98]",
@@ -191,7 +202,7 @@ export function GameMatchupRow({
     >
       <div className="flex items-center gap-3">
         <div className="flex min-w-0 flex-1 items-center gap-2">
-          <StaticTeamMark teamKey={awayKey} abbr={awayAbbr} />
+          <StaticTeamMark brand={awayBrand} />
           <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
             {awayAbbr}
           </span>
@@ -211,7 +222,7 @@ export function GameMatchupRow({
           <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
             {homeAbbr}
           </span>
-          <StaticTeamMark teamKey={homeKey} abbr={homeAbbr} />
+          <StaticTeamMark brand={homeBrand} />
         </div>
         <GameStatusAside game={game} />
       </div>
@@ -220,7 +231,7 @@ export function GameMatchupRow({
           Where to watch · {watch}
         </p>
       ) : null}
-    </Link>
+    </TransitionLink>
   );
 }
 
@@ -230,16 +241,21 @@ export function GameScoreCard({
   awayStarters = [],
   homeStarters = [],
   className,
+  href,
+  brandPresentation = "era",
 }: {
   game: GameSummary;
   awayStarters?: GameCardStarter[];
   homeStarters?: GameCardStarter[];
   className?: string;
+  /** Override Game Lab link (e.g. Time Machine theme params). */
+  href?: string;
+  brandPresentation?: HistoricalBrandPresentation;
 }) {
+  const awayBrand = resolveSideBrand(game, "away", brandPresentation);
+  const homeBrand = resolveSideBrand(game, "home", brandPresentation);
   const awayKey = gameSideBrandKey(game, "away");
   const homeKey = gameSideBrandKey(game, "home");
-  const away = resolveTeamBrand(awayKey);
-  const home = resolveTeamBrand(homeKey);
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
   const awayScore = game.awayScore;
   const homeScore = game.homeScore;
@@ -249,10 +265,11 @@ export function GameScoreCard({
     awayScore,
   });
 
-  const awayAbbr = teamAbbr(awayKey, away?.abbr);
-  const homeAbbr = teamAbbr(homeKey, home?.abbr);
+  const awayAbbr = awayBrand.abbreviation;
+  const homeAbbr = homeBrand.abbreviation;
   const hasStarters = awayStarters.length > 0 || homeStarters.length > 0;
   const watch = broadcastHint(game);
+  const gameHref = href ?? `/games/${game.id}`;
 
   return (
     <article
@@ -262,13 +279,13 @@ export function GameScoreCard({
       )}
       style={matchup.cssVars as CSSProperties}
     >
-      <Link
-        href={`/games/${game.id}`}
+      <TransitionLink
+        href={gameHref}
         className="flex flex-col gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
       >
         <div className="flex items-center gap-3">
           <div className="flex min-w-0 flex-1 items-center gap-2">
-            <TeamLogo teamKey={awayKey} size="sm" />
+            <HistoricalTeamMark brand={awayBrand} size="sm" />
             <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
               {awayAbbr}
             </span>
@@ -306,7 +323,7 @@ export function GameScoreCard({
             <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
               {homeAbbr}
             </span>
-            <TeamLogo teamKey={homeKey} size="sm" />
+            <HistoricalTeamMark brand={homeBrand} size="sm" />
           </div>
 
           <GameStatusAside game={game} />
@@ -317,7 +334,7 @@ export function GameScoreCard({
             Where to watch · {watch}
           </p>
         ) : null}
-      </Link>
+      </TransitionLink>
 
       {hasStarters ? (
         <div className="flex flex-col gap-1.5 border-t border-border/70 pt-2">

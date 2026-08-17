@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 
 import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
@@ -7,6 +7,11 @@ import {
   formatTeamGameScoreLine,
   notableTeamGames,
 } from "@/lib/team-explorer";
+
+function gameLabHref(gameId: string, season?: string): string {
+  if (!season) return `/games/${gameId}`;
+  return `/games/${encodeURIComponent(gameId)}?season=${encodeURIComponent(season)}`;
+}
 
 export function TeamGamesSection({
   recentPool,
@@ -24,6 +29,7 @@ export function TeamGamesSection({
   const recent = filterTeamGames(recentPool, team, brand, 8);
   const upcoming = filterTeamGames(upcomingPool, team, brand, 5);
   const notables = notableTeamGames(recent, team, brand, seasonAvgPpg);
+  const season = team.season;
 
   return (
     <div className="flex flex-col gap-5">
@@ -39,8 +45,8 @@ export function TeamGamesSection({
           <ul className="grid gap-2 sm:grid-cols-2">
             {notables.map((n) => (
               <li key={`${n.kind}-${n.game.id}`}>
-                <Link
-                  href={`/games/${n.game.id}`}
+                <TransitionLink
+                  href={gameLabHref(n.game.id, season)}
                   className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -50,7 +56,7 @@ export function TeamGamesSection({
                   <span className="text-[12px] text-muted-foreground">
                     {n.game.gameDate} → Game Lab
                   </span>
-                </Link>
+                </TransitionLink>
               </li>
             ))}
           </ul>
@@ -63,6 +69,7 @@ export function TeamGamesSection({
         games={recent}
         team={team}
         brand={brand}
+        season={season}
       />
 
       <GameList
@@ -71,16 +78,17 @@ export function TeamGamesSection({
         games={upcoming}
         team={team}
         brand={brand}
+        season={season}
         upcoming
       />
 
       <p className="text-[13px] text-muted-foreground">
-        <Link
+        <TransitionLink
           href="/scores"
           className="font-semibold underline-offset-2 hover:underline"
         >
           Open scores →
-        </Link>
+        </TransitionLink>
         <span className="mx-2">·</span>
         Team page is a gateway into Game Lab, not a duplicate.
       </p>
@@ -94,6 +102,7 @@ function GameList({
   games,
   team,
   brand,
+  season,
   upcoming,
 }: {
   title: string;
@@ -101,6 +110,7 @@ function GameList({
   games: GameSummary[];
   team: TeamSeasonStats;
   brand?: TeamBrand | null;
+  season?: string;
   upcoming?: boolean;
 }) {
   return (
@@ -114,8 +124,8 @@ function GameList({
             const line = formatTeamGameScoreLine(g, team, brand);
             return (
               <li key={g.id}>
-                <Link
-                  href={`/games/${g.id}`}
+                <TransitionLink
+                  href={gameLabHref(g.id, season)}
                   className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[13px] hover:bg-secondary/40"
                 >
                   <span className="font-semibold">
@@ -129,7 +139,7 @@ function GameList({
                       ? g.statusDetail ?? "Scheduled"
                       : `${line.teamScore}–${line.oppScore} · Game Lab →`}
                   </span>
-                </Link>
+                </TransitionLink>
               </li>
             );
           })}

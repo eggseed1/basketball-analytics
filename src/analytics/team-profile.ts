@@ -40,7 +40,7 @@ function percentileOf(value: number, pool: number[], invert = false): number {
 type TraitDef = {
   id: string;
   label: string;
-  pick: (t: TeamSeasonStats) => number;
+  pick: (t: TeamSeasonStats) => number | undefined;
   format: (v: number) => string;
   invert?: boolean;
   /** Plain identity phrase when this is a strength. */
@@ -142,9 +142,11 @@ export function analyzeTeamProfile(options: {
 
   for (const def of TRAITS) {
     const value = def.pick(team);
-    if (!Number.isFinite(value)) continue;
+    if (value == null || !Number.isFinite(value)) continue;
     if (def.id === "3par" && value <= 0) continue;
-    const pool = league.map((t) => def.pick(t)).filter((n) => Number.isFinite(n));
+    const pool = league
+      .map((t) => def.pick(t))
+      .filter((n): n is number => n != null && Number.isFinite(n));
     const percentile = percentileOf(value, pool, def.invert);
     traits.push({
       id: def.id,
@@ -209,7 +211,14 @@ export function analyzeTeamProfile(options: {
     for (const def of TRAITS) {
       const from = def.pick(prior);
       const to = def.pick(team);
-      if (!Number.isFinite(from) || !Number.isFinite(to)) continue;
+      if (
+        from == null ||
+        to == null ||
+        !Number.isFinite(from) ||
+        !Number.isFinite(to)
+      ) {
+        continue;
+      }
       const delta = to - from;
       const signed = def.invert ? -delta : delta;
       const abs = Math.abs(delta);
@@ -239,9 +248,13 @@ export function analyzeTeamProfile(options: {
     const top = [...changes]
       .map((c) => {
         const def = TRAITS.find((t) => t.id === c.id)!;
+        const from = def.pick(prior);
+        const to = def.pick(team);
+        const abs =
+          from != null && to != null ? Math.abs(to - from) : 0;
         return {
           change: c,
-          abs: Math.abs(def.pick(team) - def.pick(prior)),
+          abs,
         };
       })
       .sort((a, b) => b.abs - a.abs)

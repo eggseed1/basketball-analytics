@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -202,7 +202,7 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                           key={col.key}
                           className="sticky left-0 z-10 bg-card"
                         >
-                          <Link
+                          <TransitionLink
                             href={`/teams/${row.teamId}?season=${row.season}`}
                             className="flex items-center gap-2 font-semibold hover:underline"
                           >
@@ -210,7 +210,7 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                             <span className="whitespace-nowrap">
                               {row.abbreviation}
                             </span>
-                          </Link>
+                          </TransitionLink>
                         </TableCell>
                       );
                     }

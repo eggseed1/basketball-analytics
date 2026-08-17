@@ -26,6 +26,10 @@ import {
   type AskBuilderState,
   type AskInputMode,
 } from "@/query-engine/ask-builder";
+import {
+  historyReturnHref,
+  type AskContext,
+} from "@/query-engine/ask-context";
 import { AskBuilderForm } from "@/components/ask/ask-builder-form";
 import {
   clearAskRecent,
@@ -35,6 +39,7 @@ import {
   subscribeAskRecent,
   type AskRecentEntry,
 } from "@/components/ask/ask-recent-store";
+import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { AppLink } from "@/components/ui/app-link";
@@ -44,6 +49,24 @@ import {
 } from "@/lib/learn-column-concepts";
 import { assertInternalHref } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
+
+function askHrefWithContext(
+  q: string,
+  context: AskContext | null | undefined,
+  extra?: Record<string, string>
+): string {
+  const params = new URLSearchParams();
+  params.set("q", q);
+  if (extra) {
+    for (const [k, v] of Object.entries(extra)) {
+      if (v) params.set(k, v);
+    }
+  }
+  if (context?.season) params.set("season", context.season);
+  if (context?.date) params.set("date", context.date);
+  if (context?.source === "time_machine") params.set("from", "history");
+  return `/ask?${params.toString()}`;
+}
 
 function statusMeta(status: AskDrblResult["status"]): {
   title: string;
@@ -87,7 +110,13 @@ function statusMeta(status: AskDrblResult["status"]): {
   }
 }
 
-function AmbiguityPicker({ result }: { result: AskDrblResult }) {
+function AmbiguityPicker({
+  result,
+  askContext,
+}: {
+  result: AskDrblResult;
+  askContext?: AskContext | null;
+}) {
   const groups = result.ast.ambiguous ?? [];
   if (!groups.length) return null;
   return (
@@ -135,7 +164,9 @@ function AmbiguityPicker({ result }: { result: AskDrblResult }) {
                 </span>
               )}
               <AppLink
-                href={`/ask?q=${encodeURIComponent(result.rawQuery)}&playerId=${encodeURIComponent(c.id)}`}
+                href={askHrefWithContext(result.rawQuery, askContext, {
+                  playerId: c.id,
+                })}
                 className="shrink-0 text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
               >
                 Continue →
@@ -170,7 +201,13 @@ function QueryPlanDisclosure({ result }: { result: AskDrblResult }) {
   );
 }
 
-function StatusBanner({ result }: { result: AskDrblResult }) {
+function StatusBanner({
+  result,
+  askContext,
+}: {
+  result: AskDrblResult;
+  askContext?: AskContext | null;
+}) {
   if (result.status === "ok") return null;
   const meta = statusMeta(result.status);
   const statusConcept = conceptIdForAskStatus(result.status);
@@ -198,7 +235,7 @@ function StatusBanner({ result }: { result: AskDrblResult }) {
         </ul>
       ) : null}
       {result.status === "ambiguous" ? (
-        <AmbiguityPicker result={result} />
+        <AmbiguityPicker result={result} askContext={askContext} />
       ) : null}
     </section>
   );
@@ -287,15 +324,26 @@ function ExamplesList({
   );
 }
 
-function AskResultBlock({ result }: { result: AskDrblResult }) {
+function AskResultBlock({
+  result,
+  askContext,
+}: {
+  result: AskDrblResult;
+  askContext?: AskContext | null;
+}) {
   const quietInterpretation = result.interpretation.slice(0, 4);
+  const seasons = result.ast.when?.seasons ?? [];
+  const seasonSource = result.ast.seasonSource;
+  const inferred =
+    seasonSource === "time_machine" || seasonSource === "url";
+
   return (
     <div
       id="result"
       tabIndex={-1}
       className="flex scroll-mt-20 flex-col gap-4 outline-none"
     >
-      <StatusBanner result={result} />
+      <StatusBanner result={result} askContext={askContext} />
 
       {result.status === "ok" ? (
         <section
@@ -305,6 +353,27 @@ function AskResultBlock({ result }: { result: AskDrblResult }) {
           <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             Result
           </p>
+          {seasons.length ? (
+            <div className="rounded-md bg-secondary/40 px-3 py-2">
+              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                Interpreted as
+              </p>
+              <p className="mt-0.5 text-[14px] font-semibold tracking-tight">
+                {result.rawQuery}
+              </p>
+              <p className="mt-1 text-[13px]">
+                Season:{" "}
+                <span className="font-bold">{seasons.join(" · ")}</span>
+              </p>
+              {inferred ? (
+                <p className="mt-0.5 text-[12px] text-muted-foreground">
+                  {seasonSource === "time_machine"
+                    ? "Season inferred from Time Machine context."
+                    : "Season inferred from shareable ASK URL context."}
+                </p>
+              ) : null}
+            </div>
+          ) : null}
           <AskResultEntities result={result} />
           <AskMetricChip result={result} />
           {result.headline ? (
@@ -409,12 +478,14 @@ export function AskDrblView({
   initialMode = "natural",
   initialBuilder,
   exampleSeed,
+  askContext = null,
 }: {
   initialQuery: string;
   result: AskDrblResult | null;
   initialMode?: AskInputMode;
   initialBuilder?: AskBuilderState;
   exampleSeed?: string;
+  askContext?: AskContext | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -423,6 +494,12 @@ export function AskDrblView({
   const [builder, setBuilder] = useState<AskBuilderState>(
     () => initialBuilder ?? defaultAskBuilderState()
   );
+  /** Keep last successful result visible while the next query is in-flight. */
+  const [staleResult, setStaleResult] = useState(result);
+  useEffect(() => {
+    if (result) setStaleResult(result);
+  }, [result]);
+  const displayResult = result ?? (pending ? staleResult : null);
   const recent = useSyncExternalStore(
     subscribeAskRecent,
     getAskRecentSnapshot,
@@ -430,13 +507,16 @@ export function AskDrblView({
   );
   const [examplesOpen, setExamplesOpen] = useState(!result);
   const resultRef = useRef<HTMLDivElement>(null);
-  const hasResult = Boolean(result);
+  const hasResult = Boolean(displayResult);
   const lastPushedQuery = useRef<string | null>(null);
 
   const examples = useMemo(
     () => pickAskExamples(exampleSeed ?? daySeed(), 8),
     [exampleSeed]
   );
+
+  const historyBack = historyReturnHref(askContext);
+  const hasSeasonContext = Boolean(askContext?.season);
 
   useEffect(() => {
     if (!result?.rawQuery) return;
@@ -453,7 +533,6 @@ export function AskDrblView({
 
   useEffect(() => {
     if (!result) return;
-    // Defer UI/focus work so we don't sync-set state in the effect body.
     const id = window.setTimeout(() => {
       setExamplesOpen(false);
       document.getElementById("result")?.focus({ preventScroll: true });
@@ -470,7 +549,7 @@ export function AskDrblView({
     if (!trimmed) return;
     startTransition(() => {
       router.push(
-        assertInternalHref(`/ask?q=${encodeURIComponent(trimmed)}#result`)
+        assertInternalHref(`${askHrefWithContext(trimmed, askContext)}#result`)
       );
     });
   }
@@ -478,9 +557,33 @@ export function AskDrblView({
   function submitBuilder() {
     const v = validateAskBuilderState(builder);
     if (!v.ok) return;
-    const href = askBuilderHref(builder, true);
+    let href = askBuilderHref(builder, true);
+    if (askContext?.source === "time_machine") {
+      const u = new URL(href, "https://drbl.local");
+      u.searchParams.set("from", "history");
+      if (askContext.date) u.searchParams.set("date", askContext.date);
+      // Builder season is authoritative in the composed query; keep URL season in sync.
+      href = `${u.pathname}?${u.searchParams.toString()}`;
+    }
     startTransition(() => {
       router.push(assertInternalHref(`${href}#result`));
+    });
+  }
+
+  function clearContext() {
+    const params = new URLSearchParams();
+    if (value.trim()) params.set("q", value.trim());
+    if (mode === "builder") {
+      // Drop historical season from builder URL; keep other builder fields via full rebuild.
+      const cleared = {
+        ...builder,
+        season: defaultAskBuilderState().season,
+      };
+      setBuilder(cleared);
+    }
+    const qs = params.toString();
+    startTransition(() => {
+      router.push(assertInternalHref(qs ? `/ask?${qs}` : "/ask"));
     });
   }
 
@@ -490,7 +593,11 @@ export function AskDrblView({
   }
 
   return (
-    <div className="flex flex-col gap-6">
+    <div
+      className="relative flex flex-col gap-6"
+      data-updating={pending ? "true" : "false"}
+    >
+      <QueryUpdatingChrome pending={pending} />
       <header className="flex flex-col gap-2">
         <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
           DRBL · Analytical search
@@ -509,6 +616,48 @@ export function AskDrblView({
             : "Natural language or a guided builder — both use the same trusted query engine. Not a chatbot."}
         </p>
       </header>
+
+      {hasSeasonContext ? (
+        <div
+          className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-secondary/40 px-3 py-2.5"
+          role="status"
+        >
+          <div className="min-w-0">
+            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+              Historical context
+            </p>
+            <p className="text-[15px] font-bold tracking-tight">
+              {askContext!.season}
+              {askContext?.source === "time_machine"
+                ? " · Time Machine"
+                : ""}
+            </p>
+            {askContext?.date ? (
+              <p className="text-[12px] text-muted-foreground">
+                Date on file: {askContext.date} (not applied to season-level
+                ASK)
+              </p>
+            ) : null}
+          </div>
+          <div className="flex flex-wrap items-center gap-2">
+            {historyBack ? (
+              <AppLink
+                href={historyBack}
+                className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+              >
+                Back to {askContext!.season} Time Machine
+              </AppLink>
+            ) : null}
+            <button
+              type="button"
+              onClick={clearContext}
+              className="rounded-md border border-border bg-background px-2.5 py-1 text-[12px] font-semibold"
+            >
+              × Clear context
+            </button>
+          </div>
+        </div>
+      ) : null}
 
       <div
         className="inline-flex w-fit rounded-md border border-border bg-secondary/30 p-0.5"
@@ -580,9 +729,21 @@ export function AskDrblView({
         />
       )}
 
-      {hasResult && result ? (
-        <div ref={resultRef}>
-          <AskResultBlock result={result} />
+      {hasResult && displayResult ? (
+        <div
+          ref={resultRef}
+          className={cn(
+            "query-updating-content",
+            pending && "opacity-70"
+          )}
+          data-updating={pending ? "true" : "false"}
+        >
+          {pending ? (
+            <p className="mb-2 text-[12px] font-semibold text-muted-foreground">
+              Updating…
+            </p>
+          ) : null}
+          <AskResultBlock result={displayResult} askContext={askContext} />
         </div>
       ) : null}
 

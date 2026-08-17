@@ -1,7 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -53,12 +53,12 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
               {expanded ? "Show less" : `Show all ${leaders.length}`}
             </button>
           ) : null}
-          <Link
+          <TransitionLink
             href="/explore/players?sort=darkoDpm"
             className="text-[13px] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             Full board
-          </Link>
+          </TransitionLink>
         </div>
       </div>
       <ol className="sports-card divide-y divide-black/5">
@@ -135,18 +135,18 @@ function EfficiencyCard({
       <div className="flex items-baseline justify-between gap-2">
         <h3 className="text-[15px] font-bold">{title}</h3>
         <div className="flex items-center gap-2">
-          <Link
+          <TransitionLink
             href={learnHref}
             className="text-[11px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
           >
             Learn
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href={boardHref}
             className="text-[11px] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             {boardLabel}
-          </Link>
+          </TransitionLink>
         </div>
       </div>
       <ul className="mt-1 flex flex-col gap-2">
@@ -209,7 +209,9 @@ export function EfficiencyLeaders({
         rows={tsLeaders}
         renderMeta={(p) => (
           <span className="tabular-nums text-[13px] font-bold">
-            {formatPct(p.trueShootingPct)}
+            {p.trueShootingPct != null && p.trueShootingPct > 0
+              ? formatPct(p.trueShootingPct)
+              : "—"}
           </span>
         )}
       />
@@ -232,10 +234,14 @@ export function EfficiencyLeaders({
         renderMeta={(p) => (
           <>
             <span className="text-[11px] tabular-nums text-muted-foreground">
-              {formatPct(p.usagePct)}
+              {p.usagePct != null && p.usagePct > 0
+                ? formatPct(p.usagePct)
+                : "—"}
             </span>
             <span className="tabular-nums text-[13px] font-bold">
-              {formatPct(p.trueShootingPct)}
+              {p.trueShootingPct != null && p.trueShootingPct > 0
+                ? formatPct(p.trueShootingPct)
+                : "—"}
             </span>
           </>
         )}

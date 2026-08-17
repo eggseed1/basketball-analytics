@@ -90,7 +90,8 @@ const METRICS: MetricDef[] = [
   {
     id: "usg",
     label: "Usage",
-    pick: (r) => (r.usagePct > 0 ? r.usagePct : null),
+    pick: (r) =>
+      r.usagePct != null && r.usagePct > 0 ? r.usagePct : null,
     format: (v) => formatPct(v),
     weight: 2.4,
     formatDelta: pctDelta,
@@ -99,7 +100,10 @@ const METRICS: MetricDef[] = [
   {
     id: "ts",
     label: "True shooting",
-    pick: (r) => (r.trueShootingPct > 0 ? r.trueShootingPct : null),
+    pick: (r) =>
+      r.trueShootingPct != null && r.trueShootingPct > 0
+        ? r.trueShootingPct
+        : null,
     format: (v) => formatPct(v),
     weight: 2.6,
     formatDelta: pctDelta,
@@ -108,7 +112,10 @@ const METRICS: MetricDef[] = [
   {
     id: "efg",
     label: "Effective FG%",
-    pick: (r) => (r.effectiveFieldGoalPct > 0 ? r.effectiveFieldGoalPct : null),
+    pick: (r) =>
+      r.effectiveFieldGoalPct != null && r.effectiveFieldGoalPct > 0
+        ? r.effectiveFieldGoalPct
+        : null,
     format: (v) => formatPct(v),
     weight: 2.2,
     formatDelta: pctDelta,
@@ -158,7 +165,10 @@ const METRICS: MetricDef[] = [
   {
     id: "ortg",
     label: "Offensive rating",
-    pick: (r) => (r.offensiveRating > 0 ? r.offensiveRating : null),
+    pick: (r) =>
+      r.offensiveRating != null && r.offensiveRating > 0
+        ? r.offensiveRating
+        : null,
     format: (v) => formatNumber(v, 1),
     weight: 1.7,
     formatDelta: (d) => numDelta(d, 1),
@@ -167,7 +177,10 @@ const METRICS: MetricDef[] = [
   {
     id: "drtg",
     label: "Defensive rating",
-    pick: (r) => (r.defensiveRating > 0 ? r.defensiveRating : null),
+    pick: (r) =>
+      r.defensiveRating != null && Number.isFinite(r.defensiveRating)
+        ? r.defensiveRating
+        : null,
     format: (v) => formatNumber(v, 1),
     weight: 1.7,
     formatDelta: (d) => numDelta(d, 1),
@@ -177,7 +190,8 @@ const METRICS: MetricDef[] = [
   {
     id: "net",
     label: "Net rating",
-    pick: (r) => (r.netRating !== 0 ? r.netRating : null),
+    pick: (r) =>
+      r.netRating != null && Number.isFinite(r.netRating) ? r.netRating : null,
     format: (v) => formatNumber(v, 1),
     weight: 2.0,
     formatDelta: (d) => numDelta(d, 1),

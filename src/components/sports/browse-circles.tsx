@@ -13,7 +13,7 @@ const BROWSE = [
   { href: "/offseason", label: "Transactions", key: "mia" },
   { href: "/ask", label: "ASK DRBL", key: "phx" },
   { href: "/learn", label: "Learn", key: "mil" },
-  { href: "/franchises", label: "History", key: "chi" },
+  { href: "/history", label: "History", key: "chi" },
 ];
 
 export function BrowseCircles({

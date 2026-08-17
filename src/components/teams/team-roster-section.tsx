@@ -43,12 +43,35 @@ export function TeamRosterSection({
   season,
   teamKey,
   teamId,
+  status = "ok",
+  unavailableMessage,
 }: {
   buckets: TeamRosterBuckets;
   season: string;
   teamKey: string;
   teamId: string;
+  /** Diagnosed board capability — never treat unsupported as “0 players”. */
+  status?: "ok" | "unsupported" | "timeout" | "error";
+  unavailableMessage?: string;
 }) {
+  if (status === "unsupported") {
+    return (
+      <p className="text-[13px] text-muted-foreground">
+        {unavailableMessage ??
+          `Historical roster data unavailable for ${season}.`}
+      </p>
+    );
+  }
+
+  if (status === "timeout" || status === "error") {
+    return (
+      <p className="text-[13px] text-muted-foreground">
+        {unavailableMessage ??
+          `Roster data unavailable for ${season}.`}
+      </p>
+    );
+  }
+
   const empty =
     buckets.rotation.length === 0 &&
     buckets.leadingScorers.length === 0 &&

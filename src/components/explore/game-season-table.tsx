@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState, type CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -180,15 +180,15 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                     }
                   >
                     <TableCell className="tabular-nums">
-                      <Link
+                      <TransitionLink
                         href={`/games/${game.id}`}
                         className="underline-offset-4 hover:underline"
                       >
                         {game.gameDate}
-                      </Link>
+                      </TransitionLink>
                     </TableCell>
                     <TableCell>
-                      <Link
+                      <TransitionLink
                         href={`/games/${game.id}`}
                         className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
@@ -205,7 +205,7 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
                             {homeKey}
                           </span>
                         </span>
-                      </Link>
+                      </TransitionLink>
                       <span className="sr-only">
                         {matchupLabel(game)} - {gameSideDisplayName(game, "away")}{" "}
                         at {gameSideDisplayName(game, "home")}

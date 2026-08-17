@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 
 import { FranchiseHistoryTable } from "@/components/franchises/franchise-history-table";
 import {
@@ -33,18 +33,18 @@ export default function FranchisesPage() {
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Link
+          <TransitionLink
             href="/explore/teams"
             className="rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold"
           >
             This season
-          </Link>
-          <Link
+          </TransitionLink>
+          <TransitionLink
             href="/gm"
             className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
           >
             Franchise Lab
-          </Link>
+          </TransitionLink>
         </div>
       </header>
 

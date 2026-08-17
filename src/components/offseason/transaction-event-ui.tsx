@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { useState, useTransition } from "react";
+import { useState } from "react";
 
 import type {
   NbaTransactionEvent,
@@ -16,6 +15,7 @@ import {
 } from "@/lib/transaction-event-presentation";
 import { sourceTextCategoryLabel } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { useQueryNav } from "@/components/continuity/query-nav";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { AppLink } from "@/components/ui/app-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -275,8 +275,7 @@ export function OffseasonFilters({
   dateTo?: string;
   season?: string;
 }) {
-  const router = useRouter();
-  const [pending, startTransition] = useTransition();
+  const { pending, pushHref } = useQueryNav();
   const [year, setYear] = useState(String(offseasonYear));
   const [team, setTeam] = useState(teamId ?? "");
   const [query, setQuery] = useState(q ?? "");
@@ -292,9 +291,7 @@ export function OffseasonFilters({
     if (from) params.set("from", from);
     if (to) params.set("to", to);
     if (seasonVal.trim()) params.set("season", seasonVal.trim());
-    startTransition(() => {
-      router.push(`/offseason?${params.toString()}`);
-    });
+    pushHref(`/offseason?${params.toString()}`);
   }
 
   return (
@@ -373,7 +370,7 @@ export function OffseasonFilters({
           disabled={pending}
           className="rounded-md bg-foreground px-4 py-2 text-[13px] font-bold text-background disabled:opacity-50"
         >
-          {pending ? "Loading…" : "Apply"}
+          {pending ? "Updating…" : "Apply"}
         </button>
       </div>
       <p className="text-[11px] text-muted-foreground">

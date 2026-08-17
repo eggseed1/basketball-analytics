@@ -124,10 +124,15 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
   },
   {
     id: "history",
-    href: "/franchises",
+    href: "/history",
     label: "History",
-    match: (p) => p.startsWith("/franchises"),
+    match: (p) => p.startsWith("/franchises") || p.startsWith("/history"),
     subnav: [
+      {
+        href: "/history",
+        label: "Time Machine",
+        match: (p) => p.startsWith("/history"),
+      },
       {
         href: "/franchises",
         label: "Franchise History",

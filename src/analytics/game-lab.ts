@@ -615,7 +615,11 @@ function teamContextMetrics(
       id: "efg",
       label: "Effective FG%",
       game: totals.effectiveFieldGoalPct,
-      avg: season.effectiveFieldGoalPct,
+      avg:
+        season.effectiveFieldGoalPct != null &&
+        season.effectiveFieldGoalPct > 0
+          ? season.effectiveFieldGoalPct
+          : null,
       formatGame: (v) => formatPct(v),
       formatAvg: (v) => formatPct(v),
       formatDelta: pctPointsDisplay,
@@ -625,7 +629,10 @@ function teamContextMetrics(
       id: "ts",
       label: "True shooting",
       game: totals.trueShootingPct,
-      avg: season.trueShootingPct,
+      avg:
+        season.trueShootingPct != null && season.trueShootingPct > 0
+          ? season.trueShootingPct
+          : null,
       formatGame: (v) => formatPct(v),
       formatAvg: (v) => formatPct(v),
       formatDelta: pctPointsDisplay,

@@ -31,6 +31,8 @@ const cases: Array<[string, string]> = [
   ["/learn/true-shooting", "Learn"],
   ["/franchises", "History"],
   ["/franchises/bos", "History"],
+  ["/history", "History"],
+  ["/history?season=1978-79", "History"],
 ];
 
 for (const [path, expected] of cases) {

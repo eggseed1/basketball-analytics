@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -161,11 +162,13 @@ export function ComparePicker({
   return (
     <form
       className={cn(
-        "grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2",
+        "relative grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2",
         pending && "opacity-70"
       )}
+      data-updating={pending ? "true" : "false"}
       onSubmit={(e) => e.preventDefault()}
     >
+      <QueryUpdatingChrome pending={pending} />
       <PlayerSearchField
         label="Player A"
         selectedId={a?.id || undefined}

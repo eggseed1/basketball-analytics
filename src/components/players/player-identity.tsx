@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { PreviewCard } from "@base-ui/react/preview-card";
 import {
   useCallback,
@@ -171,7 +171,7 @@ export function PlayerIdentity({
     <PreviewCard.Root open={open} onOpenChange={onOpenChange}>
       <span className={cn("inline-flex max-w-full items-center", className)}>
         <PreviewCard.Trigger
-          render={<Link href={target} />}
+          render={<TransitionLink href={target} />}
           delay={cfg.openDelay}
           closeDelay={cfg.closeDelay}
           className={cn(
@@ -240,7 +240,7 @@ export function PlayerIdentity({
             )}
           >
             {resolved === "chip" ? (
-              <Link
+              <TransitionLink
                 href={target}
                 className="block px-2.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => onOpenChange(false)}
@@ -254,9 +254,9 @@ export function PlayerIdentity({
                     <span className="truncate">{teamOnly}</span>
                   </span>
                 ) : null}
-              </Link>
+              </TransitionLink>
             ) : resolved === "compact" ? (
-              <Link
+              <TransitionLink
                 href={target}
                 className={cn(
                   "flex items-center gap-2 px-2 py-1.5",
@@ -285,9 +285,9 @@ export function PlayerIdentity({
                     </span>
                   </span>
                 </span>
-              </Link>
+              </TransitionLink>
             ) : (
-              <Link
+              <TransitionLink
                 href={target}
                 className={cn(
                   "flex items-center gap-3 p-2.5",
@@ -319,7 +319,7 @@ export function PlayerIdentity({
                     View player →
                   </span>
                 </span>
-              </Link>
+              </TransitionLink>
             )}
           </PreviewCard.Popup>
         </PreviewCard.Positioner>

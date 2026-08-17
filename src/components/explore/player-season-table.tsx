@@ -9,8 +9,8 @@ import {
 } from "react";
 
 import {
-  buildLeaderboardContextIndex,
   buildLeaderboardRowContext,
+  leaderboardContextIndexFromPools,
   type LeaderboardRowContext,
 } from "@/analytics";
 import {
@@ -20,6 +20,10 @@ import {
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamLogo } from "@/components/brand/team-logo";
+import {
+  TransitionLink,
+  useQueryNav,
+} from "@/components/continuity/query-nav";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -30,7 +34,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
-import type { PlayerSeason } from "@/data/types";
+import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -42,114 +46,73 @@ import {
 type SortKey = PlayerSeasonSortKey;
 
 export interface PlayerSeasonTableProps {
-  players: PlayerSeason[];
-  /** Seed sort from URL (?sort=trueShootingPct). */
-  initialSortKey?: PlayerSeasonSortKey;
-  initialSortDir?: "asc" | "desc";
-}
-
-type Row = PlayerSeason & {
-  mpg: number;
-  ppg: number;
-  rpg: number;
-  apg: number;
-  spg: number;
-  bpg: number;
-  tov: number;
-};
-
-function perGame(total: number, gp: number): number {
-  if (!gp) return 0;
-  return total / gp;
-}
-
-function toRow(p: PlayerSeason): Row {
-  const gp = p.gamesPlayed || 0;
-  return {
-    ...p,
-    mpg: perGame(p.minutes, gp),
-    ppg: perGame(p.points, gp),
-    rpg: perGame(p.rebounds, gp),
-    apg: perGame(p.assists, gp),
-    spg: perGame(p.steals, gp),
-    bpg: perGame(p.blocks, gp),
-    tov: perGame(p.turnovers, gp),
-  };
-}
-
-function sortValue(row: Row, key: SortKey): string | number {
-  const v = row[key];
-  if (v == null || Number.isNaN(v as number)) {
-    if (typeof v === "string") return "";
-    return sortKeyIsImpact(key) ? Number.NEGATIVE_INFINITY : 0;
-  }
-  return v as string | number;
-}
-
-function sortKeyIsImpact(key: SortKey): boolean {
-  return key === "darkoDpm" || key === "lebron";
+  players: ExplorePlayerBoardRow[];
+  totalCount: number;
+  page: number;
+  pageSize: number;
+  pageCount: number;
+  sortKey: PlayerSeasonSortKey;
+  sortDir: "asc" | "desc";
+  hasDarko: boolean;
+  hasLebron: boolean;
+  boardSampleSize: number;
+  contextPools: Record<string, number[]>;
 }
 
 export function PlayerSeasonTable({
   players,
-  initialSortKey,
-  initialSortDir,
+  totalCount,
+  page,
+  pageSize,
+  pageCount,
+  sortKey,
+  sortDir,
+  hasDarko,
+  hasLebron,
+  boardSampleSize,
+  contextPools,
 }: PlayerSeasonTableProps) {
-  const [query, setQuery] = useState("");
+  const { pending, replaceParams, searchParams, pathname } = useQueryNav();
   const [openContextId, setOpenContextId] = useState<string | null>(null);
-  const hasDarko = players.some((p) => p.darkoDpm != null);
-  const hasLebron = players.some((p) => p.lebron != null);
-  const [sortKey, setSortKey] = useState<SortKey>(
-    initialSortKey ?? (hasDarko ? "darkoDpm" : "ppg")
-  );
-  const [sortDir, setSortDir] = useState<"asc" | "desc">(
-    initialSortDir ??
-      defaultPlayerSeasonSortDir(
-        initialSortKey ?? (hasDarko ? "darkoDpm" : "ppg")
-      )
-  );
+  const playerQuery = searchParams.get("player") ?? "";
+  const [queryDraft, setQueryDraft] = useState(playerQuery);
+  const [draftSource, setDraftSource] = useState(playerQuery);
 
-  const rows = useMemo(() => {
-    const needle = query.trim().toLowerCase();
-    const mapped = players.map(toRow);
-    const filtered = needle
-      ? mapped.filter(
-          (p) =>
-            p.playerName.toLowerCase().includes(needle) ||
-            p.teamName.toLowerCase().includes(needle) ||
-            p.teamId.toLowerCase().includes(needle) ||
-            (p.position ?? "").toLowerCase().includes(needle)
-        )
-      : mapped;
+  if (playerQuery !== draftSource) {
+    setDraftSource(playerQuery);
+    setQueryDraft(playerQuery);
+  }
 
-    return [...filtered].sort((a, b) => {
-      const av = sortValue(a, sortKey);
-      const bv = sortValue(b, sortKey);
-      if (typeof av === "string" && typeof bv === "string") {
-        return sortDir === "asc"
-          ? av.localeCompare(bv)
-          : bv.localeCompare(av);
-      }
-      const an = Number(av);
-      const bn = Number(bv);
-      if (an === bn) return a.playerName.localeCompare(b.playerName);
-      return sortDir === "asc" ? an - bn : bn - an;
-    });
-  }, [players, query, sortDir, sortKey]);
-
-  /** Percentile pools for the current filtered board + active sort focus. */
   const contextIndex = useMemo(
-    () => buildLeaderboardContextIndex(rows, sortKey),
-    [rows, sortKey]
+    () =>
+      leaderboardContextIndexFromPools({
+        sortKey,
+        sampleSize: boardSampleSize,
+        pools: contextPools,
+      }),
+    [boardSampleSize, contextPools, sortKey]
   );
+
+  function patchParams(patch: Record<string, string | null>) {
+    replaceParams(patch);
+  }
 
   function toggleSort(key: SortKey) {
     setOpenContextId(null);
     if (sortKey === key) {
-      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      const nextDir = sortDir === "asc" ? "desc" : "asc";
+      patchParams({
+        sort: key,
+        dir: nextDir === defaultPlayerSeasonSortDir(key) ? null : nextDir,
+        page: null,
+      });
     } else {
-      setSortKey(key);
-      setSortDir(defaultPlayerSeasonSortDir(key));
+      const nextDir = defaultPlayerSeasonSortDir(key);
+      patchParams({
+        sort: key,
+        dir: nextDir === defaultPlayerSeasonSortDir(key) ? null : nextDir,
+        page: null,
+      });
     }
   }
 
@@ -173,11 +136,22 @@ export function PlayerSeasonTable({
   })();
 
   const colCount = 18 + (hasDarko ? 1 : 0) + (hasLebron ? 1 : 0);
+  const from = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
+  const to = Math.min(page * pageSize, totalCount);
+
+  const pageHref = (p: number) => {
+    const next = new URLSearchParams(searchParams.toString());
+    if (p <= 1) next.delete("page");
+    else next.set("page", String(p));
+    const qs = next.toString();
+    return qs ? `${pathname}?${qs}` : pathname;
+  };
 
   return (
     <section
       aria-labelledby="player-table-heading"
-      className="flex flex-col gap-3"
+      className="query-updating-content flex flex-col gap-3"
+      data-pending={pending ? "true" : "false"}
     >
       <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
@@ -188,27 +162,46 @@ export function PlayerSeasonTable({
             Player table
           </h2>
           <p className="text-sm text-muted-foreground">
-            {rows.length} player{rows.length === 1 ? "" : "s"} · per-game
-            counting stats ·{" "}
+            {totalCount} player{totalCount === 1 ? "" : "s"}
+            {totalCount > 0 ? (
+              <>
+                {" "}
+                · showing {from}–{to}
+              </>
+            ) : null}{" "}
+            · per-game counting stats ·{" "}
             <span className="font-medium text-foreground">{sortHint}</span>
             {" · "}
             tap <span className="font-semibold text-foreground">i</span> for
             percentile context
           </p>
         </div>
-        <div className="flex w-full max-w-xs flex-col gap-1.5">
+        <form
+          className="flex w-full max-w-xs flex-col gap-1.5"
+          onSubmit={(event) => {
+            event.preventDefault();
+            setOpenContextId(null);
+            patchParams({
+              player: queryDraft.trim() || null,
+              page: null,
+            });
+          }}
+        >
           <Label htmlFor="table-search">Find in table</Label>
           <Input
             id="table-search"
-            value={query}
-            onChange={(event) => {
-              setQuery(event.target.value);
+            value={queryDraft}
+            onChange={(event) => setQueryDraft(event.target.value)}
+            onBlur={() => {
+              const next = queryDraft.trim();
+              if (next === playerQuery) return;
               setOpenContextId(null);
+              patchParams({ player: next || null, page: null });
             }}
             placeholder="Name, team, position"
             autoComplete="off"
           />
-        </div>
+        </form>
       </div>
 
       <div className="sports-card overflow-hidden">
@@ -393,7 +386,7 @@ export function PlayerSeasonTable({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {rows.length === 0 ? (
+              {players.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={colCount}
@@ -403,10 +396,10 @@ export function PlayerSeasonTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                rows.map((player) => {
+                players.map((player) => {
                   const brand = resolveTeamBrand(player.teamId);
                   const rowContext = buildLeaderboardRowContext(
-                    player,
+                    player as Parameters<typeof buildLeaderboardRowContext>[0],
                     contextIndex
                   );
                   const open = openContextId === player.playerId;
@@ -489,12 +482,16 @@ export function PlayerSeasonTable({
                         <Num>{formatPct(player.fieldGoalPct)}</Num>
                         <Num>{formatPct(player.threePointPct)}</Num>
                         <Num>{formatPct(player.freeThrowPct)}</Num>
-                        <Num>{formatPct(player.effectiveFieldGoalPct)}</Num>
-                        <Num>{formatPct(player.trueShootingPct)}</Num>
-                        <Num>{formatPct(player.usagePct)}</Num>
-                        <Num>{formatNumber(player.offensiveRating, 1)}</Num>
-                        <Num>{formatNumber(player.defensiveRating, 1)}</Num>
-                        <Num>{formatSigned(player.netRating)}</Num>
+                        <Num>{formatOptionalPct(player.effectiveFieldGoalPct)}</Num>
+                        <Num>{formatOptionalPct(player.trueShootingPct)}</Num>
+                        <Num>{formatOptionalPct(player.usagePct)}</Num>
+                        <Num>
+                          {formatOptionalRating(player.offensiveRating)}
+                        </Num>
+                        <Num>
+                          {formatOptionalRating(player.defensiveRating)}
+                        </Num>
+                        <Num>{formatOptionalNet(player.netRating)}</Num>
                         {hasDarko ? (
                           <Num>{formatOptionalImpact(player.darkoDpm)}</Num>
                         ) : null}
@@ -520,6 +517,50 @@ export function PlayerSeasonTable({
           </Table>
         </div>
       </div>
+
+      {pageCount > 1 ? (
+        <nav
+          className="flex flex-wrap items-center justify-between gap-3"
+          aria-label="Player table pages"
+        >
+          <p className="text-[13px] text-muted-foreground">
+            Page {page} of {pageCount}
+            <span className="sr-only">
+              {pending ? " Updating results…" : ""}
+            </span>
+          </p>
+          <div className="flex items-center gap-2">
+            {page > 1 ? (
+              <TransitionLink
+                href={pageHref(page - 1)}
+                className="sports-pill text-[13px]"
+                scroll={false}
+                replace
+              >
+                Previous
+              </TransitionLink>
+            ) : (
+              <span className="sports-pill pointer-events-none text-[13px] opacity-40">
+                Previous
+              </span>
+            )}
+            {page < pageCount ? (
+              <TransitionLink
+                href={pageHref(page + 1)}
+                className="sports-pill text-[13px]"
+                scroll={false}
+                replace
+              >
+                Next
+              </TransitionLink>
+            ) : (
+              <span className="sports-pill pointer-events-none text-[13px] opacity-40">
+                Next
+              </span>
+            )}
+          </div>
+        </nav>
+      ) : null}
     </section>
   );
 }
@@ -566,8 +607,24 @@ function formatSigned(n: number): string {
   return `${sign}${formatNumber(n, 1)}`;
 }
 
+/** Missing ≠ zero — ESPN boards omit individual DRtg/NET. */
+function formatOptionalRating(n: number | undefined): string {
+  if (n == null || Number.isNaN(n)) return "—";
+  return formatNumber(n, 1);
+}
+
+function formatOptionalPct(n: number | undefined): string {
+  if (n == null || Number.isNaN(n)) return "—";
+  return formatPct(n);
+}
+
+function formatOptionalNet(n: number | undefined): string {
+  if (n == null || Number.isNaN(n)) return "—";
+  return formatSigned(n);
+}
+
 function formatOptionalImpact(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "-";
+  if (n == null || Number.isNaN(n)) return "—";
   const sign = n > 0 ? "+" : "";
   return `${sign}${n.toFixed(2)}`;
 }

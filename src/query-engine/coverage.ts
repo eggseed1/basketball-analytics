@@ -211,18 +211,19 @@ export function getAskCoverageGaps(now = new Date()): Array<{
       label: "DRtg (player)",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "Often 0 on ESPN career/board transforms",
+      playerCoverage: "Unavailable on ESPN athlete season boards",
       reliable: false,
       notes:
-        "Not exposed — defensive rating is frequently missing; refusing is safer than answering.",
+        "Not exposed — ESPN does not publish individual DRtg; DRBL keeps the field missing (never fabricates 0).",
     },
     {
       label: "Net rating (player)",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "Depends on ORtg/DRtg quality",
+      playerCoverage: "Unavailable without provider DRtg/NET",
       reliable: false,
-      notes: "Blocked until ORtg/DRtg are season-true and documented.",
+      notes:
+        "Blocked until a provider supplies season-true NET (never invent NET = ORtg − league average).",
     },
   ];
 }

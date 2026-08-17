@@ -12,6 +12,8 @@ import {
 } from "react";
 import { Menu, Search, X } from "lucide-react";
 
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { RouteTransitionProvider, useRouteTransitionOptional } from "@/components/continuity/route-transition";
 import { cn } from "@/lib/utils";
 import { assertInternalHref } from "@/lib/navigation";
 import {
@@ -24,25 +26,27 @@ import {
 function SiteSearch() {
   const router = useRouter();
   const [q, setQ] = useState("");
+  const routeTransition = useRouteTransitionOptional();
+  const pending = Boolean(routeTransition?.pending);
 
   const onSubmit = (e: FormEvent) => {
     e.preventDefault();
     const term = q.trim();
-    if (!term) {
-      router.push(assertInternalHref("/explore/players"));
-      return;
-    }
-    router.push(
-      assertInternalHref(
-        `/explore/players?player=${encodeURIComponent(term)}`
-      )
-    );
+    const href = !term
+      ? assertInternalHref("/explore/players")
+      : assertInternalHref(
+          `/explore/players?player=${encodeURIComponent(term)}`
+        );
+    const go = () => router.push(href);
+    if (routeTransition) routeTransition.startRouteTransition(go);
+    else go();
   };
 
   return (
     <form
       onSubmit={onSubmit}
       className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-md sm:flex-none lg:max-w-lg"
+      data-updating={pending ? "true" : "false"}
     >
       <label className="sr-only" htmlFor="site-search">
         Search players and teams
@@ -104,7 +108,7 @@ function DomainSubnav({ item }: { item: PrimaryNavItem }) {
       {item.subnav.map((link) => {
         const active = subnavActive(link, pathname, search);
         return (
-          <Link
+          <TransitionLink
             key={link.href}
             href={link.href}
             className={cn(
@@ -115,7 +119,7 @@ function DomainSubnav({ item }: { item: PrimaryNavItem }) {
             )}
           >
             {link.label}
-          </Link>
+          </TransitionLink>
         );
       })}
     </nav>
@@ -130,7 +134,7 @@ function PrimaryLink({
   active: boolean;
 }) {
   return (
-    <Link
+    <TransitionLink
       href={tab.href}
       className={cn(
         "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
@@ -142,7 +146,7 @@ function PrimaryLink({
       )}
     >
       {tab.label}
-    </Link>
+    </TransitionLink>
   );
 }
 
@@ -204,120 +208,122 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   }, [isMoreOpen, pathname]);
 
   return (
-    <div className="flex min-h-full flex-1 flex-col bg-background">
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-[color-mix(in_oklab,#f2f2f7_92%,white)] backdrop-blur-xl">
-        <div className="site-shell flex flex-col gap-2 py-3">
-          <div className="flex items-center gap-4">
-            <Link href="/" className="flex shrink-0 items-center gap-2">
-              <span
-                className="flex size-8 items-center justify-center rounded-md bg-foreground text-[11px] font-bold tracking-wide text-background"
-                aria-hidden
-              >
-                DRBL
-              </span>
-              <span className="hidden text-[1.25rem] font-bold tracking-tight sm:inline">
-                DRBL
-              </span>
-            </Link>
-            <div className="ml-auto flex min-w-0 flex-1 justify-end sm:flex-initial">
-              <SiteSearch />
-            </div>
-          </div>
-
-          {/* Desktop / tablet: full ordered nav */}
-          <div className="hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
-            <nav
-              aria-label="Primary"
-              className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
-            >
-              {PRIMARY_NAV.map((tab) => (
-                <PrimaryLink
-                  key={tab.id}
-                  tab={tab}
-                  active={tab.match(pathname)}
-                />
-              ))}
-            </nav>
-            <Link href="/gm" className="sports-pill shrink-0 text-[13px]">
-              GM mode
-            </Link>
-          </div>
-
-          {/* Mobile: pinned destinations + More */}
-          <div className="flex items-center gap-1 md:hidden">
-            <nav
-              aria-label="Primary"
-              className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
-            >
-              {mobilePinned.map((tab) => (
-                <PrimaryLink
-                  key={tab.id}
-                  tab={tab}
-                  active={tab.match(pathname)}
-                />
-              ))}
-            </nav>
-            <div className="relative shrink-0" ref={moreRef}>
-              <button
-                type="button"
-                aria-expanded={isMoreOpen}
-                aria-controls="mobile-more-nav"
-                onClick={toggleMore}
-                className={cn(
-                  "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold",
-                  moreActive || isMoreOpen
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:bg-secondary hover:text-foreground"
-                )}
-              >
-                {isMoreOpen ? (
-                  <X className="size-3.5" aria-hidden />
-                ) : (
-                  <Menu className="size-3.5" aria-hidden />
-                )}
-                More
-              </button>
-              {isMoreOpen ? (
-                <div
-                  id="mobile-more-nav"
-                  className="absolute right-0 top-full z-50 mt-1 min-w-[11rem] rounded-md border border-border bg-background p-1 shadow-md"
+    <RouteTransitionProvider>
+      <div className="flex min-h-full flex-1 flex-col bg-background">
+        <header className="sticky top-0 z-40 border-b border-black/5 bg-[color-mix(in_oklab,#f2f2f7_92%,white)] backdrop-blur-xl">
+          <div className="site-shell flex flex-col gap-2 py-3">
+            <div className="flex items-center gap-4">
+              <TransitionLink href="/" className="flex shrink-0 items-center gap-2">
+                <span
+                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[11px] font-bold tracking-wide text-background"
+                  aria-hidden
                 >
-                  {mobileMore.map((tab) => (
-                    <Link
-                      key={tab.id}
-                      href={tab.href}
-                      onClick={closeMore}
-                      className={cn(
-                        "block rounded-md px-3 py-2 text-[14px] font-semibold",
-                        tab.match(pathname)
-                          ? "bg-foreground text-background"
-                          : "text-foreground hover:bg-secondary"
-                      )}
-                    >
-                      {tab.label}
-                    </Link>
-                  ))}
-                  <Link
-                    href="/gm"
-                    onClick={closeMore}
-                    className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[13px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
-                  >
-                    GM mode
-                  </Link>
-                </div>
-              ) : null}
+                  DRBL
+                </span>
+                <span className="hidden text-[1.25rem] font-bold tracking-tight sm:inline">
+                  DRBL
+                </span>
+              </TransitionLink>
+              <div className="ml-auto flex min-w-0 flex-1 justify-end sm:flex-initial">
+                <SiteSearch />
+              </div>
             </div>
+
+            {/* Desktop / tablet: full ordered nav */}
+            <div className="hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
+              <nav
+                aria-label="Primary"
+                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
+              >
+                {PRIMARY_NAV.map((tab) => (
+                  <PrimaryLink
+                    key={tab.id}
+                    tab={tab}
+                    active={tab.match(pathname)}
+                  />
+                ))}
+              </nav>
+              <TransitionLink href="/gm" className="sports-pill shrink-0 text-[13px]">
+                GM mode
+              </TransitionLink>
+            </div>
+
+            {/* Mobile: pinned destinations + More */}
+            <div className="flex items-center gap-1 md:hidden">
+              <nav
+                aria-label="Primary"
+                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
+              >
+                {mobilePinned.map((tab) => (
+                  <PrimaryLink
+                    key={tab.id}
+                    tab={tab}
+                    active={tab.match(pathname)}
+                  />
+                ))}
+              </nav>
+              <div className="relative shrink-0" ref={moreRef}>
+                <button
+                  type="button"
+                  aria-expanded={isMoreOpen}
+                  aria-controls="mobile-more-nav"
+                  onClick={toggleMore}
+                  className={cn(
+                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold",
+                    moreActive || isMoreOpen
+                      ? "bg-foreground text-background"
+                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                  )}
+                >
+                  {isMoreOpen ? (
+                    <X className="size-3.5" aria-hidden />
+                  ) : (
+                    <Menu className="size-3.5" aria-hidden />
+                  )}
+                  More
+                </button>
+                {isMoreOpen ? (
+                  <div
+                    id="mobile-more-nav"
+                    className="absolute right-0 top-full z-50 mt-1 min-w-[11rem] rounded-md border border-border bg-background p-1 shadow-md"
+                  >
+                    {mobileMore.map((tab) => (
+                      <TransitionLink
+                        key={tab.id}
+                        href={tab.href}
+                        onClick={closeMore}
+                        className={cn(
+                          "block rounded-md px-3 py-2 text-[14px] font-semibold",
+                          tab.match(pathname)
+                            ? "bg-foreground text-background"
+                            : "text-foreground hover:bg-secondary"
+                        )}
+                      >
+                        {tab.label}
+                      </TransitionLink>
+                    ))}
+                    <TransitionLink
+                      href="/gm"
+                      onClick={closeMore}
+                      className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[13px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
+                    >
+                      GM mode
+                    </TransitionLink>
+                  </div>
+                ) : null}
+              </div>
+            </div>
+
+            {active?.subnav?.length ? (
+              <Suspense fallback={null}>
+                <DomainSubnav item={active} />
+              </Suspense>
+            ) : null}
           </div>
+        </header>
 
-          {active?.subnav?.length ? (
-            <Suspense fallback={null}>
-              <DomainSubnav item={active} />
-            </Suspense>
-          ) : null}
-        </div>
-      </header>
-
-      <div className="flex-1">{children}</div>
-    </div>
+        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+      </div>
+    </RouteTransitionProvider>
   );
 }

@@ -15,7 +15,7 @@ export const LEADERBOARD_CONTEXT_COLLISION = {
   preferredSide: "bottom" as const,
   align: "start" as const,
   sideOffset: 6,
-  collisionPadding: 8,
+  collisionPadding: 16,
   positionMethod: "fixed" as const,
   sticky: false as const,
   collisionAvoidance: {
@@ -139,7 +139,7 @@ export function LeaderboardRowContextPanel({
           sideOffset={LEADERBOARD_CONTEXT_COLLISION.sideOffset}
           positionMethod={LEADERBOARD_CONTEXT_COLLISION.positionMethod}
           collisionBoundary="clipping-ancestors"
-          collisionPadding={LEADERBOARD_CONTEXT_COLLISION.collisionPadding}
+          collisionPadding={16}
           collisionAvoidance={LEADERBOARD_CONTEXT_COLLISION.collisionAvoidance}
           sticky={LEADERBOARD_CONTEXT_COLLISION.sticky}
           className={(state) => {

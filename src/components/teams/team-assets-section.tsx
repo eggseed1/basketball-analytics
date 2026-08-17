@@ -46,7 +46,17 @@ export function TeamAssetsSection({
         </h3>
         {ledger.players.length === 0 ? (
           <p className="text-[13px] text-muted-foreground">
-            {playerCat?.note ?? "No verified player assets for this snapshot."}
+            {playerCat?.availability === "unsupported"
+              ? (playerCat.note ??
+                ledger.warning ??
+                "Historical player assets unavailable for this season.")
+              : playerCat?.availability === "timeout" ||
+                  playerCat?.availability === "provider_error"
+                ? (playerCat.note ??
+                  ledger.warning ??
+                  "Player assets unavailable for this snapshot.")
+                : (playerCat?.note ??
+                  "No verified player assets for this snapshot.")}
           </p>
         ) : (
           <ul className="divide-y divide-border/70">

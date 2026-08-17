@@ -6,6 +6,7 @@ import {
   validateAskBuilderState,
   type AskInputMode,
 } from "@/query-engine/ask-builder";
+import { parseAskContextFromSearchParams } from "@/query-engine/ask-context";
 import { daySeed } from "@/query-engine/ask-examples";
 
 export const metadata = {
@@ -28,12 +29,16 @@ interface AskPageProps {
     seasonB?: string;
     metric?: string;
     seed?: string;
+    from?: string;
+    date?: string;
   }>;
 }
 
 export default async function AskPage({ searchParams }: AskPageProps) {
   const sp = await searchParams;
   const mode: AskInputMode = sp.mode === "builder" ? "builder" : "natural";
+  const askContext = parseAskContextFromSearchParams(sp);
+
   const builder = parseAskBuilderParams({
     op: sp.op,
     player: sp.player,
@@ -52,7 +57,11 @@ export default async function AskPage({ searchParams }: AskPageProps) {
 
   const playerId = (sp.playerId ?? "").trim() || undefined;
   const teamId = (sp.teamId ?? "").trim() || undefined;
-  const result = q ? await getAskDrblAnswer(q, { playerId, teamId }) : null;
+
+  // Context never overrides seasons already present in `q` (explicit / builder).
+  const result = q
+    ? await getAskDrblAnswer(q, { playerId, teamId, context: askContext })
+    : null;
   const exampleSeed = (sp.seed ?? "").trim() || daySeed();
 
   return (
@@ -63,6 +72,7 @@ export default async function AskPage({ searchParams }: AskPageProps) {
         initialMode={mode}
         initialBuilder={builder}
         exampleSeed={exampleSeed}
+        askContext={askContext}
       />
     </main>
   );

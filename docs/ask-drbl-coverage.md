@@ -47,3 +47,15 @@ Generated for ASK DRBL v1.1. Do not treat board fields as multi-decade feeds.
 - **ORtg (player):** Not exposed in ASK DRBL yet — ESPN-derived individual ORtg is approximate and not methodology-frozen.
 - **DRtg (player):** Not exposed — defensive rating is frequently missing; refusing is safer than answering.
 - **Net rating (player):** Blocked until ORtg/DRtg are season-true and documented.
+
+## PBP (play-by-play)
+
+**Status (2026-08-16):** attach boundary ready; **no event corpus attached**; capability **false**.
+
+| Dimension | Supported in ASK? | Notes |
+| --- | --- | --- |
+| Period / clock / zone / possession | **No** | Validator / unsupported unchanged |
+| Corpus attach (`PBP_DATA_PATH`) | Config only | `getPbpCorpusStatus()` — does not unlock executors |
+| `college_three` | **No** | AST enum only |
+
+See `docs/historical-pbp-audit.md`, `npm run report:pbp-coverage`, `npm run test:pbp-capability`.

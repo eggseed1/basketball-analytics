@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { useMemo, useState, type ReactNode } from "react";
 
 import type { GameAnalysisSummary, GameWinningFactor } from "@/analytics/game-lab";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import { GameWatchOptions } from "@/components/sports/game-watch-options";
 import { LiveFreshness } from "@/components/sports/live-freshness";
@@ -22,6 +22,7 @@ import {
   statusHeadline,
   type GameStatusKind,
 } from "@/lib/game-status";
+import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import type { GameSummary } from "@/data/types";
 import { cn } from "@/lib/utils";
 
@@ -134,11 +135,17 @@ export function GameLabView({
   analysis,
   arrival,
   children,
+  omitHero = false,
 }: {
   analysis: GameAnalysisSummary;
   /** Optional Season Evidence arrival banner. */
   arrival?: { label: string } | null;
   children?: ReactNode;
+  /**
+   * When true, skip the matchup hero — page already shows a stable
+   * GameIdentityShell so the header does not remount when analysis arrives.
+   */
+  omitHero?: boolean;
 }) {
   const [showMethod, setShowMethod] = useState(false);
   const { outcome, flow, coverage } = analysis;
@@ -190,9 +197,21 @@ export function GameLabView({
   const homeThemeKey =
     outcome.homeLabel || analysis.home?.teamId || outcome.homeTeamId;
 
+  const awayBrand = resolveHistoricalTeamBrand(
+    outcome.awayTeamId,
+    analysis.season,
+    "era"
+  );
+  const homeBrand = resolveHistoricalTeamBrand(
+    outcome.homeTeamId,
+    analysis.season,
+    "era"
+  );
+
   return (
     <div className="flex flex-col gap-6">
-      {/* ——— Game hero ——— */}
+      {/* ——— Game hero (omitted when page owns stable GameIdentityShell) ——— */}
+      {!omitHero ? (
       <MatchupWashCard
         awayTeamKey={awayThemeKey}
         homeTeamKey={homeThemeKey}
@@ -262,15 +281,19 @@ export function GameLabView({
           <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5">
             <div className="flex items-center gap-2">
               <TeamLogo
-                teamKey={outcome.awayLabel || outcome.awayTeamId}
+                teamKey={awayBrand?.abbreviation ?? awayThemeKey}
                 size="md"
+                logoUrl={awayBrand?.logoUrl}
+                logoSource={awayBrand?.source}
+                textAbbr={awayBrand?.abbreviation}
+                logoPalette={awayBrand?.palette}
               />
-              <Link
+              <TransitionLink
                 href={`/teams/${encodeURIComponent(outcome.awayTeamId)}?season=${encodeURIComponent(analysis.season)}`}
                 className="text-[18px] font-bold tracking-tight underline-offset-4 hover:underline sm:text-[22px]"
               >
                 {outcome.awayLabel}
-              </Link>
+              </TransitionLink>
               {showScores ? (
                 <span className="text-[28px] font-bold tabular-nums tracking-tight sm:text-[36px]">
                   {awayScore}
@@ -286,15 +309,19 @@ export function GameLabView({
                   {homeScore}
                 </span>
               ) : null}
-              <Link
+              <TransitionLink
                 href={`/teams/${encodeURIComponent(outcome.homeTeamId)}?season=${encodeURIComponent(analysis.season)}`}
                 className="text-[18px] font-bold tracking-tight underline-offset-4 hover:underline sm:text-[22px]"
               >
                 {outcome.homeLabel}
-              </Link>
+              </TransitionLink>
               <TeamLogo
-                teamKey={outcome.homeLabel || outcome.homeTeamId}
+                teamKey={homeBrand?.abbreviation ?? homeThemeKey}
                 size="md"
+                logoUrl={homeBrand?.logoUrl}
+                logoSource={homeBrand?.source}
+                textAbbr={homeBrand?.abbreviation}
+                logoPalette={homeBrand?.palette}
               />
             </div>
           </div>
@@ -349,6 +376,7 @@ export function GameLabView({
           className="border-t border-border/60 pt-3"
         />
       </MatchupWashCard>
+      ) : null}
 
       {/* ——— Game flow ——— */}
       <MatchupWashCard

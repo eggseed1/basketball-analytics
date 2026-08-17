@@ -7,6 +7,7 @@ import { resolveQueryEntities } from "./entities";
 import { validateBasketballQuery } from "./validate";
 import { executeBasketballQuery } from "./execute";
 import { buildFollowUpLinks, buildQueryPlan } from "./followups";
+import { applyAskContext, type AskContext } from "./ask-context";
 import type { AskDrblResult, BasketballQueryAst } from "./types";
 import { ASK_DRBL_VERSION } from "./types";
 
@@ -15,6 +16,11 @@ export type RunAskDrblOptions = {
   playerId?: string;
   /** Force-resolve the team entity (e.g. deep link from a team page). */
   teamId?: string;
+  /**
+   * Historical / shareable season context (Time Machine).
+   * Never overrides an explicit season in the query text.
+   */
+  context?: AskContext | null;
 };
 
 async function enrichAmbiguousCandidates(
@@ -148,6 +154,7 @@ export async function runAskDrbl(
   }
 
   let ast = interpretAskQuery(trimmed);
+  ast = applyAskContext(ast, options.context);
 
   const forcedEntity = Boolean(
     (options.playerId || options.teamId) && !ast.unsupported?.length
@@ -245,6 +252,20 @@ export async function runAskDrbl(
     };
 
     if (validation.status === "partial" && failedAst.partialSupportedQuery) {
+      const partialHref = `/ask?q=${encodeURIComponent(failedAst.partialSupportedQuery)}`;
+      const withCtx =
+        options.context?.season
+          ? (() => {
+              const p = new URLSearchParams();
+              p.set("q", failedAst.partialSupportedQuery!);
+              p.set("season", options.context!.season!);
+              if (options.context!.date) p.set("date", options.context!.date);
+              if (options.context!.source === "time_machine") {
+                p.set("from", "history");
+              }
+              return `/ask?${p.toString()}`;
+            })()
+          : partialHref;
       base.headline = "Partially supported";
       base.detailLines = [
         failedAst.partialSupportedSummary
@@ -256,7 +277,7 @@ export async function runAskDrbl(
       base.links = [
         {
           label: "Answer the supported portion →",
-          href: `/ask?q=${encodeURIComponent(failedAst.partialSupportedQuery)}`,
+          href: withCtx,
         },
         {
           label: "Why the rest is unavailable →",

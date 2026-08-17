@@ -1,7 +1,7 @@
 import { Suspense } from "react";
 
 import { GameScoringScatter } from "@/components/charts/game-scoring-scatter";
-import { GameFilterToolbar } from "@/components/explore/game-filter-toolbar";
+import { ExploreGamesClientShell } from "@/components/explore/explore-games-client-shell";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { DecadeChips } from "@/components/sports/decade-chips";
@@ -33,7 +33,6 @@ export default async function ExploreGamesPage({
 }: ExploreGamesPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  // Prefer a classic 1960s season when opening Games with no season param.
   const defaultSeason =
     seasons.find((s) => s.startsWith("1969")) ??
     seasons.find((s) => s.startsWith("1960")) ??
@@ -52,6 +51,16 @@ export default async function ExploreGamesPage({
   const { teams, source, warnings } = teamCatalog;
 
   const cards = games.slice(0, 12);
+  const TABLE_CAP = 200;
+  const SCATTER_CAP = 400;
+  const tableGames = games.slice(0, TABLE_CAP);
+  const scatterGames =
+    games.length <= SCATTER_CAP
+      ? games
+      : games.filter(
+          (_, i) => i % Math.ceil(games.length / SCATTER_CAP) === 0
+        );
+  const truncated = games.length > TABLE_CAP;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
@@ -75,29 +84,35 @@ export default async function ExploreGamesPage({
           <div className="h-20 animate-pulse rounded-md bg-secondary" />
         }
       >
-        <GameFilterToolbar
+        <ExploreGamesClientShell
           seasons={seasons}
           teams={teams}
           defaultSeason={defaultSeason}
-        />
-      </Suspense>
+        >
+          <section className="flex flex-col gap-1">
+            {cards.length === 0 ? (
+              <div className="sports-card px-4 py-8 text-center text-sm text-muted-foreground">
+                No games for this season filter.
+              </div>
+            ) : (
+              cards.map((game) => <GameScoreCard key={game.id} game={game} />)
+            )}
+          </section>
 
-      <section className="flex flex-col gap-1">
-        {cards.length === 0 ? (
-          <div className="sports-card px-4 py-8 text-center text-sm text-muted-foreground">
-            No games for this season filter.
+          <div className="pb-8">
+            <GameScoringScatter games={scatterGames} />
+            <div className="mt-4">
+              <GameSeasonTable games={tableGames} />
+              {truncated ? (
+                <p className="mt-2 text-[12px] text-muted-foreground">
+                  Showing {tableGames.length} of {games.length} games. Narrow the
+                  season or date filters for the full set.
+                </p>
+              ) : null}
+            </div>
           </div>
-        ) : (
-          cards.map((game) => <GameScoreCard key={game.id} game={game} />)
-        )}
-      </section>
-
-      <div className="pb-8">
-        <GameScoringScatter games={games} />
-        <div className="mt-4">
-          <GameSeasonTable games={games} />
-        </div>
-      </div>
+        </ExploreGamesClientShell>
+      </Suspense>
     </main>
   );
 }

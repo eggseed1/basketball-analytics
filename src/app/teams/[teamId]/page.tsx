@@ -1,60 +1,50 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
-import type { CSSProperties } from "react";
 
 import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
-import { TeamLogo } from "@/components/brand/team-logo";
-import { TeamAssetsSection } from "@/components/teams/team-assets-section";
-import { TeamArcSection } from "@/components/teams/team-arc-section";
-import { TeamAskLinks, askDrblTeamHref } from "@/components/teams/team-ask-links";
-import { TeamGamesSection } from "@/components/teams/team-games-section";
+import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
+import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { TeamArcIsland } from "@/components/teams/team-arc-island";
+import { TeamAskLinks } from "@/components/teams/team-ask-links";
+import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
+import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
+import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
+import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamPageNav } from "@/components/teams/team-page-nav";
-import { TeamRosterSection } from "@/components/teams/team-roster-section";
-import { TeamSeasonEvidenceProfileSection } from "@/components/teams/team-season-evidence-profile";
-import { TeamTransactionsSection } from "@/components/teams/team-transactions-section";
+import { TeamRosterIsland } from "@/components/teams/team-roster-island";
+import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
+import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { currentOffseasonLabelYear } from "@/data/providers/transactions/offseason-window";
-import {
-  getLeagueStandings,
-  getRecentGameSummaries,
-  getTeamExploreSeasons,
-  getTeamPlayers,
-  getTeamSeasonArc,
-  getTeamSeasonEvidence,
-  getTeamSeasonStats,
-  getUpcomingGameSummaries,
-  listTeamArcCandidateSeasons,
-  listTransactionEvents,
-  teamArcDefaultWindow,
-} from "@/data/queries";
-import { getTeamAssets } from "@/data/queries/team-assets";
-import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
-import type { TeamAssetLedger } from "@/data/types/team-assets";
-import type { PlayerSeason, TeamSeasonStats } from "@/data/types";
+import { getLeagueStandings, getTeamExploreSeasons } from "@/data/queries";
+import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
+import type { TeamSeasonStats } from "@/data/types";
 import type { StandingRow } from "@/data/types/standings";
-import type { TeamSeasonEvidence } from "@/analytics/season-evidence";
-import { SEASON_EVIDENCE_METHODOLOGY } from "@/analytics/season-evidence";
-import { formatNumber, formatPct } from "@/lib/format";
+import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
-import { buildTeamArcModel } from "@/lib/team-arc";
-import { teamComparePath } from "@/analytics/compare-team-seasons";
+import { resolveTeamIdentityFallback } from "@/lib/team-destination";
 import {
   assessTeamCoverage,
-  buildRosterBuckets,
   buildTeamIdentityStatements,
   enrichTraitsWithPrior,
   findStandingRow,
   formatTraitPriorDelta,
   groupTraitsForPerformance,
   resolveTeamFromBoard,
-  seasonChipHref,
   transactionTeamFilterId,
 } from "@/lib/team-explorer";
+import {
+  resolveActiveEraTheme,
+} from "@/themes/era-theme";
+import {
+  historyHref,
+  parseDestinationHistoryArrival,
+} from "@/themes/history-url";
 
 interface TeamPageProps {
   params: Promise<{ teamId: string }>;
@@ -67,15 +57,25 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const league = await getTeamSeasonStats(season).catch(() => []);
-  const team = resolveTeamFromBoard(league, teamId);
+  const board = await getTeamSeasonBoardCached(season);
+  const boardTeam = resolveTeamFromBoard(board.rows, teamId);
+  if (boardTeam) {
+    return {
+      title: `${boardTeam.fullName} | Basketball Analytics`,
+    };
+  }
+  const fallback = resolveTeamIdentityFallback(teamId, season, "era");
   return {
-    title: team
-      ? `${team.fullName} | Basketball Analytics`
+    title: fallback
+      ? `${fallback.fullName} | Basketball Analytics`
       : "Team | Basketball Analytics",
   };
 }
 
+/**
+ * Progressive team destination: identity + core board paint first;
+ * arc / evidence / roster / games / transactions / assets stream as islands.
+ */
 export default async function TeamProfilePage({
   params,
   searchParams,
@@ -88,163 +88,129 @@ export default async function TeamProfilePage({
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = seasonParam ?? currentSeason;
   const priorSeason = shiftCanonicalSeason(season, -1);
-  const offseasonYear = currentOffseasonLabelYear();
+  const { fromHistory, themeMode, applyEraTheme } =
+    parseDestinationHistoryArrival(sp);
 
-  const [league, priorLeague, seasonOptions] = await Promise.all([
-    getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
-    getTeamSeasonStats(priorSeason).catch(() => [] as TeamSeasonStats[]),
+  const [seasonBoard, priorBoard, seasonOptions, standings] = await Promise.all([
+    getTeamSeasonBoardCached(season),
+    getTeamSeasonBoardCached(priorSeason),
     getTeamExploreSeasons().catch(() => [currentSeason, priorSeason]),
+    season === currentSeason
+      ? getLeagueStandings(season).catch(() => null)
+      : Promise.resolve(null),
   ]);
 
-  const team = resolveTeamFromBoard(league, teamId);
-  if (!team) notFound();
+  const league = seasonBoard.rows;
+  const priorLeague = priorBoard.rows;
+  const boardWarning =
+    seasonBoard.status === "ok"
+      ? null
+      : seasonBoard.warning ??
+        `Team metrics unavailable for ${season}.`;
 
-  const prior =
-    priorLeague.find((t) => t.teamId === team.teamId) ??
-    priorLeague.find(
-      (t) => t.abbreviation.toLowerCase() === team.abbreviation.toLowerCase()
-    ) ??
-    null;
+  const boardTeam = resolveTeamFromBoard(league, teamId);
+  const brandPresentation =
+    applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
-  const analysis = analyzeTeamProfile({ team, league, prior });
-  const traits = enrichTraitsWithPrior(analysis.traits, team, prior);
-  const brand = resolveTeamBrand(team.abbreviation);
-  const txTeamId = transactionTeamFilterId(team, brand);
-  const askTeamId = brand?.espnTeamId ?? team.teamId;
+  const identityFallback = !boardTeam
+    ? resolveTeamIdentityFallback(teamId, season, brandPresentation)
+    : null;
+  if (!boardTeam && !identityFallback) notFound();
 
-  const arcCandidates = listTeamArcCandidateSeasons({ latest: season });
-  const arcSeasons = showingFullArc
-    ? arcCandidates
-    : teamArcDefaultWindow(season);
+  const boardAvailable = Boolean(boardTeam);
+  const identityTeam = boardTeam ?? {
+    abbreviation: identityFallback!.abbreviation,
+    fullName: identityFallback!.fullName,
+    conference: identityFallback!.conference,
+    ppg: Number.NaN,
+    avgDiff: Number.NaN,
+    trueShootingPct: undefined,
+    teamId: identityFallback!.teamId,
+    season,
+    gamesPlayed: 0,
+    oppPpg: Number.NaN,
+    rpg: Number.NaN,
+    apg: Number.NaN,
+    spg: Number.NaN,
+    bpg: Number.NaN,
+    topg: Number.NaN,
+    fieldGoalPct: Number.NaN,
+    threePointPct: Number.NaN,
+    freeThrowPct: Number.NaN,
+    assistToTurnover: Number.NaN,
+    offensiveReboundPct: Number.NaN,
+    points: 0,
+    fieldGoalsMade: 0,
+    fieldGoalsAttempted: 0,
+    threePointersMade: 0,
+    threePointersAttempted: 0,
+    freeThrowsMade: 0,
+    freeThrowsAttempted: 0,
+    assists: 0,
+    turnovers: 0,
+  };
 
-  // Parallel bounded fetches — reuse current/prior boards for the arc.
-  const [
-    roster,
-    recentPool,
-    upcomingBundle,
-    txPage,
-    standings,
-    arcLoad,
-    seasonEvidence,
-    assetLedger,
-  ] = await Promise.all([
-      getTeamPlayers(team.teamId, season, { minimumGames: 10 }).catch(
-        () => [] as PlayerSeason[]
-      ),
-      getRecentGameSummaries({ season, limit: 48 }).catch(() => []),
-      season === currentSeason
-        ? getUpcomingGameSummaries({ season, limit: 40 }).catch(() => ({
-            games: [],
-          }))
-        : Promise.resolve({ games: [] }),
-      listTransactionEvents(
-        { teamId: txTeamId, offseasonYear },
-        { page: 1, pageSize: 6 }
-      ).catch(() => ({
-        events: [],
-        total: 0,
-        page: 1,
-        pageSize: 6,
-        pageCount: 0,
-      })),
-      season === currentSeason
-        ? getLeagueStandings(season).catch(() => null)
-        : Promise.resolve(null),
-      getTeamSeasonArc({
-        teamId: team.teamId,
-        abbreviation: team.abbreviation,
-        seasons: arcSeasons,
-        preloadedBoards: {
-          [season]: league,
-          ...(priorLeague.length ? { [priorSeason]: priorLeague } : {}),
-        },
-      }),
-      getTeamSeasonEvidence({
-        teamId: askTeamId,
-        season,
-        abbreviation: team.abbreviation,
-        fullName: team.fullName,
-      }).catch(
-        (): TeamSeasonEvidence => ({
-          subject: {
-            kind: "team",
-            teamId: askTeamId,
-            abbreviation: team.abbreviation,
-            fullName: team.fullName,
-            matchTeamIds: [],
-            matchAbbrs: [team.abbreviation],
-          },
-          season,
-          findings: [],
-          games: [],
-          methodology: SEASON_EVIDENCE_METHODOLOGY,
-          coverage: {
-            gameCount: 0,
-            categories: [],
-            unsupported: [],
-          },
-          error: "Season evidence temporarily unavailable.",
-        })
-      ),
-      getTeamAssets({
-        teamId: askTeamId,
-        abbreviation: team.abbreviation,
-        season,
-        minimumGames: 10,
-      }).catch(
-        (): TeamAssetLedger => ({
-          teamId: askTeamId,
-          asOfSeason: season,
-          asOfDate: null,
-          methodologyVersion: "1.0",
-          lineageMethodologyVersion: "1.0",
-          structuredLedgerAvailable: false,
-          genealogyUiReady: false,
-          categories: [],
-          players: [],
-          draftCapital: [],
-          tradeExceptions: [],
-          draftRights: [],
-          notes: ["Team assets temporarily unavailable."],
-        })
-      ),
-    ]);
+  const prior = boardTeam
+    ? priorLeague.find((t) => t.teamId === boardTeam.teamId) ??
+      priorLeague.find(
+        (t) =>
+          t.abbreviation.toLowerCase() ===
+          boardTeam.abbreviation.toLowerCase()
+      ) ??
+      null
+    : null;
 
-  const txResolutionsByEventId = Object.fromEntries(
-    await resolvePlayersForTransactionEvents(txPage.events).catch(
-      () => new Map()
-    )
-  );
+  const analysis = boardTeam
+    ? analyzeTeamProfile({ team: boardTeam, league, prior })
+    : null;
+  const traits = analysis
+    ? enrichTraitsWithPrior(analysis.traits, boardTeam!, prior)
+    : [];
+  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
+  const historicalBrand =
+    identityFallback?.historicalBrand ??
+    resolveHistoricalTeamBrand(
+      identityTeam.teamId ?? boardTeam?.teamId ?? teamId,
+      season,
+      brandPresentation
+    );
+  const useHistoricalMark =
+    applyEraTheme && themeMode !== "modern"
+      ? true
+      : Boolean(historicalBrand?.isHistorical);
+  const resolvedTeamId =
+    boardTeam?.teamId ?? identityFallback!.teamId;
+  const txTeamId = boardTeam
+    ? transactionTeamFilterId(boardTeam, modernBrand)
+    : identityFallback!.teamId;
+  const askTeamId = modernBrand?.espnTeamId ?? resolvedTeamId;
 
   const standingRows: StandingRow[] =
     standings?.conferences.flatMap((c) => c.rows) ?? [];
-  const standing = findStandingRow(standingRows, team, brand);
+  const standing = boardTeam
+    ? findStandingRow(standingRows, boardTeam, modernBrand)
+    : null;
 
   const identity = buildTeamIdentityStatements(traits);
   const grouped = groupTraitsForPerformance(traits);
-  const buckets = buildRosterBuckets(roster);
   const coverage = assessTeamCoverage({
-    hasTeamBoard: true,
+    hasTeamBoard: boardAvailable,
     traitCount: traits.length,
-    rosterCount: roster.length,
-    gameCount: recentPool.length,
-    transactionCount: txPage.events.length,
+    rosterCount: 0,
+    gameCount: 0,
+    transactionCount: 0,
   });
-
-  const arc = buildTeamArcModel({
-    rows: arcLoad.rows,
-    viewingSeason: season,
-    showingFull: showingFullArc,
-    fullCandidateCount: arcCandidates.length,
-    missingSeasons: arcLoad.missingSeasons,
-    failedSeasons: arcLoad.failedSeasons,
-  });
+  const coverageLines = coverage.lines.filter(
+    (l) =>
+      l.label === "Current season board" ||
+      l.label === "League-context traits" ||
+      l.label === "PBP / lineups"
+  );
 
   const seasonChips = [
     ...new Set([
       season,
-      ...arc.rows.map((r) => r.season).slice(0, 6),
-      ...seasonOptions.slice(0, 4),
+      ...seasonOptions.slice(0, 6),
       priorSeason,
       currentSeason,
     ]),
@@ -253,450 +219,342 @@ export default async function TeamProfilePage({
     .sort((a, b) => b.localeCompare(a))
     .slice(0, 8);
 
-  const snapshotBits = [
-    standing
-      ? `${standing.wins}–${standing.losses}`
-      : `${formatNumber(team.ppg, 1)} PPG`,
-    `${team.avgDiff >= 0 ? "+" : ""}${formatNumber(team.avgDiff, 1)} diff`,
-    `${formatPct(team.trueShootingPct)} TS`,
-    traits[0]
-      ? `${Math.round(traits[0].percentile)}th pct · ${traits[0].label}`
-      : null,
-  ].filter(Boolean);
+  const displayName =
+    useHistoricalMark && historicalBrand?.displayName
+      ? historicalBrand.displayName
+      : identityTeam.fullName;
 
-  return (
-    <main className="site-shell flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-      <p>
-        <Link
-          href={`/explore/teams?season=${encodeURIComponent(season)}`}
-          className="text-[13px] font-semibold text-muted-foreground"
-        >
-          ← Teams board
-        </Link>
-      </p>
+  const eraTheme = applyEraTheme
+    ? resolveActiveEraTheme(season, themeMode)
+    : null;
 
-      <TeamPageNav />
+  const backHref = fromHistory
+    ? historyHref({
+        season,
+        theme: themeMode === "modern" ? "modern" : undefined,
+      })
+    : `/explore/teams?season=${encodeURIComponent(season)}`;
 
-      {/* WHO */}
-      <section
-        id="overview"
-        className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Overview"
-      >
-        <header
-          className="sports-card score-card-wash overflow-hidden px-4 py-5 sm:px-5"
-          style={
-            brand
-              ? ({
-                  "--away-color": brand.primary,
-                  "--home-color": brand.secondary,
-                } as CSSProperties)
-              : undefined
+  const body = (
+    <DestinationClientShell>
+      <main className="site-shell flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+        <p>
+          <TransitionLink
+            href={backHref}
+            className="text-[13px] font-semibold text-muted-foreground"
+          >
+            ← {fromHistory ? "Time Machine" : "Teams board"}
+          </TransitionLink>
+        </p>
+
+        <TeamPageNav />
+
+        <TeamDestinationIdentity
+          teamId={teamId}
+          team={identityTeam}
+          season={season}
+          seasonChips={seasonChips}
+          standing={standing}
+          modernBrand={modernBrand}
+          historicalBrand={historicalBrand}
+          useHistoricalMark={useHistoricalMark}
+          askTeamId={askTeamId}
+          txTeamId={txTeamId}
+          priorSeason={priorSeason}
+          boardAvailable={boardAvailable}
+          fromHistory={fromHistory}
+          themeMode={themeMode === "modern" ? "modern" : "historical"}
+          snapshotExtra={
+            traits[0]
+              ? `${Math.round(traits[0].percentile)}th pct · ${traits[0].label}`
+              : boardWarning
           }
-        >
-          <div className="flex flex-wrap items-center gap-4">
-            <TeamLogo teamKey={team.abbreviation} size="xl" />
-            <div className="min-w-0 flex-1">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                {team.abbreviation} · {team.conference}
-                {standing ? ` · #${standing.rank}` : null} · {season}
-              </p>
-              <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-                {team.fullName}
-              </h1>
-              <p className="mt-1 text-[14px] font-medium text-foreground">
-                {snapshotBits.join(" · ")}
-              </p>
-              {standing ? (
-                <p className="mt-1 text-[12px] text-muted-foreground">
-                  {standing.streak ? `Streak ${standing.streak}` : null}
-                  {standing.lastTen ? ` · L10 ${standing.lastTen}` : null}
+          coverageSummary={
+            <>
+              Coverage: {coverage.level}
+              {boardWarning ? (
+                <>
                   {" · "}
-                  <Link
-                    href="/standings"
-                    className="font-semibold underline-offset-2 hover:underline"
-                  >
-                    Standings →
-                  </Link>
-                </p>
-              ) : (
-                <p className="mt-1 text-[12px] text-muted-foreground">
-                  Live standings shown for the current season only when
-                  available.
-                </p>
-              )}
+                  <span className="text-foreground">{boardWarning}</span>
+                </>
+              ) : null}
+              {" · "}
+              {coverageLines
+                .map(
+                  (l) =>
+                    `${l.label} ${l.status === "ok" ? "✓" : l.status === "partial" ? "partial" : "—"}`
+                )
+                .join(" · ")}
+              . Deep sections stream below. Missing metrics are not zeroes. PBP
+              unavailable.
+            </>
+          }
+        />
+
+        {boardAvailable && analysis ? (
+          <>
+        {/* HOW GOOD — core from board */}
+        <section
+          id="performance"
+          className="scroll-mt-16 flex flex-col gap-4"
+          aria-label="Performance"
+        >
+          <div className="flex flex-wrap items-end justify-between gap-2">
+            <div>
+              <h2 className="text-[17px] font-bold tracking-tight">
+                How good are they?
+              </h2>
+              <p className="text-[13px] text-muted-foreground">
+                Analytical profile from the team season board — Level-2 context
+                on each number. No invented overall composite.
+              </p>
             </div>
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-1.5">
-            {seasonChips.map((option) => (
-              <Link
-                key={option}
-                href={seasonChipHref(teamId, option)}
-                scroll={false}
-                className={
-                  option === season
-                    ? "rounded-md bg-foreground px-3 py-1 text-[12px] font-semibold text-background"
-                    : "rounded-md bg-white/55 px-3 py-1 text-[12px] font-semibold text-foreground"
-                }
-              >
-                {option}
-              </Link>
-            ))}
-          </div>
-
-          <div className="mt-4 flex flex-wrap gap-3 text-[13px] font-semibold">
-            <a
-              href="#performance"
-              className="underline-offset-2 hover:underline"
-            >
-              Performance →
-            </a>
             <a
               href="#identity"
-              className="underline-offset-2 hover:underline"
+              className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
             >
-              How they win →
+              What&apos;s changing →
             </a>
-            <a
-              href="#roster"
-              className="underline-offset-2 hover:underline"
-            >
-              Roster →
-            </a>
-            <a href="#games" className="underline-offset-2 hover:underline">
-              Games →
-            </a>
-            <Link
-              href={askDrblTeamHref(
-                `${team.fullName} point differential ${season}`,
-                askTeamId
-              )}
-              className="underline-offset-2 hover:underline"
-            >
-              Ask DRBL →
-            </Link>
-            <Link
-              href={teamComparePath({
-                teamA: askTeamId,
-                teamB: askTeamId,
-                seasonA: season,
-                seasonB: priorSeason,
-              })}
-              className="underline-offset-2 hover:underline"
-            >
-              Compare seasons →
-            </Link>
-            <Link
-              href={`/compare?mode=teams&view=rank&teamId=${encodeURIComponent(askTeamId)}`}
-              className="underline-offset-2 hover:underline"
-            >
-              Rank seasons →
-            </Link>
-            <Link
-              href={`/offseason?team=${encodeURIComponent(txTeamId)}`}
-              className="underline-offset-2 hover:underline"
-            >
-              Offseason →
-            </Link>
           </div>
 
-          <p className="mt-4 text-[12px] text-muted-foreground">
-            Coverage: {coverage.level}
-            {" · "}
-            {coverage.lines
-              .map(
-                (l) =>
-                  `${l.label} ${l.status === "ok" ? "✓" : l.status === "partial" ? "partial" : "—"}`
-              )
-              .join(" · ")}
-            . Missing metrics are not zeroes. PBP unavailable.
-          </p>
-        </header>
-      </section>
+          <TraitGroup title="Overall" traits={grouped.overall} />
+          <TraitGroup
+            title="Efficiency & shooting"
+            traits={grouped.efficiency}
+          />
+          <TraitGroup title="Offense" traits={grouped.offense} />
+          <TraitGroup title="Defense" traits={grouped.defense} />
+        </section>
 
-      {/* HOW GOOD */}
-      <section
-        id="performance"
-        className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Performance"
-      >
-        <div className="flex flex-wrap items-end justify-between gap-2">
+        {/* HOW THEY WIN + IDENTITY + TRENDS — same board wave */}
+        <section
+          id="identity"
+          className="scroll-mt-16 flex flex-col gap-4"
+          aria-label="Identity"
+        >
           <div>
+            <h2 className="text-[17px] font-bold tracking-tight">
+              How do they win?
+            </h2>
+            <p className="text-[13px] text-muted-foreground">
+              Strongest measurable traits vs the league this season.
+            </p>
+          </div>
+
+          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+            <ul className="flex flex-col gap-3">
+              {analysis.howTheyWin.map((finding) => (
+                <li
+                  key={finding.id}
+                  className="rounded-md bg-secondary/50 px-3 py-3"
+                >
+                  <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+                    {finding.eyebrow}
+                  </p>
+                  <p className="text-[15px] font-semibold">{finding.title}</p>
+                  <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+                    {finding.body}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+            <div>
+              <h3 className="text-[15px] font-bold tracking-tight">
+                Statistical identity
+              </h3>
+              <p className="text-[13px] text-muted-foreground">
+                Measurable Top / Bottom bands — not stylistic labels. Deeper
+                identity arrives with PBP later.
+              </p>
+            </div>
+            {identity.length === 0 ? (
+              <p className="text-[13px] text-muted-foreground">
+                No Top-10 / Bottom-10 identity traits for this sample yet.
+              </p>
+            ) : (
+              <ul className="flex flex-col gap-2">
+                {identity.map((s) => (
+                  <li
+                    key={s.id}
+                    className="rounded-md border border-border/70 bg-white/40 px-3 py-2 text-[13px]"
+                  >
+                    <span className="font-semibold">{s.text}</span>
+                    <span className="ml-2 text-muted-foreground">
+                      {Math.round(s.percentile)}th pct
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+            <div>
+              <h3 className="text-[15px] font-bold tracking-tight">
+                What&apos;s changing?
+              </h3>
+              <p className="text-[13px] text-muted-foreground">
+                {analysis.vsPrior
+                  ? `${analysis.vsPrior.priorSeason} → ${season} · existing team-profile noise floors`
+                  : "Prior-season team board unavailable for comparison."}
+              </p>
+            </div>
+            {analysis.vsPrior?.finding ? (
+              <div className="rounded-md bg-secondary/50 px-3 py-3">
+                <p className="text-[15px] font-semibold">
+                  {analysis.vsPrior.finding.title}
+                </p>
+                <p className="mt-1 text-[13px] text-muted-foreground">
+                  {analysis.vsPrior.finding.body}
+                </p>
+              </div>
+            ) : null}
+            {analysis.vsPrior?.changes.length ? (
+              <ul className="flex flex-col">
+                {analysis.vsPrior.changes.map((c) => (
+                  <li
+                    key={c.id}
+                    className="flex items-baseline justify-between gap-3 border-b border-border/60 py-2 last:border-0"
+                  >
+                    <span className="text-[13px] font-semibold">{c.label}</span>
+                    <span className="text-[14px] font-bold tabular-nums">
+                      {c.deltaDisplay}
+                    </span>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-[13px] text-muted-foreground">
+                No clear season-to-season team deltas cleared the noise filter.
+              </p>
+            )}
+            <p className="text-[12px] text-muted-foreground">
+              Season evolution charts are deferred — Team Arc below lists the
+              multi-year board history; selector above switches the profile year.
+            </p>
+          </div>
+        </section>
+          </>
+        ) : (
+          <section
+            id="performance"
+            className="scroll-mt-16 flex flex-col gap-3"
+            aria-label="Performance"
+          >
             <h2 className="text-[17px] font-bold tracking-tight">
               How good are they?
             </h2>
             <p className="text-[13px] text-muted-foreground">
-              Analytical profile from the team season board — Level-2 context on
-              each number. No invented overall composite.
+              Season board unavailable for {season}. Identity above uses
+              team-era resolution — rates are not fabricated as zeroes.
             </p>
-          </div>
-          <a
-            href="#identity"
-            className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-          >
-            What&apos;s changing →
-          </a>
-        </div>
+          </section>
+        )}
 
-        <TraitGroup title="Overall" traits={grouped.overall} />
-        <TraitGroup title="Efficiency & shooting" traits={grouped.efficiency} />
-        <TraitGroup title="Offense" traits={grouped.offense} />
-        <TraitGroup title="Defense" traits={grouped.defense} />
-      </section>
-
-      {/* HOW THEY WIN + IDENTITY + TRENDS */}
-      <section
-        id="identity"
-        className="scroll-mt-16 flex flex-col gap-4"
-        aria-label="Identity"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            How do they win?
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Strongest measurable traits vs the league this season.
-          </p>
-        </div>
-
-        <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-          <ul className="flex flex-col gap-3">
-            {analysis.howTheyWin.map((finding) => (
-              <li
-                key={finding.id}
-                className="rounded-md bg-secondary/50 px-3 py-3"
-              >
-                <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                  {finding.eyebrow}
-                </p>
-                <p className="text-[15px] font-semibold">{finding.title}</p>
-                <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-                  {finding.body}
-                </p>
-              </li>
-            ))}
-          </ul>
-        </div>
-
-        <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-          <div>
-            <h3 className="text-[15px] font-bold tracking-tight">
-              Statistical identity
-            </h3>
-            <p className="text-[13px] text-muted-foreground">
-              Measurable Top / Bottom bands — not stylistic labels. Deeper
-              identity arrives with PBP later.
-            </p>
-          </div>
-          {identity.length === 0 ? (
-            <p className="text-[13px] text-muted-foreground">
-              No Top-10 / Bottom-10 identity traits for this sample yet.
-            </p>
-          ) : (
-            <ul className="flex flex-col gap-2">
-              {identity.map((s) => (
-                <li
-                  key={s.id}
-                  className="rounded-md border border-border/70 bg-white/40 px-3 py-2 text-[13px]"
-                >
-                  <span className="font-semibold">{s.text}</span>
-                  <span className="ml-2 text-muted-foreground">
-                    {Math.round(s.percentile)}th pct
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-        <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-          <div>
-            <h3 className="text-[15px] font-bold tracking-tight">
-              What&apos;s changing?
-            </h3>
-            <p className="text-[13px] text-muted-foreground">
-              {analysis.vsPrior
-                ? `${analysis.vsPrior.priorSeason} → ${season} · existing team-profile noise floors`
-                : "Prior-season team board unavailable for comparison."}
-            </p>
-          </div>
-          {analysis.vsPrior?.finding ? (
-            <div className="rounded-md bg-secondary/50 px-3 py-3">
-              <p className="text-[15px] font-semibold">
-                {analysis.vsPrior.finding.title}
-              </p>
-              <p className="mt-1 text-[13px] text-muted-foreground">
-                {analysis.vsPrior.finding.body}
-              </p>
-            </div>
-          ) : null}
-          {analysis.vsPrior?.changes.length ? (
-            <ul className="flex flex-col">
-              {analysis.vsPrior.changes.map((c) => (
-                <li
-                  key={c.id}
-                  className="flex items-baseline justify-between gap-3 border-b border-border/60 py-2 last:border-0"
-                >
-                  <span className="text-[13px] font-semibold">{c.label}</span>
-                  <span className="text-[14px] font-bold tabular-nums">
-                    {c.deltaDisplay}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="text-[13px] text-muted-foreground">
-              No clear season-to-season team deltas cleared the noise filter.
-            </p>
-          )}
-          <p className="text-[12px] text-muted-foreground">
-            Season evolution charts are deferred — Team Arc below lists the
-            multi-year board history; selector above switches the profile year.
-          </p>
-        </div>
-      </section>
-
-      {/* TEAM ARC */}
-      <section
-        id="arc"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Team Arc"
-      >
-        <div className="sports-card p-4 sm:p-5">
-          <TeamArcSection
-            arc={arc}
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading Team Arc…" />
+          }
+        >
+          <TeamArcIsland
             teamRouteKey={teamId}
-            teamId={team.teamId}
-            teamName={team.fullName}
-            viewingSeason={season}
-            teamEspnId={askTeamId}
-          />
-        </div>
-      </section>
-
-      {/* SEASON EVIDENCE → GAME LAB */}
-      <TeamSeasonEvidenceProfileSection evidence={seasonEvidence} />
-
-      {/* WHO DRIVES IT */}
-      <section
-        id="roster"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Roster"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            Who drives it?
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Compact roster explorer — transparent categories only.
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamRosterSection
-            buckets={buckets}
+            teamId={resolvedTeamId}
+            teamName={displayName}
+            abbreviation={identityTeam.abbreviation}
             season={season}
-            teamKey={team.abbreviation}
-            teamId={team.teamId}
-          />
-        </div>
-      </section>
-
-      {/* CAP / ASSETS */}
-      <section
-        id="assets"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Cap and assets"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            Cap &amp; assets
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Verified inventory for this season — structured picks and exceptions
-            stay unavailable until a licensed ledger exists.
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamAssetsSection
-            ledger={assetLedger}
-            teamKey={team.abbreviation}
-          />
-        </div>
-      </section>
-
-      {/* GAMES */}
-      <section
-        id="games"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Games"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Recent / upcoming / notable from scoreboard samples · opens Game Lab
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamGamesSection
-            recentPool={recentPool}
-            upcomingPool={upcomingBundle.games}
-            team={team}
-            brand={brand}
-            seasonAvgPpg={team.ppg}
-          />
-        </div>
-      </section>
-
-      {/* TRANSACTIONS */}
-      <section
-        id="transactions"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Transactions"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            {offseasonYear} Offseason
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Latest ESPN archive events involving this team.
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamTransactionsSection
-            events={txPage.events}
-            teamFilterId={txTeamId}
-            offseasonYear={offseasonYear}
-            resolutionsByEventId={txResolutionsByEventId}
-          />
-        </div>
-      </section>
-
-      {/* ASK */}
-      <section
-        id="ask"
-        className="scroll-mt-16 flex flex-col gap-3"
-        aria-label="Ask DRBL"
-      >
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            Ask DRBL about this team
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Prefills supported team-board and offseason queries only.
-          </p>
-        </div>
-        <div className="sports-card p-4 sm:p-5">
-          <TeamAskLinks
-            teamName={team.fullName}
-            season={season}
-            teamId={askTeamId}
             priorSeason={priorSeason}
+            showingFullArc={showingFullArc}
+            teamEspnId={askTeamId}
+            currentBoard={league}
+            priorBoard={priorLeague}
           />
-        </div>
-      </section>
-    </main>
+        </Suspense>
+
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading Season Evidence…" />
+          }
+        >
+          <TeamEvidenceIsland
+            teamId={askTeamId}
+            season={season}
+            abbreviation={identityTeam.abbreviation}
+            fullName={displayName}
+          />
+        </Suspense>
+
+        <Suspense
+          fallback={<DestinationSectionSkeleton label="Loading roster…" />}
+        >
+          <TeamRosterIsland
+            teamId={resolvedTeamId}
+            season={season}
+            teamKey={identityTeam.abbreviation}
+          />
+        </Suspense>
+
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading Cap & assets…" />
+          }
+        >
+          <TeamAssetsIsland
+            teamId={askTeamId}
+            abbreviation={identityTeam.abbreviation}
+            season={season}
+            teamKey={identityTeam.abbreviation}
+          />
+        </Suspense>
+
+        <Suspense
+          fallback={<DestinationSectionSkeleton label="Loading games…" />}
+        >
+          <TeamGamesIsland
+            team={identityTeam}
+            brand={modernBrand}
+            season={season}
+          />
+        </Suspense>
+
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading transactions…" />
+          }
+        >
+          <TeamTransactionsIsland teamFilterId={txTeamId} />
+        </Suspense>
+
+        <section
+          id="ask"
+          className="scroll-mt-16 flex flex-col gap-3"
+          aria-label="Ask DRBL"
+        >
+          <div>
+            <h2 className="text-[17px] font-bold tracking-tight">
+              Ask DRBL about this team
+            </h2>
+            <p className="text-[13px] text-muted-foreground">
+              Prefills supported team-board and offseason queries only.
+            </p>
+          </div>
+          <div className="sports-card p-4 sm:p-5">
+            <TeamAskLinks
+              teamName={displayName}
+              season={season}
+              teamId={askTeamId}
+              priorSeason={priorSeason}
+            />
+          </div>
+        </section>
+      </main>
+    </DestinationClientShell>
   );
+
+  if (!eraTheme) return body;
+  return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
 }
 
 function TraitGroup({

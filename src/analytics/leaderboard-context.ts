@@ -202,6 +202,25 @@ export function buildLeaderboardContextIndex(
   };
 }
 
+/** Rehydrate a context index from server-serialized pools (page window + full-board percentiles). */
+export function leaderboardContextIndexFromPools(options: {
+  sortKey: PlayerSeasonSortKey;
+  sampleSize: number;
+  pools: Record<string, number[]>;
+}): LeaderboardContextIndex {
+  const dimensions = dimensionsForSort(options.sortKey);
+  const pools = new Map<string, number[]>();
+  for (const [metricId, values] of Object.entries(options.pools)) {
+    pools.set(metricId, values);
+  }
+  return {
+    sortKey: options.sortKey,
+    sampleSize: options.sampleSize,
+    pools,
+    dimensions,
+  };
+}
+
 /**
  * Compact Level-2 context for one leaderboard row.
  * Uses only the precomputed board pools — no per-row fetches.

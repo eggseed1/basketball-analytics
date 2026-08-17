@@ -62,13 +62,15 @@ async function loadSeasonRow(
     ...row,
     playerName: row.playerName || fromPeers?.playerName || playerId,
     usagePct:
-      row.usagePct > 0 ? row.usagePct : fromPeers?.usagePct ?? row.usagePct,
+      row.usagePct != null && row.usagePct > 0
+        ? row.usagePct
+        : fromPeers?.usagePct ?? row.usagePct,
     darkoDpm: row.darkoDpm ?? fromPeers?.darkoDpm,
     darkoOff: row.darkoOff ?? fromPeers?.darkoOff,
     darkoDef: row.darkoDef ?? fromPeers?.darkoDef,
     lebron: row.lebron ?? fromPeers?.lebron,
     trueShootingPct:
-      row.trueShootingPct > 0
+      row.trueShootingPct != null && row.trueShootingPct > 0
         ? row.trueShootingPct
         : fromPeers?.trueShootingPct ?? row.trueShootingPct,
   };
