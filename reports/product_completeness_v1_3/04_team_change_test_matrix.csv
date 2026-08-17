@@ -1,0 +1,6 @@
+caseId,kind,playerId,season,expectedBrand,status
+adjacent-season-change,adjacent-season,synth-adjacent-01,2023-24,bos,ASSERT_UNIT
+current-vs-historical,current-team-change,synth-adjacent-02,2024-25,nyk,ASSERT_UNIT
+midseason-aggregate,midseason-trade,1626153,2024-25,NEUTRAL,DATA_BACKED
+multi-team-aggregate,multiple-team-aggregate,1626156,2024-25,NEUTRAL,DATA_BACKED
+unresolved-team,unresolved,unresolved,2024-25,NEUTRAL,ASSERT_UNIT

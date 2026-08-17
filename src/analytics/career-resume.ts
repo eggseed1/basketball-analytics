@@ -166,18 +166,34 @@ export function isCareerQualifyingSeason(row: PlayerSeason): boolean {
   );
 }
 
-/** One row per season — keep highest gamesPlayed (trade seasons). */
+/** One row per season — prefer multi-team aggregate, else highest gamesPlayed. */
 export function dedupeCareerSeasons(career: PlayerSeason[]): PlayerSeason[] {
-  const bySeason = new Map<string, PlayerSeason>();
+  const bySeason = new Map<string, PlayerSeason[]>();
   for (const row of career) {
-    const existing = bySeason.get(row.season);
-    if (!existing || row.gamesPlayed > existing.gamesPlayed) {
-      bySeason.set(row.season, row);
-    }
+    const list = bySeason.get(row.season) ?? [];
+    list.push(row);
+    bySeason.set(row.season, list);
   }
-  return [...bySeason.values()].sort((a, b) =>
-    a.season.localeCompare(b.season)
-  );
+  const out: PlayerSeason[] = [];
+  for (const [, rows] of bySeason) {
+    const aggregate = rows.find(
+      (row) =>
+        row.teamId === "TOT" ||
+        ["TOT", "2TM", "3TM", "4TM"].includes(
+          (row.teamAbbreviation ?? "").toUpperCase()
+        )
+    );
+    if (aggregate) {
+      out.push(aggregate);
+      continue;
+    }
+    out.push(
+      rows.reduce((best, row) =>
+        row.gamesPlayed > best.gamesPlayed ? row : best
+      )
+    );
+  }
+  return out.sort((a, b) => a.season.localeCompare(b.season));
 }
 
 function breakdownOf(row: PlayerSeason): CareerProductionBreakdown {

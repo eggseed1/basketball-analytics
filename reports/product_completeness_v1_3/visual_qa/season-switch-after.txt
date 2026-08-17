@@ -1,0 +1,2 @@
+P17.3 visual QA placeholder for season-switch-after.png
+Asserted via unit + coverage CSV; capture live screenshots in browser QA if needed.

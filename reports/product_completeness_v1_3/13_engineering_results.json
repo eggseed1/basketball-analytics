@@ -1,0 +1,10 @@
+{
+  "unitTests": "scripts/test-player-team-context.ts",
+  "coverage": {
+    "tested": 15,
+    "correct": 15,
+    "incorrect": 0,
+    "multiTeam": 12,
+    "unresolved": 0
+  }
+}

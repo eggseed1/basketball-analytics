@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils";
 /**
  * Soft dual-tone wash for a single team or career dual-brand.
  * For game matchups prefer {@link MatchupWashCard}.
+ * No teamKey → NEUTRAL wash (multi-team aggregate / unresolved).
  */
 export function TeamWashCard({
   teamKey,
@@ -28,6 +29,19 @@ export function TeamWashCard({
 }) {
   const primary = resolveTeamBrand(teamKey);
   const secondary = resolveTeamBrand(secondaryTeamKey);
+  if (!primary && !secondary) {
+    return (
+      <Tag
+        className={cn(
+          "sports-card score-card-wash overflow-hidden",
+          className
+        )}
+        style={NEUTRAL_WASH_STYLE}
+      >
+        {children}
+      </Tag>
+    );
+  }
   const left = brandWashColor(primary);
   // Dual brand → second team's primary wash; single brand → that team's secondary wash.
   const right = secondary

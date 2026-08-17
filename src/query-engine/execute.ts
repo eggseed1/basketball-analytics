@@ -45,6 +45,10 @@ import {
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import {
+  pickPlayerSeasonBoardRow,
+  primaryTeamForSeason,
+} from "@/lib/player-team-context";
 import { metricById } from "./metrics";
 import { metricSeasonAvailability, coverageForMetric } from "./coverage";
 import { buildQueryPlan } from "./followups";
@@ -287,12 +291,17 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
   }
 
   // Prefer DRBL-overlaid board rows for DRBL metrics (career path skips overlay).
-  const boardRow = (
-    await getFilteredPlayerSeasons({ season, player: player.id })
-  )[0];
+  const boardRows = await getFilteredPlayerSeasons({
+    season,
+    player: player.id,
+  });
+  const boardRow = pickPlayerSeasonBoardRow(
+    boardRows,
+    boardRows[0]?.playerId ?? player.id
+  );
   const career = await getPlayerCareerSeasons(player.id);
   const row =
-    boardRow ?? career.find((r) => r.season === season) ?? undefined;
+    boardRow ?? primaryTeamForSeason(career, season) ?? undefined;
 
   if (!row) {
     return {

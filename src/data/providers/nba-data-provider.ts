@@ -30,6 +30,10 @@ import {
 import { fetchRawPlayByPlay } from "./nba/play-by-play-client";
 import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
 import {
+  enrichCareerRowKeepTeam,
+  pickPlayerSeasonBoardRow,
+} from "@/lib/player-team-context";
+import {
   BREF_CRITICAL_PATH_BUDGET_MS,
   CACHE_TTL_MS,
   DARKO_CRITICAL_PATH_BUDGET_MS,
@@ -57,7 +61,7 @@ import {
   transformStatsNbaTeamSeason,
   normalizeNbaPlayerSeasonTeam,
 } from "@/data/transformers/stats-nba";
-import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
+import { getCanonicalTeamFromProvider, resolveCanonicalTeam } from "@/data/identity/team-map";
 
 /**
  * Live NBA data via stats.nba.com (most extensive free stats API),
@@ -168,7 +172,7 @@ export class NBADataProvider implements BasketballDataProvider {
     season: string
   ): Promise<PlayerSeason | null> {
     const rows = await this.loadPlayerSeasonsForSeason(season);
-    return rows.find((row) => row.playerId === playerId) ?? null;
+    return pickPlayerSeasonBoardRow(rows, playerId);
   }
 
   /** Full career counting + advanced where available. */
@@ -649,26 +653,24 @@ export class NBADataProvider implements BasketballDataProvider {
         const rich = richSeasons.has(season)
           ? await this.getPlayerSeason(playerId, season).catch(() => null)
           : null;
-        if (rich) {
-          return rich.playerName.startsWith("Player ")
-            ? { ...rich, playerName: displayName }
-            : rich;
-        }
         const basic = transformStatsNbaCareerTotalsRow(
           row,
           displayName,
           season
         );
-        return {
+        const withName = {
           ...basic,
           teamName: nbaTeamName(basic.teamId, basic.teamAbbreviation),
         };
+        // Enrich counting/advanced from league dash without overwriting
+        // this career row's season/stint team identity (P17.3).
+        return enrichCareerRowKeepTeam(withName, rich);
       })
     );
 
-    return seasons
-      .filter((row) => row.teamAbbreviation !== "TOT")
-      .sort((a, b) => b.season.localeCompare(a.season));
+    // Keep TOT / multi-team aggregate rows for season brand NEUTRAL policy.
+    // Franchise stints remain for depth / stint disclosure.
+    return seasons.sort((a, b) => b.season.localeCompare(a.season));
   }
 
   private async fetchGameLog(
@@ -689,12 +691,20 @@ export class NBADataProvider implements BasketballDataProvider {
       const set = getResultSet(response, "PlayerGameLog");
       if (!set) return [];
       const seasonRow = await this.getPlayerSeason(playerId, season);
-      const teamId = seasonRow?.teamId ?? "";
+      const fallbackTeamId = seasonRow?.teamId ?? "";
 
       return resultSetToObjects(set).map((row) => {
         const matchup = String(row.MATCHUP ?? "");
         const isHome = matchup.includes(" vs.");
         const opponent = matchup.split(/\s+(?:vs\.|@)\s+/)[1] ?? "";
+        const matchupAbbr = matchup.split(/\s+/)[0]?.trim() ?? "";
+        const fromMatchup = matchupAbbr
+          ? (() => {
+              const r = resolveCanonicalTeam(matchupAbbr);
+              return r.status === "resolved" ? r.team.canonicalTeamId : undefined;
+            })()
+          : undefined;
+        const teamId = fromMatchup || fallbackTeamId;
         return {
           id: `${playerId}-${row.Game_ID}`,
           gameId: String(row.Game_ID ?? ""),

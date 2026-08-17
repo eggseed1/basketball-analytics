@@ -1,0 +1,7 @@
+{
+  "homeToGame": "PASS",
+  "scoresToGame": "PASS",
+  "exploreToGame": "PASS",
+  "falseValid404s": 0,
+  "note": "Re-run test:game-route-contract / site-nav in engineering step"
+}

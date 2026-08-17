@@ -1,0 +1,16 @@
+playerId,season,expected,rendered,status,kind
+1626153,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1626156,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1627732,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1627747,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1627777,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1627827,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1628368,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1628380,2024-25,NEUTRAL,NEUTRAL,correct,multi-team
+1626145,2025-26,NEUTRAL,NEUTRAL,correct,multi-team
+1627741,2025-26,NEUTRAL,NEUTRAL,correct,multi-team
+1627824,2025-26,NEUTRAL,NEUTRAL,correct,multi-team
+1627826,2025-26,NEUTRAL,NEUTRAL,correct,multi-team
+adj-1,2022-23,2,2,correct,adjacent
+adj-1,2023-24,13,13,correct,adjacent
+adj-1,2024-25,18,18,correct,adjacent
