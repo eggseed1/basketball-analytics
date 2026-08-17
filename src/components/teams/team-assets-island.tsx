@@ -1,0 +1,69 @@
+import { TeamAssetsSection } from "@/components/teams/team-assets-section";
+import { getTeamAssets } from "@/data/queries/team-assets";
+import type { TeamAssetLedger } from "@/data/types/team-assets";
+
+export async function TeamAssetsIsland({
+  teamId,
+  abbreviation,
+  season,
+  teamKey,
+}: {
+  teamId: string;
+  abbreviation: string;
+  season: string;
+  teamKey: string;
+}) {
+  const assetLedger = await getTeamAssets({
+    teamId,
+    abbreviation,
+    season,
+    minimumGames: 10,
+  }).catch(
+    (): TeamAssetLedger => ({
+      teamId,
+      asOfSeason: season,
+      asOfDate: null,
+      methodologyVersion: "1.0",
+      lineageMethodologyVersion: "1.0",
+      structuredLedgerAvailable: false,
+      genealogyUiReady: false,
+      playerBoardStatus: "error",
+      warning: "Team assets temporarily unavailable.",
+      categories: [
+        {
+          id: "players",
+          label: "Players",
+          availability: "provider_error",
+          count: 0,
+          note: "Team assets temporarily unavailable.",
+        },
+      ],
+      players: [],
+      draftCapital: [],
+      tradeExceptions: [],
+      draftRights: [],
+      notes: ["Team assets temporarily unavailable."],
+    })
+  );
+
+  return (
+    <section
+      id="assets"
+      className="scroll-mt-16 flex flex-col gap-3"
+      aria-label="Cap and assets"
+    >
+      <div>
+        <h2 className="text-[17px] font-bold tracking-tight">
+          Cap &amp; assets
+        </h2>
+        <p className="text-[13px] text-muted-foreground">
+          Verified inventory for this season — structured picks and exceptions
+          stay unavailable until a licensed ledger exists.
+        </p>
+      </div>
+      <div className="sports-card p-4 sm:p-5">
+        <TeamAssetsSection ledger={assetLedger} teamKey={teamKey} />
+      </div>
+    </section>
+  );
+}

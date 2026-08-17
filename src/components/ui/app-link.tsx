@@ -1,6 +1,8 @@
-import Link from "next/link";
+"use client";
+
 import type { ComponentProps, MouseEventHandler, ReactNode } from "react";
 
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { isHashHref, linkNavigationKind } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -19,14 +21,16 @@ type AppLinkProps = {
   /** Optional accessibility label. */
   "aria-label"?: string;
   title?: string;
-  prefetch?: ComponentProps<typeof Link>["prefetch"];
+  prefetch?: ComponentProps<typeof TransitionLink>["prefetch"];
+  /** Cross-route default true; in-place query changes pass false. */
+  scroll?: boolean;
 };
 
 /**
  * Single navigation path for every href:
  * - external → browser <a> only (never Next.js router)
  * - hash → plain <a>
- * - internal → next/link
+ * - internal → TransitionLink (soft nav, keeps site shell)
  *
  * Does not add a second onClick navigation. Modifier-clicks use the browser.
  */
@@ -39,6 +43,7 @@ export function AppLink({
   rel,
   onClick,
   prefetch,
+  scroll = true,
   ...rest
 }: AppLinkProps) {
   const kind = linkNavigationKind(href);
@@ -77,18 +82,19 @@ export function AppLink({
     );
   }
 
-  // Internal — Next.js client navigation only (one path).
+  // Internal — soft client navigation (one path).
   return (
-    <Link
+    <TransitionLink
       href={href}
       className={cn(className)}
       onClick={onClick}
       prefetch={prefetch}
+      scroll={scroll}
       data-nav="internal"
       {...rest}
     >
       {children}
-    </Link>
+    </TransitionLink>
   );
 }
 
