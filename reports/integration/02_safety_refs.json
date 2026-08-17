@@ -1,0 +1,12 @@
+{
+    "BACKUP_ANALYTICS_REF":  "backup/analytics-pre-web-merge",
+    "WEB_REMOTE":  "origin/drbl-ia-and-ask",
+    "ANALYTICS_BRANCH":  "analytics/sealed-pre-web-merge",
+    "MERGE_BASE":  "629bb1b790bef21020940122194772b6921569ff",
+    "ANALYTICS_PREMERGE_COMMIT":  "72272b23fe6e037b6d463de2c840f1ad2980b562",
+    "BACKUP_WEB_REF":  "backup/web-pre-analytics-merge",
+    "WEB_BRANCH":  "web/drbl-ia-and-ask",
+    "ORIGINAL_BRANCHES_MODIFIED":  "NO",
+    "ORIGINAL_MAIN":  "629bb1b790bef21020940122194772b6921569ff",
+    "WEB_PREMERGE_COMMIT":  "7e764ceb5c834a19696dad84ed6696e7e3289a6a"
+}
