@@ -36,10 +36,9 @@ const DIMENSIONS: DimSpec[] = [
   { id: "overall", label: "Overall (DRBL/100)", metricId: "drbl100", group: "rate_ability" },
   { id: "drbl_o", label: "DRBL-O", metricId: "drblO", group: "rate_ability" },
   { id: "drbl_d", label: "DRBL-D", metricId: "drblD", group: "rate_ability" },
-  { id: "r1_points", label: "R1 Points", metricId: "r1Points", group: "realized_value" },
   {
     id: "r1_win_eq",
-    label: "R1 Win Equivalents",
+    label: "Wins Above R1",
     metricId: "r1WinEq",
     group: "realized_value",
   },

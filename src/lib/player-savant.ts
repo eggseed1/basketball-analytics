@@ -136,19 +136,10 @@ export function buildSavantSections(
         ),
         metric(
           percentiles,
-          "r1Points",
-          "R1 Points",
-          row.r1Points != null ? formatSigned(row.r1Points, 1) : null,
-          row.r1Points,
-          "overall",
-          { missing: row.r1Points == null }
-        ),
-        metric(
-          percentiles,
           "r1WinEquivalents",
-          "R1 Win Eq.",
+          "Wins Above R1",
           row.r1WinEquivalents != null
-            ? formatSigned(row.r1WinEquivalents, 2)
+            ? formatSigned(row.r1WinEquivalents, 1)
             : null,
           row.r1WinEquivalents,
           "overall",
@@ -500,17 +491,10 @@ export const CAREER_TIMELINE_METRICS: CareerTimelineMetric[] = [
     kind: "plusMinus",
   },
   {
-    key: "r1Points",
-    label: "R1 Points",
-    value: (r) => r.r1Points ?? 0,
-    format: (v) => formatSigned(v, 1),
-    kind: "plusMinus",
-  },
-  {
     key: "r1WinEquivalents",
-    label: "R1 Win Eq.",
+    label: "Wins Above R1",
     value: (r) => r.r1WinEquivalents ?? 0,
-    format: (v) => formatSigned(v, 2),
+    format: (v) => formatSigned(v, 1),
     kind: "plusMinus",
   },
   {

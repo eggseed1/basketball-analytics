@@ -562,11 +562,11 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   },
   {
     key: "r1WinEquivalents",
-    label: "R1 Win Eq.",
+    label: "Wins Above R1",
     format: (r) =>
       r.r1WinEquivalents == null
         ? "—"
-        : formatNumber(r.r1WinEquivalents, 2),
+        : formatNumber(r.r1WinEquivalents, 1),
   },
   {
     key: "drbl100",

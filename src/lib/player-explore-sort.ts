@@ -18,7 +18,6 @@ export type PlayerSortKey =
   | "assistPct"
   | "vorp"
   | "dpm"
-  | "r1Points"
   | "r1WinEquivalents"
   | "drbl100"
   | "minutes"
@@ -142,24 +141,15 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
     format: (r) => formatNumber(r.dpm, 1),
   },
   {
-    key: "r1Points",
-    label: "R1 Points",
-    defaultDir: "desc",
-    numeric: true,
-    value: (r) => r.r1Points ?? Number.NEGATIVE_INFINITY,
-    format: (r) =>
-      r.r1Points == null ? "—" : formatNumber(r.r1Points, 1),
-  },
-  {
     key: "r1WinEquivalents",
-    label: "R1 Win Eq.",
+    label: "Wins Above R1",
     defaultDir: "desc",
     numeric: true,
     value: (r) => r.r1WinEquivalents ?? Number.NEGATIVE_INFINITY,
     format: (r) =>
       r.r1WinEquivalents == null
         ? "—"
-        : formatNumber(r.r1WinEquivalents, 2),
+        : formatNumber(r.r1WinEquivalents, 1),
   },
   {
     key: "drbl100",
@@ -202,9 +192,9 @@ const OPTION_BY_KEY = new Map(
 );
 
 export function getPlayerSortOption(key: string | null | undefined): PlayerSortOption {
-  // Old ?sort=drblWar bookmarks redirect to R1 Win Equivalents (not a field alias).
+  // Old bookmarks: drblWar / r1Points → Wins Above R1 (identical ordering).
   const normalized =
-    key === "drblWar" ? "r1WinEquivalents" : key;
+    key === "drblWar" || key === "r1Points" ? "r1WinEquivalents" : key;
   if (normalized && OPTION_BY_KEY.has(normalized as PlayerSortKey)) {
     return OPTION_BY_KEY.get(normalized as PlayerSortKey)!;
   }
@@ -238,7 +228,6 @@ export const PLAYER_TABLE_COLUMNS: PlayerSortKey[] = [
   "playerName",
   "team",
   "drbl100",
-  "r1Points",
   "r1WinEquivalents",
   "pointsPerGame",
   "assistsPerGame",

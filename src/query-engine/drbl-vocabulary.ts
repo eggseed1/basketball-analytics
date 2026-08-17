@@ -45,21 +45,24 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "R1 Points",
     tier: "canonical",
     glossary:
-      "R1 Points are realized attributed point residuals above the R1 reference over the player’s actual season exposure — accounting value, not latent ability.",
+      "R1 Points are the underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. They power accounting, stint conservation, and research. Wins Above R1 is the preferred public display of the same ordering (R1 Points ÷ frozen P1).",
     synonyms: ["r1 points", "r1 pts", "r1 point"],
   },
   {
     id: "r1_win_eq",
-    label: "R1 Win Equivalents",
+    label: "Wins Above R1",
     tier: "canonical",
     glossary:
-      "R1 Win Equivalents convert R1 Points with a frozen points-per-win factor. They are not WAR and not a claim about roster replacement causality.",
+      "Wins Above R1 converts accumulated R1-relative value into win-equivalent units (R1 Points ÷ frozen P1). It is not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline.",
     synonyms: [
+      "wins above r1",
+      "war1",
       "r1 win equivalents",
       "r1 win eq",
       "r1 wineq",
       "win equivalents",
       "r1 wins",
+      "r1 winequivalents",
     ],
   },
   {

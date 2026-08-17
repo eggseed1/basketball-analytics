@@ -34,6 +34,7 @@ import {
 import { getPlayerSeasonCached } from "@/data/queries/request-cache";
 import type { PlayerSeason } from "@/data/types";
 import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
+import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { buildPlayerPercentileMetrics } from "@/lib/player-percentile-metrics";
@@ -302,8 +303,8 @@ export async function PlayerCoreIsland({
               {hasDrbl && seasonStats ? (
                 <>
                   <p className="mb-3 text-[11px] text-muted-foreground">
-                    Ability rate vs realized value — DRBL/100 ranks ability;
-                    R1 metrics are season accounting.
+                    Ability rate vs realized season value — DRBL/100 ranks
+                    ability; Wins Above R1 is accumulated value.
                   </p>
                   <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
                     <MiniStat
@@ -327,22 +328,39 @@ export async function PlayerCoreIsland({
                       }
                     />
                     <MiniStat
-                      label="R1 Points"
-                      value={
-                        seasonStats.r1Points != null
-                          ? formatNumber(seasonStats.r1Points, 1)
-                          : "—"
-                      }
-                    />
-                    <MiniStat
-                      label="R1 Win Eq."
+                      label="Wins Above R1"
                       value={
                         seasonStats.r1WinEquivalents != null
-                          ? formatNumber(seasonStats.r1WinEquivalents, 2)
+                          ? formatNumber(seasonStats.r1WinEquivalents, 1)
                           : "—"
                       }
                     />
                   </dl>
+                  <details className="mt-3 text-[11px] text-muted-foreground">
+                    <summary className="cursor-pointer font-medium text-foreground/80">
+                      How this is calculated · R1 Points
+                    </summary>
+                    <p className="mt-1.5 leading-relaxed">
+                      Wins Above R1 = R1 Points ÷ {P1_POINTS_PER_WIN} (frozen
+                      P1). R1 Points are the underlying point-equivalent
+                      accounting quantity — same ranking as Wins Above R1.
+                      Not traditional WAR.
+                    </p>
+                    <dl className="mt-2 grid grid-cols-2 gap-2">
+                      <MiniStat
+                        label="R1 Points"
+                        value={
+                          seasonStats.r1Points != null
+                            ? formatNumber(seasonStats.r1Points, 1)
+                            : "—"
+                        }
+                      />
+                      <MiniStat
+                        label="P1"
+                        value={formatNumber(P1_POINTS_PER_WIN, 3)}
+                      />
+                    </dl>
+                  </details>
                   <details className="mt-3 text-[11px] text-muted-foreground">
                     <summary className="cursor-pointer font-medium text-foreground/80">
                       Diagnostics P / LN / B

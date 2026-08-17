@@ -691,21 +691,8 @@ export function comparePlayerSeasons(options: {
     SEASON_COMPARE_TOLERANCE.impact
   );
   pushDrblOrUnavailable(
-    "r1_points",
-    "R1 Points",
-    "realized_value",
-    aDrbl && a.r1Points != null && Number.isFinite(a.r1Points)
-      ? a.r1Points
-      : null,
-    bDrbl && b.r1Points != null && Number.isFinite(b.r1Points)
-      ? b.r1Points
-      : null,
-    5,
-    "Realized accounting value — not ability."
-  );
-  pushDrblOrUnavailable(
     "r1_win_eq",
-    "R1 Win Equivalents",
+    "Wins Above R1",
     "realized_value",
     aDrbl &&
       a.r1WinEquivalents != null &&
@@ -718,7 +705,7 @@ export function comparePlayerSeasons(options: {
       ? b.r1WinEquivalents
       : null,
     0.15,
-    "Not WAR."
+    "Not traditional WAR. Same ordering as R1 Points (÷ P1)."
   );
 
   // Optional diagnostic disclosure (non-additive).

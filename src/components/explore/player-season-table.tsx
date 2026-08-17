@@ -141,7 +141,7 @@ export function PlayerSeasonTable({
     18 +
     (hasDarko ? 1 : 0) +
     (hasLebron ? 1 : 0) +
-    (hasDrbl ? 3 : 0);
+    (hasDrbl ? 2 : 0);
   const from = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalCount);
 
@@ -399,18 +399,11 @@ export function PlayerSeasonTable({
                       DRBL/100
                     </SortableTableHead>
                     <SortableTableHead
-                      active={sortKey === "r1Points"}
-                      dir={sortDir}
-                      onClick={() => toggleSort("r1Points")}
-                    >
-                      R1 Points
-                    </SortableTableHead>
-                    <SortableTableHead
                       active={sortKey === "r1WinEquivalents"}
                       dir={sortDir}
                       onClick={() => toggleSort("r1WinEquivalents")}
                     >
-                      R1 Win Equivalents
+                      Wins Above R1
                     </SortableTableHead>
                   </>
                 ) : null}
@@ -554,7 +547,6 @@ export function PlayerSeasonTable({
                         {hasDrbl ? (
                           <>
                             <Num>{formatOptionalDrbl(player.drbl100)}</Num>
-                            <Num>{formatOptionalDrbl(player.r1Points)}</Num>
                             <Num>
                               {formatOptionalDrbl(player.r1WinEquivalents)}
                             </Num>
@@ -663,8 +655,7 @@ const COLUMN_META: Partial<Record<SortKey, { label: string }>> = {
   darkoDpm: { label: "DARKO" },
   lebron: { label: "LEBRON" },
   drbl100: { label: "DRBL/100" },
-  r1Points: { label: "R1 Points" },
-  r1WinEquivalents: { label: "R1 Win Equivalents" },
+  r1WinEquivalents: { label: "Wins Above R1" },
 };
 
 function formatSigned(n: number): string {

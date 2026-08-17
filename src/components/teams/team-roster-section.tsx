@@ -11,16 +11,17 @@ import type { TeamRosterBuckets } from "@/lib/team-explorer";
 function valueDetail(player: PlayerSeason): string {
   if (hasValidDrblEstimate(player)) {
     const drbl = formatNumber(player.drbl100, 1);
-    const r1 =
-      player.r1Points != null && Number.isFinite(player.r1Points)
-        ? formatNumber(player.r1Points, 1)
+    const war1 =
+      player.r1WinEquivalents != null &&
+      Number.isFinite(player.r1WinEquivalents)
+        ? formatNumber(player.r1WinEquivalents, 1)
         : null;
     const darko =
       player.darkoDpm != null && Number.isFinite(player.darkoDpm)
         ? formatNumber(player.darkoDpm, 2)
         : null;
     const parts = [`${drbl} DRBL/100`];
-    if (r1 != null) parts.push(`${r1} R1 Pts`);
+    if (war1 != null) parts.push(`${war1} Wins Above R1`);
     if (darko != null) parts.push(`${darko} DPM`);
     return parts.join(" · ");
   }
@@ -119,7 +120,9 @@ export function TeamRosterSection({
             valueUsesDrbl ? (
               <>
                 <MetricHelp conceptId="drbl100">DRBL/100</MetricHelp> when
-                available (ability rate); R1 Points is realized value.{" "}
+                available (ability rate);{" "}
+                <MetricHelp conceptId="r1_win_eq">Wins Above R1</MetricHelp>{" "}
+                is realized season value.{" "}
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> shown as
                 secondary context when present — rows do not sum to team value.
               </>

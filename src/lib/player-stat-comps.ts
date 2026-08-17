@@ -104,7 +104,7 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
       Number.isFinite(r.r1WinEquivalents)
         ? r.r1WinEquivalents
         : null,
-    format: (v) => formatNumber(v, 2),
+    format: (v) => formatNumber(v, 1),
   },
   drblO: {
     pick: (r) =>

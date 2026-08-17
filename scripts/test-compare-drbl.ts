@@ -93,7 +93,8 @@ function validDrbl(
   const overall = result.dimensions.find((d) => d.id === "overall");
   assert.ok(overall);
   assert.match(overall!.label, /DRBL/i);
-  assert.ok(result.dimensions.some((d) => d.id === "r1_points"));
+  assert.ok(result.dimensions.some((d) => d.id === "r1_win_eq"));
+  assert.ok(!result.dimensions.some((d) => d.id === "r1_points"));
   assert.ok(result.dimensions.some((d) => d.group === "rate_ability"));
   assert.ok(result.dimensions.some((d) => d.group === "realized_value"));
   assert.ok(result.dimensions.some((d) => d.group === "external"));
@@ -146,7 +147,8 @@ function validDrbl(
     nowSeason: "2025-26",
   });
   assert.ok(cmp.metrics.some((m) => m.id === "drbl100"));
-  assert.ok(cmp.metrics.some((m) => m.id === "r1_points"));
+  assert.ok(cmp.metrics.some((m) => m.id === "r1_win_eq"));
+  assert.ok(!cmp.metrics.some((m) => m.id === "r1_points"));
   assert.ok(cmp.metrics.some((m) => m.category === "diagnostic"));
   assert.ok(
     cmp.metrics.some(

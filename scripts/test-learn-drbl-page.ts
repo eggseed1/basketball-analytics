@@ -8,8 +8,8 @@ import path from "node:path";
 
 const REQUIRED = [
   "DRBL/100",
+  "Wins Above R1",
   "R1 Points",
-  "R1 Win Equivalents",
   "DRBL-O",
   "DRBL-D",
   "DRBL-P",
@@ -21,6 +21,7 @@ const REQUIRED = [
   "M16j",
   "M17b",
   "non-additive",
+  "Not traditional WAR",
 ];
 
 async function main() {
@@ -39,6 +40,16 @@ async function main() {
       `learn/drbl page missing public metric / phrase: ${needle}`
     );
   }
+  // Primary surface should not headline both R1 Points and Wins Above R1 as equals.
+  const simpleIdx = src.indexOf("Two main numbers");
+  const deepIdx = src.indexOf("Deep rabbit hole");
+  assert.ok(simpleIdx >= 0 && deepIdx > simpleIdx);
+  const simpleBlock = src.slice(simpleIdx, deepIdx);
+  assert.ok(simpleBlock.includes("Wins Above R1"));
+  assert.ok(
+    !simpleBlock.includes('title="R1 Points"'),
+    "R1 Points must not be a simple-surface Card title"
+  );
   console.log("test-learn-drbl-page: ok");
 }
 

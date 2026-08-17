@@ -88,17 +88,27 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "R1 Points": {
     title: "R1 Points",
-    body: "Realized player-attributed point residual above the contextual role-matched R1 reference over actual season exposure. Accounting value — not latent ability. Prefer DRBL/100 for rate ranking.",
+    body: "Underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. Canonical for accounting and research. Wins Above R1 is the preferred public display — the same ordering via a fixed linear conversion (÷ P1). Prefer DRBL/100 for rate ranking.",
+    learnMoreHref: "/learn/drbl",
+  },
+  "Wins Above R1": {
+    title: "Wins Above R1",
+    body: "Realized season value in win-equivalent units: R1 Points ÷ frozen P1 (37.490662671779255). Not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Ranking is identical to R1 Points.",
+    learnMoreHref: "/learn/drbl",
+  },
+  WAR1: {
+    title: "Wins Above R1",
+    body: "Compact label for Wins Above R1 — realized season value in win-equivalent units. Not traditional WAR.",
     learnMoreHref: "/learn/drbl",
   },
   "R1 Win Eq.": {
-    title: "R1 Win Equivalents",
-    body: "R1 Points expressed in marginal win-equivalent units via a frozen points-per-win factor. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
+    title: "Wins Above R1",
+    body: "Legacy label for Wins Above R1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
     learnMoreHref: "/learn/drbl",
   },
   "R1 Win Equivalents": {
-    title: "R1 Win Equivalents",
-    body: "R1 Points expressed in marginal win-equivalent units via a frozen points-per-win factor. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
+    title: "Wins Above R1",
+    body: "Legacy label for Wins Above R1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL/100": {
@@ -108,7 +118,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL impact": {
     title: "DRBL seasonal impact",
-    body: "Legacy companion field related to realized Approach-B attribution. Prefer R1 Points as the canonical realized attribution total.",
+    body: "Legacy companion field related to realized Approach-B attribution. Prefer Wins Above R1 for public realized value; R1 Points remain the underlying accounting total.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL ±": {
@@ -118,7 +128,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DRBL: {
     title: "Differential Replacement Basketball Level",
-    body: "Possession-based impact versus a contextual role-matched R1 reference. DRBL/100 is the posterior ability rate; R1 Points is realized attributed season value; R1 Win Equivalents convert R1 Points with a frozen points-per-win factor.",
+    body: "Possession-based impact versus a contextual role-matched R1 reference. DRBL/100 is the posterior ability rate; Wins Above R1 is realized season value in win-equivalent units; R1 Points are the underlying point-equivalent accounting quantity.",
     learnMoreHref: "/learn/drbl",
   },
   BPM: {
@@ -249,7 +259,12 @@ const ALIASES: Record<string, string> = {
   onOffDpm: "On/Off DPM",
   drbl100: "DRBL/100",
   r1Points: "R1 Points",
-  r1WinEquivalents: "R1 Win Equivalents",
+  r1WinEquivalents: "Wins Above R1",
+  r1WinEq: "Wins Above R1",
+  WAR1: "Wins Above R1",
+  "Wins Above R1": "Wins Above R1",
+  "R1 Win Eq.": "Wins Above R1",
+  "R1 Win Equivalents": "Wins Above R1",
   drblP: "DRBL-P",
   drblLn: "DRBL-LN",
   drblB: "DRBL-B",

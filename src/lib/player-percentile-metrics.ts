@@ -212,32 +212,6 @@ export function buildPlayerPercentileMetrics(
         interpretation: "higher_is_better",
       });
     }
-    if (seasonStats.r1Points != null && Number.isFinite(seasonStats.r1Points)) {
-      const r1Pool = pool
-        .filter(
-          (p) =>
-            hasValidDrblEstimate(p) &&
-            p.r1Points != null &&
-            Number.isFinite(p.r1Points)
-        )
-        .map((p) => p.r1Points as number);
-      if (r1Pool.length) {
-        push({
-          id: "r1Points",
-          category: "value",
-          label: "R1 Points",
-          value: seasonStats.r1Points,
-          values: r1Pool,
-          display: formatNumber(seasonStats.r1Points, 1),
-          series: careerSeries((r) =>
-            r.r1Points != null && Number.isFinite(r.r1Points)
-              ? r.r1Points
-              : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
-    }
     if (
       seasonStats.r1WinEquivalents != null &&
       Number.isFinite(seasonStats.r1WinEquivalents)
@@ -254,10 +228,10 @@ export function buildPlayerPercentileMetrics(
         push({
           id: "r1WinEquivalents",
           category: "value",
-          label: "R1 Win Eq.",
+          label: "Wins Above R1",
           value: seasonStats.r1WinEquivalents,
           values: winEqPool,
-          display: formatNumber(seasonStats.r1WinEquivalents, 2),
+          display: formatNumber(seasonStats.r1WinEquivalents, 1),
           series: careerSeries((r) =>
             r.r1WinEquivalents != null && Number.isFinite(r.r1WinEquivalents)
               ? r.r1WinEquivalents

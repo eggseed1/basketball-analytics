@@ -51,6 +51,7 @@
     "test:team-identity": "tsx scripts/test-team-identity.ts",
     "test:player-team-render": "tsx scripts/test-player-team-render-contract.ts",
     "test:player-team-context": "tsx scripts/test-player-team-context.ts",
+    "test:r1-wins-sort-equivalence": "tsx scripts/test-r1-wins-sort-equivalence.ts",
     "p17:3": "tsx scripts/p17-3-temporal-identity-audit.ts",
     "test:game-route-contract": "tsx scripts/test-game-route-contract.ts",
     "test:historical-team-era": "tsx scripts/test-historical-team-era.ts",
