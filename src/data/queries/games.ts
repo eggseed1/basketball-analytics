@@ -24,6 +24,15 @@ import {
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
+import {
+  isAdequateSeasonGamesCache,
+  readGamesCache,
+} from "@/data/providers/historical/games-cache";
+import {
+  getProviderTeamId,
+  resolveCanonicalTeam,
+  HISTORICAL_SCHEDULE_TEAM_PROVIDER,
+} from "@/data/identity/team-map";
 
 /** ESPN event ids are typically 9 digits starting with 40… */
 export function looksLikeEspnEventId(gameId: string): boolean {
@@ -172,28 +181,199 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 }
 
 /**
- * Filtered game summaries - prefers BallDontLie historical path (1960-present).
- * Modern seasons use ESPN (fast) unless a full disk cache exists.
+ * Filtered game summaries - prefers local season archive, then modern ESPN.
+ * Never passes ESPN canonical team ids as BallDontLie teamIds (25 OKC ≠ 25 POR).
  */
 export async function getFilteredGames(
-  filters: BasketballFilters = {}
+  filters: BasketballFilters = {},
+  options?: {
+    maxPages?: number;
+    /**
+     * When false (team destinations), skip remote historical crawls if the
+     * local season archive is missing — return empty instead of multi-page BDL.
+     */
+    allowRemoteHistoricalCrawl?: boolean;
+  }
 ): Promise<GameSummary[]> {
   let games: Game[] = [];
   const season = filters.season;
-  const start = season ? startYearFromCanonicalSeason(season) : null;
+  const start = season
+    ? (() => {
+        try {
+          return startYearFromCanonicalSeason(season);
+        } catch {
+          return null;
+        }
+      })()
+    : null;
+  const dateStart = filters.dateRange?.start;
+  const dateEnd = filters.dateRange?.end;
+  const hasDateWindow = Boolean(dateStart || dateEnd);
+  const allowRemoteHistoricalCrawl =
+    options?.allowRemoteHistoricalCrawl !== false;
+  const maxPages =
+    options?.maxPages ??
+    (hasDateWindow ? 4 : start != null && start < 2000 ? 20 : 8);
+
+  // Prefer disk / modern archive — filter in memory (no ESPN→BDL id footgun).
+  if (season && !hasDateWindow) {
+    const archive = await getSeasonGamesArchive(season);
+    if (archive.games.length > 0) {
+      return applyGameFilters(archive.games, filters);
+    }
+    if (
+      start != null &&
+      start < 2000 &&
+      !allowRemoteHistoricalCrawl
+    ) {
+      return [];
+    }
+  }
+
+  // Map canonical ESPN ids → BDL schedule ids before any remote team crawl.
+  let bdlTeamId: string | undefined;
+  if (filters.team && /^\d+$/.test(String(filters.team))) {
+    const resolved = resolveCanonicalTeam(String(filters.team));
+    if (resolved.status === "resolved") {
+      bdlTeamId =
+        getProviderTeamId(
+          HISTORICAL_SCHEDULE_TEAM_PROVIDER,
+          resolved.team.canonicalTeamId
+        ) ?? undefined;
+    } else {
+      // Already a provider schedule id (e.g. evidence second pass).
+      bdlTeamId = String(filters.team);
+    }
+  }
+
   try {
     games = await getHistoricalGames({
       season,
-      maxPages: start != null && start < 2000 ? 20 : 8,
+      startDate: dateStart,
+      endDate: dateEnd,
+      maxPages,
       preferSource: "auto",
+      ...(bdlTeamId ? { teamId: bdlTeamId } : {}),
     });
   } catch {
     games = [];
   }
-  if (games.length === 0) {
+  if (games.length === 0 && !hasDateWindow) {
     games = await getDataProvider().getGames(filters.season);
   }
   return applyGameFilters(games, filters);
+}
+
+export type SeasonGamesArchiveSource =
+  | "disk_cache"
+  | "espn"
+  | "unavailable";
+
+export type SeasonGamesArchiveResult = {
+  games: Game[];
+  source: SeasonGamesArchiveSource;
+  warning?: string;
+};
+
+/**
+ * Load a season slate from trusted local/modern sources only.
+ * Pre-modern seasons without an adequate disk cache do not trigger BDL crawls.
+ */
+export async function getSeasonGamesArchive(
+  season: string
+): Promise<SeasonGamesArchiveResult> {
+  const cached = await readGamesCache(season);
+  if (
+    cached &&
+    isAdequateSeasonGamesCache(season, cached.games.length)
+  ) {
+    return { games: cached.games, source: "disk_cache" };
+  }
+
+  const start = (() => {
+    try {
+      return startYearFromCanonicalSeason(season);
+    } catch {
+      return null;
+    }
+  })();
+
+  if (start != null && start >= 2000) {
+    try {
+      const espnGames = await getDataProvider().getGames(season);
+      if (espnGames.length > 0) {
+        return { games: espnGames, source: "espn" };
+      }
+    } catch {
+      // fall through
+    }
+    return {
+      games: [],
+      source: "unavailable",
+      warning: `Season games unavailable for ${season} (live schedule miss).`,
+    };
+  }
+
+  return {
+    games: [],
+    source: "unavailable",
+    warning: `Historical game archive unavailable for ${season}. No local season cache is present; remote schedule crawl skipped.`,
+  };
+}
+
+export type TeamSeasonGamesResult = {
+  games: GameSummary[];
+  source: SeasonGamesArchiveSource;
+  warning?: string;
+};
+
+/**
+ * Team-scoped season games for destination Games / Evidence islands.
+ * Shared archive load → in-memory team filter. No duplicate BDL discovery.
+ */
+export async function getTeamSeasonGames(
+  options: {
+    teamId: string;
+    season: string;
+    abbreviation?: string;
+    limit?: number;
+  }
+): Promise<TeamSeasonGamesResult> {
+  const archive = await getSeasonGamesArchive(options.season);
+  if (archive.games.length === 0) {
+    return {
+      games: [],
+      source: archive.source,
+      warning:
+        archive.warning ??
+        `Historical games unavailable for ${options.season}.`,
+    };
+  }
+
+  const resolved = resolveCanonicalTeam(options.teamId);
+  const teamFilter =
+    resolved.status === "resolved"
+      ? resolved.team.canonicalTeamId
+      : options.teamId;
+
+  let summaries = applyGameFilters(archive.games, {
+    season: options.season,
+    team: teamFilter,
+  });
+
+  summaries = summaries
+    .slice()
+    .sort((a, b) =>
+      a.gameDate === b.gameDate
+        ? b.id.localeCompare(a.id)
+        : b.gameDate.localeCompare(a.gameDate)
+    );
+
+  if (options.limit != null) {
+    summaries = summaries.slice(0, options.limit);
+  }
+
+  return { games: summaries, source: archive.source };
 }
 
 /** Scoreboard-sized recent slate - never waits on full-season schedule fan-out. */
@@ -213,6 +393,28 @@ export async function getRecentGameSummaries(
     // fall through
   }
 
+  const start = (() => {
+    try {
+      return startYearFromCanonicalSeason(season);
+    } catch {
+      return null;
+    }
+  })();
+
+  // Historical: local season archive only — no multi-page BDL rediscovery.
+  if (start != null && start < 2000) {
+    const archive = await getSeasonGamesArchive(season);
+    return archive.games
+      .map(toGameSummary)
+      .slice()
+      .sort((a, b) =>
+        a.gameDate === b.gameDate
+          ? b.id.localeCompare(a.id)
+          : b.gameDate.localeCompare(a.gameDate)
+      )
+      .slice(0, limit);
+  }
+
   const games = await getFilteredGames({ season });
   return games
     .slice()
@@ -221,8 +423,7 @@ export async function getRecentGameSummaries(
         ? b.id.localeCompare(a.id)
         : b.gameDate.localeCompare(a.gameDate)
     )
-    .slice(0, limit)
-    .map(toGameSummary);
+    .slice(0, limit);
 }
 
 /** Home week strip: this week's slate, or upcoming previews when quiet. */

@@ -6,10 +6,15 @@ export {
   getPlayerGameLog,
   getPlayersBySeason,
   getTeamPlayers,
+  getTeamRoster,
   getFilteredPlayerSeasons,
   getFilteredPlayerSeasonsDetailed,
   getAvailableSeasons,
+  isTeamRosterBoardSupported,
+  TEAM_ROSTER_BOARD_EARLIEST_START_YEAR,
+  TEAM_ROSTER_BOARD_BUDGET_MS,
 } from "./players";
+export type { TeamRosterResult, TeamRosterStatus } from "./players";
 export {
   getPlayerSeasonBoardSnapshot,
   getActiveProviderChip,
@@ -37,6 +42,8 @@ export {
   getGameBoxScore,
   getGameShell,
   getFilteredGames,
+  getSeasonGamesArchive,
+  getTeamSeasonGames,
   getRecentGameSummaries,
   getHomeWeekStripSummaries,
   getScoreboardMonthSummaries,
@@ -49,7 +56,13 @@ export {
   addDaysIso,
   upcomingScheduleSeason,
 } from "./games";
-export type { GameShell, GameShellAvailability } from "./games";
+export type {
+  GameShell,
+  GameShellAvailability,
+  SeasonGamesArchiveResult,
+  SeasonGamesArchiveSource,
+  TeamSeasonGamesResult,
+} from "./games";
 export {
   applyPlayerSeasonFilters,
   applyGameFilters,
@@ -73,7 +86,18 @@ export {
 export { getHomeAnalytics } from "./home";
 export type { HomeAnalytics, ComputedInsight, HomeDarkoLeader } from "./home";
 export { getLeagueStandings } from "./standings";
-export { getTeamSeasonStats, getTeamExploreSeasons } from "./team-seasons";
+export {
+  getTeamSeasonStats,
+  getTeamExploreSeasons,
+  getTeamSeasonBoard,
+  isTeamSeasonBoardSupported,
+  TEAM_SEASON_BOARD_EARLIEST_SEASON,
+  TEAM_SEASON_BOARD_BUDGET_MS,
+} from "./team-seasons";
+export type {
+  TeamSeasonBoardResult,
+  TeamSeasonBoardStatus,
+} from "./team-seasons";
 export {
   getTeamSeasonArc,
   listTeamArcCandidateSeasons,
@@ -128,6 +152,7 @@ export {
   hasPlayerSeasonImpact,
   clearHistoricalImpactIndexCache,
 } from "./historical-impact";
+export { getAdvancedStatsCoverage } from "./advanced-stats-audit";
 export type {
   HistoricalImpactCoverageReport,
   HistoricalImpactLookupKey,
@@ -165,3 +190,30 @@ export type {
   TeamTradeExceptionAsset,
   TradeExceptionFitResult,
 } from "@/data/types/team-assets";
+export {
+  getHistoricalTeamDirectory,
+  getHistoricalLeaders,
+  getHistoricalLeadersBundle,
+  getHistoricalTeamSnapshot,
+  getHistoricalGamesForDate,
+  getHistoricalTransactionsForDate,
+  getHistoricalStandingsProxy,
+  resolveTimeMachineDate,
+} from "./time-machine";
+export type {
+  HistoricalTeamDirectoryRow,
+  HistoricalLeaderRow,
+  LeaderMetric,
+} from "./time-machine";
+export {
+  getPlayerCached,
+  getPlayerSeasonCached,
+  getPlayerGameLogCached,
+  getTeamSeasonStatsCached,
+  getTeamSeasonBoardCached,
+  getTeamRosterCached,
+  getSeasonGamesArchiveCached,
+  getTeamSeasonGamesCached,
+  getGameShellCached,
+  getHomeAnalyticsCached,
+} from "./request-cache";

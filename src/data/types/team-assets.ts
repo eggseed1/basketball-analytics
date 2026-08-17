@@ -38,6 +38,9 @@ export const CAP_FIT_TIER_LABELS: Record<CapFitTier, string> = {
 export type TeamAssetCategoryAvailability =
   | "available"
   | "unavailable"
+  | "unsupported"
+  | "timeout"
+  | "provider_error"
   | "blocked_pending_structured_source";
 
 export type TeamAssetCategoryCoverage = {
@@ -117,6 +120,18 @@ export type TeamAssetLedger = {
   /** Structured trade/pick ledger still empty in production. */
   structuredLedgerAvailable: boolean;
   genealogyUiReady: boolean;
+  /**
+   * Player-board capability for this snapshot.
+   * Distinguishes unsupported historical eras from empty/failed modern boards.
+   */
+  playerBoardStatus?:
+    | "ok"
+    | "unsupported"
+    | "timeout"
+    | "error"
+    | "unavailable";
+  /** User-facing honest state when the player board is not usable. */
+  warning?: string;
   categories: TeamAssetCategoryCoverage[];
   players: TeamPlayerAsset[];
   draftCapital: TeamDraftPickAsset[];

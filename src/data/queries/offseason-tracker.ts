@@ -55,7 +55,7 @@ export async function getTransactionEventCoverage(options?: {
   force?: boolean;
 }): Promise<TransactionEventCoverage> {
   const index = await buildTransactionEventIndex({
-    force: options?.force ?? true,
+    force: options?.force ?? false,
   });
   return buildTransactionEventCoverage(index);
 }

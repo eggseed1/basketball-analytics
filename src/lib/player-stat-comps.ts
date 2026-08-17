@@ -49,7 +49,8 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => formatNumber(v, 2),
   },
   net: {
-    pick: (r) => (r.netRating !== 0 ? r.netRating : null),
+    pick: (r) =>
+      r.netRating != null && Number.isFinite(r.netRating) ? r.netRating : null,
     format: (v) => formatNumber(v, 1),
   },
   pts: {
@@ -73,15 +74,26 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => formatNumber(v, 2),
   },
   ortg: {
-    pick: (r) => (r.offensiveRating > 0 ? r.offensiveRating : null),
+    pick: (r) =>
+      r.offensiveRating != null &&
+      Number.isFinite(r.offensiveRating) &&
+      r.offensiveRating > 0
+        ? r.offensiveRating
+        : null,
     format: (v) => formatNumber(v, 1),
   },
   ts: {
-    pick: (r) => (r.trueShootingPct > 0 ? r.trueShootingPct : null),
+    pick: (r) =>
+      r.trueShootingPct != null && r.trueShootingPct > 0
+        ? r.trueShootingPct
+        : null,
     format: (v) => formatPct(v),
   },
   efg: {
-    pick: (r) => (r.effectiveFieldGoalPct > 0 ? r.effectiveFieldGoalPct : null),
+    pick: (r) =>
+      r.effectiveFieldGoalPct != null && r.effectiveFieldGoalPct > 0
+        ? r.effectiveFieldGoalPct
+        : null,
     format: (v) => formatPct(v),
   },
   fg: {
@@ -113,11 +125,15 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => formatNumber(v, 2),
   },
   drtg: {
-    pick: (r) => (r.defensiveRating > 0 ? r.defensiveRating : null),
+    pick: (r) =>
+      r.defensiveRating != null && Number.isFinite(r.defensiveRating)
+        ? r.defensiveRating
+        : null,
     format: (v) => formatNumber(v, 1),
   },
   usg: {
-    pick: (r) => (r.usagePct > 0 ? r.usagePct : null),
+    pick: (r) =>
+      r.usagePct != null && r.usagePct > 0 ? r.usagePct : null,
     format: (v) => formatPct(v),
   },
   min: {
@@ -141,6 +157,10 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
       return t > 0 ? a / t : null;
     },
     format: (v) => formatNumber(v, 2),
+  },
+  gp: {
+    pick: (r) => (r.gamesPlayed > 0 ? r.gamesPlayed : null),
+    format: (v) => `${Math.round(v)} GP`,
   },
 };
 

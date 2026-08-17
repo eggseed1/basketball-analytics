@@ -23,8 +23,8 @@ export type TeamSeasonStats = {
   fieldGoalPct: number;
   threePointPct: number;
   freeThrowPct: number;
-  effectiveFieldGoalPct: number;
-  trueShootingPct: number;
+  effectiveFieldGoalPct?: number;
+  trueShootingPct?: number;
   /** Assists / turnovers (season totals). */
   assistToTurnover: number;
   offensiveReboundPct: number;

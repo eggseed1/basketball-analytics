@@ -35,8 +35,11 @@ export async function fetchTeamSeasonStats(
   const url =
     `${SITE_WEB}/apis/common/v3/sports/basketball/nba/statistics/byteam` +
     `?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
+  // Secondary board: hard timeout + single retry budget (no multi-minute hangs).
   const payload = await espnFetchJson<ByTeamResponse>(url, {
     ttlMs: 1000 * 60 * 30,
+    retries: 1,
+    signal: AbortSignal.timeout(4_500),
   });
   const schema = payload.categories ?? [];
 
@@ -56,6 +59,8 @@ export async function fetchTeamSeasonStats(
     const ppg = num(stats, "avgPoints");
     const avgDiff = num(stats, "avgPointsDifferential");
     const orbPct = num(stats, "offensiveReboundPct");
+    const efg = effectiveFieldGoalPct(fgm, tpm, fga);
+    const ts = trueShootingPct(points, fga, fta);
 
     return {
       season,
@@ -77,8 +82,8 @@ export async function fetchTeamSeasonStats(
         num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
       ),
       freeThrowPct: pctToFraction(num(stats, "freeThrowPct")),
-      effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, tpm, fga),
-      trueShootingPct: trueShootingPct(points, fga, fta),
+      ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+      ...(ts != null ? { trueShootingPct: ts } : {}),
       assistToTurnover: turnovers > 0 ? assists / turnovers : assists,
       offensiveReboundPct: orbPct > 1 ? orbPct / 100 : orbPct,
       points,

@@ -57,6 +57,8 @@ let homeCache: {
   expiresAt: number;
   value: HomeAnalytics;
 } | null = null;
+/** In-flight dedupe so concurrent Suspense islands share one load. */
+let homeInflight: Promise<HomeAnalytics> | null = null;
 
 function qualify(rows: PlayerSeason[], minMpg = 18): PlayerSeason[] {
   return rows.filter(
@@ -127,11 +129,17 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     .slice(0, 20)
     .map((row) => withProfileId(row, byName));
   const tsLeaders = [...efficiencyPool]
-    .sort((a, b) => b.trueShootingPct - a.trueShootingPct)
+    .sort(
+      (a, b) =>
+        (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
+    )
     .slice(0, 15);
   const usageStars = [...qualified]
-    .filter((p) => p.usagePct >= 0.24)
-    .sort((a, b) => b.trueShootingPct - a.trueShootingPct)
+    .filter((p) => p.usagePct != null && p.usagePct >= 0.24)
+    .sort(
+      (a, b) =>
+        (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
+    )
     .slice(0, 15);
 
   const insights: ComputedInsight[] = [];
@@ -154,7 +162,10 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     insights.push({
       id: "ts-leader",
       eyebrow: "TS%",
-      title: formatPct(bestTs.trueShootingPct),
+      title:
+        bestTs.trueShootingPct != null && bestTs.trueShootingPct > 0
+          ? formatPct(bestTs.trueShootingPct)
+          : "—",
       body: "Best true shooting among qualified minutes.",
       players: [{ id: bestTs.playerId, name: bestTs.playerName }],
       boardHref: "/explore/players?sort=trueShootingPct",
@@ -167,7 +178,16 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     insights.push({
       id: "usage-ts",
       eyebrow: "USG × TS%",
-      title: `${formatPct(efficientVolume.usagePct)} usg · ${formatPct(efficientVolume.trueShootingPct)} TS`,
+      title: `${
+        efficientVolume.usagePct != null && efficientVolume.usagePct > 0
+          ? formatPct(efficientVolume.usagePct)
+          : "—"
+      } usg · ${
+        efficientVolume.trueShootingPct != null &&
+        efficientVolume.trueShootingPct > 0
+          ? formatPct(efficientVolume.trueShootingPct)
+          : "—"
+      } TS`,
       body: "High usage without giving back efficiency.",
       players: [
         { id: efficientVolume.playerId, name: efficientVolume.playerName },
@@ -212,11 +232,18 @@ export async function getHomeAnalytics(): Promise<HomeAnalytics> {
   ) {
     return homeCache.value;
   }
-  const value = await loadHomeAnalytics();
-  homeCache = {
-    version: HOME_CACHE_VERSION,
-    value,
-    expiresAt: Date.now() + HOME_CACHE_TTL_MS,
-  };
-  return value;
+  if (homeInflight) return homeInflight;
+  homeInflight = loadHomeAnalytics()
+    .then((value) => {
+      homeCache = {
+        version: HOME_CACHE_VERSION,
+        value,
+        expiresAt: Date.now() + HOME_CACHE_TTL_MS,
+      };
+      return value;
+    })
+    .finally(() => {
+      homeInflight = null;
+    });
+  return homeInflight;
 }

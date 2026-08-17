@@ -28,6 +28,7 @@ import {
 } from "../src/data/queries/filter-utils";
 import { filtersFromSearchParams } from "../src/lib/search-params";
 import {
+  expandPlayerSeasonTeamMatchIds,
   expandTeamFilterMatchIds,
   normalizeTeamParam,
   offseasonTeamHref,
@@ -266,6 +267,47 @@ console.log("URL / filter normalization…");
     1
   );
   assert.ok(expandTeamFilterMatchIds("25").includes("21"));
+  assert.ok(
+    !expandPlayerSeasonTeamMatchIds("25").includes("21"),
+    "player-season filters must not treat BDL OKC 21 as ESPN PHX"
+  );
+  assert.ok(expandPlayerSeasonTeamMatchIds("25").includes("25"));
+  assert.ok(expandPlayerSeasonTeamMatchIds("25").includes("okc"));
+
+  const mixedBoard = [
+    {
+      playerId: "phx-star",
+      playerName: "PHX",
+      teamId: "21",
+      season: "2024-25",
+      position: "G",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "okc-espn",
+      playerName: "OKC ESPN",
+      teamId: "25",
+      season: "2024-25",
+      position: "G",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "okc-local",
+      playerName: "OKC sample",
+      teamId: "okc",
+      season: "2024-25",
+      position: "G",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+  ] as never;
+  const okcBoard = applyPlayerSeasonFilters(mixedBoard, { team: "25" });
+  assert.deepEqual(
+    okcBoard.map((row) => row.playerId).sort(),
+    ["okc-espn", "okc-local"]
+  );
 }
 
 console.log("client-safe identity modules must not import Node fs…");
@@ -468,9 +510,10 @@ console.log("normalized rows: explore filter OKC ≠ POR…");
   const filtered = applyGameFilters(games, fromAbbr);
   assert.equal(filtered.length, 1);
   assert.equal(filtered[0]!.id, "okc-norm");
-  // Provider-scoped BDL id still matches via homeProviderTeamId.
-  assert.equal(applyGameFilters(games, { team: "21" }).length, 1);
-  assert.equal(applyGameFilters(games, { team: "21" })[0]!.id, "okc-norm");
+  // Bare 21 is canonical ESPN PHX, not BDL OKC. Provider-scoped BDL uses bdl:21.
+  assert.equal(applyGameFilters(games, { team: "21" }).length, 0);
+  assert.equal(applyGameFilters(games, { team: "bdl:21" }).length, 1);
+  assert.equal(applyGameFilters(games, { team: "bdl:21" })[0]!.id, "okc-norm");
   assert.equal(applyGameFilters(games, { team: "22" })[0]!.id, "por-norm");
 }
 

@@ -541,16 +541,19 @@ function mergeCareerWithBoard(
   return {
     ...career,
     // League board has team-relative usage; career ESPN table does not.
-    usagePct: board.usagePct > 0 ? board.usagePct : career.usagePct,
+    usagePct:
+      board.usagePct != null && board.usagePct > 0
+        ? board.usagePct
+        : career.usagePct,
     minutes: career.minutes > 0 ? career.minutes : board.minutes,
     gamesPlayed:
       career.gamesPlayed > 0 ? career.gamesPlayed : board.gamesPlayed,
     trueShootingPct:
-      career.trueShootingPct > 0
+      career.trueShootingPct != null && career.trueShootingPct > 0
         ? career.trueShootingPct
         : board.trueShootingPct,
     effectiveFieldGoalPct:
-      career.effectiveFieldGoalPct > 0
+      career.effectiveFieldGoalPct != null && career.effectiveFieldGoalPct > 0
         ? career.effectiveFieldGoalPct
         : board.effectiveFieldGoalPct,
     position: career.position ?? board.position,

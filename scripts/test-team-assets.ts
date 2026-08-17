@@ -3,6 +3,9 @@
  * Run: npm run test:team-assets
  *
  * Never allows ESPN free text to invent players, picks, TPEs, or ownership.
+ *
+ * Live roster/assets for 2024-25 BOS go through getTeamRoster → ESPN
+ * NBADataProvider (not getDataProvider / LocalDataProvider).
  */
 import assert from "node:assert/strict";
 
@@ -124,9 +127,17 @@ async function main() {
   assertBlockedCategory(ledger, "draft_rights");
   assertBlockedCategory(ledger, "other");
 
-  // Every player asset must have a canonical id + href — never free-text-only.
+  // Every player asset must have a canonical ESPN id + href — never free-text-only
+  // and never local-sample slugs if the ESPN board succeeded.
+  if (ledger.playerBoardStatus === "ok") {
+    assert.ok(
+      ledger.players.length >= 5,
+      `ESPN BOS roster expected when board ok, got ${ledger.players.length}`
+    );
+  }
   for (const p of ledger.players) {
     assert.ok(p.playerId.trim().length > 0);
+    assert.ok(/^\d+$/.test(p.playerId), `ESPN athlete id required, got ${p.playerId}`);
     assert.ok(p.href.startsWith(`/players/${encodeURIComponent(p.playerId)}`));
     assert.ok(canLinkTransactionPlayer(p.playerId));
   }

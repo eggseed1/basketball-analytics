@@ -156,6 +156,26 @@ export interface BdlAdvancedStat {
   game?: BdlGame;
 }
 
+/** GOAT season averages row (`/nba/v1/season_averages/{category}`). */
+export type BdlSeasonAverageType =
+  | "base"
+  | "advanced"
+  | "usage"
+  | "scoring"
+  | "defense"
+  | "misc";
+
+export interface BdlSeasonAverageRow {
+  player?: BdlPlayer;
+  /** Some payloads use player_id instead of nested player. */
+  player_id?: number;
+  season: number;
+  season_type?: string;
+  /** Category-specific attributes; keys vary by type. */
+  stats?: Record<string, number | string | null | undefined>;
+  team?: BdlTeam;
+}
+
 type QueryValue = string | number | boolean | Array<string | number> | undefined;
 
 export interface BallDontLieClientOptions {
@@ -272,6 +292,33 @@ export class BallDontLieClient {
       end_date: params.endDate,
       cursor: params.cursor,
       per_page: this.perPage,
+    });
+  }
+
+  /**
+   * GOAT - season averages by category/type.
+   * Read-only diagnostic path for advanced player season metrics.
+   * Docs: `/nba/v1/season_averages/{category}?type=...&season=...&season_type=...`
+   */
+  async getSeasonAverages(params: {
+    category?: "general" | "clutch" | "defense" | "shooting" | "playtype" | "tracking" | "hustle" | "shotdashboard";
+    type?: BdlSeasonAverageType | string;
+    season: number;
+    seasonType?: "regular" | "playoffs" | "ist" | "playin" | string;
+    playerIds?: number[];
+    cursor?: number;
+    /** Bounded page size (API max 100). */
+    perPage?: number;
+  }): Promise<BdlListResponse<BdlSeasonAverageRow>> {
+    const category = params.category ?? "general";
+    const perPage = Math.min(100, Math.max(1, params.perPage ?? 25));
+    return this.get(`/nba/v1/season_averages/${category}`, {
+      type: params.type,
+      season: params.season,
+      season_type: params.seasonType ?? "regular",
+      "player_ids[]": params.playerIds,
+      cursor: params.cursor,
+      per_page: perPage,
     });
   }
 

@@ -61,6 +61,24 @@ import { getDataProvider } from "@/data/providers";
 - On Vercel (`VERCEL` set): falls back to `nba` (see `bcb6834`).
 - Elsewhere: falls back to `local` for offline demos.
 
+### Environment loading (Next.js vs CLI)
+
+tsx does not load `.env.local`. Next.js does. Do not assume a developer
+shell has `DATA_PROVIDER=nba` just because `.env.local` does.
+
+| Runtime | How env is loaded |
+| --- | --- |
+| **Next.js** (`next dev` / `next build`) | Loads `.env`, `.env.local`, `.env.production` automatically |
+| **tsx scripts** (`npm run test:*`, most `smoke:*`) | Process env only. `.env.local` is **not** auto-loaded |
+| **Opt-in CLI** (`diagnose:player-data`, `report:advanced-stats-coverage`, `prefetch:*`) | `tsx --env-file=.env.local …` |
+| **Vitest / Jest** | Not used in this repo. Tests are `tsx scripts/test-*.ts` |
+
+Provider-specific tests must declare the intended provider (construct
+`NBADataProvider`, or call `requireNbaProviderForTest`). They must not
+pass against `LocalDataProvider` sample rows when they claim to validate
+ESPN. Deterministic tests stay fixture/offline and must **not** globally
+set `DATA_PROVIDER=nba`.
+
 **Invariant:** production/preview must never silently serve the local sample dataset for canonical ESPN player pages. Sample ids (`jokic`) do not match ESPN athlete ids (`3112335`); careers appear empty while bios still resolve from ESPN.
 
 Diagnose:
@@ -163,8 +181,12 @@ because the modern franchise id is OKC. Filters may still use the franchise id
 (`?team=OKC` / `?team=SEA` both resolve to canonical `25`).
 
 Game Lab / Explore brand keys prefer **era abbreviation** over franchise id so
-logos do not resolve SEA→OKC CDN marks. When no historical logo exists, UI
-falls back to a text pill (abbr) rather than inventing era art.
+logos do not resolve SEA→OKC CDN marks. Logo selection goes through
+`resolveHistoricalTeamBrand(teamId, season)` (`src/lib/historical-team-brand.ts`):
+verified assets in `HISTORICAL_TEAM_LOGO_ASSETS` / `public/logos/historical/`,
+else **historical_text** monogram with era palette from `historical-team-palette.ts`,
+else safe **current** CDN only when the era identity matches today's franchise,
+else a neutral **text_fallback** mark. Never silently substitute Thunder art for Seattle.
 
 Team links on Game Lab use `/teams/{canonicalId}?season={season}` — franchise
 route with season context, while the visible label stays team-era.
@@ -172,8 +194,11 @@ route with season context, while the visible label stays team-era.
 Known gaps (documented, not invented):
 - Original 1988–02 Charlotte Hornets continuity is tabulated under ESPN `3`
   (NOP lineage); some BDL rows may land on ESPN `30` with Hornets naming.
+- No verified historical logo image files are committed yet; relocated/renamed
+  eras use text marks until licensed assets are registered.
 
 See `src/data/identity/team-era.ts`, `npm run test:historical-team-era`,
+`npm run test:historical-team-brand`,
 `npm run report:historical-team-identity`.
 
 See `src/data/queries/teams-catalog.ts` and
@@ -274,10 +299,14 @@ Notes:
 - Season strings stay canonical (`2024-25`). ESPN’s year param is the ending
   year (`2025`).
 - `trueShootingPct` / `effectiveFieldGoalPct` / `usagePct` are **derived** from
-  counting stats + team totals (standard formulas in
-  `providers/nba/compute-advanced.ts`).
-- `offensiveRating` / `defensiveRating` / `netRating` are lightweight proxies
-  until a dedicated advanced feed is wired.
+  counting stats (+ team totals for USG%). Standard formulas live in
+  `providers/nba/compute-advanced.ts`. When required inputs or denominators are
+  missing, the derived field is **omitted** (not coerced to `0`).
+- `offensiveRating` on ESPN season boards is an **approximate** pts-per-100
+  estimate from individual counting possessions when those inputs exist.
+  ESPN does **not** publish individual `defensiveRating` / `netRating` on the
+  athlete season board — those fields stay unavailable (`—` in UI). Never invent
+  `DRtg = 0` or `NET = ORtg − 110`.
 - `getShots()` returns `[]` for now — shot charts need a separate ingest
   (NBA CDN / warehouse), documented in §6.
 
@@ -390,20 +419,20 @@ src/
     players/[id]     player detail stub
 ```
 
-## Data flow (current explore page)
+## Data flow (current explore players page)
 
 ```
-URL searchParams
+URL searchParams (?season&team&sort&dir&page&player…)
     → filtersFromSearchParams()
-    → getFilteredPlayerSeasons(filters)
-         → getDataProvider().getPlayerSeasons()
-         → applyPlayerSeasonFilters()
-    → PlayerUsageTsScatter(players)
-    → PlayerSeasonTable(players)
+    → getExplorePlayersBoardView()
+         → getPlayerSeasonBoardSnapshot()  (full filtered board, cached)
+         → server sort + page window (100 rows)
+         → slim ExplorePlayerBoardRow[] + Level-2 contextPools
+    → PlayerSeasonTable (current page only)
 ```
 
-Interactive controls update the URL; the server component re-runs the query.
-No duplicated filter logic between chart and table.
+Full board remains available via filters/sort/pagination — not serialized into
+one HTML response. Interactive controls update the URL; the server re-queries.
 
 ## 8. Historical API (1960–present) + DARKO / LEBRON
 
@@ -438,3 +467,28 @@ Tier notes (BallDontLie):
 DARKO / LEBRON are third-party impact metrics (pts/100). DARKO is mirrored from
 the public leaderboard; LEBRON has no public API — drop BBall Index exports into
 `data/impact/lebron.csv` (see that folder’s README).
+
+## Data Truth Rules
+
+1. **Missing data is not zero.** Unavailable metrics render as `—`, never `0` /
+   `0.0` / `0%` invented for schema convenience.
+2. **Never fabricate a statistic** to satisfy a UI or TypeScript required field.
+   Prefer optional canonical fields and omit when the source has no value.
+3. **Derived statistics require valid inputs.** TS%, eFG%, USG%, and approximate
+   ORtg come from documented formulas in `compute-advanced.ts`. Missing
+   denominators or team totals → omit the derived field.
+4. **Derived / approximate statistics must be identified as such** (docs + ASK
+   coverage gaps). Do not present ESPN approx ORtg as provider-published ORtg.
+5. **Historical statistics must remain season-true.** No modern overlay onto
+   other seasons; no adjacent-season substitution for impact metrics.
+6. **Impact metrics require verified season provenance.** Live DARKO only for
+   its stamped season; LEBRON only season-keyed rows that exist.
+7. **Provider IDs stay at provider boundaries.** Canonical team/player identity
+   is resolved explicitly — never silently remapped to a modern brand/id.
+8. **Production never silently uses sample data.** `DATA_PROVIDER=nba` on
+   production; local sample is explicit and labeled.
+9. **Free-text transaction events are not structured ownership records.**
+   Reciprocal trade clustering stays high-confidence only; genealogy remains
+   blocked until structured edges exist.
+10. **Unsupported ASK queries remain unsupported.** Do not answer with a related
+    metric or estimate when the requested metric is unavailable.

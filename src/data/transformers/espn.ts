@@ -219,12 +219,13 @@ export function transformEspnPlayerSeason(
         teamFreeThrowsAttempted: team.freeThrowsAttempted,
         teamTurnovers: team.turnovers,
       })
-    : 0;
+    : undefined;
 
   const possessions = fga + 0.44 * fta + turnovers;
-  const offensiveRating = possessions > 0 ? (points / possessions) * 100 : 0;
-  const defensiveRating = 0;
-  const netRating = offensiveRating ? offensiveRating - 110 : 0;
+  const offensiveRating =
+    possessions > 0 ? (points / possessions) * 100 : undefined;
+  // ESPN athlete season stats do not include individual DRtg. Do not invent
+  // DRtg=0 or NET≈ORtg−110 — Missing ≠ zero / never invent a number.
 
   return {
     playerId: String(athlete.id),
@@ -249,12 +250,10 @@ export function transformEspnPlayerSeason(
     fieldGoalPct: fgPct,
     threePointPct: fg3Pct,
     freeThrowPct: ftPct,
-    trueShootingPct: ts,
-    effectiveFieldGoalPct: efg,
-    usagePct: usg,
-    offensiveRating,
-    defensiveRating,
-    netRating,
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+    ...(usg != null ? { usagePct: usg } : {}),
+    ...(offensiveRating != null ? { offensiveRating } : {}),
   };
 }
 
@@ -597,6 +596,10 @@ export function transformEspnBoxScore(
       const blocks = boxStat(map, "BLK", "blocks");
       const turnovers = boxStat(map, "TO", "turnovers");
       const minutes = boxStat(map, "MIN", "minutes");
+      const ts = trueShootingPct(points, fga, fta);
+      const efg = effectiveFieldGoalPct(fgm, tpm, fga);
+      const ortg = approxOffensiveRating(points, fga, fta, turnovers);
+      const tovPct = turnoverPct(turnovers, fga, fta);
 
       players.push({
         id: `${row.athlete.id}-${game.id}`,
@@ -625,10 +628,10 @@ export function transformEspnBoxScore(
         freeThrowsMade: ftm,
         freeThrowsAttempted: fta,
         plusMinus: boxStat(map, "+/-", "plusMinus"),
-        trueShootingPct: trueShootingPct(points, fga, fta),
-        effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, tpm, fga),
-        offensiveRating: approxOffensiveRating(points, fga, fta, turnovers),
-        turnoverPct: turnoverPct(turnovers, fga, fta),
+        ...(ts != null ? { trueShootingPct: ts } : {}),
+        ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+        ...(ortg != null ? { offensiveRating: ortg } : {}),
+        ...(tovPct != null ? { turnoverPct: tovPct } : {}),
         gameScore: gameScore({
           points,
           fieldGoalsMade: fgm,

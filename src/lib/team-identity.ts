@@ -35,6 +35,20 @@ export function teamMatchIds(team: CanonicalTeam): string[] {
 }
 
 /**
+ * IDs that appear on PlayerSeason.teamId:
+ * ESPN canonical numeric id, plus local-sample brand slug / abbr.
+ * Never includes BallDontLie ids — those collide with ESPN (BDL OKC 21 = ESPN PHX).
+ */
+export function playerSeasonTeamMatchIds(team: CanonicalTeam): string[] {
+  const ids = new Set<string>();
+  ids.add(team.canonicalTeamId);
+  if (team.providerIds.espn) ids.add(team.providerIds.espn);
+  ids.add(team.brandId);
+  ids.add(team.abbr.toLowerCase());
+  return [...ids];
+}
+
+/**
  * Normalize loose URL / UI team input to canonical identity.
  * Returns null for empty / ALL / unresolved.
  */
@@ -58,6 +72,14 @@ export function normalizeTeamParam(
 export function expandTeamFilterMatchIds(raw?: string | null): string[] {
   const normalized = normalizeTeamParam(raw);
   if (normalized) return normalized.matchIds;
+  const token = raw?.trim();
+  return token ? [token] : [];
+}
+
+/** Player-season board filters: ESPN/local ids only, never BDL (numeric collision). */
+export function expandPlayerSeasonTeamMatchIds(raw?: string | null): string[] {
+  const normalized = normalizeTeamParam(raw);
+  if (normalized) return playerSeasonTeamMatchIds(normalized.team);
   const token = raw?.trim();
   return token ? [token] : [];
 }

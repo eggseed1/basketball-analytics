@@ -148,6 +148,25 @@ export function assessProductionProviderGuard(
 }
 
 /**
+ * Test-only invariant: this script must exercise the live ESPN provider.
+ * tsx does not load `.env.local`; unset DATA_PROVIDER defaults to sample data.
+ */
+export function requireNbaProviderForTest(options?: {
+  providerName?: string;
+  testName?: string;
+}): void {
+  const name = (
+    options?.providerName ?? configuredDataProviderKey()
+  ).toLowerCase();
+  if (name !== "nba") {
+    const where = options?.testName ? ` (${options.testName})` : "";
+    throw new Error(
+      `NBA provider required for this test${where} (got "${name}"). tsx does not load .env.local; unset DATA_PROVIDER defaults to LocalDataProvider sample data.`
+    );
+  }
+}
+
+/**
  * Deployment invariant for ops/CI: when the environment expects live NBA,
  * the resolved provider must not be the sample dataset.
  */

@@ -4,6 +4,9 @@
  * Players: from verified season board roster rows (canonical playerIds).
  * Draft capital / TPEs / draft rights: blocked until a structured ledger exists.
  * Never parses ESPN free-text transactions into assets.
+ *
+ * Pre-modern seasons never hit ESPN athlete boards — fail fast with diagnosed
+ * unsupported state (same floor as team roster / player-board health).
  */
 
 import {
@@ -15,7 +18,13 @@ import {
   type TradeExceptionFitResult,
 } from "@/data/types/team-assets";
 import { TRANSACTION_LINEAGE_METHODOLOGY_VERSION } from "@/data/types/transaction-lineage";
-import { getFilteredPlayerSeasons } from "@/data/queries/players";
+import {
+  getTeamRoster,
+  isTeamRosterBoardSupported,
+  TEAM_ROSTER_BOARD_EARLIEST_START_YEAR,
+  type TeamRosterStatus,
+} from "@/data/queries/players";
+import { getTeamRosterCached } from "@/data/queries/request-cache";
 import { isTransactionGenealogyUiReady } from "@/data/queries/transaction-lineage";
 import { playerPageHref } from "@/lib/player-season-resolve";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -49,83 +58,55 @@ function available(
   };
 }
 
-/**
- * Build the team asset ledger for a season snapshot.
- * Roster players require canonical board playerIds — never free-text names.
- */
-export async function getTeamAssets(options: {
-  teamId: string;
-  /** Preferred board filter (e.g. BOS) when known. */
-  abbreviation?: string;
-  season?: string;
-  asOfDate?: string;
-  /** Minimum games for board inclusion (same spirit as explore boards). */
-  minimumGames?: number;
-}): Promise<TeamAssetLedger> {
-  const brand =
-    resolveTeamBrand(options.teamId) ??
-    resolveTeamBrand(options.abbreviation);
-  const teamKey = brand?.espnTeamId ?? brand?.id ?? options.teamId;
-  const season = options.season ?? null;
-  const minimumGames = options.minimumGames ?? 1;
-
-  const players: TeamPlayerAsset[] = [];
-  const notes: string[] = [
-    "Draft capital, trade exceptions, and draft rights stay blocked until a structured asset ledger is ingested.",
-    "ESPN free-text transaction blurbs never invent player, pick, or TPE assets.",
-  ];
-
-  if (season) {
-    const board = await getFilteredPlayerSeasons({
-      season,
-      // Board rows use ESPN numeric teamId — not abbreviations.
-      team: teamKey,
-      minimumGames,
-    }).catch(() => []);
-
-    const seen = new Set<string>();
-    for (const row of board) {
-      if (!row.playerId?.trim()) continue;
-      if (seen.has(row.playerId)) continue;
-      seen.add(row.playerId);
-      const gp = Math.max(1, row.gamesPlayed);
-      players.push({
-        kind: "player",
-        playerId: row.playerId,
-        playerName: row.playerName,
-        teamId: teamKey,
-        season: row.season,
-        position: row.position,
-        pointsPerGame: row.points / gp,
-        minutesPerGame: row.minutes / gp,
-        href: playerPageHref(row.playerId, row.season),
-      });
-    }
-    players.sort((a, b) =>
-      (b.pointsPerGame ?? 0) - (a.pointsPerGame ?? 0) ||
-      a.playerName.localeCompare(b.playerName)
-    );
-  } else {
-    notes.push(
-      "Pass season to load verified roster player assets from the season board."
-    );
+function playerCategoryFromRosterStatus(
+  status: TeamRosterStatus,
+  season: string,
+  count: number,
+  warning?: string
+): TeamAssetCategoryCoverage {
+  if (status === "unsupported") {
+    return {
+      id: "players",
+      label: "Players",
+      availability: "unsupported",
+      count: 0,
+      note:
+        warning ??
+        `Historical player assets unavailable for ${season}. ESPN athlete boards are not available before ${TEAM_ROSTER_BOARD_EARLIEST_START_YEAR}.`,
+    };
   }
-
-  const genealogyUiReady = await isTransactionGenealogyUiReady().catch(
-    () => false
+  if (status === "timeout") {
+    return {
+      id: "players",
+      label: "Players",
+      availability: "timeout",
+      count: 0,
+      note:
+        warning ??
+        `Player assets unavailable for ${season} (provider timed out).`,
+    };
+  }
+  if (status === "error") {
+    return {
+      id: "players",
+      label: "Players",
+      availability: "provider_error",
+      count: 0,
+      note:
+        warning ??
+        `Player assets unavailable for ${season} (provider failed).`,
+    };
+  }
+  return available(
+    "players",
+    "Players",
+    count,
+    count > 0 ? null : "No qualified board rows for this team-season."
   );
+}
 
-  const categories: TeamAssetCategoryCoverage[] = [
-    available(
-      "players",
-      "Players",
-      players.length,
-      season
-        ? players.length
-          ? null
-          : "No qualified board rows for this team-season."
-        : "Season required for roster player assets."
-    ),
+function emptyStructuredCategories(): TeamAssetCategoryCoverage[] {
+  return [
     blocked(
       "draft_capital",
       "Draft capital",
@@ -147,6 +128,144 @@ export async function getTeamAssets(options: {
       "No additional structured asset classes admitted."
     ),
   ];
+}
+
+/**
+ * Build the team asset ledger for a season snapshot.
+ * Roster players require canonical board playerIds — never free-text names.
+ */
+export async function getTeamAssets(options: {
+  teamId: string;
+  /** Preferred board filter (e.g. BOS) when known. */
+  abbreviation?: string;
+  season?: string;
+  asOfDate?: string;
+  /** Minimum games for board inclusion (same spirit as explore boards). */
+  minimumGames?: number;
+  /** Override roster board budget (tests). */
+  budgetMs?: number;
+}): Promise<TeamAssetLedger> {
+  const brand =
+    resolveTeamBrand(options.teamId) ??
+    resolveTeamBrand(options.abbreviation);
+  const teamKey = brand?.espnTeamId ?? brand?.id ?? options.teamId;
+  const season = options.season ?? null;
+  const minimumGames = options.minimumGames ?? 1;
+
+  const notes: string[] = [
+    "Draft capital, trade exceptions, and draft rights stay blocked until a structured asset ledger is ingested.",
+    "ESPN free-text transaction blurbs never invent player, pick, or TPE assets.",
+  ];
+
+  if (!season) {
+    notes.push(
+      "Pass season to load verified roster player assets from the season board."
+    );
+    return {
+      teamId: teamKey,
+      asOfSeason: null,
+      asOfDate: options.asOfDate ?? null,
+      methodologyVersion: TEAM_ASSETS_METHODOLOGY_VERSION,
+      lineageMethodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
+      structuredLedgerAvailable: false,
+      genealogyUiReady: false,
+      playerBoardStatus: "unavailable",
+      warning: "Season required for roster player assets.",
+      categories: [
+        available(
+          "players",
+          "Players",
+          0,
+          "Season required for roster player assets."
+        ),
+        ...emptyStructuredCategories(),
+      ],
+      players: [],
+      draftCapital: [],
+      tradeExceptions: [],
+      draftRights: [],
+      notes,
+    };
+  }
+
+  // Pre-modern: do not touch ESPN athlete boards (or modern roster substitution).
+  // Skip genealogy coverage scan — irrelevant without a supported player board.
+  if (!isTeamRosterBoardSupported(season)) {
+    const warning = `Historical player assets unavailable for ${season}.`;
+    notes.push(warning);
+    return {
+      teamId: teamKey,
+      asOfSeason: season,
+      asOfDate: options.asOfDate ?? null,
+      methodologyVersion: TEAM_ASSETS_METHODOLOGY_VERSION,
+      lineageMethodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
+      structuredLedgerAvailable: false,
+      genealogyUiReady: false,
+      playerBoardStatus: "unsupported",
+      warning,
+      categories: [
+        playerCategoryFromRosterStatus("unsupported", season, 0, warning),
+        ...emptyStructuredCategories(),
+      ],
+      players: [],
+      draftCapital: [],
+      tradeExceptions: [],
+      draftRights: [],
+      notes,
+    };
+  }
+
+  const genealogyUiReady = await isTransactionGenealogyUiReady().catch(
+    () => false
+  );
+
+  // Share the same bounded roster board path as the roster island.
+  const roster =
+    options.budgetMs != null
+      ? await getTeamRoster(
+          teamKey,
+          season,
+          { minimumGames },
+          { budgetMs: options.budgetMs }
+        )
+      : await getTeamRosterCached(teamKey, season, minimumGames);
+
+
+  const players: TeamPlayerAsset[] = [];
+  if (roster.status === "ok") {
+    const seen = new Set<string>();
+    for (const row of roster.players) {
+      if (!row.playerId?.trim()) continue;
+      if (seen.has(row.playerId)) continue;
+      seen.add(row.playerId);
+      const gp = Math.max(1, row.gamesPlayed);
+      players.push({
+        kind: "player",
+        playerId: row.playerId,
+        playerName: row.playerName,
+        teamId: teamKey,
+        season: row.season,
+        position: row.position,
+        pointsPerGame: row.points / gp,
+        minutesPerGame: row.minutes / gp,
+        href: playerPageHref(row.playerId, row.season),
+      });
+    }
+    players.sort(
+      (a, b) =>
+        (b.pointsPerGame ?? 0) - (a.pointsPerGame ?? 0) ||
+        a.playerName.localeCompare(b.playerName)
+    );
+  } else if (roster.warning) {
+    notes.push(roster.warning);
+  }
+
+  const playerCat = playerCategoryFromRosterStatus(
+    roster.status,
+    season,
+    players.length,
+    roster.warning
+  );
 
   return {
     teamId: teamKey,
@@ -156,7 +275,9 @@ export async function getTeamAssets(options: {
     lineageMethodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
     structuredLedgerAvailable: false,
     genealogyUiReady,
-    categories,
+    playerBoardStatus: roster.status,
+    warning: roster.status === "ok" ? undefined : roster.warning,
+    categories: [playerCat, ...emptyStructuredCategories()],
     players,
     draftCapital: [],
     tradeExceptions: [],

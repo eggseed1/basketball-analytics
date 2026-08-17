@@ -71,8 +71,11 @@ async function main() {
     );
   }
 
-  const { assessProductionProviderGuard, assertLiveNbaProviderOrThrow } =
-    await import("../src/data/diagnostics/production-provider-guard");
+  const {
+    assessProductionProviderGuard,
+    assertLiveNbaProviderOrThrow,
+    requireNbaProviderForTest,
+  } = await import("../src/data/diagnostics/production-provider-guard");
   const jokicRows = await getPlayerCareerSeasons("3112335").catch(() => []);
   const guard = assessProductionProviderGuard({
     providerName: provider.name,
@@ -87,6 +90,10 @@ async function main() {
   }
   // Fail loudly in CI/ops when this process is marked as a Vercel-like deploy.
   if (process.env.VERCEL || process.env.DRBL_REQUIRE_LIVE_NBA === "1") {
+    requireNbaProviderForTest({
+      providerName: provider.name,
+      testName: "diagnose:player-data",
+    });
     assertLiveNbaProviderOrThrow({ providerName: provider.name });
     if (guard.isSilentEmptyCareerRisk) {
       throw new Error(guard.message);

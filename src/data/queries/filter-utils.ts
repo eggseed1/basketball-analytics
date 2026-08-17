@@ -4,7 +4,7 @@ import type {
   GameSummary,
   PlayerSeason,
 } from "@/data/types";
-import { expandTeamFilterMatchIds } from "@/lib/team-identity";
+import { expandPlayerSeasonTeamMatchIds } from "@/lib/team-identity";
 import {
   ensureGameTeamIdentity,
   inferGameTeamProvider,
@@ -15,14 +15,15 @@ import {
  * Chart and table both consume query results - never re-filter in UI.
  *
  * `filters.team` is treated as a loose team identity (canonical ESPN id, abbr,
- * brand slug, or namespaced provider key) and expanded via the identity layer.
+ * brand slug, or namespaced provider key) and expanded via player-season ids
+ * only — never BDL schedule ids (BDL OKC 21 is ESPN PHX).
  */
 export function applyPlayerSeasonFilters(
   seasons: PlayerSeason[],
   filters: BasketballFilters = {}
 ): PlayerSeason[] {
   const teamIds = filters.team
-    ? new Set(expandTeamFilterMatchIds(filters.team))
+    ? new Set(expandPlayerSeasonTeamMatchIds(filters.team))
     : null;
 
   return seasons.filter((row) => {
@@ -104,14 +105,20 @@ export function applyGameFilters(
         const away = (game.awayTeamAbbr ?? "").toUpperCase();
         if (home !== teamAbbr && away !== teamAbbr) return false;
       } else if (filters.team) {
-        const needle = filters.team;
-        const homeMatch =
-          game.homeTeamId === needle ||
-          game.homeProviderTeamId === needle;
-        const awayMatch =
-          game.awayTeamId === needle ||
-          game.awayProviderTeamId === needle;
-        if (!homeMatch && !awayMatch) return false;
+        const needle = String(filters.team);
+        // Canonical team ids only for bare numerics. Matching providerTeamId
+        // against ESPN ids collides (ESPN 25 OKC ≠ BDL 25 POR).
+        // Namespaced keys (`bdl:25`) may match provider ids explicitly.
+        if (needle.includes(":")) {
+          const providerId = needle.slice(needle.indexOf(":") + 1);
+          const homeMatch = game.homeProviderTeamId === providerId;
+          const awayMatch = game.awayProviderTeamId === providerId;
+          if (!homeMatch && !awayMatch) return false;
+        } else {
+          const homeMatch = game.homeTeamId === needle;
+          const awayMatch = game.awayTeamId === needle;
+          if (!homeMatch && !awayMatch) return false;
+        }
       }
       if (filters.dateRange) {
         if (

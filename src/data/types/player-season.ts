@@ -24,12 +24,17 @@ export interface PlayerSeason {
   fieldGoalPct: number;
   threePointPct: number;
   freeThrowPct: number;
-  trueShootingPct: number;
-  effectiveFieldGoalPct: number;
-  usagePct: number;
-  offensiveRating: number;
-  defensiveRating: number;
-  netRating: number;
+  /** Derived rates — omit when inputs/denominators are unavailable. */
+  trueShootingPct?: number;
+  effectiveFieldGoalPct?: number;
+  usagePct?: number;
+  /**
+   * Possession-aware ratings. Optional: ESPN season boards do not publish
+   * individual DRtg/NET — missing must not be coerced to 0.
+   */
+  offensiveRating?: number;
+  defensiveRating?: number;
+  netRating?: number;
   /** Optional impact overlays (joined from DARKO / LEBRON feeds). */
   darkoDpm?: number;
   darkoOff?: number;

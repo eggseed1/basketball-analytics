@@ -44,6 +44,7 @@ export type TransactionEventIndex = {
 
 let memory: { expiresAt: number; value: TransactionEventIndex } | null = null;
 const TTL_MS = 1000 * 60 * 30;
+let indexInflight: Promise<TransactionEventIndex> | null = null;
 
 function toEvent(tx: CanonicalTransaction): NbaTransactionEvent | null {
   const teamId = tx.teamIds[0] ?? tx.parties[0]?.teamId;
@@ -74,47 +75,61 @@ export async function buildTransactionEventIndex(options: {
   if (!options.force && memory && memory.expiresAt > Date.now()) {
     return memory.value;
   }
-
-  const archive = await loadTransactionArchive(options.cwd);
-  const events: NbaTransactionEvent[] = [];
-  for (const tx of archive.transactions) {
-    const ev = toEvent(tx);
-    if (ev) events.push(ev);
-  }
-  events.sort(
-    (a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id)
-  );
-
-  const clusters = buildRelatedTransactionEventClusters(events);
-  for (const e of events) {
-    const cid = clusters.byEventId.get(e.id);
-    if (cid) e.relatedClusterId = cid;
+  if (!options.force && indexInflight) {
+    return indexInflight;
   }
 
-  const byId = new Map(events.map((e) => [e.id, e]));
-  const dates = [...new Set(events.map((e) => e.date))].sort((a, b) =>
-    b.localeCompare(a)
-  );
+  const build = async (): Promise<TransactionEventIndex> => {
+    const archive = await loadTransactionArchive(options.cwd);
+    const events: NbaTransactionEvent[] = [];
+    for (const tx of archive.transactions) {
+      const event = toEvent(tx);
+      if (event) events.push(event);
+    }
+    events.sort(
+      (a, b) => b.date.localeCompare(a.date) || a.id.localeCompare(b.id)
+    );
 
-  const value: TransactionEventIndex = {
-    builtAt: options.now ?? new Date().toISOString(),
-    events,
-    byId,
-    dates,
-    earliestDate: events.length
-      ? [...events].sort((a, b) => a.date.localeCompare(b.date))[0]!.date
-      : null,
-    latestDate: events[0]?.date ?? null,
-    source: archive.manifest?.source ?? null,
-    datasetVersion: archive.manifest?.datasetVersion ?? null,
-    clusters,
+    const clusters = buildRelatedTransactionEventClusters(events);
+    for (const e of events) {
+      const cid = clusters.byEventId.get(e.id);
+      if (cid) e.relatedClusterId = cid;
+    }
+
+    const byId = new Map(events.map((e) => [e.id, e]));
+    const dates = [...new Set(events.map((e) => e.date))].sort((a, b) =>
+      b.localeCompare(a)
+    );
+
+    const value: TransactionEventIndex = {
+      builtAt: options.now ?? new Date().toISOString(),
+      events,
+      byId,
+      dates,
+      earliestDate: events.length
+        ? [...events].sort((a, b) => a.date.localeCompare(b.date))[0]!.date
+        : null,
+      latestDate: events[0]?.date ?? null,
+      source: archive.manifest?.source ?? null,
+      datasetVersion: archive.manifest?.datasetVersion ?? null,
+      clusters,
+    };
+    memory = { expiresAt: Date.now() + TTL_MS, value };
+    return value;
   };
-  memory = { value, expiresAt: Date.now() + TTL_MS };
-  return value;
+
+  if (options.force) {
+    return build();
+  }
+  indexInflight = build().finally(() => {
+    indexInflight = null;
+  });
+  return indexInflight;
 }
 
 export function clearTransactionEventIndexCache(): void {
   memory = null;
+  indexInflight = null;
 }
 
 export function filterTransactionEvents(

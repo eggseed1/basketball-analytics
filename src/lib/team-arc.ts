@@ -60,8 +60,8 @@ export type TeamArcModel = {
   continuityNote: string;
 };
 
-function finiteOrNull(n: number): number | null {
-  return Number.isFinite(n) ? n : null;
+function finiteOrNull(n: number | undefined): number | null {
+  return n != null && Number.isFinite(n) ? n : null;
 }
 
 export function toTeamArcSeasonRow(row: TeamSeasonStats): TeamArcSeasonRow {

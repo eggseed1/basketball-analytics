@@ -159,7 +159,10 @@ export function transformEspnAthleteCareerStats(
 
     const season = canonicalSeasonFromEspnYear(row.season.year);
     const possessions = fga + 0.44 * fta + turnovers;
-    const offensiveRating = possessions > 0 ? (points / possessions) * 100 : 0;
+    const offensiveRating =
+      possessions > 0 ? (points / possessions) * 100 : undefined;
+    const ts = trueShootingPct(points, fga, fta);
+    const efg = effectiveFieldGoalPct(fgm, tpm, fga);
 
     out.push({
       playerId,
@@ -182,12 +185,11 @@ export function transformEspnAthleteCareerStats(
       fieldGoalPct,
       threePointPct,
       freeThrowPct,
-      trueShootingPct: trueShootingPct(points, fga, fta),
-      effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, tpm, fga),
-      usagePct: 0,
-      offensiveRating,
-      defensiveRating: 0,
-      netRating: offensiveRating ? offensiveRating - 110 : 0,
+      ...(ts != null ? { trueShootingPct: ts } : {}),
+      ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+      // Career ESPN totals lack team possessions — do not invent USG%=0.
+      ...(offensiveRating != null ? { offensiveRating } : {}),
+      // Career ESPN totals do not include individual DRtg/NET.
     });
   }
 
@@ -306,7 +308,10 @@ export function aggregatePlayerSeasonFromGames(
   }
 
   const possessions = fga + 0.44 * fta + turnovers;
-  const offensiveRating = possessions > 0 ? (points / possessions) * 100 : 0;
+  const offensiveRating =
+    possessions > 0 ? (points / possessions) * 100 : undefined;
+  const ts = trueShootingPct(points, fga, fta);
+  const efg = effectiveFieldGoalPct(fgm, tpm, fga);
 
   return {
     playerId,
@@ -325,12 +330,9 @@ export function aggregatePlayerSeasonFromGames(
     fieldGoalPct: fga > 0 ? fgm / fga : 0,
     threePointPct: tpa > 0 ? tpm / tpa : 0,
     freeThrowPct: fta > 0 ? ftm / fta : 0,
-    trueShootingPct: trueShootingPct(points, fga, fta),
-    effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, tpm, fga),
-    usagePct: 0,
-    offensiveRating,
-    defensiveRating: 0,
-    netRating: offensiveRating ? offensiveRating - 110 : 0,
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+    ...(offensiveRating != null ? { offensiveRating } : {}),
   };
 }
 

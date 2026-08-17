@@ -2,9 +2,9 @@
  * Query: team season evidence from lightweight game summaries.
  * Does NOT call getGameAnalysis / getGameBoxScore during selection.
  *
- * Identity: canonical team for matching; historical schedule filter may still
- * use provider ids at the boundary. After transform normalization, game rows
- * carry canonical homeTeamId/awayTeamId plus provider ids for traceability.
+ * Prefers the local season game archive shared with the Games island.
+ * Does not rediscover schedules via BallDontLie when the archive is present
+ * or when a pre-modern season has no local cache.
  */
 
 import {
@@ -14,86 +14,99 @@ import {
   SEASON_EVIDENCE_CATEGORIES,
   SEASON_EVIDENCE_UNSUPPORTED,
 } from "@/analytics/season-evidence";
-import { getFilteredGames } from "@/data/queries/games";
+import { getTeamSeasonGamesCached } from "@/data/queries/request-cache";
 import {
-  HISTORICAL_SCHEDULE_TEAM_PROVIDER,
-  getProviderTeamId,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
 import { teamMatchIds } from "@/lib/team-identity";
+
+function emptyEvidence(options: {
+  teamId: string;
+  season: string;
+  abbreviation: string;
+  fullName: string;
+  matchTeamIds?: string[];
+  matchAbbrs?: string[];
+  error: string;
+}): TeamSeasonEvidence {
+  return {
+    subject: {
+      kind: "team",
+      teamId: options.teamId,
+      abbreviation: options.abbreviation,
+      fullName: options.fullName,
+      matchTeamIds: options.matchTeamIds ?? [],
+      matchAbbrs: options.matchAbbrs ?? [options.abbreviation.toUpperCase()],
+    },
+    season: options.season,
+    findings: [],
+    games: [],
+    methodology: SEASON_EVIDENCE_METHODOLOGY,
+    coverage: {
+      gameCount: 0,
+      categories: SEASON_EVIDENCE_CATEGORIES.map((c) => ({
+        id: c.id,
+        label: c.label,
+        available: false,
+        note: options.error,
+      })),
+      unsupported: [...SEASON_EVIDENCE_UNSUPPORTED],
+    },
+    error: options.error,
+  };
+}
+
+/** @deprecated Budget retained for tests; archive path is sync/disk-bound. */
+export const TEAM_SEASON_EVIDENCE_BUDGET_MS = 8_000;
 
 export async function getTeamSeasonEvidence(options: {
   teamId: string;
   season: string;
   abbreviation?: string;
   fullName?: string;
+  /** Override budget (tests) — unused when archive path returns immediately. */
+  budgetMs?: number;
 }): Promise<TeamSeasonEvidence> {
   const resolved = resolveCanonicalTeam(options.teamId);
   if (resolved.status !== "resolved") {
-    const abbreviation =
-      options.abbreviation ?? options.teamId ?? "—";
-    return {
-      subject: {
-        kind: "team",
-        teamId: options.teamId,
-        abbreviation,
-        fullName: options.fullName ?? abbreviation,
-        matchTeamIds: [],
-        matchAbbrs: options.abbreviation
-          ? [options.abbreviation.toUpperCase()]
-          : [],
-      },
+    return emptyEvidence({
+      teamId: options.teamId,
       season: options.season,
-      findings: [],
-      games: [],
-      methodology: SEASON_EVIDENCE_METHODOLOGY,
-      coverage: {
-        gameCount: 0,
-        categories: SEASON_EVIDENCE_CATEGORIES.map((c) => ({
-          id: c.id,
-          label: c.label,
-          available: false,
-          note: "Provider identity unavailable",
-        })),
-        unsupported: [...SEASON_EVIDENCE_UNSUPPORTED],
-      },
+      abbreviation: options.abbreviation ?? options.teamId ?? "—",
+      fullName: options.fullName ?? options.abbreviation ?? options.teamId,
       error: `PROVIDER IDENTITY UNAVAILABLE: ${resolved.reason}`,
-    };
+    });
   }
 
   const team = resolved.team;
   const abbreviation =
     options.abbreviation?.toUpperCase() ?? team.abbr;
   const fullName = options.fullName ?? team.displayName;
-
-  const scheduleProvider = HISTORICAL_SCHEDULE_TEAM_PROVIDER;
-  const scheduleTeamId = getProviderTeamId(
-    scheduleProvider,
-    team.canonicalTeamId
-  );
-
-  // Match both canonical and provider ids so pre- and post-normalization rows work.
   const matchTeamIds = teamMatchIds(team);
   const matchAbbrs = Array.from(
     new Set([abbreviation, team.abbr].map((a) => a.toUpperCase()))
   );
 
-  let games = await getFilteredGames({
-    season: options.season,
-    team: team.canonicalTeamId,
-    teamAbbr: abbreviation,
-  }).catch(() => []);
+  const loaded = await getTeamSeasonGamesCached(
+    team.canonicalTeamId,
+    options.season,
+    abbreviation
+  );
 
-  // Legacy path: provider-scoped id filter when abbr filter returned nothing.
-  if (games.length === 0 && scheduleTeamId) {
-    games = await getFilteredGames({
+  if (loaded.games.length === 0) {
+    return emptyEvidence({
+      teamId: team.canonicalTeamId,
       season: options.season,
-      team: scheduleTeamId,
-    }).catch(() => []);
-  }
-
-  if (games.length === 0) {
-    games = await getFilteredGames({ season: options.season }).catch(() => []);
+      abbreviation,
+      fullName,
+      matchTeamIds,
+      matchAbbrs,
+      error:
+        loaded.source === "unavailable"
+          ? `Historical evidence unavailable for ${options.season}.`
+          : loaded.warning ??
+            "Season evidence unavailable for this team-season (no schedule sample).",
+    });
   }
 
   return buildTeamSeasonEvidence({
@@ -105,6 +118,6 @@ export async function getTeamSeasonEvidence(options: {
       matchAbbrs,
     },
     season: options.season,
-    games,
+    games: loaded.games,
   });
 }

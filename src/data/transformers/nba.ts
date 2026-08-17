@@ -57,11 +57,11 @@ export function transformNbaPlayerSeason(
     fieldGoalPct: raw.FG_PCT,
     threePointPct: raw.FG3_PCT,
     freeThrowPct: raw.FT_PCT,
-    trueShootingPct: raw.TS_PCT ?? 0,
-    effectiveFieldGoalPct: raw.EFG_PCT ?? 0,
-    usagePct: raw.USG_PCT ?? 0,
-    offensiveRating: raw.OFF_RATING ?? 0,
-    defensiveRating: raw.DEF_RATING ?? 0,
-    netRating: raw.NET_RATING ?? 0,
+    ...(raw.TS_PCT != null ? { trueShootingPct: raw.TS_PCT } : {}),
+    ...(raw.EFG_PCT != null ? { effectiveFieldGoalPct: raw.EFG_PCT } : {}),
+    ...(raw.USG_PCT != null ? { usagePct: raw.USG_PCT } : {}),
+    ...(raw.OFF_RATING != null ? { offensiveRating: raw.OFF_RATING } : {}),
+    ...(raw.DEF_RATING != null ? { defensiveRating: raw.DEF_RATING } : {}),
+    ...(raw.NET_RATING != null ? { netRating: raw.NET_RATING } : {}),
   };
 }

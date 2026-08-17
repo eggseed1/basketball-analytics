@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type { Game } from "@/data/types";
 import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
+import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
 
 const CACHE_DIR = path.join(process.cwd(), "data", "cache", "games");
 
@@ -86,6 +87,24 @@ export async function cacheExists(season: string): Promise<boolean> {
     return info.isFile() && info.size > 50;
   } catch {
     return false;
+  }
+}
+
+/**
+ * Disk season archives are "adequate" when they look like a full regular-season
+ * slate (not a thin smoke-test scrape). Historical seasons legitimately have
+ * fewer games than modern ones.
+ */
+export function isAdequateSeasonGamesCache(
+  season: string,
+  count: number
+): boolean {
+  try {
+    const start = startYearFromCanonicalSeason(season);
+    const minExpected = start >= 2000 ? 1000 : 200;
+    return count >= minExpected;
+  } catch {
+    return count >= 200;
   }
 }
 

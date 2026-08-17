@@ -146,6 +146,13 @@ import {
 {
   const key = configuredDataProviderKey();
   assert.ok(typeof key === "string" && key.length > 0);
+  if (!process.env.DATA_PROVIDER && !process.env.VERCEL) {
+    assert.equal(
+      key,
+      "local",
+      "tsx without DATA_PROVIDER / VERCEL must resolve to local sample, not silent nba"
+    );
+  }
 }
 
 console.log("test-player-data-health: all assertions passed");

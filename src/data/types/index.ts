@@ -31,6 +31,20 @@ export type {
 export { HISTORICAL_IMPACT_METHODOLOGY_VERSION } from "./historical-impact";
 export type { AdvancedPlayerGameStats } from "./advanced-stats";
 export type {
+  AdvancedMetricCoverage,
+  AdvancedRatingSemantics,
+  AdvancedSeasonMetricId,
+  AdvancedSeasonObservation,
+  AdvancedSeasonSourceId,
+  AdvancedSourceInventoryEntry,
+  AdvancedStatGrain,
+  AdvancedStatIdentityMatch,
+  AdvancedStatProvenance,
+  AdvancedStatsCoverageReport,
+  AdvancedStatsProductionReadiness,
+} from "./advanced-season-stats";
+export { ADVANCED_STATS_AUDIT_METHODOLOGY_VERSION } from "./advanced-season-stats";
+export type {
   AssetType,
   CanonicalAsset,
   CanonicalTransaction,

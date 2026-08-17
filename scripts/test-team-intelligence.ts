@@ -232,6 +232,45 @@ assert.equal(gameInvolvesTeam(games[0]!, bos), true);
 assert.equal(gameInvolvesTeam(games[1]!, bos), false);
 assert.equal(filterTeamGames(games, bos, null, 5).length, 1);
 
+// ESPN PHX (21) must not match OKC; BDL OKC is also 21 on provider ids only.
+{
+  const okc = team({
+    teamId: "25",
+    abbreviation: "OKC",
+    fullName: "Oklahoma City Thunder",
+  });
+  const phxEspn: GameSummary = {
+    id: "phx-espn",
+    season: "2025-26",
+    gameDate: "2025-11-03",
+    homeTeamId: "21",
+    awayTeamId: "2",
+    homeTeamAbbr: "PHX",
+    awayTeamAbbr: "BOS",
+    homeScore: 110,
+    awayScore: 108,
+    gameType: "regular",
+    status: "final",
+    totalPoints: 218,
+    margin: 2,
+    absMargin: 2,
+  };
+  const okcEspn: GameSummary = {
+    ...phxEspn,
+    id: "okc-espn",
+    homeTeamId: "25",
+    homeTeamAbbr: "OKC",
+  };
+  const okcViaBdlProvider: GameSummary = {
+    ...okcEspn,
+    id: "okc-bdl-provider",
+    homeProviderTeamId: "21",
+  };
+  assert.equal(gameInvolvesTeam(phxEspn, okc), false);
+  assert.equal(gameInvolvesTeam(okcEspn, okc), true);
+  assert.equal(gameInvolvesTeam(okcViaBdlProvider, okc), true);
+}
+
 // --- standings match ---
 const row = findStandingRow(
   [

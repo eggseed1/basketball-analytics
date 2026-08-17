@@ -104,6 +104,8 @@ export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
   const fg3m = raw.fg3m ?? 0;
   const fta = raw.fta ?? 0;
   const pts = raw.pts ?? 0;
+  const ts = trueShootingPct(pts, fga, fta);
+  const efg = effectiveFieldGoalPct(fgm, fg3m, fga);
 
   return {
     id: String(raw.id),
@@ -132,8 +134,8 @@ export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
     freeThrowsMade: raw.ftm ?? 0,
     freeThrowsAttempted: fta,
     plusMinus: raw.plus_minus ?? 0,
-    trueShootingPct: trueShootingPct(pts, fga, fta),
-    effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, fg3m, fga),
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
   };
 }
 
@@ -223,6 +225,8 @@ function transformBoxLine(
   const fg3m = line.fg3m ?? 0;
   const fta = line.fta ?? 0;
   const pts = line.pts ?? 0;
+  const ts = trueShootingPct(pts, fga, fta);
+  const efg = effectiveFieldGoalPct(fgm, fg3m, fga);
   return {
     id: `${game.id}-${line.player.id}-${index}`,
     gameId: game.id,
@@ -247,8 +251,8 @@ function transformBoxLine(
     freeThrowsMade: line.ftm ?? 0,
     freeThrowsAttempted: fta,
     plusMinus: line.plus_minus ?? 0,
-    trueShootingPct: trueShootingPct(pts, fga, fta),
-    effectiveFieldGoalPct: effectiveFieldGoalPct(fgm, fg3m, fga),
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
   };
 }
 

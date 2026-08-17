@@ -33,6 +33,7 @@ import {
   findCachedGame,
   readGamesCache,
   writeGamesCache,
+  isAdequateSeasonGamesCache,
 } from "@/data/providers/historical/games-cache";
 
 export interface HistoricalGamesQuery {
@@ -125,32 +126,43 @@ export class HistoricalNbaService {
 
   async getGames(query: HistoricalGamesQuery = {}): Promise<Game[]> {
     const prefer = query.preferSource ?? "auto";
+    const hasDateWindow = Boolean(query.startDate || query.endDate);
 
-    // Single-season fast path: local disk cache (prefers full 1960s archives).
-    if (
-      query.season &&
-      !query.startDate &&
-      !query.endDate &&
-      !query.teamId &&
-      !query.startSeason &&
-      !query.endSeason
-    ) {
+    // Season disk archive first — including team-scoped queries.
+    // Filtering in memory avoids BDL crawls and ESPN↔BDL numeric id collisions
+    // (e.g. ESPN 25 OKC ≠ BDL 25 POR).
+    if (query.season && !query.startSeason && !query.endSeason) {
       const cached = await readGamesCache(query.season);
-      // Ignore thin modern caches (often left by capped smokes); keep short
-      // historical seasons (1960s) which legitimately have fewer games.
-      const start = startYearFromCanonicalSeason(query.season);
-      const minExpected = start >= 2000 ? 1000 : 200;
-      if (cached && cached.games.length >= minExpected) {
-        return cached.games;
+      if (
+        cached &&
+        isAdequateSeasonGamesCache(query.season, cached.games.length)
+      ) {
+        let games = cached.games;
+        if (hasDateWindow) {
+          const start = query.startDate ?? "1900-01-01";
+          const end = query.endDate ?? "2100-12-31";
+          games = games.filter(
+            (g) => g.gameDate >= start && g.gameDate <= end
+          );
+        }
+        if (query.teamId) {
+          // Disk rows use canonical (ESPN) team ids. Bare numerics follow DRBL
+          // convention (ESPN) — do not also match BDL provider ids (25≠POR).
+          const needle = String(query.teamId);
+          games = games.filter(
+            (g) => g.homeTeamId === needle || g.awayTeamId === needle
+          );
+        }
+        return games;
       }
 
       // Modern seasons: ESPN schedule is ~1s. Never block the UI on BDL
       // multi-page crawls when we don't already have a full disk cache.
       if (
-        start >= 2000 &&
-        prefer !== "balldontlie" &&
-        !query.startDate &&
-        !query.endDate
+        !hasDateWindow &&
+        !query.teamId &&
+        startYearFromCanonicalSeason(query.season) >= 2000 &&
+        prefer !== "balldontlie"
       ) {
         try {
           const espnGames = await this.espn.getGames(query.season);
@@ -190,8 +202,10 @@ export class HistoricalNbaService {
           cursor,
         }),
       {
-        maxPages: query.maxPages ?? (isDeepHistory ? 60 : 40),
-        delayMs: isDeepHistory ? 900 : 250,
+        maxPages:
+          query.maxPages ??
+          (hasDateWindow ? 3 : isDeepHistory ? 60 : 40),
+        delayMs: hasDateWindow ? 200 : isDeepHistory ? 900 : 250,
       }
     );
 

@@ -8,6 +8,7 @@ import {
   assessProductionProviderGuard,
   assertLiveNbaProviderOrThrow,
   looksLikeEspnAthleteId,
+  requireNbaProviderForTest,
 } from "../src/data/diagnostics/production-provider-guard";
 
 console.log("ESPN athlete id shape…");
@@ -86,6 +87,22 @@ assert.doesNotThrow(() =>
   assertLiveNbaProviderOrThrow({
     providerName: "nba",
     configuredKey: "nba",
+  })
+);
+
+console.log("requireNbaProviderForTest is loud when sample is active…");
+assert.throws(
+  () =>
+    requireNbaProviderForTest({
+      providerName: "local",
+      testName: "parity-audit",
+    }),
+  /NBA provider required for this test/
+);
+assert.doesNotThrow(() =>
+  requireNbaProviderForTest({
+    providerName: "nba",
+    testName: "parity-audit",
   })
 );
 

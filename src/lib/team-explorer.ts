@@ -12,7 +12,10 @@ import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { formatNumber, formatPct } from "@/lib/format";
 import { isPreTipStatus } from "@/lib/game-status";
 import type { TeamBrand } from "@/lib/nba-brand";
-import { teamMatchIds, teamProfileHref } from "@/lib/team-identity";
+import {
+  playerSeasonTeamMatchIds,
+  teamProfileHref,
+} from "@/lib/team-identity";
 
 export type TeamCoverageLevel = "full" | "partial" | "minimal";
 
@@ -42,7 +45,7 @@ export type TeamRosterBuckets = {
 
 const TRAIT_PICKERS: Record<
   string,
-  (t: TeamSeasonStats) => number
+  (t: TeamSeasonStats) => number | undefined
 > = {
   diff: (t) => t.avgDiff,
   ts: (t) => t.trueShootingPct,
@@ -74,7 +77,14 @@ export function enrichTraitsWithPrior(
     if (!pick) return trait;
     const from = pick(prior);
     const to = pick(team);
-    if (!Number.isFinite(from) || !Number.isFinite(to)) return trait;
+    if (
+      from == null ||
+      to == null ||
+      !Number.isFinite(from) ||
+      !Number.isFinite(to)
+    ) {
+      return trait;
+    }
     const delta = to - from;
     return {
       ...trait,
@@ -188,6 +198,23 @@ export function formatTraitPriorDelta(
   return `${vsPrior >= 0 ? "+" : ""}${formatNumber(vsPrior, 1)} vs prior`;
 }
 
+function resolvedCanonicalForTeam(
+  team: TeamSeasonStats,
+  brand?: TeamBrand | null
+) {
+  const resolved = resolveCanonicalTeam(team.teamId);
+  if (resolved.status === "resolved") return resolved.team;
+  if (brand?.espnTeamId) {
+    const byBrand = resolveCanonicalTeam(brand.espnTeamId);
+    if (byBrand.status === "resolved") return byBrand.team;
+  }
+  return null;
+}
+
+/**
+ * Canonical ESPN / brand ids for homeTeamId / awayTeamId / standings.
+ * Does not include BallDontLie ids (BDL OKC 21 is ESPN PHX).
+ */
 export function teamIdsForMatch(
   team: TeamSeasonStats,
   brand?: TeamBrand | null
@@ -196,16 +223,21 @@ export function teamIdsForMatch(
   ids.add(team.teamId);
   if (brand?.espnTeamId) ids.add(brand.espnTeamId);
   if (brand?.id) ids.add(brand.id);
-  // Include BDL schedule ids so historical game rows match the same franchise.
-  const resolved = resolveCanonicalTeam(team.teamId);
-  if (resolved.status === "resolved") {
-    for (const id of teamMatchIds(resolved.team)) ids.add(id);
-  } else if (brand?.espnTeamId) {
-    const byBrand = resolveCanonicalTeam(brand.espnTeamId);
-    if (byBrand.status === "resolved") {
-      for (const id of teamMatchIds(byBrand.team)) ids.add(id);
-    }
+  const canonical = resolvedCanonicalForTeam(team, brand);
+  if (canonical) {
+    for (const id of playerSeasonTeamMatchIds(canonical)) ids.add(id);
   }
+  return ids;
+}
+
+/** BDL schedule ids — match only against homeProviderTeamId / awayProviderTeamId. */
+export function teamScheduleProviderIdsForMatch(
+  team: TeamSeasonStats,
+  brand?: TeamBrand | null
+): Set<string> {
+  const ids = new Set<string>();
+  const canonical = resolvedCanonicalForTeam(team, brand);
+  if (canonical?.providerIds.bdl) ids.add(canonical.providerIds.bdl);
   return ids;
 }
 
@@ -226,14 +258,13 @@ export function gameInvolvesTeam(
 ): boolean {
   const ids = teamIdsForMatch(team, brand);
   if (ids.has(game.homeTeamId) || ids.has(game.awayTeamId)) return true;
-  // Optional provider ids when historical rows are normalized (forward-compatible).
-  const homeProvider = (game as { homeProviderTeamId?: string })
-    .homeProviderTeamId;
-  const awayProvider = (game as { awayProviderTeamId?: string })
-    .awayProviderTeamId;
+  // BDL ids only against retained provider ids — never against canonical ESPN ids.
+  const scheduleIds = teamScheduleProviderIdsForMatch(team, brand);
+  const homeProvider = game.homeProviderTeamId;
+  const awayProvider = game.awayProviderTeamId;
   if (
-    (homeProvider && ids.has(homeProvider)) ||
-    (awayProvider && ids.has(awayProvider))
+    (homeProvider && scheduleIds.has(homeProvider)) ||
+    (awayProvider && scheduleIds.has(awayProvider))
   ) {
     return true;
   }
@@ -534,8 +565,20 @@ export function transactionTeamFilterId(
   return brand?.espnTeamId ?? team.teamId;
 }
 
-export function seasonChipHref(teamKey: string, season: string): string {
-  return teamProfileHref(teamKey, season);
+export function seasonChipHref(
+  teamKey: string,
+  season: string,
+  opts?: { fromHistory?: boolean; themeMode?: "historical" | "modern" }
+): string {
+  const base = teamProfileHref(teamKey, season);
+  if (!opts?.fromHistory && opts?.themeMode !== "modern") return base;
+  const q = new URLSearchParams();
+  // teamProfileHref already includes season=
+  const url = new URL(base, "https://drbl.local");
+  if (opts.fromHistory) url.searchParams.set("from", "history");
+  if (opts.themeMode === "modern") url.searchParams.set("theme", "modern");
+  else if (opts.fromHistory) url.searchParams.set("theme", "historical");
+  return `${url.pathname}?${url.searchParams.toString()}`;
 }
 
 /** Display-only: keep unused import honest for formatPct in tests/docs. */

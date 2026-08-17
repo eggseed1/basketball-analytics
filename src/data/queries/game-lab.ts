@@ -8,7 +8,7 @@ import { analyzeGame, type GameAnalysisSummary } from "@/analytics/game-lab";
 import {
   type GameSeasonContext,
 } from "@/analytics/game-season-context";
-import { getGameShell } from "@/data/queries/games";
+import { getGameShellCached } from "@/data/queries/request-cache";
 import { getFilteredPlayerSeasons } from "@/data/queries/players";
 import { getTeam } from "@/data/queries/teams";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
@@ -119,7 +119,7 @@ async function resolveSideLabels(
 export async function getGameAnalysis(
   gameId: string
 ): Promise<GameAnalysisPayload | null> {
-  const shell = await getGameShell(gameId);
+  const shell = await getGameShellCached(gameId);
   if (!shell) return null;
 
   const game = ensureGameTeamIdentity(

@@ -63,13 +63,11 @@ export function enrichBoxScoreAdvanced(players: PlayerGame[]): PlayerGame[] {
 
     return {
       ...player,
-      usagePct: usage,
-      assistPct: Number.isFinite(assistPct) && assistPct > 0 ? assistPct : 0,
-      reboundPct,
-      netRating:
-        player.offensiveRating != null
-          ? player.offensiveRating - 110
-          : undefined,
+      ...(usage != null ? { usagePct: usage } : {}),
+      ...(Number.isFinite(assistPct) && assistPct > 0
+        ? { assistPct }
+        : {}),
+      ...(reboundPct > 0 ? { reboundPct } : {}),
     };
   });
 }

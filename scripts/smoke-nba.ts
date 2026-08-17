@@ -9,14 +9,22 @@ async function main() {
   console.log("players", seasons.length);
 
   const top = [...seasons]
-    .sort((a, b) => b.usagePct - a.usagePct)
+    .sort(
+      (a, b) => (b.usagePct ?? -Infinity) - (a.usagePct ?? -Infinity)
+    )
     .slice(0, 8);
   for (const row of top) {
     console.log(
       row.playerName.padEnd(28),
       row.teamName.padEnd(24),
-      `USG ${(row.usagePct * 100).toFixed(1)}%`.padEnd(12),
-      `TS ${(row.trueShootingPct * 100).toFixed(1)}%`.padEnd(11),
+      `USG ${
+        row.usagePct != null ? `${(row.usagePct * 100).toFixed(1)}%` : "—"
+      }`.padEnd(12),
+      `TS ${
+        row.trueShootingPct != null
+          ? `${(row.trueShootingPct * 100).toFixed(1)}%`
+          : "—"
+      }`.padEnd(11),
       `MIN ${Math.round(row.minutes)}`
     );
   }
@@ -26,9 +34,18 @@ async function main() {
     "SGA",
     sga && {
       id: sga.playerId,
-      usg: `${(sga.usagePct * 100).toFixed(1)}%`,
-      ts: `${(sga.trueShootingPct * 100).toFixed(1)}%`,
-      efg: `${(sga.effectiveFieldGoalPct * 100).toFixed(1)}%`,
+      usg:
+        sga.usagePct != null
+          ? `${(sga.usagePct * 100).toFixed(1)}%`
+          : "—",
+      ts:
+        sga.trueShootingPct != null
+          ? `${(sga.trueShootingPct * 100).toFixed(1)}%`
+          : "—",
+      efg:
+        sga.effectiveFieldGoalPct != null
+          ? `${(sga.effectiveFieldGoalPct * 100).toFixed(1)}%`
+          : "—",
       gp: sga.gamesPlayed,
       pts: sga.points,
     }

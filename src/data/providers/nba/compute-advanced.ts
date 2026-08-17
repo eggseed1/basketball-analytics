@@ -1,15 +1,18 @@
 /**
  * Derived advanced metrics when a source does not publish them directly.
  * Formulas follow standard Basketball-Reference / NBA definitions.
+ *
+ * Data-truth: when required inputs / denominators are missing, return
+ * `undefined` — never invent 0 as a real rate.
  */
 
 export function trueShootingPct(
   points: number,
   fieldGoalsAttempted: number,
   freeThrowsAttempted: number
-): number {
+): number | undefined {
   const denom = 2 * (fieldGoalsAttempted + 0.44 * freeThrowsAttempted);
-  if (denom <= 0) return 0;
+  if (denom <= 0) return undefined;
   return points / denom;
 }
 
@@ -17,8 +20,8 @@ export function effectiveFieldGoalPct(
   fieldGoalsMade: number,
   threePointersMade: number,
   fieldGoalsAttempted: number
-): number {
-  if (fieldGoalsAttempted <= 0) return 0;
+): number | undefined {
+  if (fieldGoalsAttempted <= 0) return undefined;
   return (fieldGoalsMade + 0.5 * threePointersMade) / fieldGoalsAttempted;
 }
 
@@ -35,7 +38,7 @@ export function usagePct(params: {
   teamFieldGoalsAttempted: number;
   teamFreeThrowsAttempted: number;
   teamTurnovers: number;
-}): number {
+}): number | undefined {
   const {
     minutes,
     fieldGoalsAttempted,
@@ -53,7 +56,7 @@ export function usagePct(params: {
   const teamPoss =
     teamFieldGoalsAttempted + 0.44 * teamFreeThrowsAttempted + teamTurnovers;
 
-  if (minutes <= 0 || teamPoss <= 0 || teamMinutes <= 0) return 0;
+  if (minutes <= 0 || teamPoss <= 0 || teamMinutes <= 0) return undefined;
 
   return (playerPoss * (teamMinutes / 5)) / (minutes * teamPoss);
 }
@@ -68,7 +71,7 @@ export function gameUsagePct(params: {
   teamFieldGoalsAttempted: number;
   teamFreeThrowsAttempted: number;
   teamTurnovers: number;
-}): number {
+}): number | undefined {
   const playerPoss =
     params.fieldGoalsAttempted +
     0.44 * params.freeThrowsAttempted +
@@ -77,22 +80,28 @@ export function gameUsagePct(params: {
     params.teamFieldGoalsAttempted +
     0.44 * params.teamFreeThrowsAttempted +
     params.teamTurnovers;
-  if (params.minutes <= 0 || teamPoss <= 0 || params.teamMinutes <= 0) return 0;
+  if (params.minutes <= 0 || teamPoss <= 0 || params.teamMinutes <= 0) {
+    return undefined;
+  }
   return (
     (playerPoss * (params.teamMinutes / 5)) / (params.minutes * teamPoss)
   );
 }
 
-/** Approximate offensive rating (pts per 100 possessions). */
+/**
+ * Approximate offensive rating (pts per 100 individual possessions).
+ * Derived estimate — not provider-published ORtg. Returns undefined when
+ * possession inputs are missing.
+ */
 export function approxOffensiveRating(
   points: number,
   fieldGoalsAttempted: number,
   freeThrowsAttempted: number,
   turnovers: number
-): number {
+): number | undefined {
   const possessions =
     fieldGoalsAttempted + 0.44 * freeThrowsAttempted + turnovers;
-  if (possessions <= 0) return 0;
+  if (possessions <= 0) return undefined;
   return (points / possessions) * 100;
 }
 
@@ -101,9 +110,9 @@ export function turnoverPct(
   turnovers: number,
   fieldGoalsAttempted: number,
   freeThrowsAttempted: number
-): number {
+): number | undefined {
   const denom = fieldGoalsAttempted + 0.44 * freeThrowsAttempted + turnovers;
-  if (denom <= 0) return 0;
+  if (denom <= 0) return undefined;
   return turnovers / denom;
 }
 
