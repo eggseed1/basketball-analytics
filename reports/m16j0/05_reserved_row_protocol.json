@@ -1,0 +1,30 @@
+{
+  "RESERVED_ROW_PROTOCOL_PREEXISTING": "YES",
+  "RESERVED_ROW_PROTOCOL_OUTCOME_INDEPENDENT": "YES",
+  "protocolId": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+  "sourceFiles": [
+    "drbl/evaluation/m16c-dataset.ts::buildFutureBlockStackRows",
+    "drbl/evaluation/protocol.ts::ELIGIBILITY_RULES",
+    "drbl/evaluation/splits.ts::RESERVED_TEST = entire usable 2025-26"
+  ],
+  "historyFutureConstruction": {
+    "gameUniverse": "RESERVED_TEST game ids (2025-26), chronological by gameDate then gameId",
+    "earlyFrac": 0.7,
+    "history": "first floor(nGames * earlyFrac) games (min 1)",
+    "future": "remaining games after early cut",
+    "R1Pool": "built from history games only",
+    "predictionFeatures": "Approach-B attributeGamePlayerValue on history → rawAbilityRate, N",
+    "target": "future_block_residual_per_100 = 100 * future.totalValue / future.possessions (same R1 replacement semantics)",
+    "eligibility": {
+      "minPossessions": 50,
+      "minFutureObservations": 20
+    }
+  },
+  "explicitlyNotUsed": {
+    "m16gExpandingFolds": "TRAIN-development only; applying to RESERVED would create new date cuts — forbidden",
+    "adHocCutoffs": "forbidden"
+  },
+  "newCutoffInvented": "NO",
+  "outcomeDependent": "NO",
+  "note": "Membership hash verified; normalized reserved PBP/outcomes NOT loaded in M16j0"
+}

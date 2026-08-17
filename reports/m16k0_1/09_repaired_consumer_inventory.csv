@@ -1,0 +1,9 @@
+path,class,status,note
+drbl/models/validated-ability-v1.ts,C1,READY,validated point estimate frozen
+drbl/models/validated-percentile-eligibility-v1.ts,C1,READY,minutes>=500 + hasValidatedDrblEstimate; uncertainty not used
+src/data/queries/percentiles.ts,C1,READY_FOR_K1_SWAP,live still legacy gate; validated helpers exported; k1 swaps eligible
+src/lib/stat-glossary.ts,C1,COPY_FROZEN_FOR_K1,live fused wording retained until cutover; replacement text frozen
+src/lib/player-savant.ts,C1,READY_FOR_K1,replace uncertainty missingness with hasValidatedDrblEstimate at cutover
+src/lib/player-explore-sort.ts,C1,OK,GENERAL_PLAYER_EXPLORER default PPG; not a cutover blocker
+drbl/models/war-math.ts,C2,FIREWALLED,WAR_CHANGED=NO
+O/D fields,C2,FIREWALLED,OD_CHANGED=NO; not implied equal to validated DRBL

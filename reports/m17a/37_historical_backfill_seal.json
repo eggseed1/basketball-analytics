@@ -1,0 +1,103 @@
+{
+  "HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH": "2b2d862a242978718c2c3cf550eb1dd23b7ba13076fb196a26ad0a9f11af96a6",
+  "normalizationVersion": "historical-pbp-normalized-v1",
+  "normalizedSeasonHashes": {
+    "2024-25:0022400001": "c3e92c56c3105ec029f59c2ec3e9d0959ecf2c01cce65a318485e2fac535f69c",
+    "2024-25": "b36260b8dd3711abb75e6d4aa17bd6be2acbbd3c49d684a79fec91c4c79dce8b",
+    "2025-26": "c0fdc66eef48d1df7b1940ce9d3fa2b4d2cb8e7a036263c8c03684d5b89c048d"
+  },
+  "supportTiers": [
+    {
+      "season": "2024-25",
+      "tier": "B_CANONICAL_WITH_LIMITATIONS",
+      "reason": "core formulas unchanged; limitations: lineup_coverage=98.7828%<99.9%",
+      "blockingFeatures": "lineup_coverage=98.7828%<99.9%",
+      "drblSupported": "YES",
+      "r1PointsSupported": "YES",
+      "r1WinEqSupported": "YES",
+      "stintsSupported": "YES",
+      "websiteCanonicalDisplay": "YES"
+    },
+    {
+      "season": "2025-26",
+      "tier": "B_CANONICAL_WITH_LIMITATIONS",
+      "reason": "core formulas unchanged; limitations: lineup_coverage=98.7372%<99.9%",
+      "blockingFeatures": "lineup_coverage=98.7372%<99.9%",
+      "drblSupported": "YES",
+      "r1PointsSupported": "YES",
+      "r1WinEqSupported": "YES",
+      "stintsSupported": "YES",
+      "websiteCanonicalDisplay": "YES"
+    }
+  ],
+  "modelVersions": {
+    "ability": "drbl-ability-eb1600-r1-v1",
+    "r1Points": "drbl-r1-points-v1",
+    "r1WinEq": "drbl-r1-wineq-v1",
+    "P1": 37.490662671779255,
+    "k": 1600
+  },
+  "seasonRegistry": [
+    {
+      "season": "2024-25",
+      "label": "2024-25",
+      "regularSeasonAvailable": true,
+      "postseasonAvailable": false,
+      "drblAvailable": true,
+      "r1PointsAvailable": true,
+      "r1WinEqAvailable": true,
+      "stintsAvailable": true,
+      "supportTier": "B_CANONICAL_WITH_LIMITATIONS",
+      "dataQualityNote": "Canonical production season (M16l3). M17a lineup reconstruction coverage is below the strict 99.9% Tier-A gate on raw possessions; quarantined/incomplete lineups are explicit. Frozen v1 formulas unchanged.",
+      "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+      "r1PointValueVersion": "drbl-r1-points-v1",
+      "r1WinEquivalentVersion": "drbl-r1-wineq-v1",
+      "normalizationVersion": "historical-pbp-normalized-v1"
+    },
+    {
+      "season": "2025-26",
+      "label": "2025-26",
+      "regularSeasonAvailable": true,
+      "postseasonAvailable": false,
+      "drblAvailable": true,
+      "r1PointsAvailable": true,
+      "r1WinEqAvailable": true,
+      "stintsAvailable": true,
+      "supportTier": "B_CANONICAL_WITH_LIMITATIONS",
+      "dataQualityNote": "Canonical production season; reserved outcomes consumed once in M16l2. M17a lineup coverage below strict Tier-A gate; limitations documented. Frozen v1 formulas unchanged.",
+      "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+      "r1PointValueVersion": "drbl-r1-points-v1",
+      "r1WinEquivalentVersion": "drbl-r1-wineq-v1",
+      "normalizationVersion": "historical-pbp-normalized-v1"
+    }
+  ],
+  "currentSeasonRegression": {
+    "2024_25_DRBL_CHANGED": "NO",
+    "2025_26_DRBL_CHANGED": "NO",
+    "2024_25_R1_CHANGED": "NO",
+    "2025_26_R1_CHANGED": "NO",
+    "method": "M17a does not rewrite precomputed boards; compares shadow extract to live artifact (identity)",
+    "mismatches": {
+      "2024-25_drbl": 0,
+      "2024-25_r1": 0,
+      "2025-26_drbl": 0,
+      "2025-26_r1": 0
+    },
+    "CANONICAL_DRBL_RANK_CHANGED": "NO",
+    "P1_CHANGED": "NO",
+    "MODEL_PARAMETER_CHANGED": "NO",
+    "boardsMutatedByM17a": "NO"
+  },
+  "typecheck": "PASS",
+  "tests": "PASS",
+  "build": "PASS",
+  "HISTORICAL_PRODUCT_CUTOVER": "BLOCKED",
+  "HISTORICAL_MODEL_APPLICATION": "RETROSPECTIVE_FROZEN_V1_BACKFILL",
+  "HISTORICAL_R1_WINEQ_P1_POLICY": "FROZEN_V1_P1",
+  "P1_ERA_ROBUSTNESS": "NOT_ESTABLISHED",
+  "HISTORICAL_CANONICAL_WAR_FIELD": "NONE",
+  "CAREER_R1_VALUE_PUBLIC": "NO",
+  "DRBL_V1_REOPENED": "NO",
+  "P1_REFIT": "NO",
+  "M17A_HISTORICAL_BACKFILL_SEAL_HASH": "fee516cd2a714b6b8817213dbe7dde68f388dd853e1a2de1239aa0928ed4d689"
+}

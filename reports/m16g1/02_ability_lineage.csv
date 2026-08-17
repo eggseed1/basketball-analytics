@@ -1,0 +1,11 @@
+field,sourceFunction,sourceFile,definition,inputs,rateUnit,exposureUnit,ebApplied,k,priorMean,researchOrProduction
+rawAbilityRate,finalizePlayerSeasonRows,drbl/models/player-value.ts,100 * acc.totalValue / possessions,"DrblPlayerAccumulator.totalValue,possessions",points/100 combined possession appearances vs R1,actual possessions,NO,,,both (research shrinkage input)
+drblP,"empiricalBayesShrink(raw100,n)",drbl/models/player-value.ts,"EB(rawAbilityRate; k=200, prior=0)","rawAbilityRate,N",same as rawAbilityRate,actual possessions (weight only),YES,200,0,production component
+drblLn,"empiricalBayesShrink(lnRaw,n)",drbl/models/player-value.ts,EB(lineup ridge rating; k=200),lineupRatingsPer100,points/100,possessions,YES,200,0,production component
+drblB,"empiricalBayesShrink(bRaw,n)",drbl/models/player-value.ts,EB(behavior rating; k=200) if present,behaviorRatingsPer100,points/100,possessions,YES,200,0,production component
+fusedRateRaw,fusePlayerRating OR fusionMap,drbl/models/fusion.ts + player-value.ts,wP*drblP + wLn*drblLn + wB*drblB (lite) or OOF ridge fusion,"drblP,drblLn,drblB (already EB'd)",points/100,n/a (blend),NO (inputs already EB),,,production
+posteriorAbilityRate,"empiricalBayesRate(fusedRateRaw,n,0,k)",drbl/models/player-value.ts,"EB(fusedRateRaw; k=200, prior=0)","fusedRateRaw,N",points/100,actual possessions,YES,200,0,production published ability
+drbl100,alias of posteriorAbilityRate,drbl/models/player-value.ts / leaderboard.ts,posteriorAbilityRate,posteriorAbilityRate,points/100,n/a,YES (inherited),200,0,production display alias
+seasonalImpact,seasonalImpactFromRawRate,drbl/models/player-value.ts,(rawAbilityRate - replacementLevelRate) * N / 100,"rawAbilityRate,N",points (not rate),actual possessions ONLY (no +k),NO,,,production
+calibratedDRBL100,optional calibratePosterior,drbl/models/pipeline-value.ts,intercept + slope * posterior (when calib present),posteriorAbilityRate,points/100,n/a,downstream of EB,,,production optional
+WAR ability input,board-provenance / war-math,drbl/models/board-provenance.ts,posteriorAbilityRate ?? drbl100,posteriorAbilityRate,points/100,paired_team_possessions (WAR),YES (uses published posterior),200,0,production

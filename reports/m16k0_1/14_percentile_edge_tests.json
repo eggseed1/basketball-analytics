@@ -1,0 +1,28 @@
+{
+  "belowQualification": {
+    "minutes": 499,
+    "percentileEligible": false
+  },
+  "exactBoundary": {
+    "minutes": 500,
+    "percentileEligible": true
+  },
+  "aboveQualification": {
+    "minutes": 501,
+    "percentileEligible": true
+  },
+  "validZeroDrbl": {
+    "validatedDRBL100": 0,
+    "hasEstimate": true,
+    "percentileEligibleIfQualified": true
+  },
+  "invalidDrblHighMinutes": {
+    "minutes": 3000,
+    "percentileEligible": false
+  },
+  "metadataOnly": {
+    "percentileEligible": false
+  },
+  "MISSING_PERCENTILE_COERCED_TO_NUMBER": "NO",
+  "result": "PASS"
+}

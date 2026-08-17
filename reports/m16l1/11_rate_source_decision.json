@@ -1,0 +1,17 @@
+{
+  "RATE_SOURCE_DECISION": "W0_EMPIRICAL_WIN",
+  "SELECTED_RATE_SOURCE": "W0",
+  "RATE_SOURCE_SELECTION_STRENGTH": "EMPIRICAL_STRONG",
+  "gates": {
+    "relW1Imp": -0.08108921946373403,
+    "relW0Imp": 0.07500696335123729,
+    "pW1Beats": 0.0002,
+    "pW0Beats": 0.9998,
+    "w1MAE": 253.74409217969972,
+    "w0MAE": 237.02948381362597,
+    "w1FreeSlopeB": 2.5406252634442263,
+    "w1Empirical": false,
+    "w0Empirical": true
+  },
+  "reason": "W0 cleared empirical strong gates vs W1 on LOO fixed-slope net points"
+}

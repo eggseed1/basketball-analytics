@@ -1,0 +1,11 @@
+{
+  "possessionsChecked": 244587,
+  "maxOffResidual": 4.440892098500626e-16,
+  "meanOffResidual": 1.3351073369925518e-17,
+  "P99OffResidual": 2.220446049250313e-16,
+  "maxDefResidual": 4.440892098500626e-16,
+  "meanDefResidual": 1.3695977919046621e-17,
+  "mismatchCount": 0,
+  "POSSESSION_CONSERVATION": "PASS",
+  "EXECUTION_SKILL_FRACTION": 1
+}

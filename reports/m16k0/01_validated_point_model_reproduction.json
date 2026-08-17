@@ -1,0 +1,12 @@
+{
+  "POINT_ESTIMATE_FORMULA_REPRODUCED": "PASS",
+  "formula": "N/(N+1600)*rawAbilityRate",
+  "maxResidual": 0,
+  "meanResidual": 0,
+  "P99Residual": 0,
+  "rowsChecked": 1130,
+  "VALIDATED_POSTERIOR_OPERATION_COUNT": 1,
+  "VALIDATED_POSTERIOR_K": 1600,
+  "VALIDATED_PRIOR_MEAN": 0,
+  "VALIDATED_CALIBRATION": "identity"
+}

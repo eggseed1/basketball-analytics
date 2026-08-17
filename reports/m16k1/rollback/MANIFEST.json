@@ -1,0 +1,13 @@
+{
+  "createdAt": "2026-08-13T00:09:15.123Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "seasons": [
+    "2024-25",
+    "2025-26"
+  ],
+  "sha256": {
+    "2024-25": "b205bf317e487ba2c55dd580f089dffbbb7680a5fbfdc4884606328572e985a7",
+    "2025-26": "a18c996838a999e265f2cee356e3c15f17b5a8534be9832bf65786c7ea55d8df"
+  },
+  "note": "Exact pre-cutover precomputed artifacts for rollback"
+}

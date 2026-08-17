@@ -1,0 +1,4 @@
+artifact,generator,embeds,migrationRequired,rebuild
+src/data/drbl/precomputed/2024-25.json,scripts/drbl-compute-season.ts / remasters,legacy drbl100/rank/uncertainty/WAR,YES,npm run drbl:compute (season) then copy/overlay to src/data
+src/data/drbl/precomputed/2025-26.json,same,legacy fields,YES,same
+data/drbl/normalized/*/player_season.json,writeSeasonDrblArtifact,full pipeline,YES,compute-season

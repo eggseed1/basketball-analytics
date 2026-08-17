@@ -1,0 +1,18 @@
+{
+  "lockPath": "C:\\Users\\parkh\\Projects\\basketball-analytics\\data\\drbl\\raw\\.historical_import.lock",
+  "observation": {
+    "state": "STALE",
+    "lock": {
+      "pid": 12788,
+      "startedAt": "2026-08-13T02:57:52.041Z",
+      "command": "npm run drbl:import-historical -- --from 1996-97 --to 2023-24 --raw-only --delay 120",
+      "from": "1996-97",
+      "to": "2023-24",
+      "rawOnly": true,
+      "observedBy": "m17a_1_early",
+      "note": "Observed lock for pre-existing importer; do not start a second process"
+    }
+  },
+  "policy": "Second invocation with live lock → STOP IMPORT_ALREADY_RUNNING",
+  "duplicateImporterLaunched": "NO"
+}

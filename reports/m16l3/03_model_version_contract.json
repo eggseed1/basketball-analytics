@@ -1,0 +1,8 @@
+{
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "r1PointValueVersion": "drbl-r1-points-v1",
+  "r1WinEquivalentVersion": "drbl-r1-wineq-v1",
+  "r1PointsPerWin": 37.490662671779255,
+  "R1_VALUE_CALCULATION_SINGLE_SOURCE": "YES",
+  "note": "Do not use display-rounded P1 internally"
+}

@@ -1,0 +1,9 @@
+{
+  "VALIDATED_PERCENTILE_DEPENDS_ON_UNCERTAINTY": "NO",
+  "VALIDATED_PREDICTIVE_INTERVAL_AVAILABLE": "NO",
+  "validatedPathUncertaintyDisplay": "REMOVED_AT_K1 / LEGACY_UNTIL_CUTOVER",
+  "liveLegacyUncertaintyStillPresent": true,
+  "liveCanonicalValidatedDisplayActive": false,
+  "UNCERTAINTY_QUARANTINED": "YES",
+  "result": "PASS"
+}

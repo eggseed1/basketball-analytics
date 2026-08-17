@@ -4,11 +4,19 @@ import type {
   PlayerGame,
   PlayerSeason,
   Position,
+  Shot,
   Team,
 } from "@/data/types";
 import {
   effectiveFieldGoalPct,
+  estimatePossessions,
+  freeThrowRate,
+  ratingPerHundred,
+  safePct,
+  threePointAttemptRate,
   trueShootingPct,
+  turnoverPct,
+  twoPointPct,
   usagePct,
 } from "@/data/providers/nba/compute-advanced";
 
@@ -67,6 +75,11 @@ export interface TeamSeasonTotals {
   freeThrowsAttempted: number;
   turnovers: number;
   points: number;
+  /** Opponent points scored against this team (season total). */
+  pointsAllowed: number;
+  opponentFieldGoalsAttempted: number;
+  opponentFreeThrowsAttempted: number;
+  opponentTurnovers: number;
 }
 
 /**
@@ -75,7 +88,8 @@ export interface TeamSeasonTotals {
  */
 export function categoryMap(
   valueCategories: EspnStatCategoryValues[],
-  schemaCategories: EspnStatCategorySchema[] = []
+  schemaCategories: EspnStatCategorySchema[] = [],
+  split: "own" | "opponent" | "all" = "own"
 ): Map<string, number> {
   const map = new Map<string, number>();
 
@@ -87,10 +101,11 @@ export function categoryMap(
   }
 
   for (const category of valueCategories) {
-    if (category.displayName?.startsWith("Opponent")) continue;
+    const isOpponent = Boolean(category.displayName?.startsWith("Opponent"));
+    if (split === "own" && isOpponent) continue;
+    if (split === "opponent" && !isOpponent) continue;
 
-    const names =
-      category.names ?? schemasByName.get(category.name) ?? [];
+    const names = category.names ?? schemasByName.get(category.name) ?? [];
 
     names.forEach((name, nameIndex) => {
       const value = category.values?.[nameIndex];
@@ -146,7 +161,8 @@ export function transformEspnTeamTotals(
   row: EspnTeamStatsRow,
   schemaCategories: EspnStatCategorySchema[] = []
 ): TeamSeasonTotals {
-  const stats = categoryMap(row.categories, schemaCategories);
+  const stats = categoryMap(row.categories, schemaCategories, "own");
+  const opp = categoryMap(row.categories, schemaCategories, "opponent");
   return {
     teamId: row.team.id,
     abbreviation: row.team.abbreviation,
@@ -156,6 +172,10 @@ export function transformEspnTeamTotals(
     freeThrowsAttempted: num(stats, "freeThrowsAttempted"),
     turnovers: num(stats, "turnovers"),
     points: num(stats, "points"),
+    pointsAllowed: num(opp, "points"),
+    opponentFieldGoalsAttempted: num(opp, "fieldGoalsAttempted"),
+    opponentFreeThrowsAttempted: num(opp, "freeThrowsAttempted"),
+    opponentTurnovers: num(opp, "turnovers"),
   };
 }
 
@@ -188,16 +208,42 @@ export function transformEspnPlayerSeason(
   const fgm = num(stats, "fieldGoalsMade");
   const fga = num(stats, "fieldGoalsAttempted");
   const tpm = num(stats, "threePointFieldGoalsMade");
+  const tpa = num(stats, "threePointFieldGoalsAttempted");
+  const ftm = num(stats, "freeThrowsMade");
   const fta = num(stats, "freeThrowsAttempted");
   const turnovers = num(stats, "turnovers");
   const minutes = num(stats, "minutes");
   const gamesPlayed = num(stats, "gamesPlayed");
-
-  const fgPct = pctToFraction(num(stats, "fieldGoalPct"));
-  const fg3Pct = pctToFraction(
-    num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
+  const gamesStarted = num(stats, "gamesStarted", gamesPlayed);
+  const offensiveRebounds = num(stats, "offensiveRebounds");
+  const defensiveRebounds = num(
+    stats,
+    "defensiveRebounds",
+    Math.max(
+      0,
+      num(stats, "rebounds", num(stats, "avgRebounds") * gamesPlayed) -
+        offensiveRebounds
+    )
   );
-  const ftPct = pctToFraction(num(stats, "freeThrowPct"));
+  const rebFallback =
+    offensiveRebounds + defensiveRebounds > 0
+      ? offensiveRebounds + defensiveRebounds
+      : num(stats, "avgRebounds") * gamesPlayed;
+  const rebounds = num(stats, "rebounds", rebFallback);
+  const personalFouls = num(
+    stats,
+    "fouls",
+    num(stats, "personalFouls", num(stats, "avgFouls") * gamesPlayed)
+  );
+
+  const fgPct = safePct(fgm, fga) || pctToFraction(num(stats, "fieldGoalPct"));
+  const fg3Pct =
+    safePct(tpm, tpa) ||
+    pctToFraction(
+      num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
+    );
+  const ftPct =
+    safePct(ftm, fta) || pctToFraction(num(stats, "freeThrowPct"));
 
   const ts = trueShootingPct(points, fga, fta);
   const efg = effectiveFieldGoalPct(fgm, tpm, fga);
@@ -214,10 +260,24 @@ export function transformEspnPlayerSeason(
       })
     : 0;
 
-  const possessions = fga + 0.44 * fta + turnovers;
-  const offensiveRating = possessions > 0 ? (points / possessions) * 100 : 0;
-  const defensiveRating = 0;
-  const netRating = offensiveRating ? offensiveRating - 110 : 0;
+  const possessions = estimatePossessions(fga, fta, turnovers);
+  const offensiveRating = ratingPerHundred(points, possessions);
+  // Player-level DRtg is not published on ESPN's athlete dashboard; use the
+  // team defensive rating (points allowed per 100 opponent possessions).
+  const teamDefPoss = team
+    ? estimatePossessions(
+        team.opponentFieldGoalsAttempted,
+        team.opponentFreeThrowsAttempted,
+        team.opponentTurnovers
+      )
+    : 0;
+  const defensiveRating = team
+    ? ratingPerHundred(team.pointsAllowed, teamDefPoss)
+    : 0;
+  const netRating =
+    offensiveRating && defensiveRating
+      ? offensiveRating - defensiveRating
+      : 0;
 
   return {
     playerId: String(athlete.id),
@@ -232,22 +292,80 @@ export function transformEspnPlayerSeason(
     season,
     position: mapEspnPosition(athlete.position?.abbreviation),
     gamesPlayed,
+    gamesStarted,
     minutes,
-    points,
+    fieldGoalsMade: fgm,
+    fieldGoalsAttempted: fga,
+    threePointersMade: tpm,
+    threePointersAttempted: tpa,
+    freeThrowsMade: ftm,
+    freeThrowsAttempted: fta,
+    offensiveRebounds,
+    defensiveRebounds,
+    rebounds,
     assists: num(stats, "assists"),
-    rebounds: num(stats, "rebounds", num(stats, "avgRebounds") * gamesPlayed),
     steals: num(stats, "steals"),
     blocks: num(stats, "blocks"),
     turnovers,
+    personalFouls,
+    points,
+    plusMinus: 0,
     fieldGoalPct: fgPct,
+    twoPointPct: twoPointPct(fgm, tpm, fga, tpa),
     threePointPct: fg3Pct,
     freeThrowPct: ftPct,
-    trueShootingPct: ts,
     effectiveFieldGoalPct: efg,
+    trueShootingPct: ts,
+    threePointAttemptRate: threePointAttemptRate(tpa, fga),
+    freeThrowRate: freeThrowRate(fta, fga),
+    turnoverPct: turnoverPct(turnovers, fga, fta),
     usagePct: usg,
+    assistPct: 0,
+    offensiveReboundPct: 0,
+    defensiveReboundPct: 0,
+    reboundPct: 0,
+    stealPct: 0,
+    blockPct: 0,
+    pie: 0,
     offensiveRating,
     defensiveRating,
     netRating,
+    per: 0,
+    ows: 0,
+    dws: 0,
+    winShares: 0,
+    winSharesPer48: 0,
+    obpm: 0,
+    dbpm: 0,
+    bpm: 0,
+    vorp: 0,
+    dpm: 0,
+    oDpm: 0,
+    dDpm: 0,
+    boxDpm: 0,
+    onOffDpm: 0,
+    drbl100: 0,
+    drblP: 0,
+    drblLn: 0,
+    drblB: 0,
+    drblO: 0,
+    drblD: 0,
+    sdv100: 0,
+    shotMaking100: 0,
+    epvShootMean: 0,
+    vContMean: 0,
+    r1Points: null,
+    r1WinEquivalents: null,
+    r1PointValueVersion: null,
+    r1WinEquivalentVersion: null,
+    drblWar: 0,
+    drblSeasonalImpact: 0,
+    drblL: 0,
+    drblMeanLeverage: 0,
+    drblDisagreement: 0,
+    drblUncertainty: 0,
+    drblIntervalLo: 0,
+    drblIntervalHi: 0,
   };
 }
 
@@ -349,7 +467,8 @@ export interface EspnScheduleEvent {
 
 export function transformEspnScheduleEvent(
   event: EspnScheduleEvent,
-  season: string
+  season: string,
+  gameType: Game["gameType"] = "regular"
 ): Game | null {
   const competition = event.competitions?.[0];
   if (!competition) return null;
@@ -375,7 +494,7 @@ export function transformEspnScheduleEvent(
     awayTeamName: away.team?.displayName,
     homeScore: parseEspnScore(home.score),
     awayScore: parseEspnScore(away.score),
-    gameType: "regular",
+    gameType,
     status,
   };
 }
@@ -411,6 +530,82 @@ export interface EspnSummaryResponse {
   boxscore?: {
     players?: EspnBoxScoreTeamBlock[];
   };
+  plays?: EspnPlay[];
+  gameInfo?: { date?: string };
+}
+
+export interface EspnPlay {
+  id?: string;
+  text?: string;
+  shootingPlay?: boolean;
+  scoringPlay?: boolean;
+  scoreValue?: number;
+  pointsAttempted?: number;
+  coordinate?: { x?: number; y?: number };
+  period?: { number?: number };
+  clock?: { displayValue?: string; value?: number };
+  team?: { id?: string };
+  participants?: Array<{ athlete?: { id?: string } }>;
+  type?: { text?: string };
+}
+
+/**
+ * ESPN shot coordinates use roughly feet with basket near (25, 0) on a
+ * half-court grid. Convert to our canonical basket-at-(0,0) system.
+ */
+export function transformEspnPlaysToShots(
+  plays: EspnPlay[],
+  meta: {
+    gameId: string;
+    season: string;
+    gameDate: string;
+  }
+): Shot[] {
+  const shots: Shot[] = [];
+
+  for (const play of plays) {
+    if (!play.shootingPlay) continue;
+    const playerId = play.participants?.[0]?.athlete?.id;
+    const teamId = play.team?.id;
+    if (!playerId || !teamId) continue;
+
+    const rawX = play.coordinate?.x;
+    const rawY = play.coordinate?.y;
+    if (rawX == null || rawY == null) continue;
+
+    const locX = rawX - 25;
+    const locY = rawY;
+    const shotDistance = Math.sqrt(locX * locX + locY * locY);
+    const pointsAttempted = play.pointsAttempted ?? play.scoreValue ?? 2;
+    const shotType: Shot["shotType"] = pointsAttempted >= 3 ? "3PT" : "2PT";
+    const made = Boolean(play.scoringPlay);
+    const assistPlayerId = play.participants?.[1]?.athlete?.id;
+
+    const clock = play.clock?.displayValue ?? "0:00";
+    const [mins, secs] = clock.split(":").map((p) => Number(p) || 0);
+    const secondsRemaining = mins * 60 + secs;
+
+    shots.push({
+      id: String(play.id ?? `${meta.gameId}-${playerId}-${shots.length}`),
+      gameId: meta.gameId,
+      playerId: String(playerId),
+      teamId: String(teamId),
+      season: meta.season,
+      gameDate: meta.gameDate,
+      period: play.period?.number ?? 1,
+      secondsRemaining,
+      shotDistance: Number(shotDistance.toFixed(1)),
+      locX: Number(locX.toFixed(1)),
+      locY: Number(locY.toFixed(1)),
+      made,
+      shotType,
+      shotZoneBasic: play.type?.text,
+      assisted: Boolean(assistPlayerId),
+      assistPlayerId: assistPlayerId ? String(assistPlayerId) : undefined,
+    });
+  }
+
+  return shots;
 }
 
 function boxStat(stats: Map<string, string>, ...keys: string[]): number {

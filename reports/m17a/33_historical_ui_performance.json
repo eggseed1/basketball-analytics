@@ -1,0 +1,15 @@
+{
+  "strategy": "per-season precomputed JSON lazy load via fetchDrblSeason(season)",
+  "monolithicArchiveInBrowser": "NO",
+  "initialJsPayloadNote": "unchanged Next.js app bundle; DRBL data not embedded for all seasons",
+  "seasonDataPayload": "src/data/drbl/precomputed/{season}.json",
+  "cacheBehavior": "memory TTL in drbl-loader; historical TTL longer than current",
+  "incrementalBuildKey": [
+    "raw source hash (HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH)",
+    "normalizationVersion",
+    "abilityModelVersion",
+    "r1PointValueVersion",
+    "r1WinEquivalentVersion",
+    "script version m17a"
+  ]
+}

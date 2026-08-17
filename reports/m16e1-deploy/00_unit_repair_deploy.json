@@ -1,0 +1,136 @@
+{
+  "milestone": "M16e1-deploy",
+  "kind": "WAR_UNIT_REPAIR_ONLY",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "season": "2024-25",
+  "beforeHash": "02fb73394131ec37991d95cf3c4400334e8002a2957fd8622450327accb66c2b",
+  "afterHash": "b205bf317e487ba2c55dd580f089dffbbb7680a5fbfdc4884606328572e985a7",
+  "warFormulaVersion": "4.0.1",
+  "warFormulaVersionPrevious": "4.0.0",
+  "warExposureUnit": "paired_team_possessions",
+  "frozen": {
+    "slope": 5.835416607524311,
+    "intercept": 0,
+    "repl": -1.4886147765794517,
+    "ppw": 38.714285714285715
+  },
+  "players": 555,
+  "exactHalfMatches": 555,
+  "maxAbsRatioDeviationFromHalf": 0,
+  "samples": [
+    {
+      "player": "Nikola Jokić",
+      "warV400": 28.914181240578213,
+      "warV401": 14.457090620289106,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 10737,
+      "pairedOnCourtPossessions": 5368.5,
+      "finalAbility": 8.936940534423483,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "warV400": 25.440480170203234,
+      "warV401": 12.720240085101617,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 10880,
+      "pairedOnCourtPossessions": 5440,
+      "finalAbility": 7.5638670066730125,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Franz Wagner",
+      "warV400": 19.412414798364516,
+      "warV401": 9.706207399182258,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 8188,
+      "pairedOnCourtPossessions": 4094,
+      "finalAbility": 7.689912005395538,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Victor Wembanyama",
+      "warV400": 17.769548987801056,
+      "warV401": 8.884774493900528,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 6024,
+      "pairedOnCourtPossessions": 3012,
+      "finalAbility": 9.931295524345625,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Payton Pritchard",
+      "warV400": 16.911760834133176,
+      "warV401": 8.455880417066588,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 9025,
+      "pairedOnCourtPossessions": 4512.5,
+      "finalAbility": 5.765975149894772,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Ivica Zubac",
+      "warV400": 14.935679277215945,
+      "warV401": 7.467839638607972,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 10739,
+      "pairedOnCourtPossessions": 5369.5,
+      "finalAbility": 3.89572412718323,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "DeMar DeRozan",
+      "warV400": 14.931805809496899,
+      "warV401": 7.465902904748449,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 11459,
+      "pairedOnCourtPossessions": 5729.5,
+      "finalAbility": 3.5561028806253154,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Christian Braun",
+      "warV400": 13.732648605099087,
+      "warV401": 6.866324302549543,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 11046,
+      "pairedOnCourtPossessions": 5523,
+      "finalAbility": 3.3244368413066,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    },
+    {
+      "player": "Moritz Wagner",
+      "warV400": 1.6396887169148504,
+      "warV401": 0.8198443584574252,
+      "ratio": 0.5,
+      "combinedPossessionAppearances": 2282,
+      "pairedOnCourtPossessions": 1141,
+      "finalAbility": 1.2931283202273873,
+      "replacement": -1.4886147765794517,
+      "pointsPerWin": 38.714285714285715
+    }
+  ],
+  "unchanged": [
+    "calibrationSlope",
+    "calibrationIntercept",
+    "replacementLevel",
+    "pointsPerWin",
+    "posterior",
+    "P",
+    "M6",
+    "2025-26 provisional WAR"
+  ],
+  "nuance": "combined/paired ratio ≡ 2 by definition; bug confirmed by LOO netRating units × former combined exposure, equivalence of paired/combined formulations, and team-wins slope 0.555→1.109",
+  "PRODUCTION_WAR_CHANGED": true,
+  "PRODUCTION_DRBL_RATE_CHANGED": false,
+  "CALIBRATION_REFIT": false
+}

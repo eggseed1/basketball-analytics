@@ -1,0 +1,17 @@
+{
+  "reserved": {
+    "mean": -2.4253192047278085e-12,
+    "SD": 308.63455048757595,
+    "min": -635.1532073824492,
+    "max": 504.2005158899392,
+    "range": 1139.3537232723884,
+    "corrActualNetPoints": 0.988598148477523,
+    "corrTeamR1Points": 0.9267059875002989
+  },
+  "development": {
+    "mean": 2.1221543041368327e-12,
+    "SD": 285.94548946395474,
+    "corrActualNet": "see m16l1.1 (~0.980)"
+  },
+  "variableBaselineRemainsMaterial": true
+}

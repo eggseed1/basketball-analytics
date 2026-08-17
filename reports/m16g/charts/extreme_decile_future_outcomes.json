@@ -1,0 +1,82 @@
+[
+  {
+    "k": 0,
+    "decile": "bottom",
+    "n": 198,
+    "meanRaw": -3.477885858585859,
+    "meanPosterior": -3.477885858585859,
+    "meanTarget": -0.8839155747887002,
+    "RMSE_raw": 4.502555546742965,
+    "RMSE_posterior": 4.502555546742965
+  },
+  {
+    "k": 0,
+    "decile": "top",
+    "n": 198,
+    "meanRaw": 2.8933146464646473,
+    "meanPosterior": 2.8933146464646473,
+    "meanTarget": 0.4221103135757686,
+    "RMSE_raw": 4.507341446756297,
+    "RMSE_posterior": 4.507341446756297
+  },
+  {
+    "k": 800,
+    "decile": "bottom",
+    "n": 198,
+    "meanRaw": -3.477885858585859,
+    "meanPosterior": -1.1561244329327953,
+    "meanTarget": -0.8839155747887002,
+    "RMSE_raw": 4.502555546742965,
+    "RMSE_posterior": 3.3080792687396237
+  },
+  {
+    "k": 800,
+    "decile": "top",
+    "n": 198,
+    "meanRaw": 2.8933146464646473,
+    "meanPosterior": 1.339639383586228,
+    "meanTarget": 0.4221103135757686,
+    "RMSE_raw": 4.507341446756297,
+    "RMSE_posterior": 3.3320824472692827
+  },
+  {
+    "k": 800,
+    "decile": "bottom",
+    "n": 198,
+    "meanRaw": -3.477885858585859,
+    "meanPosterior": -1.1561244329327953,
+    "meanTarget": -0.8839155747887002,
+    "RMSE_raw": 4.502555546742965,
+    "RMSE_posterior": 3.3080792687396237
+  },
+  {
+    "k": 800,
+    "decile": "top",
+    "n": 198,
+    "meanRaw": 2.8933146464646473,
+    "meanPosterior": 1.339639383586228,
+    "meanTarget": 0.4221103135757686,
+    "RMSE_raw": 4.507341446756297,
+    "RMSE_posterior": 3.3320824472692827
+  },
+  {
+    "k": 200,
+    "decile": "bottom",
+    "n": 198,
+    "meanRaw": -3.477885858585859,
+    "meanPosterior": -2.0343524445706405,
+    "meanTarget": -0.8839155747887002,
+    "RMSE_raw": 4.502555546742965,
+    "RMSE_posterior": 3.5198738160122165
+  },
+  {
+    "k": 200,
+    "decile": "top",
+    "n": 198,
+    "meanRaw": 2.8933146464646473,
+    "meanPosterior": 2.0136027394728777,
+    "meanTarget": 0.4221103135757686,
+    "RMSE_raw": 4.507341446756297,
+    "RMSE_posterior": 3.6401511577009202
+  }
+]

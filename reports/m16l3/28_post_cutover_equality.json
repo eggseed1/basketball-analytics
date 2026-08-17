@@ -1,0 +1,25 @@
+{
+  "R1_POINTS_PRODUCTION_RESEARCH_EQUALITY": "PASS",
+  "R1_WINEQ_PRODUCTION_RESEARCH_EQUALITY": "PASS",
+  "STINT_PRODUCT_RESEARCH_EQUALITY": "PASS",
+  "TEAM_PRODUCT_RESEARCH_EQUALITY": "PASS",
+  "playerMismatchCount": 0,
+  "stintMismatchCount": 0,
+  "teamFailCount": 0,
+  "boardOnly": 0,
+  "researchOnly": 21,
+  "cutoverStats": {
+    "2024-25": {
+      "players": 555,
+      "fromResearch": 555,
+      "fallbackComputed": 0,
+      "fallbackNull": 0
+    },
+    "2025-26": {
+      "players": 575,
+      "fromResearch": 575,
+      "fallbackComputed": 0,
+      "fallbackNull": 0
+    }
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "M16K0_REPORTED_EXPLORE_DEFAULT_SORT": "WAR",
+  "M16K0_1_REPORTED_EXPLORE_DEFAULT_SORT": "pointsPerGame",
+  "CURRENT_PRE_CUTOVER_EXPLORE_DEFAULT_SORT": "pointsPerGame",
+  "EXPLORE_SORT_DISCREPANCY_REASON": "M16k0 consumer inventory incorrectly summarized Explore default as WAR; code default has been pointsPerGame via getPlayerSortOption fallback (GENERAL_PLAYER_EXPLORER).",
+  "EXPLORE_PAGE_CLASSIFICATION": "GENERAL_PLAYER_EXPLORER",
+  "EXPLORE_DEFAULT_SORT_CHANGE_REQUIRED": "NO"
+}

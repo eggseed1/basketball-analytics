@@ -1,0 +1,6 @@
+{
+  "oldRankSource": "descending seasonWar / finalRankingScore",
+  "newRankSource": "descending unrounded validatedDRBL100",
+  "tieBreak": "actualPossessions desc, playerId asc",
+  "LIVE_RANK_SOURCE_CHANGED": "YES"
+}

@@ -1,0 +1,7 @@
+{
+  "drbl100": "posterior ability rate (validatedDRBL100)",
+  "r1Points": "realized player-attributed R1-relative point value",
+  "r1WinEquivalents": "r1Points / frozen P1",
+  "doNotAliasR1WinEqToDrblWar": true,
+  "productionUIChanged": false
+}

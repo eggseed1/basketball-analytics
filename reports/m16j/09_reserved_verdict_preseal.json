@@ -1,0 +1,15 @@
+{
+  "PRIMARY_RESERVED_SUCCESS": "YES",
+  "deltaRMSE_vs_raw": -0.16922323936347317,
+  "relativeRMSEChange_vs_raw": -0.0718650560140354,
+  "P_research_beats_raw": 0.992,
+  "deltaRMSE_vs_EB200": -0.030384391611883554,
+  "relativeRMSEChange_vs_EB200": -0.01371200403429987,
+  "P_research_beats_EB200": 0.802,
+  "EB1600_VS_EB200": "BETTER",
+  "SEVERE_INTEGRITY_ANOMALY": "NO",
+  "negativeCalibrationSlope": false,
+  "M16J_RESERVED_VERDICT": "STRONG_PASS",
+  "POINT_ESTIMATE_RESERVED_VALIDATION": "PASSED",
+  "PLAYER_NAMES_USED_FOR_RESERVED_DECISION": false
+}

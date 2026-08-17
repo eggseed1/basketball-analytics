@@ -1,0 +1,8 @@
+path,function,metric,populationRule,minutesRule,uncertaintyDependency,seasonScope,userVisibleConsumer
+src/data/queries/percentiles.ts,hasValidDrblEstimate,DRBL metrics eligible gate (live),minutes>=500 AND drblUncertainty>0,minutes >= 500 (cohort) then eligible filter,YES (live),caller season league,player profile percentile rankings
+src/data/queries/percentiles.ts,computePlayerPercentiles,all PLAYER_PERCENTILE_METRICS,minute cohort; DRBL metrics add eligible(),minimumMinutes default 500,via hasValidDrblEstimate for DRBL keys,season-relative league array,PercentileRankings UI
+src/data/queries/percentiles.ts,percentileRank,midrank + round + clamp 1..100,values from eligible pool,inherited,NO (math only),pool,percentile number
+src/app/players/[playerId]/page.tsx,PERCENTILE_MIN_MINUTES + computePlayerPercentiles,profile percentiles,league filtered minimumMinutes=500,500,indirect via percentiles.ts,selected season,YES
+src/lib/player-savant.ts,buildSavantSections missingness,DRBL/100 display missingness,drblUncertainty>0 OR nonzero value heuristics,none (display missingness),YES (legacy),player seasons,Savant radar
+src/components/player/percentile-rankings.tsx,PercentileRankings,renders PlayerPercentile[],inherits computePlayerPercentiles,displays minimumMinutes prop,NO direct,season,YES
+drbl/models/validated-percentile-eligibility-v1.ts,qualifiesForValidatedDrblPercentile,validated DRBL percentile universe (shadow/k1),minutes>=500 AND hasValidatedDrblEstimate,minutes >= 500 exact,NO,caller,prepared for M16k1; not live default yet

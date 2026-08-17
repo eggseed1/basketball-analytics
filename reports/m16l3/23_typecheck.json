@@ -1,0 +1,8 @@
+{
+  "command": "npx tsc --noEmit",
+  "exitCode": 0,
+  "ms": 7397,
+  "stdoutTail": "",
+  "stderrTail": "",
+  "result": "PASS"
+}

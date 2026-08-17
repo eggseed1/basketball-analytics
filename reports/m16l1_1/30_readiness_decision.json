@@ -1,0 +1,13 @@
+{
+  "M16L1_ORIGINAL_AUTHORIZATION": "YES",
+  "M16L1_1_SUPERSEDING_HOLD": "ACTIVE",
+  "M16L2_ONE_SHOT_WAR_RESERVED_TEST_AUTHORIZED": "NO",
+  "NEXT_MILESTONE": "M16l1.2_BASELINE_AWARE_WAR_DEVELOPMENT_REFREEZE",
+  "blockers": [
+    "M16l1 fixed-intercept NetPoints~candidatePoints protocol misspecified given variable R1/context baseline",
+    "Approach-B is scoreboard-point residual above R1 EP, not full net points",
+    "conventional WAR naming / replacement-team intercept not justified"
+  ],
+  "P1_STATUS": "PRESERVED",
+  "W0_SELECTION_STATUS": "EMPIRICAL_RESULT_VALID_BUT_PROTOCOL_REQUIRES_REFREEZE"
+}

@@ -1,0 +1,47 @@
+{
+  "milestone": "M16j0",
+  "timestamp": "2026-08-12T23:17:12.496Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "evaluationProtocolVersion": "drbl-eval-v1",
+  "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+  "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+  "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+  "m16gFoldHashes": [
+    {
+      "foldId": 0,
+      "historyHash": "dd94e24208064620cc95f5eb4f3324b4841a467c7f203de3f17021570d33b05e",
+      "futureHash": "b99877856e32eb74f8c5aa53a8e27d4b96a8e5182b7b1896e6edc199b9f6a45d",
+      "nRows": 358
+    },
+    {
+      "foldId": 1,
+      "historyHash": "833bebe2f72b7832768805af9d0b9fc8a8a3e325679b5e01bf4aa360d8b49fe0",
+      "futureHash": "dd0b81f6a9b58e8a70c7dfadc51a398954e4e2e0ad0279b2d09638e5b327d58e",
+      "nRows": 389
+    },
+    {
+      "foldId": 2,
+      "historyHash": "e97d1030915a208ee0ac0c39b9e9801cfb16f5e175a3e39c88163fe4d381e6f9",
+      "futureHash": "927bdc2c29e159edb451663944437be5398a215610850c6266f3d22bd1fe9ed0",
+      "nRows": 406
+    },
+    {
+      "foldId": 3,
+      "historyHash": "bf760b45c383f06081b2c6fde360aa6c17170b5f7f66b0bc12a41df344427b84",
+      "futureHash": "f5d8a8f5bd46cfa12dd35a28abba73c4d497aa784240f55c3b72d97889f3c10c",
+      "nRows": 412
+    },
+    {
+      "foldId": 4,
+      "historyHash": "5326c698ba347a0454eadf6dcc523e9acbf155be724552e3814a2aa1b6f36b28",
+      "futureHash": "7c671ee93152b607911145721346a270a084bb736984f808e9c83510ad6d1f27",
+      "nRows": 417
+    }
+  ],
+  "m16hDecisionVersion": "IDENTITY_SELECTED",
+  "m16i4DecisionVersion": "RELIABILITY_FEATURES_FAILED_TO_REPAIR_UNCERTAINTY",
+  "RESERVED_TEST_ACCESSED": false,
+  "M16B_VALIDATION_USED": false,
+  "note": "Protocol certification only; no reserved metrics computed"
+}

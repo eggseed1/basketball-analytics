@@ -1,0 +1,16 @@
+{
+  "approachAVersion": "drbl-p-counterfactual-v1",
+  "epvVersion": "drbl-counterfactual-epv-v1",
+  "lambda": 100,
+  "nTrainGames": 737,
+  "nTrainPossRows": 145264,
+  "nFitRows": 72632,
+  "nCoefPlayers": 160,
+  "minAppearances": 100,
+  "maxPlayers": 160,
+  "fitRowStride": 2,
+  "r1CutoffDate": "2025-02-04",
+  "r1Candidates": 80,
+  "rolePlayers": 515,
+  "architectureChanged": false
+}

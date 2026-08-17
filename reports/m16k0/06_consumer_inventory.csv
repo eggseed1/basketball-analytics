@@ -1,0 +1,21 @@
+path,consumerType,field,assumption,class,migrate,userVisible,blocker
+drbl/models/player-value.ts,pipeline,drbl100,EB200(fused),C1,YES,NO,
+drbl/models/compute-season.ts,pipeline,artifact.drbl100,production lineage,C1,YES,NO,
+src/data/drbl/precomputed/*.json,precompute,drbl100/rank,legacy fused,C1,YES,indirect,rebuild required
+src/data/providers/nba/drbl-loader.ts,loader,drbl100,artifact field,C1,YES,NO,
+src/data/queries/players.ts,loader,drbl100,PlayerSeason,C1,YES,NO,
+src/lib/player-savant.ts,ui,drbl100/uncertainty/O/D,fused posterior + legacy ±,C1,YES,YES,uncertainty display quarantine
+src/lib/player-stat-views.ts,ui,drbl100,ability column,C1,YES,YES,
+src/lib/player-explore-sort.ts,ui,drbl100/drblWar,sort keys; default WAR,C1,YES,YES,
+src/data/queries/percentiles.ts,ui/data,drbl* + uncertainty>0 gate,valid estimate iff uncertainty>0,C1,YES,YES,PERCENTILE_POPULATION_DECISION_REQUIRED
+src/lib/stat-glossary.ts,ui copy,DRBL/100 description,fused posterior; 0≈replacement,C1,YES,YES,copy still says fused rate
+src/app/explore/players/page.tsx,ui route,board,loader fields,C1,YES,YES,
+src/app/players/[playerId]/page.tsx,ui route,savant,loader fields,C1,YES,YES,
+src/app/learn/drbl/page.tsx,docs,copy,replacement framing,C1,YES,YES,
+src/components/charts/player-career-timeline.tsx,ui,drbl100/drblWar,series values,C1,YES,YES,
+drbl/models/war-math.ts,war,rawAbilityRate via seasonalImpact,raw_realized default,C2,NO,NO,
+drbl/models/uncertainty.ts,pipeline,uncertainty intervals,legacy half-width,C2,LATER,YES,no validated interval
+drbl/models/fusion.ts,pipeline,fusedRateRaw,legacy fusion,C3,NO,NO,
+drblP/drblLn/drblB fields,diagnostic,components,component EB200,C3,NO,YES,
+src/app/api/drbl/provenance/route.ts,api diagnostic,lineage,debug,C3,NO,dev,
+placeholder transformers nba/espn/local,loader,zero defaults,non-DRBL providers,C4,REMOVE,NO,

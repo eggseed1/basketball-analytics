@@ -1,0 +1,38 @@
+{
+  "season": "2024-25",
+  "warFormulaVersion": "3.0.0",
+  "pointsPerWin": 38.714285714285715,
+  "pointsPerWinSource": "team point-differential / wins-above-.500 (median, n=26)",
+  "pointsPerWinMean": 38.8276527583433,
+  "fringeReplacementEstimate": -0.4347,
+  "replacementLevelUsed": 0,
+  "rateCalibration": {
+    "intercept": -2.1799802537284836,
+    "slope": 3.0899643470351523,
+    "corr": 0.7728351620740915,
+    "throughOriginSlope": 2.5190174668611904,
+    "appliedSlope": 2.5190174668611904,
+    "appliedIntercept": 0
+  },
+  "teamCalibration": {
+    "n": 30,
+    "slope": 1.8506223101001904,
+    "intercept": -1.5477534666031048,
+    "corr": 0.7275928617944785,
+    "mae": 18.267932325378116,
+    "rmse": 20.60915187359914,
+    "replacementWinPct": 0.25
+  },
+  "oldMaxWAR": 3.151883333333333,
+  "newMaxWAR": 6.1525,
+  "oldMedianTop10": 2.0880243499999995,
+  "newMedianTop10": 4.0758,
+  "oldLeagueTotalWAR": 38.28448746666661,
+  "newLeagueTotalWAR": 74.73159999999991,
+  "traces": [
+    "Player: Nikola Jokić (203999)\nrawDRBL100                 = 2.81\nposteriorDRBL100           = 1.0173\ndrblP / drblLn / drblB     = 2.65 / 0 / 0\nwarInputRate               = 2.81\ncalibratedWarInputRate     = 7.078439081879945\nreplacementLevelDRBL100    = 0\naboveReplacementRate       = 7.078439081879945\nactualOnCourtPossessions   = 3365\nmodelObservationCount      = 3365\nseasonImpactAboveReplacement = 238.18947510526013\npointsPerWin               = 38.714285714285715\nDRBL_WAR                   = 6.152495666925538\n\ncalibratedWarInputRate = 0 + 2.5190174668611904 * 2.81 = 7.078439081879945\naboveReplacementRate = 7.078439081879945 - (0) = 7.078439081879945 points / 100 possessions\nimpactAboveReplacement = 7.078439081879945 * 3365 / 100 = 238.18947510526013 points\nDRBL_WAR = 238.18947510526013 / 38.714285714285715 = 6.152495666925538 wins",
+    "Player: Jayson Tatum (1628369)\nrawDRBL100                 = 1.6766\nposteriorDRBL100           = 0.6144\ndrblP / drblLn / drblB     = 1.59 / 0 / 0\nwarInputRate               = 1.6766\ncalibratedWarInputRate     = 4.2233846849394725\nreplacementLevelDRBL100    = 0\naboveReplacementRate       = 4.2233846849394725\nactualOnCourtPossessions   = 3770\nmodelObservationCount      = 3770\nseasonImpactAboveReplacement = 159.22160262221811\npointsPerWin               = 38.714285714285715\nDRBL_WAR                   = 4.112735123083125\n\ncalibratedWarInputRate = 0 + 2.5190174668611904 * 1.6766 = 4.2233846849394725\naboveReplacementRate = 4.2233846849394725 - (0) = 4.2233846849394725 points / 100 possessions\nimpactAboveReplacement = 4.2233846849394725 * 3770 / 100 = 159.22160262221811 points\nDRBL_WAR = 159.22160262221811 / 38.714285714285715 = 4.112735123083125 wins",
+    "Player: Shai Gilgeous-Alexander (1628983)\nrawDRBL100                 = 1.6374\nposteriorDRBL100           = 0.6002\ndrblP / drblLn / drblB     = 1.56 / 0 / 0\nwarInputRate               = 1.6374\ncalibratedWarInputRate     = 4.124639200238513\nreplacementLevelDRBL100    = 0\naboveReplacementRate       = 4.124639200238513\nactualOnCourtPossessions   = 3782\nmodelObservationCount      = 3782\nseasonImpactAboveReplacement = 155.99385455302055\npointsPerWin               = 38.714285714285715\nDRBL_WAR                   = 4.0293615567200884\n\ncalibratedWarInputRate = 0 + 2.5190174668611904 * 1.6374 = 4.124639200238513\naboveReplacementRate = 4.124639200238513 - (0) = 4.124639200238513 points / 100 possessions\nimpactAboveReplacement = 4.124639200238513 * 3782 / 100 = 155.99385455302055 points\nDRBL_WAR = 155.99385455302055 / 38.714285714285715 = 4.0293615567200884 wins",
+    "Player: Victor Wembanyama (1641705)\nrawDRBL100                 = 1.1718\nposteriorDRBL100           = 0.4174\ndrblP / drblLn / drblB     = 1.1 / 0 / 0\nwarInputRate               = 1.1718\ncalibratedWarInputRate     = 2.9517846676679427\nreplacementLevelDRBL100    = 0\naboveReplacementRate       = 2.9517846676679427\nactualOnCourtPossessions   = 2937\nmodelObservationCount      = 2937\nseasonImpactAboveReplacement = 86.69391568940748\npointsPerWin               = 38.714285714285715\nDRBL_WAR                   = 2.23932623551975\n\ncalibratedWarInputRate = 0 + 2.5190174668611904 * 1.1718 = 2.9517846676679427\naboveReplacementRate = 2.9517846676679427 - (0) = 2.9517846676679427 points / 100 possessions\nimpactAboveReplacement = 2.9517846676679427 * 2937 / 100 = 86.69391568940748 points\nDRBL_WAR = 86.69391568940748 / 38.714285714285715 = 2.23932623551975 wins"
+  ]
+}

@@ -1,0 +1,166 @@
+{
+  "freeze": {
+    "milestone": "M16g2",
+    "timestamp": "2026-08-12T21:44:07.193Z",
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "evaluationProtocolVersion": "drbl-eval-v1",
+    "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+    "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+    "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+    "approachBVersion": "drbl-seq-attr-v1",
+    "abilityLineageVersion": "ability-lineage-v1",
+    "productionPosteriorVersion": "eb-fused-v1",
+    "productionComponentK": 200,
+    "productionFusedK": 200,
+    "researchAbilityVersion": "drbl-research-ability-v1",
+    "researchPosteriorVersion": "drbl-eb-posterior-k1600-v1",
+    "researchK": 1600,
+    "priorMean": 0,
+    "exposureDefinition": "actual_combined_possession_appearances",
+    "WAR_versions_by_season": {
+      "2024-25": "4.0.1",
+      "2025-26": "provisional (unchanged in M16g2)"
+    },
+    "WAR_exposureUnit": "paired_team_possessions",
+    "RESERVED_TEST_PREDICTIVE_METRICS_USED": "NO",
+    "PRODUCTION_CHANGED": "NO"
+  },
+  "m16g1Repro": {
+    "reproduced": "PASS",
+    "k1600RMSE": 2.6960956582451727,
+    "expectedK1600RMSE": 2.6960956582451727,
+    "k1600RMSE_delta": 0,
+    "practicalBandSelection": {
+      "NUMERIC_BEST_K": 2400,
+      "PRACTICAL_OPTIMUM_MIN_K": 1600,
+      "SELECTED_RESEARCH_K": 1600,
+      "FINAL_K_STATUS": "PLATEAU_SELECTED",
+      "match": true
+    },
+    "reliabilityDistributions": {
+      "median": 0.4557823129251701,
+      "p10": 0.12424740010946908,
+      "p90": 0.7057741816844428,
+      "expected": {
+        "median": 0.4557823129251701,
+        "p10": 0.12424740010946908,
+        "p90": 0.7057741816844428
+      },
+      "match": true
+    },
+    "maxDirectFormulaResidual": 0,
+    "nRows": 1982,
+    "sourceFoldRows": "reports/m16g/04_fold_rows.csv"
+  },
+  "modelHealth": {
+    "M16G1_REPRODUCED": "PASS",
+    "RESEARCH_RAW_INPUT": "rawAbilityRate",
+    "RESEARCH_K": 1600,
+    "RESEARCH_PRIOR_MEAN": 0,
+    "RESEARCH_EXPOSURE": "actual_combined_possession_appearances",
+    "RESEARCH_POSTERIOR_LAYER_COUNT": 1,
+    "LEGACY_FUSION_AFFECTS_RESEARCH_SHADOW": "NO",
+    "LEGACY_EB200_AFFECTS_RESEARCH_SHADOW": "NO",
+    "SHADOW_SINGLE_POSTERIOR_IDENTITY": "PASS",
+    "PSEUDO_EXPOSURE_PRESENT": "NO",
+    "ZERO_SEMANTICS": "REPLACEMENT_LEVEL",
+    "RAW_OD_DECOMPOSITION": "FAIL",
+    "RESEARCH_OD_STATUS": "NOT_CANONICAL_YET",
+    "LN_ROLE": "DIAGNOSTIC",
+    "B_ROLE": "DIAGNOSTIC",
+    "M6_ROLE": "DIAGNOSTIC",
+    "UNCERTAINTY_COMPATIBILITY": "REDESIGN_REQUIRED",
+    "RESEARCH_RANKING_DEFINED": "PASS",
+    "PRODUCTION_FIELD_CONSUMERS_MAPPED": "PASS",
+    "CALIBRATION_SELECTED": "NO",
+    "WAR_CHANGED": "NO",
+    "PRODUCTION_CHANGED": "NO",
+    "RESERVED_TEST_PREDICTIVE_METRICS_USED": "NO",
+    "shadowPlayerCount": 555,
+    "rankingSensitivity": {
+      "Spearman": 0.8052051402102047,
+      "top10_overlap": 0.4,
+      "top25_overlap": 0.44,
+      "top50_overlap": 0.56,
+      "top100_overlap": 0.64,
+      "mean_abs_rank_change": 71.96396396396396,
+      "used_for_model_selection": "NO",
+      "researchRank_definition": "descending researchDRBL100 (research artifact only)",
+      "productionDefaultRankingMode": "season_value"
+    },
+    "distribution": {
+      "legacyMean": -0.11326486486486496,
+      "legacySd": 0.6156566856644698,
+      "researchMean": 0.018166815981233344,
+      "researchSd": 0.6389782580504155,
+      "pearson": 0.7974863801342703,
+      "spearman": 0.8050015056741805,
+      "meanAbsDiff": 0.31357496081542585
+    },
+    "independencePass": true,
+    "maxDirectFormulaResidual": 0,
+    "maxOdResidual": 3
+  },
+  "rankingSensitivity": {
+    "Spearman": 0.8052051402102047,
+    "top10_overlap": 0.4,
+    "top25_overlap": 0.44,
+    "top50_overlap": 0.56,
+    "top100_overlap": 0.64,
+    "mean_abs_rank_change": 71.96396396396396,
+    "used_for_model_selection": "NO",
+    "researchRank_definition": "descending researchDRBL100 (research artifact only)",
+    "productionDefaultRankingMode": "season_value"
+  },
+  "exposureRows": [
+    {
+      "quartile": "Q1",
+      "nPlayers": 139,
+      "nMin": 50,
+      "nMax": 1428,
+      "mean_legacy_minus_research": -0.04549677472406806,
+      "mean_research_reliability": 0.2401897810979729,
+      "mean_abs_diff": 0.3079124382107446,
+      "median_abs_diff": 0.18844250371103413
+    },
+    {
+      "quartile": "Q2",
+      "nPlayers": 139,
+      "nMin": 1456,
+      "nMax": 3895,
+      "mean_legacy_minus_research": -0.1477944720408363,
+      "mean_research_reliability": 0.6041956237550723,
+      "mean_abs_diff": 0.3670906494026107,
+      "median_abs_diff": 0.26746911692155895
+    },
+    {
+      "quartile": "Q3",
+      "nPlayers": 139,
+      "nMin": 3953,
+      "nMax": 7167,
+      "mean_legacy_minus_research": -0.10056580280913224,
+      "mean_research_reliability": 0.7717441344372893,
+      "mean_abs_diff": 0.2666017810801782,
+      "median_abs_diff": 0.2062653624118024
+    },
+    {
+      "quartile": "Q4",
+      "nPlayers": 138,
+      "nMin": 7215,
+      "nMax": 12218,
+      "mean_legacy_minus_research": -0.23259748535357586,
+      "mean_research_reliability": 0.8465461286859792,
+      "mean_abs_diff": 0.3126885978562338,
+      "median_abs_diff": 0.2861760635280771
+    }
+  ],
+  "researchOdStatus": "NOT_CANONICAL_YET",
+  "functionName": "computeResearchAbilityV1",
+  "fields": [
+    "researchRawP100",
+    "researchReliability",
+    "researchPosteriorP100",
+    "researchDRBL100"
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "ROLLBACK_MECHANISM_VERIFIED": "YES",
+  "verifiedBy": "rollback artifact readable; sha matches pre-cutover snapshot; restore = copy files back",
+  "sampleSeason": "2024-25",
+  "rollbackSha256": "b205bf317e487ba2c55dd580f089dffbbb7680a5fbfdc4884606328572e985a7",
+  "matchesPreCutover": true,
+  "envToggle": "DRBL_CANONICAL_ABILITY_SOURCE=legacy",
+  "rollbackExecuted": "NO"
+}

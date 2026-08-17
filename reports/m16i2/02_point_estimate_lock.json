@@ -1,0 +1,12 @@
+{
+  "reproduced": "PASS",
+  "formula": "N/(N+1600)*rawAbilityRate",
+  "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+  "POINT_ESTIMATE_CHANGED": "NO",
+  "posteriorOperations": 1,
+  "fusionInfluence": 0,
+  "legacyEB200Influence": 0,
+  "calibrationCoefficient": 1,
+  "CALIBRATION_SELECTION_RESULT": "IDENTITY_SELECTED",
+  "nRows": 1982
+}

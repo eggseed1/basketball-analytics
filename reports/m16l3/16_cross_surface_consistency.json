@@ -1,0 +1,11 @@
+{
+  "note": "Boards are single source for loader/API/UI; stints from dedicated artifacts",
+  "surfaces": [
+    "precomputed board JSON",
+    "drbl-loader",
+    "stats-nba transformer",
+    "explore sort / savant / player-stat-views"
+  ],
+  "independentFrontendFormula": false,
+  "PASS": true
+}

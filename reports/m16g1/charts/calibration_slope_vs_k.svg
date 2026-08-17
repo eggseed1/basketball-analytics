@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="52" y="24" font-size="14">Calibration slope vs k</text>
+  <text x="280" y="332" text-anchor="middle" font-size="11">k</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">slope</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="52,288 52.890625,284.5030210759558 53.78125,281.81501901708924 55.5625,277.72788977534435 59.125,271.9888232097261 66.25,264.1474209215624 80.5,252.9839848275783 94.75,243.90617366403566 109,235.72650783084927 137.5,220.68762294848585 166,206.56406679671713 223,179.60557404797765 280,153.49782888416382 394,102.4032203974549 508,52"/>
+  <circle cx="52" cy="288" r="3" fill="#0f766e"/><circle cx="52.890625" cy="284.5030210759558" r="3" fill="#0f766e"/><circle cx="53.78125" cy="281.81501901708924" r="3" fill="#0f766e"/><circle cx="55.5625" cy="277.72788977534435" r="3" fill="#0f766e"/><circle cx="59.125" cy="271.9888232097261" r="3" fill="#0f766e"/><circle cx="66.25" cy="264.1474209215624" r="3" fill="#0f766e"/><circle cx="80.5" cy="252.9839848275783" r="3" fill="#0f766e"/><circle cx="94.75" cy="243.90617366403566" r="3" fill="#0f766e"/><circle cx="109" cy="235.72650783084927" r="3" fill="#0f766e"/><circle cx="137.5" cy="220.68762294848585" r="3" fill="#0f766e"/><circle cx="166" cy="206.56406679671713" r="3" fill="#0f766e"/><circle cx="223" cy="179.60557404797765" r="3" fill="#0f766e"/><circle cx="280" cy="153.49782888416382" r="3" fill="#0f766e"/><circle cx="394" cy="102.4032203974549" r="3" fill="#0f766e"/><circle cx="508" cy="52" r="3" fill="#0f766e"/>
+</svg>

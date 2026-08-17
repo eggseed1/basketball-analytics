@@ -1,0 +1,10 @@
+{
+  "r1PointValueVersion": "drbl-r1-points-v1",
+  "formula": "R1Points = ApproachBAttributedValue = rawAbilityRateExact * N / 100",
+  "sourceOfTruth": "PRIMITIVE_APPROACH_B_ATTRIBUTED_VALUE",
+  "unit": "SCOREBOARD_POINT_EQUIVALENT_RESIDUAL",
+  "reference": "CONTEXTUAL_ROLE_MATCHED_R1",
+  "exposure": "ACTUAL_HISTORICAL",
+  "posteriorShrinkage": "NONE",
+  "frozen": true
+}

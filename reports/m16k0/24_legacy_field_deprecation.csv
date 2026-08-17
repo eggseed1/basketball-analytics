@@ -1,0 +1,7 @@
+field,plan
+drblP,KEEP_DIAGNOSTIC
+drblLn,KEEP_DIAGNOSTIC
+drblB,KEEP_DIAGNOSTIC
+fusedRateRaw,INTERNAL_ONLY
+posteriorAbilityRate,DEPRECATE after cutover alias period
+legacy uncertainty,REMOVE_FROM_VALIDATED_DISPLAY

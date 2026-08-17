@@ -1,0 +1,18 @@
+{
+  "candidateUniverse": ">=40 possessions",
+  "roleKnn": 8,
+  "roleFeatures": [
+    "usage",
+    "three",
+    "starter",
+    "mpg"
+  ],
+  "qualityRestriction": "bottom ~40% residual vs EPV",
+  "exposurePreference": "8-32 mpg",
+  "EPV": "unchanged",
+  "clamps": "unchanged",
+  "attribution": "drbl-seq-attr-v1",
+  "EXECUTION_SKILL_FRACTION": 1,
+  "seasonSpecificBranch": false,
+  "RESERVED_R1_FORMULA_IDENTICAL": "YES"
+}

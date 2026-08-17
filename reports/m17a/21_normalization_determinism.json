@@ -1,0 +1,10 @@
+{
+  "NORMALIZATION_DETERMINISTIC": "YES",
+  "normalizationVersion": "historical-pbp-normalized-v1",
+  "sampleHashes": {
+    "2024-25:0022400001": "c3e92c56c3105ec029f59c2ec3e9d0959ecf2c01cce65a318485e2fac535f69c",
+    "2024-25": "b36260b8dd3711abb75e6d4aa17bd6be2acbbd3c49d684a79fec91c4c79dce8b",
+    "2025-26": "c0fdc66eef48d1df7b1940ce9d3fa2b4d2cb8e7a036263c8c03684d5b89c048d"
+  },
+  "method": "Double-run adapter equality on sample games; per-season hash of first-5 adapted games"
+}

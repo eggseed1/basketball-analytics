@@ -1,0 +1,7 @@
+{
+  "sumAbsPlayerCredit": 5816.707146910123,
+  "sumAbsOffTarget": 7996.777996315445,
+  "absCreditOverAbsTarget": 0.7273813465360923,
+  "note": "O+D player credits cancel across teams; abs measures avoid cancellation",
+  "varianceShare_attributed_of_residBU": 1.000000000000049
+}

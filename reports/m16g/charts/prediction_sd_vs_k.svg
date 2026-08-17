@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="520" height="320">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="48" y="24" font-size="14">Prediction SD vs k</text>
+  <text x="260" y="312" text-anchor="middle" font-size="11">k</text>
+  <text x="12" y="160" text-anchor="middle" font-size="11" transform="rotate(-90 12 160)">SD</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="48,48 61.25,91.91575000934239 74.5,118.48838630276293 101,151.41925975124633 154,188.3949204560084 260,228.60188129380538 472,272"/>
+  <circle cx="48" cy="48" r="3.5" fill="#0f766e"/><circle cx="61.25" cy="91.91575000934239" r="3.5" fill="#0f766e"/><circle cx="74.5" cy="118.48838630276293" r="3.5" fill="#0f766e"/><circle cx="101" cy="151.41925975124633" r="3.5" fill="#0f766e"/><circle cx="154" cy="188.3949204560084" r="3.5" fill="#0f766e"/><circle cx="260" cy="228.60188129380538" r="3.5" fill="#0f766e"/><circle cx="472" cy="272" r="3.5" fill="#0f766e"/>
+</svg>

@@ -1,0 +1,17 @@
+{
+  "reservedNamespace": "drbl-war-r1-v1",
+  "alternateSuggestion": "drbl-war-v5",
+  "activated": false,
+  "metadataFields": [
+    "warModelVersion",
+    "warRateSource",
+    "warExposureSource",
+    "replacementSemantics",
+    "pointsPerWinVersion"
+  ],
+  "CROSS_SEASON_WAR_FORMULA_REQUIRED": true,
+  "DRBL_RANK_SEMANTICS_CHANGED_BY_WAR": false,
+  "WAR_UNCERTAINTY_AVAILABLE": false,
+  "OFFENSIVE_WAR_CANONICAL": false,
+  "DEFENSIVE_WAR_CANONICAL": false
+}

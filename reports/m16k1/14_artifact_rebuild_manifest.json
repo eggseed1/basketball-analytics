@@ -1,0 +1,16 @@
+{
+  "method": "applyValidatedAbilityCutoverToArtifact on frozen rawAbilityRate+N (no game replay)",
+  "seasons": [
+    "2024-25",
+    "2025-26"
+  ],
+  "oldSha256": {
+    "2024-25": "b205bf317e487ba2c55dd580f089dffbbb7680a5fbfdc4884606328572e985a7",
+    "2025-26": "a18c996838a999e265f2cee356e3c15f17b5a8534be9832bf65786c7ea55d8df"
+  },
+  "newSha256": {
+    "2024-25": "d2a2d81295315b9bbdcf53e8ff2fcb30fd841ef0f90cd571be57f117b1236868",
+    "2025-26": "f0d2b082515acf1e4b7cd711b58f6012e84b5ae26cdb3de6e03fd41064877a74"
+  },
+  "CACHE_REBUILD": "PASS"
+}

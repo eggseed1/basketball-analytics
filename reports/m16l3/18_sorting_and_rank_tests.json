@@ -1,0 +1,13 @@
+{
+  "canonicalRankField": "drbl100",
+  "canonicalRankOrder": "descending unrounded drbl100",
+  "r1PointsSortUsesUnrounded": true,
+  "r1WinEqSortUsesUnrounded": true,
+  "selectingR1SortMutatesCanonicalRank": false,
+  "exploreSortKeys": [
+    "r1Points",
+    "r1WinEquivalents"
+  ],
+  "legacyDrblWarSortRedirectsToR1WinEq": true,
+  "PASS": true
+}

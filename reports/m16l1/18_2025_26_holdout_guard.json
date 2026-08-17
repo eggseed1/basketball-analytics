@@ -1,0 +1,9 @@
+{
+  "WAR_RESERVED_2025_26": "ELIGIBLE_WITH_HUMAN_BLINDNESS_LIMITATION",
+  "WAR_RESERVED_TARGET_METRICS_ACCESSED": "NO",
+  "WAR_SELECTION_USED_2025_26": "NO",
+  "PPW_FIT_USED_2025_26": "NO",
+  "holdStintRowsLoadedForStructureOnly": 660,
+  "holdOutcomeMetricsAccessed": false,
+  "asserts": "season != 2025-26 for all scoring/fitting routines"
+}

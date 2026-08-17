@@ -1,0 +1,2 @@
+status,reason,available_internal_targets
+NOT_RUN,External bakeoff (DARKO/LEBRON/EPM/RAPM) requires licensed identical periods; M15 pass freezes diagnostics only,team_valueSum_vs_wins (see war csv)

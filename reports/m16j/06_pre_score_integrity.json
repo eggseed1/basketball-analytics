@@ -1,0 +1,9 @@
+{
+  "researchFormulaReconstruction": "PASS",
+  "eb200Reconstruction": "PASS",
+  "shrinkageOrdering": "PASS",
+  "finitePredictions": "PASS",
+  "finiteTargets": "PASS",
+  "RESERVED_PREDICTION_FUTURE_LEAKAGE": "NO",
+  "nRowsChecked": 458
+}

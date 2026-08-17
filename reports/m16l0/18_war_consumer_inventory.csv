@@ -1,0 +1,10 @@
+consumer,cutoverClass
+precomputed.drblWar,REQUIRES_CACHE_REBUILD
+Explore sort key drblWar,DIRECT
+Explore default sort,DIRECT
+player-savant drblWar,DIRECT
+percentiles drblWar,REQUIRES_COPY_CHANGE
+glossary DRBL-WAR,REQUIRES_COPY_CHANGE
+learn/drbl WAR links,REQUIRES_COPY_CHANGE
+canonical DRBL rank,BLOCKED_FROM_CHANGE
+API/loaders,REQUIRES_SCHEMA_CHANGE

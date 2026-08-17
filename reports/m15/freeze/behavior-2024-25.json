@@ -1,0 +1,81 @@
+{
+  "version": "drbl-b-ridge-v1",
+  "fittedAt": "2026-08-12T02:30:28.574Z",
+  "lambda": 40,
+  "featureKeys": [
+    "usage",
+    "threeRate",
+    "assistPer100",
+    "tovPer100",
+    "stlPer100",
+    "blkPer100",
+    "ftRate",
+    "rimRate",
+    "gravityProxy"
+  ],
+  "intercept": 0.115555,
+  "coefficients": [
+    0.100512,
+    -0.004897,
+    0.067778,
+    -0.254141,
+    0.107139,
+    0.146735,
+    0.107326,
+    -0.14799,
+    0.110935
+  ],
+  "featureMeans": [
+    0.22381080392014788,
+    0.4188181120045271,
+    4.848754907059196,
+    2.772998203804604,
+    1.659012768862771,
+    1.091030956760333,
+    0.24759468277759686,
+    0.15632012485125144,
+    0.4136050401791196
+  ],
+  "featureStds": [
+    0.073115585911021,
+    0.23927377573874864,
+    3.269890527576429,
+    1.9480905901339625,
+    1.2876244673449007,
+    1.3072050360998388,
+    0.20782403227856316,
+    0.1445889053197803,
+    0.08005051460840656
+  ],
+  "train": {
+    "n": 256,
+    "mae": 1.015,
+    "rmse": 1.372
+  },
+  "holdout": {
+    "n": 65,
+    "mae": 1.129,
+    "rmse": 1.503
+  },
+  "provenance": {
+    "version": "drbl-b-v1",
+    "sources": [
+      "box",
+      "play-by-play"
+    ],
+    "endpoint": "cdn+stats.nba.com",
+    "asOfTimestamp": "2026-08-12T02:30:28.573Z",
+    "postGameOnly": true,
+    "parserVersion": "drbl-parser-2026.08.11",
+    "coverage": {
+      "games": 50,
+      "players": 321,
+      "missingXyRate": 0
+    },
+    "definitions": {
+      "gravityProxy": "DRBL Gravity Proxy — teammate 3PA share while player is on offense (not optical gravity)",
+      "rimRate": "Share of located FGA within ~8 ft of the rim",
+      "target": "Mean possession residual vs EPV, scaled per 100"
+    }
+  }
+}

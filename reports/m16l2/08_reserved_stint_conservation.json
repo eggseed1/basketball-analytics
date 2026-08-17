@@ -1,0 +1,10 @@
+{
+  "singleTeamPlayers": 510,
+  "multiTeamPlayers": 72,
+  "twoTeamPlayers": 67,
+  "threePlusTeamPlayers": 5,
+  "maxResidual": 0,
+  "mismatchCount": 0,
+  "RESERVED_STINT_CONSERVATION": "PASS",
+  "REALIZED_STINT_VALUE_SOURCE": "OBSERVED_PRIMITIVE_STINT_ATTRIBUTION"
+}

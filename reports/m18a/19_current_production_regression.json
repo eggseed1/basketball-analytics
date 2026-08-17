@@ -1,0 +1,7 @@
+{
+  "2024-25_sha256": "1ac1dad1f59c1faebf8103e0876e216f1b46d897db0816500f667b262def7951",
+  "2025-26_sha256": "82bdd84e724b1d5d84f4e232f19ecf2861c25eef9195b9edfeae5ca7dd50371c",
+  "CURRENT_2024_25_CHANGED": "NO",
+  "CURRENT_2025_26_CHANGED": "NO",
+  "note": "M18a does not rewrite production precomputed artifacts"
+}

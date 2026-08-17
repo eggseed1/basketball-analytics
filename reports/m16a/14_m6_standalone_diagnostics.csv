@@ -1,0 +1,3 @@
+season,sample,version,continueMaeC0,continueMaeC2,continueCorrC2,shotsScored,fusedIntoDrbl100,sdv_nonzero,sdv_dist_mean,label
+2024-25,full,drbl-m7-cv-c2-in-season,1.0290203898395047,1.022529031696289,0.09244327270881784,218612,false,552,-1.075981981981982,standalone_diagnostic_only
+2025-26,full,drbl-m7-cv-c2-in-season,1.0182331790877481,1.0087958994576334,0.11238321393773124,218260,false,573,-0.9626608695652171,standalone_diagnostic_only

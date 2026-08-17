@@ -1,0 +1,6 @@
+plan,seasons,games_est,tier,uir_overlap,purpose,status
+LOCAL_WORKSPACE,NONE,0,T3/T4,0,none,CURRENT
+SPORTVU_2015_16_PUBLIC,2015-16,~636,T0,0,method_prototype,AVAILABLE_PUBLIC
+STATS_AGGREGATES_T2,2013-14→current,N/A,T2,full_player_seasons_possible,association_only,API_READY
+SECOND_SPECTRUM_LICENSED,2017→~2023,unknown_until_license,T0/T1,HIGH_IF_LICENSED,uir_mediation,REQUIRES_USER_ACCESS
+HAWKEYE_LICENSED,2023-24→,unknown_until_license,T0/T1,HIGH_IF_LICENSED,uir_mediation,REQUIRES_USER_ACCESS

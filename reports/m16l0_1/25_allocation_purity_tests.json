@@ -1,0 +1,6 @@
+{
+  "holdingRateAndSharesConstant_changesWinsNetRatingPpwEtc": "no_effect",
+  "equality": true,
+  "note": "Allocator API accepts only seasonRate + team appearance rows; wins/PPW/reputation are not inputs",
+  "result": "PASS"
+}

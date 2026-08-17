@@ -1,0 +1,14 @@
+{
+  "milestone": "M16l0",
+  "timestamp": "2026-08-13T00:29:16.438Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "canonicalAbilityVersion": "drbl-ability-eb1600-r1-v1",
+  "CURRENT_WAR_VERSION_2024_25": "4.0.1",
+  "CURRENT_WAR_VERSION_2025_26": "provisional_raw_ppw30",
+  "LIVE_WAR_CHANGED": false,
+  "PRODUCTION_DRBL_CHANGED": false,
+  "purpose": "WAR semantic specification + dimensional re-audit only"
+}

@@ -1,0 +1,52 @@
+{
+  "production": {
+    "operations": [
+      {
+        "stage": "component_EB",
+        "k": 200,
+        "inputs": [
+          "rawP",
+          "LN",
+          "B"
+        ]
+      },
+      {
+        "stage": "fusion",
+        "k": null,
+        "inputs": [
+          "drblP",
+          "drblLn",
+          "drblB"
+        ]
+      },
+      {
+        "stage": "published_EB",
+        "k": 200,
+        "inputs": [
+          "fusedRateRaw"
+        ],
+        "output": "drbl100"
+      }
+    ],
+    "publishedPosteriorOperationCount": 2,
+    "LEGACY_DOUBLE_SHRINKAGE_PRESENT": "YES",
+    "LEGACY_FUSION_PRESENT": "YES"
+  },
+  "validatedShadow": {
+    "operations": [
+      {
+        "stage": "validated_EB",
+        "k": 1600,
+        "priorMean": 0,
+        "inputs": [
+          "rawAbilityRate"
+        ],
+        "output": "validatedDRBL100"
+      }
+    ],
+    "VALIDATED_POSTERIOR_OPERATION_COUNT": 1,
+    "VALIDATED_POSTERIOR_K": 1600,
+    "VALIDATED_PRIOR_MEAN": 0,
+    "hiddenEb200Input": "NO"
+  }
+}

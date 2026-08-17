@@ -1,0 +1,29 @@
+{
+  "purpose": "Analysis-ready fields for future M17b — DO NOT TUNE with this in M17a",
+  "seasons": [
+    "2024-25",
+    "2025-26"
+  ],
+  "fields": [
+    "season",
+    "playerId",
+    "teamId",
+    "N",
+    "rawAbilityRate",
+    "validatedDRBL100",
+    "R1Points",
+    "R1WinEq",
+    "supportTier",
+    "teamWins",
+    "teamNetPoints",
+    "teamPossessions",
+    "normalizationVersion",
+    "modelVersions"
+  ],
+  "shadowArtifacts": [
+    "reports/m17a/shadow/2024-25-player-season.csv",
+    "reports/m17a/shadow/2025-26-player-season.csv"
+  ],
+  "P1_ERA_REFIT_IN_M17A": "NO",
+  "K_REFIT_IN_M17A": "NO"
+}

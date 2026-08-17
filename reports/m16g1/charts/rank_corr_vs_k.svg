@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="52" y="24" font-size="14">Raw/posterior Spearman vs k</text>
+  <text x="280" y="332" text-anchor="middle" font-size="11">k</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">Spearman</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="52,52 52.890625,53.31326510900476 53.78125,56.17663435911362 55.5625,63.822534972886416 59.125,80.5843410879207 66.25,110.23256390818634 80.5,151.7590614381247 94.75,178.7198229840476 109,197.93557456017732 137.5,222.64178700256133 166,238.32980948364207 223,257.4886275453391 280,268.60527211691146 394,280.93459151190183 508,288"/>
+  <circle cx="52" cy="52" r="3" fill="#0f766e"/><circle cx="52.890625" cy="53.31326510900476" r="3" fill="#0f766e"/><circle cx="53.78125" cy="56.17663435911362" r="3" fill="#0f766e"/><circle cx="55.5625" cy="63.822534972886416" r="3" fill="#0f766e"/><circle cx="59.125" cy="80.5843410879207" r="3" fill="#0f766e"/><circle cx="66.25" cy="110.23256390818634" r="3" fill="#0f766e"/><circle cx="80.5" cy="151.7590614381247" r="3" fill="#0f766e"/><circle cx="94.75" cy="178.7198229840476" r="3" fill="#0f766e"/><circle cx="109" cy="197.93557456017732" r="3" fill="#0f766e"/><circle cx="137.5" cy="222.64178700256133" r="3" fill="#0f766e"/><circle cx="166" cy="238.32980948364207" r="3" fill="#0f766e"/><circle cx="223" cy="257.4886275453391" r="3" fill="#0f766e"/><circle cx="280" cy="268.60527211691146" r="3" fill="#0f766e"/><circle cx="394" cy="280.93459151190183" r="3" fill="#0f766e"/><circle cx="508" cy="288" r="3" fill="#0f766e"/>
+</svg>

@@ -1,0 +1,4 @@
+season,gamesAudited,exact,mismatches,maxResidual,meanAbsResidual,status
+1996-97,smoke_sample,1,0,0,0,PARTIAL_SMOKE_ONLY_PENDING_FULL_ARCHIVE
+2024-25,1225,1225,0,0,0,PASS_PRIOR_M17A
+2025-26,1225,1225,0,0,0,PASS_PRIOR_M17A

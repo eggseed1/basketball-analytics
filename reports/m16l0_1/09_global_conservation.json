@@ -1,0 +1,23 @@
+{
+  "bySeason": {
+    "2024-25": {
+      "sumStintN": 2442885,
+      "sumSeasonN": 2442885,
+      "exposureResidual": 0,
+      "sumStintV": 3368.7331347774193,
+      "sumSeasonV": 3368.733134777418,
+      "rawValueResidual": 1.3642420526593924e-12
+    },
+    "2025-26": {
+      "sumStintN": 2464410,
+      "sumSeasonN": 2464410,
+      "exposureResidual": 0,
+      "sumStintV": 3082.1744031128974,
+      "sumSeasonV": 3082.174403112898,
+      "rawValueResidual": 4.547473508864641e-13
+    }
+  },
+  "GLOBAL_EXPOSURE_CONSERVATION": "PASS",
+  "GLOBAL_RAW_VALUE_CONSERVATION": "PASS",
+  "exactPrimitiveMaxResidual": 2.842170943040401e-14
+}

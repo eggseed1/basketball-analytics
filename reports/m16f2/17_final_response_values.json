@@ -1,0 +1,179 @@
+{
+  "freeze": {
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "ok": true,
+    "trainHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+    "validationHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0"
+  },
+  "coverage": {
+    "nAll": 419,
+    "nAEval": 106,
+    "nASupported": 0,
+    "nAWeak": 106,
+    "nAUnsupported": 313,
+    "nBEval": 419,
+    "commonN": 106,
+    "commonShare": 0.2529832935560859
+  },
+  "metrics": {
+    "mA": {
+      "n": 106,
+      "RMSE": 3.92750532857604,
+      "MAE": 3.140978710079982,
+      "Pearson": 0.19802893077279982,
+      "Spearman": 0.21785525354560797,
+      "R2": -3.716415157313663,
+      "calibrationIntercept": 0.5660562021333255,
+      "calibrationSlope": 0.09353970104787142
+    },
+    "mB": {
+      "n": 106,
+      "RMSE": 1.7284157676980205,
+      "MAE": 1.416487438487008,
+      "Pearson": 0.38209460298458464,
+      "Spearman": 0.3284127264024989,
+      "R2": 0.08657078130540785,
+      "calibrationIntercept": 0.2775765020692299,
+      "calibrationSlope": 0.615860014959261
+    },
+    "mAStatic": {
+      "n": 106,
+      "RMSE": 4.330050172604344,
+      "MAE": 3.5250689386237553,
+      "Pearson": 0.1636029353544103,
+      "Spearman": 0.15310476862231404,
+      "R2": -4.732767354305776,
+      "calibrationIntercept": 0.7268361638248299,
+      "calibrationSlope": 0.08556287471438649
+    },
+    "mACal": {
+      "n": 106,
+      "RMSE": 1.7829869896226014,
+      "MAE": 1.39960796164439,
+      "Pearson": 0.19802893077279973,
+      "Spearman": 0.21785525354560797,
+      "R2": 0.02798087753562495,
+      "calibrationIntercept": -0.3362379048593713,
+      "calibrationSlope": 1.8870461417384403
+    },
+    "mBCal": {
+      "n": 106,
+      "RMSE": 1.6718267252997467,
+      "MAE": 1.363724849758602,
+      "Pearson": 0.38209460298458453,
+      "Spearman": 0.3284127264024989,
+      "R2": 0.14540374086030317,
+      "calibrationIntercept": -0.030367168952211886,
+      "calibrationSlope": 1.0669618003871528
+    }
+  },
+  "bootstrap": {
+    "pointEstimate": 2.1990895608780194,
+    "ciLow": 1.7530550310159128,
+    "ciHigh": 2.678804015359125,
+    "pABeatsB": 0,
+    "pBBeatsA": 1,
+    "resamples": 1000,
+    "seed": 42
+  },
+  "MODEL_SELECTION_RESULT": "APPROACH_B_WINS",
+  "RESEARCH_P_INCUMBENT": "B",
+  "reason": "B materially better on native RMSE / bootstrap evidence favors B",
+  "contextualIncremental": "POSITIVE",
+  "supportStrata": [
+    {
+      "stratum": "near",
+      "n": 20,
+      "RMSE_A": 4.660224444198975,
+      "RMSE_B": 1.8410138671892946,
+      "deltaRMSE": 2.81921057700968,
+      "Pearson_A": -0.14628747625363112,
+      "Pearson_B": 0.00580338372889464,
+      "edgeLo": 0.055978803014381226,
+      "edgeHi": 0.1626400021485373
+    },
+    {
+      "stratum": "medium",
+      "n": 44,
+      "RMSE_A": 3.868065882656873,
+      "RMSE_B": 1.6385097883214381,
+      "deltaRMSE": 2.229556094335435,
+      "Pearson_A": 0.21415761063398958,
+      "Pearson_B": 0.49392039909280383,
+      "edgeLo": 0.1626400021485373,
+      "edgeHi": 0.21195665091329036
+    },
+    {
+      "stratum": "far",
+      "n": 42,
+      "RMSE_A": 3.5936540636828713,
+      "RMSE_B": 1.7644138474461182,
+      "deltaRMSE": 1.8292402162367531,
+      "Pearson_A": 0.32246636752371965,
+      "Pearson_B": 0.3832824778640931,
+      "edgeLo": 0.21195665091329036,
+      "edgeHi": 0.33554940257184124
+    }
+  ],
+  "exposureStrata": [
+    {
+      "quartile": 1,
+      "n": 1,
+      "RMSE_A": 0.47341705358672614,
+      "RMSE_B": 2.8210133978203467,
+      "deltaRMSE": -2.3475963442336205,
+      "Pearson_A": null,
+      "Pearson_B": null,
+      "Spearman_A": null,
+      "Spearman_B": null
+    },
+    {
+      "quartile": 2,
+      "n": 10,
+      "RMSE_A": 4.463826984257335,
+      "RMSE_B": 1.8210044003566486,
+      "deltaRMSE": 2.6428225839006867,
+      "Pearson_A": -0.13920247265126284,
+      "Pearson_B": 0.2417348119860554,
+      "Spearman_A": 0.01818181818181818,
+      "Spearman_B": 0.503030303030303
+    },
+    {
+      "quartile": 3,
+      "n": 30,
+      "RMSE_A": 4.2485004191269375,
+      "RMSE_B": 1.7810613955955767,
+      "deltaRMSE": 2.4674390235313606,
+      "Pearson_A": 0.1639324597684011,
+      "Pearson_B": 0.26000454735786127,
+      "Spearman_A": 0.23648498331479423,
+      "Spearman_B": 0.10077864293659622
+    },
+    {
+      "quartile": 4,
+      "n": 65,
+      "RMSE_A": 3.7088403490022412,
+      "RMSE_B": 1.6658680125969256,
+      "deltaRMSE": 2.042972336405316,
+      "Pearson_A": 0.22514746786014955,
+      "Pearson_B": 0.47859671514721064,
+      "Spearman_A": 0.2111888111888112,
+      "Spearman_B": 0.41481643356643355
+    }
+  ],
+  "calibration": {
+    "A": {
+      "a": 0.5660562021333255,
+      "b": 0.09353970104787142
+    },
+    "B": {
+      "a": 0.2775765020692299,
+      "b": 0.615860014959261
+    }
+  },
+  "offCorr": 0.1961901287004009,
+  "defCorr": 0.10008576173036404,
+  "majorSelectionConcern": true,
+  "appearanceCoefShare": 0.516008612369144
+}

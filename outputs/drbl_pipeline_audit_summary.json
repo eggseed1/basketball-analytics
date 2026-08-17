@@ -1,0 +1,320 @@
+{
+  "season": "2024-25",
+  "pipelineVersion": "4.0.0",
+  "abilityInput": "posterior",
+  "selectedInputNote": "posterior_forced",
+  "posteriorClearlyWorse": false,
+  "calibration": {
+    "intercept": 0,
+    "slope": 5.835416607524311,
+    "throughOriginSlope": 5.835416607524311,
+    "oofMae": 3.1210927420044103,
+    "oofRmse": 3.8264827876765026,
+    "oofCorr": 0.809101302215348,
+    "inSample": {
+      "intercept": 1.6486593551918511,
+      "slope": 6.505172193081908,
+      "corr": 0.8214664092105282,
+      "mae": 2.6597514436345233,
+      "rmse": 3.3785340243661452
+    },
+    "source": "learned_leave_one_out",
+    "appliedIntercept": 0,
+    "appliedSlope": 5.835416607524311,
+    "input": "posterior",
+    "rawAblation": {
+      "oofMae": 2.8965726373345366,
+      "oofCorr": 0.9454495326389833,
+      "slope": 3.376392649384618
+    },
+    "posteriorAblation": {
+      "oofMae": 3.1210927420044103,
+      "oofCorr": 0.809101302215348,
+      "slope": 5.835416607524311
+    },
+    "explanationOfLegacy2519": "Legacy ~2.519 was through-origin slope of team RAW DRBL rate → team net rating (in-sample Phase 22). It bypassed posterior and was a global multiplier. Replaced by LOO calibration on the selected ability input."
+  },
+  "pointsPerWin": {
+    "value": 38.714285714285715,
+    "pointsPerWin": 38.714285714285715,
+    "median": 38.714285714285715,
+    "mean": 38.8276527583433,
+    "n": 26,
+    "version": "team-margin-median-v1"
+  },
+  "replacement": {
+    "replacementLevelDRBL100": -1.4886147765794517,
+    "method": "fringe_median_poss_200_800",
+    "sampleSize": 64,
+    "mean": -1.522259600457209,
+    "sd": 4.149214070776597,
+    "min": -10.291340729029876,
+    "max": 7.71208658850413,
+    "warAvailable": true,
+    "zeroMeans": "Approach B residuals are vs R1; EB prior mean 0 is near replacement on uncalibrated scale. After calibration, fringe median defines replacement on finalAbility scale."
+  },
+  "teamAccounting": {
+    "warTeamFit": {
+      "mae": 6.330130189877791,
+      "rmse": 8.124163703515439,
+      "corr": 0.7855937655635736,
+      "slope": 0.5546007964366233,
+      "intercept": 15.682649691447626
+    },
+    "waaTeamFit": {
+      "mae": 6.315954073367007,
+      "rmse": 8.083941320463277,
+      "corr": 0.787996860997944,
+      "slope": 0.5599711508256877,
+      "intercept": 3.4472027501014133
+    },
+    "n": 30
+  },
+  "distributions": {
+    "rawDRBL": {
+      "mean": -0.19133801801801792,
+      "sd": 1.5920666206508656,
+      "median": 0.028,
+      "p5": -2.7841,
+      "p25": -0.7796,
+      "p75": 0.6839,
+      "p95": 1.8019,
+      "min": -10.4191,
+      "max": 4.6818
+    },
+    "posteriorDRBL": {
+      "mean": -0.11326486486486499,
+      "sd": 0.6156566856644696,
+      "median": -0.0874,
+      "p5": -1.1892,
+      "p25": -0.4671,
+      "p75": 0.2617,
+      "p95": 0.8664,
+      "min": -2.369,
+      "max": 2.1365
+    },
+    "finalAbility": {
+      "mean": -0.6609476468468469,
+      "sd": 3.5926132682981287,
+      "median": -0.510015,
+      "p5": -6.939477,
+      "p25": -2.725723,
+      "p75": 1.527129,
+      "p95": 5.055805,
+      "min": -13.824102,
+      "max": 12.467368
+    },
+    "WAA": {
+      "mean": -0.3327587207207221,
+      "sd": 4.846974474776301,
+      "median": -0.153964,
+      "p5": -8.741786,
+      "p25": -1.944198,
+      "p75": 1.322816,
+      "p95": 6.421426,
+      "min": -27.752267,
+      "max": 24.785665
+    },
+    "WAR": {
+      "mean": 1.3594423009008973,
+      "sd": 5.050632806800434,
+      "median": 0.299943,
+      "p5": -5.844155,
+      "p25": -0.583292,
+      "p75": 2.992441,
+      "p95": 9.723406,
+      "min": -24.763832,
+      "max": 28.914181
+    }
+  },
+  "leagueTotals": {
+    "WAA": -184.68109000000078,
+    "WAR": 754.490476999998
+  },
+  "health": [
+    "PASS"
+  ],
+  "top25War": [
+    {
+      "player": "Nikola Jokić",
+      "WAR": 28.914181,
+      "WAA": 24.785665,
+      "ability": 8.936941,
+      "oldWAR": 9.57
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "WAR": 25.44048,
+      "WAA": 21.256978,
+      "ability": 7.563867,
+      "oldWAR": 10.03
+    },
+    {
+      "player": "Franz Wagner",
+      "WAR": 19.412415,
+      "WAA": 16.264022,
+      "ability": 7.689912,
+      "oldWAR": 3.62
+    },
+    {
+      "player": "Victor Wembanyama",
+      "WAR": 17.769549,
+      "WAA": 15.453242,
+      "ability": 9.931296,
+      "oldWAR": 1.36
+    },
+    {
+      "player": "Norman Powell",
+      "WAR": 17.317831,
+      "WAA": 14.21981,
+      "ability": 6.832689,
+      "oldWAR": 5.69
+    },
+    {
+      "player": "Payton Pritchard",
+      "WAR": 16.911761,
+      "WAA": 13.441531,
+      "ability": 5.765975,
+      "oldWAR": 4.98
+    },
+    {
+      "player": "Naz Reid",
+      "WAR": 16.685229,
+      "WAA": 13.206924,
+      "ability": 5.652185,
+      "oldWAR": 2.94
+    },
+    {
+      "player": "Jimmy Butler",
+      "WAR": 16.569911,
+      "WAA": 13.889855,
+      "ability": 7.715004,
+      "oldWAR": 4.38
+    },
+    {
+      "player": "Jaren Jackson Jr.",
+      "WAR": 16.501235,
+      "WAA": 12.76646,
+      "ability": 5.088483,
+      "oldWAR": 4.51
+    },
+    {
+      "player": "Zach LaVine",
+      "WAR": 14.986467,
+      "WAA": 10.79912,
+      "ability": 3.839121,
+      "oldWAR": 2.6
+    },
+    {
+      "player": "Ivica Zubac",
+      "WAR": 14.935679,
+      "WAA": 10.806394,
+      "ability": 3.895724,
+      "oldWAR": 4.63
+    },
+    {
+      "player": "DeMar DeRozan",
+      "WAR": 14.931806,
+      "WAA": 10.525671,
+      "ability": 3.556103,
+      "oldWAR": 2.99
+    },
+    {
+      "player": "Keon Ellis",
+      "WAR": 14.175524,
+      "WAA": 11.090576,
+      "ability": 5.351661,
+      "oldWAR": 4.08
+    },
+    {
+      "player": "Christian Braun",
+      "WAR": 13.732649,
+      "WAA": 9.485318,
+      "ability": 3.324437,
+      "oldWAR": 5.21
+    },
+    {
+      "player": "Tari Eason",
+      "WAR": 13.130717,
+      "WAA": 10.886699,
+      "ability": 7.221912,
+      "oldWAR": 3.47
+    },
+    {
+      "player": "Jarrett Allen",
+      "WAR": 12.979832,
+      "WAA": 9.267358,
+      "ability": 3.715993,
+      "oldWAR": 4.51
+    },
+    {
+      "player": "Malik Beasley",
+      "WAR": 12.736933,
+      "WAA": 8.970627,
+      "ability": 3.545599,
+      "oldWAR": 4
+    },
+    {
+      "player": "De'Andre Hunter",
+      "WAR": 12.390929,
+      "WAA": 9.572448,
+      "ability": 5.055805,
+      "oldWAR": 3.75
+    },
+    {
+      "player": "Dyson Daniels",
+      "WAR": 12.384957,
+      "WAA": 8.2053,
+      "ability": 2.922377,
+      "oldWAR": 3.52
+    },
+    {
+      "player": "Pascal Siakam",
+      "WAR": 12.378622,
+      "WAA": 8.405064,
+      "ability": 3.148791,
+      "oldWAR": 4.28
+    },
+    {
+      "player": "Evan Mobley",
+      "WAR": 12.023224,
+      "WAA": 8.542997,
+      "ability": 3.654138,
+      "oldWAR": 3.16
+    },
+    {
+      "player": "Rudy Gobert",
+      "WAR": 11.751597,
+      "WAA": 8.06604,
+      "ability": 3.257913,
+      "oldWAR": 4.36
+    },
+    {
+      "player": "Karl-Anthony Towns",
+      "WAR": 11.024245,
+      "WAA": 7.149507,
+      "ability": 2.746731,
+      "oldWAR": 2.81
+    },
+    {
+      "player": "Jalen Johnson",
+      "WAR": 10.808486,
+      "WAA": 8.733653,
+      "ability": 6.26607,
+      "oldWAR": 0.59
+    },
+    {
+      "player": "Jayson Tatum",
+      "WAR": 10.492266,
+      "WAA": 6.421426,
+      "ability": 2.348172,
+      "oldWAR": 1.83
+    }
+  ],
+  "traces": [
+    "Player: Nikola Jokić\nrawDRBL = 2.6742\nposteriorDRBL = 1.5315 (reliability 0.982)\ncalibration: finalAbility = 0 + 5.835416607524311 * posterior\nfinalAbilityDRBL100 = 8.936940534423483\nreplacement = -1.4886147765794517\naboveReplacement = 10.425555311002935\n× possessions 10737 / 100 → impact = 1119.391873742385\n÷ pointsPerWin 38.714285714285715 → WAR = 28.914181240578213\nWAA = 24.7856647094736\nposterior = 1.0000*1.5315 + 0.0000*0 = 1.5315\nfinalAbility = 0 + 5.835416607524311 * 1.5315 = 8.936940534423483\naboveReplacement = 8.936940534423483 - (-1.4886147765794517) = 10.425555311002935\nimpactAR = 10.425555311002935 * 10737 / 100 = 1119.391873742385\nWAR = 1119.391873742385 / 38.714285714285715 = 28.914181240578213\nWAA = 8.936940534423483 * 10737 / 100 / 38.714285714285715 = 24.7856647094736",
+    "Player: Jayson Tatum\nrawDRBL = 0.5173\nposteriorDRBL = 0.4024 (reliability 0.982)\ncalibration: finalAbility = 0 + 5.835416607524311 * posterior\nfinalAbilityDRBL100 = 2.348171642867783\nreplacement = -1.4886147765794517\naboveReplacement = 3.8367864194472343\n× possessions 10587 / 100 → impact = 406.2005782268787\n÷ pointsPerWin 38.714285714285715 → WAR = 10.49226585825886\nWAA = 6.42142628344238\nposterior = 1.0000*0.4024 + 0.0000*0 = 0.4024\nfinalAbility = 0 + 5.835416607524311 * 0.4024 = 2.348171642867783\naboveReplacement = 2.348171642867783 - (-1.4886147765794517) = 3.8367864194472343\nimpactAR = 3.8367864194472343 * 10587 / 100 = 406.2005782268787\nWAR = 406.2005782268787 / 38.714285714285715 = 10.49226585825886\nWAA = 2.348171642867783 * 10587 / 100 / 38.714285714285715 = 6.42142628344238",
+    "Player: Shai Gilgeous-Alexander\nrawDRBL = 2.7644\nposteriorDRBL = 1.2962 (reliability 0.982)\ncalibration: finalAbility = 0 + 5.835416607524311 * posterior\nfinalAbilityDRBL100 = 7.5638670066730125\nreplacement = -1.4886147765794517\naboveReplacement = 9.052481783252464\n× possessions 10880 / 100 → impact = 984.9100180178681\n÷ pointsPerWin 38.714285714285715 → WAR = 25.440480170203234\nWAA = 21.256978274103936\nposterior = 1.0000*1.2962 + 0.0000*0 = 1.2962\nfinalAbility = 0 + 5.835416607524311 * 1.2962 = 7.5638670066730125\naboveReplacement = 7.5638670066730125 - (-1.4886147765794517) = 9.052481783252464\nimpactAR = 9.052481783252464 * 10880 / 100 = 984.9100180178681\nWAR = 984.9100180178681 / 38.714285714285715 = 25.440480170203234\nWAA = 7.5638670066730125 * 10880 / 100 / 38.714285714285715 = 21.256978274103936",
+    "Player: Victor Wembanyama\nrawDRBL = 0.6765\nposteriorDRBL = 1.7019 (reliability 0.968)\ncalibration: finalAbility = 0 + 5.835416607524311 * posterior\nfinalAbilityDRBL100 = 9.931295524345625\nreplacement = -1.4886147765794517\naboveReplacement = 11.419910300925077\n× possessions 6024 / 100 → impact = 687.9353965277265\n÷ pointsPerWin 38.714285714285715 → WAR = 17.769548987801056\nWAA = 15.453242423269607\nposterior = 1.0000*1.7019 + 0.0000*0 = 1.7019\nfinalAbility = 0 + 5.835416607524311 * 1.7019 = 9.931295524345625\naboveReplacement = 9.931295524345625 - (-1.4886147765794517) = 11.419910300925077\nimpactAR = 11.419910300925077 * 6024 / 100 = 687.9353965277265\nWAR = 687.9353965277265 / 38.714285714285715 = 17.769548987801056\nWAA = 9.931295524345625 * 6024 / 100 / 38.714285714285715 = 15.453242423269607"
+  ]
+}

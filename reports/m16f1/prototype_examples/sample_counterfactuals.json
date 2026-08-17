@@ -1,0 +1,227 @@
+[
+  {
+    "side": "off",
+    "focalId": "1630595",
+    "credit": 0.06175740849014688,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.4142989830275916,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1631105",
+    "credit": 0.08706638319890381,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.3889900083188347,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "202699",
+    "credit": 0.13483913058071129,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.3412172609370272,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "203501",
+    "credit": -0.018365484014262412,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.494421875532001,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1626167",
+    "credit": -0.07439651653346546,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.401659874984273,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1627783",
+    "credit": 0.0923617598069908,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.5684181513247293,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1630169",
+    "credit": -0.1480666278818441,
+    "actualV": 1.4760563915177385,
+    "meanRep": 1.3279897636358944,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1626167",
+    "credit": 0.021676901038493623,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.2038578377674436,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1627783",
+    "credit": 0.037270941218915166,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.188263797587022,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1630169",
+    "credit": 0.006768709416330454,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.2187660293896068,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1630595",
+    "credit": 0.056573045856193716,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.282107784662131,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1631105",
+    "credit": -0.03428585480999935,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.1912488839959379,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "202699",
+    "credit": 0.09966962357077436,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.3252043623767116,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "203501",
+    "credit": -0.030285983754279933,
+    "actualV": 1.2255347388059372,
+    "meanRep": 1.1952487550516573,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1630595",
+    "credit": 0.017695601615492995,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.3925194841976627,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1631105",
+    "credit": 0.07782886987586646,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.3323862159372892,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "202699",
+    "credit": 0.09759865160600723,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.3126164342071485,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "203501",
+    "credit": -0.060591496822397284,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.470806582635553,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1626167",
+    "credit": -0.06998038072693635,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.3402347050862193,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1627783",
+    "credit": 0.0945468565391796,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.5047619423523353,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "def",
+    "focalId": "1630169",
+    "credit": -0.140421219384816,
+    "actualV": 1.4102150858131557,
+    "meanRep": 1.2697938664283397,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1630595",
+    "credit": 0.03706382679639786,
+    "actualV": 1.373232768649888,
+    "meanRep": 1.33616894185349,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "1631105",
+    "credit": 0.0738209269170631,
+    "actualV": 1.373232768649888,
+    "meanRep": 1.2994118417328249,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "202699",
+    "credit": 0.10318618116969991,
+    "actualV": 1.373232768649888,
+    "meanRep": 1.270046587480188,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  },
+  {
+    "side": "off",
+    "focalId": "203501",
+    "credit": -0.055465540731258534,
+    "actualV": 1.373232768649888,
+    "meanRep": 1.4286983093811465,
+    "identityResidual": 0,
+    "support": "WEAK_SUPPORT"
+  }
+]

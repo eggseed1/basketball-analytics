@@ -1,0 +1,57 @@
+{
+  "warModelVersion": "drbl-war-r1-v1",
+  "warRateSource": "W0",
+  "rateFormula": "rawAbilityRate = 100*ApproachBAttributedValue/N",
+  "rateVersion": "raw-approach-b",
+  "warExposureSource": "actualCombinedPossessionAppearances",
+  "replacementSemantics": "R1_zero_no_additional_subtraction",
+  "teamAllocationRule": "selectedSeasonRate * teamN / 100 / PPW",
+  "pointsPerWinSource": "P1",
+  "pointsPerWin": 37.490662671779255,
+  "pointsPerWinVersion": "dev-netpoints-wins-2024-25",
+  "ppwFit": {
+    "alpha": 40.833333333333336,
+    "c": 0.02667330819822346,
+    "fitHash": "f99f0d74797dcec0fa450bc2255ea70645a0a12379a9e62848c7fad6b0d5c3f4"
+  },
+  "developmentSeasons": [
+    "2024-25"
+  ],
+  "developmentTeamCount": 30,
+  "rateDecision": "W0_EMPIRICAL_WIN",
+  "rateStrength": "EMPIRICAL_STRONG",
+  "ppwDecision": "P1_EMPIRICALLY_SUPPORTED",
+  "RATE_SOURCE_DECISION": "W0_EMPIRICAL_WIN",
+  "PPW_DECISION": "P1_EMPIRICALLY_SUPPORTED",
+  "developmentResults": {
+    "w0RMSE": 293.0989632935307,
+    "w1RMSE": 316.8661294526327,
+    "p0RMSE": 4.170874609233093,
+    "p1RMSE": 2.628643042269232,
+    "fixedSlopeWarRMSE": 8.312383272526297,
+    "freeSlopeWarB": 2.157871819232955
+  },
+  "m16l2PrimaryTests": {
+    "Q1": "actualNetPoints = a + selectedTeamPoints + e (slope 1)",
+    "Q2": "actualWins = a + selectedTeamWAR + e (slope 1)",
+    "Q3": "actualWins = a + b*selectedTeamWAR + e (diagnostic)"
+  },
+  "m16l2SuccessRule": {
+    "required": [
+      "no accounting failures",
+      "fixed-slope team WAR calibration finite",
+      "free-slope b > 0",
+      "no catastrophic team-level anomaly"
+    ],
+    "ppw30Benchmark": "selected PPW reserved-supported if fixed-slope win RMSE <= PPW30 benchmark RMSE",
+    "postTestRetuningAllowed": false,
+    "reopenW0W1AfterReserved": false
+  },
+  "allowedBenchmarks": [
+    "selected rate + P0=30 conversion benchmark",
+    "LEGACY_WAR_RESERVED_COMPARATOR = NOT_COMPARABLE (unless same-cutoff reconstructible without leakage)"
+  ],
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "WAR_PRE_RESERVED_FREEZE_HASH": "21abd1c7e503dde633fa7ff7a53fab59aeba29caf7b95684830d7400028d850c"
+}

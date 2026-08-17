@@ -1,0 +1,54 @@
+{
+  "candidateFeatureVersion": "drbl-reliability-features-v1",
+  "R1_technical_status": "ELIGIBLE",
+  "R2_technical_status": "ELIGIBLE",
+  "R3_technical_status": "ELIGIBLE",
+  "eligibleReliabilityFeatures": [
+    "TEMPORAL_SEGMENT_DISPERSION",
+    "SPLIT_HALF_P_SHIFT",
+    "APPEARANCE_VALUE_DISPERSION"
+  ],
+  "F0": [
+    "N"
+  ],
+  "singleFeatureCandidateSets": {
+    "F1": [
+      "N",
+      "TEMPORAL_SEGMENT_DISPERSION"
+    ],
+    "F2": [
+      "N",
+      "SPLIT_HALF_P_SHIFT"
+    ],
+    "F3": [
+      "N",
+      "APPEARANCE_VALUE_DISPERSION"
+    ]
+  },
+  "F_ALL": [
+    "N",
+    "TEMPORAL_SEGMENT_DISPERSION",
+    "SPLIT_HALF_P_SHIFT",
+    "APPEARANCE_VALUE_DISPERSION"
+  ],
+  "transforms": {
+    "xN": "log(N)",
+    "xR": "log1p(R)",
+    "zR": "(xR - median_train(xR)) / IQR_train(xR); flag if IQR=0"
+  },
+  "missingValueRules": "null; never impute; never zero-fill",
+  "coverageStatistics": {
+    "R1": 1,
+    "R2": 1,
+    "R3": 1
+  },
+  "outcomeUsedForFeatureSelection": false,
+  "M16I4_FEATURE_SET_FROZEN": true,
+  "RELIABILITY_FEATURE_AUDIT_RESULT": "FEATURE_SET_FROZEN",
+  "M16I4_RELIABILITY_BAKEOFF_READY": "YES",
+  "RESEARCH_RATE_MODEL_FREEZE_READY": "NO",
+  "RESERVED_TEST_SHOULD_OPEN": "NO",
+  "PREDICTIVE_UNCERTAINTY_FROZEN": "NO",
+  "futureFeatureSetCountIncludingF0": 5,
+  "newUncertaintyFeatureSetsMaxNote": "F0 is historical exposure-only REFERENCE; singles + F_ALL are new sets (≤4 when all three eligible)"
+}

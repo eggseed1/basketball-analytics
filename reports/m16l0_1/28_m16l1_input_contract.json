@@ -1,0 +1,27 @@
+{
+  "M16L1_INPUT_CONTRACT_FROZEN": true,
+  "playerTeamFields": [
+    "season",
+    "playerId",
+    "teamId",
+    "seasonN",
+    "teamN",
+    "teamExposureShare",
+    "rawAbilityRate",
+    "validatedDRBL100",
+    "w0AllocatedSeasonPoints",
+    "w1AllocatedSeasonPoints"
+  ],
+  "forbiddenInInputArtifact": [
+    "wins",
+    "PPW",
+    "candidate WAR",
+    "candidate performance metric"
+  ],
+  "WAR_ESTIMATION_UNIT": "PLAYER_SEASON",
+  "TEAM_VALIDATION_ALLOCATION_UNIT": "PLAYER_TEAM_SEASON",
+  "developmentHoldout": {
+    "development": "2024-25 / earlier eligible",
+    "reserved": "2025-26 one-shot WAR reserved evaluation"
+  }
+}

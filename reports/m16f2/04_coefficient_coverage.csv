@@ -1,0 +1,7 @@
+metric,value
+validation_unique_players,419
+players_with_fitted_coefficient,139
+players_seen_in_TRAIN_excluded_from_coefs,262
+players_truly_unseen_in_TRAIN,18
+share_combined_appearances_with_coef,0.516008612369144
+share_combined_appearances_without_coef,0.48399138763085603

@@ -1,0 +1,28 @@
+component,metric,value,n,notes
+audit,games_processed,120,120,M7 research diagnostic only; M6 frozen
+C0_m5_continue_at_shots,mean,1.1111,4207,holdout shot moments
+C0_m5_continue_at_shots,std,0.0907,4207,low std ⇒ nearly flat continuation
+C0_m5_continue_at_shots,p10,1.0054,4207,
+C0_m5_continue_at_shots,p90,1.1926,4207,
+separation,corr_sdv_epvShoot,0.6092,4207,"if ~1, SDV is mostly rescaled shot quality"
+separation,corr_sdv_shotMaking,-0.0192,4207,should be near 0 if decision ⊥ making
+separation,corr_sdv_epvContinue,-0.546,4207,
+epv_shoot,mean,1.0717,4207,
+epv_shoot,std,0.0958,4207,
+sdv,mean,-0.0393,4207,
+sdv,std,0.1079,4207,
+C1_nonsShot_preFG_remaining,n_states,9004,9004,pre-first-FGA non-shot events; target=remaining poss points
+C1_nonsShot_preFG_remaining,mean_remaining_points,0.7156,9004,TARGET construction uses post-state outcomes
+C1_nonsShot_preFG_remaining,mean_m5_epv,1.1211,9004,FEATURE-side M5 at same states
+C1_nonsShot_preFG_remaining,mae_m5_vs_remaining,0.7635,9004,C0 baseline error on continue-labeled states
+C1_nonsShot_preFG_remaining,corr_m5_vs_remaining,0.0308,9004,
+data_constraint,shot_clock_in_cdn_pbp,0,0,CDN playbyplay.json has no shotClock field (verified)
+C1_by_possession_age,age_0_4,0.7168,8848,mean remaining points; mean_m5=1.121
+C1_by_possession_age,age_4_8,0.4884,86,mean remaining points; mean_m5=1.130
+C1_by_possession_age,age_8_14,0.9737,38,mean remaining points; mean_m5=1.107
+C1_by_possession_age,age_14_24,0.6429,28,mean remaining points; mean_m5=1.099
+C1_by_possession_age,age_24_plus,1,4,mean remaining points; mean_m5=1.089
+C1_game_clock_strata,mean_remaining_late_le8,0.8163,283,
+C1_game_clock_strata,mean_remaining_early_gt60,0.6956,7749,
+C0_game_clock_strata,mean_m5_late_le8,0.9301,283,
+C0_game_clock_strata,mean_m5_early_gt60,1.1235,7749,

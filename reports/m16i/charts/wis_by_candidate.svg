@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="280" y="24" text-anchor="middle" font-size="13">Pooled WIS by candidate</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">WIS</text>
+  <rect x="56.0" y="52.0" width="144.0" height="236.0" fill="#1f4e79"/><text x="128.0" y="324" text-anchor="middle" font-size="10">U0</text><rect x="208.0" y="55.3" width="144.0" height="232.7" fill="#1f4e79"/><text x="280.0" y="324" text-anchor="middle" font-size="10">U1</text><rect x="360.0" y="58.5" width="144.0" height="229.5" fill="#1f4e79"/><text x="432.0" y="324" text-anchor="middle" font-size="10">U2</text>
+</svg>

@@ -1,0 +1,46 @@
+{
+  "version": "m16j0_1-verdict-taxonomy-v1",
+  "B2_STATUS": "NOT_COMPARABLE",
+  "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+  "INCUMBENT_REGRESSION_RULE": "NOT_APPLICABLE",
+  "PRIMARY_COMPARATOR": "B0_RAW_P",
+  "PRIMARY_SUCCESS_RULE": "deltaRMSE_vs_raw < 0 AND P(RESEARCH_FINAL beats RAW) >= 0.95",
+  "PRIMARY_SUCCESS_RULE_CHANGED": false,
+  "practicalEquivalenceRelative": 0.005,
+  "outcomes": {
+    "STRONG_PASS": {
+      "require": [
+        "PRIMARY_RESERVED_SUCCESS = YES",
+        "no severe integrity/calibration anomaly"
+      ],
+      "note": "B2 N/A — incumbent 0.5% regression rule not applicable"
+    },
+    "SCIENTIFIC_PASS_PRODUCTION_MIXED": {
+      "require": [
+        "PRIMARY_RESERVED_SUCCESS = YES",
+        "material production-oriented issue if a comparable incumbent existed"
+      ],
+      "note": "With B2 NOT_COMPARABLE this outcome is unused for incumbent regression; retained for taxonomy completeness"
+    },
+    "INCONCLUSIVE": {
+      "require": [
+        "deltaRMSE_vs_raw < 0",
+        "P(beat raw) < 0.95 OR effectively tied"
+      ]
+    },
+    "FAIL": {
+      "require": [
+        "deltaRMSE_vs_raw >= 0 with material evidence EB1600 did not beat raw"
+      ]
+    }
+  },
+  "EB1600_VS_EB200_secondary": {
+    "thresholdRelative": 0.005,
+    "classes": [
+      "BETTER",
+      "TIED",
+      "WORSE"
+    ]
+  },
+  "VERDICT_TAXONOMY_FROZEN": true
+}

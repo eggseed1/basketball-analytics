@@ -1,0 +1,3 @@
+season,warFormulaVersion_400,warFormulaVersion_full,warCalibrationAbilityInput,games_400,games_full,pearson,spearman,mae,status,changed
+2024-25,4.0.0,4.0.0,posterior,400,1225,0.8014,0.7574,2.8529,PROVISIONAL,NO
+2025-26,,,,400,1225,0.7623,0.7058,0.8511,PROVISIONAL,NO

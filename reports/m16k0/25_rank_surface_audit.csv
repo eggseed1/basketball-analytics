@@ -1,0 +1,3 @@
+surface,currentRankSource,futureAbilityRankSource,tie,qualification,ruleClass
+explore players default,drblWar sort,descending validatedDRBL100 when sorting by DRBL/100,stable by playerId recommended,product display rules separate,PRODUCT_DISPLAY_RULE
+artifact.rank,descending legacy drbl100,descending validatedDRBL100,deterministic,none in formula,SCIENTIFIC_MODEL_RULE for ability board only

@@ -1,0 +1,75 @@
+{
+  "warmUp": "F1",
+  "evaluationFolds": [
+    "F2",
+    "F3",
+    "F4",
+    "F5"
+  ],
+  "candidates": [
+    "U0_CONSTANT",
+    "U1_INVERSE_SQRT",
+    "U2_FLOOR_PLUS_SAMPLING"
+  ],
+  "scaleFit": "Gaussian NLL on prior-fold residuals",
+  "quantileFit": "empirical |error|/sigma percentiles on prior folds",
+  "intervalLevels": [
+    0.5,
+    0.8,
+    0.95
+  ],
+  "primaryMetric": "WIS",
+  "practicalThreshold": 0.005,
+  "folds": [
+    {
+      "name": "UNC_EVAL_2",
+      "evalFoldId": 1,
+      "trainFoldIds": [
+        0
+      ],
+      "trainFutureDateMax": "2024-11-24",
+      "evalFutureDateMin": "2024-11-25",
+      "chronological": true
+    },
+    {
+      "name": "UNC_EVAL_3",
+      "evalFoldId": 2,
+      "trainFoldIds": [
+        0,
+        1
+      ],
+      "trainFutureDateMax": "2024-12-12",
+      "evalFutureDateMin": "2024-12-13",
+      "chronological": true
+    },
+    {
+      "name": "UNC_EVAL_4",
+      "evalFoldId": 3,
+      "trainFoldIds": [
+        0,
+        1,
+        2
+      ],
+      "trainFutureDateMax": "2025-01-01",
+      "evalFutureDateMin": "2025-01-02",
+      "chronological": true
+    },
+    {
+      "name": "UNC_EVAL_5",
+      "evalFoldId": 4,
+      "trainFoldIds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "trainFutureDateMax": "2025-01-18",
+      "evalFutureDateMin": "2025-01-19",
+      "chronological": true
+    }
+  ],
+  "UNCERTAINTY_TRAIN_EVAL_OVERLAP": 0,
+  "M16B_VALIDATION_USED_FOR_UNCERTAINTY": false,
+  "RESERVED_TEST_ACCESSED": false,
+  "note": "TRAIN-development OOS corpus (already used in prior TRAIN research)"
+}

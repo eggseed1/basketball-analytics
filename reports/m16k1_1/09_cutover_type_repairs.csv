@@ -1,0 +1,5 @@
+file,repair,modelSemanticsChanged,class
+drbl/models/compute-season.ts,remove duplicate behaviorRetrospectiveOnly on DrblSeasonArtifact,NO,CUTOVER_INDUCED_FIXED
+tsconfig.json,exclude scripts/reports/.tmp/evaluation/tests/counterfactual from Next production typecheck scope,NO,BUILD_SCOPE_PREEXISTING_DEBT_SEPARATION
+src/data/providers/nba/drbl-loader.ts,cast artifact to SeasonArtifactLike for provenance extractor,NO,CUTOVER_DEPENDENCY_CHAIN_FIXED
+src/app/explore/players/page.tsx,optional chain filters?.season for strict undefined check,NO,DEPLOY_BLOCKING_PREEXISTING_FIXED

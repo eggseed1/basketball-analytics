@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="52" y="24" font-size="14">Median reliability vs k</text>
+  <text x="280" y="332" text-anchor="middle" font-size="11">k</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">N/(N+k)</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="52,52 52.890625,56.77483974358972 53.78125,61.377922661870485 55.5625,70.10460069444443 59.125,85.85795454545456 66.25,111.93247126436779 80.5,149.4602803738318 94.75,175.16830708661416 109,193.88095238095238 137.5,219.298128342246 166,235.75770925110132 223,255.80944625407164 280,267.57105943152453 394,280.77330895795245 508,288"/>
+  <circle cx="52" cy="52" r="3" fill="#0f766e"/><circle cx="52.890625" cy="56.77483974358972" r="3" fill="#0f766e"/><circle cx="53.78125" cy="61.377922661870485" r="3" fill="#0f766e"/><circle cx="55.5625" cy="70.10460069444443" r="3" fill="#0f766e"/><circle cx="59.125" cy="85.85795454545456" r="3" fill="#0f766e"/><circle cx="66.25" cy="111.93247126436779" r="3" fill="#0f766e"/><circle cx="80.5" cy="149.4602803738318" r="3" fill="#0f766e"/><circle cx="94.75" cy="175.16830708661416" r="3" fill="#0f766e"/><circle cx="109" cy="193.88095238095238" r="3" fill="#0f766e"/><circle cx="137.5" cy="219.298128342246" r="3" fill="#0f766e"/><circle cx="166" cy="235.75770925110132" r="3" fill="#0f766e"/><circle cx="223" cy="255.80944625407164" r="3" fill="#0f766e"/><circle cx="280" cy="267.57105943152453" r="3" fill="#0f766e"/><circle cx="394" cy="280.77330895795245" r="3" fill="#0f766e"/><circle cx="508" cy="288" r="3" fill="#0f766e"/>
+</svg>

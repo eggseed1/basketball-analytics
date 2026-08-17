@@ -1,0 +1,19 @@
+check_id,category,item,status,severity,detail,required_mitigation
+L01,current_M6,C0_continue_uses_M5_start_EPV_at_mid_poss,FAIL_CONCEPTUAL,HIGH,"Not feature leakage; wrong estimand. Treat as baseline only.",Replace with C1/C2 for experimental continue
+L02,current_M6,C0_not_action_conditioned,FAIL_CONCEPTUAL,HIGH,Unconditional PPP ≠ E[R|continue],Action-condition training on non-shoot states
+L03,data,true_shot_clock_feature,UNAVAILABLE,HIGH,CDN PBP has no shotClock field,Use possession_age proxy; do not fabricate shot clock
+L04,data,explicit_pass_dribble_actions,UNAVAILABLE,MEDIUM,Cannot build Cervone-style action graph from CDN alone,Defer C3; use C1 proxy labels
+L05,target_vs_feature,Y_cont_uses_future_points_on_possession,PASS_IF_TARGET_ONLY,HIGH,Remaining points after t are post-decision,Enforce: never put Y components into X; code assert
+L06,target_vs_feature,train_continue_on_shot_rows_with_FG_points_as_Y,BAN,CRITICAL,Would make continue ≈ shoot and collapse SDV,Exclude FGA rows from continue training Y
+L07,target_vs_feature,same_possession_outcome_in_features,BAN,CRITICAL,Leakage,Block possession.points / made / assists from feature vector
+L08,priors,player_team_lineup_priors_from_future_games,PASS_WITH_EXPANDING_WINDOW,HIGH,Same discipline as M6,Chronological accumulate-after-game only
+L09,score_state,post_make_score_without_reversal,PASS_IN_M6,HIGH,M6 reverses pointsOnAction for Made,Keep reversal for any St used in continue/shoot
+L10,final_box,AST_TOV_STL_BLK_final_totals_as_features,PASS_BANNED,MEDIUM,Not used in M6 continue/shoot features,Keep banned for M7-CV features
+L11,diagnostic,next_poss_points_as_training_Y,BAN,MEDIUM,Wrong estimand + future info as label for current decision,Diagnostic only
+L12,selection,continue_labeled_states_vs_shot_states,RISK_DOCUMENTED,HIGH,Observational continue ≠ causal do(continue),Report overlap diagnostics; matched-state tests
+L13,coverage,pre_first_FGA_nonshot_rows_skew_young_possessions,RISK_DOCUMENTED,MEDIUM,Age 0-4 dominates sample in diagnostic,Consider mid-poss sampling / post-OREB branches carefully in impl
+L14,fusion,integrate_SDV_into_drbl100_this_pass,PASS_NOT_DONE,CRITICAL,Explicitly out of scope,No fusion edits
+L15,m6_freeze,modify_frozen_m6_implementation,PASS_NOT_DONE,HIGH,M6 sources untouched; research script isolated,Keep frozen unless impl pass approved
+L16,proposed_C1,features_listed_in_provenance_timestamp_safe,PASS_DESIGN,HIGH,See m7_feature_provenance.csv,Re-audit on implementation PR
+L17,proposed_C1,target_remaining_points_post_state,PASS_DESIGN_TARGET_ONLY,HIGH,Allowed as Y,Separate TargetBuilder vs FeatureBuilder modules
+L18,stop_condition,cannot_make_timestamp_safe_or_defensible,ARMED,CRITICAL,If X requires post-decision info or no valid continue labels,STOP and document — do not ship

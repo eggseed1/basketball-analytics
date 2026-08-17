@@ -1,0 +1,9 @@
+{
+  "rebuildRuns": 2,
+  "season": "2024-25",
+  "stintRowEquality": "PASS",
+  "exposureEquality": "PASS",
+  "rawValueEquality": "PASS",
+  "note": "Full season rebuild fingerprint equality; W0/W1 allocation is pure function of rates+N",
+  "STINT_DETERMINISM": "PASS"
+}

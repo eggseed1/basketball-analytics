@@ -1,0 +1,11 @@
+{
+  "Spearman": 0.8052051402102047,
+  "top10_overlap": 0.4,
+  "top25_overlap": 0.44,
+  "top50_overlap": 0.56,
+  "top100_overlap": 0.64,
+  "mean_abs_rank_change": 71.96396396396396,
+  "used_for_model_selection": "NO",
+  "researchRank_definition": "descending researchDRBL100 (research artifact only)",
+  "productionDefaultRankingMode": "season_value"
+}

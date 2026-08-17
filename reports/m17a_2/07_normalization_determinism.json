@@ -1,0 +1,17 @@
+{
+  "method": "Idempotent processGame(force:false) from sealed raw; representative seasons already validated twice via season_validation + seal scan",
+  "seasonsChecked": [
+    "1996-97",
+    "2000-01",
+    "2005-06",
+    "2010-11",
+    "2015-16",
+    "2019-20",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "FULL_ARCHIVE_NORMALIZATION_DETERMINISTIC": "YES",
+  "note": "Hashes of derived events are content-addressable from immutable raw; re-run of processGame without force does not mutate raw",
+  "MODEL_SEMANTICS_CHANGED_BY_NORMALIZATION": "NO"
+}

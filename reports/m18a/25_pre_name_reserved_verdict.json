@@ -1,0 +1,17 @@
+{
+  "M18A_RESERVED_VERDICT": "STRONG_PASS",
+  "frozenBeforeNames": true,
+  "selected": "UIR-C",
+  "targetA_deltaRMSE": -0.07124188536428333,
+  "bootA": {
+    "deltaRMSE": -0.07124188536428333,
+    "ciLow": -0.12418572026703267,
+    "ciHigh": -0.03128988523487819,
+    "probImproves": 1
+  },
+  "targetB_deltaRMSE": -0.001309616660442714,
+  "teamChangeSignal": "YES",
+  "lowContSignal": "YES",
+  "NAMES_INSPECTED_BEFORE_RESERVED": "NO",
+  "M18A_RESERVED_VERDICT_HASH": "bf0863705ddc8feff62ad6c68f65b56864cc38ab8faa21e1eb987179b6f0a318"
+}

@@ -1,0 +1,23 @@
+{
+  "frozenBeforeValidation": true,
+  "candidates": [
+    {
+      "id": "UIR-A",
+      "lineup": "NET",
+      "residualizer": "L ~ P_RAW + logN"
+    },
+    {
+      "id": "UIR-B",
+      "lineup": "NET",
+      "residualizer": "L ~ P_RAW + logN + roleO + roleD"
+    },
+    {
+      "id": "UIR-C",
+      "lineup": "OD combined (O−D)×100",
+      "residualizer": "L ~ P_RAW + logN"
+    }
+  ],
+  "selectedLambda": 3200,
+  "namesInspected": false,
+  "M18A_CANDIDATE_FREEZE_HASH": "a7661a47e74d98d1a818682813100a19789a9ee7f14180e5f9d0da910113d0b5"
+}

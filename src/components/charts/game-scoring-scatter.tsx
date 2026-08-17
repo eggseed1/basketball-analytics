@@ -16,6 +16,7 @@ import {
 import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 
 export interface GameScoringScatterProps {
   games: GameSummary[];
@@ -26,8 +27,8 @@ type ChartPoint = GameSummary & {
 };
 
 function matchupLabel(game: GameSummary): string {
-  const away = game.awayTeamAbbr ?? game.awayTeamId;
-  const home = game.homeTeamAbbr ?? game.homeTeamId;
+  const away = nbaTeamAbbr(game.awayTeamId, game.awayTeamAbbr);
+  const home = nbaTeamAbbr(game.homeTeamId, game.homeTeamAbbr);
   return `${away} @ ${home}`;
 }
 

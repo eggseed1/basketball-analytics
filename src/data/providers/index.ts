@@ -1,5 +1,6 @@
 import { LocalDataProvider } from "./local-data-provider";
 import { NBADataProvider } from "./nba-data-provider";
+import { clearDrblCache } from "./nba/drbl-loader";
 import type { BasketballDataProvider } from "./types";
 
 export type { BasketballDataProvider } from "./types";
@@ -30,7 +31,8 @@ export function getDataProvider(): BasketballDataProvider {
   return cachedProvider;
 }
 
-/** Test helper — clears the singleton between suites. */
+/** Clears the singleton (and DRBL memo) so the next call rebuilds caches. */
 export function resetDataProvider(): void {
   cachedProvider = null;
+  clearDrblCache();
 }

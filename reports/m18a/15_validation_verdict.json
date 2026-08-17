@@ -1,0 +1,19 @@
+{
+  "M18A_VALIDATION_VERDICT": "PASS_TO_RESERVED",
+  "UIR_SELECTED": "UIR-C",
+  "negPass": true,
+  "splitHalfPearson": 0.15905398195165613,
+  "splitHalfSpearman": 0.12153023647187373,
+  "crossSeasonPearson": 0.2749531885615108,
+  "crossSeasonSpearman": 0.23437842917327714,
+  "bestCandidate": "UIR-C",
+  "bestTargetA_deltaRMSE": -0.08461443545677771,
+  "bestBoot": {
+    "deltaRMSE": -0.08461443545677771,
+    "ciLow": -0.13765742919804347,
+    "ciHigh": -0.041213481632067506,
+    "probImproves": 1
+  },
+  "reason": "Incremental Target-A signal with bootstrap support, negative controls pass, positive split-half",
+  "NAMES_INSPECTED_BEFORE_RESERVED": "NO"
+}

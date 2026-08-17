@@ -1,0 +1,13 @@
+{
+  "LIVE_DRBL100_SOURCE_CHANGED": "YES",
+  "LIVE_DRBL100_SOURCE": "validatedDRBL100",
+  "LIVE_RANK_SOURCE_CHANGED": "YES",
+  "LIVE_RANK_SOURCE": "descending unrounded validatedDRBL100",
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "samplePlayer": {
+    "id": "1628983",
+    "drbl100": 2.41,
+    "rank": 1,
+    "abilityModelVersion": "drbl-ability-eb1600-r1-v1"
+  }
+}

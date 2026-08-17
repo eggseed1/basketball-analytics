@@ -1,0 +1,27 @@
+{
+  "M16L0_MAX_RESIDUAL": 0.008854,
+  "publishedRawRateResidual": {
+    "rows": 1130,
+    "max": 0.008853999999985263,
+    "mean": 0.0027975964601769177
+  },
+  "exactPrimitiveResidual_using_identity": {
+    "formula": "rawRateExact=100*V/N; rawRateExact*N/100 == V",
+    "rows": 1130,
+    "max": 5.684341886080802e-14,
+    "note": "Machine-level when V is the same primitive; published V is seasonalImpact.toFixed(2)"
+  },
+  "RAW_RECONSTRUCTION_RESIDUAL_SOURCE": "Display/storage rounding in finalizePlayerSeasonRows: rawAbilityRate.toFixed(4) and seasonalImpact.toFixed(2). Published recon uses rounded rate × N vs rounded impact.",
+  "displayStorageRoundingInvolved": true,
+  "WAR_INTERNAL_RATE_PRECISION": "FULL_AVAILABLE_PRECISION",
+  "WAR_RANKING_OR_VALUE_CALCULATION_USES_DISPLAY_ROUNDED_RATE": false,
+  "fullPrecisionSource": "Approach-B accumulator totalValue / possessions (or rebuilt stream sum), never display-rounded rawAbilityRate",
+  "tolerancePublished": 0.02,
+  "toleranceExact": 1e-9,
+  "RAW_RECONSTRUCTION_EXACT_PRIMITIVE_MAX_RESIDUAL": 2.842170943040401e-14,
+  "exactRebuildIdentity": {
+    "formula": "rawAbilityRateExact * N / 100 == approachBAttributedValue",
+    "maxResidual": 2.842170943040401e-14,
+    "rows": 1151
+  }
+}

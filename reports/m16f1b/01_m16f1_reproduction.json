@@ -1,0 +1,25 @@
+{
+  "m5Rmse": 1.1809237705260536,
+  "additiveRmse": 1.1827867817387752,
+  "contextualRmse": 1.184143445162592,
+  "contextualCalibrationIntercept": 0.5695745468048063,
+  "contextualCalibrationSlope": 0.5090758078716171,
+  "deltaM5": 0,
+  "deltaAdd": 0,
+  "deltaCtx": 0,
+  "withinTolerance": true,
+  "supportCounts": {
+    "SUPPORTED": 0,
+    "WEAK_SUPPORT": 18153,
+    "UNSUPPORTED": 4385
+  },
+  "supportPct": {
+    "supported": 0,
+    "weak": 0.8054397018368977,
+    "unsupported": 0.19456029816310233
+  },
+  "staticCollapseR2": 0.36698094069649884,
+  "localIdentityMaxOff": 0,
+  "localIdentityMaxDef": 0,
+  "M16F1_REPRODUCED": "PASS"
+}

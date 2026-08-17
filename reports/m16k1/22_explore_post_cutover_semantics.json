@@ -1,0 +1,6 @@
+{
+  "pageClassification": "GENERAL_PLAYER_EXPLORER",
+  "POST_CUTOVER_EXPLORE_DEFAULT_SORT": "pointsPerGame",
+  "EXPLORE_DEFAULT_SORT_CHANGE_REQUIRED": "NO",
+  "canonicalDrblRankIndependent": true
+}

@@ -1,0 +1,30 @@
+{
+  "ARCHITECTURE_DIFFERENCE_ALONE_CAUSES_INCOMPARABILITY": "NO",
+  "dimensions": {
+    "C1_predictionTimeAvailability": "NO",
+    "C2_targetCompatibility": "YES",
+    "C3_unitCompatibility": "YES",
+    "C4_zeroSemantics": "R1_REPLACEMENT_PRIOR_MEAN_0",
+    "C5_historicalRowReproducibility": "NO",
+    "C6_commonPlayerUniverse": "NO",
+    "C7_chronologyCompatibility": "earlyFrac boundary exists but fusion stage cannot use it leakage-free under frozen BASELINE definition",
+    "C8_leakageStatus": "YES"
+  },
+  "B2_STATUS": "NOT_COMPARABLE",
+  "B2_REASON_CODES": [
+    "FUTURE_BLOCK_LEAKAGE",
+    "FULL_SEASON_INPUT_DEPENDENCY",
+    "HISTORICAL_RECONSTRUCTION_IMPOSSIBLE"
+  ],
+  "B2_REQUIRES_FULL_SEASON": "YES",
+  "B2_REQUIRES_RESERVED_FUTURE": "YES",
+  "shadowReconstruction": "NOT_REQUIRED",
+  "M16B_VALIDATION_USED_IN_M16J0_1_OR_M16J_RESERVED_EVALUATION": "NO",
+  "RESERVED_RMSE_COMPUTED": "NO",
+  "RESERVED_MAE_COMPUTED": "NO",
+  "RESERVED_CORRELATIONS_COMPUTED": "NO",
+  "RESERVED_TARGET_ERRORS_INSPECTED": "NO",
+  "RESERVED_UNCERTAINTY_METRICS_COMPUTED": "NO",
+  "RESERVED_TEST_ACCESSED": "NO",
+  "decisionNarrative": "BASELINE_M16A is a legitimate different architecture (P+LN+B fused EB200) and would be a valid incumbent IF it could emit a leakage-free prediction at the frozen earlyFrac cutoff. Under its frozen mathematical definition it cannot: fitFusionOof requires same-season late-block Y; published EB uses full-season N; current R1 builders use the full game set; fixed-fit was never completed as the BASELINE procedure. Architecture difference alone is rejected as an exclusion reason."
+}

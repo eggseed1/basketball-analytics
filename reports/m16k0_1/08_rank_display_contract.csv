@@ -1,0 +1,5 @@
+consumer,claimedLabel,currentSource,validatedShadowSource,cutoverAction,status
+precomputed rank field (live),season DRBL board rank,legacy fused drbl100 descending,shadowRank from validatedDRBL100,rebuild artifact rank from validatedDRBL100,READY_FOR_K1
+Explore table row order,table sort position,pointsPerGame default / user sort,must NOT redefine DRBL rank,keep table sort independent,OK_GENERAL_EXPLORER
+shadow boards m16k0 08/09,shadowRank,descending unrounded validatedDRBL100,validatedDRBL100,promote to live rank,PASS
+WAR column / sort,DRBL-WAR,drblWar / seasonalImpact,unchanged (firewall),no WAR math change,FIREWALLED

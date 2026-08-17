@@ -1,0 +1,15 @@
+{
+  "season": "2025-26",
+  "rowsCompared": 575,
+  "maxR1PointsResidual": 0,
+  "meanR1PointsResidual": 0,
+  "r1PointsMismatchCount": 0,
+  "maxR1WinEqResidual": 0,
+  "meanR1WinEqResidual": 0,
+  "r1WinEqMismatchCount": 0,
+  "boardMissingFromResearch": 0,
+  "researchMissingFromBoard": 7,
+  "fallbackComputed": 0,
+  "fallbackNull": 0,
+  "PASS": true
+}

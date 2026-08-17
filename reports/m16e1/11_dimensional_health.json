@@ -1,0 +1,125 @@
+{
+  "M16E0_REPRODUCED": "PASS",
+  "PAIRED_EXPOSURE_DEFINED": "PASS",
+  "COMBINED_EXPOSURE_DEFINED": "PASS",
+  "RATE_CONVERSION_IDENTITY": "PASS",
+  "LOO_OUTPUT_UNIT_IDENTIFIED": "PASS",
+  "PAIRED_WAR_CANDIDATE_BUILT": "PASS",
+  "COMBINED_CONVERTED_CANDIDATE_BUILT": "PASS",
+  "CANDIDATE_EQUIVALENCE": "PASS",
+  "REPLACEMENT_UNIT_EQUIVALENCE": "PASS",
+  "LOO_SLOPE_UNIT_COMPONENT_IDENTIFIED": "PASS",
+  "TEAM_ACCOUNTING_IMPROVES": "YES",
+  "WAR_UNIT_BUG_STATUS": "CONFIRMED",
+  "PRODUCTION_WAR_CHANGED": "NO",
+  "PRODUCTION_DRBL_CHANGED": "NO",
+  "POSTERIOR_CHANGED": "NO",
+  "P_CHANGED": "NO",
+  "RESERVED_TEST_PREDICTIVE_EVALUATION": "NO",
+  "maxProductionReconResidual": 0,
+  "maxEquivalenceResidual": 0,
+  "meanAbsEquivalenceResidual": 0,
+  "exposureRatioStats": {
+    "mean": 2,
+    "median": 2,
+    "sd": 0,
+    "p5": 2,
+    "p25": 2,
+    "p75": 2,
+    "p95": 2,
+    "min": 2,
+    "max": 2
+  },
+  "inflationStats": {
+    "mean": 2,
+    "median": 2,
+    "sd": 0,
+    "p5": 2,
+    "p25": 2,
+    "p75": 2,
+    "p95": 2,
+    "min": 2,
+    "max": 2
+  },
+  "league": {
+    "production": {
+      "sum": 754.4904717694892,
+      "mean": 1.3594422914765603,
+      "median": 0.29994323443699156,
+      "positive": 1290.0110589355475,
+      "negative": -535.5205871660575,
+      "meanTeam": 25.149682392316308
+    },
+    "paired": {
+      "sum": 377.2452358847446,
+      "mean": 0.6797211457382801,
+      "median": 0.14997161721849578,
+      "positive": 645.0055294677737,
+      "negative": -267.7602935830287,
+      "meanTeam": 12.574841196158154
+    },
+    "combined": {
+      "sum": 377.2452358847446,
+      "mean": 0.6797211457382801,
+      "median": 0.14997161721849578,
+      "positive": 645.0055294677737,
+      "negative": -267.7602935830287,
+      "meanTeam": 12.574841196158154
+    },
+    "refit": {
+      "sum": 377.24523588474466,
+      "mean": 0.6797211457382806,
+      "median": 0.14997161721849583,
+      "positive": 645.0055294677738,
+      "negative": -267.76029358302884,
+      "meanTeam": 12.574841196158156
+    }
+  },
+  "teamFits": {
+    "production": {
+      "intercept": 27.051965757183545,
+      "slope": 0.5546008106678035,
+      "rmse": 8.124163533062404,
+      "mae": 6.330130037149667,
+      "r2": 0.6171575805571867
+    },
+    "paired": {
+      "intercept": 27.051965757183545,
+      "slope": 1.109201621335607,
+      "rmse": 8.124163533062404,
+      "mae": 6.330130037149667,
+      "r2": 0.6171575805571867
+    },
+    "combined": {
+      "intercept": 27.051965757183545,
+      "slope": 1.109201621335607,
+      "rmse": 8.124163533062404,
+      "mae": 6.330130037149667,
+      "r2": 0.6171575805571867
+    },
+    "refit": {
+      "intercept": 27.051965757183552,
+      "slope": 1.1092016213356066,
+      "rmse": 8.124163533062404,
+      "mae": 6.330130037149664,
+      "r2": 0.6171575805571867
+    }
+  },
+  "loo": {
+    "fullSlope": 5.835416607524312,
+    "combinedTargetSlope": 2.917708303762156,
+    "remainingEmpiricalFactor": 2.9177083037621556,
+    "looMean": 5.8350362141152665,
+    "looSd": 0.1477260189133134,
+    "looMin": 5.456256951365801,
+    "looMax": 6.152470234466634,
+    "cv": 0.025317069764872448,
+    "WAR_CALIBRATION_TEAM_LEVERAGE_RISK": false,
+    "throughOriginDiagnostic": {
+      "label": "DIAGNOSTIC_ONLY_WITH_INTERCEPT",
+      "a": 1.6486593551918514,
+      "b": 6.505172193081908,
+      "throughOriginSlope": 5.835416607524312
+    }
+  }
+}

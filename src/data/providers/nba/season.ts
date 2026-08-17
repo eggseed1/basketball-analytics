@@ -1,7 +1,13 @@
 /**
- * Season string helpers for ESPN (uses ending calendar year).
- * Canonical: "2024-25"  ↔  ESPN: 2025
+ * Season string helpers.
+ * Canonical: "2024-25"  ↔  ending calendar year 2025
  */
+
+/** First season with usable stats.nba.com leagueleaders rows (1951-52). */
+export const EARLIEST_NBA_STATS_ESPN_YEAR = 1952;
+
+/** First season where leaguedashplayerstats / teamstats return data (1996-97). */
+export const MODERN_LEAGUE_DASH_ESPN_YEAR = 1997;
 
 export function canonicalSeasonFromEspnYear(year: number): string {
   const start = year - 1;
@@ -25,15 +31,44 @@ export function espnYearFromCanonicalSeason(season: string): number {
   return start + 1;
 }
 
+/** Ending calendar year for the current NBA campaign (Oct flip). */
+export function currentEspnSeasonYear(now = new Date()): number {
+  return now.getUTCMonth() >= 9
+    ? now.getUTCFullYear() + 1
+    : now.getUTCFullYear();
+}
+
 /** Recent seasons to expose when none is requested. */
 export function defaultCanonicalSeasons(count = 3): string[] {
-  // ESPN season year for "current" completed-or-active campaign.
-  // Prefer ending year of the latest NBA season that has stats.
-  const now = new Date();
-  // NBA season year flips around October; before Oct use previous ESPN year.
-  const espnYear =
-    now.getUTCMonth() >= 9 ? now.getUTCFullYear() + 1 : now.getUTCFullYear();
+  const espnYear = currentEspnSeasonYear();
   return Array.from({ length: count }, (_, i) =>
     canonicalSeasonFromEspnYear(espnYear - i)
+  );
+}
+
+/**
+ * Whether stats.nba.com league-dash endpoints have season tables.
+ * Pre-1996 seasons use leagueleaders (+ standings) instead.
+ */
+export function isModernLeagueDashSeason(season: string): boolean {
+  try {
+    return espnYearFromCanonicalSeason(season) >= MODERN_LEAGUE_DASH_ESPN_YEAR;
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Season picker list for explore / dashboard.
+ * Goes back to 1951-52 (earliest season with stats.nba.com leaders data).
+ * Each season loads on demand when selected.
+ */
+export function availableCanonicalSeasons(
+  earliestEspnYear = EARLIEST_NBA_STATS_ESPN_YEAR
+): string[] {
+  const latest = currentEspnSeasonYear();
+  const start = Math.min(earliestEspnYear, latest);
+  return Array.from({ length: latest - start + 1 }, (_, i) =>
+    canonicalSeasonFromEspnYear(latest - i)
   );
 }

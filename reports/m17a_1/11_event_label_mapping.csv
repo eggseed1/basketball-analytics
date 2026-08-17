@@ -1,0 +1,12 @@
+rawLabel,normalizedEventType,seasonFirstSeen,seasonLastSeen,count,mapped
+Made Shot,2pt|3pt(via shotValue),1996-97,unknown_pending_full_scan,pending,YES
+Missed Shot,2pt|3pt(via shotValue),1996-97,unknown_pending_full_scan,pending,YES
+Free Throw,freethrow,1996-97,unknown_pending_full_scan,pending,YES
+Rebound,rebound,1996-97,unknown_pending_full_scan,pending,YES
+Turnover,turnover,1996-97,unknown_pending_full_scan,pending,YES
+Foul,foul,1996-97,unknown_pending_full_scan,pending,YES
+Substitution,substitution(+SUB parse),1996-97,unknown_pending_full_scan,pending,YES
+Jump Ball,jumpball,1996-97,unknown_pending_full_scan,pending,YES
+Timeout,timeout,1996-97,unknown_pending_full_scan,pending,YES
+Violation,violation,1996-97,unknown_pending_full_scan,pending,YES
+(empty),unknown,1996-97,unknown_pending_full_scan,pending,EXPLICIT_UNKNOWN

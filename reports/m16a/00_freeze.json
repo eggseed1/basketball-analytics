@@ -1,0 +1,108 @@
+{
+  "milestone": "M16a",
+  "frozenAt": "2026-08-12T15:24:55.018Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "note": "Repaired A1/A2 400-game baseline freeze. Model math frozen for full-season recompute.",
+  "abilityLineageVersion": "ability-lineage-v1",
+  "publishedAbilityInput": "fused_rate",
+  "m6FusedIntoDrbl100": false,
+  "priorEquivalentPossessions": 200,
+  "artifacts": {
+    "2024-25": "freeze/repaired-400-2024-25.json",
+    "2025-26": "freeze/repaired-400-2025-26.json"
+  },
+  "seasons": {
+    "2024-25": {
+      "gamesProcessed": 400,
+      "version": "drbl-ranking-v2-seq",
+      "rankingFormulaVersion": "2.2.0",
+      "warFormulaVersion": "4.0.0",
+      "pipelineVersion": "4.0.0",
+      "abilityLineageVersion": "ability-lineage-v1",
+      "publishedAbilityInput": "fused_rate",
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 1.687,
+        "equalMae": 1.767,
+        "liteMae": 1.789,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 0.374622573619265,
+          "wLn": 0,
+          "wB": 0.625377426380735
+        }
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.025830258302583026,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "v4 pipeline: raw → LOO calibration → fringe replacement",
+        "holdoutMae": 2.204,
+        "holdoutCorr": 0.66,
+        "pointsPerWin": 38.714285714285715,
+        "calibrationIntercept": 0,
+        "calibrationSlope": 2.588789997707921,
+        "calibrationSource": "learned_leave_one_out",
+        "calibrationInput": "raw",
+        "oofMae": 3.591334976039962,
+        "oofCorr": 0.7675888246047589,
+        "replacementLevelDRBL100": -1.05570856106529,
+        "replacementMethod": "fringe_median_poss_200_800"
+      },
+      "shotDecisionModel": {
+        "version": "drbl-m7-cv-c2-in-season",
+        "continueMaeC0": 1.0297891664316154,
+        "continueMaeC2": 1.0218558495515593,
+        "continueCorrC2": 0.08614372217054449,
+        "shotsScored": 70917,
+        "fusedIntoDrbl100": false
+      },
+      "players": 476
+    },
+    "2025-26": {
+      "gamesProcessed": 400,
+      "version": "drbl-ranking-v2-seq",
+      "rankingFormulaVersion": "2.2.0",
+      "abilityLineageVersion": "ability-lineage-v1",
+      "publishedAbilityInput": "fused_rate",
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 1.746,
+        "equalMae": 1.776,
+        "liteMae": 1.798,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 0.45933796080245737,
+          "wLn": 0.07128819249962558,
+          "wB": 0.4693738466979172
+        }
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.033333,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": false,
+        "reason": "holdout MAE worse than provisional — keeping provisional conversion",
+        "holdoutMae": 1.493,
+        "holdoutCorr": 0.686
+      },
+      "shotDecisionModel": {
+        "version": "drbl-m7-cv-c2-in-season",
+        "continueMaeC0": 1.0237577794139678,
+        "continueMaeC2": 1.01648510460542,
+        "continueCorrC2": 0.10344368088024165,
+        "shotsScored": 71408,
+        "fusedIntoDrbl100": false
+      },
+      "players": 484
+    }
+  }
+}

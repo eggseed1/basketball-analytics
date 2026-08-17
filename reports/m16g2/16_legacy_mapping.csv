@@ -1,0 +1,10 @@
+current_field,future_canonical_meaning,action
+rawAbilityRate,rawP100 (unshrunk Approach B),keep/rename
+drblP,legacy EB200(P); not research primary,deprecate as primary; diagnostic alias
+drblLn,lnDiagnostic100,rename/keep diagnostic
+drblB,bDiagnostic100,rename/keep diagnostic
+fusedRateRaw,legacy fusion rate,deprecate
+posteriorAbilityRate,legacy EB200(fused),deprecate
+drbl100,final displayed ability (post-calibration TBD),keep name; change semantics after migration
+drblO,drblO100 if canonical else diagnostic,alias pending O/D audit
+drblD,drblD100 if canonical else diagnostic,alias pending O/D audit

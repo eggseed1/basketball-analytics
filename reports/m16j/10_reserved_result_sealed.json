@@ -1,0 +1,121 @@
+{
+  "testVersion": "M16j-point-estimate-reserved-v1",
+  "timestamp": "2026-08-12T23:36:43.867Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "dirty": true,
+  "TRAINHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+  "VALIDATIONHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+  "RESERVEDHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+  "pointEstimateFreezeHash": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "authorizationArtifact": "reports/m16j0_1/09_reserved_test_authorization_repaired.json",
+  "authorizationArtifactHash": "1027e5f6d51bb42c20662a3042148427cd6a03c707f22b42f6fc019f4c0952fd",
+  "reservedProtocolVersion": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+  "reservedHumanBlindness": "NOT_FULL",
+  "historyGameCount": 857,
+  "futureGameCount": 368,
+  "historyCutoff": {
+    "gameIndex": 856,
+    "lastHistoryDate": "2026-02-24",
+    "lastHistoryGameId": "0022500834",
+    "firstFutureDate": "2026-02-24",
+    "firstFutureGameId": "0022500835",
+    "sameDayBoundaryAtCut": true
+  },
+  "commonUniverseN": 458,
+  "models": {
+    "RESEARCH_FINAL": "N/(N+1600)*rawAbilityRate",
+    "B0_RAW_P": "rawAbilityRate",
+    "B1_P_EB200": "N/(N+200)*rawAbilityRate"
+  },
+  "target": "future_block_residual_per_100",
+  "metrics": {
+    "RESEARCH_FINAL": {
+      "n": 458,
+      "RMSE": 2.1855128277791382,
+      "MAE": 1.3863013523995151,
+      "Pearson": 0.34817135874926913,
+      "Spearman": 0.42254305841982986,
+      "R2": 0.11684697293041757,
+      "bias": 0.12861760203623324,
+      "predictionMean": 0.008176111104993522,
+      "predictionSD": 0.7252892681664582,
+      "targetMean": -0.12044149093123968,
+      "targetSD": 2.3256019289405394,
+      "calibrationIntercept": -0.12956924550633106,
+      "calibrationSlope": 1.1163931675924326
+    },
+    "B0_RAW_P": {
+      "n": 458,
+      "RMSE": 2.3547360671426114,
+      "MAE": 1.5064796017913555,
+      "Pearson": 0.2983269110402186,
+      "Spearman": 0.37877613468824983,
+      "R2": -0.025212077611261652,
+      "bias": -0.0013185527368826553,
+      "predictionMean": -0.12176004366812217,
+      "predictionSD": 1.4797285303214103,
+      "targetMean": -0.12044149093123968,
+      "targetSD": 2.3256019289405394,
+      "calibrationIntercept": -0.06335273775531917,
+      "calibrationSlope": 0.4688627849996972
+    },
+    "B1_P_EB200": {
+      "n": 458,
+      "RMSE": 2.215897219391022,
+      "MAE": 1.4225220618924226,
+      "Pearson": 0.33747856767662804,
+      "Spearman": 0.39851206998490935,
+      "R2": 0.0921199621947576,
+      "bias": 0.05058452803710872,
+      "predictionMean": -0.06985696289413063,
+      "predictionSD": 1.1242409470088681,
+      "targetMean": -0.12044149093123968,
+      "targetSD": 2.3256019289405394,
+      "calibrationIntercept": -0.07167383543383861,
+      "calibrationSlope": 0.6981072963522513
+    }
+  },
+  "deltaRMSE_vs_raw": -0.16922323936347317,
+  "relativeRMSEChange_vs_raw": -0.0718650560140354,
+  "deltaRMSE_vs_EB200": -0.030384391611883554,
+  "relativeRMSEChange_vs_EB200": -0.01371200403429987,
+  "bootstrapPrimary": {
+    "comparison": "RESEARCH_FINAL vs B0_RAW_P",
+    "delta": -0.16922323936347317,
+    "CI95": [
+      -0.32749444233419034,
+      -0.035102397868131074
+    ],
+    "probabilityResearchBeatsRaw": 0.992,
+    "resamples": 1000,
+    "seed": 42,
+    "dependencyUnit": "playerId"
+  },
+  "bootstrapSecondary": {
+    "comparison": "RESEARCH_FINAL vs B1_P_EB200",
+    "delta": -0.030384391611883554,
+    "CI95": [
+      -0.10044448182203425,
+      0.035995237901828236
+    ],
+    "probabilityResearchBeatsEB200": 0.802,
+    "resamples": 1000,
+    "seed": 42,
+    "dependencyUnit": "playerId"
+  },
+  "PRIMARY_RESERVED_SUCCESS": "YES",
+  "EB1600_VS_EB200": "BETTER",
+  "SEVERE_INTEGRITY_ANOMALY": "NO",
+  "M16J_RESERVED_VERDICT": "STRONG_PASS",
+  "POINT_ESTIMATE_RESERVED_VALIDATION": "PASSED",
+  "PREDICTIVE_UNCERTAINTY_INCLUDED": false,
+  "WAR_INCLUDED": false,
+  "OD_INCLUDED": false,
+  "PLAYER_NAMES_USED_FOR_RESERVED_DECISION": false,
+  "BASELINE_M16A_STATUS": "NOT_COMPARABLE",
+  "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+  "RESERVED_TEST_ACCESSED": true,
+  "RESERVED_TEST_CONSUMED": true,
+  "RESERVED_OFFICIAL_SCORING_RUN_COUNT": 1,
+  "resultSealed": true
+}

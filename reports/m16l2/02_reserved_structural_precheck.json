@@ -1,0 +1,13 @@
+{
+  "season": "2025-26",
+  "listedGames": 1225,
+  "loadedGames": 1225,
+  "uniqueTeamIds": 30,
+  "uniquePlayerIds": 582,
+  "possessionCount": 246754,
+  "appearanceSlots": 2464410,
+  "SEQUENTIAL_ATTRIBUTION_VERSION": "drbl-seq-attr-v1",
+  "EXECUTION_SKILL_FRACTION": 1,
+  "formulaContract": "same as development (R1 pool + seq-attr-v1)",
+  "outcomesAggregated": false
+}

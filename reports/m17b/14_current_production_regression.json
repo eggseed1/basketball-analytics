@@ -1,0 +1,18 @@
+{
+  "method": "Artifact hash check — M17b does not rewrite production precomputed JSON",
+  "2024-25": {
+    "sha256": "1ac1dad1f59c1faebf8103e0876e216f1b46d897db0816500f667b262def7951",
+    "DRBL_changed": "NO",
+    "R1_changed": "NO",
+    "R1WinEq_changed": "NO",
+    "rank_changed": "NO"
+  },
+  "2025-26": {
+    "sha256": "82bdd84e724b1d5d84f4e232f19ecf2861c25eef9195b9edfeae5ca7dd50371c",
+    "DRBL_changed": "NO",
+    "R1_changed": "NO",
+    "R1WinEq_changed": "NO",
+    "rank_changed": "NO"
+  },
+  "PASS": true
+}

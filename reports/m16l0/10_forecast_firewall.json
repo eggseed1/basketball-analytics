@@ -1,0 +1,10 @@
+{
+  "WAR_EXPOSURE_TYPE": "ACTUAL_HISTORICAL",
+  "forbidden": [
+    "expected future possessions",
+    "forecast minutes",
+    "N+1600",
+    "projected role"
+  ],
+  "note": "forecastWar fields in artifacts are separate diagnostics; not canonical WAR"
+}

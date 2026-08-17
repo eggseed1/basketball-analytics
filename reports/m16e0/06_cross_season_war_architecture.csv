@@ -1,0 +1,8 @@
+field,2024-25,2025-26
+displayed_ability_input,posteriorAbilityRate,posteriorAbilityRate
+WAR_ability_input,posterior → LOO calibrated finalAbility,rawAbilityRate via seasonalImpact
+calibration_transform,0 + 5.835416607524311 * posterior,none
+replacement,-1.4886147765794517,0
+exposure_definition,actualOnCourtPossessions (off+def),actualOnCourtPossessions (off+def)
+pointsPerWin,38.714285714285715,30
+WAR_formula_version,4.0.0,provisional-seasonalImpact/30

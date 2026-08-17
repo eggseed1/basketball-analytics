@@ -1,0 +1,3 @@
+season,total_valid_DRBL_rows,existing_product_qualified_rows,old_uncertainty_qualified_rows,new_validated_qualified_rows,rows_added,rows_removed,valid_estimate_rows,explanation
+2024-25,555,375,375,375,0,0,555,Differences explained by removing legacy uncertainty>0 proxy; minutes>=500 preserved; no new N threshold
+2025-26,575,378,378,378,0,0,575,Differences explained by removing legacy uncertainty>0 proxy; minutes>=500 preserved; no new N threshold

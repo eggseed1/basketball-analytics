@@ -1,0 +1,9 @@
+{
+  "internalPrecision": "full IEEE float from research / attributed value",
+  "display": {
+    "DRBL/100": "1-2 decimals (existing)",
+    "R1 Points": "1 decimal",
+    "R1 Win Equivalents": "1-2 decimals"
+  },
+  "calculationsUseRoundedDisplay": false
+}

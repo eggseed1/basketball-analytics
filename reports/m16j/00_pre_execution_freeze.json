@@ -1,0 +1,60 @@
+{
+  "milestone": "M16j",
+  "timestamp": "2026-08-12T23:36:43.867Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+  "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+  "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "authorizationArtifact": "reports/m16j0_1/09_reserved_test_authorization_repaired.json",
+  "authorizationArtifactHash": "1027e5f6d51bb42c20662a3042148427cd6a03c707f22b42f6fc019f4c0952fd",
+  "reservedProtocolVersion": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+  "earlyFrac": 0.7,
+  "historicalMinExposure": 50,
+  "futureMinExposure": 20,
+  "modelFormulas": {
+    "RESEARCH_FINAL": "N/(N+1600)*rawAbilityRate",
+    "B0_RAW_P": "rawAbilityRate",
+    "B1_P_EB200": "N/(N+200)*rawAbilityRate"
+  },
+  "primaryTarget": "future_block_residual_per_100",
+  "primaryMetric": "RMSE",
+  "secondaryMetrics": [
+    "MAE",
+    "Pearson",
+    "Spearman",
+    "R2",
+    "bias=prediction-target",
+    "calibrationIntercept",
+    "calibrationSlope"
+  ],
+  "r2Definition": "1 - SS_res/SS_tot with SS_tot vs mean(target)",
+  "biasDefinition": "mean(prediction - target)",
+  "bootstrapProtocol": {
+    "dependencyUnit": "playerId",
+    "resamples": 1000,
+    "seed": 42,
+    "confidenceLevel": 0.95
+  },
+  "successRule": "deltaRMSE_vs_raw < 0 AND P(RESEARCH_FINAL beats RAW) >= 0.95",
+  "verdictTaxonomy": [
+    "STRONG_PASS",
+    "SCIENTIFIC_PASS_PRODUCTION_MIXED",
+    "INCONCLUSIVE",
+    "FAIL"
+  ],
+  "B2_STATUS": "NOT_COMPARABLE",
+  "B2_REASON_CODES": [
+    "FUTURE_BLOCK_LEAKAGE",
+    "FULL_SEASON_INPUT_DEPENDENCY",
+    "HISTORICAL_RECONSTRUCTION_IMPOSSIBLE"
+  ],
+  "uncertaintyExcluded": true,
+  "WARExcluded": true,
+  "ODExcluded": true,
+  "productionUnchanged": true,
+  "RESERVED_TEST_ACCESSED": false,
+  "RESERVED_HUMAN_BLINDNESS": "NOT_FULL",
+  "RESERVED_NUMERIC_PREDICTIVE_METRICS_PREVIOUSLY_USED": "NO"
+}

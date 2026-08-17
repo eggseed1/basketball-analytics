@@ -1,0 +1,9 @@
+{
+  "method": "Independent recompute of one Family A window + bootstrap seed fixed",
+  "window": "2022-23->2023-24",
+  "commonPlayersMatch": true,
+  "rmseMatch": true,
+  "deltaMatch": true,
+  "bootstrapSeed": 42,
+  "DETERMINISM": "PASS"
+}

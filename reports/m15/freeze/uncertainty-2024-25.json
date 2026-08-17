@@ -1,0 +1,16 @@
+{
+  "version": "drbl-uncertainty-v1",
+  "fittedAt": "2026-08-12T02:30:28.597Z",
+  "targetCoverage": 0.8,
+  "scaleMultiplier": 0.52751,
+  "disagreementCoef": 0.15,
+  "minHalfWidth": 0.15,
+  "maxHalfWidth": 4,
+  "oof": {
+    "n": 321,
+    "coverage": 0.804,
+    "calibrated": true,
+    "tolerance": 0.08,
+    "meanAbsError": 0.259
+  }
+}

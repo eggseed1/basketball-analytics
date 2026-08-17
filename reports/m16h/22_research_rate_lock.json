@@ -1,0 +1,38 @@
+{
+  "status": "RESEARCH_RATE_LOCKED",
+  "lockedBy": "post-M16h audit",
+  "specification": {
+    "formula": "DRBL100 = N/(N+1600) * rawAbilityRate",
+    "rawEstimator": "rawAbilityRate (drbl-seq-attr-v1 / Approach B)",
+    "k": 1600,
+    "priorMean": 0,
+    "zeroSemantics": "R1_REPLACEMENT_BASELINE",
+    "posteriorLayerCount": 1,
+    "calibration": "IDENTITY",
+    "calibrationCoefficient": 1,
+    "fusion": "NONE",
+    "pseudoExposure": "NONE"
+  },
+  "versions": {
+    "attribution": "drbl-seq-attr-v1",
+    "researchAbility": "drbl-research-ability-v1",
+    "posterior": "drbl-eb-posterior-k1600-v1",
+    "calibration": "drbl-calibration-identity-v1",
+    "researchRate": "drbl-research-rate-v1"
+  },
+  "m16hDecision": {
+    "CALIBRATION_SELECTION_RESULT": "IDENTITY_SELECTED",
+    "identityRMSE_F2_F5": 2.781961911853985,
+    "zeroLinearRMSE_F2_F5": 2.7817700526948723,
+    "relativeImprovement": 0.00006896541548440327,
+    "P_zero_beats_identity": 0.636,
+    "foldWins": "2/4",
+    "BASELINE_SHIFT_SIGNAL": "NO"
+  },
+  "diagnosticOnly": ["LN", "B", "M6"],
+  "nextMilestone": "M16i_P_ONLY_UNCERTAINTY",
+  "productionChanged": false,
+  "warChanged": false,
+  "reservedTestAccessed": false,
+  "lockDocument": "reports/m16h/22_research_rate_lock.md"
+}

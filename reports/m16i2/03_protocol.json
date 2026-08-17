@@ -1,0 +1,72 @@
+{
+  "warmUp": "F1",
+  "evaluationFolds": [
+    "F2",
+    "F3",
+    "F4",
+    "F5"
+  ],
+  "foldCounts": {
+    "F2": 389,
+    "F3": 406,
+    "F4": 412,
+    "F5": 417
+  },
+  "pooledEvalRows": 1624,
+  "TRAIN_EVAL_OVERLAP": 0,
+  "candidates": [
+    "M1",
+    "M2"
+  ],
+  "response": "absError = |target - lockedDRBL|",
+  "input": "historical N only (logN for M2)",
+  "folds": [
+    {
+      "name": "EVAL_F2",
+      "evalFoldId": 1,
+      "trainFoldIds": [
+        0
+      ],
+      "chronological": true,
+      "trainFutureDateMax": "2024-11-24",
+      "evalFutureDateMin": "2024-11-25"
+    },
+    {
+      "name": "EVAL_F3",
+      "evalFoldId": 2,
+      "trainFoldIds": [
+        0,
+        1
+      ],
+      "chronological": true,
+      "trainFutureDateMax": "2024-12-12",
+      "evalFutureDateMin": "2024-12-13"
+    },
+    {
+      "name": "EVAL_F4",
+      "evalFoldId": 3,
+      "trainFoldIds": [
+        0,
+        1,
+        2
+      ],
+      "chronological": true,
+      "trainFutureDateMax": "2025-01-01",
+      "evalFutureDateMin": "2025-01-02"
+    },
+    {
+      "name": "EVAL_F5",
+      "evalFoldId": 4,
+      "trainFoldIds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "chronological": true,
+      "trainFutureDateMax": "2025-01-18",
+      "evalFutureDateMin": "2025-01-19"
+    }
+  ],
+  "note": "TRAIN-development chronological OOS folds"
+}

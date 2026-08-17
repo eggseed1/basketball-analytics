@@ -1,0 +1,44 @@
+{
+  "candidates": [
+    "U0",
+    "U1",
+    "U2"
+  ],
+  "U0_WIS": 4.43626047461963,
+  "U1_WIS": 4.37438731883086,
+  "U2_WIS": 4.314058843592033,
+  "U1_relImp": 0.013947142225474217,
+  "U2_relImp": 0.02754609016461653,
+  "U1_bootstrapP": 1,
+  "U2_bootstrapP": 1,
+  "U1_foldWins": "4/4",
+  "U2_foldWins": "4/4",
+  "U1_clears_gates": false,
+  "U2_clears_gates": false,
+  "U2_collapse": "NO",
+  "catastrophic": {
+    "U0": true,
+    "U1": true,
+    "U2": true
+  },
+  "coverageGates": {
+    "U0": true,
+    "U1": false,
+    "U2": false
+  },
+  "UNCERTAINTY_SELECTION_RESULT": "CONSTANT_SCALE_SELECTED",
+  "finalConfig": {
+    "modelType": "U0_CONSTANT",
+    "params": {
+      "s": 2.6960956582451727
+    },
+    "quantiles": {
+      "q50": 0.4950476886081375,
+      "q80": 0.9906396697923614,
+      "q95": 1.9842275977287305
+    }
+  },
+  "ASYMMETRIC_INTERVAL_REVIEW_REQUIRED": "NO",
+  "lockedBeforeLeaderboardInspection": true,
+  "practicalThreshold": 0.005
+}

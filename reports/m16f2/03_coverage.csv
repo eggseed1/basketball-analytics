@@ -1,0 +1,14 @@
+metric,value
+N_all_validation_eligible,419
+N_A_supported,0
+N_A_weak,106
+N_A_unsupported,313
+N_A_evaluable,106
+N_B_evaluable,419
+COMMON_UNIVERSE_N,106
+COMMON_share_of_eligible,0.2529832935560859
+appearance_coef_share_early_val,0.516008612369144
+common_share_exposure_Q1,0.009523809523809525
+common_share_exposure_Q2,0.09523809523809523
+common_share_exposure_Q3,0.28846153846153844
+common_share_exposure_Q4,0.6190476190476191

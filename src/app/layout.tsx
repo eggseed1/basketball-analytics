@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Link from "next/link";
 
+import { GlobalPlayerSearch } from "@/components/layout/global-player-search";
+
 import "./globals.css";
 
 const geistSans = Geist({
@@ -37,16 +39,37 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           Skip to content
         </a>
         <header className="border-b border-border">
-          <div className="mx-auto flex h-14 w-full max-w-6xl items-center justify-between px-4 sm:px-6">
-            <Link href="/" className="font-semibold tracking-tight">
+          <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-2.5 sm:px-6 md:h-14 md:flex-row md:items-center md:gap-4 md:py-0">
+            <Link
+              href="/"
+              className="shrink-0 font-semibold tracking-tight"
+            >
               Basketball Analytics
             </Link>
-            <nav aria-label="Primary" className="flex items-center gap-4">
+
+            <GlobalPlayerSearch className="w-full md:max-w-md md:flex-1" />
+
+            <nav
+              aria-label="Primary"
+              className="flex flex-wrap items-center gap-3 md:gap-4"
+            >
+              <Link
+                href="/dashboard"
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                Dashboard
+              </Link>
               <Link
                 href="/explore/players"
                 className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
               >
                 Players
+              </Link>
+              <Link
+                href="/explore/teams"
+                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
+              >
+                Teams
               </Link>
               <Link
                 href="/explore/games"

@@ -1,0 +1,300 @@
+{
+  "freeze": {
+    "milestone": "M16f1b",
+    "timestamp": "2026-08-12T19:14:33.978Z",
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "evaluationProtocolVersion": "drbl-eval-v1",
+    "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+    "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+    "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+    "ENGINE_FIT_hash": "0d002d3ef73107ad4758478138c8da36fc716efdeee37bfc3fe56646efd48da9",
+    "ENGINE_HOLDOUT_hash": "6d8790e7973c42f6f8fb776d416391750baee48e8cb8f03f001da299e63fe00a",
+    "counterfactualEpvVersion": "drbl-counterfactual-epv-v1",
+    "featureVersion": "player-main+player×state+shared-role⊗state",
+    "lambda": 100,
+    "replacementVersion": "R1 k=8 equal weight",
+    "supportVersion": "roleDistance weak=1.5 support=2.5; known>=8 for SUPPORTED",
+    "ApproachB_version": "drbl-seq-attr-v1",
+    "WAR_version": "4.0.1",
+    "WAR_exposureUnit": "paired_team_possessions",
+    "posteriorVersion": "eb-fused-v1 — untouched",
+    "FROZEN_VALIDATION_ACCESSED": false,
+    "RESERVED_TEST_ACCESSED": false,
+    "MODEL_ARCHITECTURE_CHANGED": false,
+    "LAMBDA_CHANGED": false,
+    "K8_CHANGED": false,
+    "SUPPORT_POLICY_CHANGED": false
+  },
+  "reproduction": {
+    "m5Rmse": 1.1809237705260536,
+    "additiveRmse": 1.1827867817387752,
+    "contextualRmse": 1.184143445162592,
+    "contextualCalibrationIntercept": 0.5695745468048063,
+    "contextualCalibrationSlope": 0.5090758078716171,
+    "deltaM5": 0,
+    "deltaAdd": 0,
+    "deltaCtx": 0,
+    "withinTolerance": true,
+    "supportCounts": {
+      "SUPPORTED": 0,
+      "WEAK_SUPPORT": 18153,
+      "UNSUPPORTED": 4385
+    },
+    "supportPct": {
+      "supported": 0,
+      "weak": 0.8054397018368977,
+      "unsupported": 0.19456029816310233
+    },
+    "staticCollapseR2": 0.36698094069649884,
+    "localIdentityMaxOff": 0,
+    "localIdentityMaxDef": 0,
+    "M16F1_REPRODUCED": "PASS"
+  },
+  "supportDegenerateFlag": false,
+  "supportedPossibleProbe": 0,
+  "unseenVsCoef": 300,
+  "unseenVsFitGames": 6,
+  "expandStats": {
+    "medianPearson": 0.8735298999500545,
+    "medianSpearman": 0.8647604822362104,
+    "medianMae": 1.9451125422515043
+  },
+  "jackStats": {
+    "medianPearson": 0.7748069246759488,
+    "medianSpearman": 0.775962872079377,
+    "medianMae": 2.89715509173627
+  },
+  "allPaStats": {
+    "medianPearson": 0.8195481905531172,
+    "medianSpearman": 0.8118211885202177,
+    "medianMae": 2.591274777234133
+  },
+  "icc": 0.7857762706827726,
+  "playerStabilityCat": "STRONG",
+  "deltaStats": {
+    "medianPearson": 0.7536301061645075,
+    "medianSpearman": 0.7303173131649919,
+    "medianMae": 0.043791135697805086
+  },
+  "deltaCat": "MODERATE",
+  "signAgreement": 0.7772810808125963,
+  "medianWithinDeltaSD": 0.03432292360752425,
+  "compStab": [
+    {
+      "component": "staticMain",
+      "medianPearson": 0.7662967246707102,
+      "medianSpearman": 0.7443448913002214,
+      "medianMae": 0.03705717068797289,
+      "medianWithinSD": 0.02792402922428092
+    },
+    {
+      "component": "state",
+      "medianPearson": 0.7385689384813873,
+      "medianSpearman": 0.6760625077847936,
+      "medianMae": 0.01638853598201684,
+      "medianWithinSD": 0.0018202205335196117
+    },
+    {
+      "component": "teammate",
+      "medianPearson": 0.930685169363454,
+      "medianSpearman": 0.8586886531065844,
+      "medianMae": 0.0004661816520096598,
+      "medianWithinSD": 0.000054854415781378064
+    },
+    {
+      "component": "opponent",
+      "medianPearson": null,
+      "medianSpearman": 1,
+      "medianMae": 0,
+      "medianWithinSD": 0
+    },
+    {
+      "component": "contextualTotal",
+      "medianPearson": 0.7413123073031469,
+      "medianSpearman": 0.6795303313566394,
+      "medianMae": 0.016346827645079325,
+      "medianWithinSD": 0.001808781687614039
+    }
+  ],
+  "betweenVar": 19.895934092460177,
+  "withinVar": 5.2802135301557005,
+  "reliabilityRatio": 0.7902692020516889,
+  "relByQ": [
+    {
+      "quartile": "Q1",
+      "n": 26,
+      "meanExposure": 3964.3076923076924,
+      "betweenVar": 15.369661649724966,
+      "withinVar": 6.496284996122052,
+      "reliability": 0.7029040131973483,
+      "medianRefitPearson": 0.7561655576878831
+    },
+    {
+      "quartile": "Q2",
+      "n": 26,
+      "meanExposure": 4565.2307692307695,
+      "betweenVar": 22.91203205479689,
+      "withinVar": 4.811480968691767,
+      "reliability": 0.826447645195064,
+      "medianRefitPearson": 0.8783713597354799
+    },
+    {
+      "quartile": "Q3",
+      "n": 26,
+      "meanExposure": 4947.192307692308,
+      "betweenVar": 18.824869431887578,
+      "withinVar": 4.970634300202919,
+      "reliability": 0.7911103561342329,
+      "medianRefitPearson": 0.8172919586749707
+    },
+    {
+      "quartile": "Q4",
+      "n": 26,
+      "meanExposure": 5525.5,
+      "betweenVar": 17.42710219585226,
+      "withinVar": 4.842453855606047,
+      "reliability": 0.7825527440054674,
+      "medianRefitPearson": 0.8342366645728181
+    }
+  ],
+  "corr84": 0.9402079934845972,
+  "corr812": 0.9805176143926889,
+  "sp84": 0.934453051103101,
+  "sp812": 0.9769409719559271,
+  "replacementCat": "ROBUST",
+  "looMedianMaxAbs": 0.020800354079047567,
+  "stateChanges": 8334,
+  "tmChanges": 8334,
+  "oppChanges": 0,
+  "nAudit": 8334,
+  "pgSignal": {
+    "n": 1229,
+    "pearson": 0.03761961249449749,
+    "spearman": 0.025748775503779294,
+    "staticPearson": 0.047664294518856974,
+    "staticSpearman": 0.040984877070075594,
+    "deltaPearson": -0.010044682024359486,
+    "deltaSpearman": -0.0152361015662963
+  },
+  "blockSignal": {
+    "n": 137,
+    "pearson": 0.1519971517994807,
+    "spearman": 0.15884779808464167,
+    "staticPearson": 0.15281274771298506,
+    "staticSpearman": 0.14947635671215487,
+    "deltaPearson": -0.0008155959135043578,
+    "deltaSpearman": 0.0093714413724868
+  },
+  "playerSignal": {
+    "n": 148,
+    "pearson": 0.09876302849605097,
+    "spearman": 0.11431236742837893,
+    "staticPearson": 0.10880040127473958,
+    "staticSpearman": 0.12335962863287887,
+    "deltaPearson": -0.010037372778688616,
+    "deltaSpearman": -0.009047261204499946
+  },
+  "aggregateCategory": "POSITIVE",
+  "offStab": {
+    "medianPearson": 0.7770186950899699,
+    "medianSpearman": 0.7551571318093149,
+    "medianMae": 0.0405772125807403
+  },
+  "defStab": {
+    "medianPearson": 0.7719553968939018,
+    "medianSpearman": 0.7474014719134341,
+    "medianMae": 0.04369209202446904
+  },
+  "offAgg": {
+    "n": 148,
+    "pearson": 0.051120041847567764,
+    "spearman": 0.04792383124118503,
+    "staticPearson": null,
+    "staticSpearman": -0.08718168929098939,
+    "deltaPearson": null,
+    "deltaSpearman": 0.13510552053217442
+  },
+  "defAgg": {
+    "n": 148,
+    "pearson": 0.08638630275121256,
+    "spearman": 0.09815760151330621,
+    "staticPearson": null,
+    "staticSpearman": -0.08779619230242433,
+    "deltaPearson": null,
+    "deltaSpearman": 0.18595379381573054
+  },
+  "fullCal": {
+    "m5": {
+      "n": 27978,
+      "rmse": 1.1809237705260536,
+      "mae": 1.1166626971065339,
+      "meanPred": 1.1308686128526693,
+      "meanActual": 1.146686682393309,
+      "r2": 0.005769340499368281,
+      "calibrationIntercept": 0.05213105616628,
+      "calibrationSlope": 0.9678892965876567
+    },
+    "add": {
+      "n": 27978,
+      "rmse": 1.1827867817387752,
+      "mae": 1.1168514672182996,
+      "meanPred": 1.1477332556982627,
+      "meanActual": 1.146686682393309,
+      "r2": 0.002629893285556628,
+      "calibrationIntercept": 0.425594402441406,
+      "calibrationSlope": 0.6282751470098354
+    },
+    "ctx": {
+      "n": 27978,
+      "rmse": 1.184143445162592,
+      "mae": 1.1095307237421042,
+      "meanPred": 1.1336467509649242,
+      "meanActual": 1.146686682393309,
+      "r2": 0.00034060231785149053,
+      "calibrationIntercept": 0.5695745468048063,
+      "calibrationSlope": 0.5090758078716171
+    }
+  },
+  "supportCounts": {
+    "SUPPORTED": 0,
+    "WEAK_SUPPORT": 18153,
+    "UNSUPPORTED": 4385
+  },
+  "supportFailRows": [
+    {
+      "reason": "TOO_FEW_REPLACEMENTS",
+      "count": 39970,
+      "shareOfAll": 1.7734492856509008,
+      "shareOfWeak": 1,
+      "shareOfUnsupported": 4.975370581527936
+    },
+    {
+      "reason": "REPLACEMENT_ID_UNSEEN",
+      "count": 39970,
+      "shareOfAll": 1.7734492856509008,
+      "shareOfWeak": 1,
+      "shareOfUnsupported": 4.975370581527936
+    },
+    {
+      "reason": "FOCAL_ID_UNSEEN",
+      "count": 17432,
+      "shareOfAll": 0.7734492856509007,
+      "shareOfWeak": 0,
+      "shareOfUnsupported": 3.9753705815279363
+    },
+    {
+      "reason": "ROLE_VECTOR_MISSING",
+      "count": 302,
+      "shareOfAll": 0.013399591800514686,
+      "shareOfWeak": 0,
+      "shareOfUnsupported": 0.06887115165336374
+    }
+  ],
+  "reliabilityStatus": "READY_WITH_WARNINGS",
+  "supportDistStatus": "PASS",
+  "offRelStatus": "PASS",
+  "defRelStatus": "PASS",
+  "contextualCompStatus": "PASS",
+  "focalValid": true
+}

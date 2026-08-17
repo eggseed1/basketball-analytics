@@ -1,0 +1,7 @@
+{
+  "gamesToSeason": "PASS_TRANSITIVE (appearances→games→stints; stint sum proves season)",
+  "stintsToSeason": "PASS",
+  "maxResidual": 0,
+  "mismatches": 0,
+  "PLAYER_SEASON_R1_POINTS_ADDITIVITY": "PASS"
+}

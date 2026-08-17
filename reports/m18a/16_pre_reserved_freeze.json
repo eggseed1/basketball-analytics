@@ -1,0 +1,36 @@
+{
+  "selectedUIR": "UIR-C",
+  "lambda": 3200,
+  "residualizer": {
+    "version": "m18-uir-residualizer-v1",
+    "kind": "UIR-A",
+    "coef": [
+      -1.164367640080242,
+      0.23266695425350659,
+      0.15562732826514772
+    ],
+    "featureNames": [
+      "intercept",
+      "P_RAW",
+      "logN"
+    ]
+  },
+  "metrics": [
+    "RMSE",
+    "MAE",
+    "Pearson",
+    "Spearman",
+    "R2",
+    "bootstrap"
+  ],
+  "targets": [
+    "future_L",
+    "future_P_RAW"
+  ],
+  "pair": "2023-24→2024-25",
+  "NAMES_INSPECTED_BEFORE_RESERVED": "NO",
+  "decisionRules": {
+    "strong": "Target A ΔRMSE<0 with CI mostly <0, team-change incremental, neg controls pass"
+  },
+  "M18A_PRE_RESERVED_FREEZE_HASH": "3e9d2cf64a1b718150eeef2729b40f3ad67b2e24461b47a6aca359948b70626d"
+}

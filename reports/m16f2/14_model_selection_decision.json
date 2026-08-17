@@ -1,0 +1,41 @@
+{
+  "RMSE_A": 3.92750532857604,
+  "RMSE_B": 1.7284157676980205,
+  "deltaRMSE": 2.1990895608780194,
+  "relativeImprovement": -1.272315146607846,
+  "bootstrap": {
+    "pointEstimate": 2.1990895608780194,
+    "ciLow": 1.7530550310159128,
+    "ciHigh": 2.678804015359125,
+    "pABeatsB": 0,
+    "pBBeatsA": 1,
+    "resamples": 1000,
+    "seed": 42
+  },
+  "MAE_A": 3.140978710079982,
+  "MAE_B": 1.416487438487008,
+  "Pearson_A": 0.19802893077279982,
+  "Pearson_B": 0.38209460298458464,
+  "Spearman_A": 0.21785525354560797,
+  "Spearman_B": 0.3284127264024989,
+  "R2_A": -3.716415157313663,
+  "R2_B": 0.08657078130540785,
+  "coverage": {
+    "nAll": 419,
+    "nAEval": 106,
+    "nASupported": 0,
+    "nAWeak": 106,
+    "nAUnsupported": 313,
+    "nBEval": 419,
+    "commonN": 106,
+    "commonShare": 0.2529832935560859
+  },
+  "MODEL_SELECTION_RESULT": "APPROACH_B_WINS",
+  "RESEARCH_P_INCUMBENT": "B",
+  "incumbentAfterM16f2": "B",
+  "reason": "B materially better on native RMSE / bootstrap evidence favors B",
+  "practicalThreshold": 0.005,
+  "VALIDATION_OPENED_ONCE": true,
+  "VALIDATION_USED_TO_CHANGE_MODEL": false,
+  "lockedBeforeNameInspection": true
+}

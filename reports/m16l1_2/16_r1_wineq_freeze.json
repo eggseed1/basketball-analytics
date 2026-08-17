@@ -1,0 +1,12 @@
+{
+  "r1WinEqVersion": "drbl-r1-wineq-v1",
+  "authorized": true,
+  "R1_WIN_EQUIVALENT_STATUS": "FROZEN_RESEARCH",
+  "formula": "R1WinEq = R1Points / 37.490662671779255",
+  "PPW": 37.490662671779255,
+  "PPWSource": "M16l1 P1 team net-points→wins (preserved)",
+  "estimandClass": "PLAYER_ATTRIBUTED_WIN_EQUIVALENTS_ABOVE_CONTEXTUAL_R1",
+  "conventionalWarClaim": false,
+  "causalReplacementEffect": false,
+  "frozen": true
+}

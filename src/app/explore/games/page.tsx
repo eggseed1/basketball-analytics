@@ -3,12 +3,15 @@ import { Suspense } from "react";
 import { GameScoringScatter } from "@/components/charts/game-scoring-scatter";
 import { GameFilterToolbar } from "@/components/explore/game-filter-toolbar";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
+import { AutoRefresh } from "@/components/system/auto-refresh";
 import {
   getAvailableSeasons,
   getFilteredGames,
   getTeams,
 } from "@/data/queries";
 import { filtersFromSearchParams } from "@/lib/search-params";
+
+export const revalidate = 60;
 
 export const metadata = {
   title: "Explore Games | Basketball Analytics",
@@ -46,6 +49,7 @@ export default async function ExploreGamesPage({
           Analyze completed games by total scoring and home margin. Filters run
           once in the data layer and drive both the chart and the table.
         </p>
+        <AutoRefresh />
       </header>
 
       <Suspense

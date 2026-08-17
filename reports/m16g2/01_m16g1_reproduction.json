@@ -1,0 +1,27 @@
+{
+  "reproduced": "PASS",
+  "k1600RMSE": 2.6960956582451727,
+  "expectedK1600RMSE": 2.6960956582451727,
+  "k1600RMSE_delta": 0,
+  "practicalBandSelection": {
+    "NUMERIC_BEST_K": 2400,
+    "PRACTICAL_OPTIMUM_MIN_K": 1600,
+    "SELECTED_RESEARCH_K": 1600,
+    "FINAL_K_STATUS": "PLATEAU_SELECTED",
+    "match": true
+  },
+  "reliabilityDistributions": {
+    "median": 0.4557823129251701,
+    "p10": 0.12424740010946908,
+    "p90": 0.7057741816844428,
+    "expected": {
+      "median": 0.4557823129251701,
+      "p10": 0.12424740010946908,
+      "p90": 0.7057741816844428
+    },
+    "match": true
+  },
+  "maxDirectFormulaResidual": 0,
+  "nRows": 1982,
+  "sourceFoldRows": "reports/m16g/04_fold_rows.csv"
+}

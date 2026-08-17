@@ -1,0 +1,10 @@
+{
+  "formula": "seasonRawAbilityRate * teamN / 100",
+  "rows": 1314,
+  "playerSeasons": 1151,
+  "maxResidual": 1.4210854715202004e-14,
+  "mismatchCount": 0,
+  "tolerance": 0.000001,
+  "W0_ALLOCATION_CONSERVATION": "PASS",
+  "STINT_LEVEL_POSTERIOR_REFIT": "NO"
+}

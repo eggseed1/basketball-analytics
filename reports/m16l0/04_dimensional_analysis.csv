@@ -1,0 +1,10 @@
+quantity,symbol,numeratorUnit,denominatorUnit,scale,zeroReference,role
+rawAbilityRate,raw,Approach-B attributed points vs R1,100 combined possession appearances,pts/100 combined,R1 replacement,unshrunk rate
+validatedDRBL100,v,same attributed-point scale,100 combined possession appearances,pts/100 combined,R1 replacement (priorMean=0),canonical ability rate
+ApproachBAttributedValue,V,points vs R1,1 (season total),points,R1,raw cumulative value
+combinedPossessionAppearances,N,off appearances + def appearances,1,count,n/a,rate & provisional WAR exposure
+pairedOnCourtPossessions,N/2,team possessions while on court (approx),1,count,n/a,WAR4.0.1 exposure only
+seasonalImpact (provisional),I_raw,points vs R1,1,points,R1,raw*N/100
+team net rating (LOO target),NR,team net points,100 paired team possessions,pts/100 paired,average/zero margin context,historical calibration target for slope 5.835
+pointsPerWin,PPW,replacement-relative points,1 win,points/win,n/a,unit conversion
+WAR,W,wins above replacement,1 (season),wins,depends on WAR version,season value

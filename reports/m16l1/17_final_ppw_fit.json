@@ -1,0 +1,14 @@
+{
+  "SELECTED_PPW_SOURCE": "P1",
+  "FINAL_DEVELOPMENT_PPW": 37.490662671779255,
+  "alpha": 40.833333333333336,
+  "c": 0.02667330819822346,
+  "PPW": 37.490662671779255,
+  "developmentSeasons": [
+    "2024-25"
+  ],
+  "teamN": 30,
+  "fitHash": "f99f0d74797dcec0fa450bc2255ea70645a0a12379a9e62848c7fad6b0d5c3f4",
+  "frozen": true,
+  "refitAfterReservedForbidden": true
+}

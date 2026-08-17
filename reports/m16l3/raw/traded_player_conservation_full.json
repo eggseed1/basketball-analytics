@@ -1,0 +1,1534 @@
+{
+  "rows": [
+    {
+      "season": "2024-25",
+      "playerId": "1626153",
+      "stintCount": 2,
+      "sumStintR1Points": -14.435638450702502,
+      "seasonR1Points": -14.435638450702502,
+      "sumStintR1WinEq": -0.3850462334337129,
+      "seasonR1WinEq": -0.3850462334337129,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1626156",
+      "stintCount": 2,
+      "sumStintR1Points": -83.60600604123707,
+      "seasonR1Points": -83.60600604123707,
+      "sumStintR1WinEq": -2.230048766360449,
+      "seasonR1WinEq": -2.230048766360449,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1627732",
+      "stintCount": 2,
+      "sumStintR1Points": -109.67669953982106,
+      "seasonR1Points": -109.67669953982106,
+      "sumStintR1WinEq": -2.925440408989601,
+      "seasonR1WinEq": -2.9254404089896004,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1627747",
+      "stintCount": 2,
+      "sumStintR1Points": 17.223809122259084,
+      "seasonR1Points": 17.223809122259084,
+      "sumStintR1WinEq": 0.4594159690653893,
+      "seasonR1WinEq": 0.4594159690653893,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1627777",
+      "stintCount": 2,
+      "sumStintR1Points": -20.72183446991623,
+      "seasonR1Points": -20.72183446991623,
+      "sumStintR1WinEq": -0.5527198772486462,
+      "seasonR1WinEq": -0.5527198772486462,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1627827",
+      "stintCount": 2,
+      "sumStintR1Points": 21.123172479068234,
+      "seasonR1Points": 21.123172479068234,
+      "sumStintR1WinEq": 0.563424889658419,
+      "seasonR1WinEq": 0.563424889658419,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628368",
+      "stintCount": 2,
+      "sumStintR1Points": 3.17604608923687,
+      "seasonR1Points": 3.17604608923687,
+      "sumStintR1WinEq": 0.08471565618997734,
+      "seasonR1WinEq": 0.08471565618997737,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628380",
+      "stintCount": 2,
+      "sumStintR1Points": 1.4595710795117909,
+      "seasonR1Points": 1.4595710795117909,
+      "sumStintR1WinEq": 0.03893158924103172,
+      "seasonR1WinEq": 0.038931589241031725,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628398",
+      "stintCount": 2,
+      "sumStintR1Points": -134.98481011191024,
+      "seasonR1Points": -134.98481011191024,
+      "sumStintR1WinEq": -3.6004914421936527,
+      "seasonR1WinEq": -3.6004914421936527,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628418",
+      "stintCount": 2,
+      "sumStintR1Points": 2.9403849195828857,
+      "seasonR1Points": 2.9403849195828857,
+      "sumStintR1WinEq": 0.07842979318144283,
+      "seasonR1WinEq": 0.07842979318144283,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628470",
+      "stintCount": 2,
+      "sumStintR1Points": 0.30367288450366026,
+      "seasonR1Points": 0.30367288450366026,
+      "sumStintR1WinEq": 0.00809996043980965,
+      "seasonR1WinEq": 0.008099960439809649,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628963",
+      "stintCount": 2,
+      "sumStintR1Points": 5.5447349738337,
+      "seasonR1Points": 5.5447349738337,
+      "sumStintR1WinEq": 0.1478964248345348,
+      "seasonR1WinEq": 0.1478964248345348,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628964",
+      "stintCount": 2,
+      "sumStintR1Points": -18.13654292184947,
+      "seasonR1Points": -18.13654292184947,
+      "sumStintR1WinEq": -0.4837615990047991,
+      "seasonR1WinEq": -0.48376159900479915,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628971",
+      "stintCount": 2,
+      "sumStintR1Points": -22.57131810043315,
+      "seasonR1Points": -22.57131810043315,
+      "sumStintR1WinEq": -0.6020517241329931,
+      "seasonR1WinEq": -0.6020517241329932,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628989",
+      "stintCount": 2,
+      "sumStintR1Points": 10.314948445568948,
+      "seasonR1Points": 10.314948445568948,
+      "sumStintR1WinEq": 0.2751337989374466,
+      "seasonR1WinEq": 0.2751337989374466,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628997",
+      "stintCount": 2,
+      "sumStintR1Points": -47.663306100794316,
+      "seasonR1Points": -47.663306100794316,
+      "sumStintR1WinEq": -1.2713380533727516,
+      "seasonR1WinEq": -1.2713380533727514,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1628998",
+      "stintCount": 2,
+      "sumStintR1Points": -5.176407714307075,
+      "seasonR1Points": -5.176407714307075,
+      "sumStintR1WinEq": -0.13807191832337407,
+      "seasonR1WinEq": -0.1380719183233741,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629003",
+      "stintCount": 2,
+      "sumStintR1Points": -8.85142274274782,
+      "seasonR1Points": -8.85142274274782,
+      "sumStintR1WinEq": -0.23609672681007698,
+      "seasonR1WinEq": -0.23609672681007704,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629006",
+      "stintCount": 2,
+      "sumStintR1Points": 52.525570635280204,
+      "seasonR1Points": 52.525570635280204,
+      "sumStintR1WinEq": 1.401030733842385,
+      "seasonR1WinEq": 1.401030733842385,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629029",
+      "stintCount": 2,
+      "sumStintR1Points": 60.158785561163526,
+      "seasonR1Points": 60.158785561163526,
+      "sumStintR1WinEq": 1.6046338281037507,
+      "seasonR1WinEq": 1.6046338281037504,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629162",
+      "stintCount": 2,
+      "sumStintR1Points": 17.630647733249116,
+      "seasonR1Points": 17.630647733249116,
+      "sumStintR1WinEq": 0.47026770072326357,
+      "seasonR1WinEq": 0.47026770072326357,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629234",
+      "stintCount": 2,
+      "sumStintR1Points": -20.712390846918915,
+      "seasonR1Points": -20.712390846918915,
+      "sumStintR1WinEq": -0.5524679845819309,
+      "seasonR1WinEq": -0.5524679845819309,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629611",
+      "stintCount": 2,
+      "sumStintR1Points": -5.436528425778839,
+      "seasonR1Points": -5.436528425778839,
+      "sumStintR1WinEq": -0.14501019822920164,
+      "seasonR1WinEq": -0.1450101982292016,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629631",
+      "stintCount": 2,
+      "sumStintR1Points": 112.50420026590521,
+      "seasonR1Points": 112.50420026590521,
+      "sumStintR1WinEq": 3.000859207287144,
+      "seasonR1WinEq": 3.000859207287144,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629643",
+      "stintCount": 2,
+      "sumStintR1Points": 3.9292067197832345,
+      "seasonR1Points": 3.9292067197832345,
+      "sumStintR1WinEq": 0.10480494181130887,
+      "seasonR1WinEq": 0.10480494181130888,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629645",
+      "stintCount": 2,
+      "sumStintR1Points": -42.526844244887776,
+      "seasonR1Points": -42.526844244887776,
+      "sumStintR1WinEq": -1.1343316232417378,
+      "seasonR1WinEq": -1.1343316232417375,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629650",
+      "stintCount": 2,
+      "sumStintR1Points": 13.587757095274016,
+      "seasonR1Points": 13.587757095274016,
+      "sumStintR1WinEq": 0.36243043272484143,
+      "seasonR1WinEq": 0.36243043272484143,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629656",
+      "stintCount": 2,
+      "sumStintR1Points": 19.061908994745146,
+      "seasonR1Points": 19.061908994745146,
+      "sumStintR1WinEq": 0.5084441734633253,
+      "seasonR1WinEq": 0.5084441734633253,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1629750",
+      "stintCount": 2,
+      "sumStintR1Points": -11.168815217964916,
+      "seasonR1Points": -11.168815217964916,
+      "sumStintR1WinEq": -0.29790925051778655,
+      "seasonR1WinEq": -0.29790925051778655,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630200",
+      "stintCount": 2,
+      "sumStintR1Points": 28.678572468595306,
+      "seasonR1Points": 28.678572468595306,
+      "sumStintR1WinEq": 0.7649524021399289,
+      "seasonR1WinEq": 0.7649524021399289,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630208",
+      "stintCount": 2,
+      "sumStintR1Points": -39.62780707383036,
+      "seasonR1Points": -39.62780707383036,
+      "sumStintR1WinEq": -1.0570047113000172,
+      "seasonR1WinEq": -1.0570047113000172,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630215",
+      "stintCount": 2,
+      "sumStintR1Points": 31.242142271689332,
+      "seasonR1Points": 31.242142271689332,
+      "sumStintR1WinEq": 0.833331289585515,
+      "seasonR1WinEq": 0.833331289585515,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630231",
+      "stintCount": 2,
+      "sumStintR1Points": 7.098429745674444,
+      "seasonR1Points": 7.098429745674444,
+      "sumStintR1WinEq": 0.18933860432981142,
+      "seasonR1WinEq": 0.18933860432981145,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630283",
+      "stintCount": 2,
+      "sumStintR1Points": -2.409234489709566,
+      "seasonR1Points": -2.409234489709566,
+      "sumStintR1WinEq": -0.06426225406581287,
+      "seasonR1WinEq": -0.06426225406581289,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630322",
+      "stintCount": 2,
+      "sumStintR1Points": 4.920336247229495,
+      "seasonR1Points": 4.920336247229495,
+      "sumStintR1WinEq": 0.13124164516124256,
+      "seasonR1WinEq": 0.13124164516124256,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630531",
+      "stintCount": 2,
+      "sumStintR1Points": -0.7258058070966804,
+      "seasonR1Points": -0.7258058070966804,
+      "sumStintR1WinEq": -0.01935964198475007,
+      "seasonR1WinEq": -0.019359641984750084,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630538",
+      "stintCount": 2,
+      "sumStintR1Points": 5.2471780962817105,
+      "seasonR1Points": 5.2471780962817105,
+      "sumStintR1WinEq": 0.13995959853308954,
+      "seasonR1WinEq": 0.13995959853308954,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630539",
+      "stintCount": 2,
+      "sumStintR1Points": 53.3363879492189,
+      "seasonR1Points": 53.3363879492189,
+      "sumStintR1WinEq": 1.4226579139495277,
+      "seasonR1WinEq": 1.4226579139495277,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630550",
+      "stintCount": 2,
+      "sumStintR1Points": -12.36229572504568,
+      "seasonR1Points": -12.36229572504568,
+      "sumStintR1WinEq": -0.3297433239117238,
+      "seasonR1WinEq": -0.32974332391172384,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630558",
+      "stintCount": 2,
+      "sumStintR1Points": -58.443463632604605,
+      "seasonR1Points": -58.443463632604605,
+      "sumStintR1WinEq": -1.5588805176441272,
+      "seasonR1WinEq": -1.5588805176441274,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630579",
+      "stintCount": 2,
+      "sumStintR1Points": -32.31490192852034,
+      "seasonR1Points": -32.31490192852034,
+      "sumStintR1WinEq": -0.8619453385347888,
+      "seasonR1WinEq": -0.8619453385347888,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630658",
+      "stintCount": 3,
+      "sumStintR1Points": -5.250642363441148,
+      "seasonR1Points": -5.250642363441148,
+      "sumStintR1WinEq": -0.1400520019987142,
+      "seasonR1WinEq": -0.1400520019987142,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1630699",
+      "stintCount": 3,
+      "sumStintR1Points": -3.1754332426599685,
+      "seasonR1Points": -3.1754332426599685,
+      "sumStintR1WinEq": -0.08469930954435345,
+      "seasonR1WinEq": -0.08469930954435345,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631108",
+      "stintCount": 2,
+      "sumStintR1Points": -18.728595989200954,
+      "seasonR1Points": -18.728595989200954,
+      "sumStintR1WinEq": -0.4995536129399689,
+      "seasonR1WinEq": -0.4995536129399689,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631111",
+      "stintCount": 2,
+      "sumStintR1Points": 5.898814160197934,
+      "seasonR1Points": 5.898814160197934,
+      "sumStintR1WinEq": 0.1573408880990042,
+      "seasonR1WinEq": 0.1573408880990042,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631115",
+      "stintCount": 2,
+      "sumStintR1Points": -44.28609139959376,
+      "seasonR1Points": -44.28609139959376,
+      "sumStintR1WinEq": -1.1812565647960578,
+      "seasonR1WinEq": -1.1812565647960578,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631116",
+      "stintCount": 2,
+      "sumStintR1Points": 20.084855823617385,
+      "seasonR1Points": 20.084855823617385,
+      "sumStintR1WinEq": 0.5357295495002299,
+      "seasonR1WinEq": 0.5357295495002299,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631197",
+      "stintCount": 2,
+      "sumStintR1Points": 17.737289213645788,
+      "seasonR1Points": 17.737289213645788,
+      "sumStintR1WinEq": 0.47311218179659875,
+      "seasonR1WinEq": 0.4731121817965988,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631210",
+      "stintCount": 2,
+      "sumStintR1Points": -4.287854806816709,
+      "seasonR1Points": -4.287854806816709,
+      "sumStintR1WinEq": -0.11437127277145603,
+      "seasonR1WinEq": -0.114371272771456,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631222",
+      "stintCount": 2,
+      "sumStintR1Points": -8.889159143318453,
+      "seasonR1Points": -8.889159143318453,
+      "sumStintR1WinEq": -0.23710328145278917,
+      "seasonR1WinEq": -0.23710328145278917,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631223",
+      "stintCount": 3,
+      "sumStintR1Points": -9.807810950216716,
+      "seasonR1Points": -9.807810950216716,
+      "sumStintR1WinEq": -0.2616067642250413,
+      "seasonR1WinEq": -0.26160676422504137,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631250",
+      "stintCount": 2,
+      "sumStintR1Points": -6.455803424444458,
+      "seasonR1Points": -6.455803424444458,
+      "sumStintR1WinEq": -0.17219763440735347,
+      "seasonR1WinEq": -0.17219763440735347,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631306",
+      "stintCount": 2,
+      "sumStintR1Points": -0.5885951639966411,
+      "seasonR1Points": -0.5885951639966411,
+      "sumStintR1WinEq": -0.015699780213266293,
+      "seasonR1WinEq": -0.015699780213266293,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631311",
+      "stintCount": 2,
+      "sumStintR1Points": -2.8301635690877367,
+      "seasonR1Points": -2.8301635690877367,
+      "sumStintR1WinEq": -0.07548982512966129,
+      "seasonR1WinEq": -0.0754898251296613,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1631321",
+      "stintCount": 2,
+      "sumStintR1Points": 2.026409844542544,
+      "seasonR1Points": 2.026409844542544,
+      "sumStintR1WinEq": 0.054051054319397385,
+      "seasonR1WinEq": 0.05405105431939738,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641720",
+      "stintCount": 2,
+      "sumStintR1Points": -30.576414332902694,
+      "seasonR1Points": -30.576414332902694,
+      "sumStintR1WinEq": -0.8155741230980909,
+      "seasonR1WinEq": -0.8155741230980909,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641721",
+      "stintCount": 2,
+      "sumStintR1Points": -4.536294259712957,
+      "seasonR1Points": -4.536294259712957,
+      "sumStintR1WinEq": -0.12099797486715565,
+      "seasonR1WinEq": -0.12099797486715565,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641732",
+      "stintCount": 2,
+      "sumStintR1Points": 0.7924054391527702,
+      "seasonR1Points": 0.7924054391527702,
+      "sumStintR1WinEq": 0.02113607449647044,
+      "seasonR1WinEq": 0.02113607449647045,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641736",
+      "stintCount": 2,
+      "sumStintR1Points": -7.773308232057445,
+      "seasonR1Points": -7.773308232057445,
+      "sumStintR1WinEq": -0.2073398461934558,
+      "seasonR1WinEq": -0.2073398461934558,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641798",
+      "stintCount": 2,
+      "sumStintR1Points": -3.591627882501701,
+      "seasonR1Points": -3.591627882501701,
+      "sumStintR1WinEq": -0.09580059744330059,
+      "seasonR1WinEq": -0.0958005974433006,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641803",
+      "stintCount": 2,
+      "sumStintR1Points": -2.883703816915694,
+      "seasonR1Points": -2.883703816915694,
+      "sumStintR1WinEq": -0.07691792066098566,
+      "seasonR1WinEq": -0.07691792066098567,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1641998",
+      "stintCount": 2,
+      "sumStintR1Points": -21.617114724931298,
+      "seasonR1Points": -21.617114724931298,
+      "sumStintR1WinEq": -0.5765999634144472,
+      "seasonR1WinEq": -0.5765999634144472,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1642024",
+      "stintCount": 2,
+      "sumStintR1Points": 9.308031145691844,
+      "seasonR1Points": 9.308031145691844,
+      "sumStintR1WinEq": 0.2482759834677016,
+      "seasonR1WinEq": 0.2482759834677016,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "1642358",
+      "stintCount": 2,
+      "sumStintR1Points": -40.92932111215445,
+      "seasonR1Points": -40.92932111215445,
+      "sumStintR1WinEq": -1.09172039636855,
+      "seasonR1WinEq": -1.09172039636855,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "201988",
+      "stintCount": 2,
+      "sumStintR1Points": -5.267766413556158,
+      "seasonR1Points": -5.267766413556158,
+      "sumStintR1WinEq": -0.1405087570650337,
+      "seasonR1WinEq": -0.14050875706503368,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "202685",
+      "stintCount": 2,
+      "sumStintR1Points": -9.645939437244966,
+      "seasonR1Points": -9.645939437244966,
+      "sumStintR1WinEq": -0.2572891154710331,
+      "seasonR1WinEq": -0.25728911547103317,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "202693",
+      "stintCount": 2,
+      "sumStintR1Points": -20.024396396892737,
+      "seasonR1Points": -20.024396396892737,
+      "sumStintR1WinEq": -0.5341168965777154,
+      "seasonR1WinEq": -0.5341168965777154,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "202710",
+      "stintCount": 2,
+      "sumStintR1Points": 131.46643868079,
+      "seasonR1Points": 131.46643868079,
+      "sumStintR1WinEq": 3.506644836655558,
+      "seasonR1WinEq": 3.506644836655558,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203076",
+      "stintCount": 2,
+      "sumStintR1Points": 42.46345932243864,
+      "seasonR1Points": 42.46345932243864,
+      "sumStintR1WinEq": 1.1326409376701307,
+      "seasonR1WinEq": 1.1326409376701312,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203114",
+      "stintCount": 2,
+      "sumStintR1Points": 15.412583814594383,
+      "seasonR1Points": 15.412583814594383,
+      "sumStintR1WinEq": 0.4111045982176266,
+      "seasonR1WinEq": 0.4111045982176266,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203458",
+      "stintCount": 2,
+      "sumStintR1Points": -33.771888326379745,
+      "seasonR1Points": -33.771888326379745,
+      "sumStintR1WinEq": -0.9008079857655121,
+      "seasonR1WinEq": -0.9008079857655121,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203471",
+      "stintCount": 3,
+      "sumStintR1Points": -74.59016605579261,
+      "seasonR1Points": -74.59016605579261,
+      "sumStintR1WinEq": -1.9895664877628225,
+      "seasonR1WinEq": -1.9895664877628225,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203482",
+      "stintCount": 2,
+      "sumStintR1Points": -13.37578968569743,
+      "seasonR1Points": -13.37578968569743,
+      "sumStintR1WinEq": -0.3567765606812261,
+      "seasonR1WinEq": -0.35677656068122615,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203897",
+      "stintCount": 2,
+      "sumStintR1Points": 78.03887938567658,
+      "seasonR1Points": 78.03887938567658,
+      "sumStintR1WinEq": 2.081555081298139,
+      "seasonR1WinEq": 2.081555081298139,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203901",
+      "stintCount": 2,
+      "sumStintR1Points": -71.68241668780082,
+      "seasonR1Points": -71.68241668780082,
+      "sumStintR1WinEq": -1.9120071927071882,
+      "seasonR1WinEq": -1.9120071927071882,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203935",
+      "stintCount": 2,
+      "sumStintR1Points": -14.649075453990406,
+      "seasonR1Points": -14.649075453990406,
+      "sumStintR1WinEq": -0.3907393044033164,
+      "seasonR1WinEq": -0.3907393044033164,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203937",
+      "stintCount": 2,
+      "sumStintR1Points": 10.001855250055492,
+      "seasonR1Points": 10.001855250055492,
+      "sumStintR1WinEq": 0.2667825676387495,
+      "seasonR1WinEq": 0.2667825676387495,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203952",
+      "stintCount": 2,
+      "sumStintR1Points": 36.660718717205214,
+      "seasonR1Points": 36.660718717205214,
+      "sumStintR1WinEq": 0.9778626491123943,
+      "seasonR1WinEq": 0.9778626491123942,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203992",
+      "stintCount": 2,
+      "sumStintR1Points": -23.71258862985379,
+      "seasonR1Points": -23.71258862985379,
+      "sumStintR1WinEq": -0.6324931847017796,
+      "seasonR1WinEq": -0.6324931847017796,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203994",
+      "stintCount": 2,
+      "sumStintR1Points": -42.60676791593481,
+      "seasonR1Points": -42.60676791593481,
+      "sumStintR1WinEq": -1.1364634519519086,
+      "seasonR1WinEq": -1.1364634519519083,
+      "ok": true
+    },
+    {
+      "season": "2024-25",
+      "playerId": "203995",
+      "stintCount": 2,
+      "sumStintR1Points": -60.055120089400845,
+      "seasonR1Points": -60.055120089400845,
+      "sumStintR1WinEq": -1.6018687270259102,
+      "seasonR1WinEq": -1.6018687270259102,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1626145",
+      "stintCount": 3,
+      "sumStintR1Points": -44.62276369412669,
+      "seasonR1Points": -44.62276369412669,
+      "sumStintR1WinEq": -1.190236728669938,
+      "seasonR1WinEq": -1.1902367286699378,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1627741",
+      "stintCount": 2,
+      "sumStintR1Points": -8.983623983741932,
+      "seasonR1Points": -8.983623983741932,
+      "sumStintR1WinEq": -0.23962297125530058,
+      "seasonR1WinEq": -0.2396229712553006,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1627824",
+      "stintCount": 2,
+      "sumStintR1Points": -36.43771178503253,
+      "seasonR1Points": -36.43771178503253,
+      "sumStintR1WinEq": -0.9719143164802122,
+      "seasonR1WinEq": -0.971914316480212,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1627826",
+      "stintCount": 2,
+      "sumStintR1Points": -13.746147675257482,
+      "seasonR1Points": -13.746147675257482,
+      "sumStintR1WinEq": -0.3666552334804358,
+      "seasonR1WinEq": -0.3666552334804358,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628379",
+      "stintCount": 2,
+      "sumStintR1Points": 77.53650165251244,
+      "seasonR1Points": 77.53650165251244,
+      "sumStintR1WinEq": 2.0681550051895274,
+      "seasonR1WinEq": 2.0681550051895274,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628396",
+      "stintCount": 2,
+      "sumStintR1Points": -8.31408346254971,
+      "seasonR1Points": -8.31408346254971,
+      "sumStintR1WinEq": -0.22176411058234133,
+      "seasonR1WinEq": -0.22176411058234133,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628963",
+      "stintCount": 2,
+      "sumStintR1Points": 57.24848067698684,
+      "seasonR1Points": 57.24848067698684,
+      "sumStintR1WinEq": 1.5270063689773106,
+      "seasonR1WinEq": 1.5270063689773106,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628964",
+      "stintCount": 2,
+      "sumStintR1Points": -5.636128355729154,
+      "seasonR1Points": -5.636128355729154,
+      "sumStintR1WinEq": -0.15033418867711018,
+      "seasonR1WinEq": -0.15033418867711018,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628975",
+      "stintCount": 2,
+      "sumStintR1Points": -5.615469500296554,
+      "seasonR1Points": -5.615469500296554,
+      "sumStintR1WinEq": -0.14978314865913392,
+      "seasonR1WinEq": -0.1497831486591339,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628989",
+      "stintCount": 2,
+      "sumStintR1Points": -12.742558050580016,
+      "seasonR1Points": -12.742558050580016,
+      "sumStintR1WinEq": -0.3398861781168744,
+      "seasonR1WinEq": -0.3398861781168743,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1628991",
+      "stintCount": 2,
+      "sumStintR1Points": 53.525343681624975,
+      "seasonR1Points": 53.525343681624975,
+      "sumStintR1WinEq": 1.427697988435816,
+      "seasonR1WinEq": 1.4276979884358159,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629012",
+      "stintCount": 2,
+      "sumStintR1Points": 61.821784343331224,
+      "seasonR1Points": 61.821784343331224,
+      "sumStintR1WinEq": 1.6489915071537797,
+      "seasonR1WinEq": 1.6489915071537797,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629014",
+      "stintCount": 2,
+      "sumStintR1Points": 2.830245712425741,
+      "seasonR1Points": 2.830245712425741,
+      "sumStintR1WinEq": 0.07549201616423235,
+      "seasonR1WinEq": 0.07549201616423233,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629027",
+      "stintCount": 2,
+      "sumStintR1Points": -5.489944833443765,
+      "seasonR1Points": -5.489944833443765,
+      "sumStintR1WinEq": -0.14643499053369013,
+      "seasonR1WinEq": -0.14643499053369013,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629111",
+      "stintCount": 2,
+      "sumStintR1Points": -14.14519072480166,
+      "seasonR1Points": -14.14519072480166,
+      "sumStintR1WinEq": -0.37729903172528667,
+      "seasonR1WinEq": -0.3772990317252866,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629216",
+      "stintCount": 2,
+      "sumStintR1Points": -41.78507489248385,
+      "seasonR1Points": -41.78507489248385,
+      "sumStintR1WinEq": -1.114546180693071,
+      "seasonR1WinEq": -1.1145461806930708,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629599",
+      "stintCount": 2,
+      "sumStintR1Points": 14.340793406782165,
+      "seasonR1Points": 14.340793406782165,
+      "sumStintR1WinEq": 0.38251640234615175,
+      "seasonR1WinEq": 0.3825164023461517,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629631",
+      "stintCount": 2,
+      "sumStintR1Points": -36.96032588424074,
+      "seasonR1Points": -36.96032588424074,
+      "sumStintR1WinEq": -0.9858541634171294,
+      "seasonR1WinEq": -0.9858541634171294,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629632",
+      "stintCount": 2,
+      "sumStintR1Points": 0.9770907689976198,
+      "seasonR1Points": 0.9770907689976198,
+      "sumStintR1WinEq": 0.026062243219112713,
+      "seasonR1WinEq": 0.02606224321911268,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629636",
+      "stintCount": 2,
+      "sumStintR1Points": -24.127275242078923,
+      "seasonR1Points": -24.127275242078923,
+      "sumStintR1WinEq": -0.6435542485153377,
+      "seasonR1WinEq": -0.6435542485153377,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629646",
+      "stintCount": 4,
+      "sumStintR1Points": 9.545850598244868,
+      "seasonR1Points": 9.545850598244868,
+      "sumStintR1WinEq": 0.2546194150211812,
+      "seasonR1WinEq": 0.2546194150211812,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1629723",
+      "stintCount": 2,
+      "sumStintR1Points": 36.44310018765677,
+      "seasonR1Points": 36.44310018765677,
+      "sumStintR1WinEq": 0.9720580430041043,
+      "seasonR1WinEq": 0.9720580430041044,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630208",
+      "stintCount": 2,
+      "sumStintR1Points": -50.65127760463937,
+      "seasonR1Points": -50.65127760463937,
+      "sumStintR1WinEq": -1.3510371381823196,
+      "seasonR1WinEq": -1.3510371381823199,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630214",
+      "stintCount": 2,
+      "sumStintR1Points": -16.935420120352838,
+      "seasonR1Points": -16.935420120352838,
+      "sumStintR1WinEq": -0.451723680336566,
+      "seasonR1WinEq": -0.45172368033656596,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630228",
+      "stintCount": 2,
+      "sumStintR1Points": -14.335316404104699,
+      "seasonR1Points": -14.335316404104699,
+      "sumStintR1WinEq": -0.3823703125657332,
+      "seasonR1WinEq": -0.3823703125657332,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630245",
+      "stintCount": 2,
+      "sumStintR1Points": 113.73553462876626,
+      "seasonR1Points": 113.73553462876626,
+      "sumStintR1WinEq": 3.0337029682427996,
+      "seasonR1WinEq": 3.0337029682427996,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630249",
+      "stintCount": 2,
+      "sumStintR1Points": 62.14111686027378,
+      "seasonR1Points": 62.14111686027378,
+      "sumStintR1WinEq": 1.657509161795903,
+      "seasonR1WinEq": 1.657509161795903,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630526",
+      "stintCount": 2,
+      "sumStintR1Points": -13.98059225263873,
+      "seasonR1Points": -13.98059225263873,
+      "sumStintR1WinEq": -0.37290864594832807,
+      "seasonR1WinEq": -0.37290864594832807,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630534",
+      "stintCount": 2,
+      "sumStintR1Points": -1.2843874283019154,
+      "seasonR1Points": -1.2843874283019154,
+      "sumStintR1WinEq": -0.034258861721020634,
+      "seasonR1WinEq": -0.034258861721020634,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630543",
+      "stintCount": 2,
+      "sumStintR1Points": 23.08550000331102,
+      "seasonR1Points": 23.08550000331102,
+      "sumStintR1WinEq": 0.6157666564984037,
+      "seasonR1WinEq": 0.6157666564984036,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630557",
+      "stintCount": 2,
+      "sumStintR1Points": -4.3628738176451645,
+      "seasonR1Points": -4.3628738176451645,
+      "sumStintR1WinEq": -0.11637227796800925,
+      "seasonR1WinEq": -0.11637227796800927,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630560",
+      "stintCount": 2,
+      "sumStintR1Points": -52.23979656114031,
+      "seasonR1Points": -52.23979656114031,
+      "sumStintR1WinEq": -1.3934081938877898,
+      "seasonR1WinEq": -1.3934081938877898,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630625",
+      "stintCount": 2,
+      "sumStintR1Points": -11.935061449181932,
+      "seasonR1Points": -11.935061449181932,
+      "sumStintR1WinEq": -0.3183475723987652,
+      "seasonR1WinEq": -0.31834757239876527,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630631",
+      "stintCount": 2,
+      "sumStintR1Points": 10.814846082337796,
+      "seasonR1Points": 10.814846082337796,
+      "sumStintR1WinEq": 0.28846772267054566,
+      "seasonR1WinEq": 0.28846772267054566,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630644",
+      "stintCount": 2,
+      "sumStintR1Points": 0.9746924191044544,
+      "seasonR1Points": 0.9746924191044544,
+      "sumStintR1WinEq": 0.025998271293245098,
+      "seasonR1WinEq": 0.0259982712932451,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1630702",
+      "stintCount": 2,
+      "sumStintR1Points": -15.870420731795546,
+      "seasonR1Points": -15.870420731795546,
+      "sumStintR1WinEq": -0.42331662341465776,
+      "seasonR1WinEq": -0.42331662341465776,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631093",
+      "stintCount": 2,
+      "sumStintR1Points": -9.429906669462808,
+      "seasonR1Points": -9.429906669462808,
+      "sumStintR1WinEq": -0.25152680687506446,
+      "seasonR1WinEq": -0.25152680687506446,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631097",
+      "stintCount": 2,
+      "sumStintR1Points": -41.688389490855826,
+      "seasonR1Points": -41.688389490855826,
+      "sumStintR1WinEq": -1.1119672611771776,
+      "seasonR1WinEq": -1.1119672611771776,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631110",
+      "stintCount": 2,
+      "sumStintR1Points": -11.212226709833022,
+      "seasonR1Points": -11.212226709833022,
+      "sumStintR1WinEq": -0.29906717861972926,
+      "seasonR1WinEq": -0.29906717861972926,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631116",
+      "stintCount": 2,
+      "sumStintR1Points": 0.22612334224819364,
+      "seasonR1Points": 0.22612334224819364,
+      "sumStintR1WinEq": 0.006031457598598425,
+      "seasonR1WinEq": 0.0060314575985984335,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631132",
+      "stintCount": 3,
+      "sumStintR1Points": -24.351775390134158,
+      "seasonR1Points": -24.351775390134158,
+      "sumStintR1WinEq": -0.6495424101549618,
+      "seasonR1WinEq": -0.6495424101549618,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631159",
+      "stintCount": 2,
+      "sumStintR1Points": 22.683418679027675,
+      "seasonR1Points": 22.683418679027675,
+      "sumStintR1WinEq": 0.6050418174150443,
+      "seasonR1WinEq": 0.6050418174150441,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631165",
+      "stintCount": 2,
+      "sumStintR1Points": 47.11397725338139,
+      "seasonR1Points": 47.11397725338139,
+      "sumStintR1WinEq": 1.2566856357235316,
+      "seasonR1WinEq": 1.2566856357235316,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631169",
+      "stintCount": 2,
+      "sumStintR1Points": 49.1409212602783,
+      "seasonR1Points": 49.1409212602783,
+      "sumStintR1WinEq": 1.3107509379200348,
+      "seasonR1WinEq": 1.3107509379200348,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631172",
+      "stintCount": 2,
+      "sumStintR1Points": -98.29592589312108,
+      "seasonR1Points": -98.29592589312108,
+      "sumStintR1WinEq": -2.6218775259769522,
+      "seasonR1WinEq": -2.6218775259769527,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631207",
+      "stintCount": 2,
+      "sumStintR1Points": 4.090100178749272,
+      "seasonR1Points": 4.090100178749272,
+      "sumStintR1WinEq": 0.10909650262938822,
+      "seasonR1WinEq": 0.1090965026293882,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631213",
+      "stintCount": 2,
+      "sumStintR1Points": -36.01047932350283,
+      "seasonR1Points": -36.01047932350283,
+      "sumStintR1WinEq": -0.9605186133615445,
+      "seasonR1WinEq": -0.9605186133615445,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631218",
+      "stintCount": 2,
+      "sumStintR1Points": -2.0555951794905987,
+      "seasonR1Points": -2.0555951794905987,
+      "sumStintR1WinEq": -0.05482952375333522,
+      "seasonR1WinEq": -0.05482952375333522,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1631246",
+      "stintCount": 2,
+      "sumStintR1Points": -44.4644377480369,
+      "seasonR1Points": -44.4644377480369,
+      "sumStintR1WinEq": -1.1860136519141096,
+      "seasonR1WinEq": -1.1860136519141096,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1641707",
+      "stintCount": 2,
+      "sumStintR1Points": 13.06163892471254,
+      "seasonR1Points": 13.06163892471254,
+      "sumStintR1WinEq": 0.34839712061276973,
+      "seasonR1WinEq": 0.3483971206127697,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1641712",
+      "stintCount": 2,
+      "sumStintR1Points": -52.827587953316325,
+      "seasonR1Points": -52.827587953316325,
+      "sumStintR1WinEq": -1.4090865348475634,
+      "seasonR1WinEq": -1.4090865348475634,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1641738",
+      "stintCount": 2,
+      "sumStintR1Points": -28.58162659484894,
+      "seasonR1Points": -28.58162659484894,
+      "sumStintR1WinEq": -0.7623665349709461,
+      "seasonR1WinEq": -0.7623665349709461,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1641763",
+      "stintCount": 2,
+      "sumStintR1Points": 6.987721410836289,
+      "seasonR1Points": 6.987721410836289,
+      "sumStintR1WinEq": 0.18638564679456124,
+      "seasonR1WinEq": 0.1863856467945612,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1641790",
+      "stintCount": 2,
+      "sumStintR1Points": -18.987612723069343,
+      "seasonR1Points": -18.987612723069343,
+      "sumStintR1WinEq": -0.5064624461109377,
+      "seasonR1WinEq": -0.5064624461109377,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642265",
+      "stintCount": 2,
+      "sumStintR1Points": -96.38013518789381,
+      "seasonR1Points": -96.38013518789381,
+      "sumStintR1WinEq": -2.5707770500531337,
+      "seasonR1WinEq": -2.5707770500531337,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642272",
+      "stintCount": 2,
+      "sumStintR1Points": -21.01838788413587,
+      "seasonR1Points": -21.01838788413587,
+      "sumStintR1WinEq": -0.5606299378633621,
+      "seasonR1WinEq": -0.560629937863362,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642354",
+      "stintCount": 2,
+      "sumStintR1Points": -27.005554348108575,
+      "seasonR1Points": -27.005554348108575,
+      "sumStintR1WinEq": -0.7203274741909738,
+      "seasonR1WinEq": -0.7203274741909738,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642358",
+      "stintCount": 2,
+      "sumStintR1Points": -26.52305955467925,
+      "seasonR1Points": -26.52305955467925,
+      "sumStintR1WinEq": -0.7074577418617952,
+      "seasonR1WinEq": -0.7074577418617952,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642383",
+      "stintCount": 2,
+      "sumStintR1Points": -96.60552935841568,
+      "seasonR1Points": -96.60552935841568,
+      "sumStintR1WinEq": -2.5767890582295463,
+      "seasonR1WinEq": -2.5767890582295463,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642403",
+      "stintCount": 2,
+      "sumStintR1Points": -7.844800934119702,
+      "seasonR1Points": -7.844800934119702,
+      "sumStintR1WinEq": -0.20924679306948613,
+      "seasonR1WinEq": -0.20924679306948613,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642434",
+      "stintCount": 2,
+      "sumStintR1Points": 4.247320751591699,
+      "seasonR1Points": 4.247320751591699,
+      "sumStintR1WinEq": 0.11329009542391552,
+      "seasonR1WinEq": 0.11329009542391552,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642484",
+      "stintCount": 3,
+      "sumStintR1Points": -15.42793660190964,
+      "seasonR1Points": -15.42793660190964,
+      "sumStintR1WinEq": -0.4115141078453883,
+      "seasonR1WinEq": -0.4115141078453882,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642933",
+      "stintCount": 2,
+      "sumStintR1Points": -12.785737629535792,
+      "seasonR1Points": -12.785737629535792,
+      "sumStintR1WinEq": -0.34103792033423125,
+      "seasonR1WinEq": -0.34103792033423125,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "1642959",
+      "stintCount": 2,
+      "sumStintR1Points": -8.528037613613547,
+      "seasonR1Points": -8.528037613613547,
+      "sumStintR1WinEq": -0.2274709755939563,
+      "seasonR1WinEq": -0.2274709755939563,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "201935",
+      "stintCount": 2,
+      "sumStintR1Points": 2.7674073658996443,
+      "seasonR1Points": 2.7674073658996443,
+      "sumStintR1WinEq": 0.07381590958067497,
+      "seasonR1WinEq": 0.07381590958067498,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "202696",
+      "stintCount": 2,
+      "sumStintR1Points": 9.0866190644476,
+      "seasonR1Points": 9.0866190644476,
+      "sumStintR1WinEq": 0.2423701907858638,
+      "seasonR1WinEq": 0.2423701907858638,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "203114",
+      "stintCount": 2,
+      "sumStintR1Points": -84.81019236952258,
+      "seasonR1Points": -84.81019236952258,
+      "sumStintR1WinEq": -2.2621683994228956,
+      "seasonR1WinEq": -2.2621683994228956,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "203468",
+      "stintCount": 2,
+      "sumStintR1Points": 30.653680776987148,
+      "seasonR1Points": 30.653680776987148,
+      "sumStintR1WinEq": 0.8176350747745363,
+      "seasonR1WinEq": 0.8176350747745363,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "203471",
+      "stintCount": 2,
+      "sumStintR1Points": -98.88602115206808,
+      "seasonR1Points": -98.88602115206808,
+      "sumStintR1WinEq": -2.637617318685156,
+      "seasonR1WinEq": -2.6376173186851566,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "203486",
+      "stintCount": 2,
+      "sumStintR1Points": -1.5320231521893168,
+      "seasonR1Points": -1.5320231521893168,
+      "sumStintR1WinEq": -0.04086412570515946,
+      "seasonR1WinEq": -0.04086412570515946,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "203937",
+      "stintCount": 3,
+      "sumStintR1Points": 5.733856006958861,
+      "seasonR1Points": 5.733856006958861,
+      "sumStintR1WinEq": 0.15294090843784863,
+      "seasonR1WinEq": 0.15294090843784866,
+      "ok": true
+    },
+    {
+      "season": "2025-26",
+      "playerId": "204001",
+      "stintCount": 2,
+      "sumStintR1Points": -2.037836082584879,
+      "seasonR1Points": -2.037836082584879,
+      "sumStintR1WinEq": -0.05435582988824684,
+      "seasonR1WinEq": -0.05435582988824684,
+      "ok": true
+    }
+  ]
+}

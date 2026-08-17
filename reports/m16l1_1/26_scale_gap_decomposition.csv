@@ -1,0 +1,8 @@
+contributor,present,direction,estimatedMagnitude,evidence,provenCausal
+baseline_variation,YES,omitted_variable_in_constant_intercept_model,baseline SD=285.9; corr(net)=0.980,exact algebra Net=Attr+Baseline+U; baseline materially varies,YES_PARTIAL
+unassigned_residual,YES,small_relative_to_net_scale,leagueAbsU=3368.7; teamSD=17.3,unobserved bucket in sequential attribution,PARTIAL
+coverage_gap,NO,n/a,0,Y_off vs scoreboard PF coverage,NO
+stint_allocation_smoothing,NO,minor_for_scale_b,obs free-b=2.236 vs alloc free-b=2.181,observed-stint diagnostic,NO
+offense_defense_accounting,YES_CORRECT_ZERO_SUM,not_a_doubling_bug,none,O→+Δ D→−Δ identities PASS,NO_AS_SCALE_BUG
+deterministic_unit_factor,NO,n/a,NONE,no exact ×2 in value equation,NO
+residual_vs_full_points_misspecification,YES,primary_semantic,W0 vs Net free-b=2.181; AttrStable vs (Net-Baseline-U) free-b=1.000,Approach-B is Y−V0 residual; validating against full NetPoints with constant intercept conflates baseline,YES

@@ -1,0 +1,7 @@
+{
+  "formula": "teamN / seasonN",
+  "playerSeasons": 1151,
+  "maxSumToOneResidual": 0,
+  "mismatchCount": 0,
+  "TEAM_EXPOSURE_SHARE_CONSERVATION": "PASS"
+}

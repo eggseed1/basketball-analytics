@@ -1,0 +1,8 @@
+file,line,snippet,status
+src/app/learn/drbl/page.tsx,48,"def: ""R1 Points expressed in marginal win-equivalent units using a frozen development points-per-win conversion. Not traditional WAR."",",ALLOWED_METHODOLOGY_CONTEXT
+src/data/types/player-season.ts,124,* R1 Points / frozen P1. Not conventional WAR.,ALLOWED_METHODOLOGY_CONTEXT
+src/data/types/player-season.ts,131,* @deprecated Legacy seasonalImpact / pointsPerWin (historical WAR generations).,ALLOWED_METHODOLOGY_CONTEXT
+src/data/types/player-season.ts,136,/** Seasonal points above replacement (pre-WAR conversion; legacy companion). */,ALLOWED_METHODOLOGY_CONTEXT
+src/lib/stat-glossary.ts,31,"title: ""Value over replacement player"",",ALLOWED_METHODOLOGY_CONTEXT
+src/lib/stat-glossary.ts,101,"body: ""R1 Points expressed in marginal win-equivalent units. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement."",",ALLOWED_METHODOLOGY_CONTEXT
+src/lib/stat-glossary.ts,106,"body: ""R1 Points expressed in marginal win-equivalent units. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement."",",ALLOWED_METHODOLOGY_CONTEXT

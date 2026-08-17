@@ -1,0 +1,7 @@
+{
+  "HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH": "2b2d862a242978718c2c3cf550eb1dd23b7ba13076fb196a26ad0a9f11af96a6",
+  "fileCount": 9800,
+  "totalBytes": 1040349531,
+  "root": "data/drbl/raw/games",
+  "algorithm": "sha256(relativePath,bytes,sha256 CSV manifest)"
+}

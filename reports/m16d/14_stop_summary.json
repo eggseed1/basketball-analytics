@@ -1,0 +1,210 @@
+{
+  "freeze": {
+    "milestone": "M16d",
+    "timestamp": "2026-08-12T16:31:23.272Z",
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "evaluationProtocolVersion": "drbl-eval-v1",
+    "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+    "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+    "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+    "targetVersion": "drbl-targets-v1",
+    "eligibilityVersion": "drbl-eligibility-v1",
+    "target": "future_block_residual_per_100",
+    "earlyFrac": 0.7,
+    "P_version": "approach-b-sequential-drbl-p",
+    "M6_version": "drbl-m6-shot-decision-v1",
+    "SDV_version": "sdv100 = EB(100*sdvSum/sdvN) post-M7 C2 continue",
+    "m6CandidateField": "sdv100",
+    "m6CandidateUnit": "points_per_100_shot_decisions_EB_shrunk",
+    "fusionConstraintType": "ridge_with_intercept",
+    "fusionConstraintDetail": "fitFusionRidgeFull: unrestricted ridge on [1,P,LN,B,hasB] with λ on non-intercept terms; predictions use signed coefficients; toSimplexWeights() is diagnostic renormalization only and does not alter predictions",
+    "fusion": {
+      "version": "drbl-fusion-oof-v1",
+      "lambda": 8,
+      "folds": 5,
+      "constraint": "ridge_with_intercept",
+      "m16cConstraintDoc": "ridge_unconstrained_predict;simplex_report_only",
+      "note": "P+M6 uses LN feature slot for sdv100; B unused; same ridge math as M16c"
+    },
+    "posterior": {
+      "version": "eb-fused-v1",
+      "priorMean": 0,
+      "priorStrength": 200
+    },
+    "m6": {
+      "fusedIntoDrbl100": false
+    },
+    "war": {
+      "version": "unchanged_not_used"
+    },
+    "base": "M16C_P",
+    "reservedTestAccessed": false,
+    "hashesMatchM16b": true
+  },
+  "pMetrics": {
+    "n": 419,
+    "RMSE": 2.409176880654843,
+    "MAE": 1.7535410774334381,
+    "Pearson": 0.3689320376237677,
+    "Spearman": 0.39980456674339354,
+    "R2": 0.1195452349109668,
+    "calibrationIntercept": 0.2716266197833243,
+    "calibrationSlope": 1.4271016240133199
+  },
+  "m6Metrics": {
+    "n": 419,
+    "RMSE": 2.5810034128388946,
+    "MAE": 1.902842802018574,
+    "Pearson": 0.015394023752793879,
+    "Spearman": 0.01463987588846275,
+    "R2": -0.010524464480209827,
+    "calibrationIntercept": 0.019990141148808756,
+    "calibrationSlope": 0.2811275702504838
+  },
+  "pm6Metrics": {
+    "n": 419,
+    "RMSE": 2.4087818289661365,
+    "MAE": 1.753177058342967,
+    "Pearson": 0.3691521942594156,
+    "Spearman": 0.3994763432773733,
+    "R2": 0.11983396142727876,
+    "calibrationIntercept": 0.26925950625503786,
+    "calibrationSlope": 1.425335291671793
+  },
+  "resComboMetrics": {
+    "n": 419,
+    "RMSE": 2.409255823102911,
+    "MAE": 1.7536602853572467,
+    "Pearson": 0.3690741420378347,
+    "Spearman": 0.39960097684001716,
+    "R2": 0.1194875335492438,
+    "calibrationIntercept": 0.2746792227070212,
+    "calibrationSlope": 1.428454244518805
+  },
+  "bootPm6": {
+    "pointEstimate": -0.0003950516887063493,
+    "ciLow": -0.0007779925843007796,
+    "ciHigh": -0.000036465465131918506,
+    "probCandidateBeatsBaseline": 0.986,
+    "resamples": 1000,
+    "seed": 42
+  },
+  "corrM6Y": 0.015394023752793836,
+  "corrM6RP": -0.020699403445959663,
+  "partialM6": -0.037159283441644604,
+  "corrPM6": 0.1344913598151604,
+  "weights": {
+    "wP": 0.54212074913898,
+    "wM6": -0.0020701224895601626,
+    "intercept": -0.23718741779760627
+  },
+  "subgroupRows": [
+    {
+      "group": "Q1",
+      "N": 104,
+      "meanPossessions": 287.3942307692308,
+      "P_RMSE": 3.6556667049129317,
+      "PM6_RMSE": 3.655456130647785,
+      "delta": -0.00021057426514659028,
+      "Corr_M6_residualAfterP": -0.10762667241664078
+    },
+    {
+      "group": "Q2",
+      "N": 105,
+      "meanPossessions": 1067.4857142857143,
+      "P_RMSE": 1.8840414202211002,
+      "PM6_RMSE": 1.8841276367918445,
+      "delta": 0.00008621657074425748,
+      "Corr_M6_residualAfterP": 0.12087100325846681
+    },
+    {
+      "group": "Q3",
+      "N": 105,
+      "meanPossessions": 1870.3333333333333,
+      "P_RMSE": 1.7069563190798693,
+      "PM6_RMSE": 1.706459304275176,
+      "delta": -0.0004970148046934408,
+      "Corr_M6_residualAfterP": -0.015048749761514175
+    },
+    {
+      "group": "Q4",
+      "N": 105,
+      "meanPossessions": 2735.4,
+      "P_RMSE": 1.8604622363893004,
+      "PM6_RMSE": 1.8591990212935887,
+      "delta": -0.0012632150957117005,
+      "Corr_M6_residualAfterP": -0.05445216055119171
+    }
+  ],
+  "extremeRows": [
+    {
+      "bucket": "bottom_5pct",
+      "n": 20,
+      "meanM6": -5.519500000000001,
+      "meanP": -0.04949999999999999,
+      "meanY": -0.07980355933655954,
+      "meanResidualAfterP": 0.18340078658143688,
+      "calibrationSlope": -0.9274388493702651,
+      "calibrationIntercept": -5.198802288435738,
+      "pearson_M6_Y": -0.2927452578278698
+    },
+    {
+      "bucket": "top_5pct",
+      "n": 20,
+      "meanM6": 4.1995,
+      "meanP": 0.641,
+      "meanY": 0.2857609060971703,
+      "meanResidualAfterP": 0.1756438078649089,
+      "calibrationSlope": -0.39689670580563713,
+      "calibrationIntercept": 1.9525286221279434,
+      "pearson_M6_Y": -0.22085858342414363
+    }
+  ],
+  "m6ExtremeRisk": "M6_EXTREME_CALIBRATION_RISK",
+  "nextBase": "P + M6",
+  "decision": "P+M6_validated_improvement",
+  "m6Class": "C",
+  "statuses": {
+    "M16D_SPLITS_MATCH_M16B": "PASS",
+    "M16C_P_BASELINE_REPRODUCED": "PASS",
+    "FUSION_CONSTRAINT_VERIFIED": "PASS",
+    "RESERVED_TEST_ACCESSED": "NO",
+    "VALIDATION_ROWS_USED_IN_FIT": 0,
+    "TARGET_UNCHANGED": "PASS",
+    "ELIGIBILITY_UNCHANGED": "PASS",
+    "M6_FORMULA_CHANGED": "NO",
+    "M6_STANDALONE_COMPLETE": "PASS",
+    "M6_RESIDUAL_SIGNAL_COMPLETE": "PASS",
+    "P_M6_FUSION_COMPLETE": "PASS",
+    "PAIRED_BOOTSTRAP_COMPLETE": "PASS",
+    "POSTERIOR_ROBUSTNESS_COMPLETE": "PASS",
+    "LN_REINTRODUCED": "NO",
+    "B_REINTRODUCED": "NO",
+    "APPROACH_A_RUN": "NO",
+    "WAR_CHANGED": "NO",
+    "PRODUCTION_DRBL_CHANGED": "NO",
+    "M6_EXTREME_CALIBRATION_RISK": true,
+    "M16D_NEXT_BASE": "P + M6",
+    "m6Class": "C",
+    "decision": "P+M6_validated_improvement"
+  },
+  "coverage": {
+    "validationN": 419,
+    "m6CoverageN": 419,
+    "missingM6": 0
+  },
+  "posterior": {
+    "rawP": 2.409176880654843,
+    "rawPM6": 2.4087818289661365,
+    "ebP": 2.4334342620486393,
+    "ebPM6": 2.433077288295319
+  },
+  "improvementShare": {
+    "improved": 208,
+    "worsened": 211,
+    "meanSEImp": 0.0019033427243483774
+  },
+  "reservedTestAccessed": false,
+  "VALIDATION_ROWS_USED_IN_FIT": 0
+}

@@ -1,0 +1,6 @@
+{
+  "oldRule": "minutes >= 500 AND drblUncertainty > 0",
+  "newRule": "minutes >= 500 AND hasValidatedDrblEstimate",
+  "PERCENTILE_MATH_CHANGED": "NO",
+  "NEW_SCIENTIFIC_EXPOSURE_THRESHOLD_INTRODUCED": "NO"
+}

@@ -1,0 +1,8 @@
+field,formula,shrinkage,fusion,unit,zero,role
+rawAbilityRate,100*totalValue/N,none,no,pts/100 vs R1,R1,validated input
+drblP,EB200(rawAbilityRate),k=200,input,pts/100,R1,diagnostic / fusion input
+drblLn,EB200(LN ridge),k=200,input,pts/100,R1-ish,diagnostic
+drblB,EB200(behavior ridge),k=200,input,pts/100,R1-ish,diagnostic
+fusedRateRaw,"OOF ridge(P,LN,B)",pre-fused components EB200,yes,pts/100,R1,legacy published input
+posteriorAbilityRate / drbl100,EB200(fusedRateRaw),k=200 second EB,yes,pts/100,R1,LIVE canonical ability
+validatedDRBL100,EB1600(rawAbilityRate),k=1600 once,no,pts/100,R1,SHADOW validated ability

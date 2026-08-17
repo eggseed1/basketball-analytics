@@ -1,0 +1,43 @@
+{
+  "milestone": "M16c",
+  "statuses": {
+    "M16C_SPLITS_MATCH_M16B": "PASS",
+    "RESERVED_TEST_ACCESSED": "NO",
+    "TARGET_UNCHANGED": "PASS",
+    "ELIGIBILITY_UNCHANGED": "PASS",
+    "CANDIDATE_SAMPLE_EQUALITY": "PASS",
+    "P_STANDALONE_COMPLETE": "PASS",
+    "LN_STANDALONE_COMPLETE": "PASS",
+    "B_STANDALONE_COMPLETE": "PASS",
+    "PAIRWISE_ABLATIONS_COMPLETE": "PASS",
+    "FULL_FUSION_COMPLETE": "PASS",
+    "INCREMENTAL_RESIDUAL_TEST_COMPLETE": "PASS",
+    "FUSION_WEIGHT_DIAGNOSTICS_COMPLETE": "PASS",
+    "POSTERIOR_ABLATION_COMPLETE": "PASS",
+    "M6_CHANGED": "NO",
+    "APPROACH_A_RUN": "NO",
+    "WAR_CHANGED": "NO",
+    "MODEL_FORMULAS_CHANGED": "NO",
+    "VALIDATION_ROWS_USED_IN_FIT": 0,
+    "reservedTestAccessed": false,
+    "FUSION_CONSTRAINT_SUPPRESSION": false,
+    "LN_EXTREME_CALIBRATION_RISK": false,
+    "POSTERIOR_FLAG": "POSTERIOR_INCREMENTAL_VALUE_UNPROVEN",
+    "LN_CLASS": "B_standalone_little_incremental",
+    "B_CLASS": "D_no_meaningful_validation_signal",
+    "B_SCALE": {
+      "rawB_SD": 0.21256280506830694,
+      "rawP_SD": 1.227686212729074,
+      "rawLN_SD": 1.6907503776776154,
+      "final_wB": 0.06879998292602353,
+      "effectiveContributionSD_B": 0.01462431735940718,
+      "normalization": "none_in_fusion_ridge_feature_space"
+    }
+  },
+  "winner": "M16C_P",
+  "runnerUp": "M16C_P_B",
+  "trainStackN": 434,
+  "validationStackN": 419,
+  "trainGamesLoaded": 737,
+  "validationGamesLoaded": 488
+}

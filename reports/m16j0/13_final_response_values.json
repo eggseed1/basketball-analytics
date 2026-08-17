@@ -1,0 +1,174 @@
+{
+  "modelHealth": {
+    "M16I4_REPRODUCED": "PASS",
+    "POINT_ESTIMATE_CERTIFICATION": "PASS",
+    "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+    "POINT_ESTIMATE_FORMULA": "N/(N+1600)*rawAbilityRate",
+    "POSTERIOR_K": 1600,
+    "PRIOR_MEAN": 0,
+    "CALIBRATION": "IDENTITY",
+    "FUSION": "NONE",
+    "POINT_ESTIMATE_ZERO_SEMANTICS": "R1_REPLACEMENT",
+    "PREDICTIVE_UNCERTAINTY_FROZEN": "NO",
+    "UNCERTAINTY_SELECTION_RESULT": "RELIABILITY_FEATURES_FAILED_TO_REPAIR_UNCERTAINTY",
+    "UNCERTAINTY_RESEARCH_CHECKPOINT_REQUIRED": "YES",
+    "M16J_RESERVED_TEST_SCOPE": "POINT_ESTIMATE_ONLY",
+    "RESERVED_HUMAN_BLINDNESS": "NOT_FULL",
+    "RESERVED_NUMERIC_PREDICTIVE_METRICS_PREVIOUSLY_USED": "NO",
+    "RESERVED_ROW_PROTOCOL_PREEXISTING": "YES",
+    "RESERVED_ROW_PROTOCOL_OUTCOME_INDEPENDENT": "YES",
+    "RESERVED_PRIMARY_TARGET": "future_block_residual_per_100",
+    "PRIMARY_MODEL": "RESEARCH_FINAL_EB1600",
+    "PRIMARY_COMPARATOR": "B0_RAW_P",
+    "SECONDARY_COMPARATOR": "B1_P_EB200",
+    "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+    "PRIMARY_METRIC": "RMSE",
+    "PRIMARY_SUCCESS_RULE": "DELTA_RMSE_LT_0_AND_BOOTSTRAP_P_GE_0_95",
+    "WIS_IN_RESERVED_SCOPE": "NO",
+    "UNCERTAINTY_COVERAGE_IN_RESERVED_SCOPE": "NO",
+    "WAR_IN_RESERVED_SCOPE": "NO",
+    "OD_IN_RESERVED_SCOPE": "NO",
+    "COMPARATOR_SET_FROZEN": "YES",
+    "METRIC_SET_FROZEN": "YES",
+    "BOOTSTRAP_PROTOCOL_FROZEN": "YES",
+    "VERDICT_TAXONOMY_FROZEN": "YES",
+    "PLAYER_NAMES_ALLOWED_BEFORE_VERDICT": "NO",
+    "RESERVED_MAY_BE_USED_FOR_FUTURE_UNCERTAINTY_TUNING": "NO",
+    "M16B_VALIDATION_USED": "NO",
+    "RESERVED_TEST_ACCESSED": "NO",
+    "M16J_ONE_SHOT_RESERVED_TEST_AUTHORIZED": "YES",
+    "RESERVED_TEST_SHOULD_OPEN_NEXT_MILESTONE": "YES",
+    "PRODUCTION_CHANGED": "NO",
+    "WAR_CHANGED": "NO",
+    "PRODUCTION_DEPLOYMENT_ALLOWED": "NO",
+    "WAR_version": "4.0.1",
+    "WAR_exposureUnit": "paired_team_possessions"
+  },
+  "authorization": {
+    "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+    "PREDICTIVE_UNCERTAINTY_FROZEN": "NO",
+    "M16J_RESERVED_TEST_SCOPE": "POINT_ESTIMATE_ONLY",
+    "RESERVED_ROW_PROTOCOL_PREEXISTING": "YES",
+    "PRIMARY_TARGET_FROZEN": "YES",
+    "COMPARATOR_SET_FROZEN": "YES",
+    "METRICS_FROZEN": "YES",
+    "BOOTSTRAP_FROZEN": "YES",
+    "SUCCESS_RULES_FROZEN": "YES",
+    "SOURCE_MANIFEST_FROZEN": "YES",
+    "VERDICT_TAXONOMY_FROZEN": "YES",
+    "RESERVED_TEST_ACCESSED": "NO",
+    "M16J_ONE_SHOT_RESERVED_TEST_AUTHORIZED": "YES",
+    "RESERVED_TEST_SHOULD_OPEN_NEXT_MILESTONE": "YES",
+    "PRODUCTION_DEPLOYMENT_ALLOWED": "NO",
+    "RESERVED_2025_26_MAY_BE_USED_FOR_FUTURE_UNCERTAINTY_TUNING": "NO",
+    "prerequisites": {
+      "pointEstimateCertification": "PASS",
+      "uncertaintyCheckpoint": "PASS",
+      "reservedRowProtocol": "PASS",
+      "comparators": "PASS",
+      "metrics": "PASS",
+      "bootstrap": "PASS",
+      "successRules": "PASS",
+      "sourceManifest": "PASS"
+    }
+  },
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "reservedRowProtocol": {
+    "RESERVED_ROW_PROTOCOL_PREEXISTING": "YES",
+    "RESERVED_ROW_PROTOCOL_OUTCOME_INDEPENDENT": "YES",
+    "protocolId": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+    "sourceFiles": [
+      "drbl/evaluation/m16c-dataset.ts::buildFutureBlockStackRows",
+      "drbl/evaluation/protocol.ts::ELIGIBILITY_RULES",
+      "drbl/evaluation/splits.ts::RESERVED_TEST = entire usable 2025-26"
+    ],
+    "historyFutureConstruction": {
+      "gameUniverse": "RESERVED_TEST game ids (2025-26), chronological by gameDate then gameId",
+      "earlyFrac": 0.7,
+      "history": "first floor(nGames * earlyFrac) games (min 1)",
+      "future": "remaining games after early cut",
+      "R1Pool": "built from history games only",
+      "predictionFeatures": "Approach-B attributeGamePlayerValue on history → rawAbilityRate, N",
+      "target": "future_block_residual_per_100 = 100 * future.totalValue / future.possessions (same R1 replacement semantics)",
+      "eligibility": {
+        "minPossessions": 50,
+        "minFutureObservations": 20
+      }
+    },
+    "explicitlyNotUsed": {
+      "m16gExpandingFolds": "TRAIN-development only; applying to RESERVED would create new date cuts — forbidden",
+      "adHocCutoffs": "forbidden"
+    },
+    "newCutoffInvented": "NO",
+    "outcomeDependent": "NO",
+    "note": "Membership hash verified; normalized reserved PBP/outcomes NOT loaded in M16j0"
+  },
+  "comparatorManifest": {
+    "RESEARCH_FINAL": {
+      "name": "RESEARCH_FINAL_EB1600",
+      "formula": "N/(N+1600)*rawAbilityRate",
+      "version": "drbl-research-rate-v1",
+      "posteriorVersion": "drbl-eb-posterior-k1600-v1",
+      "sourceFiles": [
+        "drbl/models/research-ability-v1.ts",
+        "drbl/models/research-rate-v1.ts"
+      ],
+      "reservedFittingAllowed": false
+    },
+    "B0_RAW_P": {
+      "name": "B0_RAW_P",
+      "formula": "rawAbilityRate",
+      "equivalentK": 0,
+      "available": true,
+      "role": "PRIMARY_COMPARATOR"
+    },
+    "B1_P_EB200": {
+      "name": "B1_P_EB200",
+      "formula": "N/(N+200)*rawAbilityRate",
+      "equivalentK": 200,
+      "available": true,
+      "role": "SECONDARY_COMPARATOR",
+      "note": "P-only legacy shrinkage strength; NOT fused double-EB production rating"
+    },
+    "B2_BASELINE_M16A": {
+      "name": "BASELINE_M16A",
+      "experimentId": "BASELINE_M16A",
+      "modelComponents": [
+        "P",
+        "LN",
+        "B",
+        "fusion_oof",
+        "posterior_eb"
+      ],
+      "available": true,
+      "semanticComparability": "NOT_COMPARABLE",
+      "B2_STATUS": "NOT_COMPARABLE",
+      "reason": "BASELINE_M16A is fused P+LN+B with EB200 posterior; RESEARCH_FINAL is P-only EB1600. Same target name does not imply same predictor/universe semantics for a fair incumbent RMSE comparison under the frozen point-estimate-only contract.",
+      "role": "EXCLUDED"
+    },
+    "hierarchy": {
+      "PRIMARY_COMPARATOR": "B0_RAW_P",
+      "SECONDARY_COMPARATOR": "B1_P_EB200",
+      "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+      "additionalBaselinesAllowed": false
+    },
+    "COMPARATOR_SET_FROZEN": true
+  },
+  "bootstrapProtocol": {
+    "function": "pairedBlockBootstrapRmseDiff",
+    "source": "drbl/evaluation/metrics.ts",
+    "resamples": 1000,
+    "confidenceLevel": 0.95,
+    "requirePairedUncertainty": true,
+    "dependencyUnit": "playerId (M16c earlyFrac reserved/validation universe precedent)",
+    "note": "M16g foldId|playerId applies to TRAIN chronological folds; reserved earlyFrac rows have no foldId → playerId block is the preexisting non-fold unit",
+    "seedConvention": 42,
+    "primaryComparison": "RESEARCH_FINAL vs B0_RAW_P",
+    "secondaryComparisons": [
+      "RESEARCH_FINAL vs B1_P_EB200"
+    ],
+    "BOOTSTRAP_PROTOCOL_FROZEN": true
+  }
+}

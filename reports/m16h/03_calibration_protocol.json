@@ -1,0 +1,71 @@
+{
+  "design": "expanding_past_folds_fit_next_fold_eval",
+  "warmUpFold": "F1 (foldId=0)",
+  "evaluationFolds": [
+    "F2",
+    "F3",
+    "F4",
+    "F5"
+  ],
+  "weightConvention": "w=1 (unweighted; matches M16g)",
+  "candidates": [
+    "CAL_IDENTITY",
+    "CAL_ZERO_LINEAR",
+    "CAL_AFFINE_DIAGNOSTIC"
+  ],
+  "folds": [
+    {
+      "name": "CAL_EVAL_2",
+      "evalFoldId": 1,
+      "trainFoldIds": [
+        0
+      ],
+      "trainHistoryDateMax": "2024-11-07",
+      "trainFutureDateMax": "2024-11-24",
+      "evalFutureDateMin": "2024-11-25",
+      "chronological": true
+    },
+    {
+      "name": "CAL_EVAL_3",
+      "evalFoldId": 2,
+      "trainFoldIds": [
+        0,
+        1
+      ],
+      "trainHistoryDateMax": "2024-11-24",
+      "trainFutureDateMax": "2024-12-12",
+      "evalFutureDateMin": "2024-12-13",
+      "chronological": true
+    },
+    {
+      "name": "CAL_EVAL_4",
+      "evalFoldId": 3,
+      "trainFoldIds": [
+        0,
+        1,
+        2
+      ],
+      "trainHistoryDateMax": "2024-12-12",
+      "trainFutureDateMax": "2025-01-01",
+      "evalFutureDateMin": "2025-01-02",
+      "chronological": true
+    },
+    {
+      "name": "CAL_EVAL_5",
+      "evalFoldId": 4,
+      "trainFoldIds": [
+        0,
+        1,
+        2,
+        3
+      ],
+      "trainHistoryDateMax": "2025-01-01",
+      "trainFutureDateMax": "2025-01-18",
+      "evalFutureDateMin": "2025-01-19",
+      "chronological": true
+    }
+  ],
+  "CALIBRATION_TRAIN_EVAL_OVERLAP": 0,
+  "M16B_VALIDATION_USED_FOR_SELECTION": false,
+  "RESERVED_TEST_ACCESSED": false
+}

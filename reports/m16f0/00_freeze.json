@@ -1,0 +1,26 @@
+{
+  "milestone": "M16f0",
+  "timestamp": "2026-08-12T18:01:26.199Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "evaluationProtocolVersion": "drbl-eval-v1",
+  "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+  "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+  "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+  "targetVersion": "drbl-targets-v1",
+  "currentPVersion": "approach-b-sequential-drbl-p",
+  "ApproachB_version": "drbl-seq-attr-v1",
+  "R1_replacementVersion": "fringe-posterior-calibrated-v1 / buildReplacementPool R1",
+  "epvVersions": {
+    "m5": "epv-ridge-v1 / predictExpectedPoints",
+    "ln": "drbl-ln-ridge-v1",
+    "continuation": "drbl-m7-cv-continuation-v1",
+    "sequential": "drbl-seq-attr-v1"
+  },
+  "warVersion": "4.0.1",
+  "warExposureUnit": "paired_team_possessions",
+  "posteriorVersion": "eb-fused-v1 (k=200) — untouched",
+  "reservedTestAccessedForSelection": false,
+  "validationRowsUsedInFit": 0,
+  "note": "Specification + feasibility only. No A/B bakeoff."
+}

@@ -1,0 +1,8 @@
+path,lineKey,excerpt,classification,userVisible
+src/lib/stat-glossary.ts,DRBL/100 body,posterior mean of the fused rate; 0 ≈ replacement; WAR leaderboard note,STALE_FUSION_LANGUAGE,YES
+src/lib/stat-glossary.ts,DRBL ±,~80% interval around posterior DRBL/100,STALE_UNCERTAINTY_LANGUAGE,YES
+src/lib/stat-glossary.ts,DRBL-WAR / Impact,replacement framing; ability/rate vs season value,CURRENTLY_CORRECT,YES
+src/app/learn/drbl/page.tsx,DRBL/100 term + ability rate,learn page ability/rate vs WAR,AMBIGUOUS,YES
+src/lib/player-savant.ts,DRBL/100 missingness via uncertainty,drblUncertainty > 0 gates display,STALE_UNCERTAINTY_LANGUAGE,YES
+src/data/types/player-season.ts,drblUncertainty JSDoc,~80% interval around posterior,INTERNAL_ONLY,NO
+reports/m16k0_1/15_copy_replacement_contract.md,canonical validated descriptions,"Estimated impact per 100 combined possession appearances, adjusted toward a role-matched replacement baseline for sample size.",CURRENTLY_CORRECT,frozen for k1

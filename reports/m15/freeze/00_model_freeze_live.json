@@ -1,0 +1,189 @@
+{
+  "frozenAt": "2026-08-12T14:30:59.992Z",
+  "auditPass": "m15-refresh-live-400game",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "note": "Freeze of LIVE site precomputed artifacts (post sequential + WAR pipeline remaster). Prior 50-game freeze retained as freeze/precomputed-*-original if present. NO model math changed in this pass.",
+  "parserVersion": "drbl-parser-2026.08.11",
+  "reconstructionVersion": "drbl-recon-2026.08.11",
+  "priorEquivalentPossessions": 200,
+  "provisionalPointsToWins": 0.03333333333333333,
+  "artifacts": [
+    {
+      "season": "2024-25",
+      "version": "drbl-ranking-v2-seq",
+      "generatedAt": "2026-08-12T05:59:21.468Z",
+      "gamesProcessed": 400,
+      "gamesFailed": 0,
+      "players": 476,
+      "rankingFormulaVersion": "2.2.0",
+      "warFormulaVersion": "4.0.0",
+      "pipelineVersion": "4.0.0",
+      "sequentialAttributionVersion": "drbl-seq-attr-v1",
+      "replacementLevel": "R1",
+      "shotDecisionModel": {
+        "version": "drbl-m7-cv-c2-in-season",
+        "continueMaeC0": 1.0297891664316154,
+        "continueMaeC2": 1.0218558495515593,
+        "continueCorrC2": 0.08614372217054449,
+        "shotsScored": 70917,
+        "fusedIntoDrbl100": false
+      },
+      "lineupModel": {
+        "version": "drbl-ln-ridge-v1",
+        "lambda": 800,
+        "trainMae": 1.117,
+        "holdoutMae": 1.122,
+        "players": 492
+      },
+      "behaviorModel": {
+        "version": "drbl-b-ridge-v1",
+        "lambda": 40,
+        "trainMae": 0.843,
+        "holdoutMae": 0.575,
+        "players": 471,
+        "missingXyRate": 0.002
+      },
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 1.067,
+        "equalMae": 1.2,
+        "liteMae": 1.245,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 0.561309344277284,
+          "wLn": 0,
+          "wB": 0.43869065572271604
+        }
+      },
+      "uncertaintyModel": {
+        "version": "drbl-uncertainty-v1",
+        "targetCoverage": 0.8,
+        "scaleMultiplier": 3.710337,
+        "oofCoverage": 0.807,
+        "calibrated": true,
+        "meanAbsError": 1.067
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.025830258302583026,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "v4 pipeline: posterior → LOO calibration → fringe replacement",
+        "holdoutMae": 0.994,
+        "holdoutCorr": 0.662,
+        "pointsPerWin": 38.714285714285715,
+        "rateCalibrationSlope": 2.5190174668611904,
+        "rateCalibrationIntercept": 0,
+        "fringeReplacementEstimate": -0.4347,
+        "calibrationIntercept": 0,
+        "calibrationSlope": 6.470617519083234,
+        "calibrationSource": "learned_leave_one_out",
+        "calibrationInput": "posterior",
+        "oofMae": 3.7195805904132944,
+        "oofCorr": 0.7410183387446401,
+        "replacementLevelDRBL100": -0.5726496504388662,
+        "replacementMethod": "fringe_median_poss_200_800"
+      },
+      "leverageModel": {
+        "version": "drbl-l-wp-v1",
+        "meanRawLambda": 0.010151,
+        "exampleClutchLambdaStar": 5.943,
+        "possessions": 801132
+      }
+    },
+    {
+      "season": "2025-26",
+      "version": "drbl-ranking-v2-seq",
+      "generatedAt": "2026-08-12T05:10:34.247Z",
+      "gamesProcessed": 400,
+      "gamesFailed": 0,
+      "players": 482,
+      "rankingFormulaVersion": "2.1.0",
+      "warFormulaVersion": null,
+      "pipelineVersion": null,
+      "sequentialAttributionVersion": "drbl-seq-attr-v1",
+      "replacementLevel": "R1",
+      "lineupModel": {
+        "version": "drbl-ln-ridge-v1",
+        "lambda": 800,
+        "trainMae": 1.099,
+        "holdoutMae": 1.112,
+        "players": 385
+      },
+      "behaviorModel": {
+        "version": "drbl-b-ridge-v1",
+        "lambda": 40,
+        "trainMae": 0.924,
+        "holdoutMae": 1.077,
+        "players": 337,
+        "missingXyRate": 0.006
+      },
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 0.246,
+        "equalMae": 0.668,
+        "liteMae": 0.594,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 0.9709354911858271,
+          "wLn": 0,
+          "wB": 0.029064508814172805
+        }
+      },
+      "uncertaintyModel": {
+        "version": "drbl-uncertainty-v1",
+        "targetCoverage": 0.8,
+        "scaleMultiplier": 0.514876,
+        "oofCoverage": 0.801,
+        "calibrated": true,
+        "meanAbsError": 0.246
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.02992,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "holdout through-origin MAE ≤ provisional and positive correlation",
+        "holdoutMae": 0.272,
+        "holdoutCorr": 0.808
+      },
+      "leverageModel": {
+        "version": "drbl-l-wp-v1",
+        "meanRawLambda": 0.010384,
+        "exampleClutchLambdaStar": 5.81,
+        "possessions": 103752
+      }
+    }
+  ],
+  "m6": {
+    "status": "COMPLETE_STANDALONE",
+    "files": [
+      "drbl/models/shot-decision.ts",
+      "drbl/models/continuation-value.ts",
+      "drbl/models/shot-components.ts"
+    ],
+    "fusedIntoPublishedDrbl100": false,
+    "evidence": {
+      "version": "drbl-m7-cv-c2-in-season",
+      "continueMaeC0": 1.0297891664316154,
+      "continueMaeC2": 1.0218558495515593,
+      "continueCorrC2": 0.08614372217054449,
+      "shotsScored": 70917,
+      "fusedIntoDrbl100": false
+    }
+  },
+  "sampleNote": {
+    "live2024_25_games": 400,
+    "live2025_26_games": 400,
+    "fullSeasonTarget": "~1230 regular-season games",
+    "isFullSeason": false,
+    "prior50gameFreezeExists": true
+  }
+}

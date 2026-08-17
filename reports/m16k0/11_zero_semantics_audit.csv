@@ -1,0 +1,5 @@
+location,phrase,classification,notes
+src/lib/stat-glossary.ts DRBL/100,0 ≈ replacement,CORRECT,R1 replacement zero OK; still says fused rate (copy update at cutover)
+src/lib/stat-glossary.ts DRBL/100,posterior mean of the fused rate,INCORRECT_FOR_VALIDATED,legacy description; must update on cutover
+src/lib/stat-glossary.ts BPM,0 is average,CORRECT,BPM not DRBL
+src/app/learn/drbl/page.tsx,replacement framing,CORRECT,

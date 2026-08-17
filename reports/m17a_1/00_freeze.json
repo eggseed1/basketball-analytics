@@ -1,0 +1,54 @@
+{
+  "milestone": "M17a.1",
+  "timestamp": "2026-08-13T02:57:52.046Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+  "M16L3_PRODUCT_MIGRATION_HASH": "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+  "M17A_HISTORICAL_BACKFILL_SEAL_HASH": "fee516cd2a714b6b8817213dbe7dde68f388dd853e1a2de1239aa0928ed4d689",
+  "CANONICAL_ABILITY_VERSION": "drbl-ability-eb1600-r1-v1",
+  "R1_POINTS_VERSION": "drbl-r1-points-v1",
+  "R1_WINEQ_VERSION": "drbl-r1-wineq-v1",
+  "P1": 37.490662671779255,
+  "historicalImporterCommand": "npm run drbl:import-historical -- --from 1996-97 --to 2023-24 --raw-only --delay 120",
+  "historicalImporterScriptHash": "74362df3c0444bcf9386d1485f110519b4be6a826a8af27a6714f0309e9f3cfe",
+  "currentImportProgress": {
+    "HISTORICAL_IMPORT_STATE": "RUNNING",
+    "shellPids": [
+      20144,
+      20024,
+      24516,
+      9580,
+      17264,
+      12788
+    ],
+    "prefixCounts": {
+      "00224": 1225,
+      "00225": 1225,
+      "00296": 84
+    },
+    "totalGameDirs": 2534
+  },
+  "rawArchiveRoot": "data/drbl/raw",
+  "reportsM17aImport": [
+    {
+      "name": "historical_import_progress.jsonl",
+      "bytes": 1320,
+      "mtime": "2026-08-13T02:48:04.189Z"
+    },
+    {
+      "name": "historical_import_summary.json",
+      "bytes": 230,
+      "mtime": "2026-08-13T02:48:04.190Z"
+    },
+    {
+      "name": "README.md",
+      "bytes": 997,
+      "mtime": "2026-08-13T02:48:52.008Z"
+    }
+  ],
+  "DRBL_V1_REOPENED": "NO",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "NORMALIZATION_VERSION": "historical-pbp-normalized-v1"
+}

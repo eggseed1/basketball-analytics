@@ -1,0 +1,10 @@
+metric,C0,C1,C2,delta_C1_minus_C0,delta_C2_minus_C0,notes
+continue_holdout_mae,1.032325,1.030767,1.022532,-0.001558,-0.009793,lower better
+continue_holdout_rmse,1.130828,1.126243,1.121595,-0.004585,-0.009233,lower better
+continue_holdout_corr,0.013109,0.055708,0.110267,0.042599,0.097157,higher better
+continue_holdout_std_pred,0.094117,0.059918,0.090295,-0.034199,-0.003822,non-flat
+continue_holdout_mean_pred,1.110268,1.12031,1.124586,0.010042,0.014318,
+sdv_corr_epvShoot,0.628817,0.82062,0.481423,0.191803,-0.147394,lower better for decision separation
+sdv_corr_shotMaking,-0.009096,-0.040317,-0.036696,-0.031221,-0.0276,≈0 desired
+vcont_at_shots_std,0.094407,0.060683,0.153661,-0.033724,0.059254,higher ⇒ less flat continue
+sdv_std,0.11255,0.087151,0.173389,-0.025399,0.060839,

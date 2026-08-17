@@ -342,16 +342,20 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
               <button
                 type="button"
                 className={cn(
-                  "w-full rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                  "flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left text-sm hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
                   focusedId === p.playerId && "bg-muted"
                 )}
                 onFocus={() => setFocusedId(p.playerId)}
                 onClick={() => navigateToPlayer(p.playerId)}
               >
-                <span className="font-medium">{p.playerName}</span>
-                <span className="block text-xs text-muted-foreground tabular-nums">
-                  {p.position ?? "—"} · USG {formatPct(p.usagePct)} · TS{" "}
-                  {formatPct(p.trueShootingPct)}
+                <span className="min-w-0 flex-1 truncate">
+                  <span className="font-medium">{p.playerName}</span>
+                  {p.position ? (
+                    <span className="text-muted-foreground"> {p.position}</span>
+                  ) : null}
+                </span>
+                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                  USG {formatPct(p.usagePct)} · TS {formatPct(p.trueShootingPct)}
                 </span>
               </button>
             </li>

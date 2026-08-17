@@ -208,6 +208,7 @@ export interface RawLocalPlayerSeason {
   season: string;
   pos: string;
   gp: number;
+  gs?: number;
   min: number;
   pts: number;
   ast: number;
@@ -215,6 +216,16 @@ export interface RawLocalPlayerSeason {
   stl: number;
   blk: number;
   tov: number;
+  /** Optional BRef-style counting; estimated when omitted. */
+  fgm?: number;
+  fga?: number;
+  fg3m?: number;
+  fg3a?: number;
+  ftm?: number;
+  fta?: number;
+  orb?: number;
+  drb?: number;
+  pf?: number;
   fg_pct: number;
   fg3_pct: number;
   ft_pct: number;
@@ -872,6 +883,109 @@ export const SAMPLE_SHOTS: Shot[] = [
     assisted: false,
   },
 ];
+
+/** Minimal CDN-shaped PBP for the local sample game pages. */
+export const SAMPLE_PLAY_BY_PLAY: Record<
+  string,
+  { game: { actions: Array<Record<string, unknown>> } }
+> = {
+  "g20241101-bos-nyk": {
+    game: {
+      actions: [
+        {
+          actionNumber: 1,
+          orderNumber: 1,
+          period: 1,
+          clock: "PT12M00.00S",
+          actionType: "period",
+          subType: "start",
+          description: "Start of 1st Period",
+          personId: 0,
+          teamId: 0,
+          teamTricode: "",
+          scoreHome: "0",
+          scoreAway: "0",
+          isFieldGoal: 0,
+          shotResult: "",
+          playerName: "",
+          playerNameI: "",
+        },
+        {
+          actionNumber: 4,
+          orderNumber: 4,
+          period: 1,
+          clock: "PT11M22.00S",
+          actionType: "2pt",
+          subType: "Jump Shot",
+          description: "Jayson Tatum makes 15-foot jumper",
+          personId: "tatum",
+          teamId: "bos",
+          teamTricode: "BOS",
+          scoreHome: "2",
+          scoreAway: "0",
+          isFieldGoal: 1,
+          shotResult: "Made",
+          playerName: "Jayson Tatum",
+          playerNameI: "J. Tatum",
+        },
+        {
+          actionNumber: 7,
+          orderNumber: 7,
+          period: 1,
+          clock: "PT10M48.00S",
+          actionType: "3pt",
+          subType: "Jump Shot",
+          description: "Jalen Brunson makes 26-foot three point jumper",
+          personId: "brunson",
+          teamId: "nyk",
+          teamTricode: "NYK",
+          scoreHome: "2",
+          scoreAway: "3",
+          isFieldGoal: 1,
+          shotResult: "Made",
+          playerName: "Jalen Brunson",
+          playerNameI: "J. Brunson",
+        },
+        {
+          actionNumber: 12,
+          orderNumber: 12,
+          period: 2,
+          clock: "PT08M10.00S",
+          actionType: "freethrow",
+          subType: "1 of 2",
+          description: "Jaylen Brown makes free throw 1 of 2",
+          personId: "brown",
+          teamId: "bos",
+          teamTricode: "BOS",
+          scoreHome: "15",
+          scoreAway: "14",
+          isFieldGoal: 0,
+          shotResult: "Made",
+          playerName: "Jaylen Brown",
+          playerNameI: "J. Brown",
+        },
+        {
+          actionNumber: 40,
+          orderNumber: 40,
+          period: 4,
+          clock: "PT00M24.00S",
+          actionType: "2pt",
+          subType: "Layup",
+          description: "Jayson Tatum makes driving layup",
+          personId: "tatum",
+          teamId: "bos",
+          teamTricode: "BOS",
+          scoreHome: "112",
+          scoreAway: "104",
+          isFieldGoal: 1,
+          shotResult: "Made",
+          playerName: "Jayson Tatum",
+          playerNameI: "J. Tatum",
+        },
+      ],
+    },
+  },
+};
 
 /** Pre-normalized seasons used only when transformers are bypassed in tests. */
 export type SamplePlayerSeason = PlayerSeason;

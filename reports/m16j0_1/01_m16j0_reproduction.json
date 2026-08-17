@@ -1,0 +1,19 @@
+{
+  "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+  "PREDICTIVE_UNCERTAINTY_FROZEN": "NO",
+  "M16J_RESERVED_TEST_SCOPE": "POINT_ESTIMATE_ONLY",
+  "RESERVED_ROW_PROTOCOL_PREEXISTING": "YES",
+  "PRIMARY_TARGET": "future_block_residual_per_100",
+  "PRIMARY_COMPARATOR": "B0_RAW_P",
+  "SECONDARY_COMPARATOR": "B1_P_EB200",
+  "B2_original": {
+    "status": "NOT_COMPARABLE",
+    "role": "EXCLUDED",
+    "reason": "BASELINE_M16A is fused P+LN+B with EB200 posterior; RESEARCH_FINAL is P-only EB1600. Same target name does not imply same predictor/universe semantics for a fair incumbent RMSE comparison under the frozen point-estimate-only contract."
+  },
+  "B2_EXCLUSION_REASON_AUDIT_STATUS": "UNDER_REVIEW",
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "POINT_ESTIMATE_CHANGED": "NO",
+  "M16J0_REPRODUCED": "PASS",
+  "note": "Original B2 exclusion cited architecture difference; under review for concrete semantic/leakage grounds"
+}

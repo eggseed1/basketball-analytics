@@ -1,0 +1,20 @@
+{
+  "HISTORICAL_IMPORT_STATE": "RUNNING",
+  "M17A_1_STATUS": "RAW_IMPORT_IN_PROGRESS",
+  "M17A_1_RESULT": "RAW_IMPORT_INCOMPLETE",
+  "M17B_AUTHORIZED": "NO",
+  "shellImporterRunning": true,
+  "liveImporterNodePid": 9580,
+  "lockPath": "data/drbl/raw/.historical_import.lock",
+  "lockReanchoredToLivePid": true,
+  "duplicateImporterLaunched": "NO",
+  "command": "npm run drbl:import-historical -- --from 1996-97 --to 2023-24 --raw-only --delay 120",
+  "delayMs": 120,
+  "latestPrefixProgress": {
+    "00224": 1225,
+    "00225": 1225,
+    "00296": 158
+  },
+  "updatedAt": "2026-08-13T03:27:30.000Z",
+  "note": "Do not launch a second overlapping bulk importer while RUNNING. Live progress: reports/m17a_1/import/"
+}

@@ -1,0 +1,23 @@
+{
+  "2024-25": {
+    "playerWARInspected": true,
+    "teamWinWARMetricsUsed": true,
+    "ppwFit": true,
+    "replacementCalibration": true,
+    "candidateComparison": true,
+    "notes": "Extensive M16e0/e1/war-unit-repair / remaster"
+  },
+  "2025-26": {
+    "playerWARInspected": true,
+    "provisionalIndividualWARVisible": true,
+    "teamWinWARMetricsUsed": false,
+    "ppwFit": false,
+    "replacementCalibration": false,
+    "candidateComparison": false,
+    "notes": "Provisional raw/30 individual WAR exists; formal team WAR / team-win selection not completed"
+  },
+  "WAR_RESERVED_2025_26": "ELIGIBLE_WITH_HUMAN_BLINDNESS_LIMITATION",
+  "humanBlindness": "NOT_FULL",
+  "mayUseForFutureWarTuning": false,
+  "reason": "No PPW/W0/W1/team-win WAR selection used 2025-26; public season outcomes mean human blindness incomplete; keep numeric WAR selection off 2025-26"
+}

@@ -1,0 +1,10 @@
+feature,endpoint,post_game_only,predictive_real_time_eligible,used_in_published_drbl100,used_in_M6
+usage,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+threeRate,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+assistPer100,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+tovPer100,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+stlPer100,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+blkPer100,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+ftRate,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+rimRate,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module
+gravityProxy,cdn+stats box/pbp,YES,NO,YES_via_DRBL_B_when_hasB,NO_separate_module

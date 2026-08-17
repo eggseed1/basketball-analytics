@@ -1,0 +1,9 @@
+ablation,status,notes
+involvement_weighted_P,ENABLED,PM7-006/036
+usage_weighted_replacement_role,ENABLED,PM7-027
+future_block_fusion_target,ENABLED,PM7-004 earlyFrac=0.7
+C2_V_cont_in_SDV,ENABLED_NOT_FUSED,PM7-002/020; fields sdv100 emitted
+SDV_in_drbl100_fusion,DISABLED,PM7-022 fusion NO-GO
+Approach_A_replacement,DISABLED,PM7-003 product decision
+WAR_stricter_calibration,ENABLED,holdout MAE worse than provisional — keeping provisional conversion
+sample_vs_baseline_50g,AFTER_games=400_BEFORE=50,PM7-005

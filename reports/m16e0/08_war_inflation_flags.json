@@ -1,0 +1,57 @@
+{
+  "WAR_USES_NONDISPLAYED_ABILITY": {
+    "status": "WARNING",
+    "evidence": "WAR uses LOO-calibrated finalAbility from posterior, not displayed posterior alone",
+    "magnitude": "slope=5.835416607524311"
+  },
+  "WAR_CALIBRATION_LARGE_SCALE_EXPANSION": {
+    "status": "WARNING",
+    "evidence": "through-origin LOO slope maps residual-share rates onto net-rating scale",
+    "magnitude": "slope=5.835416607524311; mean final/posterior≈5.835"
+  },
+  "WAR_CALIBRATION_INTERCEPT_DOMINANT": {
+    "status": "PASS",
+    "evidence": "intercept=0 (through-origin)",
+    "magnitude": 0
+  },
+  "WAR_DOUBLE_EXPOSURE": {
+    "status": "NO",
+    "evidence": "Calibration target is team netRating (rate). Downstream multiplies calibrated rate by player appearances once. Not season-total → rate double multiply.",
+    "magnitude": null
+  },
+  "WAR_EXPOSURE_UNIT_MISMATCH": {
+    "status": "WARNING",
+    "evidence": "Calibrated rates are net-rating-like (team pts/100) while exposure remains off+def appearance counts (~2× paired team possessions for full-time players). Slope absorbs some scale, but appearance vs paired-possession semantics remain ambiguous.",
+    "magnitude": "diagnostic half-exposure shrinks WAR by ~1.99x vs current"
+  },
+  "WAR_RATE_DENOMINATOR_MISMATCH": {
+    "status": "PASS",
+    "evidence": "rawAbilityRate denominator = possessions = off+def; identity raw*n/100 ≈ seasonalImpact",
+    "magnitude": "max |raw*n/100 - seasonalImpact|=0.008853999999985263"
+  },
+  "POINTS_PER_WIN_UNIT_MISMATCH": {
+    "status": "PASS",
+    "evidence": "pointsPerWin from season pointDifferential / (wins-0.5*games); WAR impact treated as season-total points on calibrated scale",
+    "magnitude": 38.714285714285715
+  },
+  "REPLACEMENT_LEVEL_SEMANTIC_MISMATCH": {
+    "status": "WARNING",
+    "evidence": "Zero on uncalibrated residual scale ≈ R1/league-average-ish; WAR uses fringe calibrated median ≠ 0. Naming 'WAR' is above fringe replacement after calibration — OK if documented. Zero is NOT replacement on calibrated scale.",
+    "magnitude": -1.4886147765794517
+  },
+  "WAR_TARGET_EXPOSURE_ALREADY_EMBEDDED": {
+    "status": "NO",
+    "evidence": "netRating is per-100 rate, not season total",
+    "magnitude": null
+  },
+  "WAR_TEAM_SCALE_INFLATED": {
+    "status": "PASS",
+    "evidence": "actualWins ≈ 27.05 + 0.555 * teamWAR",
+    "magnitude": 0.5546008106678035
+  },
+  "WAR_UNEXPLAINED_SCALE_FACTOR": {
+    "status": "NO",
+    "evidence": "Current WAR reconstructs from slope, replacement, exposure, PPW with residual≈0; primary inflation is calibration slope (~5.8×) plus replacement shift",
+    "magnitude": null
+  }
+}

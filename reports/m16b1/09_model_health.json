@@ -1,0 +1,70 @@
+{
+  "milestone": "M16b.1",
+  "boardProvenanceVersion": "board-provenance-v1",
+  "statuses": {
+    "BOARD_SOURCE_IDENTIFIED": "PASS",
+    "BOARD_ARTIFACT_HASHED": "PASS",
+    "PLAYER_COUNT_RECONCILED": "PASS",
+    "PLAYER_IDS_UNIQUE": "PASS",
+    "PLAYER_SEASON_SEMANTICS": "PASS",
+    "DISPLAYED_DRBL_RECONSTRUCTS": "PASS",
+    "DISPLAYED_WAR_RECONSTRUCTS": "PASS",
+    "WAR_SOURCE_IDENTIFIED": "PASS",
+    "2025_26_WAR_EXPLAINED": "PASS",
+    "ARTIFACT_GENERATIONS_COMPATIBLE": "PASS",
+    "STALE_WAR_GUARD": "PASS",
+    "STALE_PLAYER_ROW_GUARD": "PASS",
+    "RESERVED_TEST_MODEL_EVALUATION": "NO",
+    "BOARD_NONCANONICAL_ABILITY_COUNT": 0,
+    "BUILD_ASSERTIONS": "PASS"
+  },
+  "warReconstruction": {
+    "meanAbsoluteResidual": 0.0025503606956521698,
+    "maxAbsoluteResidual": 0.005277333333333356,
+    "p95Residual": 0.0047239999999999505,
+    "failCount": 0
+  },
+  "drblReconstruction": {
+    "maxAbsoluteResidual": 0.0050000000000000044,
+    "failCount": 0,
+    "tolerance": 0.011
+  },
+  "playerUniverse": {
+    "m16aCount": 575,
+    "productionBoardCount": 582,
+    "difference": 7,
+    "siteOnly": [
+      {
+        "playerId": "1641732",
+        "name": "Colby Jones"
+      },
+      {
+        "playerId": "1642468",
+        "name": "Darius Brown II"
+      },
+      {
+        "playerId": "1643257",
+        "name": "Jayson Kent"
+      },
+      {
+        "playerId": "1642855",
+        "name": "Noa Essengue"
+      },
+      {
+        "playerId": "1630649",
+        "name": "Stanley Umude"
+      },
+      {
+        "playerId": "1641787",
+        "name": "Tosan Evbuomwan"
+      },
+      {
+        "playerId": "1642280",
+        "name": "Trentyn Flowers"
+      }
+    ]
+  },
+  "M16C_READY": "YES",
+  "modelMathChanged": false,
+  "reservedTestModelEvaluation": false
+}

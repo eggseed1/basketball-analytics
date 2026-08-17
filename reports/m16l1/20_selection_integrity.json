@@ -1,0 +1,20 @@
+{
+  "rateCandidates": [
+    "W0",
+    "W1"
+  ],
+  "ppwCandidates": [
+    "P0",
+    "P1"
+  ],
+  "newReplacementFit": "NO",
+  "newDrblCalibration": "NO",
+  "teamSlopeRescaling": "NO",
+  "stintEB": "NO",
+  "target2025_26Access": "NO",
+  "externalReputationTarget": "NO",
+  "liveWarMutation": "NO",
+  "FREE_SLOPE_REGRESSION_USED_TO_SELECT_PPW": "NO",
+  "EXTERNAL_REPUTATION_METRICS_ACCESSED": "NO",
+  "result": "PASS"
+}

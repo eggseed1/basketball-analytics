@@ -1,0 +1,9 @@
+field,class
+drblP,DIAGNOSTIC_ONLY
+drblLn,DIAGNOSTIC_ONLY
+drblB,DIAGNOSTIC_ONLY
+fusedRateRaw,INTERNAL_ONLY
+posteriorAbilityRate,DEPRECATED
+drblUncertainty,DEPRECATED
+intervalLo,DEPRECATED
+intervalHi,DEPRECATED

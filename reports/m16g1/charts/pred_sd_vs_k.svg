@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="52" y="24" font-size="14">Prediction SD vs k</text>
+  <text x="280" y="332" text-anchor="middle" font-size="11">k</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">SD</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="52,52 52.890625,79.65135960765815 53.78125,96.38270364064331 55.5625,117.11748384420542 59.125,140.39904662431564 66.25,165.7151833775406 80.5,193.04061870280628 94.75,209.61814325153665 109,221.37315336704728 137.5,237.5076167520087 166,248.35495001438844 223,262.36047036258117 280,271.1666505918443 394,281.7776008370357 508,288"/>
+  <circle cx="52" cy="52" r="3" fill="#0f766e"/><circle cx="52.890625" cy="79.65135960765815" r="3" fill="#0f766e"/><circle cx="53.78125" cy="96.38270364064331" r="3" fill="#0f766e"/><circle cx="55.5625" cy="117.11748384420542" r="3" fill="#0f766e"/><circle cx="59.125" cy="140.39904662431564" r="3" fill="#0f766e"/><circle cx="66.25" cy="165.7151833775406" r="3" fill="#0f766e"/><circle cx="80.5" cy="193.04061870280628" r="3" fill="#0f766e"/><circle cx="94.75" cy="209.61814325153665" r="3" fill="#0f766e"/><circle cx="109" cy="221.37315336704728" r="3" fill="#0f766e"/><circle cx="137.5" cy="237.5076167520087" r="3" fill="#0f766e"/><circle cx="166" cy="248.35495001438844" r="3" fill="#0f766e"/><circle cx="223" cy="262.36047036258117" r="3" fill="#0f766e"/><circle cx="280" cy="271.1666505918443" r="3" fill="#0f766e"/><circle cx="394" cy="281.7776008370357" r="3" fill="#0f766e"/><circle cx="508" cy="288" r="3" fill="#0f766e"/>
+</svg>

@@ -1,0 +1,9 @@
+{
+  "rows": 1151,
+  "maxResidual": 6.252776074688882e-13,
+  "meanResidual": 4.238187173544087e-15,
+  "P99Residual": 1.1368683772161603e-13,
+  "mismatchCount": 0,
+  "tolerance": 0.000001,
+  "TEAM_STINT_RAW_VALUE_CONSERVATION": "PASS"
+}

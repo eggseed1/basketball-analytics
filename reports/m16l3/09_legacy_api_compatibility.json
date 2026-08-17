@@ -1,0 +1,7 @@
+{
+  "drblWarRetained": true,
+  "reason": "storage/API compatibility; consumers may still read field",
+  "aliasedToR1WinEquivalents": false,
+  "LEGACY_DRBL_WAR_STATUS": "DEPRECATED_NONCANONICAL",
+  "LEGACY_WAR_PUBLIC_STATUS": "RETIRED"
+}

@@ -1,0 +1,37 @@
+{
+  "milestone": "M16c",
+  "timestamp": "2026-08-12T16:15:17.467Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "evaluationProtocolVersion": "drbl-eval-v1",
+  "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+  "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+  "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+  "targetVersion": "drbl-targets-v1",
+  "eligibilityVersion": "drbl-eligibility-v1",
+  "target": "future_block_residual_per_100",
+  "earlyFrac": 0.7,
+  "P_version": "approach-b-sequential-drbl-p",
+  "LN_version": "lineup-ridge-lambda-800",
+  "B_version": "behavior-ridge-lambda-40",
+  "fusion": {
+    "version": "drbl-fusion-oof-v1",
+    "lambda": 8,
+    "folds": 5,
+    "constraints": "ridge_unconstrained_predict;simplex_report_only",
+    "modelFamily": "chronological_ridge_oof_stack"
+  },
+  "posterior": {
+    "version": "eb-fused-v1",
+    "priorMean": 0,
+    "priorStrength": 200
+  },
+  "m6": {
+    "fusedIntoDrbl100": false
+  },
+  "war": {
+    "version": "unchanged_not_used_for_selection"
+  },
+  "reservedTestAccessed": false,
+  "hashesMatchM16b": true
+}

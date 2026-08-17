@@ -1,0 +1,46 @@
+{
+  "fullFrozenKGrid": [
+    0,
+    25,
+    50,
+    100,
+    200,
+    400,
+    800,
+    1200,
+    1600,
+    2400,
+    3200,
+    4800,
+    6400,
+    9600,
+    12800
+  ],
+  "numericBestK": 2400,
+  "numericBestRMSE": 2.6960353786289537,
+  "practicalOptimumBand": [
+    1600,
+    2400
+  ],
+  "practicalBandThreshold": 0.001,
+  "smallestQualifyingK": 1600,
+  "finalSelectedK": 1600,
+  "FINAL_K_STATUS": "PLATEAU_SELECTED",
+  "SHRINKAGE_REQUIRED": "YES",
+  "priorMean": 0,
+  "exposureN": "actual_combined_possession_appearances",
+  "posteriorFormula": "N/(N+k)*rawAbilityRate + k/(N+k)*0",
+  "lineageStatus": {
+    "rawAbilityRateUnshrunk": "PASS",
+    "drblP": "EB200",
+    "fusedRateRawInputs": "SHRUNK_COMPONENTS",
+    "posteriorAbilityRate": "EB200(fusedRateRaw)",
+    "accidentalDoubleShrinkage": "NO",
+    "multiStageProductionShrinkage": "YES",
+    "zeroSemantics": "REPLACEMENT_LEVEL",
+    "priorMeanValid": "PASS"
+  },
+  "HIGH_EXPOSURE_OVER_SHRINKAGE": "NO",
+  "lockedBeforeNameInspection": true,
+  "M16B_VALIDATION_USED_FOR_K_SELECTION": false
+}

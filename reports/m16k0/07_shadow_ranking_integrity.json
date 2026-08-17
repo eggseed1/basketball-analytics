@@ -1,0 +1,15 @@
+{
+  "RANK_USES_UNROUNDED_VALIDATED_DRBL100": "YES",
+  "formula": "descending validatedDRBL100",
+  "WARInfluence": "NO",
+  "uncertaintyInfluence": "NO",
+  "integrity": "PASS",
+  "seasons": {
+    "2024-25": {
+      "n": 555
+    },
+    "2025-26": {
+      "n": 575
+    }
+  }
+}

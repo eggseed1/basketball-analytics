@@ -1,0 +1,11 @@
+{
+  "TARGET_LEAKAGE_FUTURE_GAME": "PASS_by_construction_early_vs_late_block",
+  "TARGET_LEAKAGE_FULL_SEASON_AGGREGATE": "WARNING_behavior_box_features_are_post_game_within_block",
+  "TARGET_LEAKAGE_OVERLAPPING_WINDOW": "PASS_earlyFrac_disjoint_late",
+  "notes": [
+    "Fusion stack uses earlyFrac games for features and late games for Y — intended.",
+    "DRBL-B features from final box within a game are post-tip; retrospective OK, live-invalid.",
+    "No redesign in M16b."
+  ],
+  "status": "WARNING"
+}

@@ -1,0 +1,14 @@
+Dimension,Result,Status,Blocking
+support-policy validity,NON_DEGENERATE,PASS,NO
+unseen-player interpretation,300 vs coef set; 6 truly unseen in FIT boxes,PASS,NO
+player-level refit stability,STRONG,PASS,NO
+per-delta stability,MODERATE,PASS,NO
+contextual-component stability,PASS,PASS,NO
+reliability ratio,0.7902692020516889,PASS,NO
+replacement robustness,ROBUST,PASS,NO
+focal interaction validity,PASS,PASS,NO
+aggregate holdout signal,POSITIVE,PASS,NO
+offensive reliability,PASS,PASS,NO
+defensive reliability,PASS,PASS,NO
+calibration,ctx slope=0.509,WARNING,NO
+support-distance degradation,PASS,PASS,NO

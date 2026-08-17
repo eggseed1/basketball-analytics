@@ -13,6 +13,10 @@ export interface PlayerGame {
   gameDate: string;
   opponentTeamId: string;
   isHome: boolean;
+  /**
+   * NBA START_POSITION (G/F/C) when the player started; empty/undefined = bench.
+   */
+  startPosition?: string;
   minutes: number;
   points: number;
   assists: number;

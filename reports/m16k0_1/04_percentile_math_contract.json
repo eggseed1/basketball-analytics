@@ -1,0 +1,11 @@
+{
+  "PERCENTILE_MATH_CHANGED": "NO",
+  "seasonRelativePopulation": true,
+  "metricSpecificRanking": true,
+  "tieMethod": "midrank (0.5 credit for equals)",
+  "roundingPolicy": "Math.round",
+  "clampPolicy": "Math.max(1, Math.min(100, ...))",
+  "missingEligiblePlayer": "metric omitted from result (not coerced to 0/1/50)",
+  "sourceFunction": "src/data/queries/percentiles.ts#percentileRank",
+  "validatedPopulationChangeOnly": true
+}

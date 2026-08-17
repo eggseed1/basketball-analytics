@@ -1,0 +1,35 @@
+{
+  "milestone": "M16b",
+  "frozenAt": "2026-08-12T15:43:18.018Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "evaluationProtocolVersion": "drbl-eval-v1",
+  "abilityLineageVersion": "ability-lineage-v1",
+  "sequentialAttributionVersion": "drbl-seq-attr-v1",
+  "fusion": {
+    "target": "future_block_residual_per_100",
+    "folds": 5,
+    "lambda": 8,
+    "modelFamily": "chronological_ridge_oof_stack",
+    "simplex": "nonnegative_renormalized",
+    "inputs": [
+      "P",
+      "LN",
+      "B"
+    ]
+  },
+  "posterior": {
+    "formula": "reliability*fused + (1-reliability)*priorMean",
+    "priorMean": 0,
+    "priorStrength": 200
+  },
+  "m6": {
+    "fusedIntoDrbl100": false
+  },
+  "war": {
+    "formulaVersion": "4.0.0",
+    "calibrationMode": "loo_team_net_optional_raw_if_posterior_worse_15pct",
+    "fallback": "1/30_provisional_pointsToWins"
+  },
+  "note": "M16a full-season repaired baseline frozen for evaluation infrastructure. No model math changes in M16b."
+}

@@ -1,0 +1,28 @@
+{
+  "preOpenHashes": {
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+    "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+    "M16L1_WAR_PRE_RESERVED_FREEZE_HASH": "21abd1c7e503dde633fa7ff7a53fab59aeba29caf7b95684830d7400028d850c",
+    "M16L1_1_SCALE_AUDIT_HASH": "422bf1391ac8f64d23a17e32786b8516c7bed6a0b08c48da6732856bb029ff0b",
+    "M16L1_2_R1_VALUE_FREEZE_HASH": "7d87d96e3ad4934e7f222d91e568d034468bbfe17ac6cbf7b52bf90136878149",
+    "M16L2_PROTOCOL_HASH": "b4096844ba45230f4338f275fa65e864cbeeeab82657a4bbf4b8907da2d47b60"
+  },
+  "reservedDatasetFingerprint": "2d3e100ee414ac3111b0c2696c5fabbbf9ed847a960f4ea651eb076a130cadeb",
+  "gameCount": 1225,
+  "teamCount": 30,
+  "pbpPossessionCount": 246754,
+  "playerSeasons": 582,
+  "primaryMetrics": {
+    "accountingMaxResidual": 7.486278263968416e-11,
+    "leagueAttr": 3082.174403112871,
+    "leagueU": -3082.174403112899,
+    "zeroSum": true,
+    "p1Rmse": 3.154250393085138,
+    "bReserved": 0.9846475361017686
+  },
+  "semanticVerdict": "PASS",
+  "p1Verdict": "PASS",
+  "overallVerdict": "STRONG_PASS",
+  "WAR_RESERVED_2025_26_STATUS": "CONSUMED_ONCE",
+  "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa"
+}

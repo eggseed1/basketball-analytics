@@ -1,0 +1,231 @@
+file,line,function,pattern,category,current_semantics,publicly_reachable,migration_action
+drbl/models/__tests__/ability-lineage.test.ts,39,,drblWar,TEST,"drblWar: 3.0,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ability-lineage.test.ts,40,,seasonalImpact,TEST,"seasonalImpact: 50,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ability-lineage.test.ts,59,,seasonalImpact,TEST,"seasonalImpact: 94,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ability-lineage.test.ts,61,,drblWar,TEST,"drblWar: 5.0,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,72,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,82,,drblWar,TEST,"{ playerId: ""1"", drbl100: 1.5, drblWar: 10 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,83,,drblWar,TEST,"{ playerId: ""2"", drbl100: 0.5, drblWar: 2 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,90,,drblWar,TEST,"{ playerId: ""1"", drbl100: 1.5, drblWar: 10 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,91,,drblWar,TEST,"{ playerId: ""3"", drbl100: 0, drblWar: 0 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,102,,drblWar,TEST,"players: [{ pointsPerWin: 30, drblWar: 1 }],",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,102,,pointsPerWin,TEST,"players: [{ pointsPerWin: 30, drblWar: 1 }],",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,141,,drblWar,TEST,"drblWar: 2,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/board-provenance.test.ts,155,,drblWar,TEST,"drblWar: 2,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,11,,seasonalImpact,TEST,"seasonalImpactFromRawRate,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,42,,seasonalImpact,TEST,"seasonalImpact: 20,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,51,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,64,,drblWar,TEST,"drblWar: 20 / 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,86,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(2.0, 1000), 20);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,87,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(2.0, 0), 0);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,93,,seasonalImpact,TEST,"const impact = seasonalImpactFromRawRate(raw, n);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,96,,seasonalImpact,TEST,"assert.equal(impact, seasonalImpactFromRawRate(raw, n));",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,100,,seasonalImpact,TEST,"const impact = seasonalImpactFromRawRate(8, 0);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,106,,seasonalImpact,TEST,"const season = seasonalImpactFromRawRate(2, 1000);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,107,,seasonalImpact,TEST,"const forecastA = seasonalImpactFromRawRate(2, 2500);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,108,,seasonalImpact,TEST,"const forecastB = seasonalImpactFromRawRate(2, 4000);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,111,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(2, 1000), season);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,267,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(5, -10), 0);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,268,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(5, 0), 0);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,335,,seasonalImpact,TEST,// seasonalImpact = raw * n / 100 = totalValue,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,336,,seasonalImpact,TEST,assert.ok(Math.abs(rows[0]!.seasonalImpact - 160) < 0.02);,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,346,,seasonalImpact,TEST,"assert.equal(row.seasonalImpact, 10);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/leaderboard.test.ts,348,,seasonalImpact,TEST,"assert.equal(seasonalImpactFromRawRate(raw, 100), 10);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,46,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,57,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,63,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,75,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,81,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,88,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,93,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,103,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,196,,pointsPerWin,TEST,"pointsPerWin: ppw,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/pipeline-value.test.ts,245,,pointsPerWin,TEST,"pointsPerWin: 30,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,75,,seasonalImpact,TEST,"seasonalImpact: Number(cols[idx(""seasonalImpact"")]),",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,76,,drblWar,TEST,"drblWar: Number(cols[idx(""drblWar"")]),",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,92,,seasonalImpact,TEST,// EB identity: seasonalImpact ≈ drblP*(n+200)/100 == raw*n/100,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,95,,seasonalImpact,TEST,"Math.abs(r.seasonalImpact - ebForm) < 0.5,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,96,,seasonalImpact,TEST,`impact ${r.seasonalImpact} vs EB form ${ebForm}`,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,98,,drblWar,TEST,assert.ok(Math.abs(r.drblWar - r.seasonalImpact / 30) < 0.02);,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,98,,seasonalImpact,TEST,assert.ok(Math.abs(r.drblWar - r.seasonalImpact / 30) < 0.02);,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/ranking-forensics.test.ts,106,,drblWar,TEST,".sort((a, b) => b.drblWar - a.drblWar)",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-dimensional.test.ts,20,,38.7142857,TEST,const ppw = 38.714285714285715;,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-dimensional.test.ts,25,,pointsPerWin,TEST,"pointsPerWin: ppw,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,25,,pointsPerWin,TEST,"config: { replacementLevelRate: -2, pointsPerWin: 32 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,37,,pointsPerWin,TEST,"config: { replacementLevelRate: -2, pointsPerWin: 32 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,49,,pointsPerWin,TEST,"config: { replacementLevelRate: -2, pointsPerWin: 32 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,61,,pointsPerWin,TEST,"config: { replacementLevelRate: 0, pointsPerWin: 30 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,67,,pointsPerWin,TEST,"config: { replacementLevelRate: 0, pointsPerWin: 30 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,77,,pointsPerWin,TEST,"config: { replacementLevelRate: 0, pointsPerWin: 30 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,83,,pointsPerWin,TEST,"config: { replacementLevelRate: 0, pointsPerWin: 30 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,138,,pointsPerWin,TEST,"config: { replacementLevelRate: -2, pointsPerWin: 32 },",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,158,,pointsPerWin,TEST,assert.ok(est.pointsPerWin > 20 && est.pointsPerWin < 40);,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,172,,pointsPerWin,TEST,"it(""diagnoses legacy pointsPerWin unit mismatch"", () => {",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-math.test.ts,180,,seasonalImpact,TEST,"seasonalImpact: 60,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-unit-repair.test.ts,22,,38.7142857,TEST,const ppw = 38.714285714285715;,NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-unit-repair.test.ts,30,,pointsPerWin,TEST,"pointsPerWin: ppw,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-unit-repair.test.ts,37,,pointsPerWin,TEST,"pointsPerWin: ppw,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-units.test.ts,61,,pointsPerWin,TEST,"pointsPerWin: 40,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-units.test.ts,68,,pointsPerWin,TEST,"pointsPerWin: 40,",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-units.test.ts,71,,seasonalImpact,TEST,"assert.equal(paired.seasonalImpactPaired, 500);",NO,LEAVE_HISTORICAL
+drbl/models/__tests__/war-units.test.ts,75,,seasonalImpact,TEST,"assert.equal(combined.seasonalImpactCombined, 500);",NO,LEAVE_HISTORICAL
+drbl/models/ability-lineage.ts,64,,seasonalImpact,MODEL_CALCULATION,"""seasonalImpact"",",NO,DOCUMENT
+drbl/models/ability-lineage.ts,217,,drblWar,MODEL_CALCULATION,const publishedWar = published.drblWar;,NO,DOCUMENT
+drbl/models/ability-lineage.ts,241,,drblWar,MODEL_CALCULATION,"drblWar: publishedWar ?? sequential.drblWar,",NO,DOCUMENT
+drbl/models/board-provenance.ts,5,,DRBL-WAR,MODEL_CALCULATION,* Answers: where did each displayed DRBL/100 and DRBL-WAR number come from?,NO,DOCUMENT
+drbl/models/board-provenance.ts,80,,pointsPerWin,TYPE_DEFINITION,pointsPerWin?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,129,,pointsPerWin,MODEL_CALCULATION,// Provisional season WAR: seasonalImpact from raw residual / pointsPerWin.,NO,DOCUMENT
+drbl/models/board-provenance.ts,129,,seasonalImpact,MODEL_CALCULATION,// Provisional season WAR: seasonalImpact from raw residual / pointsPerWin.,NO,DOCUMENT
+drbl/models/board-provenance.ts,131,,pointsPerWin,TYPE_DEFINITION,| { pointsPerWin?: number; warFormulaVersion?: string },NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,133,,pointsPerWin,MODEL_CALCULATION,if (!pipe && (sample?.pointsPerWin === 30 || sample?.pointsPerWin == null)) {,NO,DOCUMENT
+drbl/models/board-provenance.ts,145,,drblWar,TYPE_DEFINITION,(p) => Number((p as { drblWar?: number }).drblWar) !== 0,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,152,,pointsPerWin,TYPE_DEFINITION,pointsPerWin?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,178,,seasonalImpact,MODEL_CALCULATION,"? ""rawAbilityRate_via_seasonalImpact""",NO,DOCUMENT
+drbl/models/board-provenance.ts,278,,seasonalImpact,TYPE_DEFINITION,seasonalImpact?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,279,,pointsPerWin,TYPE_DEFINITION,pointsPerWin?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,285,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,293,,pointsPerWin,MODEL_CALCULATION,const pointsPerWin = Number(player.pointsPerWin ?? 30);,NO,DOCUMENT
+drbl/models/board-provenance.ts,296,,pointsPerWin,MODEL_CALCULATION,"const calculatedWAR = warFromImpact(calculatedImpact, pointsPerWin);",NO,DOCUMENT
+drbl/models/board-provenance.ts,302,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin,",NO,DOCUMENT
+drbl/models/board-provenance.ts,348,,drblWar,TYPE_DEFINITION,drblWar?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,358,,drblWar,TYPE_DEFINITION,drblWar?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,382,,drblWar,MODEL_CALCULATION,const wRes = Number(b.drblWar ?? 0) - Number(art.drblWar ?? 0);,NO,DOCUMENT
+drbl/models/board-provenance.ts,386,,drblWar,TYPE_DEFINITION,"board: Number(b.drblWar ?? 0),",NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,387,,drblWar,TYPE_DEFINITION,"artifact: Number(art.drblWar ?? 0),",NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,424,,drblWar,TYPE_DEFINITION,drblWar?: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,450,,drblWar,MODEL_CALCULATION,const w = Number(p.drblWar);,NO,DOCUMENT
+drbl/models/board-provenance.ts,489,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number | null;,NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,514,,seasonalImpact,TYPE_DEFINITION,"seasonalImpact: Number(p.seasonalImpact ?? 0),",NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,515,,pointsPerWin,TYPE_DEFINITION,"pointsPerWin: Number(p.pointsPerWin ?? 30),",NO,DEPRECATE_ANNOTATE
+drbl/models/board-provenance.ts,528,,drblWar,MODEL_CALCULATION,calculatedWAR = Number(p.drblWar ?? 0);,NO,DOCUMENT
+drbl/models/board-provenance.ts,537,,drblWar,MODEL_CALCULATION,const displayedWAR = Number(p.drblWar ?? 0);,NO,DOCUMENT
+drbl/models/board-provenance.ts,563,,seasonalImpact,MODEL_CALCULATION,"? ""rawAbilityRate_via_seasonalImpact""",NO,DOCUMENT
+drbl/models/board-provenance.ts,570,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: recon.pointsPerWin,",NO,DOCUMENT
+drbl/models/leaderboard.ts,36,,seasonalImpact,TYPE_DEFINITION,seasonalImpact: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/leaderboard.ts,45,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/leaderboard.ts,64,,drblWar,TYPE_DEFINITION,drblWar: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/leaderboard.ts,90,,seasonalImpact,MODEL_CALCULATION,export function seasonalImpactFromRate(,NO,DOCUMENT
+drbl/models/leaderboard.ts,101,,seasonalImpact,MODEL_CALCULATION,export function seasonalImpactFromRawRate(,NO,DOCUMENT
+drbl/models/leaderboard.ts,105,,seasonalImpact,MODEL_CALCULATION,"return seasonalImpactFromRate(rawAbilityRate, actualPossessions);",NO,DOCUMENT
+drbl/models/leaderboard.ts,110,,pointsPerWin,MODEL_CALCULATION,"* `pointsPerWin` is points/win (e.g. 30), not wins/point.",NO,DOCUMENT
+drbl/models/leaderboard.ts,114,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number,NO,DEPRECATE_ANNOTATE
+drbl/models/leaderboard.ts,116,,pointsPerWin,MODEL_CALCULATION,if (!(pointsPerWin > 0)) return 0;,NO,DOCUMENT
+drbl/models/leaderboard.ts,118,,pointsPerWin,MODEL_CALCULATION,if (pointsPerWin > 0 && pointsPerWin <= 1) {,NO,DOCUMENT
+drbl/models/leaderboard.ts,119,,pointsPerWin,MODEL_CALCULATION,return impact * pointsPerWin;,NO,DOCUMENT
+drbl/models/leaderboard.ts,121,,pointsPerWin,MODEL_CALCULATION,return impact / pointsPerWin;,NO,DOCUMENT
+drbl/models/pipeline-value.ts,6,,pointsPerWin,MODEL_CALCULATION,*     ├─ WAA  = finalAbility * poss / 100 / pointsPerWin,NO,DOCUMENT
+drbl/models/pipeline-value.ts,7,,pointsPerWin,MODEL_CALCULATION,*     └─ WAR  = (finalAbility - replacement) * poss / 100 / pointsPerWin,NO,DOCUMENT
+drbl/models/pipeline-value.ts,108,,pointsPerWin,MODEL_CALCULATION,"""pointsPerWin"",",NO,DOCUMENT
+drbl/models/pipeline-value.ts,112,,pointsPerWin,MODEL_CALCULATION,"formula: ""finalAbility * pairedOnCourtPossessions / 100 / pointsPerWin"",",NO,DOCUMENT
+drbl/models/pipeline-value.ts,120,,pointsPerWin,MODEL_CALCULATION,"""pointsPerWin"",",NO,DOCUMENT
+drbl/models/pipeline-value.ts,125,,pointsPerWin,MODEL_CALCULATION,"""(finalAbility - replacement) * pairedOnCourtPossessions / 100 / pointsPerWin"",",NO,DOCUMENT
+drbl/models/pipeline-value.ts,187,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/pipeline-value.ts,194,,pointsPerWin,MODEL_CALCULATION,return args.pointsPerWin > 0 ? impact / args.pointsPerWin : 0;,NO,DOCUMENT
+drbl/models/pipeline-value.ts,212,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/pipeline-value.ts,241,,pointsPerWin,MODEL_CALCULATION,args.pointsPerWin > 0 ? impactAboveReplacement / args.pointsPerWin : 0;,NO,DOCUMENT
+drbl/models/pipeline-value.ts,376,,pointsPerWin,TYPE_DEFINITION,): { pointsPerWin: number; median: number; n: number; mean: number } {,NO,DEPRECATE_ANNOTATE
+drbl/models/pipeline-value.ts,385,,pointsPerWin,MODEL_CALCULATION,"return { pointsPerWin: 30, median: 30, mean: 30, n: 0 };",NO,DOCUMENT
+drbl/models/pipeline-value.ts,390,,pointsPerWin,MODEL_CALCULATION,"return { pointsPerWin: median, median, mean, n: ratios.length };",NO,DOCUMENT
+drbl/models/pipeline-value.ts,583,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/pipeline-value.ts,604,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/pipeline-value.ts,626,,pointsPerWin,MODEL_CALCULATION,args.pointsPerWin > 0 ? impactAboveAverage / args.pointsPerWin : 0;,NO,DOCUMENT
+drbl/models/pipeline-value.ts,631,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: args.pointsPerWin,",NO,DOCUMENT
+drbl/models/pipeline-value.ts,652,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: args.pointsPerWin,",NO,DOCUMENT
+drbl/models/pipeline-value.ts,665,,pointsPerWin,MODEL_CALCULATION,"`WAR = ${warParts.impactAboveReplacement} / ${args.pointsPerWin} = ${warParts.war}`,",NO,DOCUMENT
+drbl/models/pipeline-value.ts,666,,pointsPerWin,MODEL_CALCULATION,"`WAA = ${finalAbilityDRBL100} * ${nPaired} / 100 / ${args.pointsPerWin} = ${waa}`,",NO,DOCUMENT
+drbl/models/player-value.ts,56,,seasonalImpact,MODEL_CALCULATION,"seasonalImpactFromRawRate,",NO,DOCUMENT
+drbl/models/player-value.ts,147,,seasonalImpact,TYPE_DEFINITION,seasonalImpact: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,159,,pointsPerWin,MODEL_CALCULATION,* Legacy seasonalImpact / pointsPerWin (historical WAR generations).,NO,DOCUMENT
+drbl/models/player-value.ts,159,,seasonalImpact,MODEL_CALCULATION,* Legacy seasonalImpact / pointsPerWin (historical WAR generations).,NO,DOCUMENT
+drbl/models/player-value.ts,162,,drblWar,TYPE_DEFINITION,drblWar: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,170,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,518,,pointsPerWin,MODEL_CALCULATION,pointsPerWin:,NO,DOCUMENT
+drbl/models/player-value.ts,553,,seasonalImpact,TYPE_DEFINITION,seasonalImpact: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,582,,seasonalImpact,MODEL_CALCULATION,const seasonalImpact = seasonalImpactFromRawRate(,NO,DOCUMENT
+drbl/models/player-value.ts,627,,seasonalImpact,MODEL_CALCULATION,"seasonalImpact,",NO,DOCUMENT
+drbl/models/player-value.ts,704,,pointsPerWin,MODEL_CALCULATION,"const seasonWar = warFromImpact(d.seasonalImpact, ranking.pointsPerWin);",NO,DOCUMENT
+drbl/models/player-value.ts,704,,seasonalImpact,MODEL_CALCULATION,"const seasonWar = warFromImpact(d.seasonalImpact, ranking.pointsPerWin);",NO,DOCUMENT
+drbl/models/player-value.ts,705,,seasonalImpact,MODEL_CALCULATION,const r1Fields = buildR1ValueFieldsFromAttributed(d.seasonalImpact);,NO,DOCUMENT
+drbl/models/player-value.ts,707,,seasonalImpact,MODEL_CALCULATION,// Forecast uses canonical validated ability (not WAR seasonalImpact).,NO,DOCUMENT
+drbl/models/player-value.ts,708,,seasonalImpact,MODEL_CALCULATION,const forecastImpact = seasonalImpactFromRawRate(,NO,DOCUMENT
+drbl/models/player-value.ts,712,,pointsPerWin,MODEL_CALCULATION,"const forecastWar = warFromImpact(forecastImpact, ranking.pointsPerWin);",NO,DOCUMENT
+drbl/models/player-value.ts,751,,seasonalImpact,MODEL_CALCULATION,"seasonalImpact: d.seasonalImpact,",NO,DOCUMENT
+drbl/models/player-value.ts,757,,drblWar,MODEL_CALCULATION,"drblWar: seasonWar,",NO,DOCUMENT
+drbl/models/player-value.ts,764,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: ranking.pointsPerWin,",NO,DOCUMENT
+drbl/models/player-value.ts,828,,seasonalImpact,TYPE_DEFINITION,"seasonalImpact: Number(p.seasonalImpact.toFixed(2)),",NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,836,,drblWar,TYPE_DEFINITION,"drblWar: Number(p.drblWar.toFixed(2)),",NO,DEPRECATE_ANNOTATE
+drbl/models/player-value.ts,837,,drblWar,TYPE_DEFINITION,"legacyDrblWar: Number((p.legacyDrblWar ?? p.drblWar).toFixed(2)),",NO,DEPRECATE_ANNOTATE
+drbl/models/ranking-config.ts,71,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/ranking-config.ts,89,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: DEFAULT_POINTS_PER_WIN,",NO,DOCUMENT
+drbl/models/validated-ability-cutover.ts,154,,drblWar,MODEL_CALCULATION,"drblWar: p.drblWar,",NO,DOCUMENT
+drbl/models/validated-ability-cutover.ts,155,,seasonalImpact,MODEL_CALCULATION,"seasonalImpact: p.seasonalImpact,",NO,DOCUMENT
+drbl/models/war-math.ts,2,,DRBL-WAR,MODEL_CALCULATION,* DRBL-WAR dimensional mathematics (unit ledger + pure conversion steps).,NO,DOCUMENT
+drbl/models/war-math.ts,20,,pointsPerWin,MODEL_CALCULATION,* pointsPerWin,NO,DOCUMENT
+drbl/models/war-math.ts,23,,pointsPerWin,MODEL_CALCULATION,*   unit: wins / point  (= 1 / pointsPerWin),NO,DOCUMENT
+drbl/models/war-math.ts,29,,pointsPerWin,MODEL_CALCULATION,*         / pointsPerWin,NO,DOCUMENT
+drbl/models/war-math.ts,54,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,69,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: PROVISIONAL_POINTS_PER_WIN,",NO,DOCUMENT
+drbl/models/war-math.ts,93,,pointsPerWin,MODEL_CALCULATION,"* `pointsPerWin` MUST be points/win (e.g. 30), never wins/point (1/30).",NO,DOCUMENT
+drbl/models/war-math.ts,97,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,99,,pointsPerWin,MODEL_CALCULATION,if (!(pointsPerWin > 0) || !Number.isFinite(pointsPerWin)) return 0;,NO,DOCUMENT
+drbl/models/war-math.ts,100,,pointsPerWin,MODEL_CALCULATION,return impactAboveReplacement / pointsPerWin;,NO,DOCUMENT
+drbl/models/war-math.ts,103,,pointsPerWin,TYPE_DEFINITION,export function winsPerPointFromPointsPerWin(pointsPerWin: number): number {,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,104,,pointsPerWin,MODEL_CALCULATION,return pointsPerWin > 0 ? 1 / pointsPerWin : 0;,NO,DOCUMENT
+drbl/models/war-math.ts,107,,pointsPerWin,TYPE_DEFINITION,export function pointsPerWinFromWinsPerPoint(winsPerPoint: number): number {,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,140,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,165,,pointsPerWin,MODEL_CALCULATION,config.pointsPerWin,NO,DOCUMENT
+drbl/models/war-math.ts,173,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: config.pointsPerWin,",NO,DOCUMENT
+drbl/models/war-math.ts,211,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,241,,pointsPerWin,MODEL_CALCULATION,result.war - result.impactAboveReplacement / result.pointsPerWin,NO,DOCUMENT
+drbl/models/war-math.ts,248,,pointsPerWin,MODEL_CALCULATION,"`DRBL_WAR = ${result.impactAboveReplacement} / ${result.pointsPerWin} = ${result.war} wins`,",NO,DOCUMENT
+drbl/models/war-math.ts,268,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: result.pointsPerWin,",NO,DOCUMENT
+drbl/models/war-math.ts,292,,pointsPerWin,MODEL_CALCULATION,"`pointsPerWin               = ${trace.pointsPerWin}`,",NO,DOCUMENT
+drbl/models/war-math.ts,384,,pointsPerWin,TYPE_DEFINITION,): { pointsPerWin: number; n: number; median: number } {,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,394,,pointsPerWin,MODEL_CALCULATION,"pointsPerWin: PROVISIONAL_POINTS_PER_WIN,",NO,DOCUMENT
+drbl/models/war-math.ts,402,,pointsPerWin,MODEL_CALCULATION,"return { pointsPerWin: mean, n: ratios.length, median };",NO,DOCUMENT
+drbl/models/war-math.ts,414,,seasonalImpact,TYPE_DEFINITION,seasonalImpact: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,440,,seasonalImpact,MODEL_CALCULATION,Math.abs(args.seasonalImpact - expected) > 0.05 &&,NO,DOCUMENT
+drbl/models/war-math.ts,441,,seasonalImpact,MODEL_CALCULATION,Math.abs(args.seasonalImpact - expected / 100) < 0.05,NO,DOCUMENT
+drbl/models/war-math.ts,449,,seasonalImpact,MODEL_CALCULATION,args.seasonalImpact -,NO,DOCUMENT
+drbl/models/war-math.ts,452,,seasonalImpact,MODEL_CALCULATION,Math.abs(args.seasonalImpact - expected) > 0.05,NO,DOCUMENT
+drbl/models/war-math.ts,472,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-math.ts,481,,pointsPerWin,MODEL_CALCULATION,if (!(args.pointsPerWin > 0)) {,NO,DOCUMENT
+drbl/models/war-math.ts,482,,pointsPerWin,MODEL_CALCULATION,"warnings.push(""pointsPerWin must be > 0"");",NO,DOCUMENT
+drbl/models/war-units.ts,99,,pointsPerWin,MODEL_CALCULATION,pointsPerWin: PointsPerWin,NO,DOCUMENT
+drbl/models/war-units.ts,101,,pointsPerWin,MODEL_CALCULATION,if (!(pointsPerWin > 0)) return asWins(0);,NO,DOCUMENT
+drbl/models/war-units.ts,102,,pointsPerWin,MODEL_CALCULATION,return asWins(impact / pointsPerWin);,NO,DOCUMENT
+drbl/models/war-units.ts,112,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-units.ts,115,,seasonalImpact,TYPE_DEFINITION,seasonalImpactPaired: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-units.ts,122,,seasonalImpact,MODEL_CALCULATION,"seasonalImpactPaired: impact,",NO,DOCUMENT
+drbl/models/war-units.ts,123,,pointsPerWin,MODEL_CALCULATION,"warPaired: args.pointsPerWin > 0 ? impact / args.pointsPerWin : 0,",NO,DOCUMENT
+drbl/models/war-units.ts,136,,pointsPerWin,TYPE_DEFINITION,pointsPerWin: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-units.ts,141,,seasonalImpact,TYPE_DEFINITION,seasonalImpactCombined: number;,NO,DEPRECATE_ANNOTATE
+drbl/models/war-units.ts,156,,seasonalImpact,MODEL_CALCULATION,"seasonalImpactCombined: impact,",NO,DOCUMENT
+drbl/models/war-units.ts,158,,pointsPerWin,MODEL_CALCULATION,"args.pointsPerWin > 0 ? impact / args.pointsPerWin : 0,",NO,DOCUMENT
+src/data/drbl/precomputed/2024-25-r1-stints.json,1,,2.918,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-r1-stints-v1"",""r1PointValueVersion"":""drbl-r1-points-v1"",""r1WinEquivalentVersion"":""drbl-r1-wineq-v1"",""r1PointsPerWin"":37.490662671779255,""stints"":[{""playerId"":""101108"",""teamId"":""1610612759"",""teamN"":9301,""r",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,drblWar,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,pointsPerWin,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,seasonalImpact,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,5.835,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,2.918,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2024-25.json,1,,38.7142857,DATA_STORAGE,"{""season"":""2024-25"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26-r1-stints.json,1,,5.835,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-r1-stints-v1"",""r1PointValueVersion"":""drbl-r1-points-v1"",""r1WinEquivalentVersion"":""drbl-r1-wineq-v1"",""r1PointsPerWin"":37.490662671779255,""stints"":[{""playerId"":""101108"",""teamId"":""1610612746"",""teamN"":559,""r1",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26-r1-stints.json,1,,2.918,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-r1-stints-v1"",""r1PointValueVersion"":""drbl-r1-points-v1"",""r1WinEquivalentVersion"":""drbl-r1-wineq-v1"",""r1PointsPerWin"":37.490662671779255,""stints"":[{""playerId"":""101108"",""teamId"":""1610612746"",""teamN"":559,""r1",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26.json,1,,drblWar,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26.json,1,,pointsPerWin,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26.json,1,,seasonalImpact,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26.json,1,,5.835,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/drbl/precomputed/2025-26.json,1,,2.918,DATA_STORAGE,"{""season"":""2025-26"",""version"":""drbl-ranking-v2-seq"",""sequentialAttributionVersion"":""drbl-seq-attr-v1"",""abilityLineageVersion"":""ability-lineage-v1"",""publishedAbilityInput"":""validated_raw_eb1600"",""rankingMode"":""season_value"",""rankingFormulaVe",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/queries/players.ts,210,,drblWar,DATA_STORAGE,"drblWar: drbl?.drblWar ?? row.drblWar,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/queries/players.ts,211,,seasonalImpact,DATA_STORAGE,"drblSeasonalImpact: drbl?.seasonalImpact ?? row.drblSeasonalImpact,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/espn.ts,361,,drblWar,DATA_STORAGE,"drblWar: 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/local.ts,125,,drblWar,DATA_STORAGE,"drblWar: 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/nba.ts,147,,drblWar,DATA_STORAGE,"drblWar: 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/stats-nba.ts,187,,drblWar,DATA_STORAGE,"drblWar: drbl?.drblWar ?? 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/stats-nba.ts,188,,seasonalImpact,DATA_STORAGE,"drblSeasonalImpact: drbl?.seasonalImpact ?? 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/transformers/stats-nba.ts,327,,drblWar,DATA_STORAGE,"drblWar: 0,",NO,KEEP_LEGACY_FIELD_ADD_R1
+src/data/types/player-season.ts,131,,pointsPerWin,TYPE_DEFINITION,* @deprecated Legacy seasonalImpact / pointsPerWin (historical WAR generations).,NO,DEPRECATE_ANNOTATE
+src/data/types/player-season.ts,131,,seasonalImpact,TYPE_DEFINITION,* @deprecated Legacy seasonalImpact / pointsPerWin (historical WAR generations).,NO,DEPRECATE_ANNOTATE
+src/data/types/player-season.ts,135,,drblWar,TYPE_DEFINITION,drblWar: number;,NO,DEPRECATE_ANNOTATE
+src/lib/player-explore-sort.ts,202,,drblWar,SORTING,// Old ?sort=drblWar bookmarks redirect to R1 Win Equivalents (not a field alias).,NO,DOCUMENT
+src/lib/player-explore-sort.ts,204,,drblWar,SORTING,"key === ""drblWar"" ? ""r1WinEquivalents"" : key;",NO,DOCUMENT

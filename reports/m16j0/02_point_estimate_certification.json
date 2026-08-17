@@ -1,0 +1,66 @@
+{
+  "POINT_ESTIMATE_CERTIFICATION": "PASS",
+  "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+  "POINT_ESTIMATE_FORMULA": "N/(N+1600)*rawAbilityRate",
+  "POINT_ESTIMATE_ZERO_SEMANTICS": "R1_REPLACEMENT",
+  "POINT_ESTIMATE_RANK_RULE": "DESCENDING_FINAL_RESEARCH_DRBL100",
+  "attribution": "drbl-seq-attr-v1",
+  "raw": "rawAbilityRate = 100 * ApproachBAttributedValue / N",
+  "N": "actual combined historical possession appearances",
+  "posterior": "N/(N+1600)*rawAbilityRate",
+  "priorStrength": 1600,
+  "priorMean": 0,
+  "calibration": "IDENTITY",
+  "calibrationCoefficient": 1,
+  "calibrationSelection": "IDENTITY_SELECTED",
+  "fusionInfluence": 0,
+  "LNInfluence": 0,
+  "BInfluence": 0,
+  "M6Influence": 0,
+  "legacyEB200Influence": 0,
+  "pseudoExposureInfluence": 0,
+  "posteriorOperations": 1,
+  "productionLegacyK": 200,
+  "probes": [
+    {
+      "raw": 2.5,
+      "N": 800,
+      "expected": 0.8333333333333333,
+      "ability": 0.8333333333333333,
+      "rate": 0.8333333333333333,
+      "posteriorOps": 1,
+      "ok": true
+    },
+    {
+      "raw": -1.2,
+      "N": 1600,
+      "expected": -0.6,
+      "ability": -0.6,
+      "rate": -0.6,
+      "posteriorOps": 1,
+      "ok": true
+    },
+    {
+      "raw": 0,
+      "N": 50,
+      "expected": 0,
+      "ability": 0,
+      "rate": 0,
+      "posteriorOps": 1,
+      "ok": true
+    },
+    {
+      "raw": 4,
+      "N": 10000,
+      "expected": 3.4482758620689653,
+      "ability": 3.4482758620689653,
+      "rate": 3.4482758620689653,
+      "posteriorOps": 1,
+      "ok": true
+    }
+  ],
+  "m16hLockSummary": {
+    "CALIBRATION_SELECTION_RESULT": "IDENTITY_SELECTED",
+    "formula": "N/(N+1600)*rawAbilityRate"
+  }
+}

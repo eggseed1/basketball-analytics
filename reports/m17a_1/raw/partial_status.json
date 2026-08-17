@@ -1,0 +1,14 @@
+{
+  "at": "2026-08-13T03:00:46.327Z",
+  "M17A_1_STATUS": "RAW_IMPORT_IN_PROGRESS",
+  "M17A_1_RESULT": "RAW_IMPORT_INCOMPLETE",
+  "M17B_AUTHORIZED": "NO",
+  "sealKind": "PARTIAL_SNAPSHOT_NOT_FINAL",
+  "note": "Early snapshot only. See reports/m17a_1/import/status.json for live progress.",
+  "prefix": {
+    "00224": 1225,
+    "00225": 1225,
+    "00296": 110
+  },
+  "gameDirs": 2560
+}

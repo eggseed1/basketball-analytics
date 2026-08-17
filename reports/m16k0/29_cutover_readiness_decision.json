@@ -1,0 +1,25 @@
+{
+  "PRODUCTION_CUTOVER_READY": "NO",
+  "PRODUCTION_READINESS_RESULT": "READY_WITH_BLOCKERS",
+  "blockers": [
+    "PERCENTILE_POPULATION_DECISION_REQUIRED: replace uncertainty>0 eligibility with approved metadata/exposure rule before cutover",
+    "Glossary still describes DRBL/100 as fused posterior — update at cutover (classified; not model change)"
+  ],
+  "gates": {
+    "validatedFormula": "PASS",
+    "researchProductionEquality": "PASS",
+    "consumerMigration": "PASS_WITH_PERCENTILE_BLOCKER",
+    "rankMigration": "PASS",
+    "uncertaintyQuarantine": "PASS",
+    "warFirewall": "PASS",
+    "odFirewall": "PASS",
+    "apiMigration": "PASS",
+    "cacheMigration": "PASS",
+    "rollback": "PASS",
+    "liveUnchanged": "PASS"
+  },
+  "LIVE_DRBL100_SOURCE_CHANGED": "NO",
+  "LIVE_RANK_SOURCE_CHANGED": "NO",
+  "PRODUCTION_LIVE_CUTOVER": "NO",
+  "nextMilestone": "M16k0.1 BLOCKER REPAIR (percentile population) then M16k1 cutover"
+}

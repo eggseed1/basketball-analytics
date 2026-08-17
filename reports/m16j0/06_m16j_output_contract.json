@@ -1,0 +1,56 @@
+{
+  "freezeHash": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "pointEstimateFreezeHash": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "reservedProtocolVersion": "drbl-eval-v1",
+  "reservedRowProtocolId": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+  "reservedRowProtocolHash": "809dda8898033a313285941acbd6014e25eed18954f37045830b3dd8ead94057",
+  "primaryTarget": "future_block_residual_per_100",
+  "researchModelVersion": "drbl-research-rate-v1",
+  "comparatorVersions": {
+    "B0": "rawAbilityRate",
+    "B1": "EB200_P_only",
+    "B2": "NOT_COMPARABLE"
+  },
+  "primaryMetric": "RMSE",
+  "secondaryMetrics": [
+    "MAE",
+    "Pearson",
+    "Spearman",
+    "R2",
+    "mean_prediction_bias",
+    "calibration_intercept",
+    "calibration_slope"
+  ],
+  "bootstrapProtocol": {
+    "function": "pairedBlockBootstrapRmseDiff",
+    "source": "drbl/evaluation/metrics.ts",
+    "resamples": 1000,
+    "confidenceLevel": 0.95,
+    "requirePairedUncertainty": true,
+    "dependencyUnit": "playerId (M16c earlyFrac reserved/validation universe precedent)",
+    "note": "M16g foldId|playerId applies to TRAIN chronological folds; reserved earlyFrac rows have no foldId → playerId block is the preexisting non-fold unit",
+    "seedConvention": 42,
+    "primaryComparison": "RESEARCH_FINAL vs B0_RAW_P",
+    "secondaryComparisons": [
+      "RESEARCH_FINAL vs B1_P_EB200"
+    ],
+    "BOOTSTRAP_PROTOCOL_FROZEN": true
+  },
+  "successRules": {
+    "PRIMARY_RESERVED_SUCCESS": "deltaRMSE_vs_raw < 0 AND P(RESEARCH_FINAL beats RAW) >= 0.95",
+    "practicalEquivalenceRelative": 0.005,
+    "incumbentRegressionThreshold": 0.005
+  },
+  "verdictTaxonomy": [
+    "STRONG_PASS",
+    "SCIENTIFIC_PASS_PRODUCTION_MIXED",
+    "INCONCLUSIVE",
+    "FAIL"
+  ],
+  "uncertaintyExcluded": true,
+  "WARExcluded": true,
+  "ODExcluded": true,
+  "PLAYER_NAMES_VISIBLE_BEFORE_RESERVED_VERDICT": false,
+  "RESERVED_TEST_MAX_VALID_MODEL_RUNS": 1,
+  "sealedResultArtifactRequiredBeforeNarrative": "reports/m16j/10_reserved_result_sealed.json"
+}

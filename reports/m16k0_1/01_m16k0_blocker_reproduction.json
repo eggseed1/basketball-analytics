@@ -1,0 +1,25 @@
+{
+  "M16K0_REPRODUCED": "PASS",
+  "gates": {
+    "validatedFormula": "PASS",
+    "researchProductionShadowEquality": "PASS",
+    "uncertaintyQuarantined": "YES",
+    "warFirewall": "PASS",
+    "odFirewall": "PASS",
+    "apiMigrationReady": "YES",
+    "cacheMigrationReady": "YES",
+    "rollbackAvailable": "YES"
+  },
+  "blockers": {
+    "PERCENTILE_POPULATION_DECISION_REQUIRED": "YES",
+    "fusedRateWordingBlocker": "YES",
+    "exploreRankSortVerificationRequired": "YES"
+  },
+  "m16k0BlockersQuoted": [
+    "PERCENTILE_POPULATION_DECISION_REQUIRED: replace uncertainty>0 eligibility with approved metadata/exposure rule before cutover",
+    "Glossary still describes DRBL/100 as fused posterior — update at cutover (classified; not model change)"
+  ],
+  "liveStillUsesUncertaintyProxy": true,
+  "liveGlossaryStillSaysFusedRate": true,
+  "note": "Live paths unchanged in k0.1; blockers repaired via validated helpers + frozen copy for k1."
+}

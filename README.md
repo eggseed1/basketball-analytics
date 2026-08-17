@@ -1,7 +1,7 @@
 # Basketball Analytics
 
 Modern basketball analytics site (Next.js App Router) with a canonical data
-layer inspired by Baseball Savant / Databallr workflows.
+layer over live NBA stats.
 
 ## Quick start
 
@@ -10,12 +10,12 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000/explore/players](http://localhost:3000/explore/players).
+Open [http://localhost:3000](http://localhost:3000).
 
 ## Data provider
 
-Default in `.env.local`: **live NBA data** via `NBADataProvider` (ESPN JSON →
-canonical types).
+Default in `.env.local`: **live NBA data** via `NBADataProvider`
+(`stats.nba.com` + Basketball-Reference advanced metrics → canonical types).
 
 ```bash
 # .env.local

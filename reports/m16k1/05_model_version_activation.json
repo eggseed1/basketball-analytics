@@ -1,0 +1,12 @@
+{
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "attributionVersion": "drbl-seq-attr-v1",
+  "posteriorStrength": 1600,
+  "priorMean": 0,
+  "calibration": "identity",
+  "zeroSemantics": "r1_replacement",
+  "activatedOnArtifacts": [
+    "2024-25",
+    "2025-26"
+  ]
+}

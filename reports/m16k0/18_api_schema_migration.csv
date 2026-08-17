@@ -1,0 +1,4 @@
+field,type,nullable,currentSemantics,futureSemantics,compatRisk,ready
+drbl100,number,false currently,EB200(fused),validatedDRBL100,numeric jump; same field name preferred,YES_WITH_VERSION_META
+abilityModelVersion,string,new,absent,drbl-ability-eb1600-r1-v1,additive,YES
+uncertainty/interval*,number,yes after quarantine,legacy,removed/null on validated display,UI must tolerate absence,YES_AFTER_UI_QUARANTINE

@@ -1,0 +1,7 @@
+{
+  "sameStintBuilder": true,
+  "sameAllocationFormula": true,
+  "seasonSpecificModelingBranches": "NONE",
+  "ONE_STINT_ALLOCATION_FORMULA_CROSS_SEASON": "YES",
+  "allocationVersion": "drbl-war-team-stint-alloc-v1"
+}

@@ -1,0 +1,10 @@
+{
+  "equation": "ActualNetPoints = TeamR1Points + R1BaselineNetPoints + UnassignedResidual",
+  "tolerance": 1e-8,
+  "leagueResidual": 1.0152234608540311e-10,
+  "maxAbsTeamResidual": 7.486278263968416e-11,
+  "meanAbsResidual": 2.6960833565681242e-11,
+  "P99Residual": 7.486278263968416e-11,
+  "mismatchCount": 0,
+  "R1_RESERVED_ACCOUNTING_REPRODUCTION": "PASS"
+}

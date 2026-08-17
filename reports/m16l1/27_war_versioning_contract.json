@@ -1,0 +1,26 @@
+{
+  "researchWarModelVersion": "drbl-war-r1-v1",
+  "activatedInProduction": false,
+  "metadata": {
+    "warModelVersion": "drbl-war-r1-v1",
+    "warRateSource": "W0",
+    "warExposureSource": "actualCombinedPossessionAppearances",
+    "replacementSemantics": "R1_zero_no_additional_subtraction",
+    "pointsPerWin": 37.490662671779255,
+    "pointsPerWinVersion": "dev-netpoints-wins-2024-25"
+  },
+  "WAR_UNCERTAINTY_AVAILABLE": "NO",
+  "OFFENSIVE_WAR_CANONICAL": "NO",
+  "DEFENSIVE_WAR_CANONICAL": "NO",
+  "shadowFieldsOnly": [
+    "researchWarRateSource",
+    "researchWarRate",
+    "researchSeasonPointValue",
+    "researchPointsPerWin",
+    "researchWAR",
+    "researchWarModelVersion"
+  ],
+  "doNotOverwrite": [
+    "drblWar"
+  ]
+}

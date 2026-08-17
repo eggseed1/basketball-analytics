@@ -1,0 +1,109 @@
+[
+  {
+    "field": "rawDRBL",
+    "dependsOn": [
+      "Approach B residual shares",
+      "actualOnCourtPossessions"
+    ],
+    "usedBy": [
+      "posteriorDRBL (via fused rate)",
+      "diagnostics"
+    ],
+    "unit": "residual points / 100 possessions",
+    "formula": "100 * totalValue / actualOnCourtPossessions"
+  },
+  {
+    "field": "posteriorDRBL",
+    "dependsOn": [
+      "fusedRateRaw",
+      "actualOnCourtPossessions",
+      "priorMean=0",
+      "priorStrength"
+    ],
+    "usedBy": [
+      "calibration",
+      "finalAbilityDRBL100"
+    ],
+    "unit": "residual points / 100 possessions (EB shrunk)",
+    "formula": "w*fused + (1-w)*prior; w = n/(n+k)"
+  },
+  {
+    "field": "finalAbilityDRBL100",
+    "dependsOn": [
+      "posteriorDRBL",
+      "calibrationIntercept",
+      "calibrationSlope"
+    ],
+    "usedBy": [
+      "WAA",
+      "WAR",
+      "aboveReplacementRate"
+    ],
+    "unit": "calibrated points / 100 possessions",
+    "formula": "intercept + slope * posteriorDRBL"
+  },
+  {
+    "field": "replacementLevelDRBL100",
+    "dependsOn": [
+      "fringe players' finalAbilityDRBL100"
+    ],
+    "usedBy": [
+      "aboveReplacementRate",
+      "WAR"
+    ],
+    "unit": "points / 100 possessions",
+    "formula": "median(finalAbility | fringe sample)"
+  },
+  {
+    "field": "DRBL_WAA",
+    "dependsOn": [
+      "finalAbilityDRBL100",
+      "actualOnCourtPossessions",
+      "pointsPerWin"
+    ],
+    "usedBy": [
+      "leaderboard (optional)",
+      "team accounting"
+    ],
+    "unit": "wins",
+    "formula": "finalAbility * n / 100 / pointsPerWin"
+  },
+  {
+    "field": "DRBL_WAR",
+    "dependsOn": [
+      "finalAbilityDRBL100",
+      "replacementLevelDRBL100",
+      "actualOnCourtPossessions",
+      "pointsPerWin"
+    ],
+    "usedBy": [
+      "leaderboard",
+      "team accounting"
+    ],
+    "unit": "wins",
+    "formula": "(finalAbility - replacement) * n / 100 / pointsPerWin"
+  },
+  {
+    "field": "position",
+    "dependsOn": [
+      "roster metadata OR unavailable"
+    ],
+    "usedBy": [
+      "diagnostics only"
+    ],
+    "unit": "categorical",
+    "formula": "never invent proxy labels"
+  },
+  {
+    "field": "archetype",
+    "dependsOn": [
+      "creation/connection/execution/defense category rates",
+      "possessions (shrinkage only)"
+    ],
+    "usedBy": [
+      "diagnostics only"
+    ],
+    "unit": "categorical + confidence",
+    "formula": "argmax behavioral membership; no DRBL/WAR inputs"
+  }
+]

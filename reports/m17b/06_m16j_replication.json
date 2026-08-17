@@ -1,0 +1,48 @@
+{
+  "evidenceClass": "PREVIOUSLY_CONSUMED_REPLICATION",
+  "commonPlayers": 458,
+  "historyGames": 857,
+  "futureGames": 368,
+  "observed": {
+    "rawRMSE": 2.3547360671426114,
+    "ebRMSE": 2.1855128277791382,
+    "deltaRMSE": -0.16922323936347317,
+    "rawMAE": 1.5064796017913562,
+    "ebMAE": 1.3863013523995151,
+    "rawPearson": 0.2983269110402185,
+    "ebPearson": 0.3481713587492692,
+    "rawSpearman": 0.37877613468824983,
+    "ebSpearman": 0.42254305841982986,
+    "rawR2": -0.025212077611261874,
+    "ebR2": 0.11684697293041724,
+    "ebBias": 0.12861760203623313
+  },
+  "expected": {
+    "n": 458,
+    "ebRMSE": 2.185513,
+    "ebMAE": 1.386301,
+    "ebPearson": 0.348171,
+    "ebSpearman": 0.422543,
+    "ebR2": 0.116847,
+    "ebBias": 0.128618,
+    "rawRMSE": 2.354736,
+    "rawMAE": 1.50648,
+    "rawPearson": 0.298327,
+    "rawSpearman": 0.378776,
+    "rawR2": -0.025212,
+    "deltaRMSE": -0.169223
+  },
+  "checks": {
+    "n": true,
+    "ebRMSE": true,
+    "rawRMSE": true,
+    "deltaRMSE": true,
+    "ebMAE": true,
+    "rawMAE": true,
+    "ebPearson": true,
+    "rawPearson": true
+  },
+  "M16J_REPLICATION": "PASS",
+  "includedInPrimaryInference": false,
+  "note": "Matches sealed M16j within tolerance"
+}

@@ -1,0 +1,9 @@
+{
+  "exactEquation": "ActualNetPoints = ApproachBAttributed(accounting O+D) + (Σ_off V0 − Σ_def V0) + Unobserved",
+  "teams": 30,
+  "leagueResidual": -6.004086117172847e-11,
+  "maxTeamResidual": 5.5990767577895895e-11,
+  "meanResidual": 1.8961543446494033e-11,
+  "P99Residual": 5.5990767577895895e-11,
+  "TEAM_NET_POINT_DECOMPOSITION": "EXACT"
+}

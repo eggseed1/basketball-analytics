@@ -1,0 +1,22 @@
+{
+  "version": "drbl-war-v1",
+  "fittedAt": "2026-08-12T02:30:28.956Z",
+  "pointsToWins": 0.034093,
+  "throughOriginSlope": 0.034093,
+  "intercept": 1.233333,
+  "provisionalPointsToWins": 0.03333333333333333,
+  "train": {
+    "n": 30,
+    "mae": 0.565,
+    "rmse": 0.682,
+    "corr": 0.671
+  },
+  "holdout": {
+    "n": 23,
+    "mae": 0.285,
+    "rmse": 0.347,
+    "corr": 0.714
+  },
+  "calibrated": true,
+  "reason": "holdout through-origin MAE ≤ provisional and positive correlation"
+}

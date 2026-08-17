@@ -1,0 +1,4 @@
+{
+  "CANONICAL_DRBL_LEGACY_NUMERICAL_CONTAMINATION": "NO",
+  "note": "canonical drbl100 from computeValidatedAbilityV1(rawAbilityRate,N); fusedRateRaw/posteriorAbilityRate retained diagnostic-only"
+}

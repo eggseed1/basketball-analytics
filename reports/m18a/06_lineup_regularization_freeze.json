@@ -1,0 +1,13 @@
+{
+  "RIDGE_GRID": [
+    50,
+    200,
+    800,
+    3200,
+    12800
+  ],
+  "selection": "TRAIN chronological holdout RMSE on pooled 2020-21+2021-22",
+  "holdoutFrac": 0.2,
+  "frozenBeforeResults": true,
+  "BOOTSTRAP_SEED": 42
+}

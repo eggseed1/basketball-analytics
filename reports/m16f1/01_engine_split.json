@@ -1,0 +1,13 @@
+{
+  "ENGINE_FIT_n": 594,
+  "ENGINE_HOLDOUT_n": 143,
+  "ENGINE_FIT_hash": "0d002d3ef73107ad4758478138c8da36fc716efdeee37bfc3fe56646efd48da9",
+  "ENGINE_HOLDOUT_hash": "6d8790e7973c42f6f8fb776d416391750baee48e8cb8f03f001da299e63fe00a",
+  "ENGINE_FIT_date_min": "2024-10-22",
+  "ENGINE_FIT_date_max": "2025-01-15",
+  "ENGINE_HOLDOUT_date_min": "2025-01-16",
+  "ENGINE_HOLDOUT_date_max": "2025-02-04",
+  "overlap": false,
+  "chronological": true,
+  "trainParentHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550"
+}

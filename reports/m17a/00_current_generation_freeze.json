@@ -1,0 +1,31 @@
+{
+  "milestone": "M17a",
+  "timestamp": "2026-08-13T02:30:50.100Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "CANONICAL_ABILITY_VERSION": "drbl-ability-eb1600-r1-v1",
+  "R1_POINTS_PRODUCTION_VERSION": "drbl-r1-points-v1",
+  "R1_WINEQ_PRODUCTION_VERSION": "drbl-r1-wineq-v1",
+  "P1": 37.490662671779255,
+  "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+  "M16L2_RESERVED_VERDICT": "STRONG_PASS",
+  "M16L3_PRODUCT_MIGRATION_HASH": "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+  "currentSupportedSeasons": [
+    "2024-25",
+    "2025-26"
+  ],
+  "websiteSeasonRoutes": [
+    "/explore/players",
+    "/players/[playerId]",
+    "/learn/drbl"
+  ],
+  "currentDataSchema": {
+    "raw": "data/drbl/raw/games/{gameId}/{boxscore,playbyplay}.json",
+    "normalized": "data/drbl/normalized/{season}/{gameId}/{events,box,lineups,possessions,reconcile}.json",
+    "precomputed": "src/data/drbl/precomputed/{season}.json + {season}-r1-stints.json"
+  },
+  "note": "No pre-2024 multi-season historical PBP archive found in-repo or nearby. Only 2024-25 and 2025-26 CDN raw games are present.",
+  "researchProductionProvenance": "PASS"
+}

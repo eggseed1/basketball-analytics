@@ -1,0 +1,9 @@
+{
+  "version": "drbl-l-wp-v1",
+  "fittedAt": "2026-08-12T02:30:28.958Z",
+  "meanRawLambda": 0.010228,
+  "minRawLambda": 0.001465,
+  "maxRawLambda": 0.016988,
+  "possessions": 101228,
+  "exampleClutchLambdaStar": 5.898
+}

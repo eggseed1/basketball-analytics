@@ -1,0 +1,6 @@
+pair,equalCount,universeN,equalRate,flag
+pctDRBL100==pctP,34,575,0.0591,isolated_ok
+pctP==pctLN,5,575,0.0087,isolated_ok
+pctP==pctB,14,575,0.0243,isolated_ok
+pctP==pctO,32,575,0.0557,isolated_ok
+pctWAR==pctD,3,575,0.0052,isolated_ok

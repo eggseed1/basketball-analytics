@@ -1,0 +1,2 @@
+scope,totalPlayers,withEnoughR1ProxyNeighbors,supportedPct,weakSupportPct,unsupportedPct,note,APPROACH_A_SUPPORT_COVERAGE
+LN_coefficient_table,553,553,1,0,0,Possession-level TRAIN appearance coverage requires PBP scan + TRAIN-only LN refit before M16f,SUFFICIENT

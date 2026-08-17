@@ -1,0 +1,11 @@
+{
+  "newDrblParameter": "NO",
+  "newShrinkage": "NO",
+  "newPPW": "NO",
+  "newScaleMultiplier": "NO",
+  "newReplacementOffset": "NO",
+  "teamRegressionCalibration": "NO",
+  "stintPosterior": "NO",
+  "externalMetricTarget": "NO",
+  "result": "PASS"
+}

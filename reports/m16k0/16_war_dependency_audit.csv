@@ -1,0 +1,3 @@
+path,warInput,readsDrbl100,automaticCoupling,firewall,WAR_COUPLING_BLOCKER
+drbl/models/war-math.ts,rawAbilityRate via seasonalImpact,NO,NO,keep warInputRateSource=raw_realized; do not switch to posterior,NO
+precomputed drblWar,artifact seasonalImpact,NO,NO,regenerate WAR only under separate WAR milestone,NO

@@ -1,0 +1,9 @@
+metric,value
+holdout_unique_player_ids,455
+fit_coefficient_player_ids,160
+fit_box_player_ids,520
+unique_unseen_vs_coefficient_set,300
+unique_unseen_vs_fit_box_players,6
+share_holdout_ids_unseen_vs_coefs,0.6593406593406593
+share_appearances_unseen_vs_coefs,0.4360997926942598
+share_holdout_possessions_with_any_unseen_coef_player,0.988169275859604

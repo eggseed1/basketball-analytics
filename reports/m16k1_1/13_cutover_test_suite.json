@@ -1,0 +1,8 @@
+{
+  "commands": [
+    "tsx --test validated-ability-v1 / validated-percentile-eligibility-v1 / ui-metric-integrity"
+  ],
+  "exitCode": 0,
+  "CUTOVER_TEST_SUITE": "PASS",
+  "tail": "▶ player-page metric percentile integrity\n  ✔ synthetic binding: each DRBL row maps to its own percentile (78.729ms)\n  ✔ upstream metric-specific percentiles: P/LN/B orderings can diverge (0.6349ms)\n  ✔ cross-season: 2024-25 and 2025-26 distributions do not silently mix (0.6109ms)\n  ✔ metadata-only default zeros are excluded from DRBL percentile universe (1.966ms)\n  ✔ every DRBL metric declares its own percentileField (0.3096ms)\n✔ player-page metric percentile integrity (84.6638ms)\n▶ validated-ability-v1\n  ✔ matches N/(N+1600)*raw and research aliases (2.4522ms)\n  ✔ raw=-2, N=1600 → -1; raw=0 → 0 (0.3564ms)\n  ✔ is pure in rawAbilityRate and N only (legacy fields cannot be passed) (0.3625ms)\n  ✔ |validated| moves toward |raw| as N increases (0.324ms)\n  ✔ shadow feature flag defaults OFF (0.9279ms)\n✔ validated-ability-v1 (6.7233ms)\n▶ validated-percentile-eligibility-v1\n  ✔ zero DRBL with valid N is a real estimate (2.3277ms)\n  ✔ N=0 or nonfinite is not an estimate (0.3026ms)\n  ✔ preserves minutes >= 500 exact boundary (0.4109ms)\n  ✔ percentile = qualification AND estimate; no uncertainty fields (0.5199ms)\n✔ validated-percentile-eligibility-v1 (5.8168ms)\nℹ tests 14\nℹ suites 3\nℹ pass 14\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 631.5066\n\n"
+}

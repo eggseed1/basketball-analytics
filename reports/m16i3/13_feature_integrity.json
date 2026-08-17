@@ -1,0 +1,24 @@
+{
+  "FEATURE_AUDIT_OUTCOME_BLIND": "YES",
+  "FEATURE_PIPELINE_READS_FUTURE_OUTCOMES": "NO",
+  "OUTCOME_USED_FOR_FEATURE_SELECTION": "NO",
+  "HISTORICAL_STREAM_RECONSTRUCTION": "PASS",
+  "R3_APPEARANCE_ACCOUNTING_IDENTITY": "PASS",
+  "streamCountIdentityOk": true,
+  "valueSumIdentityOk": true,
+  "reconstruction": {
+    "nRows": 1982,
+    "maxResidual": 0.0000499649380416578,
+    "meanResidual": 0.00002551115699125136,
+    "P99Residual": 0.0000494946912218408,
+    "streamCountIdentityOk": true,
+    "valueSumIdentityOk": true
+  },
+  "leakageViolations": 0,
+  "syntheticTests": "PASS",
+  "segmentCount": 4,
+  "halfSplitUsesAbsoluteDifference": true,
+  "imputationUsed": false,
+  "pseudoExposureUsed": false,
+  "legacyDisagreementUsed": false
+}

@@ -1,0 +1,21 @@
+{
+  "WAR_RESERVED_2025_26": "ELIGIBLE_WITH_HUMAN_BLINDNESS_LIMITATION",
+  "WAR_RESERVED_TARGET_METRICS_ACCESSED": "NO",
+  "WAR_CANDIDATE_COMPARISON_ACCESSED": "NO",
+  "allowedChecksPerformed": [
+    "row counts",
+    "team IDs",
+    "player IDs",
+    "exposure conservation",
+    "raw attribution conservation",
+    "allocation conservation",
+    "missingness",
+    "determinism"
+  ],
+  "prohibitedNotPerformed": [
+    "team wins regression",
+    "candidate RMSE/MAE/R2/corr/slope/intercept",
+    "W0 vs W1 ranking by team fit",
+    "P0 vs P1 ranking"
+  ]
+}

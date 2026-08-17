@@ -1,0 +1,28 @@
+{
+  "milestone": "M16k1",
+  "timestamp": "2026-08-13T00:09:15.123Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "M16J_RESERVED_VERDICT": "STRONG_PASS",
+  "M16K0_1_PRODUCTION_CUTOVER_READY": "YES",
+  "M16K0_1_PRODUCTION_READINESS_RESULT": "READY_FOR_CONTROLLED_CUTOVER",
+  "PRODUCTION_CUTOVER_READY": "YES",
+  "currentCanonicalDrbl100Source": "legacy fusedRateRaw → EB200 → drbl100",
+  "currentCanonicalRankSource": "stableSortPlayers(finalRankingScore=seasonWar)",
+  "currentPercentileEligibility": "minutes>=500 AND (pre-cutover) drblUncertainty>0",
+  "currentUncertaintySurfaces": [
+    "player-stat-views DRBL ±",
+    "savant uncertainty missingness",
+    "glossary DRBL ±"
+  ],
+  "precomputedArtifactHashes": {
+    "2024-25": "b205bf317e487ba2c55dd580f089dffbbb7680a5fbfdc4884606328572e985a7",
+    "2025-26": "a18c996838a999e265f2cee356e3c15f17b5a8534be9832bf65786c7ea55d8df"
+  },
+  "rollbackDir": "reports/m16k1/rollback",
+  "liveFeatureFlags": {
+    "DRBL_CANONICAL_ABILITY_SOURCE": "validated"
+  }
+}

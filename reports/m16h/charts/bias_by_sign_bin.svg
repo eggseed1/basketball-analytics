@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="280" y="24" text-anchor="middle" font-size="13">Zero-linear bias by sign/rate bin</text>
+  <text x="14" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 14 170)">bias</text>
+  <line x1="52" y1="246.34898038391555" x2="508" y2="246.34898038391555" stroke="#999"/>
+  <rect x="56.0" y="246.3" width="83.2" height="41.7" fill="#1f4e79"/><text x="97.6" y="322" text-anchor="middle" font-size="10">strong_n</text><rect x="147.2" y="135.2" width="83.2" height="111.2" fill="#1f4e79"/><text x="188.8" y="322" text-anchor="middle" font-size="10">moderate</text><rect x="238.4" y="52.0" width="83.2" height="194.3" fill="#1f4e79"/><text x="280.0" y="322" text-anchor="middle" font-size="10">near_zer</text><rect x="329.6" y="246.3" width="83.2" height="0.3" fill="#1f4e79"/><text x="371.2" y="322" text-anchor="middle" font-size="10">moderate</text><rect x="420.8" y="138.6" width="83.2" height="107.8" fill="#1f4e79"/><text x="462.4" y="322" text-anchor="middle" font-size="10">strong_p</text>
+</svg>

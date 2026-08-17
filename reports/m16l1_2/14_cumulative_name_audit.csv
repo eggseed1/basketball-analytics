@@ -1,0 +1,8 @@
+name,accurate,misleading,conventionalWarConfusion,recommended
+R1 Points,YES,LOW,LOW,YES_PRIMARY_POINT
+Player-Attributed R1 Points,YES,LOW,LOW,YES_ALT
+Points Above R1,YES,MEDIUM (may imply exhaustive),MEDIUM,CAUTION
+R1 Win Equivalents,YES,LOW,MEDIUM,YES_PRIMARY_WINEQ
+Player-Attributed Wins Above R1,YES,LOW-MEDIUM,MEDIUM,YES_ALT
+Wins Above Role-Matched R1,YES,LOW,MEDIUM,YES_ALT
+WAR,NO,HIGH,HIGH,NO

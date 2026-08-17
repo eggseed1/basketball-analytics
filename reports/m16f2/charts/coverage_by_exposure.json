@@ -1,0 +1,22 @@
+[
+  {
+    "q": 1,
+    "eligible": 105,
+    "common": 1
+  },
+  {
+    "q": 2,
+    "eligible": 105,
+    "common": 10
+  },
+  {
+    "q": 3,
+    "eligible": 104,
+    "common": 30
+  },
+  {
+    "q": 4,
+    "eligible": 105,
+    "common": 65
+  }
+]

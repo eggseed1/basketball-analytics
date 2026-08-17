@@ -1,0 +1,206 @@
+{
+  "M16F1_REPRODUCED": "PASS",
+  "FROZEN_VALIDATION_ACCESSED": "NO",
+  "RESERVED_TEST_ACCESSED": "NO",
+  "SUPPORT_POLICY_DEGENERATE": "NO",
+  "UNSEEN_PLAYER_COUNT_RESOLVED": "PASS",
+  "PLAYER_REFIT_STABILITY": "STRONG",
+  "DELTA_STABILITY": "MODERATE",
+  "CONTEXTUAL_COMPONENT_STABILITY": "PASS",
+  "RELIABILITY_RATIO": 0.7902692020516889,
+  "REPLACEMENT_ROBUSTNESS": "ROBUST",
+  "FOCAL_CONTEXT_INTERACTIONS_VALID": "PASS",
+  "AGGREGATE_SIGNAL": "POSITIVE",
+  "SUPPORT_DISTANCE_RELIABILITY": "PASS",
+  "OFFENSIVE_RELIABILITY": "PASS",
+  "DEFENSIVE_RELIABILITY": "PASS",
+  "MODEL_ARCHITECTURE_CHANGED": "NO",
+  "LAMBDA_CHANGED": "NO",
+  "K8_CHANGED": "NO",
+  "SUPPORT_POLICY_CHANGED": "NO",
+  "APPROACH_B_CHANGED": "NO",
+  "PRODUCTION_P_CHANGED": "NO",
+  "POSTERIOR_CHANGED": "NO",
+  "WAR_CHANGED": "NO",
+  "COUNTERFACTUAL_RELIABILITY_STATUS": "READY_WITH_WARNINGS",
+  "supportedPossibleProbe": 0,
+  "wouldBeSupportedIfFullK": 18153,
+  "supportCounts": {
+    "SUPPORTED": 0,
+    "WEAK_SUPPORT": 18153,
+    "UNSUPPORTED": 4385
+  },
+  "primaryWeakReason": "TOO_FEW_REPLACEMENTS",
+  "unseenVsCoef": 300,
+  "unseenVsFitGames": 6,
+  "expanding": {
+    "medianPearson": 0.8735298999500545,
+    "medianSpearman": 0.8647604822362104,
+    "medianMae": 1.9451125422515043
+  },
+  "jackknife": {
+    "medianPearson": 0.7748069246759488,
+    "medianSpearman": 0.775962872079377,
+    "medianMae": 2.89715509173627
+  },
+  "aggregate": {
+    "pgSignal": {
+      "n": 1229,
+      "pearson": 0.03761961249449749,
+      "spearman": 0.025748775503779294,
+      "staticPearson": 0.047664294518856974,
+      "staticSpearman": 0.040984877070075594,
+      "deltaPearson": -0.010044682024359486,
+      "deltaSpearman": -0.0152361015662963
+    },
+    "blockSignal": {
+      "n": 137,
+      "pearson": 0.1519971517994807,
+      "spearman": 0.15884779808464167,
+      "staticPearson": 0.15281274771298506,
+      "staticSpearman": 0.14947635671215487,
+      "deltaPearson": -0.0008155959135043578,
+      "deltaSpearman": 0.0093714413724868
+    },
+    "playerSignal": {
+      "n": 148,
+      "pearson": 0.09876302849605097,
+      "spearman": 0.11431236742837893,
+      "staticPearson": 0.10880040127473958,
+      "staticSpearman": 0.12335962863287887,
+      "deltaPearson": -0.010037372778688616,
+      "deltaSpearman": -0.009047261204499946
+    }
+  },
+  "replacement": {
+    "corr84": 0.9402079934845972,
+    "corr812": 0.9805176143926889,
+    "sp84": 0.934453051103101,
+    "sp812": 0.9769409719559271,
+    "replacementCat": "ROBUST"
+  },
+  "components": [
+    {
+      "component": "staticMain",
+      "medianPearson": 0.7662967246707102,
+      "medianSpearman": 0.7443448913002214,
+      "medianMae": 0.03705717068797289,
+      "medianWithinSD": 0.02792402922428092
+    },
+    {
+      "component": "state",
+      "medianPearson": 0.7385689384813873,
+      "medianSpearman": 0.6760625077847936,
+      "medianMae": 0.01638853598201684,
+      "medianWithinSD": 0.0018202205335196117
+    },
+    {
+      "component": "teammate",
+      "medianPearson": 0.930685169363454,
+      "medianSpearman": 0.8586886531065844,
+      "medianMae": 0.0004661816520096598,
+      "medianWithinSD": 0.000054854415781378064
+    },
+    {
+      "component": "opponent",
+      "medianPearson": null,
+      "medianSpearman": 1,
+      "medianMae": 0,
+      "medianWithinSD": 0
+    },
+    {
+      "component": "contextualTotal",
+      "medianPearson": 0.7413123073031469,
+      "medianSpearman": 0.6795303313566394,
+      "medianMae": 0.016346827645079325,
+      "medianWithinSD": 0.001808781687614039
+    }
+  ],
+  "readiness": [
+    {
+      "Dimension": "support-policy validity",
+      "Result": "NON_DEGENERATE",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "unseen-player interpretation",
+      "Result": "300 vs coef set; 6 truly unseen in FIT boxes",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "player-level refit stability",
+      "Result": "STRONG",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "per-delta stability",
+      "Result": "MODERATE",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "contextual-component stability",
+      "Result": "PASS",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "reliability ratio",
+      "Result": 0.7902692020516889,
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "replacement robustness",
+      "Result": "ROBUST",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "focal interaction validity",
+      "Result": "FAIL",
+      "Status": "FAIL",
+      "Blocking": "YES"
+    },
+    {
+      "Dimension": "aggregate holdout signal",
+      "Result": "POSITIVE",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "offensive reliability",
+      "Result": "PASS",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "defensive reliability",
+      "Result": "PASS",
+      "Status": "PASS",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "calibration",
+      "Result": "ctx slope=0.509",
+      "Status": "WARNING",
+      "Blocking": "NO"
+    },
+    {
+      "Dimension": "support-distance degradation",
+      "Result": "PASS",
+      "Status": "PASS",
+      "Blocking": "NO"
+    }
+  ],
+  "focalAuditRepair": {
+    "nAudit": 8334,
+    "stateChanges": 8334,
+    "tmChanges": 8334,
+    "oppChanges": 0,
+    "note": "repaired empty-panel false FAIL"
+  }
+}

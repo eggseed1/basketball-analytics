@@ -1,0 +1,22 @@
+{
+  "LEGACY_WAR_FORMULA_IN_CANONICAL_R1_PATH": "NO",
+  "hitsOutsideHistoricalOk": [
+    {
+      "file": "scripts\\drbl-m16l3.ts",
+      "pattern": "5.8354166"
+    },
+    {
+      "file": "scripts\\drbl-m16l3.ts",
+      "pattern": "2.918"
+    },
+    {
+      "file": "scripts\\drbl-m16l3.ts",
+      "pattern": "38.7142857"
+    },
+    {
+      "file": "scripts\\drbl-m16l3.ts",
+      "pattern": "+200"
+    }
+  ],
+  "PASS": true
+}

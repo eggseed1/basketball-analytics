@@ -1,0 +1,2 @@
+method,simulates_lineup_swap,formula,clamp,cutoff_frozen,counterfactual_rule_satisfied,classification,live_war_replacement_on_rate_scale
+Approach_B_role_matched_residual,NO,replacementEP = EPV(state) + clamp(roleMatchedR1Residual),"[-0.08, +0.04]",YES,NO_Approach_A_missing,D_modeling_limitation,-0.5726496504388662

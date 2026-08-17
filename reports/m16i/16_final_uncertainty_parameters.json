@@ -1,0 +1,20 @@
+{
+  "version": "drbl-predictive-uncertainty-v1",
+  "pointEstimateVersion": "drbl-research-rate-v1",
+  "UNCERTAINTY_SELECTION_RESULT": "CONSTANT_SCALE_SELECTED",
+  "modelType": "U0_CONSTANT",
+  "params": {
+    "s": 2.6960956582451727
+  },
+  "quantiles": {
+    "q50": 0.4950476886081375,
+    "q80": 0.9906396697923614,
+    "q95": 1.9842275977287305
+  },
+  "exposureDefinition": "actual_combined_possession_appearances",
+  "intervalSemantics": "empirically_calibrated_predictive",
+  "trainingProtocol": "chronological_OOS_F1_to_F5_after_selection",
+  "UNCERTAINTY_PSEUDO_EXPOSURE": "NO",
+  "UNCERTAINTY_CAP_USED": "NO",
+  "LEGACY_DISAGREEMENT_USED": "NO"
+}

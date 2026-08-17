@@ -1,0 +1,3 @@
+value,source,formula,trainingData,target,unit,seasonSpecificity,fittedAfterUnitMismatch,usedWith
+30,DEFAULT_POINTS_PER_WIN / provisional WAR,fixed constant,none (provisional),n/a,points/win,used on 2025-26 provisional + code default,NO,rawAbilityRate
+38.714285714285715,estimatePointsPerWinFromTeamSeasons / remaster median (2024-25 WAR4),team net-points ↔ wins conversion (historical fit),2024-25 team seasons (historical WAR path),team wins from net points,points/win,2024-25 WAR 4.0.0/4.0.1,fitted in era of unit-mismatch WAR; frozen into 4.0.1,calibrated posterior (finalAbility)

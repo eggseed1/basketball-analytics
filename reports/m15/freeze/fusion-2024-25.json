@@ -1,0 +1,36 @@
+{
+  "version": "drbl-fusion-oof-v1",
+  "fittedAt": "2026-08-12T02:30:28.589Z",
+  "lambda": 8,
+  "folds": 5,
+  "weights": {
+    "intercept": 0.011461,
+    "wP": 1.975306,
+    "wLn": -0.146103,
+    "wB": -0.037433
+  },
+  "simplexWeights": {
+    "wP": 1,
+    "wLn": 0,
+    "wB": 0
+  },
+  "train": {
+    "n": 256,
+    "mae": 0.264,
+    "rmse": 0.509
+  },
+  "holdout": {
+    "n": 65,
+    "mae": 0.251,
+    "rmse": 0.335
+  },
+  "oof": {
+    "n": 321,
+    "mae": 0.259,
+    "rmse": 0.496,
+    "equalMae": 0.735,
+    "liteMae": 0.659,
+    "improvedVsEqual": true,
+    "improvedVsLite": true
+  }
+}

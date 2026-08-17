@@ -1,0 +1,3 @@
+season,R1_FORMULA_IDENTICAL,candidate_universe_threshold,k_role,weighted_euclidean,quality_restriction,exposure_preference,epv_state_logic,clamps,blocker
+2024-25,NO,>=40 possessions,8,YES,bottom residual band,8-32 mpg,FROZEN_V1,FROZEN_V1,lineup_coverage_or_feature_gap
+2025-26,NO,>=40 possessions,8,YES,bottom residual band,8-32 mpg,FROZEN_V1,FROZEN_V1,lineup_coverage_or_feature_gap

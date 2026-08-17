@@ -3,6 +3,7 @@ import type {
   BasketballFilters,
   Game,
   GameBoxScore,
+  GamePlayByPlay,
   GameSummary,
 } from "@/data/types";
 import { applyGameFilters } from "./filter-utils";
@@ -19,6 +20,14 @@ export async function getGameBoxScore(
   gameId: string
 ): Promise<GameBoxScore | null> {
   return getDataProvider().getGameBoxScore(gameId);
+}
+
+export async function getGamePlayByPlay(
+  gameId: string
+): Promise<GamePlayByPlay | null> {
+  const provider = getDataProvider();
+  if (typeof provider.getGamePlayByPlay !== "function") return null;
+  return provider.getGamePlayByPlay(gameId);
 }
 
 /**

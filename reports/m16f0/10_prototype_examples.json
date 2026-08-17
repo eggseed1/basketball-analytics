@@ -1,0 +1,382 @@
+{
+  "run": true,
+  "trainOnlyConceptual": true,
+  "engine": "LN_coefficient_algebra_proxy",
+  "maxIdentityResidual": 0,
+  "examples": [
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "101108",
+      "side": "offense",
+      "actualEPV_component_ln": 0.020362,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.07420325,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1627827",
+      "side": "offense",
+      "actualEPV_component_ln": 0.051829,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.10567025,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1628975",
+      "side": "offense",
+      "actualEPV_component_ln": 0.032073,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.08591425,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1629610",
+      "side": "offense",
+      "actualEPV_component_ln": 0.016983,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.07082424999999999,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1630163",
+      "side": "offense",
+      "actualEPV_component_ln": 0.000817,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.05465824999999999,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1630256",
+      "side": "offense",
+      "actualEPV_component_ln": -0.001427,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.052414249999999996,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1630572",
+      "side": "offense",
+      "actualEPV_component_ln": 0.020696,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.07453725,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1631101",
+      "side": "offense",
+      "actualEPV_component_ln": -0.026517,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.027324249999999994,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1631216",
+      "side": "offense",
+      "actualEPV_component_ln": -0.016816,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.037025249999999996,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1641722",
+      "side": "offense",
+      "actualEPV_component_ln": -0.023606,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.030235249999999995,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1641801",
+      "side": "offense",
+      "actualEPV_component_ln": -0.001307,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.05253424999999999,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    },
+    {
+      "possessionId": "SYNTHETIC_IDENTITY_DEMO",
+      "focalPlayerId": "1642280",
+      "side": "offense",
+      "actualEPV_component_ln": 0.019338,
+      "replacementPlayers": [
+        "203458",
+        "1641816",
+        "202684",
+        "1641713",
+        "1630574",
+        "1631169",
+        "1631207",
+        "1631120"
+      ],
+      "replacementEPVs_ln": [
+        -0.069212,
+        -0.060107,
+        -0.055424,
+        -0.052814,
+        -0.050061,
+        -0.049878,
+        -0.049265,
+        -0.043969
+      ],
+      "meanReplacementEPV_ln": -0.05384124999999999,
+      "credit": 0.07317925,
+      "supportStatus": "SUPPORTED",
+      "note": "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      "DIAGNOSTIC_ONLY": true
+    }
+  ],
+  "determinism": "YES — pure arithmetic on frozen coefficients",
+  "caveat": "Full possession-start V=EPV+LN not scored on live possessions in this prototype; identity proven algebraically for LN-swap credits"
+}

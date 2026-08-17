@@ -1,0 +1,11 @@
+{
+  "W0_free_slope": 2.1805313665740855,
+  "W1_free_slope": 2.5406252634442263,
+  "selected_WAR_free_slope": 2.157871819232955,
+  "fixed_slope_WAR_RMSE": 8.312383272526297,
+  "free_slope_WAR_RMSE": 4.666009417478473,
+  "league_total_WAR": 89.85525714148557,
+  "fixed_team_intercept": 37.838158095283816,
+  "free_team_intercept": 34.37012909348192,
+  "M16L1_SCALE_ANOMALY_REPRODUCED": "PASS"
+}

@@ -1,0 +1,11 @@
+{
+  "exactTarget": "ActualNetPoints - R1BaselineNetPoints - UnassignedResidual",
+  "teamPlayerAttributed": "sum observed realized stint R1Points",
+  "maxAbsResidual": 5.566391791944625e-11,
+  "meanAbsResidual": 1.8865472147429805e-11,
+  "freeSlope": 0.9999999999999749,
+  "freeIntercept": 7.673861546209082e-13,
+  "Pearson": 1.0000000000000002,
+  "predictiveValidationClaim": false,
+  "result": "PASS"
+}

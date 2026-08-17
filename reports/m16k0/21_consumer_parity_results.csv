@@ -1,0 +1,15 @@
+path,shadowSubstitution,typeValid,nanRisk,sortCrashRisk,schemaBreakRisk,note
+drbl/models/player-value.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+drbl/models/compute-season.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/data/drbl/precomputed/*.json,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,rebuild required
+src/data/providers/nba/drbl-loader.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/data/queries/players.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/lib/player-savant.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,uncertainty display quarantine
+src/lib/player-stat-views.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/lib/player-explore-sort.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/data/queries/percentiles.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,PERCENTILE_POPULATION_DECISION_REQUIRED
+src/lib/stat-glossary.ts,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,copy still says fused rate
+src/app/explore/players/page.tsx,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/app/players/[playerId]/page.tsx,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/app/learn/drbl/page.tsx,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok
+src/components/charts/player-career-timeline.tsx,validatedDRBL100 available in shadow boards,YES,NO for valid N/raw rows,NO,LOW if field name preserved,ok

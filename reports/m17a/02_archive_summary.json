@@ -1,0 +1,21 @@
+{
+  "earliestSeason": "2024-25",
+  "latestSeason": "2025-26",
+  "seasonsPresent": [
+    "2024-25",
+    "2025-26"
+  ],
+  "seasonCount": 2,
+  "gameCount": 2450,
+  "fileCount": 9800,
+  "totalBytes": 1040349531,
+  "seasonGaps": [],
+  "duplicateSources": 0,
+  "duplicateGames": 0,
+  "partialSeasons": [],
+  "postseasonInclusion": "NONE_DETECTED_REGULAR_SEASON_PREFIX_002",
+  "regularSeasonInclusion": "YES",
+  "archivePresence": "CURRENT_TWO_SEASONS_ONLY",
+  "multiSeasonHistoricalArchiveSupplied": false,
+  "blocker": "M17A_BLOCKER_MISSING_MULTI_SEASON_HISTORICAL_PBP_ARCHIVE — only 2024-25 and 2025-26 raw CDN games found under data/drbl/raw/games"
+}

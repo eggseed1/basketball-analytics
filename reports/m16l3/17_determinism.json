@@ -1,0 +1,15 @@
+{
+  "PASS": true,
+  "2024-25": {
+    "boardHash": "1ac1dad1f59c1faebf8103e0876e216f1b46d897db0816500f667b262def7951",
+    "boardReadEqual": true,
+    "stintHash": "3899c23706da28078103ea3deac577dc168ed1740b04445ce9617c0bf830f787",
+    "stintReadEqual": true
+  },
+  "2025-26": {
+    "boardHash": "82bdd84e724b1d5d84f4e232f19ecf2861c25eef9195b9edfeae5ca7dd50371c",
+    "boardReadEqual": true,
+    "stintHash": "d1090607d578c76fcaf5552915280d072efc4acae0872fffe9427b79ad04f5c9",
+    "stintReadEqual": true
+  }
+}

@@ -1,0 +1,4 @@
+split,n_games,n_teams,date_min,date_max,note
+TRAIN,737,30,2024-10-22,2025-02-04,player-level reserved diagnostics redacted by default
+VALIDATION,488,30,2025-02-05,2025-04-13,player-level reserved diagnostics redacted by default
+RESERVED_TEST,1225,30,2025-10-21,2026-04-12,player-level reserved diagnostics redacted by default

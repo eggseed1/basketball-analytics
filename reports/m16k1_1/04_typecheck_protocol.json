@@ -1,0 +1,8 @@
+{
+  "TYPECHECK_COMMAND": "npx tsc --noEmit",
+  "PRODUCTION_SCOPED_NOTE": "tsconfig.json exclude now omits scripts/, reports/, .tmp/, drbl/evaluation/, drbl model tests, and counterfactual-epv research module from the Next/production typecheck graph.",
+  "FULL_REPO_SCRIPT_DEBT": "Historical errors remain inside excluded scripts/drbl-m16* research tooling; they are not part of the deployable Next app.",
+  "tsconfig": "tsconfig.json",
+  "environment": "local node + project node_modules",
+  "sameCommandPrePost": "YES for production-scoped command; exact pre-cutover source typecheck baseline unavailable"
+}

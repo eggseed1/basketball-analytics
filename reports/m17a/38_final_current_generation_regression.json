@@ -1,0 +1,22 @@
+{
+  "2024_25_DRBL_CHANGED": "NO",
+  "2025_26_DRBL_CHANGED": "NO",
+  "2024_25_R1_CHANGED": "NO",
+  "2025_26_R1_CHANGED": "NO",
+  "method": "M17a does not rewrite precomputed boards; compares shadow extract to live artifact (identity)",
+  "mismatches": {
+    "2024-25_drbl": 0,
+    "2024-25_r1": 0,
+    "2025-26_drbl": 0,
+    "2025-26_r1": 0
+  },
+  "CANONICAL_DRBL_RANK_CHANGED": "NO",
+  "P1_CHANGED": "NO",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "boardsMutatedByM17a": "NO",
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "P1": 37.490662671779255,
+  "abilityVersion": "drbl-ability-eb1600-r1-v1",
+  "r1PointsVersion": "drbl-r1-points-v1",
+  "r1WinEqVersion": "drbl-r1-wineq-v1"
+}

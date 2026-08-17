@@ -1,0 +1,14 @@
+{
+  "replicates": 10000,
+  "meanDelta": 23.601799987267867,
+  "medianDelta": 23.81871017134995,
+  "ci95": [
+    12.134131288429728,
+    34.09094967133092
+  ],
+  "P_W1_beats_W0": 0.0002,
+  "P_W0_beats_W1": 0.9998,
+  "teamsLowerAbsError_W1": 11,
+  "teamsLowerAbsError_W0": 19,
+  "independenceNote": "NBA team-seasons are not fully independent because teams play one another."
+}

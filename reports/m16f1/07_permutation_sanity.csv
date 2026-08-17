@@ -1,0 +1,4 @@
+test,rmse
+baseline,1.165418521750123
+player_identity_shuffle,1.185257150797097
+context_shuffle,1.1856601232557704

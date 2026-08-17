@@ -1,0 +1,9 @@
+{
+  "R1_stable": 0,
+  "R1_volatile": 2,
+  "R2_zero": 0,
+  "R2_shift4": 4,
+  "R3_zero": 1.734723475976807e-15,
+  "R3_mixed": 1.920286436967152,
+  "pass": true
+}

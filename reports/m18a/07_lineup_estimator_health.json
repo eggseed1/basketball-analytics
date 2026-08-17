@@ -1,0 +1,45 @@
+{
+  "version": "m18-lineup-impact-v1",
+  "selectedLambda": 3200,
+  "gridResults": [
+    {
+      "lambda": 50,
+      "holdoutN": 91121,
+      "holdoutRMSE": 1.181393449219136,
+      "holdoutMAE": 1.114965984674838
+    },
+    {
+      "lambda": 200,
+      "holdoutN": 91121,
+      "holdoutRMSE": 1.1806746201515324,
+      "holdoutMAE": 1.1148518144383617
+    },
+    {
+      "lambda": 800,
+      "holdoutN": 91121,
+      "holdoutRMSE": 1.1801896188575198,
+      "holdoutMAE": 1.1150291053883261
+    },
+    {
+      "lambda": 3200,
+      "holdoutN": 91121,
+      "holdoutRMSE": 1.1799667685628228,
+      "holdoutMAE": 1.115478271688701
+    },
+    {
+      "lambda": 12800,
+      "holdoutN": 91121,
+      "holdoutRMSE": 1.1800497073731893,
+      "holdoutMAE": 1.1160346094572722
+    }
+  ],
+  "nPossessions": 455269,
+  "nPlayers": 695,
+  "coefMean": -1.812099631020377e-18,
+  "coefSd": 0.011557924070835208,
+  "coefMin": -0.0388338098573085,
+  "coefMax": 0.04352378585496422,
+  "homeCoef": 0.012423430347057618,
+  "intercept": 1.1115742768185224,
+  "note": "Dense ridge on sparse design; λ from TRAIN CV only"
+}

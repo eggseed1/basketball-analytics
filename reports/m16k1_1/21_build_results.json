@@ -1,0 +1,7 @@
+{
+  "PRE_CUTOVER_BUILD_RESULT": "NOT_RUN",
+  "POST_CUTOVER_BUILD_EXIT_CODE": 0,
+  "POST_CUTOVER_BUILD_RESULT": "PASS",
+  "BUILD_FAILURE_CLASS": "NONE",
+  "log": "reports/m16k1_1/raw/post_build.log"
+}

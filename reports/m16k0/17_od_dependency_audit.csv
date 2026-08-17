@@ -1,0 +1,3 @@
+surface,semantics,O_plus_D_equals_total,cutoverBehavior,OD_COUPLING_BLOCKER,notes
+drblO/drblD fields,EB200 of off/def residuals on separate possession bases,NOT_CANONICAL,KEEP_AS_LEGACY_DIAGNOSTIC,NO,update glossary 'half of DRBL-P' wording at cutover
+stat-glossary DRBL-O/D,implies half of DRBL-P,IMPLIED_IN_COPY_ONLY,HIDE_ON_CUTOVER_OR_REWRITE_COPY,NO,

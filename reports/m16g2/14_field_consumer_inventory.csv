@@ -1,0 +1,501 @@
+field,file,consumerClass
+drblP,drbl/evaluation/__tests__/fusion-constraint.test.ts,test
+drblP,drbl/evaluation/__tests__/m16b-evaluation.test.ts,test
+drblP,drbl/evaluation/m16c-dataset.ts,other
+drblP,drbl/models/__tests__/ability-lineage.test.ts,test
+drblP,drbl/models/__tests__/behavior.test.ts,test
+drblP,drbl/models/__tests__/fusion-oof.test.ts,test
+drblP,drbl/models/__tests__/leaderboard.test.ts,test
+drblP,drbl/models/__tests__/lineup-model.test.ts,test
+drblP,drbl/models/__tests__/ranking-forensics.test.ts,test
+drblP,drbl/models/__tests__/research-ability-v1.test.ts,test
+drblP,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblP,drbl/models/__tests__/war-math.test.ts,test
+drblP,drbl/models/ability-lineage.ts,model
+drblP,drbl/models/board-provenance.ts,loader
+drblP,drbl/models/compute-season.ts,model
+drblP,drbl/models/fusion.ts,model
+drblP,drbl/models/leaderboard.ts,loader
+drblP,drbl/models/player-value.ts,model
+drblP,drbl/models/research-ability-v1.ts,other
+drblP,drbl/models/war-math.ts,WAR
+drblP,scripts/drbl-compute-season.ts,artifact writer
+drblP,scripts/drbl-m15-audit.ts,artifact writer
+drblP,scripts/drbl-m15-charts.ts,artifact writer
+drblP,scripts/drbl-m15-refresh.ts,artifact writer
+drblP,scripts/drbl-m16a-diagnostics.ts,artifact writer
+drblP,scripts/drbl-m16b.ts,artifact writer
+drblP,scripts/drbl-m16c.ts,artifact writer
+drblP,scripts/drbl-m16d.ts,artifact writer
+drblP,scripts/drbl-m16f2.ts,artifact writer
+drblP,scripts/drbl-m16g.ts,artifact writer
+drblP,scripts/drbl-m16g1.ts,artifact writer
+drblP,scripts/drbl-m16g2.ts,artifact writer
+drblP,scripts/drbl-pipeline-remaster.ts,artifact writer
+drblP,scripts/drbl-post-m7-remediate.ts,artifact writer
+drblP,scripts/drbl-ranking-remaster.ts,artifact writer
+drblP,scripts/drbl-sequential-reattribute.ts,artifact writer
+drblP,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblP,scripts/drbl-war-audit.ts,artifact writer
+drblP,scripts/export-drbl-top100.ts,artifact writer
+drblP,src/data/queries/percentiles.ts,loader
+drblP,src/data/queries/players.ts,loader
+drblP,src/data/transformers/espn.ts,loader
+drblP,src/data/transformers/local.ts,loader
+drblP,src/data/transformers/nba.ts,loader
+drblP,src/data/transformers/stats-nba.ts,loader
+drblP,src/data/types/player-season.ts,loader
+drblP,src/lib/player-savant.ts,chart
+drblP,src/lib/player-stat-views.ts,API
+drblP,src/lib/stat-glossary.ts,API
+drblLn,drbl/evaluation/__tests__/fusion-constraint.test.ts,test
+drblLn,drbl/evaluation/__tests__/m16b-evaluation.test.ts,test
+drblLn,drbl/evaluation/m16c-dataset.ts,other
+drblLn,drbl/models/__tests__/ability-lineage.test.ts,test
+drblLn,drbl/models/__tests__/behavior.test.ts,test
+drblLn,drbl/models/__tests__/fusion-oof.test.ts,test
+drblLn,drbl/models/__tests__/leaderboard.test.ts,test
+drblLn,drbl/models/__tests__/lineup-model.test.ts,test
+drblLn,drbl/models/__tests__/ranking-forensics.test.ts,test
+drblLn,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblLn,drbl/models/__tests__/war-math.test.ts,test
+drblLn,drbl/models/ability-lineage.ts,model
+drblLn,drbl/models/board-provenance.ts,loader
+drblLn,drbl/models/compute-season.ts,model
+drblLn,drbl/models/fusion.ts,model
+drblLn,drbl/models/leaderboard.ts,loader
+drblLn,drbl/models/player-value.ts,model
+drblLn,drbl/models/war-math.ts,WAR
+drblLn,scripts/drbl-compute-season.ts,artifact writer
+drblLn,scripts/drbl-m15-audit.ts,artifact writer
+drblLn,scripts/drbl-m15-charts.ts,artifact writer
+drblLn,scripts/drbl-m15-refresh.ts,artifact writer
+drblLn,scripts/drbl-m16a-diagnostics.ts,artifact writer
+drblLn,scripts/drbl-m16b.ts,artifact writer
+drblLn,scripts/drbl-m16c.ts,artifact writer
+drblLn,scripts/drbl-m16d.ts,artifact writer
+drblLn,scripts/drbl-m16g1.ts,artifact writer
+drblLn,scripts/drbl-m16g2.ts,artifact writer
+drblLn,scripts/drbl-pipeline-remaster.ts,artifact writer
+drblLn,scripts/drbl-post-m7-remediate.ts,artifact writer
+drblLn,scripts/drbl-ranking-remaster.ts,artifact writer
+drblLn,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblLn,scripts/drbl-war-audit.ts,artifact writer
+drblLn,scripts/export-drbl-top100.ts,artifact writer
+drblLn,src/data/queries/percentiles.ts,loader
+drblLn,src/data/queries/players.ts,loader
+drblLn,src/data/transformers/espn.ts,loader
+drblLn,src/data/transformers/local.ts,loader
+drblLn,src/data/transformers/nba.ts,loader
+drblLn,src/data/transformers/stats-nba.ts,loader
+drblLn,src/data/types/player-season.ts,loader
+drblLn,src/lib/player-savant.ts,chart
+drblLn,src/lib/player-stat-views.ts,API
+drblLn,src/lib/stat-glossary.ts,API
+drblB,drbl/evaluation/__tests__/fusion-constraint.test.ts,test
+drblB,drbl/evaluation/__tests__/m16b-evaluation.test.ts,test
+drblB,drbl/evaluation/m16c-dataset.ts,other
+drblB,drbl/models/__tests__/ability-lineage.test.ts,test
+drblB,drbl/models/__tests__/behavior.test.ts,test
+drblB,drbl/models/__tests__/fusion-oof.test.ts,test
+drblB,drbl/models/__tests__/leaderboard.test.ts,test
+drblB,drbl/models/__tests__/ranking-forensics.test.ts,test
+drblB,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblB,drbl/models/__tests__/war-math.test.ts,test
+drblB,drbl/models/ability-lineage.ts,model
+drblB,drbl/models/board-provenance.ts,loader
+drblB,drbl/models/compute-season.ts,model
+drblB,drbl/models/fusion.ts,model
+drblB,drbl/models/leaderboard.ts,loader
+drblB,drbl/models/player-value.ts,model
+drblB,drbl/models/war-math.ts,WAR
+drblB,scripts/drbl-compute-season.ts,artifact writer
+drblB,scripts/drbl-m15-audit.ts,artifact writer
+drblB,scripts/drbl-m15-charts.ts,artifact writer
+drblB,scripts/drbl-m15-refresh.ts,artifact writer
+drblB,scripts/drbl-m16a-diagnostics.ts,artifact writer
+drblB,scripts/drbl-m16b.ts,artifact writer
+drblB,scripts/drbl-m16c.ts,artifact writer
+drblB,scripts/drbl-m16d.ts,artifact writer
+drblB,scripts/drbl-m16g1.ts,artifact writer
+drblB,scripts/drbl-m16g2.ts,artifact writer
+drblB,scripts/drbl-pipeline-remaster.ts,artifact writer
+drblB,scripts/drbl-ranking-remaster.ts,artifact writer
+drblB,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblB,scripts/drbl-war-audit.ts,artifact writer
+drblB,scripts/export-drbl-top100.ts,artifact writer
+drblB,src/data/providers/nba-data-provider.ts,API
+drblB,src/data/queries/percentiles.ts,loader
+drblB,src/data/queries/players.ts,loader
+drblB,src/data/transformers/espn.ts,loader
+drblB,src/data/transformers/local.ts,loader
+drblB,src/data/transformers/nba.ts,loader
+drblB,src/data/transformers/stats-nba.ts,loader
+drblB,src/data/types/player-season.ts,loader
+drblB,src/lib/player-savant.ts,chart
+drblB,src/lib/player-stat-views.ts,API
+drblB,src/lib/stat-glossary.ts,API
+fusedRateRaw,drbl/evaluation/__tests__/m16b-evaluation.test.ts,test
+fusedRateRaw,drbl/evaluation/fixed-vs-refit.ts,other
+fusedRateRaw,drbl/models/__tests__/ability-lineage.test.ts,test
+fusedRateRaw,drbl/models/__tests__/leaderboard.test.ts,test
+fusedRateRaw,drbl/models/ability-lineage.ts,model
+fusedRateRaw,drbl/models/board-provenance.ts,loader
+fusedRateRaw,drbl/models/leaderboard.ts,loader
+fusedRateRaw,drbl/models/pipeline-value.ts,other
+fusedRateRaw,drbl/models/player-value.ts,model
+fusedRateRaw,drbl/models/research-ability-v1.ts,other
+fusedRateRaw,scripts/drbl-m16a-diagnostics.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16b.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16b1.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16e0.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16g.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16g1.ts,artifact writer
+fusedRateRaw,scripts/drbl-m16g2.ts,artifact writer
+fusedRateRaw,scripts/drbl-pipeline-remaster.ts,artifact writer
+fusedRateRaw,scripts/drbl-ranking-remaster.ts,artifact writer
+posteriorAbilityRate,drbl/models/__tests__/ability-lineage.test.ts,test
+posteriorAbilityRate,drbl/models/__tests__/board-provenance.test.ts,test
+posteriorAbilityRate,drbl/models/__tests__/leaderboard.test.ts,test
+posteriorAbilityRate,drbl/models/__tests__/war-math.test.ts,test
+posteriorAbilityRate,drbl/models/ability-lineage.ts,model
+posteriorAbilityRate,drbl/models/board-provenance.ts,loader
+posteriorAbilityRate,drbl/models/leaderboard.ts,loader
+posteriorAbilityRate,drbl/models/player-value.ts,model
+posteriorAbilityRate,drbl/models/research-ability-v1.ts,other
+posteriorAbilityRate,drbl/models/war-math.ts,WAR
+posteriorAbilityRate,scripts/drbl-m15-charts.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m15-refresh.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16a-diagnostics.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16b.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16b1.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16e0.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16e1.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16g.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16g1.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-m16g2.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-pipeline-remaster.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-ranking-remaster.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-war-audit.ts,artifact writer
+posteriorAbilityRate,scripts/drbl-war-player-diagnostics.ts,artifact writer
+posteriorAbilityRate,scripts/export-drbl-top100.ts,artifact writer
+drbl100,drbl/models/__tests__/ability-lineage.test.ts,test
+drbl100,drbl/models/__tests__/board-provenance.test.ts,test
+drbl100,drbl/models/__tests__/leaderboard.test.ts,test
+drbl100,drbl/models/__tests__/ranking-forensics.test.ts,test
+drbl100,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drbl100,drbl/models/ability-lineage.ts,model
+drbl100,drbl/models/board-provenance.ts,loader
+drbl100,drbl/models/compute-season.ts,model
+drbl100,drbl/models/fusion.ts,model
+drbl100,drbl/models/leaderboard.ts,loader
+drbl100,drbl/models/player-value.ts,model
+drbl100,drbl/models/ranking-config.ts,other
+drbl100,drbl/models/research-ability-v1.ts,other
+drbl100,scripts/drbl-compute-season.ts,artifact writer
+drbl100,scripts/drbl-m15-audit.ts,artifact writer
+drbl100,scripts/drbl-m15-charts.ts,artifact writer
+drbl100,scripts/drbl-m15-refresh.ts,artifact writer
+drbl100,scripts/drbl-m16a-diagnostics.ts,artifact writer
+drbl100,scripts/drbl-m16b.ts,artifact writer
+drbl100,scripts/drbl-m16b1.ts,artifact writer
+drbl100,scripts/drbl-m16e0.ts,artifact writer
+drbl100,scripts/drbl-m16e1.ts,artifact writer
+drbl100,scripts/drbl-m16g.ts,artifact writer
+drbl100,scripts/drbl-m16g1.ts,artifact writer
+drbl100,scripts/drbl-m16g2.ts,artifact writer
+drbl100,scripts/drbl-pipeline-remaster.ts,artifact writer
+drbl100,scripts/drbl-post-m7-remediate.ts,artifact writer
+drbl100,scripts/drbl-ranking-remaster.ts,artifact writer
+drbl100,scripts/drbl-sequential-reattribute.ts,artifact writer
+drbl100,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drbl100,scripts/drbl-war-audit.ts,artifact writer
+drbl100,scripts/drbl-war-player-diagnostics.ts,artifact writer
+drbl100,scripts/export-drbl-top100.ts,artifact writer
+drbl100,src/app/learn/drbl/page.tsx,API
+drbl100,src/components/charts/player-career-timeline.tsx,chart
+drbl100,src/data/queries/percentiles.ts,loader
+drbl100,src/data/queries/players.ts,loader
+drbl100,src/data/transformers/espn.ts,loader
+drbl100,src/data/transformers/local.ts,loader
+drbl100,src/data/transformers/nba.ts,loader
+drbl100,src/data/transformers/stats-nba.ts,loader
+drbl100,src/data/types/player-season.ts,loader
+drbl100,src/lib/player-explore-sort.ts,explore table
+drbl100,src/lib/player-savant.ts,chart
+drbl100,src/lib/player-stat-views.ts,API
+drbl100,src/lib/stat-glossary.ts,API
+drblO,drbl/models/__tests__/leaderboard.test.ts,test
+drblO,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblO,drbl/models/ability-lineage.ts,model
+drblO,drbl/models/leaderboard.ts,loader
+drblO,drbl/models/player-value.ts,model
+drblO,scripts/drbl-compute-season.ts,artifact writer
+drblO,scripts/drbl-m15-audit.ts,artifact writer
+drblO,scripts/drbl-m15-charts.ts,artifact writer
+drblO,scripts/drbl-m15-refresh.ts,artifact writer
+drblO,scripts/drbl-m16g2.ts,artifact writer
+drblO,scripts/drbl-ranking-remaster.ts,artifact writer
+drblO,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblO,scripts/drbl-war-player-diagnostics.ts,artifact writer
+drblO,scripts/export-drbl-top100.ts,artifact writer
+drblO,src/data/queries/percentiles.ts,loader
+drblO,src/data/queries/players.ts,loader
+drblO,src/data/transformers/espn.ts,loader
+drblO,src/data/transformers/local.ts,loader
+drblO,src/data/transformers/nba.ts,loader
+drblO,src/data/transformers/stats-nba.ts,loader
+drblO,src/data/types/player-season.ts,loader
+drblO,src/lib/player-savant.ts,chart
+drblO,src/lib/player-stat-views.ts,API
+drblO,src/lib/stat-glossary.ts,API
+drblD,drbl/models/__tests__/leaderboard.test.ts,test
+drblD,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblD,drbl/models/ability-lineage.ts,model
+drblD,drbl/models/board-provenance.ts,loader
+drblD,drbl/models/leaderboard.ts,loader
+drblD,drbl/models/player-value.ts,model
+drblD,scripts/drbl-compute-season.ts,artifact writer
+drblD,scripts/drbl-m15-audit.ts,artifact writer
+drblD,scripts/drbl-m15-charts.ts,artifact writer
+drblD,scripts/drbl-m15-refresh.ts,artifact writer
+drblD,scripts/drbl-m16b1.ts,artifact writer
+drblD,scripts/drbl-m16g2.ts,artifact writer
+drblD,scripts/drbl-ranking-remaster.ts,artifact writer
+drblD,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblD,scripts/drbl-war-player-diagnostics.ts,artifact writer
+drblD,scripts/export-drbl-top100.ts,artifact writer
+drblD,src/data/queries/percentiles.ts,loader
+drblD,src/data/queries/players.ts,loader
+drblD,src/data/transformers/espn.ts,loader
+drblD,src/data/transformers/local.ts,loader
+drblD,src/data/transformers/nba.ts,loader
+drblD,src/data/transformers/stats-nba.ts,loader
+drblD,src/data/types/player-season.ts,loader
+drblD,src/lib/player-savant.ts,chart
+drblD,src/lib/player-stat-views.ts,API
+drblD,src/lib/stat-glossary.ts,API
+uncertainty,drbl/evaluation/protocol.ts,other
+uncertainty,drbl/models/__tests__/leaderboard.test.ts,test
+uncertainty,drbl/models/__tests__/ranking-forensics.test.ts,test
+uncertainty,drbl/models/__tests__/uncertainty.test.ts,test
+uncertainty,drbl/models/compute-season.ts,model
+uncertainty,drbl/models/leaderboard.ts,loader
+uncertainty,drbl/models/player-value.ts,model
+uncertainty,drbl/models/ranking-config.ts,other
+uncertainty,drbl/models/uncertainty.ts,other
+uncertainty,scripts/drbl-compute-season.ts,artifact writer
+uncertainty,scripts/drbl-m15-audit.ts,artifact writer
+uncertainty,scripts/drbl-m15-refresh.ts,artifact writer
+uncertainty,scripts/drbl-m16e0.ts,artifact writer
+uncertainty,scripts/drbl-m16g2.ts,artifact writer
+uncertainty,scripts/drbl-post-m7-remediate.ts,artifact writer
+uncertainty,scripts/drbl-ranking-remaster.ts,artifact writer
+uncertainty,scripts/drbl-ui-metric-integrity.ts,artifact writer
+uncertainty,scripts/export-drbl-top100.ts,artifact writer
+uncertainty,src/data/queries/players.ts,loader
+uncertainty,src/data/transformers/stats-nba.ts,loader
+uncertainty,src/lib/stat-glossary.ts,API
+intervalLo,drbl/models/__tests__/leaderboard.test.ts,test
+intervalLo,drbl/models/__tests__/ranking-forensics.test.ts,test
+intervalLo,drbl/models/leaderboard.ts,loader
+intervalLo,drbl/models/player-value.ts,model
+intervalLo,scripts/drbl-m15-audit.ts,artifact writer
+intervalLo,scripts/drbl-m15-refresh.ts,artifact writer
+intervalLo,scripts/drbl-m16g2.ts,artifact writer
+intervalLo,scripts/drbl-ranking-remaster.ts,artifact writer
+intervalLo,scripts/export-drbl-top100.ts,artifact writer
+intervalLo,src/data/queries/players.ts,loader
+intervalLo,src/data/transformers/stats-nba.ts,loader
+intervalHi,drbl/models/__tests__/leaderboard.test.ts,test
+intervalHi,drbl/models/__tests__/ranking-forensics.test.ts,test
+intervalHi,drbl/models/leaderboard.ts,loader
+intervalHi,drbl/models/player-value.ts,model
+intervalHi,scripts/drbl-m15-audit.ts,artifact writer
+intervalHi,scripts/drbl-m15-refresh.ts,artifact writer
+intervalHi,scripts/drbl-m16g2.ts,artifact writer
+intervalHi,scripts/drbl-ranking-remaster.ts,artifact writer
+intervalHi,scripts/export-drbl-top100.ts,artifact writer
+intervalHi,src/data/queries/players.ts,loader
+intervalHi,src/data/transformers/stats-nba.ts,loader
+seasonalImpact,drbl/models/__tests__/ability-lineage.test.ts,test
+seasonalImpact,drbl/models/__tests__/leaderboard.test.ts,test
+seasonalImpact,drbl/models/__tests__/ranking-forensics.test.ts,test
+seasonalImpact,drbl/models/__tests__/war-math.test.ts,test
+seasonalImpact,drbl/models/__tests__/war-units.test.ts,test
+seasonalImpact,drbl/models/ability-lineage.ts,model
+seasonalImpact,drbl/models/board-provenance.ts,loader
+seasonalImpact,drbl/models/leaderboard.ts,loader
+seasonalImpact,drbl/models/player-value.ts,model
+seasonalImpact,drbl/models/war-math.ts,WAR
+seasonalImpact,drbl/models/war-units.ts,WAR
+seasonalImpact,scripts/drbl-m15-audit.ts,artifact writer
+seasonalImpact,scripts/drbl-m15-refresh.ts,artifact writer
+seasonalImpact,scripts/drbl-m16b1.ts,artifact writer
+seasonalImpact,scripts/drbl-m16e0.ts,artifact writer
+seasonalImpact,scripts/drbl-m16e1.ts,artifact writer
+seasonalImpact,scripts/drbl-m16g.ts,artifact writer
+seasonalImpact,scripts/drbl-m16g1.ts,artifact writer
+seasonalImpact,scripts/drbl-m16g2.ts,artifact writer
+seasonalImpact,scripts/drbl-pipeline-remaster.ts,artifact writer
+seasonalImpact,scripts/drbl-ranking-remaster.ts,artifact writer
+seasonalImpact,scripts/drbl-sequential-reattribute.ts,artifact writer
+seasonalImpact,scripts/drbl-ui-metric-integrity.ts,artifact writer
+seasonalImpact,scripts/drbl-war-audit.ts,artifact writer
+seasonalImpact,scripts/drbl-war-player-diagnostics.ts,artifact writer
+seasonalImpact,scripts/export-drbl-top100.ts,artifact writer
+seasonalImpact,src/data/queries/players.ts,loader
+seasonalImpact,src/data/transformers/stats-nba.ts,loader
+seasonalImpact,src/data/types/player-season.ts,loader
+rank,drbl/evaluation/metrics.ts,other
+rank,drbl/evaluation/protocol.ts,other
+rank,drbl/models/__tests__/board-provenance.test.ts,test
+rank,drbl/models/__tests__/leaderboard.test.ts,test
+rank,drbl/models/__tests__/ranking-forensics.test.ts,test
+rank,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+rank,drbl/models/__tests__/war-math.test.ts,test
+rank,drbl/models/ability-lineage.ts,model
+rank,drbl/models/board-provenance.ts,loader
+rank,drbl/models/compute-season.ts,model
+rank,drbl/models/leaderboard.ts,loader
+rank,drbl/models/player-value.ts,model
+rank,drbl/models/ranking-config.ts,other
+rank,drbl/models/replacement.ts,other
+rank,drbl/models/sequential-attribution.ts,other
+rank,scripts/drbl-m15-audit.ts,artifact writer
+rank,scripts/drbl-m15-refresh.ts,artifact writer
+rank,scripts/drbl-m16a-diagnostics.ts,artifact writer
+rank,scripts/drbl-m16b.ts,artifact writer
+rank,scripts/drbl-m16b1.ts,artifact writer
+rank,scripts/drbl-m16c.ts,artifact writer
+rank,scripts/drbl-m16d.ts,artifact writer
+rank,scripts/drbl-m16e0.ts,artifact writer
+rank,scripts/drbl-m16f0.ts,artifact writer
+rank,scripts/drbl-m16f1b.ts,artifact writer
+rank,scripts/drbl-m16g.ts,artifact writer
+rank,scripts/drbl-m16g1.ts,artifact writer
+rank,scripts/drbl-m16g2.ts,artifact writer
+rank,scripts/drbl-pipeline-remaster.ts,artifact writer
+rank,scripts/drbl-post-m7-remediate.ts,artifact writer
+rank,scripts/drbl-ranking-remaster.ts,artifact writer
+rank,scripts/drbl-sequential-reattribute.ts,artifact writer
+rank,scripts/drbl-ui-metric-integrity.ts,artifact writer
+rank,scripts/drbl-war-audit.ts,artifact writer
+rank,scripts/drbl-war-unit-repair.ts,artifact writer
+rank,scripts/export-drbl-top100.ts,artifact writer
+rank,src/app/learn/drbl/page.tsx,API
+rank,src/app/players/[playerId]/page.tsx,player page
+rank,src/components/charts/player-efficiency-profile.tsx,chart
+rank,src/components/explore/board-provenance-debug.tsx,loader
+rank,src/components/player/percentile-rankings.tsx,other
+rank,src/components/player/player-savant-summary.tsx,chart
+rank,src/components/player/player-season-summary.tsx,other
+rank,src/data/queries/percentiles.ts,loader
+rank,src/data/types/player-season.ts,loader
+rank,src/lib/player-savant.ts,chart
+rank,src/lib/stat-glossary.ts,API
+WAR,drbl/evaluation/fixed-vs-refit.ts,other
+WAR,drbl/models/__tests__/board-provenance.test.ts,test
+WAR,drbl/models/__tests__/leaderboard.test.ts,test
+WAR,drbl/models/__tests__/pipeline-value.test.ts,test
+WAR,drbl/models/__tests__/ranking-forensics.test.ts,test
+WAR,drbl/models/__tests__/war-dimensional.test.ts,test
+WAR,drbl/models/__tests__/war-math.test.ts,test
+WAR,drbl/models/__tests__/war-unit-repair.test.ts,test
+WAR,drbl/models/__tests__/war-units.test.ts,test
+WAR,drbl/models/__tests__/war.test.ts,test
+WAR,drbl/models/ability-lineage.ts,model
+WAR,drbl/models/board-provenance.ts,loader
+WAR,drbl/models/compute-season.ts,model
+WAR,drbl/models/leverage.ts,other
+WAR,drbl/models/pipeline-value.ts,other
+WAR,drbl/models/player-value.ts,model
+WAR,drbl/models/ranking-config.ts,other
+WAR,drbl/models/research-ability-v1.ts,other
+WAR,drbl/models/sequential-attribution.ts,other
+WAR,drbl/models/war-math.ts,WAR
+WAR,drbl/models/war-units.ts,WAR
+WAR,drbl/models/war.ts,WAR
+WAR,scripts/drbl-m15-audit.ts,artifact writer
+WAR,scripts/drbl-m15-charts.ts,artifact writer
+WAR,scripts/drbl-m15-refresh.ts,artifact writer
+WAR,scripts/drbl-m16a-diagnostics.ts,artifact writer
+WAR,scripts/drbl-m16b.ts,artifact writer
+WAR,scripts/drbl-m16b1.ts,artifact writer
+WAR,scripts/drbl-m16c.ts,artifact writer
+WAR,scripts/drbl-m16d.ts,artifact writer
+WAR,scripts/drbl-m16e0.ts,artifact writer
+WAR,scripts/drbl-m16e1.ts,artifact writer
+WAR,scripts/drbl-m16f0.ts,artifact writer
+WAR,scripts/drbl-m16f1.ts,artifact writer
+WAR,scripts/drbl-m16f1b-repair-focal.ts,artifact writer
+WAR,scripts/drbl-m16f1b.ts,artifact writer
+WAR,scripts/drbl-m16f2.ts,artifact writer
+WAR,scripts/drbl-m16g.ts,artifact writer
+WAR,scripts/drbl-m16g1.ts,artifact writer
+WAR,scripts/drbl-m16g2.ts,artifact writer
+WAR,scripts/drbl-m6-validate.ts,artifact writer
+WAR,scripts/drbl-m7-cv-validate.ts,artifact writer
+WAR,scripts/drbl-pipeline-remaster.ts,artifact writer
+WAR,scripts/drbl-post-m7-remediate.ts,artifact writer
+WAR,scripts/drbl-ui-metric-integrity.ts,artifact writer
+WAR,scripts/drbl-war-audit.ts,artifact writer
+WAR,scripts/drbl-war-player-diagnostics.ts,artifact writer
+WAR,scripts/drbl-war-unit-repair.ts,artifact writer
+WAR,src/app/explore/players/page.tsx,explore table
+WAR,src/app/learn/drbl/page.tsx,API
+WAR,src/data/queries/percentiles.ts,loader
+WAR,src/data/types/player-season.ts,loader
+WAR,src/lib/player-explore-sort.ts,explore table
+WAR,src/lib/player-savant.ts,chart
+WAR,src/lib/player-stat-views.ts,API
+WAR,src/lib/stat-glossary.ts,API
+drblWar,drbl/models/__tests__/ability-lineage.test.ts,test
+drblWar,drbl/models/__tests__/board-provenance.test.ts,test
+drblWar,drbl/models/__tests__/leaderboard.test.ts,test
+drblWar,drbl/models/__tests__/ranking-forensics.test.ts,test
+drblWar,drbl/models/__tests__/ui-metric-integrity.test.ts,test
+drblWar,drbl/models/ability-lineage.ts,model
+drblWar,drbl/models/board-provenance.ts,loader
+drblWar,drbl/models/leaderboard.ts,loader
+drblWar,drbl/models/player-value.ts,model
+drblWar,scripts/drbl-compute-season.ts,artifact writer
+drblWar,scripts/drbl-m15-audit.ts,artifact writer
+drblWar,scripts/drbl-m15-charts.ts,artifact writer
+drblWar,scripts/drbl-m15-refresh.ts,artifact writer
+drblWar,scripts/drbl-m16a-diagnostics.ts,artifact writer
+drblWar,scripts/drbl-m16b1.ts,artifact writer
+drblWar,scripts/drbl-m16e0.ts,artifact writer
+drblWar,scripts/drbl-m16e1.ts,artifact writer
+drblWar,scripts/drbl-m16g2.ts,artifact writer
+drblWar,scripts/drbl-pipeline-remaster.ts,artifact writer
+drblWar,scripts/drbl-ranking-remaster.ts,artifact writer
+drblWar,scripts/drbl-sequential-reattribute.ts,artifact writer
+drblWar,scripts/drbl-ui-metric-integrity.ts,artifact writer
+drblWar,scripts/drbl-war-audit.ts,artifact writer
+drblWar,scripts/drbl-war-player-diagnostics.ts,artifact writer
+drblWar,scripts/drbl-war-unit-repair.ts,artifact writer
+drblWar,scripts/export-drbl-top100.ts,artifact writer
+drblWar,src/app/learn/drbl/page.tsx,API
+drblWar,src/components/charts/player-career-timeline.tsx,chart
+drblWar,src/data/queries/percentiles.ts,loader
+drblWar,src/data/queries/players.ts,loader
+drblWar,src/data/transformers/espn.ts,loader
+drblWar,src/data/transformers/local.ts,loader
+drblWar,src/data/transformers/nba.ts,loader
+drblWar,src/data/transformers/stats-nba.ts,loader
+drblWar,src/data/types/player-season.ts,loader
+drblWar,src/lib/player-explore-sort.ts,explore table
+drblWar,src/lib/player-savant.ts,chart
+drblWar,src/lib/player-stat-views.ts,API
+drblWar,src/lib/stat-glossary.ts,API
+seasonWar,drbl/models/__tests__/leaderboard.test.ts,test
+seasonWar,drbl/models/ability-lineage.ts,model
+seasonWar,drbl/models/leaderboard.ts,loader
+seasonWar,drbl/models/player-value.ts,model
+seasonWar,scripts/drbl-m16g2.ts,artifact writer
+seasonWar,scripts/drbl-pipeline-remaster.ts,artifact writer
+seasonWar,scripts/drbl-ranking-remaster.ts,artifact writer
+seasonWar,scripts/drbl-war-audit.ts,artifact writer
+seasonWar,scripts/drbl-war-unit-repair.ts,artifact writer
+seasonWar,scripts/export-drbl-top100.ts,artifact writer

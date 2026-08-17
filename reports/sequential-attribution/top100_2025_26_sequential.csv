@@ -1,0 +1,101 @@
+rank,playerId,playerName,actualPossessions,drblWar,seasonalImpact,drbl100,drblP,creationValuePer100,connectionValuePer100,conversionOpportunityPer100,executionValuePer100,turnoverValuePer100,defensiveValuePer100,finalRankingScore,rankingMode,sequentialAttributionVersion
+1,1628983,Shai Gilgeous-Alexander,9235,10.01,300.44,1.27,3.18,1.29,0.08,-3.3,6.86,-1.81,0.18,10.01461,season_value,drbl-seq-attr-v1
+2,202695,Kawhi Leonard,8540,8.16,244.92,1.11,2.8,0.96,0.03,-2.75,6.37,-1.84,0.13,8.163961,season_value,drbl-seq-attr-v1
+3,1631105,Jalen Duren,8146,6.64,199.3,0.95,2.39,0.83,0.01,-2.15,5.96,-1.86,-0.33,6.643228,season_value,drbl-seq-attr-v1
+4,1630178,Tyrese Maxey,10951,5.55,166.51,0.6,1.49,0.78,0.05,-2.28,4.91,-1.8,-0.1,5.5504,season_value,drbl-seq-attr-v1
+5,1641705,Victor Wembanyama,7784,5.45,163.4,0.81,2.05,1.1,0.03,-2.57,5.14,-2.23,0.66,5.446515,season_value,drbl-seq-attr-v1
+6,201142,Kevin Durant,11517,5.32,159.53,0.54,1.36,0.8,0.03,-2.27,6.09,-2.52,-0.69,5.317826,season_value,drbl-seq-attr-v1
+7,1628378,Donovan Mitchell,9900,5.29,158.7,0.63,1.57,0.94,0.08,-2.18,5.35,-2.26,-0.27,5.290007,season_value,drbl-seq-attr-v1
+8,203999,Nikola Jokić,9758,5.18,155.31,0.62,1.56,1.08,0.1,-1.88,5.39,-2.81,-0.24,5.176958,season_value,drbl-seq-attr-v1
+9,1630162,Anthony Edwards,8938,4.91,147.18,0.64,1.61,0.96,0.05,-2.3,5.61,-2.23,-0.39,4.906018,season_value,drbl-seq-attr-v1
+10,1628374,Lauri Markkanen,6266,4.79,143.76,0.88,2.22,1.04,0.03,-1.69,4.79,-1.15,-0.66,4.791885,season_value,drbl-seq-attr-v1
+11,1642851,Kon Knueppel,10376,4.68,140.35,0.53,1.33,0.5,0.05,-1.31,4.61,-1.8,-0.67,4.678338,season_value,drbl-seq-attr-v1
+12,1630217,Desmond Bane,11232,4.29,128.84,0.45,1.13,0.56,0.05,-1.87,4.42,-1.58,-0.4,4.294571,season_value,drbl-seq-attr-v1
+13,1626181,Norman Powell,7564,4.16,124.76,0.64,1.61,1.08,0.03,-1.85,4.5,-1.63,-0.44,4.158773,season_value,drbl-seq-attr-v1
+14,1629029,Luka Dončić,9501,4.04,121.17,0.5,1.25,1.42,0.07,-2.41,5.4,-2.95,-0.2,4.039083,season_value,drbl-seq-attr-v1
+15,1629627,Zion Williamson,7789,4.02,120.55,0.6,1.51,1.21,0.04,-2.11,5,-1.82,-0.74,4.018428,season_value,drbl-seq-attr-v1
+16,1630530,Trey Murphy III,9748,3.95,118.58,0.47,1.19,0.58,0.04,-1.32,3.89,-1.44,-0.5,3.952802,season_value,drbl-seq-attr-v1
+17,1631096,Chet Holmgren,8379,3.8,113.96,0.53,1.33,0.61,0.02,-1.73,3.88,-1.58,0.18,3.798554,season_value,drbl-seq-attr-v1
+18,1630245,Ayo Dosunmu,8119,3.79,113.74,0.54,1.37,0.39,0.04,-1.41,4.34,-1.41,-0.48,3.791184,season_value,drbl-seq-attr-v1
+19,1629638,Nickeil Alexander-Walker,11222,3.63,108.88,0.38,0.95,0.62,0.03,-1.55,3.93,-1.68,-0.33,3.629468,season_value,drbl-seq-attr-v1
+20,1630198,Isaiah Joe,6182,3.62,108.47,0.67,1.7,0.47,0.01,-1.22,3.49,-0.87,-0.09,3.615545,season_value,drbl-seq-attr-v1
+21,203507,Giannis Antetokounmpo,4232,3.61,108.2,0.95,2.44,1.65,0.08,-2.98,7.09,-2.99,-0.27,3.606574,season_value,drbl-seq-attr-v1
+22,1629674,Neemias Queta,7536,3.58,107.32,0.55,1.39,0.41,0.01,-1.35,3.45,-1.21,0.13,3.577296,season_value,drbl-seq-attr-v1
+23,202710,Jimmy Butler III,4853,3.53,106.04,0.82,2.1,1.12,0.05,-1.66,4.35,-1.49,-0.13,3.534621,season_value,drbl-seq-attr-v1
+24,1629750,Javonte Green,6387,3.36,100.77,0.6,1.53,0.47,0.02,-0.9,2.54,-1.07,0.57,3.359144,season_value,drbl-seq-attr-v1
+25,1628384,OG Anunoby,8823,3.35,100.58,0.44,1.11,0.55,0.04,-1.17,3.23,-1.56,0.08,3.352546,season_value,drbl-seq-attr-v1
+26,1629640,Keldon Johnson,8028,3.32,99.57,0.48,1.21,0.54,0.02,-1.66,3.83,-1.07,-0.39,3.318949,season_value,drbl-seq-attr-v1
+27,1630572,Sandro Mamukelashvili,7199,3.17,95.18,0.51,1.29,0.45,0.03,-1.16,3.38,-1.17,-0.15,3.172664,season_value,drbl-seq-attr-v1
+28,201939,Stephen Curry,5745,3,90.05,0.59,1.51,0.83,0.04,-1.94,5.66,-2.33,-0.67,3.001591,season_value,drbl-seq-attr-v1
+29,1629008,Michael Porter Jr.,6830,2.98,89.36,0.5,1.27,0.84,0.04,-1.91,5,-2.03,-0.6,2.978689,season_value,drbl-seq-attr-v1
+30,1630541,Moses Moody,6468,2.96,88.82,0.53,1.33,0.5,0.02,-0.83,3.01,-1.1,-0.19,2.960785,season_value,drbl-seq-attr-v1
+31,1627750,Jamal Murray,10970,2.91,87.45,0.31,0.78,0.77,0.06,-2.19,4.99,-1.81,-1,2.914992,season_value,drbl-seq-attr-v1
+32,203501,Tim Hardaway Jr.,8754,2.88,86.33,0.38,0.96,0.57,0.01,-1.05,3.07,-0.62,-0.95,2.877538,season_value,drbl-seq-attr-v1
+33,1630200,Tre Jones,7641,2.79,83.59,0.42,1.07,0.75,0.09,-1.41,3.38,-1.41,-0.23,2.786317,season_value,drbl-seq-attr-v1
+34,1631109,Mark Williams,5935,2.72,81.59,0.52,1.33,0.67,0.02,-1.38,3.73,-1.33,-0.31,2.719613,season_value,drbl-seq-attr-v1
+35,1630241,Sam Merrill,5636,2.62,78.68,0.53,1.35,0.3,0.04,-0.84,3.5,-0.9,-0.68,2.622608,season_value,drbl-seq-attr-v1
+36,1630577,Julian Champagnie,9440,2.59,77.69,0.32,0.81,0.41,0.02,-0.79,2.37,-0.85,-0.3,2.589567,season_value,drbl-seq-attr-v1
+37,1628379,Luke Kennard,6978,2.58,77.54,0.43,1.08,0.19,0.04,-0.97,3.57,-1.09,-0.57,2.58455,season_value,drbl-seq-attr-v1
+38,1630180,Saddiq Bey,9453,2.52,75.73,0.31,0.78,0.66,0.03,-1.47,3.26,-0.88,-0.78,2.524209,season_value,drbl-seq-attr-v1
+39,1630202,Payton Pritchard,10030,2.52,75.73,0.29,0.74,0.37,0.03,-1.74,4.11,-1.34,-0.64,2.524184,season_value,drbl-seq-attr-v1
+40,1628386,Jarrett Allen,6448,2.51,75.23,0.45,1.13,0.76,0.02,-1.72,3.83,-1.32,-0.36,2.507515,season_value,drbl-seq-attr-v1
+41,1629057,Robert Williams III,4265,2.48,74.42,0.65,1.67,0.47,0.02,-1.01,3.27,-1.34,0.38,2.480621,season_value,drbl-seq-attr-v1
+42,1628969,Mikal Bridges,10732,2.48,74.27,0.27,0.68,0.27,0.05,-1.31,2.92,-0.97,-0.22,2.475581,season_value,drbl-seq-attr-v1
+43,1642266,Ja'Kobe Walter,6062,2.42,72.71,0.46,1.16,0.37,0.02,-0.68,2.34,-0.8,0.01,2.423794,season_value,drbl-seq-attr-v1
+44,1628973,Jalen Brunson,10268,2.42,72.55,0.28,0.69,0.8,0.1,-2.36,5.05,-1.95,-0.88,2.418203,season_value,drbl-seq-attr-v1
+45,1642276,Kel'el Ware,7445,2.4,71.97,0.37,0.94,0.34,0.01,-1.18,3.17,-0.98,-0.35,2.398942,season_value,drbl-seq-attr-v1
+46,1642263,Reed Sheppard,8653,2.38,71.26,0.32,0.8,0.26,0.04,-1.49,3.65,-1.71,0.14,2.375169,season_value,drbl-seq-attr-v1
+47,1629130,Duncan Robinson,8698,2.37,71.12,0.32,0.8,0.3,0.02,-0.77,2.87,-0.78,-0.77,2.370596,season_value,drbl-seq-attr-v1
+48,1629655,Daniel Gafford,4980,2.33,70,0.53,1.35,0.65,0.01,-1.18,3.29,-1.39,0.05,2.333309,season_value,drbl-seq-attr-v1
+49,1629637,Jaxson Hayes,4934,2.33,69.94,0.53,1.36,0.62,0.02,-1.23,3.48,-0.75,-0.64,2.331202,season_value,drbl-seq-attr-v1
+50,1641717,Cason Wallace,8408,2.26,67.73,0.31,0.79,0.26,0.03,-1,1.82,-1.09,0.83,2.25754,season_value,drbl-seq-attr-v1
+51,1630573,Sam Hauser,7898,2.24,67.28,0.33,0.83,0.12,0.03,-0.78,2.73,-0.59,-0.62,2.242536,season_value,drbl-seq-attr-v1
+52,1641750,Ryan Kalkbrenner,6205,2.22,66.66,0.41,1.04,0.39,0.01,-0.96,3.27,-1.3,-0.32,2.221951,season_value,drbl-seq-attr-v1
+53,1630230,Naji Marshall,9293,2.2,65.9,0.28,0.69,0.79,0.06,-1.3,2.92,-1.46,-0.26,2.196765,season_value,drbl-seq-attr-v1
+54,1641783,Tristan da Silva,7730,2.19,65.85,0.33,0.83,0.3,0.04,-0.91,2.63,-1.02,-0.14,2.194937,season_value,drbl-seq-attr-v1
+55,202699,Tobias Harris,6969,2.19,65.57,0.36,0.91,0.44,0.03,-1.53,3.44,-1.11,-0.28,2.185654,season_value,drbl-seq-attr-v1
+56,203924,Jerami Grant,7350,2.14,64.08,0.34,0.85,0.91,0.03,-1.33,4.06,-1.87,-0.87,2.135945,season_value,drbl-seq-attr-v1
+57,1630540,Miles McBride,4395,2.13,63.78,0.54,1.39,0.31,0.04,-1.1,3.45,-0.88,-0.31,2.125835,season_value,drbl-seq-attr-v1
+58,1630533,Ziaire Williams,5297,2.12,63.5,0.45,1.16,0.7,0.02,-0.89,2.25,-1.3,0.48,2.116766,season_value,drbl-seq-attr-v1
+59,1630249,Vít Krejčí,5966,2.07,62.14,0.4,1.01,0.31,0.02,-0.68,2.67,-0.94,-0.28,2.071371,season_value,drbl-seq-attr-v1
+60,1629012,Collin Sexton,6787,2.06,61.82,0.35,0.88,0.79,0.05,-1.72,4.2,-2.34,-0.02,2.060726,season_value,drbl-seq-attr-v1
+61,1630551,Justin Champagnie,5788,2.02,60.72,0.4,1.01,0.47,0.05,-1.06,2.81,-0.93,-0.23,2.023857,season_value,drbl-seq-attr-v1
+62,203497,Rudy Gobert,9903,1.98,59.5,0.23,0.59,0.53,0.01,-0.92,2.39,-1.23,-0.14,1.983434,season_value,drbl-seq-attr-v1
+63,1629011,Mitchell Robinson,4669,1.98,59.33,0.47,1.22,0.46,0.02,-0.52,2.13,-1.08,0.33,1.977533,season_value,drbl-seq-attr-v1
+64,1630194,Paul Reed,3883,1.91,57.33,0.54,1.4,0.5,0,-1.99,4.25,-1.94,0.75,1.911157,season_value,drbl-seq-attr-v1
+65,1628963,Marvin Bagley III,5149,1.91,57.25,0.42,1.07,0.69,0.02,-1.34,3.71,-1.31,-0.62,1.908283,season_value,drbl-seq-attr-v1
+66,1641706,Brandon Miller,8072,1.89,56.56,0.27,0.68,0.71,0.04,-1.82,4.46,-2.35,-0.3,1.88546,season_value,drbl-seq-attr-v1
+67,1630568,Luka Garza,4589,1.85,55.5,0.45,1.16,0.43,0.01,-1.29,4.01,-1.19,-0.73,1.850163,season_value,drbl-seq-attr-v1
+68,1628381,John Collins,7593,1.84,55.1,0.28,0.71,0.5,0.02,-1.35,3.62,-1.53,-0.51,1.836641,season_value,drbl-seq-attr-v1
+69,1629680,Matisse Thybulle,2049,1.79,53.59,0.88,2.38,0.28,0.03,-0.69,2.4,-1.77,2.41,1.786372,season_value,drbl-seq-attr-v1
+70,1628991,Jaren Jackson Jr.,5984,1.78,53.53,0.34,0.87,0.73,0.02,-1.58,3.78,-1.91,-0.08,1.784178,season_value,drbl-seq-attr-v1
+71,1627780,Gary Payton II,4658,1.78,53.33,0.43,1.1,0.29,0.02,-1.44,3.85,-1.51,-0.02,1.777787,season_value,drbl-seq-attr-v1
+72,1641708,Amen Thompson,12012,1.75,52.46,0.17,0.43,0.64,0.04,-1.8,3.7,-1.86,-0.23,1.748575,season_value,drbl-seq-attr-v1
+73,1629013,Landry Shamet,4854,1.7,51.02,0.39,1.01,0.42,0.03,-0.8,2.61,-0.82,-0.33,1.700565,season_value,drbl-seq-attr-v1
+74,1630532,Franz Wagner,4174,1.69,50.64,0.45,1.16,0.95,0.05,-2.12,4.11,-1.39,-0.32,1.68809,season_value,drbl-seq-attr-v1
+75,202331,Paul George,4694,1.68,50.45,0.4,1.03,0.61,0.03,-1.59,3.54,-1.56,0.09,1.68155,season_value,drbl-seq-attr-v1
+76,1631169,Josh Minott,3365,1.64,49.14,0.53,1.38,0.44,0.02,-0.86,3.15,-1.48,0.24,1.638031,season_value,drbl-seq-attr-v1
+77,1631255,Karlo Matković,3688,1.6,47.96,0.48,1.23,0.34,0.03,-0.75,3.06,-1.1,-0.24,1.598566,season_value,drbl-seq-attr-v1
+78,1631165,Keon Ellis,6005,1.57,47.11,0.3,0.76,0.31,0.02,-0.68,1.9,-0.82,0.09,1.570466,season_value,drbl-seq-attr-v1
+79,1630596,Evan Mobley,8779,1.56,46.83,0.21,0.52,0.74,0.05,-1.6,3.45,-1.63,-0.43,1.561072,season_value,drbl-seq-attr-v1
+80,1642396,Blake Hinson,1218,1.55,46.37,1.14,3.27,0.43,0.01,-1.13,5.07,-0.57,0.03,1.545691,season_value,drbl-seq-attr-v1
+81,1641739,Toumani Camara,11640,1.52,45.71,0.15,0.39,0.27,0.03,-0.79,2.67,-1.43,-0.32,1.523634,season_value,drbl-seq-attr-v1
+82,1628436,Luke Kornet,5861,1.51,45.18,0.29,0.75,0.42,0.02,-0.79,2.35,-0.62,-0.57,1.505978,season_value,drbl-seq-attr-v1
+83,1630193,Immanuel Quickley,9153,1.5,44.91,0.19,0.48,0.56,0.07,-1.26,2.86,-1.35,-0.36,1.497035,season_value,drbl-seq-attr-v1
+84,1629028,Deandre Ayton,8061,1.5,44.86,0.22,0.54,0.39,0.01,-1.57,3.92,-1.24,-0.91,1.495434,season_value,drbl-seq-attr-v1
+85,1629661,Cameron Johnson,6872,1.49,44.64,0.25,0.63,0.34,0.02,-0.95,2.97,-0.83,-0.86,1.488045,season_value,drbl-seq-attr-v1
+86,1630170,Devin Vassell,8333,1.48,44.48,0.21,0.52,0.3,0.03,-1.29,2.85,-0.87,-0.46,1.482772,season_value,drbl-seq-attr-v1
+87,1629639,Tyler Herro,4431,1.45,43.51,0.37,0.94,0.62,0.06,-1.59,4.25,-1.62,-0.7,1.45026,season_value,drbl-seq-attr-v1
+88,203932,Aaron Gordon,4176,1.44,43.3,0.38,0.99,0.9,0.03,-1.47,3.33,-1.1,-0.62,1.443276,season_value,drbl-seq-attr-v1
+89,1630549,Day'Ron Sharpe,4696,1.43,42.85,0.34,0.88,0.59,0.06,-1.25,3.32,-2.45,0.69,1.428345,season_value,drbl-seq-attr-v1
+90,1630538,Bones Hyland,4951,1.4,41.87,0.32,0.81,0.48,0.06,-1.15,3.34,-1.71,-0.12,1.395516,season_value,drbl-seq-attr-v1
+91,1629004,Svi Mykhailiuk,4971,1.39,41.62,0.31,0.8,0.22,0.03,-0.69,3.13,-0.96,-0.87,1.387372,season_value,drbl-seq-attr-v1
+92,1627783,Pascal Siakam,8690,1.37,41.18,0.18,0.46,1.04,0.04,-2.25,3.95,-1.77,-0.48,1.372824,season_value,drbl-seq-attr-v1
+93,1628960,Grayson Allen,6039,1.35,40.44,0.25,0.65,0.7,0.05,-1.21,3.06,-1.61,-0.27,1.347954,season_value,drbl-seq-attr-v1
+94,1642270,Donovan Clingan,8850,1.33,39.9,0.18,0.44,0.45,0.02,-1.13,3.03,-1.3,-0.59,1.329957,season_value,drbl-seq-attr-v1
+95,1629048,Goga Bitadze,3878,1.33,39.76,0.38,0.98,0.49,0.03,-1.23,3.07,-1.21,-0.06,1.325394,season_value,drbl-seq-attr-v1
+96,1626171,Bobby Portis,6650,1.29,38.79,0.22,0.57,0.28,0.03,-1.64,3.88,-1.15,-0.76,1.293008,season_value,drbl-seq-attr-v1
+97,1631323,Simone Fontecchio,5031,1.29,38.75,0.29,0.74,0.53,0.04,-1.03,2.89,-1.16,-0.44,1.29152,season_value,drbl-seq-attr-v1
+98,1630559,Austin Reaves,7310,1.28,38.42,0.2,0.51,1.08,0.03,-1.83,4.19,-2.39,-0.51,1.280706,season_value,drbl-seq-attr-v1
+99,1627936,Alex Caruso,4205,1.28,38.28,0.34,0.87,0.35,0.03,-0.93,1.51,-1.34,1.35,1.276083,season_value,drbl-seq-attr-v1
+100,1630692,Jordan Goodwin,6325,1.27,38.02,0.23,0.58,0.3,0.03,-1.09,2.23,-1.34,0.52,1.267483,season_value,drbl-seq-attr-v1

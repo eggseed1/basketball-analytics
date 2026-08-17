@@ -1,0 +1,8 @@
+{
+  "formula": "rawAbilityRate * (N/2) / 100",
+  "meanRatio_vs_ApproachBAttributedValue": 0.49994458090537125,
+  "medianRatio": 0.49999611725878473,
+  "expectedIfCombinedIsRateDenominator": 0.5,
+  "PAIRED_EXPOSURE_RECONSTRUCTION_RATIO": 0.49994458090537125,
+  "conclusion": "Paired exposure reconstructs ~half of attributed value ⇒ rate denominator is COMBINED appearances, not paired. Do NOT apply /2 to canonical DRBL WAR."
+}

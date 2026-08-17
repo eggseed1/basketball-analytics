@@ -1,0 +1,23 @@
+{
+  "caches": [
+    {
+      "path": "src/data/drbl/precomputed/2024-25.json",
+      "reasonRebuilt": "additive R1 product fields + legacyDrblWar",
+      "note": "Boards patched in-place with R1 fields; schema additive"
+    },
+    {
+      "path": "src/data/drbl/precomputed/2025-26.json",
+      "reasonRebuilt": "additive R1 product fields + legacyDrblWar",
+      "note": "Boards patched in-place with R1 fields; schema additive"
+    },
+    {
+      "path": "src/data/drbl/precomputed/2024-25-r1-stints.json",
+      "reasonRebuilt": "new stint artifact from research"
+    },
+    {
+      "path": "src/data/drbl/precomputed/2025-26-r1-stints.json",
+      "reasonRebuilt": "new stint artifact from research"
+    }
+  ],
+  "DATABASE_MIGRATION_REQUIRED": "NO"
+}

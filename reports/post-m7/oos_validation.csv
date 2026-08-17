@@ -1,0 +1,13 @@
+metric,value,n
+fusion_oof_mae,1.067,471
+fusion_improved_vs_equal,true,
+fusion_target_kind,future_block_residual_per_100,
+continue_mae_C0,1.0297891664316154,70917
+continue_mae_C2,1.0218558495515593,
+continue_corr_C2,0.08614372217054449,
+war_calibrated,false,
+war_pointsToWins,0.033333,
+uncertainty_oof_coverage,0.807,
+mean_abs_delta_drbl100_vs_baseline,0.9460747663551405,321
+mean_rank_delta_vs_baseline,-72.95638629283489,321
+std_drbl100_after,0.41648473613451314,471

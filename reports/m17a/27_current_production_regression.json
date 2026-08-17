@@ -1,0 +1,17 @@
+{
+  "2024_25_DRBL_CHANGED": "NO",
+  "2025_26_DRBL_CHANGED": "NO",
+  "2024_25_R1_CHANGED": "NO",
+  "2025_26_R1_CHANGED": "NO",
+  "method": "M17a does not rewrite precomputed boards; compares shadow extract to live artifact (identity)",
+  "mismatches": {
+    "2024-25_drbl": 0,
+    "2024-25_r1": 0,
+    "2025-26_drbl": 0,
+    "2025-26_r1": 0
+  },
+  "CANONICAL_DRBL_RANK_CHANGED": "NO",
+  "P1_CHANGED": "NO",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "boardsMutatedByM17a": "NO"
+}

@@ -1,0 +1,28 @@
+{
+  "milestone": "M16k0.1",
+  "timestamp": "2026-08-12T23:57:52.676Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "M16J_RESERVED_VERDICT": "STRONG_PASS",
+  "POINT_ESTIMATE_RESERVED_VALIDATION": "PASSED",
+  "M16K0_PRODUCTION_READINESS_RESULT": "READY_WITH_BLOCKERS",
+  "M16K0_PRODUCTION_CUTOVER_READY": "NO",
+  "LIVE_DRBL100_SOURCE_CHANGED": false,
+  "LIVE_RANK_SOURCE_CHANGED": false,
+  "POST_RESERVED_MODEL_TUNING": false,
+  "currentPercentileCodePath": "src/data/queries/percentiles.ts",
+  "currentGlossaryCopyPaths": [
+    "src/lib/stat-glossary.ts",
+    "src/app/learn/drbl/page.tsx",
+    "src/lib/player-savant.ts"
+  ],
+  "currentRankExploreSortPaths": [
+    "src/lib/player-explore-sort.ts",
+    "src/app/explore/players/page.tsx",
+    "src/data/drbl/precomputed/*.json rank field"
+  ],
+  "validatedAbilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "validatedPercentileEligibilityVersion": "drbl-validated-percentile-eligibility-v1"
+}

@@ -1,0 +1,25 @@
+{
+  "LeagueMeanWins": 40.833333333333336,
+  "formula": "PredWins = LeagueMeanWins + ActualNetPoints/P1",
+  "P1": 37.490662671779255,
+  "P1_REFIT": "NO",
+  "RMSE": 3.154250393085138,
+  "MAE": 2.4790598453348283,
+  "bias": -2.2500519965736505e-15,
+  "Pearson": 0.9725145270778358,
+  "Spearman": 0.9528364849833147,
+  "R2": 0.9455545800744841,
+  "scaleDiagnostic": {
+    "equation": "ActualWinDelta = b_reserved * PredWinDelta (intercept 0)",
+    "b_reserved": 0.9846475361017686,
+    "RMSE": 3.147583080379396,
+    "R2": 0.9457845053774263,
+    "acceptedRange": [
+      0.85,
+      1.15
+    ],
+    "P1_RESERVED_SCALE_STABILITY": "PASS",
+    "label": "POST_RESERVED_DIAGNOSTIC_ONLY NOT_MODEL_PARAMETER"
+  },
+  "CONSTANT_INTERCEPT_TEAM_R1WINEQ_TEST_RUN": "NO"
+}

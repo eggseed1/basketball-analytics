@@ -1,0 +1,10 @@
+{
+  "PPW_DECISION": "P1_EMPIRICALLY_SUPPORTED",
+  "SELECTED_PPW_SOURCE": "P1",
+  "FINAL_DEVELOPMENT_PPW": 37.490662671779255,
+  "stabilityPass": true,
+  "strongP1": true,
+  "relP1Imp": 0.3697621509766351,
+  "pP1Beats": 0.9995,
+  "reason": "P1 stable and cleared strong empirical improvement gates"
+}

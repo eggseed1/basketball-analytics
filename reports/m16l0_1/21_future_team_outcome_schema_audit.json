@@ -1,0 +1,21 @@
+{
+  "schemaAvailable": true,
+  "fields": {
+    "teamId": "YES",
+    "season": "YES",
+    "wins": "YES (src/data/types/team-season.ts + game score derivation)",
+    "losses": "YES",
+    "pointsScored": "YES via game box / team season PPG*GP path",
+    "pointsAllowed": "derivable from game scores",
+    "netPoints": "derivable (scored - allowed)",
+    "netRating": "YES on TeamSeason"
+  },
+  "sources": [
+    "src/data/types/team-season.ts",
+    "src/data/queries/teams.ts",
+    "drbl/models/war.ts buildTeamWarRows (wins from box scores)",
+    "DrblBoxScore homeScore/awayScore"
+  ],
+  "actualOutcomeMetricsEvaluated": false,
+  "valuesEmittedFor2025_26": false
+}

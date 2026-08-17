@@ -1,0 +1,11 @@
+{
+  "POST_RESERVED_MODEL_PARAMETER_CHANGES": "NONE",
+  "k": 1600,
+  "priorMean": 0,
+  "calibration": "identity",
+  "featureSet": "P_only",
+  "attribution": "drbl-seq-attr-v1",
+  "RESERVED_TEST_CONSUMED": true,
+  "RESERVED_MAY_BE_USED_FOR_FUTURE_POINT_MODEL_TUNING": false,
+  "RESERVED_MAY_BE_USED_FOR_FUTURE_UNCERTAINTY_TUNING": false
+}

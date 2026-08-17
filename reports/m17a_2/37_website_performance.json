@@ -1,0 +1,8 @@
+{
+  "strategy": "per-season lazy loading via season registry + precomputed JSON",
+  "historicalSeasonsPublished": 4,
+  "publishedSeasons": ["2020-21", "2021-22", "2022-23", "2023-24"],
+  "modelProductStatus": "RETROSPECTIVE_FROZEN_V1",
+  "initialBundleHistoricalPayload": "LAZY_PER_SEASON",
+  "artifactNote": "Each season loads independently from src/data/drbl/precomputed/<season>.json"
+}

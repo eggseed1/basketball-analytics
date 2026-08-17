@@ -1,0 +1,2 @@
+comparison,deltaRMSE_mean,ciLow,ciHigh,P_zero_beats_identity,P_identity_beats_zero,resamples,seed
+ZERO_LINEAR_vs_IDENTITY,-0.00019185915911279494,-0.0011951270483083754,0.001062152133683547,0.636,0.364,1000,42

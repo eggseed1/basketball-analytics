@@ -1,0 +1,10 @@
+check,status,detail
+continue_labels_are_age_grid_pre_FGA,PASS,Primary labels: possessions still without FGA at age τ; Y=remaining points; FGAs never trained as continue
+features_exclude_remainingPoints,PASS,C1/C2 feature names audited; builders do not read remainingPoints
+FGA_rows_excluded_from_continue_training,PASS,buildContinueRowsForGame skips isFieldGoalAttempt events
+Y_remaining_points_target_only,PASS,remainingPoints used only as ridge Y
+chronological_holdout_excluded_from_fit,PASS,Coefficients fit on train games only; priors expand after predict
+true_shot_clock_not_fabricated,PASS,possessionAgeNorm documented as PROXY only
+M6_coefficients_untouched,PASS,shot-decision.ts not modified; M6 OOF used read-only
+DRBL_fusion_untouched,PASS,No fusion/WAR/leaderboard writes
+post_decision_points_as_features,PASS,Banned

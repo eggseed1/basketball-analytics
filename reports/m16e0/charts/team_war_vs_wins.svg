@@ -1,0 +1,36 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="480" height="360">
+  <rect width="100%" height="100%" fill="#fff"/>
+  <text x="40" y="24" font-size="13" font-family="sans-serif">team player WAR vs actual wins</text>
+  <line x1="40" y1="320" x2="440" y2="320" stroke="#333"/>
+  <line x1="40" y1="40" x2="40" y2="320" stroke="#333"/>
+  <circle cx="377.0" cy="40.0" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="440.0" cy="56.5" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="403.4" cy="68.8" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="273.7" cy="105.9" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="273.2" cy="110.0" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="211.9" cy="114.1" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="257.9" cy="114.1" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="169.0" cy="114.1" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="194.2" cy="114.1" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="374.5" cy="118.2" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="278.1" cy="122.4" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="283.0" cy="122.4" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="202.5" cy="122.4" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="253.3" cy="138.8" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="222.4" cy="151.2" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="264.8" cy="155.3" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="261.3" cy="155.3" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="242.0" cy="159.4" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="202.5" cy="159.4" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="124.7" cy="221.2" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="273.9" cy="180.0" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="109.7" cy="171.8" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="191.0" cy="171.8" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="101.0" cy="196.5" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="172.2" cy="212.9" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="151.8" cy="233.5" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="227.3" cy="241.8" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="61.8" cy="245.9" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="40.0" cy="250.0" r="2" fill="#1d4ed8" opacity="0.5"/>
+<circle cx="258.3" cy="167.6" r="2" fill="#1d4ed8" opacity="0.5"/>
+</svg>

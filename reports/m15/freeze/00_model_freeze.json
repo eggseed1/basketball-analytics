@@ -1,0 +1,251 @@
+{
+  "frozenAt": "2026-08-12T02:36:45.678Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "note": "DRBL tree largely uncommitted relative to Initial commit; freeze copies of artifacts under reports/m15/freeze/",
+  "parserVersion": "drbl-parser-2026.08.11",
+  "reconstructionVersion": "drbl-recon-2026.08.11",
+  "artifactVersions": [
+    {
+      "season": "2024-25",
+      "version": "drbl-l-v1",
+      "generatedAt": "2026-08-12T02:30:28.962Z",
+      "gamesProcessed": 50,
+      "players": 321,
+      "lineupModel": {
+        "version": "drbl-ln-ridge-v1",
+        "lambda": 800,
+        "trainMae": 1.102,
+        "holdoutMae": 1.123,
+        "players": 393
+      },
+      "behaviorModel": {
+        "version": "drbl-b-ridge-v1",
+        "lambda": 40,
+        "trainMae": 1.015,
+        "holdoutMae": 1.129,
+        "players": 321,
+        "missingXyRate": 0
+      },
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 0.259,
+        "equalMae": 0.735,
+        "liteMae": 0.659,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 1,
+          "wLn": 0,
+          "wB": 0
+        }
+      },
+      "uncertaintyModel": {
+        "version": "drbl-uncertainty-v1",
+        "targetCoverage": 0.8,
+        "scaleMultiplier": 0.52751,
+        "oofCoverage": 0.804,
+        "calibrated": true,
+        "meanAbsError": 0.259
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.034093,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "holdout through-origin MAE ≤ provisional and positive correlation",
+        "holdoutMae": 0.285,
+        "holdoutCorr": 0.714
+      },
+      "leverageModel": {
+        "version": "drbl-l-wp-v1",
+        "meanRawLambda": 0.010228,
+        "exampleClutchLambdaStar": 5.898,
+        "possessions": 101228
+      }
+    },
+    {
+      "season": "2025-26",
+      "version": "drbl-l-v1",
+      "generatedAt": "2026-08-12T02:30:38.170Z",
+      "gamesProcessed": 50,
+      "players": 337,
+      "lineupModel": {
+        "version": "drbl-ln-ridge-v1",
+        "lambda": 800,
+        "trainMae": 1.099,
+        "holdoutMae": 1.112,
+        "players": 385
+      },
+      "behaviorModel": {
+        "version": "drbl-b-ridge-v1",
+        "lambda": 40,
+        "trainMae": 0.924,
+        "holdoutMae": 1.077,
+        "players": 337,
+        "missingXyRate": 0.006
+      },
+      "fusionModel": {
+        "version": "drbl-fusion-oof-v1",
+        "lambda": 8,
+        "folds": 5,
+        "oofMae": 0.246,
+        "equalMae": 0.668,
+        "liteMae": 0.594,
+        "improvedVsEqual": true,
+        "improvedVsLite": true,
+        "simplexWeights": {
+          "wP": 0.9709354911858271,
+          "wLn": 0,
+          "wB": 0.029064508814172805
+        }
+      },
+      "uncertaintyModel": {
+        "version": "drbl-uncertainty-v1",
+        "targetCoverage": 0.8,
+        "scaleMultiplier": 0.514876,
+        "oofCoverage": 0.801,
+        "calibrated": true,
+        "meanAbsError": 0.246
+      },
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.02992,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "holdout through-origin MAE ≤ provisional and positive correlation",
+        "holdoutMae": 0.272,
+        "holdoutCorr": 0.808
+      },
+      "leverageModel": {
+        "version": "drbl-l-wp-v1",
+        "meanRawLambda": 0.010384,
+        "exampleClutchLambdaStar": 5.81,
+        "possessions": 103752
+      }
+    }
+  ],
+  "trainingSeasons": [
+    "2024-25",
+    "2025-26"
+  ],
+  "validationSeasons": "chrono within-sample holdout only (not separate seasons)",
+  "testSeasons": "none held out as true test",
+  "sampleNote": "Published site artifacts computed with --limit 50 games per season",
+  "hyperparameters": {
+    "epvLambda": "see epv fit",
+    "lineupLambda": 800,
+    "behaviorLambda": 40,
+    "fusionLambda": 8,
+    "fusionFolds": 5,
+    "uncertaintyTargetCoverage": 0.8,
+    "shrinkageK": 200,
+    "provisionalPointsToWins": 0.03333333333333333
+  },
+  "randomSeeds": "none (deterministic linear algebra)",
+  "fusionEquation2025_26": {
+    "description": "OOF ridge: yhat = intercept + wP*P + wLn*LN + wB*B + wHasB*hasB (hasB internalized in fit)",
+    "weights": {
+      "intercept": -0.066012,
+      "wP": 1.973385,
+      "wLn": -0.150949,
+      "wB": 0.059072
+    },
+    "simplexWeights": {
+      "wP": 0.9709354911858271,
+      "wLn": 0,
+      "wB": 0.029064508814172805
+    },
+    "publishedField": "drbl100 = OOF stacked prediction (not simplex blend of components)"
+  },
+  "epvCoefficients": {
+    "version": "epv-ridge-v1",
+    "fittedAt": "2026-08-12T01:44:23.885Z",
+    "featureNames": [
+      "bias",
+      "offenseIsHome",
+      "clockLe4",
+      "clockLe8",
+      "periodGe4",
+      "absDiffGe10",
+      "absDiffGe20",
+      "trailingGe10",
+      "leadingGe10",
+      "clockNorm"
+    ],
+    "coefficients": [
+      1.138709,
+      -0.015257,
+      -0.61111,
+      0.113626,
+      0.055415,
+      -0.010306,
+      0.105776,
+      -0.120629,
+      0.110323,
+      -0.051525
+    ],
+    "train": {
+      "n": 8142,
+      "mae": 1.108,
+      "rmse": 1.175,
+      "meanPredicted": 1.119,
+      "meanActual": 1.117
+    },
+    "holdout": {
+      "n": 2192,
+      "mae": 1.124,
+      "rmse": 1.19,
+      "meanPredicted": 1.11,
+      "meanActual": 1.116
+    },
+    "heuristicHoldout": {
+      "n": 2192,
+      "mae": 1.125,
+      "rmse": 1.192,
+      "meanPredicted": 1.085,
+      "meanActual": 1.116
+    },
+    "seasons": [
+      "2024-25"
+    ],
+    "mode": "chrono"
+  },
+  "m13WarVersions": [
+    {
+      "version": "drbl-war-v1",
+      "pointsToWins": 0.034093,
+      "provisionalPointsToWins": 0.03333333333333333,
+      "calibrated": true,
+      "reason": "holdout through-origin MAE ≤ provisional and positive correlation",
+      "holdoutMae": 0.285,
+      "holdoutCorr": 0.714
+    },
+    {
+      "version": "drbl-war-v1",
+      "pointsToWins": 0.02992,
+      "provisionalPointsToWins": 0.03333333333333333,
+      "calibrated": true,
+      "reason": "holdout through-origin MAE ≤ provisional and positive correlation",
+      "holdoutMae": 0.272,
+      "holdoutCorr": 0.808
+    }
+  ],
+  "m14LeverageVersions": [
+    {
+      "version": "drbl-l-wp-v1",
+      "meanRawLambda": 0.010228,
+      "exampleClutchLambdaStar": 5.898,
+      "possessions": 101228
+    },
+    {
+      "version": "drbl-l-wp-v1",
+      "meanRawLambda": 0.010384,
+      "exampleClutchLambdaStar": 5.81,
+      "possessions": 103752
+    }
+  ],
+  "m6Status": "NOT IMPLEMENTED — no shot-decision/continuation module in codebase"
+}

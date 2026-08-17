@@ -1,0 +1,17 @@
+{
+  "PRODUCTION_CUTOVER_READY": "YES",
+  "PRODUCTION_READINESS_RESULT": "READY_FOR_CONTROLLED_CUTOVER",
+  "PRODUCTION_LIVE_CUTOVER": "NO",
+  "LIVE_DRBL100_SOURCE_CHANGED": "NO",
+  "LIVE_RANK_SOURCE_CHANGED": "NO",
+  "blockers": [],
+  "deferredToM16k1": [
+    "switch live drbl100 to validatedDRBL100",
+    "switch live rank to validated shadow rank",
+    "swap percentile eligible to qualifiesForValidatedDrblPercentile",
+    "apply frozen glossary/copy",
+    "remove legacy uncertainty from canonical validated displays",
+    "rebuild precomputed artifacts"
+  ],
+  "nextMilestone": "M16k1 CONTROLLED VALIDATED DRBL/100 PRODUCTION CUTOVER"
+}

@@ -1,0 +1,51 @@
+{
+  "RESEARCH_FINAL": {
+    "name": "RESEARCH_FINAL_EB1600",
+    "formula": "N/(N+1600)*rawAbilityRate",
+    "version": "drbl-research-rate-v1",
+    "posteriorVersion": "drbl-eb-posterior-k1600-v1",
+    "sourceFiles": [
+      "drbl/models/research-ability-v1.ts",
+      "drbl/models/research-rate-v1.ts"
+    ],
+    "reservedFittingAllowed": false
+  },
+  "B0_RAW_P": {
+    "name": "B0_RAW_P",
+    "formula": "rawAbilityRate",
+    "equivalentK": 0,
+    "available": true,
+    "role": "PRIMARY_COMPARATOR"
+  },
+  "B1_P_EB200": {
+    "name": "B1_P_EB200",
+    "formula": "N/(N+200)*rawAbilityRate",
+    "equivalentK": 200,
+    "available": true,
+    "role": "SECONDARY_COMPARATOR",
+    "note": "P-only legacy shrinkage strength; NOT fused double-EB production rating"
+  },
+  "B2_BASELINE_M16A": {
+    "name": "BASELINE_M16A",
+    "experimentId": "BASELINE_M16A",
+    "modelComponents": [
+      "P",
+      "LN",
+      "B",
+      "fusion_oof",
+      "posterior_eb"
+    ],
+    "available": true,
+    "semanticComparability": "NOT_COMPARABLE",
+    "B2_STATUS": "NOT_COMPARABLE",
+    "reason": "BASELINE_M16A is fused P+LN+B with EB200 posterior; RESEARCH_FINAL is P-only EB1600. Same target name does not imply same predictor/universe semantics for a fair incumbent RMSE comparison under the frozen point-estimate-only contract.",
+    "role": "EXCLUDED"
+  },
+  "hierarchy": {
+    "PRIMARY_COMPARATOR": "B0_RAW_P",
+    "SECONDARY_COMPARATOR": "B1_P_EB200",
+    "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+    "additionalBaselinesAllowed": false
+  },
+  "COMPARATOR_SET_FROZEN": true
+}

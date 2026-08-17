@@ -1,0 +1,7 @@
+{
+  "validatedNSource": "combinedPossessionAppearances ?? actualPossessions ?? possessions",
+  "actualAppearances": "YES",
+  "PSEUDO_EXPOSURE_IN_VALIDATED_ABILITY": "NO",
+  "note": "validated path never uses N+1600 as exposure",
+  "productionPossessionsField": "player-value accumulator possessions"
+}

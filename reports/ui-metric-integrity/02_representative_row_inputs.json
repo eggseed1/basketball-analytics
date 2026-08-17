@@ -1,0 +1,109 @@
+{
+  "playerId": "202710",
+  "playerName": "Jimmy Butler III",
+  "season": "2025-26",
+  "liveLeagueModeNote": "Browser verification 2025-26: WAR94 /100=100 P99 LN96 B100 O98 D73 (distinct).",
+  "claimedSymptom": "WAR13 + five 88s + D13 — NOT reproduced; O-DPM=88 and 3PAr=13 appear on same page for other metrics.",
+  "rows": [
+    {
+      "metricKey": "drblWar",
+      "label": "DRBL-WAR",
+      "rawValue": 3.53,
+      "percentileFieldRequested": "drblWarPercentile",
+      "percentileValueReceived": 96,
+      "displayedPercentile": 96,
+      "barPosition": 96,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblWar",
+      "recomputedPct": 96
+    },
+    {
+      "metricKey": "drbl100",
+      "label": "DRBL/100",
+      "rawValue": 2.31,
+      "percentileFieldRequested": "drbl100Percentile",
+      "percentileValueReceived": 100,
+      "displayedPercentile": 100,
+      "barPosition": 100,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drbl100",
+      "recomputedPct": 100
+    },
+    {
+      "metricKey": "drblP",
+      "label": "DRBL-P",
+      "rawValue": 2.1,
+      "percentileFieldRequested": "drblPPercentile",
+      "percentileValueReceived": 98,
+      "displayedPercentile": 98,
+      "barPosition": 98,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblP",
+      "recomputedPct": 98
+    },
+    {
+      "metricKey": "drblLn",
+      "label": "DRBL-LN",
+      "rawValue": 3.78,
+      "percentileFieldRequested": "drblLnPercentile",
+      "percentileValueReceived": 97,
+      "displayedPercentile": 97,
+      "barPosition": 97,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblLn",
+      "recomputedPct": 97
+    },
+    {
+      "metricKey": "drblB",
+      "label": "DRBL-B",
+      "rawValue": 0.48,
+      "percentileFieldRequested": "drblBPercentile",
+      "percentileValueReceived": 100,
+      "displayedPercentile": 100,
+      "barPosition": 100,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblB",
+      "recomputedPct": 100
+    },
+    {
+      "metricKey": "drblO",
+      "label": "DRBL-O",
+      "rawValue": 4.28,
+      "percentileFieldRequested": "drblOPercentile",
+      "percentileValueReceived": 98,
+      "displayedPercentile": 98,
+      "barPosition": 98,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblO",
+      "recomputedPct": 98
+    },
+    {
+      "metricKey": "drblD",
+      "label": "DRBL-D",
+      "rawValue": -0.24,
+      "percentileFieldRequested": "drblDPercentile",
+      "percentileValueReceived": 63,
+      "displayedPercentile": 63,
+      "barPosition": 63,
+      "season": "2025-26",
+      "comparisonUniverseN": 575,
+      "sourceArtifactField": "drblD",
+      "recomputedPct": 63
+    }
+  ],
+  "warProvenance": {
+    "abilityInput": "rawAbilityRate",
+    "exposure": "combinedPossessionAppearances (artifact actualPossessions)",
+    "replacement": 0,
+    "pointsPerWin": 30,
+    "warFormulaVersion": "provisional / null (not 4.0.1)",
+    "displayedWar": 3.53,
+    "result": "2025_26_WAR_PROVENANCE PASS"
+  }
+}

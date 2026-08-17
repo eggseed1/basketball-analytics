@@ -1,0 +1,14 @@
+field,valueType,unit,producer,consumer
+rawAbilityRate,rate,Approach B residual-share points / 100 player on-court possession-appearances (off+def counted separately),finalizePlayerSeasonRows: 100*totalValue/possessions,diagnostics; 2025-26 provisional WAR; pre-pipeline seasonalImpact
+fusedRateRaw,rate,same residual-share pts/100 appearances (OOF fusion of P/LN/B),fitFusionOof / fusePlayerRating,posteriorAbilityRate
+posteriorAbilityRate,rate,same residual-share pts/100 appearances (EB shrunk fused rate),"empiricalBayesRate(fusedRateRaw,n,0,k=200)",displayed drbl100; warCalibrationAbilityInput=posterior
+displayedDrbl100,rate,alias of posteriorAbilityRate (display rounded),ability lineage published field,site leaderboard DRBL/100
+warCalibrationInput,rate,posteriorAbilityRate (2024-25 v4),pipeline-remaster abilityInput selection,LOO calibratePosterior
+calibrationSlope,dimensionless scale,maps residual-share rate → team-net-rating-like pts/100 scale,fitCalibrationLeaveOneOut through-origin on team features → netRating,finalAbilityDRBL100
+finalAbilityDRBL100 / calibratedDRBL100,rate,calibrated points / 100 possessions (net-rating-like after LOO),intercept + slope * posterior,WAA/WAR
+replacementLevelDRBL100,rate,"calibrated pts/100 (fringe median finalAbility, 200–800 poss)",estimateReplacementLevel,aboveReplacementRate
+aboveReplacementDRBL100,rate,calibrated pts/100 above fringe replacement,finalAbility - replacement,seasonImpactAboveReplacement
+actualOnCourtPossessions / possessions,count,player possession-appearances = offensivePossessions + defensivePossessions,attributeGamePlayerValue (++ on offense and defense separately),rate denominator; WAR exposure
+seasonImpactAboveReplacement,season total,calibrated residual-share / net-rating-scale points (season total),aboveReplacement * n / 100,WAR
+pointsPerWin,conversion,season point differential per win-above-.500 (median across teams),estimatePointsPerWinFromTeamSeasons,WAR = impact / pointsPerWin
+drblWar,wins,wins above fringe replacement (v4),computeWAR,leaderboard

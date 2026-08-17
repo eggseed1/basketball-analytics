@@ -1,0 +1,21 @@
+{
+  "milestone": "ui-metric-integrity",
+  "timestamp": "2026-08-12T18:27:02.525Z",
+  "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+  "gitDirty": true,
+  "pageSeason": "2025-26",
+  "artifactPath": "src/data/drbl/precomputed/2025-26.json",
+  "artifactHash": "a18c996838a999e265f2cee356e3c15f17b5a8534be9832bf65786c7ea55d8df",
+  "artifactGenerationId": "2025-26-g1225-2026-08-12T15-24-09-645Z",
+  "artifactPlayerCount": 575,
+  "exploreRowCountSimulated": 582,
+  "representativePlayer": {
+    "playerId": "202710",
+    "playerName": "Jimmy Butler III"
+  },
+  "loader": "nba-data-provider getPlayerSeasons + drbl-loader left join",
+  "pageComponent": "src/app/players/[playerId]/page.tsx",
+  "metricRowComponent": "src/components/player/player-savant-summary.tsx",
+  "percentileHelper": "src/data/queries/percentiles.ts computePlayerPercentiles",
+  "classification": "H — claimed identical 88/13 DRBL pattern not reproducible on current league binding; live page shows distinct metric-specific percentiles. Residual G (metadata-zero contamination) repaired by eligible filter."
+}

@@ -1,0 +1,7 @@
+{
+  "SHADOW_DETERMINISM": "PASS",
+  "hashRun1": "02a33d5513ddd01d45b6148648bdbd42c814da16b09482b50bddedc936719f7c",
+  "hashRun2": "02a33d5513ddd01d45b6148648bdbd42c814da16b09482b50bddedc936719f7c",
+  "rankIntegrity": "PASS",
+  "note": "Identical inputs → identical validatedDRBL100 serialization"
+}

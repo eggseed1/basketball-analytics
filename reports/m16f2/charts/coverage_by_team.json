@@ -1,0 +1,182 @@
+[
+  {
+    "teamId": "1610612737",
+    "eligible": 12,
+    "common": 3,
+    "coveragePct": 25
+  },
+  {
+    "teamId": "1610612738",
+    "eligible": 16,
+    "common": 5,
+    "coveragePct": 31.25
+  },
+  {
+    "teamId": "1610612739",
+    "eligible": 17,
+    "common": 5,
+    "coveragePct": 29.41176470588235
+  },
+  {
+    "teamId": "1610612740",
+    "eligible": 10,
+    "common": 0,
+    "coveragePct": 0
+  },
+  {
+    "teamId": "1610612741",
+    "eligible": 12,
+    "common": 4,
+    "coveragePct": 33.333333333333336
+  },
+  {
+    "teamId": "1610612742",
+    "eligible": 14,
+    "common": 3,
+    "coveragePct": 21.428571428571427
+  },
+  {
+    "teamId": "1610612743",
+    "eligible": 15,
+    "common": 4,
+    "coveragePct": 26.666666666666668
+  },
+  {
+    "teamId": "1610612744",
+    "eligible": 15,
+    "common": 1,
+    "coveragePct": 6.666666666666667
+  },
+  {
+    "teamId": "1610612745",
+    "eligible": 16,
+    "common": 4,
+    "coveragePct": 25
+  },
+  {
+    "teamId": "1610612746",
+    "eligible": 15,
+    "common": 4,
+    "coveragePct": 26.666666666666668
+  },
+  {
+    "teamId": "1610612747",
+    "eligible": 16,
+    "common": 3,
+    "coveragePct": 18.75
+  },
+  {
+    "teamId": "1610612748",
+    "eligible": 12,
+    "common": 6,
+    "coveragePct": 50
+  },
+  {
+    "teamId": "1610612749",
+    "eligible": 13,
+    "common": 4,
+    "coveragePct": 30.76923076923077
+  },
+  {
+    "teamId": "1610612750",
+    "eligible": 12,
+    "common": 6,
+    "coveragePct": 50
+  },
+  {
+    "teamId": "1610612751",
+    "eligible": 13,
+    "common": 1,
+    "coveragePct": 7.6923076923076925
+  },
+  {
+    "teamId": "1610612752",
+    "eligible": 14,
+    "common": 5,
+    "coveragePct": 35.714285714285715
+  },
+  {
+    "teamId": "1610612753",
+    "eligible": 14,
+    "common": 3,
+    "coveragePct": 21.428571428571427
+  },
+  {
+    "teamId": "1610612754",
+    "eligible": 15,
+    "common": 4,
+    "coveragePct": 26.666666666666668
+  },
+  {
+    "teamId": "1610612755",
+    "eligible": 15,
+    "common": 0,
+    "coveragePct": 0
+  },
+  {
+    "teamId": "1610612756",
+    "eligible": 16,
+    "common": 4,
+    "coveragePct": 25
+  },
+  {
+    "teamId": "1610612757",
+    "eligible": 12,
+    "common": 4,
+    "coveragePct": 33.333333333333336
+  },
+  {
+    "teamId": "1610612758",
+    "eligible": 12,
+    "common": 5,
+    "coveragePct": 41.666666666666664
+  },
+  {
+    "teamId": "1610612759",
+    "eligible": 13,
+    "common": 3,
+    "coveragePct": 23.076923076923077
+  },
+  {
+    "teamId": "1610612760",
+    "eligible": 15,
+    "common": 4,
+    "coveragePct": 26.666666666666668
+  },
+  {
+    "teamId": "1610612761",
+    "eligible": 15,
+    "common": 4,
+    "coveragePct": 26.666666666666668
+  },
+  {
+    "teamId": "1610612762",
+    "eligible": 13,
+    "common": 3,
+    "coveragePct": 23.076923076923077
+  },
+  {
+    "teamId": "1610612763",
+    "eligible": 15,
+    "common": 3,
+    "coveragePct": 20
+  },
+  {
+    "teamId": "1610612764",
+    "eligible": 14,
+    "common": 3,
+    "coveragePct": 21.428571428571427
+  },
+  {
+    "teamId": "1610612765",
+    "eligible": 13,
+    "common": 6,
+    "coveragePct": 46.15384615384615
+  },
+  {
+    "teamId": "1610612766",
+    "eligible": 15,
+    "common": 2,
+    "coveragePct": 13.333333333333334
+  }
+]

@@ -1,0 +1,26 @@
+[
+  {
+    "season": "2024-25",
+    "games": 1225,
+    "possessions": 244587,
+    "FULL_5V5": 241610,
+    "RAW_LINEUP_COMPLETENESS_RATE": 0.9878284618561085,
+    "incompletePossessions": 2977,
+    "offenseOnlyIncomplete": 1478,
+    "defenseOnlyIncomplete": 1494,
+    "bothSidesIncomplete": 5,
+    "CANONICAL_ATTRIBUTION_SUPPORT_RATE_NOTE": "Frozen attribution path already skips/quarantines unusable games; product boards are CANONICAL_PRODUCTION"
+  },
+  {
+    "season": "2025-26",
+    "games": 1225,
+    "possessions": 246754,
+    "FULL_5V5": 243638,
+    "RAW_LINEUP_COMPLETENESS_RATE": 0.9873720385485139,
+    "incompletePossessions": 3116,
+    "offenseOnlyIncomplete": 1551,
+    "defenseOnlyIncomplete": 1551,
+    "bothSidesIncomplete": 14,
+    "CANONICAL_ATTRIBUTION_SUPPORT_RATE_NOTE": "Frozen attribution path already skips/quarantines unusable games; product boards are CANONICAL_PRODUCTION"
+  }
+]

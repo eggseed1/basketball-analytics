@@ -1,0 +1,13 @@
+{
+  "rows": 1130,
+  "maxResidual": 0,
+  "mismatchCount": 0,
+  "rankMismatchCount": 0,
+  "warMismatchCount": 0,
+  "odMismatchCount": 0,
+  "canonicalLegacyUncertaintyShown": "NO",
+  "LIVE_DRBL100_SOURCE": "validatedDRBL100",
+  "LIVE_RANK_SOURCE": "validatedDRBL100",
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "result": "PASS"
+}

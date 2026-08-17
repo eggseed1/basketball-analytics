@@ -1,0 +1,13 @@
+{
+  "leagueSignedUnobserved": -3368.7331347774193,
+  "leagueAbsoluteUnobserved": 3368.7331347774193,
+  "residualPerPossession": 0.013773148755974027,
+  "fractionOfAbsOffTarget": 0.42126130503179904,
+  "teamResidualSD": 17.257300197778605,
+  "min": -160.09410955413776,
+  "max": -72.70620268320619,
+  "corrActualNet": 0.28417829407327133,
+  "corrW0": 0.26719473589624754,
+  "classification": "intentional_model_unobserved_bucket",
+  "PLAYER_ATTRIBUTION_EXHAUSTIVE": "NO"
+}

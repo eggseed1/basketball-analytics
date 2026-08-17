@@ -1,0 +1,16 @@
+model,feature,class,playerVarying,leakageRisk
+M5_EPV,bias,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,offenseIsHome,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,clockLe4,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,clockLe8,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,periodGe4,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,absDiffGe10,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,absDiffGe20,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,trailingGe10,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,leadingGe10,PRE_POSSESSION_AVAILABLE,false,NONE
+M5_EPV,clockNorm,PRE_POSSESSION_AVAILABLE,false,NONE
+LN_ridge,offensePlayerIds[+1],PRE_POSSESSION_AVAILABLE,true,NONE_if_TRAIN_fit_only
+LN_ridge,defensePlayerIds[-1],PRE_POSSESSION_AVAILABLE,true,NONE_if_TRAIN_fit_only
+LN_ridge,homeCoef,PRE_POSSESSION_AVAILABLE,false,NONE
+LN_ridge_target,residual = points - EPV,FUTURE_OUTCOME,false,TRAINING_TARGET_ONLY_never_in_A_features
+Approach_B_sequential,actualPoints / event path,FUTURE_OUTCOME,true,ALLOWED_for_B_retrospective_NOT_for_A_counterfactual

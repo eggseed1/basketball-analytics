@@ -1,0 +1,36 @@
+{
+  "candidateFamily": [
+    "CAL_IDENTITY",
+    "CAL_ZERO_LINEAR",
+    "CAL_AFFINE_DIAGNOSTIC"
+  ],
+  "targetZeroSemantics": "R1_REPLACEMENT_BASELINE",
+  "TARGET_ZERO_ALIGNED_WITH_P": "YES",
+  "identityRMSE": 2.781961911853985,
+  "zeroLinearRMSE": 2.7817700526948723,
+  "relativeImprovement": 0.00006896541548440327,
+  "zeroLinearBootstrapCI": [
+    -0.0011951270483083754,
+    0.001062152133683547
+  ],
+  "P_zero_beats_identity": 0.636,
+  "foldWins": "2/4",
+  "rollingBValues": [
+    1.0769236160402875,
+    0.945304253965262,
+    0.9587329072741432,
+    0.9178208836026555
+  ],
+  "coefficientStability": "STABLE",
+  "affineRMSE": 2.7772185435299996,
+  "affineVsZeroImprovement": 0.0016361917335558892,
+  "BASELINE_SHIFT_SIGNAL": "NO",
+  "CALIBRATION_SELECTION_RESULT": "IDENTITY_SELECTED",
+  "b_final": 1,
+  "practicalThreshold": 0.005,
+  "practicalPassed": false,
+  "secondaryOk": true,
+  "researchRateVersion": "drbl-research-rate-v1",
+  "calibrationVersion": "drbl-calibration-identity-v1",
+  "lockedBeforeNameInspection": true
+}

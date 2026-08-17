@@ -1,0 +1,40 @@
+{
+  "milestone": "M16d",
+  "statuses": {
+    "M16D_SPLITS_MATCH_M16B": "PASS",
+    "M16C_P_BASELINE_REPRODUCED": "PASS",
+    "FUSION_CONSTRAINT_VERIFIED": "PASS",
+    "RESERVED_TEST_ACCESSED": "NO",
+    "VALIDATION_ROWS_USED_IN_FIT": 0,
+    "TARGET_UNCHANGED": "PASS",
+    "ELIGIBILITY_UNCHANGED": "PASS",
+    "M6_FORMULA_CHANGED": "NO",
+    "M6_STANDALONE_COMPLETE": "PASS",
+    "M6_RESIDUAL_SIGNAL_COMPLETE": "PASS",
+    "P_M6_FUSION_COMPLETE": "PASS",
+    "PAIRED_BOOTSTRAP_COMPLETE": "PASS",
+    "POSTERIOR_ROBUSTNESS_COMPLETE": "PASS",
+    "LN_REINTRODUCED": "NO",
+    "B_REINTRODUCED": "NO",
+    "APPROACH_A_RUN": "NO",
+    "WAR_CHANGED": "NO",
+    "PRODUCTION_DRBL_CHANGED": "NO",
+    "M6_EXTREME_CALIBRATION_RISK": true,
+    "M16D_NEXT_BASE": "P + M6",
+    "m6Class": "C",
+    "decision": "P+M6_validated_improvement"
+  },
+  "coverage": {
+    "validationN": 419,
+    "m6CoverageN": 419,
+    "missingM6": 0,
+    "commonValidationN": 419
+  },
+  "m6Definition": {
+    "field": "sdv100",
+    "unit": "points_per_100_shot_decisions_EB_shrunk",
+    "version": "drbl-m6-shot-decision-v1",
+    "fusedIntoDrbl100": false
+  },
+  "fusionConstraintType": "ridge_with_intercept"
+}

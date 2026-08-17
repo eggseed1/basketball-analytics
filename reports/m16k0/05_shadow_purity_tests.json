@@ -1,0 +1,25 @@
+{
+  "status": "PASS",
+  "exitCode": 0,
+  "stdoutTail": "▶ validated-ability-v1\n  ✔ matches N/(N+1600)*raw and research aliases (2.2892ms)\n  ✔ raw=-2, N=1600 → -1; raw=0 → 0 (0.3137ms)\n  ✔ is pure in rawAbilityRate and N only (legacy fields cannot be passed) (0.3131ms)\n  ✔ |validated| moves toward |raw| as N increases (0.3155ms)\n  ✔ shadow feature flag defaults OFF (0.2394ms)\n✔ validated-ability-v1 (5.2464ms)\nℹ tests 5\nℹ suites 1\nℹ pass 5\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 462.6876\n",
+  "stderrTail": "",
+  "probes": [
+    {
+      "raw": 2,
+      "N": 1600,
+      "expected": 1,
+      "got": 1
+    },
+    {
+      "note": "function signature accepts only rawAbilityRate + N",
+      "cannotAccept": [
+        "drblP",
+        "drblLn",
+        "drblB",
+        "fusedRateRaw",
+        "uncertainty",
+        "WAR"
+      ]
+    }
+  ]
+}

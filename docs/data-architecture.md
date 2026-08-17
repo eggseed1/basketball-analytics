@@ -117,39 +117,43 @@ search for display convenience; that does not replace query-layer filters.)
 DATA_PROVIDER=nba
 ```
 
-### Current live source: ESPN public JSON
+### Current live sources
 
-`stats.nba.com` is frequently blocked by Akamai TLS fingerprinting from
-Node/server environments. The live adapter therefore reads ESPN endpoints:
+Primary: **stats.nba.com** (most extensive free NBA Stats API).  
+Supplement: **Basketball-Reference** league advanced tables (PER, OWS/DWS/WS,
+BPM, VORP, STL%/BLK%).
 
-| Need | Endpoint |
+| Need | Source |
 | --- | --- |
-| Player season counting stats | `site.web.api.espn.com/.../statistics/byathlete` |
-| Team season totals (for USG%) | `site.web.api.espn.com/.../statistics/byteam` |
-| Teams | `site.api.espn.com/.../nba/teams` |
-| Game logs | `site.web.api.espn.com/.../athletes/{id}/gamelog` |
-| Today’s games | `site.api.espn.com/.../nba/scoreboard` |
+| Player season counting (totals) | `stats.nba.com/stats/leaguedashplayerstats` MeasureType=Base |
+| On-court advanced (ORtg/DRtg/USG%/AST%/…/PIE) | same endpoint, MeasureType=Advanced |
+| PER / WS / BPM / VORP / STL% / BLK% | BRef `NBA_{year}_advanced.html` scrape |
+| Career seasons | `playercareerstats` |
+| Game logs | `playergamelog` |
+| Games | `leaguegamelog` (Team) |
+| Box scores | `boxscoretraditionalv2` |
+| Shot charts | `shotchartdetail` |
 
 Flow:
 
 ```
-ESPN JSON
-  → transformers/espn.ts (+ compute-advanced.ts for TS%/eFG%/USG%)
-  → canonical PlayerSeason / Player / Team / PlayerGame
+stats.nba.com JSON  ─┐
+                     ├→ transformers/stats-nba.ts (+ BRef merge)
+BRef advanced HTML  ─┘
+  → canonical PlayerSeason / Player / Team / PlayerGame / Shot
   → query layer → UI
 ```
 
 Notes:
 
-- Season strings stay canonical (`2024-25`). ESPN’s year param is the ending
-  year (`2025`).
-- `trueShootingPct` / `effectiveFieldGoalPct` / `usagePct` are **derived** from
-  counting stats + team totals (standard formulas in
-  `providers/nba/compute-advanced.ts`).
-- `offensiveRating` / `defensiveRating` / `netRating` are lightweight proxies
-  until a dedicated advanced feed is wired.
-- `getShots()` returns `[]` for now — shot charts need a separate ingest
-  (NBA CDN / warehouse), documented in §6.
+- Season strings stay canonical (`2024-25`).
+- Player / team / game ids are **NBA Stats ids** (e.g. LeBron `2544`).
+- BRef rows merge by normalized player name + team abbreviation.
+- ESPN adapters remain in the repo as a fallback transformer set but are not
+  the active `DATA_PROVIDER=nba` path.
+- **Freshness:** current-season league/game/log caches expire in 2–5 minutes;
+  pages set `revalidate` and include a client `AutoRefresh` that calls
+  `router.refresh()` so new games appear without a hard reload.
 
 ### Switching back to sample data
 
@@ -228,19 +232,24 @@ Canonical `Shot` in TypeScript mirrors this table so the provider can map
 
 ## Game data
 
-`NBADataProvider` loads a season slate by fetching each team schedule
-(`.../teams/{id}/schedule?season={year}&seasontype=2`), deduping by game id,
+`NBADataProvider` loads a season slate by fetching each team schedule for
+**regular season and playoffs** (`seasontype=2` and `3`), deduping by game id,
 and filtering to the canonical season date window.
 
 Box scores come from `.../summary?event={gameId}` via `getGameBoxScore()`.
 
+Shot attempts come from the same summary endpoint’s `plays` feed
+(`shootingPlay` + coordinates) via `getShots({ gameId })` or scoped
+`getShots({ season, player })` / `getShots({ season, team })` (capped for
+live responsiveness).
+
 Explore UI:
 
 - `/explore/games` — total points vs home margin (shared filtered query)
-- `/games/[gameId]` — box score detail
+- `/games/[gameId]` — box score detail + tracked shot count
 
-Query helpers: `getGames`, `getGame`, `getGameBoxScore`, `getFilteredGames`
-(filters applied once in `applyGameFilters`).
+Query helpers: `getGames`, `getGame`, `getGameBoxScore`, `getFilteredGames`,
+`getShots` (filters applied in the query/provider layer).
 
 
 ```

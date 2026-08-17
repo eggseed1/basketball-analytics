@@ -1,0 +1,8 @@
+check,status,detail
+future_block_Y_not_in_early_features,PASS,Late residual used as Y; early P/LN/B as X
+SDV_uses_C2_not_C0,PASS,shot-components predictVCont C2
+SDV_not_fused_into_drbl100,PASS,fusedIntoDrbl100=false
+ShotMaking_separate_from_SDV,PASS,separate fields
+involvement_weights_same_possession_events_only,PASS,timestamp-safe
+behavior_retrospective_only_flag,PASS,behaviorRetrospectiveOnly=true
+replacement_cutoff_frozen,PASS,unchanged R1 cutoff

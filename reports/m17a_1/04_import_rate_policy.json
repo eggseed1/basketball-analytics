@@ -1,0 +1,11 @@
+{
+  "baseDelayMs": 120,
+  "maxRetries": 3,
+  "retryBackoff": "delayMs * attempt * 2 for RATE_LIMIT / TRANSIENT_NETWORK",
+  "httpStatusesRetried": [
+    429,
+    "network/timeouts"
+  ],
+  "parallelStatsRequests": "NO (single-threaded game loop)",
+  "throttlingAggressivelyReduced": "NO"
+}

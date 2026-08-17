@@ -1,0 +1,2 @@
+originalPairedSlope,reproducedPairedSlope,combinedTargetSlope,slopeRatio,meanExposureRatio,medianExposureRatio,remainingEmpiricalCalibrationFactor,unitConversionFactor,interpretation,DIAGNOSTIC_CANDIDATE
+5.835416607524311,5.835416607524312,2.917708303762156,1.9999999999999998,2,2,2.9177083037621556,2,"If slopeRatio ≈ exposureRatio, much of original slope is denominator conversion",true

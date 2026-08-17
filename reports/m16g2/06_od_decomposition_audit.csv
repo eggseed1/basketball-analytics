@@ -1,0 +1,5 @@
+rawOffense_field,rawDefense_field,denominator_total,sign_convention,same_N_as_total,offN,defN,rawO,rawD,rawAbilityRate,reconstruction_residual_rawO_plus_rawD,weighted_reconstruction_residual
+100 * offensiveValue / offensivePossessions,100 * defensiveValue / defensivePossessions,combined possessions = offN + defN (typical),offense positive contribution; defense as stored defensiveValue,NO,600,400,1.6666666666666667,-0.5,0.8,0.3666666666666667,0
+100 * offensiveValue / offensivePossessions,100 * defensiveValue / defensivePossessions,combined possessions = offN + defN (typical),offense positive contribution; defense as stored defensiveValue,NO,500,500,1,1,1,1,0
+100 * offensiveValue / offensivePossessions,100 * defensiveValue / defensivePossessions,combined possessions = offN + defN (typical),offense positive contribution; defense as stored defensiveValue,NO,800,200,1,-4,0,-3,0
+100 * offensiveValue / offensivePossessions,100 * defensiveValue / defensivePossessions,combined possessions = offN + defN (typical),offense positive contribution; defense as stored defensiveValue,NO,100,900,0,0.3333333333333333,0.3,0.033333333333333326,0

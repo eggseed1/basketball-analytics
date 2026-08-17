@@ -1,0 +1,8 @@
+metricKey,comparisonField,comparisonSeason,comparisonUniverseRule,higherIsBetter,missingValueBehavior,tieHandling,percentileFormula,displayRounding
+drblWar,drblWar,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drbl100,drbl100,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drblP,drblP,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drblLn,drblLn,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drblB,drblB,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drblO,drblO,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile
+drblD,drblD,page season (2025-26),minutes>=500 AND hasValidDrblEstimate (uncertainty>0),true,omit percentile row / display —,midrank 0.5,round(100 * below_or_tie_midrank / N) clamped [1,100],integer percentile

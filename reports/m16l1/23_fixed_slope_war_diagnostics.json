@@ -1,0 +1,10 @@
+{
+  "RMSE": 8.312383272526297,
+  "MAE": 6.628521314782055,
+  "bias": -8.289665250534503e-15,
+  "R2": 0.5945219306723342,
+  "replacementTeamWinsInterceptMean": 37.838158095283816,
+  "replacementTeamWinsInterceptSD": 0.28181618626040955,
+  "TEAM_REPLACEMENT_INTERCEPT_USED_IN_PLAYER_WAR": "NO",
+  "note": "cross-fitted intercept; slope fixed at 1; diagnostic only"
+}

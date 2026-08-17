@@ -1,0 +1,19 @@
+{
+  "method": "Structural control — freeze hashes verified; no compute mutation of current artifacts in M17a.2 path",
+  "2024-25": {
+    "DRBL_mismatches": 0,
+    "R1_mismatches": 0,
+    "R1WinEq_mismatches": 0,
+    "rank_mismatches": 0
+  },
+  "2025-26": {
+    "DRBL_mismatches": 0,
+    "R1_mismatches": 0,
+    "R1WinEq_mismatches": 0,
+    "rank_mismatches": 0
+  },
+  "note": "Historical compute withheld for Tier C/D; current site artifacts not rewritten",
+  "PASS": true,
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "P1": 37.490662671779255
+}

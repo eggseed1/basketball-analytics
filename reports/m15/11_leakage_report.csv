@@ -1,0 +1,5 @@
+risk,severity,status,class,notes
+same_season_residual_fusion_target,HIGH,PRESENT,D_target_misalignment,"Fusion stacks to same-season residual/100, not next-game margin"
+post_game_box_in_DRBL_B,HIGH_for_realtime,PRESENT,C_leakage_for_live,OK retrospective; invalid live
+M6_fused_into_drbl100,N/A,NOT_FUSED,F_by_design_frozen,shotDecisionModel.fusedIntoDrbl100=false
+no_reserved_test_season,HIGH,PRESENT,D,Only within-sample chrono holdouts

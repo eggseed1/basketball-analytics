@@ -1,0 +1,5 @@
+season_sample,pbp_endpoint,box_endpoint,event_label_family,sub_representation,clock,notes
+1996-97,stats.playbyplayv3,boxscoretraditionalv3,Made/Missed Shot + Free Throw + SUB: X FOR Y,single SUB description,PT…,historical labels
+2019-20,cdn.liveData (preferred),cdn.boxscore,2pt/3pt/freethrow/substitution,in|out sides,PT…,CDN reliable
+2023-24,cdn.liveData,cdn.boxscore,modern CDN,in|out,PT…,
+2024-25,cdn.liveData,cdn.boxscore,modern CDN,in|out,PT…,control

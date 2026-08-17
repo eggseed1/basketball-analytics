@@ -1,0 +1,27 @@
+{
+  "K": 1600,
+  "K_REFIT": "NO",
+  "K_GRID_RUN": "NO",
+  "P1_REFIT": "NO",
+  "R1_CHANGED": "NO",
+  "EPV_CHANGED": "NO",
+  "SUPPORT_TIERS_CHANGED": "NO",
+  "legacyTokensInCanonicalPaths": {
+    "drbl/models/research-ability-v1.ts": [],
+    "drbl/models/research-rate-v1.ts": [],
+    "drbl/models/leaderboard.ts": [],
+    "drbl/models/player-value.ts": [],
+    "scripts/drbl-m17b.ts": [
+      "5.835",
+      "2.918",
+      "N/2",
+      "+200"
+    ]
+  },
+  "5.835": "ABSENT_OR_NONCANONICAL",
+  "2.918": "ABSENT_OR_NONCANONICAL",
+  "/30": "NONCANONICAL_SIDE_OUTPUT_ONLY",
+  "N/2": "ABSENT_FROM_M17B",
+  "+200_cumulative_exposure": "DIAGNOSTIC_EB200_ONLY",
+  "PASS": true
+}

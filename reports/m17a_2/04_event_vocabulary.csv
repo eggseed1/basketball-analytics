@@ -1,0 +1,42 @@
+rawLabel,rawSubtype,count,firstSeason,lastSeason,normalizedType,mapped
+Rebound,,2797722,1996-97,2019-20,MAPPED,YES
+Missed Shot,,2469349,1996-97,2019-20,MAPPED,YES
+Made Shot,,2039455,1996-97,2019-20,MAPPED,YES
+Free Throw,,1336419,1996-97,2019-20,MAPPED,YES
+Foul,,1208267,1996-97,2019-20,MAPPED,YES
+Substitution,,1098024,1996-97,2019-20,MAPPED,YES
+Turnover,,804707,1996-97,2019-20,MAPPED,YES
+,,694088,1996-97,2019-20,REVIEW,NO
+2pt,,598351,2019-20,2023-24,MAPPED,YES
+substitution,,595455,2019-20,2023-24,MAPPED,YES
+rebound,,578916,2019-20,2023-24,MAPPED,YES
+3pt,,385678,2019-20,2023-24,MAPPED,YES
+Timeout,,359738,1996-97,2019-20,MAPPED,YES
+period,,269121,1996-97,2023-24,MAPPED,YES
+freethrow,,248744,2019-20,2023-24,MAPPED,YES
+foul,,225279,2019-20,2023-24,MAPPED,YES
+turnover,,154898,2019-20,2023-24,MAPPED,YES
+steal,,80264,2019-20,2023-24,MAPPED,YES
+timeout,,61134,2019-20,2023-24,MAPPED,YES
+block,,51854,2019-20,2023-24,MAPPED,YES
+Violation,,49094,1996-97,2019-20,MAPPED,YES
+Jump Ball,,47835,1996-97,2019-20,MAPPED,YES
+stoppage,,35604,2019-20,2021-22,REVIEW,NO
+Instant Replay,,21613,2003-04,2019-20,REVIEW,NO
+violation,,9721,2019-20,2023-24,MAPPED,YES
+jumpball,,9681,2019-20,2023-24,MAPPED,YES
+game,,5557,2019-20,2023-24,MAPPED,YES
+instantreplay,,5535,2019-20,2021-22,REVIEW,NO
+Ejection,,1811,1996-97,2019-20,MAPPED,YES
+Rebound                                 ,,1097,2000-01,2000-01,REVIEW,NO
+Missed Shot                             ,,981,2000-01,2000-01,REVIEW,NO
+Made Shot                               ,,764,2000-01,2000-01,REVIEW,NO
+Free Throw                              ,,563,2000-01,2000-01,REVIEW,NO
+Foul                                    ,,518,2000-01,2000-01,REVIEW,NO
+memo,,498,2019-20,2021-22,REVIEW,NO
+Substitution                            ,,406,2000-01,2000-01,REVIEW,NO
+ejection,,356,2019-20,2023-24,MAPPED,YES
+Turnover                                ,,293,2000-01,2000-01,REVIEW,NO
+Timeout                                 ,,145,2000-01,2000-01,REVIEW,NO
+Jump Ball                               ,,27,2000-01,2000-01,REVIEW,NO
+Violation                               ,,26,2000-01,2000-01,REVIEW,NO

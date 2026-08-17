@@ -1,6 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
+import { AutoRefresh } from "@/components/system/auto-refresh";
+import { PlayerHeadshot } from "@/components/player/player-headshot";
 import {
   Table,
   TableBody,
@@ -9,8 +12,16 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { getGameBoxScore, getTeam } from "@/data/queries";
-import { formatNumber } from "@/lib/format";
+import {
+  getGameBoxScore,
+  getGamePlayByPlay,
+  getShots,
+  getTeam,
+} from "@/data/queries";
+import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
+import { formatNumber, formatPct } from "@/lib/format";
+
+export const revalidate = 60;
 
 interface GamePageProps {
   params: Promise<{ gameId: string }>;
@@ -20,8 +31,14 @@ export async function generateMetadata({ params }: GamePageProps) {
   const { gameId } = await params;
   const box = await getGameBoxScore(gameId);
   if (!box) return { title: "Game | Basketball Analytics" };
-  const away = box.game.awayTeamAbbr ?? box.game.awayTeamId;
-  const home = box.game.homeTeamAbbr ?? box.game.homeTeamId;
+  const away = nbaTeamAbbr(
+    box.game.awayTeamId,
+    box.game.awayTeamAbbr
+  );
+  const home = nbaTeamAbbr(
+    box.game.homeTeamId,
+    box.game.homeTeamAbbr
+  );
   return {
     title: `${away} @ ${home} | Basketball Analytics`,
   };
@@ -33,9 +50,11 @@ export default async function GamePage({ params }: GamePageProps) {
   if (!box) notFound();
 
   const { game, players } = box;
-  const [homeTeam, awayTeam] = await Promise.all([
+  const [homeTeam, awayTeam, shots, playByPlay] = await Promise.all([
     getTeam(game.homeTeamId),
     getTeam(game.awayTeamId),
+    getShots({ gameId }),
+    getGamePlayByPlay(gameId),
   ]);
 
   const homePlayers = players
@@ -45,10 +64,14 @@ export default async function GamePage({ params }: GamePageProps) {
     .filter((p) => p.teamId === game.awayTeamId)
     .sort((a, b) => b.points - a.points);
 
-  const awayLabel =
-    game.awayTeamAbbr ?? awayTeam?.abbreviation ?? game.awayTeamId;
-  const homeLabel =
-    game.homeTeamAbbr ?? homeTeam?.abbreviation ?? game.homeTeamId;
+  const awayLabel = nbaTeamAbbr(
+    game.awayTeamId,
+    game.awayTeamAbbr ?? awayTeam?.abbreviation
+  );
+  const homeLabel = nbaTeamAbbr(
+    game.homeTeamId,
+    game.homeTeamAbbr ?? homeTeam?.abbreviation
+  );
 
   return (
     <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
@@ -70,11 +93,12 @@ export default async function GamePage({ params }: GamePageProps) {
           {game.awayTeamName ?? awayTeam?.fullName ?? "Away"} at{" "}
           {game.homeTeamName ?? homeTeam?.fullName ?? "Home"} · {game.season}
         </p>
+        <AutoRefresh intervalMs={2 * 60 * 1000} label="Live box score refresh" />
       </header>
 
       <section
         aria-labelledby="game-summary-heading"
-        className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-3"
+        className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-4"
       >
         <h2 id="game-summary-heading" className="sr-only">
           Game summary
@@ -93,9 +117,19 @@ export default async function GamePage({ params }: GamePageProps) {
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground">Status</p>
-          <p className="text-xl font-medium capitalize">
-            {game.status ?? "final"}
+          <p className="text-xs text-muted-foreground">Type</p>
+          <p className="text-xl font-medium capitalize">{game.gameType}</p>
+        </div>
+        <div>
+          <p className="text-xs text-muted-foreground">Tracked shots</p>
+          <p className="text-xl font-medium tabular-nums">
+            {formatNumber(shots.length)}
+            {shots.length > 0 ? (
+              <span className="ml-2 text-sm font-normal text-muted-foreground">
+                ({formatPct(shots.filter((s) => s.made).length / shots.length)}{" "}
+                make)
+              </span>
+            ) : null}
           </p>
         </div>
       </section>
@@ -107,6 +141,21 @@ export default async function GamePage({ params }: GamePageProps) {
       <BoxScoreSection
         heading={`${homeLabel} box score`}
         players={homePlayers}
+      />
+
+      <GamePlayByPlayPanel
+        events={playByPlay?.events ?? []}
+        awayTricode={awayLabel}
+        homeTricode={homeLabel}
+        source={
+          playByPlay
+            ? playByPlay.source === "cdn"
+              ? "NBA CDN"
+              : playByPlay.source === "stats"
+                ? "stats.nba.com"
+                : "sample"
+            : undefined
+        }
       />
     </main>
   );
@@ -165,8 +214,13 @@ function BoxScoreSection({
                   <TableCell>
                     <Link
                       href={`/players/${p.playerId}`}
-                      className="underline-offset-4 hover:underline"
+                      className="inline-flex items-center gap-2 underline-offset-4 hover:underline"
                     >
+                      <PlayerHeadshot
+                        playerId={p.playerId}
+                        name={p.playerName ?? p.playerId}
+                        size="xs"
+                      />
                       {p.playerName ?? p.playerId}
                     </Link>
                   </TableCell>

@@ -1,0 +1,11 @@
+{
+  "reproduced": "PASS",
+  "maxFormulaResidual": 0,
+  "CALIBRATION_SELECTION_RESULT": "IDENTITY_SELECTED",
+  "calibrationCoefficient": 1,
+  "posteriorLayerCount": 1,
+  "fusionInfluence": 0,
+  "legacyEB200Influence": 0,
+  "nRows": 1982,
+  "POINT_ESTIMATE_CHANGED": "NO"
+}

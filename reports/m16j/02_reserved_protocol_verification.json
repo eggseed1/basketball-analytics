@@ -1,0 +1,11 @@
+{
+  "protocolId": "drbl-eval-v1-reserved-earlyFrac-future-block-v1",
+  "earlyFrac": 0.7,
+  "historicalMinExposure": 50,
+  "futureMinExposure": 20,
+  "target": "future_block_residual_per_100",
+  "R1Pool": "history_games_only",
+  "chronologyBasis": "gameDate then gameId, earlyFrac game-count cut",
+  "outcomeIndependent": true,
+  "RESERVED_PROTOCOL_OK": true
+}

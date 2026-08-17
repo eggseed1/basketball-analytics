@@ -1,0 +1,8 @@
+{
+  "sealedPath": "reports/m16j/10_reserved_result_sealed.json",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "sealedAt": "2026-08-12T23:37:00.759Z",
+  "RESERVED_TEST_CONSUMED": true,
+  "RESERVED_OFFICIAL_SCORING_RUN_COUNT": 1,
+  "immutable": true
+}

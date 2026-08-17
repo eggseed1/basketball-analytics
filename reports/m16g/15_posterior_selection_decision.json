@@ -1,0 +1,33 @@
+{
+  "candidateGrid": [
+    0,
+    25,
+    50,
+    100,
+    200,
+    400,
+    800
+  ],
+  "priorMean": 0,
+  "exposureField": "actual_combined_possession_appearances",
+  "researchInput": "rawAbilityRate (unshrunk Approach B / seq-attr)",
+  "publishedDrblPNote": "drblP embeds EB(k=200); not used as shrinkage input",
+  "RMSE_k0": 3.071603914379542,
+  "bestPositiveK": 800,
+  "bestPositiveRMSE": 2.709840313887856,
+  "relativeImprovement": 0.11777677414659811,
+  "bootstrapProbability": 1,
+  "bootstrapCI": {
+    "low": -0.45971176014682813,
+    "high": -0.2626158632792235
+  },
+  "clearsK0Hurdle": true,
+  "selectedK": 800,
+  "SELECTED_RESEARCH_K": 800,
+  "SELECTED_RESEARCH_PRIOR_MEAN": 0,
+  "SELECTED_RESEARCH_POSTERIOR_VERSION": "eb-PB-k800-v1",
+  "POSTERIOR_SELECTION_RESULT": "STRONG_SHRINKAGE_SELECTED",
+  "LEGACY_K200_STATUS": "SUPPORTED",
+  "lockedBeforeNameInspection": true,
+  "M16B_VALIDATION_USED_FOR_K_SELECTION": false
+}

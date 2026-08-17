@@ -1,0 +1,7 @@
+{
+  "PRODUCTION_BUILD_COMMAND": "npm run build",
+  "resolvesTo": "next build",
+  "deploymentRelevant": "YES",
+  "notes": "package.json build script is next build — canonical Next.js production build",
+  "environmentAssumptions": "local node_modules; DATA_PROVIDER not required for compile"
+}

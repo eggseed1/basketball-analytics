@@ -1,0 +1,6 @@
+{
+  "key": "relativePath|TSCode|normalizedMessage",
+  "lineColumn": "secondary metadata only",
+  "pathNormalization": "forward slashes; strip tmp tree prefixes if present",
+  "messageNormalization": "trim only; do not rewrite semantics"
+}

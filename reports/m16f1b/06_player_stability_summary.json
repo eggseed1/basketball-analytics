@@ -1,0 +1,26 @@
+{
+  "nCommonPlayers": 104,
+  "expanding": {
+    "medianPearson": 0.8735298999500545,
+    "medianSpearman": 0.8647604822362104,
+    "medianMae": 1.9451125422515043
+  },
+  "jackknife": {
+    "medianPearson": 0.7748069246759488,
+    "medianSpearman": 0.775962872079377,
+    "medianMae": 2.89715509173627
+  },
+  "allRefits": {
+    "medianPearson": 0.8195481905531172,
+    "medianSpearman": 0.8118211885202177,
+    "medianMae": 2.591274777234133
+  },
+  "icc": 0.7857762706827726,
+  "category": "STRONG",
+  "cutoffs": {
+    "STRONG": "Pearson&Spearman>=0.75",
+    "MODERATE": ">=0.60",
+    "WEAK": ">=0.40 either",
+    "UNSTABLE": "below"
+  }
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState, useTransition } from "react";
+import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 
 import { Input } from "@/components/ui/input";
@@ -38,12 +38,17 @@ export function GameFilterToolbar({
   const [startDraft, setStartDraft] = useState(startDate);
   const [endDraft, setEndDraft] = useState(endDate);
   const [dateSource, setDateSource] = useState(`${startDate}|${endDate}`);
+  const [seasonDraft, setSeasonDraft] = useState(season);
 
   if (`${startDate}|${endDate}` !== dateSource) {
     setDateSource(`${startDate}|${endDate}`);
     setStartDraft(startDate);
     setEndDraft(endDate);
   }
+
+  useEffect(() => {
+    setSeasonDraft(season);
+  }, [season]);
 
   const updateParams = useCallback(
     (patch: Record<string, string | null>) => {
@@ -57,8 +62,12 @@ export function GameFilterToolbar({
       }
       if (!next.get("season")) next.set("season", defaultSeason);
       const qs = next.toString();
+      const href = qs ? `${pathname}?${qs}` : pathname;
+      const nav = Object.prototype.hasOwnProperty.call(patch, "season")
+        ? router.push
+        : router.replace;
       startTransition(() => {
-        router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+        nav.call(router, href, { scroll: false });
       });
     },
     [defaultSeason, pathname, router, searchParams]
@@ -85,15 +94,22 @@ export function GameFilterToolbar({
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="game-filter-season">Season</Label>
         <Select
-          value={season}
+          value={seasonDraft}
           onValueChange={(value) => {
-            if (value != null) updateParams({ season: String(value) });
+            if (value == null) return;
+            const next = String(value);
+            setSeasonDraft(next);
+            updateParams({ season: next });
           }}
         >
-          <SelectTrigger id="game-filter-season" className="w-full">
+          <SelectTrigger
+            id="game-filter-season"
+            className="w-full"
+            disabled={isPending}
+          >
             <SelectValue placeholder="Season" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="max-h-72" alignItemWithTrigger={false}>
             {seasons.map((s) => (
               <SelectItem key={s} value={s}>
                 {s}

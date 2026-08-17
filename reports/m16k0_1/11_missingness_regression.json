@@ -1,0 +1,9 @@
+{
+  "missingDrblNotEqualReplacementZero": true,
+  "missingPercentileNotCoercedToNumber": true,
+  "MISSING_PERCENTILE_COERCED_TO_NUMBER": "NO",
+  "zeroIsValidEstimateWhenNPositive": true,
+  "computePlayerPercentilesOmitsIneligible": true,
+  "barPositionPercentReturnsNullForMissing": true,
+  "result": "PASS"
+}

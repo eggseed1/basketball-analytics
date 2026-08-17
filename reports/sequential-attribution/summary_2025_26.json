@@ -1,0 +1,118 @@
+{
+  "season": "2025-26",
+  "games": 1225,
+  "players": 575,
+  "sequentialAttributionVersion": "drbl-seq-attr-v1",
+  "top10": [
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "war": 10.01,
+      "poss": 9235,
+      "creation": 1.29,
+      "connection": 0.08,
+      "execution": 6.86
+    },
+    {
+      "player": "Kawhi Leonard",
+      "war": 8.16,
+      "poss": 8540,
+      "creation": 0.96,
+      "connection": 0.03,
+      "execution": 6.37
+    },
+    {
+      "player": "Jalen Duren",
+      "war": 6.64,
+      "poss": 8146,
+      "creation": 0.83,
+      "connection": 0.01,
+      "execution": 5.96
+    },
+    {
+      "player": "Tyrese Maxey",
+      "war": 5.55,
+      "poss": 10951,
+      "creation": 0.78,
+      "connection": 0.05,
+      "execution": 4.91
+    },
+    {
+      "player": "Victor Wembanyama",
+      "war": 5.45,
+      "poss": 7784,
+      "creation": 1.1,
+      "connection": 0.03,
+      "execution": 5.14
+    },
+    {
+      "player": "Kevin Durant",
+      "war": 5.32,
+      "poss": 11517,
+      "creation": 0.8,
+      "connection": 0.03,
+      "execution": 6.09
+    },
+    {
+      "player": "Donovan Mitchell",
+      "war": 5.29,
+      "poss": 9900,
+      "creation": 0.94,
+      "connection": 0.08,
+      "execution": 5.35
+    },
+    {
+      "player": "Nikola Jokić",
+      "war": 5.18,
+      "poss": 9758,
+      "creation": 1.08,
+      "connection": 0.1,
+      "execution": 5.39
+    },
+    {
+      "player": "Anthony Edwards",
+      "war": 4.91,
+      "poss": 8938,
+      "creation": 0.96,
+      "connection": 0.05,
+      "execution": 5.61
+    },
+    {
+      "player": "Lauri Markkanen",
+      "war": 4.79,
+      "poss": 6266,
+      "creation": 1.04,
+      "connection": 0.03,
+      "execution": 4.79
+    }
+  ],
+  "beforeAfter": {
+    "oldTop10": [
+      "Shai Gilgeous-Alexander",
+      "Kawhi Leonard",
+      "Jalen Duren",
+      "Tyrese Maxey",
+      "Victor Wembanyama",
+      "Kevin Durant",
+      "Donovan Mitchell",
+      "Nikola Jokić",
+      "Anthony Edwards",
+      "Lauri Markkanen"
+    ],
+    "newTop10": [
+      "Shai Gilgeous-Alexander",
+      "Kawhi Leonard",
+      "Jalen Duren",
+      "Tyrese Maxey",
+      "Victor Wembanyama",
+      "Kevin Durant",
+      "Donovan Mitchell",
+      "Nikola Jokić",
+      "Anthony Edwards",
+      "Lauri Markkanen"
+    ],
+    "medianPossOldTop10": 9086.5,
+    "medianPossNewTop10": 9086.5,
+    "meanConnectionTop25": 0.04,
+    "meanCreationTop25": 0.83
+  }
+}

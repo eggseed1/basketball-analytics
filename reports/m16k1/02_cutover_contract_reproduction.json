@@ -1,0 +1,9 @@
+{
+  "percentileRule": "minutes >= 500 AND hasValidatedDrblEstimate",
+  "validatedPercentileUncertaintyDependency": "NO",
+  "canonicalDrblRank": "descending unrounded validatedDRBL100",
+  "uncertaintyQuarantined": "YES",
+  "warFirewall": "PASS",
+  "odFirewall": "PASS",
+  "M16K0_1_READINESS_REPRODUCED": "PASS"
+}

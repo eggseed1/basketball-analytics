@@ -1,0 +1,10 @@
+{
+  "correlation": 0.9939771005405091,
+  "realizedMean": 5.920444876585971,
+  "realizedSD": 48.411224700105656,
+  "posteriorMean": 5.661011913818592,
+  "posteriorSD": 39.50804614874332,
+  "meanDifference_posterior_minus_realized": -0.25943296276738537,
+  "diffSD": 10.114631957291927,
+  "interpretation": "Posterior season value shrinks extreme realized totals toward 0; not an accounting substitute"
+}

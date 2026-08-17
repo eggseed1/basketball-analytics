@@ -1,0 +1,8 @@
+check,status,detail
+same_possession_points_in_make_model_target,PASS,"Make model target is make/miss indicator only, not possession points"
+same_possession_points_in_epv_continue,PASS,"Continuation uses M5 state EPV, not realized possession points"
+post_make_score_in_features,PASS,decisionStateFromEvent subtracts pointsOnAction for Made shots
+player_prior_from_future_games,PASS,Priors accumulate only after each game; holdout starts from train priors
+final_box_stats_in_features,PASS,No AST/TOV/STL/BLK or final totals in M6 features
+next_possession_points_in_training,PASS,"Used only as OOS diagnostic correlation target, not as training Y"
+holdout_games_in_make_ridge_fit,PASS,Coefficients fit on train games only

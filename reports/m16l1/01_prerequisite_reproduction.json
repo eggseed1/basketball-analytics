@@ -1,0 +1,15 @@
+{
+  "result": "PASS",
+  "canonicalDRBL": "N/(N+1600)*rawAbilityRate",
+  "exposure": "COMBINED_APPEARANCE_POSSESSIONS",
+  "zero": "R1",
+  "additionalReplacementSubtraction": "NO",
+  "WAR_ESTIMATION_UNIT": "PLAYER_SEASON",
+  "TEAM_VALIDATION_ALLOCATION_UNIT": "PLAYER_TEAM_SEASON",
+  "W0": "rawAbilityRate*teamN/100",
+  "W1": "validatedDRBL100*teamN/100",
+  "STINT_LEVEL_POSTERIOR_REFIT": "NO",
+  "TEAM_ATTRIBUTION_ADDITIVITY_STATUS": "PASS_INDEPENDENT_REFERENCE",
+  "M16L0_REPRODUCED": "PASS",
+  "M16L0_1_REPRODUCED": "PASS"
+}

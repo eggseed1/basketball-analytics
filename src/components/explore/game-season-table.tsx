@@ -15,14 +15,15 @@ import {
 } from "@/components/ui/table";
 import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
+import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 
 export interface GameSeasonTableProps {
   games: GameSummary[];
 }
 
 function matchupLabel(game: GameSummary): string {
-  const away = game.awayTeamAbbr ?? game.awayTeamId;
-  const home = game.homeTeamAbbr ?? game.homeTeamId;
+  const away = nbaTeamAbbr(game.awayTeamId, game.awayTeamAbbr);
+  const home = nbaTeamAbbr(game.homeTeamId, game.homeTeamAbbr);
   return `${away} @ ${home}`;
 }
 

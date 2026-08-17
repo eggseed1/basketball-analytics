@@ -1,0 +1,179 @@
+{
+  "experimentId": "BASELINE_M16A",
+  "modelVersion": "m16a-full-season-repaired",
+  "fusionVersion": "drbl-fusion-oof-v1",
+  "posteriorVersion": "eb-fused-v1",
+  "BASELINE_M16A_FREEZE_HASH": "ea602c117f7d630cf6e777d6eeb7927783ab4f2d8cddc383fbdf13ee7ddec4e6",
+  "BASELINE_M16A_MODIFIED": "NO",
+  "BASELINE_M16A_FOUND": "YES",
+  "predictionScalar": "drbl100 = EB200(fusedRateRaw_OOF) with priorMean=0",
+  "files": [
+    {
+      "path": "drbl/evaluation/fixed-vs-refit.ts",
+      "sha256": "1f9e75573d456f420bb4c2bb8f2d001916c44b8e9f315aa961e32e9d353e0e1a",
+      "relevantExports": [
+        "FIXED_VS_REFIT_PLAN"
+      ],
+      "role": "documents fusion fixed-fit as PARTIAL / not executed for baseline"
+    },
+    {
+      "path": "drbl/evaluation/m16c-dataset.ts",
+      "sha256": "1b2b3020fe9441711fefcb35f27df8c061647ea34a6493f7a679066be24722ab",
+      "relevantExports": [
+        "buildFutureBlockStackRows",
+        "M16C_EARLY_FRAC"
+      ],
+      "role": "earlyFrac stack builder (shared eval protocol)"
+    },
+    {
+      "path": "drbl/models/behavior.ts",
+      "sha256": "be3e7ec7859bbe7f1d322293383949edb23db6d9088b25adaba89721dcba19c8",
+      "relevantExports": [
+        "fitBehaviorModel",
+        "accumulateBehaviorSignals"
+      ],
+      "role": "B ridge component"
+    },
+    {
+      "path": "drbl/models/compute-season.ts",
+      "sha256": "7282f946938a2985fdc770f47fb39dbd8f04a1ad536d605f57d9f8aaa42241b7",
+      "relevantExports": [
+        "computeSeasonDrbl"
+      ],
+      "role": "season orchestration: early/late split, fusion OOF, finalize"
+    },
+    {
+      "path": "drbl/models/fusion.ts",
+      "sha256": "84e1b64da72d105405f2c55714eefca394e7c6998627e38728259b257696ab2c",
+      "relevantExports": [
+        "fitFusionOof",
+        "fitFusionRidgeFull",
+        "predictFusionFull"
+      ],
+      "role": "OOF/ridge fusion of P+LN+B → fusedRateRaw"
+    },
+    {
+      "path": "drbl/models/leaderboard.ts",
+      "sha256": "1d6071c703df197c252b6e8dca6483438f9d09bcc7eb41f4542ef28216fcc17e",
+      "relevantExports": [
+        "empiricalBayesRate"
+      ],
+      "role": "EB(k=200) posterior transform"
+    },
+    {
+      "path": "drbl/models/lineup-model.ts",
+      "sha256": "8d43442f131abdee84e7adf5a9153e90d39a31519622539036bb4db42dca8ba4",
+      "relevantExports": [
+        "fitLineupModel",
+        "buildLineupRows"
+      ],
+      "role": "LN ridge component"
+    },
+    {
+      "path": "drbl/models/pipeline-value.ts",
+      "sha256": "d9dd854a2ad2695f572bb46e61ed148b78f468cdebf99baed81b2dcaaf311b1e",
+      "relevantExports": [
+        "POSTERIOR_VERSION",
+        "empiricalBayesPosterior"
+      ],
+      "role": "posterior version stamp eb-fused-v1"
+    },
+    {
+      "path": "drbl/models/player-value.ts",
+      "sha256": "5033fe74651e0c33ac841bcfb79b7c420a0e2a7ef78a0cf53ae72b458c7167f1",
+      "relevantExports": [
+        "attributeGamePlayerValue",
+        "finalizePlayerSeasonRows"
+      ],
+      "role": "Approach-B attribution + EB posterior → drbl100"
+    },
+    {
+      "path": "drbl/models/ranking-config.ts",
+      "sha256": "37974ae3d02adc9364a354b633476c339d897f2116713b35e8067e0396890659",
+      "relevantExports": [
+        "PRIOR_EQUIVALENT_POSSESSIONS"
+      ],
+      "role": "k=200 prior strength"
+    },
+    {
+      "path": "drbl/models/replacement.ts",
+      "sha256": "e0142053d0079e7f7b4bdb1388aeb91567923e68f2db3e82d41c32f60f4d2205",
+      "relevantExports": [
+        "buildReplacementPool"
+      ],
+      "role": "R1 replacement baseline"
+    },
+    {
+      "path": "drbl/models/sequential-attribution.ts",
+      "sha256": "0bdd53dbaa184ade13b047788cd9e09bcee9af950afb19da0ab619a27e30fd8e",
+      "relevantExports": [
+        "SEQUENTIAL_ATTRIBUTION_VERSION"
+      ],
+      "role": "Approach B P attribution"
+    },
+    {
+      "path": "reports/m15/freeze/fusion-2024-25.json",
+      "sha256": "d68fc71e566321cc5f1438dad2dd7441c8525e1a4ff2a188412b93d47f03e359",
+      "relevantExports": [
+        "finalFit weights artifact"
+      ],
+      "role": "2024-25 finalFit weights (NOT applied as reserved fixed-fit harness)"
+    },
+    {
+      "path": "reports/m16b/18_baseline_experiment.json",
+      "sha256": "218963899d4080ef533e559ca5afff61196abcf56170b818f6420692671a4891",
+      "relevantExports": [
+        "BASELINE_M16A registry"
+      ],
+      "role": "frozen experiment registry entry"
+    },
+    {
+      "path": "reports/m16b/freeze/00_m16a_model_freeze.json",
+      "sha256": "9f3c96cb67620b62cf51e13784c24bab62cf8c7844fe0056af446eb52fc9e30b",
+      "relevantExports": [
+        "fusion/posterior protocol"
+      ],
+      "role": "M16b model freeze protocol"
+    }
+  ],
+  "protocolFreeze": {
+    "milestone": "M16b",
+    "frozenAt": "2026-08-12T15:43:18.018Z",
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "evaluationProtocolVersion": "drbl-eval-v1",
+    "abilityLineageVersion": "ability-lineage-v1",
+    "sequentialAttributionVersion": "drbl-seq-attr-v1",
+    "fusion": {
+      "target": "future_block_residual_per_100",
+      "folds": 5,
+      "lambda": 8,
+      "modelFamily": "chronological_ridge_oof_stack",
+      "simplex": "nonnegative_renormalized",
+      "inputs": [
+        "P",
+        "LN",
+        "B"
+      ]
+    },
+    "posterior": {
+      "formula": "reliability*fused + (1-reliability)*priorMean",
+      "priorMean": 0,
+      "priorStrength": 200
+    },
+    "m6": {
+      "fusedIntoDrbl100": false
+    },
+    "war": {
+      "formulaVersion": "4.0.0",
+      "calibrationMode": "loo_team_net_optional_raw_if_posterior_worse_15pct",
+      "fallback": "1/30_provisional_pointsToWins"
+    },
+    "note": "M16a full-season repaired baseline frozen for evaluation infrastructure. No model math changes in M16b."
+  },
+  "fixedVsRefitFusion": {
+    "name": "Fusion OOF stack",
+    "fixedFitStatus": "PARTIAL",
+    "notes": "Freeze fold/final ridge betas from 400-game fit and score new P/LN/B inputs (FIXED). Refitting folds on full sample is REFIT. OOF fold membership differs under REFIT."
+  }
+}

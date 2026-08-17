@@ -1,0 +1,150 @@
+
+> basketball-analytics@0.1.0 build
+> next build
+
+▲ Next.js 16.3.0 (Turbopack)
+- Environments: .env.local
+✓ Running next.config.ts took 47ms
+
+  Creating an optimized production build ...
+✓ Compiled successfully in 11.9s
+  Running TypeScript ...
+  Finished TypeScript in 9.7s ...
+  Collecting page data using 15 workers ...
+  Generating static pages using 15 workers (0/10) ...
+  Generating static pages using 15 workers (2/10) 
+  Generating static pages using 15 workers (4/10) 
+  Generating static pages using 15 workers (7/10) 
+✓ Generating static pages using 15 workers (10/10) in 4.1s
+  Finalizing page optimization ...
+
+Route (app)               Revalidate  Expire
+┌ ○ /                             1m      1y
+├ ○ /_not-found
+├ ƒ /api/drbl/provenance
+├ ƒ /api/players/search
+├ ƒ /dashboard
+├ ƒ /explore/games
+├ ƒ /explore/players
+├ ƒ /explore/teams
+├ ƒ /games/[gameId]
+├ ○ /learn/drbl
+├ ƒ /players/[playerId]
+└ ƒ /teams/[teamId]
+
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+
+
+Turbopack build encountered 4 warnings:
+./src/data/providers/nba/drbl-loader.ts:74:25
+Warning: The file pattern ('/ROOT/src/data/drbl/precomputed/' <dynamic> '.json' | '/ROOT/src/data/drbl/precomputed' <dynamic> '.json' | '/ROOT/data/drbl/normalized/' <dynamic> '/player_season.json' | '/ROOT/data/drbl/normalized' <dynamic> '/player_season.json' | '/ROOT/data/drbl/normalized/' <dynamic> 'player_season.json' | '/ROOT/data/drbl/normalized' <dynamic> 'player_season.json' | <dynamic>) matches 23201 files in [project]/
+  [90m72 |[0m   [36mfor[0m ([36mconst[0m file [36mof[0m candidates) {
+  [90m73 |[0m     [36mtry[0m {
+[33m[1m>[0m [90m74 |[0m       [36mconst[0m raw = [36mawait[0m readFile(file, [32m"utf8"[0m);
+  [90m   |[0m                         [33m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m75 |[0m       [36mconst[0m parsed = [33mJSON[0m.parse(raw) [36mas[0m [33mDrblSeasonArtifact[0m;
+  [90m76 |[0m       [36mif[0m (parsed?.players?.length) {
+  [90m77 |[0m         artifactCache.set(season, parsed);
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  App Route:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/api/players/search/route.ts
+
+  Server Component:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/players/[playerId]/page.tsx
+
+
+./src/data/providers/nba/drbl-loader.ts:106:32
+Warning: The file pattern ('/ROOT/src/data/drbl/precomputed/2024-25.json' | '/ROOTsrc/data/drbl/precomputed/2024-25.json' | '/ROOT/src/data/drbl/precomputed/2025-26.json' | '/ROOTsrc/data/drbl/precomputed/2025-26.json' | '/ROOT/' <dynamic> | '/ROOT' <dynamic>) matches 46394 files in [project]/
+  [90m104 |[0m   [36mlet[0m hash = [32m"unknown"[0m;
+  [90m105 |[0m   [36mtry[0m {
+[33m[1m>[0m [90m106 |[0m     [36mconst[0m raw = [36mawait[0m readFile(path.join(process.cwd(), artifactPath), [32m"utf8"[0m);
+  [90m    |[0m                                [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m107 |[0m     hash = sha256Hex(raw);
+  [90m108 |[0m   } [36mcatch[0m {
+  [90m109 |[0m     hash = sha256Hex([33mJSON[0m.stringify(artifact));
+
+Overly broad patterns can lead to build performance issues and over bundling.
+
+Import traces:
+  App Route:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/api/players/search/route.ts
+
+  Server Component:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/players/[playerId]/page.tsx
+
+
+./src/data/providers/nba/drbl-loader.ts:74:25
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m72 |[0m   [36mfor[0m ([36mconst[0m file [36mof[0m candidates) {
+  [90m73 |[0m     [36mtry[0m {
+[33m[1m>[0m [90m74 |[0m       [36mconst[0m raw = [36mawait[0m readFile(file, [32m"utf8"[0m);
+  [90m   |[0m                         [33m[1m^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m75 |[0m       [36mconst[0m parsed = [33mJSON[0m.parse(raw) [36mas[0m [33mDrblSeasonArtifact[0m;
+  [90m76 |[0m       [36mif[0m (parsed?.players?.length) {
+  [90m77 |[0m         artifactCache.set(season, parsed);
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: fs.readFile(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/api/players/search/route.ts
+
+  Server Component:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/players/[playerId]/page.tsx
+
+
+./src/data/providers/nba/drbl-loader.ts:106:32
+Warning: Dynamic filesystem access causes tracing of the whole project
+  [90m104 |[0m   [36mlet[0m hash = [32m"unknown"[0m;
+  [90m105 |[0m   [36mtry[0m {
+[33m[1m>[0m [90m106 |[0m     [36mconst[0m raw = [36mawait[0m readFile(path.join(process.cwd(), artifactPath), [32m"utf8"[0m);
+  [90m    |[0m                                [33m[1m^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^[0m
+  [90m107 |[0m     hash = sha256Hex(raw);
+  [90m108 |[0m   } [36mcatch[0m {
+  [90m109 |[0m     hash = sha256Hex([33mJSON[0m.stringify(artifact));
+
+Static analysis determined that this filesystem access causes the whole project to be traced and included in the output.
+This is usually unintentional and leads to all source files (including the public folder) to be deployed as part of the server code.
+This can slow down deployments or lead to failures when size limits are exceeded.
+To resolve this, you can
+- make sure the path is statically scoped to some subfolder, for example path.join(process.cwd(), 'data', bar), or
+- only use them in development, or
+- opt out by adding an ignore comment to the highlighted call: path.join(/*turbopackIgnore: true*/ ...), or
+- remove them.
+
+Import traces:
+  App Route:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/api/players/search/route.ts
+
+  Server Component:
+    ./src/data/providers/nba/drbl-loader.ts
+    ./src/data/queries/players.ts
+    ./src/app/players/[playerId]/page.tsx
+
+

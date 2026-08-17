@@ -1,0 +1,19 @@
+{
+  "reproduced": "PASS",
+  "k1600RMSE": 2.6960956582451727,
+  "expectedK1600RMSE": 2.6960956582451727,
+  "k0RMSE": 3.071603914379542,
+  "foldWinsVsK0": "5/5",
+  "medianReliability": 0.4557823129251701,
+  "Q1_medianReliability": 0.15833771699105734,
+  "Q4_medianReliability": 0.690761499806726,
+  "expected": {
+    "median": 0.4557823129251701,
+    "Q1": 0.15833771699105734,
+    "Q4": 0.690761499806726
+  },
+  "posteriorLayerCount": 1,
+  "legacyFusionInfluence": 0,
+  "legacyEB200Influence": 0,
+  "nRows": 1982
+}

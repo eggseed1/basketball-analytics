@@ -1,0 +1,8 @@
+{
+  "DRBL_ABILITY_PRODUCTION_VERSION": "drbl-ability-eb1600-r1-v1",
+  "R1_POINTS_PRODUCTION_VERSION": "drbl-r1-points-v1",
+  "R1_WINEQ_PRODUCTION_VERSION": "drbl-r1-wineq-v1",
+  "P1": 37.490662671779255,
+  "PUBLIC_R1_DISPLAY_ELIGIBILITY_RULE": "existing public board eligibility (minimumActualPossessions=50); R1 fields display when DRBL overlay present on eligible public row",
+  "R1_ACCOUNTING_USES_PUBLIC_DISPLAY_FILTER": "NO"
+}

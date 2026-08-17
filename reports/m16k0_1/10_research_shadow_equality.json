@@ -1,0 +1,11 @@
+{
+  "rowsChecked": 1130,
+  "maxResidual": 0,
+  "meanResidual": 0,
+  "mismatchCount": 0,
+  "result": "PASS",
+  "VALIDATED_POINT_MODEL_CHANGED": "NO",
+  "formula": "N/(N+1600)*rawAbilityRate",
+  "k": 1600,
+  "priorMean": 0
+}

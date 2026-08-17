@@ -1,0 +1,36 @@
+{
+  "canonicalAbilityVersion": "drbl-ability-eb1600-r1-v1",
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "RESERVED_RESULT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+  "M16L1_WAR_PRE_RESERVED_FREEZE_HASH": "21abd1c7e503dde633fa7ff7a53fab59aeba29caf7b95684830d7400028d850c",
+  "M16L1_1_SCALE_AUDIT_HASH": "422bf1391ac8f64d23a17e32786b8516c7bed6a0b08c48da6732856bb029ff0b",
+  "R1Points": {
+    "version": "drbl-r1-points-v1",
+    "formula": "ApproachBAttributedValue = rawAbilityRateExact * N / 100",
+    "unit": "SCOREBOARD_POINT_EQUIVALENT_RESIDUAL",
+    "reference": "CONTEXTUAL_ROLE_MATCHED_R1",
+    "exposure": "ACTUAL_HISTORICAL",
+    "source": "PRIMITIVE_APPROACH_B_ATTRIBUTED_VALUE",
+    "stintSource": "OBSERVED_PRIMITIVE_STINT_ATTRIBUTION"
+  },
+  "PosteriorSeasonValueDiagnostic": "validatedDRBL100 * N / 100",
+  "R1WinEq": {
+    "version": "drbl-r1-wineq-v1",
+    "formula": "R1Points / 37.490662671779255",
+    "PPW": 37.490662671779255,
+    "status": "FROZEN_RESEARCH",
+    "estimandClass": "PLAYER_ATTRIBUTED_WIN_EQUIVALENTS_ABOVE_CONTEXTUAL_R1",
+    "causal": false,
+    "conventionalWar": false
+  },
+  "naming": {
+    "point": "R1 Points",
+    "winEq": "R1 Win Equivalents",
+    "conventionalWarProhibited": true
+  },
+  "nonexhaustive": true,
+  "contextDependent": true,
+  "P1Preserved": true,
+  "reserved2025_26": "ELIGIBLE_WITH_HUMAN_BLINDNESS_LIMITATION",
+  "m16l2Protocol": "R1 VALUE SEMANTIC STABILITY + ACCOUNTING REPRODUCTION"
+}

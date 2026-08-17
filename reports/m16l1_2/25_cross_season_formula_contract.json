@@ -1,0 +1,16 @@
+{
+  "seasonsCheckedStructurally": [
+    "2024-25",
+    "2025-26"
+  ],
+  "R1_pool_construction": "same code path",
+  "role_features": "same",
+  "k": 8,
+  "quality_cut": "bottom ~40%",
+  "EPV_model": "same",
+  "clamps": "same",
+  "possession_attribution": "drbl-seq-attr-v1",
+  "P1_version": "frozen M16l1 P1",
+  "R1_VALUE_CROSS_SEASON_FORMULA_IDENTICAL": "YES",
+  "outcomes2025_26Accessed": false
+}

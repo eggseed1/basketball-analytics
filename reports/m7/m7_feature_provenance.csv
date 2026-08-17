@@ -1,0 +1,25 @@
+feature_or_target,role,candidate,source,available_now,timestamp_safe,uses_shot_outcome,uses_final_box,uses_future_possessions,uses_post_state_as_feature,notes
+game_clock_seconds,feature,C0/C1/C2,pbp_event.clock,YES,YES,NO,NO,NO,NO,Pre-decision period clock
+period,feature,C0/C1/C2,pbp_event.period,YES,YES,NO,NO,NO,NO,
+score_diff_offense,feature,C0/C1/C2,pbp scores reversed if make,YES,YES,NO,NO,NO,NO,Must reverse made-shot points before state
+offense_is_home,feature,C0/C1/C2,box+teamId,YES,YES,NO,NO,NO,NO,
+m5_epv_at_St,feature_or_baseline,C0_only,M5 predictExpectedPoints(St),YES,YES,NO,NO,NO,NO,Baseline comparator only — NOT valid continue estimand
+possession_age_sec,feature,C2,startClock-eventClock,YES,YES,NO,NO,NO,NO,Shot-clock PROXY only; OREB/reset error
+possession_start_type,feature,C2,prior events on poss before t,YES,YES,NO,NO,NO,NO,OREB/steal/inbound/jumpball if known before t
+player_prior_make,feature,C2,prior games only,YES,YES,NO,NO,NO,NO,Expanding priors; no same-game future
+team_prior_make,feature,C2,prior games only,YES,YES,NO,NO,NO,NO,
+opp_prior_allow,feature,C2,prior games only,YES,YES,NO,NO,NO,NO,
+lineup_offense_prior_make,feature,C2,on-court ids + prior makes,YES,YES,NO,NO,NO,NO,Ids known at poss start
+lineup_defense_prior_allow,feature,C2,on-court ids + prior makes,YES,YES,NO,NO,NO,NO,
+true_shot_clock_remaining,feature,C2_desired,CDN pbp shotClock,NO,N/A,N/A,N/A,N/A,N/A,ABSENT in CDN playbyplay.json — NO-GO until new feed
+explicit_pass_action,feature,C3,tracking/pbp,NO,N/A,N/A,N/A,N/A,N/A,Not first-class in CDN PBP
+explicit_dribble_state,feature,C3,tracking,NO,N/A,N/A,N/A,N/A,N/A,Requires tracking
+shot_distance_at_decision,feature,shoot_only,pbp x/y,YES,YES,NO,NO,NO,NO,For ÊPV_shoot; optional context for continue matching only if pre-shot
+is_three,feature,shoot_only,actionType,YES,YES,NO,NO,NO,NO,Known at attempt decision
+Y_cont_remaining_points,target,C1/C2,sum pointsOnAction from event to poss end,YES,TARGET_ONLY,YES_as_target,NO,NO,NO,Post-decision outcomes allowed ONLY as Y
+Y_shot_points,target,shoot,made*pointValue,YES,TARGET_ONLY,YES_as_target,NO,NO,NO,ShotMaking / make model only
+next_offense_poss_points,diagnostic_only,legacy_m6,next same-team possession points,YES,DIAGNOSTIC,NO,NO,YES_as_diag,NO,Not a primary SDV validation target
+full_possession_points_at_start,target,M5_not_continue,possession.points,YES,TARGET_ONLY,NO,NO,NO,NO,Correct for M5 start-EPV; wrong for mid-poss continue
+epv_shoot,component,M6_frozen,pMake*pointValue,YES,YES,NO,NO,NO,NO,Frozen M6 shot quality
+sdv,component,derived,epv_shoot - epv_continue,YES,YES,NO,NO,NO,NO,Must not include ShotMaking
+shot_making,component,M6_frozen,Y_shot - epv_shoot,YES,YES,YES_as_residual,NO,NO,NO,Separate from SDV

@@ -1,0 +1,34 @@
+{
+  "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+  "POINT_ESTIMATE_FREEZE_VERIFIED": "YES",
+  "RESEARCH_FINAL": {
+    "formula": "N/(N+1600)*rawAbilityRate",
+    "k": 1600,
+    "priorMean": 0,
+    "calibration": "IDENTITY",
+    "fusion": "NONE",
+    "posteriorOperations": 1,
+    "attribution": "drbl-seq-attr-v1",
+    "versions": {
+      "RESEARCH_ABILITY_VERSION": "drbl-research-ability-v1",
+      "RESEARCH_RATE_VERSION": "drbl-research-rate-v1"
+    }
+  },
+  "B0_RAW_P": {
+    "formula": "rawAbilityRate"
+  },
+  "B1_P_EB200": {
+    "formula": "N/(N+200)*rawAbilityRate",
+    "priorMean": 0
+  },
+  "B2_BASELINE_M16A": {
+    "status": "NOT_COMPARABLE",
+    "reasonCodes": [
+      "FUTURE_BLOCK_LEAKAGE",
+      "FULL_SEASON_INPUT_DEPENDENCY",
+      "HISTORICAL_RECONSTRUCTION_IMPOSSIBLE"
+    ]
+  },
+  "additionalBaselines": "NONE",
+  "reservedFittingAllowed": false
+}

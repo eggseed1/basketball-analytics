@@ -1,0 +1,22 @@
+feature,source,timestamp_safe,uses_shot_outcome,uses_final_box,uses_future_possessions,notes
+bias,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+isThree,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+distanceNorm,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+hasDistance,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+rim,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+mid,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+longTwo,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+cornerThreeProxy,pbp_shot_location_pre_outcome,YES,NO,NO,NO,
+offenseIsHome,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+periodGe4,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+clockLe8,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+clockLe4,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+absDiffGe10,pbp_game_state_pre_outcome,YES,NO,NO,NO,
+playerPriorMake,prior_games_only_player_make_rate,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+playerPriorLogAttempts,prior_games_only_player_make_rate,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+teamPriorMake,prior_games_only_team_fg_rates,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+oppPriorAllow,prior_games_only_team_fg_rates,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+lineupOffensePriorMake,prior_games_only_player_make_rate,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+lineupDefensePriorAllow,prior_games_only_player_make_rate,YES,NO,NO,NO,Expanding priors updated only after each game; design/holdout never see same-game or future outcomes
+epv_continue,M5_predictExpectedPoints(pre_shot_state),YES,NO,NO,NO,Possession EPV at reversed-score state
+epv_shoot,pMake * pointValue,YES,NO,NO,NO,"pointValue known from shot type (2pt/3pt attempt), not make/miss"

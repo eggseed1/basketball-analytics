@@ -1,0 +1,431 @@
+{
+  "freeze": {
+    "milestone": "M16e0",
+    "timestamp": "2026-08-12T17:06:38.222Z",
+    "gitCommit": "629bb1b790bef21020940122194772b6921569ff",
+    "gitDirty": true,
+    "evaluationProtocolVersion": "drbl-eval-v1",
+    "trainSplitHash": "7bec77be45295ee858d90896d9383e4da951e98e81ad1ef31b5285fb055d1550",
+    "validationSplitHash": "4fd339a445f269162c2d76e9102ea5bb965a5d0fc05e0fcd2f60593117c5faf0",
+    "reservedTestSplitHash": "e542aa54602390ed65792f37e10207814e10b62bfdf552ddf4da69825076c1ce",
+    "targetVersion": "drbl-targets-v1",
+    "eligibilityVersion": "drbl-eligibility-v1",
+    "P_version": "approach-b-sequential-drbl-p",
+    "M6_version": "drbl-m6-shot-decision-v1",
+    "abilityLineageVersion": "ability-lineage-v1",
+    "2024-25": {
+      "artifactPath": "src/data/drbl/precomputed/2024-25.json",
+      "artifactHash": "02fb73394131ec37991d95cf3c4400334e8002a2957fd8622450327accb66c2b",
+      "generationId": "2024-25-g1225-2026-08-12T15-20-02-204Z",
+      "warFormulaVersion": "4.0.0",
+      "pipelineVersion": "4.0.0",
+      "warModel": {
+        "version": "drbl-war-v1",
+        "pointsToWins": 0.025830258302583026,
+        "provisionalPointsToWins": 0.03333333333333333,
+        "calibrated": true,
+        "reason": "v4 pipeline: posterior → LOO calibration → fringe replacement",
+        "holdoutMae": 6.095,
+        "holdoutCorr": 0.908,
+        "pointsPerWin": 38.714285714285715,
+        "calibrationIntercept": 0,
+        "calibrationSlope": 5.835416607524311,
+        "calibrationSource": "learned_leave_one_out",
+        "calibrationInput": "posterior",
+        "oofMae": 3.1210927420044103,
+        "oofCorr": 0.809101302215348,
+        "replacementLevelDRBL100": -1.4886147765794517,
+        "replacementMethod": "fringe_median_poss_200_800"
+      }
+    },
+    "2025-26": {
+      "artifactPath": "src/data/drbl/precomputed/2025-26.json",
+      "artifactHash": "a18c996838a999e265f2cee356e3c15f17b5a8534be9832bf65786c7ea55d8df",
+      "generationId": "2025-26-g1225-2026-08-12T15-24-09-645Z",
+      "warFormulaVersion": "provisional-seasonalImpact/30",
+      "pipelineVersion": null
+    },
+    "posterior": {
+      "priorMean": 0,
+      "priorStrength": 200
+    },
+    "fusion": {
+      "constraint": "ridge_with_intercept",
+      "lambda": 8,
+      "folds": 5
+    },
+    "m6": {
+      "fusedIntoDrbl100": false
+    },
+    "reservedTestAccessedForModelEvaluation": false
+  },
+  "health": {
+    "WAR_PRODUCTION_RECONSTRUCTS": "PASS",
+    "WAR_UNITS_DEFINED": "PASS",
+    "ABILITY_RATE_DENOMINATOR_IDENTIFIED": "PASS",
+    "WAR_EXPOSURE_DENOMINATOR_IDENTIFIED": "PASS",
+    "RATE_EXPOSURE_DIMENSIONAL_IDENTITY": "PASS",
+    "WAR_DOUBLE_EXPOSURE": "NO",
+    "WAR_CALIBRATION_TARGET_UNITS_VALID": "PASS",
+    "WAR_CALIBRATION_EXPOSURE_EMBEDDED": "NO",
+    "POINTS_PER_WIN_UNITS_VALID": "PASS",
+    "REPLACEMENT_SEMANTICS_VALID": "WARNING",
+    "WAR_UNEXPLAINED_SCALE_FACTOR": "NO",
+    "M16D_FORMAL_WINNER": "P+M6",
+    "M16E0_RESEARCH_BASE": "P",
+    "M6_PRACTICAL_EFFECT": "DETECTABLE_ONLY",
+    "P_CALIBRATION_RISK": "NO",
+    "POSTERIOR_INCREMENTAL_VALUE": "UNSUPPORTED",
+    "RESERVED_TEST_ACCESSED_FOR_MODEL_EVALUATION": "NO",
+    "PRODUCTION_DRBL_CHANGED": "NO",
+    "PRODUCTION_WAR_CHANGED": "NO",
+    "maxWarReconstructionResidual": 0,
+    "mismatchCount": 0,
+    "league": {
+      "sumWar": 754.4904717694892,
+      "meanWar": 1.3594422914765572,
+      "medianWar": 0.29994323443699156,
+      "posWar": 1290.0110589355475,
+      "negWar": -535.5205871660575,
+      "top10Share": 0.14768017505838302,
+      "top25Share": 0.29487074613512376,
+      "meanTeamWar": 25.149682392316308
+    },
+    "teamFit": {
+      "intercept": 27.051965757183545,
+      "slope": 0.5546008106678035,
+      "rmse": 8.124163533062404,
+      "mae": 6.330130037149667,
+      "r2": 0.6171575805571867
+    },
+    "calibrationSlope": 5.835416607524311,
+    "pointsPerWin": 38.714285714285715,
+    "replacement": -1.4886147765794517
+  },
+  "flags": {
+    "WAR_USES_NONDISPLAYED_ABILITY": {
+      "status": "WARNING",
+      "evidence": "WAR uses LOO-calibrated finalAbility from posterior, not displayed posterior alone",
+      "magnitude": "slope=5.835416607524311"
+    },
+    "WAR_CALIBRATION_LARGE_SCALE_EXPANSION": {
+      "status": "WARNING",
+      "evidence": "through-origin LOO slope maps residual-share rates onto net-rating scale",
+      "magnitude": "slope=5.835416607524311; mean final/posterior≈5.835"
+    },
+    "WAR_CALIBRATION_INTERCEPT_DOMINANT": {
+      "status": "PASS",
+      "evidence": "intercept=0 (through-origin)",
+      "magnitude": 0
+    },
+    "WAR_DOUBLE_EXPOSURE": {
+      "status": "NO",
+      "evidence": "Calibration target is team netRating (rate). Downstream multiplies calibrated rate by player appearances once. Not season-total → rate double multiply.",
+      "magnitude": null
+    },
+    "WAR_EXPOSURE_UNIT_MISMATCH": {
+      "status": "WARNING",
+      "evidence": "Calibrated rates are net-rating-like (team pts/100) while exposure remains off+def appearance counts (~2× paired team possessions for full-time players). Slope absorbs some scale, but appearance vs paired-possession semantics remain ambiguous.",
+      "magnitude": "diagnostic half-exposure shrinks WAR by ~1.99x vs current"
+    },
+    "WAR_RATE_DENOMINATOR_MISMATCH": {
+      "status": "PASS",
+      "evidence": "rawAbilityRate denominator = possessions = off+def; identity raw*n/100 ≈ seasonalImpact",
+      "magnitude": "max |raw*n/100 - seasonalImpact|=0.008853999999985263"
+    },
+    "POINTS_PER_WIN_UNIT_MISMATCH": {
+      "status": "PASS",
+      "evidence": "pointsPerWin from season pointDifferential / (wins-0.5*games); WAR impact treated as season-total points on calibrated scale",
+      "magnitude": 38.714285714285715
+    },
+    "REPLACEMENT_LEVEL_SEMANTIC_MISMATCH": {
+      "status": "WARNING",
+      "evidence": "Zero on uncalibrated residual scale ≈ R1/league-average-ish; WAR uses fringe calibrated median ≠ 0. Naming 'WAR' is above fringe replacement after calibration — OK if documented. Zero is NOT replacement on calibrated scale.",
+      "magnitude": -1.4886147765794517
+    },
+    "WAR_TARGET_EXPOSURE_ALREADY_EMBEDDED": {
+      "status": "NO",
+      "evidence": "netRating is per-100 rate, not season total",
+      "magnitude": null
+    },
+    "WAR_TEAM_SCALE_INFLATED": {
+      "status": "PASS",
+      "evidence": "actualWins ≈ 27.05 + 0.555 * teamWAR",
+      "magnitude": 0.5546008106678035
+    },
+    "WAR_UNEXPLAINED_SCALE_FACTOR": {
+      "status": "NO",
+      "evidence": "Current WAR reconstructs from slope, replacement, exposure, PPW with residual≈0; primary inflation is calibration slope (~5.8×) plus replacement shift",
+      "magnitude": null
+    }
+  },
+  "traces": [
+    {
+      "player": "Nikola Jokić",
+      "playerId": "203999",
+      "displayedDRBL100": 1.5315,
+      "posteriorAbilityRate": 1.5315,
+      "rawAbilityRate": 2.6742,
+      "warCalibrationInput": 1.5315,
+      "looTransform": "0 + 5.835416607524311 * 1.5315",
+      "warCalibratedRate": 8.936940534423483,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 10.425555311002935,
+      "actualOnCourtPossessions": 10737,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "10.425555311002935 * 10737 / 100 = 1119.391873742385",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "1119.391873742385 / 38.714285714285715 = 28.914181240578213",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 287.128854,
+        "seasonalImpactStored": 287.12
+      }
+    },
+    {
+      "player": "Shai Gilgeous-Alexander",
+      "playerId": "1628983",
+      "displayedDRBL100": 1.2962,
+      "posteriorAbilityRate": 1.2962,
+      "rawAbilityRate": 2.7644,
+      "warCalibrationInput": 1.2962,
+      "looTransform": "0 + 5.835416607524311 * 1.2962",
+      "warCalibratedRate": 7.5638670066730125,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 9.052481783252464,
+      "actualOnCourtPossessions": 10880,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "9.052481783252464 * 10880 / 100 = 984.9100180178681",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "984.9100180178681 / 38.714285714285715 = 25.440480170203234",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 300.76672,
+        "seasonalImpactStored": 300.77
+      }
+    },
+    {
+      "player": "Franz Wagner",
+      "playerId": "1630532",
+      "displayedDRBL100": 1.3178,
+      "posteriorAbilityRate": 1.3178,
+      "rawAbilityRate": 1.3266,
+      "warCalibrationInput": 1.3178,
+      "looTransform": "0 + 5.835416607524311 * 1.3178",
+      "warCalibratedRate": 7.689912005395538,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 9.17852678197499,
+      "actualOnCourtPossessions": 8188,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "9.17852678197499 * 8188 / 100 = 751.5377729081121",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "751.5377729081121 / 38.714285714285715 = 19.412414798364516",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 108.62200800000001,
+        "seasonalImpactStored": 108.62
+      }
+    },
+    {
+      "player": "Victor Wembanyama",
+      "playerId": "1641705",
+      "displayedDRBL100": 1.7019,
+      "posteriorAbilityRate": 1.7019,
+      "rawAbilityRate": 0.6765,
+      "warCalibrationInput": 1.7019,
+      "looTransform": "0 + 5.835416607524311 * 1.7019",
+      "warCalibratedRate": 9.931295524345625,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 11.419910300925077,
+      "actualOnCourtPossessions": 6024,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "11.419910300925077 * 6024 / 100 = 687.9353965277265",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "687.9353965277265 / 38.714285714285715 = 17.769548987801056",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 40.752359999999996,
+        "seasonalImpactStored": 40.75
+      }
+    },
+    {
+      "player": "Payton Pritchard",
+      "playerId": "1630202",
+      "displayedDRBL100": 0.9881,
+      "posteriorAbilityRate": 0.9881,
+      "rawAbilityRate": 1.6565,
+      "warCalibrationInput": 0.9881,
+      "looTransform": "0 + 5.835416607524311 * 0.9881",
+      "warCalibratedRate": 5.765975149894772,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 7.254589926474224,
+      "actualOnCourtPossessions": 9025,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "7.254589926474224 * 9025 / 100 = 654.7267408642987",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "654.7267408642987 / 38.714285714285715 = 16.911760834133176",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 149.499125,
+        "seasonalImpactStored": 149.5
+      }
+    },
+    {
+      "player": "Ivica Zubac",
+      "playerId": "1627826",
+      "displayedDRBL100": 0.6676,
+      "posteriorAbilityRate": 0.6676,
+      "rawAbilityRate": 1.2934,
+      "warCalibrationInput": 0.6676,
+      "looTransform": "0 + 5.835416607524311 * 0.6676",
+      "warCalibratedRate": 3.89572412718323,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 5.384338903762682,
+      "actualOnCourtPossessions": 10739,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "5.384338903762682 * 10739 / 100 = 578.2241548750744",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "578.2241548750744 / 38.714285714285715 = 14.935679277215945",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 138.89822600000002,
+        "seasonalImpactStored": 138.9
+      }
+    },
+    {
+      "player": "DeMar DeRozan",
+      "playerId": "201942",
+      "displayedDRBL100": 0.6094,
+      "posteriorAbilityRate": 0.6094,
+      "rawAbilityRate": 0.7831,
+      "warCalibrationInput": 0.6094,
+      "looTransform": "0 + 5.835416607524311 * 0.6094",
+      "warCalibratedRate": 3.5561028806253154,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 5.044717657204767,
+      "actualOnCourtPossessions": 11459,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "5.044717657204767 * 11459 / 100 = 578.0741963390942",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "578.0741963390942 / 38.714285714285715 = 14.931805809496899",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 89.73542900000001,
+        "seasonalImpactStored": 89.74
+      }
+    },
+    {
+      "player": "Christian Braun",
+      "playerId": "1631128",
+      "displayedDRBL100": 0.5697,
+      "posteriorAbilityRate": 0.5697,
+      "rawAbilityRate": 1.4143,
+      "warCalibrationInput": 0.5697,
+      "looTransform": "0 + 5.835416607524311 * 0.5697",
+      "warCalibratedRate": 3.3244368413066,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 4.813051617886051,
+      "actualOnCourtPossessions": 11046,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "4.813051617886051 * 11046 / 100 = 531.6496817116932",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "531.6496817116932 / 38.714285714285715 = 13.732648605099087",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 156.22357799999997,
+        "seasonalImpactStored": 156.22
+      }
+    },
+    {
+      "player": "Norman Powell",
+      "playerId": "1626181",
+      "displayedDRBL100": 1.1709,
+      "posteriorAbilityRate": 1.1709,
+      "rawAbilityRate": 2.1189,
+      "warCalibrationInput": 1.1709,
+      "looTransform": "0 + 5.835416607524311 * 1.1709",
+      "warCalibratedRate": 6.8326893057502165,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 8.321304082329668,
+      "actualOnCourtPossessions": 8057,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "8.321304082329668 * 8057 / 100 = 670.4474699133013",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "670.4474699133013 / 38.714285714285715 = 17.317831326173835",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 170.71977299999998,
+        "seasonalImpactStored": 170.72
+      }
+    },
+    {
+      "player": "Naz Reid",
+      "playerId": "1629675",
+      "displayedDRBL100": 0.9686,
+      "posteriorAbilityRate": 0.9686,
+      "rawAbilityRate": 0.9765,
+      "warCalibrationInput": 0.9686,
+      "looTransform": "0 + 5.835416607524311 * 0.9686",
+      "warCalibratedRate": 5.652184526048048,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 7.140799302627499,
+      "actualOnCourtPossessions": 9046,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "7.140799302627499 * 9046 / 100 = 645.9567049156835",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "645.9567049156835 / 38.714285714285715 = 16.68522854025751",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 88.33418999999999,
+        "seasonalImpactStored": 88.33
+      }
+    },
+    {
+      "player": "Zach LaVine",
+      "playerId": "203897",
+      "displayedDRBL100": 0.6579,
+      "posteriorAbilityRate": 0.6579,
+      "rawAbilityRate": 0.7166,
+      "warCalibrationInput": 0.6579,
+      "looTransform": "0 + 5.835416607524311 * 0.6579",
+      "warCalibratedRate": 3.8391205860902446,
+      "replacement": -1.4886147765794517,
+      "aboveReplacementRate": 5.327735362669697,
+      "actualOnCourtPossessions": 10890,
+      "note_exposure": "off+def possession-appearances (combined-event count)",
+      "seasonalImpact": "5.327735362669697 * 10890 / 100 = 580.1903809947299",
+      "pointsPerWin": 38.714285714285715,
+      "WAR": "580.1903809947299 / 38.714285714285715 = 14.986467405767932",
+      "identity_raw": {
+        "formula": "raw * n / 100",
+        "value": 78.03774,
+        "seasonalImpactStored": 78.04
+      }
+    }
+  ],
+  "m6": {
+    "formalWinner": "P+M6",
+    "researchBase": "P",
+    "relativeGain": 0.00016397786807541073,
+    "category": "STATISTICALLY_DETECTABLE_ONLY"
+  },
+  "pCalibration": {
+    "linear": {
+      "intercept": 0.2716266197833243,
+      "slope": 1.4271016240133199,
+      "rmse": 2.3864051243569673,
+      "mae": 1.7410552074941636,
+      "r2": 0.13611084838522391
+    },
+    "nonlinearFlag": "NONE",
+    "top5": {
+      "bin": "top_5pct",
+      "n": 20,
+      "meanPrediction": 1.17006885964657,
+      "meanY": 1.151214394359481,
+      "residual": -0.018854465287089006,
+      "RMSE": 1.7467183733958787
+    }
+  },
+  "reservedTestAccessedForModelEvaluation": false
+}

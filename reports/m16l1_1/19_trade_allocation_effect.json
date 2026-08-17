@@ -1,0 +1,6 @@
+{
+  "absDiffFromMultiTeamPlayers": 1447.3201557443615,
+  "absDiffFromSingleTeamPlayers": 5.033473637894303e-13,
+  "shareMulti": 0.9999999999999997,
+  "interpretation": "Nearly all alloc−obs difference comes from multi-team players by construction; single-team should be ~0"
+}

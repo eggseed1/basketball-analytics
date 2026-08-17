@@ -1,0 +1,5 @@
+check,status,detail
+EPV_pre_possession_state,PASS,M5 start state
+shot_decision_pre_make_score_reverse,PASS,M6 decisionStateFromEvent
+V_cont_features_pre_decision,PASS,C2 age-grid / priors expanding
+fusion_early_asOf_before_late_Y,PASS,chrono earlyFrac split

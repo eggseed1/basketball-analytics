@@ -1,0 +1,9 @@
+{
+  "rollbackSnapshotSource": "reports/m16k1/rollback",
+  "artifactReconstruction": "PASS",
+  "sourceReconstruction": "FAIL_FULL_SOURCE — rollback contains precomputed artifacts only; dirty-tree source was never content-addressed pre-cutover",
+  "PRE_CUTOVER_SOURCE_RECONSTRUCTION": "FAIL",
+  "PRE_CUTOVER_TYPECHECK_BASELINE_AVAILABLE": "NO",
+  "reason": "M16k1 rollback preserved exact precomputed JSON hashes only. Most cutover source files were untracked in a dirty worktree and have no content-addressed pre-cutover source snapshot. Attribution uses fallback protocol (changed-file intersection + symbol analysis).",
+  "fallbackProtocol": "YES"
+}

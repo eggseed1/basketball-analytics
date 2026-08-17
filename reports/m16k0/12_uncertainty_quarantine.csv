@@ -1,0 +1,5 @@
+consumer,field,validatedPredictive,migrationState
+player-savant / explore ± column,drblUncertainty/intervalLo/Hi,NO,REMOVE_FROM_VALIDATED_DISPLAY
+percentiles hasValidDrblEstimate,uncertainty>0 gate,NO,BLOCK_CUTOVER
+glossary DRBL uncertainty,copy,NO,REMOVE_FROM_VALIDATED_DISPLAY
+artifact uncertainty fields,serialized,NO,LABEL_EXPLICITLY_LEGACY_DIAGNOSTIC

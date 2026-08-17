@@ -1,0 +1,13 @@
+{
+  "note": "Order-of-magnitude for full-season Approach A with EPV+LN composite",
+  "possessionsApprox": 245000,
+  "focalEvaluationsPerPossession": 10,
+  "replacementCandidatesPerFocal": 8,
+  "epvCallsPerPossession": 1,
+  "lnScoreCallsPerPossession": 90,
+  "estimatedTotalLnScoreCalls_season": 22050000,
+  "estimatedTotalEpvCalls_season": 245000,
+  "runtimeEstimate": "With coef lookup O(1): seconds–minutes; with naive refits: hours. Caching β lookups makes A cheap.",
+  "cachingBatching": "Cache EPV(s0) once per possession; credit_off = β_i - mean(β_r) closed form under additive LN — no need to rescore full lineup each time",
+  "algebraicShortcut": "Under additive LN, offensive credit = β_i - E[β_r]; defensive credit = β_i - E[β_r] under current sign coding — full lineup rescoring optional for verification only"
+}

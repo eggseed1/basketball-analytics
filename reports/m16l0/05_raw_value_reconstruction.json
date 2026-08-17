@@ -1,0 +1,10 @@
+{
+  "formula": "rawAbilityRate * N / 100 == seasonalImpact (== ApproachBAttributedValue when repl=0)",
+  "rows": 1130,
+  "maxResidual": 0.008853999999985263,
+  "meanResidual": 0.0027975964601769177,
+  "P99Residual": 0.007632000000000971,
+  "mismatchCount": 0,
+  "tolerance": 0.02,
+  "RAW_RECONSTRUCTION": "PASS"
+}

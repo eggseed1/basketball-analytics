@@ -1,0 +1,8 @@
+playerId,player,inM16aArtifact,inProductionBoard,team,games,minutes,possessions,reasonForDifference,detail
+1641732,Colby Jones,false,true,DET,1,6.816666666666666,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1642468,Darius Brown II,false,true,CLE,1,2.6666666666666665,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1643257,Jayson Kent,false,true,POR,5,22.466666666666665,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1642855,Noa Essengue,false,true,CHI,2,6.033333333333333,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1630649,Stanley Umude,false,true,SAS,2,6.566666666666666,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1641787,Tosan Evbuomwan,false,true,CHA,5,7.713333333333333,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).
+1642280,Trentyn Flowers,false,true,CHI,2,5.55,,site_only_metadata_row,Present in stats.nba.com leaguedashplayerstats (GP>0) but absent from DRBL precomputed artifact (no PBP possession row in 1225-game compute).

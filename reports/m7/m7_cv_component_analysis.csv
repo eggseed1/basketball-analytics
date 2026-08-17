@@ -1,0 +1,7 @@
+component,source,holdout_mean,holdout_std,separated
+EPV_shoot,M6_frozen,1.0887,0.1062,YES
+V_cont_C0,M5,1.108,0.0944,YES
+V_cont_C1,ridge_C1,1.1206,0.0607,YES
+V_cont_C2,ridge_C2_age_proxy,1.1054,0.1537,YES
+ShotMaking,M6_frozen,-0.0069,1.2071,YES
+SDV_C2,epvShoot-V_C2,-0.0167,0.1734,YES

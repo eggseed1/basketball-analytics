@@ -1,0 +1,163 @@
+{
+  "M16I2_REPRODUCED": "PASS",
+  "POINT_ESTIMATE_REPRODUCED": "PASS",
+  "POINT_ESTIMATE_MODEL_FROZEN": "YES",
+  "POINT_ESTIMATE_CHANGED": "NO",
+  "POSTERIOR_K": 1600,
+  "CALIBRATION": "IDENTITY",
+  "EXPOSURE_ONLY_INFORMATION_CEILING": "YES",
+  "FEATURE_AUDIT_OUTCOME_BLIND": "YES",
+  "FEATURE_PIPELINE_READS_FUTURE_OUTCOMES": "NO",
+  "HISTORICAL_STREAM_RECONSTRUCTION": "PASS",
+  "R1_TEMPORAL_SEGMENT_DISPERSION_STATUS": "ELIGIBLE",
+  "R1_AVAILABILITY": 1,
+  "R2_SPLIT_HALF_SHIFT_STATUS": "ELIGIBLE",
+  "R2_AVAILABILITY": 1,
+  "R3_APPEARANCE_VALUE_DISPERSION_STATUS": "ELIGIBLE",
+  "R3_AVAILABILITY": 1,
+  "R3_APPEARANCE_ACCOUNTING_IDENTITY": "PASS",
+  "HIGH_REDUNDANCY_PAIRS": "NONE",
+  "M16I4_ELIGIBLE_RELIABILITY_FEATURES": [
+    "TEMPORAL_SEGMENT_DISPERSION",
+    "SPLIT_HALF_P_SHIFT",
+    "APPEARANCE_VALUE_DISPERSION"
+  ],
+  "M16I4_FEATURE_SET_FROZEN": "YES",
+  "RELIABILITY_FEATURE_AUDIT_RESULT": "FEATURE_SET_FROZEN",
+  "M16I4_RELIABILITY_BAKEOFF_READY": "YES",
+  "PREDICTIVE_UNCERTAINTY_FROZEN": "NO",
+  "RESEARCH_RATE_MODEL_FREEZE_READY": "NO",
+  "M16B_VALIDATION_USED": "NO",
+  "RESERVED_TEST_ACCESSED": "NO",
+  "RESERVED_TEST_SHOULD_OPEN": "NO",
+  "PRODUCTION_CHANGED": "NO",
+  "WAR_CHANGED": "NO",
+  "nRows": 1982,
+  "reconstruction": {
+    "nRows": 1982,
+    "maxResidual": 0.0000499649380416578,
+    "meanResidual": 0.00002551115699125136,
+    "P99Residual": 0.0000494946912218408,
+    "streamCountIdentityOk": true,
+    "valueSumIdentityOk": true
+  },
+  "spearman": {
+    "R1_logN": -0.6816850319867238,
+    "R2_logN": -0.4445547843332915,
+    "R3_logN": 0.2958155611577472
+  },
+  "distributions": {
+    "R1": {
+      "n": 1982,
+      "mean": 2.13501650001622,
+      "sd": 1.8511391692230115,
+      "min": 0.06028837979894485,
+      "P1": 0.29887321702431247,
+      "P5": 0.556612641342485,
+      "P25": 1.0648738172110774,
+      "median": 1.5894203256833654,
+      "P75": 2.560361603224542,
+      "P95": 5.5681282004283155,
+      "P99": 10.05352860993783,
+      "max": 17.132850715848132,
+      "zeroShare": 0
+    },
+    "R2": {
+      "n": 1982,
+      "mean": 2.098781523165088,
+      "sd": 2.3552437092099856,
+      "min": 0.00007348473207879902,
+      "P1": 0.024342910533806328,
+      "P5": 0.13975763334819913,
+      "P25": 0.6468208747094986,
+      "median": 1.4120357511543422,
+      "P75": 2.5866813008156,
+      "P95": 6.217168800417055,
+      "P99": 11.347640421262378,
+      "max": 22.91396940900658,
+      "zeroShare": 0
+    },
+    "R3": {
+      "n": 1982,
+      "mean": 39.67817802660936,
+      "sd": 5.778251807379435,
+      "min": 21.09721412289639,
+      "P1": 26.53364315670356,
+      "P5": 30.415894143149323,
+      "P25": 35.84617635570684,
+      "median": 39.51095471156387,
+      "P75": 43.52810624696463,
+      "P95": 49.19004741751615,
+      "P99": 52.94639329538538,
+      "max": 61.071245818453626,
+      "zeroShare": 0
+    }
+  },
+  "redundancy": [
+    {
+      "pair": "R1_vs_R2",
+      "n": 1982,
+      "pearson": 0.7418925067457316,
+      "spearman": 0.629426339097406,
+      "pearson_log1p": 0.6920958690425832,
+      "spearman_log1p": 0.629426339097406,
+      "HIGH_REDUNDANCY": "NO"
+    },
+    {
+      "pair": "R1_vs_R3",
+      "n": 1982,
+      "pearson": 0.0010608456202597703,
+      "spearman": -0.042988401908795194,
+      "pearson_log1p": -0.03357960429119467,
+      "spearman_log1p": -0.042988401908795194,
+      "HIGH_REDUNDANCY": "NO"
+    },
+    {
+      "pair": "R2_vs_R3",
+      "n": 1982,
+      "pearson": -0.016721980501456235,
+      "spearman": -0.02453189615700249,
+      "pearson_log1p": -0.03922741476122018,
+      "spearman_log1p": -0.02453189615700249,
+      "HIGH_REDUNDANCY": "NO"
+    }
+  ],
+  "stabilitySample": [
+    {
+      "feature": "R1",
+      "adjacent": "F1->F2",
+      "nPlayers": 333,
+      "pearson": 0.6653470560934543,
+      "spearman": 0.5074097977928871,
+      "medianAbsChange": 0.9857967547969055,
+      "P90AbsChange": 2.724309753067104
+    },
+    {
+      "feature": "R1",
+      "adjacent": "F2->F3",
+      "nPlayers": 365,
+      "pearson": 0.6897573792865399,
+      "spearman": 0.5804105393820193,
+      "medianAbsChange": 0.5521250630201595,
+      "P90AbsChange": 1.5675786736613886
+    },
+    {
+      "feature": "R1",
+      "adjacent": "F3->F4",
+      "nPlayers": 376,
+      "pearson": 0.546107667572131,
+      "spearman": 0.5742863592753541,
+      "medianAbsChange": 0.4803000368818424,
+      "P90AbsChange": 1.4104066677636915
+    },
+    {
+      "feature": "R1",
+      "adjacent": "F4->F5",
+      "nPlayers": 387,
+      "pearson": 0.7639957752042087,
+      "spearman": 0.6052033346459579,
+      "medianAbsChange": 0.3730550574951679,
+      "P90AbsChange": 1.208889638672697
+    }
+  ]
+}

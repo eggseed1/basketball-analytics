@@ -1,0 +1,203 @@
+{
+  "startedAt": "2026-08-16T07:57:39.139Z",
+  "seasons": {
+    "1996-97": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "1997-98": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "1998-99": {
+      "games": 725,
+      "ok": 725,
+      "failed": 0,
+      "skippedCached": 725,
+      "errors": []
+    },
+    "1999-00": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "2000-01": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "2001-02": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "2002-03": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "2003-04": {
+      "games": 1189,
+      "ok": 1189,
+      "failed": 0,
+      "skippedCached": 1189,
+      "errors": []
+    },
+    "2004-05": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2005-06": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2006-07": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2007-08": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2008-09": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2009-10": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2010-11": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2011-12": {
+      "games": 990,
+      "ok": 990,
+      "failed": 0,
+      "skippedCached": 990,
+      "errors": []
+    },
+    "2012-13": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2013-14": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2014-15": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2015-16": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2016-17": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2017-18": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2018-19": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2019-20": {
+      "games": 1059,
+      "ok": 1059,
+      "failed": 0,
+      "skippedCached": 1059,
+      "errors": []
+    },
+    "2020-21": {
+      "games": 1080,
+      "ok": 1080,
+      "failed": 0,
+      "skippedCached": 1080,
+      "errors": []
+    },
+    "2021-22": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2022-23": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    },
+    "2023-24": {
+      "games": 1230,
+      "ok": 1230,
+      "failed": 0,
+      "skippedCached": 1230,
+      "errors": []
+    }
+  },
+  "finishedAt": "2026-08-16T08:00:16.142Z",
+  "importerScriptSha256": "74362df3c0444bcf9386d1485f110519b4be6a826a8af27a6714f0309e9f3cfe"
+}

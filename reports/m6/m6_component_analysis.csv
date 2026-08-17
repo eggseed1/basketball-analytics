@@ -1,0 +1,5 @@
+component,definition,holdout_mean,holdout_std,separated_from_shot_making
+SDV,epvShoot - epvContinue,-0.0193,0.1125,YES
+ShotMaking,observedShotPoints - epvShoot,-0.0069,1.2071,N/A
+EPV_shoot,pMake * pointValue,1.0887,,YES
+EPV_continue,M5 possession EPV(pre-shot state),1.108,,YES

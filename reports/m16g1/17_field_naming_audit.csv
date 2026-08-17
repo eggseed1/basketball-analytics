@@ -1,0 +1,6 @@
+field,accurate,recommendedName
+rawAbilityRate,YES — unshrunk seq rate,approachB_rawRate_per100
+drblP,NO — implies raw P but is EB200,approachB_eb200_per100
+fusedRateRaw,PARTIAL — 'raw' but inputs are pre-shrunk,fusedAbility_prePublishEb_per100
+posteriorAbilityRate,YES for fused EB,publishedAbility_eb_per100
+drbl100,AMBIGUOUS alias,deprecate alias; use publishedAbility_eb_per100

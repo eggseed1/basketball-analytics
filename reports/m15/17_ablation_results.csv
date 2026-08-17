@@ -1,0 +1,5 @@
+ablation,result,reason,incremental_oos_on_published_metric,notes
+Full_DRBL_vs_Full_without_M6,IDENTICAL_for_published_drbl100,fusedIntoDrbl100=false AND live sdv100 all zero after merge wipe,0,cannot measure M6 info gain on published metric until fusion gate + A1 fix
+Published_vs_Intended_P_LN_B,BROKEN,sequential merge wiped LN/B to 0; board is effectively seq-P plus remaster WAR path,NA,Class A — LN/B ablations on live artifact are invalid
+Fusion_metadata_oofMae_2024-25,1.067,early-to-late residual target; wLn=0 wP~0.56 wB~0.44,NA,metadata only — not reflected in wiped player LN/B fields
+External_DARKO_LEBRON_EPM_bakeoff,NOT_RUN,requires licensed identical periods,NA,M15 diagnostics only

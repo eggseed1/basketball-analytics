@@ -1,0 +1,43 @@
+{
+  "2024-25": {
+    "playerCount": 569,
+    "teamCount": 30,
+    "meanRawAbilityRate": -0.23327117469553682,
+    "SDRawAbilityRate": 2.208067995510923,
+    "meanR1Points": 5.920444876585971,
+    "SDR1Points": 48.411224700105656,
+    "medianR1Points": 0.30367288450366026,
+    "P10R1Points": -39.62780707383036,
+    "P90R1Points": 63.942892211011944,
+    "meanR1WinEq": 0.15791785086377044,
+    "SDR1WinEq": 1.2912875166793671,
+    "TeamR1PointsSD": 211.11038946069948,
+    "R1BaselineNetPointsSD": 285.94548946395474,
+    "UnassignedResidualTeamSD": 17.257300197778605,
+    "leagueTeamR1Points": 3368.7331347774184,
+    "leagueUnassignedResidual": -3368.7331347774193,
+    "meanR1PointsPerAppearance": -0.0023327117469553707
+  },
+  "2025-26": {
+    "playerCount": 582,
+    "teamCount": 30,
+    "meanRawAbilityRate": -0.31109292727211363,
+    "SDRawAbilityRate": 2.715493645931975,
+    "meanR1Points": 5.295832307754079,
+    "SDR1Points": 47.214285823564325,
+    "medianR1Points": 0.004456743008354136,
+    "P10R1Points": -41.221429217046236,
+    "P90R1Points": 62.14111686027378,
+    "meanR1WinEq": 0.14125736731083352,
+    "SDR1WinEq": 1.259361197130945,
+    "TeamR1PointsSD": 199.542533169359,
+    "R1BaselineNetPointsSD": 308.63455048757595,
+    "UnassignedResidualTeamSD": 19.035220542948455,
+    "leagueTeamR1Points": 3082.174403112871,
+    "leagueUnassignedResidual": -3082.174403112899,
+    "meanR1PointsPerAppearance": -0.0031109292727211366,
+    "R1BaselinePerPossession": 0.03128136206045975,
+    "unassignedPerPossession": 0.012490879187826334
+  },
+  "note": "Descriptive only; no tuning"
+}

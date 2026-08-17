@@ -1,0 +1,8 @@
+gameId,season,field,pass,note
+0029600012,1996-97,gameId,YES,adapted
+0029600012,1996-97,teamIds,YES,
+0029600012,1996-97,playerIds,YES,
+0029600012,1996-97,starterCap5,YES,top-5 by minutes among positioned
+0029600012,1996-97,minutes,YES,MM:SS parsed
+0029600012,1996-97,points,YES,from team.statistics.points
+0029600012,1996-97,scoreboardSmoke,YES,82-96 exact after event-label map

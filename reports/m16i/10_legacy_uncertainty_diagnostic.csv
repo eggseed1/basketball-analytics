@@ -1,0 +1,2 @@
+model,eligible,disagreementUsed,cap,scaleMultiplier,descriptive_WIS,spearman_hw_absErr,mean_half_width,note
+LEGACY_UNCERTAINTY_DIAGNOSTIC,NO,NO (fold rows lack LN/B; disagreement set to 0),4,0.52751,6.904208934829732,0.21541324046595256,0.1948042235106073,Non-eligible descriptive only; not recalibrated for promotion

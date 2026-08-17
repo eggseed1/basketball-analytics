@@ -1,0 +1,33 @@
+{
+  "ResidualNetPoints": "ActualNetPoints - R1BaselineNetPoints",
+  "W0": {
+    "fixedSlope1_RMSE": 30.8243984118463,
+    "freeSlope_b": 0.9939648856680291,
+    "freeSlope_a": -111.61341483850673,
+    "Pearson": 0.9894693746038938,
+    "R2_free": 0.9790496432790216
+  },
+  "W1": {
+    "fixedSlope1_RMSE": 45.49161673192118,
+    "freeSlope_b": 1.1423685538429742,
+    "freeSlope_a": -122.65671247248521,
+    "Pearson": 0.984553365286712,
+    "R2_free": 0.9693453290973899
+  },
+  "accountingAttributed_vs_ResidualNet": {
+    "fixedSlope1_RMSE": 16.967240880951323,
+    "freeSlope_b": 1.0221002269776882,
+    "Pearson": 0.9970486518897212
+  },
+  "accountingAttributed_vs_ActualNet": {
+    "freeSlope_b": 2.236089062277479,
+    "Pearson": 0.965526428757339
+  },
+  "Residual_minus_Unassigned_vs_Attributed": {
+    "fixedSlope1_RMSE": 2.3919427232023718e-11,
+    "freeSlope_b": 0.9999999999999755,
+    "note": "should be ~1 if algebra holds"
+  },
+  "originalW0_freeSlope": 2.1805313665740855,
+  "VARIABLE_BASELINE_EXPLAINS_SCALE": "YES"
+}

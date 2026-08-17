@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="560" height="340">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="280" y="24" text-anchor="middle" font-family="Segoe UI,sans-serif" font-size="14">Reliability vs N (k=1600)</text>
+  <text x="280" y="328" text-anchor="middle" font-size="11">N</text>
+  <text x="16" y="170" text-anchor="middle" font-size="11" transform="rotate(-90 16 170)">reliability</text>
+  <path d="M52.0,288.0 L54.3,279.9 L58.9,265.1 L68.0,239.9 L86.4,202.0 L123.0,154.7 L196.4,107.4 L343.0,69.6 L508.0,52.0" fill="none" stroke="#1f4e79" stroke-width="2"/>
+</svg>

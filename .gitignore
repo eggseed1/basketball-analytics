@@ -40,3 +40,14 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# DRBL offline pipeline caches (immutable NBA raw + normalized outputs)
+/data/drbl/
+
+# Local scratch / large research intermediates (seals + summaries remain tracked)
+/.tmp/
+/reports/m18a/raw/
+/reports/m17a_1/import/import_ledger.jsonl
+/reports/m17a_1/07_raw_manifest.csv
+
+/reports/m17a_1/import/

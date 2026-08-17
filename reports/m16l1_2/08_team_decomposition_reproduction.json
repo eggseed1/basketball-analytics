@@ -1,0 +1,9 @@
+{
+  "equation": "ActualNetPoints = TeamR1Points(realized) + R1BaselineNetPoints + UnassignedResidual",
+  "teams": 30,
+  "maxResidual": 5.566391791944625e-11,
+  "meanResidual": 1.8871067671473915e-11,
+  "mismatchCount": 0,
+  "TEAM_R1_POINT_DECOMPOSITION": "PASS",
+  "note": "TeamR1Points from observed stint attribution; matches m16l1.1 stable sums"
+}

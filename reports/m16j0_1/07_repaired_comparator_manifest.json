@@ -1,0 +1,55 @@
+{
+  "RESEARCH_FINAL": {
+    "name": "RESEARCH_FINAL_EB1600",
+    "formula": "N/(N+1600)*rawAbilityRate",
+    "version": "drbl-research-rate-v1",
+    "abilityVersion": "drbl-research-ability-v1",
+    "priorMean": 0,
+    "calibration": "identity",
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c"
+  },
+  "B0_RAW_P": {
+    "name": "B0_RAW_P",
+    "formula": "rawAbilityRate",
+    "role": "PRIMARY_COMPARATOR",
+    "available": true
+  },
+  "B1_P_EB200": {
+    "name": "B1_P_EB200",
+    "formula": "N/(N+200)*rawAbilityRate",
+    "role": "SECONDARY_COMPARATOR",
+    "available": true
+  },
+  "B2_BASELINE_M16A": {
+    "name": "BASELINE_M16A",
+    "experimentId": "BASELINE_M16A",
+    "modelVersion": "m16a-full-season-repaired",
+    "BASELINE_M16A_FREEZE_HASH": "ea602c117f7d630cf6e777d6eeb7927783ab4f2d8cddc383fbdf13ee7ddec4e6",
+    "B2_STATUS": "NOT_COMPARABLE",
+    "B2_REASON_CODES": [
+      "FUTURE_BLOCK_LEAKAGE",
+      "FULL_SEASON_INPUT_DEPENDENCY",
+      "HISTORICAL_RECONSTRUCTION_IMPOSSIBLE"
+    ],
+    "B2_FORMULA_VERSION": "drbl-fusion-oof-v1+eb-fused-v1",
+    "role": "EXCLUDED_INCUMBENT",
+    "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+    "ARCHITECTURE_DIFFERENCE_ALONE_CAUSES_INCOMPARABILITY": "NO",
+    "detailedReasons": {
+      "FUTURE_BLOCK_LEAKAGE": "Published BASELINE uses fitFusionOof which requires late-block targetPer100 from the same season being scored.",
+      "FULL_SEASON_INPUT_DEPENDENCY": "Published EB exposure uses full-season N; current R1 builders accumulate the full game set including post-cutoff games.",
+      "HISTORICAL_RECONSTRUCTION_IMPOSSIBLE": "No preexisting cutoff-evaluable BASELINE harness produces the published OOF+EB scalar from history-only inputs. Fixed-fit was NOT_IDENTIFIABLE / not frozen as BASELINE procedure. Substituting cross-season weights would change the baseline definition (forbidden)."
+    },
+    "invalidExclusionReasonRejected": "DIFFERENT_ARCHITECTURE / uses fusion / uses LN/B / different k — explicitly NOT used",
+    "BASELINE_M16A_MODIFIED": "NO"
+  },
+  "hierarchy": {
+    "PRIMARY_COMPARATOR": "B0_RAW_P",
+    "SECONDARY_COMPARATOR": "B1_P_EB200",
+    "INCUMBENT_REFERENCE": "NOT_COMPARABLE",
+    "additionalBaselinesAllowed": false
+  },
+  "COMPARATOR_SET_FROZEN": true,
+  "PRIMARY_SUCCESS_RULE_CHANGED": false,
+  "supersedes": "reports/m16j0/07_model_comparator_manifest.json"
+}

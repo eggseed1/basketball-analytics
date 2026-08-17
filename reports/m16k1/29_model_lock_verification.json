@@ -1,0 +1,9 @@
+{
+  "k": 1600,
+  "priorMean": 0,
+  "calibration": "identity",
+  "featureSet": "P only",
+  "attribution": "Approach B",
+  "zero": "R1 replacement",
+  "POST_RESERVED_MODEL_PARAMETER_CHANGES": "NONE"
+}

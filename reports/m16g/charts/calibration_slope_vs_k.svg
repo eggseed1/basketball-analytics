@@ -1,0 +1,8 @@
+<?xml version="1.0"?><svg xmlns="http://www.w3.org/2000/svg" width="520" height="320">
+  <rect width="100%" height="100%" fill="#fafafa"/>
+  <text x="48" y="24" font-size="14">Calibration slope vs k</text>
+  <text x="260" y="312" text-anchor="middle" font-size="11">k</text>
+  <text x="12" y="160" text-anchor="middle" font-size="11" transform="rotate(-90 12 160)">slope</text>
+  <polyline fill="none" stroke="#115e59" stroke-width="2" points="48,272 61.25,249.62957106544673 74.5,232.43422607198423 101,206.28856256222213 154,169.57533564681407 260,119.41331395760582 472,48"/>
+  <circle cx="48" cy="272" r="3.5" fill="#0f766e"/><circle cx="61.25" cy="249.62957106544673" r="3.5" fill="#0f766e"/><circle cx="74.5" cy="232.43422607198423" r="3.5" fill="#0f766e"/><circle cx="101" cy="206.28856256222213" r="3.5" fill="#0f766e"/><circle cx="154" cy="169.57533564681407" r="3.5" fill="#0f766e"/><circle cx="260" cy="119.41331395760582" r="3.5" fill="#0f766e"/><circle cx="472" cy="48" r="3.5" fill="#0f766e"/>
+</svg>
