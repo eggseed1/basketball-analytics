@@ -40,6 +40,10 @@ yarn-error.log*
 # historical game caches (BallDontLie pulls)
 /data/cache/
 
+# historical PBP corpus (external import — do not commit event dumps)
+/data/pbp/**
+!/data/pbp/README.md
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
