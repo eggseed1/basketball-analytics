@@ -11,12 +11,17 @@ let cachedProvider: BasketballDataProvider | null = null;
 
 /**
  * Resolves the active data provider.
- * Set DATA_PROVIDER=local|nba (default: local).
+ * Set DATA_PROVIDER=local|nba.
+ *
+ * Default: `nba` on Vercel (live ESPN-backed career/boards).
+ * Default: `local` elsewhere (sample dataset for offline/dev without .env).
+ * Always set DATA_PROVIDER explicitly in production to avoid empty careers.
  */
 export function getDataProvider(): BasketballDataProvider {
   if (cachedProvider) return cachedProvider;
 
-  const key = (process.env.DATA_PROVIDER ?? "local").toLowerCase();
+  const fallback = process.env.VERCEL ? "nba" : "local";
+  const key = (process.env.DATA_PROVIDER ?? fallback).toLowerCase();
 
   switch (key) {
     case "nba":

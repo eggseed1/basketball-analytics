@@ -124,8 +124,9 @@ export function transformStatsNbaPlayerSeason(
     turnoverPct:
       bref?.turnoverPct ||
       (advanced ? pctMaybeFraction(n(advanced, "E_TOV_PCT") || n(advanced, "TM_TOV_PCT")) : 0) ||
-      turnoverPct(tov, fga, fta),
-    usagePct: usgFromNba || bref?.usagePct || 0,
+      turnoverPct(tov, fga, fta) ||
+      0,
+    usagePct: usgFromNba || bref?.usagePct,
     assistPct: advanced
       ? n(advanced, "AST_PCT")
       : bref?.assistPct ?? 0,
@@ -279,15 +280,15 @@ export function transformStatsNbaCareerTotalsRow(
     twoPointPct: twoPointPct(fgm, tpm, fga, tpa),
     threePointPct: n(row, "FG3_PCT") || safePct(tpm, tpa),
     freeThrowPct: n(row, "FT_PCT") || safePct(ftm, fta),
-    effectiveFieldGoalPct: fga > 0 ? (fgm + 0.5 * tpm) / fga : 0,
+    effectiveFieldGoalPct: fga > 0 ? (fgm + 0.5 * tpm) / fga : undefined,
     trueShootingPct:
       points > 0 && fga + fta > 0
         ? points / (2 * (fga + 0.44 * fta))
-        : 0,
+        : undefined,
     threePointAttemptRate: threePointAttemptRate(tpa, fga),
     freeThrowRate: freeThrowRate(fta, fga),
-    turnoverPct: turnoverPct(tov, fga, fta),
-    usagePct: 0,
+    turnoverPct: turnoverPct(tov, fga, fta) ?? 0,
+    usagePct: undefined,
     assistPct: 0,
     offensiveReboundPct: 0,
     defensiveReboundPct: 0,
@@ -295,9 +296,9 @@ export function transformStatsNbaCareerTotalsRow(
     stealPct: 0,
     blockPct: 0,
     pie: 0,
-    offensiveRating: 0,
-    defensiveRating: 0,
-    netRating: 0,
+    offensiveRating: undefined,
+    defensiveRating: undefined,
+    netRating: undefined,
     per: 0,
     ows: 0,
     dws: 0,

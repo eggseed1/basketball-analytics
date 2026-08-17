@@ -4,19 +4,32 @@ import type {
   GameSummary,
   PlayerSeason,
 } from "@/data/types";
+import { expandPlayerSeasonTeamMatchIds } from "@/lib/team-identity";
+import {
+  ensureGameTeamIdentity,
+  inferGameTeamProvider,
+} from "@/lib/game-team-identity";
 
 /**
  * Single source of truth for PlayerSeason filtering.
- * Chart and table both consume query results — never re-filter in UI.
+ * Chart and table both consume query results - never re-filter in UI.
+ *
+ * `filters.team` is treated as a loose team identity (canonical ESPN id, abbr,
+ * brand slug, or namespaced provider key) and expanded via player-season ids
+ * only — never BDL schedule ids (BDL OKC 21 is ESPN PHX).
  */
 export function applyPlayerSeasonFilters(
   seasons: PlayerSeason[],
   filters: BasketballFilters = {}
 ): PlayerSeason[] {
+  const teamIds = filters.team
+    ? new Set(expandPlayerSeasonTeamMatchIds(filters.team))
+    : null;
+
   return seasons.filter((row) => {
     if (filters.season && row.season !== filters.season) return false;
 
-    if (filters.team && row.teamId !== filters.team) return false;
+    if (teamIds && !teamIds.has(row.teamId)) return false;
 
     if (filters.player) {
       const needle = filters.player.toLowerCase();
@@ -52,10 +65,14 @@ export function applyPlayerSeasonFilters(
 }
 
 export function toGameSummary(game: Game): GameSummary {
-  const margin = game.homeScore - game.awayScore;
+  const normalized = ensureGameTeamIdentity(
+    game,
+    game.teamIdProvider ?? inferGameTeamProvider(game)
+  );
+  const margin = normalized.homeScore - normalized.awayScore;
   return {
-    ...game,
-    totalPoints: game.homeScore + game.awayScore,
+    ...normalized,
+    totalPoints: normalized.homeScore + normalized.awayScore,
     margin,
     absMargin: Math.abs(margin),
   };
@@ -63,20 +80,45 @@ export function toGameSummary(game: Game): GameSummary {
 
 /**
  * Single filter path for game explore views (chart + table share results).
+ *
+ * Prefer abbreviation (set by URL normalization) so ESPN↔BDL numeric collisions
+ * cannot mix franchises. Fall back to exact `filters.team` match for callers that
+ * already pass a provider-scoped schedule id (e.g. Season Evidence → BDL id).
  */
 export function applyGameFilters(
   games: Game[],
   filters: BasketballFilters = {}
 ): GameSummary[] {
+  const teamAbbr = filters.teamAbbr?.trim().toUpperCase();
+
   return games
+    .map((game) =>
+      ensureGameTeamIdentity(
+        game,
+        game.teamIdProvider ?? inferGameTeamProvider(game)
+      )
+    )
     .filter((game) => {
       if (filters.season && game.season !== filters.season) return false;
-      if (
-        filters.team &&
-        game.homeTeamId !== filters.team &&
-        game.awayTeamId !== filters.team
-      ) {
-        return false;
+      if (teamAbbr) {
+        const home = (game.homeTeamAbbr ?? "").toUpperCase();
+        const away = (game.awayTeamAbbr ?? "").toUpperCase();
+        if (home !== teamAbbr && away !== teamAbbr) return false;
+      } else if (filters.team) {
+        const needle = String(filters.team);
+        // Canonical team ids only for bare numerics. Matching providerTeamId
+        // against ESPN ids collides (ESPN 25 OKC ≠ BDL 25 POR).
+        // Namespaced keys (`bdl:25`) may match provider ids explicitly.
+        if (needle.includes(":")) {
+          const providerId = needle.slice(needle.indexOf(":") + 1);
+          const homeMatch = game.homeProviderTeamId === providerId;
+          const awayMatch = game.awayProviderTeamId === providerId;
+          if (!homeMatch && !awayMatch) return false;
+        } else {
+          const homeMatch = game.homeTeamId === needle;
+          const awayMatch = game.awayTeamId === needle;
+          if (!homeMatch && !awayMatch) return false;
+        }
       }
       if (filters.dateRange) {
         if (

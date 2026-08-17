@@ -1,0 +1,5014 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2007,
+  "fetchedAt": "2026-08-14T20:06:22.103Z",
+  "apiCount": 455,
+  "rows": [
+    {
+      "date": "2007-12-31T08:00Z",
+      "description": "Waived guard Mike Wilks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-12-29T08:00Z",
+      "description": "Signed guard DerMarr Johnson; waived guard Marcus Williams.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-12-29T08:00Z",
+      "description": "Acquired guard Gordan Giricek and a first-round pick from the Utah Jazz for guard Kyle Korver.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-12-28T08:00Z",
+      "description": "Waived guard Darius Washington; signed guard Keith Langford.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-12-27T08:00Z",
+      "description": "Waived center Jelani McCoy.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-12-27T08:00Z",
+      "description": "Named Jim Boylan interim head coach for the remainder of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-12-26T08:00Z",
+      "description": "Signed forward Marcus Williams from Austin of  the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-12-24T08:00Z",
+      "description": "Signed forward Billy Thomas.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-12-24T08:00Z",
+      "description": "Recalled guard Coby Karl from Los Angeles  of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-12-24T08:00Z",
+      "description": "Fired coach Scott Skiles.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-12-22T08:00Z",
+      "description": "Recalled guard Taurean Green from Idaho  of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-12-21T08:00Z",
+      "description": "Assigned guard Darius Washington to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-12-19T08:00Z",
+      "description": "Signed guard Mike Wilks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-12-19T08:00Z",
+      "description": "Waived center Courtney Sims.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-12-18T08:00Z",
+      "description": "Assigned guard D.J. Strawberry to Albuquerque of the D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-12-18T08:00Z",
+      "description": "Assigned forward Demetris Nichols to Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-12-18T08:00Z",
+      "description": "Waived forward Brandon Wallace.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-12-17T08:00Z",
+      "description": "Assigned guard Maurice Ager to Tulsa of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-12-17T08:00Z",
+      "description": "Recalled guard JamesOn Curry from Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-12-14T08:00Z",
+      "description": "Acquired center Nazr Mohammed from the Detroit Pistons for center Primoz Brezec and forward Walter Herrmann.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-12-14T08:00Z",
+      "description": "Signed guard Richie Frahm.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-12-14T08:00Z",
+      "description": "Recalled guard Aaron Brooks from Rio Grande Valley of the D-League.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-12-14T08:00Z",
+      "description": "Waived forward Ronald Dupree.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-12-13T08:00Z",
+      "description": "Recalled center Kyrylo Fesenko from Utah of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-12-13T08:00Z",
+      "description": "Recalled guard Darius Washington from Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-12-13T08:00Z",
+      "description": "Waived forward Ruben Patterson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-12-12T08:00Z",
+      "description": "Waived guard Eddie Gill.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-12-12T08:00Z",
+      "description": "Waived guard Anfernee Hardaway; signed forward Luke Jackson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-12-12T08:00Z",
+      "description": "Signed coach Phil Jackson to a one-year contract extension with an option for 2009-10.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-12-12T08:00Z",
+      "description": "Signed forward Courtney Sims.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-12-10T08:00Z",
+      "description": "Assigned guard Taurean Green to Idaho of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-12-10T08:00Z",
+      "description": "Assigned center Cheikh Samb to Fort Wayne of the D-League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-12-07T08:00Z",
+      "description": "Claimed forward Demetris Nichols off waivers from the Cleveland Cavaliers; waived guard Thomas Gardner.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-12-06T08:00Z",
+      "description": "Assigned guard Morris Almond and center Kyrylo Fesenko to Utah of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-12-05T08:00Z",
+      "description": "Waived forward Demetris Nichols.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-12-04T08:00Z",
+      "description": "Fired general manager Billy King; named Ed Stefanski general manager.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-12-04T08:00Z",
+      "description": "Waived center Courtney Sims.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-12-03T08:00Z",
+      "description": "Assigned guard Gabe Pruitt to Utah of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-11-29T08:00Z",
+      "description": "Assigned guard Darius Washington to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-11-29T08:00Z",
+      "description": "Assigned forward Alando Tucker to Albuquerque of the D-League.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-11-29T08:00Z",
+      "description": "Signed forward-center Jelani McCoy.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-11-28T08:00Z",
+      "description": "Assigned guard Coby Karl to Los Angeles of",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-11-28T08:00Z",
+      "description": "Waived guard Mike Wilks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-11-23T08:00Z",
+      "description": "Assigned guard Gabe Pruitt to Utah of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-11-21T08:00Z",
+      "description": "Assigned center Ian Mahinmi to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-11-20T08:00Z",
+      "description": "Assigned forward Marcin Gortat to Anaheim of the D-League; waived forward Bo Outlaw.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-11-20T08:00Z",
+      "description": "Acquired forward Trevor Ariza from the Orlando Magic for center Brian Cook and guard Maurice Evans.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-11-20T08:00Z",
+      "description": "Assigned forward Nick Fazekas to Tulsa of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-11-18T08:00Z",
+      "description": "Assigned center Kosta Perovic to Bakersfield of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-11-17T08:00Z",
+      "description": "Signed center D.J. Mbenga; waived forward Stephane Lasme.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-11-16T08:00Z",
+      "description": "Signed guard Eddie Gill.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-11-15T08:00Z",
+      "description": "Assigned guard JamesOn Curry to Iowa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-11-13T08:00Z",
+      "description": "Assigned forward Brandon Wallace to Utah of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-11-11T08:00Z",
+      "description": "Assigned forward Steve Novak to Rio Grande Valley of the D-League.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-11-08T08:00Z",
+      "description": "Named Mark Rosenberg assistant manager of public relations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-11-06T08:00Z",
+      "description": "Named Adam Rose to the public relations staff.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-11-06T08:00Z",
+      "description": "Signed broadcasters Bob Ortegel and Mark Followill to contract extensions.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-11-02T07:00Z",
+      "description": "Signed forward Tim Duncan to a multi-year contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-11-02T07:00Z",
+      "description": "Signed guard Sasha Pavlovic to a multi-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-11-01T07:00Z",
+      "description": "Released guard David Wesley.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-11-01T07:00Z",
+      "description": "Signed forward Juwan Howard.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-11-01T07:00Z",
+      "description": "Exercised the third-year contract option on forward Cedric Simmons; declined the third-year contract option on guard Shannon Brown.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-10-31T07:00Z",
+      "description": "Signed forward Kris Humphries to a multi-year contract extension through the 2010-11 season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-10-31T07:00Z",
+      "description": "Exercised the contract options on guards Randy Foye and Rashad McCants; agreed to terms with forward Al Jefferson on a multi-year contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-10-30T07:00Z",
+      "description": "Exercised the contract option on forward Rodney Carney for the 2008-09 season.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-10-30T07:00Z",
+      "description": "Exercised the contract option on guard Maurice Ager for the 2008-09 season; waived center D.J. Mbenga.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-10-30T07:00Z",
+      "description": "Exercised the contract option on guard Rajon Rondo for the 2008-09 season.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-10-28T07:00Z",
+      "description": "Waived guard Robert Hite.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-10-27T07:00Z",
+      "description": "Waived forward Marcus Williams.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-10-27T07:00Z",
+      "description": "Signed guard Mike Wilks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-27T07:00Z",
+      "description": "Waived guard Hassan Adams and forward Darius Rice.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-10-26T07:00Z",
+      "description": "Exercised the contract options on centers Johan Petro and Mouhamed Sene.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived forward Mike Hall.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived guard Kevin Kruger.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived guards Jared Jordan, Demetris Nichols and Walker Russell Jr.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived guard Eddie Gill.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived center John Edwards.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived forwards Kimani Ffriend and Yaroslav Korolev and guard Guillermo Diaz.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived centers Lukasz Obrzut and Courtney Sims.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived guards Dahntay Jones and Jackie Manuel.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-10-25T07:00Z",
+      "description": "Waived forwards Antywane Robinson and Steven Smith and guard Jamaal Tatum.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-10-24T07:00Z",
+      "description": "Waived guard Keith Langford and forward-center Kris Lang.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-10-24T07:00Z",
+      "description": "Waived guard Richie Frahm.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-10-24T07:00Z",
+      "description": "Waived guard Mateen Cleaves.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-10-24T07:00Z",
+      "description": "Acquired guard Ricky Davis and center Mark Blount from the Minnesota Timberwolves for forwards Antoine Walker, Michael Doleac and Wayne Simien and a conditional first-round draft pick.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-10-24T07:00Z",
+      "description": "Waived forward Darvin Ham and guard Jared Newson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-10-23T07:00Z",
+      "description": "Waived forwards Elton Brown and Andre Patterson and center Larry Turner.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-10-23T07:00Z",
+      "description": "Waived forward Stacey Augmon, guards Anthony Roberson and Mike Wilks and forwards-centers Jelani McCoy and Brad Stricker.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-22T07:00Z",
+      "description": "Waived forwards Damone Brown and Donnell Harvey.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-10-22T07:00Z",
+      "description": "Waived guard-forward Derrick Byars.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-10-22T07:00Z",
+      "description": "Waived forward Mike Harris.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-10-22T07:00Z",
+      "description": "Waived center Jamal Sampson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-10-22T07:00Z",
+      "description": "Waived guard Andre Barrett and forward-center Jared Homan.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-10-21T07:00Z",
+      "description": "Waived guard Donell Taylor and center Tony Massenburg.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-10-21T07:00Z",
+      "description": "Waived guard Tierre Brown and forward Pat Burke.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-10-20T07:00Z",
+      "description": "Suspended guard J.R. Smith for the first three games of the regular season for conduct detrimental to the team.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-19T07:00Z",
+      "description": "Waived guard Anthony Lever-Pedroza.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-10-19T07:00Z",
+      "description": "Exercised the 2008-09 contract options on forward Tyrus Thomas and swingman Thabo Sefolosha.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-10-18T07:00Z",
+      "description": "Signed guard Mike Wilks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-17T07:00Z",
+      "description": "Waived forward Samaki Walker.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-10-16T07:00Z",
+      "description": "Waived center Esteban Batista.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-10-15T07:00Z",
+      "description": "Waived guard J.R. Pinnock.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-10-14T07:00Z",
+      "description": "Waived forwards Doug Thomas and Rawle Marshall.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-10-14T07:00Z",
+      "description": "Waived forward Rod Benson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-10-13T07:00Z",
+      "description": "Waived guard Roderick Wilmont.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-10-13T07:00Z",
+      "description": "Waived forward Carlos Powell.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-10-12T07:00Z",
+      "description": "Exercised the 2008-09 contract options on forwards Ike Diogu, Danny Granger and Shawne Williams.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-10-12T07:00Z",
+      "description": "Waived guard Chet Mason.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-10-11T07:00Z",
+      "description": "Waived guards Willie Deane and Jamon Gordon.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-10-11T07:00Z",
+      "description": "Released guard Torrell Martin.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-10-11T07:00Z",
+      "description": "Waived forward Marcus Douthit.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-10-10T07:00Z",
+      "description": "Signed guard Allan Houston.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-10-10T07:00Z",
+      "description": "Waived forward-center Joseph Blair.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-10-09T07:00Z",
+      "description": "Waived center Shagari Alleyne.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-10-08T07:00Z",
+      "description": "Waived guard Donell Williams.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-10-08T07:00Z",
+      "description": "Waived swingman Justin Cage.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-10-07T07:00Z",
+      "description": "Signed guard-forward Bruce Bowen to a contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-10-04T07:00Z",
+      "description": "Waived center Alvin Jones.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-03T07:00Z",
+      "description": "Named Aaron McKie assistant coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-10-03T07:00Z",
+      "description": "Signed guard Dan Dickau.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-10-03T07:00Z",
+      "description": "Signed forward Stacey Augmon.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-02T07:00Z",
+      "description": "Signed forwards Kris Lang and Anthony Lever-Pedroza and guards Keith Langford and Darius Washington.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-10-02T07:00Z",
+      "description": "Re-signed forward Yaroslav Korolev; signed guard Donell Williams.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-10-02T07:00Z",
+      "description": "Signed centers Courtney Sims and Lukasz Obrzut.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-10-02T07:00Z",
+      "description": "Named Sidney Moncrief shooting coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-10-02T07:00Z",
+      "description": "Signed guards Andre Barrett and Thomas Gardner and forwards Joseph Blair, Justin Cage and Jared Homan.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forward Tony Massenburg and guards Jamon Gordon and Willie Deane.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed guard Jermaine Jackson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forwards Chris Ellis and Brent Petway and guard J.R. Pinnock.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed guard Richie Frahm, swingman Rawle Marshall and forwards Doug Thomas and Brian Skinner.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forward Demetris Nichols and guards Jared Jordan, Walker Russell Jr. and Roderick Wilmont; waived guard Dan Dickau.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forwards Rod Benson and Jumaine Jones and guards Mateen Cleaves and Eddie Gill.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forward Andre Patterson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Waived guard Darrell Armstrong.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Re-signed center Dikembe Mutombo; signed forward Carl Landry; named Kenny Atkinson director of player development and Pat Zipfel advance scout.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Re-signed forward Mickael Pietrus; signed guard Tierre Brown and forwards Pat Burke and Carlos  Powell.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Exercised the team option on forward Jason Maxiell for the 2008-09 season.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed guard Anthony Roberson and forwards-centers Jelani McCoy, Alvin Jones and Brad Stricker.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forward Darvin Ham, guard Jared Newson and forward-center Jamal Sampson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed guard Trey Johnson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "NO/Oklahoma City Hornets",
+        "location": "NO/Oklahoma City",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2007-10-01T07:00Z",
+      "description": "Signed forwards Antywane Robinson and Jamaal Tatum and guards Steven Smith and Mario West.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-09-30T07:00Z",
+      "description": "Signed guard Darrick Martin.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-09-30T07:00Z",
+      "description": "Acquired the rights to guard Jared Jordan from the Los Angeles Clippers for cash.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-09-29T07:00Z",
+      "description": "Signed senior advisor Wayne Embry to a contract extension through the 2009-10 season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-09-29T07:00Z",
+      "description": "Signed forward Marcus Williams.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-09-29T07:00Z",
+      "description": "Signed forward Chris Richard.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-09-29T07:00Z",
+      "description": "Signed guard Devin Brown; acquired forward Cedric Simmons from the New Orleans Hornets for guard David Wesley.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-09-28T07:00Z",
+      "description": "Acquired guard Greg Buckner from the Dallas Mavericks for forward Trenton Hassell.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-09-28T07:00Z",
+      "description": "Named Mario Elie assistant coach.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-09-27T07:00Z",
+      "description": "Named Paul Westhead assistant coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-09-26T07:00Z",
+      "description": "Signed center John Edwards.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-09-25T07:00Z",
+      "description": "Signed forward Samaki Walker.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-09-25T07:00Z",
+      "description": "Signed guard Brian Chase.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-09-24T07:00Z",
+      "description": "Re-signed guard Roger Mason.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-09-24T07:00Z",
+      "description": "Signed guard Troy Hudson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-09-22T07:00Z",
+      "description": "Signed forward Michael Ruffin.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-09-22T07:00Z",
+      "description": "Signed guard Devin Harris to a contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-09-21T07:00Z",
+      "description": "Named Scott Howard director of scouting, Rich Sheubrooks director of global scouting and Darrel Johnson, Dennis Nutt and Jim Thrash scouts.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-09-21T07:00Z",
+      "description": "Named Ed Pinckney assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-09-20T07:00Z",
+      "description": "Signed guard Charlie Bell to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-09-20T07:00Z",
+      "description": "Waived guard Sarunas Jasikevicius.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-09-18T07:00Z",
+      "description": "Signed guard Royal Ivey to a one-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-09-17T07:00Z",
+      "description": "Signed guard Charlie Bell to an offer sheet.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-09-17T07:00Z",
+      "description": "Signed forward Elton Brown.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-09-14T07:00Z",
+      "description": "Named Jarinn Akana assistant coach for player development.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-09-13T07:00Z",
+      "description": "Suspended forward Shawne Williams three games.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-09-13T07:00Z",
+      "description": "Agreed to terms with guard Devin Harris on a five-year contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-09-12T07:00Z",
+      "description": "Signed center Calvin Booth.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-09-11T07:00Z",
+      "description": "Named Paul Rivers director of basketball technology.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-09-11T07:00Z",
+      "description": "Signed guard-forward Derrick Byars and center Herbert Hill.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-09-10T07:00Z",
+      "description": "Signed forward Malik Allen.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-09-10T07:00Z",
+      "description": "Acquired center Steven Hunter and forward Bobby Jones from the Philadelphia 76ers for forward Reggie Evans and the draft rights to forward Ricky Sanchez.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-09-06T07:00Z",
+      "description": "Named Matt Lloyd director of college scouting.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-08-31T07:00Z",
+      "description": "Signed guard Anthony Carter.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-08-31T07:00Z",
+      "description": "Waived forward Pops Mensah-Bonsu.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-08-30T07:00Z",
+      "description": "Named Tom Thibodeau assistant coach.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-08-28T07:00Z",
+      "description": "Signed guard D.J. Strawberry; named Vinny Del Negro assistant general manager.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-08-27T07:00Z",
+      "description": "Signed forward-center Marcin Gortat.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-08-24T07:00Z",
+      "description": "Signed center Adonal Foyle.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-08-24T07:00Z",
+      "description": "Signed forward Alexander Johnson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-08-23T07:00Z",
+      "description": "Signed forward Ian Mahinmi; released guard Vassilis Spanoulis.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-08-22T07:00Z",
+      "description": "Named Alton Lister assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-08-21T07:00Z",
+      "description": "Signed forward Stephane Lasme.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-08-21T07:00Z",
+      "description": "Exercised the contract options on forward Marvin Williams and center Shelden Williams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-08-20T07:00Z",
+      "description": "Waived guard Will Conroy.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-08-17T07:00Z",
+      "description": "Re-signed forward Andray Blatche.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-08-16T07:00Z",
+      "description": "Signed guard-forward Ime Udoka.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-08-16T07:00Z",
+      "description": "Signed guard Robert Hite.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-08-16T07:00Z",
+      "description": "Signed guard Guillermo Diaz.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-08-16T07:00Z",
+      "description": "Signed forward Jarvis Hayes.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-08-14T07:00Z",
+      "description": "Signed forward Josh Powell.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-08-14T07:00Z",
+      "description": "Named John Kuester assistant coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2007-08-13T07:00Z",
+      "description": "Signed forward Dominic McGuire.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-08-13T07:00Z",
+      "description": "Signed guard Brevin Knight.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-08-10T07:00Z",
+      "description": "Signed guard Devin Green.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-08-09T07:00Z",
+      "description": "signed guard-forward Penny Hardaway.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-08-09T07:00Z",
+      "description": "Signed guard Eddie House and center Scot Pollard.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-08-08T07:00Z",
+      "description": "Promoted Matt Tumbleson to public relations coordinator, Zach Kurtin to basketball operations coordinator and John Zisa to basketball operations assistant.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-08-08T07:00Z",
+      "description": "Named Dean Cooper vice president of player personnel and Gersson Rosas director of scouting.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-08-07T07:00Z",
+      "description": "Signed center Justin Williams to a one-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-08-07T07:00Z",
+      "description": "Signed forward Awvee Storey to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-08-07T07:00Z",
+      "description": "Promoted Pete D'Alessandro to assistant general manager.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-08-06T07:00Z",
+      "description": "Signed guard Eddie Jones.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-08-03T07:00Z",
+      "description": "Waived guard Troy Hudson.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-08-03T07:00Z",
+      "description": "Re-signed forward Chuck Hayes.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-08-03T07:00Z",
+      "description": "Signed center Kosta Perovic and forward Austin Croshere.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-08-02T07:00Z",
+      "description": "Signed guard JamesOn Curry.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-07-31T07:00Z",
+      "description": "Signed forward Nick Fazekas.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-07-31T07:00Z",
+      "description": "Acquired forward Kevin Garnett from the Minnesota Timberwolves for forwards Al Jefferson, Gerald Green and Ryan Gomes, guard Sebastian Telfair, center Theo Ratliff and two first-round picks.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-07-27T07:00Z",
+      "description": "Named Eric Blankenship vice president of marketing and Dennis Nelson director of new media; promoted Larry Meli to vice president of customer service-box office operations, Brad McCleary to director of sales, Derek Goldfarb to senior corporate sales manager, Kevin Fischer to public relations manager, Derrick Hayes to game operations manager and Shana Booker to marketing manager.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-07-27T07:00Z",
+      "description": "Signed forward Wilson Chandler.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-07-27T07:00Z",
+      "description": "Signed guard Smush Parker.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-07-27T07:00Z",
+      "description": "Signed forward Joakim Noah and center Aaron Gray.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-07-27T07:00Z",
+      "description": "Waived guard Allen Ray.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-07-26T07:00Z",
+      "description": "Signed forward Jermareo Davidson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-07-26T07:00Z",
+      "description": "Signed forwards Nick Fazekas and Brandon Bass.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-07-24T07:00Z",
+      "description": "Named Randy Ayers assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-07-24T07:00Z",
+      "description": "Re-signed cetner Sean Marks to one-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-07-24T07:00Z",
+      "description": "Signed guard Sammy Mejia.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Waived guard-forward James White.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Signed coach Lawrence Frank to a multi-year contract extension.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Signed guard-forward Desmond Mason to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Signed guard Travis Diener.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Named Keith Garnett rehabilitation and performance coordinator-assistant athletic trainer.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-07-23T07:00Z",
+      "description": "Signed forward Antonio McDyess to a contract extension.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-07-20T07:00Z",
+      "description": "Acquired forward Kurt Thomas and 2008 and 2010 first-round picks from the Phoenix Suns for a 2008 second-round pick.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-07-20T07:00Z",
+      "description": "Traded forward Kurt Thomas and two first-round picks in 2008 and 2010 to the Seattle SuperSonics for a second-round pick in 2008.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-07-20T07:00Z",
+      "description": "Signed center Jake Voskuhl to a one-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-07-20T07:00Z",
+      "description": "Signed general manager Randy Pfund to a contract extension.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-07-20T07:00Z",
+      "description": "Signed guard Derek Fisher.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-07-19T07:00Z",
+      "description": "Re-signed forward Gerald Wallace.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-07-19T07:00Z",
+      "description": "Re-signed center Chris Mihm.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-07-18T07:00Z",
+      "description": "Re-signed forward Fabricio Oberto.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-07-18T07:00Z",
+      "description": "Re-signed forward Travis Outlaw to a three-year contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-07-18T07:00Z",
+      "description": "Promoted George Galante to director of communications.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-07-18T07:00Z",
+      "description": "Re-signed forward Andrs Nocioni to a multi-year extension; signed forward Joe Smith.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-07-17T07:00Z",
+      "description": "Re-signed guard Matt Carroll.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-07-17T07:00Z",
+      "description": "Signed center Jamaal Magloire.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-07-17T07:00Z",
+      "description": "Signed center Cheick Samb.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-07-16T07:00Z",
+      "description": "Re-signed guard DeShawn Stevenson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-07-16T07:00Z",
+      "description": "Signed guard Marco Belinelli.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-07-16T07:00Z",
+      "description": "Signed guard Chucky Atkins.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-07-14T07:00Z",
+      "description": "Waived guard Hassan Adams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-07-13T07:00Z",
+      "description": "Signed guard Steve Blake to a three-year contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-07-13T07:00Z",
+      "description": "Re-signed guard-forward Vince Carter to a multi-year contract; waived forward Clifford Robinson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-07-13T07:00Z",
+      "description": "Signed forward Mike Harris.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-07-13T07:00Z",
+      "description": "Re-signed guard-forward Jerry Stackhouse.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-07-12T07:00Z",
+      "description": "Re-signed forward Matt Bonner and guard Jacque Vaughn; acquired guard Vassilis Spanoulis, a 2009 second-round pick and future considerations from the Houston Rockets for center Jackie Butler and the draft rights to forward Luis Scola.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-07-12T07:00Z",
+      "description": "Signed center Dwight Howard to a contract extension.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-07-12T07:00Z",
+      "description": "Re-signed forward Luke Walton to a multi-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-07-12T07:00Z",
+      "description": "Re-signed forward Devean George.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Signed forward Jason Kapono to a multi-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Requested waivers on guard Steve Francis; acquired forward James Jones and the draft rights to guard Rudy Fernandez from the Phoenix Suns for cash considerations.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Signed forward Grant Hill.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Signed forwards Thaddeus Young and Jason Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Acquired forward Rashard Lewis from the Seattle SuperSonics for a future conditional second-round pick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-07-11T07:00Z",
+      "description": "Re-signed guard Chauncey Billups to a multi-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-07-10T07:00Z",
+      "description": "Signed forward Jamario Moon to a two-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-07-10T07:00Z",
+      "description": "Signed forward Corey Brewer.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-07-10T07:00Z",
+      "description": "Signed forward Brandon Wallace.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-07-09T07:00Z",
+      "description": "signed forward-center Sean Williams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-07-09T07:00Z",
+      "description": "Signed guard Aaron Brooks to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-07-09T07:00Z",
+      "description": "Signed guard Acie Law and forward-center Al Horford to multi-year contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-07-07T07:00Z",
+      "description": "Signed guard Alando Tucker.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-07-07T07:00Z",
+      "description": "Waived center Kenyon Gamble and guard David Logan.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-07-07T07:00Z",
+      "description": "Signed guard Aaron Brooks to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-07-06T07:00Z",
+      "description": "Signed associate coach Mike O'Koren and assistant coaches Phil Hubbard and Wes Unseld Jr. to contract extensions.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-07-06T07:00Z",
+      "description": "Announced the resignation of vice chairman Lenny Wilkens.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-07-06T07:00Z",
+      "description": "Waived guard Giorgos Diamantopoulos and forwards Jamel Staten and Guillaume Yango.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-07-06T07:00Z",
+      "description": "Signed guards Rodney Stuckey and Arron Afflalo.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-07-05T07:00Z",
+      "description": "Signed guard-forward Nick Young and forward-center Oleksiy Pecherov.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-07-05T07:00Z",
+      "description": "Named P.J. Carlesimo coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-07-05T07:00Z",
+      "description": "Signed guards Daequan Cook and Jeremy Richardson, center Joel Anthony and forward Marcus Slaughter.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-07-05T07:00Z",
+      "description": "Signed forward Al Thornton.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-07-04T07:00Z",
+      "description": "Signed forwards Kevin Durant and Jeff Green.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-07-03T07:00Z",
+      "description": "Named Tom Thibodeau assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-07-03T07:00Z",
+      "description": "Named Brendan Malone, Patrick Ewing, Steve Clifford and Bob Beyer assistant coaches.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-07-03T07:00Z",
+      "description": "Signed guard Javaris Crittenton.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-07-03T07:00Z",
+      "description": "Singed forward Stephen Graham and guards Kareem Rush and Andre Owens.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-07-02T07:00Z",
+      "description": "Named Andy Greer assistant coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-06-30T07:00Z",
+      "description": "Announced guard-forward Vince Carter declined to exercise the option on the final year of his contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-06-29T07:00Z",
+      "description": "Waived guard Brevin Knight.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-06-29T07:00Z",
+      "description": "Waived guard Daniel Ewing; declined to exercise the contract option on forward James Singleton.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-06-29T07:00Z",
+      "description": "Waived guard Orien Greene.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-06-29T07:00Z",
+      "description": "Named Jeff Weltman director of basketball administration and Michael Curry assistant coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired the rights to forward Giorgos Printezis from the San Antonio Spurs for a 2008 second-round pick.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired forward Wally Szczerbiak, guard Delonte West, the rights to forward Jeff Green and a 2008 second-round pick from the Boston Celtics for guard Ray Allen and the rights to forward Glen Davis.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired the rights to guard Petteri Koponen from the Philadelphia 76ers for the rights to guard-forward Derrick Byars and cash considerations.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Traded the 54th overall pick in the 2007 draft to the Houston Rockets for cash considerations.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired forward Zach Randolph and guards Dan Dickau and Freddy Jones from the Portland Trail Blazers for guard Steve Francis and center Channing Frye; acquired the rights to forward Demetris Nichols from Portland for a 2008 second-round pick.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired the rights to guard Daequan Cook, a 2009 second-round pick and cash considerations from the Philadelphia 76ers for the rights to forward Jason Smith.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired the rights to forward Stanko Barac from the Miami Heat for a 2009 second-round pick.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired a 2007 second-round pick from the Orlando Magic for cash considerations; acquired the rights to forward Carl Landry from the Seattle SuperSonics for a future second-round pick and cash considerations.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Acquired the rights to forward Brandan Wright from the Charlotte Bobcats for guard-forward Jason Richardson and the rights to forward Jermareo Davidson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-06-28T07:00Z",
+      "description": "Named Paul Westphal assistant coach; acquired the rights to forward Reyshawn Terry from the Orlando Magic for the rights to forward Milovan Rakovic and cash considerations.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-06-22T07:00Z",
+      "description": "Named Johnny Davis, Gordon Chiesa and David Joerger assistant coaches.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-06-22T07:00Z",
+      "description": "Announced forward Shavlik Randolph exercised the player option on his contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-06-21T07:00Z",
+      "description": "Exercised the contract options of center Andrew Bogut and forward Charlie Villanueva.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-06-20T07:00Z",
+      "description": "Named Larry Miller president.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-06-19T07:00Z",
+      "description": "Named Dennis Lindsey vice president-assistant general manager.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-06-19T07:00Z",
+      "description": "Named John-Blair Bickerstaff assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-06-19T07:00Z",
+      "description": "Named Elston Turner, Jack Sikma, T.R. Dunn and R.J. Adelman assistant coaches.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-06-18T07:00Z",
+      "description": "Named Dell Curry and Paul Mokeski assistant coaches and John Outlaw director of pro player personnel.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-06-18T07:00Z",
+      "description": "Named Chris Wallace general manager and vice president of basketball operations.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-06-15T07:00Z",
+      "description": "Acquired guard Carlos Delfino from the Detroit Pistons for second-round picks in 2009 and 2011.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-06-15T07:00Z",
+      "description": "Named Jim Todd assistant coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-06-14T07:00Z",
+      "description": "Announced the retirement of assistant coach Tom Young.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-06-14T07:00Z",
+      "description": "Acquired forward Juwan Howard from the Houston Rockets for guard Mike James and forward Justin Reed.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-06-13T07:00Z",
+      "description": "Named Paul Mokeski assistant coach",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-06-13T07:00Z",
+      "description": "Named Chad Buchanan director of college scouting.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-06-13T07:00Z",
+      "description": "Named Dick Harter, Lester Conner, Frank Vogel, Dan Burke and Jay DeFruscio assistant coaches.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-06-12T07:00Z",
+      "description": "Signed guard Lynn Greer to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-06-12T07:00Z",
+      "description": "Announced the resignation of Rick Carlisle,  executive vice president.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-06-12T07:00Z",
+      "description": "Signed forward Leon Powe.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-06-08T07:00Z",
+      "description": "Named Jerry Sichting assistant coach.  Connecticut Sun (WNBA)- Signed guard Evanthia Maltsi.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-06-07T07:00Z",
+      "description": "Named Phil Ford, Lee Rose and Jeff Capel assistant coaches.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-06-07T07:00Z",
+      "description": "Named Stan Van Gundy coach.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-06-05T07:00Z",
+      "description": "Named Tony Brown assistant coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-06-04T07:00Z",
+      "description": "Named Cheri Hanson vice president of  communications.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-06-04T07:00Z",
+      "description": "Named Dan Smyczek director of public relations.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-06-01T07:00Z",
+      "description": "Named Mike Tomon vice president of ticketing, Marlene McDade director of partnership sales, Kristen Peifer director of corporate communications, Jim Dunleavy finance, Will Beason staff accountant, Bobby Carter senior coordinator of research and database marketing, Seth Denton arena finance and Stephanie Siedlecki graphic designer.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-06-01T07:00Z",
+      "description": "Named Billy Donovan coach.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-06-01T07:00Z",
+      "description": "Named Jim Morris special adviser to CEO Donnie Walsh.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-05-31T07:00Z",
+      "description": "Named Marc Iavaroni coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-05-31T07:00Z",
+      "description": "Named Billy Donovan coach.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-05-31T07:00Z",
+      "description": "Named Jim O'Brien coach.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-05-29T07:00Z",
+      "description": "Named Tom Penn assistant general manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-05-25T07:00Z",
+      "description": "Named Sam Vincent coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-05-23T07:00Z",
+      "description": "Named Jeff Gewirtz senior vice president and general counsel.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-05-23T07:00Z",
+      "description": "Signed coach Randy Whittman.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-05-22T07:00Z",
+      "description": "Re-signed coach Sam Mitchell to a four-year  contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-05-18T07:00Z",
+      "description": "Announced coach Jeff Van Gundy will not return next season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-05-11T07:00Z",
+      "description": "Exercised the contract option on center DeSagana Diop.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-05-10T07:00Z",
+      "description": "Signed coach Doc Rivers to a contract extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-04-27T07:00Z",
+      "description": "Named Lenny Wilkens president of basketball operations.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-04-26T07:00Z",
+      "description": "Fired assistant coach Mike Sanders.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-04-25T07:00Z",
+      "description": "Fired coach Rick Carlisle.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-04-24T07:00Z",
+      "description": "Fired coach Bob Hill and general manager Rick Sund.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-04-20T07:00Z",
+      "description": "Fired coach Eric Musselman.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Signed forward Andre Emmett and guard Antonio Burks to two-year contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Signed guard Kevin Martin, their first-round pick, to a multi-year contract; signed guard Ricky Minard.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Signed forward-center Dwight Howard, their first-round pick, to a three-year contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Signed center David Harrison, their first-round pick, to a multi-year contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Named Russell Turner assistant coach; signed forward Andris Biedrins, their first-round pick, to a multi-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-04-18T07:00Z",
+      "description": "Announced Rich Gotham has been promoted to team president.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-04-17T07:00Z",
+      "description": "President of basketball operations Jerry West announced he will step down, effective July 1.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-04-14T07:00Z",
+      "description": "Signed forward Luke Jackson to a contract for the remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-04-13T07:00Z",
+      "description": "Recalled foward Amir Johnson from Sioux Falls of the D-League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-04-13T07:00Z",
+      "description": "Signed guards Anthony Carter and Von Wafer for the remainder of the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-04-12T07:00Z",
+      "description": "Assigned guard Jordan Farmar to Los Angeles of the D-League; recalled Farmar from Los Angeles.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-04-12T07:00Z",
+      "description": "Signed center Kevin Willis for the remainder of the season.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-04-11T07:00Z",
+      "description": "Signed guard Randy Livingston.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-04-09T07:00Z",
+      "description": "Suspended forward Josh Smith two games for conduct detrimental to the team.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-04-06T07:00Z",
+      "description": "Signed guard Will Conroy; waived forward Zeljko Rebraca.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-04-04T07:00Z",
+      "description": "Signed forward Luke Jackson to a second 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-04-04T07:00Z",
+      "description": "Signed forward Kevin Pinkney to a 10-day  contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2007-04-03T07:00Z",
+      "description": "Re-signed forward Alan Henderson for the remainder of the season.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-04-03T07:00Z",
+      "description": "Recalled center Mile Ilic from Colorado of the D-League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-04-02T07:00Z",
+      "description": "Assigned guard Jordan Farmar to  Los Angeles of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-04-02T07:00Z",
+      "description": "Signed center Kevin Willis to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2007-03-31T07:00Z",
+      "description": "Assigned guard Jordan Farmar to Los Angeles of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-03-29T07:00Z",
+      "description": "Promoted Kevin Pritchard to general manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-03-29T07:00Z",
+      "description": "Recalled center Patrick O'Bryant from Bakersfield of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-03-27T07:00Z",
+      "description": "F Louis Amundson Signed for the Rest of the Season ",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-03-25T07:00Z",
+      "description": "SF Luke Jackson Signed to 10-Day Contract ",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-03-25T07:00Z",
+      "description": "C Luke Schenscher Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-03-25T07:00Z",
+      "description": "PF Rasheed Wallace League Suspension One game for 18th Technical Foul",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-03-24T07:00Z",
+      "description": "F P.J. Tucker Waived ",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-03-23T07:00Z",
+      "description": "FC Randolph Morris Signed as Free Agent ",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2007-03-21T07:00Z",
+      "description": "F Mike Hall Signed for the Rest of the Season ",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-03-18T07:00Z",
+      "description": "F Louis Amundson Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-03-17T07:00Z",
+      "description": "GF Alan Anderson Re-Signed ",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-03-16T07:00Z",
+      "description": "GF Eric Williams Waived ",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-03-16T07:00Z",
+      "description": "C Luke Schenscher Signed to 10-Day Contract ",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-03-13T07:00Z",
+      "description": "F Jeremy Richardson 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-03-13T07:00Z",
+      "description": "FC Eddie Griffin Waived ",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-03-11T08:00Z",
+      "description": "F Mike Hall Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-03-10T08:00Z",
+      "description": "FC Danny Fortson Team Suspension 2 days",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-03-10T08:00Z",
+      "description": "PG Jamaal Tinsley Team Suspension One game for conduct detrimental to team",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-03-10T08:00Z",
+      "description": "PF Rasheed Wallace League Suspension One game for 16th technical foul",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-03-08T08:00Z",
+      "description": "F Louis Amundson Signed to 10-Day Contract ",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-03-07T08:00Z",
+      "description": "SG Kobe Bryant League Suspension One game for striking M Jaric",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-03-07T08:00Z",
+      "description": "PG Lindsey Hunter League Suspension 10 games for use of phentermine",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-03-05T08:00Z",
+      "description": "G Will Conroy 10-Day Contract Expired - Player Not Re-Signed; PG Jason Hart Signed to 10-Day Contract ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-03-02T08:00Z",
+      "description": "PF Alan Henderson Waived ",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-03-02T08:00Z",
+      "description": "F Jeremy Richardson Signed to 10-Day Contract ",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-03-02T08:00Z",
+      "description": "C Jared Reiner Signed for the Rest of the Season ",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-03-01T08:00Z",
+      "description": "PG Jason Hart Waived ",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-02-28T08:00Z",
+      "description": "F Mike Hall Signed to 10-Day Contract; C James Lang Waived ",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-02-28T08:00Z",
+      "description": "G Will Conroy Signed to 10-Day Contract; G Von Wafer Waived ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-02-27T08:00Z",
+      "description": "F Louis Amundson Waived ",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-02-27T08:00Z",
+      "description": "G Will Blalock Waived; F Amir Johnson Waived ",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-02-22T08:00Z",
+      "description": "G Juan Dixon Traded for G Fred Jones",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2007-02-22T08:00Z",
+      "description": "PF Alan Henderson Traded For the rights to exchange draft picks",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-02-22T08:00Z",
+      "description": "GF Fred Jones Traded for G Juan Dixon",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-02-22T08:00Z",
+      "description": "PG Anthony Johnson Traded for Atlanta's 2007 2nd-round pick",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-02-21T08:00Z",
+      "description": "SG Doug Christie 10-Day Contract Expired - Player Not Re-Signed; G Von Wafer Signed to 10-Day Contract ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-02-20T08:00Z",
+      "description": "SG Doug Christie Team Suspension failed to report to team after the break",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-02-20T08:00Z",
+      "description": "F Jeremy Richardson 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-02-19T08:00Z",
+      "description": "C Jared Reiner Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-02-13T08:00Z",
+      "description": "GF Eric Williams Traded For Melvin Ely",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-02-13T08:00Z",
+      "description": "PF Scott Padgett Traded For J Tsakalidis",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-02-13T08:00Z",
+      "description": "FC Melvin Ely Traded For E Williams, 2nd round pick, and cash",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2007-02-13T08:00Z",
+      "description": "C Jake Tsakalidis Traded For S Padgett",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2007-02-11T08:00Z",
+      "description": "SG Doug Christie Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-02-11T08:00Z",
+      "description": "PG Darrell Armstrong League Suspension One game",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-02-10T08:00Z",
+      "description": "FC Etan Thomas Team Suspension Two games for fighting",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2007-02-09T08:00Z",
+      "description": "PG Junior Harrington Signed to 10-Day Contract; G Will Conroy 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-02-08T08:00Z",
+      "description": "C Jared Reiner Signed to 10-Day Contract ",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-02-07T08:00Z",
+      "description": "G Julius Hodge Waived ",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-02-07T08:00Z",
+      "description": "F Jeremy Richardson Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-02-06T08:00Z",
+      "description": "F Louis Amundson Signed to 10-Day Contract ",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-02-05T08:00Z",
+      "description": "PG Gary Payton League Suspension One game - talking back to officials",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-02-01T08:00Z",
+      "description": "GF Eddie Jones Signed as Free Agent; G Robert Hite Waived ",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-01-31T08:00Z",
+      "description": "SG Doug Christie Signed to 10-Day Contract ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-01-30T08:00Z",
+      "description": "GF Eddie Jones Waived; G Will Conroy Signed to 10-Day Contract ",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2007-01-30T08:00Z",
+      "description": "SG Kobe Bryant League Suspension One game for Striking M Ginobili",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2007-01-30T08:00Z",
+      "description": "G Alvin Williams 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-01-27T08:00Z",
+      "description": "FC Justin Williams Signed for the Rest of the Season ",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-01-27T08:00Z",
+      "description": "F Renaldo Major 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-01-27T08:00Z",
+      "description": "GF Dijon Thompson 10-Day Contract Expired - Player Not Re-Signed; F Jeremy Richardson Signed to 10-Day Contract ",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-01-25T08:00Z",
+      "description": "FC Andre Brown Signed for the Rest of the Season ",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-01-23T08:00Z",
+      "description": "PF Maurice Taylor Waived ",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-01-21T08:00Z",
+      "description": "F Kevin Garnett League Suspension One game for swinging at A. McDyess",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-01-20T08:00Z",
+      "description": "GF Ricky Davis Team Suspension One game for leaving bench during a game",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-01-20T08:00Z",
+      "description": "G Alvin Williams Signed to 10-Day Contract; SF Luke Jackson 10-Day Contract Expired - Player Not Re-Signed ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-01-20T08:00Z",
+      "description": "PG Baron Davis League Suspension One game for throwing punch",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-01-17T08:00Z",
+      "description": "GF Mike Dunleavy Traded One of 4 players traded to the Pacers; FC Troy Murphy Traded One of 4 players traded to the Pacers; FC Ike Diogu Traded One of 4 players traded to the Pacers; PG Keith McLeod Traded One of 4 players traded to the pacers",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2007-01-17T08:00Z",
+      "description": "FC Al Harrington Traded One of 4 players traded to the warriors; GF Stephen Jackson Traded One of 4 players traded to the warriors; PG Sarunas Jasikevicius Traded One of 4 players traded to the warriors; F Josh Powell Traded One of 4 players traded to the warriors; F Renaldo Major Signed to 10-Day Contract ",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-01-16T08:00Z",
+      "description": "FC Chris Webber Signed as Free Agent ",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2007-01-16T08:00Z",
+      "description": "GF Dijon Thompson Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-01-15T08:00Z",
+      "description": "FC Andre Brown Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-01-15T08:00Z",
+      "description": "FC Justin Williams Signed to 2nd 10-Day Contract ",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-01-15T08:00Z",
+      "description": "PG Chris Duhon Team Suspension one game",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-01-13T08:00Z",
+      "description": "F Andres Nocioni League Suspension One game for elbowing M Moore on 1/11",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2007-01-12T08:00Z",
+      "description": "FC Eddie Griffin League Suspension Five games for drug violation",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2007-01-11T08:00Z",
+      "description": "FC Chris Webber Waived remainder of contract bought out",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-01-11T08:00Z",
+      "description": "PG Earl Boykins Traded Along with Hodge and cash for S Blake; G Julius Hodge Traded Along with Boykins and cash for S Blake",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-01-11T08:00Z",
+      "description": "PG Steve Blake Traded For E Boykins, J Hodge, and cash",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2007-01-08T08:00Z",
+      "description": "SF Luke Jackson Signed to 10-Day Contract ",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2007-01-06T08:00Z",
+      "description": "GF Dijon Thompson Signed to 10-Day Contract ",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2007-01-05T08:00Z",
+      "description": "SF Roger Powell Waived ",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2007-01-05T08:00Z",
+      "description": "G Desmon Farmer Waived; C Andreas Glyniadakis Waived; FC Andre Brown Signed to 10-Day Contract ",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-01-05T08:00Z",
+      "description": "FC Justin Williams Signed to 10-Day Contract ",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2007-01-05T08:00Z",
+      "description": "SG Raja Bell League Suspension One game for incident during 1/3 game",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2007-01-05T08:00Z",
+      "description": "G Anthony Roberson Waived ",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-01-04T08:00Z",
+      "description": "Named Jared Bartie chief administrative officer and general counsel for Bobcats Sports & Entertainment.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2007-01-04T08:00Z",
+      "description": "Waived guard Desmon Farmer and center Andreas Glyniadakis.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2007-01-04T08:00Z",
+      "description": "Waived forward Steven Smith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2007-01-04T08:00Z",
+      "description": "Waived guard Chris McCray.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2007-01-03T08:00Z",
+      "description": "Acquired guard-forward Bernard Robinson from the Charlotte Bobcats for guard Jeff McInnis and cash considerations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2007-01-03T08:00Z",
+      "description": "Announced coach and president Pat Riley will take an indefinite leave of absence for health reasons; named Ron Rothstein interim coach.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2007-01-02T08:00Z",
+      "description": "Waived guard-forward Stephen Graham.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2007-01-02T08:00Z",
+      "description": "Signed guard Kelenna Azubuike from Fort Worth of the D-League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2007-01-02T08:00Z",
+      "description": "Recalled guard Julius Hodge from Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    }
+  ]
+}

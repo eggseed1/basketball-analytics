@@ -1,289 +1,255 @@
-import { getDataProvider } from "@/data/providers";
-import { fetchLeagueSchedule } from "@/data/providers/nba/schedule-client";
-import type { ScheduleGame, ScheduleLeader } from "@/data/providers/nba/schedule-client";
-import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
-import type { Game, PlayerSeason } from "@/data/types";
-import { perGame } from "@/data/providers/nba/compute-advanced";
-
-export type { ScheduleGame, ScheduleLeader };
-
-export interface HomeFeed {
-  recent: ScheduleGame[];
-  upcoming: ScheduleGame[];
-}
-
-const STARTING_FIVE = 5;
-
-function nextCanonicalSeason(season: string): string {
-  const start = Number(season.slice(0, 4));
-  const end = (start + 2) % 100;
-  return `${start + 1}-${String(end).padStart(2, "0")}`;
-}
-
-function scheduleSeasons(): string[] {
-  const currentAndPrev = defaultCanonicalSeasons(2);
-  const next = nextCanonicalSeason(currentAndPrev[0]!);
-  return [...new Set([...currentAndPrev, next])];
-}
-
 /**
- * Recent finals + upcoming scheduled games for the homepage,
- * with headshots for each team's starting five.
+ * Homepage analytics payload - leaders + plain-language findings.
+ * Optimized for first paint: DARKO is required; ESPN seasons are soft-timed
+ * so a slow byathlete crawl cannot block the whole homepage.
  */
-export async function getHomeFeed(options?: {
-  recentLimit?: number;
-  upcomingLimit?: number;
-}): Promise<HomeFeed> {
-  const recentLimit = options?.recentLimit ?? 8;
-  const upcomingLimit = options?.upcomingLimit ?? 8;
 
-  const provider = getDataProvider();
-  if (provider.name === "nba") {
-    return buildNbaHomeFeed(recentLimit, upcomingLimit);
-  }
-  return buildLocalHomeFeed(recentLimit, upcomingLimit);
-}
+import { getDarkoRatings } from "@/data/queries/historical";
+import type { DarkoRating, PlayerSeason } from "@/data/types";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import { NBADataProvider } from "@/data/providers/nba-data-provider";
+import {
+  explainDarko,
+  formatImpact,
+  formatPct,
+} from "@/lib/stat-explainers";
+import { normalizePlayerName } from "@/lib/player-name";
 
-async function buildNbaHomeFeed(
-  recentLimit: number,
-  upcomingLimit: number
-): Promise<HomeFeed> {
-  const seasons = scheduleSeasons();
-  const chunks = await Promise.all(
-    seasons.map((season) =>
-      fetchLeagueSchedule(season).catch(() => [] as ScheduleGame[])
-    )
+/** Re-export schedule types for analytics home game list compatibility. */
+export type {
+  ScheduleGame,
+  ScheduleLeader,
+} from "@/data/providers/nba/schedule-client";
+
+/** DARKO row with ESPN athlete id when name-matched for profile links. */
+export type HomeDarkoLeader = DarkoRating & {
+  /** Prefer for `/players/[id]` and headshots. */
+  profileId: string;
+};
+
+export type InsightPlayer = {
+  id: string;
+  name: string;
+};
+
+export type ComputedInsight = {
+  id: string;
+  eyebrow: string;
+  /** Metric / headline without relying on embedded names. */
+  title: string;
+  body: string;
+  players?: InsightPlayer[];
+  /** Full board with sort already lined up. */
+  boardHref?: string;
+  learnHref?: string;
+};
+
+export type HomeAnalytics = {
+  season: string;
+  darkoLeaders: HomeDarkoLeader[];
+  tsLeaders: PlayerSeason[];
+  usageStars: PlayerSeason[];
+  insights: ComputedInsight[];
+};
+
+const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
+const HOME_CACHE_VERSION = 7;
+const ESPN_SEASONS_BUDGET_MS = 3500;
+let homeCache: {
+  version: number;
+  expiresAt: number;
+  value: HomeAnalytics;
+} | null = null;
+/** In-flight dedupe so concurrent Suspense islands share one load. */
+let homeInflight: Promise<HomeAnalytics> | null = null;
+
+function qualify(rows: PlayerSeason[], minMpg = 18): PlayerSeason[] {
+  return rows.filter(
+    (p) => p.gamesPlayed >= 15 && p.minutes / p.gamesPlayed >= minMpg
   );
-  const all = chunks.flat();
-
-  const recent = all
-    .filter((g) => g.game.status === "final")
-    .sort((a, b) =>
-      b.game.gameDate === a.game.gameDate
-        ? b.game.id.localeCompare(a.game.id)
-        : b.game.gameDate.localeCompare(a.game.gameDate)
-    )
-    .slice(0, recentLimit);
-
-  const seasonPlayers = new Map<string, PlayerSeason[]>();
-  async function playersFor(season: string) {
-    if (!seasonPlayers.has(season)) {
-      seasonPlayers.set(
-        season,
-        await getDataProvider().getPlayerSeasons(season)
-      );
-    }
-    return seasonPlayers.get(season)!;
-  }
-
-  const recentEnriched = await Promise.all(
-    recent.map(async (card) => {
-      const starters = await startersFromBoxScore(
-        card.game.id,
-        card.game.homeTeamId,
-        card.game.awayTeamId
-      );
-      if (starters.length > 0) {
-        return { ...card, leaders: starters };
-      }
-      const roster = await playersFor(card.game.season);
-      return {
-        ...card,
-        leaders: mergeLeaders(
-          card.leaders,
-          teamStartingFive(
-            roster,
-            card.game.homeTeamId,
-            card.game.awayTeamId
-          )
-        ),
-      };
-    })
-  );
-
-  let upcoming = all
-    .filter(
-      (g) => g.game.status === "scheduled" || g.game.status === "in_progress"
-    )
-    .sort((a, b) =>
-      a.game.gameDate === b.game.gameDate
-        ? a.game.id.localeCompare(b.game.id)
-        : a.game.gameDate.localeCompare(b.game.gameDate)
-    )
-    .slice(0, upcomingLimit);
-
-  upcoming = await Promise.all(
-    upcoming.map(async (card) => {
-      const previewSeason =
-        card.game.gameType === "preseason"
-          ? defaultCanonicalSeasons(2)[1] ?? card.game.season
-          : card.game.season;
-      const roster = await playersFor(previewSeason);
-      return {
-        ...card,
-        leaders: mergeLeaders(
-          card.leaders,
-          teamStartingFive(
-            roster,
-            card.game.homeTeamId,
-            card.game.awayTeamId
-          )
-        ),
-      };
-    })
-  );
-
-  return { recent: recentEnriched, upcoming };
 }
 
-async function startersFromBoxScore(
-  gameId: string,
-  homeTeamId: string,
-  awayTeamId: string
-): Promise<ScheduleLeader[]> {
-  try {
-    const box = await getDataProvider().getGameBoxScore(gameId);
-    if (!box?.players?.length) return [];
-
-    const starters = box.players.filter(
-      (p) => p.playerId && Boolean(p.startPosition)
-    );
-    const pool =
-      starters.length >= 2
-        ? starters
-        : [...box.players]
-            .filter((p) => p.minutes > 0 && p.playerId)
-            .sort((a, b) => b.minutes - a.minutes);
-
-    const toLeader = (p: (typeof pool)[number]): ScheduleLeader => ({
-      playerId: p.playerId,
-      playerName: p.playerName?.trim() || `Player ${p.playerId}`,
-      teamId: p.teamId,
-      points: p.points,
-    });
-
-    const pick = (teamId: string) =>
-      pool
-        .filter((p) => p.teamId === teamId)
-        .slice(0, STARTING_FIVE)
-        .map(toLeader);
-
-    return interleave(pick(awayTeamId), pick(homeTeamId));
-  } catch {
-    return [];
-  }
-}
-
-function mergeLeaders(
-  primary: ScheduleLeader[],
-  secondary: ScheduleLeader[],
-  limit = STARTING_FIVE * 2
-): ScheduleLeader[] {
-  const seen = new Set<string>();
-  const out: ScheduleLeader[] = [];
-  for (const leader of [...primary, ...secondary]) {
-    if (!leader.playerId || seen.has(leader.playerId)) continue;
-    seen.add(leader.playerId);
-    out.push(leader);
-    if (out.length >= limit) break;
-  }
-  return out;
-}
-
-/** Likely starting five: most games started, then minutes, then scoring. */
-function teamStartingFive(
-  players: PlayerSeason[],
-  homeTeamId: string,
-  awayTeamId: string
-): ScheduleLeader[] {
-  const pick = (teamId: string) =>
-    [...players]
-      .filter((p) => p.teamId === teamId && p.gamesPlayed > 0)
-      .sort((a, b) => {
-        const gs =
-          (b.gamesStarted ?? 0) - (a.gamesStarted ?? 0) ||
-          b.minutes - a.minutes ||
-          perGame(b.points, b.gamesPlayed) - perGame(a.points, a.gamesPlayed);
-        return gs;
+function withTimeout<T>(
+  promise: Promise<T>,
+  ms: number,
+  fallback: T
+): Promise<T> {
+  return new Promise((resolve) => {
+    const timer = setTimeout(() => resolve(fallback), ms);
+    promise
+      .then((value) => {
+        clearTimeout(timer);
+        resolve(value);
       })
-      .slice(0, STARTING_FIVE)
-      .map((p) => ({
-        playerId: p.playerId,
-        playerName: p.playerName,
-        teamId: p.teamId,
-        points: Math.round(perGame(p.points, p.gamesPlayed) * 10) / 10,
-      }));
-
-  return interleave(pick(awayTeamId), pick(homeTeamId));
+      .catch(() => {
+        clearTimeout(timer);
+        resolve(fallback);
+      });
+  });
 }
 
-function interleave(
-  away: ScheduleLeader[],
-  home: ScheduleLeader[]
-): ScheduleLeader[] {
-  const out: ScheduleLeader[] = [];
-  const max = Math.max(away.length, home.length);
-  for (let i = 0; i < max; i++) {
-    if (away[i]) out.push(away[i]!);
-    if (home[i]) out.push(home[i]!);
+function espnIdByName(seasons: PlayerSeason[]): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const row of seasons) {
+    const key = normalizePlayerName(row.playerName);
+    if (!map.has(key)) map.set(key, row.playerId);
   }
-  return out;
+  return map;
 }
 
-async function buildLocalHomeFeed(
-  recentLimit: number,
-  upcomingLimit: number
-): Promise<HomeFeed> {
-  const games = await getDataProvider().getGames();
-  const players = await getDataProvider().getPlayerSeasons();
-  const sorted = [...games].sort((a, b) =>
-    b.gameDate.localeCompare(a.gameDate)
-  );
+function withProfileId(
+  row: DarkoRating,
+  byName: Map<string, string>
+): HomeDarkoLeader {
+  const espnId = byName.get(normalizePlayerName(row.playerName));
+  return {
+    ...row,
+    // Links prefer ESPN athlete ids; headshots use nbaPlayerId via NBA CDN.
+    profileId: espnId ?? row.nbaPlayerId ?? row.playerId,
+  };
+}
 
-  const finals = sorted.filter((g) => g.status !== "scheduled");
-  const scheduled = sorted.filter((g) => g.status === "scheduled");
+async function loadHomeAnalytics(): Promise<HomeAnalytics> {
+  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+  const espn = new NBADataProvider();
 
-  const upcomingGames: Game[] =
-    scheduled.length > 0
-      ? scheduled.slice(0, upcomingLimit)
-      : finals.slice(0, Math.min(3, upcomingLimit)).map((g, i) => ({
-          ...g,
-          id: `upcoming-demo-${i}`,
-          status: "scheduled" as const,
-          homeScore: 0,
-          awayScore: 0,
-          gameDate: shiftDate(g.gameDate, 7 + i),
-        }));
+  // DARKO first-class; ESPN seasons must not stall the page.
+  const [darko, seasons] = await Promise.all([
+    getDarkoRatings().catch(() => [] as DarkoRating[]),
+    withTimeout(
+      espn.getPlayerSeasons(season).catch(() => [] as PlayerSeason[]),
+      ESPN_SEASONS_BUDGET_MS,
+      [] as PlayerSeason[]
+    ),
+  ]);
 
-  const recent: ScheduleGame[] = await Promise.all(
-    finals.slice(0, recentLimit).map(async (game) => {
-      const starters = await startersFromBoxScore(
-        game.id,
-        game.homeTeamId,
-        game.awayTeamId
-      );
-      return {
-        game,
-        statusText: "Final",
-        leaders:
-          starters.length > 0
-            ? starters
-            : teamStartingFive(players, game.homeTeamId, game.awayTeamId),
+  const byName = espnIdByName(seasons);
+  const qualified = qualify(seasons, 18);
+  const efficiencyPool = qualify(seasons, 24);
+
+  const darkoLeaders = [...darko]
+    .sort((a, b) => b.impact - a.impact)
+    .slice(0, 20)
+    .map((row) => withProfileId(row, byName));
+  const tsLeaders = [...efficiencyPool]
+    .sort(
+      (a, b) =>
+        (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
+    )
+    .slice(0, 15);
+  const usageStars = [...qualified]
+    .filter((p) => p.usagePct != null && p.usagePct >= 0.24)
+    .sort(
+      (a, b) =>
+        (b.trueShootingPct ?? -Infinity) - (a.trueShootingPct ?? -Infinity)
+    )
+    .slice(0, 15);
+
+  const insights: ComputedInsight[] = [];
+
+  const top = darkoLeaders[0];
+  if (top) {
+    insights.push({
+      id: "darko-leader",
+      eyebrow: "DARKO",
+      title: `${formatImpact(top.impact)} DPM`,
+      body: explainDarko(top.impact),
+      players: [{ id: top.profileId, name: top.playerName }],
+      boardHref: "/explore/players?sort=darkoDpm",
+      learnHref: "/learn/darko",
+    });
+  }
+
+  const bestTs = tsLeaders[0];
+  if (bestTs) {
+    insights.push({
+      id: "ts-leader",
+      eyebrow: "TS%",
+      title:
+        bestTs.trueShootingPct != null && bestTs.trueShootingPct > 0
+          ? formatPct(bestTs.trueShootingPct)
+          : "—",
+      body: "Best true shooting among qualified minutes.",
+      players: [{ id: bestTs.playerId, name: bestTs.playerName }],
+      boardHref: "/explore/players?sort=trueShootingPct",
+      learnHref: "/learn/true-shooting",
+    });
+  }
+
+  const efficientVolume = usageStars[0];
+  if (efficientVolume) {
+    insights.push({
+      id: "usage-ts",
+      eyebrow: "USG × TS%",
+      title: `${
+        efficientVolume.usagePct != null && efficientVolume.usagePct > 0
+          ? formatPct(efficientVolume.usagePct)
+          : "—"
+      } usg · ${
+        efficientVolume.trueShootingPct != null &&
+        efficientVolume.trueShootingPct > 0
+          ? formatPct(efficientVolume.trueShootingPct)
+          : "—"
+      } TS`,
+      body: "High usage without giving back efficiency.",
+      players: [
+        { id: efficientVolume.playerId, name: efficientVolume.playerName },
+      ],
+      boardHref: "/explore/players?sort=usagePct",
+      learnHref: "/learn/usage",
+    });
+  }
+
+  if (darkoLeaders[1] && darkoLeaders[0]) {
+    const gap = darkoLeaders[0].impact - darkoLeaders[1].impact;
+    if (gap >= 0.4) {
+      insights.push({
+        id: "gap",
+        eyebrow: "DARKO",
+        title: `${formatImpact(gap)} between #1 and #2`,
+        body: "Largest gap at the top of the impact board.",
+        players: [
+          { id: darkoLeaders[0].profileId, name: darkoLeaders[0].playerName },
+          { id: darkoLeaders[1].profileId, name: darkoLeaders[1].playerName },
+        ],
+        boardHref: "/explore/players?sort=darkoDpm",
+        learnHref: "/learn/darko",
+      });
+    }
+  }
+
+  return {
+    season,
+    darkoLeaders,
+    tsLeaders,
+    usageStars,
+    insights: insights.slice(0, 4),
+  };
+}
+
+export async function getHomeAnalytics(): Promise<HomeAnalytics> {
+  if (
+    homeCache &&
+    homeCache.version === HOME_CACHE_VERSION &&
+    homeCache.expiresAt > Date.now()
+  ) {
+    return homeCache.value;
+  }
+  if (homeInflight) return homeInflight;
+  homeInflight = loadHomeAnalytics()
+    .then((value) => {
+      homeCache = {
+        version: HOME_CACHE_VERSION,
+        value,
+        expiresAt: Date.now() + HOME_CACHE_TTL_MS,
       };
+      return value;
     })
-  );
-
-  const upcoming: ScheduleGame[] = upcomingGames.map((game) => ({
-    game,
-    statusText: "Preview",
-    leaders: teamStartingFive(players, game.homeTeamId, game.awayTeamId),
-  }));
-
-  return { recent, upcoming };
-}
-
-function shiftDate(iso: string, days: number): string {
-  const d = new Date(`${iso}T12:00:00Z`);
-  d.setUTCDate(d.getUTCDate() + days);
-  return d.toISOString().slice(0, 10);
+    .finally(() => {
+      homeInflight = null;
+    });
+  return homeInflight;
 }

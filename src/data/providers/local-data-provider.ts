@@ -25,7 +25,7 @@ import {
 import { perGame } from "./nba/compute-advanced";
 
 /**
- * LocalDataProvider — loads the marked sample dataset and runs it through
+ * LocalDataProvider - loads the marked sample dataset and runs it through
  * transformers so the rest of the app never sees raw column names.
  *
  * Swap this for NBADataProvider / Supabase by changing DATA_PROVIDER env.
@@ -97,6 +97,12 @@ export class LocalDataProvider implements BasketballDataProvider {
         (s) => s.playerId === playerId && s.season === season
       ) ?? null
     );
+  }
+
+  async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
+    return this.playerSeasons
+      .filter((s) => s.playerId === playerId)
+      .sort((a, b) => b.season.localeCompare(a.season));
   }
 
   async getPlayerGameLog(
@@ -179,13 +185,14 @@ function synthesizeTeamSeasons(
     const ast = roster.reduce((s, r) => s + perGame(r.assists, r.gamesPlayed), 0);
     const reb = roster.reduce((s, r) => s + perGame(r.rebounds, r.gamesPlayed), 0);
     const ts =
-      roster.reduce((s, r) => s + r.trueShootingPct, 0) / roster.length;
+      roster.reduce((s, r) => s + (r.trueShootingPct ?? 0), 0) / roster.length;
     const efg =
-      roster.reduce((s, r) => s + r.effectiveFieldGoalPct, 0) / roster.length;
+      roster.reduce((s, r) => s + (r.effectiveFieldGoalPct ?? 0), 0) /
+      roster.length;
     const ortg =
-      roster.reduce((s, r) => s + r.offensiveRating, 0) / roster.length;
+      roster.reduce((s, r) => s + (r.offensiveRating ?? 0), 0) / roster.length;
     const drtg =
-      roster.reduce((s, r) => s + r.defensiveRating, 0) / roster.length;
+      roster.reduce((s, r) => s + (r.defensiveRating ?? 0), 0) / roster.length;
     const wins = Math.round(gp * 0.55);
     out.push({
       teamId: team.id,

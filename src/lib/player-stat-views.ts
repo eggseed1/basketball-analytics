@@ -113,7 +113,7 @@ export const BREF_PER_GAME_COLUMNS: BrefColumn[] = [
   {
     key: "efg",
     label: "eFG%",
-    format: (r) => formatPct(r.effectiveFieldGoalPct),
+    format: (r) => formatPct(r.effectiveFieldGoalPct ?? 0),
   },
   {
     key: "ft",
@@ -235,7 +235,7 @@ export const BREF_TOTALS_COLUMNS: BrefColumn[] = [
   {
     key: "efg",
     label: "eFG%",
-    format: (r) => formatPct(r.effectiveFieldGoalPct),
+    format: (r) => formatPct(r.effectiveFieldGoalPct ?? 0),
   },
   {
     key: "ft",
@@ -355,7 +355,7 @@ export const BREF_PER_36_COLUMNS: BrefColumn[] = [
   {
     key: "efg",
     label: "eFG%",
-    format: (r) => formatPct(r.effectiveFieldGoalPct),
+    format: (r) => formatPct(r.effectiveFieldGoalPct ?? 0),
   },
   {
     key: "ft",
@@ -437,7 +437,7 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   {
     key: "ts",
     label: "TS%",
-    format: (r) => formatPct(r.trueShootingPct),
+    format: (r) => formatPct(r.trueShootingPct ?? 0),
   },
   {
     key: "3par",
@@ -487,7 +487,7 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   {
     key: "usg",
     label: "USG%",
-    format: (r) => formatPct(r.usagePct),
+    format: (r) => formatPct(r.usagePct ?? 0),
   },
   {
     key: "ows",
@@ -616,17 +616,17 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   {
     key: "ortg",
     label: "ORtg",
-    format: (r) => formatNumber(r.offensiveRating, 1),
+    format: (r) => formatNumber(r.offensiveRating ?? 0, 1),
   },
   {
     key: "drtg",
     label: "DRtg",
-    format: (r) => formatNumber(r.defensiveRating, 1),
+    format: (r) => formatNumber(r.defensiveRating ?? 0, 1),
   },
   {
     key: "nrtg",
     label: "NRtg",
-    format: (r) => formatNumber(r.netRating, 1),
+    format: (r) => formatNumber(r.netRating ?? 0, 1),
   },
   {
     key: "pie",
@@ -698,17 +698,17 @@ export function buildSeasonSummary(row: PlayerSeason): SeasonSummaryStat[] {
     {
       key: "efg",
       label: "eFG%",
-      value: formatPct(row.effectiveFieldGoalPct),
+      value: formatPct(row.effectiveFieldGoalPct ?? 0),
     },
     {
       key: "ts",
       label: "TS%",
-      value: formatPct(row.trueShootingPct),
+      value: formatPct(row.trueShootingPct ?? 0),
     },
     {
       key: "usg",
       label: "USG%",
-      value: formatPct(row.usagePct),
+      value: formatPct(row.usagePct ?? 0),
     },
   ];
 }
@@ -772,14 +772,14 @@ export function buildEfficiencyProfile(
     {
       key: "efg",
       label: "eFG%",
-      value: row.effectiveFieldGoalPct,
-      display: formatPct(row.effectiveFieldGoalPct),
+      value: row.effectiveFieldGoalPct ?? 0,
+      display: formatPct(row.effectiveFieldGoalPct ?? 0),
     },
     {
       key: "ts",
       label: "TS%",
-      value: row.trueShootingPct,
-      display: formatPct(row.trueShootingPct),
+      value: row.trueShootingPct ?? 0,
+      display: formatPct(row.trueShootingPct ?? 0),
     },
     {
       key: "ft",

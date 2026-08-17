@@ -1,0 +1,4860 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2010,
+  "fetchedAt": "2026-08-14T20:06:24.889Z",
+  "apiCount": 441,
+  "rows": [
+    {
+      "date": "2010-12-28T08:00Z",
+      "description": "Signed G-F Alonzo Gee.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-12-27T08:00Z",
+      "description": "Waived F Jawad Williams. Assigned F Samardo Samuels to Erie (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-12-26T08:00Z",
+      "description": "Named Ralph Lewis and Charles Oakley assistant coaches.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-12-26T08:00Z",
+      "description": "Re-signed F Ronald Dupree.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-12-25T08:00Z",
+      "description": "Suspended F Andray Blatche and C JaVale McGee for one game each for conduct detrimental to the team.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-12-24T08:00Z",
+      "description": "Announced the resignation of assistant coach Stephen Silas to become an assistant coach for Charlotte. Named Lloyd Pierce assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-12-23T08:00Z",
+      "description": "Named Paul Silas coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-12-22T08:00Z",
+      "description": "Announced the resignation of coach Larry Brown.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-12-22T08:00Z",
+      "description": "Signed F Ike Diogu.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-12-21T08:00Z",
+      "description": "Recalled G Sherron Collins from Maine (NBADL).",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-12-21T08:00Z",
+      "description": "Released C Earl Barron.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-12-18T08:00Z",
+      "description": "Traded F Rashard Lewis to Washington for G Gilbert Arenas and G Vince Carter, G Mickael Pietrus and C Marcin Gortat to Phoenix for F Hedo Turkoglu, G-F Jason Richardson and F Earl Clark.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-12-15T08:00Z",
+      "description": "Acquired G Sasha Vujacic and a 2011 first-round draft pick from the Los Angeles Lakers and a 2012 first-round draft pick from Houston in a three-team trade. The Nets sent F-C Joe Smith and two second-round draft picks to Los Angeles and G Terrence Williams to Houston.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-12-15T08:00Z",
+      "description": "Traded G Jermaine Taylor and cash considerations to Sacramento Kings for a conditional 2011 second-round draft pick.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-12-14T08:00Z",
+      "description": "Assigned F DeMarre Carroll to Dakota (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-12-13T08:00Z",
+      "description": "Recalled G Jonny Flynn from Sioux Falls (NBADL).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-12-12T08:00Z",
+      "description": "Recalled F Craig Brackins from Springfield (NBADL).",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-12-09T08:00Z",
+      "description": "Assigned G Sherron Collins to Maine (NBADL).",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-12-07T08:00Z",
+      "description": "Recalled G-F Terrence Williams from Springfield (NBADL).",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-12-04T08:00Z",
+      "description": "Waived G Acie Law.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-12-03T08:00Z",
+      "description": "Signed G-F Damien Wilkins.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-12-02T08:00Z",
+      "description": "Waived G Darington Hobson. Signed C Brian Skinner.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-11-30T08:00Z",
+      "description": "Assigned F Craig Brackins to Springfield (NBADL).",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-11-29T08:00Z",
+      "description": "Recalled F Ed Davis from Erie (NBADL).",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-11-29T08:00Z",
+      "description": "Waived G Antoine Wright.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-11-26T08:00Z",
+      "description": "Assigned F Dexter Pittman to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-11-26T08:00Z",
+      "description": "Signed G John Lucas III.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-11-24T08:00Z",
+      "description": "Assigned C Cole Aldrich to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-11-24T08:00Z",
+      "description": "Signed G-F Ime Udoka.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-11-24T08:00Z",
+      "description": "Sent C Dexter Pittman to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-11-23T08:00Z",
+      "description": "Signed C Nick Collison to a multiyear contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-11-23T08:00Z",
+      "description": "Waived F Danny Green.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-11-22T08:00Z",
+      "description": "Signed G-F Alonzo Gee. Waived G Lester Hudson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-11-16T08:00Z",
+      "description": "Signed C Earl Barron. Released G Matt Janning. Assigned F Gani Lawal to Iowa (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-11-12T08:00Z",
+      "description": "Signed G Sundiata Gaines.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-11-11T08:00Z",
+      "description": "Waived G Maurice Ager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-11-09T08:00Z",
+      "description": "Assigned F Patrick Patterson to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-11-04T07:00Z",
+      "description": "Announced the retirement of C Fabricio Oberto.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-11-02T07:00Z",
+      "description": "Signed G Mike Conley to a multiyear contract extension.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-11-01T07:00Z",
+      "description": "Exercised fourth-year contract options on F Michael Beasley, F Kevin Love and C Kosta Koufos and third-year contract options on G Jonny Flynn and G Wayne Ellington. Declined to offer a contract extension to F Corey Brewer, making him a restricted free agent at the end of this season.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-11-01T07:00Z",
+      "description": "Agreed to terms with C Al Horford on a five-year contract extension.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-10-30T07:00Z",
+      "description": "Signed G Tony Parker to a multiyear contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-10-29T07:00Z",
+      "description": "Exercised the second-year option on the contract of F/C Jordan Hill and third-year option on the contract of G Courtney Lee.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-10-28T07:00Z",
+      "description": "Exercised fourth-year contract options on G O.J. Mayo and F Darrell Arthur and the third-year contract option on C Hasheem Thabeet.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-10-27T07:00Z",
+      "description": "Exercised their fourth-year contract option on G Jerryd Bayless.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-10-26T07:00Z",
+      "description": "Exercised the contract option on general manager John Hammond and signed coach Scott Skiles through the 2012-13 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-10-25T07:00Z",
+      "description": "Exercised their contract options on G Tyreke Evans, F Jason Thompson, F Donte Greene and F Omri Casspi.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-10-25T07:00Z",
+      "description": "Signed C Fabricio Oberto.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-10-25T07:00Z",
+      "description": "Exercised their third-year contract option on G Brandon Jennings. Waived F Brian Skinner.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-10-25T07:00Z",
+      "description": "Waived F Da'Sean Butler and G Patrick Beverley.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-10-25T07:00Z",
+      "description": "Exercised their fourth-year contract option on G Derrick Rose and third-year contract options on F Taj Gibson and F James Johnson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-10-23T07:00Z",
+      "description": "Signed F Jerry Stackhouse.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-10-23T07:00Z",
+      "description": "Exercised the fourth-year contract option on F J.J. Hickson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-10-23T07:00Z",
+      "description": "Acquired G Jerryd Bayless from the Portland Trail Blazers for a conditional future first-round pick.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-10-22T07:00Z",
+      "description": "Waived C Brian Zoubek.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Waived F Darius Miles and C Matt Rogers.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Waived F Adam Morrison and C Sean Marks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Exercised their fourth-year contract option on C Robin Lopez.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Exercised their third-year contract option on G Jrue Holiday and their fourth-year contract option on F-C Marreese Speights. Waived F-C Trent Plaisted and G Chris Quinn.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Exercised their option on the contract of G Ty Lawson through the 2011-12 season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Released G Dee Brown, G Rashad McCants, F-C Sean Williams and G Adam Haluska.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Waived G John Lucas III, G Kyle Weaver and F Roger Powell.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-10-21T07:00Z",
+      "description": "Waived F Stephane Lasme, F Keith Gallon and G Mario West.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-10-20T07:00Z",
+      "description": "Exercised the fourth-year contract option on G George Hill.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-10-20T07:00Z",
+      "description": "Requested waivers on G Jason Hart and F John Thomas.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-10-20T07:00Z",
+      "description": "Waived G Aaron Miles.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-10-20T07:00Z",
+      "description": "Requested waivers on G Vernon Hamilton and F Ike Diogu.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-10-20T07:00Z",
+      "description": "Released F Evan Brock, G Richard Delk and F Ricardo Marsh.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-10-19T07:00Z",
+      "description": "Waived F James Gist.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-10-19T07:00Z",
+      "description": "Exercised contract options on C Brook Lopez and G-F Terrence Williams for the 2011-12 season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-10-19T07:00Z",
+      "description": "Waived G Danny Green.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-10-18T07:00Z",
+      "description": "Exercised the contract options on G Darren Collison and F Tyler Hansbrough.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-10-18T07:00Z",
+      "description": "Waived G Antonio Anderson, F Mike Harris, F Alexander Johnson and G Jerel McNeal.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-10-15T07:00Z",
+      "description": "Waived G Javaris Crittenton.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-10-15T07:00Z",
+      "description": "Waived F-C Connor Atchley, G Joe Crawford and F Marcus Landry.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-10-14T07:00Z",
+      "description": "Waived G Kevin Palmer.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-10-14T07:00Z",
+      "description": "Named Pete D'Alessandro advisor to the executive vice president of basketball operations.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-10-13T07:00Z",
+      "description": "Waived G Cedric Jackson and F Tasmin Mitchell.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-10-13T07:00Z",
+      "description": "Signed C D.J. Mbenga.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-10-11T07:00Z",
+      "description": "Waived F Luke Jackson, G Tre Kelley and G Kenny Thomas.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-10-11T07:00Z",
+      "description": "Waived G Kirk Penney.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-10-11T07:00Z",
+      "description": "Signed C Steven Hill.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-10-11T07:00Z",
+      "description": "Waived G Chucky Atkins.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-10-11T07:00Z",
+      "description": "Waived F Vernon Goodridge.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-10-08T07:00Z",
+      "description": "Waived G James Florence.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-10-08T07:00Z",
+      "description": "Named David Patrick personnel scout.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-10-07T07:00Z",
+      "description": "Named Shareef Abdur-Rahim assistant general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-10-07T07:00Z",
+      "description": "Waived G Cheyne Gadson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-10-06T07:00Z",
+      "description": "Waived G Eddie Gill.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-10-06T07:00Z",
+      "description": "Waived F Keith Gallon.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-10-06T07:00Z",
+      "description": "Waived F Chris Richard.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-10-04T07:00Z",
+      "description": "Waived G J.R. Giddens and G Donald Sloan.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-10-04T07:00Z",
+      "description": "Agreed to terms with C Joakim Noah on a multi-year contract extension.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-10-02T07:00Z",
+      "description": "Waived C Greg Stiemsma.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-10-01T07:00Z",
+      "description": "Exercised their contract option on F Ryan Anderson through the 2011-12 season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-09-30T07:00Z",
+      "description": "Exercised their option on G/F DeMar DeRozan.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-09-30T07:00Z",
+      "description": "Requested waivers on F DerMarr Johnson.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-09-30T07:00Z",
+      "description": "Waived G Anthony Roberson and C Russell Hicks.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-09-30T07:00Z",
+      "description": "Signed F Magnum Rolle and F Lance Allred.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-09-29T07:00Z",
+      "description": "Waived F Andre Brown.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-09-29T07:00Z",
+      "description": "Exercised their third-year contract option on G Stephen Curry for the 2011-12 season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-09-28T07:00Z",
+      "description": "Signed C Matt Rogers.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-09-28T07:00Z",
+      "description": "Signed G Kirk Penney.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-09-28T07:00Z",
+      "description": "Exercised their fourth-year contract option on G Eric Gordon and their third-year option on F Blake Griffin.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-09-28T07:00Z",
+      "description": "Added G Vernon Hamilton to their training camp roster.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-09-27T07:00Z",
+      "description": "Re-signed C Kyrylo Fesenko.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-09-27T07:00Z",
+      "description": "Signed G James Florence, F-C Trent Plaisted and G Chris Quinn.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-09-27T07:00Z",
+      "description": "Signed C Jarron Collins, C Jake Voskuhl, F Marqus Blakely, G Stephen Dennis and G Jon Scheyer.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-09-27T07:00Z",
+      "description": "Named Keith Smart coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-09-27T07:00Z",
+      "description": "Signed F Brian Cardinal, G Dee Brown and G Adam Haluska.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Named Chris Whitney director of player development.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Signed G Xavier Henry and G Greivis Vasquez to multi-year contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Signed F Andray Blatche to a five-year contract extension. Exercised their fourth-year contract option on C JaVale McGee.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Named Jacque Vaughn assistant coach.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Signed G Eddie Gill and F Andre Brown.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Signed G Anthony Roberson, G Trey Johnson, C Andrew Naymick and C Russell Hicks.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Named David Griffin vice president of basketball operations, Michael Blackstone executive director of basketball operations, Derek Millender assistant strength and conditioning coach, Stephen Spiro assistant trainer and Kwame Graves-Fulgham video Coordinator. Promoted David Henderson to director of east coast scouting, Wes Wilcox to director of player personnel, Trent Redden to basketball operations manager/scout, Dan Vincent to assistant video coordinator and Larisha Whatley to player programs and team services manager.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-09-24T07:00Z",
+      "description": "Signed G Jannero Pargo and F Pops Mensah-Bonsu.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-09-23T07:00Z",
+      "description": "Signed coach Alvin Gentry to a contract extension through the 2012-13 season.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-09-23T07:00Z",
+      "description": "Traded G Willie Green and F-C Jason Smith to New Orleans for F Darius Songaila and F Craig Brackins.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-09-23T07:00Z",
+      "description": "Signed F Shawne Williams.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-09-23T07:00Z",
+      "description": "Signed F Steve Novak.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-09-22T07:00Z",
+      "description": "Signed F Jawad Williams to a one-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-09-20T07:00Z",
+      "description": "Promoted Mike Zavodsky to vice president of new corporate marketing ventures.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-09-16T07:00Z",
+      "description": "Signed F Ronald Dupree.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-09-16T07:00Z",
+      "description": "Signed F Malik Allen.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-09-15T07:00Z",
+      "description": "Signed C Francisco Elson.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-09-15T07:00Z",
+      "description": "Signed F Stephen Graham to a two-year contract. Named Doug Overton player development coach and Robby Hoenshel assistant trainer and director of sports rehabilitation.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-09-15T07:00Z",
+      "description": "Signed G-F Pape Sy.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-09-09T07:00Z",
+      "description": "Named Ron Adams, Andy Greer, Rick Brunson and Adrian Griffin assistant coaches.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-09-08T07:00Z",
+      "description": "Signed G-F Rodney Carney.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-09-08T07:00Z",
+      "description": "Signed G Mustafa Shakur.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-09-08T07:00Z",
+      "description": "Named Nick Van Exel assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-09-07T07:00Z",
+      "description": "Named Adonal Foyle director of player development.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-09-07T07:00Z",
+      "description": "Waived F Sean May.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-09-04T07:00Z",
+      "description": "Signed F Darington Hobson.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-09-01T07:00Z",
+      "description": "Signed G Delonte West.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-08-31T07:00Z",
+      "description": "Promoted Mark Cranston to head trainer. Named Carlos Daniel strength coach and Adam Tatalovich video coordinator.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-08-30T07:00Z",
+      "description": "Signed F Da'Sean Butler.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-08-27T07:00Z",
+      "description": "Signed F Patrick Ewing Jr.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-08-27T07:00Z",
+      "description": "Named Masai Ujiri executive vice president of basketball operations.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-08-26T07:00Z",
+      "description": "Named Danny Ferry vice president of basketball operations.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-08-26T07:00Z",
+      "description": "Signed F Landry Fields.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-08-24T07:00Z",
+      "description": "Signed C Kwame Brown to a one-year contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-08-19T07:00Z",
+      "description": "Signed G Earl Boykins to a one-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-08-18T07:00Z",
+      "description": "Re-signed F Tim Thomas.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-08-17T07:00Z",
+      "description": "Announced the retirement of C Adonal Foyle.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-08-16T07:00Z",
+      "description": "Signed G-F Tracy McGrady to a one-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-08-16T07:00Z",
+      "description": "Signed F Samardo Samuels.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-08-15T07:00Z",
+      "description": "Waived G Coby Karl and C Brian Butch.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-08-13T07:00Z",
+      "description": "Signed G Terrico White to a two-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-08-12T07:00Z",
+      "description": "Named Bill Branch and Steve Rosenberry assistant general managers.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-08-12T07:00Z",
+      "description": "Named Rod Thorn team president. Announced team president and general manager Ed Stefanski will remain as general manager.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-08-12T07:00Z",
+      "description": "Signed F Devin Ebanks.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-08-12T07:00Z",
+      "description": "Named Dave Severns director of player development and Dean Demopoulos, Marc Iavaroni and Robert Pack assistant coaches.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-08-11T07:00Z",
+      "description": "Announced Isiah Thomas has rescinded his consulting agreement with the team.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-08-11T07:00Z",
+      "description": "Re-signed G Shannon Brown.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-08-11T07:00Z",
+      "description": "Acquired G Darren Collison and F James Posey from New Orleans. Traded F Troy Murphy to New Jersey, who traded G Courtney Lee to Houston. Houston traded G-F Trevor Ariza to New Orleans.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-08-11T07:00Z",
+      "description": "Signed G/F Keith Bogans.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-08-10T07:00Z",
+      "description": "Named Bill Duffy chief financial and administrative officer.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-08-10T07:00Z",
+      "description": "Signed G Roger Mason Jr.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-08-10T07:00Z",
+      "description": "Signed F Luke Harangody to a two-year contract. Released C Rasheed Wallace.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-08-09T07:00Z",
+      "description": "Signed F Sean May.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-08-09T07:00Z",
+      "description": "Signed F Anthony Tolliver.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-08-06T07:00Z",
+      "description": "Agreed to terms with G Sherron Collins on a two-year contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-08-06T07:00Z",
+      "description": "Signed C Cole Aldrich.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-08-06T07:00Z",
+      "description": "Named Isiah Thomas as a consultant.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-08-05T07:00Z",
+      "description": "Signed general manager Kevin O'Connor to a contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-08-05T07:00Z",
+      "description": "Named Lance Blanks general manager.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-08-04T07:00Z",
+      "description": "Signed G Matt Janning to a multiyear contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-08-04T07:00Z",
+      "description": "Re-signed C Ben Wallace to a two-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-08-04T07:00Z",
+      "description": "Promoted Wes Wilcox to director of pro player personnel and Trent Redden to basketball operationa manager/scout.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-08-04T07:00Z",
+      "description": "Signed C Shaquille O'Neal.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Re-signed G Jason Williams.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Named Roy Rogers advance scout, Bob Ferry and Frank Zanin scouts and Danko Cvjeticanin international scouting coordinator.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Waived G Delonte West.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Signed G Eddie House to a two-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Declined to extend the contracts of vice president of basketball operations Mark Warkentien and vice president of player personnel Rex Chapman.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-08-03T07:00Z",
+      "description": "Signed G Von Wafer.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-08-02T07:00Z",
+      "description": "Signed G Armon Johnson.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-08-02T07:00Z",
+      "description": "Signed F Gani Lawal.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-08-02T07:00Z",
+      "description": "Signed G Patrick Beverly.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-30T07:00Z",
+      "description": "Signed F Josh Howard to a one-year contract and F Kevin Seraphin to a four-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-07-30T07:00Z",
+      "description": "Signed F Joey Graham.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-07-29T07:00Z",
+      "description": "Named Otis Hughley assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-07-29T07:00Z",
+      "description": "Named Paul Pressey, Chris Jent, Jamahl Mosley and Joe Prunty assistant coaches.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-07-29T07:00Z",
+      "description": "Re-signed C Jason Collins.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-07-28T07:00Z",
+      "description": "Re-signed F Rasual Butler.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-28T07:00Z",
+      "description": "Traded C David Anderson to Toronto for cash and a future second-round draft pick.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-07-28T07:00Z",
+      "description": "Named Kenny Gattison assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-07-27T07:00Z",
+      "description": "Named Bernie Bickerstaff, Bob Ociepka and Buck Williams assistant coaches.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-07-27T07:00Z",
+      "description": "Re-signed F Shavlik Randolph.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Signed F Linas Kleiza to a multiyear contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Waived F Taylor Griffin.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Named Bobby Marks assistant general manager.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Traded G Ramon Sessions and F Ryan Hollins and a future second-round pick to Cleveland for G Delonte West and G Sebastian Telfair.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Signed F/C Kurt Thomas.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Re-signed G/F Marquis Daniels.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-26T07:00Z",
+      "description": "Signed F Josh Powell.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-07-23T07:00Z",
+      "description": "Signed G James Anderson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-07-23T07:00Z",
+      "description": "Signed G-F Antoine Wright and G Pooh Jeter.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-07-23T07:00Z",
+      "description": "Signed G-F Christian Eyenga.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Signed general manager Sam Presti to a multiyear contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Signed G Gary Neal.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Signed G Carlos Arroyo.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Agreed to terms with C Theo Ratliff on a one-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Signed G Lance Stephenson to a multiyear contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-07-22T07:00Z",
+      "description": "Signed G C.J. Watson and traded him to Chicago for a 2011 second-round draft pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-07-21T07:00Z",
+      "description": "Re-signed G Richard Jefferson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-07-21T07:00Z",
+      "description": "Signed G Wesley Matthews.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-07-21T07:00Z",
+      "description": "Signed C Tony Battie.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-07-21T07:00Z",
+      "description": "Traded F Darnell Jackson and a 2011 second-round draft pick to Sacramento for F Jon Brockman.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-07-21T07:00Z",
+      "description": "Signed G Jeremy Lin.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-07-20T07:00Z",
+      "description": "Named Lon Babby president of basketball operations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-07-20T07:00Z",
+      "description": "Signed F Juwan Howard.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-20T07:00Z",
+      "description": "Signed C Brad Miller to a three-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Signed G Raja Bell to a three-year contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Named Rich Cho general manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Named Sam Mitchell, Larry Krystkowiak, Popeye Jones, John Loyer and Tom Barrise assistant coaches.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Signed G Keyon Dooling.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Re-signed C Jamaal Magloire and F James Jones.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Signed F Dirk Nowitzki.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Signed G Ronnie Brewer.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-19T07:00Z",
+      "description": "Re-signed G Nate Robinson.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-17T07:00Z",
+      "description": "Signed C Zydrunas Ilgauskas.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-17T07:00Z",
+      "description": "Agreed to terms with C Brad Miller on a three-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-07-16T07:00Z",
+      "description": "Matched Chicago's three-year offer sheet to G J.J. Redick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-07-16T07:00Z",
+      "description": "Signed C Joel Anthony and C Dexter Pittman.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-16T07:00Z",
+      "description": "Agreed to terms with G Nate Robinson.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Agreed to terms with G Raja Bell on a three-year contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Signed F Mike Miller to a five-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Announced Chris Cohan agreed to sell the franchise to Boston Celtics minority partner Joe Lacob and Mandalay Entertainment CEO Peter Guber.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Signed G Anthony Carter and F-C Shelden Williams.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Named Scottie Pippen ambassador.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-15T07:00Z",
+      "description": "Re-signed F Paul Pierce to a four-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Acquired F-G Josh Childress from Atlanta for a 2012 second-round draft pick. Acquired F Hedo Turkoglu from Toronto for G Leandro Barbosa and F Dwayne Jones.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Signed G Evan Turner.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Named Billy King general manager. Signed G Jordan Farmer, F Travis Outlaw and C Johan Petro.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Agreed to terms with G Derek Fisher.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Named Clark Kellogg vice president for player relations.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Matched Cleveland's offer sheet to G Kyle Lowry.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-07-14T07:00Z",
+      "description": "Signed G Kyle Lowry to an offer sheet.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Traded C Tyson Chandler and C Alexis Ajinca to Dallas for C Erick Dampier, F Eduardo Najera, G Matt Carroll and cash considerations.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Signed C Hilton Armstrong.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Agreed to terms with F Matt Bonner.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Signed G Anthony Morrow and traded him to New Jersey for a 2011 second-round draft pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Signed G Dominique Jones.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Signed F Kyle Korver and C Omer Asik.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-13T07:00Z",
+      "description": "Announced the resignation of Jeff Bower general manager.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-07-12T07:00Z",
+      "description": "Signed C Tiago Splitter.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-07-12T07:00Z",
+      "description": "Acquired F Michael Beasley from Miami for a 2011 and 2014 second-round draft picks and cash considerations. Signed C Darko Milicic, F Wesley Johnson and F Lazar Hayward.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-07-12T07:00Z",
+      "description": "Signed F Udonis Haslem to a five-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-07-11T07:00Z",
+      "description": "Agreed to terms with G Jordan Farmar.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-07-10T07:00Z",
+      "description": "Signed F Al-Farouq Aminu and G Eric Bledsoe.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-10T07:00Z",
+      "description": "Signed F LeBron James and traded him to Miami for two future first-round draft picks and two future second-round draft picks.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Agreed to terms with F Tyrus Thomas on a five-year contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Signed F Brian Cook.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Acquired F David Lee from the New York Knicks for F Anthony Randolph, F Kelenna Azubuike, F Ronny Turiaf and a 2012 second-round draft pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Re-signed C Brendan Haywood to a six-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Signed and traded the contract of F Hakim Warrick to Phoenix for a 2011 second-round draft pick.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-09T07:00Z",
+      "description": "Signed G Jordan Crawford.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed F Rudy Gay to a five-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed F Kevin Durant to a five-year contract. Acquired F Morris Peterson and the draft rights to C Cole Aldrich from New Orleans for the draft rights to F Craig Brackins and F Quincy Poindexter.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Signed C-F Hassan Whiteside.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed F Channing Frye to a five-year contract. Signed F Hakim Warrick to a four-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Signed G Chris Duhon to a four-year contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed G John Salmons to a five-year contract. Signed F Drew Gooden to a five-year contract. Traded the draft rights to 2010 second-round pick Jerome Jordan to New York for cash considerations. Signed F Larry Sanders to a multiyear contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Signed G Steve Blake to a four-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Signed G Randy Foye and F Ryan Gomes.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Signed F Carlos Boozer. Traded G Kirk Hinrich, the rights to F-C Kevin Seraphin and cash considerations to Washington for the draft rights to F Vladimir Veremeenko.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed F Paul Pierce to a four-year contract and G Ray Allen to a two-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-08T07:00Z",
+      "description": "Re-signed G Joe Johnson to a six-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-07-07T07:00Z",
+      "description": "Signed C DeMarcus Cousins.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-07-07T07:00Z",
+      "description": "Named Vinny Del Negro coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-06T07:00Z",
+      "description": "Agreed to terms with Vinny Del Negro to become the coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-07-06T07:00Z",
+      "description": "Signed C-F Greg Monroe.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-07-05T07:00Z",
+      "description": "Signed c-f Greg Monroe.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-07-02T07:00Z",
+      "description": "Signed G Avery Bradley.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Agreed to terms with F Amir Johnson on a five-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Signed G Gordon Hayward and F Jeremy Evans.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Named Michael Curry associate head coach and Brian James and Quin Snyder assistant coaches.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Signed G Ben Uzoh and C Brian Zoubek.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Agreed to terms with C Darko Milicic on a four-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-07-01T07:00Z",
+      "description": "Agreed to terms with F Drew Gooden on a five-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-06-30T07:00Z",
+      "description": "Announced F Richard Jefferson has opted out of the final year of his contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-06-30T07:00Z",
+      "description": "Announced C Amare Stoudemire has opted out of the final year of his contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-06-30T07:00Z",
+      "description": "Extended qualifying offers to F Anthony Morrow and G C.J. Watson, making them restricted free agents.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-06-30T07:00Z",
+      "description": "Waived F Rob Kurz and F Chris Richard.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-06-29T07:00Z",
+      "description": "Waived F Ryan Gomes.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-06-29T07:00Z",
+      "description": "Promoted Noel Gillespie to assistant coach-advance scout.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-06-29T07:00Z",
+      "description": "Traded F Yi Jianlian and cash to Washington for F Quinton Ross.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-06-29T07:00Z",
+      "description": "Waived F James Jones.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-06-29T07:00Z",
+      "description": "Announced C Yao Ming has exercised his contract option for next season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-06-28T07:00Z",
+      "description": "Named Joseph Ondrejko vice president of ticket sales.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-06-28T07:00Z",
+      "description": "Waived G Keyon Dooling.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-06-25T07:00Z",
+      "description": "Made a one-year qualifying offer to F Tyrus Thomas making him a restricted free agent.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-06-22T07:00Z",
+      "description": "Acquired F Corey Maggette and a 2010 second-round draft pick from Golden State for G Charlie Bell and C Dan Gadzuric.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-06-21T07:00Z",
+      "description": "Made a qualifying offer to F Linas Kleiza.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-06-20T07:00Z",
+      "description": "Agreed to terms with general manager Chris Wallace on a multiyear contract extension.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-06-18T07:00Z",
+      "description": "Exercised the team contract option on G Mario Chalmers.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-06-18T07:00Z",
+      "description": "Named Bob Williams president.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-06-17T07:00Z",
+      "description": "Traded C Samuel Dalembert to Sacramento for C Spencer Hawes and F Andres Nocioni.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-06-15T07:00Z",
+      "description": "General manager Steve Kerr announced he won't return after his contract expires at the end of June.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-06-13T07:00Z",
+      "description": "Named Larry Drew coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-06-10T07:00Z",
+      "description": "Agreed to terms on a three-contract with Avery Johnson to become the coach.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-06-08T07:00Z",
+      "description": "Announced F Grant Hill has exercised the one-year player option of his contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-06-04T07:00Z",
+      "description": "Announced the resignation of general manager Danny Ferry. Named Chris Grant general manager.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-06-02T07:00Z",
+      "description": "Named P.J. Carlesimo assistant coach.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-05-24T07:00Z",
+      "description": "Fired coach Mike Brown.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-05-21T07:00Z",
+      "description": "Named Doug Collins coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-05-19T07:00Z",
+      "description": "Announced the contract of general manager Kiki Vandeweghe will not be renewed.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-05-18T07:00Z",
+      "description": "Exercised the club option on F Leon Powe.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-05-17T07:00Z",
+      "description": "Named Tony Ronzone assistant general manager/player personnel.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-05-14T07:00Z",
+      "description": "Fired coach Mike Woodson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-05-04T07:00Z",
+      "description": "Exercised a team option on coach Scott Brooks, extending his contract through 2012.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-05-04T07:00Z",
+      "description": "Announced G Kelenna Azubuike exercised the player option on his contract for the 2010-11 season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-05-04T07:00Z",
+      "description": "Fired coach Vinny Del Negro.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-05-03T07:00Z",
+      "description": "Exercised a team option on coach Scott Brooks, extending his contract through 2012.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-05-03T07:00Z",
+      "description": "Announced G Kelenna Azubuike exercised the player option on his contract for the 2010-11 season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-05-03T07:00Z",
+      "description": "Fired coach Vinny Del Negro.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-04-20T07:00Z",
+      "description": "Announced Jeff Bower is stepping down as coach but will remain as general manager.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-04-13T07:00Z",
+      "description": "Signed C Greg Stiemsma.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-04-13T07:00Z",
+      "description": "Assigned F Mike Harris to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-04-12T07:00Z",
+      "description": "Picked up the option on the contract of coach Paul Westphal through the 2011-12 season.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-04-11T07:00Z",
+      "description": "Signed G Coby Karl and C Brian Butch.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-04-10T07:00Z",
+      "description": "Signed G Cedric Jackson for the remainder of the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-04-09T07:00Z",
+      "description": "Signed G-F Cartier Martin for the remainder of the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-04-09T07:00Z",
+      "description": "Signed G Manu Ginobili to a three-year contract extension.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-04-09T07:00Z",
+      "description": "Signed F Alexander Johnson. Waived F Hilton Armstrong.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-04-09T07:00Z",
+      "description": "Waived C Jerome James. Signed F Rob Kurz for the remainder of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-04-08T07:00Z",
+      "description": "Assigned G Kyle Weaver to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-04-07T07:00Z",
+      "description": "Assigned F D.J. White to Tulsa of the NBA Development League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-04-06T07:00Z",
+      "description": "Signed F Shavlik Randolph.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-04-05T07:00Z",
+      "description": "Signed F-C Dwayne Jones.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-04-05T07:00Z",
+      "description": "Waived G Cuttino Mobley.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-04-05T07:00Z",
+      "description": "Signed G Kenny Hasbrouck for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-04-04T07:00Z",
+      "description": "Signed F Joey Dorsey for the remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-04-02T07:00Z",
+      "description": "Signed C Earl Barron to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-04-02T07:00Z",
+      "description": "Signed G Kobe Bryant to a three-year contract extension.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2010-04-02T07:00Z",
+      "description": "Fined Boston F Kevin Garnett $25,000 for publicly criticizing game officials and for using inappropriate language during an interview after Wednesday's game against Oklahoma City.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2010-03-31T07:00Z",
+      "description": "Signed G Cedric Jackson to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-31T07:00Z",
+      "description": "Signed G Mustafa Shakur and assigned him to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-03-31T07:00Z",
+      "description": "Assigned F Nathan Jawai to Sioux Falls (NBADL).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-03-30T07:00Z",
+      "description": "Signed G-F Cartier Martin to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-28T07:00Z",
+      "description": "Signed F Alade Aminu to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-03-26T07:00Z",
+      "description": "Signed G Kenny Hasbrouck to a second 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-03-25T07:00Z",
+      "description": "Released G Mustafa Shakur.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-03-24T07:00Z",
+      "description": "Signed F Mike Harris for the remainder of the season. Recalled G Jermaine Taylor from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-03-23T07:00Z",
+      "description": "Signed C Zydrunas Ilgauskas for the remainder of the season. Waived F Darnell Jackson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-03-22T07:00Z",
+      "description": "Waived F Alando Tucker.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-03-22T07:00Z",
+      "description": "Signed F Reggie Williams for the remainder of the season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-03-21T07:00Z",
+      "description": "Recalled F Darnell Jackson from Erie (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-03-20T07:00Z",
+      "description": "Assigned F Darnell Jackson to Erie (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-03-19T07:00Z",
+      "description": "Signed G Shaun Livingston for the remainder of the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-18T07:00Z",
+      "description": "Signed G-F Alonzo Gee to a second 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-17T07:00Z",
+      "description": "Fired vice president of basketball operations Tom Penn.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-03-16T07:00Z",
+      "description": "Signed G Mustafa Shakur to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-03-16T07:00Z",
+      "description": "Signed G Kenny Hasbrouck to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-03-15T07:00Z",
+      "description": "Assigned F Earl Clark to Iowa (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-03-13T08:00Z",
+      "description": "Signed G Larry Hughes.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-03-13T08:00Z",
+      "description": "Signed G Garrett Temple to a 10-day contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-03-12T08:00Z",
+      "description": "Recalled G Kyle Weaver from the Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-03-12T08:00Z",
+      "description": "Suspended F Dorell Wright for two games after being charged with DUI and driving with a suspended license.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-03-12T08:00Z",
+      "description": "Signed F Reggie Williams to a second 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-03-11T08:00Z",
+      "description": "Returned G Will Conroy to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-03-09T08:00Z",
+      "description": "Signed G Shaun Livingston to a second 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-09T08:00Z",
+      "description": "Announced the team has severed ties with general manager Mike Dunleavy. Named assistant general manager Neil Olshey general manager.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-03-08T08:00Z",
+      "description": "Recalled C Hasheem Thabeet from Dakota (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-03-07T08:00Z",
+      "description": "Signed G-F Alonzo Gee to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-05T08:00Z",
+      "description": "Signed G Antonio Anderson to a second 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-03-05T08:00Z",
+      "description": "Named Lindsey Hunter player development assistant.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-03-03T08:00Z",
+      "description": "Signed G Garrett Temple to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-03-03T08:00Z",
+      "description": "Signed G Travis Diener.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-03-03T08:00Z",
+      "description": "Waived G Lindsey Hunter. Signed F Chris Richard for the remainder of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-03-02T08:00Z",
+      "description": "Announced G Allen Iverson will not return to the team this season.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-03-01T08:00Z",
+      "description": "Bought out the contract of G Mike James and waived him.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-03-01T08:00Z",
+      "description": "Waived F Michael Finley.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-03-01T08:00Z",
+      "description": "Suspended F-C Solomon Jones one game for conduct detrimental to the team. Waived G Travis Diener.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2010-02-26T08:00Z",
+      "description": "Signed G Shaun Livingston to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-02-26T08:00Z",
+      "description": "Recalled F Darnell Jackson from Erie (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-02-25T08:00Z",
+      "description": "Assigned C Hasheem Thabeet to Dakota (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-02-25T08:00Z",
+      "description": "Bought out the contract of C Zydrunas Ilgauskas and waived him.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-02-24T08:00Z",
+      "description": "Signed G Mike Harris to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-02-24T08:00Z",
+      "description": "Signed G Von Wafer to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-02-24T08:00Z",
+      "description": "Assigned F Darnell Jackson and F/G Danny Green to Erie (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-02-22T08:00Z",
+      "description": "Signed G Antonio Anderson to a 10-day contract. Waived F Matt Harpring.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-02-20T08:00Z",
+      "description": "Signed G Garrett Temple to a second 10-day contract. Waived F Brian Cook.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-02-19T08:00Z",
+      "description": "Assigned F Nathan Jawai to Sioux Falls (NBADL).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2010-02-19T08:00Z",
+      "description": "Re-assigned G Jermaine Taylor to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Acquired F Tyrus Thomas from Chicago for a future first-round draft pick, G Flip Murray and G Acie Law. Acquired F Theo Ratliff from San Antonio for a future second-round draft pick.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Traded F Dominic McGuire to Sacramento Kings for future second-round draft pick and cash.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Traded G Ronnie Brewer to Memphis for a future first-round draft pick.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Acquired G Jodie Meeks and C Francisco Elson from Milwaukee for C Primoz Brezec, G Royal Ivey and a 2010 second-round draft pick.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Acquired G-F Tracy McGrady from Houston for G-F Jared Jeffries, F Jordan Hill, a protected 2012 first-round pick and the right to exchange first-round picks in 2011. Houston received G Kevin Martin and F Hilton Armstrong from Sacramento for F Carl Landry and F Joey Dorsey. Sacramento received G Larry Hughes from New York for G Sergio Rodriguez. Traded G Nate Robinson and F Marcus Landry to Boston for G Eddie House, G J.R. Giddens, G-F Bill Walker and a future conditional second-round pick.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-02-18T08:00Z",
+      "description": "Traded G John Salmons and 2011 and 2012 second-round draft picks to Milwaukee for F Joe Alexander and F Hakim Warrick.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-02-17T08:00Z",
+      "description": "Traded F-C Darko Milicic and cash to Minnesota for F Brian Cardinal.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2010-02-17T08:00Z",
+      "description": "Acquired F Drew Gooden from Washington. Sent F Al Thornton to Washington and G Sebastian Telfair to Cleveland. Cleveland acquired F Antawn Jamison from Washington for C Zydrunas Ilgauskas.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-02-17T08:00Z",
+      "description": "Announced the resignation of president and chief executive officer Tom Wilson. Promoted chief operating officer Alan Ostfield to president and chief executive officer.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2010-02-16T08:00Z",
+      "description": "Traded G Steve Blake, F Travis Outlaw and cash to the L.A. Clippers for F-C Marcus Camby.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-02-15T08:00Z",
+      "description": "Re-signed F Chris Richard to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-02-13T08:00Z",
+      "description": "Traded F Josh Howard, F Drew Gooden, F James Singleton and G-F Quinton Ross to Washington for G-F Caron Butler, C Brendan Haywood, G DeShawn Stevenson and cash considerations.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-02-12T08:00Z",
+      "description": "Agreed to a contract extension with George Karl coach, through the 2010-11 season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2010-02-08T08:00Z",
+      "description": "Signed G Garrett Temple to a 10-day contract after recalling him from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-02-06T08:00Z",
+      "description": "Suspended F Tyrus Thomas for one game for conduct detrimental to the team.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-02-05T08:00Z",
+      "description": "Signed F Chris Richard to a 10-day contract",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-02-05T08:00Z",
+      "description": "Signed G Jason Hart to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-02-04T08:00Z",
+      "description": "Announced Mike Dunleavy will step down as head coach and will remain general manager. Named Kim Hughes interim coach.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-02-04T08:00Z",
+      "description": "Recalled G Jermaine Taylor from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-02-04T08:00Z",
+      "description": "Signed F Chris Richard to a 10-day contract",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-02-04T08:00Z",
+      "description": "Signed G Jason Hart to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2010-02-02T08:00Z",
+      "description": "Announced the resignation of assistant coach Del Harris.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-02-02T08:00Z",
+      "description": "Signed G Cedric Jackson to a second 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-02-01T08:00Z",
+      "description": "Signed G Mario West for the remainder of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-01-31T08:00Z",
+      "description": "Signed G Coby Karl to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2010-01-25T08:00Z",
+      "description": "Signed G Sundiata Gaines for the rest of the season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-01-25T08:00Z",
+      "description": "Acquired G Devin Brown from New Orleans for C Aaron Gray.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2010-01-23T08:00Z",
+      "description": "Signed G Cedric Jackson to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-01-22T08:00Z",
+      "description": "Signed G JamesOn Curry to a 10-day contract. Waived F Kareem Rush.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2010-01-22T08:00Z",
+      "description": "Signed G Mario West to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-01-20T08:00Z",
+      "description": "Recalled F Taylor Griffin from Iowa (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2010-01-19T08:00Z",
+      "description": "Signed F Jerry Stackhouse for the remainder of the season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-01-18T08:00Z",
+      "description": "Announced assistant coach Tom Barrise would become a special assistant to the president and associate coach-advance scout Jimmy Sann would replace Barrise.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-01-15T08:00Z",
+      "description": "Signed G Sundiata Gaines to a second 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-01-15T08:00Z",
+      "description": "Waived F Shawne Williams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-01-14T08:00Z",
+      "description": "Assigned G Malik Hairston to Austin (NBADL).",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2010-01-13T08:00Z",
+      "description": "Recalled F Joey Dorsey from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2010-01-12T08:00Z",
+      "description": "Signed G Mario West to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-01-11T08:00Z",
+      "description": "Aacquired F Hilton Armstrong from New Orleans for a conditional 2016 second-round pick and cash considerations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2010-01-11T08:00Z",
+      "description": "Waived F Sean Williams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-01-11T08:00Z",
+      "description": "Acquired F Eduardo Najera from New Jersey for F Kris Humphries and F Shawne Williams.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2010-01-08T08:00Z",
+      "description": "Claimed G Lester Hudson off waivers.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2010-01-08T08:00Z",
+      "description": "Recalled F D.J. White from Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2010-01-06T08:00Z",
+      "description": "Waived F Shavlik Randolph.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2010-01-06T08:00Z",
+      "description": "Waived G Coby Karl.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2010-01-05T08:00Z",
+      "description": "Released F Pops Mensah-Bonsu.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2010-01-05T08:00Z",
+      "description": "Signed G Sundiata Gaines to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2010-01-05T08:00Z",
+      "description": "Announced they have reached a buyout agreement with G Rafer Alston.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2010-01-05T08:00Z",
+      "description": "Traded G Chris Quinn to the New Jersey Nets for a second-round pick in 2012.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2010-01-05T08:00Z",
+      "description": "Requested waivers on F Othello Hunter.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2010-01-04T08:00Z",
+      "description": "Waived G Roko Ukic.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2010-01-04T08:00Z",
+      "description": "Waived C Mikki Moore.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    }
+  ]
+}

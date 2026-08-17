@@ -1,0 +1,4981 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2021,
+  "fetchedAt": "2026-08-14T20:06:33.144Z",
+  "apiCount": 452,
+  "rows": [
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed F Paris Bass to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed Gs Damyean Dotson and Matt Mooney to 10-day contracts.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed F Chris Silva, Gs Mario Chalmers and Nik Stauskas to 10-day contracts.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed G Ahmed Caver to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed G Jaysean Paige to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed G Theo Pinson and F Marquese Chriss to 10-day contracts.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-12-31T08:00Z",
+      "description": "Signed G Brandon Goodwin to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed G Dakota Mathias to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed C Jaime Echenique to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed G M.J. Walker to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed G Kyle Guy, Fs Aric Holman and Haywood Highsmith to 10-day contracts.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed G Nate Hinton to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-12-30T08:00Z",
+      "description": "Signed F Jordan Bell to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-29T08:00Z",
+      "description": "Signed F Jalen Hoard to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-12-29T08:00Z",
+      "description": "Signed G Shaquille Harrison to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-12-29T08:00Z",
+      "description": "Signed C Micah Potter to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-12-29T08:00Z",
+      "description": "Signed G Malik Newman to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-12-29T08:00Z",
+      "description": "Signed G Chris Clemons and F Cameron Oliver to 10-day contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-28T08:00Z",
+      "description": "Signed G Craig Sword to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-12-28T08:00Z",
+      "description": "Signed Gs Justin Robinson and Trayvon Palmer to 10-day contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-12-28T08:00Z",
+      "description": "Signed F Feron Hunt to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-12-28T08:00Z",
+      "description": "Signed F Justin Tillman to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed F Xavier Sneed to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed G Jordan Goodwin to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed F Emanuel Terry to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed G Hassani Gravett and F Admiral Schofield to 20-day contracts.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed G Langston Galloway to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed F Greg Monroe to a 10-day contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed G Keifer Sykes to a rest of season contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-12-27T08:00Z",
+      "description": "Signed G Chaundee Brown Jr. to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-26T08:00Z",
+      "description": "Signed Gs Brandon Williams, Jarron Cumberland and F Cameron McGriff to 10-day contracts.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-12-26T08:00Z",
+      "description": "Signed F Deividas Sirvydis to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-12-26T08:00Z",
+      "description": "Signed F Alfonzo McKinnie to a rest-of-season contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-26T08:00Z",
+      "description": "Signed G Justin James and F Anthony Tolliver to 10-day contracts.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-12-25T08:00Z",
+      "description": "Signed C Norvel Pelle and F Al-Farouq Aminu to 10-day contracts.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-12-25T08:00Z",
+      "description": "Signed Gs Cat Barber and Malik Ellison to 10-day contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-24T08:00Z",
+      "description": "Signed C Daniel Oturu to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-12-24T08:00Z",
+      "description": "Signed F Stanley Johnson and G Darren Collison to 10-day contracts.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed F Danuel House Jr. to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed C Javin DeLaurier to a 10-day contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed G Quinndary Weatherspoon to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed F Cheick Diallo to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed Gs Charlie Brown Jr. and Brandon Knight to 10-day contracts.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed F Ersan Ilyasova and G Mac McClung to 10-day contracts.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-23T08:00Z",
+      "description": "Signed G Wes Iwundu to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed G Jordan Schakel to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed G Emmanuel Mudiay and Ade Murkey to 10-day contracts.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed G Tyler Johnson to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed F Zylan Cheatham to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed F George King to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed F Trevon Scott to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed F Ersan Ilyasova and G Mac McClung to 10-day contracts.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed G Joe Johnson to a 10-day contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-12-22T08:00Z",
+      "description": "Signed Fs Lance Stephenson and Malcolm Hill to 10-day contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed G Jordan Schakel to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed G Emmanuel Mudiay to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed G Tyler Johnson to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed F Geroge King to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed F Trevon Scott to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-12-21T08:00Z",
+      "description": "Signed Fs Lance Stephenson and Malcolm Hill to 10-day contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed D Freddie Gillespie and G Tim Frazier to 10-day contracts.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed Gs Matt Mooney and Damyean Dotson to 10-day contracts.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed F Wenyen Gabriel to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed F Chris Silva and G Rayjon Tucker to 10-day contracts.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed F Marquese Chriss to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed F Justin Anderson and C Luke Kornet to 10-day contracts.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed F Alfonzo McKinnie to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed G Jared Harper to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-12-20T08:00Z",
+      "description": "Signed G C.J. Miles to a 10-day contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-12-18T08:00Z",
+      "description": "Signed G Tyler Hall to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-12-18T08:00Z",
+      "description": "Re-signed G Garrison Mathews to a rest-of-season contract. Signed G Trevelin Queen to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-12-18T08:00Z",
+      "description": "Signed F Justin Jackson to a 10-day contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-12-17T08:00Z",
+      "description": "Signed Fs Admiral Schofield, Aleem Ford, B.J. Johnson and G Hassani Gravett to 10-day contracts.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-12-17T08:00Z",
+      "description": "Named Craig Hughner director, media relations.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-12-16T08:00Z",
+      "description": "Signed G Langston Galloway to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-12-15T08:00Z",
+      "description": "Waived G DeJon Jarreau.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-12-13T08:00Z",
+      "description": "Assigned F Gabriel Deck to the Oklahoma City Blue of the G League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-12-10T08:00Z",
+      "description": "Signed F Alfonzo McKinnie to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-09T08:00Z",
+      "description": "Signed G Stanley Johnson to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-12-03T08:00Z",
+      "description": "Fired general manager and president of basketball operations Neil Olshey. Promoted Joe Cronin to interim general manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-12-03T08:00Z",
+      "description": "Signed F Gary Clark to a rest-of-season contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-11-20T08:00Z",
+      "description": "Transferred two-way G McKinley Wright IV from Iowa.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-11-18T08:00Z",
+      "description": "Recalled G Leandro Bolmaro from Iowa (NBA G League).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-11-09T08:00Z",
+      "description": "Recalled G Leandro Bolmaro from Iowa.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-11-06T07:00Z",
+      "description": "Assigned G Leandro Bolmaro and transferred F Nathan Knight to Iowa (NBA G League).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-11-03T07:00Z",
+      "description": "Placed F Herbert Jones on injured reserve under concussion protocol.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-10-30T07:00Z",
+      "description": "Recalled G Leandro Bolmaro from Iowa (G League).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-28T07:00Z",
+      "description": "Assigned G Leandro Bolmaro to Iowa (NBA G League).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-26T07:00Z",
+      "description": "Signed G Mychal Mulder to a two-way contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-10-26T07:00Z",
+      "description": "Transferred G McKinley Wright IV to Iowa an NBA G League affiliate.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-21T07:00Z",
+      "description": "Signed F Ishmail Wainwright to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-10-20T07:00Z",
+      "description": "Re-signed C Jonas Valanciunas to a veteran extension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-10-19T07:00Z",
+      "description": "Exercised third-year options on G Anthony Edwards and F Jaden McDaniels.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-19T07:00Z",
+      "description": "Signed G Gary Payton II.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-10-17T07:00Z",
+      "description": "Requested waivers on F Javin DeLaurier and G Tremont Waters.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Kris Dunn and David Stockton and F Matt Hurt.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived G Ashton Hagans and Breein Tyree and F Ish Wainright.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived C Jaime Echenique and Gs Jordan Goodwin and Devontae Shuler.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Announced the contract conversion for F Malik Fitts to a two-way contract. Waived F Nino Johnson.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Fs Mamadi Diakite, Justin Jaworski and Olivier Sarr and G Zavier Simpson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived F Emanuel Terry.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived G Chasson Randle.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived G Shaquille Harrison.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Re-signed C Wendell Carter Jr. to a rookie scale extension. Waived Gs Jeff Dowtin and Hassani Gravett and Fs B.J. Johnson and Admiral Schofield.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Brandon Knight, Brandon Goodwin and M.J. Walker and F Aamir Simms.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Announced the contract conversion for Malik Fitts to a two-way contract. Waived F Devontae Cacok.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived F Vincent Edwards.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Jalen Lecque and Tremont Waters, F Wenyen Gabriel and C Javin DeLaurier.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Javonte Smart, Dru Smith and D.J. Stewart and F Micah Potter.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Fs Justin Anderson and Bennie Boatwright, C Derek Culver, Gs Nate Hinton, Keifer Sykes and Terry Taylor.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Dante Exum and Christian Vital.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived F/C Jordan Bell, Gs Avery Bradley, Mychal Mulder and Gary Payton II, G/F L.J. Figueroa and F Axel Toupane.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Jared Cunningham, Cassius Stanley and Derrick Walton Jr.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived G Nik Stauskas.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Carlik Jones and Tyrell Terry, Fs Reron Hunt, Justin Jackson and E.J. Onu.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Announced the contract conversion for C Tacko Fall and G R.J. Nembhard to two-way contracts. Waived Gs Mitch Ballock, Kyle Guy and Justin James.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Fs Stanley Johnson and Troy Baxter Jr. Announced a contract conversion for F Tyler Cook to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-10-16T07:00Z",
+      "description": "Waived Gs Chris Clemons, Theo Pinson and Garrison Mathews and F Luke Kornet.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-10-15T07:00Z",
+      "description": "Waived F Brian Bowen II, Gs Matt Lewis, Isaiah Miller and F Chris Silva. Signed F Vince Edwards.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-10-15T07:00Z",
+      "description": "Signed general manager Jon Horst to a multi-year contract extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived G Jalen Crutcher and F Cameron McGriff.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived Fs Sean McDermott and Romeo Weems.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived F Derrick Alston Jr., C Marques Bolden and G MaCio Teague.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived G Melvin Frazier Jr.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived Gs Jordan Burns and Damyean Dotson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived G Ade Murkey and F Damien Jefferson.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived Gs Dwayne Bacon and Myles Powell.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived Gs Elijah Bryant and Rayjon Weems.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived G Frank Mason.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Re-signed G Armoni Brooks. Waived F Tyler Bey.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-10-14T07:00Z",
+      "description": "Waived G Bryce Alford.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived Fs Freddie Gillespie and Reggie Perry.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived C Jay Huff and G Jordan Schakel.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived G Jared Brownridge and F Braxton Key.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived F Jemerrio Jones.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Converted the contract of G Armoni Brooks to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived G Quinndary Weatherspoon. Signed G/F L.J. Figueroa.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Signed C Ed Davis.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-10-13T07:00Z",
+      "description": "Waived Fs Wenyen Gabriel, Malcolm Hill and C James Banks III.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Waived F Jaylen Hoard.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Waived Gs Matt Coleman III and D.J. Steward.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Waived C Jeremiah Tilmon.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Waived G Tyler Hall.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Signed F Sekou Doumbouya to a two-way contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Waived F Mfiondu Kabengele and G Brodric Thomas.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-10-12T07:00Z",
+      "description": "Signed G Ibi Watson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived G Rob Edwards.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived F Luka Samanic.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived Gs Bryce Brown and Josh Gray.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived F Johnny O'Bryant III.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Signed G Quinndary Weatherspoon.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived C Daniel Oturu and G Ethan Thompson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-10-11T07:00Z",
+      "description": "Waived C Jahlil Okafor.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-10-10T07:00Z",
+      "description": "Waived G Edmond Sumner.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-10-10T07:00Z",
+      "description": "Waived G Langston Galloway.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-10-10T07:00Z",
+      "description": "Waived F Matt Ryan.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-10-08T07:00Z",
+      "description": "Waived G D.J. Carton and F Xavier Sneed.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-10-08T07:00Z",
+      "description": "Waoved G Shaq Buchanan.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-10-07T07:00Z",
+      "description": "Waived C Jon Teske.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-10-07T07:00Z",
+      "description": "Waived F Sekou Doumbouya.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-10-07T07:00Z",
+      "description": "Waived G A.J. Lawson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-10-06T07:00Z",
+      "description": "Acquired G Edmond Sumner and a draft consideration from Indiana",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-10-06T07:00Z",
+      "description": "Acquired F Sekou Doumbouya and a draft consideration from Brooklyn. Waived G Khri Thomas.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-09-30T07:00Z",
+      "description": "Waived F Haywood Highsmith.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-09-30T07:00Z",
+      "description": "Named Leandro Barbosa, Jacob Rubin and Kris Weems player development coaches.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-09-29T07:00Z",
+      "description": "Signed G Elijah Bryant and F Johnny O'Bryant.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-09-29T07:00Z",
+      "description": "Waived F Deividas Sirvydis.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-09-29T07:00Z",
+      "description": "Re-signed F Michael Porter Jr. to a rookie scale extension.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Waived G Charlie Brown Jr.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Signed F Javin DeLaurier and G Tremont Waters.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Signed G Austin Reaves.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Waived G Anthony Tarke.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Re-signed F Aaron Gordon to a veteran extension.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-09-27T07:00Z",
+      "description": "Signed C Daniel Oturu.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-09-26T07:00Z",
+      "description": "Signed G Chasson Randle.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Waived G Carsen Edwards and C Daniel Oturu.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Named Michael Ruffin assistant coach and Jamal Gross and Corey Vinson player development coaches/video coordinators.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Signed C Charles Bassey.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Waived F Mamadi Diakite.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Waived F Matt Hurt.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-09-24T07:00Z",
+      "description": "Signed C Luka Garza. Converted the contract of F Jamarko Pickett to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-09-23T07:00Z",
+      "description": "Converted the contract of F Yves Pons to a two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-09-23T07:00Z",
+      "description": "Re-signed G Keljin Blevins to a two-way contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-09-20T07:00Z",
+      "description": "Signed G Xavier Sneed.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-09-20T07:00Z",
+      "description": "Signed Fs Brian Bowen II, Chris Silva and Gs Matt Lewis and Isaiah Miller.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-09-18T07:00Z",
+      "description": "Signed G Leandro Bolmaro.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-09-16T07:00Z",
+      "description": "Waived F Jarrell Brantley.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Traded F Juancho Hernangomez to Boston in exchange for Gs Carsen Edwards, Chris Dunn and a draft consideration. Waived C Marc Gasol.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Signed G Paul Watson to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Re-signed F Jarred Vanderbilt and G Jordan Mclaughlin.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Signed G Justin Robinson to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Announced the hiring of David Fizdale and John Lucas III as assistant coaches.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-09-15T07:00Z",
+      "description": "Re-signed G Brodric Thomas to a two-way contract. Waived F Trevon Scott.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-09-14T07:00Z",
+      "description": "Re-signed G Jordan McLaughlin.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-09-14T07:00Z",
+      "description": "Signed F Caleb Martin to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-09-10T07:00Z",
+      "description": "Signed F Paul Millsap.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-09-08T07:00Z",
+      "description": "Signed Fs Tyler Cook, Alize Johnson and Stanley Johnson, and Gs Matt Thomas and Ethan Thompson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-09-07T07:00Z",
+      "description": "Re-signed F Keita Bates-Diop. Signed G Joe Wieskam to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-09-07T07:00Z",
+      "description": "Signed F Chandler Hutchinson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-09-07T07:00Z",
+      "description": "Waived C DeAndre Jordan.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-09-04T07:00Z",
+      "description": "Acquired F Sekou Doumbouya and C Jahill Okafor from Detroit in exchange for C DeAndre Jordan and a draft consideration.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-09-03T07:00Z",
+      "description": "Signed C LaMarcus Aldridge.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-09-03T07:00Z",
+      "description": "Waived F E.J. Onu.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-09-02T07:00Z",
+      "description": "Signed G Marcus Garrett to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-08-31T07:00Z",
+      "description": "Signed G Rajon Rondo.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-08-30T07:00Z",
+      "description": "Signed G Grant Riller to a two-way contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-30T07:00Z",
+      "description": "Signed G Austin Rivers to a multi-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-08-30T07:00Z",
+      "description": "Re-signed C Clint Capela to a veteran extension.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-28T07:00Z",
+      "description": "Waived G Rajon Rondo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-28T07:00Z",
+      "description": "Acquired F Lauri Markkanen from Chicago Bulls.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-08-28T07:00Z",
+      "description": "Acquired F Derrick Jones Jr. from Portland along with a draft consideration. Acquired a draft consideration from Portland.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-08-27T07:00Z",
+      "description": "Waived F Anthony Tolliver.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-27T07:00Z",
+      "description": "Waived G Nate Hinton.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-08-26T07:00Z",
+      "description": "Waived G Ty-Shon Alexander.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-08-26T07:00Z",
+      "description": "Re-signed F Julius Randle to a veteran extension.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-08-26T07:00Z",
+      "description": "Re-signed G Skylar Mays to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-25T07:00Z",
+      "description": "Traded G Patrick Beverley to Minnesota in exchange for Gs Jarrett Culver and F Juancho Hernangomez.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-25T07:00Z",
+      "description": "Signed G Bryn Forbes.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-08-25T07:00Z",
+      "description": "Named Nick Van Exel assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-24T07:00Z",
+      "description": "Re-signed G Terry Rozier to a veteran extension.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-08-24T07:00Z",
+      "description": "Signed G DeJon Jarreau to a two-way contract. Waived C Amida Brimah.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-24T07:00Z",
+      "description": "Re-signed C Robert Williams III to a rookie scale extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-08-23T07:00Z",
+      "description": "Re-signed F Moritz Wagner.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-08-23T07:00Z",
+      "description": "Re-signed G Josh Richardson to a veteran extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-08-20T07:00Z",
+      "description": "Signed F Torrey Craig.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-19T07:00Z",
+      "description": "Signed C Jock Landale.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-08-19T07:00Z",
+      "description": "Re-signed G Hamidou Diallo.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-08-19T07:00Z",
+      "description": "Signed C Tony Bradley. Re-signed F Javonte Green. Re-signed G Devon Dotson to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-08-18T07:00Z",
+      "description": "Waived G Rayjon Tucker.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-18T07:00Z",
+      "description": "Signed F Daulton Hommes to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-08-17T07:00Z",
+      "description": "Re-signed C Joel Emblid to a veteran extension.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-17T07:00Z",
+      "description": "Acquired G Evan Fournier and and two second-round draft picks from Boston in a sign-and-trade. Signed G Alec Burks.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-08-17T07:00Z",
+      "description": "Signed C Luke Garza and F Chris Smith to two-way contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-08-16T07:00Z",
+      "description": "Traded G Eric Bledsoe to Los Angeles Clippers in exchange for C Daniel Oturu, Gs Patrick Beverley and Rajon Rondo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-16T07:00Z",
+      "description": "Signed C JaVale McGee.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-08-16T07:00Z",
+      "description": "Signed F Kessler Edwards to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-08-16T07:00Z",
+      "description": "Signed C Luka Garza and F Chris Smith to two-way contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-08-16T07:00Z",
+      "description": "Signed F Herbert Jones. Re-signed C Willy Hernangomez.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-08-13T07:00Z",
+      "description": "Signed F Matt Hurt to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-08-13T07:00Z",
+      "description": "Re-signed G Didi Louzada.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-08-13T07:00Z",
+      "description": "Signed C Enes Kanter and G Dennis Schroder.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-08-12T07:00Z",
+      "description": "Signed Killian Tillie to a two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-12T07:00Z",
+      "description": "Signed F Greg Brown III.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-08-11T07:00Z",
+      "description": "Signed G Jared Butler.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-08-11T07:00Z",
+      "description": "Re-signed F Mike Muscala.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-08-11T07:00Z",
+      "description": "Signed F Isaiah Jackson to a rookie scale contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-11T07:00Z",
+      "description": "Re-signed G Will Barton.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-08-11T07:00Z",
+      "description": "Traded F Al-Frouq Amino to San Antonio in exchange for G DeMar DeRozan, F Thaddeus Young and a draft consideration. Re-signed G Javonte Green. Signed C Tony Bradley.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed F Yves Pons.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed F Sam Dekker.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Named Nick Collison special assistant to executive vice president and general manager. Signed F Jeremiah Robinson-Eart.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed G Elfrid Payton.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed G Patty Mills.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed G Andre Iguodala.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Re-signed G Frank Jackson. Signed Gs Cory Joseph and Rodney McGruder.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Re-signed F Luka Doncic to a rookie scale extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-08-10T07:00Z",
+      "description": "Signed G Alex Caruso.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Re-signed F Frank Kaminsky.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Re-signed G Furkan Korkmaz.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Signed F Jericho Sims to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Re-signed F Blake Griffin.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Re-signed G Tim Hardaway Jr and C Boban Marjanovic. Signed G Sterling Brown.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-08-09T07:00Z",
+      "description": "Signed C Gorgui Dieng.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-08T07:00Z",
+      "description": "Signed Gs Josh Giddey and Tre Mann.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired F Wes Iwundu and a draft consideration from New Orleans. Signed F Kelly Oubre Jr.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired C Steven Adams, G Eric Bledsoe and a draft consideration from New Orleans. Acquired G Sam Merrill and a draft consideration from Milwaukee.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Re-signed G Raul Neto.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Re-signed F Jarrell Brantley. Acquired F Eric Paschall from Golden State.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Signed G Danny Green.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired G Grayson Allen from Memphis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Re-signed F Jimmy Butle. Signed F P.J. Tucker.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired a draft consideration from Utah Jazz.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired C Jonas Valanciunas from Memphis and G Devonte' Graham from Charlotte.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-08-07T07:00Z",
+      "description": "Acquired G Delon Wright as part of a three-team transaction with the Boston and Sacramento with Kris Dunn, Bruno Fernando and a 2023 second round pick go to Boston, while Sacramento receives Tristan Thompson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Acquired F Mason Plumlee from Detroit. Signed F J.T. Thor.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed C Khen Birch and G Kyle Lowry. Acquired F Precious Achiuwa and G Goran Dragic from Miami.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Acquired G Spencer Dinwiddie from Brooklyn; G Aaron Holiday, the rights to F Isaiah Todd and cash considerations from the Indiana Pacers; Fs Kyle Kuzma, Montrezl Harrell and G Kentavious Caldwell-Pope from the Los Angeles Lakers in a five-team trade.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed G Mike Conley. Signed C Hassan Whiteside and F Rudy Gay.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Waived G Kemba Walker. Re-signed G Shai Gilgeous-Alexander to a rookie scale extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed F Richaun Holmes and C Hassan Whiteside.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed G Ben McLemore. Re-signed G Norman Powell.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Acquired G Landry Shamet from Brooklyn. Re-signed Gs Cameron Payne, Chris Paul and F Abdel Nader.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed F Georges Niang.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed C Robin Lopez.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed G Quentin Grimes to a rookie scale contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Acquired G Jevon Carter from Phoenix. Signed F James Johnson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed F Bobby Portis. Signed Gs George Hill, Rodney Hood and F Semi Ojeleye.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed Gs Max Strus, Gabe Vincent, F Duncan Robinson and C Dewayne Dedmon. Acquired G Kyle Lowry from Toronto.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed C Dwight Howard, Gs Wayne Ellington, Kendrick Nunn, Malik Monk and F Trevor Ariza. Re-signed G Talen Horton-Tucker.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed G T.J. McConnell.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed C Alperen Sengun. Signed G Josh Christopher to a rookie scale contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed Fs Nemanja Bjelica and Otto Porter Jr.. Re-signed G Stephen Curry to a veteran extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed Fs Isaiah Livers and Trey Lyles. Re-signed G Saben Lee. Waived G Rodney McGruder. Signed F Kelly Olynyk.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Signed G Reggie Bullock.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed C Jarrett Allen.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-08-06T07:00Z",
+      "description": "Re-signed G Trae Young to a rookie scale extension. Re-signed F John Collins and G Lou Williams.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Waived G Caleb Homesley.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed G Davion Mitchell.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed G Cam Thomas.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed G Jaden Springer.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed G Duane Washington Jr. to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed G Moses Moody.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-05T07:00Z",
+      "description": "Signed F Jalen Johnson. Signed G Sharife Cooper to a two-way contract. Re-signed F Solomon Hill.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Waived C Aron Baynes.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed F Corey Kispert.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed F Cody Zeller.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed G Jaden Springer and C Andre Drummond.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed F Nathan Knight to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Waived F Alfonzo McKinnie.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed F Chris Duarte to a rookie scale contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed G Jalen Green.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Waived F Alen Smailagic.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-04T07:00Z",
+      "description": "Signed F Jalen Johnson to a Rookie Scale Contract. Signed G Sharife Cooper to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed F Arnoldas Kulboka and G Scottie Lewis to two-way contracts. Signed C Kai Jones and G James Bouknight to Rookie Scale Contracts.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Waived Gs DeAndre' Bembry, Rodney Hood and Paul Watson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Re-signed G Rayjon Tucker to a two-way contract. Waived G George Hill.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed G Jalen Suggs and F Franz Wagner to Rookie Scale Contracts.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed F Sandro Mamukelashvili to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed Gs Joel Ayayi and Austin Reaves to two-way contracts.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed F Jonathan Kuminga to a Rookie Scale Contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Re-signed G Nate Hinton to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2021-08-03T07:00Z",
+      "description": "Signed C Evan Mobley to a Rookie Scale Contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-08-02T07:00Z",
+      "description": "Named Trevor Gleeson, Nathaniel Mitchell and Earl Watson assistant coaches.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-08-02T07:00Z",
+      "description": "Announced Doug Christie has been hired as assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-07-30T07:00Z",
+      "description": "Acquired F/C Derrick Favors and a future first-round draft pick from Utah in exchange for a 2027 second-round draft pick and cash considerations.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-07-08T07:00Z",
+      "description": "Announced the hiring of Nate McMillan as the full-time head coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-06-18T07:00Z",
+      "description": "Acquired G Kemba Walker from Boston in exchange for Cs Al Horford, Moses Brown and a 2023 second-round draft pick.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-06-06T07:00Z",
+      "description": "Signed G Gary Payton II to a rest-of-season contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-06-02T07:00Z",
+      "description": "Named John Beilein senior advisor/player development.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-05-15T07:00Z",
+      "description": "Signed G Charlie Brown Jr. to a rest-of-season contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-05-15T07:00Z",
+      "description": "Claimed G DaQuan Jeffries off waivers from Houston.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-05-14T07:00Z",
+      "description": "Signed C Omer Yurtseven to a remainder-of-the-season contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-05-14T07:00Z",
+      "description": "Signed G Khyri Thomas to a remainder-of-the-season contract. Signed F Cameron Reynolds to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-05-14T07:00Z",
+      "description": "Signed F Anderson Varejao to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-05-13T07:00Z",
+      "description": "Signed G Mike James to a remainder-of-the-season contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-05-13T07:00Z",
+      "description": "Signed G Elijah Bryant to a remainder-of-the-season contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-05-13T07:00Z",
+      "description": "Waived G DaQuan Jeffries.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-05-13T07:00Z",
+      "description": "Re-signed F Juan Toscano-Anderson to a remainder-of-the-season contract. Signed F Jordan Bell to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-05-12T07:00Z",
+      "description": "Signed F Ignas Brazdeikis to a remainder-of-the-season contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-05-12T07:00Z",
+      "description": "Waived F Rodions Kurucs.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-05-11T07:00Z",
+      "description": "Signed F Gary Clark to a two-way contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-05-10T07:00Z",
+      "description": "Signed F Cameron Oliver to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-05-07T07:00Z",
+      "description": "Signed G Khyri Thomas to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-05-07T07:00Z",
+      "description": "Signed F Naji Marshall to a remainder-of-the season contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-05-05T07:00Z",
+      "description": "Signed G Charlie Brown.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-05-04T07:00Z",
+      "description": "Signed G Sindarius Thornwell to a two-way contract. Waived G Devin Cannady.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-05-04T07:00Z",
+      "description": "Signed F Anderson Varejo to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-05-03T07:00Z",
+      "description": "Signed G Jared Harper to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-05-03T07:00Z",
+      "description": "Signed G Mike James to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-05-01T07:00Z",
+      "description": "Signed F Mfiondu Kabengele for the remainder of the season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-04-30T07:00Z",
+      "description": "Signed G Austin Rivers to contract for the remainder of the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-04-28T07:00Z",
+      "description": "Signed F Freddie Gillespie to a contract for the remainder of the season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-04-28T07:00Z",
+      "description": "Waived F Chris Silva.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-04-28T07:00Z",
+      "description": "Signed F Rondae Hollis-Jefferson to a contract for the remainder of the season.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-04-28T07:00Z",
+      "description": "Signed G Jeremiah Martin to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-04-27T07:00Z",
+      "description": "Signed F Moritz Wagner to a contract for remainder of the season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-25T07:00Z",
+      "description": "Signed G Charlie Brown Jr. to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-04-24T07:00Z",
+      "description": "Signed G Tim Frazier for the remainder of the season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-04-23T07:00Z",
+      "description": "Signed C Donta Hall to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-23T07:00Z",
+      "description": "Re-signed G Jared Harper to a 10-day contract. Signed G Myles Powell to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-04-23T07:00Z",
+      "description": "Waived C LaMarcus Aldridge. Signed G Mike James to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-04-23T07:00Z",
+      "description": "Signed C Amida Brimah to a two-way contract. Waived F Brian Bowen II.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-04-22T07:00Z",
+      "description": "Signed F Anthony Tolliver to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2021-04-22T07:00Z",
+      "description": "Signed F Robert Franks to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-22T07:00Z",
+      "description": "Signed C Norvel Pelle to a rest-of-season contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-04-21T07:00Z",
+      "description": "Signed F Mamadi Diakite to a multi-year contract. Signed F Justin Jackson to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-04-21T07:00Z",
+      "description": "Signed F Oshae Brissett to a rest-of-season contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-04-21T07:00Z",
+      "description": "Signed F Mfiondu Kabengele to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-04-20T07:00Z",
+      "description": "Signed G Austin Rivers to a 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-04-19T07:00Z",
+      "description": "Signed F Yuta Watanabe.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-04-19T07:00Z",
+      "description": "Signed G Gary Payton II to a second 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2021-04-16T07:00Z",
+      "description": "Signed G Devin Cannady to a two-way contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-14T07:00Z",
+      "description": "Signed G Tim Frazier to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-04-14T07:00Z",
+      "description": "Signed C Jordan Bell to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-04-13T07:00Z",
+      "description": "Signed F T.J. Leaf to a two-way contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-04-13T07:00Z",
+      "description": "Signed C Donta Hall to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-12T07:00Z",
+      "description": "Signed F Robert Franks to a 10-day contract.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-04-12T07:00Z",
+      "description": "Signed C Norvel Pelle to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2021-04-09T07:00Z",
+      "description": "Waived G Patrick McCaw.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-04-09T07:00Z",
+      "description": "Waived F Darius Miller.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-04-09T07:00Z",
+      "description": "Signed G Shaquille Harrison to a two-way contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2021-04-08T07:00Z",
+      "description": "Waived G Jerome Robinson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-04-07T07:00Z",
+      "description": "Released F Justin Jackson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-04-07T07:00Z",
+      "description": "Released F Tyler Cook.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-04-05T07:00Z",
+      "description": "Placed F Justin Jackson on waivers.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-04-05T07:00Z",
+      "description": "Released G/F Cam Reynolds to become a free agent.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-04-05T07:00Z",
+      "description": "Released G DaQuan Jeffries to become a free agent.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-04-05T07:00Z",
+      "description": "Released C Justin Patton and G/F Ben McLemore to become a free agents.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-04-04T07:00Z",
+      "description": "Agreed to terms with G Jrue Holiday on a four-year contract extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-04-03T07:00Z",
+      "description": "Waived G DeQuan Jeffries.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-04-03T07:00Z",
+      "description": "Waived G Ben McLemore.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-04-03T07:00Z",
+      "description": "Signed G Isaiah Thomas to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-04-01T07:00Z",
+      "description": "Signed F Alize Johnson to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-04-01T07:00Z",
+      "description": "Signed G Jeff Teague to a rest of season contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-04-01T07:00Z",
+      "description": "Signed F Oshae Brissett to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-03-29T07:00Z",
+      "description": "Signed C Gorgui Dieng.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-03-27T07:00Z",
+      "description": "Waived G Jeff Teague.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-03-26T07:00Z",
+      "description": "Waived C Gorjui Dieng.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-03-26T07:00Z",
+      "description": "Waived Fs Mifondu Kabengele and Jabari Parker.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-03-26T07:00Z",
+      "description": "Waived C Andre Drummond.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Acquired C Daniel Gafford and F/G Chandler Hutchison from the Chicago in a three-way trade that sends F Troy Brown Jr. to Chicago and C Moe Wagner to Boston.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Waived F Meyers Leonard.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Waived C LaMarcus Aldridge.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Acquired G Norman Powell from Toronto in exchange for Gs Gary Trent Jr. and Rodney Hood.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Waived G Jalen Lecque.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Acquired C Nikola Vucevic and F Al-Farouq Aminu from Orlando in exchange for C Wendell Carter Jr., F Otto Porter Jr, and two first-round picks with certain lottery position protections.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-03-25T07:00Z",
+      "description": "Acquired F Luke Kornet from Chicago in exchange for F Daniel Theis and G Javonte Green.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2021-03-22T07:00Z",
+      "description": "Released G Quinn Cook as a free agent.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-03-19T07:00Z",
+      "description": "Acquired Fs P.J. Tucker and Rodions Kurucs from Houston in exchange for G D.J. Augustin and F D.J. Wilson and were returned their own 2022 first-round draft pick and a Houston 2021 second-round draft pick in exchange for Milwaukee's 2021 and 2023 first-round draft picks.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-03-18T07:00Z",
+      "description": "Acquired F Torrey Craig from Milwaukee in exchange for cash and a traded player exception (TPE).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2021-03-17T07:00Z",
+      "description": "Traded F Trevor Ariza to Miami Heat for F Meyers Leonard and a draft consideration.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2021-03-17T07:00Z",
+      "description": "Traded F Meyers Leonard and a draft consideration to Oklahoma City for F Trevor Ariza.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2021-03-12T08:00Z",
+      "description": "Signed G Mason Jones to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-03-11T08:00Z",
+      "description": "Signed C Damian Jones to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-03-11T08:00Z",
+      "description": "Released G Mason Jones.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-03-10T08:00Z",
+      "description": "Released G Mason Jones.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-03-09T08:00Z",
+      "description": "Recalled F Jontay Porter from Memphis Hustle.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-03-09T08:00Z",
+      "description": "Waived G Mason Jones.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-03-09T08:00Z",
+      "description": "Recalled G Adam Mokoka.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2021-03-09T08:00Z",
+      "description": "Recalled F Wenyen Gabriel.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-03-08T08:00Z",
+      "description": "Released F Donta Hall.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-03-08T08:00Z",
+      "description": "Released G/Fs Andre Roberson and Iman Shumpert. Signed F Blake Griffin.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-03-08T08:00Z",
+      "description": "Released C Damian Jones.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-03-05T08:00Z",
+      "description": "Agreed to terms with F Blake Griffin on a contract buyout and placed him on waivers.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-03-04T08:00Z",
+      "description": "Waived G Jaylen Adams.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-02-26T08:00Z",
+      "description": "Signed F Donta Hall to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2021-02-26T08:00Z",
+      "description": "Signed Gs Andre Roberson and Iman Shumpert to a 10-day contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-02-26T08:00Z",
+      "description": "Signed C Damian Jones to a 10-day contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-02-25T08:00Z",
+      "description": "Signed C Norvel Pelle to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-02-24T08:00Z",
+      "description": "Waived F Glenn Robinson III.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2021-02-24T08:00Z",
+      "description": "Signed F Tyler Cook to a 10-day contract. Waived Gs Andre Roberson, Iman Shumpert and F Noah Vonleh.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-02-24T08:00Z",
+      "description": "Waived G Quinn Cook.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2021-02-24T08:00Z",
+      "description": "Signed G Brodric Thomas to a two-way contract. Waived C Marques Bolden.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-02-24T08:00Z",
+      "description": "Signed G Sindarius Thornwell to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-02-23T08:00Z",
+      "description": "Placed G/F Sindarius Thornwell on waivers.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2021-02-21T08:00Z",
+      "description": "Transferred F Sean McDermott to the Memphis Hustle (NBA G League).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-02-19T08:00Z",
+      "description": "Recalled G Sam Merrill from Memhis (NBA G League).",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2021-02-19T08:00Z",
+      "description": "Signed C Justin Patton to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-02-16T08:00Z",
+      "description": "Placed F/C Norvel Pelle on waivers. Signed G Andre Roberson. Waived C Norvel Pelle.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-02-16T08:00Z",
+      "description": "Waived F Ray Spalding.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-02-12T08:00Z",
+      "description": "Waived G Brodric Thomas.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-02-08T08:00Z",
+      "description": "Acquired G Dennis Smith Jr. and a future second-round pick from New York Knicks in exchange for G Derrick Rose.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2021-02-05T08:00Z",
+      "description": "Released Jordan Bone.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2021-02-03T08:00Z",
+      "description": "Assigned F Jontay Porter to Memphis Hustle (NBA G League).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-01-23T08:00Z",
+      "description": "Signed C Alex Len and F Jordan Bell.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-01-17T08:00Z",
+      "description": "Waived C Anzejs Pasecniks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2021-01-14T08:00Z",
+      "description": "Acquired G James Harden in exchange for C Jarrett Allen, F Rodions Kurucs, G Caris LeVert, F Taurean Prince, the draft rights to F Aleksandar Vezenkov, a swap of 2021 1st round picks, a 2022 of 1st round pick (BRK own), a swap of 2023 1st round picks, a 2024 1st round pick (BRK own), a swap of 2024 2nd round picks, a swap of 2025 1st round picks, a 2026 1st round pick (BRK own) and a swap of 2027 1st round picks.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2021-01-14T08:00Z",
+      "description": "Acquired G Dante Exum, F Rodions Kurucs, G Caris LeVert, a swap of 2021 1st round picks, a 2022 1st round pick (BRK own), a conditional 2022 1st round pick (MIL own), a swap of 2023 1st round picks, a 2024 1st round pick (BRK own), a swap of 2025 1st round picks, a 2026 1st round pick (BRK own), a swap of 2027 1st round picks and a TPE in exchange for G James Harden and a TPE. Waived F Bruno Caboclo. Announced termination of 10 day contract with G Yogi Ferrell.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2021-01-14T08:00Z",
+      "description": "Acquired C Jarrett Allen, F Taurean Prince, the draft rights to F Aleksandar Vezenkov and a swap 2024 2nd round picks in exchange for G Dante Exum, a conditional 2022 1st round pick (MIL own) and a TPE. Rennounced free-agent exception rights for C Ante Zizic and F/C Channing Frye.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2021-01-05T08:00Z",
+      "description": "Named vice president of public relations Amy Phuong chief operating officer for Saving Our Atlanta Region's Residents.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2021-01-04T08:00Z",
+      "description": "Signed G Tim Frazier.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2021-01-04T08:00Z",
+      "description": "Named Josh Proctor Chief Financial Officer. Promoted Liz Cardenas to Vice President, Financial Planning and Analysis.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    }
+  ]
+}

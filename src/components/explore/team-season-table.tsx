@@ -1,150 +1,244 @@
 "use client";
 
-import Link from "next/link";
-import { useMemo } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { useMemo, useState } from "react";
 
-import { TeamLogo } from "@/components/team/team-logo";
+import { TeamLogo } from "@/components/brand/team-logo";
 import {
   Table,
   TableBody,
   TableCell,
-  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { StatTooltip } from "@/components/ui/stat-tooltip";
-import type { TeamSeason } from "@/data/types";
-import {
-  TEAM_TABLE_COLUMNS,
-  getTeamSortOption,
-  parseSortDir,
-  sortTeamSeasons,
-  type TeamSortKey,
-} from "@/lib/team-explore-sort";
+import { SortableTableHead } from "@/components/ui/sortable-table-head";
+import type { TeamSeasonStats } from "@/data/types";
+import { formatNumber, formatPct } from "@/lib/format";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
-import { formatNumber } from "@/lib/format";
 
-export function TeamSeasonTable({ teams }: { teams: TeamSeason[] }) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const sortKey = getTeamSortOption(searchParams.get("sort")).key;
-  const sortDir = parseSortDir(searchParams.get("dir"));
+type SortKey =
+  | "fullName"
+  | "conference"
+  | "gamesPlayed"
+  | "ppg"
+  | "oppPpg"
+  | "avgDiff"
+  | "rpg"
+  | "apg"
+  | "spg"
+  | "bpg"
+  | "topg"
+  | "fieldGoalPct"
+  | "threePointPct"
+  | "freeThrowPct"
+  | "effectiveFieldGoalPct"
+  | "trueShootingPct"
+  | "assistToTurnover"
+  | "offensiveReboundPct";
 
-  const rows = useMemo(
-    () => sortTeamSeasons(teams, sortKey, sortDir),
-    [teams, sortKey, sortDir]
+const COLUMNS: {
+  key: SortKey;
+  label: string;
+  tip?: string;
+  align?: "left" | "right";
+}[] = [
+  { key: "fullName", label: "Team", align: "left" },
+  { key: "conference", label: "Conf", align: "left" },
+  { key: "gamesPlayed", label: "GP" },
+  { key: "avgDiff", label: "DIFF", tip: "Avg point differential" },
+  { key: "ppg", label: "PPG" },
+  { key: "oppPpg", label: "OPP", tip: "Estimated opponent PPG" },
+  { key: "trueShootingPct", label: "TS%", tip: "True shooting %" },
+  { key: "effectiveFieldGoalPct", label: "eFG%" },
+  { key: "fieldGoalPct", label: "FG%" },
+  { key: "threePointPct", label: "3P%" },
+  { key: "freeThrowPct", label: "FT%" },
+  { key: "rpg", label: "RPG" },
+  { key: "apg", label: "APG" },
+  { key: "spg", label: "SPG" },
+  { key: "bpg", label: "BPG" },
+  { key: "topg", label: "TOV" },
+  { key: "assistToTurnover", label: "AST/TO" },
+  { key: "offensiveReboundPct", label: "ORB%" },
+];
+
+function defaultDir(key: SortKey): "asc" | "desc" {
+  if (key === "fullName" || key === "conference") return "asc";
+  if (key === "oppPpg" || key === "topg") return "asc";
+  return "desc";
+}
+
+function isPct(key: SortKey): boolean {
+  return (
+    key === "fieldGoalPct" ||
+    key === "threePointPct" ||
+    key === "freeThrowPct" ||
+    key === "effectiveFieldGoalPct" ||
+    key === "trueShootingPct" ||
+    key === "offensiveReboundPct"
   );
+}
 
-  function setSort(key: TeamSortKey) {
-    const next = new URLSearchParams(searchParams.toString());
-    if (key === sortKey) {
-      next.set("dir", sortDir === "asc" ? "desc" : "asc");
-    } else {
-      const opt = getTeamSortOption(key);
-      next.set("sort", key);
-      next.set("dir", opt.defaultDir);
-    }
-    const qs = next.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+function sortValue(row: TeamSeasonStats, key: SortKey): string | number {
+  if (key === "fullName") return row.abbreviation;
+  if (key === "conference") return row.conference;
+  const v = row[key];
+  return typeof v === "number" && Number.isFinite(v) ? v : Number.NEGATIVE_INFINITY;
+}
+
+function formatCell(row: TeamSeasonStats, key: SortKey): string {
+  if (key === "fullName") return row.abbreviation;
+  if (key === "conference") return row.conference;
+  const v = row[key] as number;
+  if (key === "avgDiff") {
+    return `${v > 0 ? "+" : ""}${formatNumber(v, 1)}`;
   }
+  if (isPct(key)) return formatPct(v);
+  if (key === "assistToTurnover" || key === "gamesPlayed") {
+    return formatNumber(v, key === "gamesPlayed" ? 0 : 2);
+  }
+  return formatNumber(v, 1);
+}
 
-  const columns = TEAM_TABLE_COLUMNS.map((key) => getTeamSortOption(key));
+export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
+  const [sortKey, setSortKey] = useState<SortKey>("avgDiff");
+  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const [conf, setConf] = useState<"all" | "East" | "West">("all");
+
+  const filtered = useMemo(() => {
+    const base =
+      conf === "all" ? teams : teams.filter((t) => t.conference === conf);
+    return [...base].sort((a, b) => {
+      const av = sortValue(a, sortKey);
+      const bv = sortValue(b, sortKey);
+      if (typeof av === "string" && typeof bv === "string") {
+        return sortDir === "asc"
+          ? av.localeCompare(bv)
+          : bv.localeCompare(av);
+      }
+      const an = Number(av);
+      const bn = Number(bv);
+      if (an === bn) return a.abbreviation.localeCompare(b.abbreviation);
+      return sortDir === "asc" ? an - bn : bn - an;
+    });
+  }, [teams, conf, sortKey, sortDir]);
+
+  const onSort = (key: SortKey) => {
+    if (key === sortKey) {
+      setSortDir((d) => (d === "asc" ? "desc" : "asc"));
+      return;
+    }
+    setSortKey(key);
+    setSortDir(defaultDir(key));
+  };
+
+  const activeLabel =
+    COLUMNS.find((c) => c.key === sortKey)?.label ?? sortKey;
 
   return (
-    <section aria-labelledby="team-table-heading" className="flex flex-col gap-3">
-      <div>
-        <h2 id="team-table-heading" className="text-lg font-semibold">
-          Team standings & efficiency
-        </h2>
-        <p className="text-sm text-muted-foreground">
-          {rows.length} teams · click a column to sort
+    <div className="flex flex-col gap-3">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <div className="flex flex-wrap gap-2">
+          {(["all", "East", "West"] as const).map((c) => (
+            <button
+              key={c}
+              type="button"
+              onClick={() => setConf(c)}
+              className={cn(
+                "rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                conf === c
+                  ? "bg-foreground text-background"
+                  : "bg-secondary text-foreground hover:bg-foreground/10"
+              )}
+            >
+              {c === "all" ? "All teams" : c}
+            </button>
+          ))}
+        </div>
+        <p className="text-[12px] text-muted-foreground">
+          {filtered.length} teams · sorted by{" "}
+          <span className="font-medium text-foreground">
+            {activeLabel} {sortDir === "asc" ? "↑" : "↓"}
+          </span>
         </p>
       </div>
 
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-10 text-muted-foreground">#</TableHead>
-              {columns.map((col) => {
-                const active = sortKey === col.key;
-                const arrow = active ? (sortDir === "asc" ? " ↑" : " ↓") : "";
-                return (
-                  <TableHead
-                    key={col.key}
-                    className={cn(col.numeric && "text-right")}
-                  >
-                    <button
-                      type="button"
-                      className={cn(
-                        "inline-flex items-center gap-0.5 font-medium hover:text-foreground",
-                        active ? "text-foreground" : "text-muted-foreground",
-                        col.numeric && "w-full justify-end"
-                      )}
-                      onClick={() => setSort(col.key)}
-                      aria-label={`Sort by ${col.label}`}
-                    >
-                      <StatTooltip nestable stat={col.label}>
-                        {col.label}
-                      </StatTooltip>
-                      <span aria-hidden>{arrow}</span>
-                    </button>
-                  </TableHead>
-                );
-              })}
+      <div className="overflow-x-auto rounded-md border border-border bg-card">
+        <Table container={false} className="min-w-[980px] text-[12px]">
+          <TableHeader className="sticky top-0 z-20 border-b border-border bg-card">
+            <TableRow className="hover:bg-transparent">
+              {COLUMNS.map((col) => (
+                <SortableTableHead
+                  key={col.key}
+                  active={sortKey === col.key}
+                  dir={sortDir}
+                  onClick={() => onSort(col.key)}
+                  align={col.align ?? "right"}
+                  title={col.tip}
+                  sticky={col.key === "fullName"}
+                >
+                  {col.label}
+                </SortableTableHead>
+              ))}
             </TableRow>
           </TableHeader>
           <TableBody>
-            {rows.length === 0 ? (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length + 1}
-                  className="text-muted-foreground"
+            {filtered.map((row) => {
+              const brand = resolveTeamBrand(row.abbreviation);
+              return (
+                <TableRow
+                  key={row.teamId}
+                  style={
+                    brand
+                      ? { boxShadow: `inset 3px 0 0 ${brand.primary}` }
+                      : undefined
+                  }
                 >
-                  No teams match the current filters.
-                </TableCell>
-              </TableRow>
-            ) : (
-              rows.map((team, index) => (
-                <TableRow key={`${team.teamId}-${team.season}`}>
-                  <TableCell className="tabular-nums text-muted-foreground">
-                    {index + 1}
-                  </TableCell>
-                  <TableCell>
-                    <Link
-                      href={`/teams/${team.teamId}?season=${team.season}`}
-                      className="inline-flex items-center gap-2 font-medium underline-offset-4 hover:underline"
-                    >
-                      <TeamLogo
-                        teamId={team.teamId}
-                        abbreviation={team.teamAbbreviation}
-                        size="xs"
-                      />
-                      <span>{team.teamName}</span>
-                      <span className="font-mono text-xs text-muted-foreground">
-                        {team.teamAbbreviation}
-                      </span>
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(team.wins)}-{formatNumber(team.losses)}
-                  </TableCell>
-                  {columns.slice(2).map((col) => (
-                    <TableCell
-                      key={col.key}
-                      className={cn("tabular-nums", col.numeric && "text-right")}
-                    >
-                      {col.format(team)}
-                    </TableCell>
-                  ))}
+                  {COLUMNS.map((col) => {
+                    if (col.key === "fullName") {
+                      return (
+                        <TableCell
+                          key={col.key}
+                          className="sticky left-0 z-10 bg-card"
+                        >
+                          <TransitionLink
+                            href={`/teams/${row.teamId}?season=${row.season}`}
+                            className="flex items-center gap-2 font-semibold hover:underline"
+                          >
+                            <TeamLogo teamKey={row.abbreviation} size="xs" />
+                            <span className="whitespace-nowrap">
+                              {row.abbreviation}
+                            </span>
+                          </TransitionLink>
+                        </TableCell>
+                      );
+                    }
+                    const tone =
+                      col.key === "avgDiff"
+                        ? row.avgDiff > 0
+                          ? "text-emerald-700 font-medium"
+                          : row.avgDiff < 0
+                            ? "text-rose-700 font-medium"
+                            : ""
+                        : col.key === "oppPpg" || col.key === "conference"
+                          ? "text-muted-foreground"
+                          : "";
+                    return (
+                      <TableCell
+                        key={col.key}
+                        className={cn("text-right tabular-nums", tone)}
+                      >
+                        {formatCell(row, col.key)}
+                      </TableCell>
+                    );
+                  })}
                 </TableRow>
-              ))
-            )}
+              );
+            })}
           </TableBody>
         </Table>
       </div>
-    </section>
+    </div>
   );
 }

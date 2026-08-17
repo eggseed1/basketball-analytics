@@ -82,7 +82,7 @@ export function transformLocalPlayerSeason(
     trueShootingPct: raw.ts_pct,
     threePointAttemptRate: threePointAttemptRate(c.tpa, c.fga),
     freeThrowRate: freeThrowRate(c.fta, c.fga),
-    turnoverPct: turnoverPct(raw.tov, c.fga, c.fta),
+    turnoverPct: turnoverPct(raw.tov, c.fga, c.fta) ?? 0,
     usagePct: raw.usg_pct,
     assistPct: 0,
     offensiveReboundPct: 0,

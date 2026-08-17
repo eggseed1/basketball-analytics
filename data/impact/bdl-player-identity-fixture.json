@@ -1,0 +1,45 @@
+{
+  "version": "1.0",
+  "notes": [
+    "Diagnostic fixture only — not a full-league ESPN↔BDL graph.",
+    "NAME MATCH ≠ IDENTITY MATCH: common-name rows prove ambiguity must not silently resolve.",
+    "canonicalPlayerId is the site ESPN athlete id when known."
+  ],
+  "mappings": [
+    {
+      "bdlPlayerId": "246",
+      "canonicalPlayerId": "3112335",
+      "playerName": "Nikola Jokic",
+      "role": "current_star",
+      "notes": "Current star — deterministic BDL→ESPN fixture."
+    },
+    {
+      "bdlPlayerId": "1043",
+      "canonicalPlayerId": "1102",
+      "playerName": "Michael Jordan",
+      "role": "historical",
+      "notes": "Historical star fixture mapping (diagnostic ids; not a live crawl claim)."
+    },
+    {
+      "bdlPlayerId": "900001",
+      "canonicalPlayerId": "espn-chris-a",
+      "playerName": "Chris Smith",
+      "role": "common_name",
+      "notes": "Common name A — only BDL id disambiguates."
+    },
+    {
+      "bdlPlayerId": "900002",
+      "canonicalPlayerId": "espn-chris-b",
+      "playerName": "Chris Smith",
+      "role": "common_name",
+      "notes": "Common name B — same display name, different BDL id."
+    },
+    {
+      "bdlPlayerId": "999999001",
+      "canonicalPlayerId": null,
+      "playerName": "Unresolved Probe",
+      "role": "unresolved",
+      "notes": "Deliberately unresolved — must not invent a canonical id."
+    }
+  ]
+}

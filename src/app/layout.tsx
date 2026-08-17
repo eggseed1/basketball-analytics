@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import { Geist, Geist_Mono } from "next/font/google";
-import Link from "next/link";
 
-import { GlobalPlayerSearch } from "@/components/layout/global-player-search";
+import { SportsShell } from "@/components/sports/sports-shell";
+import { DataProviderDevBadge } from "@/components/sports/data-provider-dev-badge";
+import { SmoothScroll } from "@/components/smooth-scroll";
 
 import "./globals.css";
-
 const geistSans = Geist({
   variable: "--font-sans",
   subsets: ["latin"],
@@ -21,67 +22,30 @@ export const metadata: Metadata = {
     default: "Basketball Analytics",
     template: "%s | Basketball Analytics",
   },
-  description:
-    "Modern basketball analytics with a canonical data layer and clear visualizations.",
+  description: "NBA impact, efficiency, and advanced stats.",
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default function RootLayout({
+  children,
+}: {
+  children: ReactNode;
+}) {
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="flex min-h-full flex-col bg-background text-foreground">
+      <body className="min-h-full bg-background font-sans text-foreground">
+        <SmoothScroll />
         <a
           href="#main-content"
-          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-primary focus:px-3 focus:py-2 focus:text-primary-foreground"
+          className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"
         >
           Skip to content
         </a>
-        <header className="border-b border-border">
-          <div className="mx-auto flex w-full max-w-6xl flex-col gap-2 px-4 py-2.5 sm:px-6 md:h-14 md:flex-row md:items-center md:gap-4 md:py-0">
-            <Link
-              href="/"
-              className="shrink-0 font-semibold tracking-tight"
-            >
-              Basketball Analytics
-            </Link>
-
-            <GlobalPlayerSearch className="w-full md:max-w-md md:flex-1" />
-
-            <nav
-              aria-label="Primary"
-              className="flex flex-wrap items-center gap-3 md:gap-4"
-            >
-              <Link
-                href="/dashboard"
-                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Dashboard
-              </Link>
-              <Link
-                href="/explore/players"
-                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Players
-              </Link>
-              <Link
-                href="/explore/teams"
-                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Teams
-              </Link>
-              <Link
-                href="/explore/games"
-                className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline"
-              >
-                Games
-              </Link>
-            </nav>
-          </div>
-        </header>
-        <div id="main-content" className="flex flex-1 flex-col">
-          {children}
+        <div id="main-content" className="flex min-h-screen flex-col">
+          <DataProviderDevBadge />
+          <SportsShell>{children}</SportsShell>
         </div>
       </body>
     </html>

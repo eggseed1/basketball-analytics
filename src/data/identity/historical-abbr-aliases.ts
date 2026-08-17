@@ -1,0 +1,40 @@
+/**
+ * Historical abbreviations → current franchise brand abbr.
+ * Shared by canonical resolution (filters) and team-era display.
+ * No imports — keeps team-map ↔ team-era free of cycles.
+ */
+export const HISTORICAL_ABBR_ALIASES: Record<string, string> = {
+  SEA: "OKC",
+  SON: "OKC",
+  NJN: "BKN",
+  NJ: "BKN",
+  NET: "BKN",
+  BAL: "WAS",
+  CAP: "WAS",
+  WSB: "WAS",
+  BUL: "WAS",
+  CHP: "WAS",
+  CHZ: "WAS",
+  CHH: "NOP",
+  NOH: "NOP",
+  NOK: "NOP",
+  VAN: "MEM",
+  SDR: "HOU",
+  BUF: "LAC",
+  SDC: "LAC",
+  SD: "LAC",
+  BRV: "LAC",
+  CIN: "SAC",
+  KCK: "SAC",
+  KCO: "SAC",
+  ROC: "SAC",
+  SYR: "PHI",
+  MNL: "LAL",
+  PHW: "GSW",
+  SFW: "GSW",
+  TRI: "ATL",
+  MLH: "ATL",
+  STL: "ATL",
+  CAT: "CHA",
+  NOJ: "UTA",
+};

@@ -1,6 +1,6 @@
 /**
  * =============================================================================
- * SAMPLE DATASET — LOCAL DEVELOPMENT ONLY
+ * SAMPLE DATASET - LOCAL DEVELOPMENT ONLY
  * =============================================================================
  * All mock / sample basketball rows live HERE (provider/data layer).
  * UI components must never import this file or hard-code player constants.
@@ -613,7 +613,7 @@ export const SAMPLE_RAW_PLAYER_SEASONS: RawLocalPlayerSeason[] = [
     drtg: 110.0,
     net_rtg: 4.0,
   },
-  // Prior season row — used to exercise season filtering.
+  // Prior season row - used to exercise season filtering.
   {
     player_id: "jokic",
     player_name: "Nikola Jokic",
@@ -828,7 +828,7 @@ export const SAMPLE_PLAYER_GAMES: PlayerGame[] = [
   },
 ];
 
-/** Tiny shot sample for architecture testing — not exhaustive. */
+/** Tiny shot sample for architecture testing - not exhaustive. */
 export const SAMPLE_SHOTS: Shot[] = [
   {
     id: "shot-1",

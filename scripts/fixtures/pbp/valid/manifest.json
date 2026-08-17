@@ -1,0 +1,16 @@
+{
+  "source": "synthetic-fixture",
+  "version": "fixture-1",
+  "path": "scripts/fixtures/pbp/valid",
+  "importedAt": "2026-08-16T00:00:00.000Z",
+  "games": 2,
+  "events": 10,
+  "seasons": ["2024-25"],
+  "earliestSeason": "2024-25",
+  "latestSeason": "2024-25",
+  "fileCount": 1,
+  "format": "manifest-only",
+  "notes": [
+    "Synthetic fixture for unit tests — must never unlock production PBP capability."
+  ]
+}

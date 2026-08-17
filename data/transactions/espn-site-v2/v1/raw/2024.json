@@ -1,0 +1,5916 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2024,
+  "fetchedAt": "2026-08-14T20:06:35.785Z",
+  "apiCount": 537,
+  "rows": [
+    {
+      "date": "2024-12-29T08:00Z",
+      "description": "Acquired F Maxwell Lewis, G D'Angelo Russell and draft consideration from Los Angeles Lakers for G Shake Milton and F Dorian Finney-Smith.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-12-29T08:00Z",
+      "description": "Acquired G Shake Milton and F Dorian Finney-Smith from Brooklyn in exchange for F Maxwell Lewis, G D'Angelo Russell and draft consideration.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-12-28T08:00Z",
+      "description": "Waived G P.J. Dozier.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-12-26T08:00Z",
+      "description": "Signed F Keshad Johnson to a contract. Signed G Isaiah Stevens to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-12-23T08:00Z",
+      "description": "Signed G Landry Shamet to a rest-of-season contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-12-22T08:00Z",
+      "description": "Re-signed G Alex Caruso to a veteran extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-12-22T08:00Z",
+      "description": "Waived F Matt Ryan.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-12-22T08:00Z",
+      "description": "Recalled G Bronny James and F Maxwell Lewis from the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-12-16T08:00Z",
+      "description": "Signed F Paul Reed to a rest-of-season contract. Waived G Javante McCoy.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Recalled F Caleb Houstan from the Osceola Magic of the G League.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Waived F Cui Yongxi.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Received draft considerations from Indiana in exchange for C Thomas Bryant.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Received G Dennis Schroder and draft considerations from Brooklyn in exchange for G De'Anthony Melton.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Signed G Javante McCoy to a rest-of-season contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-12-15T08:00Z",
+      "description": "Recalled G Craig Porter, Jr. and F Jaylon Tyson rom the Cleveland Charge of the G League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-12-14T08:00Z",
+      "description": "Assigned F Jaylon Tyson to the Cleveland Charge of the G League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-12-13T08:00Z",
+      "description": "Assigned G Patrick Baldwin to the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-12-13T08:00Z",
+      "description": "Recalled C Kyle Filipowski from the Salt Lake City Stars of the G League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-12-13T08:00Z",
+      "description": "Recalled F Caleb Houston from the Osceola Magic of the G League.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-12-12T08:00Z",
+      "description": "Assigned G Craig Porter, Jr. to the Cleveland Charge of the G League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-12-07T08:00Z",
+      "description": "Recalled F Johnny Davis om the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-12-06T08:00Z",
+      "description": "Assigned F Dariq Whitehead to the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-12-05T08:00Z",
+      "description": "Assigned F Ja'Kobe Walter to the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-12-05T08:00Z",
+      "description": "Assigned G Craig Porter, Jr. and F Jaylon Tyson to the Cleveland Charge of the G League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-12-03T08:00Z",
+      "description": "Signed F Pete Nance to a two-way contract. Waived G Lester Quinones.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-12-03T08:00Z",
+      "description": "Waived G Elfrid Payton.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-12-02T08:00Z",
+      "description": "Signed G Isaiah Wong to a two-way contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-12-01T08:00Z",
+      "description": "Waived G Jared Rhoden.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-11-30T08:00Z",
+      "description": "Waived G Jared Rhoden.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-11-23T08:00Z",
+      "description": "Assigned F Tyler Smith to the Wisconsin Herd of the G League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-11-22T08:00Z",
+      "description": "Signed F David Jones to a two-way contract. Waived G Jason Preston.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-11-22T08:00Z",
+      "description": "Recalled Fs Chris Livingston and Tyler Smith from the Wisconsin Herd of the G League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-11-22T08:00Z",
+      "description": "Assigned G Baylor Scheierman to the Maine Celtics of the G League",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-11-21T08:00Z",
+      "description": "Assigned F Ja'Kobe Walter to the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-11-20T08:00Z",
+      "description": "Signed C Moses Brown to a rest-of-season contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-11-20T08:00Z",
+      "description": "Signed G Elfrid Payton to a rest-of-season contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-11-16T08:00Z",
+      "description": "Signed center Branden Carlson to a rest-of-season contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-11-16T08:00Z",
+      "description": "Recalled G/F Gui Santos from the Santa Cruz Warriors of the G League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-11-14T08:00Z",
+      "description": "Assigned F Caleb Houstan to the Osceola Magic of the G-League.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-11-14T08:00Z",
+      "description": "Recalled F Mouhamed Gueye from the College Park Skyhawks of the G-League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-11-05T08:00Z",
+      "description": "Signed C Ariel Hukporti and F Matt Ryan to a rest-of-season contract and G Boo Buei III to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-11-03T07:00Z",
+      "description": "Signed G Jaylen Nowell to a rest-of-season contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-10-31T07:00Z",
+      "description": "Recalled F Ja'Kobe Walter from the Raptors 905 (G-League)",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-10-31T07:00Z",
+      "description": "Signed F Malevy Leons to a rest-of-season contract. Waived F Alex Reese.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-10-28T07:00Z",
+      "description": "Re-signed C Jay Huff to a rest-of-season contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Claimed G Jared Rhoden off waivers.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Re-signed F Corey Kispert to a rookie scale extension. Waived G Ray J Dennis.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Re-signed G Jalen Suggs to a rookie scale extension.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Waived F Maclolm Hill.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Re-signed G Jalen Green to a rookie scale extension. Re-signed C Alperen Sengun to a five-year rookie scale extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Re-signed G Moses Moody to a rookie scale extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Signed F Cole Swider to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-10-21T07:00Z",
+      "description": "Claimed G Brandon Boston Jr. off waivers. Re-signed F Trey Murphy III to a rookie scale extension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of G Yuki Kawamura to a two-way contract. Waived C Armando Bacot, G Miye Oni and Fs Miles Norris and Maozinha Pereira.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of F Jamison Battle to a two-way contract. Waived C Branden Carlson and Gs Kevin Obanor, Jahmi'us Ramsey and Jared Rhoden.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Signed G Ray J Dennis to a two-way contract. Waived G Jared Butler.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Signed C/F Alex Reese to a non-guaranteed contract. Waived F Malevy Leons.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of F Riley Minix to a two-way contract. Waived Gs Brandon Boston Jr., Jamaree Bouyea and Malachi Flynn.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived F Shareef O'Neal.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived F Frank Kaminsky.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of G Mac McClung to a two-way contract. Waived Gs jarrett culver and Alex Morales, Ethan Thompson and F Jalen Slawson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived G Landry Shamet and Fs Chuma Okeke and T.J. Warren.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of F Tyrese Martin to a two-way contract. Waived F Killian Hayes.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Released C Anzejs Pasecniks. Converted the contract of C Liam Robbins to a two-way contract. Waived F Jalen Lewis and C Anzejs Pasecniks.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived Fs Nassir Little, Warren Washington and Gs Zyon Pullin and Isaiah Stevens.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Converted the contract of G Quincy Olivari to a two-way contract. Waived C Colin Castleton and G Grayson Murphy.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived Gs Matt Bradley, Nate Hinton and F Jermaine Samuels Jr.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived Fs Jackson Rowe and Kevin Knox II.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived F Jamir Chaplin and GJ arod Lucas.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived G Jules Bernard and F Peter Nance.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-10-19T07:00Z",
+      "description": "Waived G Lonnie Walker IV.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Signed F Keshawn Justice to a contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived F Buddy Boeheim and G Cormac Ryan.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived F Terry Taylor and Gs Boogie Ellis and Brodric Thomas.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived C Nick Muszynski.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Signed G Cui Yongxi to a two-way contract. Signed G/F Tyrese Martin and G Killian Hayes to contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived F Eugene Omoruyi.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived C Kylor Kelly and G Jordan Goodwin.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived F Cole Swider.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived F A.J. Griffin.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived G Yuri Collins and F Javan Johnson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived C Jamrion Sharp, F Emanuel Miller, and G A.J. Lawson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Waived Gs Darius Brown and Elijah Hughes.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-10-18T07:00Z",
+      "description": "Signed G Kevon Harris and F Joey Hauser to contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived guard David Johnson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived G Devonte’ Graham.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived G Paul Watson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived Fs Max Fielder, Isaiah Mobley, and Jordan Tucker, and G Judah Mintz.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived Fs Henry Ellenson and Justice Winslow.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived Gs Aaron Estrada, Javante McCoy, and Dereon Seabron, and Fs Tolu Smith and Lamar Stevens.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived Fs Onuralp Bitim and Kenneth Lofton Jr.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-10-17T07:00Z",
+      "description": "Waived G Ron Harper Jr., G Jay Scrubb, and F Hason Ward.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Justin Lewis.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Alex Reese.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Jalen McDaniels.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived G James Bouknight.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Robert Baker.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived G KJ Jones II.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived G James Akinjo.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Tosan Evbuomwan.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived Gs Andrew Funk and Will Richardson and C Charles Bediako.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived F Keion Brooks Jr., Gs Trhae Mitchell and Elfrid Payton and C Josh Oduro.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived C Dmytro Skapintsev.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-10-16T07:00Z",
+      "description": "Waived G Jarkel Joiner.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Re-signed G Scotty Pippen Jr..",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Waived G Isaiah Miller.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Traded F Jalen McDaniels and draft considerations to San Antonio in exchange for draft considerations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Waived G Skylar Mays.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Waived G Terence Davis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Waived G Zhaire Smith.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-10-15T07:00Z",
+      "description": "Signed G Jarkel Joiner.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-10-14T07:00Z",
+      "description": "Waived C Chase Jeter.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-10-14T07:00Z",
+      "description": "Waived F/C Mamadi Diakite and F Moses Wood.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-10-14T07:00Z",
+      "description": "Waived F Thon Maker and G Markquis Nowell.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-10-14T07:00Z",
+      "description": "Waived G Jacob Gilyard.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-10-14T07:00Z",
+      "description": "Waived G Jalen Crutcher.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-10-10T07:00Z",
+      "description": "Signed F AJ Lawson to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-10-10T07:00Z",
+      "description": "Waived F Matt Ryan and G Adonis Arms.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-10-09T07:00Z",
+      "description": "Waived Gs Boo Buie III, Damion Baugh and Alex O'Connell.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-10-08T07:00Z",
+      "description": "Waived Gs Max Abmas, Taevion Kinsey and Isaiah Wong.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-10-08T07:00Z",
+      "description": "Waived G A.J. Lawson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-10-08T07:00Z",
+      "description": "Waived F Tristan Enaruna.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-10-08T07:00Z",
+      "description": "Waived C Tony Bradley.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-10-07T07:00Z",
+      "description": "Waived Fs Gabe McGlothan and Jaylin Williams, and G Jahmir Young.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-10-07T07:00Z",
+      "description": "Waived F Ben Coupet Jr.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-10-04T07:00Z",
+      "description": "Waived G Joshua Primo.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-10-02T07:00Z",
+      "description": "Acquired Gs Charlie Brown Jr., DaQuan Jeffries and Duane Washington Jr. and cash considerations in exchange for the NBA draft rights to C James Nnaji. Waived Gs Marcus Garrett and Caleb McConnell.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-10-02T07:00Z",
+      "description": "Acquired F/C Karl-Anthony Towns from Minnesota Timberwolves for F Keita Bates-Diop, G Donte DiVincenzo, F Julius Randle and a first round pick (via Detroit).",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-10-02T07:00Z",
+      "description": "Acquired F Keita Bates-Diop, G Donte DiVincenzo, F Julius Randle and a first round pick (via Detroit) from the New York Knicks in exchange for F/C Karl-Anthony Towns. Waived F David Mouka.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-10-02T07:00Z",
+      "description": "Waived G Marcus Domask.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-10-01T07:00Z",
+      "description": "Waived C David Muoka.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-09-30T07:00Z",
+      "description": "Waived G David Stockton.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-09-30T07:00Z",
+      "description": "Re-signed G Jose Alvarado to a veteran extension.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-09-28T07:00Z",
+      "description": "Waived G Jaylen Sims.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-09-28T07:00Z",
+      "description": "Waived Fs Marcus Morris Sr. and Chuma Okeke.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-09-28T07:00Z",
+      "description": "Waived G Chasson Randle.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-09-28T07:00Z",
+      "description": "Agreed to a two-year contract extension with G Jose Alvarado.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Waived F Babacar Sané.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Waived G Jaden Shackelford and F Tyrese Samuel. Signed F/Cs Mamadi Diakite and Frank Kaminsky and F Moses Wood.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Signed G Lester Quinones to a two-way contract. Waived F David Jones.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Waived G Trevor Keels.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Signed C Quinten Post to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-09-26T07:00Z",
+      "description": "Signed G/F Jordan Bowden and F Joirdon Nicholas.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-09-25T07:00Z",
+      "description": "Waived G RaeQuan Battle.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-09-25T07:00Z",
+      "description": "Waived G Kennedy Chandler.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-09-25T07:00Z",
+      "description": "Waived G Dane Goodwin.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-09-25T07:00Z",
+      "description": "Waived Gs Dexter Dennis and Justin Powell.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-09-25T07:00Z",
+      "description": "Waived F Philip Alston.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-09-23T07:00Z",
+      "description": "Waived G Derrick Rose.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-09-23T07:00Z",
+      "description": "Waived C Dylan Disu.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-09-23T07:00Z",
+      "description": "Waived F Keshawn Justice.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-09-23T07:00Z",
+      "description": "Waived F Joey Hauser",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-09-20T07:00Z",
+      "description": "Signed F Keshawn Justice to a contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-09-20T07:00Z",
+      "description": "Signed G Yongxi Cui to a two-way contract. Signed G/F Tyrese Martin and G Killian Hayes to contracts.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-09-20T07:00Z",
+      "description": "Waived F A.J. Griffin.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-09-20T07:00Z",
+      "description": "Waived G Yuri Collins and F Javan Johnson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-09-20T07:00Z",
+      "description": "Signed G Kevon Harris and F Joey Hauser to contracts.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-09-19T07:00Z",
+      "description": "Waived Fs Myron Garner and Trevon Scott.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-09-18T07:00Z",
+      "description": "Waived F Sam Peek and G Devon Higgs.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-09-17T07:00Z",
+      "description": "Re-signed F Isaac Okoro.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-09-16T07:00Z",
+      "description": "Signed C Christian Koloko to a two-way contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-09-13T07:00Z",
+      "description": "Signed G Taze Moore to a two-way contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-09-13T07:00Z",
+      "description": "Waived G Jordan Schakel.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-09-12T07:00Z",
+      "description": "Signed G/F Keyontae Johnson to a contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-09-12T07:00Z",
+      "description": "Waived G Bryson Warren and C Malik Williams.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-09-11T07:00Z",
+      "description": "Waived G Tyson Etienne.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-09-06T07:00Z",
+      "description": "Waived F Alex Fudge.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-09-03T07:00Z",
+      "description": "Re-signed G T.J. McConnell to a contract extension.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-08-30T07:00Z",
+      "description": "Signed G Patty Mills to a contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-08-30T07:00Z",
+      "description": "Waived G Vincent Valerio-Bodon",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-08-29T07:00Z",
+      "description": "Signed F Guerschon Yabusele to a contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-08-29T07:00Z",
+      "description": "Waived G Dakota Mathias.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-08-29T07:00Z",
+      "description": "Re-signed G Stephen Curry to a veteran extension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-08-27T07:00Z",
+      "description": "Waived F Mamadi Diakite.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-08-27T07:00Z",
+      "description": "Waived Fs E.J. Liddell and F Nassir Little.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-08-26T07:00Z",
+      "description": "Waived G Kyle Mangas and F Cameron McGriff.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-08-23T07:00Z",
+      "description": "Waived F Matt Ryan.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-08-21T07:00Z",
+      "description": "Waived F Eugene Omoruyi.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-08-21T07:00Z",
+      "description": "Signed F Emoni Bates to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-08-20T07:00Z",
+      "description": "Re-signed F Emoni Bates to a two-way contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-08-16T07:00Z",
+      "description": "Signed F Kenny Lofton Jr. to a contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-08-14T07:00Z",
+      "description": "Re-signed F Jacob Toppin to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-08-12T07:00Z",
+      "description": "Signed C Kyle Filipowski to a contract. Re-signed G Johnny Juzang to a contract. Waived G Taevion Kinsey.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-08-10T07:00Z",
+      "description": "Signed F Drew Eubanks and G Svi Mykhailuk.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-08-10T07:00Z",
+      "description": "Signed C Anzejs to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-08-09T07:00Z",
+      "description": "Signed G B.J. Boston, Jr. to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-08-08T07:00Z",
+      "description": "Signed G Malachi Flynn to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-08-08T07:00Z",
+      "description": "Promoted Max Lefevre and Jeff Newton to assistant coaches and Chris Hines to assistant coach/director of player development, Nathan Bubes to assistant coach/quality control, Moses Ehambe and James White to assistant coaches/player development and Cole Fisher manager of basketball analytics. Named Joey Dorsey player development assistant.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-08-08T07:00Z",
+      "description": "Signed F Enrique Freeman to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-08-08T07:00Z",
+      "description": "Signed G Kessler Edwards to a two-way contract Waived F Alex Fudge.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-08-07T07:00Z",
+      "description": "Re-signed F Lauri Markkanen to a veteran extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-08-07T07:00Z",
+      "description": "Signed C Orlando Robinson.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-08-06T07:00Z",
+      "description": "Re-signed C Micah Potter to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-08-06T07:00Z",
+      "description": "Named Chad Forcier, David Fizdale, Vince Legarza, Mike Hopkins, Brent Barry, James Posey, Chaisson Allen and Schuyler Rimmer assistant coaches.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-08-05T07:00Z",
+      "description": "Signed G Kevin McCullar Jr. to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-08-03T07:00Z",
+      "description": "Signed G Spencer Dinwiddie.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-08-02T07:00Z",
+      "description": "Signed G Ty Ty Washington Jr. to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-08-02T07:00Z",
+      "description": "Re-signed C Jarrett Allen to a veteran extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-08-02T07:00Z",
+      "description": "Signed F Anton Watson to a two-way contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-08-01T07:00Z",
+      "description": "Waived F Leaky Black.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-08-01T07:00Z",
+      "description": "Waived F Jaylin Galloway.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-07-31T07:00Z",
+      "description": "Signed F Moussa Diabate to a two-way contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-30T07:00Z",
+      "description": "Signed G Tyus Jones.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-30T07:00Z",
+      "description": "Re-signed F Precious Achiuwa.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-07-30T07:00Z",
+      "description": "Signed F Spencer Jones to a two-way contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-07-30T07:00Z",
+      "description": "Signed F Dominick Barlow to a two-way contract. Waived F Bruno Fernando.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-29T07:00Z",
+      "description": "Signed F Harrison Ingram to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-29T07:00Z",
+      "description": "Signed G Tyus Jones to a contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-29T07:00Z",
+      "description": "Acquired F David Roddy from the Phoenix Suns in exchange for F E.J. Liddell.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-26T07:00Z",
+      "description": "Signed G David Duke Jr. to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-26T07:00Z",
+      "description": "Re-signed G Andrew Nembhard to a veteran contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-07-26T07:00Z",
+      "description": "Claimed C Trey Jemison off waivers.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-25T07:00Z",
+      "description": "Re-signed F Anthony Gill.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-07-25T07:00Z",
+      "description": "Signed G Josh Christopher to a two-way contract. Waived G Zyon Pullin.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-24T07:00Z",
+      "description": "Signed C Jay Huff to a two-way contract. Waived C Trey Jemison.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-07-24T07:00Z",
+      "description": "Waived Fs Darius Bazley and Kenneth Lofton Jr.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-07-24T07:00Z",
+      "description": "Re-signed C DeAnder Jordan to a contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-07-24T07:00Z",
+      "description": "Waived G Andrew Funk.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-07-23T07:00Z",
+      "description": "Waived G Reggie Jackson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-23T07:00Z",
+      "description": "Re-signed F Sam Hauser to a veteran contact extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-07-22T07:00Z",
+      "description": "Waived F Sasha Vezenkov and G Javon Freeman-Liberty.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-07-22T07:00Z",
+      "description": "Signed F Sandro Mamukelashvili to a contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-22T07:00Z",
+      "description": "Signed F David Jones and G Jeff Dowtin Jr to two-way contracts.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-07-22T07:00Z",
+      "description": "Signed G Antonio Reeves to a contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-19T07:00Z",
+      "description": "Acquired F Mamadi Diakite from Brooklyn Nets for F Ziaire Williams and a 2030 second-round draft pick.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-07-19T07:00Z",
+      "description": "Acquired F Ziaire Williams and a 2030 second-round draft pick from Memphis in exchange for F Mamadi Diakite.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-07-18T07:00Z",
+      "description": "Acquired G Russell Westbrook, the draft rights to Balša Koprivica, a future second round draft pick swap, and cash considerations from Los Angeles Clippers for G Kris Dunn.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-07-17T07:00Z",
+      "description": "Signed F Jamison Battle.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-07-17T07:00Z",
+      "description": "Signed C Charles Bassey.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-17T07:00Z",
+      "description": "Signed G/F Daeqwon Plowden to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-07-16T07:00Z",
+      "description": "Re-signed G Seth Curry to a contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-16T07:00Z",
+      "description": "Signed G Alex Ducas to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-07-15T07:00Z",
+      "description": "Re-signed G Seth Curry.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-15T07:00Z",
+      "description": "Re-signed G PJ Dozier.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-15T07:00Z",
+      "description": "Signed G Keaton Wallace to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-14T07:00Z",
+      "description": "Re-signed G Miles Bridges.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-13T07:00Z",
+      "description": "Signed F Taj Gibson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-13T07:00Z",
+      "description": "Re-signed G/F Josh Okogie.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-13T07:00Z",
+      "description": "Waived F RaiQuan Gray.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-07-12T07:00Z",
+      "description": "Re-signed Jalen Brunson to a veteran extension.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-07-12T07:00Z",
+      "description": "Re-signed F Simone Fontecchio.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-12T07:00Z",
+      "description": "Signed F Dario Saric.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-07-12T07:00Z",
+      "description": "Singed F Jamal Cain to a two-way contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-12T07:00Z",
+      "description": "Re-signed G Vit Krejci.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-11T07:00Z",
+      "description": "Signed G Daishen Nix to a two-way contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-11T07:00Z",
+      "description": "Signed G Malik Beasley.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-10T07:00Z",
+      "description": "Signed G Eric Gordon.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-07-10T07:00Z",
+      "description": "Announced G Nickeil Alexander-Walker was named to the Canadian Olympic Team. Promoted Matt Lloyd to general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-10T07:00Z",
+      "description": "Re-signed G Cade Cunningham to a rookie contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-10T07:00Z",
+      "description": "Re-signed G Brandon Williams to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed C Ulrich Chomche to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Re-signed C Alex Len to a contract and G Devin Carter to a rookie contract. Signed G Jordan McLaughlin.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Re-signed F Trendon Watford to a contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed C Jesse Edwards to a two-way contract and re-signed G Jordan McLaughlin.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed G Stanley Umude to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed G Nicolas Batum and F Derrick Jones Jr. Re-signed G James Harden to a contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Claimed F Paul Reed off waivers.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed F DaRon Holmes II to a rookie contract..",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed F Daniel Theis.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-09T07:00Z",
+      "description": "Signed G/F Seth Lundy to a two-way contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Re-signed F Scottie Barnes to a rookie scale extension. Re-signed G Immanuel Quickley to a contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Received F Harrison Barnes and draft consideration from the Sacramento Kings.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Received G DeMar DeRozan from the Chicago Bulls.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Signed C Ariel Hukporti to a two-way contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Signed Gs Rob Dillingham and Terrence Shannon Jr. to rookie scale contracts.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Re-signed F Haywood Highsmith to a Contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Signed G De’Anthony Melton to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Signed F Tobias Harris to a contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Received G Chris Duarte and draft consideration from the Sacramento Kings.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Signed C Yves Missi to a rookie scale contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-08T07:00Z",
+      "description": "Re-signed G JD Davison to a two-way contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Signed G K.J. Simpson to a two-way contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Signed G Carlton Carrington to a rookie scale contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Signed G Nikola Topic to a rookie scale contract. Re-signed Gs Isaiah Joe and Aaron Wiggins.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Signed G Chris Paul.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Re-signed C Bol Bol.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Signed C Andre Drummond and F Kelly Oubre Jr.. Re-signed G Tyrese Maxey.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Waived C Orlando Robinson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-07T07:00Z",
+      "description": "Re-signed G Donovan Mitchell to a veteran extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Waived Fs Davis Bertans and Aleksej Pokusevski and G Bryce McGowens. Acquired G Devonte Graham and a draft consideration from San Antonio in exchange for cash. Acquired G Josh Green from Dallas and G Reggie Jackson from Denver in a six-team trade. Also acquired a 2029 and 2030 second-round picks from Denver in exchange for a 2025 second-round pick and cash.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed C Alexandre Sarr and F KyShawn George to rookie contracts. Acquired G Malcolm Brogdon and a draft consideration from Portland in exchange for F Deni Avdija. Acquired C Jonas Valanciunas from New Orleans in exchange for a draft consideration. Waived G Landry Shamet.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed G Taevion Kinsey to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed C Isaiah Hartenstein. Signed F Dillon Jones and G Nikola Topic to rookie contracts. Signed G Ajay Mitchell to a two-way contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed G Malik Monk.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed F Royce O'Neale and G Damion Lee.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Acquired draft consideration from Dallas as part of a six-team trade.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed F Tristan Da Silva to a rookie contract; re-signed G Gary Harris and Fs Moritz Wagner to a two-year contract, Franz Wagner to a five-year extension and Jonathan Isaac to a veteran extension. Re-signed G Trevelin Queen to a two-way contract. Signed G Kentavious Caldwell-Pope.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed C Nic Claxton. Acquired Fs Bojan Bogdanovic and Mamadi Diakite, G Shake Milton and draft considerations from New York in exchange for G Mikal Bridges, F Keita Bates-Diop and draft considerations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed Fs Luka Garza and Joe Ingles to contacts. Traded G Wendall Moore and F Bobi Klintman and 37th pick in the 2024 NBA draft to Detroit for a second-round draft pick and cash considerations. Acquired draft consideration from Denver and Golden State as part of a six-team trade.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed G A.J. Johnson to a rookie contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed F Kevin Love.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed G Max Christie to a contract and C Collin Castleton to a two-way contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Acquired F Kyle Anderson from Minnesota and G Buddy Hield from Philadelphia in a sign-and-trade deals as part of a six-team trade.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed F Ronald Holland to a rookie contract and G Daniss Jenkins to a two-way contract. Acquired G Wendell Moore Jr. from Minnesota in exchange for draft considerations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Acquired G Quentin Grimes from Detroit in exchange for G Tim Hardaway Jr. and a draft consideration. Acquired G Klay Thompson and draft considerations from Golden State as part of a six-team trade.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed F Adama Sanogo to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed C Jonas Valanciunas. Acquired G Dejounte Murray from Atlanta in exchange for G Dyson Daniels, Fs Cody Zeller, E.J. Liddell and Larry Nance Jr. and draft considerations.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Re-signed F Jayson Tatum and G Derrick White to veteran extensions. Signed G Baylor Scheierman to a rookie contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-07-06T07:00Z",
+      "description": "Signed F Zaccharie Risacher to a rookie contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-07-05T07:00Z",
+      "description": "Signed C Branden Carlson to a two-way contract and re-signed G Garret Temple to a contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-07-05T07:00Z",
+      "description": "Signed G Taevion Kinsey to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-07-05T07:00Z",
+      "description": "Signed C Mason Plumlee and G Monte Morris.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-05T07:00Z",
+      "description": "Signed F Tyler Smith to a contract and G A.J. Johnson to a rookie contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-07-05T07:00Z",
+      "description": "Signed C James Wiseman to a contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "re-signed F Tristan Vukcevic to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "Signed F Isaac Jones to a two-way contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "Signed F Oso Ighodaro. Signed F Jalen Bridges to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "Signed F Justin Edwards to a two-way contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "Signed G Tyler Kolek.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-07-04T07:00Z",
+      "description": "Signed G Alec Burks.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Named Lamar Skeeter, Josh Longstaff, Chris Jent, Blaine Mueller, Ryan Frazier, Matt Hill and Jermaine Bucknor assistant coaches and Zach Peterson as assistant coach/director of player development and Kemba Walker as player enhancement coach. Waived C Marques Bolden. Signed F Tidjane Salaun to a rookie contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Re-signed F Tristan Vukcevic to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Signed F Isaac Jones to a two-way contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Signed F Ryan Dunn to a rookie contract and F Mason Plumlee and G Monte Morris to contracts. Re-signed G Damion Lee to a contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Re-signed C Thomas Bryant to a contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Re-signed G Nate Williams to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Signed G Reece Beekman to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Signed G Trey Alexander to a two-way contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-07-03T07:00Z",
+      "description": "Re-signed F Drew Peterson to a two-way contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Signed G Stephon Castle to a rookie contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Signed F Ryan Dunn to a rookie contract and G Collin Gillespie and F Jalen Bridges to two-way contracts.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Signed G Pelle Larsson to a contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Signed F Dalton Knecht to a rookie contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Signed G Reed Sheppard to a rookie contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2024-07-02T07:00Z",
+      "description": "Re-signed F Xavier Tillman and C Luke Kornet to contract extensions.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-07-01T07:00Z",
+      "description": "Waived C Omer Yurtseven.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-07-01T07:00Z",
+      "description": "Re-signed F Justin Minaya to a two-way contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-07-01T07:00Z",
+      "description": "Signed G Zyon Pullin to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-06-29T07:00Z",
+      "description": "Re-signed F Richaun Holmes to a veteran extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-06-28T07:00Z",
+      "description": "Waived G Seth Curry.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-06-28T07:00Z",
+      "description": "Acquired G Davion Mitchell, F Sasha Vezenkov and future draft considerations from Sacramento Kings for F Jalen McDaniels.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-06-28T07:00Z",
+      "description": "Acquired F Jalen McDaniels from Toronto in exchange for G Davion Mitchell, F Sasha Vezenkov and future draft considerations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-06-24T07:00Z",
+      "description": "Signed Head Coach Chris Finch to a multi-year contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-06-20T07:00Z",
+      "description": "Hired JJ Redick to Head Coach.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-06-19T07:00Z",
+      "description": "Fired Head Coach Monty Williams.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-05-31T07:00Z",
+      "description": "Part ways with general manager Troy Weaver.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-05-23T07:00Z",
+      "description": "Fired head coach J.B. Bickerstaff.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-05-16T07:00Z",
+      "description": "Named Dotun Akinwale assistant general manager, Ryan Gisriel vice president of basketball operations & strategy and Patrick Harrel vice president of basketball insights & analysis.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-05-11T07:00Z",
+      "description": "Named Mike Budenholzer head coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-05-09T07:00Z",
+      "description": "Named Charles Lee head coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-05-09T07:00Z",
+      "description": "Dismissed head coach Frank Vogel.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-05-06T07:00Z",
+      "description": "Signed Head Coach Jason Kidd to a multi-year contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-05-03T07:00Z",
+      "description": "Fired head coach Darvin Ham.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-04-16T07:00Z",
+      "description": "Signed G Grayson Allen to a multi-year contract extension.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-04-16T07:00Z",
+      "description": "Recalled C Neemias Queta and F Jordan Walsh from the Maine Celtics of the G League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-04-14T07:00Z",
+      "description": "Signed G Taze Moore to a 10-day contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-04-14T07:00Z",
+      "description": "Converted the contract of F Usman Garuba to an NBA contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-04-13T07:00Z",
+      "description": "Signed G Ricky Council IV to a rest-of-season contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-04-13T07:00Z",
+      "description": "Signed G Jaylen Nowell to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-04-11T07:00Z",
+      "description": "Re-signed G Jrue Holiday to a veteran extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-04-09T07:00Z",
+      "description": "Signed G Zavier Simpson and F Jack White to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-04-09T07:00Z",
+      "description": "Signed G Isaiah Thomas to a rest-of-season contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-04-05T07:00Z",
+      "description": "Waived F Terry Taylor. (April 4)",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-04-04T07:00Z",
+      "description": "Converted the two-way contract of C Luka Garza to a standard NBA contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-04-04T07:00Z",
+      "description": "Signed G Javonte Green to a rest-of-season contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-04-03T07:00Z",
+      "description": "Signed C Malik Williams to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-04-03T07:00Z",
+      "description": "Recalled G Patrick Baldwin, Jr. from the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-04-03T07:00Z",
+      "description": "Signed G Jaylen Nowell to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-04-02T07:00Z",
+      "description": "Assigned G/F Jett Howard to the Osceola Magic of the G League.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2024-03-30T07:00Z",
+      "description": "Signed F Maozinha Pereira and G Zavier Simpson to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-03-30T07:00Z",
+      "description": "Signed G Isaiah Thomas to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-03-30T07:00Z",
+      "description": "Signed F Chimezie Metu to a rest-of-season contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-29T07:00Z",
+      "description": "Signed F Marcus Morris Sr. to a rest-of-season contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-03-28T07:00Z",
+      "description": "Recalled G Andre Jackson, Jr. from the Wisconsin Herd of the G League",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-03-28T07:00Z",
+      "description": "Assigned F Orlando Robinson to the Sioux Falls Skyforce of the G League.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-03-27T07:00Z",
+      "description": "Signed F T.J. Warren to a rest-of-season contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-03-27T07:00Z",
+      "description": "Recalled G Jaden Springer and F Jordan Walsh from the Maine Celtics of the G League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-03-23T07:00Z",
+      "description": "Assigned F Olivier-Maxence Prosper to the Texas Legends of the G League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-03-23T07:00Z",
+      "description": "Signed G Javonte Green to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-03-21T07:00Z",
+      "description": "Recalled F Noah Clowney from the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-03-20T07:00Z",
+      "description": "Signed G DeJon Jarreau and F Maozinha Pereira to 10-day contracts. Signed F Maozinha Pereira and G DeJon Jarreau to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-03-20T07:00Z",
+      "description": "Recalled Gs Javon Freeman-Liberty and Jahmi'us Ramsey from the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-03-20T07:00Z",
+      "description": "Signed G Isaiah Thomas to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-03-20T07:00Z",
+      "description": "Signed F Chimezie Metu to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-19T07:00Z",
+      "description": "Assigned G/F Gui Santos to the Santa Cruz Warriors of the G League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-03-19T07:00Z",
+      "description": "Assigned F Jordan Walsh to the Maine Celtics of the G League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-03-18T07:00Z",
+      "description": "Announced G Evan Fournier has been fined $25,000 for an incident on March 17.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-16T07:00Z",
+      "description": "Signed F T.J. Warren to a second 10-day contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-03-16T07:00Z",
+      "description": "Signed F Taj Gibson to a rest-of-season contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-15T07:00Z",
+      "description": "Signed C Kai Jones to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-03-14T07:00Z",
+      "description": "Signed G Jahmi'us Ramsey to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-03-14T07:00Z",
+      "description": "Signed G DaQuan Jeffries and F Mamadi Diakite to 10-day contracts.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-03-12T07:00Z",
+      "description": "Assigned F Kenny Lofton, Jr. to the Salt Lake City Stars of the G League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-03-12T07:00Z",
+      "description": "Recalled F Maxwell Lewis from the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-03-11T07:00Z",
+      "description": "Singed F Kenneth Lofton Jr. to a rest-of-season contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-03-10T08:00Z",
+      "description": "Signed G DeJon Jarreau to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-03-09T08:00Z",
+      "description": "Signed Taevion Kinsey to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-03-08T08:00Z",
+      "description": "Signed F Wenyan Gabriel to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-03-06T08:00Z",
+      "description": "Assigned G Jahmi'us Ramsey to the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-03-06T08:00Z",
+      "description": "Recalled G R. J. Hampton from the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-03-06T08:00Z",
+      "description": "Signed F T.J. Warren to a 10-day contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-03-06T08:00Z",
+      "description": "Signed G Patty Mills to a rest-of-season contract. Waived G Dru Smith.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-03-06T08:00Z",
+      "description": "Signed F Taj Gibson to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-05T08:00Z",
+      "description": "Signed G Shake Milton to a rest-of-season contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-03-05T08:00Z",
+      "description": "Recalled F Noah Clowney from the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-03-05T08:00Z",
+      "description": "Assigned G Jalen Hood-Schifino and F Maxwell Lewis to the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-03-04T08:00Z",
+      "description": "Signed F Ish Wainright to a two-way contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-03-03T08:00Z",
+      "description": "Signed G R.J. Hampton to a 10-day contract. Signed G Justin Champagnie to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-03-03T08:00Z",
+      "description": "Signed G Izaiah Brockington to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Signed C Marques Bolden to a two-way contract. Waived C Nathan Mensah.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Signed G D.J. Carton to a two-way contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Signed F Mike Muscala to a rest-of-season contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Converted the contract of F Dominick Barlow to a NBA contract. Signed F RaiQuan Gray and G Jamaree Bouyea to two-way contracts. Waived F Mamdi Diakite.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Signed G Jeff Dowtin to a two-way contract. Waived F Kenneth Lofton Jr.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Signed G Jacob Gilyard to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Waived G Dylan Windler.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-03-02T08:00Z",
+      "description": "Waived G Shake Milton.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-03-01T08:00Z",
+      "description": "Signed G Javon Freeman-Liberty to a rest-of-season contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-03-01T08:00Z",
+      "description": "Re-signed F Eugene Omoruyi to a rest-of-season contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-03-01T08:00Z",
+      "description": "Signed F Jalen Wilson to a rest-of-season contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-29T08:00Z",
+      "description": "Assigned F Jacob Toppin to the Westchester Knicks of the G League.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-02-29T08:00Z",
+      "description": "Assigned F Wendell Moore, Jr. to the Iowa Wolves of the G League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-02-29T08:00Z",
+      "description": "Assigned G Sharife Cooper to the Cleveland Charge of the G League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-02-29T08:00Z",
+      "description": "Assigned G Jalen Crutcher to the Birmingham Squadron of the G League.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-02-29T08:00Z",
+      "description": "Placed G Patty Mills on waivers. Converted the Contract of G Trent Forrest to an NBA contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-02-28T08:00Z",
+      "description": "Signed F Aleksej Pokusevski.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-28T08:00Z",
+      "description": "Assigned G Lindy Waters III to the Oklahoma City Blue of the G League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-28T08:00Z",
+      "description": "Assigned F Jacob Toppin to the Westchester Knicks of the G League.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-02-28T08:00Z",
+      "description": "Waived F Mike Muscala.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-28T08:00Z",
+      "description": "Assigned F Jordan Walsh to the Maine Celtics of the G League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-02-27T08:00Z",
+      "description": "Recalled F Justin Champagnie from the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-27T08:00Z",
+      "description": "Recalled G Lindy Waters III from the Oklahoma City Blue of the G League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-27T08:00Z",
+      "description": "Assigned F Jalen Pickett and G/F Julian Strawther to the Grand Rapids Gold of the G League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2024-02-27T08:00Z",
+      "description": "Assigned G A.J. Griffitn, Jr. and F Mouhamed Gueye to the College Park Skyhawks of the G League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-02-26T08:00Z",
+      "description": "Signed F Matt Hurt to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-02-26T08:00Z",
+      "description": "Signed G Sharife Cooper to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-02-25T08:00Z",
+      "description": "Signed G Andrew Funk to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-02-24T08:00Z",
+      "description": "Signed G Jordan Goodwin to a two-way contract. Waived G Jacob Gilyard.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-02-23T08:00Z",
+      "description": "Waived F Aleksej Pokusevski.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-23T08:00Z",
+      "description": "Signed G Mike Conley to a contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-02-23T08:00Z",
+      "description": "Re-signed G Stanley Umude to a rest-of-season contract. Signed Fs Buddy Boeheim and Tosan Evbuomwan to two-way contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-22T08:00Z",
+      "description": "Signed G Justin Champagnie to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-22T08:00Z",
+      "description": "Signed G DaQuan Jeffries to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-02-22T08:00Z",
+      "description": "Signed F Justin Jackson to a 10-day contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-02-22T08:00Z",
+      "description": "Converted the contract of G Lester Quinones to an NBA contract. Signed G Pat Spencer to a two-way contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-02-22T08:00Z",
+      "description": "Signed F Malcolm Hill to a two-way contract and G Jalen Crutcher to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Assigned G Nick Smith, Jr. to the Greensboro Swarm of the G League.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Signed G D.J. Carton to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Signed G Jaylen Martin to a two-way contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Signed G Ryan Rollins to a two-way contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Waived G Malcolm Cazalon.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-21T08:00Z",
+      "description": "Assigned G A.J. Griffin, Jr. to the College Park Skyhawks for the G League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-02-20T08:00Z",
+      "description": "Signed C Marques Bolden to a 10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-20T08:00Z",
+      "description": "Signed F Thaddeus Young.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-02-20T08:00Z",
+      "description": "Signed F Darius Bazley to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-02-19T08:00Z",
+      "description": "Released head coach Jacque Vaughn.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-16T08:00Z",
+      "description": "Waived G Delon Wright.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Recalled G Nick Smith, Jr. from the Greensboro Swarm of the G League",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Recalled Fs Mouhamadou Gueve and Justise Winslow from the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Recalled F Leonard Mille from the Iowa Wolves of the G League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Assigned G Jalen Hood-Schifino and F Maxwell Lewis to the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Recalled G Jarace Walker from the Indiana Mad Ants of the G League.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-02-14T08:00Z",
+      "description": "Signed G Craig Porter Jr. to a rest-of-season contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-02-13T08:00Z",
+      "description": "Signed G Jordan Goodwin to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-02-12T08:00Z",
+      "description": "Signed F Tosan Evbuomwan to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-11T08:00Z",
+      "description": "Waived G Kyle Lowry.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-11T08:00Z",
+      "description": "Signed G Zhaire Smith to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-02-10T08:00Z",
+      "description": "Signed Fs Justise Winslow and Mouhamadou Gueye to 10-day contracts.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-02-10T08:00Z",
+      "description": "Signed C Bismack Biyombo to a rest-of-season contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-10T08:00Z",
+      "description": "Signed F Taj Gibson to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-02-10T08:00Z",
+      "description": "Signed G Spencer Dinwiddie to a rest-of-season contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-02-10T08:00Z",
+      "description": "Waived G Ryan Arcidiacono.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Signed F G.G. Jackson to a rest-of-season contract and C Trey Jemison to a two-way contract. Waived F Chimezie Metu.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Waived F Kevin Knox II.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Re-signed F Lindy Waters III to a rest-of-season contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Re-signed G Keon Ellis to a rest-of-season contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Waived G Jordan Goodwin.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Signed G Alondes Williams to a two-way contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-02-09T08:00Z",
+      "description": "Waived G Furkan Korkmaz.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Seth Curry, F Grant Williams and a 2027 first-round pick from Dallas in exchange for F P.J. Washington Jr., a 2024 second-round pick and a 2028 second-round pick. Acquired F Davis Bertans, Gs Tre Mann and Vasilije Micic, a 2024 second-round pick and a 2025 second round pick from Oklahoma City in exchange for F Gordon Hayward. Waived Gs James Bouknight, Frank Ntilikina and Ish Smith.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Waived G Victor Oladipo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Ochai Agbaji and F Kelly Olynyk from Utah in exchange for G Kira Lewis Jr and F Otto Porter Jr. and draft consideration. Acquired G Spencer Dinwiddie from Brooklyn in exchange for F Thaddeus Young and G Dennis Schroder. Waived G Spencer Dinwiddie.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Richaun Holmes and draft consideration from Dallas Mavericks for F Daniel Gafford.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Kira Lewis Jr and F Otto Porter Jr from Toronto Raptors for G Ochai Agbaji and F Kelly Olynyk.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Gordon Hayward from Charlotte Hornets for F Davis Bertans, Gs Tre Mann and Vasilije Micic, a 2024 second-round pick and a 2025 second round pick.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired C Robin Lopez from Milwaukee in exchange for cash considerations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Dalano Banton from Boston in exchange for draft consideration.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Royce O'Neale from Brooklyn and F David Roddy from Memphis in exchange for F Keita Bates-Diop, G Jordan Goodwin and three future second-round picks to Brooklyn, and F/C Chimezie Metu, F Yuta Wantanabe and a 2026 first-round pick to Memphis.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Buddy Hield from Indiana in a three-team trade sending F Marcus Morris Sr. and draft consideration to San Antonio.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Bojan Bogdanovic and G Alec Burks from Detroit in exchange for Gs Malachi Flynn, Quentin Grime, Ryan Arcidiacono and Evan Fournier and draft consideration.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Thaddeus Young and G Dennis Schroder from Toronto Raptors for G Spencer Dinwiddie.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Monte Morris from Detroit in exchange for Gs Shake Milton and Troy Brown Jr. and draft consideration.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired cash considerations from Sacramento Kings for C Robin Lopez.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired G Cory Joseph and cash consideration from Golden State in exchange for draft consideration. Acquired G Furkan Korkmaz and draft consideration from Philadelphia and F Doug McDermott from San Antonio in a three-team trade.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired draft consideration from Indiana Pacers for G Cory Joseph and cash consideration.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired Gs Malachi Flynn, Quentin Grime, Ryan Arcidiacono and Evan Fournier and draft consideration from New York Knicks for F Bojan Bogdanovic and G Alec Burks.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired F Daniel Gafford from Washington in exchange for F Richaun Holmes and draft consideration.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-02-08T08:00Z",
+      "description": "Acquired draft consideration from Portland Trail Blazers for F Dalano Banton.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-02-07T08:00Z",
+      "description": "Recalled Fs Taylor Hendricks and Brice Sensabaugh from the Salt Lake City Stars of the G League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2024-02-07T08:00Z",
+      "description": "Assigned F Noah Clowney to the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-07T08:00Z",
+      "description": "Assigned G Jarace Walker to the Indiana Mad Ants of the G League.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-02-06T08:00Z",
+      "description": "Recalled G Kira Lewis, Jr. from the Raptors 905 of the G League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2024-02-06T08:00Z",
+      "description": "Assigned F Johnny Davis and G Patrkck Baldwin, Jr. to the Capital City Go-Go of the G League,",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-06T08:00Z",
+      "description": "Recalled F Noah Clowney from the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-02-06T08:00Z",
+      "description": "Assigned G Jarace Walker to the Indiana Mad Ants of the G League.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-02-03T08:00Z",
+      "description": "Assigned G Patrick Baldwin, Jr. and F Johnny Davie to the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-02-03T08:00Z",
+      "description": "Recalled G Rayan Rupert from the Rip City Remix of the G League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2024-02-03T08:00Z",
+      "description": "Recalled G Dalano Banton and F Jordan Walsh from the Maine Celtics of the G League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2024-02-03T08:00Z",
+      "description": "Assigned G Kobe Bufkin and F Mouhamed Gueye to the College Park Skyhawks of the G League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-02-01T08:00Z",
+      "description": "Assigned F Olivier-Maxence Proster to the Texas Legends of the G League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-02-01T08:00Z",
+      "description": "Assigned G Malcolm Hill and F E.J. Liddell to the Birmingham Squadron of the G League.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-01-31T08:00Z",
+      "description": "Assigned G Patrick Baldwin, Jr. to the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-01-31T08:00Z",
+      "description": "Assigned G Kobe Bufkin to the College Park Skyhawks of the G League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-01-30T08:00Z",
+      "description": "Signed C Trey Jemison and F Tosan Evbuomwan to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-01-30T08:00Z",
+      "description": "Signed F Taj Gibson to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-01-30T08:00Z",
+      "description": "Recalled Kobe Bufkin from the College Park Skyhawks of the G League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2024-01-29T08:00Z",
+      "description": "Signed F James Johnson to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-01-27T08:00Z",
+      "description": "Signed F Malcolm Hill to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2024-01-25T08:00Z",
+      "description": "Recalled F Johnny Davis from the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-01-25T08:00Z",
+      "description": "Recalled G MarJon Beauchamp and F Chris Livingston from the Wisconsin Herd of the G League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-01-25T08:00Z",
+      "description": "Reacalled G Jalen Hood-Schifino from the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-01-25T08:00Z",
+      "description": "Assigned F Olivier-Maxence Prosper to the Texas Legends of the G League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2024-01-24T08:00Z",
+      "description": "Assigned G Tre Mann to the Oklahoma City Blue of the G League.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2024-01-24T08:00Z",
+      "description": "Recalled F Noah Clowney from the Long Island Nets of the G League.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2024-01-24T08:00Z",
+      "description": "Assigned G Jalen Hood-Schifino and F Maxwell Lewis to the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-01-23T08:00Z",
+      "description": "Acquired a 2027 first-round draft pick and G Kyle Lowry from Miami in exchange for G Terry Rozier.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2024-01-23T08:00Z",
+      "description": "Acquired G Terry Rozier from Charlotte Hornets for a 2027 first-round draft pick and G Kyle Lowry.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2024-01-20T08:00Z",
+      "description": "Signed C Trey Jemison to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-01-19T08:00Z",
+      "description": "Signed F James Johnson to a 10-day contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-01-18T08:00Z",
+      "description": "Signed F Pete Nance to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2024-01-17T08:00Z",
+      "description": "Waived F James Johnson. Received G Kira Lewis Jr. and cash consideration from New Orleans.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-01-16T08:00Z",
+      "description": "Signed G Scotty Pippen Jr. to a two-way contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-01-14T08:00Z",
+      "description": "Received Fs Danilo Gallinari and Mike Muscala from Washington in exchange for Fs Marvin Bagley III and Isaiah Livers and two second-round draft picks.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2024-01-11T08:00Z",
+      "description": "Waived C Bismack Biyombo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Assigned F Jake LaRavia to the Memphis Hustle of the G League.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Recalled G Patrick Baldwin, Jr. from the Capital City Go-Go of the G League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Recalled Fs Leonard Miller and Josh Minott from the Iowa Wolves of the G League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Assigned G Jalen Hood-Schifino and F Maxwell Lewis to the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Assigned Gs Ben Sheppard and Jarace Walker to the Indiana mad ants of the G League.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2024-01-10T08:00Z",
+      "description": "Assigned F Julian Phillips to the Windy City Bulls of the G League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2024-01-09T08:00Z",
+      "description": "Signed G Hamidou Diallo to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2024-01-09T08:00Z",
+      "description": "Signed F Juan Toscano-Anderson to a 10-day contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-01-09T08:00Z",
+      "description": "Assigned Fs Jae Crowder, Chris Livingston and G A.J. Green to the Wisconsin Herd of the G League.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2024-01-09T08:00Z",
+      "description": "Recalled G Jalen Hood-Schifino and F Maxwell Lewis from the South Bay Lakers of the G League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2024-01-07T08:00Z",
+      "description": "Waived F Juan Toscano-Anderson.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2024-01-07T08:00Z",
+      "description": "Waived F Taj Gibson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2024-01-06T08:00Z",
+      "description": "Reinstated Golden State F Draymond Green from his 12 game suspension.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    }
+  ]
+}

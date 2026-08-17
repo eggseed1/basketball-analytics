@@ -1,4 +1,4 @@
-import type { PlayerPercentile, PercentileSide } from "@/data/queries";
+﻿import type { PlayerPercentile, PercentileSide } from "@/data/queries";
 import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 import { perGame } from "@/data/providers/nba/compute-advanced";
@@ -8,7 +8,7 @@ import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 export interface SavantMetric {
   key: string;
   label: string;
-  /** Displayed value, or null → "—" */
+  /** Displayed value, or null ??"?? */
   display: string | null;
   /** Raw numeric for career ranking / animation; null when unavailable. */
   value: number | null;
@@ -73,8 +73,8 @@ function metric(
 }
 
 /**
- * Baseball Savant–style sections for an NBA player-season:
- * Value (impact) → Offense → Defense.
+ * Baseball Savant?뱒tyle sections for an NBA player-season:
+ * Value (impact) ??Offense ??Defense.
  */
 export function buildSavantSections(
   row: PlayerSeason,
@@ -225,16 +225,16 @@ export function buildSavantSections(
           percentiles,
           "trueShootingPct",
           "TS%",
-          formatPct(row.trueShootingPct),
-          row.trueShootingPct,
+          formatPct(row.trueShootingPct ?? 0),
+          row.trueShootingPct ?? null,
           "offense"
         ),
         metric(
           percentiles,
           "effectiveFieldGoalPct",
           "eFG%",
-          formatPct(row.effectiveFieldGoalPct),
-          row.effectiveFieldGoalPct,
+          formatPct(row.effectiveFieldGoalPct ?? 0),
+          row.effectiveFieldGoalPct ?? null,
           "offense"
         ),
         metric(
@@ -249,8 +249,8 @@ export function buildSavantSections(
           percentiles,
           "usagePct",
           "USG%",
-          formatPct(row.usagePct),
-          row.usagePct,
+          formatPct(row.usagePct ?? 0),
+          row.usagePct ?? null,
           "offense"
         ),
         metric(
@@ -265,10 +265,12 @@ export function buildSavantSections(
           percentiles,
           "offensiveRating",
           "ORtg",
-          row.offensiveRating > 0 ? formatNumber(row.offensiveRating, 1) : null,
-          row.offensiveRating > 0 ? row.offensiveRating : null,
+          (row.offensiveRating ?? 0) > 0
+            ? formatNumber(row.offensiveRating ?? 0, 1)
+            : null,
+          (row.offensiveRating ?? 0) > 0 ? (row.offensiveRating ?? null) : null,
           "offense",
-          { missing: row.offensiveRating <= 0 }
+          { missing: (row.offensiveRating ?? 0) <= 0 }
         ),
         metric(
           percentiles,
@@ -312,10 +314,12 @@ export function buildSavantSections(
           percentiles,
           "defensiveRating",
           "DRtg",
-          row.defensiveRating > 0 ? formatNumber(row.defensiveRating, 1) : null,
-          row.defensiveRating > 0 ? row.defensiveRating : null,
+          (row.defensiveRating ?? 0) > 0
+            ? formatNumber(row.defensiveRating ?? 0, 1)
+            : null,
+          (row.defensiveRating ?? 0) > 0 ? (row.defensiveRating ?? null) : null,
           "defense",
-          { missing: row.defensiveRating <= 0, higherBetter: false }
+          { missing: (row.defensiveRating ?? 0) <= 0, higherBetter: false }
         ),
         metric(
           percentiles,
@@ -554,14 +558,14 @@ export const CAREER_TIMELINE_METRICS: CareerTimelineMetric[] = [
   {
     key: "trueShootingPct",
     label: "TS%",
-    value: (r) => r.trueShootingPct * 100,
+    value: (r) => (r.trueShootingPct ?? 0) * 100,
     format: (v) => `${v.toFixed(1)}%`,
     kind: "rate",
   },
   {
     key: "usagePct",
     label: "USG%",
-    value: (r) => r.usagePct * 100,
+    value: (r) => (r.usagePct ?? 0) * 100,
     format: (v) => `${v.toFixed(1)}%`,
     kind: "rate",
   },
@@ -596,7 +600,7 @@ export const CAREER_TIMELINE_METRICS: CareerTimelineMetric[] = [
   {
     key: "effectiveFieldGoalPct",
     label: "eFG%",
-    value: (r) => r.effectiveFieldGoalPct * 100,
+    value: (r) => (r.effectiveFieldGoalPct ?? 0) * 100,
     format: (v) => `${v.toFixed(1)}%`,
     kind: "rate",
   },

@@ -1,0 +1,5377 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2006,
+  "fetchedAt": "2026-08-14T20:06:21.223Z",
+  "apiCount": 488,
+  "rows": [
+    {
+      "date": "2006-12-30T08:00Z",
+      "description": "Assigned center Patrick O'Bryant to  Bakersfield of the NBA Developement League.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-12-29T08:00Z",
+      "description": "Assigned guard-forward James White to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-12-28T08:00Z",
+      "description": "Fired coach Mike Fratello.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-12-28T08:00Z",
+      "description": "Signed forward Stanislav Medvedenko.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-12-26T08:00Z",
+      "description": "Recalled guard-forward James White from Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-12-22T08:00Z",
+      "description": "Waived forward Ivan McFarlin.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-12-19T08:00Z",
+      "description": "Traded guard Allen Iverson and forward Ivan McFarlin to the Denver Nuggets for guard Andre Miller, forward Joe Smith and two 2007 first-round draft picks.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-12-18T08:00Z",
+      "description": "Assigned guard Maurice Ager to Fort Worth of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-12-16T08:00Z",
+      "description": "Assigned guard-forward James White to Austin of the D-League.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-12-14T08:00Z",
+      "description": "Agreed to terms with FSN North on a long-term television rights contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-12-13T08:00Z",
+      "description": "Announced they will no longer operate the Charlotte Sting of the WNBA.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-12-11T08:00Z",
+      "description": "Suspended guard Stephen Jackson one game for conduct detrimental to the team.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-12-11T08:00Z",
+      "description": "Assigned center Martynas Andriuskevicius to Dakota of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-12-09T08:00Z",
+      "description": "Suspended forward Zach Randolph one game without pay for his actions in a game at Indiana on December 8.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-12-07T08:00Z",
+      "description": "Assigned forward Pops Mensah-Bonsu to Fort Worth of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-12-01T08:00Z",
+      "description": "Assigned guard Julius Hodge to Colorado of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-11-30T08:00Z",
+      "description": "Named Lenny Wilkens vice chairman of professional basketball club.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-11-28T08:00Z",
+      "description": "Signed guard Derek Anderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-11-28T08:00Z",
+      "description": "Assigned guards Bobby Jones and Louis Williams to their D-League affiliate.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-11-27T08:00Z",
+      "description": "Waived guard Alan Anderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-11-27T08:00Z",
+      "description": "Named Dave Hopla basketball development consultant.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-11-26T08:00Z",
+      "description": "Waived guard Alan Anderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-11-22T08:00Z",
+      "description": "Assigned center Ryan Hollins to Fort  Worth of the NBDL.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-11-20T08:00Z",
+      "description": "Waived guard Dajuan Wagner.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-11-13T08:00Z",
+      "description": "Released forward Vin Baker.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-11-07T08:00Z",
+      "description": "Signed guard-forward Jalen Rose.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-11-05T08:00Z",
+      "description": "Signed center Andreas Glyniadakis.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-11-03T08:00Z",
+      "description": "Signed swingman James White.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-11-01T08:00Z",
+      "description": "Named Chris Jent director of player development and assistant coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived forward Mike Hall.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Signed guard Luke Ridnour to a multi-year contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Exercised their third-year options on guards Jarrett Jack and Martell Webster.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived guard-forward Jalen Rose.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived forward Darvin Ham.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived forward Devin Green.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived guard-forward James White and center John Edwards.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Named Tad Brown chief executive officer.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-10-30T08:00Z",
+      "description": "Waived center Luke Schenscher.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-10-29T07:00Z",
+      "description": "Waived guard Vincent Grier.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-10-29T07:00Z",
+      "description": "Exercised their fourth-year option on guard J.R. Smith and third-year option on forward Linas Kleiza.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-28T07:00Z",
+      "description": "Exercised the 2007-08 contract option on guard Beno Udrih.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-10-28T07:00Z",
+      "description": "Waived center Ha Seung-Jin.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-10-28T07:00Z",
+      "description": "Signed center Chris Kaman to a multi-year contract extension.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-10-28T07:00Z",
+      "description": "Signed forward Josh Howard to a contract extension.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-10-27T07:00Z",
+      "description": "Exercised their fourth-year option on forward-center Nenad Krstic and their third-year option on guard-forward Antoine Wright.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-10-27T07:00Z",
+      "description": "Exercised their fourth-year option on guard Sasha Vujacic and their third-year option on center Andrew Bynum.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-10-27T07:00Z",
+      "description": "Waived forward Ryan Bowen and guard Casey Jacobsen.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Promoted Mike O'Koren to associate coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived guards Denham Brown and Milt Palacio.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived guards Melvin Sanders and Charles Lee and forward Jamar Smith.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived forwards Matt Walsh and Awvee Storey.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived guards Von Wafer and J.R. Pinnock.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived forwards Lamond Murray, Ryan Humphrey and Jawad Williams and guard Dawan Robinson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived guard Andre Owens.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived forward Ndudi Ebi.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived center Ondrej Starosta.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Exercised the 2007-08 contract option on guard Tony Allen; waived forwards Brian Grant and Luke Jackson.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-10-26T07:00Z",
+      "description": "Waived forward Andre Brown and center Andreas Glyniadakis.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Waived center Zendon Hamilton.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Waived guard Rick Brunson.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Waived guard-forward Jackie Manuel and forward Kasib Powell.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Exercised the third-year options of forwards Channing Frye and David Lee and guard Nate Robinson; waived forwards Nikoloz Tskitishvili and Elton Brown, guard Milone Clark and center Paul Miller; signed center Kelvin Cato.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Waived forward Mike Harris.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-10-25T07:00Z",
+      "description": "Waived guards Anthony Carter and Antoine Hood.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-24T07:00Z",
+      "description": "Waived guards Antonio Burks and Daniel Horton.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-10-24T07:00Z",
+      "description": "Waived guard Kelenna Azubuike.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-10-24T07:00Z",
+      "description": "Waived swingman Stephen Graham.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-24T07:00Z",
+      "description": "Exercised fourth-year options on guard Ben Gordon and forwards Luol Deng and Viktor Khryapa.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-10-23T07:00Z",
+      "description": "Waived guard Lionel Chalmers and forward Kaniel Dickens.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Waived guard Will Conroy and forward Donta Smith.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Waived forward Kenny Adeleke; exercised their fourth-year option on center Robert Swift and the third-year option on center Johan Petro for the 2007-08 season.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Waived guard Olu Famutimi, forward Rich Melzer and center Jared Reiner.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Signed forward-center Boris Diaw to a five-year contract extension.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Agreed to a 10-year naming rights deal with Oracle for The Arena in Oakland.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Waived guard Darius Washington.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-10-20T07:00Z",
+      "description": "Waived forwards Akin Akingbala and Kevin Pittsnogle.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-10-19T07:00Z",
+      "description": "Waived forward Brandon Bowman.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-10-19T07:00Z",
+      "description": "Waived forward-center Matt Haryasz.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-10-19T07:00Z",
+      "description": "Waived forward Rick Rickert and guard Rob Griffin.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2006-10-16T07:00Z",
+      "description": "Named Steve Yaros vice president of marketing.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-10-16T07:00Z",
+      "description": "Waived forward Courtney Alexander.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-15T07:00Z",
+      "description": "Released forward LaVell Blanchard and center Cezary Trybanski.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-10-15T07:00Z",
+      "description": "Signed guard DerMarr Johnson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-15T07:00Z",
+      "description": "Waived forward Pat Carroll.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-10-14T07:00Z",
+      "description": "Waived forward Brandon Hunter.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-13T07:00Z",
+      "description": "Waived forward Kimani Ffriend.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-10-13T07:00Z",
+      "description": "Waived center Peter John Ramos.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-10-13T07:00Z",
+      "description": "Named Mike Golub executive vice president of business operations; Jim Taylor content manager; promoted Kevin Pritchard to assistant general manager; Mario Milosevic to graphic designer; Chris Cook to database marketing manager; Kerry Moran to project manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-10-13T07:00Z",
+      "description": "Acquired forward-center Dwayne Jones from the Boston Celtics for guard-forward Luke Jackson and cash.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-13T07:00Z",
+      "description": "Waived guard-forward Jeff Varem.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-10-12T07:00Z",
+      "description": "Promoted Lorrie-Ann Diaz to director of marketing communications.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-10-12T07:00Z",
+      "description": "Extended the contract of coach Avery Johnson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-10-11T07:00Z",
+      "description": "Waived forward Dijon Thompson",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-10-11T07:00Z",
+      "description": "Waived guard Eddie Basden.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-10-10T07:00Z",
+      "description": "Waived forward Kevinn Pinkney.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-10-10T07:00Z",
+      "description": "Signed forward Lamond Murray.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-10-10T07:00Z",
+      "description": "Exercised the 2009-10 option on the contract of coach George Karl.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-10T07:00Z",
+      "description": "Waived forward-center Scott Merritt.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-10-08T07:00Z",
+      "description": "Signed guard Courtney Alexander; waived guards Larry Ayuso and Corey Williams and forward Jefferson Sobral.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-10-06T07:00Z",
+      "description": "Waived center Eric Chenowith.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-10-05T07:00Z",
+      "description": "Signed coach Rick Carlisle to a multi-year contract extension.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-10-04T07:00Z",
+      "description": "Signed president of basketball operations Ernie Grunfeld to a multi-year contract extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-10-03T07:00Z",
+      "description": "Signed center Cezary Trybanski.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-10-03T07:00Z",
+      "description": "Signed guard-forward Ime Udoka.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-10-03T07:00Z",
+      "description": "Waived guard Devin Brown.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-10-02T07:00Z",
+      "description": "Signed swingman Jackie Manuel and forward Kasib Powell.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-10-02T07:00Z",
+      "description": "Signed forwards Elton Brown and Nikoloz Tskitishvili, guard Milone Clark and center Paul Miller.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-10-02T07:00Z",
+      "description": "Signed forwards Brandon Bowman and Darvin Ham and guards Awvee Storey and Matt Walsh.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-10-02T07:00Z",
+      "description": "Signed forwards Vin Baker and Paul Shirley and guard Tyrone Ellis.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-10-02T07:00Z",
+      "description": "Signed swingman Bonzi Wells, who had been with the Sacramento Kings, to a multi-year contract; signed forward Scott Padgett, who had been with the New Jersey Nets.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-09-30T07:00Z",
+      "description": "Waived forward Mike Gansey.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-09-29T07:00Z",
+      "description": "Signed guard Darrick Martin, forward LaVell Blanchard and center Cezary Trybanski.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-09-29T07:00Z",
+      "description": "Exercised the fourth-year option on contract of guard Andre Iguodala.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-09-29T07:00Z",
+      "description": "Waived forward Maurice Taylor.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-09-29T07:00Z",
+      "description": "Signed forwards Ryan Humphrey and Jawad Williams and guard Dawan Robinson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-09-29T07:00Z",
+      "description": "Signed forwards Andre Brown, Kaniel Dickens and Matt Freije, guards Cedric Bozeman and Lionel Chalmers and center Andreas Glyniadakis.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-09-28T07:00Z",
+      "description": "Signed guard Davin White.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-09-28T07:00Z",
+      "description": "Named Moses Malone and Jim Lynam assistant coaches.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-09-28T07:00Z",
+      "description": "Named Glen Grunwald senior vice president of basketball operations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-09-28T07:00Z",
+      "description": "Signed guard Jay Williams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-09-27T07:00Z",
+      "description": "Signed guard Hassan Adams.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-09-25T07:00Z",
+      "description": "Named Seth Burton assistant director of communications.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-09-22T07:00Z",
+      "description": "Signed guard Dajuan Wagner.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-09-21T07:00Z",
+      "description": "Signed forward Mike Harris and guard Chris McCray.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-09-20T07:00Z",
+      "description": "Signed guard Olu Famutimi; promoted Sam Presti to vice president-assistant general manager.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-09-15T07:00Z",
+      "description": "Named Tom Savage director of public relations and Jennifer Carroll manager of corporate communications.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-09-15T07:00Z",
+      "description": "Signed forwards Rich Melzer and Jamar Smith, guard Charles Lee and center Jared Reiner; named George Felton director of college player personnel.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-09-15T07:00Z",
+      "description": "Exercised the contract options on guard Dorell Wright and forward Wayne Simien.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-09-14T07:00Z",
+      "description": "Promoted Ryan Krueger to assistant coach, Pete Williams to video coordinator and Matt Reicher to assistant trainer-equipment manager.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-09-14T07:00Z",
+      "description": "Named Fred Hoiberg and Rob Babcock assistant general managers, Bob Ociepka assistant coach and Dave Vitel strength and conditioning coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-09-14T07:00Z",
+      "description": "Named Stephen Silas assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-09-13T07:00Z",
+      "description": "Signed center Mile Ilic.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-09-12T07:00Z",
+      "description": "Named Ann Meyers vice president.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-09-12T07:00Z",
+      "description": "Waived guard Derek Anderson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-09-11T07:00Z",
+      "description": "Signed forward Walter Herrmann.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-09-11T07:00Z",
+      "description": "Waived guard Ime Udoka.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-09-11T07:00Z",
+      "description": "Re-signed forward Drew Gooden to a multi-year contract extension.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-09-11T07:00Z",
+      "description": "Named Kevin Eastman assistant coach; re-signed  center Kendrick Perkins to a multi-year contract extension.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-09-08T07:00Z",
+      "description": "Signed forward-center Alan Henderson, who had been with the Cleveland Cavaliers, and forward Ivan McFarlin.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-09-07T07:00Z",
+      "description": "Named Bill Berry assistant coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-09-07T07:00Z",
+      "description": "Named Mark Warkentien vice president of basketball operations, Rex Chapman vice president of player personnel and Bret Bearup advisor; promoted Masai Ujiri to director of international scouting; fired assistant general managers Jeff Weltman and David Fredman.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-09-06T07:00Z",
+      "description": "Re-signed free agent guard Gary Payton.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-09-05T07:00Z",
+      "description": "Signed guard-forward Casey Jacobsen.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-09-05T07:00Z",
+      "description": "Signed guard David Wesley, who had been with the Houston Rockets.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-09-01T07:00Z",
+      "description": "Named Larry Riley assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-08-31T07:00Z",
+      "description": "Signed forward Craig Smith.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-08-31T07:00Z",
+      "description": "Named Sam Vincent assistant coach.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-08-30T07:00Z",
+      "description": "Announced the resignation of assistant Patrick Ewing.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-08-30T07:00Z",
+      "description": "Signed free agent forward-center Lorenzen Wright, who had been with the Memphis Grizzlies.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-08-29T07:00Z",
+      "description": "Named Greg Economou executive vice president and chief marketing officer of sports and entertainment.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-08-29T07:00Z",
+      "description": "Signed guard Jimmie Hunter; named Johnny Davis and Leonard Perry assistant coaches.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-08-29T07:00Z",
+      "description": "Fired coach Mike Montgomery.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-08-28T07:00Z",
+      "description": "Exercised the contract options for swingmen Josh Childress and Josh Smith and forward Marvin Williams for the 2007-08 season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-08-23T07:00Z",
+      "description": "Announced coach Pat Riley will return for the 2006-07 season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-08-23T07:00Z",
+      "description": "Named Casey Owens video coordinator, Adam Tatalovich assistant video coordinator, Michael Irr assistant strength coach and Brian Meyer basketball operations intern.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-08-22T07:00Z",
+      "description": "Named Scott McCullough head athletic trainer.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-08-22T07:00Z",
+      "description": "Signed forward Al Harrington and traded him and center John Edwards to the Indiana Pacers for a 2007 first-round pick.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-08-18T07:00Z",
+      "description": "Re-signed center Alonzo Mourning.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-08-18T07:00Z",
+      "description": "Signed forward-center Scot Pollard, who had been with the Indiana Pacers.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-08-18T07:00Z",
+      "description": "Acquired center Martynas Andriuskevicius from the Cleveland Cavaliers for guard Eddie Basden.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-08-17T07:00Z",
+      "description": "Signed guard Eddie House, who had been with the Phoenix Suns.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-08-17T07:00Z",
+      "description": "Signed forwards Ndubi Ebi and Pat Carroll and guards Jose Barea and Darius Washington.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-08-16T07:00Z",
+      "description": "Re-signed forward Bo Outlaw.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-08-15T07:00Z",
+      "description": "Re-signed center Jake Voskuhl.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-08-15T07:00Z",
+      "description": "Re-signed forward Chris Wilcox.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-08-15T07:00Z",
+      "description": "Re-signed forward Clifford Robinson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-08-11T07:00Z",
+      "description": "Waived guard Zoran Planinic.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-08-10T07:00Z",
+      "description": "Announced World B. Free will assume additional duties as director of player development; named Michael Preston director of public relations, Scott Faust assistant athletic trainer, Katie Rauchut game entertainment manager, Amber Stuart community relations manager, Brent Rossi director of marketing and Darin Swartley box office manager.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-08-10T07:00Z",
+      "description": "Announced a multi-year broadcasting agreement with KTLA-TV.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-08-10T07:00Z",
+      "description": "Acquired forward Joe Smith from the Milwaukee Bucks for guard-forward Ruben Patterson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-08-08T07:00Z",
+      "description": "Signed forward Jared Jeffries, who had been with the Washington Wizards.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-08-07T07:00Z",
+      "description": "Announced they will not match a five-year offer sheet tendered to forward Jared Jeffries by the New York Knicks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-08-05T07:00Z",
+      "description": "Signed guard DeShawn Stevenson, who had been with the Orlando Magic.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-08-04T07:00Z",
+      "description": "Signed guard Robert Hite.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-08-04T07:00Z",
+      "description": "Signed guard Kelenna Azubuike.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-08-04T07:00Z",
+      "description": "Waived center Pavel Podkolzin.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-08-03T07:00Z",
+      "description": "Signed forward Pops Mensah-Bonsu.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-08-02T07:00Z",
+      "description": "Signed center Francisco Elson, who had been with the Denver Nuggets.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-08-02T07:00Z",
+      "description": "Re-signed forward Justin Reed.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-08-02T07:00Z",
+      "description": "Signed forward Devean George, who had been with the Los Angeles Lakers.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-08-01T07:00Z",
+      "description": "Signed forward Aaron Williams, who had been with the New Orleans Hornets.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-08-01T07:00Z",
+      "description": "Signed forward Tyrus Thomas and swingman Thabo Sefolosha, first-round picks in the 2006 draft, to two-year contracts with club options.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-31T07:00Z",
+      "description": "Signed center Ryan Hollins.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-07-31T07:00Z",
+      "description": "Acquired center Jamaal Magloire from the Milwaukee Bucks for guard Steve Blake, forward Brian Skinner and center Ha Seung-Jin.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-07-31T07:00Z",
+      "description": "Signed forward Jared Jeffries, a restricted free agent of the Washington Wizards, to an offer sheet.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-07-31T07:00Z",
+      "description": "Named Bobby Marks vice president of basketball operations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-07-31T07:00Z",
+      "description": "Signed swingman Adrian Griffin, who had been with the Dallas Mavericks, to a three-year contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-28T07:00Z",
+      "description": "Re-signed swingman Bernard Robinson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-07-28T07:00Z",
+      "description": "Signed forward Maceo Baston.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-07-28T07:00Z",
+      "description": "Signed guard John Lucas III to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-07-28T07:00Z",
+      "description": "Signed forward-center Jamal Sampson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-07-27T07:00Z",
+      "description": "Signed forward Uros Slokar.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-27T07:00Z",
+      "description": "Signed forward-center Sean Marks to a one-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-07-27T07:00Z",
+      "description": "Re-signed forward Trevor Ariza.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-07-27T07:00Z",
+      "description": "Acquired center Mikki Moore from the Seattle SuperSonics for a 2009 second-round pick.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-07-26T07:00Z",
+      "description": "Released guard Alvin Williams; signed guard Fred Jones, who had been with the Indiana Pacers, to a multi-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-26T07:00Z",
+      "description": "Signed forward Steve Novak to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-07-26T07:00Z",
+      "description": "Signed forward Yakhouba Diawara.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-07-25T07:00Z",
+      "description": "Signed guard-forward P.J. Tucker to a  multi-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-25T07:00Z",
+      "description": "Signed forward Damir Markota to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-07-25T07:00Z",
+      "description": "Re-signed guard Jason Terry to a multi-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-07-24T07:00Z",
+      "description": "Signed forward Jorge Garbajosa to a multi-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-24T07:00Z",
+      "description": "Acquired guard Darrell Armstrong, guard-forward Rawle Marshall and forward Josh Powell from the Dallas Mavericks for guard Anthony Johnson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-07-24T07:00Z",
+      "description": "Re-signed guard Darrell Armstrong; acquired guard Anthony Johnson from the Indiana Pacers for Armstrong, guard-forward Rawle Marshall and forward Josh Powell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-07-21T07:00Z",
+      "description": "Announced the signing of center Jackie Butler, who had been with the New York Knicks, to a three-year contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-07-20T07:00Z",
+      "description": "Signed guard Marcus Banks to a multi-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-07-20T07:00Z",
+      "description": "Acquired guard J.R. Smith from the Chicago Bulls for guard Howard Eisley and two second-round picks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-07-19T07:00Z",
+      "description": "Signed forward Othella Harrington.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-07-19T07:00Z",
+      "description": "Signed forward Darius Songaila, who had been with the Chicago Bulls.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-07-19T07:00Z",
+      "description": "Signed guard Vassili Spanoulis to a multi-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-07-18T07:00Z",
+      "description": "Signed guard Lynn Greer to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-07-18T07:00Z",
+      "description": "Signed forward Leon Powe.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-07-17T07:00Z",
+      "description": "Named Fred Whitfield president and COO.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-07-17T07:00Z",
+      "description": "Re-signed center Joel Przybilla to a multi-year contract.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-07-17T07:00Z",
+      "description": "Agreed on a contract extension with forward Paul Pierce through the 2010-11 season.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-07-15T07:00Z",
+      "description": "Signed coach Eddie Jordan to a contract extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-07-14T07:00Z",
+      "description": "Signed guard Tarence Kinsey.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-07-14T07:00Z",
+      "description": "Signed forward Chris Bosh to a multi-year contract extension.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-14T07:00Z",
+      "description": "Acquired guard Kirk Snyder from the New Orleans Hornets for cash and future draft considerations.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-07-14T07:00Z",
+      "description": "Acquired forward P.J. Brown and guard J.R. Smith from the New Orleans Hornets for center Tyson Chandler.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed guard-forward Anthony Parker to a multi-year contract; waived guard Andre Barrett.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Re-signed center Jarron Collins.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed guard-forward Eric Piatkowski, who had been with the Chicago Bulls, to a two-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed guard Keith Bogans, who had been with the Houston Rockets.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed guard Mike James, who had been with the Toronto Raptors.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed forward Vladimir Radmanovic, who had been with the Los Angeles Clippers.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed forward Tim Thomas, who had been with the Phoenix Suns; signed forward Paul Davis.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed guard Greg Buckner, who had been with the Denver Nuggets; re-signed center D.J. Mebenga.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-07-13T07:00Z",
+      "description": "Signed center Ben Wallace, who had been with the Detroit Pistons, to a four-year contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Acquired forwards Rudy Gay and Stromile Swift from the Houston Rockets for forward Shane Battier.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Signed guard-forward Mickael Gelabale.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Signed guard Jacque Vaughn, who had been with the New Jersey Nets.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Re-signed forward Shavlik Randolph and guard Willie Green.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Signed guard Marcus Williams and forward Josh Boone, their first-round draft picks.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Re-signed guard Sam Cassell to a  two-year contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Acquired guard Marquis Daniels from the Dallas Mavericks for forward Austin Croshere.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Acquired guards Devin Brown, Keith  McLeod and Andre Owens from the Utah Jazz for guard Derek Fisher.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Signed forward Carmelo Anthony to a  multi-year contract extension.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Reached agreement with forward LeBron James on a three-year contract extension with a player option for the 2010-11 season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-07-12T07:00Z",
+      "description": "Signed forward-center Solomon Jones and guard Speedy Claxton, who had been with the New Orleans Hornets.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-07-11T07:00Z",
+      "description": "Promoted Mike Cristaldi to director of public relations, Liz Hogenson to director of marketing and Katie Mattis to senior manager of community relations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-07-10T07:00Z",
+      "description": "Signed center Saer Sene, their first-round pick, to a two-year contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-07-10T07:00Z",
+      "description": "Signed forward Shelden Williams, their first-round pick, to a two-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-07-09T07:00Z",
+      "description": "Signed guard Daniel Horton.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-07-08T07:00Z",
+      "description": "Signed forward James Augustine.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-07-08T07:00Z",
+      "description": "Signed guard Vincent Grier.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-07-08T07:00Z",
+      "description": "Signed guard Shannon Brown, their first-round draft pick, and guard Daniel Gibson.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-07-07T07:00Z",
+      "description": "Signed guard J.J. Redick, their 2006 first-round pick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-07-07T07:00Z",
+      "description": "Signed center Patrick O'Bryant, their 2006 first-round pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-07-07T07:00Z",
+      "description": "Waived forward Othella Harrington.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Signed forward Adam Morrison, their first-round pick.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Promoted Vinny Del Negro to director of player personnel and Todd Quinter to assistant coach and director of scouting.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Named John Kuester assistant coach.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Signed guards Mike Gansey and Chris Quinn.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Signed forward Shawne Williams, their first-round pick, and swingman James White.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-07-06T07:00Z",
+      "description": "Exercised their 2007-08 club options on guards Delonte West, Gerald Green and Sebastian Telfair and forward Al Jefferson; signed guard Allan Ray.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-07-05T07:00Z",
+      "description": "Waived forward Nikoloz Tskitishvili.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-07-05T07:00Z",
+      "description": "Signed forward Renaldo Balkman and guard Mardy Collins, their first-round picks.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-07-05T07:00Z",
+      "description": "Signed guard Randy Foye, their first-round pick, to a two-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-07-05T07:00Z",
+      "description": "Named Jim Paxson basketball operations consultant.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-07-04T07:00Z",
+      "description": "Signed forward LaMarcus Aldridge and guard Brandon Roy, their first-round draft picks.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-07-04T07:00Z",
+      "description": "Signed guard Rajon Rondo, their first-round  draft pick.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-07-03T07:00Z",
+      "description": "Signed forward LaMarcus Alridge and guard Brandon Roy, their first-round picks.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-07-03T07:00Z",
+      "description": "Signed forward David Noel to a multi-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-07-01T07:00Z",
+      "description": "Signed Andrea Bargnani, their first-round pick, to a two-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-07-01T07:00Z",
+      "description": "Signed guard Maurice Ager, their first-round pick, to a two-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-06-30T07:00Z",
+      "description": "Claimed center Nikoloz Tskitishvili off waivers from the Phoenix Suns.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-06-30T07:00Z",
+      "description": "Declined to exercise the contract option on forward Clifford Robinson for the 2006-07 season; waived forward Scott Padgett.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-06-30T07:00Z",
+      "description": "Acquired forward Charlie Villanueva from the Toronto Raptors for guard T.J. Ford and cash considerations.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-06-30T07:00Z",
+      "description": "Waived guard Orien Greene.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-06-30T07:00Z",
+      "description": "Exercised the contract option on guard Royal Ivey for the 2006-07 season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-06-29T07:00Z",
+      "description": "Exercised the third-year contract option on center Andrew Bogut for the 2007-08 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-06-29T07:00Z",
+      "description": "Named Rich Gotham chief operating officer.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the draft rights to forward Edin Bavcic to the Philadelphia 76ers for cash considerations.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the draft rights of forward Damir Markota to the Milwaukee Bucks for a 2007 second-round pick.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded guard Sebastian Telfair, center Theo Ratliff and a 2008 second-round pick to the Boston Celtics for forward Raef LaFrentz, guard Dan Dickau and the rights to guard Randy Foye; traded forward Viktor Khryapa and the rights to forward Tyrus Thomas to the Chicago Bulls for the rights to forward LaMarcus Aldridge and a future second-round pick; traded the rights to guard James White to the Indiana Pacers for the rights to forward Alexander Johnson and two future second-round picks; traded the rights to Johnson to the Memphis Grizzlies for a future second-round pick.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the rights to guard Sergio Rodriguez to the Portland Trail Blazers for cash considerations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Acquired the draft rights to forward Rodney Carney, a 2007 second-round pick and $1 million from the Chicago Bulls for the draft rights to swingman Thabo Sefolosha.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the rights to guard Brandon Roy to the Portland Trail Blazers for the rights to guard Randy Foye and cash considerations; traded the rights to forward Bobby Jones to the Philadelphia 76ers for a future second-round pick and cash considerations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the rights to center Cheick Samb to the Detroit Pistons for swingman Maurice Evans.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Acquired the draft rights to forward Lior Eliyahu from the Orlando Magic for cash considerations.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the rights to forward Leon Powe to the Boston Celtics for a 2007 second-round pick.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Traded the rights to guard Danilo Pinnock to the Los Angeles Lakers for a 2007 second-round pick.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-06-28T07:00Z",
+      "description": "Acquired forward Brian Grant and the rights to guard Rajon Rondo from the Phoenix Suns for a future first-round pick.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-06-27T07:00Z",
+      "description": "Named Marc Eversley director of basketball operations; exercised contract options on forwards Charlie Villanueva and Joey Graham through the 2008-09 season.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-06-22T07:00Z",
+      "description": "Named Maurizio Gherardini vice president and assistant general manager.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-06-22T07:00Z",
+      "description": "Fired coach Larry Brown; named Isiah Thomas coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-06-22T07:00Z",
+      "description": "Named Larry Krystkowiak assistant coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-06-21T07:00Z",
+      "description": "Acquired forwards Matt Bonner, Eric Williams and a 2009 second-round pick from the Toronto Raptors for center Rasho Nesterovic.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-06-14T07:00Z",
+      "description": "Waived retired forward Jonathan Bender.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-06-13T07:00Z",
+      "description": "Exercised the club option on forward Chuck  Hayes.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-06-08T07:00Z",
+      "description": "Acquired forward Kris Humphries and center Robert Whaley from the Utah Jazz for center Rafael Araujo.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-06-07T07:00Z",
+      "description": "Named Gordon Chiesa assistant coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-06-06T07:00Z",
+      "description": "Exercised the contract option on coach Lawrence Frank for the 2007-08 season; named Dashawnda Brown director of VIP access and experience.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-05-30T07:00Z",
+      "description": "Announced the contract of general manager John Nash will not be extended; named Steve Patterson interim general manager.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-05-30T07:00Z",
+      "description": "Named Alex Diaz senior vice president and  general manager of arena operations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-05-30T07:00Z",
+      "description": "Announced the resignation of president and CEO George Postolos, effective June 30.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-05-29T07:00Z",
+      "description": "Signed guard Mateen Cleaves to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-05-29T07:00Z",
+      "description": "Signed guard-forward Stephen Graham to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-05-29T07:00Z",
+      "description": "Re-signed forward James Thomas to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-05-25T07:00Z",
+      "description": "Exercised the 2008-09 option for coach Mike Brown.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-05-24T07:00Z",
+      "description": "Announced the resignation of president and CEO Ed Tapscott; named Van Sinclair acting president and COO.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-05-22T07:00Z",
+      "description": "Named Randy Wittman assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-05-18T07:00Z",
+      "description": "Promoted Sarah Mensah to senior vice president of marketing, Jack Bradley to vice president, corporate sales and service and Tom Fletcher to director of sales, corporate sponsorship.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-05-09T07:00Z",
+      "description": "Fired coach Rick Adelman and assistants Elston  Turner, Pete Carril, T.R. Dunn and Bubba Burrage.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2006-05-09T07:00Z",
+      "description": "Announced the resignation of assistant general manager Dan Kohl.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-05-03T07:00Z",
+      "description": "Promoted Otis Smith to general manager; named Alex Martins chief operating officer and Jim  Fritz chief financial officer.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-05-02T07:00Z",
+      "description": "Exercised their 2006-07 options on guards Matt Carroll and Alan Anderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-04-30T07:00Z",
+      "description": "Suspended forward Kenyon Martin for the remainder of their first-round series with the Los Angeles Clippers.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-04-28T07:00Z",
+      "description": "Agreed to a multi-year contract extension  with vide president of basketball operations and player  personnel Dennis Lindsey.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-04-20T07:00Z",
+      "description": "Assigned guard-forward Rawle Marshall and center Pavel Podkolzin to Fort Worth of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-04-18T07:00Z",
+      "description": "Exercised their 2006-07 option on coach Bob Hill.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-04-18T07:00Z",
+      "description": "Fined and suspended forward Zach Randolph for conduct detrimental to the team.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-04-18T07:00Z",
+      "description": "Announced the retirement of guard Fred Hoiberg, who will join the team's front office.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-04-17T07:00Z",
+      "description": "Exercised their 2006-07 option on coach Bob Hill.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-04-17T07:00Z",
+      "description": "Fined and suspended forward Zach Randolph for conduct detrimental to the team.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-04-17T07:00Z",
+      "description": "Announced the retirement of guard Fred Hoiberg, who will join the team's front office.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-04-17T07:00Z",
+      "description": "Signed guard Anthony Grundy for the rest of the season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-04-12T07:00Z",
+      "description": "Assigned guard Von Wafer to Fort Worth of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-04-12T07:00Z",
+      "description": "Recalled forward-center Martynas Andriuskevicius from Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-04-11T07:00Z",
+      "description": "Signed guard Randy Livingston for the  remainder of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-04-10T07:00Z",
+      "description": "Recalled guard Bracey Wright from Florida of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-04-07T07:00Z",
+      "description": "Signed guard Will Bynum for the remainder of the season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-04-06T07:00Z",
+      "description": "Signed forward Ime Udoke for the  remainder of the season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-04-06T07:00Z",
+      "description": "Signed guard Anthony Grundy to a second  10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-04-04T07:00Z",
+      "description": "Signed guard Andre Barrett for the remainder of the season and the 2006-07 campaign.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-04-03T07:00Z",
+      "description": "Named Rob Babcock general manager, Wayne Embry special advisor to the general manager and Alex English director of player development/scout.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-04-03T07:00Z",
+      "description": "Named Daryl Morey assistant general manager.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-04-01T08:00Z",
+      "description": "Released guard Kareem Rush.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-04-01T08:00Z",
+      "description": "Signed guard Randy Livingston to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-03-29T08:00Z",
+      "description": "Suspended guard Orien Greene indefinitely for conduct detrimental to the team.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-03-27T08:00Z",
+      "description": "Signed center James Lang to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-03-27T08:00Z",
+      "description": "Assigned center Ha Seung-Jin to Fort Worth of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-03-27T08:00Z",
+      "description": "Exercised their 2007-08 options on forward-center Dwight Howard and guard Jameer Nelson.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-03-27T08:00Z",
+      "description": "Signed guard Will Bynum to a second 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-03-27T08:00Z",
+      "description": "Signed guard Anthony Grundy to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-03-26T08:00Z",
+      "description": "Signed guard Melvin Sanders for the  remainder of the season.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-03-25T08:00Z",
+      "description": "Signed guard Andre Barrett to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-03-24T08:00Z",
+      "description": "Announced forward Jamal Mashburn has been waived and announced his retirement.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-03-23T08:00Z",
+      "description": "Released center Antonio Davis.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-03-23T08:00Z",
+      "description": "Signed guard Willie Green.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-03-23T08:00Z",
+      "description": "Signed guard Howard Eisley for the remainder of the season.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-03-22T08:00Z",
+      "description": "Signed forward Noel Felix for the rest of  the season.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-03-22T08:00Z",
+      "description": "Re-signed forward-center Tony Battie.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-03-22T08:00Z",
+      "description": "Recalled guard Von Wafer from Fort Worth of the NBA D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-03-22T08:00Z",
+      "description": "Signed guard Randy Livingston to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-03-20T08:00Z",
+      "description": "Named Mark Shamley vice president of community relations and government affairs.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-03-20T08:00Z",
+      "description": "Claimed guard Richie Frahm off waivers from the Minnesota Timberwolves.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-03-17T08:00Z",
+      "description": "Signed guard Billy Thomas for the remainder of the season.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Signed guard Andre Barrett to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Signed guard Melvin Sanders.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Waived guard Richie Frahm.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Named Greg Schenkel vice president of corporate relations.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Recalled guard-forward Julius Hodge from Austin of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-03-16T08:00Z",
+      "description": "Assigned forward-center Martynas Andriuskevicius to Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-03-15T08:00Z",
+      "description": "Signed guard Andre Barrett to a 10-day contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-03-15T08:00Z",
+      "description": "Re-signed center Luke Schenscher to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-03-13T08:00Z",
+      "description": "Signed forward Noel Felix to a second 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-03-13T08:00Z",
+      "description": "Recalled guard Gerald Fitch from Austin of the D-League and released him.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-03-13T08:00Z",
+      "description": "Signed guard Howard Eisley to a second 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-03-13T08:00Z",
+      "description": "Recalled guard Eddie Basden from Tulsa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-03-11T08:00Z",
+      "description": "Signed guard Andre Barrett to a second 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-03-10T08:00Z",
+      "description": "Named Mike D'Antoni executive vice president of basketball operations and general manager; promoted David Griffin to vice president of operations and Mark West to vice president of player programs.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-03-09T08:00Z",
+      "description": "Extended the contract of president and COO Rick Welts through the 2008-09 season.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-03-08T08:00Z",
+      "description": "Signed forward Marcus Fizer to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-03-07T08:00Z",
+      "description": "Assigned center Pavel Podkolzin to Fort Worth of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Re-signed guard Billy Thomas to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Named Scott Howard to the team's scouting staff.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Signed swingman Jim Jackson; waived forward-center Slava Medvedenko.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Assigned guard Gerald Fitch to Austin of the D-League.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Recalled forward-center Martynas Andriuskevicius from Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-03-06T08:00Z",
+      "description": "Recalled guard Donta Smith from Arkansas of the D-League.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-03-05T08:00Z",
+      "description": "Signed center Luke Schenscher to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-03-04T08:00Z",
+      "description": "Recalled forward Josh Powell from Fort Worth  of the D-League.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-03-03T08:00Z",
+      "description": "Signed forward Tim Thomas.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-03-03T08:00Z",
+      "description": "Signed guard Howard Eisley to a 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-03-02T08:00Z",
+      "description": "Signed forward Noel Felix to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-03-02T08:00Z",
+      "description": "Claimed guard Rick Brunson off waivers from the Seattle SuperSonics.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-03-02T08:00Z",
+      "description": "Assigned guard Alex Acker to Fayetteville of the D-League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2006-03-02T08:00Z",
+      "description": "Assigned forward-center Martynas Andriuskevicius to Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-03-02T08:00Z",
+      "description": "Signed center James Lang to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Waived forward Bryon Russell.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Released guard-forward Jim Jackson; signed guard Andre Barrett to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Waived guard Jon Barry.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Signed guard Tony Delk.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Waived guard Charles Smith.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-03-01T08:00Z",
+      "description": "Waived forward Tim Thomas.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-02-28T08:00Z",
+      "description": "Assigned forward Lawrence Roberts and guard Anthony Roberson to Arkansas of the D-League.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-02-28T08:00Z",
+      "description": "Named Bryan Colangelo president and general manager.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-02-28T08:00Z",
+      "description": "Waived guard Rick Brunson.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-02-27T08:00Z",
+      "description": "Named Rudy D'Amico, Darrell Hedric and Larry Siegfried scouts.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-02-27T08:00Z",
+      "description": "Assigned guard Von Wafer to Fort Worth of the D-League.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-02-27T08:00Z",
+      "description": "Assigned forward Amir Johnson to Fayetteville of the NBA Development League.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2006-02-26T08:00Z",
+      "description": "Recalled forward Rawle Marshall from Fort Worth of the D-League; assigned forward Josh Powell to Fort Worth.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2006-02-25T08:00Z",
+      "description": "Assigned guard Julius Hodge to Austin of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-02-24T08:00Z",
+      "description": "Signed guard Billy Thomas to a 10-day contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-02-24T08:00Z",
+      "description": "Waived guard Penny Hardaway; signed forward Bo Outlaw.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-02-24T08:00Z",
+      "description": "Recalled guard-forward Julius Hodge from Austin of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-02-24T08:00Z",
+      "description": "Signed guard-forward Stephen Graham; waived forward Lee Nailon.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-02-24T08:00Z",
+      "description": "Waived guard Tony Delk.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Traded forward-center Vitaly Potapenko to the Portland Trail Blazers and forward Reggie Evans to the Denver Nuggets and acquired guard Earl Watson, forward Bryon Russell and a 2008 second-round pick from Denver as part of a four-team deal.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Traded forward-center Brian Skinner to the Portland Trail Blazers for forward Sergei Monia and center Vitaly Potapenko.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Traded forward Ruben Patterson and guard Charles Smith to the Denver Nuggets and acquired guard Voshon Lenard from Denver and forward-center Vitaly Potapenko from the Seattle SuperSonics as part of a four-team deal; traded Potapenko and forward Sergei Monia to the Sacramento Kings for forward-center Brian Skinner.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Acquired forward Bostjan Nachbar from the New Orleans Hornets for forward-center Marc Jackson, forward Linton Johnson and cash considerations.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Acquired guard Derek Anderson from the Houston  Rockets for guard Gerald Fitch and a trade exception.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Reached local broadcast rights agreement  with Spanish Radio 830 AM for the remainder of the 2005-06  season and the entire 2006-07 season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Traded guard Voshon Lenard to the Portland Trail Blazers and guard Earl Watson, forward Bryon Russell and a 2008 second-round pick to the Seattle SuperSonics and acquired forward Ruben Patterson and guard Charles Smith from Portland and forward Reggie Evans from Seattle as part of a four-team deal.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-02-23T08:00Z",
+      "description": "Acquired forward Lee Nailon and a 2006 second-round pick from the Philadelphia 76ers for a conditional 2006 second-round pick; acquired guard Ronald Murray from the Seattle SuperSonics for guard Mike Wilks and cash considerations.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-02-22T08:00Z",
+      "description": "Waived forward Bo Outlaw.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-02-22T08:00Z",
+      "description": "Acquired guard Steve Francis from the Orlando Magic for forward Trevor Ariza and guard Penny Hardaway.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2006-02-21T08:00Z",
+      "description": "Recalled forward Lawrence Roberts and guard Anthony Roberson from Arkansas of the D-League.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-02-21T08:00Z",
+      "description": "Recalled forward Gerald Green from Florida of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-02-20T08:00Z",
+      "description": "Signed forward Vin Baker.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-02-20T08:00Z",
+      "description": "Signed forward Stephen Graham to a  10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-02-16T08:00Z",
+      "description": "Assigned forward Gerald Green to Florida of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-02-15T08:00Z",
+      "description": "Acquired forward Darko Milicic and guard Carlos  Arroyo from the Detroit Pistons for center Kelvin Cato and a  future first-round pick.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-02-14T08:00Z",
+      "description": "Acquired forward Vladimir Radmanovic from the Seattle SuperSonics in exchange for forward Chris Wilcox.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-02-13T08:00Z",
+      "description": "Acquired forward Maciej Lampe from the New Orleans Hornets for guard Moochie Norris.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-02-09T08:00Z",
+      "description": "Acquired forward-center Lonny Baxter from the Houston Rockets for guard Keith Bogans.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2006-02-08T08:00Z",
+      "description": "Assigned guard Julius Hodge to Austin of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-02-08T08:00Z",
+      "description": "Recalled center Dwayne Jones from Florida of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-02-07T08:00Z",
+      "description": "Activated guard Lindsey Hunter from the  inactive list; placed forward Jason Maxiell on the inactive list.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2006-02-07T08:00Z",
+      "description": "Assigned guard Julius Hodge to Austin of the D-League.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2006-02-06T08:00Z",
+      "description": "Signed guard Mateen Cleaves to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-02-06T08:00Z",
+      "description": "Signed guard-forward Stephen Graham to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-02-06T08:00Z",
+      "description": "Re-signed forward James Thomas to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-02-03T08:00Z",
+      "description": "Acquired forward-center Antonio Davis from the New York Knicks for guard-forward Jalen Rose, a 2006 first-round pick and an undisclosed amount of cash.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-02-03T08:00Z",
+      "description": "Recalled guard C.J. miles from Albuquerque of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2006-02-03T08:00Z",
+      "description": "Recalled guards Sergei Monia and  Martell Webster from Forth Worth of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-02-03T08:00Z",
+      "description": "Recalled guard-forward Gerald Green from Fayetteville of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-02-02T08:00Z",
+      "description": "Assigned forward Lawrence Roberts and guard Anthony Roberson to Arkansas of the D-League.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-02-01T08:00Z",
+      "description": "Signed center Zendon Hamilton to a 10-day contract; traded forward-center Steven Hunter to the New Orleans Hornets for second-round draft picks in 2006 and 2007.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-02-01T08:00Z",
+      "description": "Named Tom Glick chief marketing officer.",
+      "team": {
+        "id": "17",
+        "abbreviation": "NJ",
+        "displayName": "New Jersey Nets",
+        "location": "New Jersey",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2006-02-01T08:00Z",
+      "description": "Recalled forward-center Martynas  Andriuskevicius from Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-01-31T08:00Z",
+      "description": "Acquired a 2006 and 2009 second-round picks  from the New Orleans Hornets for center Aaron Williams.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-01-31T08:00Z",
+      "description": "Assigned center Peter John Ramos to Roanoke of the D-League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-01-31T08:00Z",
+      "description": "Assigned guard Bracey Wright to Florida of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-01-30T08:00Z",
+      "description": "Named Larry Cohen vice president of ticket sales.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-01-28T08:00Z",
+      "description": "Signed guard Mateen Cleaves to a 10-day contract.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-01-28T08:00Z",
+      "description": "Signed forward Chuck Hayes for the remainder of the season.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-01-27T08:00Z",
+      "description": "Fired director of player personnel Pete Babcock and director of international player personnel Scott Howard.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-01-27T08:00Z",
+      "description": "Signed forward James Thomas to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-01-26T08:00Z",
+      "description": "Fired general manager Rob Babcock.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-01-26T08:00Z",
+      "description": "Acquired forward Nikoloz Tskitishvili from the Minnesota Timberwolves for a 2006 second-round draft pick.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-01-26T08:00Z",
+      "description": "Acquired guards Ricky Davis and Marcus Banks, center Mark Blount, forward Justin Reed and two second-round picks from the Boston Celtics for forward Wally Szczerbiak, centers Michael Olowokandi and Dwayne Jones and a future first-round pick.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-01-25T08:00Z",
+      "description": "Named Jerome Williams community  representative.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-01-25T08:00Z",
+      "description": "Acquired forward Ron Artest from the  Indiana Pacers for forward Peja Stojakovic.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2006-01-23T08:00Z",
+      "description": "Signed guard Chucky Atkins.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2006-01-22T08:00Z",
+      "description": "Signed guard Melvin Sanders.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-01-22T08:00Z",
+      "description": "Assigned center Martynus Andriuskevicius to Arkansas of the D-League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-01-20T08:00Z",
+      "description": "Named Detlef Schrempf assistant coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-01-20T08:00Z",
+      "description": "Assigned guard Eddie Basden to Tulsa of the D-League.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-01-19T08:00Z",
+      "description": "Recalled center Peter John Ramos from Roanoke of the D-League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-01-18T08:00Z",
+      "description": "Recalled forward-center Pape Sow from Arkansas  of the D-League.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2006-01-18T08:00Z",
+      "description": "Announced the buyout of the contract of guard Chucky Atkins.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-01-18T08:00Z",
+      "description": "Recalled forward Dorell Wright and center Earl Barron from Florida of the D-League.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-01-18T08:00Z",
+      "description": "Signed forward Ronny Turiaf, their 2006  second-round pick.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2006-01-18T08:00Z",
+      "description": "Re-signed forward Chuck Hayes to a 10-day contract; signed guard John Lucas III to a second 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-01-17T08:00Z",
+      "description": "Named Henry Bibby assistant coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-01-17T08:00Z",
+      "description": "Signed forward Stephen Graham to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-01-16T08:00Z",
+      "description": "Assigned Martell Webster and Sergei  Monia to Fort Worth of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-01-15T08:00Z",
+      "description": "Assigned G Martell Webster and swingman Sergei Monia to Fort Worth of the D-League.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2006-01-12T08:00Z",
+      "description": "Suspended guard Steve Francis for conduct detrimental to the team.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2006-01-11T08:00Z",
+      "description": "Announced the SBC Center has been changed to the ATT Center.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2006-01-10T08:00Z",
+      "description": "Recalled guard Bracey Wright from  Florida of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-01-10T08:00Z",
+      "description": "Signed forward Kaniel Dickens to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-01-10T08:00Z",
+      "description": "Signed center Zendon Hamilton to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-01-09T08:00Z",
+      "description": "Signed forward Josh Davis to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-01-09T08:00Z",
+      "description": "Signed forward Kaniel Dickens to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2006-01-09T08:00Z",
+      "description": "Signed center Zendon Hamilton to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-01-08T08:00Z",
+      "description": "Re-signed guard John Lucas to a 10-day contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-01-07T08:00Z",
+      "description": "Assigned forward Gerald Green to Fayetteville of the NBA Development League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-01-06T08:00Z",
+      "description": "Assigned forward Gerald Green to Fayetteville of the D-League.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Waived center Jared Reiner.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Waived center Samaki Walker.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Waived guard Aaron Miles.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Waived center Zendon Hamilton.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Signed forward Randy Holcombe to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2006-01-05T08:00Z",
+      "description": "Waived center John Thomas.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2006-01-04T08:00Z",
+      "description": "Assigned guard C.J. Miles to Albuequerque of the D-League.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2006-01-04T08:00Z",
+      "description": "Waived guard Mateen Cleaves.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-01-04T08:00Z",
+      "description": "Waived guard John Lucas III and forward Josh Davis.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2006-01-03T08:00Z",
+      "description": "Fired coach Bob Weiss; named Bob Hill coach.",
+      "team": {
+        "id": "25",
+        "abbreviation": "SEA",
+        "displayName": "Seattle SuperSonics",
+        "location": "Seattle",
+        "name": "SuperSonics"
+      }
+    },
+    {
+      "date": "2006-01-03T08:00Z",
+      "description": "Announced assistant coach Jim Lynam will not  return to team citing health reasons.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2006-01-03T08:00Z",
+      "description": "Assigned center Dwayne Jones to Florida of the D-League.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2006-01-03T08:00Z",
+      "description": "Assigned forward Dorell Wright and guard Earl Barron to Florida of the D-League.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2006-01-02T08:00Z",
+      "description": "Recalled forward Andray Blatche from Roanoke of the D-League.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2006-01-02T08:00Z",
+      "description": "Suspended center Jerome James indefinitely for conduct detrimental to the team.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    }
+  ]
+}

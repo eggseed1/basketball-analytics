@@ -1,0 +1,5003 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2013,
+  "fetchedAt": "2026-08-14T20:06:27.635Z",
+  "apiCount": 454,
+  "rows": [
+    {
+      "date": "2013-12-31T08:00Z",
+      "description": "Signed F Jeremy Tyler from Erie (NBADL). Released G Chris Smith.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-12-31T08:00Z",
+      "description": "Waived F Lou Amundson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2013-12-28T08:00Z",
+      "description": "Suspended C Andrew Bynum indefinitely from the team for detrimental conduct and banned him from all team activities.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-12-26T08:00Z",
+      "description": "Assigned G Lorenzo Brown to Delaware (NBADL).",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-12-26T08:00Z",
+      "description": "Assigned G Tony Mitchell and G Peyton Siva to Fort Wayne (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-12-26T08:00Z",
+      "description": "Assigned G Marquis Teague to Iowa (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-12-23T08:00Z",
+      "description": "Recalled G Isaiah Canaan Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-12-20T08:00Z",
+      "description": "Signed G Kendall Marshall.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-12-20T08:00Z",
+      "description": "Assigned G Nemanja Nedovic to Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-12-17T08:00Z",
+      "description": "Recalled G Chris Smith from Erie (NBADL).",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-12-16T08:00Z",
+      "description": "Signed F James Johnson from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-12-16T08:00Z",
+      "description": "Waived G Mike James.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-12-13T08:00Z",
+      "description": "Agreed to terms with G D.J. Augustin.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-12-13T08:00Z",
+      "description": "Waived F Josh Childress.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2013-12-11T08:00Z",
+      "description": "Signed F Chris Douglas-Roberts from Texas (NBADL). Waived F James Southerland.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-12-11T08:00Z",
+      "description": "Signed C Hilton Armstrong from Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-12-10T08:00Z",
+      "description": "Signed G/F Stephen Jackson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-12-09T08:00Z",
+      "description": "Traded F Rudy Gay, C Aaron Gray and F Quincy Acy to Sacramento for Gs John Salmins and Greivis Vasquez, F Patrick Patterson and C Chuck Hayes.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-12-09T08:00Z",
+      "description": "Recall G/F Carrick Felix and C Henry Sims from Canton (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-12-05T08:00Z",
+      "description": "Assigned F Henry Sims and F Carrick Felix to Canton of NBA Development League.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-12-04T08:00Z",
+      "description": "Recalled G Marquis Teague from Iowa (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-12-04T08:00Z",
+      "description": "Assigned G Dennis Schroder to Bakersfield (NBADL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-12-03T08:00Z",
+      "description": "Assigned F Andre Roberson to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-12-03T08:00Z",
+      "description": "Reassigned assistant coach Lawrence Frank to a non-bench role.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-12-03T08:00Z",
+      "description": "Assigned G Marquis Teague to Iowa (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-11-27T08:00Z",
+      "description": "Recalled G Ray McCallum from Reno (NBADL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-11-26T08:00Z",
+      "description": "Traded F Derrick Williams to Sacramento for F Luc Mbah a Moute.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-11-25T08:00Z",
+      "description": "Signed G Kobe Bryant to a two-year contract extension.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-11-24T08:00Z",
+      "description": "Assigned C Dewayne Dedmon and G Nemanja Nedovic to Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-11-21T08:00Z",
+      "description": "Assigned G Ray McCallum to Reno (NBADL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-11-20T08:00Z",
+      "description": "Signed G Elliot Williams and G Lorenzo Brown.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-11-19T08:00Z",
+      "description": "Named Ravi Shah vice president of strategy.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-11-19T08:00Z",
+      "description": "Assigned C Dewayne Dedmon, C Ognjen Kuzmic and G Nemanja Nedovic to Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-11-18T08:00Z",
+      "description": "Assigned G Chris Smith to Erie (NBADL).",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-11-18T08:00Z",
+      "description": "Signed C Dewayne Dedmon from the Santa Cruz Warriors (NBADL)",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-11-14T08:00Z",
+      "description": "Assigned F Ryan Kelly and F Elias Harris to Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-11-11T08:00Z",
+      "description": "Fined Houston G James Harden $5,000 for violating the league's anti-flopping rules for the second time this season in a Nov. 9 game against the Los Angeles Clippers.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-11-07T08:00Z",
+      "description": "Assigned G Isaiah Canaan and F Robert Covington to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-11-05T08:00Z",
+      "description": "Named Nevada Smith coach and Gianluca Pascucci general manager of Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-11-02T07:00Z",
+      "description": "Fined C-F Andray Blatche $15,000 for making an obscene gesture during a Nov. 1 against Miami.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-11-01T07:00Z",
+      "description": "Exercised the third-year team options on F Arnett Moultrie and G Tony Wroten.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-31T07:00Z",
+      "description": "Signed G/F Quincy Pondexter to a contract extension.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-10-30T07:00Z",
+      "description": "G Allen Iverson announced his retirement.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-30T07:00Z",
+      "description": "Exercised the fourth-year contract option on F Kenneth Faried and third-year option on G Evan Fournier.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-10-30T07:00Z",
+      "description": "Exercised the fourth-year option for G/F Jimmy Butler and third-year option for G Marquis Teague.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-10-30T07:00Z",
+      "description": "Suspended F Jared Sullinger for the Celtics' season-opening game against Toronto on Wednesday night.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-10-28T07:00Z",
+      "description": "Waived G Shannon Brown, G Malcolm Lee and G Kendall Marshall.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-10-28T07:00Z",
+      "description": "Signed F Brandon Davies.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-28T07:00Z",
+      "description": "Exercised their fourth-year contract option on G Iman Shumpert.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-10-27T07:00Z",
+      "description": "Waived G Rodney Williams and F Gani Lawal.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-26T07:00Z",
+      "description": "Signed G Jamaal Tinsley.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-10-26T07:00Z",
+      "description": "Exercised their 2014-15 options on F Markieff Morris, F Marcus Morris and C Miles Plumlee.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-10-26T07:00Z",
+      "description": "Waived F Eric Griffin and C Justin Hamilton.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-10-26T07:00Z",
+      "description": "Waived G Mickey McConnell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-10-26T07:00Z",
+      "description": "Waived C Dexter Pittman and F D.J. White.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Acquired C Marcin Gortat, G Kendall Marshall, G Shannon Brown and G Malcolm Lee from the Phoenix Suns for C Emeka Okafor and a top-12-protected first-round draft pick in 2014.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Waived G Diante Garrett and G Rodney McGruder. Exercised the fourth-year contract option on G Reggie Jackson, third-year options for G Jeremy Lamb and F Perry Jones.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Waived G Vander Blue, G Khalif Wyatt, F Royce White and F Mac Koshwal.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Waived F Ike Diogu, F C.J. Leslie, F Josh Powell, F Jeremy Tyler and G Chris Douglas-Roberts.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Waived G Seth Curry, C Dewayne Dedmon and F Joe Alexander. Extended the contract of C Andrew Bogut.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-10-25T07:00Z",
+      "description": "Waived C DeSagana Diop, F Kenny Kadji, G Jermaine Taylor and G Elliot Williams.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-10-24T07:00Z",
+      "description": "Exercised third-year team options C Jonas Valanciunas and G Terrence Ross.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-10-24T07:00Z",
+      "description": "Waived Fs Josh Childress and Pops Mensah-Bonsu and G Xavier Silas.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-10-24T07:00Z",
+      "description": "Waived G Trent Lockett.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-10-24T07:00Z",
+      "description": "Waived G-F James Nunnally.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-10-23T07:00Z",
+      "description": "Announced the resignation of assistant coach Brendan Malone.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-10-23T07:00Z",
+      "description": "Exercised the fourth-year contract options on G Kyrie Irving and F Tristan Thompson and the third-year options on G Dion Waiters and F Tyler Zeller.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-10-22T07:00Z",
+      "description": "Waived C Fab Melo, F Renaldo Balkman, F Devin Ebanks and G-F D.J. Kennedy.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-10-21T07:00Z",
+      "description": "Waived F Jarvis Varnado, G Larry Drew II and G Charlie Westbrook.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-10-21T07:00Z",
+      "description": "Waived F Brandon Davies.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-10-21T07:00Z",
+      "description": "Waived F James Johnson.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-10-20T07:00Z",
+      "description": "Exercised the contract options for G Brandon Knight and F John Henson.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-10-19T07:00Z",
+      "description": "Signed F-C Derrick Favors to a four-year contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-10-19T07:00Z",
+      "description": "Exercised the third-year contract option on C John Henson and the fourth-year contract option on G Brandon Knight.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-10-16T07:00Z",
+      "description": "Waived C D'Or Fischer.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-10-16T07:00Z",
+      "description": "Signed C Daniel Orton.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-16T07:00Z",
+      "description": "Waived G Darius Johnson-Odom.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-10-16T07:00Z",
+      "description": "Exercised the third-year options on C Anthony Davis and G Austin Rivers.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2013-10-15T07:00Z",
+      "description": "Waived C Marcus Cousin, G Myck Kabongo and F Corey Maggette.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-10-15T07:00Z",
+      "description": "Waived F DeQuan Jones and G Brandon Heath.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-10-10T07:00Z",
+      "description": "Waived C Daniel Orton.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-10-09T07:00Z",
+      "description": "Waived C Dan Gadzuric and C Eric Boateng.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-10-08T07:00Z",
+      "description": "Exercised their 2014-15 option on G Norris Cole.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-10-08T07:00Z",
+      "description": "Waived G-F Dahntay Jones.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-10-06T07:00Z",
+      "description": "Waived F Rodney Carney.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2013-10-05T07:00Z",
+      "description": "Named Rob Werdann and Zendon Hamilton assistant coaches for Idaho (NBADL).",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-10-05T07:00Z",
+      "description": "Signed F Gani Lawal.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-10-02T07:00Z",
+      "description": "Named Dave Telep draft scouting coordinator.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-10-02T07:00Z",
+      "description": "Signed G Chris Douglas-Roberts. Released F Justin Brownlee.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-10-02T07:00Z",
+      "description": "Released Gs Kalin Lucas and Patrick Christopher.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-09-30T07:00Z",
+      "description": "Signed C DeMarcus Cousins to a four-year contract extension.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-09-30T07:00Z",
+      "description": "Exercised the 2014-15 contract option on coach Mike Woodson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-09-30T07:00Z",
+      "description": "Promoted Chris Gilmartin to director of NBA scouting. Named Luke Steele advance scout.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-09-28T07:00Z",
+      "description": "Signed G/F James Nunnally.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-09-28T07:00Z",
+      "description": "Signed C Solomon Alabi and F Nayal Koshwal.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-09-28T07:00Z",
+      "description": "Promoted Andy Elisburg to senior vice president of basketball operations and general manager; Adam Simon to assistant general manager and general manager of Sioux Falls (NBDL); Dan Craig to assistant coach for player development; Chad Kammerer to director of NBA scouting and advance scout; and Keith Askins to director of college and pro scouting. Named Juwan Howard assistant coach for player development; Rich Fernando executive assistant to the coaches; Eric Glass video coordinator; and Tim Hardaway scout.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-09-27T07:00Z",
+      "description": "Signed G Diante Garrett and G Rodney McGruder.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-09-27T07:00Z",
+      "description": "Signed F Ike Diogu.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-09-27T07:00Z",
+      "description": "Signed G Roger Mason Jr.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-09-27T07:00Z",
+      "description": "Signed C Dan Gadzuric.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-09-27T07:00Z",
+      "description": "Promoted Trent Redden to assistant general Manager and Koby Altman director of pro player personnel. Named Alex Moore high performance director.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-09-26T07:00Z",
+      "description": "Named Steve Mills president and general manager. Reassigned Glen Grunwald to adviser.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-09-25T07:00Z",
+      "description": "Signed F Paul George to a six-year contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-09-25T07:00Z",
+      "description": "Named Henry Bibby and Maz Trakh assistant coaches, Rasheed Wallace and Bernard Smith player development coaches, Kamran Sufi advance scout and Raman Sposato video coordinator.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-09-24T07:00Z",
+      "description": "Signed C Nerlens Noel and G Michael Carter-Williams.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-09-24T07:00Z",
+      "description": "Signed C Cole Aldrich.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-09-23T07:00Z",
+      "description": "Signed G Larry Drew II.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-09-23T07:00Z",
+      "description": "Signed C Dewayne Dedmon and G Cameron Jones.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-09-20T07:00Z",
+      "description": "Signed C Ryan Kelly.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-09-19T07:00Z",
+      "description": "Signed F Chris Wright, G Carlos Morais and G Julyan Stone.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-09-18T07:00Z",
+      "description": "Named Lindsey Hunter assistant coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-09-17T07:00Z",
+      "description": "Promoted Randy Brown to assistant general manager, Ivica Dukant to director of international scouting/special assistant to the general manager and Nick Papendieck to head strength coach. Named Matt Johnson assistant strength coach.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-09-16T07:00Z",
+      "description": "Promoted Tommy Sheppard to senior vice president of basketball operations, Ed Tapscott to vice president of player programs, Pat Sullivan to assistant coach, Brett Greenberg to director of basketball analytics/salary cap management, Bryan Oringher to video coordinator and Ryan Richman to assistant video coordinator. Named Marc Eversley vice president of scouting, Frank Ross director of player personnel, Greg Ballard advance pro scout and Thomas Knox director of player performance and rehabilitation.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-09-16T07:00Z",
+      "description": "Named Dan Hauser senior vice president of corporate partnerships.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-09-13T07:00Z",
+      "description": "Signed F Richard Howell.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-09-13T07:00Z",
+      "description": "Named Brandon D. Williams general manager of Delaware (NBADL).",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-09-13T07:00Z",
+      "description": "Signed F Devin Ebanks.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-09-11T07:00Z",
+      "description": "Named Robert Schaefer director of athletic performance.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-09-11T07:00Z",
+      "description": "Signed G Chris Smith and G Toure' Murry.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-09-11T07:00Z",
+      "description": "Signed F Michael Beasley.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-09-10T07:00Z",
+      "description": "Signed C Justin Hamilton and F Eric Griffin.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-09-10T07:00Z",
+      "description": "Signed G-F Ron Howard and F Darnell Jackson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-09-10T07:00Z",
+      "description": "Signed C Fab Melo, G-F D.J. Kennedy and G Richard McConnell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-09-09T07:00Z",
+      "description": "Promoted player development coach David Adelman to assistant coach. Named Bobby Jackson player development coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-09-06T07:00Z",
+      "description": "Waived G DeAndre Liggins.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-09-06T07:00Z",
+      "description": "Named Milt Newton general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-09-05T07:00Z",
+      "description": "Named Chris Mullin as an adviser to the owner and general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-09-05T07:00Z",
+      "description": "Signed G Xavier Henry.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-09-04T07:00Z",
+      "description": "Named Jim Cleamons and Scott Williams assistant coaches and Josh Oppenheimer assistant coach/player development.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-09-04T07:00Z",
+      "description": "Named Kenny Lauer vice president of digital and marketing.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-09-03T07:00Z",
+      "description": "Waived G-F Quentin Richardson.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-09-03T07:00Z",
+      "description": "Announced the team and F Michael Beasley agreed to terminate his contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-09-03T07:00Z",
+      "description": "Signed F Shawne Williams.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-08-30T07:00Z",
+      "description": "Waived C Fab Melo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-08-29T07:00Z",
+      "description": "Named Shareef Abdur-Rahim general manager of the Reno Bighorns of the NBA Development League.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-08-29T07:00Z",
+      "description": "Signed C Alex Len. Traded F Caron Butler to Milwaukee for G Ish Smith and C Viacheslav Kravstov.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-08-29T07:00Z",
+      "description": "Named JoHan Wang athletic trainer, Drew Yoder assistant athletic trainer, Keke Lyles director of athletic performance/assistant coach and Michael Roncarati strength and conditioning coach.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-08-28T07:00Z",
+      "description": "Signed G Trent Lockett.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-08-28T07:00Z",
+      "description": "Signed G-F Ronnie Brewer.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-08-27T07:00Z",
+      "description": "Named Jennifer Swanson director of sports performance.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-08-26T07:00Z",
+      "description": "G-F Tracy McGrady announced his retirement.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-08-26T07:00Z",
+      "description": "Named Jennifer Swanson director of sports performance.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-08-22T07:00Z",
+      "description": "Acquired G Tony Wroten from Memphis for future draft considerations.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-08-22T07:00Z",
+      "description": "Re-signed F Lance Thomas. Signed F Arinze Onuaku.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-08-21T07:00Z",
+      "description": "Named Ryan Bowen assistant coach and assistant director of player development.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-08-21T07:00Z",
+      "description": "Signed C Josh Harrellson to a two-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-08-21T07:00Z",
+      "description": "Named Walter McCarty. Ron Adams and Micah Shrewsberry assistant coaches.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-08-20T07:00Z",
+      "description": "Named Justin Zanik assistant general manager.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-08-20T07:00Z",
+      "description": "Signed F Anthony Bennett.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-08-19T07:00Z",
+      "description": "Signed F Anthony Tolliver.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-08-16T07:00Z",
+      "description": "Announced assistant coaches Michael Curry, Aaron McKie and Jeff Capel will not return next season.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-08-15T07:00Z",
+      "description": "Traded F Donte Greene to Boston for C Fab Melo.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-08-14T07:00Z",
+      "description": "Signed F Al Harrington.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-08-14T07:00Z",
+      "description": "Named Brett Brown coach.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-08-14T07:00Z",
+      "description": "Agreed to terms with C Nikola Pekovic on a five-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-08-14T07:00Z",
+      "description": "Agreed to terms with F Elias Harris on a two-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-08-14T07:00Z",
+      "description": "Named Popeye Jones assistant coach.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-08-08T07:00Z",
+      "description": "Signed G Mo Williams.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-08-08T07:00Z",
+      "description": "Signed G Beno Udrih.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-08-07T07:00Z",
+      "description": "Signed F Ryan Gomes.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-08-07T07:00Z",
+      "description": "Signed C Greg Oden.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-08-07T07:00Z",
+      "description": "Signed C DeJuan Blair.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-08-06T07:00Z",
+      "description": "Signed F Jeremy Tyler.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-08-05T07:00Z",
+      "description": "Named John Vidalin executive vice president and chief revenue officer.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-08-05T07:00Z",
+      "description": "Signed G Peyton Siva.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-08-02T07:00Z",
+      "description": "Named Corliss Williamson assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-08-01T07:00Z",
+      "description": "Signed F Austin Daye.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-08-01T07:00Z",
+      "description": "Signed G Nate Wolters.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-31T07:00Z",
+      "description": "Agreed to terms with G John Wall on a contract extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-07-31T07:00Z",
+      "description": "Named Robert Pack and Mike Terpstra assistant coaches.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-07-31T07:00Z",
+      "description": "Traded G Brandon Jennings to Detroit for G Brandon Knight, F Khris Middleton and C Viacheslav Kravtsov.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-31T07:00Z",
+      "description": "Signed G Devin Harris.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-30T07:00Z",
+      "description": "Re-signed G Gerald Henderson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-07-30T07:00Z",
+      "description": "Signed F-G Mike Miller.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-07-30T07:00Z",
+      "description": "Signed G Gary Neal to a two-year contract. Signed F Giannis Antetokunbo.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-30T07:00Z",
+      "description": "Signed C Jeff Withey.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-07-29T07:00Z",
+      "description": "Named Chris Heck chief revenue officer.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-07-29T07:00Z",
+      "description": "Named Kurt Rambis and Johnny Davis assistant coaches.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-07-29T07:00Z",
+      "description": "Signed C Marcus Camby.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-07-29T07:00Z",
+      "description": "Signed G Shane Larkin.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-27T07:00Z",
+      "description": "Traded F Luis Scola to Indiana for F Gerald Green, C Miles Plumlee and a first-round draft pick.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-07-27T07:00Z",
+      "description": "Re-signed C Timofey Mozgov to a three-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-07-26T07:00Z",
+      "description": "Signed G Jamaal Franklin to a multiyear contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-07-26T07:00Z",
+      "description": "Agreed to terms with G-F Alan Anderson on a two-year contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-07-26T07:00Z",
+      "description": "Signed C Miroslav Raduljica.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-26T07:00Z",
+      "description": "Agreed to terms with F Elias Harris.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-07-26T07:00Z",
+      "description": "Re-signed C Bernard James.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-25T07:00Z",
+      "description": "Named Bill Bayno and Jesse Mermuys assistant coaches. Promoted Jama Mahlalela to assistant coach.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-07-25T07:00Z",
+      "description": "Signed G Ronnie Price.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2013-07-25T07:00Z",
+      "description": "Re-Signed F Kenyon Martin.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-07-25T07:00Z",
+      "description": "Re-signed C-F Brandan Wright.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-24T07:00Z",
+      "description": "Waived F-C Dwayne Jones, G Scott Machado and G Kevin Murphy.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-07-24T07:00Z",
+      "description": "Signed G Ricky Ledo.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-23T07:00Z",
+      "description": "Signed C Jermaine O'Neal.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-07-23T07:00Z",
+      "description": "Signed G Monta Ellis.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-23T07:00Z",
+      "description": "Waived F Malcolm Thomas.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-07-22T07:00Z",
+      "description": "Signed G D.J. Augustin to a one-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-07-22T07:00Z",
+      "description": "Signed G John Lucas III.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-07-22T07:00Z",
+      "description": "Signed C Byron Mullens.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-07-22T07:00Z",
+      "description": "Traded the draft rights to G Nick Calathes to Memphis for a 2016 second-round draft pick. Named Gersson Rosas general manager.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-22T07:00Z",
+      "description": "Signed C Vitor Faverani and G Phil Pressey.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-07-19T07:00Z",
+      "description": "Promoted Brad Jones to assistant coach.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-07-19T07:00Z",
+      "description": "Signed Gs Kentavious Caldwell-Pope and Tony Mitchell.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-07-19T07:00Z",
+      "description": "Signed C Samuel Dalembert.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-18T07:00Z",
+      "description": "Signed G Ray McCallum.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-07-18T07:00Z",
+      "description": "Signed F-C Jason Maxiell.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2013-07-18T07:00Z",
+      "description": "Signed C Ronny Turiaf to a two-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-07-18T07:00Z",
+      "description": "Signed G Toney Douglas.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-07-18T07:00Z",
+      "description": "Agreed to terms with C Samuel Dalembert.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-17T07:00Z",
+      "description": "Bought out the contract of C Marcus Camby and place him on waivers. Announced they were using their amnesty provision on F Linas Kleiza.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-07-17T07:00Z",
+      "description": "Signed G-F Carlos Delfino and C Zaza Puchulia.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-17T07:00Z",
+      "description": "Signed G Jordan Farmar.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Agreed to terms with F Jeff Pendergraph on a two-year contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Claimed G-F James Anderson and C Tim Ohlbrecht off waivers from Houston.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Signed F Metta World Peace.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Waived F Mike Miller.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Signed G Chauncey Billups.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-07-16T07:00Z",
+      "description": "Named Arturas Karnisovas assistant general manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Re-signed G Tony Allen and F Jon Leuer to multiyear contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Signed F Carl Landry to a four-year contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Signed G Isaiah Canaan. Agreed to terms with F Robert Covington and G B.J. Young. Waived G/F James Anderson and C Tim Ohlbrecht.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Signed F Luigi Datome and G Will Bynum.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Waived F Kris Joseph.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-07-15T07:00Z",
+      "description": "Signed F Elton Brand.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-07-14T07:00Z",
+      "description": "Signed F Chris Copeland.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-07-13T07:00Z",
+      "description": "Re-signed C Tiago Splitter.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-07-13T07:00Z",
+      "description": "Acquired the rights to F Royce White, C-F Furkan Aldemir additional consideration and from Houston for future draft considerations.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-07-13T07:00Z",
+      "description": "Signed G O.J. Mayo. to a three-year contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-07-13T07:00Z",
+      "description": "Signed C Dwight Howard to a four-year contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-07-13T07:00Z",
+      "description": "Agreed to terms with G Monta Ellis.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Re-signed G Manu Ginobili. Signed G Marco Belinelli.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Announced they are taking over basketball operations of Reno (NBADL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Signed Gs C.J. McCollum and Earl Watson.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Re-signed G J.R. Smith.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Re-signed F Andray Blatche. Signed G Shaun Livingston. Agreed to a terms with F Andrei Kirilenko.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Waived F Metta World Peace under the NBA's amnesty provision.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Signed G Reggie Bullock.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Agreed to terms with G Chauncey Billups on a two-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Signed F J.J. Hickson to a three-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Signed G Gal Mekel and G Jose Calderon.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Re-signed C Nazr Mohammed.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-07-11T07:00Z",
+      "description": "Signed G Dennis Schroeder.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed C Al Jefferson and C Cody Zeller. Waived F Tyrus Thomas.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Traded C Andrea Bargnani to the New York for F Steve Novak, C Marcus Camby, G-F Quentin Richardson, a 2016 first-round draft pick and second-round draft picks in 2014 and 2017.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed G Eric Maynor. Re-signed G Garrett Temple and F Martell Webster.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Acquired C Andris Biedrins, F Richard Jefferson, G Brandon Rush, 2014 and 2017 first-round draft picks and 2016 and 2017 second-round picks from Golden State and a 2018 second-round pick and cash considerations from Denver. Re-signed G Randy Foye and traded him to Denver and sent G Kevin Murphy to Golden State. Golden State received G Andre Iguodala from Denver and sent the Nuggets a 2018 second-round draft pick.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Acquired G Greivis Vasquez from New Orleans for G Tyreke Evans",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Acquired F Thomas Robinson from Houston for the rights to F Kostas Papnikolaou and F-C Marko Todorovic and two future second-round picks. Signed F Dorell Wright. Acquired C Robin Lopez and G Terrel Harris from New Orleans for the draft rights to C Jeff Withey, future second-round draft picks and cash. Sent a 2016 second- and future second-round draft pick to Sacramento.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Re-signed G Pablo Prigioni to a multiyear contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Re-signed C-F Chris Andersen to a one-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Re-signed C Robert Sacre.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Acquired G J.J. Redick from Milwaukee and sent G Eric Bledsoe and F Caron Butler to Phoenix. Los Angeles received F-G Jared Dudley from Phoenix and Milwaukee received two future second-round draft picks. Re-signed G Chris Paul to a five-year contract and F Matt Barnes and C Ryan Hollins.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Re-signed F David West. Signed G C.J. Watson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Picked up the 2014-15 option on the coach Mark Jackson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed F Josh Smith to a four-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed G Wayne Ellington.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed G-F Mike Dunleavy, G Tony Snell and F Erik Murphy. Waived G Richard Hamilton.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Waived F Lance Thomas. Renounced their rights to F Lou Amundson, G Xavier Henry and G Roger Mason Jr. Signed C Greg Stiemsma.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-07-10T07:00Z",
+      "description": "Signed F Paul Millsap to a two-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-07-09T07:00Z",
+      "description": "Named Dee Brown assistant coach and director of player development, Micah Nori assistant coach and Bill Pope advanced scout.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-07-09T07:00Z",
+      "description": "Waived F DaJuan Summers.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-07-09T07:00Z",
+      "description": "Agreed to terms with F Mike Dunleavy.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-07-08T07:00Z",
+      "description": "Signed F Otto Porter and G Glen Rice, Jr.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-07-08T07:00Z",
+      "description": "Announced the resignation of chief executive officer Adam Aron. Named Scott O'Neil chief executive officer.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-07-08T07:00Z",
+      "description": "Signed G Tim Hardaway Jr. and F C.J. Leslie.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-07-08T07:00Z",
+      "description": "Named Alvin Gentry associate head coach and Armond Hill, Kevin Eastman and Tyronn Lue assistant coaches.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-07-07T07:00Z",
+      "description": "Signed C Kelly Olynyk.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-07-06T07:00Z",
+      "description": "Signed G Trey Burke and C Rudy Gobert.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-07-04T07:00Z",
+      "description": "Named Brad Stevens coach.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2013-07-02T07:00Z",
+      "description": "Named Jeff Weltman executive vice president of basketball operations.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-07-02T07:00Z",
+      "description": "Agreed to terms with G-F Martell Webster on a four-year contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-07-01T07:00Z",
+      "description": "Agreed to terms with G Chris Paul.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-06-30T07:00Z",
+      "description": "Waived G/F Carlos Delfino and G Aaron Brooks.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-06-29T07:00Z",
+      "description": "Waived F Hamed Haddadi.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-06-29T07:00Z",
+      "description": "Announced F Andrei Kirilenko has opted out of the final year of his contract and will become a free agent.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-06-28T07:00Z",
+      "description": "Acquired the rights to F Arsalan Kazemi from Washington.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-06-28T07:00Z",
+      "description": "Named Lawrence Frank, Roy Rogers, Eric Hughes and Doug Overton assistant coaches.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-06-27T07:00Z",
+      "description": "Named Dave Joerger coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-06-27T07:00Z",
+      "description": "Named Larry Bird president of basketball operations. Announced assistant coach Jim Boylen also will not return next season.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-06-26T07:00Z",
+      "description": "Announced the resignation of president Bryan Colangelo who will remain as a consultant with the team.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-06-26T07:00Z",
+      "description": "Exercised their contract option on G Mario Chalmers for the 2013-14 season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-06-26T07:00Z",
+      "description": "Exercised their contract option on G Jodie Meeks for the 2013-14 season. Extended a qualifying offer to C Robert Sacre.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-06-26T07:00Z",
+      "description": "Announced F Carl Landry opted out of the final year of his contract to become a free agent.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-06-25T07:00Z",
+      "description": "Named Brendan Malone assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-25T07:00Z",
+      "description": "Announced G-F J.R. Smith has declined his contract option, making him a free agent. Extended a qualifying offer to F Chris Copeland.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-06-25T07:00Z",
+      "description": "Announced F James Jones and F Rashard Lewis have exercised their options for the 2013-14 season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-06-25T07:00Z",
+      "description": "Named Doc Rivers coach and senior vice president of basketball operations. Traded an undisclosed future first-round draft pick to Boston for Rivers.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-06-21T07:00Z",
+      "description": "Named Mike Bratz assistant general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-19T07:00Z",
+      "description": "Named Bobby Webster vice president of basketball management and strategy.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-06-18T07:00Z",
+      "description": "Announced F Monta Ellis won't exercise his option for the upcoming season, making him an unrestricted free agent on July 1.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-06-17T07:00Z",
+      "description": "Named Pete D'Alessandro general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-17T07:00Z",
+      "description": "Named Bob Bender and Nick Van Exel assistant coaches.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-06-17T07:00Z",
+      "description": "Named Tim Connelly general manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-06-16T07:00Z",
+      "description": "Named Pete D'Allesandro general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-15T07:00Z",
+      "description": "Named Darvin Ham assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-06-10T07:00Z",
+      "description": "Announced the contract of coach Lionel Hollins will not be renewed.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-06-10T07:00Z",
+      "description": "Named Chris Jent assistant coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-10T07:00Z",
+      "description": "Named Maurice Cheeks coach.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-06-10T07:00Z",
+      "description": "Named Quin Snyder assistant coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-06-06T07:00Z",
+      "description": "Fired coach George Karl.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2013-06-03T07:00Z",
+      "description": "Announced the retirement of G Jason Kidd.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-06-02T07:00Z",
+      "description": "Fired executive vice president of basketball operations Ed Stefanski.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-06-02T07:00Z",
+      "description": "Named Mike Malone coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2013-06-01T07:00Z",
+      "description": "Announced the retirement of F Grant Hill.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-05-31T07:00Z",
+      "description": "Named Masai Ujiri general manager.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-05-31T07:00Z",
+      "description": "Announced they have reached an agreement in principle to hire Larry Drew as their coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-05-29T07:00Z",
+      "description": "Named Steve Clifford coach.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-05-28T07:00Z",
+      "description": "Named Jeff Hornacek coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-05-28T07:00Z",
+      "description": "Named Mike Budenholzer coach.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-05-25T07:00Z",
+      "description": "Deactivated F Austin Daye. Actiavted F Donte Greene.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-05-21T07:00Z",
+      "description": "Announced president and general manager Bryan Colangelo will relinquish his duties as general manager.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-05-14T07:00Z",
+      "description": "Named Nate Tibbetts assistant coach.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-05-14T07:00Z",
+      "description": "Named Sam Hinkie president of basketball operations and general manager.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-05-13T07:00Z",
+      "description": "Announced assistant coach Barry Hecker has left the team.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-05-10T07:00Z",
+      "description": "Waived G Brandon Roy.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-05-08T07:00Z",
+      "description": "Fired international scouting coordinator Pete Philo and scouts Curtis Crawford and Will Conroy.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-05-07T07:00Z",
+      "description": "Named Ryan McDonough general manager.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-05-05T07:00Z",
+      "description": "Announced coach P.J. Carlesimo will not return next season.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-05-03T07:00Z",
+      "description": "Named Flip Saunders president of basketball operations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-05-03T07:00Z",
+      "description": "Named Jamie Morningstar vice president of ticket sales and service and Theodore Loehrke senior vice president and chief revenue officer.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-05-03T07:00Z",
+      "description": "Announced the retirement of assistant basketball coach Jim O'Brien. Named Kaleb Canales assistant basketball coach.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-05-01T07:00Z",
+      "description": "Fired coach Jim Boylan.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-04-29T07:00Z",
+      "description": "Recalled C Tim Ohlbrecht from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-04-28T07:00Z",
+      "description": "Recalled G Scott Machado from Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-04-27T07:00Z",
+      "description": "Purchased the operating rights to the Utah Flash (NBADL), will relocate the club to Newark, Del., renamed them the Delaware 87ers and named Aaron Moszer team president.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-04-26T07:00Z",
+      "description": "Signed general manager Billy King to a contract extension.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2013-04-24T07:00Z",
+      "description": "Named Mike Brown coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-04-23T07:00Z",
+      "description": "Fired coach Mike Dunlap.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-04-22T07:00Z",
+      "description": "Fired general manager Lance Blanks.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-04-19T07:00Z",
+      "description": "Assigned F Perry Jones and Gs Jeremy Lamb and DeAndre Liggins to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-04-18T07:00Z",
+      "description": "Announced the resignation of coach Doug Collins, who will remain with the club as an adviser.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-04-18T07:00Z",
+      "description": "Fired coach Lawrence Frank.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2013-04-18T07:00Z",
+      "description": "Fired coach Byron Scott.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-04-17T07:00Z",
+      "description": "Signed F Donte Greene and F-C Willie Reed to multiyear contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-04-17T07:00Z",
+      "description": "Announced the retirement of F Rasheed Wallace. Signed C Earl Barron for the remainder of the season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-04-16T07:00Z",
+      "description": "Signed F Tracy McGrady.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-04-16T07:00Z",
+      "description": "Signed G/F Quentin Richardson for the remainder of the season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-04-15T07:00Z",
+      "description": "Waived F-C Solomon Jones.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-04-14T07:00Z",
+      "description": "Waived C Dexter Pittman.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-04-14T07:00Z",
+      "description": "Waived F-C Solomon Jones.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-04-14T07:00Z",
+      "description": "Signed G Andrew Goudelock.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2013-04-12T07:00Z",
+      "description": "Waived F Stephen Jackson.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-04-12T07:00Z",
+      "description": "Waived F-C Kurt Thomas. Signed F/C Solomon Jones for the remainder of the season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-04-09T07:00Z",
+      "description": "Assigned C Tim Ohlbrecht to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-04-08T07:00Z",
+      "description": "Signed F Malcolm Thomas for the remainder of the season.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-04-07T07:00Z",
+      "description": "Recalled F Jarvis Varnado from Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-04-07T07:00Z",
+      "description": "Signed G Scott Machado to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-04-06T07:00Z",
+      "description": "Assigned G Keyon Dooling and reassigned G Tony Wroten to Reno (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-04-06T07:00Z",
+      "description": "Signed G Jerel McNeal for the remainder of the season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-04-03T07:00Z",
+      "description": "Signed G Jannero Pargo for the remainder of the season.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-04-03T07:00Z",
+      "description": "Signed G Keyon Dooling.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-04-03T07:00Z",
+      "description": "Signed G Josh Akognon to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-04-02T07:00Z",
+      "description": "Agreed to terms with president of basketball operations Lon Babby on a two-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-04-01T07:00Z",
+      "description": "Signed G Justin Holiday. Waived G Jeremy Pargo.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-04-01T07:00Z",
+      "description": "Recalled F Terrence Jones from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-03-29T07:00Z",
+      "description": "Signed G Maalik Wayns for the remainder of the season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-03-29T07:00Z",
+      "description": "Re-signed F Malcolm Thomas to a second 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-03-27T07:00Z",
+      "description": "Signed G Jerel McNeal to a 10-day contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2013-03-26T07:00Z",
+      "description": "Recalled F Quincy Acy from Bakersfield (NBADL).",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-03-26T07:00Z",
+      "description": "Assigned G DeAndre Liggins and C Daniel Orton to Tulsa (NBADL).",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-03-25T07:00Z",
+      "description": "Signed G Jannero Pargo to a second 10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-03-25T07:00Z",
+      "description": "Signed F DaJuan Summers to a second 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-03-25T07:00Z",
+      "description": "Signed G Justin Dentmon to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-03-22T07:00Z",
+      "description": "Signed F Juwan Howard for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-03-21T07:00Z",
+      "description": "Reassigned F Jarvis Varnado to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-03-21T07:00Z",
+      "description": "Reassigned F Terrence Jones to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-03-19T07:00Z",
+      "description": "Signed G Maalik Wayns to a second 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-03-19T07:00Z",
+      "description": "Signed F Malcolm Thomas to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-03-18T07:00Z",
+      "description": "Named Jason Ranne director of strategic planning.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-03-18T07:00Z",
+      "description": "Signed G Terrell Harris to a second 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-03-15T07:00Z",
+      "description": "Signed F Kenyon Martin for the remainder of the season.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-03-15T07:00Z",
+      "description": "Signed F DaJuan Summers to a 10-day contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2013-03-14T07:00Z",
+      "description": "Signed G Jannero Pargo to a 10-day contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Bobcats",
+        "location": "Charlotte",
+        "name": "Bobcats"
+      }
+    },
+    {
+      "date": "2013-03-13T07:00Z",
+      "description": "Recalled G Kent Bazemore and F Malcolm Thomas from Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-03-13T07:00Z",
+      "description": "Signed G Chris Wright to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-03-12T07:00Z",
+      "description": "Signed F Juwan Howard to a second 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-03-12T07:00Z",
+      "description": "Assigned G Kent Bazemore and F Malcolm Thomas to Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-03-12T07:00Z",
+      "description": "Signed F Lou Amundson for the remainder of the season. Released F/C Henry Sims.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-03-09T08:00Z",
+      "description": "Waived G Dominique Jones.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-03-08T08:00Z",
+      "description": "Signed F Malcolm Thomas to a 10-day contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-03-05T08:00Z",
+      "description": "Signed F Kenyon Martin to a second 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-03-05T08:00Z",
+      "description": "Signed G Aaron Brooks. Waived F Tyler Honeycutt.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-03-02T08:00Z",
+      "description": "Signed F Juwan Howard to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-03-02T08:00Z",
+      "description": "Signed F Lou Amundson to a 10-day contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-03-01T08:00Z",
+      "description": "Assigned F Jarvis Varnado to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-02-28T08:00Z",
+      "description": "Assigned F Kevin Jones to Canton (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-02-26T08:00Z",
+      "description": "Suspended C Samuel Dalembert one game for a violation of team policy.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-02-25T08:00Z",
+      "description": "Signed G Derek Fisher.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-02-25T08:00Z",
+      "description": "Signed C Tim Ohlbrecht.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-02-23T08:00Z",
+      "description": "Signed F Kenyon Martin to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded C Hamed Haddadi and a 2014 second-round draft pick to Phoenix for G Sebastian Telfair.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G Jordan Crawford to Boston for C Jason Collins and G Leandro Barbosa.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G Eric Maynor to Portland for the rights to F Georgios Printezis and cash.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Waived F Luke Zeller.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G J.J. Redick, C Gustavo Ayon and G Ish Smith to Milwaukee for G Doron Lamb, G Beno Udrih and F Tobias Harris.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G/F Ronnie Brewer to Oklahoma City for a 2014 second-round draft pick and cash.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded C Dexter Pittman, a 2013 second-round draft pick and cash considerations to Memphis for the draft rights to F Ricky Sanchez.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded F Marcus Morris to Phoenix for a 2013 second-round draft pick. Traded F Patrick Patterson, C Cole Aldrich and G Toney Douglas to Sacramento for C Thomas Robinson, F Francisco Garcia and F Tyler Honeycutt.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G Charles Jenkins and cash to Philadelphia for a protected second-round draft pick. Traded F Jeremy Tyler to Atlanta for cash and future draft considerations.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2013-02-21T08:00Z",
+      "description": "Traded G Anthony Morrow to Dallas for G/F Dahntay Jones.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-02-18T08:00Z",
+      "description": "Signed G Jeremy Pargo for the remainder of the season.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-02-18T08:00Z",
+      "description": "Assigned C Dexter Pittman to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-02-14T08:00Z",
+      "description": "Recalled F Terrence Jones and F Greg Smith from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-02-10T08:00Z",
+      "description": "Assigned C-F Greg Smith to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-02-08T08:00Z",
+      "description": "Waived F Lou Amundson. Signed F Mickael Gelabale and F Chris Johnson for the remainder of the season.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2013-02-08T08:00Z",
+      "description": "Signed F-C Chris Andersen for remainder of season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-02-07T08:00Z",
+      "description": "Signed G Jeremy Pargo to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-02-04T08:00Z",
+      "description": "Recalled C Aron Baynes from Austin (NBADL).",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-02-03T08:00Z",
+      "description": "Reassigned C Dexter Pittman to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-02-02T08:00Z",
+      "description": "Signed G Jannero Pargo to a second 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-01-30T08:00Z",
+      "description": "Traded G-F Rudy Gay and C Hamed Haddadi to Toronto for G Jose Calderon and F Ed Davis. Traded G Jose Calderon to Detroit for F Austin Daye and F Tayshaun Prince",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-01-30T08:00Z",
+      "description": "Signed F/C Chris Andersen to a second 10-day contract and F Jarvis Varnado for the remainder of the season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-28T08:00Z",
+      "description": "Signed G Shelvin Mack to a second 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-01-28T08:00Z",
+      "description": "Re-signed F Sam Young.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-01-28T08:00Z",
+      "description": "Recalled F-C Donatas Motiejunas from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-01-28T08:00Z",
+      "description": "Signed G Mike James for the remainder of the season. Assigned G Jared Cunningham to Texas (NBADL).",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-01-23T08:00Z",
+      "description": "Signed G-F Chris Johnson to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-01-23T08:00Z",
+      "description": "Assigned G Cory Joseph to Austin (NBADL).",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-01-23T08:00Z",
+      "description": "Signed general manager John Hammond to a contract extension through the 2015-16 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-01-22T08:00Z",
+      "description": "Traded F Marreese Speights, G Wayne Ellington, G Josh Selby and a future first-round draft pick to Cleveland for F Jon Leuer.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2013-01-22T08:00Z",
+      "description": "Recalled F Terrence Jones from Rio Grande Valley (NBADL). Reassigned F/C Donatas Motiejunas to Rio Grande Valley.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-01-22T08:00Z",
+      "description": "Waived G Jeremy Pargo.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-01-21T08:00Z",
+      "description": "Assigned F Kevin Jones to Canton (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-01-21T08:00Z",
+      "description": "Signed G Jannero Pargo to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-01-20T08:00Z",
+      "description": "Named player development director Lindsey Hunter interim coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-01-20T08:00Z",
+      "description": "Re-signed F Jarvis Varnado to a second 10-day contract. Signed F-C Chris Andersen to a 10-day contract. Recalled C Dexter Pittman from Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-18T08:00Z",
+      "description": "Announced the team has agreed to mutually part ways with coach Alvin Gentry.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2013-01-18T08:00Z",
+      "description": "Reassigned C Dexter Pittman to Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-17T08:00Z",
+      "description": "Signed G Shelvin Mack to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-01-17T08:00Z",
+      "description": "Recalled C Dexter Pittman from Sioux Falls (NBADL).",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-17T08:00Z",
+      "description": "Signed G Mike James to a second 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-01-16T08:00Z",
+      "description": "Suspended F Josh Smith one game and fined him an undisclosed amount for ``conduct detrimental to the team.''",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2013-01-14T08:00Z",
+      "description": "Recalled G Cory Joseph from Austin (NBADL).",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2013-01-14T08:00Z",
+      "description": "Recalled F Terrence Jones from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-01-10T08:00Z",
+      "description": "Signed C Josh Harrellson to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-09T08:00Z",
+      "description": "Recalled G Nolan Smith and G Will Barton from Idaho (NBADL).",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2013-01-09T08:00Z",
+      "description": "Signed F Jarvis Varnado to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-08T08:00Z",
+      "description": "Signed G Maalik Wayns to a 10-day contract.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-01-08T08:00Z",
+      "description": "Announced Scott Skiles is out as coach by mutual agreement. Promoted assistant coach Jim Boylan to interim head coach.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2013-01-08T08:00Z",
+      "description": "Signed G Mike James to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Waived G Shelvin Mack.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Waived C Josh Harrellson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Signed coach Frank Vogel to a contract extension and F Dominic McGuire to a 10-day contract. Released F Sam Young.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Signed G Patrick Beverley to a multiyear contract and assigned him to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Recalled F Jon Leuer from Canton (NBADL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-01-07T08:00Z",
+      "description": "Signed G Donald Sloan to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-01-06T08:00Z",
+      "description": "Recalled F Arnett Moultrie from Sioux Falls (NBADL). Waived G Maalik Wayns.",
+      "team": {
+        "id": "20",
+        "abbreviation": "PHI",
+        "displayName": "Philadelphia 76ers",
+        "location": "Philadelphia",
+        "name": "76ers"
+      }
+    },
+    {
+      "date": "2013-01-06T08:00Z",
+      "description": "Suspended F Royce White.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2013-01-06T08:00Z",
+      "description": "Waived G Chris Douglas-Roberts.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2013-01-06T08:00Z",
+      "description": "Waived F Samardo Samuels.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2013-01-06T08:00Z",
+      "description": "Signed G Daequan Cook.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2013-01-05T08:00Z",
+      "description": "Waived G Terrel Harris.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2013-01-04T08:00Z",
+      "description": "Waived F Dominic McGuire.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Hornets",
+        "location": "New Orleans",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2013-01-02T08:00Z",
+      "description": "Recalled G-F Kent Bazemore and F-C Jeremy Tyler from Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    }
+  ]
+}

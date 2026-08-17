@@ -45,14 +45,16 @@ export interface PlayerSeason {
   twoPointPct: number;
   threePointPct: number;
   freeThrowPct: number;
-  effectiveFieldGoalPct: number;
-  trueShootingPct: number;
+  /** Optional: omit when provider did not publish (do not invent 0). */
+  effectiveFieldGoalPct?: number;
+  trueShootingPct?: number;
 
   /** Advanced rates (fractions unless noted). */
   threePointAttemptRate: number;
   freeThrowRate: number;
   turnoverPct: number;
-  usagePct: number;
+  /** Optional: omit when provider did not publish (do not invent 0). */
+  usagePct?: number;
   assistPct: number;
   offensiveReboundPct: number;
   defensiveReboundPct: number;
@@ -62,10 +64,10 @@ export interface PlayerSeason {
   /** Player Impact Estimate (NBA Stats). */
   pie: number;
 
-  /** Points per 100 possessions (on/off style from NBA Stats). */
-  offensiveRating: number;
-  defensiveRating: number;
-  netRating: number;
+  /** Points per 100 possessions — optional when provider omits. */
+  offensiveRating?: number;
+  defensiveRating?: number;
+  netRating?: number;
 
   /** Basketball-Reference advanced box. */
   per: number;
@@ -87,6 +89,18 @@ export interface PlayerSeason {
   dDpm: number;
   boxDpm: number;
   onOffDpm: number;
+
+  /**
+   * Optional impact overlays joined from public DARKO / LEBRON feeds (web IA).
+   * Not canonical DRBL value; never substitute for drbl100 / R1 fields.
+   */
+  darkoDpm?: number;
+  darkoOff?: number;
+  darkoDef?: number;
+  lebron?: number;
+  oLebron?: number;
+  dLebron?: number;
+  winsAdded?: number;
 
   /**
    * Canonical DRBL/100 — validated P-only EB1600 point estimate (M16k1+).

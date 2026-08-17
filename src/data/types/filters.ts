@@ -6,7 +6,15 @@ import type { Position } from "./player";
  */
 export interface BasketballFilters {
   season?: string;
+  /**
+   * Team identity for filters — prefer canonical ESPN id after URL normalization
+   * (`filtersFromSearchParams` / `normalizeTeamParam`).
+   * Player boards match ESPN ids; game filters also expand to BDL via identity
+   * or prefer `teamAbbr` when set.
+   */
   team?: string;
+  /** Cross-provider-safe franchise filter when game rows include abbreviations. */
+  teamAbbr?: string;
   player?: string;
   position?: Position | "ALL";
   minimumMinutes?: number;

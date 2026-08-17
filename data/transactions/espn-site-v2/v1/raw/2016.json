@@ -1,0 +1,4101 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2016,
+  "fetchedAt": "2026-08-14T20:06:30.275Z",
+  "apiCount": 372,
+  "rows": [
+    {
+      "date": "2016-12-29T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-29T08:00Z",
+      "description": "Waived G R.J. Hunter.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-28T08:00Z",
+      "description": "Recalled G Wade Baldwin IV from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-12-28T08:00Z",
+      "description": "Reassigned C Ivica Zubac to Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-27T08:00Z",
+      "description": "Waived G Nico Laprovittola.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-12-26T08:00Z",
+      "description": "Assigned F Troy Williams to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-12-20T08:00Z",
+      "description": "Fined C DeMarcus Cousins an undisclosed amount for a altercation with a Sacramento Bee reporter on Dec. 12.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-12-17T08:00Z",
+      "description": "Recalled G Sheldon McClellan from Delaware (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-12-17T08:00Z",
+      "description": "Recalled F Henry Ellenson and G Michael Gbinije from Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-12-17T08:00Z",
+      "description": "Assigned F Paul Zipser to Windy City (NBADL) and then recalled him.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-15T08:00Z",
+      "description": "Assigned G Wade Baldwin IV to Iowa (NBADL). Waived G Toney Douglas.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-12-14T08:00Z",
+      "description": "Purchased the Erie BayHawks (NBADL) and will relocate the team from Pennsylvania to Lakeland, Fla., beginning with the 2017-18 season.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-12-14T08:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-12-11T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-11T08:00Z",
+      "description": "Recalled G R.J. Hunter from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-10T08:00Z",
+      "description": "Reassigned C Ivica Zubac to Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-10T08:00Z",
+      "description": "Assigned Fs Stanley Johnson and Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-12-10T08:00Z",
+      "description": "Recalled G Jerian Grant and F Paul Zipser from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-09T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-09T08:00Z",
+      "description": "Assigned Gs Jerian Grant and R.J. Hunter and F Paul Zipser to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-08T08:00Z",
+      "description": "Signed general manager Chris Wallace, executive vice president of basketball operations John Hollinger and executive vice president of player personnel Ed Stefanski to multiyear contract extensions.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-12-07T08:00Z",
+      "description": "Recalled G R.J. Hunter and Fs Doug McDermott and Paul Zipser from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-12-06T08:00Z",
+      "description": "Assigned G Sheldon McClellan to Delaware (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-12-05T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-12-05T08:00Z",
+      "description": "Suspended G Rajon Rondo one game for conduct detrimental to the team. Assigned F Doug McDermott to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-11-27T08:00Z",
+      "description": "Recalled F/C Cristiano Felicio and Gs Jerian Grant and R.J. Hunter from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-11-27T08:00Z",
+      "description": "Recalled F Cheick Diallo from Austin (NBADL).",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-11-26T08:00Z",
+      "description": "Assigned F/C Cristiano Felicio and Gs Jerian Grant and R.J. Hunter to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-11-25T08:00Z",
+      "description": "Recalled G Wade Baldwin IV from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-11-23T08:00Z",
+      "description": "Named Mike McCarthy chief operating officer. Recalled G Rashad Vaughn from Westchester (NBADL).",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-11-23T08:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-11-21T08:00Z",
+      "description": "Recalled F Danuel House from Delaware (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-11-21T08:00Z",
+      "description": "Recalled C Chinanu Onuaku and F Kyle Wiltjer from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-11-21T08:00Z",
+      "description": "Assigned C Damian Jones to Santa Cruz (NBADL).",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-11-21T08:00Z",
+      "description": "Signed G Anthony Brown from Erie (NBADL).",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-11-20T08:00Z",
+      "description": "Assigned G Wade Baldwin IV to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-11-20T08:00Z",
+      "description": "Released G Archie Goodwin.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-11-18T08:00Z",
+      "description": "Recalled C Georgios Pagagiannis from Reno (NBADL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-11-18T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-11-16T08:00Z",
+      "description": "Assigned F Danuel House to Delaware (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-11-16T08:00Z",
+      "description": "Assigned C Ivica Zubac to Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-11-14T08:00Z",
+      "description": "Recalled F Davis Bertans, G Bryn Forbes and G Dejounte Murray from Austin (NBADL).",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-11-14T08:00Z",
+      "description": "Recalled G R.J. Hunter from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-11-11T08:00Z",
+      "description": "Assigned C Georgios Papagiannis, F Skal Labissiere and G Malachi Richardson to Reno (NBADL).",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-11-10T08:00Z",
+      "description": "Acquired the right to own and operate an NBA D-League team that will play in College Park, Ga., beginning with the 2019-20 season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-11-08T08:00Z",
+      "description": "Assigned G R.J. Hunter to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-11-07T08:00Z",
+      "description": "Waived G Jordan Farmar.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-11-07T08:00Z",
+      "description": "Waived G Lance Stephenson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-11-05T07:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-11-01T07:00Z",
+      "description": "Signed C Cody Zeller to a four-year contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2016-11-01T07:00Z",
+      "description": "Signed C Steven Adams and G Victor Oladipo to multiyear contract extensions.l",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2016-10-31T07:00Z",
+      "description": "Signed C Rudy Gobert to a multiyear contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-10-31T07:00Z",
+      "description": "Signed C Gorgui Dieng to a four-year contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-10-31T07:00Z",
+      "description": "Waived C Edy Tavares. Signed F Ryan Kelly.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-10-30T07:00Z",
+      "description": "Exercised the third-year option on the contract of F-C Frank Kaminsky.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2016-10-28T07:00Z",
+      "description": "Exercised their third-year option on F Jarell Martin.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-28T07:00Z",
+      "description": "Exercised fourth-year options on F Doug McDermott and third-year options on G Jerian Grant and F Bobby Portis.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-10-27T07:00Z",
+      "description": "Signed G R.J. Hunter.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-10-26T07:00Z",
+      "description": "Exercised their 2017-18 team options on G guard D'Angelo Russell, F Julius Randle and F Larry Nance Jr.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-10-26T07:00Z",
+      "description": "Signed G Dennis Schr?der to a contract extension through the 2020-21 season. Promoted Thad Sheely to chief operating officer, Atlanta Hawks and Philips Arena; David Lee to executive vice president, external affairs and executive director; and Nzinga Shaw to senior vice president along with her duties as chief diversity & inclusion officer. Named Brett Stefansson executive vice president, general manager of Philips Arena.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-10-25T07:00Z",
+      "description": "Exercised fourth-year options on F Aaron Gordon and Gs Elfrid Payton and G Mario Hezonja.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived G Jordan Adams and C Matt Costello.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Exercised the contract options for G Rodney Hood, G Dante Exum and F-C Trey Lyles.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived F Mitch McGary, G Ronnie Price, F Chris Wright and C Kaleb Tarczewski.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived G Jordan Farmar and Isaiah Cousins.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived G Archie Goodwin.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived Fs Yi Jianlian and Anthony Brown.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Signed F Ben Bentil.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Claimed G Beno Udrih off waivers from Miami. Waived G Ray McCallum.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-10-24T07:00Z",
+      "description": "Waived F Alonzo Gee.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived F JaKarr Sampson, G/F Wayne Selden Jr. and G/F D.J. Stephens.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived G Drew Crawford, G Brady Heslip, F E.J. Singler, F Jarrod Uthoff and C Yanick Moreira.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived G Nick Johnson and G Ramon Galloway.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived F Rasual Butler and G Toure' Murry.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived G Beno Udrih, G Briante Weber, G Luis Montero, F Okaro White and C Vashil Fernandez.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived G Trey Freeman, C Mamadou N'Diaye and G Lorenzo Brown.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-10-22T07:00Z",
+      "description": "Waived C Jaleel Cousins, G Kyle Collinsworth, G Keith Hornsby, G Jonathan Gibson and F CJ Williams.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Signed F JaKarr Sampson. Waived G Kellen Dunham.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Exercised their third-year option on C Willie Cauley-Stein.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Waived Gs Chasson Randle and J.P. Tokoto and Fs Lou Amundson, Cleananthony Early and Damien Inglis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Waived G Yogi Ferrell.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Exercised their fourth-year options on G Gary Harris and C Jusuf Nurkic. Exercised their third-year option on G Emmanuel Mudiay.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-10-21T07:00Z",
+      "description": "Waived F J.J. Avila, G D'Vauntes Smith-Rivera, G/F Thomas Walkup and G Spencer Dinwiddie.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-10-20T07:00Z",
+      "description": "Waived G Chris Crawford and F Vince Hunter. Signed C Matt Costello and G Kellen Dunham. PHILADELPHIA 76ERS - Announced the retirement of F Elton Brand.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-20T07:00Z",
+      "description": "Waived Gs Cameron Jones, Phil Pressey and Elliot Williams.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-10-20T07:00Z",
+      "description": "Exercised its team option on the contract of F Stanley Johnson through the 2017-18 season.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-10-18T07:00Z",
+      "description": "Re-signed F Cleanthony Early.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-10-17T07:00Z",
+      "description": "Waived F Alex Poythress and G Nick Zeisloft.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-10-17T07:00Z",
+      "description": "Waived F Nikola Jovanovic.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-10-17T07:00Z",
+      "description": "Signed C Jaleel Cousins.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-10-17T07:00Z",
+      "description": "Traded G Tony Snell to Milwaukee for G Michael Carter-Williams.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-10-17T07:00Z",
+      "description": "Signed G-F Quincy Ford.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-10-15T07:00Z",
+      "description": "Re-signed G J.R. Smith to a four-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-10-11T07:00Z",
+      "description": "Signed F Damien Inglis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-10-09T07:00Z",
+      "description": "Signed F Vince Hunter.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-09T07:00Z",
+      "description": "Waived Fs Elgin Cook and Scott Wood.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-10-07T07:00Z",
+      "description": "Waived G Tony Wroten.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-10-05T07:00Z",
+      "description": "Waived G Jabari Brown.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-10-05T07:00Z",
+      "description": "Named Jennifer Swanson physical therapist, Stacey Robinson massage therapist, Sean Light assistant strength and conditioning coach, Lorena Martin director of sports performance analytics and Jae Kim basketball data analyst.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-10-04T07:00Z",
+      "description": "Waived F Vince Hunter.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-10-03T07:00Z",
+      "description": "Signed G Toney Douglas. Waived F-C Eric Moreland.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-10-03T07:00Z",
+      "description": "Signed G Josh Magette.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-10-02T07:00Z",
+      "description": "Named Ed Pinckney assistant coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-09-29T07:00Z",
+      "description": "Waived F-C Ryan Richards.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-09-25T07:00Z",
+      "description": "Signed C Gracin Bakumanya, Fs Derek Cooke Jr. and Derrick Jones Jr., and G Shaquille Harrison.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-09-25T07:00Z",
+      "description": "Named Noah Croom assistant general manager, Brian Pauga director of player personnel, Andy Greer and Rick Brunson assistant coaches, Peter Patton shooting coach and Matt Duhamel director of athletic therapy. Retained assistant coach Ryan Saunders, director of pro personnel Calvin Booth, pro personnel scout Matt Bollero, strength and condition coach David Crewe and director of basketball administration Manny Rohan. Promoted Vince Legarza to player development coach.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-09-24T07:00Z",
+      "description": "Signed F Scott Wood.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-09-23T07:00Z",
+      "description": "Announced the retirement of C Kevin Garnett.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-09-23T07:00Z",
+      "description": "Re-signed F Metta World Peace.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-09-23T07:00Z",
+      "description": "Promoted Pat Garrity to associate general manager, Adam Glessner to director of player personnel and J.R. Holden to director of international scouting, Jorge Costa to director of research and technology, Aaron Gray to assistant coach, Ryan Winters to scout, Jordan Sabourin to head strength coach, T.J. Saint to head video coordinator and Jordan Brink to assistant video coordinator. Named Aaron Blackshear analytics systems coordinator and Louis Thompson assistant strength and conditioning coach. Announced director of player development Quentin Richardson will become pro scout. Named Courtney Havens-Mitchell athletic trainer and Evarist Akujobi strength and conditioning coach for Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-09-22T07:00Z",
+      "description": "Traded G Tyler Ennis to Houston for F Michael Beasley.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-09-21T07:00Z",
+      "description": "Signed F Thomas Robinson.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-09-20T07:00Z",
+      "description": "Promoted Bob Myers to president of basketball operations/general manager, Travis Schlenk to vice president of basketball operations/assistant general manager, Kirk Lacob to vice president of GSW Sports Ventures/assistant general manager, and Larry Harris to assistant general manager/director of player personnel.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-09-19T07:00Z",
+      "description": "Re-signed F Lou Amundson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-09-19T07:00Z",
+      "description": "Agreed to terms with F Giannis Antetokounmpo on a contract extension.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-09-16T07:00Z",
+      "description": "Named Monty Williams vice president of basketball operations and Dutch Gaitley video coordinator. Promoted Will Hardy to assistant coach, Andy Birdsong to director of pro player personnel, Brandon James to assistant general counsel and director of basketball administration, Dave Telep to director of scouting, Xavi Schelling to director of sports science and athletic performance, Niraj Mulji basketball operations manager.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-09-16T07:00Z",
+      "description": "Named Stacey Augmon assistant coach, Seth Partnow director of basketball research and Scott Faust athletic trainer.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-09-12T07:00Z",
+      "description": "Signed G-F Xavier Henry.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-09-08T07:00Z",
+      "description": "Signed G Orlando Johnson and F J.J. O'Brien to the training camp roster.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-09-08T07:00Z",
+      "description": "Signed F/C Kevin Seraphin and G Nick Zeisloft.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-09-07T07:00Z",
+      "description": "Signed F Quincy Ford.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-09-01T07:00Z",
+      "description": "Signed G Julian Jacobs and F Travis Wear.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-08-31T07:00Z",
+      "description": "Signed G Ty Lawson.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-08-30T07:00Z",
+      "description": "Traded F Joffrey Lauvergne to Oklahoma City for two 2017 second-round draft picks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-08-29T07:00Z",
+      "description": "Re-signed F Steve Novak.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-08-29T07:00Z",
+      "description": "Signed F Zach Auguste.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-08-29T07:00Z",
+      "description": "Signed G Julyan Stone and F Alex Poythress.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-08-24T07:00Z",
+      "description": "Signed F Brandon Ingram and F/C Yi Jianlian.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-08-22T07:00Z",
+      "description": "Signed G Jason Terry.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-08-17T07:00Z",
+      "description": "Named Bob Bender assistant coach and Bob Thate shooting coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-08-17T07:00Z",
+      "description": "Signed G Beno Udrih to a one-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-08-12T07:00Z",
+      "description": "Signed F LeBron James to a three-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-08-09T07:00Z",
+      "description": "Named Willie Green assistant coach/player development.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-08-08T07:00Z",
+      "description": "Signed G Tony Wroten, F Troy Williams and G/Fs Wayne Selden Jr. and D.J. Stephens.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-08-04T07:00Z",
+      "description": "Signed G Russell Westbrook to a contract extension.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2016-08-04T07:00Z",
+      "description": "Signed G Chasson Randle.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-08-03T07:00Z",
+      "description": "Re-signed G/F James Jones.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-08-02T07:00Z",
+      "description": "Signed F/C David Lee.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-08-02T07:00Z",
+      "description": "Signed G J.P. Tokoto.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-08-02T07:00Z",
+      "description": "Re-signed C Miles Plumlee.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-08-01T07:00Z",
+      "description": "Signed G Ron Baker.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-07-30T07:00Z",
+      "description": "Waived G-F Dahntay Jones.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-07-29T07:00Z",
+      "description": "Signed F Patricio Garino.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-07-28T07:00Z",
+      "description": "Re-signed G Marcus Thornton.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-07-28T07:00Z",
+      "description": "Re-signed F Richard Jefferson to a two-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-07-28T07:00Z",
+      "description": "Signed G Spencer Dinwiddie.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-27T07:00Z",
+      "description": "Signed G CJ McCollum to a four-year contract extension.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2016-07-27T07:00Z",
+      "description": "Named Jay Triano associate head coach and Tyrone Corbin and Nate Bjorkgren assistant coaches.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-07-20T07:00Z",
+      "description": "Signed F-C Jordan Hill to a two-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-07-20T07:00Z",
+      "description": "Signed G Isaiah Canaan.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-19T07:00Z",
+      "description": "Signed G Leandro Barbosa.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-07-19T07:00Z",
+      "description": "Signed F Henry Ellenson to a multiyear contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-07-19T07:00Z",
+      "description": "Signed G Jamal Murray. Agreed to terms with G Mike Miller.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-07-17T07:00Z",
+      "description": "Waived F Branden Dawson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-07-17T07:00Z",
+      "description": "Re-signed C Anderson Varejao.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-07-16T07:00Z",
+      "description": "Signed G Wade Baldwin IV.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-16T07:00Z",
+      "description": "Signed G Denzel Valentine.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-15T07:00Z",
+      "description": "Traded G Devyn Marble and a 2020 second-round draft pick to the L.A. Clippers for G C.J. Wilcox and cash.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-07-15T07:00Z",
+      "description": "Signed G Randy Foye.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-07-15T07:00Z",
+      "description": "Re-signed C Andre Drummond to a five-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-07-15T07:00Z",
+      "description": "Signed G Dwayne Wade and F Paul Zipser.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed G Mike Conley to a five-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed F DeMar DeRozan to a five-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed F/C Pau Gasol, C Dewayne Dedmon, F Davis Bertans and Gs Dejounte Murray, Ryan Arcidiacono and Bryn Forbes. Re-signed G Manu Ginobili.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Re-signed G Sasha Vujacic. Signed F Maurice Ndour.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed F Anthony Bennett and F Caris LeVert.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed C Cole Aldrich.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed C Diamond Stone.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-07-14T07:00Z",
+      "description": "Signed G Michael Gbinije to a multiyear contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-07-13T07:00Z",
+      "description": "Signed F James Ennis to a multiyear contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-12T07:00Z",
+      "description": "Signed G Andrew Harrison and C Deyonta Davis to multiyear contracts. Waived G Tony Wroten.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-12T07:00Z",
+      "description": "Signed C/F Marreese Speights and F Brice Johnson.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-07-12T07:00Z",
+      "description": "Signed C Boban Marjanovic to a three-year contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-07-11T07:00Z",
+      "description": "Announced the retirement of F/C Tim Duncan.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-07-11T07:00Z",
+      "description": "Named Ethan Casson chief executive officer.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-07-11T07:00Z",
+      "description": "Agreed to terms with G Jarrett Jack on a one-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-07-10T07:00Z",
+      "description": "Re-signed F Marvin Williams to a multiyear contract.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2016-07-10T07:00Z",
+      "description": "Signed F/C Meyers Leonard. Matched Brooklyn's offer sheet for G Allen Crabbe.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2016-07-10T07:00Z",
+      "description": "Signed F Udonis Haslem to a one-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Signed G Arron Afflalo, G Garrett Temple, F Matt Barnes and F Anthony Tolliver.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Signed F Mindaugas Kuzminskas. Re-signed F Lance Thomas.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Signed F Trevor Booker to a multiyear contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Signed G James Harden to a four-year contract extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Re-signed G Ian Clark.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Re-signed F Darrell Arthur to a multiyear contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-07-09T07:00Z",
+      "description": "Signed F Dwight Powell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed F Chandler Parsons to a multiyear contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed G Joe Johnson.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Traded F Boris Diaw, a future second-round draft pick and cash considerations to Utah for the rights to G Olivier Hanlan.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed F Jared Dudley to a three-year contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed F Joakim Noah and G Courtney Lee to four-year contracts and G Brandon Jennings, C Marshall Plumlee and C Guillermo Hernangomez to one-year contracts.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed G Brandon Rush to a one-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed F Mirza Teletovic to a multiyear contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed C Timofey Mozgov to a multiyear contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Re-signed G Jamal Crawford, F Wesley Johnson and G Austin Rivers to three-year contracts and F Luc Mbah a Moute to a two-year contract.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed F Jon Leuer and G Ish Smith to multiyear contracts.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed G Deron Williams to a one-year contract. Agreed to terms with C A.J. Hammons and F Dorian Finney-Smith. Waived C JaVale McGee.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Named Chip Schaefer as director of sports performance and Dr. Wendy Borlabi high performance coach. Promoted Shaun Hickombottom to senior manager of player development and team services.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-08T07:00Z",
+      "description": "Signed C Al Horford to a four-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Re-signed G-F Nicolas Batum to a five-year contract. Signed G Ramon Sessions to a two-year contract and C Roy Hibbert and G Brian Roberts to one-year contracts. Acquired G-F Marco Belinelli from Sacramento for the draft rights to G Malachi Richardson.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed C Ian Mahinmi, F Andrew Nicholson and F-C Jason Smith. Acquired G Trey Burke from Utah for a 2021 second-round draft pick.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed G-F Evan Turner to a four-year contract and F Jake Layman.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed Fs Dragan Bender and Marquese Chriss and G Tyler Ulis.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Re-signed G Evan Fournier to a five-year contract. Signed G D.J. Augustin and C Bismack Biyombo to four-year contracts and F Jeff Green to a one-year contract and C Stephen Zimmerman. Traded G Shabazz Napier to Portland for cash considerations.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Acquired the draft rights to G Caris LeVert and a future second round draft pick from Indiana for F Thaddeus Young. Signed G Jeremy Lin to a multiyear contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed G Kris Dunn.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Acquired G Matthew Dellavedova and cash considerations from Cleveland for the draft rights to C Albert Miralles.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Re-signed C Hassan Whiteside to a four-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed F Luol Deng to a four-year contract and C Ivica Zubac. Re-signed G Jordan Clarkson to a four-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed F Kevin Durant to a two-year contract. Traded C Andrew Bogut and future second-round draft pick to Dallas for future second-round draft pick.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Acquired the rights to C Stanko Barac from Indiana for F Jeremy Evans, the rights to G-F Emir Preldzic and cash. Signed G Harrison Barnes to a four-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Signed G Rajon Rondo to a two-year contract. Traded G Jose Calderon, Denver's 2018 second-round draft pick and a 2019 second-round draft pick to the Los Angeles Lakers for the draft rights to F/C Ater Mojok. Traded G/F Mike Dunleavy and the draft rights to F Vladimir Veremeenko to Cleveland for the draft rights to C Albert Miralles.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-07-07T07:00Z",
+      "description": "Acquired the draft rights to F Taurean Prince from Utah, sent G Jeff Teague to Indiana, which sent G George Hill to Utah. Re-signed F Kent Bazemore to a four-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-07-06T07:00Z",
+      "description": "Named Mike Brown assistant coach. Signed G Patrick McCaw.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-07-05T07:00Z",
+      "description": "Named Keith Smart and Adam Mazarei assistant coaches.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-07-05T07:00Z",
+      "description": "Named Eric Sebastian director of coaching operations, Kamran Sufi advance scout and Tony Brown, Sidney Lowe, Chad Iske, Mike Terpstra and Maz Trakh assistant coaches.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-06-30T07:00Z",
+      "description": "Waived G Jarrett Jack.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-06-30T07:00Z",
+      "description": "Promoted Lawrence Frank to executive vice president of basketball operations.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-06-30T07:00Z",
+      "description": "Name Pete Thuresson senior vice president of corporate partnerships.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-06-29T07:00Z",
+      "description": "Named Jon Phelps general manager and Rex Walters coach of Grand Rapids (NBADL). Traded G Jodie Meeks to Orlando for a 2019 conditional second-round draft pick.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-06-29T07:00Z",
+      "description": "Exercised their 2016-17 contract option on F-C Mike Muscala.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-06-27T07:00Z",
+      "description": "Named Bill Bayno and David McClure assistant coaches.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-06-22T07:00Z",
+      "description": "Acquired G Derrick Rose, G Justin Holiday and a 2017 second-round draft pick from Chicago for C Robin Lopez and Gs Jose Calderon and Jerian Grant.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-06-21T07:00Z",
+      "description": "Signed coach Jason Kidd to a three-year contract extension through the 2019-20 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-06-17T07:00Z",
+      "description": "Announced the resignation of CEO Rob Moor.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-06-17T07:00Z",
+      "description": "Acquired F Cameron Bairstow from Chicago Bulls for G Spencer Dinwiddie.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-06-17T07:00Z",
+      "description": "Acquired G Spencer Dinwiddie from Detroit for F-C Cameron Bairstow.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-06-15T07:00Z",
+      "description": "Promoted director of strategic planning Pat Garrity to assistant general manager, executive director of basketball operations Andrew Loomis to chief of staff and assistant coach Bob Beyer to associate head coach. Named Otis Smith director of player development/assistant coach. Reassigned assistant coach Brendan Malone to special assignment scout. Announced the resignation of director of player development Quentin Richardson.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-06-13T07:00Z",
+      "description": "Announced the retirement of assistant coach Kevin Eastman.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-06-13T07:00Z",
+      "description": "Signed general manager Jeff Bower to a contract extension.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-06-09T07:00Z",
+      "description": "Named Justin Zanik assistant general manager.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-06-08T07:00Z",
+      "description": "Named J.B. Bickerstaff associate head coach and Nick Van Exel assistant coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-06-08T07:00Z",
+      "description": "Named Danny Ferry special adviser.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-06-07T07:00Z",
+      "description": "Agreed to terms with coach Dwane Casey on a three-year contract.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2016-06-03T07:00Z",
+      "description": "Naming Elston Turner, Duane Ticknor, Bryan Gates, Corliss Williamson, Nancy Lieberman and Jason March assistant coaches.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-06-02T07:00Z",
+      "description": "Named Jeff Hornacek coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-06-01T07:00Z",
+      "description": "Announced assistant coach Monty Williams will not return.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2016-06-01T07:00Z",
+      "description": "Signed president of basketball operations Danny Ainge and coach Brad Stevens to contract extensions.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2016-05-29T07:00Z",
+      "description": "Named David Fizdale coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-05-20T07:00Z",
+      "description": "Named Frank Vogel coach.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-05-20T07:00Z",
+      "description": "Announced the departure of General manager Milt Newton and vice president of sports performance Arnie Kander.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-05-16T07:00Z",
+      "description": "Promoted assistant coach Nate McMillan to coach.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-05-12T07:00Z",
+      "description": "Announced the resignation of coach Scott Skiles.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2016-05-09T07:00Z",
+      "description": "Named Dave Joerger coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-05-07T07:00Z",
+      "description": "Fired coach Dave Joerger.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-05-06T07:00Z",
+      "description": "Named Matt Woodley coach of Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-05-06T07:00Z",
+      "description": "Signed coach Quin Snyder to a long-term contract extension.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-05-05T07:00Z",
+      "description": "Announced they will not renew the contract of coach Frank Vogel.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-04-29T07:00Z",
+      "description": "Named Luke Walton coach.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-04-28T07:00Z",
+      "description": "Named Ken Catanella assistant general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-04-26T07:00Z",
+      "description": "Named Scott Brooks coach.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-04-24T07:00Z",
+      "description": "Fired coach Byron Scott.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2016-04-20T07:00Z",
+      "description": "Named Tom Thibodeau as coach and president of basketball operations and Scott Layden general manager.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-04-19T07:00Z",
+      "description": "Removed the interim tag from coach Earl Watson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-04-17T07:00Z",
+      "description": "Named Kenny Atkinson coach.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-04-13T07:00Z",
+      "description": "Fired interim coach Sam Mitchell.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-04-13T07:00Z",
+      "description": "Signed G Lorenzo Brown.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-04-12T07:00Z",
+      "description": "Purchased the Bakersfield Jam (NBADL) and are relocating the team to Prescott Valley, Ariz. to be known as the Northern Arizona Suns.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-04-12T07:00Z",
+      "description": "Signed F Dorell Wright.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-04-11T07:00Z",
+      "description": "Signed G Bryce Cotton for the remainder of the regular season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-04-10T07:00Z",
+      "description": "Signed G Briante Weber.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-04-07T07:00Z",
+      "description": "Waived C Ryan Hollins. Signed G Xavier Munford to a multi-year contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-04-06T07:00Z",
+      "description": "Named Horace Grant special advisor to the president.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-04-04T07:00Z",
+      "description": "Announced the Idaho Stampede (NBADL) will relocate to Salt Lake City next season.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-04-01T07:00Z",
+      "description": "Signed G Bryce Cotton to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-31T07:00Z",
+      "description": "Signed G Jordan Farmar for the remainder of the season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-30T07:00Z",
+      "description": "Signed general manager and vice president of basketball operations Vlade Divac to a multiyear contract.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-03-25T07:00Z",
+      "description": "Signed F Axel Toupane to a multiyear contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-03-25T07:00Z",
+      "description": "Signed F Jordan Hamilton to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-03-23T07:00Z",
+      "description": "Assigned F Montrezl Harrell to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-03-22T07:00Z",
+      "description": "Signed G Ray McCallum to a second 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-21T07:00Z",
+      "description": "Signed G Jordan Farmar to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-19T07:00Z",
+      "description": "Signed G Sean Kilpatrick to a multiyear contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-03-18T07:00Z",
+      "description": "Signed G Lorenzo Brown to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-03-16T07:00Z",
+      "description": "Signed G Xavier Munford to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-16T07:00Z",
+      "description": "Signed G Tony Wroten.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-03-16T07:00Z",
+      "description": "Signed G Jared Cunningham to a 10-day contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-03-16T07:00Z",
+      "description": "Signed F Jeff Ayres for the remainder of the season.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2016-03-14T07:00Z",
+      "description": "Signed F Alex Toupane to a second 10-day contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-03-12T08:00Z",
+      "description": "Signed G Ray McCallum and C Alex Stepheson to 10-day contracts.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-11T08:00Z",
+      "description": "Signed G Briante Weber to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-03-10T08:00Z",
+      "description": "Suspended C DeMarcus Cousins one game for conduct detrimental to the team.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-03-09T08:00Z",
+      "description": "Waived G Gary Neal. Signed G Marcus Thornton.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-03-09T08:00Z",
+      "description": "Waived F Rasual Butler. Signed G Kevin Martin. Announced the retirement of Peter Holt, CEO and chairman of the board. Named Julianna Holt and president of business operations, Rick Pych, CEO.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-03-09T08:00Z",
+      "description": "Signed G Jordan McRae for the remainder of this season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-03-08T08:00Z",
+      "description": "Waived G Gary Neal. Signed G Marcus Thornton.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-03-08T08:00Z",
+      "description": "Waived F Rasual Butler. Signed G Kevin Martin.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-03-08T08:00Z",
+      "description": "Signed F Chase Budinger for the remainder of the season and F/C Alan Williams to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-03-08T08:00Z",
+      "description": "Signed G Jordan McRae for the remainder of this season.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-03-07T08:00Z",
+      "description": "Assigned F Cleanthony Early to Westchester (NBADL).",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-03-07T08:00Z",
+      "description": "Signed G Ty Lawson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-03-05T08:00Z",
+      "description": "Signed C Nazr Mohammed.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2016-03-05T08:00Z",
+      "description": "Waived F Chase Budinger.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2016-03-05T08:00Z",
+      "description": "Recalled Fs Sam Dekker and Montrezl Harrell and G/F K.J. McDaniels from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-03-04T08:00Z",
+      "description": "Signed F Michael Beasley. Assigned F Montrezl Harrell and G-F K.J. McDaniels to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-03-01T08:00Z",
+      "description": "Assigned F Sam Dekker to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-03-01T08:00Z",
+      "description": "Signed F Kris Humphries.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2016-02-29T08:00Z",
+      "description": "Recalled F Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-29T08:00Z",
+      "description": "Waived G Ray McCallum. Signed G Andre Miller.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2016-02-29T08:00Z",
+      "description": "Waived G Beno Udrih.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-02-28T08:00Z",
+      "description": "Recalled F Sam Dekker from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-27T08:00Z",
+      "description": "Signed G Joe Johnson.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-02-25T08:00Z",
+      "description": "Reassigned F Jarell Martin to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-25T08:00Z",
+      "description": "Signed F J.J. Hickson.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2016-02-25T08:00Z",
+      "description": "Waived G Joe Johnson.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-02-25T08:00Z",
+      "description": "Waived G Andre Miller.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2016-02-24T08:00Z",
+      "description": "Signed F Justin Harper to a 10-day contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-02-23T08:00Z",
+      "description": "Assigned F Sam Dekker to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Waived F-C DeJuan Blair.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Signed G Jimmer Fredette to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Signed F Steve Novak. Waived F Chris Copeland.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Waived F Jason Thompson. Agreed to terms with C Anderson Varejao for the remainder of the season.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Announced the trade of C Joel Anthony and a protected 2016 first-round draft pick to Houston for F-C Donatas Motiejunas and G Marcus Thornton was rescinded because medical clearance was not given on all players.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Agreed to terms with F JaKarr Sampson on a multiyear contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-02-22T08:00Z",
+      "description": "Signed F David Lee. Waived G John Jenkins.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2016-02-20T08:00Z",
+      "description": "Signed G Phil Pressey to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-02-19T08:00Z",
+      "description": "Assigned F Sam Dekker to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-19T08:00Z",
+      "description": "Signed G Bryce Dejean-Jones. Waived F Jarnell Stokes.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-02-19T08:00Z",
+      "description": "Waived F David Lee.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Traded F Jeff Green to the Los Angeles Clippers for G Lance Stephenson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Acquired G Shelvin Mack from Atlanta for a future second-round draft pick.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Acquiring G Brian Roberts and a future second-round pick from Miami for cash considerations. Waived G Tim Frazier.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Traded F Markieff Morris to Washington for a protected 2016 first-round draft pick and Fs Kris Humphries and DeJuan Blair.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Named Sean Marks general manager.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Traded Fs Donatas Motiejunas and Marcus Thornton to Detroit for a protected 2016 first-round pick and F Joel Anthony.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Traded G Randy Foye to Oklahoma City for F Steve Novak, G D.J. Augustin and two future second-round draft picks.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Acquired F Channing Frye from Orlando. Cleveland sent G Jared Cunningham and a future second-round draft pick to Orlando and C Anderson Varejao and 2018 first-round draft pick to Portland.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Acquired G Justin Holiday from Atlanta and a 2018 second-round draft pick from Utah and sent G Kirk Hinrich to Atlanta.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-02-18T08:00Z",
+      "description": "Acquired F Jarnell Stokes and cash from Miami for a future second round draft pick.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2016-02-17T08:00Z",
+      "description": "Recalled F James Ennis from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-17T08:00Z",
+      "description": "Announced president Randy Rigby will retire at the end of the season and will be replaced by Steve Starks.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2016-02-17T08:00Z",
+      "description": "Fired assistant coach Vance Walberg.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2016-02-16T08:00Z",
+      "description": "Acquired G-F Courtney Lee from Memphis for F P.J. Hairston.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2016-02-16T08:00Z",
+      "description": "Acquired F Chris Andersen and two second-round draft picks from Miami.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-16T08:00Z",
+      "description": "Acquired G Brian Roberts from Charlotte.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2016-02-16T08:00Z",
+      "description": "Traded G Brandon Jennings and F Ersan Ilyasova to Orlando for F Tobias Harris.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2016-02-11T08:00Z",
+      "description": "Assigned G Jordan McRae to Bakersfield (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-02-09T08:00Z",
+      "description": "Recalled F Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-09T08:00Z",
+      "description": "Recalled G-F K.J. McDaniels and F-C Donatas Motiejunas from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-08T08:00Z",
+      "description": "Fired coach Derek Fisher. Named Kurt Rambis interim coach.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-02-06T08:00Z",
+      "description": "Assigned G-F K.J. McDaniels to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-04T08:00Z",
+      "description": "Recalled F/C Donatas Motiejunas from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-03T08:00Z",
+      "description": "Recalled Fs James Ennis and Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-03T08:00Z",
+      "description": "Assigned F/C Donatas Motiejunas to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-03T08:00Z",
+      "description": "Recalled F Mike Dunleavy from Santa Cruz (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-02-02T08:00Z",
+      "description": "Suspended Houston C Dwight Howard one game for striking the arm of a game official and fined Houston coach J.B. Bickerstaff $10,000 for public criticism of the officiating of Saturday's game.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-01T08:00Z",
+      "description": "Signed C Ryan Hollins to a second 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-02-01T08:00Z",
+      "description": "Fired coach Jeff Hornacek. Named Earl Watson interim coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-02-01T08:00Z",
+      "description": "Recalled G-F K.J. McDaniels and F-C Donatas Motiejunas from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-02-01T08:00Z",
+      "description": "Named Brad Seymour president of the team's NBA D-League team, effective on Feb. 22. Assigned F Mike Dunleavy to Santa Cruz (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-01-30T08:00Z",
+      "description": "Assigned G-F K.J. McDaniels and F-C Donatas Motiejunas to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-01-29T08:00Z",
+      "description": "Signed G Jordan McRae to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-01-29T08:00Z",
+      "description": "Signed F Thanasis Antetokounmpo to a 10-day contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2016-01-29T08:00Z",
+      "description": "Recalled F Montrezl Harrell and G/F K.J. McDaniels from Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-01-25T08:00Z",
+      "description": "Reassigned F Jarell Martin to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-01-23T08:00Z",
+      "description": "Assigned F Montrezl Harrell and G/F K.J. McDaniels to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-01-22T08:00Z",
+      "description": "Acquired F Josh Smith, the rights to F-C Sergei Lishouk and cash considerations from the Los Angeles Clippers for the rights to F Maarty Leunen.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-01-22T08:00Z",
+      "description": "Announced coach Steve Kerr has returned from his leave of absence.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2016-01-22T08:00Z",
+      "description": "Fired coach David Blatt. Named Tyronn Lue coach.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-01-21T08:00Z",
+      "description": "Signed C Ryan Hollins to a 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-01-19T08:00Z",
+      "description": "Signed general manager Tim Connelly and assistant general manager Arturas Karnisovas to multiyear contract extensions.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2016-01-16T08:00Z",
+      "description": "Recalled F-C Cristiano Felicio from Canton (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-01-15T08:00Z",
+      "description": "Reassigned F James Ennis to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-01-15T08:00Z",
+      "description": "Recalled G/F K.J. McDaniels fromGrande Valley (NBADL).",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2016-01-15T08:00Z",
+      "description": "Assigned F-C Cristiano Felicio to Canton (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-01-13T08:00Z",
+      "description": "Recalled F/C Cristiano Felicio from Canton (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2016-01-12T08:00Z",
+      "description": "Traded G Joe Harris and cash to the Orlando Magic for a second-round 2017 draft pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2016-01-10T08:00Z",
+      "description": "Fired coach Lionel Hollins. Reassigned general manager Billy King. Named assistant coach Tony Brown interim head coach.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2016-01-08T08:00Z",
+      "description": "Signed G Elliot Williams to a 10-day contract. Recalled Fs James Ennis and Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-01-08T08:00Z",
+      "description": "Signed GLorenzo Brown to a 10-day contract.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2016-01-07T08:00Z",
+      "description": "Waived C Ryan Hollins.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2016-01-07T08:00Z",
+      "description": "Waived G Bryce Cotton and F Cory Jefferson.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    }
+  ]
+}

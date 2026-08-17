@@ -1,8 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState, useTransition } from "react";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useMemo, useState } from "react";
 
+import { useQueryNav } from "@/components/continuity/query-nav";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -25,10 +25,7 @@ export function GameFilterToolbar({
   teams,
   defaultSeason,
 }: GameFilterToolbarProps) {
-  const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
-  const [isPending, startTransition] = useTransition();
+  const { pending, replaceParams, searchParams } = useQueryNav();
 
   const season = searchParams.get("season") ?? defaultSeason;
   const team = searchParams.get("team") ?? "ALL";
@@ -38,7 +35,6 @@ export function GameFilterToolbar({
   const [startDraft, setStartDraft] = useState(startDate);
   const [endDraft, setEndDraft] = useState(endDate);
   const [dateSource, setDateSource] = useState(`${startDate}|${endDate}`);
-  const [seasonDraft, setSeasonDraft] = useState(season);
 
   if (`${startDate}|${endDate}` !== dateSource) {
     setDateSource(`${startDate}|${endDate}`);
@@ -46,32 +42,18 @@ export function GameFilterToolbar({
     setEndDraft(endDate);
   }
 
-  useEffect(() => {
-    setSeasonDraft(season);
-  }, [season]);
-
-  const updateParams = useCallback(
-    (patch: Record<string, string | null>) => {
-      const next = new URLSearchParams(searchParams.toString());
-      for (const [key, value] of Object.entries(patch)) {
-        if (value === null || value === "" || value === "ALL") {
-          next.delete(key);
-        } else {
-          next.set(key, value);
-        }
-      }
-      if (!next.get("season")) next.set("season", defaultSeason);
-      const qs = next.toString();
-      const href = qs ? `${pathname}?${qs}` : pathname;
-      const nav = Object.prototype.hasOwnProperty.call(patch, "season")
-        ? router.push
-        : router.replace;
-      startTransition(() => {
-        nav.call(router, href, { scroll: false });
-      });
-    },
-    [defaultSeason, pathname, router, searchParams]
-  );
+  function updateParams(patch: Record<string, string | null>) {
+    const normalized: Record<string, string | null> = { ...patch };
+    for (const [key, value] of Object.entries(normalized)) {
+      if (value === "ALL") normalized[key] = null;
+    }
+    if (!("season" in normalized) && !searchParams.get("season")) {
+      normalized.season = defaultSeason;
+    } else if (normalized.season === null) {
+      normalized.season = defaultSeason;
+    }
+    replaceParams(normalized);
+  }
 
   const sortedTeams = useMemo(
     () => [...teams].sort((a, b) => a.fullName.localeCompare(b.fullName)),
@@ -89,27 +71,20 @@ export function GameFilterToolbar({
           endDate: endDraft || null,
         });
       }}
-      data-pending={isPending ? "true" : "false"}
+      data-pending={pending ? "true" : "false"}
     >
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="game-filter-season">Season</Label>
         <Select
-          value={seasonDraft}
+          value={season}
           onValueChange={(value) => {
-            if (value == null) return;
-            const next = String(value);
-            setSeasonDraft(next);
-            updateParams({ season: next });
+            if (value != null) updateParams({ season: String(value) });
           }}
         >
-          <SelectTrigger
-            id="game-filter-season"
-            className="w-full"
-            disabled={isPending}
-          >
+          <SelectTrigger id="game-filter-season" className="w-full">
             <SelectValue placeholder="Season" />
           </SelectTrigger>
-          <SelectContent className="max-h-72" alignItemWithTrigger={false}>
+          <SelectContent>
             {seasons.map((s) => (
               <SelectItem key={s} value={s}>
                 {s}
@@ -134,7 +109,7 @@ export function GameFilterToolbar({
             <SelectItem value="ALL">All teams</SelectItem>
             {sortedTeams.map((t) => (
               <SelectItem key={t.id} value={t.id}>
-                {t.abbreviation} — {t.fullName}
+                {t.fullName}
               </SelectItem>
             ))}
           </SelectContent>
@@ -147,13 +122,8 @@ export function GameFilterToolbar({
           id="game-filter-start"
           type="date"
           value={startDraft}
-          onChange={(event) => setStartDraft(event.target.value)}
-          onBlur={() =>
-            updateParams({
-              startDate: startDraft || null,
-              endDate: endDraft || null,
-            })
-          }
+          onChange={(e) => setStartDraft(e.target.value)}
+          onBlur={() => updateParams({ startDate: startDraft || null })}
         />
       </div>
 
@@ -163,18 +133,13 @@ export function GameFilterToolbar({
           id="game-filter-end"
           type="date"
           value={endDraft}
-          onChange={(event) => setEndDraft(event.target.value)}
-          onBlur={() =>
-            updateParams({
-              startDate: startDraft || null,
-              endDate: endDraft || null,
-            })
-          }
+          onChange={(e) => setEndDraft(e.target.value)}
+          onBlur={() => updateParams({ endDate: endDraft || null })}
         />
       </div>
 
       <p className="sr-only" aria-live="polite">
-        {isPending ? "Updating game results…" : "Game results updated."}
+        {pending ? "Updating game results…" : "Game results updated."}
       </p>
     </form>
   );

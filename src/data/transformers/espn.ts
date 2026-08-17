@@ -4,21 +4,21 @@ import type {
   PlayerGame,
   PlayerSeason,
   Position,
-  Shot,
   Team,
 } from "@/data/types";
+import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
 import {
+  approxOffensiveRating,
   effectiveFieldGoalPct,
-  estimatePossessions,
-  freeThrowRate,
-  ratingPerHundred,
-  safePct,
-  threePointAttemptRate,
+  gameScore,
   trueShootingPct,
   turnoverPct,
-  twoPointPct,
   usagePct,
 } from "@/data/providers/nba/compute-advanced";
+import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
+import { normalizeEspnStatusType } from "@/lib/game-status";
+import { mapEspnBroadcasts } from "@/lib/game-watch";
+import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
 
 export interface EspnStatCategorySchema {
   name: string;
@@ -75,11 +75,6 @@ export interface TeamSeasonTotals {
   freeThrowsAttempted: number;
   turnovers: number;
   points: number;
-  /** Opponent points scored against this team (season total). */
-  pointsAllowed: number;
-  opponentFieldGoalsAttempted: number;
-  opponentFreeThrowsAttempted: number;
-  opponentTurnovers: number;
 }
 
 /**
@@ -88,8 +83,7 @@ export interface TeamSeasonTotals {
  */
 export function categoryMap(
   valueCategories: EspnStatCategoryValues[],
-  schemaCategories: EspnStatCategorySchema[] = [],
-  split: "own" | "opponent" | "all" = "own"
+  schemaCategories: EspnStatCategorySchema[] = []
 ): Map<string, number> {
   const map = new Map<string, number>();
 
@@ -101,11 +95,10 @@ export function categoryMap(
   }
 
   for (const category of valueCategories) {
-    const isOpponent = Boolean(category.displayName?.startsWith("Opponent"));
-    if (split === "own" && isOpponent) continue;
-    if (split === "opponent" && !isOpponent) continue;
+    if (category.displayName?.startsWith("Opponent")) continue;
 
-    const names = category.names ?? schemasByName.get(category.name) ?? [];
+    const names =
+      category.names ?? schemasByName.get(category.name) ?? [];
 
     names.forEach((name, nameIndex) => {
       const value = category.values?.[nameIndex];
@@ -161,8 +154,7 @@ export function transformEspnTeamTotals(
   row: EspnTeamStatsRow,
   schemaCategories: EspnStatCategorySchema[] = []
 ): TeamSeasonTotals {
-  const stats = categoryMap(row.categories, schemaCategories, "own");
-  const opp = categoryMap(row.categories, schemaCategories, "opponent");
+  const stats = categoryMap(row.categories, schemaCategories);
   return {
     teamId: row.team.id,
     abbreviation: row.team.abbreviation,
@@ -172,10 +164,6 @@ export function transformEspnTeamTotals(
     freeThrowsAttempted: num(stats, "freeThrowsAttempted"),
     turnovers: num(stats, "turnovers"),
     points: num(stats, "points"),
-    pointsAllowed: num(opp, "points"),
-    opponentFieldGoalsAttempted: num(opp, "fieldGoalsAttempted"),
-    opponentFreeThrowsAttempted: num(opp, "freeThrowsAttempted"),
-    opponentTurnovers: num(opp, "turnovers"),
   };
 }
 
@@ -208,42 +196,16 @@ export function transformEspnPlayerSeason(
   const fgm = num(stats, "fieldGoalsMade");
   const fga = num(stats, "fieldGoalsAttempted");
   const tpm = num(stats, "threePointFieldGoalsMade");
-  const tpa = num(stats, "threePointFieldGoalsAttempted");
-  const ftm = num(stats, "freeThrowsMade");
   const fta = num(stats, "freeThrowsAttempted");
   const turnovers = num(stats, "turnovers");
   const minutes = num(stats, "minutes");
   const gamesPlayed = num(stats, "gamesPlayed");
-  const gamesStarted = num(stats, "gamesStarted", gamesPlayed);
-  const offensiveRebounds = num(stats, "offensiveRebounds");
-  const defensiveRebounds = num(
-    stats,
-    "defensiveRebounds",
-    Math.max(
-      0,
-      num(stats, "rebounds", num(stats, "avgRebounds") * gamesPlayed) -
-        offensiveRebounds
-    )
-  );
-  const rebFallback =
-    offensiveRebounds + defensiveRebounds > 0
-      ? offensiveRebounds + defensiveRebounds
-      : num(stats, "avgRebounds") * gamesPlayed;
-  const rebounds = num(stats, "rebounds", rebFallback);
-  const personalFouls = num(
-    stats,
-    "fouls",
-    num(stats, "personalFouls", num(stats, "avgFouls") * gamesPlayed)
-  );
 
-  const fgPct = safePct(fgm, fga) || pctToFraction(num(stats, "fieldGoalPct"));
-  const fg3Pct =
-    safePct(tpm, tpa) ||
-    pctToFraction(
-      num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
-    );
-  const ftPct =
-    safePct(ftm, fta) || pctToFraction(num(stats, "freeThrowPct"));
+  const fgPct = pctToFraction(num(stats, "fieldGoalPct"));
+  const fg3Pct = pctToFraction(
+    num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
+  );
+  const ftPct = pctToFraction(num(stats, "freeThrowPct"));
 
   const ts = trueShootingPct(points, fga, fta);
   const efg = effectiveFieldGoalPct(fgm, tpm, fga);
@@ -258,28 +220,15 @@ export function transformEspnPlayerSeason(
         teamFreeThrowsAttempted: team.freeThrowsAttempted,
         teamTurnovers: team.turnovers,
       })
-    : 0;
+    : undefined;
 
-  const possessions = estimatePossessions(fga, fta, turnovers);
-  const offensiveRating = ratingPerHundred(points, possessions);
-  // Player-level DRtg is not published on ESPN's athlete dashboard; use the
-  // team defensive rating (points allowed per 100 opponent possessions).
-  const teamDefPoss = team
-    ? estimatePossessions(
-        team.opponentFieldGoalsAttempted,
-        team.opponentFreeThrowsAttempted,
-        team.opponentTurnovers
-      )
-    : 0;
-  const defensiveRating = team
-    ? ratingPerHundred(team.pointsAllowed, teamDefPoss)
-    : 0;
-  const netRating =
-    offensiveRating && defensiveRating
-      ? offensiveRating - defensiveRating
-      : 0;
+  const possessions = fga + 0.44 * fta + turnovers;
+  const offensiveRating =
+    possessions > 0 ? (points / possessions) * 100 : undefined;
+  // ESPN athlete season stats do not include individual DRtg. Do not invent
+  // DRtg=0 or NET≈ORtg−110 — Missing ≠ zero / never invent a number.
 
-  return {
+  return withPlayerSeasonDefaults({
     playerId: String(athlete.id),
     playerName: athlete.displayName,
     teamId,
@@ -292,81 +241,21 @@ export function transformEspnPlayerSeason(
     season,
     position: mapEspnPosition(athlete.position?.abbreviation),
     gamesPlayed,
-    gamesStarted,
     minutes,
-    fieldGoalsMade: fgm,
-    fieldGoalsAttempted: fga,
-    threePointersMade: tpm,
-    threePointersAttempted: tpa,
-    freeThrowsMade: ftm,
-    freeThrowsAttempted: fta,
-    offensiveRebounds,
-    defensiveRebounds,
-    rebounds,
+    points,
     assists: num(stats, "assists"),
+    rebounds: num(stats, "rebounds", num(stats, "avgRebounds") * gamesPlayed),
     steals: num(stats, "steals"),
     blocks: num(stats, "blocks"),
     turnovers,
-    personalFouls,
-    points,
-    plusMinus: 0,
     fieldGoalPct: fgPct,
-    twoPointPct: twoPointPct(fgm, tpm, fga, tpa),
     threePointPct: fg3Pct,
     freeThrowPct: ftPct,
-    effectiveFieldGoalPct: efg,
-    trueShootingPct: ts,
-    threePointAttemptRate: threePointAttemptRate(tpa, fga),
-    freeThrowRate: freeThrowRate(fta, fga),
-    turnoverPct: turnoverPct(turnovers, fga, fta),
-    usagePct: usg,
-    assistPct: 0,
-    offensiveReboundPct: 0,
-    defensiveReboundPct: 0,
-    reboundPct: 0,
-    stealPct: 0,
-    blockPct: 0,
-    pie: 0,
-    offensiveRating,
-    defensiveRating,
-    netRating,
-    per: 0,
-    ows: 0,
-    dws: 0,
-    winShares: 0,
-    winSharesPer48: 0,
-    obpm: 0,
-    dbpm: 0,
-    bpm: 0,
-    vorp: 0,
-    dpm: 0,
-    oDpm: 0,
-    dDpm: 0,
-    boxDpm: 0,
-    onOffDpm: 0,
-    drbl100: 0,
-    drblP: 0,
-    drblLn: 0,
-    drblB: 0,
-    drblO: 0,
-    drblD: 0,
-    sdv100: 0,
-    shotMaking100: 0,
-    epvShootMean: 0,
-    vContMean: 0,
-    r1Points: null,
-    r1WinEquivalents: null,
-    r1PointValueVersion: null,
-    r1WinEquivalentVersion: null,
-    drblWar: 0,
-    drblSeasonalImpact: 0,
-    drblL: 0,
-    drblMeanLeverage: 0,
-    drblDisagreement: 0,
-    drblUncertainty: 0,
-    drblIntervalLo: 0,
-    drblIntervalHi: 0,
-  };
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+    ...(usg != null ? { usagePct: usg } : {}),
+    ...(offensiveRating != null ? { offensiveRating } : {}),
+  });
 }
 
 export interface EspnGameLogEvent {
@@ -443,18 +332,50 @@ export interface EspnScheduleEvent {
   id: string;
   date?: string;
   name?: string;
+  status?: {
+    type?: {
+      state?: string;
+      completed?: boolean;
+      name?: string;
+      description?: string;
+      shortDetail?: string;
+      detail?: string;
+      id?: string;
+    };
+  };
   competitions?: Array<{
     status?: {
+      clock?: number;
+      displayClock?: string;
+      period?: number;
       type?: {
         state?: string;
         completed?: boolean;
         name?: string;
+        description?: string;
+        shortDetail?: string;
+        detail?: string;
+        id?: string;
       };
     };
+    broadcasts?: Array<{
+      market?: string;
+      names?: string[];
+      type?: { shortName?: string; type?: string };
+    }>;
+    geoBroadcasts?: Array<{
+      type?: { shortName?: string; type?: string };
+      market?: { type?: string; id?: string };
+      media?: { shortName?: string; longName?: string };
+      lang?: string;
+      region?: string;
+    }>;
     competitors?: Array<{
       homeAway?: string;
       score?: unknown;
       winner?: boolean;
+      /** Period-by-period points when ESPN includes linescores. */
+      linescores?: Array<{ value?: number | string; displayValue?: string }>;
       team?: {
         id?: string;
         abbreviation?: string;
@@ -465,10 +386,31 @@ export interface EspnScheduleEvent {
   }>;
 }
 
+function parseEspnLinescores(
+  linescores: Array<{ value?: number | string; displayValue?: string }> | undefined
+): number[] | undefined {
+  if (!linescores?.length) return undefined;
+  const values = linescores.map((row) => {
+    if (typeof row.value === "number" && Number.isFinite(row.value)) {
+      return row.value;
+    }
+    if (typeof row.value === "string") {
+      const n = Number(row.value);
+      if (Number.isFinite(n)) return n;
+    }
+    if (row.displayValue != null) {
+      const n = Number(row.displayValue);
+      if (Number.isFinite(n)) return n;
+    }
+    return NaN;
+  });
+  if (!values.every((n) => Number.isFinite(n))) return undefined;
+  return values;
+}
+
 export function transformEspnScheduleEvent(
   event: EspnScheduleEvent,
-  season: string,
-  gameType: Game["gameType"] = "regular"
+  season: string
 ): Game | null {
   const competition = event.competitions?.[0];
   if (!competition) return null;
@@ -477,26 +419,70 @@ export function transformEspnScheduleEvent(
   const away = competition.competitors?.find((c) => c.homeAway === "away");
   if (!home || !away) return null;
 
-  const statusType = competition.status?.type;
-  let status: Game["status"] = "scheduled";
-  if (statusType?.completed || statusType?.state === "post") status = "final";
-  else if (statusType?.state === "in") status = "in_progress";
+  const statusType = competition.status?.type ?? event.status?.type;
+  const homeScore = parseEspnScore(home.score);
+  const awayScore = parseEspnScore(away.score);
+  const status = normalizeEspnStatusType(statusType, {
+    home: homeScore,
+    away: awayScore,
+  });
 
-  return {
+  const tipOffAt = event.date?.trim() || undefined;
+  const statusDetail =
+    statusType?.shortDetail?.trim() || statusType?.detail?.trim() || undefined;
+
+  const homePeriodScores = parseEspnLinescores(home.linescores);
+  const awayPeriodScores = parseEspnLinescores(away.linescores);
+  const broadcasts = mapEspnBroadcasts({
+    broadcasts: competition.broadcasts,
+    geoBroadcasts: competition.geoBroadcasts,
+  });
+  const period =
+    typeof competition.status?.period === "number"
+      ? competition.status.period
+      : undefined;
+  const displayClock = competition.status?.displayClock?.trim() || undefined;
+
+  const homeSide = normalizeGameTeamSide({
+    provider: "espn",
+    providerTeamId: String(home.team?.id ?? home.id ?? ""),
+    abbr: home.team?.abbreviation,
+    name: home.team?.displayName,
+  });
+  const awaySide = normalizeGameTeamSide({
+    provider: "espn",
+    providerTeamId: String(away.team?.id ?? away.id ?? ""),
+    abbr: away.team?.abbreviation,
+    name: away.team?.displayName,
+  });
+
+  return applyHistoricalTeamEraToGame({
     id: event.id,
     season,
     gameDate: (event.date ?? "").slice(0, 10),
-    homeTeamId: String(home.team?.id ?? home.id ?? ""),
-    awayTeamId: String(away.team?.id ?? away.id ?? ""),
-    homeTeamAbbr: home.team?.abbreviation,
-    awayTeamAbbr: away.team?.abbreviation,
-    homeTeamName: home.team?.displayName,
-    awayTeamName: away.team?.displayName,
-    homeScore: parseEspnScore(home.score),
-    awayScore: parseEspnScore(away.score),
-    gameType,
+    tipOffAt,
+    statusDetail,
+    homeTeamId: homeSide.canonicalTeamId,
+    awayTeamId: awaySide.canonicalTeamId,
+    homeTeamAbbr: homeSide.abbr,
+    awayTeamAbbr: awaySide.abbr,
+    homeTeamName: homeSide.name,
+    awayTeamName: awaySide.name,
+    teamIdProvider: "espn",
+    homeProviderTeamId: homeSide.providerTeamId,
+    awayProviderTeamId: awaySide.providerTeamId,
+    homeScore,
+    awayScore,
+    ...(homePeriodScores && awayPeriodScores
+      ? { homePeriodScores, awayPeriodScores }
+      : {}),
+    gameType: "regular",
     status,
-  };
+    ...(period != null ? { period } : {}),
+    ...(displayClock ? { displayClock } : {}),
+    ...(broadcasts.length ? { broadcasts } : {}),
+    retrievedAt: new Date().toISOString(),
+  });
 }
 
 export interface EspnBoxScoreAthlete {
@@ -517,6 +503,7 @@ export interface EspnBoxScoreTeamBlock {
   };
   statistics?: Array<{
     names?: string[];
+    labels?: string[];
     athletes?: EspnBoxScoreAthlete[];
   }>;
 }
@@ -530,82 +517,6 @@ export interface EspnSummaryResponse {
   boxscore?: {
     players?: EspnBoxScoreTeamBlock[];
   };
-  plays?: EspnPlay[];
-  gameInfo?: { date?: string };
-}
-
-export interface EspnPlay {
-  id?: string;
-  text?: string;
-  shootingPlay?: boolean;
-  scoringPlay?: boolean;
-  scoreValue?: number;
-  pointsAttempted?: number;
-  coordinate?: { x?: number; y?: number };
-  period?: { number?: number };
-  clock?: { displayValue?: string; value?: number };
-  team?: { id?: string };
-  participants?: Array<{ athlete?: { id?: string } }>;
-  type?: { text?: string };
-}
-
-/**
- * ESPN shot coordinates use roughly feet with basket near (25, 0) on a
- * half-court grid. Convert to our canonical basket-at-(0,0) system.
- */
-export function transformEspnPlaysToShots(
-  plays: EspnPlay[],
-  meta: {
-    gameId: string;
-    season: string;
-    gameDate: string;
-  }
-): Shot[] {
-  const shots: Shot[] = [];
-
-  for (const play of plays) {
-    if (!play.shootingPlay) continue;
-    const playerId = play.participants?.[0]?.athlete?.id;
-    const teamId = play.team?.id;
-    if (!playerId || !teamId) continue;
-
-    const rawX = play.coordinate?.x;
-    const rawY = play.coordinate?.y;
-    if (rawX == null || rawY == null) continue;
-
-    const locX = rawX - 25;
-    const locY = rawY;
-    const shotDistance = Math.sqrt(locX * locX + locY * locY);
-    const pointsAttempted = play.pointsAttempted ?? play.scoreValue ?? 2;
-    const shotType: Shot["shotType"] = pointsAttempted >= 3 ? "3PT" : "2PT";
-    const made = Boolean(play.scoringPlay);
-    const assistPlayerId = play.participants?.[1]?.athlete?.id;
-
-    const clock = play.clock?.displayValue ?? "0:00";
-    const [mins, secs] = clock.split(":").map((p) => Number(p) || 0);
-    const secondsRemaining = mins * 60 + secs;
-
-    shots.push({
-      id: String(play.id ?? `${meta.gameId}-${playerId}-${shots.length}`),
-      gameId: meta.gameId,
-      playerId: String(playerId),
-      teamId: String(teamId),
-      season: meta.season,
-      gameDate: meta.gameDate,
-      period: play.period?.number ?? 1,
-      secondsRemaining,
-      shotDistance: Number(shotDistance.toFixed(1)),
-      locX: Number(locX.toFixed(1)),
-      locY: Number(locY.toFixed(1)),
-      made,
-      shotType,
-      shotZoneBasic: play.type?.text,
-      assisted: Boolean(assistPlayerId),
-      assistPlayerId: assistPlayerId ? String(assistPlayerId) : undefined,
-    });
-  }
-
-  return shots;
 }
 
 function boxStat(stats: Map<string, string>, ...keys: string[]): number {
@@ -619,10 +530,14 @@ function boxStat(stats: Map<string, string>, ...keys: string[]): number {
   return 0;
 }
 
-function boxPair(stats: Map<string, string>, key: string): [number, number] {
-  const raw = stats.get(key) ?? "0-0";
-  const [made, attempted] = raw.split("-").map((part) => Number(part) || 0);
-  return [made, attempted];
+function boxPair(stats: Map<string, string>, ...keys: string[]): [number, number] {
+  for (const key of keys) {
+    const raw = stats.get(key);
+    if (raw == null || raw === "") continue;
+    const [made, attempted] = raw.split("-").map((part) => Number(part) || 0);
+    return [made, attempted];
+  }
+  return [0, 0];
 }
 
 export function transformEspnBoxScore(
@@ -652,7 +567,7 @@ export function transformEspnBoxScore(
   for (const block of summary.boxscore?.players ?? []) {
     const teamId = String(block.team?.id ?? "");
     const statsBlock = block.statistics?.[0];
-    const names = statsBlock?.names ?? [];
+    const names = statsBlock?.names ?? statsBlock?.labels ?? [];
     const opponent =
       teamId === game.homeTeamId ? game.awayTeamId : game.homeTeamId;
     const isHome = teamId === game.homeTeamId;
@@ -664,9 +579,28 @@ export function transformEspnBoxScore(
         map.set(name, row.stats?.[index] ?? "0");
       });
 
-      const [fgm, fga] = boxPair(map, "FG");
-      const [tpm, tpa] = boxPair(map, "3PT");
-      const [ftm, fta] = boxPair(map, "FT");
+      const [fgm, fga] = boxPair(map, "FG", "fieldGoalsMade-fieldGoalsAttempted");
+      const [tpm, tpa] = boxPair(
+        map,
+        "3PT",
+        "threePointFieldGoalsMade-threePointFieldGoalsAttempted"
+      );
+      const [ftm, fta] = boxPair(map, "FT", "freeThrowsMade-freeThrowsAttempted");
+      const oreb = boxStat(map, "OREB", "offensiveRebounds");
+      const dreb = boxStat(map, "DREB", "defensiveRebounds");
+      const reb =
+        boxStat(map, "REB", "totalRebounds") || oreb + dreb;
+      const pf = boxStat(map, "PF", "fouls", "personalFouls");
+      const points = boxStat(map, "PTS", "points");
+      const assists = boxStat(map, "AST", "assists");
+      const steals = boxStat(map, "STL", "steals");
+      const blocks = boxStat(map, "BLK", "blocks");
+      const turnovers = boxStat(map, "TO", "turnovers");
+      const minutes = boxStat(map, "MIN", "minutes");
+      const ts = trueShootingPct(points, fga, fta);
+      const efg = effectiveFieldGoalPct(fgm, tpm, fga);
+      const ortg = approxOffensiveRating(points, fga, fta, turnovers);
+      const tovPct = turnoverPct(turnovers, fga, fta);
 
       players.push({
         id: `${row.athlete.id}-${game.id}`,
@@ -678,13 +612,16 @@ export function transformEspnBoxScore(
         gameDate: game.gameDate,
         opponentTeamId: opponent,
         isHome,
-        minutes: boxStat(map, "MIN", "minutes"),
-        points: boxStat(map, "PTS", "points"),
-        assists: boxStat(map, "AST", "assists"),
-        rebounds: boxStat(map, "REB", "totalRebounds"),
-        steals: boxStat(map, "STL", "steals"),
-        blocks: boxStat(map, "BLK", "blocks"),
-        turnovers: boxStat(map, "TO", "turnovers"),
+        minutes,
+        points,
+        assists,
+        rebounds: reb,
+        offensiveRebounds: oreb,
+        defensiveRebounds: dreb,
+        steals,
+        blocks,
+        turnovers,
+        personalFouls: pf,
         fieldGoalsMade: fgm,
         fieldGoalsAttempted: fga,
         threePointersMade: tpm,
@@ -692,9 +629,30 @@ export function transformEspnBoxScore(
         freeThrowsMade: ftm,
         freeThrowsAttempted: fta,
         plusMinus: boxStat(map, "+/-", "plusMinus"),
+        ...(ts != null ? { trueShootingPct: ts } : {}),
+        ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+        ...(ortg != null ? { offensiveRating: ortg } : {}),
+        ...(tovPct != null ? { turnoverPct: tovPct } : {}),
+        gameScore: gameScore({
+          points,
+          fieldGoalsMade: fgm,
+          fieldGoalsAttempted: fga,
+          freeThrowsMade: ftm,
+          freeThrowsAttempted: fta,
+          offensiveRebounds: oreb,
+          defensiveRebounds: dreb,
+          steals,
+          assists,
+          blocks,
+          personalFouls: pf,
+          turnovers,
+        }),
       });
     }
   }
 
-  return { game, players };
+  return {
+    game,
+    players: enrichBoxScoreAdvanced(players),
+  };
 }

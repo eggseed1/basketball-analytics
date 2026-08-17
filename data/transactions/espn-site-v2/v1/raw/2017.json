@@ -1,0 +1,3881 @@
+{
+  "source": "espn-site-v2-transactions",
+  "datasetVersion": "1.0",
+  "espnCalendarYear": 2017,
+  "fetchedAt": "2026-08-14T20:06:30.916Z",
+  "apiCount": 352,
+  "rows": [
+    {
+      "date": "2017-12-31T08:00Z",
+      "description": "Assigned G Zach LaVine to Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-30T08:00Z",
+      "description": "Recalled F Ivan Rabb from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-29T08:00Z",
+      "description": "Suspended F Serge Ibaka one game because of an altercation with a team staff member. Recalled F Bruno Caboclo from Raptors 905 (NBAGL).",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2017-12-29T08:00Z",
+      "description": "Recalled F/C Cristiano Felicio from Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-28T08:00Z",
+      "description": "Assigned F Ivan Rabb to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-28T08:00Z",
+      "description": "Assigned Cs Thomas Bryant and Ivica Zubac to South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-12-28T08:00Z",
+      "description": "Assigned F Cristiano Felicio to Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-23T08:00Z",
+      "description": "Recalled C Ivica Zubac from South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-12-22T08:00Z",
+      "description": "Assigned F Ivan Rabb to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-21T08:00Z",
+      "description": "Assigned G Isaiah Thomas to Canton (NBAGL).",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-12-19T08:00Z",
+      "description": "Waived G/F Antonius Cleveland and C Jeff Withey. Signed G Kyles Collinsworth to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-12-19T08:00Z",
+      "description": "Waived G Kay Felder.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-19T08:00Z",
+      "description": "Assigned F/C Mike Muscala and G Tyler Dorsey to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-12-18T08:00Z",
+      "description": "Recalled F Ivan Rabb from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-18T08:00Z",
+      "description": "Waived G/F Antonius Cleveland and C Jeff Withey. Signed G Kyles Collinsworth to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-12-18T08:00Z",
+      "description": "Waived G Kay Felder.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-18T08:00Z",
+      "description": "Assigned F/C Mike Muscala to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-12-17T08:00Z",
+      "description": "Recalled G Kay Felder and F/C Cristiano Felicio from Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-16T08:00Z",
+      "description": "Recalled C Thomas Bryant from South Bay (NBAGL). Assigned F Ivica Zubac to South Bay.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-12-16T08:00Z",
+      "description": "Assigned G Kay Felder and F/C Cristiano Felicio to Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-13T08:00Z",
+      "description": "Assigned F Ivan Rabb to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-13T08:00Z",
+      "description": "Signed G Isaiah Canaan.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-12-13T08:00Z",
+      "description": "Transferred G Josh Magette to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-12-12T08:00Z",
+      "description": "Recalled F/C John Collins from Erie (NBAGL). Transferred G Josh Magette from Erie.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-12-09T08:00Z",
+      "description": "Recalled Gs Kay Felder and Zach LaVine from Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-05T08:00Z",
+      "description": "Assigned G Kay Felder to Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-04T08:00Z",
+      "description": "Assigned F Ivan Rabb to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-02T08:00Z",
+      "description": "Recalled F Ivan Rabb from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-12-02T08:00Z",
+      "description": "Assigned C Ivica Zubac to South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-12-02T08:00Z",
+      "description": "Recalled G Tyler Dorsey from Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-12-01T08:00Z",
+      "description": "Assigned G Kay Felder to Windy City (NBAGL). Recalled Gs Kay Felder and Zach LaVine, and F Nikola Miroti from Windy City.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-12-01T08:00Z",
+      "description": "Assigned G Josh Magette to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-11-30T08:00Z",
+      "description": "Assigned G Zach LaVine and F Nikola Mirotic to Windy City (NBAGL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-11-28T08:00Z",
+      "description": "Recalled C Thomas Bryant from South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-11-27T08:00Z",
+      "description": "Fired coach David Fizdale. Named J.B. Bickerstaff interim coach.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-26T08:00Z",
+      "description": "Recalled F Jarell Martin and F Ivan Rabb from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-26T08:00Z",
+      "description": "Assigned G Tyler Dorsey to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-11-25T08:00Z",
+      "description": "Assigned F Jarell Martin to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-22T08:00Z",
+      "description": "Assigned C Thomas Bryant to South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-11-21T08:00Z",
+      "description": "Named Dan Sabreen vice president of public relations.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-11-19T08:00Z",
+      "description": "Recalled G Josh Hart and C Ivica Zubac from South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-11-17T08:00Z",
+      "description": "Assigned F Jarell Martin and C Deyonta Davis to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-14T08:00Z",
+      "description": "Assigned G Josh Hart and C Ivica Zubac to South bay (NBAGL). Recalled C Thomas Bryant from South Bay.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-11-12T08:00Z",
+      "description": "Waived F Mindaugas Kuzminskas.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-11-12T08:00Z",
+      "description": "Assigned G Tyler Dorsey to Erie (NBAGL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-11-11T08:00Z",
+      "description": "Recalled C Deyonta Davis and G/F Wayne Selden Jr. from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-10T08:00Z",
+      "description": "Assigned C Deyonta Davis, F Ivan Rabb and G/F Wayne Selden Jr. to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-09T08:00Z",
+      "description": "Recalled G Ben McLemore and F Ivan Rabb from Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-07T08:00Z",
+      "description": "Traded G Eric Bledsoe to Milwaukee for F/C Greg Monroe and two 2018 draft picks.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-11-02T07:00Z",
+      "description": "Assigned G Ben McLemore and F Ivan Rabb to Memphis (NBAGL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-11-01T07:00Z",
+      "description": "Assigned C Thomas Bryant South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-25T07:00Z",
+      "description": "Assigned C Thomas Bryant to South Bay (NBAGL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-23T07:00Z",
+      "description": "Announced G Eric Bledsoe has been sent home. Fired assistant coaches Nate Bjorkgren, Jason Fraser and Mehmet Okur. Named Tyrone Corbin lead assistant coach, Ty Ellis assistant coach and Marlon Garnett bench coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-10-23T07:00Z",
+      "description": "Named Metta World Peach player development coach for South Bay (NBAGL)",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-22T07:00Z",
+      "description": "Fired coach Earl Watson. Named assistant coach Jay Triano interim coach.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-10-20T07:00Z",
+      "description": "Named Jenny Boucek assistant player development coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-10-20T07:00Z",
+      "description": "Named Michelle Leftwich vice president of salary cap administration.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-10-18T07:00Z",
+      "description": "Suspended F Bobby Portis eight games for injuring teammate Nikola Mirotic during a fight at practice.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-10-15T07:00Z",
+      "description": "Waived Gs David Stockton, Matt Jones and Reggie Hearn.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-10-14T07:00Z",
+      "description": "Waived G Durand Scott.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-10-14T07:00Z",
+      "description": "Waived G Donald Sloan.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-10-14T07:00Z",
+      "description": "Waived Gs Vander Blue and Briante Weber and F Travis Wear.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-14T07:00Z",
+      "description": "Waived G Michael Gbinije and G Georges Niang.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-10-13T07:00Z",
+      "description": "Signed F Tidjan Keita.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-10-13T07:00Z",
+      "description": "Waived C Trevor Thompson.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-10-13T07:00Z",
+      "description": "Requested waivers on F Tyler Cavanaugh, G Quinn Cook and F Jeremy Evans.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-10-12T07:00Z",
+      "description": "Waived C Amida Brimah and G London Perrantes.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-10-12T07:00Z",
+      "description": "Waived G Xavier Munford.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-10-12T07:00Z",
+      "description": "Signed F Travis Wear.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-11T07:00Z",
+      "description": "Signed G Trey Burke.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-10-11T07:00Z",
+      "description": "Agreed to terms with F Andrew Wiggins on a multiyear contract extension.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-10-10T07:00Z",
+      "description": "Signed Gs Reggie Hearn and David Stockton. Waived G Marcus Williams.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-10-09T07:00Z",
+      "description": "Waived C Daniel Ochefu.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-10-09T07:00Z",
+      "description": "Waived F V.J. Beachem and C Stephen Zimmermann.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-10-08T07:00Z",
+      "description": "Waived G Kendall Marshall.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-10-07T07:00Z",
+      "description": "Waived Gs John Jenkins and Jordan Mathews.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-10-05T07:00Z",
+      "description": "Signed G Durand Scott. Waived G Jeremy Morgan.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-10-05T07:00Z",
+      "description": "Signed G Xavier Munford.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-10-04T07:00Z",
+      "description": "Waived F Jamel Artis.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-09-28T07:00Z",
+      "description": "Signed G Bronson Koenig.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-09-27T07:00Z",
+      "description": "Signed F JaMychal Green to a multiyear contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-09-26T07:00Z",
+      "description": "Signed G Marcus Williams.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-09-25T07:00Z",
+      "description": "Signed G Jarell Eddie and F Jaylen Johnson.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-09-22T07:00Z",
+      "description": "Waived G JeQuan Lewis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-09-21T07:00Z",
+      "description": "Signed F Ivan Rabb.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-09-21T07:00Z",
+      "description": "Signed G Kendall Marshall to a training camp contract. Waived G Bronson Koenig.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-09-21T07:00Z",
+      "description": "Signed F Jeremy Evans and G Jordan Mathews.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-09-19T07:00Z",
+      "description": "Named Olivier Sedra public address announcer.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2017-09-19T07:00Z",
+      "description": "Named Doug Collins senior adviser of basketball operations.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-09-15T07:00Z",
+      "description": "Signed G Jarrett Jack.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-09-15T07:00Z",
+      "description": "Signed G Tony Allen.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-09-14T07:00Z",
+      "description": "Signed C Diamond Stone.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-09-13T07:00Z",
+      "description": "Signed G Nate Wolters to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2017-09-12T07:00Z",
+      "description": "Signed G Dwight Buycks to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-09-11T07:00Z",
+      "description": "Signed G Darrun Hilliard to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-09-01T07:00Z",
+      "description": "Acquired G-F Quincy Pondexter and cash considerations from New Orleans for the rights to Ater Majok.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-08-31T07:00Z",
+      "description": "Named Shawn Respert director of player development, Nate Loenser assistant coach and Charlie Henry assistant coach of Windy City (NBAGL). Promoted Arnold Lee to assistant trainer.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-08-29T07:00Z",
+      "description": "Agreed to terms with Neil Olshey, president of basketball operations, on a multiyear contract extension through the 2020-21 season.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2017-08-28T07:00Z",
+      "description": "Signed C Nerlens Noel to a one-year contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-08-24T07:00Z",
+      "description": "Re-signed G Manu Ginobili.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-08-23T07:00Z",
+      "description": "Signed G London Perrantes.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-08-22T07:00Z",
+      "description": "Signed F Alex Poythress to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-08-22T07:00Z",
+      "description": "Traded G Kyrie Irving to the Boston Celtics for G Isaiah Thomas, F Jae Crowder, C Ante Zizic and a 2018 first-round draft pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-08-20T07:00Z",
+      "description": "Signed F Jordan Mickey.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-08-18T07:00Z",
+      "description": "Signed F Jamel Artis, F Nigel Hayes and G Xavier Rathan-Mayes.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-08-16T07:00Z",
+      "description": "Named Bob Weiss assistant coach and Calvin Booth assistant general manager.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-08-15T07:00Z",
+      "description": "Signed G/F Damien Wilkins and F Ben Moore.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-08-14T07:00Z",
+      "description": "Signed G Briante Weber.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-08-11T07:00Z",
+      "description": "Signed F V.J. Beachem.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-08-09T07:00Z",
+      "description": "Named Frank Johnson assistant coach, Milt Newton assistant general manager, David Mincberg director of basketball strategy, Tony Bollier director of basketball operations and Ronald Dupree scout.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-08-09T07:00Z",
+      "description": "Signed C Stephen Zimmerman.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-08-09T07:00Z",
+      "description": "Signed F Luke Babbitt to a one-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-08-08T07:00Z",
+      "description": "Signed G Ramon Sessions and F Michael Beasley. Named Gerald Madkins assistant general manager; Craig Robinson vice president, player development and G League operations; Harold Ellis director, player personnel; Michael Arcieri director, basketball strategy; and Fred Cofield scout.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-08-08T07:00Z",
+      "description": "Promoted executive vice president and chief marketing officer Charlie Metzger to chief revenue and marketing officer.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-08-07T07:00Z",
+      "description": "Signed G Damyean Dotson. Re-signed G Ron Baker.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-08-04T07:00Z",
+      "description": "Re-signed G Patty Mills.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-08-04T07:00Z",
+      "description": "Signed G Vander Blue.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-08-04T07:00Z",
+      "description": "Signed Jason Maxiell allowing him to retire as a member of the organization.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-08-02T07:00Z",
+      "description": "Signed G Marcus Paige and F/C Mangok Mathiang to two-way contracts.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2017-08-01T07:00Z",
+      "description": "Waived C Kevin Seraphin.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-08-01T07:00Z",
+      "description": "Re-signed C JaVale McGee.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-08-01T07:00Z",
+      "description": "Signed G Gian Clavell.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-08-01T07:00Z",
+      "description": "Signed G Ryan Arcidiacono to a two-way contract.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-07-31T07:00Z",
+      "description": "Re-signed G Tony Snell.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-07-31T07:00Z",
+      "description": "Signed G Shane Larkin.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-07-31T07:00Z",
+      "description": "Waived C Diamond Stone.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-07-30T07:00Z",
+      "description": "Named Brandon Williams assistant general manager.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-07-30T07:00Z",
+      "description": "Signed C Thomas Bryant,",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-07-29T07:00Z",
+      "description": "Signed F Jack Cooley and F JaKarr Sampson to two-way contracts.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-07-27T07:00Z",
+      "description": "Signed G Arron Afflalo and C Khem Birch.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2017-07-26T07:00Z",
+      "description": "Signed G John Wall to a multi-year contract extension.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-07-26T07:00Z",
+      "description": "Signed C-F Alan Williams and G Devin Booker to a three-year contracts.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-07-26T07:00Z",
+      "description": "Re-signed G Tyler Ennis.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-07-25T07:00Z",
+      "description": "Traded G Allen Crabbe to the Brooklyn Nets in for F Andrew Nicholson.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2017-07-25T07:00Z",
+      "description": "Signed F Wesley Iwundu.",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2017-07-25T07:00Z",
+      "description": "Signed G Stephen Curry to a five-year contract, G/F Andre Iguodala and G Shaun Livingston to three-year contracts and C Zaza Pachulia and F David West to one-year contracts.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-07-25T07:00Z",
+      "description": "Signed G Derrick Rose to a one-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-07-25T07:00Z",
+      "description": "Re-signed F Mike Muscala to a two-year contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-07-24T07:00Z",
+      "description": "Re-signed C Pau Gasol to a three-year contract. Signed F Matt Costello to a two-way contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-07-24T07:00Z",
+      "description": "Signed G Luis Montero to a two-way contract.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-07-24T07:00Z",
+      "description": "Named Koby Altman general manager.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-07-21T07:00Z",
+      "description": "Signed F Dillon Brooks.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-07-20T07:00Z",
+      "description": "Signed F Eric Griffin to a two-way contract.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2017-07-20T07:00Z",
+      "description": "Signed C-F Udonis Haslem to a one-year contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-07-19T07:00Z",
+      "description": "Signed G Mario Chalmers.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-07-19T07:00Z",
+      "description": "Signed F Royce O'Neale.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2017-07-19T07:00Z",
+      "description": "Signed general manager Ryan McDonough to a contract extension through the 2019-20 season. Named James Jones vice president of basketball operations.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-07-19T07:00Z",
+      "description": "Signed C Aron Baynes.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-07-18T07:00Z",
+      "description": "Signed F/C Joffrey Lauvergne.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-07-18T07:00Z",
+      "description": "Signed F Cedi Osman to a three-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-07-17T07:00Z",
+      "description": "Signed F Rade Zagorac.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-07-17T07:00Z",
+      "description": "Signed G/F Paul Pierce and announced his retirement.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-07-15T07:00Z",
+      "description": "Waived G Michael Gbinije.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Signed F Devin Robinson to a two-Way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Promoted Steve Mills to president. Named Scott Perry general manager.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Acquired G Cory Joseph from Toronto for the rights to F Emir Preldzic.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Re-signed G-F Reggie Bullock. Signed F Anthony Tolliver.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Signed G Antonio Blakeney to a two-Way contract. Claimed G David Nwaba off waivers.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-07-14T07:00Z",
+      "description": "Signed F Gordon Hayward to a four-year contract.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-07-13T07:00Z",
+      "description": "Agreed to terms with F Thabo Sefolosha, F Jonas Jerebko and F-C Ekpe Udoh. Released C Boris Diaw.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2017-07-13T07:00Z",
+      "description": "Signed G Alex Caruso to a two-way contract. Waived G David Nwaba.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-07-13T07:00Z",
+      "description": "Signed F Paul Millsap.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-07-13T07:00Z",
+      "description": "Signed F Maxi Kleber.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-07-12T07:00Z",
+      "description": "Signed G Jodie Meeks.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-07-12T07:00Z",
+      "description": "Signed C Ike Anigbogu.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-11T07:00Z",
+      "description": "Waived G Mike Miller.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-07-11T07:00Z",
+      "description": "Signed F Jeff Green.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-07-11T07:00Z",
+      "description": "Signed G Frank Jackson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-07-10T07:00Z",
+      "description": "Signed G George Hill and G Vince Carter.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-07-10T07:00Z",
+      "description": "Signed F Taj Gibson to a two-year contract and G Jeff Teague to a three-year contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-07-10T07:00Z",
+      "description": "Signed F Bojan Bogdanovic.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-10T07:00Z",
+      "description": "Signed G Jose Calderon to a one-year contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-07-10T07:00Z",
+      "description": "Signed G Justin Holiday.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-07-09T07:00Z",
+      "description": "Signed F Mike Scott.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-07-08T07:00Z",
+      "description": "Signed G De'Aaron Fox, F Justin Jackson and C Harry Giles.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-07-08T07:00Z",
+      "description": "Signed G Tim Hardaway Jr. to a four-year contract.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-07-08T07:00Z",
+      "description": "Signed G James Harden to a four-year contract extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2017-07-08T07:00Z",
+      "description": "Signed F Jordan Bell.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Re-signed G Dion Waiters and F James Johnson to four-year contracts. Signed F Kelly Olynyk to a four-year contract. Traded F Josh McRoberts to Dallas for C A.J. Hammons and a 2023 second-round draft pick.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Signed G Darren Collison. Waived F Rakeem Christmas.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Agreed to terms with C Zaza Pachulia on a one-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Withdrew their qualifying offer and renounced the rights to G Kentavious Caldwell-Pope.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Traded G Avery Bradley to Detroit for F Marcus Morris and a 2019 second-round draft pick.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-07-07T07:00Z",
+      "description": "Waived G Jamal Crawford after buying out of his contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Acquired F Paul George from Indiana for G Victor Oladipo and F Domantas Sabonis.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Signed Derrick White and F Rudy Gay.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Named Phil Ricci assistant player development coach.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Signed G Davon Reed.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Acquired the rights to G Sterling Brown from Philadelphia for cash considerations. Signed F D.J. Wilson, G Bronson Koenig and F JeQuan Lewis.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Agreed to terms with C Kelly Olynyk.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Waived G Monta Ellis.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Signed G Langston Galloway and C Eric Moreland.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Agreed to terms with F Tyler Lydon on a multi-year contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-07-06T07:00Z",
+      "description": "Re-signed F/C Cristiano Felicio.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Signed F Mike Young to a two-way contract.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Signed G Frank Ntilikina.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Signed F Edmond Sumner.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Agreed to terms with G Nick Young on a one-year contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Signed G Dennis Smith Jr.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-07-05T07:00Z",
+      "description": "Signed F Lauri Markkanen.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-07-04T07:00Z",
+      "description": "Signed C Justin Patton.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-07-04T07:00Z",
+      "description": "Waived F Chris Bosh.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-07-03T07:00Z",
+      "description": "Signed G Malik Monk.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2017-07-03T07:00Z",
+      "description": "Signed C Zach Collins and F Caleb Swanigan.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2017-07-03T07:00Z",
+      "description": "Signed F Josh Jackson and G Mike James. Declined a team option on G Leandro Barbosa.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-07-03T07:00Z",
+      "description": "Signed G Lonzo Ball, F Kyle Kuzma and G Josh Hart.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-07-03T07:00Z",
+      "description": "Signed F Johnathan Motley to a two-way contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-06-30T07:00Z",
+      "description": "Waived F Maurice Ndour.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-06-30T07:00Z",
+      "description": "Traded G Ricky Rubio to the Utah Jazz for a protected future first-round pick from the Oklahoma City Thunder.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-06-30T07:00Z",
+      "description": "Waived Gs Rajon Rondo and Isaiah Canaan.",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-06-29T07:00Z",
+      "description": "Agreed to a two-year extension with the Grand Rapids Drive as the team's G League affiliate. Named Rex Walters assistant coach. Named Rob Werdann coach of Grand Rapids.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Promoted Bobby Webster to general manager and Dan Tolzman to assistant general manager.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Traded G Tim Quarterman to Houston for cash considerations.",
+      "team": {
+        "id": "22",
+        "abbreviation": "POR",
+        "displayName": "Portland Trail Blazers",
+        "location": "Portland",
+        "name": "Trail Blazers"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Fired president Phil Jackson.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Exercised their contract option on G David Nwaba for the 2017-18 season.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Acquired F Shawn Long from Philadelphia for a 2018 second-round draft pick and cash considerations.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Traded G-F Darrun Hilliard to Houston for cash considerations.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Traded G DeAndre Liggins to Houston for cash considerations.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-06-28T07:00Z",
+      "description": "Traded F Ryan Kelly to Houston for cash considerations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-06-27T07:00Z",
+      "description": "Named Miles Simon assistant coach.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-06-26T07:00Z",
+      "description": "Waived F Jordan Hill.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-06-23T07:00Z",
+      "description": "Waived G Arron Afflalo.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-06-22T07:00Z",
+      "description": "Announced C Greg Monroe has exercised his player option to stay with the team for 2017-18.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-06-21T07:00Z",
+      "description": "Acquired the right to own and operate an NBA G League franchise in Washington to begin play with the 2018-19 season. Acquired G Tim Frazier from the New Orleans Pelicans for their 2017 second-round pick.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-06-21T07:00Z",
+      "description": "Announced G Nick Young declined his contract option, making him an unrestricted free agent.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-06-20T07:00Z",
+      "description": "Waived C Nikola Pekovic.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-06-20T07:00Z",
+      "description": "Announced C Aron Baynes is declining his player option for next season and becoming a free agent.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-06-20T07:00Z",
+      "description": "Traded C Dwight Howard and the No. 31 overall pick in Thursday's NBA draft to Charlotte for C Miles Plumlee, G Marco Belinelli and the 41st pick.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-06-19T07:00Z",
+      "description": "Announced president Chris Granger is leaving. Promoted chief financial officer, John Rinehart, to president of business operations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-06-19T07:00Z",
+      "description": "Traded the 2017 first-round draft pick (No. 1) to Philadelphia for the 76ers' 2017 first-round draft pick (No. 3) and a conditional first-round pick in 2018 or 2019.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2017-06-16T07:00Z",
+      "description": "Named director of basketball operations, Jon Horst, general manager.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-06-15T07:00Z",
+      "description": "Promoted Arturas Karnisovas to general manager and Tim Connelly president of basketball operations.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-06-08T07:00Z",
+      "description": "Announced their NBADL team in Oshkosh will be called the Wisconsin Herd.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-06-01T07:00Z",
+      "description": "Waived F Anthony Tolliver.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-05-31T07:00Z",
+      "description": "Named Chris Makris general manager and Glynn Cyprien coach of Memphis' NBA Development League expansion team, which will begin play in the 2017-18 season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-05-25T07:00Z",
+      "description": "Named John Thomas vice president of community engagement.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-05-25T07:00Z",
+      "description": "Named Travis Schlenk general manager and director of basketball operations.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-05-24T07:00Z",
+      "description": "Named Gunnar Peterson director of strength and endurance training.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-05-23T07:00Z",
+      "description": "Named Jeff Weltman president of basketball operations and John Hammond general manager.l",
+      "team": {
+        "id": "19",
+        "abbreviation": "ORL",
+        "displayName": "Orlando Magic",
+        "location": "Orlando",
+        "name": "Magic"
+      }
+    },
+    {
+      "date": "2017-05-23T07:00Z",
+      "description": "Named Barry Baum as senior vice president of communications.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-05-22T07:00Z",
+      "description": "Named Barry Baum senior vice president of communications.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-05-08T07:00Z",
+      "description": "G Kyle Lowry will opt out of the final year of his contract and become a free agent.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2017-05-05T07:00Z",
+      "description": "Announced president of basketball operations and coach Mike Budenholzer resigned as president of basketball operations and general manager Wes Wilcox will become a special adviser to ownership.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-05-01T07:00Z",
+      "description": "Announced the resignation of president Larry Bird.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-04-21T07:00Z",
+      "description": "Named Scott Perry executive vice president of basketball operations.",
+      "team": {
+        "id": "23",
+        "abbreviation": "SAC",
+        "displayName": "Sacramento Kings",
+        "location": "Sacramento",
+        "name": "Kings"
+      }
+    },
+    {
+      "date": "2017-04-12T07:00Z",
+      "description": "Waived C Larry Sanders. Signed G-F Dahntay Jones and C Edy Tavares.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-04-11T07:00Z",
+      "description": "Recalled G Sheldon McClellan from the Rio Grande (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-04-11T07:00Z",
+      "description": "Promoted Malik Rose to general manager of Erie (NBADL).",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-04-04T07:00Z",
+      "description": "Assigned G Sheldon McClellan to Rio Grande Valley (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-04-04T07:00Z",
+      "description": "Signed G Archie Goodwin to a multiyear contract.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2017-04-02T07:00Z",
+      "description": "Signed G Gary Payton II to a multiyear contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-03-31T07:00Z",
+      "description": "Recalled F Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-30T07:00Z",
+      "description": "Agreed to terms with G Lance Stephenson.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-03-29T07:00Z",
+      "description": "Waived G Rodney Stuckey.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2017-03-29T07:00Z",
+      "description": "Recalled G Cameron Payne from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-28T07:00Z",
+      "description": "Assigned G Cameron Payne to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-26T07:00Z",
+      "description": "Recalled G Wade Baldwin IV and C Deyonta Davis from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-24T07:00Z",
+      "description": "Recalled G Cameron Payne from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-23T07:00Z",
+      "description": "Assigned G Cameron Payne to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-22T07:00Z",
+      "description": "Recalled G Cameron Payne from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-21T07:00Z",
+      "description": "Signed G David Nwaba to a multi-year contract.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-03-20T07:00Z",
+      "description": "Assigned C Deyonta Davis to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-20T07:00Z",
+      "description": "Assigned F Henry Ellenson to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-03-20T07:00Z",
+      "description": "Assigned G Cameron Payne to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-03-15T07:00Z",
+      "description": "Assigned C Deyonta Davis to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-13T07:00Z",
+      "description": "Recalled C Deyonta Davis from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-13T07:00Z",
+      "description": "Signed F Larry Sanders.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-03-10T08:00Z",
+      "description": "Assigned C Deyonta Davis to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-03-09T08:00Z",
+      "description": "Signed G Manny Harris and F Jarrod Uthoff to 10-day contracts.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-03-07T08:00Z",
+      "description": "Named Rob Pelinka general manager.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-03-06T08:00Z",
+      "description": "Signed G Jordan Crawford to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-03-04T08:00Z",
+      "description": "Signed F Terrence Jones for the remainder of the season. Released G Axel Toupane from a 10-day contract.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-03-03T08:00Z",
+      "description": "Assigned F Chris McCullough to Northern Arizona Suns (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-03-02T08:00Z",
+      "description": "Signed F Matt Barnes.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-03-02T08:00Z",
+      "description": "Signed C Andrew Bogut.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-03-01T08:00Z",
+      "description": "Signed G Brndon Jennings. Waiving F Danuel House.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-03-01T08:00Z",
+      "description": "Signed G Norris Cole.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2017-03-01T08:00Z",
+      "description": "Waived G Jordan McRae.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-02-27T08:00Z",
+      "description": "Waived G Brandon Jennings. Signed G Chasson Randle.",
+      "team": {
+        "id": "18",
+        "abbreviation": "NY",
+        "displayName": "New York Knicks",
+        "location": "New York",
+        "name": "Knicks"
+      }
+    },
+    {
+      "date": "2017-02-27T08:00Z",
+      "description": "Waived F Luis Scola.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2017-02-27T08:00Z",
+      "description": "Waived G Jose Calderon.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-02-27T08:00Z",
+      "description": "Signed G Deron Williams.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-02-26T08:00Z",
+      "description": "Signed F Ben Bentil and G Quinn Cook to 10-day contracts.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-02-24T08:00Z",
+      "description": "Waived F Mike Scott and C/F Jared Sullinger. Signed G Ronnie Price for the rest of the season.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-02-24T08:00Z",
+      "description": "Signed G Jarrett Jack to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-02-24T08:00Z",
+      "description": "Signed F Ryan Kelly and G Lamar Patterson to multiyear contracts. Suspended G Dennis Schroder for one game for failing to return to the team on time following the All-Star break.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Signed G Toney Douglas for the remainder of the season",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Acquired Fs Taj Gibson and Doug McDermott from Chicago for G Cameron Payne, C Joffrey Lauvergne, G Anthony Morrow and a 2018 second-round draft pick.",
+      "team": {
+        "id": "25",
+        "abbreviation": "OKC",
+        "displayName": "Oklahoma City Thunder",
+        "location": "Oklahoma City",
+        "name": "Thunder"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Traded F P.J. Tucker to Toronto Raptors for F Jared Sullinger and 2017 and 2018 second-round draft picks. Acquired F Mike Scott, the rights to G Cenk Akyol and cash considerations from Atlanta for a 2017 second-round pick.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Waived G Marcus Thornton. Acquired G-F K.J. McDaniels from Houston for a future draft pick.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Recalled F Henry Ellenson and G Michael Gbinije from Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Acquired F Nerlens Noel from Philadelphia for C Andrew Bogut, G Justin Anderson and a protected first-round draft pick. Waived G Deron Williams.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-02-23T08:00Z",
+      "description": "Waived F Terrence Jones. Signed G Hollis Thompson to a 10-day contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-02-22T08:00Z",
+      "description": "Assigned G Wade Baldwin IV and F Jarell Martin to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-02-22T08:00Z",
+      "description": "Acquired F Bojan Bogdanovic and F Chris McCullough from the Brooklyn Nets for F Andrew Nicholson, G Marcus Thornton and a 2017 protected first round draft pick.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-02-22T08:00Z",
+      "description": "Assigned F Derrick Jones Jr. to Northern Arizona (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-02-22T08:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-02-22T08:00Z",
+      "description": "Signed F Derrick Williams to a second 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-02-21T08:00Z",
+      "description": "Fired general manager Mitch Kupchak, executive vice president of basketball operations Jim Buss and vice president of public relations John Black. Promoted Magic Johnson to president of basketball operations. Traded G Lou Williams to the Houston Rockets for F Corey Brewer and a future draft pick.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-02-20T08:00Z",
+      "description": "Acquired C DeMarcus Cousins and F Omri Casspi from Sacramento for G Tyreke Evans, G Buddy Hield, G-F Langston Galloway and 2017 first- and second-round draft picks.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2017-02-16T08:00Z",
+      "description": "Named Shane Battier director of basketball development and analytics.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-02-15T08:00Z",
+      "description": "Recalled G Wade Baldwin IV, C Deyonta Davis and F Jarell Martin from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-02-14T08:00Z",
+      "description": "Acquired F Serge Ibaka from the Orlando Magic for F Terrence Ross and a 2017 first round draft pick.",
+      "team": {
+        "id": "28",
+        "abbreviation": "TOR",
+        "displayName": "Toronto Raptors",
+        "location": "Toronto",
+        "name": "Raptors"
+      }
+    },
+    {
+      "date": "2017-02-13T08:00Z",
+      "description": "Traded C Jusuf Nurkic and a 2017 first-round draft pick to Portland for C Mason Plumlee, a 2018 second-round draft pick and cash.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-02-13T08:00Z",
+      "description": "Traded C Chris Andersen and cash to Charlotte for a protected 2017 second-round draft pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-02-11T08:00Z",
+      "description": "Recalled F Henry Ellenson and G Michael Gbinije from Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-02-10T08:00Z",
+      "description": "Assigned F Danuel House Jr. to Delaware (NBADL).",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2017-02-09T08:00Z",
+      "description": "Signed G Toney Douglas to a second 10-day contract.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-02-09T08:00Z",
+      "description": "Signed F Derrick Williams to a 10-day contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-02-08T08:00Z",
+      "description": "Signed G Lance Stephenson to a 10-day contract.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-02-08T08:00Z",
+      "description": "Acquired the right to own and operate an NBADL team that will begin play in Oshkosh, Wis., for the 2017-18 season.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-02-08T08:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-02-07T08:00Z",
+      "description": "Signed G Yogi Ferrell to a multiyear contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-02-06T08:00Z",
+      "description": "Assigned C Deyonta Davis to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-02-06T08:00Z",
+      "description": "Waived F Derrick Williams. Signed F Okaro White through the 2017-18 season.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-02-04T08:00Z",
+      "description": "Recalled G Denzel Valentine from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-02-03T08:00Z",
+      "description": "Waived C Anderson Varejao.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2017-02-03T08:00Z",
+      "description": "Assigned F Henry Ellenson and G Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-02-02T08:00Z",
+      "description": "Signed C Joel Anthony to a second 10-day contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-02-02T08:00Z",
+      "description": "Acquired F-C Spencer Hawes and C Roy Hibbert from Charlotte for C Miles Plumlee. Waived F Steve Novak.",
+      "team": {
+        "id": "15",
+        "abbreviation": "MIL",
+        "displayName": "Milwaukee Bucks",
+        "location": "Milwaukee",
+        "name": "Bucks"
+      }
+    },
+    {
+      "date": "2017-02-02T08:00Z",
+      "description": "Named Magic Johnson adviser to owner Jeanie Buss.",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-01-31T08:00Z",
+      "description": "Assigned G Wade Baldwin IV to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-31T08:00Z",
+      "description": "Announced their new NBADL team intends to play in Erie, Pa., for the 2017-18 and 2018-19 seasons and will relocate to College Park, Ga. for the 2019-20 season.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-01-30T08:00Z",
+      "description": "Signed G Toney Douglas to a 10-day contract. Waived F Troy Williams.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-30T08:00Z",
+      "description": "Assigned G Denzel Valentine to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-29T08:00Z",
+      "description": "Recalled G Denzel Valentine to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-29T08:00Z",
+      "description": "Signed G Lamar Patterson to a 10-day contract.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2017-01-28T08:00Z",
+      "description": "Recalled G Wade Baldwin IV from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-28T08:00Z",
+      "description": "Assigned G Denzel Valentine to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-27T08:00Z",
+      "description": "Assigned F Henry Ellenson and Gs Darrun Hilliard and Michael Gbinije to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-01-26T08:00Z",
+      "description": "Assigned F Troy Williams to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-25T08:00Z",
+      "description": "Recalled F Troy Williams from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-25T08:00Z",
+      "description": "Signed G Pierre Jackson to a second 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-01-24T08:00Z",
+      "description": "Announced the team acquired the right to own and operate an NBA D-League expansion team that will begin play for the 2017-18 season.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-23T08:00Z",
+      "description": "Signed F Joel Anthony to a 10-day contract.",
+      "team": {
+        "id": "24",
+        "abbreviation": "SA",
+        "displayName": "San Antonio Spurs",
+        "location": "San Antonio",
+        "name": "Spurs"
+      }
+    },
+    {
+      "date": "2017-01-23T08:00Z",
+      "description": "Signed a letter of intent to purchase majority ownership of Iowa (NBADL).",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2017-01-22T08:00Z",
+      "description": "Assigned F Jarell Martin to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-17T08:00Z",
+      "description": "Signed F Okaro White to a 10-day contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2017-01-15T08:00Z",
+      "description": "Signed G Pierre Jackson to a 10-day contract.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2017-01-08T08:00Z",
+      "description": "Recalled F Paul Zipser from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-07T08:00Z",
+      "description": "Recalled F Derrick Jones Jr. from the Northern Arizona (NBADL).",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-01-07T08:00Z",
+      "description": "Acquired G Kyle Korver from Atlanta for F Mike Dunleavy, G Mo Williams, cash and a protected future first-round draft pick.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2017-01-07T08:00Z",
+      "description": "Recalled F Bobby Portis from Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-06T08:00Z",
+      "description": "Waived G John Jenkins.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2017-01-06T08:00Z",
+      "description": "Recalled C Ivica Zubac from Los Angeles (NBADL).",
+      "team": {
+        "id": "13",
+        "abbreviation": "LAL",
+        "displayName": "Los Angeles Lakers",
+        "location": "Los Angeles",
+        "name": "Lakers"
+      }
+    },
+    {
+      "date": "2017-01-06T08:00Z",
+      "description": "Waived F Alonzo Gee.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2017-01-06T08:00Z",
+      "description": "Assigned Fs Bobby Portis and Paul Zipser to Windy City (NBADL).",
+      "team": {
+        "id": "4",
+        "abbreviation": "CHI",
+        "displayName": "Chicago Bulls",
+        "location": "Chicago",
+        "name": "Bulls"
+      }
+    },
+    {
+      "date": "2017-01-05T08:00Z",
+      "description": "Assigned G Wade Baldwin IV and F Troy Williams to Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-04T08:00Z",
+      "description": "Recalled F Troy Williams from Iowa (NBADL).",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2017-01-04T08:00Z",
+      "description": "Assigned F Henry Ellenson to Grand Rapids (NBADL).",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2017-01-02T08:00Z",
+      "description": "Announced C Cody Zeller was placed in the NBA's concussion protocol.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2017-01-01T08:00Z",
+      "description": "Waived F Reggie Williams.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    }
+  ]
+}

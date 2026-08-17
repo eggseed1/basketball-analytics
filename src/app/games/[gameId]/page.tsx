@@ -1,260 +1,159 @@
-import Link from "next/link";
+import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
-import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
-import { AutoRefresh } from "@/components/system/auto-refresh";
-import { PlayerHeadshot } from "@/components/player/player-headshot";
+import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
+import { GameLabView } from "@/components/games/game-lab-view";
+import { GameIdentityShell } from "@/components/games/game-identity-shell";
+import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
+import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
+import { getGameAnalysis } from "@/data/queries";
+import { getGameShellCached } from "@/data/queries/request-cache";
+import type { PlayerGame } from "@/data/types";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  getGameBoxScore,
-  getGamePlayByPlay,
-  getShots,
-  getTeam,
-} from "@/data/queries";
-import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
-import { formatNumber, formatPct } from "@/lib/format";
-
-export const revalidate = 60;
+  parseThemeMode,
+  resolveActiveEraTheme,
+} from "@/themes/era-theme";
 
 interface GamePageProps {
   params: Promise<{ gameId: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
 export async function generateMetadata({ params }: GamePageProps) {
   const { gameId } = await params;
-  const box = await getGameBoxScore(gameId);
-  if (!box) return { title: "Game | Basketball Analytics" };
-  const away = nbaTeamAbbr(
-    box.game.awayTeamId,
-    box.game.awayTeamAbbr
-  );
-  const home = nbaTeamAbbr(
-    box.game.homeTeamId,
-    box.game.homeTeamAbbr
-  );
+  const shell = await getGameShellCached(gameId);
+  if (!shell) return { title: "Game | Basketball Analytics" };
+  const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId;
+  const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId;
   return {
     title: `${away} @ ${home} | Basketball Analytics`,
   };
 }
 
-export default async function GamePage({ params }: GamePageProps) {
-  const { gameId } = await params;
-  const box = await getGameBoxScore(gameId);
-  if (!box) notFound();
+function first(
+  value: string | string[] | undefined
+): string | undefined {
+  return Array.isArray(value) ? value[0] : value;
+}
 
-  const { game, players } = box;
-  const [homeTeam, awayTeam, shots, playByPlay] = await Promise.all([
-    getTeam(game.homeTeamId),
-    getTeam(game.awayTeamId),
-    getShots({ gameId }),
-    getGamePlayByPlay(gameId),
-  ]);
+async function GameLabDeepBody({
+  gameId,
+  arrival,
+}: {
+  gameId: string;
+  arrival: ReturnType<typeof parseSeasonEvidenceArrival>;
+}) {
+  const payload = await getGameAnalysis(gameId);
+  if (!payload) notFound();
 
-  const homePlayers = players
-    .filter((p) => p.teamId === game.homeTeamId)
-    .sort((a, b) => b.points - a.points);
-  const awayPlayers = players
-    .filter((p) => p.teamId === game.awayTeamId)
-    .sort((a, b) => b.points - a.points);
+  const { analysis, game, players, availability } = payload;
+  const { outcome } = analysis;
 
-  const awayLabel = nbaTeamAbbr(
-    game.awayTeamId,
-    game.awayTeamAbbr ?? awayTeam?.abbreviation
+  const sortPlayers = (rows: PlayerGame[]) =>
+    [...rows].sort((a, b) => {
+      const scoreDiff = (b.gameScore ?? b.points) - (a.gameScore ?? a.points);
+      if (scoreDiff !== 0) return scoreDiff;
+      return b.minutes - a.minutes;
+    });
+
+  const homePlayers = sortPlayers(
+    players.filter((p) => p.teamId === game.homeTeamId)
   );
-  const homeLabel = nbaTeamAbbr(
-    game.homeTeamId,
-    game.homeTeamAbbr ?? homeTeam?.abbreviation
+  const awayPlayers = sortPlayers(
+    players.filter((p) => p.teamId === game.awayTeamId)
   );
 
   return (
-    <main className="mx-auto flex w-full max-w-5xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
-      <p>
-        <Link
-          href="/explore/games"
-          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
-        >
-          ← Back to explore games
-        </Link>
-      </p>
-
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">{game.gameDate}</p>
-        <h1 className="text-3xl font-semibold tracking-tight">
-          {awayLabel} {game.awayScore} @ {homeLabel} {game.homeScore}
-        </h1>
-        <p className="text-muted-foreground">
-          {game.awayTeamName ?? awayTeam?.fullName ?? "Away"} at{" "}
-          {game.homeTeamName ?? homeTeam?.fullName ?? "Home"} · {game.season}
-        </p>
-        <AutoRefresh intervalMs={2 * 60 * 1000} label="Live box score refresh" />
-      </header>
-
-      <section
-        aria-labelledby="game-summary-heading"
-        className="grid gap-3 rounded-xl border border-border p-4 sm:grid-cols-4"
-      >
-        <h2 id="game-summary-heading" className="sr-only">
-          Game summary
-        </h2>
-        <div>
-          <p className="text-xs text-muted-foreground">Total points</p>
-          <p className="text-xl font-medium tabular-nums">
-            {formatNumber(game.homeScore + game.awayScore)}
+    <GameLabView
+      analysis={analysis}
+      arrival={arrival ? { label: arrival.label } : null}
+      omitHero
+    >
+      {availability === "scoreboard" || players.length === 0 ? (
+        <div className="rounded-xl border border-border p-4">
+          <p className="text-[14px] font-semibold tracking-tight">
+            Box score unavailable
+          </p>
+          <p className="mt-1 text-[13px] text-muted-foreground">
+            Detailed player and team box-score data is not currently available
+            for this game. Scoreboard and season context above still reflect
+            the known result — player lines are not fabricated.
           </p>
         </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Home margin</p>
-          <p className="text-xl font-medium tabular-nums">
-            {game.homeScore - game.awayScore > 0 ? "+" : ""}
-            {formatNumber(game.homeScore - game.awayScore)}
-          </p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Type</p>
-          <p className="text-xl font-medium capitalize">{game.gameType}</p>
-        </div>
-        <div>
-          <p className="text-xs text-muted-foreground">Tracked shots</p>
-          <p className="text-xl font-medium tabular-nums">
-            {formatNumber(shots.length)}
-            {shots.length > 0 ? (
-              <span className="ml-2 text-sm font-normal text-muted-foreground">
-                ({formatPct(shots.filter((s) => s.made).length / shots.length)}{" "}
-                make)
-              </span>
-            ) : null}
-          </p>
-        </div>
-      </section>
-
-      <BoxScoreSection
-        heading={`${awayLabel} box score`}
-        players={awayPlayers}
-      />
-      <BoxScoreSection
-        heading={`${homeLabel} box score`}
-        players={homePlayers}
-      />
-
-      <GamePlayByPlayPanel
-        events={playByPlay?.events ?? []}
-        awayTricode={awayLabel}
-        homeTricode={homeLabel}
-        source={
-          playByPlay
-            ? playByPlay.source === "cdn"
-              ? "NBA CDN"
-              : playByPlay.source === "stats"
-                ? "stats.nba.com"
-                : "sample"
-            : undefined
-        }
-      />
-    </main>
+      ) : (
+        <GameBoxScoreTables
+          awayLabel={outcome.awayLabel}
+          homeLabel={outcome.homeLabel}
+          awayTeamId={game.awayTeamId}
+          homeTeamId={game.homeTeamId}
+          awayPlayers={awayPlayers}
+          homePlayers={homePlayers}
+          contextIndex={analysis.boxScoreContext}
+        />
+      )}
+    </GameLabView>
   );
 }
 
-function BoxScoreSection({
-  heading,
-  players,
-}: {
-  heading: string;
-  players: Array<{
-    id: string;
-    playerId: string;
-    playerName?: string;
-    minutes: number;
-    points: number;
-    rebounds: number;
-    assists: number;
-    steals: number;
-    blocks: number;
-    turnovers: number;
-    plusMinus: number;
-  }>;
-}) {
-  const headingId = heading.replace(/\s+/g, "-").toLowerCase();
-  return (
-    <section aria-labelledby={headingId} className="flex flex-col gap-3">
-      <h2 id={headingId} className="text-lg font-semibold">
-        {heading}
-      </h2>
-      <div className="overflow-x-auto rounded-xl border border-border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Player</TableHead>
-              <TableHead className="text-right">MIN</TableHead>
-              <TableHead className="text-right">PTS</TableHead>
-              <TableHead className="text-right">REB</TableHead>
-              <TableHead className="text-right">AST</TableHead>
-              <TableHead className="text-right">STL</TableHead>
-              <TableHead className="text-right">BLK</TableHead>
-              <TableHead className="text-right">TO</TableHead>
-              <TableHead className="text-right">+/-</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {players.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={9} className="text-muted-foreground">
-                  No box-score rows available for this team.
-                </TableCell>
-              </TableRow>
-            ) : (
-              players.map((p) => (
-                <TableRow key={p.id}>
-                  <TableCell>
-                    <Link
-                      href={`/players/${p.playerId}`}
-                      className="inline-flex items-center gap-2 underline-offset-4 hover:underline"
-                    >
-                      <PlayerHeadshot
-                        playerId={p.playerId}
-                        name={p.playerName ?? p.playerId}
-                        size="xs"
-                      />
-                      {p.playerName ?? p.playerId}
-                    </Link>
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.minutes)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.points)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.rebounds)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.assists)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.steals)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.blocks)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(p.turnovers)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {p.plusMinus > 0 ? "+" : ""}
-                    {formatNumber(p.plusMinus)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
-    </section>
+/**
+ * Stable identity/score header stays mounted; deep Game Lab streams below.
+ * No identity → hero remount when analysis arrives.
+ */
+export default async function GamePage({ params, searchParams }: GamePageProps) {
+  const { gameId } = await params;
+  const sp = await searchParams;
+  const arrival = parseSeasonEvidenceArrival(sp);
+
+  const shell = await getGameShellCached(gameId);
+  if (!shell) notFound();
+
+  const fromHistory = first(sp.from) === "history";
+  const themeParam = first(sp.theme);
+  const themeMode = parseThemeMode(themeParam);
+  const applyEraTheme =
+    fromHistory || themeParam === "historical" || themeParam === "modern";
+  const eraTheme = applyEraTheme
+    ? resolveActiveEraTheme(shell.game.season, themeMode)
+    : null;
+
+  const brandPresentation =
+    applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
+
+  const backHref = fromHistory
+    ? `/history?season=${encodeURIComponent(shell.game.season)}${
+        themeMode === "modern" ? "&theme=modern" : ""
+      }`
+    : "/explore/games";
+
+  const body = (
+    <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
+      <p>
+        <TransitionLink
+          href={backHref}
+          className="text-sm text-muted-foreground underline-offset-4 hover:underline"
+        >
+          ← {fromHistory ? "Back to Time Machine" : "Back to explore games"}
+        </TransitionLink>
+      </p>
+
+      <GameIdentityShell
+        game={shell.game}
+        brandPresentation={brandPresentation}
+        arrivalLabel={arrival?.label}
+      />
+
+      <Suspense
+        fallback={
+          <DestinationSectionSkeleton label="Loading Game Lab analysis…" />
+        }
+      >
+        <GameLabDeepBody gameId={gameId} arrival={arrival} />
+      </Suspense>
+    </main>
   );
+
+  if (!eraTheme) return body;
+  return <EraThemeScope theme={eraTheme}>{body}</EraThemeScope>;
 }

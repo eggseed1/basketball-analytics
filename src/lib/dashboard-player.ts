@@ -31,10 +31,10 @@ export function toDashboardPlayer(row: PlayerSeason): DashboardPlayer {
     gamesPlayed: row.gamesPlayed,
     minutes: row.minutes,
     points: row.points,
-    usagePct: row.usagePct,
-    trueShootingPct: row.trueShootingPct,
+    usagePct: row.usagePct ?? 0,
+    trueShootingPct: row.trueShootingPct ?? 0,
     assistPct: row.assistPct,
-    netRating: row.netRating,
+    netRating: row.netRating ?? 0,
     per: row.per,
     vorp: row.vorp,
   };

@@ -27,7 +27,9 @@ export interface PlayerUsageTsScatterProps {
   players: PlayerSeason[];
 }
 
-type ChartPoint = PlayerSeason & {
+type ChartPoint = Omit<PlayerSeason, "usagePct" | "trueShootingPct"> & {
+  usagePct: number;
+  trueShootingPct: number;
   usagePctDisplay: number;
   trueShootingPctDisplay: number;
 };
@@ -64,7 +66,7 @@ function AccessibleTooltip({
   if (!active || !payload?.length) return null;
   const p = payload[0].payload;
 
-  const summary = `${p.playerName}, ${p.teamName}. Usage ${formatPct(p.usagePct)}, true shooting ${formatPct(p.trueShootingPct)}, ${formatMinutes(p.minutes)} minutes, ${p.gamesPlayed} games.`;
+  const summary = `${p.playerName}, ${p.teamName}. Usage ${formatPct(p.usagePct ?? 0)}, true shooting ${formatPct(p.trueShootingPct ?? 0)}, ${formatMinutes(p.minutes)} minutes, ${p.gamesPlayed} games.`;
 
   return (
     <div
@@ -75,9 +77,9 @@ function AccessibleTooltip({
       <p className="text-muted-foreground">{p.teamName}</p>
       <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 tabular-nums">
         <dt className="text-muted-foreground">Usage %</dt>
-        <dd className="text-right">{formatPct(p.usagePct)}</dd>
+        <dd className="text-right">{formatPct(p.usagePct ?? 0)}</dd>
         <dt className="text-muted-foreground">TS %</dt>
-        <dd className="text-right">{formatPct(p.trueShootingPct)}</dd>
+        <dd className="text-right">{formatPct(p.trueShootingPct ?? 0)}</dd>
         <dt className="text-muted-foreground">Minutes</dt>
         <dd className="text-right">{formatMinutes(p.minutes)}</dd>
         <dt className="text-muted-foreground">Games</dt>
@@ -210,11 +212,21 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
 
   const data: ChartPoint[] = useMemo(
     () =>
-      players.map((p) => ({
-        ...p,
-        usagePctDisplay: p.usagePct * 100,
-        trueShootingPctDisplay: p.trueShootingPct * 100,
-      })),
+      players
+        .filter(
+          (p) =>
+            p.usagePct != null &&
+            Number.isFinite(p.usagePct) &&
+            p.trueShootingPct != null &&
+            Number.isFinite(p.trueShootingPct)
+        )
+        .map((p) => ({
+          ...p,
+          usagePct: p.usagePct ?? 0,
+          trueShootingPct: p.trueShootingPct ?? 0,
+          usagePctDisplay: (p.usagePct ?? 0) * 100,
+          trueShootingPctDisplay: (p.trueShootingPct ?? 0) * 100,
+        })),
     [players]
   );
 
@@ -355,7 +367,8 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
                   ) : null}
                 </span>
                 <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                  USG {formatPct(p.usagePct)} · TS {formatPct(p.trueShootingPct)}
+                  USG {formatPct(p.usagePct ?? 0)} · TS{" "}
+                  {formatPct(p.trueShootingPct ?? 0)}
                 </span>
               </button>
             </li>

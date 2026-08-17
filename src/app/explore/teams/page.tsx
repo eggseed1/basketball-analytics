@@ -1,19 +1,22 @@
+import Link from "next/link";
 import { Suspense } from "react";
 
-import { TeamFilterToolbar } from "@/components/explore/team-filter-toolbar";
 import { TeamSeasonTable } from "@/components/explore/team-season-table";
-import { AutoRefresh } from "@/components/system/auto-refresh";
+import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
+import { BrowseCircles } from "@/components/sports/browse-circles";
 import {
   getAvailableSeasons,
-  getFilteredTeamSeasons,
+  getTeamSeasonStats,
 } from "@/data/queries";
-
-export const revalidate = 60;
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 
 export const metadata = {
-  title: "Explore Teams | Basketball Analytics",
+  title: "Teams",
   description:
-    "Team standings, ratings, and efficiency — filter by conference and sort by net rating, offense, defense, and more.",
+    "NBA team advanced stats - differential, true shooting, eFG%, and more.",
 };
 
 interface ExploreTeamsPageProps {
@@ -25,48 +28,55 @@ export default async function ExploreTeamsPage({
 }: ExploreTeamsPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  const defaultSeason = seasons[0] ?? "2024-25";
-  const seasonParam = Array.isArray(params.season)
-    ? params.season[0]
-    : params.season;
-  const conferenceRaw = Array.isArray(params.conference)
-    ? params.conference[0]
-    : params.conference;
-  const season = seasonParam ?? defaultSeason;
-  const conference =
-    conferenceRaw === "East" || conferenceRaw === "West"
-      ? conferenceRaw
-      : "ALL";
+  const defaultSeason =
+    seasons[0] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
+  const seasonParam = params.season;
+  const season =
+    typeof seasonParam === "string" && seasonParam.length
+      ? seasonParam
+      : defaultSeason;
 
-  const teams = await getFilteredTeamSeasons({ season, conference });
+  const teams = await getTeamSeasonStats(season).catch(() => []);
 
   return (
-    <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-6 px-4 py-8 sm:px-6">
-      <header className="flex flex-col gap-2">
-        <p className="text-sm text-muted-foreground">Explore</p>
-        <h1 className="text-3xl font-semibold tracking-tight">Teams</h1>
-        <p className="max-w-2xl text-muted-foreground">
-          League team stats — record, points, offensive/defensive rating, true
-          shooting, and pace. Click a team for roster detail.
-        </p>
-        <AutoRefresh />
+    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+        <div>
+          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Teams
+          </p>
+          <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
+            Team boards
+          </h1>
+          <p className="mt-1 max-w-xl text-[15px] text-muted-foreground">
+            Team efficiency board for {season} - sorted by point differential by
+            default. Click a team to open its analytical profile.
+          </p>
+        </div>
+        <Link
+          href="/standings"
+          className="rounded-full bg-secondary px-4 py-2 text-[13px] font-semibold"
+        >
+          Standings
+        </Link>
       </header>
 
       <Suspense
         fallback={
-          <div className="h-24 animate-pulse rounded-xl border border-border bg-muted/40" />
+          <div className="h-12 w-40 animate-pulse rounded-xl bg-secondary" />
         }
       >
-        <TeamFilterToolbar seasons={seasons} defaultSeason={defaultSeason} />
+        <TeamSeasonToolbar seasons={seasons} defaultSeason={defaultSeason} />
       </Suspense>
 
-      <Suspense
-        fallback={
-          <div className="h-64 animate-pulse rounded-xl border border-border bg-muted/40" />
-        }
-      >
+      <section className="sports-card px-4 py-4">
+        <h2 className="mb-3 text-[15px] font-bold">Jump to team profile</h2>
+        <BrowseCircles mode="teams" />
+      </section>
+
+      <div className="pb-8">
         <TeamSeasonTable teams={teams} />
-      </Suspense>
+      </div>
     </main>
   );
 }
