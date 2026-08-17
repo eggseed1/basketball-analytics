@@ -1,0 +1,22 @@
+{
+  "season": "2025-26",
+  "measuredAt": "2026-08-17T17:38:54.968Z",
+  "note": "Counts hasValidDrblEstimate after overlay; never fabricated",
+  "nbaIdBoardPath": {
+    "status": "OK",
+    "boardRows": 582,
+    "hasValidDrblEstimate": 575,
+    "joinRate": 0.9879725085910653,
+    "error": null,
+    "note": "NBA Stats PLAYER_ID board joins DRBL by direct id; alias gate mainly affects ESPN→NBA"
+  },
+  "espnBoardPath": {
+    "status": "OK",
+    "boardRows": 578,
+    "productionApprovedAliasesOnBoard": 545,
+    "estimatedDrblJoinViaApprovedAlias": 543,
+    "joinRate": 0.9394463667820069,
+    "methodology": "ESPN byathlete ids ∩ productionApproved aliases ∩ DRBL precomputed nba ids (static estimate; not fabricated)"
+  },
+  "mode": "ESPN_AND_NBA_MEASURED"
+}

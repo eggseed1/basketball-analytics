@@ -18,6 +18,11 @@ export const metadata = {
     "Contour/Quiver-style multi-board dashboard with chart-to-chart filtering.",
 };
 
+/**
+ * P17.1 classification: SECONDARY_LAB / DEFER_DRBL (INTENTIONALLY_DEFERRED).
+ * Not a primary DRBL hierarchy surface — box Contour boards only for now.
+ */
+
 interface DashboardPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }

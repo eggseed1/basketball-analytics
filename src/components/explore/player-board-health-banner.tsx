@@ -12,11 +12,18 @@ export function PlayerBoardHealthBanner({
 }) {
   if (health.status === "healthy") {
     // Keep live healthy quiet in production; light hint in development.
-    if (process.env.NODE_ENV === "production") return null;
+    if (process.env.NODE_ENV === "production") {
+      return (
+        <p className="text-[11px] text-muted-foreground">
+          Live ESPN/NBA board browsing is separate from the precomputed DRBL
+          overlay.
+        </p>
+      );
+    }
     return (
       <p className="text-[12px] text-muted-foreground">
         {health.providerDescription} · {health.season} · {health.rowCount}{" "}
-        player-season rows
+        player-season rows · live board ≠ precomputed DRBL overlay
       </p>
     );
   }
@@ -47,6 +54,10 @@ export function PlayerBoardHealthBanner({
     >
       <p className="font-bold tracking-tight">{health.label}</p>
       <p className="mt-1 text-muted-foreground">{health.message}</p>
+      <p className="mt-1 text-[11px] text-muted-foreground">
+        Live ESPN/NBA board browsing is separate from the precomputed DRBL
+        overlay.
+      </p>
       {health.historicalGamesCachePresent === true &&
       (health.status === "season_unsupported" ||
         health.status === "board_unavailable") ? (

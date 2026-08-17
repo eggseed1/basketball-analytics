@@ -18,6 +18,8 @@ import type { PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { formatNumber, formatPct } from "@/lib/format";
 import { METRIC_PICKERS } from "@/lib/player-stat-comps";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { NON_ADDITIVE_COMPONENT_WARNING } from "@/query-engine/drbl-vocabulary";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -55,6 +57,9 @@ export type SeasonCompareCategoryId =
   | "rebounding"
   | "shooting"
   | "impact"
+  | "ability"
+  | "realized_value"
+  | "diagnostic"
   | "team_context"
   | "availability";
 
@@ -143,7 +148,7 @@ export const PLAYER_SEASON_COMPARE_METHODOLOGY: PlayerSeasonCompareMethodology =
     overallRule:
       "Overall = plurality of decisive category winners among available categories. Impact and team context participate only when covered for both seasons. No opaque universal season score.",
     impactRule:
-      "Historical impact participates only when the same season-true metric exists for BOTH seasons. Live DARKO stamped on one year is never compared to a year without it. CPI is never substituted for missing impact.",
+      "DRBL/100 participates when both seasons have valid estimates (registry seasons only). Otherwise historical impact participates only when the same season-true metric (DARKO or LEBRON) exists for BOTH seasons. Live DARKO stamped on one year is never compared to a year without it. CPI is never substituted for missing impact. Diagnostic P/LN/B are disclosed separately and are not additive into DRBL/100.",
     cpiNote:
       "CPI (Career Production Index) is a documented box-score production composite — not impact, WAR, or true value.",
     incompleteNote:
@@ -160,6 +165,9 @@ const CATEGORY_LABELS: Record<SeasonCompareCategoryId, string> = {
   rebounding: "Rebounding",
   shooting: "Shooting",
   impact: "Impact",
+  ability: "Rate / ability",
+  realized_value: "Realized value",
+  diagnostic: "Diagnostic (non-additive)",
   team_context: "Team context",
   availability: "Availability",
 };
@@ -616,13 +624,143 @@ export function comparePlayerSeasons(options: {
     tolerance: SEASON_COMPARE_TOLERANCE.rpg,
   });
 
+  // --- DRBL ability / realized (primary when valid; Unavailable not 0) ---
+  const aDrbl = hasValidDrblEstimate(a);
+  const bDrbl = hasValidDrblEstimate(b);
+  const pushDrblOrUnavailable = (
+    id: string,
+    label: string,
+    category: SeasonCompareCategoryId,
+    aRaw: number | null,
+    bRaw: number | null,
+    tolerance: number,
+    note?: string
+  ) => {
+    if (aRaw != null && bRaw != null) {
+      pushMetric(metrics, {
+        id,
+        label,
+        category,
+        aRaw,
+        bRaw,
+        format: (v) => formatNumber(v, 2),
+        tolerance,
+        note,
+      });
+    } else if (aRaw != null || bRaw != null || aDrbl || bDrbl) {
+      metrics.push({
+        id,
+        label,
+        category,
+        aDisplay: aRaw != null ? formatNumber(aRaw, 2) : "Unavailable",
+        bDisplay: bRaw != null ? formatNumber(bRaw, 2) : "Unavailable",
+        aValue: aRaw ?? undefined,
+        bValue: bRaw ?? undefined,
+        edge: "unavailable",
+        higherIsBetter: true,
+        note:
+          note ??
+          "Unavailable for at least one season — never shown as 0.",
+      });
+    }
+  };
+
+  pushDrblOrUnavailable(
+    "drbl100",
+    "DRBL/100",
+    "ability",
+    aDrbl ? a.drbl100 : null,
+    bDrbl ? b.drbl100 : null,
+    SEASON_COMPARE_TOLERANCE.impact,
+    "Canonical validated ability rate."
+  );
+  pushDrblOrUnavailable(
+    "drbl_o",
+    "DRBL-O",
+    "ability",
+    aDrbl && Number.isFinite(a.drblO) ? a.drblO : null,
+    bDrbl && Number.isFinite(b.drblO) ? b.drblO : null,
+    SEASON_COMPARE_TOLERANCE.impact
+  );
+  pushDrblOrUnavailable(
+    "drbl_d",
+    "DRBL-D",
+    "ability",
+    aDrbl && Number.isFinite(a.drblD) ? a.drblD : null,
+    bDrbl && Number.isFinite(b.drblD) ? b.drblD : null,
+    SEASON_COMPARE_TOLERANCE.impact
+  );
+  pushDrblOrUnavailable(
+    "r1_points",
+    "R1 Points",
+    "realized_value",
+    aDrbl && a.r1Points != null && Number.isFinite(a.r1Points)
+      ? a.r1Points
+      : null,
+    bDrbl && b.r1Points != null && Number.isFinite(b.r1Points)
+      ? b.r1Points
+      : null,
+    5,
+    "Realized accounting value — not ability."
+  );
+  pushDrblOrUnavailable(
+    "r1_win_eq",
+    "R1 Win Equivalents",
+    "realized_value",
+    aDrbl &&
+      a.r1WinEquivalents != null &&
+      Number.isFinite(a.r1WinEquivalents)
+      ? a.r1WinEquivalents
+      : null,
+    bDrbl &&
+      b.r1WinEquivalents != null &&
+      Number.isFinite(b.r1WinEquivalents)
+      ? b.r1WinEquivalents
+      : null,
+    0.15,
+    "Not WAR."
+  );
+
+  // Optional diagnostic disclosure (non-additive).
+  if (aDrbl || bDrbl) {
+    pushDrblOrUnavailable(
+      "drbl_p",
+      "DRBL-P",
+      "diagnostic",
+      aDrbl && Number.isFinite(a.drblP) ? a.drblP : null,
+      bDrbl && Number.isFinite(b.drblP) ? b.drblP : null,
+      SEASON_COMPARE_TOLERANCE.impact,
+      NON_ADDITIVE_COMPONENT_WARNING
+    );
+    pushDrblOrUnavailable(
+      "drbl_ln",
+      "DRBL-LN",
+      "diagnostic",
+      aDrbl && Number.isFinite(a.drblLn) ? a.drblLn : null,
+      bDrbl && Number.isFinite(b.drblLn) ? b.drblLn : null,
+      SEASON_COMPARE_TOLERANCE.impact,
+      NON_ADDITIVE_COMPONENT_WARNING
+    );
+    pushDrblOrUnavailable(
+      "drbl_b",
+      "DRBL-B",
+      "diagnostic",
+      aDrbl && Number.isFinite(a.drblB) ? a.drblB : null,
+      bDrbl && Number.isFinite(b.drblB) ? b.drblB : null,
+      SEASON_COMPARE_TOLERANCE.impact,
+      NON_ADDITIVE_COMPONENT_WARNING
+    );
+  }
+
   // --- Impact (both seasons, same metric only) ---
   if (
     impactA &&
     impactB &&
     impactA.metricId === impactB.metricId &&
     Number.isFinite(impactA.value) &&
-    Number.isFinite(impactB.value)
+    Number.isFinite(impactB.value) &&
+    // Avoid duplicating DRBL/100 when already shown under ability.
+    impactA.metricId !== "drbl100"
   ) {
     pushMetric(metrics, {
       id: "impact",
@@ -634,7 +772,11 @@ export function comparePlayerSeasons(options: {
       tolerance: SEASON_COMPARE_TOLERANCE.impact,
       note: `Season-true ${impactA.source} · ${impactA.metricId}`,
     });
-  } else if (impactA || impactB) {
+  } else if (
+    (impactA || impactB) &&
+    impactA?.metricId !== "drbl100" &&
+    impactB?.metricId !== "drbl100"
+  ) {
     metrics.push({
       id: "impact",
       label: "Historical impact",
@@ -677,6 +819,9 @@ export function comparePlayerSeasons(options: {
   }
 
   const categoryOrder: SeasonCompareCategoryId[] = [
+    "ability",
+    "realized_value",
+    "diagnostic",
     "production",
     "efficiency",
     "shooting",

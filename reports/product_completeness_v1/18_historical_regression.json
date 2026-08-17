@@ -1,0 +1,17 @@
+{
+  "HISTORICAL_DRBL_MISMATCHES": 0,
+  "HISTORICAL_R1_MISMATCHES": 0,
+  "HISTORICAL_R1WINEQ_MISMATCHES": 0,
+  "HISTORICAL_RANK_MISMATCHES": 0,
+  "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24"
+  ],
+  "method": "carry_forward_integration_git_hash_object_equality_vs_72272b2",
+  "precomputed_untouched": "YES",
+  "product_branch": "product/drbl-site-completeness-v1",
+  "note": "P17 did not mutate historical precomputed DRBL artifacts; historical mismatch counts remain 0.",
+  "source_report": "reports/integration/10_historical_regression.json"
+}

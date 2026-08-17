@@ -10,6 +10,7 @@ import {
   twoPointPct,
 } from "@/data/providers/nba/compute-advanced";
 import { NBA_TEAM_META } from "@/data/providers/nba/nba-team-meta";
+import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
 
 function n(row: Record<string, string | number | null>, key: string): number {
   const value = row[key];
@@ -24,6 +25,63 @@ function n(row: Record<string, string | number | null>, key: string): number {
 function s(row: Record<string, string | number | null>, key: string): string {
   const value = row[key];
   return value == null ? "" : String(value);
+}
+
+/** Multi-team aggregate abbreviations from NBA Stats / BRef. */
+const MULTI_TEAM_ABBRS = new Set(["TOT", "2TM", "3TM", "4TM"]);
+
+/**
+ * Normalize NBA Stats TEAM_ID → canonical ESPN product id at the transform
+ * boundary. Preserves provider provenance; never invents a franchise for TOT.
+ */
+export function normalizeNbaPlayerSeasonTeam(input: {
+  teamId: string;
+  teamAbbreviation?: string;
+}): {
+  teamId: string;
+  teamName: string;
+  teamAbbreviation?: string;
+  teamIdProvider: "nba";
+  providerTeamId?: string;
+  nbaTeamId?: string;
+} {
+  const providerTeamId = String(input.teamId ?? "").trim();
+  const abbr = (input.teamAbbreviation ?? "").trim().toUpperCase();
+
+  if (MULTI_TEAM_ABBRS.has(abbr) || providerTeamId === "0" || !providerTeamId) {
+    return {
+      teamId: "TOT",
+      teamName: abbr || "TOT",
+      teamAbbreviation: abbr || "TOT",
+      teamIdProvider: "nba",
+      providerTeamId: providerTeamId || undefined,
+      nbaTeamId: providerTeamId || undefined,
+    };
+  }
+
+  const canonical = getCanonicalTeamFromProvider("nba", providerTeamId);
+  if (canonical) {
+    return {
+      teamId: canonical.canonicalTeamId,
+      teamName: canonical.displayName,
+      teamAbbreviation: canonical.abbr,
+      teamIdProvider: "nba",
+      providerTeamId,
+      nbaTeamId: providerTeamId,
+    };
+  }
+
+  // Unresolved NBA id — keep provenance only; never put provider id in teamId
+  // (TeamLogo would otherwise render digit prefixes as a public badge).
+  const meta = NBA_TEAM_META[providerTeamId];
+  return {
+    teamId: "",
+    teamName: meta?.fullName || "Team unavailable",
+    teamAbbreviation: meta?.abbreviation ?? (abbr || undefined),
+    teamIdProvider: "nba",
+    providerTeamId,
+    nbaTeamId: providerTeamId,
+  };
 }
 
 function mapPosition(raw?: string): Position | undefined {
@@ -57,8 +115,10 @@ export function transformStatsNbaPlayerSeason(
 ): PlayerSeason {
   const playerId = String(base.PLAYER_ID ?? "");
   const playerName = s(base, "PLAYER_NAME");
-  const teamId = String(base.TEAM_ID ?? "");
-  const teamAbbreviation = s(base, "TEAM_ABBREVIATION");
+  const team = normalizeNbaPlayerSeasonTeam({
+    teamId: String(base.TEAM_ID ?? ""),
+    teamAbbreviation: s(base, "TEAM_ABBREVIATION"),
+  });
 
   const fgm = n(base, "FGM");
   const fga = n(base, "FGA");
@@ -78,9 +138,12 @@ export function transformStatsNbaPlayerSeason(
   return {
     playerId,
     playerName,
-    teamId,
-    teamName: teamAbbreviation || "Unknown",
-    teamAbbreviation,
+    teamId: team.teamId,
+    teamName: team.teamName,
+    teamAbbreviation: team.teamAbbreviation,
+    teamIdProvider: team.teamIdProvider,
+    providerTeamId: team.providerTeamId,
+    nbaTeamId: team.nbaTeamId,
     season,
     position: mapPosition(bref?.position),
     age: n(base, "AGE") || undefined,
@@ -214,7 +277,11 @@ export function transformStatsNbaCommonPlayerInfo(
   const height = parseHeightInches(s(row, "HEIGHT"));
   const weight = n(row, "WEIGHT") || undefined;
   const birth = s(row, "BIRTHDATE").slice(0, 10) || undefined;
-  const teamId = String(row.TEAM_ID ?? "");
+  const rawTeamId = String(row.TEAM_ID ?? "");
+  const team =
+    rawTeamId && rawTeamId !== "0"
+      ? normalizeNbaPlayerSeasonTeam({ teamId: rawTeamId })
+      : null;
   return {
     id,
     fullName,
@@ -224,7 +291,7 @@ export function transformStatsNbaCommonPlayerInfo(
     birthDate: birth && birth !== "0000-00-00" ? birth : undefined,
     heightInches: height,
     weightLbs: weight,
-    currentTeamId: teamId && teamId !== "0" ? teamId : undefined,
+    currentTeamId: team?.teamId,
   };
 }
 
@@ -249,12 +316,20 @@ export function transformStatsNbaCareerTotalsRow(
   const tov = n(row, "TOV");
   const points = n(row, "PTS");
 
+  const team = normalizeNbaPlayerSeasonTeam({
+    teamId: String(row.TEAM_ID ?? ""),
+    teamAbbreviation: s(row, "TEAM_ABBREVIATION"),
+  });
+
   return {
     playerId: String(row.PLAYER_ID ?? ""),
     playerName,
-    teamId: String(row.TEAM_ID ?? ""),
-    teamName: s(row, "TEAM_ABBREVIATION") || "Unknown",
-    teamAbbreviation: s(row, "TEAM_ABBREVIATION"),
+    teamId: team.teamId,
+    teamName: team.teamName,
+    teamAbbreviation: team.teamAbbreviation,
+    teamIdProvider: team.teamIdProvider,
+    providerTeamId: team.providerTeamId,
+    nbaTeamId: team.nbaTeamId,
     season,
     age: n(row, "PLAYER_AGE") || undefined,
     gamesPlayed: n(row, "GP"),
@@ -344,10 +419,17 @@ export function transformStatsNbaTeamSeason(
   advanced: Record<string, string | number | null> | undefined,
   season: string
 ): TeamSeason {
-  const teamId = String(base.TEAM_ID ?? "");
-  const meta = NBA_TEAM_META[teamId];
-  const teamName = s(base, "TEAM_NAME") || meta?.fullName || "Unknown";
-  const abbr = meta?.abbreviation ?? "UNK";
+  const providerTeamId = String(base.TEAM_ID ?? "");
+  const canonical = getCanonicalTeamFromProvider("nba", providerTeamId);
+  const meta = NBA_TEAM_META[providerTeamId];
+  const teamId = canonical?.canonicalTeamId ?? "";
+  const teamName =
+    s(base, "TEAM_NAME") ||
+    canonical?.displayName ||
+    meta?.fullName ||
+    "Team unavailable";
+  const abbr =
+    canonical?.abbr ?? meta?.abbreviation ?? "—";
 
   return {
     teamId,

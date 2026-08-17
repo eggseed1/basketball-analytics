@@ -1,0 +1,136 @@
+{
+  "workbook": "project_workbook_v1",
+  "generatedAt": "2026-08-17T16:46:02.337Z",
+  "repo": "basketball-analytics-integration",
+  "productThesis": "NBA analytics site: DRBL ability + R1 value with ESPN-backed browsing and historical BallDontLie depth",
+  "stack": {
+    "framework": "Next.js App Router",
+    "ui": "React 19 + Tailwind 4",
+    "language": "TypeScript"
+  },
+  "frozenConstants": {
+    "K": 1600,
+    "P1": 37.490662671779255,
+    "abilityVersion": "drbl-ability-eb1600-r1-v1",
+    "r1PointsVersion": "drbl-r1-points-v1",
+    "r1WinEqVersion": "drbl-r1-wineq-v1"
+  },
+  "seasons": {
+    "canonicalProduction": [
+      "2024-25",
+      "2025-26"
+    ],
+    "retrospectiveFrozenV1": [
+      "2020-21",
+      "2021-22",
+      "2022-23",
+      "2023-24"
+    ],
+    "registrySingleSource": true
+  },
+  "seals": {
+    "INTEGRATION_SEAL_HASH": "7616954121ce6263018a364d205aa10681ac95cfca89fa2a489fd15dfd692e15",
+    "M18B_0_READINESS_SEAL_HASH": "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+    "M18A_SEAL_HASH": "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+    "M18A_RESERVED_VERDICT": "STRONG_PASS",
+    "M17B_SEAL_HASH": "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+    "M17B_VERDICT": "STRONG_MULTI_SEASON_PASS",
+    "M17A_2_HISTORICAL_CORPUS_SEAL_HASH": "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+    "M16L3_PRODUCT_MIGRATION_HASH": "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+    "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+    "M16L2_OVERALL_VERDICT": "STRONG_PASS",
+    "UIR_STATUS": "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+    "UIR_SELECTED": "UIR-C",
+    "M18B_READINESS_VERDICT": "TRACKING_ACCESS_REQUIRED",
+    "NEXT_MILESTONE_INTEGRATION": "M17c_EXTERNAL_COMMON_TARGET_BENCHMARK",
+    "NEXT_MILESTONE_RESEARCH": "USER_TRACKING_ACCESS_STEP"
+  },
+  "verdicts": {
+    "integrationReadyForResearch": "YES",
+    "productionMetricSemanticsPreserved": "YES",
+    "webDesignIntentPreserved": "YES",
+    "drblV1Reopened": "NO",
+    "modelParameterChanged": "NO",
+    "currentProductionRegression": {
+      "CURRENT_2024_25_DRBL_MISMATCHES": 0,
+      "CURRENT_2024_25_R1_MISMATCHES": 0,
+      "CURRENT_2024_25_R1WINEQ_MISMATCHES": 0,
+      "CURRENT_2024_25_RANK_MISMATCHES": 0,
+      "CURRENT_2025_26_DRBL_MISMATCHES": 0,
+      "CURRENT_2025_26_R1_MISMATCHES": 0,
+      "CURRENT_2025_26_R1WINEQ_MISMATCHES": 0,
+      "CURRENT_2025_26_RANK_MISMATCHES": 0,
+      "method": "git_hash_object_equality_vs_72272b2",
+      "seasons": {
+        "2024-25": "equal",
+        "2025-26": "equal"
+      }
+    },
+    "historicalRegression": {
+      "HISTORICAL_DRBL_MISMATCHES": 0,
+      "HISTORICAL_R1_MISMATCHES": 0,
+      "HISTORICAL_R1WINEQ_MISMATCHES": 0,
+      "HISTORICAL_RANK_MISMATCHES": 0,
+      "seasons": [
+        "2020-21",
+        "2021-22",
+        "2022-23",
+        "2023-24"
+      ],
+      "method": "git_hash_object_equality_vs_72272b2"
+    },
+    "uirPublicCanonical": "NO",
+    "legacyWarPublic": "NO",
+    "m18bMethodPrototypeAuthorized": "YES",
+    "m18bPlayerValueValidationAuthorized": "NO"
+  },
+  "engineeringPriorSeal": {
+    "TYPECHECK": "PASS",
+    "UNRESOLVED_CONFLICT_MARKERS": 0,
+    "TEST_COUNT": "201/201",
+    "SEPARATE_WORKTREE_USED": "YES",
+    "BUILD": "PASS",
+    "DRBL_TESTS": "PASS",
+    "WEB_SPECIFIC": "test:data-truth PASS; test:site-nav PASS; test:drbl-release:fixture PARTIAL (team-identity live schedule sample miss)",
+    "WORKTREE_PATH": "C:\\Users\\parkh\\Projects\\basketball-analytics-integration"
+  },
+  "artifacts": {
+    "precomputedDir": "src/data/drbl/precomputed",
+    "criticalSourceSnapshot": "reports/project_workbook_v1/critical_source_snapshot",
+    "exampleCurrent": "reports/project_workbook_v1/32_EXAMPLE_DATA_RECORD.json",
+    "exampleHistorical": "reports/project_workbook_v1/33_EXAMPLE_HISTORICAL_RECORD.json",
+    "exampleStint": "reports/project_workbook_v1/34_EXAMPLE_STINT_RECORD.json"
+  },
+  "envVarNamesFromExample": [
+    "DATA_PROVIDER",
+    "DRBL_CANONICAL_ABILITY_SOURCE",
+    "DRBL_VALIDATED_ABILITY_SHADOW",
+    "BALLDONTLIE_API_KEY",
+    "PBP_DATA_PATH"
+  ],
+  "engineeringLive": {
+    "ranAt": "2026-08-17T16:47:40.000Z",
+    "drblTest": "PASS_201_201_with_data_drbl_junction",
+    "typecheck": "PASS",
+    "dataTruth": "PASS",
+    "siteNav": "PASS",
+    "buildPrior": "PASS",
+    "releaseFixture": "PARTIAL_team_identity_live_schedule_sample_miss",
+    "workbookPolicy": "live_espn_fixture_miss_does_not_fail_workbook",
+    "PROJECT_SEMANTICS_CHANGED_BY_WORKBOOK": "NO"
+  },
+  "researchStatus": {
+    "M17b": "STRONG_MULTI_SEASON_PASS",
+    "M18a": "STRONG_PASS",
+    "M18a_UIR": "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+    "OFFBALL_VALUE_ESTABLISHED": "NO",
+    "M18b_0": "TRACKING_ACCESS_REQUIRED",
+    "M17c": "NOT_STARTED",
+    "M18b": "NOT_STARTED"
+  },
+  "knownProductDebt": [
+    "ESPN_NBA_player_identity_join_may_empty_live_DRBL",
+    "live_team_evidence_fixture_schedule_sample_miss"
+  ]
+}
+

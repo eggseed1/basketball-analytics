@@ -1,0 +1,110 @@
+{
+  "workbook": "project_workbook_v1",
+  "purpose": "READ-ONLY forensic snapshot for external technical/research review",
+  "PROJECT_SEMANTICS_CHANGED_BY_WORKBOOK": "NO",
+  "timestamp": "2026-08-17T16:42:47.000Z",
+  "branch": "integration/analytics-web",
+  "HEAD": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "HEAD_NOTE": "docs-only seal commit after analytics+web integration merge",
+  "workingTree": {
+    "dirtyRelativeToHead": true,
+    "untrackedOnly": ["reports/project_workbook_v1/"],
+    "modelOrProductSourcesModified": "NO"
+  },
+  "integrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "analyticsPremergeCommit": "72272b23fe6e037b6d463de2c840f1ad2980b562",
+  "webPremergeCommit": "7e764ceb5c834a19696dad84ed6696e7e3289a6a",
+  "mergeBase": "629bb1b790bef21020940122194772b6921569ff",
+  "backupRefs": {
+    "BACKUP_ANALYTICS_REF": "backup/analytics-pre-web-merge",
+    "BACKUP_WEB_REF": "backup/web-pre-analytics-merge"
+  },
+  "worktreePath": "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+  "platform": {
+    "os": "win32",
+    "release": "10.0.26200",
+    "arch": "x64"
+  },
+  "runtime": {
+    "node": "v24.19.0",
+    "npm": "11.17.0"
+  },
+  "canonicalModel": {
+    "CANONICAL_ABILITY_VERSION": "drbl-ability-eb1600-r1-v1",
+    "R1_POINTS_VERSION": "drbl-r1-points-v1",
+    "R1_WINEQ_VERSION": "drbl-r1-wineq-v1",
+    "K": 1600,
+    "PRIOR_MEAN": 0,
+    "CALIBRATION": "IDENTITY",
+    "P1": 37.490662671779255,
+    "P1_ERA_ROBUSTNESS": "NOT_ESTABLISHED"
+  },
+  "productionSeasons": ["2024-25", "2025-26"],
+  "supportedHistoricalSeasons_TierB": ["2020-21", "2021-22", "2022-23", "2023-24"],
+  "EARLIEST_TIER_A_SEASON": "NONE",
+  "EARLIEST_TIER_B_SEASON": "2020-21",
+  "seals": {
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+    "M16J_RESERVED_POINT_SEAL_HASH": "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+    "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+    "M16L3_PRODUCT_MIGRATION_HASH": "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+    "M17A_1_RAW_IMPORT_SEAL_HASH": "b87fff81a579456fa793db09bd4162ad8a706eb8aac4d15cd3675aa356fef437",
+    "M17A_2_HISTORICAL_CORPUS_SEAL_HASH": "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+    "M17A_2_SUPPORT_TIER_FREEZE_HASH": "86b01c4af8f03bb91502c0c8fb484aa1ef7120fc4c5e68eb33d5b4b89756d094",
+    "M17B_MULTI_SEASON_VALIDATION_SEAL_HASH": "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+    "M17B_VERDICT": "STRONG_MULTI_SEASON_PASS",
+    "M18A_SEAL_HASH": "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+    "M18A_RESERVED_VERDICT": "STRONG_PASS",
+    "UIR_STATUS": "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+    "OFFBALL_VALUE_ESTABLISHED": "NO",
+    "M18B_0_READINESS_SEAL_HASH": "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+    "M18B_0_TRACKING_ACQUISITION_STATUS": "POSSIBLE_REQUIRES_USER_ACCESS",
+    "M18B_0_TRACKING_LOCAL_TIER": "T3",
+    "INTEGRATION_SEAL_HASH": "7616954121ce6263018a364d205aa10681ac95cfca89fa2a489fd15dfd692e15",
+    "INTEGRATION_HEALTH_PRECOMMIT_HASH": "fed78dae01fc9ddc42ac6749f5a2cdefeb7d84a7a8ba6dd7b5c9d3da9a128b8c",
+    "ANALYTICS_WEB_INTEGRATION_COMMIT": "28827fbdfb6509756b35284f80c27bafac1f356c"
+  },
+  "milestoneStatus": {
+    "M17c": "NOT_STARTED",
+    "M17C_AUTHORIZED": "YES",
+    "M17C_EXECUTED": "NO",
+    "M18b": "NOT_STARTED",
+    "M18b_0": "COMPLETE_READINESS_ONLY",
+    "M18B_METHOD_PROTOTYPE_AUTHORIZED": "YES",
+    "M18B_PLAYER_VALUE_VALIDATION_AUTHORIZED": "NO"
+  },
+  "integrationGates": {
+    "DRBL_TESTS": "PASS",
+    "TEST_COUNT": "201/201",
+    "TYPECHECK": "PASS",
+    "BUILD": "PASS",
+    "UI_SMOKE": "PASS",
+    "PRODUCTION_METRIC_SEMANTICS_PRESERVED": "YES",
+    "WEB_DESIGN_INTENT_PRESERVED": "YES",
+    "INTEGRATION_READY_FOR_RESEARCH": "YES",
+    "CURRENT_PRODUCTION_REGRESSION": "PASS_0_MISMATCHES",
+    "HISTORICAL_REGRESSION": "PASS_0_MISMATCHES"
+  },
+  "knownProductDebt": [
+    {
+      "id": "ESPN_NBA_PLAYER_IDENTITY",
+      "class": "PRODUCT_DATA_INTEGRATION_DEBT",
+      "summary": "ESPN ↔ NBA Stats player-id join may leave live DRBL columns empty until identity mapping succeeds"
+    },
+    {
+      "id": "TEAM_EVIDENCE_FIXTURE",
+      "class": "PRODUCT_DATA_INTEGRATION_DEBT",
+      "summary": "test:drbl-release:fixture team-identity live schedule sample miss (environmental); not a precomputed DRBL regression"
+    }
+  ],
+  "criticalSourceSnapshotFileCount": 45,
+  "screenshots": "AVAILABLE",
+  "screenshotCount": 17,
+  "engineeringRecheck": {
+    "drblTest": "PASS_201_201",
+    "typecheck": "PASS",
+    "dataTruth": "PASS",
+    "siteNav": "PASS",
+    "secretScan": "PASS"
+  }
+}

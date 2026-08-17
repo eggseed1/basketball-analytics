@@ -72,7 +72,25 @@ export default async function PlayerPage({
   ].sort((a, b) => b.localeCompare(a));
   const seasonTeams = buildSeasonTeamsMap(career);
   const primaryTeam = primaryTeamForSeason(career, season);
-  const teamKey = primaryTeam?.teamId;
+  const multiTeamAbbr = (primaryTeam?.teamAbbreviation ?? "").toUpperCase();
+  const isMultiTeamRow =
+    primaryTeam?.teamId === "TOT" ||
+    ["TOT", "2TM", "3TM", "4TM"].includes(multiTeamAbbr);
+  const rawTeamKey = primaryTeam?.teamId?.trim() || "";
+  // Product teamKey is canonical ESPN only — never pass raw NBA Stats ids to logos.
+  const teamKey =
+    !rawTeamKey || isMultiTeamRow || /^\d{6,}$/.test(rawTeamKey)
+      ? undefined
+      : rawTeamKey;
+  const teamLabel = isMultiTeamRow
+    ? multiTeamAbbr === "2TM" ||
+      multiTeamAbbr === "3TM" ||
+      multiTeamAbbr === "4TM"
+      ? "Multiple"
+      : "TOT"
+    : /^\d{6,}$/.test(rawTeamKey) || (!rawTeamKey && primaryTeam)
+      ? "Team unavailable"
+      : (primaryTeam?.teamName ?? null);
   const useHistoricalBranding =
     applyEraTheme && themeMode !== "modern";
   const historicalBrand =
@@ -97,7 +115,7 @@ export default async function PlayerPage({
   const bioBits = [
     player?.jersey ? `#${player.jersey}` : null,
     primaryTeam?.position ?? player?.position,
-    historicalBrand?.displayName ?? primaryTeam?.teamName,
+    historicalBrand?.displayName ?? teamLabel,
     season,
   ].filter(Boolean) as string[];
 
@@ -133,6 +151,7 @@ export default async function PlayerPage({
           displayName={displayName}
           season={season}
           teamKey={teamKey}
+          teamName={teamLabel}
           historicalBrand={historicalBrand}
           useHistoricalBranding={useHistoricalBranding}
           bioBits={bioBits}

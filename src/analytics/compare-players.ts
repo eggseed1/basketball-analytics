@@ -4,6 +4,7 @@ import type {
 } from "@/analytics/types";
 import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { METRIC_PICKERS } from "@/lib/player-stat-comps";
 
 function percentileOf(value: number, pool: number[], invert = false): number {
@@ -19,6 +20,8 @@ function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {
   return total / Math.max(1, row.gamesPlayed);
 }
 
+type DimGroup = NonNullable<ComparisonDimension["group"]>;
+
 type DimSpec = {
   id: string;
   label: string;
@@ -26,21 +29,33 @@ type DimSpec = {
   pick?: (row: PlayerSeason) => number | null;
   format?: (v: number) => string;
   invert?: boolean;
+  group?: DimGroup;
 };
 
 const DIMENSIONS: DimSpec[] = [
-  { id: "overall", label: "Overall", metricId: "darko" },
-  { id: "offense", label: "Offense", metricId: "ortg" },
-  { id: "defense", label: "Defense", metricId: "drtg", invert: true },
-  { id: "shooting", label: "Shooting", metricId: "ts" },
-  { id: "playmaking", label: "Playmaking", metricId: "ast" },
-  { id: "rebounding", label: "Rebounding", metricId: "reb" },
-  { id: "usage", label: "Usage", metricId: "usg" },
+  { id: "overall", label: "Overall (DRBL/100)", metricId: "drbl100", group: "rate_ability" },
+  { id: "drbl_o", label: "DRBL-O", metricId: "drblO", group: "rate_ability" },
+  { id: "drbl_d", label: "DRBL-D", metricId: "drblD", group: "rate_ability" },
+  { id: "r1_points", label: "R1 Points", metricId: "r1Points", group: "realized_value" },
+  {
+    id: "r1_win_eq",
+    label: "R1 Win Equivalents",
+    metricId: "r1WinEq",
+    group: "realized_value",
+  },
+  { id: "darko", label: "DARKO DPM", metricId: "darko", group: "external" },
+  { id: "offense", label: "Offense", metricId: "ortg", group: "box" },
+  { id: "defense", label: "Defense", metricId: "drtg", invert: true, group: "box" },
+  { id: "shooting", label: "Shooting", metricId: "ts", group: "box" },
+  { id: "playmaking", label: "Playmaking", metricId: "ast", group: "box" },
+  { id: "rebounding", label: "Rebounding", metricId: "reb", group: "box" },
+  { id: "usage", label: "Usage", metricId: "usg", group: "box" },
   {
     id: "scoring",
     label: "Scoring volume",
     pick: (r) => perGame(r, "points"),
     format: (v) => `${formatNumber(v, 1)} PPG`,
+    group: "box",
   },
 ];
 
@@ -69,6 +84,7 @@ function resolvePicker(spec: DimSpec): {
 }
 
 function fallbackOverall(row: PlayerSeason): number | null {
+  if (hasValidDrblEstimate(row)) return row.drbl100;
   if (row.darkoDpm != null) return row.darkoDpm;
   if (row.lebron != null) return row.lebron;
   if (row.netRating != null && Number.isFinite(row.netRating)) return row.netRating;
@@ -97,15 +113,50 @@ export function buildPlayerComparison(options: {
 
   for (const spec of DIMENSIONS) {
     let picker = resolvePicker(spec);
+    let label = spec.label;
+    let note: string | undefined;
+
     if (spec.id === "overall" && picker) {
-      const aVal = picker.pick(a);
-      const bVal = picker.pick(b);
-      if (aVal == null && bVal == null) {
-        picker = {
-          pick: fallbackOverall,
-          format: (v) => formatNumber(v, 2),
-          invert: false,
-        };
+      const aDrbl = METRIC_PICKERS.drbl100.pick(a);
+      const bDrbl = METRIC_PICKERS.drbl100.pick(b);
+      if (aDrbl != null && bDrbl != null) {
+        // Same-season comparable DRBL — keep picker.
+        label = "Overall (DRBL/100)";
+      } else if (aDrbl != null || bDrbl != null) {
+        // Asymmetric DRBL — unavailable for overall (never cross-metric).
+        dimensions.push({
+          id: "overall",
+          label: "Overall (DRBL/100)",
+          aDisplay: aDrbl != null ? formatNumber(aDrbl, 2) : "Unavailable",
+          bDisplay: bDrbl != null ? formatNumber(bDrbl, 2) : "Unavailable",
+          aValue: aDrbl ?? undefined,
+          bValue: bDrbl ?? undefined,
+          group: "rate_ability",
+          note: "Overall DRBL edge requires valid estimates on both sides — never cross-compared to DARKO.",
+        });
+        continue;
+      } else {
+        const aDarko = a.darkoDpm;
+        const bDarko = b.darkoDpm;
+        if (aDarko != null && bDarko != null) {
+          picker = {
+            pick: (r) => r.darkoDpm ?? null,
+            format: (v) => formatNumber(v, 2),
+            invert: false,
+          };
+          label = "Overall (DARKO)";
+          note = "DRBL unavailable for both — using season-true DARKO as external overall.";
+        } else if (aValMissingBoth(a, b)) {
+          picker = {
+            pick: fallbackOverall,
+            format: (v) => formatNumber(v, 2),
+            invert: false,
+          };
+          label = "Overall";
+          note = "Fallback overall among available season-true metrics.";
+        } else {
+          continue;
+        }
       }
     }
     if (!picker) continue;
@@ -113,6 +164,26 @@ export function buildPlayerComparison(options: {
     const aRaw = picker.pick(a);
     const bRaw = picker.pick(b);
     if (aRaw == null && bRaw == null) continue;
+
+    // Same-metric both-sides for rate/value groups — show Unavailable not 0.
+    if (
+      (spec.group === "rate_ability" || spec.group === "realized_value") &&
+      (aRaw == null || bRaw == null)
+    ) {
+      dimensions.push({
+        id: spec.id,
+        label,
+        aDisplay: aRaw != null ? picker.format(aRaw) : "Unavailable",
+        bDisplay: bRaw != null ? picker.format(bRaw) : "Unavailable",
+        aValue: aRaw ?? undefined,
+        bValue: bRaw ?? undefined,
+        group: spec.group,
+        note:
+          note ??
+          "Metric unavailable for at least one side this season (not shown as 0).",
+      });
+      continue;
+    }
 
     const values = pool
       .map((row) => picker!.pick(row))
@@ -144,12 +215,14 @@ export function buildPlayerComparison(options: {
 
     dimensions.push({
       id: spec.id,
-      label: spec.label,
+      label,
       aDisplay,
       bDisplay,
       aValue: aPct ?? aRaw ?? undefined,
       bValue: bPct ?? bRaw ?? undefined,
       delta,
+      group: spec.group,
+      note,
     });
   }
 
@@ -172,6 +245,7 @@ export function buildPlayerComparison(options: {
         aValue: aTs ?? undefined,
         bValue: bTs ?? undefined,
         delta: aTs != null && bTs != null ? aTs - bTs : undefined,
+        group: "box",
       });
     }
   }
@@ -191,6 +265,10 @@ export function buildPlayerComparison(options: {
     dimensions,
     differenceSummary,
   };
+}
+
+function aValMissingBoth(a: PlayerSeason, b: PlayerSeason): boolean {
+  return fallbackOverall(a) != null || fallbackOverall(b) != null;
 }
 
 function buildDifferenceSummary(

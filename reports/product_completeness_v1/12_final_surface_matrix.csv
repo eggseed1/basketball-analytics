@@ -1,0 +1,22 @@
+route,surface,current_data_provider,player_identity_shown,team_identity_shown,logo_shown,team_full_name_shown,team_abbreviation_shown,team_colors_shown,historical_identity_supported,DRBL_applicable,DRBL_currently_visible,R1_Points_visible,R1_WinEq_visible,DRBL_OD_visible,diagnostics_visible,support_notice_correct,external_metrics_visible,external_metric_hierarchy_appropriate,null_behavior_correct,mobile_audited,main_gap,p17_status
+/,home,NBA+DARKO+ESPN scoreboard,partial,partial,yes,partial,yes,partial,partial,no,no,no,no,no,no,n/a,yes,no_DARKO_first,n/a,no,DRBL absent; DARKO-first impact rail,OPEN
+/ask,ASK DRBL,query-engine ESPN boards,yes,optional,optional,optional,optional,no,partial,yes,no,no,no,no,no,partial,yes,no_no_DRBL,yes,no,No DRBL metrics in ASK,OPEN
+/scores,scores,ESPN scoreboard,no,yes,yes,partial,yes,partial,yes,no,no,no,no,no,no,n/a,no,n/a,yes,no,No impact metrics by design,INTENTIONALLY_NOT_SUPPORTED
+/explore/games,games explore,provider games,no,yes,yes,partial,yes,partial,yes,no,no,no,no,no,no,n/a,no,n/a,yes,no,No DRBL by design,INTENTIONALLY_NOT_SUPPORTED
+/games/[gameId],game destination,game lab,partial,yes,yes,yes,yes,yes,yes,no,no,no,no,no,no,n/a,no,n/a,yes,no,No game-level DRBL,INTENTIONALLY_NOT_SUPPORTED
+/explore/players,player leaderboard,NBA board+DRBL overlay+DARKO,yes,yes,yes,no,yes_id_or_logo,no,yes,yes,yes,yes,yes,no,no,yes,yes,partial_DARKO_columns_ok,mostly,partial,O/D diagnostics missing; desktop team full name weak,PARTIAL_FIXED
+/players/[playerId],player destination,NBA career+season peers+alias DRBL,yes,yes,yes,yes,yes,partial,yes,yes,yes,yes,yes,no,no,partial,yes,yes_DRBL_before_DARKO,partial,partial,O/D still disclosure-only; season-rank/compare lack DRBL,FIXED
+/players/[playerId]/season-rank,season rank,career analytics,yes,yes,yes,yes,yes,no,partial,yes,no,no,no,no,no,n/a,yes,n/a,yes,no,No DRBL ranking,OPEN
+/players/[playerId]/season-compare,season compare,career seasons,yes,yes,yes,yes,yes,no,partial,yes,no,no,no,no,no,n/a,yes,n/a,yes,no,No DRBL compare,OPEN
+/explore/teams,team boards,team season stats,no,yes,yes,yes_FIXED,yes,partial,partial,no,no,no,no,no,no,n/a,no,n/a,yes,partial,No team DRBL; full names FIXED via canonical resolve,FIXED_IDENTITY
+/teams/[teamId],team destination,team board+roster+DRBL prefer,yes,yes,yes,yes,yes,yes,yes,yes,yes_roster_when_valid,partial,partial,no,no,partial,yes,yes_DRBL_before_DARKO_roster,yes,partial,Roster value prefers DRBL; DARKO fallback,FIXED
+/standings,standings,ESPN standings,no,yes,yes,partial,yes,no,partial,no,no,no,no,no,no,n/a,no,n/a,yes,no,Identity OK; no DRBL,INTENTIONALLY_NOT_SUPPORTED
+/compare,compare,player/team compare,yes,yes,yes,partial,yes,no,partial,yes,no,no,no,no,no,n/a,yes,no_DARKO_led,yes,no,Compare ignores DRBL,OPEN
+/offseason,transactions,ESPN transactions,no,yes,yes,partial,yes,no,partial,no,no,no,no,no,no,n/a,no,n/a,yes,no,Provider ID collision risk historically noted,OPEN_IDENTITY_RISK
+/learn,learn index,static,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,branding,no,no,no,no,n/a,n/a,n/a,n/a,no,Registry still thin on DRBL metric concept ids,PARTIAL
+/learn/drbl,DRBL methodology,static,n/a,n/a,n/a,n/a,n/a,n/a,yes,yes,defs_yes,defs_yes,defs_yes,defs_yes,defs_yes,yes,n/a,n/a,n/a,no,O/D/P/LN/B + non-additive + retired WAR/uncertainty documented,FIXED
+/history,time machine,historical queries,partial,yes,partial_text_mark,yes,yes,partial,yes,partial,no,no,no,no,no,banner,no,n/a,yes,no,No historical DRBL leaders; historical logos empty,OPEN
+/franchises,franchise list,static lore,no,yes,yes,yes,yes,partial,yes,no,no,no,no,no,no,n/a,no,n/a,n/a,no,Franchise vs team-season dual system,INTENTIONALLY_NOT_SUPPORTED
+/franchises/[id],franchise detail,static lore,no,yes,yes,yes,yes,partial,yes,no,no,no,no,no,no,n/a,no,n/a,n/a,no,No metrics,INTENTIONALLY_NOT_SUPPORTED
+/dashboard,dashboard,player seasons slim,partial,partial,partial,no,yes,no,no,yes,no,no,no,no,no,n/a,partial,n/a,yes,no,Omits DRBL/DARKO,OPEN
+/explore/players#banner,board health banner,live board health,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,yes_FIXED,n/a,n/a,n/a,n/a,Live board vs precomputed DRBL overlay clarified,FIXED

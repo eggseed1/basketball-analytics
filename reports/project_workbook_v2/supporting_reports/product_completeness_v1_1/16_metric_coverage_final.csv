@@ -1,0 +1,15 @@
+metric,display_name,status,public,home,ask,compare,season_compare,season_rank,history,player_destination,explore_players,roster,learn,glossary_tooltip,notes
+drbl100,DRBL/100,CANONICAL,YES,YES_default_sort,YES_vocabulary,YES_overall,YES_primary,YES_rank_and_pct,YES_season_leaders,YES_snapshot,YES_sort,YES_when_valid,YES,YES,P17.1 hierarchy FIXED on primary surfaces
+r1Points,R1 Points,CANONICAL,YES,NO,YES_vocabulary,YES_realized,YES,YES_labeled_distinct,NO,YES_snapshot,YES,PARTIAL,YES,YES,Never labeled as DRBL rank
+r1WinEquivalents,R1 Win Equivalents,CANONICAL,YES,NO,YES_vocabulary,YES_realized,YES,NO,NO,YES_snapshot,YES,PARTIAL,YES,YES,Frozen P1; not traditional WAR
+drblO,DRBL-O,DIAGNOSTIC,DISCLOSURE,NO,PARTIAL,YES_OD_row,YES_OD,NO,NO,DISCLOSURE,NO,NO,YES,YES,O+D ≠ DRBL/100
+drblD,DRBL-D,DIAGNOSTIC,DISCLOSURE,NO,PARTIAL,YES_OD_row,YES_OD,NO,NO,DISCLOSURE,NO,NO,YES,YES,Diagnostic
+drblP,DRBL-P,DIAGNOSTIC,DISCLOSURE,NO,NO,NO,YES_diagnostic,NO,NO,DISCLOSURE,NO,NO,YES,YES,Non-additive warning required
+drblLn,DRBL-LN,DIAGNOSTIC,DISCLOSURE,NO,NO,NO,YES_diagnostic,NO,NO,DISCLOSURE,NO,NO,YES,YES,Non-additive warning required
+drblB,DRBL-B,DIAGNOSTIC,DISCLOSURE,NO,NO,NO,YES_diagnostic,NO,NO,DISCLOSURE,NO,NO,YES,YES,Non-additive; gravity wording removed
+darkoDpm,DARKO DPM,EXTERNAL,YES,YES_secondary,YES,YES_external_group,NO,NO,NO,YES_comparison,YES,YES_fallback,PARTIAL,YES,Never substitute for missing DRBL
+drblWar,DRBL WAR,DEPRECATED,NO,NO,NO,NO,NO,NO,NO,NO,REDIRECT_r1WinEq,NO,YES_retired,NO,Retired public WAR
+drblUncertainty,DRBL ±,DEPRECATED,NO,NO,NO,NO,NO,NO,NO,NO,NO,NO,YES_retired,YES_legacy,Not public canonical
+UIR-C,UIR-C,RESEARCH,NO,NO,NO,NO,NO,NO,NO,NO,NO,NO,MENTION_ONLY,NO,Research-only; M17c NOT_STARTED
+dashboard_box,Box Contour,SECONDARY_LAB,YES_lab,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,n/a,Dashboard INTENTIONALLY_DEFERRED for DRBL
+SUMMARY,public_core_coverage,FINAL,3/3_core,FIXED,FIXED,FIXED,FIXED,FIXED,FIXED,FIXED,FIXED,FIXED,YES,"tooltips YES for public core; HISTORICAL_LOGO not a metric issue"

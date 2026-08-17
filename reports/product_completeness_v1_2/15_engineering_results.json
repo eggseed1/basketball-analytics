@@ -1,0 +1,12 @@
+{
+  "drbl:test": "PASS (201/201)",
+  "test:team-identity": "PASS",
+  "test:player-team-render": "PASS",
+  "test:game-route-contract": "PASS (ESPN live shell OK; NBA live sample optional skip)",
+  "test:data-truth": "PASS",
+  "test:site-nav": "PASS",
+  "typecheck": "PASS",
+  "build": "PASS",
+  "precomputedVs28827fb": "EQUAL",
+  "note": "data/drbl junction used only for drbl:test; removed before next build (Turbopack symlink root panic)"
+}

@@ -1,0 +1,13 @@
+{
+  "integrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "precomputedEqual": true,
+  "note": "No edits to src/data/drbl/precomputed or model math in P17.2",
+  "mismatches": 0,
+  "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24"
+  ],
+  "supportTierMismatches": 0
+}

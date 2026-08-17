@@ -1,0 +1,21 @@
+{
+  "milestone": "P17_DRBL_PRODUCT_COMPLETENESS",
+  "DRBL_V1_REOPENED": "NO",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "K": 1600,
+  "K_REFIT": "NO",
+  "PRIOR_MEAN": 0,
+  "CALIBRATION": "IDENTITY",
+  "P1": 37.490662671779255,
+  "P1_REFIT": "NO",
+  "P1_UNCHANGED": "YES",
+  "R1_CHANGED": "NO",
+  "EPV_CHANGED": "NO",
+  "ABILITY_VERSION": "drbl-ability-eb1600-r1-v1",
+  "M17C_STARTED": "NO",
+  "M18B_STARTED": "NO",
+  "LEGACY_WAR_PUBLIC": "NO",
+  "UIR_PUBLIC_CANONICAL": "NO",
+  "note": "Product completeness only — identity/UI/copy. Model firewall unchanged from 00_freeze.json / integration health.",
+  "source": "reports/product_completeness_v1/00_freeze.json + reports/m17b/20_model_health.json"
+}

@@ -1,0 +1,9 @@
+scope,methodology,status_after_fix,evidence,notes
+sampling_plan,Highest-minute player-season row per team planned as coverage sample for destination QA,PLANNED_NOT_EXECUTED_AS_BATCH,,Batch minute-ranked sample CSV not produced this seal; do not invent per-team minute ranks
+primary_team_helper,primaryTeamForSeason / buildSeasonTeamsMap use max gamesPlayed (not minutes),UNCHANGED_HELPER,src/lib/player-destination.ts,Identity branding helper still GP-max; distinct from planned minute sample
+drbl_snapshot_ui,Player core island shows DRBL/100 + rank + percentile + R1 Points + R1 Win Eq when hasValidDrblEstimate,FIXED,src/components/players/player-core-island.tsx,Headline prefers drbl100 over DARKO
+identity_join,resolvePlayerIdentity + alias ESPN→NBA for peer overlay and career/season fetches,FIXED,player-identity.ts; players.ts; aliases.json 676,Confidence HIGH_CONFIDENCE_UNIQUE_NAME documented
+merge_gap,mergePlayerSeasonStats promotes peer/career DRBL; never invents R1 zeros,FIXED,player-destination.ts + test-player-destination-merge.ts,
+empty_state,UNSUPPORTED / IDENTITY_UNRESOLVED / MISSING reasons when DRBL season applicable but estimate absent,FIXED,player-core-island.tsx,
+live_coverage_pct,Percent of live ESPN-routed player pages with visible DRBL Snapshot,NOT_MEASURED_LIVE,,Do not claim 100% join or 100% page coverage
+season_rank_compare,/players/.../season-rank and season-compare still omit DRBL ranking/compare,OPEN_GAP,01_surface_matrix + app routes,INTENTIONALLY deferred vs destination snapshot

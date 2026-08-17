@@ -1,0 +1,4 @@
+playerId,season,teamId_before_fix,teamId_after,brand,route,status
+fixture-okc,any,1610612760,25,OKC,/teams/25,PASS
+fixture-lac,any,1610612746,12,LAC,/teams/12,PASS
+fixture-det,any,1610612765,8,DET,/teams/8,PASS

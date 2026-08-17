@@ -1,0 +1,64 @@
+{
+  "version": "player-crosswalk-v1.1",
+  "generatedAt": "2026-08-17T17:38:54.894Z",
+  "aliasFile": "data/impact/player-id-aliases.json",
+  "aliasCount": 676,
+  "countsByClass": {
+    "VERIFIED_MULTI_FIELD": 270,
+    "HIGH_CONFIDENCE_MULTI_FIELD": 349,
+    "UNIQUE_NAME_ONLY": 57
+  },
+  "productionApprovedCount": 619,
+  "productionApprovedRate": 0.915680473372781,
+  "sha256": {
+    "before": "0e31560508a92f709b3b47f0aabcd4e71ec88688762e997dbae4d86bacf4f1f3",
+    "after": "104ae0e91b8928a494a14b2855240750962751ff764e31f1d315d22de64673a6"
+  },
+  "provenance": {
+    "drblSeasons": [
+      "2020-21",
+      "2021-22",
+      "2022-23",
+      "2023-24",
+      "2024-25",
+      "2025-26"
+    ],
+    "espnBoardSeasonsAttempted": [
+      "2024-25",
+      "2025-26"
+    ],
+    "espnBoardOk": true,
+    "espnBoardRowCount": 1138,
+    "espnBoardErrors": [],
+    "priorSource": "byathlete",
+    "priorGeneratedAt": "2026-08-17T17:38:35.169Z",
+    "birthDates": "not_fetched_bulk_unavailable",
+    "policy": "P17.1: productionApproved only for EXACT_PROVIDER_MAPPING | VERIFIED_MULTI_FIELD | HIGH_CONFIDENCE_MULTI_FIELD. UNIQUE_NAME_ONLY retained but not used for silent production joins. No invented IDs.",
+    "targetNbaId1642935": {
+      "nbaPlayerId": "1642935",
+      "playerName": "Chucky Hepburn",
+      "normalizedName": "chuckyhepburn",
+      "drblSeasons": [
+        {
+          "season": "2025-26",
+          "teamCanon": "28",
+          "possessions": 53
+        }
+      ],
+      "espnBoardNameHits": [],
+      "aliasPresent": false,
+      "status": "UNRESOLVED",
+      "rationale": "Present in DRBL 2025-26; no ESPN byathlete board row with matching unique name; no alias invented"
+    }
+  },
+  "outputs": {
+    "evidenceCsv": "reports/product_completeness_v1_1/01_player_alias_evidence.csv",
+    "freezeJson": "reports/product_completeness_v1_1/02_player_crosswalk_freeze.json",
+    "staticCoverageCsv": "reports/product_completeness_v1_1/03_static_join_coverage.csv",
+    "liveCoverageJson": "reports/product_completeness_v1_1/04_live_join_coverage.json"
+  },
+  "firewall": {
+    "MODEL_PARAMETER_CHANGED": "NO",
+    "DRBL_MATH_CHANGED": "NO"
+  }
+}

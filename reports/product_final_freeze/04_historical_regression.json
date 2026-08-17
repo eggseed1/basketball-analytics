@@ -1,0 +1,14 @@
+{
+  "HISTORICAL_DRBL_MISMATCHES": 0,
+  "HISTORICAL_R1_MISMATCHES": 0,
+  "HISTORICAL_R1WINEQ_MISMATCHES": 0,
+  "HISTORICAL_RANK_MISMATCHES": 0,
+  "HISTORICAL_SUPPORT_TIER_MISMATCHES": 0,
+  "seasons": ["2020-21", "2021-22", "2022-23", "2023-24"],
+  "method": "git_hash_object_equality_vs_28827fb_integration_commit",
+  "integrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "sourceReports": [
+    "reports/product_completeness_v1_2/13_historical_regression.json",
+    "reports/product_completeness_v1_1/20_historical_regression.json"
+  ]
+}

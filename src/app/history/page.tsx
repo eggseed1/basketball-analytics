@@ -90,6 +90,8 @@ async function HistorySnapshotLoader({
         leadersPpg={leaders.ppg}
         leadersRpg={leaders.rpg}
         leadersApg={leaders.apg}
+        leadersDrbl={leaders.drbl}
+        leadersDrblNote={leaders.drblNote}
         leadersWarning={leaders.warning}
         teams={teamSnap.directory}
         teamsWarning={teamSnap.directoryWarning}

@@ -1,0 +1,39 @@
+﻿{
+    "milestone":  "P17_DRBL_PRODUCT_COMPLETENESS",
+    "timestamp":  "2026-08-17T13:05:11.6230846-04:00",
+    "sourceBranch":  "integration/analytics-web",
+    "productBranch":  "product/drbl-site-completeness-v1",
+    "sourceHEAD":  "64cc231a215c579f3498e6122a0230f7388971cc",
+    "productHEAD":  "64cc231a215c579f3498e6122a0230f7388971cc",
+    "integrationCommit":  "28827fbdfb6509756b35284f80c27bafac1f356c",
+    "worktree":  "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+    "dirty":  {
+                  "untracked":  [
+                                    "reports/project_workbook_v1/"
+                                ],
+                  "modelOrProductSourcesModified":  "NO"
+              },
+    "firewall":  {
+                     "DRBL_V1_REOPENED":  "NO",
+                     "MODEL_PARAMETER_CHANGED":  "NO",
+                     "K_REFIT":  "NO",
+                     "P1_REFIT":  "NO",
+                     "R1_CHANGED":  "NO",
+                     "EPV_CHANGED":  "NO",
+                     "UIR_CHANGED":  "NO",
+                     "M17C_STARTED":  "NO",
+                     "M18B_STARTED":  "NO"
+                 },
+    "canonical":  {
+                      "K":  1600,
+                      "PRIOR_MEAN":  0,
+                      "CALIBRATION":  "IDENTITY",
+                      "P1":  37.490662671779255,
+                      "ABILITY_VERSION":  "drbl-ability-eb1600-r1-v1"
+                  },
+    "runtime":  {
+                    "node":  "v24.19.0",
+                    "npm":  "11.17.0"
+                },
+    "phase":  "COMPLETE_STOP_FOR_AUDIT"
+}

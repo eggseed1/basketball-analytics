@@ -1,0 +1,16 @@
+path,role,p17_2_relevance
+src/data/identity/team-map.ts,critical_identity_or_game,YES
+src/data/identity/game-id.ts,critical_identity_or_game,YES
+src/lib/team-identity.ts,critical_identity_or_game,YES
+src/lib/game-team-identity.ts,critical_identity_or_game,YES
+src/lib/nba-brand.ts,critical_identity_or_game,YES
+src/data/providers/nba/nba-team-meta.ts,critical_identity_or_game,YES
+src/data/transformers/stats-nba.ts,critical_identity_or_game,YES
+src/data/queries/games.ts,critical_identity_or_game,YES
+src/data/providers/nba-data-provider.ts,critical_identity_or_game,YES
+src/data/providers/nba/schedule-client.ts,critical_identity_or_game,YES
+src/components/explore/player-season-table.tsx,critical_identity_or_game,YES
+src/app/games/[gameId]/page.tsx,critical_identity_or_game,YES
+src/data/types/player-season.ts,critical_identity_or_game,YES
+src/data/types/game.ts,critical_identity_or_game,YES
+src/app/games/[gameId]/page.tsx,game_destination_route,YES

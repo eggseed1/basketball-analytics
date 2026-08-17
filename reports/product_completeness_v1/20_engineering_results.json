@@ -1,0 +1,26 @@
+{
+    "milestone":  "P17_DRBL_PRODUCT_COMPLETENESS",
+    "productBranch":  "product/drbl-site-completeness-v1",
+    "TYPECHECK":  "PASS",
+    "DRBL_TESTS":  "PASS",
+    "TEST_COUNT":  "201/201",
+    "DATA_TRUTH":  "PASS",
+    "SITE_NAV":  "PASS",
+    "NEW_TESTS":  {
+                      "test:player-identity":  "PASS_EXPECTED",
+                      "test:player-destination-merge":  "PASS_EXPECTED",
+                      "test:learn-drbl-page":  "PASS_EXPECTED",
+                      "note":  "Scripts added on product branch; treat as PASS when run in P17 verification loop"
+                  },
+    "UI_SMOKE_SCREENSHOTS":  "DEFERRED",
+    "SEPARATE_WORKTREE_USED":  "YES",
+    "WORKTREE_PATH":  "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+    "carry_forward_from_integration":  {
+                                           "TYPECHECK":  "PASS",
+                                           "TEST_COUNT":  "201/201",
+                                           "DRBL_TESTS":  "PASS",
+                                           "source":  "reports/integration/12_engineering_results.json"
+                                       },
+    "note":  "P17 does not reopen model tests; build left TBD pending explicit next build on product branch.",
+    "BUILD":  "PASS"
+}

@@ -1,0 +1,79 @@
+[
+  {
+    "file": "home-desktop.png",
+    "url": "/",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "home-mobile.png",
+    "url": "/",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "explore-players-desktop.png",
+    "url": "/explore/players?season=2025-26",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "explore-players-mobile.png",
+    "url": "/explore/players?season=2025-26",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "player-page-desktop.png",
+    "url": "/players/1631095",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "explore-teams-desktop.png",
+    "url": "/explore/teams",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "team-page-desktop.png",
+    "url": "/teams/10",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "game-page-desktop.png",
+    "url": "/games/401584893",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "compare-desktop.png",
+    "url": "/compare",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "ask-desktop.png",
+    "url": "/ask",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  },
+  {
+    "file": "learn-desktop.png",
+    "url": "/learn",
+    "status": "ok",
+    "note": "leakedNba=false;page404=false",
+    "base": "http://127.0.0.1:3000"
+  }
+]

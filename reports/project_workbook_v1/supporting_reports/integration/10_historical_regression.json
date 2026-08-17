@@ -1,0 +1,13 @@
+{
+  "HISTORICAL_DRBL_MISMATCHES": 0,
+  "HISTORICAL_R1_MISMATCHES": 0,
+  "HISTORICAL_R1WINEQ_MISMATCHES": 0,
+  "HISTORICAL_RANK_MISMATCHES": 0,
+  "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24"
+  ],
+  "method": "git_hash_object_equality_vs_72272b2"
+}

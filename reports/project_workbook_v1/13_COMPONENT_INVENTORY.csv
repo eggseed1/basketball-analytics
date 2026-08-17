@@ -1,0 +1,29 @@
+path,area,purpose,bytes
+src/components/sports/sports-shell.tsx,sports,App chrome / layout shell,11549
+src/components/sports/site-nav.ts,sports,Canonical site navigation config,3696
+src/components/sports/gamefeed.tsx,sports,Live/upcoming gamefeed,22009
+src/components/sports/game-score-card.tsx,sports,Scoreboard game card,10870
+src/components/sports/live-scoreboard-scope.tsx,sports,Live scoreboard refresh scope,675
+src/components/explore/player-season-table.tsx,explore,DRBL/player season board table,24910
+src/components/explore/team-season-table.tsx,explore,Team season explore table,8497
+src/components/explore/game-season-table.tsx,explore,Game season explore table,8813
+src/components/explore/player-filter-toolbar.tsx,explore,Player explore filters,8670
+src/components/explore/drbl-season-support-notice.tsx,explore,Historical DRBL support notice,2336
+src/components/players/player-identity.tsx,players,Player identity header,10947
+src/components/players/player-season-explorer.tsx,players,Player season explorer,8137
+src/components/players/player-season-compare-view.tsx,players,Player season compare,14241
+src/components/players/player-season-rank-view.tsx,players,Player season rank,16977
+src/components/players/player-percentile-panel.tsx,players,Percentile panel,19443
+src/components/players/player-career-resume.tsx,players,Career resume,16415
+src/components/players/player-evolution-panel.tsx,players,Career evolution,4010
+src/components/teams/team-destination-identity.tsx,teams,Team identity destination,8183
+src/components/teams/team-roster-section.tsx,teams,Team roster,4682
+src/components/teams/team-arc-section.tsx,teams,Team arc,9644
+src/components/teams/team-season-evidence-profile.tsx,teams,Team season evidence,3623
+src/components/teams/team-transactions-section.tsx,teams,Team transactions,2298
+src/components/teams/team-assets-section.tsx,teams,Team assets,5937
+src/components/standings/standings-conference-table.tsx,standings,Standings table,6009
+src/components/time-machine/time-machine-landing.tsx,time-machine,Time machine landing,2741
+src/components/time-machine/time-machine-snapshot.tsx,time-machine,Time machine snapshot,13735
+src/components/time-machine/history-client-shell.tsx,time-machine,History client shell,360
+src/components/charts/player-usage-ts-scatter.tsx,charts,Usage-TS scatter chart,12747

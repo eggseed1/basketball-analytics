@@ -1,0 +1,25 @@
+{
+  "productBranch": "product/drbl-site-completeness-v1",
+  "productHEAD_at_freeze": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "analyticsPremergeCommit": "72272b23fe6e037b6d463de2c840f1ad2980b562",
+  "M17C_STARTED": "NO",
+  "M17C_EXECUTED": "NO",
+  "seals_unchanged": "YES",
+  "integration_health_flags": {
+    "M17A_2_SEAL_CHANGED": "NO",
+    "M17B_SEAL_CHANGED": "NO",
+    "M18A_SEAL_CHANGED": "NO",
+    "M18B_0_SEAL_CHANGED": "NO"
+  },
+  "seal_hashes": {
+    "M17A_2_HISTORICAL_CORPUS_SEAL_HASH": "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+    "M17B_MULTI_SEASON_VALIDATION_SEAL_HASH": "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+    "M18A_SEAL_HASH": "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+    "M18B_0_READINESS_SEAL_HASH": "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+    "POINT_ESTIMATE_FREEZE_HASH": "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+    "M16L2_RESERVED_RESULT_SEAL_HASH": "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+    "M16L3_PRODUCT_MIGRATION_HASH": "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305"
+  },
+  "working_tree_note": "P17 product/docs changes; research seal JSON files under reports/m17* and reports/m18* not modified",
+  "source": "reports/integration/13_integration_health.json + seal JSON bodies"
+}

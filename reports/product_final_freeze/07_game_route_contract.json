@@ -1,0 +1,36 @@
+{
+  "PUBLIC_GAME_ID_CONTRACT": "provider-native ids accepted when lookup matches; no cross-provider opportunistic guessing",
+  "families": [
+    {
+      "family": "ESPN event id",
+      "example": "401584893",
+      "recognition": "numeric id starting with 40… (ESPN event)",
+      "provider": "espn",
+      "lookup": "ESPN site summary API",
+      "publicRoute": "/games/{espnEventId}"
+    },
+    {
+      "family": "NBA Stats GameID",
+      "example": "0022400001",
+      "recognition": "10-char GameID starting with 00",
+      "provider": "nba",
+      "lookup": "stats.nba.com box / active NBA provider",
+      "publicRoute": "/games/{nbaGameId}"
+    },
+    {
+      "family": "BDL / historical",
+      "example": "15908541",
+      "recognition": "shorter numeric / historical normalized id",
+      "provider": "bdl",
+      "lookup": "BDL / historical path",
+      "publicRoute": "/games/{bdlOrHistoricalId}"
+    }
+  ],
+  "rootCauseFixed": "ESPN_EVENT_ID_LOOKED_UP_AS_NBA_STATS_GAMEID",
+  "HOME_TO_GAME": "PASS",
+  "SCORES_TO_GAME": "PASS",
+  "EXPLORE_GAMES_TO_GAME": "PASS",
+  "VALID_GAME_404_FAILURES": 0,
+  "crossProviderGuessing": "NO",
+  "source": "reports/product_completeness_v1_2/05_game_route_forensics.md"
+}

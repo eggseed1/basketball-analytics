@@ -1,0 +1,6 @@
+check,value,notes
+raw_nba_ids_in_tm_after,0,normalize + brand
+multi_team_policy,TOT_or_Multiple,no invented brand
+sample_okc_before,1610612760,human leak
+sample_okc_after_teamId,25,ESPN canonical
+sample_okc_after_label,OKC,resolveTeamBrand

@@ -43,17 +43,22 @@ async function HomeFindings() {
   return <FindingsSection insights={data.insights} />;
 }
 
-async function HomeRightRail({ season }: { season: string }) {
+async function HomeStandings({ season }: { season: string }) {
+  return <HomeStandingsPanel season={season} />;
+}
+
+async function HomeTopPerformers() {
   const data = await getHomeAnalyticsCached();
   return (
-    <>
-      <HomeStandingsPanel season={season} />
-      <TopPerformersPanel
-        darkoLeaders={data.darkoLeaders}
-        tsLeaders={data.tsLeaders}
-        usageStars={data.usageStars}
-      />
-    </>
+    <TopPerformersPanel
+      drblLeaders={data.drblLeaders}
+      darkoLeaders={data.darkoLeaders}
+      tsLeaders={data.tsLeaders}
+      usageStars={data.usageStars}
+      performerSeasons={data.performerSeasons}
+      drblOverlayOk={data.drblOverlayOk}
+      drblFallbackNote={data.drblFallbackNote}
+    />
   );
 }
 
@@ -81,15 +86,11 @@ export default function HomePage() {
           </Suspense>
         </div>
         <div className="flex flex-col gap-4 lg:col-span-5">
-          <Suspense
-            fallback={
-              <>
-                <BlockSkeleton className="h-72" />
-                <BlockSkeleton className="h-80" />
-              </>
-            }
-          >
-            <HomeRightRail season={season} />
+          <Suspense fallback={<BlockSkeleton className="h-72" />}>
+            <HomeStandings season={season} />
+          </Suspense>
+          <Suspense fallback={<BlockSkeleton className="h-80" />}>
+            <HomeTopPerformers />
           </Suspense>
         </div>
       </div>

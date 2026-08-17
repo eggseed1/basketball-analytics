@@ -19,6 +19,10 @@ import {
   resolveSeasonPhrases,
   validateBasketballQuery,
   withAskContextParams,
+  FORBIDDEN_DRBL_CLAIMS,
+  isForbiddenDrblClaimText,
+  DRBL_VOCABULARY,
+  matchDrblGlossaryQuery,
 } from "../src/query-engine";
 import { PLAYER_ALIASES } from "../src/query-engine/entities";
 import { askDrblHref } from "../src/components/players/player-ask-links";
@@ -434,6 +438,53 @@ function assertJsonSafe(value: unknown) {
     metricId: "ppg",
   });
   assert.equal(v.ok, true);
+}
+
+// --- P17.1 DRBL metric vocabulary ---
+{
+  assert.equal(resolveMetric("DRBL/100")?.id, "drbl100");
+  assert.equal(resolveMetric("ability rate")?.id, "drbl100");
+  assert.equal(resolveMetric("R1 Points")?.id, "r1_points");
+  assert.equal(resolveMetric("win equivalents")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("DRBL-O")?.id, "drbl_o");
+  assert.equal(resolveMetric("DRBL-LN")?.id, "drbl_ln");
+
+  assert.equal(metricSeasonAvailability("drbl100", "2012-13").ok, false);
+  assert.equal(metricSeasonAvailability("drbl100", "2024-25").ok, true);
+  assert.equal(metricSeasonAvailability("r1_points", "2012-13").ok, false);
+
+  const gloss = matchDrblGlossaryQuery("What is DRBL/100?");
+  assert.ok(gloss);
+  assert.equal(gloss!.id, "drbl100");
+  const glossAst = interpretAskQuery("What is DRBL/100?");
+  assert.equal(glossAst.metricId, "drbl100");
+  assert.equal(glossAst.entities.length, 0);
+  assert.equal(validateBasketballQuery(glossAst).ok, true);
+
+  for (const claim of FORBIDDEN_DRBL_CLAIMS) {
+    assert.equal(
+      isForbiddenDrblClaimText(claim),
+      true,
+      `expected forbidden detector to catch: ${claim}`
+    );
+  }
+  for (const entry of DRBL_VOCABULARY) {
+    assert.equal(
+      isForbiddenDrblClaimText(entry.glossary),
+      false,
+      `glossary must not affirm forbidden claim: ${entry.id}`
+    );
+  }
+  assert.ok(
+    !/LN\s*\+\s*P\s*\+\s*B\s*=\s*DRBL/i.test(
+      DRBL_VOCABULARY.map((e) => e.glossary).join("\n")
+    )
+  );
+  assert.ok(
+    !DRBL_VOCABULARY.some((e) =>
+      /beats DARKO|is WAR|is replacement|is off-ball/i.test(e.glossary)
+    )
+  );
 }
 
 console.log("test-ask-drbl: all assertions passed");

@@ -1,4 +1,5 @@
 import { metricById } from "./metrics";
+import { glossaryForMetricId } from "./drbl-vocabulary";
 import type { BasketballQueryAst, QueryValidation } from "./types";
 
 const PBP_FIELDS_PRESENT = (ast: BasketballQueryAst): string[] => {
@@ -69,8 +70,14 @@ export function validateBasketballQuery(
     };
   }
 
+  const methodologyOnly =
+    ast.operation === "season_stat" &&
+    !ast.entities.length &&
+    Boolean(ast.metricId && glossaryForMetricId(ast.metricId));
+
   const needsEntity =
     ast.operation !== "leaderboard" &&
+    !methodologyOnly &&
     !(
       ast.operation === "offseason_summary" &&
       ast.entities.some((e) => e.kind === "team" && e.name === "league")
@@ -129,7 +136,12 @@ export function validateBasketballQuery(
     (ast.operation === "season_stat" ||
       ast.operation === "team_season_stat" ||
       ast.operation === "leaderboard") &&
-    !ast.when?.seasons?.length
+    !ast.when?.seasons?.length &&
+    !(
+      ast.operation === "season_stat" &&
+      !ast.entities.length &&
+      Boolean(ast.metricId && glossaryForMetricId(ast.metricId))
+    )
   ) {
     return {
       ok: false,

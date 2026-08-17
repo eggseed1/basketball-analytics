@@ -1,0 +1,24 @@
+{
+  "DESIGN_REFERENCE_BRANCH": "origin/drbl-ia-and-ask",
+  "DESIGN_REFERENCE_LOCAL": "web/drbl-ia-and-ask",
+  "DESIGN_REFERENCE_COMMIT": "7e764ceb5c834a19696dad84ed6696e7e3289a6a",
+  "referenceWorktree": "C:\\Users\\parkh\\Projects\\basketball-analytics-design-ref",
+  "referenceScreenshots": 11,
+  "pairedCurrentScreenshots": 11,
+  "explorePlayersScreenshots": [
+    "reports/product_completeness_v1_2/screenshots/explore-players-team-identity-fixed.png",
+    "reports/product_completeness_v1_2/screenshots/explore-players-team-identity-fixed-mobile.png"
+  ],
+  "playerPageScreenshot": "reports/product_completeness_v1_2/screenshots/player-page-team-identity.png",
+  "gamePageScreenshots": [
+    "reports/product_completeness_v1_2/screenshots/game-from-home.png",
+    "reports/product_completeness_v1_2/screenshots/game-from-scores.png"
+  ],
+  "DESIGN_INTENT_PRESERVED": "YES",
+  "UNINTENTIONAL_DESIGN_DRIFT": 0,
+  "note": "Wash opacity experiment reverted to design-reference CSS before freeze",
+  "source": [
+    "reports/product_completeness_v1_2/00A_design_reference_diff.md",
+    "reports/product_completeness_v1_2/design_visual_regression.md"
+  ]
+}

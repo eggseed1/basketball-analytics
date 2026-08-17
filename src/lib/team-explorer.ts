@@ -9,6 +9,7 @@ import type { GameSummary, PlayerSeason, TeamSeasonStats } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { StandingRow } from "@/data/types/standings";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { formatNumber, formatPct } from "@/lib/format";
 import { isPreTipStatus } from "@/lib/game-status";
 import type { TeamBrand } from "@/lib/nba-brand";
@@ -321,17 +322,23 @@ export function buildRosterBuckets(
       b.points / Math.max(1, b.gamesPlayed) -
       a.points / Math.max(1, a.gamesPlayed)
   );
+  const withDrbl = roster.filter(hasValidDrblEstimate);
+  const byDrbl = [...withDrbl].sort((a, b) => b.drbl100 - a.drbl100);
   const withDarko = roster.filter(
     (p) => p.darkoDpm != null && Number.isFinite(p.darkoDpm)
   );
   const byDarko = [...withDarko].sort(
     (a, b) => (b.darkoDpm ?? 0) - (a.darkoDpm ?? 0)
   );
+  // Prefer DRBL when valid estimates exist for the board season; else DARKO.
+  const highestValue = (
+    byDrbl.length > 0 ? byDrbl : byDarko
+  ).slice(0, listLimit);
 
   return {
     rotation: byMinutes.slice(0, rotationLimit),
     leadingScorers: byPpg.slice(0, listLimit),
-    highestValue: byDarko.slice(0, listLimit),
+    highestValue,
   };
 }
 

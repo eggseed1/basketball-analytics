@@ -1,5 +1,6 @@
 import { isCareerQualifyingSeason } from "@/analytics";
 import type { PlayerSeason } from "@/data/types";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 
 /** Resolve selected season from URL or latest career row. */
 export function resolvePlayerSeason(
@@ -29,13 +30,45 @@ export function primaryTeamForSeason(
   );
 }
 
-/** Merge season raw + career + peer overlays (USG / impact). */
+/** Prefer peer (valid DRBL) then career when seasonRaw lacks a valid estimate. */
+function pickAbilitySource(
+  seasonRaw: PlayerSeason | null,
+  peerRow: PlayerSeason | null | undefined,
+  careerSeason: PlayerSeason | null | undefined
+): PlayerSeason | null {
+  if (seasonRaw && hasValidDrblEstimate(seasonRaw)) return seasonRaw;
+  if (peerRow && hasValidDrblEstimate(peerRow)) return peerRow;
+  if (careerSeason && hasValidDrblEstimate(careerSeason)) return careerSeason;
+  return seasonRaw ?? peerRow ?? careerSeason ?? null;
+}
+
+/** Never invent zeros for R1* — keep null when all sources are missing. */
+function pickR1Number(
+  ...vals: Array<number | null | undefined>
+): number | null {
+  for (const v of vals) {
+    if (v != null && Number.isFinite(v)) return v;
+  }
+  return null;
+}
+
+function pickR1Version(
+  ...vals: Array<string | null | undefined>
+): string | null {
+  for (const v of vals) {
+    if (v != null && String(v).trim()) return v;
+  }
+  return null;
+}
+
+/** Merge season raw + career + peer overlays (USG / impact / DRBL). */
 export function mergePlayerSeasonStats(
   seasonRaw: PlayerSeason | null,
   careerSeason: PlayerSeason | null | undefined,
   peerRow: PlayerSeason | null | undefined
 ): PlayerSeason | null {
   if (seasonRaw) {
+    const ability = pickAbilitySource(seasonRaw, peerRow, careerSeason);
     return {
       ...seasonRaw,
       usagePct:
@@ -61,8 +94,46 @@ export function mergePlayerSeasonStats(
         seasonRaw.winsAdded ??
         careerSeason?.winsAdded ??
         peerRow?.winsAdded,
+      // Ability / rate fields — peer overlay when seasonRaw lacks valid DRBL.
+      drbl100: ability?.drbl100 ?? seasonRaw.drbl100,
+      rawAbilityRate: ability?.rawAbilityRate ?? seasonRaw.rawAbilityRate,
+      drblPossessions: ability?.drblPossessions ?? seasonRaw.drblPossessions,
+      abilityModelVersion:
+        ability?.abilityModelVersion ?? seasonRaw.abilityModelVersion,
+      drblRank: ability?.drblRank ?? seasonRaw.drblRank,
+      drblP: ability?.drblP ?? seasonRaw.drblP,
+      drblLn: ability?.drblLn ?? seasonRaw.drblLn,
+      drblB: ability?.drblB ?? seasonRaw.drblB,
+      drblO: ability?.drblO ?? seasonRaw.drblO,
+      drblD: ability?.drblD ?? seasonRaw.drblD,
+      sdv100: ability?.sdv100 ?? seasonRaw.sdv100,
+      shotMaking100: ability?.shotMaking100 ?? seasonRaw.shotMaking100,
+      epvShootMean: ability?.epvShootMean ?? seasonRaw.epvShootMean,
+      vContMean: ability?.vContMean ?? seasonRaw.vContMean,
+      // Realized value — never invent zeros.
+      r1Points: pickR1Number(
+        seasonRaw.r1Points,
+        peerRow?.r1Points,
+        careerSeason?.r1Points
+      ),
+      r1WinEquivalents: pickR1Number(
+        seasonRaw.r1WinEquivalents,
+        peerRow?.r1WinEquivalents,
+        careerSeason?.r1WinEquivalents
+      ),
+      r1PointValueVersion: pickR1Version(
+        seasonRaw.r1PointValueVersion,
+        peerRow?.r1PointValueVersion,
+        careerSeason?.r1PointValueVersion
+      ),
+      r1WinEquivalentVersion: pickR1Version(
+        seasonRaw.r1WinEquivalentVersion,
+        peerRow?.r1WinEquivalentVersion,
+        careerSeason?.r1WinEquivalentVersion
+      ),
     };
   }
+  // Prefer peer then career when seasonRaw missing.
   return peerRow ?? careerSeason ?? null;
 }
 

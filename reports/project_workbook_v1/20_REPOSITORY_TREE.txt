@@ -1,0 +1,2549 @@
+# Repository tree (depth 6) excluding node_modules, .next, .git, data/drbl raw, drbl/download
+C:\Users\parkh\Projects\basketball-analytics-integration
+
+├── .tmp/
+│   ├── merge/
+│   │   ├── HEAD_src__app__explore__players__page.tsx
+│   │   ├── HEAD_src__app__players____playerId____page.tsx
+│   │   ├── HEAD_src__components__explore__player-season-table.tsx
+│   │   ├── ours_filter.tsx
+│   │   ├── ours_player_page.tsx
+│   │   ├── ours_players.ts
+│   │   ├── ours_src__app__explore__players__page.tsx
+│   │   ├── ours_src__app__layout.tsx
+│   │   ├── ours_src__app__page.tsx
+│   │   ├── ours_src__app__players____playerId____page.tsx
+│   │   ├── ours_src__components__explore__player-filter-toolbar.tsx
+│   │   ├── ours_src__components__explore__player-season-table.tsx
+│   │   ├── theirs_explore_players.tsx
+│   │   ├── theirs_filter.tsx
+│   │   ├── theirs_player_page.tsx
+│   │   ├── theirs_player_table.tsx
+│   │   ├── theirs_players.ts
+│   │   ├── theirs_src__app__explore__players__page.tsx
+│   │   ├── theirs_src__app__layout.tsx
+│   │   ├── theirs_src__app__page.tsx
+│   │   ├── theirs_src__app__players____playerId____page.tsx
+│   │   ├── theirs_src__components__explore__player-filter-toolbar.tsx
+│   │   └── theirs_src__components__explore__player-season-table.tsx
+│   ├── b.json
+│   ├── theirs_ps.ts
+│   ├── theirs_ts.ts
+│   ├── theirs_types_index.ts
+│   ├── web_compute.ts
+│   └── web_espn.ts
+├── data/
+│   ├── cba/
+│   │   └── salary-cap-by-year.json
+│   ├── impact/
+│   │   ├── bdl-player-identity-fixture.json
+│   │   ├── lebron.csv
+│   │   ├── player-id-aliases.json
+│   │   └── README.md
+│   ├── pbp/
+│   │   └── README.md
+│   ├── salaries/
+│   │   ├── player-salaries-2000-2025.csv
+│   │   └── README.md
+│   └── transactions/
+│       ├── espn-site-v2/
+│       │   └── v1/
+│       │       ├── raw/
+│       │       │   ├── 2000.json
+│       │       │   ├── 2001.json
+│       │       │   ├── 2002.json
+│       │       │   ├── 2003.json
+│       │       │   ├── 2004.json
+│       │       │   ├── 2005.json
+│       │       │   ├── 2006.json
+│       │       │   ├── 2007.json
+│       │       │   ├── 2008.json
+│       │       │   ├── 2009.json
+│       │       │   ├── 2010.json
+│       │       │   ├── 2011.json
+│       │       │   ├── 2012.json
+│       │       │   ├── 2013.json
+│       │       │   ├── 2014.json
+│       │       │   ├── 2015.json
+│       │       │   ├── 2016.json
+│       │       │   ├── 2017.json
+│       │       │   ├── 2018.json
+│       │       │   ├── 2019.json
+│       │       │   ├── 2020.json
+│       │       │   ├── 2021.json
+│       │       │   ├── 2022.json
+│       │       │   ├── 2023.json
+│       │       │   ├── 2024.json
+│       │       │   ├── 2025.json
+│       │       │   └── 2026.json
+│       │       ├── manifest.json
+│       │       ├── ownership-edges.jsonl
+│       │       ├── transactions.jsonl
+│       │       └── validation-summary.json
+│       └── README.md
+├── docs/
+│   ├── advanced-stats-source-audit.md
+│   ├── ask-drbl-coverage.md
+│   ├── BRANCH_DELIVERABLES.md
+│   ├── career-resume.md
+│   ├── data-architecture.md
+│   ├── drbl-full-pipeline-audit.md
+│   ├── drbl-war-audit.md
+│   ├── game-status-and-watch.md
+│   ├── historical-impact.md
+│   ├── historical-pbp-audit.md
+│   ├── myleague-architecture.md
+│   ├── myleague-season-flow.md
+│   ├── offseason-tracker.md
+│   ├── player-ranking-audit.md
+│   ├── PRODUCT_ROADMAP.md
+│   ├── public-tracking-data.md
+│   ├── RELEASE_BASELINE.md
+│   ├── season-rank.md
+│   ├── sequential-attribution-audit.md
+│   ├── structured-transaction-source-audit.md
+│   ├── team-intelligence.md
+│   ├── trade-builder-architecture.md
+│   └── transaction-lineage.md
+├── drbl/
+│   ├── evaluation/
+│   │   ├── __tests__/
+│   │   │   ├── fusion-constraint.test.ts
+│   │   │   └── m16b-evaluation.test.ts
+│   │   ├── fixed-vs-refit.ts
+│   │   ├── m16c-dataset.ts
+│   │   ├── metrics.ts
+│   │   ├── protocol.ts
+│   │   ├── registry.ts
+│   │   ├── reserved-test.ts
+│   │   └── splits.ts
+│   ├── historical/
+│   │   ├── __tests__/
+│   │   │   └── m17a-registry-adapter.test.ts
+│   │   ├── adapters/
+│   │   │   └── nba-cdn-playbyplayv3.ts
+│   │   ├── normalized-event-schema.ts
+│   │   └── season-registry.ts
+│   ├── ingest/
+│   │   └── normalize.ts
+│   ├── models/
+│   │   ├── __tests__/
+│   │   │   ├── ability-lineage.test.ts
+│   │   │   ├── attribution-weights.test.ts
+│   │   │   ├── behavior.test.ts
+│   │   │   ├── board-provenance.test.ts
+│   │   │   ├── continuation-value.test.ts
+│   │   │   ├── fusion-oof.test.ts
+│   │   │   ├── leaderboard.test.ts
+│   │   │   ├── leverage.test.ts
+│   │   │   ├── lineup-model.test.ts
+│   │   │   ├── pipeline-value.test.ts
+│   │   │   ├── ranking-forensics.test.ts
+│   │   │   ├── replacement.test.ts
+│   │   │   ├── research-ability-v1.test.ts
+│   │   │   ├── research-direct-quantile-uncertainty-v2.test.ts
+│   │   │   ├── research-monotone-conditional-uncertainty-v3.test.ts
+│   │   │   ├── research-predictive-uncertainty-v1.test.ts
+│   │   │   ├── research-rate-v1.test.ts
+│   │   │   ├── research-reliability-features-v1.test.ts
+│   │   │   ├── research-reliability-uncertainty-v2.test.ts
+│   │   │   ├── sequential-attribution.test.ts
+│   │   │   ├── shot-decision.test.ts
+│   │   │   ├── ui-metric-integrity.test.ts
+│   │   │   ├── uncertainty.test.ts
+│   │   │   ├── validated-ability-v1.test.ts
+│   │   │   ├── validated-percentile-eligibility-v1.test.ts
+│   │   │   ├── war-dimensional.test.ts
+│   │   │   ├── war-math.test.ts
+│   │   │   ├── war-team-stint-allocation-v1.test.ts
+│   │   │   ├── war-unit-repair.test.ts
+│   │   │   ├── war-units.test.ts
+│   │   │   └── war.test.ts
+│   │   ├── ability-lineage.ts
+│   │   ├── behavior.ts
+│   │   ├── board-provenance.ts
+│   │   ├── compute-season.ts
+│   │   ├── continuation-value.ts
+│   │   ├── counterfactual-epv-v1.ts
+│   │   ├── epv-data.ts
+│   │   ├── epv-model.ts
+│   │   ├── expected-points.ts
+│   │   ├── fusion.ts
+│   │   ├── leaderboard.ts
+│   │   ├── leverage.ts
+│   │   ├── lineup-model.ts
+│   │   ├── paired-possessions.ts
+│   │   ├── pipeline-value.ts
+│   │   ├── player-value.ts
+│   │   ├── public-tracking.ts
+│   │   ├── r1-value-v1.ts
+│   │   ├── ranking-config.ts
+│   │   ├── replacement.ts
+│   │   ├── research-ability-v1.ts
+│   │   ├── research-direct-quantile-uncertainty-v2.ts
+│   │   ├── research-monotone-conditional-uncertainty-v3.ts
+│   │   ├── research-predictive-uncertainty-v1.ts
+│   │   ├── research-rate-v1.ts
+│   │   ├── research-reliability-features-v1.ts
+│   │   ├── research-reliability-uncertainty-v2.ts
+│   │   ├── sequential-attribution.ts
+│   │   ├── shot-components.ts
+│   │   ├── shot-decision.ts
+│   │   ├── uncertainty.ts
+│   │   ├── validated-ability-cutover.ts
+│   │   ├── validated-ability-v1.ts
+│   │   ├── validated-percentile-eligibility-v1.ts
+│   │   ├── war-math.ts
+│   │   ├── war-team-stint-allocation-v1.ts
+│   │   ├── war-units.ts
+│   │   └── war.ts
+│   ├── possessions/
+│   │   ├── __tests__/
+│   │   │   └── possession-edge-cases.test.ts
+│   │   ├── reconcile-lineups.ts
+│   │   ├── reconcile.ts
+│   │   ├── reconstruct-lineups.ts
+│   │   └── reconstruct-possessions.ts
+│   ├── research/
+│   │   └── m18/
+│   │       ├── __tests__/
+│   │       │   └── m18-lineup-uir.test.ts
+│   │       ├── lineup-impact.ts
+│   │       └── uir.ts
+│   ├── constants.ts
+│   ├── index.ts
+│   ├── PLAN.md
+│   ├── README.md
+│   └── types.ts
+├── outputs/
+│   ├── _audit_run.log
+│   ├── _pipeline_run.log
+│   ├── drbl_field_lineage.json
+│   ├── drbl_pipeline_audit_summary.json
+│   ├── drbl_pipeline_corrected.csv
+│   ├── drbl_war_audit_summary.json
+│   ├── drbl_war_audit.csv
+│   ├── drbl_war_before_after.csv
+│   ├── drbl_war_corrected.csv
+│   ├── drbl_war_player_diagnostics_summary.json
+│   ├── drbl_war_player_diagnostics.csv
+│   ├── drbl_war_replacement_by_archetype.csv
+│   ├── drbl_war_replacement_by_position.csv
+│   └── drbl_war_replacement_by_team.csv
+├── public/
+│   ├── logos/
+│   │   └── historical/
+│   │       └── README.md
+│   ├── file.svg
+│   ├── globe.svg
+│   ├── next.svg
+│   ├── vercel.svg
+│   └── window.svg
+├── reports/
+│   ├── experiments/
+│   │   └── registry.jsonl
+│   ├── integration/
+│   │   ├── 00_branch_inventory.md
+│   │   ├── 01_premerge_freeze.json
+│   │   ├── 02_safety_refs.json
+│   │   ├── 03_overlap_matrix.csv
+│   │   ├── 04_conflict_resolution_log.md
+│   │   ├── 05_api_contract_audit.md
+│   │   ├── 06_sensitive_file_diff.md
+│   │   ├── 07_ui_design_preservation.md
+│   │   ├── 08_rollback_plan.md
+│   │   ├── 09_current_production_regression.json
+│   │   ├── 10_historical_regression.json
+│   │   ├── 11_ui_smoke.md
+│   │   ├── 12_engineering_results.json
+│   │   ├── 13_integration_health.json
+│   │   ├── 14_integration_seal.json
+│   │   └── 15_full_audit.md
+│   ├── m15/
+│   │   ├── charts/
+│   │   │   ├── component_population.svg
+│   │   │   ├── drbl_vs_possessions.svg
+│   │   │   ├── offense_vs_defense.svg
+│   │   │   ├── raw_vs_posterior.svg
+│   │   │   └── war_vs_possessions.svg
+│   │   ├── freeze/
+│   │   │   ├── 00_model_freeze_live.json
+│   │   │   ├── 00_model_freeze.json
+│   │   │   ├── behavior-2024-25.json
+│   │   │   ├── behavior-2025-26.json
+│   │   │   ├── epv-coeffs.json
+│   │   │   ├── fusion-2024-25.json
+│   │   │   ├── fusion-2025-26.json
+│   │   │   ├── leverage-2024-25.json
+│   │   │   ├── leverage-2025-26.json
+│   │   │   ├── lineup-2024-25.json
+│   │   │   ├── lineup-2025-26.json
+│   │   │   ├── precomputed-2024-25.json
+│   │   │   ├── precomputed-2024-25.live.json
+│   │   │   ├── precomputed-2025-26.json
+│   │   │   ├── precomputed-2025-26.live.json
+│   │   │   ├── uncertainty-2024-25.json
+│   │   │   ├── uncertainty-2025-26.json
+│   │   │   ├── war-2024-25.json
+│   │   │   └── war-2025-26.json
+│   │   ├── 01_implementation_audit.md
+│   │   ├── 02_leaderboard_diagnostics.csv
+│   │   ├── 03_component_decomposition.csv
+│   │   ├── 04_sample_size_analysis.csv
+│   │   ├── 05_shrinkage_analysis.csv
+│   │   ├── 06_team_contamination.csv
+│   │   ├── 07_replacement_analysis.csv
+│   │   ├── 08_defensive_ablation.csv
+│   │   ├── 09_lineup_audit.csv
+│   │   ├── 10_behavior_feature_audit.csv
+│   │   ├── 11_leakage_report.csv
+│   │   ├── 12_fusion_validation.csv
+│   │   ├── 13_war_validation.csv
+│   │   ├── 14_war_multi_season_calibration.csv
+│   │   ├── 15_leverage_validation.csv
+│   │   ├── 16_full_benchmark.csv
+│   │   ├── 17_ablation_results.csv
+│   │   ├── 18_m6_validation.csv
+│   │   ├── 19_final_recommendations.md
+│   │   ├── 19_suspicious_and_star_focus.csv
+│   │   ├── 20_final_recommendations.md
+│   │   ├── 21_finding_classifications.csv
+│   │   └── 22_a1_a2_path_repair.md
+│   ├── m16a/
+│   │   ├── artifacts/
+│   │   │   ├── full-2024-25.json
+│   │   │   └── full-2025-26.json
+│   │   ├── charts/
+│   │   │   ├── 2024-25_400_vs_full_drbl100.svg
+│   │   │   ├── 2024-25_400_vs_full_rank.svg
+│   │   │   ├── 2024-25_P_vs_LN.svg
+│   │   │   ├── 2025-26_400_vs_full_drbl100.svg
+│   │   │   ├── 2025-26_400_vs_full_rank.svg
+│   │   │   └── 2025-26_P_vs_LN.svg
+│   │   ├── freeze/
+│   │   │   ├── repaired-400-2024-25.json
+│   │   │   └── repaired-400-2025-26.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_full_sample_inventory.md
+│   │   ├── 02_lineage_validation.csv
+│   │   ├── 03_component_distributions.csv
+│   │   ├── 04_component_correlations.csv
+│   │   ├── 05_fusion_deltas.csv
+│   │   ├── 06_posterior_shrinkage.csv
+│   │   ├── 07_top_bottom_decomposition.csv
+│   │   ├── 08_400_vs_full_player_comparison.csv
+│   │   ├── 09_rank_stability.csv
+│   │   ├── 10_component_convergence.csv
+│   │   ├── 11_sample_size_stability.csv
+│   │   ├── 12_team_clustering.csv
+│   │   ├── 13_archetype_diagnostics.csv
+│   │   ├── 14_m6_standalone_diagnostics.csv
+│   │   ├── 15_war_stability.csv
+│   │   ├── 16_model_health.json
+│   │   ├── 17_full_audit.md
+│   │   └── 18_focus_movers_decomposition.csv
+│   ├── m16b/
+│   │   ├── freeze/
+│   │   │   ├── 00_m16a_model_freeze.json
+│   │   │   ├── m16a-400-2024-25.json
+│   │   │   ├── m16a-400-2025-26.json
+│   │   │   ├── m16a-full-2024-25.json
+│   │   │   └── m16a-full-2025-26.json
+│   │   ├── oof/
+│   │   │   └── demo_fold_models.json
+│   │   ├── splits/
+│   │   │   ├── reserved_test_game_ids.json
+│   │   │   ├── train_game_ids.json
+│   │   │   └── validation_game_ids.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_data_inventory.csv
+│   │   ├── 02_evaluation_protocol.md
+│   │   ├── 03_split_summary.csv
+│   │   ├── 04_split_game_ids.csv
+│   │   ├── 05_split_distribution_diagnostics.csv
+│   │   ├── 06_target_definitions.md
+│   │   ├── 07_target_leakage_audit.json
+│   │   ├── 08_oof_fold_assignments.csv
+│   │   ├── 09_oof_fold_models.json
+│   │   ├── 10_oof_predictions.csv
+│   │   ├── 11_oof_reconstruction.csv
+│   │   ├── 12_fixed_fit_vs_refit.md
+│   │   ├── 13_fixed_fit_vs_refit_players.csv
+│   │   ├── 14_metric_contract.json
+│   │   ├── 15_model_selection_rules.md
+│   │   ├── 16_reserved_test_policy.md
+│   │   ├── 17_experiment_registry_snapshot.jsonl
+│   │   ├── 18_baseline_experiment.json
+│   │   ├── 19_future_ablation_manifest.json
+│   │   ├── 20_reproducibility_report.md
+│   │   ├── 21_model_health.json
+│   │   ├── 22_full_audit.md
+│   │   └── reserved_test_access_log.jsonl
+│   ├── m16b1/
+│   │   ├── freeze/
+│   │   │   ├── m16a-full-2025-26.json
+│   │   │   ├── representative_traces.json
+│   │   │   └── site-2025-26.json
+│   │   ├── 00_production_board_freeze.json
+│   │   ├── 01_board_dataflow.md
+│   │   ├── 02_player_universe_reconciliation.csv
+│   │   ├── 03_war_row_lineage.csv
+│   │   ├── 04_drbl_row_lineage.csv
+│   │   ├── 05_generation_reconciliation.csv
+│   │   ├── 06_board_vs_artifact.csv
+│   │   ├── 07_2025_26_war_source.md
+│   │   ├── 08_board_provenance.json
+│   │   ├── 09_model_health.json
+│   │   └── 10_full_audit.md
+│   ├── m16c/
+│   │   ├── charts/
+│   │   │   ├── P_pred_vs_actual.svg
+│   │   │   ├── residual_vs_pred_P.svg
+│   │   │   └── winner_pred_vs_actual.svg
+│   │   ├── freeze/
+│   │   │   └── m16b_00_freeze.json
+│   │   ├── predictions/
+│   │   │   ├── M16C_B.csv
+│   │   │   ├── M16C_LN_B.csv
+│   │   │   ├── M16C_LN.csv
+│   │   │   ├── M16C_P_B.csv
+│   │   │   ├── M16C_P_LN_B.csv
+│   │   │   ├── M16C_P_LN.csv
+│   │   │   └── M16C_P.csv
+│   │   ├── 00_freeze.json
+│   │   ├── 00b_component_distributions.csv
+│   │   ├── 01_candidate_metrics.csv
+│   │   ├── 02_incremental_signal.csv
+│   │   ├── 03_fusion_weights.csv
+│   │   ├── 04_fusion_weight_summary.csv
+│   │   ├── 05_effective_component_contributions.csv
+│   │   ├── 06_calibration.csv
+│   │   ├── 07_posterior_ablation.csv
+│   │   ├── 08_component_extremes.csv
+│   │   ├── 09_selection_audit.md
+│   │   ├── 10_component_redundancy.csv
+│   │   ├── 11_bootstrap_comparisons.csv
+│   │   ├── 12_model_health.json
+│   │   ├── 13_full_audit.md
+│   │   └── 14_stop_summary.json
+│   ├── m16d/
+│   │   ├── charts/
+│   │   │   ├── delta_squared_error.svg
+│   │   │   ├── M6_vs_residual_after_P.svg
+│   │   │   ├── P_pred_vs_Y.svg
+│   │   │   ├── PM6_pred_vs_Y.svg
+│   │   │   └── PM6_residual_vs_pred.svg
+│   │   ├── freeze/
+│   │   │   ├── m16b_00_freeze.json
+│   │   │   └── m16c_00_freeze.json
+│   │   ├── predictions/
+│   │   │   ├── M16D_M6_ONLY.csv
+│   │   │   ├── M16D_P_BASE.csv
+│   │   │   ├── M16D_P_M6.csv
+│   │   │   └── M16D_P_RESIDUAL_M6.csv
+│   │   ├── 00_freeze.json
+│   │   ├── 00b_m6_distributions.csv
+│   │   ├── 01_candidate_metrics.csv
+│   │   ├── 02_m6_incremental_signal.csv
+│   │   ├── 03_p_m6_weights.csv
+│   │   ├── 04_weight_summary.csv
+│   │   ├── 05_effective_contributions.csv
+│   │   ├── 06_sample_size_subgroups.csv
+│   │   ├── 07_m6_extremes.csv
+│   │   ├── 08_posterior_robustness.csv
+│   │   ├── 09_calibration.csv
+│   │   ├── 10_selection_audit.md
+│   │   ├── 11_bootstrap_comparisons.csv
+│   │   ├── 12_model_health.json
+│   │   ├── 13_full_audit.md
+│   │   └── 14_stop_summary.json
+│   ├── m16e0/
+│   │   ├── charts/
+│   │   │   ├── current_vs_posterior_direct_war.svg
+│   │   │   ├── drbl100_vs_war.svg
+│   │   │   ├── p_calibration_deciles.svg
+│   │   │   ├── possessions_vs_war.svg
+│   │   │   ├── posterior_vs_finalAbility.svg
+│   │   │   └── team_war_vs_wins.svg
+│   │   ├── freeze/
+│   │   │   ├── site-2024-25.json
+│   │   │   └── site-2025-26.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_war_dataflow.md
+│   │   ├── 02_war_unit_ledger.csv
+│   │   ├── 03_exposure_identity.csv
+│   │   ├── 04_war_reconstruction.csv
+│   │   ├── 05_war_counterfactual_decomposition.csv
+│   │   ├── 06_cross_season_war_architecture.csv
+│   │   ├── 07_team_war_accounting.csv
+│   │   ├── 08_war_inflation_flags.json
+│   │   ├── 09_representative_war_traces.json
+│   │   ├── 10_m6_practical_significance.md
+│   │   ├── 11_metric_noise_estimate.csv
+│   │   ├── 12_p_calibration_diagnostics.csv
+│   │   ├── 13_posterior_technical_debt.md
+│   │   ├── 14_approach_ab_readiness.md
+│   │   ├── 15_model_health.json
+│   │   ├── 16_full_audit.md
+│   │   └── 17_stop_summary.json
+│   ├── m16e1/
+│   │   ├── charts/
+│   │   │   ├── exposure_ratio_hist.svg
+│   │   │   ├── inflation_factor.svg
+│   │   │   ├── loo_slope_sensitivity.svg
+│   │   │   ├── n_combined_vs_n_paired.svg
+│   │   │   ├── paired_vs_combined_converted.svg
+│   │   │   ├── production_vs_paired_war.svg
+│   │   │   ├── team_paired_war_vs_wins.svg
+│   │   │   └── team_production_war_vs_wins.svg
+│   │   ├── freeze/
+│   │   │   ├── paired-possessions-cache.json
+│   │   │   └── site-2024-25.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_exposure_conventions.csv
+│   │   ├── 01b_exposure_ratio_by_team.csv
+│   │   ├── 02_candidate_war.csv
+│   │   ├── 03_production_inflation_factor.csv
+│   │   ├── 04_rate_conversion_identity.csv
+│   │   ├── 05_candidate_equivalence.csv
+│   │   ├── 06_replacement_unit_conversion.csv
+│   │   ├── 07_loo_scale_decomposition.csv
+│   │   ├── 08_team_accounting.csv
+│   │   ├── 09_calibration_stability.csv
+│   │   ├── 10_representative_traces.json
+│   │   ├── 11_dimensional_health.json
+│   │   ├── 12_war_repair_candidate.md
+│   │   └── 13_full_audit.md
+│   ├── m16e1-deploy/
+│   │   ├── freeze/
+│   │   │   ├── 2024-25-post-4.0.1.json
+│   │   │   ├── 2024-25-pre-4.0.1.json
+│   │   │   └── m16a-full-2024-25-pre-4.0.1.json
+│   │   ├── 00_unit_repair_deploy.json
+│   │   ├── 01_representative_war.csv
+│   │   └── 02_deploy_notes.md
+│   ├── m16f/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_approach_specification.md
+│   │   ├── 13_model_health.json
+│   │   └── 15_full_audit.md
+│   ├── m16f0/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_epv_infrastructure_inventory.md
+│   │   ├── 02_epv_feature_audit.csv
+│   │   ├── 03_replacement_compatibility.csv
+│   │   ├── 04_state_definition.md
+│   │   ├── 05_local_counterfactual_identity.csv
+│   │   ├── 06_approach_a_spec_v1.md
+│   │   ├── 07_a_vs_b_conceptual_contract.md
+│   │   ├── 08_support_coverage.csv
+│   │   ├── 09_compute_cost.json
+│   │   ├── 10_prototype_examples.json
+│   │   ├── 11_model_health.json
+│   │   └── 12_full_audit.md
+│   ├── m16f1/
+│   │   ├── charts/
+│   │   │   └── holdout_rmse.json
+│   │   ├── prototype_examples/
+│   │   │   └── sample_counterfactuals.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_engine_split.json
+│   │   ├── 02_epv_target_definition.md
+│   │   ├── 03_feature_contract.md
+│   │   ├── 04_counterfactual_decomposition.csv
+│   │   ├── 05_context_sensitivity.csv
+│   │   ├── 06_local_identity.csv
+│   │   ├── 07_permutation_sanity.csv
+│   │   ├── 08_epv_model_card.md
+│   │   ├── 09_epv_metrics.csv
+│   │   ├── 10_epv_calibration.csv
+│   │   ├── 11_support_coverage.csv
+│   │   ├── 12_player_signal_diagnostics.csv
+│   │   ├── 13_defense_diagnostics.csv
+│   │   ├── 14_model_health.json
+│   │   └── 15_full_audit.md
+│   ├── m16f1b/
+│   │   ├── charts/
+│   │   │   ├── aggregate_signal.json
+│   │   │   ├── calibration_comparison.json
+│   │   │   ├── component_stability.json
+│   │   │   ├── exposure_reliability.json
+│   │   │   ├── offense_defense_reliability.json
+│   │   │   ├── pairwise_stability.json
+│   │   │   ├── player_pa_refit_scatter.json
+│   │   │   ├── r1_loo_sensitivity.json
+│   │   │   ├── replacement_k_comparison.json
+│   │   │   └── support_distance_reliability.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16f1_reproduction.json
+│   │   ├── 02_support_failure_reasons.csv
+│   │   ├── 03_unseen_player_audit.csv
+│   │   ├── 04_reference_panel.json
+│   │   ├── 05_player_stability.csv
+│   │   ├── 06_player_stability_summary.json
+│   │   ├── 07_delta_stability.csv
+│   │   ├── 08_component_stability.csv
+│   │   ├── 09_reliability_decomposition.csv
+│   │   ├── 10_replacement_sensitivity.csv
+│   │   ├── 11_r1_member_sensitivity.csv
+│   │   ├── 12_focal_interaction_audit.md
+│   │   ├── 13_aggregate_outcome_definition.md
+│   │   ├── 14_aggregate_signal.csv
+│   │   ├── 15_calibration_comparison.csv
+│   │   ├── 16_support_distance_reliability.csv
+│   │   ├── 17_offense_defense_reliability.csv
+│   │   ├── 18_readiness_matrix.csv
+│   │   ├── 19_model_health.json
+│   │   ├── 20_full_audit.md
+│   │   └── 21_final_response_values.json
+│   ├── m16f2/
+│   │   ├── charts/
+│   │   │   ├── a_error_vs_b_error.svg
+│   │   │   ├── a_vs_b_scatter.svg
+│   │   │   ├── bootstrap_delta_rmse.json
+│   │   │   ├── bootstrap_delta_rmse.svg
+│   │   │   ├── calibration_A.svg
+│   │   │   ├── calibration_B.svg
+│   │   │   ├── coverage_by_exposure.json
+│   │   │   ├── coverage_by_team.json
+│   │   │   ├── exposure_stratified_delta_rmse.json
+│   │   │   ├── full_vs_static_A.svg
+│   │   │   ├── prediction_distributions.json
+│   │   │   └── support_stratified_delta_rmse.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_decision_rules.md
+│   │   ├── 02_train_refit.json
+│   │   ├── 03_coverage.csv
+│   │   ├── 04_coefficient_coverage.csv
+│   │   ├── 05_primary_metrics.csv
+│   │   ├── 06_bootstrap.csv
+│   │   ├── 07_train_calibrated_diagnostic.csv
+│   │   ├── 08_context_incremental.csv
+│   │   ├── 09_support_strata.csv
+│   │   ├── 10_exposure_strata.csv
+│   │   ├── 11_common_universe_bias.csv
+│   │   ├── 12_calibration.csv
+│   │   ├── 13_anonymous_error_analysis.csv
+│   │   ├── 14_model_selection_decision.json
+│   │   ├── 15_model_health.json
+│   │   ├── 16_full_audit.md
+│   │   └── 17_final_response_values.json
+│   ├── m16g/
+│   │   ├── charts/
+│   │   │   ├── bootstrap_vs_k0.json
+│   │   │   ├── calibration_slope_vs_k.svg
+│   │   │   ├── delta_rmse_vs_k.svg
+│   │   │   ├── exposure_variance_diagnostic.json
+│   │   │   ├── extreme_decile_future_outcomes.json
+│   │   │   ├── fold_delta_rmse.json
+│   │   │   ├── prediction_sd_vs_k.svg
+│   │   │   ├── rank_stability.json
+│   │   │   ├── raw_vs_posterior_scatter.json
+│   │   │   ├── reliability_vs_exposure.json
+│   │   │   ├── rmse_by_exposure_quartile.json
+│   │   │   ├── rmse_vs_k.svg
+│   │   │   └── shrinkage_vs_exposure.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_existing_posterior_audit.md
+│   │   ├── 02_research_input_contract.md
+│   │   ├── 03_posterior_folds.json
+│   │   ├── 04_fold_rows.csv
+│   │   ├── 05_candidate_metrics.csv
+│   │   ├── 06_bootstrap_vs_k0.csv
+│   │   ├── 07_exposure_quartiles.csv
+│   │   ├── 08_high_exposure_distortion.csv
+│   │   ├── 09_reliability_weights.csv
+│   │   ├── 10_shrinkage_magnitude.csv
+│   │   ├── 11_prior_bias_diagnostic.csv
+│   │   ├── 12_calibration.csv
+│   │   ├── 13_fold_consistency.csv
+│   │   ├── 14_production_gap.md
+│   │   ├── 15_posterior_selection_decision.json
+│   │   ├── 16_model_health.json
+│   │   ├── 17_full_audit.md
+│   │   └── 18_final_response_values.json
+│   ├── m16g1/
+│   │   ├── charts/
+│   │   │   ├── ability_lineage_diagram.md
+│   │   │   ├── calibration_slope_vs_k.svg
+│   │   │   ├── extreme_decile_behavior.json
+│   │   │   ├── fold_rmse_vs_k.json
+│   │   │   ├── marginal_improvement.svg
+│   │   │   ├── median_reliability_vs_k.svg
+│   │   │   ├── pred_sd_vs_k.svg
+│   │   │   ├── q_rmse_vs_k.json
+│   │   │   ├── rank_corr_vs_k.svg
+│   │   │   ├── rmse_vs_log_k.svg
+│   │   │   └── rmse_zoom_optimum.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16g_reproduction.json
+│   │   ├── 02_ability_lineage.csv
+│   │   ├── 03_ability_lineage_graph.md
+│   │   ├── 04_lineage_reconstruction.csv
+│   │   ├── 05_research_posterior_contract.md
+│   │   ├── 06_zero_semantics.md
+│   │   ├── 07_extended_candidate_metrics.csv
+│   │   ├── 08_marginal_k_improvements.csv
+│   │   ├── 09_optimum_bootstrap.csv
+│   │   ├── 10_over_shrinkage_diagnostic.csv
+│   │   ├── 11_exposure_quartiles_extended.csv
+│   │   ├── 12_fold_consistency_extended.csv
+│   │   ├── 13_calibration_vs_k.csv
+│   │   ├── 14_reliability_weights_extended.csv
+│   │   ├── 15_final_k_decision.json
+│   │   ├── 16_production_alignment_plan.md
+│   │   ├── 17_field_naming_audit.csv
+│   │   ├── 18_model_health.json
+│   │   ├── 19_full_audit.md
+│   │   └── 20_final_response_values.json
+│   ├── m16g2/
+│   │   ├── charts/
+│   │   │   ├── diff_vs_exposure.svg
+│   │   │   ├── legacy_distribution.svg
+│   │   │   ├── legacy_vs_research_scatter.svg
+│   │   │   ├── rank_displacement_hist.svg
+│   │   │   ├── rank_scatter.svg
+│   │   │   ├── raw_vs_posterior.svg
+│   │   │   ├── reliability_curve.svg
+│   │   │   ├── reliability_vs_exposure.svg
+│   │   │   ├── research_distribution.svg
+│   │   │   └── shrinkage_vs_N.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16g1_reproduction.json
+│   │   ├── 02_research_ability_contract.md
+│   │   ├── 03_shadow_independence_tests.json
+│   │   ├── 04_single_posterior_identity.csv
+│   │   ├── 05_zero_semantics_contract.md
+│   │   ├── 06_od_decomposition_audit.csv
+│   │   ├── 07_component_role_contract.md
+│   │   ├── 08_old_vs_research_architecture.md
+│   │   ├── 09_shadow_comparison.csv
+│   │   ├── 10_distribution_comparison.csv
+│   │   ├── 11_exposure_divergence.csv
+│   │   ├── 12_uncertainty_compatibility.md
+│   │   ├── 13_ranking_contract.md
+│   │   ├── 14_field_consumer_inventory.csv
+│   │   ├── 15_proposed_field_schema.md
+│   │   ├── 16_legacy_mapping.csv
+│   │   ├── 17_migration_plan.md
+│   │   ├── 18_model_health.json
+│   │   ├── 19_full_audit.md
+│   │   ├── 20_ranking_sensitivity.json
+│   │   └── 21_final_response_values.json
+│   ├── m16h/
+│   │   ├── charts/
+│   │   │   ├── affine_diagnostic_calibration.svg
+│   │   │   ├── bias_by_sign_bin.svg
+│   │   │   ├── bootstrap_delta_rmse.svg
+│   │   │   ├── calibration_residual_by_decile.svg
+│   │   │   ├── identity_calibration.svg
+│   │   │   ├── identity_vs_calibrated_scatter.svg
+│   │   │   ├── identity_vs_zero_residuals.svg
+│   │   │   ├── pred_vs_target_distributions.svg
+│   │   │   ├── rmse_by_exposure_quartile.svg
+│   │   │   ├── rolling_b_by_fold.svg
+│   │   │   └── zero_linear_calibration.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_posterior_reproduction.json
+│   │   ├── 02_target_zero_semantics.md
+│   │   ├── 03_calibration_protocol.json
+│   │   ├── 04_calibration_rows.csv
+│   │   ├── 05_zero_linear_fits.csv
+│   │   ├── 06_affine_diagnostic.csv
+│   │   ├── 07_primary_calibration_metrics.csv
+│   │   ├── 08_bootstrap_zero_vs_identity.csv
+│   │   ├── 09_fold_consistency.csv
+│   │   ├── 10_affine_baseline_shift.csv
+│   │   ├── 11_exposure_calibration.csv
+│   │   ├── 12_sign_range_diagnostic.csv
+│   │   ├── 12b_extreme_decile_diagnostic.csv
+│   │   ├── 13_calibration_bins.csv
+│   │   ├── 14_distribution_audit.csv
+│   │   ├── 15_final_rate_identity.csv
+│   │   ├── 16_calibration_selection_decision.json
+│   │   ├── 17_posterior_vs_calibration_contract.md
+│   │   ├── 18_production_alignment_update.md
+│   │   ├── 19_model_health.json
+│   │   ├── 20_full_audit.md
+│   │   ├── 21_final_response_values.json
+│   │   ├── 22_research_rate_lock.json
+│   │   └── 22_research_rate_lock.md
+│   ├── m16i/
+│   │   ├── charts/
+│   │   │   ├── abs_error_vs_exposure.svg
+│   │   │   ├── bootstrap_delta_wis_u2_u0.svg
+│   │   │   ├── coverage_by_exposure_q_pi80.svg
+│   │   │   ├── coverage_vs_nominal.svg
+│   │   │   ├── legacy_hw_vs_abs_error.svg
+│   │   │   ├── mae_by_exposure_quartile.svg
+│   │   │   ├── per_fold_wis.svg
+│   │   │   ├── pi80_examples.svg
+│   │   │   ├── pi95_examples.svg
+│   │   │   ├── predicted_sigma_vs_exposure.svg
+│   │   │   ├── residual_signed_hist.svg
+│   │   │   ├── rmse_by_exposure_quartile.svg
+│   │   │   ├── sigma_vs_abs_error.svg
+│   │   │   ├── standardized_residual_abs.svg
+│   │   │   ├── width_by_exposure_q_pi80.svg
+│   │   │   └── wis_by_candidate.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_point_estimate_reproduction.json
+│   │   ├── 02_uncertainty_semantics.md
+│   │   ├── 03_uncertainty_protocol.json
+│   │   ├── 04_uncertainty_rows.csv
+│   │   ├── 05_bootstrap_model_comparisons.csv
+│   │   ├── 06_rolling_uncertainty_parameters.csv
+│   │   ├── 07_exposure_quartile_coverage.csv
+│   │   ├── 08_error_vs_exposure.csv
+│   │   ├── 09_uncertainty_discrimination.csv
+│   │   ├── 10_legacy_uncertainty_diagnostic.csv
+│   │   ├── 11_product_semantics.md
+│   │   ├── 12_candidate_metrics.csv
+│   │   ├── 13_interval_coverage.csv
+│   │   ├── 14_interval_widths.csv
+│   │   ├── 15_tail_symmetry.csv
+│   │   ├── 16_final_uncertainty_parameters.json
+│   │   ├── 17_uncertainty_selection_decision.json
+│   │   ├── 18_research_interval_identity.csv
+│   │   ├── 19_model_health.json
+│   │   ├── 20_full_audit.md
+│   │   ├── 21_final_response_values.json
+│   │   └── 23_corrected_selection_status.md
+│   ├── m16i1/
+│   │   ├── charts/
+│   │   │   ├── abs_error_vs_N.svg
+│   │   │   ├── cce_by_candidate.svg
+│   │   │   ├── coverage_by_quartile_Q2.svg
+│   │   │   ├── q1_pi80_comparison.svg
+│   │   │   ├── q1_pi95_comparison.svg
+│   │   │   ├── width80_vs_N_Q2.svg
+│   │   │   ├── wis_by_candidate.svg
+│   │   │   └── wis_vs_cce.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16i_reproduction.json
+│   │   ├── 02_point_estimate_lock.json
+│   │   ├── 03_protocol.json
+│   │   ├── 04_conditional_coverage_error.csv
+│   │   ├── 05_bootstrap_wis.csv
+│   │   ├── 06_exposure_quartile_metrics.csv
+│   │   ├── 07_width_by_exposure.csv
+│   │   ├── 08_candidate_metrics.csv
+│   │   ├── 09_rolling_parameters.csv
+│   │   ├── 10_fold_metrics.csv
+│   │   ├── 11_tail_symmetry.csv
+│   │   ├── 12_uncertainty_discrimination.csv
+│   │   ├── 13_interval_nesting_tests.json
+│   │   ├── 14_conditional_repair_decision.json
+│   │   ├── 15_final_parameters.json
+│   │   ├── 16_interval_contract.md
+│   │   ├── 17_model_health.json
+│   │   ├── 18_full_audit.md
+│   │   └── 19_final_response_values.json
+│   ├── m16i2/
+│   │   ├── charts/
+│   │   │   ├── abs_error_quantiles_by_decile.svg
+│   │   │   ├── abs_error_vs_N.svg
+│   │   │   ├── cce_by_candidate.svg
+│   │   │   ├── coverage_by_quartile_M1.svg
+│   │   │   ├── M1_widths_vs_N.svg
+│   │   │   ├── M2_widths_vs_N.svg
+│   │   │   ├── per_fold_wis.svg
+│   │   │   ├── pi80_width_by_quartile.svg
+│   │   │   ├── q1_coverage_comparison.svg
+│   │   │   ├── q4_coverage_comparison.svg
+│   │   │   ├── width_vs_abs_error_M2.svg
+│   │   │   ├── wis_by_candidate.svg
+│   │   │   └── wis_vs_cce.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_prior_uncertainty_reproduction.json
+│   │   ├── 02_point_estimate_lock.json
+│   │   ├── 03_protocol.json
+│   │   ├── 04_error_shape_deciles.csv
+│   │   ├── 05_shape_stability_by_fold.csv
+│   │   ├── 06_exposure_information_diagnostic.md
+│   │   ├── 07_rolling_model_parameters.csv
+│   │   ├── 08_bootstrap_wis.csv
+│   │   ├── 09_future_uncertainty_feature_hypotheses.md
+│   │   ├── 10_uncertainty_selection_decision.json
+│   │   ├── 11_candidate_metrics.csv
+│   │   ├── 12_exposure_quartile_metrics.csv
+│   │   ├── 13_conditional_coverage_error.csv
+│   │   ├── 14_fold_metrics.csv
+│   │   ├── 15_uncertainty_discrimination.csv
+│   │   ├── 16_tail_symmetry.csv
+│   │   ├── 17_interval_integrity.json
+│   │   ├── 18_final_parameters.json
+│   │   ├── 19_interval_contract.md
+│   │   ├── 20_model_health.json
+│   │   └── 21_full_audit.md
+│   ├── m16i3/
+│   │   ├── charts/
+│   │   │   ├── cutoff_stability_R1.svg
+│   │   │   ├── feature_by_cutoff_R1.svg
+│   │   │   ├── feature_by_exposure_quartile_R1.svg
+│   │   │   ├── four_segment_schematic.svg
+│   │   │   ├── R1_distribution.svg
+│   │   │   ├── R1_vs_logN.svg
+│   │   │   ├── R1_vs_R2.svg
+│   │   │   ├── R1_vs_R3.svg
+│   │   │   ├── R2_distribution.svg
+│   │   │   ├── R2_vs_logN.svg
+│   │   │   ├── R2_vs_R3.svg
+│   │   │   ├── R3_distribution.svg
+│   │   │   ├── R3_vs_logN.svg
+│   │   │   ├── redundancy_heatmap.svg
+│   │   │   └── split_half_schematic.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_prior_lock_reproduction.json
+│   │   ├── 02_historical_stream_provenance.md
+│   │   ├── 03_raw_rate_reconstruction.csv
+│   │   ├── 04_feature_leakage_audit.csv
+│   │   ├── 05_feature_availability.csv
+│   │   ├── 06_feature_distributions.csv
+│   │   ├── 07_feature_vs_exposure.csv
+│   │   ├── 08_feature_redundancy.csv
+│   │   ├── 09_feature_cutoff_stability.csv
+│   │   ├── 10_feature_provenance.csv
+│   │   ├── 11_candidate_feature_freeze.json
+│   │   ├── 12_synthetic_feature_tests.json
+│   │   ├── 13_feature_integrity.json
+│   │   ├── 14_model_health.json
+│   │   ├── 15_full_audit.md
+│   │   └── 16_final_response_values.json
+│   ├── m16i4/
+│   │   ├── charts/
+│   │   │   ├── cce_by_feature_set.svg
+│   │   │   ├── q1_coverage_comparison.svg
+│   │   │   ├── rolling_gamma_R1.svg
+│   │   │   ├── sigma_vs_abs_error_F0.svg
+│   │   │   ├── sigma_vs_R1.svg
+│   │   │   ├── wis_by_feature_set.svg
+│   │   │   └── wis_vs_cce.svg
+│   │   ├── 00_freeze.json
+│   │   ├── 01_feature_freeze_reproduction.json
+│   │   ├── 02_point_estimate_lock.json
+│   │   ├── 03_f0_u2_reproduction.json
+│   │   ├── 04_protocol.json
+│   │   ├── 05_feature_scaling_parameters.csv
+│   │   ├── 06_rolling_scale_parameters.csv
+│   │   ├── 07_bootstrap_wis.csv
+│   │   ├── 08_exposure_quartile_metrics.csv
+│   │   ├── 09_feature_stratification_diagnostics.csv
+│   │   ├── 10_uncertainty_discrimination.csv
+│   │   ├── 11_fold_metrics.csv
+│   │   ├── 12_uncertainty_selection_decision.json
+│   │   ├── 13_candidate_metrics.csv
+│   │   ├── 14_conditional_coverage_error.csv
+│   │   ├── 15_tail_symmetry.csv
+│   │   ├── 16_interval_integrity.json
+│   │   ├── 17_coefficient_diagnostics.csv
+│   │   ├── 18_incremental_feature_results.csv
+│   │   ├── 19_final_parameters.json
+│   │   ├── 20_interval_contract.md
+│   │   ├── 21_model_health.json
+│   │   ├── 22_full_audit.md
+│   │   └── 23_final_response_values.json
+│   ├── m16j/
+│   │   ├── charts/
+│   │   │   ├── mae_comparison.svg
+│   │   │   ├── obs_vs_pred_eb200.svg
+│   │   │   ├── obs_vs_pred_raw.svg
+│   │   │   ├── obs_vs_pred_research.svg
+│   │   │   ├── rmse_by_exposure_quartile.svg
+│   │   │   └── rmse_comparison.svg
+│   │   ├── 00_pre_execution_freeze.json
+│   │   ├── 01_model_freeze_verification.json
+│   │   ├── 02_reserved_protocol_verification.json
+│   │   ├── 03_reserved_chronology.json
+│   │   ├── 04_prediction_provenance.csv
+│   │   ├── 05_common_universe_sealed.json
+│   │   ├── 06_pre_score_integrity.json
+│   │   ├── 07_bootstrap_results.csv
+│   │   ├── 08_model_metrics.csv
+│   │   ├── 09_reserved_verdict_preseal.json
+│   │   ├── 10_reserved_result_sealed.json
+│   │   ├── 11_reserved_result_seal_manifest.json
+│   │   ├── 12_exposure_quartile_metrics.csv
+│   │   ├── 13_postseal_player_diagnostics.csv
+│   │   ├── 14_calibration_diagnostics.csv
+│   │   ├── 15_secondary_comparator_analysis.md
+│   │   ├── 16_reserved_consumption_contract.md
+│   │   ├── 17_model_health.json
+│   │   ├── 18_full_audit.md
+│   │   └── 19_final_response_values.json
+│   ├── m16j0/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_point_model_source_manifest.json
+│   │   ├── 02_point_estimate_certification.json
+│   │   ├── 03_uncertainty_checkpoint.json
+│   │   ├── 04_reserved_scope_amendment.md
+│   │   ├── 05_reserved_row_protocol.json
+│   │   ├── 06_m16j_output_contract.json
+│   │   ├── 07_model_comparator_manifest.json
+│   │   ├── 08_reserved_test_authorization.json
+│   │   ├── 09_human_blindness_disclosure.md
+│   │   ├── 10_no_test_tuning_contract.md
+│   │   ├── 11_model_health.json
+│   │   ├── 12_full_audit.md
+│   │   └── 13_final_response_values.json
+│   ├── m16j0_1/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16j0_reproduction.json
+│   │   ├── 02_baseline_m16a_lineage.md
+│   │   ├── 03_baseline_m16a_manifest.json
+│   │   ├── 04_b2_input_provenance.csv
+│   │   ├── 05_b2_shadow_reconstruction.csv
+│   │   ├── 06_unit_semantics.md
+│   │   ├── 07_repaired_comparator_manifest.json
+│   │   ├── 08_repaired_verdict_taxonomy.json
+│   │   ├── 09_reserved_test_authorization_repaired.json
+│   │   ├── 10_comparator_semantic_decision.json
+│   │   ├── 11_model_health.json
+│   │   ├── 12_full_audit.md
+│   │   └── 13_final_response_values.json
+│   ├── m16k0/
+│   │   ├── charts/
+│   │   │   ├── legacy_vs_validated_scatter_2024_25.svg
+│   │   │   ├── legacy_vs_validated_scatter_2025_26.svg
+│   │   │   ├── reliability_distribution_note.svg
+│   │   │   ├── topN_overlap_summary.svg
+│   │   │   └── validated_vs_exposure_2025_26.svg
+│   │   ├── _test.txt
+│   │   ├── 00_freeze.json
+│   │   ├── 01_validated_point_model_reproduction.json
+│   │   ├── 02_current_production_lineage.md
+│   │   ├── 03_current_production_field_semantics.csv
+│   │   ├── 04_posterior_operation_audit.json
+│   │   ├── 05_shadow_purity_tests.json
+│   │   ├── 06_consumer_inventory.csv
+│   │   ├── 07_shadow_ranking_integrity.json
+│   │   ├── 08_shadow_board_2024_25.csv
+│   │   ├── 09_shadow_board_2025_26.csv
+│   │   ├── 10_legacy_shadow_divergence.csv
+│   │   ├── 11_zero_semantics_audit.csv
+│   │   ├── 12_uncertainty_quarantine.csv
+│   │   ├── 13_missingness_audit.csv
+│   │   ├── 14_exposure_semantics.json
+│   │   ├── 15_season_value_semantics.md
+│   │   ├── 16_war_dependency_audit.csv
+│   │   ├── 17_od_dependency_audit.csv
+│   │   ├── 18_api_schema_migration.csv
+│   │   ├── 19_cache_artifact_inventory.csv
+│   │   ├── 20_shadow_determinism.json
+│   │   ├── 21_consumer_parity_results.csv
+│   │   ├── 22_cutover_plan.md
+│   │   ├── 23_rollback_plan.md
+│   │   ├── 24_legacy_field_deprecation.csv
+│   │   ├── 25_rank_surface_audit.csv
+│   │   ├── 26_shadow_coverage.csv
+│   │   ├── 27_research_production_equality.csv
+│   │   ├── 28_post_reserved_parameter_lock.json
+│   │   ├── 29_cutover_readiness_decision.json
+│   │   ├── 30_model_health.json
+│   │   ├── 31_full_audit.md
+│   │   └── 32_final_response_values.json
+│   ├── m16k0_1/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16k0_blocker_reproduction.json
+│   │   ├── 02_percentile_consumer_inventory.csv
+│   │   ├── 03_current_percentile_rule.md
+│   │   ├── 04_percentile_math_contract.json
+│   │   ├── 05_percentile_population_comparison.csv
+│   │   ├── 06_drbl_copy_inventory.csv
+│   │   ├── 07_explore_sort_semantics.md
+│   │   ├── 08_rank_display_contract.csv
+│   │   ├── 09_repaired_consumer_inventory.csv
+│   │   ├── 10_research_shadow_equality.json
+│   │   ├── 11_missingness_regression.json
+│   │   ├── 12_uncertainty_quarantine_recheck.json
+│   │   ├── 13_updated_cutover_plan.md
+│   │   ├── 14_percentile_edge_tests.json
+│   │   ├── 15_copy_replacement_contract.md
+│   │   ├── 16_model_health.json
+│   │   ├── 17_cutover_readiness_decision.json
+│   │   └── 18_full_audit.md
+│   ├── m16k1/
+│   │   ├── charts/
+│   │   │   ├── drbl_vs_exposure.svg
+│   │   │   ├── pre_post_drbl_scatter_2024_25.svg
+│   │   │   ├── pre_post_drbl_scatter_2025_26.svg
+│   │   │   ├── rank_scatter_2024_25.svg
+│   │   │   ├── rank_scatter_2025_26.svg
+│   │   │   ├── reliability_distribution.svg
+│   │   │   └── validated_drbl_distribution.svg
+│   │   ├── rollback/
+│   │   │   ├── 2024-25.json
+│   │   │   ├── 2025-26.json
+│   │   │   └── MANIFEST.json
+│   │   ├── 00_pre_cutover_freeze.json
+│   │   ├── 01_validated_model_reproduction.json
+│   │   ├── 02_cutover_contract_reproduction.json
+│   │   ├── 03_explore_sort_provenance.json
+│   │   ├── 04_rollback_snapshot.json
+│   │   ├── 05_model_version_activation.json
+│   │   ├── 06_rank_cutover.json
+│   │   ├── 07_percentile_cutover.json
+│   │   ├── 08_uncertainty_display_cutover.csv
+│   │   ├── 09_copy_cutover_audit.csv
+│   │   ├── 10_missingness_post_cutover.json
+│   │   ├── 11_exposure_post_cutover.json
+│   │   ├── 12_war_firewall_verification.csv
+│   │   ├── 13_od_firewall_verification.csv
+│   │   ├── 14_artifact_rebuild_manifest.json
+│   │   ├── 15_production_validated_equality.csv
+│   │   ├── 16_production_rank_equality.csv
+│   │   ├── 17_percentile_post_cutover.csv
+│   │   ├── 18_api_contract_verification.csv
+│   │   ├── 19_user_surface_verification.csv
+│   │   ├── 20_stale_legacy_contamination.json
+│   │   ├── 21_copy_post_cutover_scan.csv
+│   │   ├── 22_explore_post_cutover_semantics.json
+│   │   ├── 23_regression_suite.json
+│   │   ├── 24_post_cutover_determinism.json
+│   │   ├── 25_pre_post_cutover_board_diff.csv
+│   │   ├── 26_named_product_qa.csv
+│   │   ├── 27_live_source_confirmation.json
+│   │   ├── 28_rollback_verification.json
+│   │   ├── 29_model_lock_verification.json
+│   │   ├── 30_production_version_lock.json
+│   │   ├── 31_post_cutover_deprecation.csv
+│   │   ├── 32_cutover_decision.json
+│   │   ├── 33_model_health.json
+│   │   └── 34_full_audit.md
+│   ├── m16k1_1/
+│   │   ├── raw/
+│   │   │   ├── post_build.log
+│   │   │   ├── post_typecheck_after_repairs.log
+│   │   │   ├── post_typecheck.log
+│   │   │   ├── pre_build.log
+│   │   │   └── pre_typecheck.log
+│   │   ├── 00_freeze.json
+│   │   ├── 01_m16k1_invariant_reproduction.json
+│   │   ├── 02_m16k1_changed_files.csv
+│   │   ├── 03_pre_cutover_reconstruction.json
+│   │   ├── 04_typecheck_protocol.json
+│   │   ├── 05_pre_typecheck_errors.csv
+│   │   ├── 06_post_typecheck_errors.csv
+│   │   ├── 07_typecheck_normalization_contract.json
+│   │   ├── 08_typecheck_error_diff.csv
+│   │   ├── 09_cutover_type_repairs.csv
+│   │   ├── 10_build_protocol.json
+│   │   ├── 11_error_scope_attribution.csv
+│   │   ├── 12_regression_status_semantics.md
+│   │   ├── 13_cutover_test_suite.json
+│   │   ├── 14_postrepair_production_equality.json
+│   │   ├── 15_postrepair_rank_equality.json
+│   │   ├── 16_postrepair_firewall_verification.json
+│   │   ├── 17_final_determinism.json
+│   │   ├── 18_legacy_rank_provenance_reconciliation.md
+│   │   ├── 19_remaining_type_debt_summary.csv
+│   │   ├── 20_preexisting_technical_debt.md
+│   │   ├── 21_build_results.json
+│   │   ├── 22_regression_certification.json
+│   │   ├── 23_final_cutover_certification.json
+│   │   ├── 24_model_health.json
+│   │   └── 25_full_audit.md
+│   ├── m16l0/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_drbl_model_lock.json
+│   │   ├── 02_current_war_inventory.csv
+│   │   ├── 03_legacy_war_lineage.md
+│   │   ├── 04_dimensional_analysis.csv
+│   │   ├── 05_raw_value_reconstruction.json
+│   │   ├── 06_paired_exposure_counterfactual.json
+│   │   ├── 07_replacement_zero_proof.md
+│   │   ├── 08_team_replacement_baseline_contract.md
+│   │   ├── 09_season_value_semantics.md
+│   │   ├── 10_forecast_firewall.json
+│   │   ├── 11_team_stint_allocation_audit.csv
+│   │   ├── 12_team_additivity_audit.csv
+│   │   ├── 13_historical_2x_bug_reconstruction.md
+│   │   ├── 14_legacy_calibration_factor_audit.md
+│   │   ├── 15_points_per_win_inventory.csv
+│   │   ├── 16_points_per_win_semantic_contract.md
+│   │   ├── 17_war_data_usage_audit.json
+│   │   ├── 18_war_consumer_inventory.csv
+│   │   ├── 19_future_candidate_contract.json
+│   │   ├── 20_war_versioning_contract.json
+│   │   ├── 21_model_health.json
+│   │   ├── 22_semantic_freeze_decision.json
+│   │   └── 23_full_audit.md
+│   ├── m16l0_1/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_semantic_contract_reproduction.json
+│   │   ├── 02_raw_reconstruction_precision_audit.json
+│   │   ├── 03_war_precision_contract.md
+│   │   ├── 04_approach_b_stream_inventory.md
+│   │   ├── 05_appearance_team_identity_audit.csv
+│   │   ├── 06_player_team_season_stints.csv
+│   │   ├── 07_stint_exposure_conservation.json
+│   │   ├── 08_stint_raw_value_conservation.json
+│   │   ├── 09_global_conservation.json
+│   │   ├── 10_traded_player_inventory.csv
+│   │   ├── 11_traded_player_conservation.csv
+│   │   ├── 12_tot_row_audit.json
+│   │   ├── 13_w0_team_allocation_conservation.json
+│   │   ├── 14_w1_team_allocation_conservation.json
+│   │   ├── 15_observed_vs_allocated_raw_diagnostic.csv
+│   │   ├── 16_stint_rate_prohibition_contract.md
+│   │   ├── 17_team_season_structural_rows.csv
+│   │   ├── 18_team_id_coverage.json
+│   │   ├── 19_team_reference_search.md
+│   │   ├── 20_team_additivity_test.csv
+│   │   ├── 21_future_team_outcome_schema_audit.json
+│   │   ├── 22_2025_26_holdout_guard.json
+│   │   ├── 23_missingness_audit.csv
+│   │   ├── 24_team_exposure_share_conservation.json
+│   │   ├── 25_allocation_purity_tests.json
+│   │   ├── 26_stint_determinism.json
+│   │   ├── 27_cross_season_stint_contract.json
+│   │   ├── 28_m16l1_input_contract.json
+│   │   ├── 29_readiness_decision.json
+│   │   ├── 30_model_health.json
+│   │   └── 31_full_audit.md
+│   ├── m16l1/
+│   │   ├── raw/
+│   │   │   ├── ppw_decision.json
+│   │   │   ├── pre_reserved_war_freeze.hash.txt
+│   │   │   └── rate_source_decision.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_prerequisite_reproduction.json
+│   │   ├── 02_accounting_universe_reconciliation.csv
+│   │   ├── 03_war_accounting_universe_contract.md
+│   │   ├── 04_development_team_outcomes.csv
+│   │   ├── 05_development_candidate_team_points.csv
+│   │   ├── 06_team_point_accounting.json
+│   │   ├── 07_rate_source_fold_rows.csv
+│   │   ├── 08_rate_source_metrics.json
+│   │   ├── 09_rate_source_free_slope.json
+│   │   ├── 10_rate_source_bootstrap.json
+│   │   ├── 11_rate_source_decision.json
+│   │   ├── 12_ppw_identifiability_proof.md
+│   │   ├── 13_ppw_fold_rows.csv
+│   │   ├── 14_ppw_metrics.json
+│   │   ├── 15_ppw_bootstrap.json
+│   │   ├── 16_ppw_decision.json
+│   │   ├── 17_final_ppw_fit.json
+│   │   ├── 18_2025_26_holdout_guard.json
+│   │   ├── 19_pre_reserved_war_freeze.json
+│   │   ├── 20_selection_integrity.json
+│   │   ├── 21_selected_development_team_war.csv
+│   │   ├── 22_selected_development_player_war.csv
+│   │   ├── 23_fixed_slope_war_diagnostics.json
+│   │   ├── 24_free_slope_war_diagnostics.json
+│   │   ├── 25_league_total_diagnostics.json
+│   │   ├── 26_m16l2_protocol.md
+│   │   ├── 27_war_versioning_contract.json
+│   │   ├── 28_model_health.json
+│   │   ├── 29_readiness_decision.json
+│   │   └── 30_full_audit.md
+│   ├── m16l1_1/
+│   │   ├── raw/
+│   │   │   ├── scale_audit_body.json
+│   │   │   └── scale_audit.hash.txt
+│   │   ├── 00_freeze.json
+│   │   ├── 01_scale_anomaly_reproduction.json
+│   │   ├── 02_net_points_target_audit.json
+│   │   ├── 03_approach_b_primitive_equation.md
+│   │   ├── 04_possession_conservation_identity.md
+│   │   ├── 05_possession_conservation_test.json
+│   │   ├── 06_value_unit_semantics.md
+│   │   ├── 07_offense_defense_unit_audit.csv
+│   │   ├── 08_factor_two_forensics.md
+│   │   ├── 09_team_baseline_decomposition.csv
+│   │   ├── 10_team_net_point_decomposition.json
+│   │   ├── 11_baseline_variation.json
+│   │   ├── 12_baseline_aware_scale_diagnostic.json
+│   │   ├── 13_unassigned_residual_audit.json
+│   │   ├── 14_credit_conservation_share.json
+│   │   ├── 15_pbp_coverage_audit.csv
+│   │   ├── 16_credit_multiplicity_audit.json
+│   │   ├── 17_stint_allocation_attenuation.csv
+│   │   ├── 18_observed_stint_scale_diagnostic.json
+│   │   ├── 19_trade_allocation_effect.json
+│   │   ├── 20_r1_definition_forensics.md
+│   │   ├── 21_r1_replacement_classification.md
+│   │   ├── 22_r1_pool_description.csv
+│   │   ├── 23_zero_semantics_classification.json
+│   │   ├── 24_team_zero_intercept_semantics.md
+│   │   ├── 25_war_naming_audit.md
+│   │   ├── 26_scale_gap_decomposition.csv
+│   │   ├── 27_2025_26_holdout_guard.json
+│   │   ├── 28_semantic_decision.json
+│   │   ├── 29_model_health.json
+│   │   ├── 30_readiness_decision.json
+│   │   └── 31_full_audit.md
+│   ├── m16l1_2/
+│   │   ├── raw/
+│   │   │   ├── r1_value_freeze_body.json
+│   │   │   └── r1_value_freeze.hash.txt
+│   │   ├── 00_freeze.json
+│   │   ├── 01_semantic_reproduction.json
+│   │   ├── 02_raw_season_value_identity.json
+│   │   ├── 03_r1_points_semantic_contract.md
+│   │   ├── 04_player_season_additivity.json
+│   │   ├── 05_realized_vs_rate_allocated_stint_semantics.md
+│   │   ├── 06_realized_stint_conservation.json
+│   │   ├── 07_team_r1_points.csv
+│   │   ├── 08_team_decomposition_reproduction.json
+│   │   ├── 09_league_residual_identity.json
+│   │   ├── 10_league_residual_interpretation.md
+│   │   ├── 11_ability_vs_value_contract.md
+│   │   ├── 12_r1_point_to_win_dimensional_audit.md
+│   │   ├── 13_r1_win_estimand_classification.md
+│   │   ├── 14_cumulative_name_audit.csv
+│   │   ├── 15_r1_points_freeze.json
+│   │   ├── 16_r1_wineq_freeze.json
+│   │   ├── 17_player_season_r1_value.csv
+│   │   ├── 18_player_team_r1_value.csv
+│   │   ├── 19_team_r1_value.csv
+│   │   ├── 20_baseline_aware_consistency.json
+│   │   ├── 21_posterior_vs_realized_value_diagnostic.json
+│   │   ├── 22_low_exposure_value_audit.csv
+│   │   ├── 23_rate_vs_value_interpretation.md
+│   │   ├── 24_context_dependence_contract.md
+│   │   ├── 25_cross_season_formula_contract.json
+│   │   ├── 26_future_historical_backfill_contract.md
+│   │   ├── 27_product_field_contract.json
+│   │   ├── 28_future_product_copy.md
+│   │   ├── 29_conventional_war_future_requirements.md
+│   │   ├── 30_r1_value_freeze.json
+│   │   ├── 31_m16l2_reserved_protocol.md
+│   │   ├── 32_parameter_integrity.json
+│   │   ├── 33_2025_26_holdout_guard.json
+│   │   ├── 34_model_health.json
+│   │   ├── 35_readiness_decision.json
+│   │   └── 36_full_audit.md
+│   ├── m16l2/
+│   │   ├── raw/
+│   │   │   ├── 00_reserved_open_intent.json
+│   │   │   ├── m16l2_protocol.hash.txt
+│   │   │   ├── m16l2_protocol.md
+│   │   │   ├── reserved_result_seal_body.json
+│   │   │   └── reserved_result_seal.hash.txt
+│   │   ├── 00_preopen_freeze.json
+│   │   ├── 01_prerequisite_reproduction.json
+│   │   ├── 02_reserved_structural_precheck.json
+│   │   ├── 03_reserved_open_marker.json
+│   │   ├── 04_reserved_team_outcomes.csv
+│   │   ├── 05_reserved_player_r1_points.csv
+│   │   ├── 06_reserved_raw_value_identity.json
+│   │   ├── 07_reserved_player_team_r1_points.csv
+│   │   ├── 08_reserved_stint_conservation.json
+│   │   ├── 09_reserved_team_r1_points.csv
+│   │   ├── 10_reserved_r1_baseline.csv
+│   │   ├── 11_reserved_unassigned_residual.csv
+│   │   ├── 12_primary_accounting_test.json
+│   │   ├── 13_reserved_league_identity.json
+│   │   ├── 14_reserved_win_equivalent_accounting.csv
+│   │   ├── 15_p1_reserved_calibration.json
+│   │   ├── 16_cross_season_distribution_stability.json
+│   │   ├── 17_r1_formula_stability.json
+│   │   ├── 18_reserved_baseline_behavior.json
+│   │   ├── 19_reserved_unassigned_behavior.json
+│   │   ├── 20_reserved_posterior_vs_realized.json
+│   │   ├── 21_primary_reserved_verdict.json
+│   │   ├── 22_reserved_result_seal.json
+│   │   ├── 23_reserved_player_research_output.csv
+│   │   ├── 24_reserved_team_research_output.csv
+│   │   ├── 25_human_blindness_disclosure.md
+│   │   ├── 26_parameter_integrity.json
+│   │   ├── 27_production_eligibility.json
+│   │   ├── 28_model_health.json
+│   │   └── 29_full_audit.md
+│   ├── m16l3/
+│   │   ├── raw/
+│   │   │   ├── player_accounting_equality_summary.json
+│   │   │   ├── product_migration_seal_body.json
+│   │   │   ├── product_migration_seal.hash.txt
+│   │   │   └── traded_player_conservation_full.json
+│   │   ├── 00_pre_migration_freeze.json
+│   │   ├── 01_legacy_war_surface_inventory.csv
+│   │   ├── 02_product_data_lineage.md
+│   │   ├── 03_model_version_contract.json
+│   │   ├── 04_2024_25_shadow_equality.json
+│   │   ├── 05_2025_26_shadow_equality.json
+│   │   ├── 06_display_precision_contract.json
+│   │   ├── 07_traded_player_product_conservation.json
+│   │   ├── 08_api_contract.md
+│   │   ├── 09_legacy_api_compatibility.json
+│   │   ├── 10_cache_migration.json
+│   │   ├── 11_storage_schema_migration.md
+│   │   ├── 12_product_missingness_audit.csv
+│   │   ├── 13_player_product_research_equality.csv
+│   │   ├── 14_stint_product_research_equality.csv
+│   │   ├── 15_team_product_research_equality.json
+│   │   ├── 16_cross_surface_consistency.json
+│   │   ├── 17_determinism.json
+│   │   ├── 18_sorting_and_rank_tests.json
+│   │   ├── 19_semantic_copy_audit.csv
+│   │   ├── 20_legacy_formula_firewall.json
+│   │   ├── 21_attribution_firewall.json
+│   │   ├── 22_p1_single_source.json
+│   │   ├── 23_typecheck.json
+│   │   ├── 24_tests.json
+│   │   ├── 25_build.json
+│   │   ├── 26_ui_smoke_test.md
+│   │   ├── 27_drbl_rank_regression.json
+│   │   ├── 28_post_cutover_equality.json
+│   │   ├── 29_production_version_contract.json
+│   │   ├── 30_product_migration_seal.json
+│   │   ├── 31_rollback_plan.md
+│   │   ├── 32_legacy_war_retirement.md
+│   │   ├── 33_model_health.json
+│   │   └── 34_full_audit.md
+│   ├── m17a/
+│   │   ├── import/
+│   │   │   ├── historical_import_progress.jsonl
+│   │   │   ├── historical_import_summary.json
+│   │   │   └── README.md
+│   │   ├── raw/
+│   │   │   ├── model_health.json
+│   │   │   └── sample-normalized-0022400001.json
+│   │   ├── shadow/
+│   │   │   ├── 2024-25-player-season.csv
+│   │   │   ├── 2024-25-player-team-stints.csv
+│   │   │   ├── 2025-26-player-season.csv
+│   │   │   └── 2025-26-player-team-stints.csv
+│   │   ├── 00_current_generation_freeze.json
+│   │   ├── 01_historical_archive_inventory.csv
+│   │   ├── 02_archive_summary.json
+│   │   ├── 03_raw_archive_manifest.csv
+│   │   ├── 04_raw_archive_fingerprint.json
+│   │   ├── 05_source_schema_families.md
+│   │   ├── 06_normalized_event_schema.md
+│   │   ├── 07_game_identity_audit.csv
+│   │   ├── 08_historical_team_identity.csv
+│   │   ├── 09_historical_player_identity.csv
+│   │   ├── 10_scoreboard_reconstruction.csv
+│   │   ├── 11_game_completeness.csv
+│   │   ├── 12_lineup_reconstruction_quality.csv
+│   │   ├── 13_possession_reconstruction_quality.csv
+│   │   ├── 14_season_feature_support_matrix.csv
+│   │   ├── 15_historical_schema_change_log.md
+│   │   ├── 16_role_feature_availability.csv
+│   │   ├── 17_r1_historical_support.csv
+│   │   ├── 18_epv_input_support.csv
+│   │   ├── 19_season_quality_scorecard.csv
+│   │   ├── 20_support_tier_contract.md
+│   │   ├── 21_normalization_determinism.json
+│   │   ├── 22_normalized_dataset_manifest.csv
+│   │   ├── 23_current_season_normalization_regression.json
+│   │   ├── 24_historical_accounting_validation.csv
+│   │   ├── 25_final_season_support_tiers.csv
+│   │   ├── 26_pipeline_performance.csv
+│   │   ├── 27_current_production_regression.json
+│   │   ├── 28_historical_data_corrections.csv
+│   │   ├── 29_typecheck.json
+│   │   ├── 30_tests.json
+│   │   ├── 31_build.json
+│   │   ├── 32_ui_smoke_test.md
+│   │   ├── 33_historical_ui_performance.json
+│   │   ├── 34_future_research_dataset_manifest.json
+│   │   ├── 35_future_temporal_validation_protocol.md
+│   │   ├── 36_future_external_benchmark_protocol.md
+│   │   ├── 37_historical_backfill_seal.json
+│   │   └── 38_final_current_generation_regression.json
+│   ├── m17a_1/
+│   │   ├── raw/
+│   │   │   ├── current_lineup_forensics_summary.json
+│   │   │   └── partial_status.json
+│   │   ├── 00_freeze.json
+│   │   ├── 01_import_process_state.json
+│   │   ├── 02_import_resumability_audit.md
+│   │   ├── 03_import_lock_audit.json
+│   │   ├── 04_import_rate_policy.json
+│   │   ├── 05_import_coverage.csv
+│   │   ├── 06_import_failures.csv
+│   │   ├── 08_raw_archive_fingerprint.json
+│   │   ├── 09_schema_family_inventory.csv
+│   │   ├── 10_stats_boxscore_adapter_validation.csv
+│   │   ├── 11_event_label_mapping.csv
+│   │   ├── 12_normalization_version_decision.md
+│   │   ├── 13_scoreboard_reconstruction.csv
+│   │   ├── 14_scoreboard_failure_forensics.csv
+│   │   ├── 15_game_completeness.csv
+│   │   ├── 16_current_lineup_incompleteness_forensics.csv
+│   │   ├── 17_lineup_support_contract.md
+│   │   ├── 18_support_gate_reaudit.md
+│   │   ├── 19_historical_lineup_quality.csv
+│   │   ├── 20_historical_substitution_quality.csv
+│   │   ├── 21_historical_possession_quality.csv
+│   │   ├── 22_player_identity_audit.csv
+│   │   ├── 23_team_franchise_crosswalk.csv
+│   │   ├── 24_r1_role_feature_support.csv
+│   │   ├── 25_epv_input_support.csv
+│   │   ├── 26_r1_formula_identity.csv
+│   │   ├── 27_feature_support_matrix.csv
+│   │   ├── 28_precompute_quality_scorecard.csv
+│   │   ├── 29_precompute_support_tiers.csv
+│   │   ├── 30_normalized_dataset_manifest.csv
+│   │   ├── 31_normalization_determinism.json
+│   │   ├── 32_current_season_regression.json
+│   │   ├── 33_historical_accounting_validation.csv
+│   │   ├── 34_data_corrections.csv
+│   │   ├── 35_final_support_tiers.csv
+│   │   ├── 36_pipeline_performance.csv
+│   │   ├── 37_final_current_generation_regression.json
+│   │   ├── 38_historical_backfill_seal.json
+│   │   ├── 39_model_health.json
+│   │   └── 40_full_audit.md
+│   ├── m17a_2/
+│   │   ├── shadow/
+│   │   │   ├── 2020-21-player-season.csv
+│   │   │   ├── 2021-22-player-season.csv
+│   │   │   ├── 2022-23-player-season.csv
+│   │   │   └── 2023-24-player-season.csv
+│   │   ├── 00_freeze.json
+│   │   ├── 01_raw_seal_reproduction.json
+│   │   ├── 02_schema_families.csv
+│   │   ├── 03_schema_family_details.md
+│   │   ├── 04_event_vocabulary.csv
+│   │   ├── 05_normalization_version_decision.md
+│   │   ├── 06_normalized_dataset_manifest.csv
+│   │   ├── 07_normalization_determinism.json
+│   │   ├── 08_game_identity.csv
+│   │   ├── 09_team_franchise_crosswalk.csv
+│   │   ├── 10_player_identity.csv
+│   │   ├── 11_scoreboard_reconstruction.csv
+│   │   ├── 12_scoreboard_failure_forensics.csv
+│   │   ├── 13_game_completeness.csv
+│   │   ├── 14_substitution_quality.csv
+│   │   ├── 15_lineup_initialization_audit.csv
+│   │   ├── 16_lineup_support_contract.md
+│   │   ├── 17_support_gate_reaudit.md
+│   │   ├── 18_historical_lineup_quality.csv
+│   │   ├── 19_possession_quality.csv
+│   │   ├── 20_possession_score_consistency.csv
+│   │   ├── 21_box_adapter_validation.csv
+│   │   ├── 22_r1_role_feature_support.csv
+│   │   ├── 23_r1_formula_identity.csv
+│   │   ├── 24_epv_input_support.csv
+│   │   ├── 25_stint_support.csv
+│   │   ├── 26_feature_support_matrix.csv
+│   │   ├── 27_precompute_quality_scorecard.csv
+│   │   ├── 28_pre_name_support_tiers.csv
+│   │   ├── 29_current_season_control_regression.json
+│   │   ├── 30_legacy_formula_firewall.json
+│   │   ├── 31_raw_value_identity.csv
+│   │   ├── 32_team_accounting.csv
+│   │   ├── 33_historical_accounting_validation.csv
+│   │   ├── 34_postcompute_data_corrections.csv
+│   │   ├── 35_final_support_tiers.csv
+│   │   ├── 36_historical_coverage_map.csv
+│   │   ├── 37_website_performance.json
+│   │   ├── 38_final_current_generation_regression.json
+│   │   ├── 39_ui_smoke.md
+│   │   ├── 40_historical_corpus_seal.json
+│   │   ├── 41_model_health.json
+│   │   └── 42_full_audit.md
+│   ├── m17b/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_season_to_next_metrics.csv
+│   │   ├── 02_season_to_next_deltas.csv
+│   │   ├── 03_season_to_next_bootstrap.csv
+│   │   ├── 04_season_to_next_pooled.csv
+│   │   ├── 05_early_late_metrics.csv
+│   │   ├── 06_m16j_replication.json
+│   │   ├── 07_early_late_bootstrap.csv
+│   │   ├── 08_early_late_pooled.csv
+│   │   ├── 09_exposure_stratification.csv
+│   │   ├── 10_calibration_stability.csv
+│   │   ├── 11_team_change_validation.csv
+│   │   ├── 12_tier_b_validation_limitations.md
+│   │   ├── 13_target_circularity_audit.md
+│   │   ├── 14_current_production_regression.json
+│   │   ├── 15_model_firewall.json
+│   │   ├── 16_determinism.json
+│   │   ├── 17_pre_name_verdict.json
+│   │   ├── 18_cross_season_summary.csv
+│   │   ├── 19_validation_seal.json
+│   │   ├── 20_model_health.json
+│   │   └── 21_full_audit.md
+│   ├── m18a/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_legacy_ln_forensics.md
+│   │   ├── 02_legacy_ln_distribution.csv
+│   │   ├── 03_observable_impact_contract.md
+│   │   ├── 04_lineup_target_contract.md
+│   │   ├── 05_unit_audit.md
+│   │   ├── 06_lineup_regularization_freeze.json
+│   │   ├── 07_lineup_estimator_health.json
+│   │   ├── 08_lineup_negative_controls.csv
+│   │   ├── 09_context_control_contract.md
+│   │   ├── 10_uir_candidate_freeze.json
+│   │   ├── 11_validation_prediction.csv
+│   │   ├── 12_validation_bootstrap.csv
+│   │   ├── 13_team_change_validation.csv
+│   │   ├── 14_lineup_context_turnover.csv
+│   │   ├── 15_validation_verdict.json
+│   │   ├── 16_pre_reserved_freeze.json
+│   │   ├── 17_circularity_audit.md
+│   │   ├── 18_tracking_inventory.md
+│   │   ├── 19_current_production_regression.json
+│   │   ├── 20_determinism.json
+│   │   ├── 21_reserved_prediction.csv
+│   │   ├── 22_reserved_bootstrap.csv
+│   │   ├── 23_reserved_team_change.csv
+│   │   ├── 24_reserved_exposure.csv
+│   │   ├── 25_pre_name_reserved_verdict.json
+│   │   ├── 26_named_diagnostics.csv
+│   │   ├── 27_model_health.json
+│   │   ├── 28_full_audit.md
+│   │   └── 29_m18a_seal.json
+│   ├── m18b_0/
+│   │   ├── 00_freeze.json
+│   │   ├── 01_local_tracking_inventory.md
+│   │   ├── 02_tracking_source_inventory.md
+│   │   ├── 03_tracking_data_contract.md
+│   │   ├── 04_tracking_player_crosswalk.csv
+│   │   ├── 05_lineup_tracking_agreement.csv
+│   │   ├── 06_spatial_feature_contract.md
+│   │   ├── 07_identity_leakage_protocol.md
+│   │   ├── 08_counterfactual_identification_risks.md
+│   │   ├── 09_proposed_tracking_eval_protocol.md
+│   │   ├── 10_tracking_coverage_plan.csv
+│   │   ├── 11_storage_and_acquisition_plan.md
+│   │   ├── 12_model_firewall.json
+│   │   ├── 13_model_health.json
+│   │   ├── 14_full_audit.md
+│   │   └── 15_readiness_seal.json
+│   ├── m6/
+│   │   ├── m6_component_analysis.csv
+│   │   ├── m6_feature_provenance.csv
+│   │   ├── m6_implementation.md
+│   │   ├── m6_leakage_report.csv
+│   │   └── m6_oos_validation.csv
+│   ├── m7/
+│   │   ├── m7_component_analysis.csv
+│   │   ├── m7_cv_baseline_comparison.csv
+│   │   ├── m7_cv_component_analysis.csv
+│   │   ├── m7_cv_implementation.md
+│   │   ├── m7_cv_leakage_report.csv
+│   │   ├── m7_cv_oos_validation.csv
+│   │   ├── m7_feature_provenance.csv
+│   │   ├── m7_leakage_report.csv
+│   │   ├── m7_research.md
+│   │   ├── m7_target_definition.md
+│   │   └── m7_validation_plan.md
+│   ├── post-m7/
+│   │   ├── baseline/
+│   │   │   ├── 2024-25.pre-remediation.json
+│   │   │   └── 2025-26.pre-remediation.json
+│   │   ├── calculation_before_after.csv
+│   │   ├── component_ablation.csv
+│   │   ├── final_calculation_audit.md
+│   │   ├── leakage_report.csv
+│   │   ├── oos_validation.csv
+│   │   ├── regression_report.md
+│   │   ├── remediation_implementation.md
+│   │   ├── remediation_matrix.csv
+│   │   ├── timestamp_validation.csv
+│   │   ├── top100_2024_25.csv
+│   │   └── top100_2025_26.csv
+│   ├── project_workbook_v1/
+│   │   ├── critical_source_snapshot/
+│   │   │   ├── drbl/
+│   │   │   │   ├── historical/
+│   │   │   │   │   ├── adapters/
+│   │   │   │   │   │   └── nba-cdn-playbyplayv3.ts
+│   │   │   │   │   ├── normalized-event-schema.ts
+│   │   │   │   │   └── season-registry.ts
+│   │   │   │   ├── ingest/
+│   │   │   │   │   └── normalize.ts
+│   │   │   │   ├── models/
+│   │   │   │   │   ├── ability-lineage.ts
+│   │   │   │   │   ├── compute-season.ts
+│   │   │   │   │   ├── epv-model.ts
+│   │   │   │   │   ├── expected-points.ts
+│   │   │   │   │   ├── lineup-model.ts
+│   │   │   │   │   ├── pipeline-value.ts
+│   │   │   │   │   ├── player-value.ts
+│   │   │   │   │   ├── research-ability-v1.ts
+│   │   │   │   │   ├── research-rate-v1.ts
+│   │   │   │   │   ├── validated-ability-cutover.ts
+│   │   │   │   │   ├── validated-ability-v1.ts
+│   │   │   │   │   └── war-math.ts
+│   │   │   │   ├── research/
+│   │   │   │   │   └── m18/
+│   │   │   │   │       ├── lineup-impact.ts
+│   │   │   │   │       └── uir.ts
+│   │   │   │   ├── constants.ts
+│   │   │   │   └── types.ts
+│   │   │   ├── scripts/
+│   │   │   │   ├── drbl-m17a_2.ts
+│   │   │   │   ├── drbl-m17b.ts
+│   │   │   │   ├── drbl-m18a.ts
+│   │   │   │   └── drbl-m18b_0.ts
+│   │   │   └── src/
+│   │   │       ├── app/
+│   │   │       │   ├── ask/
+│   │   │       │   │   └── page.tsx
+│   │   │       │   ├── explore/
+│   │   │       │   │   └── players/
+│   │   │       │   ├── learn/
+│   │   │       │   │   └── drbl/
+│   │   │       │   ├── players/
+│   │   │       │   │   └── [playerId]/
+│   │   │       │   ├── teams/
+│   │   │       │   │   └── [teamId]/
+│   │   │       │   ├── layout.tsx
+│   │   │       │   └── page.tsx
+│   │   │       ├── components/
+│   │   │       │   └── explore/
+│   │   │       │       ├── drbl-season-support-notice.tsx
+│   │   │       │       └── player-season-table.tsx
+│   │   │       ├── data/
+│   │   │       │   ├── drbl/
+│   │   │       │   │   └── season-registry.ts
+│   │   │       │   ├── providers/
+│   │   │       │   │   ├── nba/
+│   │   │       │   │   └── index.ts
+│   │   │       │   ├── queries/
+│   │   │       │   │   └── players.ts
+│   │   │       │   ├── transformers/
+│   │   │       │   │   ├── espn.ts
+│   │   │       │   │   └── player-season-defaults.ts
+│   │   │       │   └── types/
+│   │   │       │       └── player-season.ts
+│   │   │       └── lib/
+│   │   │           ├── player-explore-sort.ts
+│   │   │           ├── player-season-sort.ts
+│   │   │           └── stat-glossary.ts
+│   │   ├── screenshots/
+│   │   │   └── …
+│   │   ├── supporting_reports/
+│   │   │   ├── integration/
+│   │   │   │   ├── 00_branch_inventory.md
+│   │   │   │   ├── 03_overlap_matrix.csv
+│   │   │   │   ├── 04_conflict_resolution_log.md
+│   │   │   │   ├── 05_api_contract_audit.md
+│   │   │   │   ├── 06_sensitive_file_diff.md
+│   │   │   │   ├── 07_ui_design_preservation.md
+│   │   │   │   ├── 09_current_production_regression.json
+│   │   │   │   ├── 10_historical_regression.json
+│   │   │   │   ├── 12_engineering_results.json
+│   │   │   │   ├── 13_integration_health.json
+│   │   │   │   ├── 14_integration_seal.json
+│   │   │   │   └── 15_full_audit.md
+│   │   │   └── research/
+│   │   │       ├── m16j_17_model_health.json
+│   │   │       ├── m16j_19_final_response_values.json
+│   │   │       ├── m16l2_22_reserved_result_seal.json
+│   │   │       ├── m16l3_30_product_migration_seal.json
+│   │   │       ├── m17a2_40_historical_corpus_seal.json
+│   │   │       ├── m17b_04_season_to_next_pooled.csv
+│   │   │       ├── m17b_08_early_late_pooled.csv
+│   │   │       ├── m17b_17_pre_name_verdict.json
+│   │   │       ├── m17b_19_validation_seal.json
+│   │   │       ├── m17b_20_model_health.json
+│   │   │       ├── m17b_21_full_audit.md
+│   │   │       ├── m18a_27_model_health.json
+│   │   │       ├── m18a_28_full_audit.md
+│   │   │       ├── m18a_29_m18a_seal.json
+│   │   │       ├── m18b0_13_model_health.json
+│   │   │       ├── m18b0_14_full_audit.md
+│   │   │       └── m18b0_15_readiness_seal.json
+│   │   ├── _extract_spec.js
+│   │   ├── _gen_workbook.js
+│   │   ├── _tmp_drbl_test.txt
+│   │   ├── _tmp_ex_current.json
+│   │   ├── _tmp_ex_hist.json
+│   │   ├── _tmp_spec.txt
+│   │   ├── 00_PROJECT_FREEZE.json
+│   │   ├── 08_SEASON_REGISTRY.csv
+│   │   ├── 10_DATASET_MANIFEST.csv
+│   │   ├── 13_COMPONENT_INVENTORY.csv
+│   │   ├── 18_SOURCE_CODE_MAP.csv
+│   │   └── 19_CRITICAL_SOURCE_MANIFEST.csv
+│   ├── ranking-audit/
+│   │   ├── baseline_summary_2024_25.json
+│   │   ├── baseline_summary_2025_26.json
+│   │   ├── before_after_2024_25.csv
+│   │   ├── before_after_2025_26.csv
+│   │   ├── legacy_top100_2024_25_by_drbl100.csv
+│   │   ├── top100_2024_25_ability.csv
+│   │   ├── top100_2024_25_forecast_value.csv
+│   │   ├── top100_2024_25_season_value.csv
+│   │   ├── top100_2025_26_ability.csv
+│   │   ├── top100_2025_26_forecast_value.csv
+│   │   └── top100_2025_26_season_value.csv
+│   ├── sequential-attribution/
+│   │   ├── before_after_2024_25.csv
+│   │   ├── before_after_2025_26.csv
+│   │   ├── summary_2024_25.json
+│   │   ├── summary_2025_26.json
+│   │   ├── top100_2024_25_sequential.csv
+│   │   └── top100_2025_26_sequential.csv
+│   └── ui-metric-integrity/
+│       ├── 00_freeze.json
+│       ├── 01_dataflow.md
+│       ├── 02_representative_row_inputs.json
+│       ├── 03_percentile_contract.csv
+│       ├── 04_cross_player_validation.csv
+│       ├── 05_duplication_diagnostics.csv
+│       ├── 06_fix_summary.md
+│       └── 07_model_health.json
+├── scripts/
+│   ├── fixtures/
+│   │   └── pbp/
+│   │       ├── malformed/
+│   │       │   └── manifest.json
+│   │       └── valid/
+│   │           └── manifest.json
+│   ├── audit-data.ts
+│   ├── diagnose-player-data.ts
+│   ├── drbl-compute-season.ts
+│   ├── drbl-epv-calibrate.ts
+│   ├── drbl-import-historical.ts
+│   ├── drbl-m15-audit.ts
+│   ├── drbl-m15-charts.ts
+│   ├── drbl-m15-refresh.ts
+│   ├── drbl-m16a-diagnostics.ts
+│   ├── drbl-m16b.ts
+│   ├── drbl-m16b1.ts
+│   ├── drbl-m16c.ts
+│   ├── drbl-m16d.ts
+│   ├── drbl-m16e0.ts
+│   ├── drbl-m16e1.ts
+│   ├── drbl-m16f0.ts
+│   ├── drbl-m16f1.ts
+│   ├── drbl-m16f1b-repair-focal.ts
+│   ├── drbl-m16f1b.ts
+│   ├── drbl-m16f2.ts
+│   ├── drbl-m16g.ts
+│   ├── drbl-m16g1.ts
+│   ├── drbl-m16g2.ts
+│   ├── drbl-m16h.ts
+│   ├── drbl-m16i.ts
+│   ├── drbl-m16i1.ts
+│   ├── drbl-m16i2.ts
+│   ├── drbl-m16i3.ts
+│   ├── drbl-m16i4.ts
+│   ├── drbl-m16j.ts
+│   ├── drbl-m16j0_1.ts
+│   ├── drbl-m16j0.ts
+│   ├── drbl-m16k0_1.ts
+│   ├── drbl-m16k0.ts
+│   ├── drbl-m16k1_1.ts
+│   ├── drbl-m16k1.ts
+│   ├── drbl-m16l0_1.ts
+│   ├── drbl-m16l0.ts
+│   ├── drbl-m16l1_1.ts
+│   ├── drbl-m16l1_2.ts
+│   ├── drbl-m16l1.ts
+│   ├── drbl-m16l2.ts
+│   ├── drbl-m16l3.ts
+│   ├── drbl-m17a_1_early.ts
+│   ├── drbl-m17a_1_import_progress.ts
+│   ├── drbl-m17a_1_lineup_forensics.ts
+│   ├── drbl-m17a_1_partial_seal.ts
+│   ├── drbl-m17a_1_seal_raw_import.ts
+│   ├── drbl-m17a_1_season_validate.ts
+│   ├── drbl-m17a_1_supervisor.ts
+│   ├── drbl-m17a_2_export_shadow.ts
+│   ├── drbl-m17a_2.ts
+│   ├── drbl-m17a.ts
+│   ├── drbl-m17b.ts
+│   ├── drbl-m18a.ts
+│   ├── drbl-m18b_0.ts
+│   ├── drbl-m6-validate.ts
+│   ├── drbl-m7-cv-validate.ts
+│   ├── drbl-m7-research.ts
+│   ├── drbl-phase-a.ts
+│   ├── drbl-pipeline-remaster.ts
+│   ├── drbl-post-m7-remediate.ts
+│   ├── drbl-ranking-remaster.ts
+│   ├── drbl-sequential-reattribute.ts
+│   ├── drbl-ui-metric-integrity.ts
+│   ├── drbl-war-audit.ts
+│   ├── drbl-war-player-diagnostics.ts
+│   ├── drbl-war-unit-repair.ts
+│   ├── export-drbl-top100.ts
+│   ├── ingest-espn-transactions.ts
+│   ├── inspect-box-v2.ts
+│   ├── inspect-box-v3.ts
+│   ├── inspect-box-v3b.ts
+│   ├── inspect-hist-pbp.ts
+│   ├── inspect-starters.ts
+│   ├── prefetch-historical-games.ts
+│   ├── probe-boxscore.ts
+│   ├── probe-historical-pbp.ts
+│   ├── report-advanced-stats-coverage.ts
+│   ├── report-historical-impact.ts
+│   ├── report-historical-team-identity.ts
+│   ├── report-learn-coverage.ts
+│   ├── report-pbp-coverage.ts
+│   ├── report-team-identity.ts
+│   ├── report-transaction-lineage.ts
+│   ├── smoke-games.ts
+│   ├── smoke-historical.ts
+│   ├── smoke-myleague-ingest.ts
+│   ├── smoke-myleague.ts
+│   ├── smoke-nba.ts
+│   ├── smoke-real-league.ts
+│   ├── test-advanced-stats-audit.ts
+│   ├── test-ask-drbl.ts
+│   ├── test-ask-examples.ts
+│   ├── test-ask-recent-store.ts
+│   ├── test-box-score-context.ts
+│   ├── test-career-resume.ts
+│   ├── test-cross-route-continuity.ts
+│   ├── test-data-truth.ts
+│   ├── test-drbl-release.ts
+│   ├── test-explore-players-board.ts
+│   ├── test-external-links.ts
+│   ├── test-game-lab.ts
+│   ├── test-game-matchup-theme.ts
+│   ├── test-game-season-context.ts
+│   ├── test-game-shell.ts
+│   ├── test-game-status.ts
+│   ├── test-historical-impact.ts
+│   ├── test-historical-team-brand.ts
+│   ├── test-historical-team-era.ts
+│   ├── test-historical-team-fail-fast.ts
+│   ├── test-leaderboard-context-panel.ts
+│   ├── test-learn-explanations.ts
+│   ├── test-live-refresh.ts
+│   ├── test-offseason-tracker.ts
+│   ├── test-pbp-capability.ts
+│   ├── test-player-board-resilience.ts
+│   ├── test-player-career-explorer.ts
+│   ├── test-player-data-health.ts
+│   ├── test-player-identity-preview.ts
+│   ├── test-player-percentile-metrics.ts
+│   ├── test-player-season-compare.ts
+│   ├── test-player-season-rank.ts
+│   ├── test-production-provider-guard.ts
+│   ├── test-progressive-destinations.ts
+│   ├── test-scoreboard-resilience.ts
+│   ├── test-season-evidence.ts
+│   ├── test-site-nav.ts
+│   ├── test-team-arc.ts
+│   ├── test-team-assets.ts
+│   ├── test-team-identity.ts
+│   ├── test-team-intelligence.ts
+│   ├── test-team-season-compare.ts
+│   ├── test-team-season-rank.ts
+│   ├── test-teams-catalog-resilience.ts
+│   ├── test-time-machine.ts
+│   ├── test-transaction-lineage.ts
+│   ├── test-transaction-player-resolve.ts
+│   ├── test-ui-continuity.ts
+│   ├── time-fetch.ts
+│   └── tmp-starters.ts
+├── src/
+│   ├── analytics/
+│   │   ├── box-score-context.ts
+│   │   ├── career-resume.ts
+│   │   ├── compare-player-seasons.ts
+│   │   ├── compare-players.ts
+│   │   ├── compare-team-seasons.ts
+│   │   ├── context.ts
+│   │   ├── evolution.ts
+│   │   ├── explanations.ts
+│   │   ├── game-lab.ts
+│   │   ├── game-season-context.ts
+│   │   ├── index.ts
+│   │   ├── leaderboard-context.ts
+│   │   ├── rank-player-seasons.ts
+│   │   ├── rank-team-seasons.ts
+│   │   ├── season-evidence.ts
+│   │   ├── team-profile.ts
+│   │   └── types.ts
+│   ├── app/
+│   │   ├── api/
+│   │   │   ├── _lib/
+│   │   │   │   └── http.ts
+│   │   │   ├── drbl/
+│   │   │   │   └── provenance/
+│   │   │   │       └── route.ts
+│   │   │   ├── games/
+│   │   │   │   ├── [gameId]/
+│   │   │   │   │   ├── box-score/
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── route.ts
+│   │   │   ├── gm/
+│   │   │   │   └── league/
+│   │   │   │       └── route.ts
+│   │   │   ├── historical/
+│   │   │   │   └── route.ts
+│   │   │   ├── impact/
+│   │   │   │   ├── darko/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── lebron/
+│   │   │   │       └── route.ts
+│   │   │   ├── players/
+│   │   │   │   ├── [playerId]/
+│   │   │   │   │   ├── games/
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   ├── seasons/
+│   │   │   │   │   │   └── route.ts
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── search/
+│   │   │   │       └── route.ts
+│   │   │   ├── scores/
+│   │   │   │   └── live/
+│   │   │   │       └── route.ts
+│   │   │   ├── search/
+│   │   │   │   └── route.ts
+│   │   │   ├── seasons/
+│   │   │   │   └── route.ts
+│   │   │   ├── stats/
+│   │   │   │   ├── advanced/
+│   │   │   │   │   └── route.ts
+│   │   │   │   ├── games/
+│   │   │   │   │   └── route.ts
+│   │   │   │   └── players/
+│   │   │   │       └── route.ts
+│   │   │   └── teams/
+│   │   │       └── route.ts
+│   │   ├── ask/
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   ├── compare/
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   ├── dashboard/
+│   │   │   └── page.tsx
+│   │   ├── explore/
+│   │   │   ├── games/
+│   │   │   │   └── page.tsx
+│   │   │   ├── players/
+│   │   │   │   └── page.tsx
+│   │   │   └── teams/
+│   │   │       └── page.tsx
+│   │   ├── franchises/
+│   │   │   ├── [id]/
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── games/
+│   │   │   └── [gameId]/
+│   │   │       ├── loading.tsx
+│   │   │       └── page.tsx
+│   │   ├── gm/
+│   │   │   ├── cap/
+│   │   │   │   └── page.tsx
+│   │   │   ├── draft/
+│   │   │   │   └── page.tsx
+│   │   │   ├── free-agency/
+│   │   │   │   └── page.tsx
+│   │   │   ├── game/
+│   │   │   │   └── [gameId]/
+│   │   │   │       └── page.tsx
+│   │   │   ├── lineup/
+│   │   │   │   └── page.tsx
+│   │   │   ├── medical/
+│   │   │   │   └── page.tsx
+│   │   │   ├── offseason/
+│   │   │   │   └── page.tsx
+│   │   │   ├── roster/
+│   │   │   │   └── page.tsx
+│   │   │   ├── schedule/
+│   │   │   │   └── page.tsx
+│   │   │   ├── staff/
+│   │   │   │   └── page.tsx
+│   │   │   ├── standings/
+│   │   │   │   └── page.tsx
+│   │   │   ├── trade/
+│   │   │   │   └── page.tsx
+│   │   │   ├── layout.tsx
+│   │   │   └── page.tsx
+│   │   ├── history/
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   ├── learn/
+│   │   │   ├── [slug]/
+│   │   │   │   └── page.tsx
+│   │   │   ├── drbl/
+│   │   │   │   └── page.tsx
+│   │   │   └── page.tsx
+│   │   ├── offseason/
+│   │   │   ├── loading.tsx
+│   │   │   └── page.tsx
+│   │   ├── players/
+│   │   │   └── [playerId]/
+│   │   │       ├── season-compare/
+│   │   │       │   └── page.tsx
+│   │   │       ├── season-rank/
+│   │   │       │   └── page.tsx
+│   │   │       ├── loading.tsx
+│   │   │       └── page.tsx
+│   │   ├── scores/
+│   │   │   └── page.tsx
+│   │   ├── standings/
+│   │   │   └── page.tsx
+│   │   ├── teams/
+│   │   │   └── [teamId]/
+│   │   │       ├── loading.tsx
+│   │   │       └── page.tsx
+│   │   ├── favicon.ico
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── analytics/
+│   │   │   └── stat-disclosure.tsx
+│   │   ├── ask/
+│   │   │   ├── ask-builder-form.tsx
+│   │   │   ├── ask-drbl-view.tsx
+│   │   │   └── ask-recent-store.ts
+│   │   ├── brand/
+│   │   │   ├── historical-team-mark.tsx
+│   │   │   ├── player-headshot.tsx
+│   │   │   ├── team-logo.tsx
+│   │   │   └── team-wash-card.tsx
+│   │   ├── charts/
+│   │   │   ├── game-scoring-scatter.tsx
+│   │   │   ├── player-career-timeline.tsx
+│   │   │   ├── player-efficiency-profile.tsx
+│   │   │   ├── player-shot-chart.tsx
+│   │   │   ├── player-shot-diet.tsx
+│   │   │   ├── player-usage-ts-scatter-lazy.tsx
+│   │   │   ├── player-usage-ts-scatter.tsx
+│   │   │   └── rolling-efficiency-chart.tsx
+│   │   ├── compare/
+│   │   │   ├── compare-picker.tsx
+│   │   │   ├── player-compare-view.tsx
+│   │   │   ├── team-compare-view.tsx
+│   │   │   ├── team-season-evidence-section.tsx
+│   │   │   └── team-season-rank-view.tsx
+│   │   ├── continuity/
+│   │   │   ├── destination-client-shell.tsx
+│   │   │   ├── destination-loading-frame.tsx
+│   │   │   ├── query-nav.tsx
+│   │   │   └── route-transition.tsx
+│   │   ├── dashboard/
+│   │   │   ├── analysis-board.tsx
+│   │   │   ├── category-bar-board.tsx
+│   │   │   ├── dashboard-workspace.tsx
+│   │   │   ├── histogram-board.tsx
+│   │   │   ├── metric-card.tsx
+│   │   │   └── scatter-board.tsx
+│   │   ├── explore/
+│   │   │   ├── board-provenance-debug.tsx
+│   │   │   ├── drbl-season-support-notice.tsx
+│   │   │   ├── explore-games-client-shell.tsx
+│   │   │   ├── explore-players-client-shell.tsx
+│   │   │   ├── game-filter-toolbar.tsx
+│   │   │   ├── game-season-table.tsx
+│   │   │   ├── leaderboard-row-context.tsx
+│   │   │   ├── player-board-health-banner.tsx
+│   │   │   ├── player-filter-toolbar.tsx
+│   │   │   ├── player-season-table.tsx
+│   │   │   ├── team-catalog-fallback-notice.tsx
+│   │   │   ├── team-filter-toolbar.tsx
+│   │   │   ├── team-season-table.tsx
+│   │   │   └── team-season-toolbar.tsx
+│   │   ├── franchises/
+│   │   │   └── franchise-history-table.tsx
+│   │   ├── game/
+│   │   │   └── game-play-by-play.tsx
+│   │   ├── games/
+│   │   │   ├── box-score-stat-context.tsx
+│   │   │   ├── game-box-score-tables.tsx
+│   │   │   ├── game-identity-shell.tsx
+│   │   │   └── game-lab-view.tsx
+│   │   ├── home/
+│   │   │   ├── findings-section.tsx
+│   │   │   ├── home-game-list.tsx
+│   │   │   ├── home-standings-panel.tsx
+│   │   │   ├── impact-leaders.tsx
+│   │   │   ├── league-pulse-section.tsx
+│   │   │   ├── league-pulse.tsx
+│   │   │   ├── offseason-pulse-panel.tsx
+│   │   │   ├── stat-guide-chips.tsx
+│   │   │   ├── top-performers-panel.tsx
+│   │   │   ├── watchlist-panel.tsx
+│   │   │   ├── week-game-calendar-client.tsx
+│   │   │   └── week-game-calendar.tsx
+│   │   ├── layout/
+│   │   │   └── global-player-search.tsx
+│   │   ├── learn/
+│   │   │   ├── learn-index-client.tsx
+│   │   │   ├── learn-topic-view.tsx
+│   │   │   ├── metric-help.tsx
+│   │   │   └── stat-guide-view.tsx
+│   │   ├── offseason/
+│   │   │   ├── offseason-client-shell.tsx
+│   │   │   ├── transaction-description.tsx
+│   │   │   └── transaction-event-ui.tsx
+│   │   ├── player/
+│   │   │   ├── percentile-rankings.tsx
+│   │   │   ├── player-bref-tables.tsx
+│   │   │   ├── player-headshot.tsx
+│   │   │   ├── player-savant-summary.tsx
+│   │   │   ├── player-season-select.tsx
+│   │   │   └── player-season-summary.tsx
+│   │   ├── players/
+│   │   │   ├── career-team-trend-chart.tsx
+│   │   │   ├── player-ask-links.tsx
+│   │   │   ├── player-career-data-guard-banner.tsx
+│   │   │   ├── player-career-resume.tsx
+│   │   │   ├── player-context-strip.tsx
+│   │   │   ├── player-core-island.tsx
+│   │   │   ├── player-destination-identity.tsx
+│   │   │   ├── player-destination-stats.tsx
+│   │   │   ├── player-evolution-panel.tsx
+│   │   │   ├── player-games-island.tsx
+│   │   │   ├── player-identity-preview-lock.ts
+│   │   │   ├── player-identity.tsx
+│   │   │   ├── player-notable-games.tsx
+│   │   │   ├── player-page-nav.tsx
+│   │   │   ├── player-percentile-panel.tsx
+│   │   │   ├── player-season-compare-view.tsx
+│   │   │   ├── player-season-explorer.tsx
+│   │   │   └── player-season-rank-view.tsx
+│   │   ├── sports/
+│   │   │   ├── browse-circles.tsx
+│   │   │   ├── data-provider-dev-badge.tsx
+│   │   │   ├── decade-chips.tsx
+│   │   │   ├── game-countdown.tsx
+│   │   │   ├── game-score-card.tsx
+│   │   │   ├── game-watch-options.tsx
+│   │   │   ├── gamefeed-calendar.tsx
+│   │   │   ├── gamefeed.tsx
+│   │   │   ├── live-freshness.tsx
+│   │   │   ├── live-indicator.tsx
+│   │   │   ├── live-scoreboard-scope.tsx
+│   │   │   ├── scoreboard-feed-notice.tsx
+│   │   │   ├── site-nav.ts
+│   │   │   ├── sports-shell.tsx
+│   │   │   └── use-live-scoreboard-refresh.ts
+│   │   ├── standings/
+│   │   │   └── standings-conference-table.tsx
+│   │   ├── system/
+│   │   │   └── auto-refresh.tsx
+│   │   ├── team/
+│   │   │   └── team-logo.tsx
+│   │   ├── teams/
+│   │   │   ├── team-arc-island.tsx
+│   │   │   ├── team-arc-section.tsx
+│   │   │   ├── team-ask-links.tsx
+│   │   │   ├── team-assets-island.tsx
+│   │   │   ├── team-assets-section.tsx
+│   │   │   ├── team-destination-identity.tsx
+│   │   │   ├── team-evidence-island.tsx
+│   │   │   ├── team-games-island.tsx
+│   │   │   ├── team-games-section.tsx
+│   │   │   ├── team-page-nav.tsx
+│   │   │   ├── team-roster-island.tsx
+│   │   │   ├── team-roster-section.tsx
+│   │   │   ├── team-season-evidence-profile.tsx
+│   │   │   ├── team-transactions-island.tsx
+│   │   │   └── team-transactions-section.tsx
+│   │   ├── time-machine/
+│   │   │   ├── era-theme-scope.tsx
+│   │   │   ├── history-client-shell.tsx
+│   │   │   ├── time-machine-controls.tsx
+│   │   │   ├── time-machine-landing.tsx
+│   │   │   └── time-machine-snapshot.tsx
+│   │   ├── ui/
+│   │   │   ├── app-link.tsx
+│   │   │   ├── button.tsx
+│   │   │   ├── card.tsx
+│   │   │   ├── input.tsx
+│   │   │   ├── label.tsx
+│   │   │   ├── select.tsx
+│   │   │   ├── sortable-table-head.tsx
+│   │   │   ├── stat-tooltip.tsx
+│   │   │   └── table.tsx
+│   │   └── smooth-scroll.tsx
+│   ├── content/
+│   │   ├── learn/
+│   │   │   ├── registry.ts
+│   │   │   ├── resolve.ts
+│   │   │   └── topics.ts
+│   │   └── stats/
+│   │       └── guides.ts
+│   ├── data/
+│   │   ├── diagnostics/
+│   │   │   ├── player-board-health.ts
+│   │   │   ├── production-provider-guard.ts
+│   │   │   ├── provider-failure.ts
+│   │   │   └── provider-meta.ts
+│   │   ├── drbl/
+│   │   │   ├── precomputed/
+│   │   │   │   ├── 2020-21.json
+│   │   │   │   ├── 2021-22.json
+│   │   │   │   ├── 2022-23.json
+│   │   │   │   ├── 2023-24.json
+│   │   │   │   ├── 2024-25-r1-stints.json
+│   │   │   │   ├── 2024-25.json
+│   │   │   │   ├── 2025-26-r1-stints.json
+│   │   │   │   └── 2025-26.json
+│   │   │   └── season-registry.ts
+│   │   ├── franchises/
+│   │   │   └── history.ts
+│   │   ├── identity/
+│   │   │   ├── game-id.ts
+│   │   │   ├── historical-abbr-aliases.ts
+│   │   │   ├── team-era.ts
+│   │   │   └── team-map.ts
+│   │   ├── providers/
+│   │   │   ├── advanced-stats/
+│   │   │   │   ├── admit.ts
+│   │   │   │   ├── coverage.ts
+│   │   │   │   ├── identity.ts
+│   │   │   │   ├── index.ts
+│   │   │   │   ├── inventory.ts
+│   │   │   │   ├── normalize-bdl-season-averages.ts
+│   │   │   │   ├── normalize.ts
+│   │   │   │   ├── probe-bdl.ts
+│   │   │   │   ├── quality.ts
+│   │   │   │   ├── readiness.ts
+│   │   │   │   ├── season-averages-probe.ts
+│   │   │   │   └── semantics.ts
+│   │   │   ├── balldontlie/
+│   │   │   │   └── client.ts
+│   │   │   ├── historical/
+│   │   │   │   ├── games-cache.ts
+│   │   │   │   ├── historical-nba-service.ts
+│   │   │   │   └── season-range.ts
+│   │   │   ├── impact/
+│   │   │   │   ├── darko-client.ts
+│   │   │   │   ├── historical-impact-index.ts
+│   │   │   │   ├── historical-impact-normalize.ts
+│   │   │   │   ├── lebron-store.ts
+│   │   │   │   ├── player-id-aliases.ts
+│   │   │   │   └── sample-lebron.ts
+│   │   │   ├── insights/
+│   │   │   │   └── analytics-news.ts
+│   │   │   ├── nba/
+│   │   │   │   ├── athlete-bio.ts
+│   │   │   │   ├── bref-scraper.ts
+│   │   │   │   ├── cache-policy.ts
+│   │   │   │   ├── compute-advanced.ts
+│   │   │   │   ├── darko-scraper.ts
+│   │   │   │   ├── drbl-loader.ts
+│   │   │   │   ├── enrich-box-score.ts
+│   │   │   │   ├── espn-client.ts
+│   │   │   │   ├── nba-team-meta.ts
+│   │   │   │   ├── play-by-play-client.ts
+│   │   │   │   ├── schedule-client.ts
+│   │   │   │   ├── scoreboard-client.ts
+│   │   │   │   ├── season-window.ts
+│   │   │   │   ├── season.ts
+│   │   │   │   ├── standings-client.ts
+│   │   │   │   ├── starters-client.ts
+│   │   │   │   ├── stats-nba-client.ts
+│   │   │   │   ├── team-meta.ts
+│   │   │   │   └── team-season-client.ts
+│   │   │   ├── salaries/
+│   │   │   │   └── salary-store.ts
+│   │   │   ├── sample/
+│   │   │   │   └── local-sample-data.ts
+│   │   │   ├── transactions/
+│   │   │   │   ├── espn-transactions-client.ts
+│   │   │   │   ├── espn-transactions-types.ts
+│   │   │   │   ├── offseason-window.ts
+│   │   │   │   ├── transaction-archive-store.ts
+│   │   │   │   ├── transaction-event-clusters.ts
+│   │   │   │   ├── transaction-event-index.ts
+│   │   │   │   ├── transaction-lineage-index.ts
+│   │   │   │   └── transaction-validation.ts
+│   │   │   ├── index.ts
+│   │   │   ├── local-data-provider.ts
+│   │   │   ├── nba-data-provider.ts
+│   │   │   └── types.ts
+│   │   ├── queries/
+│   │   │   ├── advanced-stats-audit.ts
+│   │   │   ├── ask-drbl.ts
+│   │   │   ├── budget.ts
+│   │   │   ├── explore-players-board.ts
+│   │   │   ├── filter-utils.ts
+│   │   │   ├── franchises.ts
+│   │   │   ├── game-lab.ts
+│   │   │   ├── games.ts
+│   │   │   ├── historical-impact.ts
+│   │   │   ├── historical.ts
+│   │   │   ├── home.ts
+│   │   │   ├── index.ts
+│   │   │   ├── offseason-tracker.ts
+│   │   │   ├── percentiles.ts
+│   │   │   ├── player-data-health.ts
+│   │   │   ├── player-season-compare.ts
+│   │   │   ├── player-season-rank.ts
+│   │   │   ├── players.ts
+│   │   │   ├── request-cache.ts
+│   │   │   ├── scoreboard-feed.ts
+│   │   │   ├── shots.ts
+│   │   │   ├── standings.ts
+│   │   │   ├── team-arc.ts
+│   │   │   ├── team-assets.ts
+│   │   │   ├── team-season-compare.ts
+│   │   │   ├── team-season-evidence.ts
+│   │   │   ├── team-season-rank.ts
+│   │   │   ├── team-seasons.ts
+│   │   │   ├── teams-catalog.ts
+│   │   │   ├── teams.ts
+│   │   │   ├── time-machine.ts
+│   │   │   ├── transaction-lineage.ts
+│   │   │   └── transaction-player-resolve.ts
+│   │   ├── transformers/
+│   │   │   ├── balldontlie.ts
+│   │   │   ├── espn-career.ts
+│   │   │   ├── espn-transactions.ts
+│   │   │   ├── espn.ts
+│   │   │   ├── index.ts
+│   │   │   ├── local.ts
+│   │   │   ├── nba.ts
+│   │   │   ├── play-by-play.ts
+│   │   │   ├── player-season-defaults.ts
+│   │   │   └── stats-nba.ts
+│   │   ├── types/
+│   │   │   ├── advanced-season-stats.ts
+│   │   │   ├── advanced-stats.ts
+│   │   │   ├── filters.ts
+│   │   │   ├── game-box-score.ts
+│   │   │   ├── game.ts
+│   │   │   ├── historical-impact.ts
+│   │   │   ├── impact.ts
+│   │   │   ├── index.ts
+│   │   │   ├── play-by-play.ts
+│   │   │   ├── player-game.ts
+│   │   │   ├── player-season.ts
+│   │   │   ├── player.ts
+│   │   │   ├── shot.ts
+│   │   │   ├── standings.ts
+│   │   │   ├── team-assets.ts
+│   │   │   ├── team-season.ts
+│   │   │   ├── team.ts
+│   │   │   ├── transaction-event.ts
+│   │   │   └── transaction-lineage.ts
+│   │   └── index.ts
+│   ├── gm/
+│   │   ├── engine/
+│   │   │   ├── cap.ts
+│   │   │   ├── lineup.ts
+│   │   │   ├── progression.ts
+│   │   │   ├── rng.ts
+│   │   │   ├── schedule.ts
+│   │   │   ├── scouting.ts
+│   │   │   ├── simulate.ts
+│   │   │   ├── standings.ts
+│   │   │   └── trades.ts
+│   │   ├── lib/
+│   │   │   └── selectors.ts
+│   │   ├── myleague/
+│   │   │   ├── cba-registry.ts
+│   │   │   ├── constants.ts
+│   │   │   ├── controller.ts
+│   │   │   ├── create-myleague.ts
+│   │   │   ├── historical-universe.ts
+│   │   │   ├── index.ts
+│   │   │   ├── ingest-snapshot.ts
+│   │   │   ├── knowledge.ts
+│   │   │   ├── phase.ts
+│   │   │   ├── real-nba-provider.ts
+│   │   │   ├── simulation-universe.ts
+│   │   │   ├── store.ts
+│   │   │   └── types.ts
+│   │   ├── seed/
+│   │   │   ├── contracts.ts
+│   │   │   ├── create-league.ts
+│   │   │   ├── create-real-league.ts
+│   │   │   ├── create-real-season-league.ts
+│   │   │   ├── franchises.ts
+│   │   │   ├── prospect-identities.ts
+│   │   │   ├── real-schedule.ts
+│   │   │   └── scouts.ts
+│   │   ├── state/
+│   │   │   └── gm-store.ts
+│   │   ├── ui/
+│   │   │   ├── gm-game-plan.tsx
+│   │   │   ├── gm-nav.tsx
+│   │   │   ├── gm-season-calendar.tsx
+│   │   │   ├── gm-shell.tsx
+│   │   │   ├── myleague-status-card.tsx
+│   │   │   └── offseason-hub.tsx
+│   │   ├── README.md
+│   │   └── types.ts
+│   ├── lib/
+│   │   ├── dashboard-aggregates.ts
+│   │   ├── dashboard-player.ts
+│   │   ├── explore-filters.ts
+│   │   ├── format.ts
+│   │   ├── game-countdown.ts
+│   │   ├── game-matchup-theme.ts
+│   │   ├── game-status.ts
+│   │   ├── game-team-identity.ts
+│   │   ├── game-watch.ts
+│   │   ├── historical-team-brand.ts
+│   │   ├── historical-team-palette.ts
+│   │   ├── learn-column-concepts.ts
+│   │   ├── live-refresh-policy.ts
+│   │   ├── navigation.ts
+│   │   ├── nba-brand.ts
+│   │   ├── nba-media.ts
+│   │   ├── player-destination.ts
+│   │   ├── player-explore-sort.ts
+│   │   ├── player-name.ts
+│   │   ├── player-percentile-metrics.ts
+│   │   ├── player-savant.ts
+│   │   ├── player-season-resolve.server.ts
+│   │   ├── player-season-resolve.ts
+│   │   ├── player-season-sort.ts
+│   │   ├── player-stat-comps.ts
+│   │   ├── player-stat-views.ts
+│   │   ├── rolling-efficiency.ts
+│   │   ├── search-params.ts
+│   │   ├── stat-explainers.ts
+│   │   ├── stat-glossary.ts
+│   │   ├── team-arc.ts
+│   │   ├── team-destination.ts
+│   │   ├── team-explore-sort.ts
+│   │   ├── team-explorer.ts
+│   │   ├── team-identity.ts
+│   │   ├── transaction-event-presentation.ts
+│   │   ├── transaction-event-status.ts
+│   │   ├── transaction-player-extract.ts
+│   │   ├── transaction-player-link.ts
+│   │   ├── transaction-player-resolution.ts
+│   │   └── utils.ts
+│   ├── offseason/
+│   │   └── index.ts
+│   ├── pbp/
+│   │   ├── corpus.server.ts
+│   │   ├── corpus.ts
+│   │   ├── index.ts
+│   │   └── types.ts
+│   ├── query-engine/
+│   │   ├── ask-builder.ts
+│   │   ├── ask-context.ts
+│   │   ├── ask-examples.ts
+│   │   ├── coverage.ts
+│   │   ├── entities.ts
+│   │   ├── execute.ts
+│   │   ├── followups.ts
+│   │   ├── index.ts
+│   │   ├── interpret-helpers.ts
+│   │   ├── interpret.ts
+│   │   ├── metrics.ts
+│   │   ├── partial.ts
+│   │   ├── run.ts
+│   │   ├── seasons.ts
+│   │   ├── types.ts
+│   │   ├── unsupported.ts
+│   │   └── validate.ts
+│   └── themes/
+│       ├── era-theme.ts
+│       └── history-url.ts
+├── .env.example
+├── .env.local
+├── .git
+├── .gitignore
+├── AGENTS.md
+├── CLAUDE.md
+├── components.json
+├── eslint.config.mjs
+├── next-env.d.ts
+├── next.config.ts
+├── package-lock.json
+├── package.json
+├── postcss.config.mjs
+├── README.md
+├── tsconfig.json
+├── tsconfig.tsbuildinfo
+└── WORKBOOK.md

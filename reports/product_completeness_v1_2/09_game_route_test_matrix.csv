@@ -1,0 +1,6 @@
+case,idExample,expectedProvider,lookupPath,result
+espn_completed,401584893,espn,ESPN summary,PASS_LIVE
+nba_stats_game,0022400001,nba,stats.nba.com box/schedule,HELPERS_PASS_LIVE_OPTIONAL
+bdl_historical,15908541,bdl,historical/BDL,ENV_DEPENDENT
+invalid,not-a-real-game-id,n/a,null shell,PASS
+provider_mismatch_pre_fix,espn id via nba box,espn,stats.nba GameID,FIXED

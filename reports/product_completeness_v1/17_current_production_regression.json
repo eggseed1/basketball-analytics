@@ -1,0 +1,19 @@
+{
+  "CURRENT_2024_25_DRBL_MISMATCHES": 0,
+  "CURRENT_2024_25_R1_MISMATCHES": 0,
+  "CURRENT_2024_25_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2024_25_RANK_MISMATCHES": 0,
+  "CURRENT_2025_26_DRBL_MISMATCHES": 0,
+  "CURRENT_2025_26_R1_MISMATCHES": 0,
+  "CURRENT_2025_26_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2025_26_RANK_MISMATCHES": 0,
+  "method": "carry_forward_integration_git_hash_object_equality_vs_72272b2",
+  "precomputed_untouched": "YES",
+  "product_branch": "product/drbl-site-completeness-v1",
+  "note": "P17 product work did not rewrite sealed precomputed season JSON; mismatches remain 0 from integration regression baseline.",
+  "seasons": {
+    "2024-25": "equal",
+    "2025-26": "equal"
+  },
+  "source_report": "reports/integration/09_current_production_regression.json"
+}

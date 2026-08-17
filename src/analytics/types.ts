@@ -70,6 +70,8 @@ export type ComparisonDimension = {
   /** Positive means A higher on the “better” scale after invert handling. */
   delta?: number;
   note?: string;
+  /** Product hierarchy group for DRBL-first compare UI. */
+  group?: "rate_ability" | "realized_value" | "external" | "box";
 };
 
 export type PlayerComparisonResult = {

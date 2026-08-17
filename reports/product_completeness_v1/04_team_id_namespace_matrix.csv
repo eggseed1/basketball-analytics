@@ -1,0 +1,9 @@
+﻿provider,id_field,example,collision_risk,resolver
+espn,espn_team_id / CanonicalTeamId,25 (OKC),High vs BDL bare numerics,getCanonicalTeamFromProvider(espn); bare UI→resolveCanonicalTeam
+bdl,bdl_team_id,21 (OKC),High vs ESPN (21=PHX),namespaced bdl:21 only
+nba_stats,NBA_TEAM_META,1610612760,Low digit-length,NBA_TEAM_META / nbaTeamLogoUrl — NOT in CanonicalTeam.providerIds
+route,/teams/[teamId],/teams/25,Medium if bare BDL leaked,normalizeTeamParam
+franchise_slug,FRANCHISE_HISTORIES.id,/franchises/okc,Low,getFranchiseHistory
+brand_id,TeamBrand.id,okc,Low,TEAM_BRANDS
+abbr,current abbr,OKC,Low modern,BY_ABBR + HISTORICAL_ABBR_ALIASES
+historical_abbr,era abbr,SEA,Medium without era path,resolveHistoricalTeamBrand

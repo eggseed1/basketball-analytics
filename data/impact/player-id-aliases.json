@@ -1,3 +1,5425 @@
 {
-  "aliases": []
+  "generatedAt": "2026-08-17T17:38:54.894Z",
+  "source": "byathlete",
+  "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24",
+    "2024-25",
+    "2025-26"
+  ],
+  "crosswalkVersion": "player-crosswalk-v1.1",
+  "policy": "P17.1: productionApproved only for EXACT_PROVIDER_MAPPING | VERIFIED_MULTI_FIELD | HIGH_CONFIDENCE_MULTI_FIELD. UNIQUE_NAME_ONLY retained but not used for silent production joins. No invented IDs.",
+  "priorSha256": "0e31560508a92f709b3b47f0aabcd4e71ec88688762e997dbae4d86bacf4f1f3",
+  "aliases": [
+    {
+      "espnPlayerId": "4067017",
+      "nbaPlayerId": "1630639",
+      "playerName": "A.J. Lawson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064290",
+      "nbaPlayerId": "203932",
+      "playerName": "Aaron Gordon",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3922230",
+      "nbaPlayerId": "1628988",
+      "playerName": "Aaron Holiday",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396909",
+      "nbaPlayerId": "1630174",
+      "playerName": "Aaron Nesmith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397183",
+      "nbaPlayerId": "1630598",
+      "playerName": "Aaron Wiggins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4873138",
+      "nbaPlayerId": "1642846",
+      "playerName": "Ace Bailey",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397654",
+      "nbaPlayerId": "1641745",
+      "playerName": "Adam Flagler",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4896365",
+      "nbaPlayerId": "1642380",
+      "playerName": "Adama Bal",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702023",
+      "nbaPlayerId": "1641766",
+      "playerName": "Adama Sanogo",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105637",
+      "nbaPlayerId": "1641737",
+      "playerName": "Adem Bona",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5060631",
+      "nbaPlayerId": "1642876",
+      "playerName": "Adou Thiero",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397475",
+      "nbaPlayerId": "1631260",
+      "playerName": "AJ Green",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5170947",
+      "nbaPlayerId": "1642358",
+      "playerName": "AJ Johnson",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4900671",
+      "nbaPlayerId": "1642349",
+      "playerName": "Ajay Mitchell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3213",
+      "nbaPlayerId": "201143",
+      "playerName": "Al Horford",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6429",
+      "nbaPlayerId": "202692",
+      "playerName": "Alec Burks",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432452",
+      "nbaPlayerId": "1630828",
+      "playerName": "Alex Antetokounmpo",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991350",
+      "nbaPlayerId": "1627936",
+      "playerName": "Alex Caruso",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432971",
+      "nbaPlayerId": "1642505",
+      "playerName": "Alex Ducas",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2596107",
+      "nbaPlayerId": "203458",
+      "playerName": "Alex Len",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4593034",
+      "nbaPlayerId": "1631457",
+      "playerName": "Alex Morales",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277812",
+      "nbaPlayerId": "1642024",
+      "playerName": "Alex Reese",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5160992",
+      "nbaPlayerId": "1642259",
+      "playerName": "Alex Sarr",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702656",
+      "nbaPlayerId": "1642918",
+      "playerName": "Alijah Martin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592216",
+      "nbaPlayerId": "1631214",
+      "playerName": "Alondes Williams",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4871144",
+      "nbaPlayerId": "1630578",
+      "playerName": "Alperen Sengun",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702745",
+      "nbaPlayerId": "1642873",
+      "playerName": "Amari Williams",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684740",
+      "nbaPlayerId": "1641708",
+      "playerName": "Amen Thompson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066387",
+      "nbaPlayerId": "1629599",
+      "playerName": "Amir Coffey",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702431",
+      "nbaPlayerId": "1643158",
+      "playerName": "Andersson Garcia",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6585",
+      "nbaPlayerId": "203083",
+      "playerName": "Andre Drummond",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432190",
+      "nbaPlayerId": "1641748",
+      "playerName": "Andre Jackson Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395712",
+      "nbaPlayerId": "1629614",
+      "playerName": "Andrew Nembhard",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3059319",
+      "nbaPlayerId": "203952",
+      "playerName": "Andrew Wiggins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4351851",
+      "nbaPlayerId": "1629014",
+      "playerName": "Anfernee Simons",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4712849",
+      "nbaPlayerId": "1641710",
+      "playerName": "Anthony Black",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6583",
+      "nbaPlayerId": "203076",
+      "playerName": "Anthony Davis",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4594268",
+      "nbaPlayerId": "1630162",
+      "playerName": "Anthony Edwards",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2581184",
+      "nbaPlayerId": "1630264",
+      "playerName": "Anthony Gill",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431705",
+      "nbaPlayerId": "1641817",
+      "playerName": "Anton Watson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592686",
+      "nbaPlayerId": "1641810",
+      "playerName": "Antonio Reeves",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4871141",
+      "nbaPlayerId": "1630574",
+      "playerName": "Ariel Hukporti",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5104156",
+      "nbaPlayerId": "1642422",
+      "playerName": "Armel Traore",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4873201",
+      "nbaPlayerId": "1642854",
+      "playerName": "Asa Newell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684742",
+      "nbaPlayerId": "1641709",
+      "playerName": "Ausar Thompson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066457",
+      "nbaPlayerId": "1630559",
+      "playerName": "Austin Reaves",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397002",
+      "nbaPlayerId": "1630245",
+      "playerName": "Ayo Dosunmu",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066261",
+      "nbaPlayerId": "1628389",
+      "playerName": "Bam Adebayo",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593841",
+      "nbaPlayerId": "1631248",
+      "playerName": "Baylor Scheierman",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5242502",
+      "nbaPlayerId": "1642879",
+      "playerName": "Ben Saraf",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433076",
+      "nbaPlayerId": "1641767",
+      "playerName": "Ben Sheppard",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3907387",
+      "nbaPlayerId": "1627732",
+      "playerName": "Ben Simmons",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4683634",
+      "nbaPlayerId": "1631097",
+      "playerName": "Bennedict Mathurin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4898237",
+      "nbaPlayerId": "1643016",
+      "playerName": "Bez Mbeng",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5104155",
+      "nbaPlayerId": "1641731",
+      "playerName": "Bilal Coulibaly",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6427",
+      "nbaPlayerId": "202687",
+      "playerName": "Bismack Biyombo",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396963",
+      "nbaPlayerId": "1642396",
+      "playerName": "Blake Hinson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683935",
+      "nbaPlayerId": "1631104",
+      "playerName": "Blake Wesley",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064482",
+      "nbaPlayerId": "1626171",
+      "playerName": "Bobby Portis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4906923",
+      "nbaPlayerId": "1641752",
+      "playerName": "Bobi Klintman",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3037789",
+      "nbaPlayerId": "203992",
+      "playerName": "Bogdan Bogdanovic",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4397102",
+      "nbaPlayerId": "1629626",
+      "playerName": "Bol Bol",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592492",
+      "nbaPlayerId": "1630538",
+      "playerName": "Bones Hyland",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6580",
+      "nbaPlayerId": "203078",
+      "playerName": "Bradley Beal",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592435",
+      "nbaPlayerId": "1642382",
+      "playerName": "Branden Carlson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4709138",
+      "nbaPlayerId": "1641764",
+      "playerName": "Brandin Podziemski",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432162",
+      "nbaPlayerId": "1630527",
+      "playerName": "Brandon Boston Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3906665",
+      "nbaPlayerId": "1629634",
+      "playerName": "Brandon Clarke",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3913176",
+      "nbaPlayerId": "1627742",
+      "playerName": "Brandon Ingram",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433287",
+      "nbaPlayerId": "1641706",
+      "playerName": "Brandon Miller",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397040",
+      "nbaPlayerId": "1630314",
+      "playerName": "Brandon Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066240",
+      "nbaPlayerId": "1630296",
+      "playerName": "Braxton Key",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105839",
+      "nbaPlayerId": "1641729",
+      "playerName": "Brice Sensabaugh",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683774",
+      "nbaPlayerId": "1642355",
+      "playerName": "Bronny James",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3448",
+      "nbaPlayerId": "201572",
+      "playerName": "Brook Lopez",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684208",
+      "nbaPlayerId": "1642964",
+      "playerName": "Brooks Barnhizer",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065670",
+      "nbaPlayerId": "1628971",
+      "playerName": "Bruce Brown",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277952",
+      "nbaPlayerId": "1628981",
+      "playerName": "Bruno Fernando",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4576086",
+      "nbaPlayerId": "1631121",
+      "playerName": "Bryce McGowens",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4845374",
+      "nbaPlayerId": "1642267",
+      "playerName": "Bub Carrington",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395676",
+      "nbaPlayerId": "1631205",
+      "playerName": "Buddy Boeheim",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2990984",
+      "nbaPlayerId": "1627741",
+      "playerName": "Buddy Hield",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432166",
+      "nbaPlayerId": "1630595",
+      "playerName": "Cade Cunningham",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433623",
+      "nbaPlayerId": "1631216",
+      "playerName": "Caleb Houstan",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433144",
+      "nbaPlayerId": "1631126",
+      "playerName": "Caleb Love",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "3138160",
+      "nbaPlayerId": "1628997",
+      "playerName": "Caleb Martin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4845363",
+      "nbaPlayerId": "1642353",
+      "playerName": "Cam Christie",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395627",
+      "nbaPlayerId": "1629629",
+      "playerName": "Cam Reddish",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433083",
+      "nbaPlayerId": "1642285",
+      "playerName": "Cam Spencer",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432174",
+      "nbaPlayerId": "1630560",
+      "playerName": "Cam Thomas",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105592",
+      "nbaPlayerId": "1641715",
+      "playerName": "Cam Whitmore",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3138196",
+      "nbaPlayerId": "1629661",
+      "playerName": "Cameron Johnson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064230",
+      "nbaPlayerId": "1626166",
+      "playerName": "Cameron Payne",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991043",
+      "nbaPlayerId": "1627747",
+      "playerName": "Caris LeVert",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5061568",
+      "nbaPlayerId": "1642868",
+      "playerName": "Carter Bryant",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683692",
+      "nbaPlayerId": "1641717",
+      "playerName": "Cason Wallace",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4903027",
+      "nbaPlayerId": "1642907",
+      "playerName": "Cedric Coward",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5174655",
+      "nbaPlayerId": "1643052",
+      "playerName": "Chaney Johnson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397886",
+      "nbaPlayerId": "1629646",
+      "playerName": "Charles Bassey",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4700852",
+      "nbaPlayerId": "1642404",
+      "playerName": "Chaz Lanier",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433255",
+      "nbaPlayerId": "1631096",
+      "playerName": "Chet Holmgren",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3948153",
+      "nbaPlayerId": "1628449",
+      "playerName": "Chris Boucher",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592402",
+      "nbaPlayerId": "1630537",
+      "playerName": "Chris Duarte",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433622",
+      "nbaPlayerId": "1641753",
+      "playerName": "Chris Livingston",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702972",
+      "nbaPlayerId": "1643024",
+      "playerName": "Chris Manon",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2779",
+      "nbaPlayerId": "101108",
+      "playerName": "Chris Paul",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4706557",
+      "nbaPlayerId": "1642959",
+      "playerName": "Chris Youngblood",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4431767",
+      "nbaPlayerId": "1631128",
+      "playerName": "Christian Braun",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431778",
+      "nbaPlayerId": "1631132",
+      "playerName": "Christian Koloko",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278052",
+      "nbaPlayerId": "1629643",
+      "playerName": "Chuma Okeke",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4702602",
+      "nbaPlayerId": "1643047",
+      "playerName": "CJ Huntley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2490149",
+      "nbaPlayerId": "203468",
+      "playerName": "CJ McCollum",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102529",
+      "nbaPlayerId": "203991",
+      "playerName": "Clint Capela",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395651",
+      "nbaPlayerId": "1629632",
+      "playerName": "Coby White",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3138161",
+      "nbaPlayerId": "1628998",
+      "playerName": "Cody Martin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4895758",
+      "nbaPlayerId": "1642262",
+      "playerName": "Cody Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433378",
+      "nbaPlayerId": "1641732",
+      "playerName": "Colby Jones",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432809",
+      "nbaPlayerId": "1630175",
+      "playerName": "Cole Anthony",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397134",
+      "nbaPlayerId": "1631306",
+      "playerName": "Cole Swider",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4397204",
+      "nbaPlayerId": "1630658",
+      "playerName": "Colin Castleton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278585",
+      "nbaPlayerId": "1631221",
+      "playerName": "Collin Gillespie",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5093267",
+      "nbaPlayerId": "1642867",
+      "playerName": "Collin Murray-Boyles",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277811",
+      "nbaPlayerId": "1629012",
+      "playerName": "Collin Sexton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5041939",
+      "nbaPlayerId": "1642843",
+      "playerName": "Cooper Flagg",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4280151",
+      "nbaPlayerId": "1630557",
+      "playerName": "Corey Kispert",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397114",
+      "nbaPlayerId": "1642504",
+      "playerName": "Cormac Ryan",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6446",
+      "nbaPlayerId": "202709",
+      "playerName": "Cory Joseph",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701233",
+      "nbaPlayerId": "1641854",
+      "playerName": "Craig Porter Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4898369",
+      "nbaPlayerId": "1642938",
+      "playerName": "Curtis Jones",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432820",
+      "nbaPlayerId": "1630618",
+      "playerName": "D.J. Carton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3136776",
+      "nbaPlayerId": "1626156",
+      "playerName": "D'Angelo Russell",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4279318",
+      "nbaPlayerId": "1631342",
+      "playerName": "Daeqwon Plowden",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432176",
+      "nbaPlayerId": "1630227",
+      "playerName": "Daishen Nix",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397885",
+      "nbaPlayerId": "1630625",
+      "playerName": "Dalano Banton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433159",
+      "nbaPlayerId": "1631207",
+      "playerName": "Dalen Terry",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4897943",
+      "nbaPlayerId": "1642261",
+      "playerName": "Dalton Knecht",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6606",
+      "nbaPlayerId": "203081",
+      "playerName": "Damian Lillard",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431766",
+      "nbaPlayerId": "1641878",
+      "playerName": "Damion Baugh",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2595209",
+      "nbaPlayerId": "1627814",
+      "playerName": "Damion Lee",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278049",
+      "nbaPlayerId": "1629655",
+      "playerName": "Daniel Gafford",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2451037",
+      "nbaPlayerId": "1628464",
+      "playerName": "Daniel Theis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5107199",
+      "nbaPlayerId": "1642450",
+      "playerName": "Daniss Jenkins",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5107173",
+      "nbaPlayerId": "1642874",
+      "playerName": "Danny Wolf",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102528",
+      "nbaPlayerId": "203957",
+      "playerName": "Dante Exum",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3913220",
+      "nbaPlayerId": "1629610",
+      "playerName": "DaQuan Jeffries",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3032978",
+      "nbaPlayerId": "203967",
+      "playerName": "Dario Saric",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432735",
+      "nbaPlayerId": "1641727",
+      "playerName": "Dariq Whitehead",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396907",
+      "nbaPlayerId": "1629636",
+      "playerName": "Darius Garland",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433607",
+      "nbaPlayerId": "1641747",
+      "playerName": "DaRon Holmes II",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397107",
+      "nbaPlayerId": "1630561",
+      "playerName": "David Duke Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4713010",
+      "nbaPlayerId": "1642357",
+      "playerName": "David Jones Garcia",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593041",
+      "nbaPlayerId": "1631223",
+      "playerName": "David Roddy",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278053",
+      "nbaPlayerId": "1630558",
+      "playerName": "Davion Mitchell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432194",
+      "nbaPlayerId": "1630549",
+      "playerName": "Day'Ron Sharpe",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066259",
+      "nbaPlayerId": "1628368",
+      "playerName": "De'Aaron Fox",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065732",
+      "nbaPlayerId": "1629631",
+      "playerName": "De'Andre Hunter",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4066436",
+      "nbaPlayerId": "1629001",
+      "playerName": "De'Anthony Melton",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3912848",
+      "nbaPlayerId": "1629731",
+      "playerName": "Dean Wade",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278129",
+      "nbaPlayerId": "1629028",
+      "playerName": "Deandre Ayton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3442",
+      "nbaPlayerId": "201599",
+      "playerName": "DeAndre Jordan",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066796",
+      "nbaPlayerId": "1630610",
+      "playerName": "DeJon Jarreau",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3907497",
+      "nbaPlayerId": "1627749",
+      "playerName": "Dejounte Murray",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064447",
+      "nbaPlayerId": "1626153",
+      "playerName": "Delon Wright",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "3978",
+      "nbaPlayerId": "201942",
+      "playerName": "DeMar DeRozan",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683021",
+      "nbaPlayerId": "1630166",
+      "playerName": "Deni Avdija",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3032979",
+      "nbaPlayerId": "203471",
+      "playerName": "Dennis Schroder",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4683688",
+      "nbaPlayerId": "1641726",
+      "playerName": "Dereck Lively II",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4869780",
+      "nbaPlayerId": "1642852",
+      "playerName": "Derik Queen",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3936099",
+      "nbaPlayerId": "1627884",
+      "playerName": "Derrick Jones Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3078576",
+      "nbaPlayerId": "1628401",
+      "playerName": "Derrick White",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066320",
+      "nbaPlayerId": "1630217",
+      "playerName": "Desmond Bane",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3136193",
+      "nbaPlayerId": "1626164",
+      "playerName": "Devin Booker",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433188",
+      "nbaPlayerId": "1642269",
+      "playerName": "Devin Carter",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395630",
+      "nbaPlayerId": "1630170",
+      "playerName": "Devin Vassell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3155526",
+      "nbaPlayerId": "1628415",
+      "playerName": "Dillon Brooks",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702159",
+      "nbaPlayerId": "1641794",
+      "playerName": "Dillon Jones",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3155942",
+      "nbaPlayerId": "1627734",
+      "playerName": "Domantas Sabonis",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4870562",
+      "nbaPlayerId": "1631230",
+      "playerName": "Dominick Barlow",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105565",
+      "nbaPlayerId": "1642270",
+      "playerName": "Donovan Clingan",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3908809",
+      "nbaPlayerId": "1628378",
+      "playerName": "Donovan Mitchell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3934673",
+      "nbaPlayerId": "1628978",
+      "playerName": "Donte DiVincenzo",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2578185",
+      "nbaPlayerId": "1627827",
+      "playerName": "Dorian Finney-Smith",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "2528588",
+      "nbaPlayerId": "203926",
+      "playerName": "Doug McDermott",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5037873",
+      "nbaPlayerId": "1642962",
+      "playerName": "Drake Powell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6589",
+      "nbaPlayerId": "203110",
+      "playerName": "Draymond Green",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3914285",
+      "nbaPlayerId": "1629234",
+      "playerName": "Drew Eubanks",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397689",
+      "nbaPlayerId": "1641809",
+      "playerName": "Drew Peterson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431695",
+      "nbaPlayerId": "1631166",
+      "playerName": "Drew Timme",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066993",
+      "nbaPlayerId": "1630696",
+      "playerName": "Dru Smith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3157465",
+      "nbaPlayerId": "1629130",
+      "playerName": "Duncan Robinson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066268",
+      "nbaPlayerId": "1641871",
+      "playerName": "Duop Reath",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2531367",
+      "nbaPlayerId": "203939",
+      "playerName": "Dwight Powell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433174",
+      "nbaPlayerId": "1642928",
+      "playerName": "Dylan Cardwell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5037871",
+      "nbaPlayerId": "1642844",
+      "playerName": "Dylan Harper",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4869342",
+      "nbaPlayerId": "1630700",
+      "playerName": "Dyson Daniels",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432821",
+      "nbaPlayerId": "1630604",
+      "playerName": "E.J. Liddell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5175643",
+      "nbaPlayerId": "1642856",
+      "playerName": "Egor Demin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2583639",
+      "nbaPlayerId": "203901",
+      "playerName": "Elfrid Payton",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4397449",
+      "nbaPlayerId": "1641989",
+      "playerName": "Elijah Harkless",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432872",
+      "nbaPlayerId": "1641801",
+      "playerName": "Emanuel Miller",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433620",
+      "nbaPlayerId": "1641734",
+      "playerName": "Emoni Bates",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592699",
+      "nbaPlayerId": "1642402",
+      "playerName": "Enrique Freeman",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3431",
+      "nbaPlayerId": "201569",
+      "playerName": "Eric Gordon",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278516",
+      "nbaPlayerId": "1630679",
+      "playerName": "Ethan Thompson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432158",
+      "nbaPlayerId": "1630596",
+      "playerName": "Evan Mobley",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4566434",
+      "nbaPlayerId": "1630532",
+      "playerName": "Franz Wagner",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991230",
+      "nbaPlayerId": "1627832",
+      "playerName": "Fred VanVleet",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3137259",
+      "nbaPlayerId": "1629216",
+      "playerName": "Gabe Vincent",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4023",
+      "nbaPlayerId": "202066",
+      "playerName": "Garrett Temple",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3913180",
+      "nbaPlayerId": "1629726",
+      "playerName": "Garrison Mathews",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2999547",
+      "nbaPlayerId": "203914",
+      "playerName": "Gary Harris",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3134903",
+      "nbaPlayerId": "1627780",
+      "playerName": "Gary Payton II",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277843",
+      "nbaPlayerId": "1629018",
+      "playerName": "Gary Trent Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2990969",
+      "nbaPlayerId": "1627777",
+      "playerName": "Georges Niang",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5105550",
+      "nbaPlayerId": "1641713",
+      "playerName": "GG Jackson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3032977",
+      "nbaPlayerId": "203507",
+      "playerName": "Giannis Antetokounmpo",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4348700",
+      "nbaPlayerId": "1629048",
+      "playerName": "Goga Bitadze",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5106258",
+      "nbaPlayerId": "1641711",
+      "playerName": "Gradey Dick",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702670",
+      "nbaPlayerId": "1641761",
+      "playerName": "Grant Nelson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066218",
+      "nbaPlayerId": "1629684",
+      "playerName": "Grant Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3135045",
+      "nbaPlayerId": "1628960",
+      "playerName": "Grayson Allen",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4017844",
+      "nbaPlayerId": "1627824",
+      "playerName": "Guerschon Yabusele",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997536",
+      "nbaPlayerId": "1630611",
+      "playerName": "Gui Santos",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6578",
+      "nbaPlayerId": "203084",
+      "playerName": "Harrison Barnes",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433618",
+      "nbaPlayerId": "1631127",
+      "playerName": "Harrison Ingram",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5176420",
+      "nbaPlayerId": "1643060",
+      "playerName": "Hayden Gray",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4291678",
+      "nbaPlayerId": "1629312",
+      "playerName": "Haywood Highsmith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277813",
+      "nbaPlayerId": "1630529",
+      "playerName": "Herbert Jones",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5175647",
+      "nbaPlayerId": "1642864",
+      "playerName": "Hugo Gonzalez",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432180",
+      "nbaPlayerId": "1630621",
+      "playerName": "Hunter Dickinson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433281",
+      "nbaPlayerId": "1642282",
+      "playerName": "Hunter Sallis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395620",
+      "nbaPlayerId": "1641816",
+      "playerName": "Hunter Tyson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395724",
+      "nbaPlayerId": "1630193",
+      "playerName": "Immanuel Quickley",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5107818",
+      "nbaPlayerId": "1642403",
+      "playerName": "Isaac Jones",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432822",
+      "nbaPlayerId": "1630171",
+      "playerName": "Isaac Okoro",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683766",
+      "nbaPlayerId": "1642268",
+      "playerName": "Isaiah Collier",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592857",
+      "nbaPlayerId": "1642384",
+      "playerName": "Isaiah Crawford",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4222252",
+      "nbaPlayerId": "1628392",
+      "playerName": "Isaiah Hartenstein",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432170",
+      "nbaPlayerId": "1630543",
+      "playerName": "Isaiah Jackson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395702",
+      "nbaPlayerId": "1630198",
+      "playerName": "Isaiah Joe",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277957",
+      "nbaPlayerId": "1630587",
+      "playerName": "Isaiah Livers",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432815",
+      "nbaPlayerId": "1630600",
+      "playerName": "Isaiah Mobley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432117",
+      "nbaPlayerId": "1641815",
+      "playerName": "Isaiah Stevens",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432810",
+      "nbaPlayerId": "1630191",
+      "playerName": "Isaiah Stewart",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431727",
+      "nbaPlayerId": "1631209",
+      "playerName": "Isaiah Wong",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4017837",
+      "nbaPlayerId": "1627826",
+      "playerName": "Ivica Zubac",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4279888",
+      "nbaPlayerId": "1629630",
+      "playerName": "Ja Morant",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684272",
+      "nbaPlayerId": "1642266",
+      "playerName": "Ja'Kobe Walter",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432639",
+      "nbaPlayerId": "1631095",
+      "playerName": "Jabari Smith Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432446",
+      "nbaPlayerId": "1631133",
+      "playerName": "Jabari Walker",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3911893",
+      "nbaPlayerId": "1629098",
+      "playerName": "Jack McVeigh",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066889",
+      "nbaPlayerId": "1642050",
+      "playerName": "Jackson Rowe",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592461",
+      "nbaPlayerId": "1631210",
+      "playerName": "Jacob Toppin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4868423",
+      "nbaPlayerId": "1630702",
+      "playerName": "Jaden Hardy",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433218",
+      "nbaPlayerId": "1631093",
+      "playerName": "Jaden Ivey",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431671",
+      "nbaPlayerId": "1630183",
+      "playerName": "Jaden McDaniels",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432164",
+      "nbaPlayerId": "1630531",
+      "playerName": "Jaden Springer",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "6581",
+      "nbaPlayerId": "203109",
+      "playerName": "Jae Crowder",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3136777",
+      "nbaPlayerId": "1630256",
+      "playerName": "Jae'Sean Tate",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683934",
+      "nbaPlayerId": "1642942",
+      "playerName": "Jahmai Mashack",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433133",
+      "nbaPlayerId": "1642443",
+      "playerName": "Jahmir Young",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702785",
+      "nbaPlayerId": "1643141",
+      "playerName": "Jahmyl Telfort",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432848",
+      "nbaPlayerId": "1631170",
+      "playerName": "Jaime Jaquez Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592691",
+      "nbaPlayerId": "1631222",
+      "playerName": "Jake LaRavia",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3134908",
+      "nbaPlayerId": "1627751",
+      "playerName": "Jakob Poeltl",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432946",
+      "nbaPlayerId": "1641779",
+      "playerName": "Jalen Bridges",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3934672",
+      "nbaPlayerId": "1628973",
+      "playerName": "Jalen Brunson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433621",
+      "nbaPlayerId": "1631105",
+      "playerName": "Jalen Duren",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4437244",
+      "nbaPlayerId": "1630224",
+      "playerName": "Jalen Green",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433626",
+      "nbaPlayerId": "1641720",
+      "playerName": "Jalen Hood-Schifino",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4701230",
+      "nbaPlayerId": "1630552",
+      "playerName": "Jalen Johnson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4398390",
+      "nbaPlayerId": "1629618",
+      "playerName": "Jalen Pickett",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4398207",
+      "nbaPlayerId": "1641771",
+      "playerName": "Jalen Slawson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397189",
+      "nbaPlayerId": "1630188",
+      "playerName": "Jalen Smith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432165",
+      "nbaPlayerId": "1630591",
+      "playerName": "Jalen Suggs",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593803",
+      "nbaPlayerId": "1631114",
+      "playerName": "Jalen Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431714",
+      "nbaPlayerId": "1630592",
+      "playerName": "Jalen Wilson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278572",
+      "nbaPlayerId": "1631288",
+      "playerName": "Jamal Cain",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3936299",
+      "nbaPlayerId": "1627750",
+      "playerName": "Jamal Murray",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432241",
+      "nbaPlayerId": "1642347",
+      "playerName": "Jamal Shead",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4280245",
+      "nbaPlayerId": "1631123",
+      "playerName": "Jamaree Bouyea",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3992",
+      "nbaPlayerId": "201935",
+      "playerName": "James Harden",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3999",
+      "nbaPlayerId": "201949",
+      "playerName": "James Johnson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432808",
+      "nbaPlayerId": "1630164",
+      "playerName": "James Wiseman",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4606840",
+      "nbaPlayerId": "1642364",
+      "playerName": "Jamir Watkins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431893",
+      "nbaPlayerId": "1642419",
+      "playerName": "Jamison Battle",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5106060",
+      "nbaPlayerId": "1641716",
+      "playerName": "Jarace Walker",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395695",
+      "nbaPlayerId": "1630215",
+      "playerName": "Jared Butler",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4683778",
+      "nbaPlayerId": "1642272",
+      "playerName": "Jared McCain",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397119",
+      "nbaPlayerId": "1631197",
+      "playerName": "Jared Rhoden",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277961",
+      "nbaPlayerId": "1628991",
+      "playerName": "Jaren Jackson Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278077",
+      "nbaPlayerId": "1629020",
+      "playerName": "Jarred Vanderbilt",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066328",
+      "nbaPlayerId": "1628386",
+      "playerName": "Jarrett Allen",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5239561",
+      "nbaPlayerId": "1642859",
+      "playerName": "Jase Richardson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4781746",
+      "nbaPlayerId": "1642914",
+      "playerName": "Javon Small",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4597259",
+      "nbaPlayerId": "1631451",
+      "playerName": "Javonte Cooke",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2596112",
+      "nbaPlayerId": "1629750",
+      "playerName": "Javonte Green",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397077",
+      "nbaPlayerId": "1629637",
+      "playerName": "Jaxson Hayes",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065731",
+      "nbaPlayerId": "1630643",
+      "playerName": "Jay Huff",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3917376",
+      "nbaPlayerId": "1627759",
+      "playerName": "Jaylen Brown",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432247",
+      "nbaPlayerId": "1641740",
+      "playerName": "Jaylen Clark",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684737",
+      "nbaPlayerId": "1641798",
+      "playerName": "Jaylen Martin",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4278541",
+      "nbaPlayerId": "1629669",
+      "playerName": "Jaylen Nowell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397570",
+      "nbaPlayerId": "1631301",
+      "playerName": "Jaylen Sims",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5112087",
+      "nbaPlayerId": "1642377",
+      "playerName": "Jaylen Wells",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432823",
+      "nbaPlayerId": "1631119",
+      "playerName": "Jaylin Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683747",
+      "nbaPlayerId": "1642281",
+      "playerName": "Jaylon Tyson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065648",
+      "nbaPlayerId": "1628369",
+      "playerName": "Jayson Tatum",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4708972",
+      "nbaPlayerId": "1641789",
+      "playerName": "Jazian Gortman",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4576085",
+      "nbaPlayerId": "1631120",
+      "playerName": "JD Davison",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066786",
+      "nbaPlayerId": "1630288",
+      "playerName": "Jeff Dowtin Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3209",
+      "nbaPlayerId": "201145",
+      "playerName": "Jeff Green",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991070",
+      "nbaPlayerId": "203924",
+      "playerName": "Jerami Grant",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5144091",
+      "nbaPlayerId": "1642847",
+      "playerName": "Jeremiah Fears",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432813",
+      "nbaPlayerId": "1630526",
+      "playerName": "Jeremiah Robinson-Earl",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4610139",
+      "nbaPlayerId": "1631110",
+      "playerName": "Jeremy Sochan",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277922",
+      "nbaPlayerId": "1630579",
+      "playerName": "Jericho Sims",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105806",
+      "nbaPlayerId": "1641724",
+      "playerName": "Jett Howard",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3133635",
+      "nbaPlayerId": "1628975",
+      "playerName": "Jevon Carter",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6430",
+      "nbaPlayerId": "202710",
+      "playerName": "Jimmy Butler III",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5279133",
+      "nbaPlayerId": "1642866",
+      "playerName": "Joan Beringer",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3146557",
+      "nbaPlayerId": "1629111",
+      "playerName": "Jock Landale",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2968436",
+      "nbaPlayerId": "204060",
+      "playerName": "Joe Ingles",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3059318",
+      "nbaPlayerId": "203954",
+      "playerName": "Joel Embiid",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3908845",
+      "nbaPlayerId": "1628381",
+      "playerName": "John Collins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3134932",
+      "nbaPlayerId": "1629723",
+      "playerName": "John Konchar",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4898238",
+      "nbaPlayerId": "1642967",
+      "playerName": "John Poulakidas",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593043",
+      "nbaPlayerId": "1642910",
+      "playerName": "John Tonje",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4433569",
+      "nbaPlayerId": "1641780",
+      "playerName": "Johni Broome",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432356",
+      "nbaPlayerId": "1631098",
+      "playerName": "Johnny Davis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5157066",
+      "nbaPlayerId": "1642277",
+      "playerName": "Johnny Furphy",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432817",
+      "nbaPlayerId": "1630548",
+      "playerName": "Johnny Juzang",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6477",
+      "nbaPlayerId": "202685",
+      "playerName": "Jonas Valanciunas",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065654",
+      "nbaPlayerId": "1628371",
+      "playerName": "Jonathan Isaac",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433247",
+      "nbaPlayerId": "1630228",
+      "playerName": "Jonathan Kuminga",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5107897",
+      "nbaPlayerId": "1642367",
+      "playerName": "Jonathan Mogbo",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2528426",
+      "nbaPlayerId": "203903",
+      "playerName": "Jordan Clarkson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278402",
+      "nbaPlayerId": "1630692",
+      "playerName": "Jordan Goodwin",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683750",
+      "nbaPlayerId": "1641722",
+      "playerName": "Jordan Hawkins",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3134916",
+      "nbaPlayerId": "1629162",
+      "playerName": "Jordan McLaughlin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396818",
+      "nbaPlayerId": "1641757",
+      "playerName": "Jordan Miller",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277956",
+      "nbaPlayerId": "1629673",
+      "playerName": "Jordan Poole",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683689",
+      "nbaPlayerId": "1641775",
+      "playerName": "Jordan Walsh",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277869",
+      "nbaPlayerId": "1630631",
+      "playerName": "Jose Alvarado",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432168",
+      "nbaPlayerId": "1630528",
+      "playerName": "Josh Christopher",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4871145",
+      "nbaPlayerId": "1630581",
+      "playerName": "Josh Giddey",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432811",
+      "nbaPlayerId": "1630182",
+      "playerName": "Josh Green",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3062679",
+      "nbaPlayerId": "1628404",
+      "playerName": "Josh Hart",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4687718",
+      "nbaPlayerId": "1631169",
+      "playerName": "Josh Minott",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432068",
+      "nbaPlayerId": "1642490",
+      "playerName": "Josh Oduro",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065663",
+      "nbaPlayerId": "1629006",
+      "playerName": "Josh Okogie",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "2581190",
+      "nbaPlayerId": "1626196",
+      "playerName": "Josh Richardson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3995",
+      "nbaPlayerId": "201950",
+      "playerName": "Jrue Holiday",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702233",
+      "nbaPlayerId": "1630550",
+      "playerName": "JT Thor",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4592479",
+      "nbaPlayerId": "1630577",
+      "playerName": "Julian Champagnie",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105553",
+      "nbaPlayerId": "1641763",
+      "playerName": "Julian Phillips",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683742",
+      "nbaPlayerId": "1642882",
+      "playerName": "Julian Reese",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432181",
+      "nbaPlayerId": "1631124",
+      "playerName": "Julian Strawther",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064514",
+      "nbaPlayerId": "203944",
+      "playerName": "Julius Randle",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432907",
+      "nbaPlayerId": "1630551",
+      "playerName": "Justin Champagnie",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4711297",
+      "nbaPlayerId": "1642348",
+      "playerName": "Justin Edwards",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278111",
+      "nbaPlayerId": "1631303",
+      "playerName": "Justin Minaya",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102530",
+      "nbaPlayerId": "203994",
+      "playerName": "Jusuf Nurkic",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701845",
+      "nbaPlayerId": "1642955",
+      "playerName": "Kadary Richmond",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431699",
+      "nbaPlayerId": "1630539",
+      "playerName": "Kai Jones",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4697268",
+      "nbaPlayerId": "1642880",
+      "playerName": "Kam Jones",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "3136195",
+      "nbaPlayerId": "1626157",
+      "playerName": "Karl-Anthony Towns",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997538",
+      "nbaPlayerId": "1631255",
+      "playerName": "Karlo Matkovic",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5214640",
+      "nbaPlayerId": "1642857",
+      "playerName": "Kasparas Jakucionis",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "6450",
+      "nbaPlayerId": "202695",
+      "playerName": "Kawhi Leonard",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4279118",
+      "nbaPlayerId": "1630811",
+      "playerName": "Keaton Wallace",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4594327",
+      "nbaPlayerId": "1631099",
+      "playerName": "Keegan Murray",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431689",
+      "nbaPlayerId": "1631232",
+      "playerName": "Keion Brooks Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105623",
+      "nbaPlayerId": "1642276",
+      "playerName": "Kel'el Ware",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395723",
+      "nbaPlayerId": "1629640",
+      "playerName": "Keldon Johnson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2489663",
+      "nbaPlayerId": "203482",
+      "playerName": "Kelly Olynyk",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3133603",
+      "nbaPlayerId": "1626162",
+      "playerName": "Kelly Oubre Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432646",
+      "nbaPlayerId": "1631113",
+      "playerName": "Kennedy Chandler",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3133626",
+      "nbaPlayerId": "1629026",
+      "playerName": "Kenrich Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2581018",
+      "nbaPlayerId": "203484",
+      "playerName": "Kentavious Caldwell-Pope",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702177",
+      "nbaPlayerId": "1631165",
+      "playerName": "Keon Ellis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432192",
+      "nbaPlayerId": "1630553",
+      "playerName": "Keon Johnson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431786",
+      "nbaPlayerId": "1642352",
+      "playerName": "Keshad Johnson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4585618",
+      "nbaPlayerId": "1642933",
+      "playerName": "Keshon Gilbert",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4397693",
+      "nbaPlayerId": "1630556",
+      "playerName": "Kessler Edwards",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3202",
+      "nbaPlayerId": "201142",
+      "playerName": "Kevin Durant",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066372",
+      "nbaPlayerId": "1628989",
+      "playerName": "Kevin Huerter",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4278075",
+      "nbaPlayerId": "1628995",
+      "playerName": "Kevin Knox II",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3449",
+      "nbaPlayerId": "201567",
+      "playerName": "Kevin Love",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4411057",
+      "nbaPlayerId": "1641755",
+      "playerName": "Kevin McCullar Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397140",
+      "nbaPlayerId": "1629645",
+      "playerName": "Kevin Porter Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3155535",
+      "nbaPlayerId": "1626172",
+      "playerName": "Kevon Looney",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433627",
+      "nbaPlayerId": "1641718",
+      "playerName": "Keyonte George",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5203685",
+      "nbaPlayerId": "1642863",
+      "playerName": "Khaman Maluach",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6609",
+      "nbaPlayerId": "203114",
+      "playerName": "Khris Middleton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683024",
+      "nbaPlayerId": "1630165",
+      "playerName": "Killian Hayes",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431828",
+      "nbaPlayerId": "1630231",
+      "playerName": "KJ Martin",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4683834",
+      "nbaPlayerId": "1642354",
+      "playerName": "KJ Simpson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6475",
+      "nbaPlayerId": "202691",
+      "playerName": "Klay Thompson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431752",
+      "nbaPlayerId": "1641738",
+      "playerName": "Kobe Brown",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683736",
+      "nbaPlayerId": "1641723",
+      "playerName": "Kobe Bufkin",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702352",
+      "nbaPlayerId": "1642920",
+      "playerName": "Kobe Sanders",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4591259",
+      "nbaPlayerId": "1642886",
+      "playerName": "Koby Brea",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5061575",
+      "nbaPlayerId": "1642851",
+      "playerName": "Kon Knueppel",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991139",
+      "nbaPlayerId": "1627739",
+      "playerName": "Kris Dunn",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4594326",
+      "nbaPlayerId": "1631200",
+      "playerName": "Kris Murray",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102531",
+      "nbaPlayerId": "204001",
+      "playerName": "Kristaps Porzingis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2993874",
+      "nbaPlayerId": "203937",
+      "playerName": "Kyle Anderson",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4684793",
+      "nbaPlayerId": "1642271",
+      "playerName": "Kyle Filipowski",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3134907",
+      "nbaPlayerId": "1628398",
+      "playerName": "Kyle Kuzma",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3012",
+      "nbaPlayerId": "200768",
+      "playerName": "Kyle Lowry",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3950760",
+      "nbaPlayerId": "1630283",
+      "playerName": "Kylor Kelley",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "6442",
+      "nbaPlayerId": "202681",
+      "playerName": "Kyrie Irving",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5174563",
+      "nbaPlayerId": "1642273",
+      "playerName": "Kyshawn George",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5107156",
+      "nbaPlayerId": "1642950",
+      "playerName": "Lachlan Olbrich",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066405",
+      "nbaPlayerId": "1630205",
+      "playerName": "Lamar Stevens",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432816",
+      "nbaPlayerId": "1630163",
+      "playerName": "LaMelo Ball",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3914044",
+      "nbaPlayerId": "1629013",
+      "playerName": "Landry Shamet",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2580365",
+      "nbaPlayerId": "1626204",
+      "playerName": "Larry Nance Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066336",
+      "nbaPlayerId": "1628374",
+      "playerName": "Lauri Markkanen",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4596528",
+      "nbaPlayerId": "1643133",
+      "playerName": "Lawson Lovering",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395650",
+      "nbaPlayerId": "1641778",
+      "playerName": "Leaky Black",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "1966",
+      "nbaPlayerId": "2544",
+      "playerName": "LeBron James",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5044385",
+      "nbaPlayerId": "1631159",
+      "playerName": "Leonard Miller",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431720",
+      "nbaPlayerId": "1631311",
+      "playerName": "Lester Quinones",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5239590",
+      "nbaPlayerId": "1642862",
+      "playerName": "Liam McNeeley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397347",
+      "nbaPlayerId": "1641857",
+      "playerName": "Liam Robbins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066317",
+      "nbaPlayerId": "1630322",
+      "playerName": "Lindy Waters III",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433149",
+      "nbaPlayerId": "1643018",
+      "playerName": "LJ Cryer",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277890",
+      "nbaPlayerId": "1629022",
+      "playerName": "Lonnie Walker IV",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066421",
+      "nbaPlayerId": "1628366",
+      "playerName": "Lonzo Ball",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4279147",
+      "nbaPlayerId": "1631351",
+      "playerName": "Lucas Williamson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397020",
+      "nbaPlayerId": "1629652",
+      "playerName": "Luguentz Dort",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3945274",
+      "nbaPlayerId": "1629029",
+      "playerName": "Luka Doncic",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277951",
+      "nbaPlayerId": "1630568",
+      "playerName": "Luka Garza",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3913174",
+      "nbaPlayerId": "1628379",
+      "playerName": "Luke Kennard",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064560",
+      "nbaPlayerId": "1628436",
+      "playerName": "Luke Kornet",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997539",
+      "nbaPlayerId": "1631247",
+      "playerName": "Luke Travers",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397071",
+      "nbaPlayerId": "1630644",
+      "playerName": "Mac McClung",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4066668",
+      "nbaPlayerId": "1630201",
+      "playerName": "Malachi Flynn",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397784",
+      "nbaPlayerId": "1641869",
+      "playerName": "Malachi Smith",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4565201",
+      "nbaPlayerId": "1631103",
+      "playerName": "Malaki Branham",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2566769",
+      "nbaPlayerId": "1627763",
+      "playerName": "Malcolm Brogdon",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4897449",
+      "nbaPlayerId": "1642502",
+      "playerName": "Malevy Leons",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3907822",
+      "nbaPlayerId": "1627736",
+      "playerName": "Malik Beasley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066262",
+      "nbaPlayerId": "1628370",
+      "playerName": "Malik Monk",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433147",
+      "nbaPlayerId": "1630542",
+      "playerName": "Marcus Bagley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277892",
+      "nbaPlayerId": "1630585",
+      "playerName": "Marcus Garrett",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432107",
+      "nbaPlayerId": "1631204",
+      "playerName": "Marcus Sasser",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2990992",
+      "nbaPlayerId": "203935",
+      "playerName": "Marcus Smart",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432179",
+      "nbaPlayerId": "1630699",
+      "playerName": "MarJon Beauchamp",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4703530",
+      "nbaPlayerId": "1641813",
+      "playerName": "Mark Sears",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701232",
+      "nbaPlayerId": "1631109",
+      "playerName": "Mark Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066636",
+      "nbaPlayerId": "1628365",
+      "playerName": "Markelle Fultz",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6461",
+      "nbaPlayerId": "202693",
+      "playerName": "Markieff Morris",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4277848",
+      "nbaPlayerId": "1628963",
+      "playerName": "Marvin Bagley III",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4395704",
+      "nbaPlayerId": "1630222",
+      "playerName": "Mason Jones",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2488653",
+      "nbaPlayerId": "203486",
+      "playerName": "Mason Plumlee",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4711294",
+      "nbaPlayerId": "1641824",
+      "playerName": "Matas Buzelis",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3907498",
+      "nbaPlayerId": "1629680",
+      "playerName": "Matisse Thybulle",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3908336",
+      "nbaPlayerId": "1630346",
+      "playerName": "Matt Ryan",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432582",
+      "nbaPlayerId": "1631108",
+      "playerName": "Max Christie",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701992",
+      "nbaPlayerId": "1642917",
+      "playerName": "Max Shulga",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065778",
+      "nbaPlayerId": "1629622",
+      "playerName": "Max Strus",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2960236",
+      "nbaPlayerId": "1628467",
+      "playerName": "Maxi Kleber",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4898371",
+      "nbaPlayerId": "1642875",
+      "playerName": "Maxime Raynaud",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684286",
+      "nbaPlayerId": "1641721",
+      "playerName": "Maxwell Lewis",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432185",
+      "nbaPlayerId": "1642877",
+      "playerName": "Micah Peavy",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066399",
+      "nbaPlayerId": "1630695",
+      "playerName": "Micah Potter",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278104",
+      "nbaPlayerId": "1629008",
+      "playerName": "Michael Porter Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3147657",
+      "nbaPlayerId": "1628969",
+      "playerName": "Mikal Bridges",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3195",
+      "nbaPlayerId": "201144",
+      "playerName": "Mike Conley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066383",
+      "nbaPlayerId": "1628970",
+      "playerName": "Miles Bridges",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4696317",
+      "nbaPlayerId": "1642939",
+      "playerName": "Miles Kelly",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431823",
+      "nbaPlayerId": "1630540",
+      "playerName": "Miles McBride",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397104",
+      "nbaPlayerId": "1641936",
+      "playerName": "Miles Norris",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4351852",
+      "nbaPlayerId": "1629011",
+      "playerName": "Mitchell Robinson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277919",
+      "nbaPlayerId": "1628964",
+      "playerName": "Mo Bamba",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5289900",
+      "nbaPlayerId": "1642885",
+      "playerName": "Mohamed Diawara",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3059310",
+      "nbaPlayerId": "1628420",
+      "playerName": "Monte Morris",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3150844",
+      "nbaPlayerId": "1629021",
+      "playerName": "Moritz Wagner",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397126",
+      "nbaPlayerId": "1629650",
+      "playerName": "Moses Brown",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432171",
+      "nbaPlayerId": "1630541",
+      "playerName": "Moses Moody",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592933",
+      "nbaPlayerId": "1631338",
+      "playerName": "Mouhamadou Gueye",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4712863",
+      "nbaPlayerId": "1631243",
+      "playerName": "Mouhamed Gueye",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701208",
+      "nbaPlayerId": "1630619",
+      "playerName": "Moussa Cisse",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433249",
+      "nbaPlayerId": "1631217",
+      "playerName": "Moussa Diabate",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3133628",
+      "nbaPlayerId": "1626167",
+      "playerName": "Myles Turner",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431772",
+      "nbaPlayerId": "1642066",
+      "playerName": "Myron Gardner",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592401",
+      "nbaPlayerId": "1642368",
+      "playerName": "N'Faly Dante",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5106268",
+      "nbaPlayerId": "1641772",
+      "playerName": "Nae'Qwan Tomlin",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278594",
+      "nbaPlayerId": "1630230",
+      "playerName": "Naji Marshall",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397821",
+      "nbaPlayerId": "1631466",
+      "playerName": "Nate Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396971",
+      "nbaPlayerId": "1629675",
+      "playerName": "Naz Reid",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397424",
+      "nbaPlayerId": "1629674",
+      "playerName": "Neemias Queta",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278067",
+      "nbaPlayerId": "1629651",
+      "playerName": "Nic Claxton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278076",
+      "nbaPlayerId": "1630208",
+      "playerName": "Nick Richards",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4683686",
+      "nbaPlayerId": "1641733",
+      "playerName": "Nick Smith Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278039",
+      "nbaPlayerId": "1629638",
+      "playerName": "Nickeil Alexander-Walker",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3416",
+      "nbaPlayerId": "201587",
+      "playerName": "Nicolas Batum",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3059409",
+      "nbaPlayerId": "1628502",
+      "playerName": "Nigel Hayes-Davis",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "3112335",
+      "nbaPlayerId": "203999",
+      "playerName": "Nikola Jokic",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997528",
+      "nbaPlayerId": "1631107",
+      "playerName": "Nikola Jovic",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5159925",
+      "nbaPlayerId": "1642260",
+      "playerName": "Nikola Topic",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6478",
+      "nbaPlayerId": "202696",
+      "playerName": "Nikola Vucevic",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702384",
+      "nbaPlayerId": "1642363",
+      "playerName": "Nique Clifford",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4712896",
+      "nbaPlayerId": "1641730",
+      "playerName": "Noah Clowney",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5214637",
+      "nbaPlayerId": "1642869",
+      "playerName": "Noah Penda",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5279130",
+      "nbaPlayerId": "1642849",
+      "playerName": "Nolan Traore",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702134",
+      "nbaPlayerId": "1641807",
+      "playerName": "Norchad Omier",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2595516",
+      "nbaPlayerId": "1626181",
+      "playerName": "Norman Powell",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278355",
+      "nbaPlayerId": "1630167",
+      "playerName": "Obi Toppin",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397018",
+      "nbaPlayerId": "1630534",
+      "playerName": "Ochai Agbaji",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3934719",
+      "nbaPlayerId": "1628384",
+      "playerName": "OG Anunoby",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278046",
+      "nbaPlayerId": "1630846",
+      "playerName": "Olivier Sarr",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4595400",
+      "nbaPlayerId": "1641765",
+      "playerName": "Olivier-Maxence Prosper",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3074213",
+      "nbaPlayerId": "1630209",
+      "playerName": "Omer Yurtseven",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431680",
+      "nbaPlayerId": "1630168",
+      "playerName": "Onyeka Okongwu",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593049",
+      "nbaPlayerId": "1631115",
+      "playerName": "Orlando Robinson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432827",
+      "nbaPlayerId": "1631131",
+      "playerName": "Oscar Tshiebwe",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278031",
+      "nbaPlayerId": "1629052",
+      "playerName": "Oshae Brissett",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4601023",
+      "nbaPlayerId": "1642345",
+      "playerName": "Oso Ighodaro",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997526",
+      "nbaPlayerId": "1631172",
+      "playerName": "Ousmane Dieng",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3033",
+      "nbaPlayerId": "200782",
+      "playerName": "P.J. Tucker",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278078",
+      "nbaPlayerId": "1629023",
+      "playerName": "P.J. Washington",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5211983",
+      "nbaPlayerId": "1642359",
+      "playerName": "Pacome Dadiet",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432573",
+      "nbaPlayerId": "1631094",
+      "playerName": "Paolo Banchero",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3149673",
+      "nbaPlayerId": "1627783",
+      "playerName": "Pascal Siakam",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2578239",
+      "nbaPlayerId": "1626192",
+      "playerName": "Pat Connaughton",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592714",
+      "nbaPlayerId": "1630311",
+      "playerName": "Pat Spencer",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433246",
+      "nbaPlayerId": "1631116",
+      "playerName": "Patrick Baldwin Jr.",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4431687",
+      "nbaPlayerId": "1630172",
+      "playerName": "Patrick Williams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4004",
+      "nbaPlayerId": "201988",
+      "playerName": "Patty Mills",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4251",
+      "nbaPlayerId": "202331",
+      "playerName": "Paul George",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278562",
+      "nbaPlayerId": "1630194",
+      "playerName": "Paul Reed",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066354",
+      "nbaPlayerId": "1630202",
+      "playerName": "Payton Pritchard",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4697270",
+      "nbaPlayerId": "1642362",
+      "playerName": "Payton Sandfort",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4601025",
+      "nbaPlayerId": "1641796",
+      "playerName": "Pelle Larsson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397233",
+      "nbaPlayerId": "1631250",
+      "playerName": "Pete Nance",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4576087",
+      "nbaPlayerId": "1631212",
+      "playerName": "Peyton Watson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4909710",
+      "nbaPlayerId": "1630762",
+      "playerName": "Phillip Wheeler",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3923250",
+      "nbaPlayerId": "1628408",
+      "playerName": "PJ Dozier",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701225",
+      "nbaPlayerId": "1641790",
+      "playerName": "PJ Hall",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431679",
+      "nbaPlayerId": "1630173",
+      "playerName": "Precious Achiuwa",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397014",
+      "nbaPlayerId": "1629656",
+      "playerName": "Quentin Grimes",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4592829",
+      "nbaPlayerId": "1631245",
+      "playerName": "Quenton Jackson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593016",
+      "nbaPlayerId": "1642366",
+      "playerName": "Quinten Post",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5105977",
+      "nbaPlayerId": "1642853",
+      "playerName": "Rasheer Fleming",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5099752",
+      "nbaPlayerId": "1641712",
+      "playerName": "Rayan Rupert",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431941",
+      "nbaPlayerId": "1642484",
+      "playerName": "RayJ Dennis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432187",
+      "nbaPlayerId": "1641736",
+      "playerName": "Reece Beekman",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4711272",
+      "nbaPlayerId": "1642263",
+      "playerName": "Reed Sheppard",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6443",
+      "nbaPlayerId": "202704",
+      "playerName": "Reggie Jackson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2993370",
+      "nbaPlayerId": "1626158",
+      "playerName": "Richaun Holmes",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4701234",
+      "nbaPlayerId": "1641741",
+      "playerName": "Ricky Council IV",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5177362",
+      "nbaPlayerId": "1642434",
+      "playerName": "Riley Minix",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4395625",
+      "nbaPlayerId": "1629628",
+      "playerName": "RJ Barrett",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684275",
+      "nbaPlayerId": "1642265",
+      "playerName": "Rob Dillingham",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066211",
+      "nbaPlayerId": "1629057",
+      "playerName": "Robert Williams III",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5157587",
+      "nbaPlayerId": "1642911",
+      "playerName": "Rocco Zikarsky",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397251",
+      "nbaPlayerId": "1631199",
+      "playerName": "Ron Harper Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683771",
+      "nbaPlayerId": "1641842",
+      "playerName": "Ronald Holland II",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2583632",
+      "nbaPlayerId": "1626220",
+      "playerName": "Royce O'Neale",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3032976",
+      "nbaPlayerId": "203497",
+      "playerName": "Rudy Gobert",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066648",
+      "nbaPlayerId": "1629060",
+      "playerName": "Rui Hachimura",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3468",
+      "nbaPlayerId": "201566",
+      "playerName": "Russell Westbrook",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4888725",
+      "nbaPlayerId": "1642346",
+      "playerName": "Ryan Dunn",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4576060",
+      "nbaPlayerId": "1641750",
+      "playerName": "Ryan Kalkbrenner",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433629",
+      "nbaPlayerId": "1642948",
+      "playerName": "Ryan Nembhard",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4591725",
+      "nbaPlayerId": "1631157",
+      "playerName": "Ryan Rollins",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397136",
+      "nbaPlayerId": "1630180",
+      "playerName": "Saddiq Bey",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065804",
+      "nbaPlayerId": "1630573",
+      "playerName": "Sam Hauser",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066757",
+      "nbaPlayerId": "1630241",
+      "playerName": "Sam Merrill",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278580",
+      "nbaPlayerId": "1630572",
+      "playerName": "Sandro Mamukelashvili",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4593125",
+      "nbaPlayerId": "1630583",
+      "playerName": "Santi Aldama",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683678",
+      "nbaPlayerId": "1630703",
+      "playerName": "Scoot Henderson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433134",
+      "nbaPlayerId": "1630567",
+      "playerName": "Scottie Barnes",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431785",
+      "nbaPlayerId": "1630590",
+      "playerName": "Scotty Pippen Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4709131",
+      "nbaPlayerId": "1642951",
+      "playerName": "Sean Pedulla",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2326307",
+      "nbaPlayerId": "203552",
+      "playerName": "Seth Curry",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4914336",
+      "nbaPlayerId": "1631101",
+      "playerName": "Shaedon Sharpe",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4278073",
+      "nbaPlayerId": "1628983",
+      "playerName": "Shai Gilgeous-Alexander",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3915195",
+      "nbaPlayerId": "1629003",
+      "playerName": "Shake Milton",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4432173",
+      "nbaPlayerId": "1630536",
+      "playerName": "Sharife Cooper",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5081727",
+      "nbaPlayerId": "1631321",
+      "playerName": "Sidy Cissoko",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3899664",
+      "nbaPlayerId": "1631323",
+      "playerName": "Simone Fontecchio",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4602025",
+      "nbaPlayerId": "1642883",
+      "playerName": "Sion James",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3936296",
+      "nbaPlayerId": "1627746",
+      "playerName": "Skal Labissiere",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2580782",
+      "nbaPlayerId": "203915",
+      "playerName": "Spencer Dinwiddie",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592427",
+      "nbaPlayerId": "1642461",
+      "playerName": "Spencer Jones",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4279532",
+      "nbaPlayerId": "1630649",
+      "playerName": "Stanley Umude",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3975",
+      "nbaPlayerId": "201939",
+      "playerName": "Stephen Curry",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4845367",
+      "nbaPlayerId": "1642264",
+      "playerName": "Stephon Castle",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2991235",
+      "nbaPlayerId": "203500",
+      "playerName": "Steven Adams",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3133602",
+      "nbaPlayerId": "1629004",
+      "playerName": "Svi Mykhailiuk",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2530530",
+      "nbaPlayerId": "204456",
+      "playerName": "T.J. McConnell",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4703421",
+      "nbaPlayerId": "1643007",
+      "playerName": "Taelon Peter",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3986",
+      "nbaPlayerId": "201959",
+      "playerName": "Taj Gibson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396991",
+      "nbaPlayerId": "1629659",
+      "playerName": "Talen Horton-Tucker",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433192",
+      "nbaPlayerId": "1631106",
+      "playerName": "Tari Eason",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2990962",
+      "nbaPlayerId": "1627752",
+      "playerName": "Taurean Prince",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4684806",
+      "nbaPlayerId": "1641707",
+      "playerName": "Taylor Hendricks",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066808",
+      "nbaPlayerId": "1631386",
+      "playerName": "Taze Moore",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3907823",
+      "nbaPlayerId": "1629611",
+      "playerName": "Terance Mann",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432847",
+      "nbaPlayerId": "1630545",
+      "playerName": "Terrence Shannon Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3074752",
+      "nbaPlayerId": "1626179",
+      "playerName": "Terry Rozier",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102533",
+      "nbaPlayerId": "203648",
+      "playerName": "Thanasis Antetokounmpo",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3934723",
+      "nbaPlayerId": "1628418",
+      "playerName": "Thomas Bryant",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5211176",
+      "nbaPlayerId": "1642275",
+      "playerName": "Tidjane Salaun",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2528210",
+      "nbaPlayerId": "203501",
+      "playerName": "Tim Hardaway Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6440",
+      "nbaPlayerId": "202699",
+      "playerName": "Tobias Harris",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4700873",
+      "nbaPlayerId": "1643253",
+      "playerName": "Toby Okani",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397882",
+      "nbaPlayerId": "1642449",
+      "playerName": "Tolu Smith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065673",
+      "nbaPlayerId": "1628396",
+      "playerName": "Tony Bradley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "2528693",
+      "nbaPlayerId": "1628470",
+      "playerName": "Torrey Craig",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4597865",
+      "nbaPlayerId": "1641787",
+      "playerName": "Tosan Evbuomwan",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431736",
+      "nbaPlayerId": "1641739",
+      "playerName": "Toumani Camara",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277905",
+      "nbaPlayerId": "1629027",
+      "playerName": "Trae Young",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431684",
+      "nbaPlayerId": "1631218",
+      "playerName": "Trayce Jackson-Davis",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5238230",
+      "nbaPlayerId": "1642848",
+      "playerName": "Tre Johnson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395626",
+      "nbaPlayerId": "1630200",
+      "playerName": "Tre Jones",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432819",
+      "nbaPlayerId": "1630544",
+      "playerName": "Tre Mann",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431675",
+      "nbaPlayerId": "1630570",
+      "playerName": "Trendon Watford",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5165257",
+      "nbaPlayerId": "1642280",
+      "playerName": "Trentyn Flowers",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4409222",
+      "nbaPlayerId": "1630243",
+      "playerName": "Trevelin Queen",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3934620",
+      "nbaPlayerId": "1630286",
+      "playerName": "Trevon Scott",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432645",
+      "nbaPlayerId": "1631211",
+      "playerName": "Trevor Keels",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433268",
+      "nbaPlayerId": "1641725",
+      "playerName": "Trey Alexander",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395623",
+      "nbaPlayerId": "1641998",
+      "playerName": "Trey Jemison III",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "3136196",
+      "nbaPlayerId": "1626168",
+      "playerName": "Trey Lyles",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397688",
+      "nbaPlayerId": "1630530",
+      "playerName": "Trey Murphy III",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4702382",
+      "nbaPlayerId": "1641783",
+      "playerName": "Tristan da Silva",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431734",
+      "nbaPlayerId": "1642400",
+      "playerName": "Tristan Enaruna",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "6474",
+      "nbaPlayerId": "202684",
+      "playerName": "Tristan Thompson",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4997537",
+      "nbaPlayerId": "1641774",
+      "playerName": "Tristan Vukcevic",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592965",
+      "nbaPlayerId": "1641803",
+      "playerName": "Tristen Newton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4065733",
+      "nbaPlayerId": "1629660",
+      "playerName": "Ty Jerome",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431914",
+      "nbaPlayerId": "1631174",
+      "playerName": "Tyler Burton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395725",
+      "nbaPlayerId": "1629639",
+      "playerName": "Tyler Herro",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433225",
+      "nbaPlayerId": "1642278",
+      "playerName": "Tyler Kolek",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5167876",
+      "nbaPlayerId": "1641890",
+      "playerName": "Tyler Smith",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4396993",
+      "nbaPlayerId": "1630169",
+      "playerName": "Tyrese Haliburton",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397179",
+      "nbaPlayerId": "1631213",
+      "playerName": "Tyrese Martin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431678",
+      "nbaPlayerId": "1630178",
+      "playerName": "Tyrese Maxey",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5023693",
+      "nbaPlayerId": "1642878",
+      "playerName": "Tyrese Proctor",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432887",
+      "nbaPlayerId": "1630623",
+      "playerName": "Tyson Etienne",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4683749",
+      "nbaPlayerId": "1631102",
+      "playerName": "TyTy Washington Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3135046",
+      "nbaPlayerId": "1626145",
+      "playerName": "Tyus Jones",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5211984",
+      "nbaPlayerId": "1642279",
+      "playerName": "Ulrich Chomche",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3102532",
+      "nbaPlayerId": "203995",
+      "playerName": "Vasilije Micic",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "5104157",
+      "nbaPlayerId": "1641705",
+      "playerName": "Victor Wembanyama",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4397227",
+      "nbaPlayerId": "1631246",
+      "playerName": "Vince Williams Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4578893",
+      "nbaPlayerId": "1630249",
+      "playerName": "Vit Krejci",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5124612",
+      "nbaPlayerId": "1642845",
+      "playerName": "VJ Edgecombe",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4700818",
+      "nbaPlayerId": "1642884",
+      "playerName": "Vladislav Goldin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4230557",
+      "nbaPlayerId": "1628427",
+      "playerName": "Vlatko Cancar",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433136",
+      "nbaPlayerId": "1631117",
+      "playerName": "Walker Kessler",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4896372",
+      "nbaPlayerId": "1642383",
+      "playerName": "Walter Clayton Jr.",
+      "matchMethod": "unique_name_only",
+      "confidence": "UNIQUE_NAME_ONLY",
+      "productionApproved": false
+    },
+    {
+      "espnPlayerId": "4277847",
+      "nbaPlayerId": "1628976",
+      "playerName": "Wendell Carter Jr.",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592187",
+      "nbaPlayerId": "1631111",
+      "playerName": "Wendell Moore Jr.",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4897262",
+      "nbaPlayerId": "1642954",
+      "playerName": "Will Richard",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5144126",
+      "nbaPlayerId": "1642860",
+      "playerName": "Will Riley",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4277964",
+      "nbaPlayerId": "1630214",
+      "playerName": "Xavier Tillman",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5217746",
+      "nbaPlayerId": "1642905",
+      "playerName": "Yang Hansen",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5108024",
+      "nbaPlayerId": "1642949",
+      "playerName": "Yanic Konan Niederhauser",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5159895",
+      "nbaPlayerId": "1642530",
+      "playerName": "Yuki Kawamura",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4432957",
+      "nbaPlayerId": "1641879",
+      "playerName": "Yuri Collins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5061589",
+      "nbaPlayerId": "1642274",
+      "playerName": "Yves Missi",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "5211175",
+      "nbaPlayerId": "1642258",
+      "playerName": "Zaccharie Risacher",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4066650",
+      "nbaPlayerId": "1628380",
+      "playerName": "Zach Collins",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4600663",
+      "nbaPlayerId": "1641744",
+      "playerName": "Zach Edey",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "3064440",
+      "nbaPlayerId": "203897",
+      "playerName": "Zach LaVine",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4431690",
+      "nbaPlayerId": "1630192",
+      "playerName": "Zeke Nnaji",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4433137",
+      "nbaPlayerId": "1630533",
+      "playerName": "Ziaire Williams",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4395628",
+      "nbaPlayerId": "1629627",
+      "playerName": "Zion Williamson",
+      "matchMethod": "unique_name_multi_season_team_overlap",
+      "confidence": "VERIFIED_MULTI_FIELD",
+      "productionApproved": true
+    },
+    {
+      "espnPlayerId": "4592979",
+      "nbaPlayerId": "1642389",
+      "playerName": "Zyon Pullin",
+      "matchMethod": "unique_name_same_season_team",
+      "confidence": "HIGH_CONFIDENCE_MULTI_FIELD",
+      "productionApproved": true
+    }
+  ]
 }

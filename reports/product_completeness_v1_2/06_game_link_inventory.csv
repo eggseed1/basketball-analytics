@@ -1,0 +1,9 @@
+sourceSurface,sourceFile,href,idNamespace,destinationLookupSupports,status
+Home week strip,src/components/home/week-game-calendar-client.tsx + scoreboard-feed,/games/{espnId},espn,espn summary,PASS
+Scores Gamefeed,src/components/sports/gamefeed.tsx + game-score-card.tsx,/games/{espnId},espn,espn summary,PASS
+Explore Games table,src/components/explore/game-season-table.tsx,/games/{id},espn|nba|bdl (archive-dependent),matching namespace paths,PASS
+HomeGameList (legacy),src/components/home/home-game-list.tsx,/games/{id},nba schedule when used,nba GameID path,PASS
+ASK execute,src/query-engine/execute.ts,/games/{id},provider of row,matching,PASS
+Player games island,src/components/players/player-games-island.tsx,/games/{gameId},espn typical,espn,PASS
+Team games,src/components/teams/team-games-section.tsx,/games/{gameId},mixed,matching,PASS
+History,src/themes/history-url.ts,/games/{id}?from=history,mixed,matching,PASS

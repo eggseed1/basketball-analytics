@@ -1,0 +1,67 @@
+<timestamp>Monday, Aug 17, 2026, 3:59 PM (UTC-4)</timestamp>
+<user_query>
+You are implementing P17.2 in:
+C:\Users\parkh\Projects\basketball-analytics-integration
+Branch: product/drbl-site-completeness-v1_2
+
+ABSOLUTE FIREWALL: Do NOT change DRBL model math, k, P1, R1, EPV, UIR, precomputed DRBL values, support tiers. M17c NOT_STARTED.
+
+## Human failures (real)
+A) Explore Players TM column shows raw NBA Stats IDs like 1610612760 / badge "161"
+B) Player page team identity broken (same namespace issue)
+C) /games/[gameId] returns 404 for valid UI links
+
+## Rules
+- Fix at provider→canonical boundary, NOT component-level `if (teamId.startsWith("161061"))`
+- No cross-namespace guessing of bare numerics
+- Prefer integrating NBA into CanonicalTeam.providerIds as `nba:` if architecture allows
+
+## Required work
+
+### 1. Team namespace
+- Audit team-map.ts, NBA_TEAM_META, team-identity.ts, nba-brand.ts
+- Add `nba` to providerIds for all 30 teams from NBA_TEAM_META (deterministic repo data only)
+- Extend getCanonicalTeamFromProvider("nba", id), resolveCanonicalTeam to accept nba: prefix and 10-digit NBA ids ONLY when unambiguously NBA format (16106127xx) — document that 16106127xx is format-inferred as nba namespace, never as espn/bdl
+- Write reports/product_completeness_v1_2/01_team_namespace_contract.md
+- Write 02_nba_to_canonical_team_crosswalk.csv (30/30)
+
+### 2. PlayerSeason contract
+- After transform from NBA Stats, normalize teamId to canonical ESPN product id
+- Preserve providerTeamId + teamIdProvider="nba" (or nbaTeamId) on PlayerSeason if fields exist or add optional fields without breaking types
+- Trace and document 03_explore_player_team_lineage.md and 04_player_destination_team_lineage.md with 3 real examples including a leaked 16106127xx BEFORE fix (capture from code path)
+
+### 3. Explore Players
+- After fix, TM cell must show logo+abbr via resolveTeamBrand(canonicalId) — never raw id
+- Multi-team/TOT policy: explicit TOT/Multiple, no invented brand
+- Search for other raw ID leaks; write 07_raw_provider_id_leak_audit.csv
+
+### 4. Game routing
+- Forensic 05_game_route_forensics.md — reproduce 404 from Home/Scores/Explore Games links
+- Inventory 06_game_link_inventory.csv
+- Fix link generator ↔ destination lookup contract (compatible namespaces)
+- Distinguish VALID_GAME_PROVIDER_MISMATCH vs INVALID vs NETWORK ≠ false notFound
+- Write 09_game_route_test_matrix.csv
+
+### 5. Tests
+- 30/30 NBA→canonical→brand→route
+- Player row with 16106127xx after normalize does not render raw id
+- Game links from Scores/Explore/Home loadable by /games/[gameId]
+- False 404 regression if architecture allows
+
+### 6. Engineering
+Run: drbl:test, data-truth, site-nav, tsc, build, new identity/game tests
+Precomputed EQUAL vs 28827fb
+
+### 7. Reports
+Fill all reports/product_completeness_v1_2/00–20 as specified in the user prompt (at least create stubs then complete)
+
+### 8. Screenshots
+If localhost:3000 up, capture explore-players-team-identity-fixed.png and game pages; else document and use playwright/script if available
+
+### 9. Workbook v2.1
+reports/project_workbook_v2_1/ with required docs + critical source snapshot of identity/game files + SOURCE_CODE_MAP.csv + ZIP if feasible
+
+Return the exact STOP response format from the user prompt (sections 1–21).
+
+Do not start M17c. Do not commit unless asked.
+</user_query>

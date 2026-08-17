@@ -37,6 +37,28 @@ export type AskExample = {
 export const ASK_EXAMPLE_POOL: readonly AskExample[] = [
   // Player season stats — diverse players / eras / metrics
   {
+    id: "ps-jokic-drbl-2425",
+    prompt: "What was Jokic's DRBL/100 in 2024-25?",
+    class: "player_stat",
+    players: ["jokic"],
+    era: "recent",
+    metric: "drbl100",
+  },
+  {
+    id: "ps-what-is-drbl",
+    prompt: "What is DRBL/100?",
+    class: "player_stat",
+    era: "current",
+    metric: "drbl100",
+  },
+  {
+    id: "lb-drbl-2526",
+    prompt: "Who led the NBA in DRBL/100 in 2025-26?",
+    class: "leaderboard",
+    era: "current",
+    metric: "drbl100",
+  },
+  {
     id: "ps-jokic-ts-2425",
     prompt: "What was Jokic's TS% in 2024-25?",
     class: "player_stat",

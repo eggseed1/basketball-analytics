@@ -4,6 +4,7 @@
  */
 
 import type { PlayerSeason } from "@/data/types";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
@@ -190,7 +191,125 @@ export function buildPlayerPercentileMetrics(
     });
   };
 
-  // --- Value (impact) ---
+  // --- Value (impact) — DRBL/100 first when valid; O/D are halves of P, not of DRBL/100 ---
+  if (hasValidDrblEstimate(seasonStats)) {
+    const drblPool = pool
+      .filter(hasValidDrblEstimate)
+      .map((p) => p.drbl100)
+      .filter((n): n is number => Number.isFinite(n));
+    if (drblPool.length) {
+      push({
+        id: "drbl100",
+        category: "value",
+        label: "DRBL/100",
+        value: seasonStats.drbl100,
+        values: drblPool,
+        display: formatNumber(seasonStats.drbl100, 1),
+        series: careerSeries(
+          (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
+          { rejectFlatOverlay: true }
+        ),
+        interpretation: "higher_is_better",
+      });
+    }
+    if (seasonStats.r1Points != null && Number.isFinite(seasonStats.r1Points)) {
+      const r1Pool = pool
+        .filter(
+          (p) =>
+            hasValidDrblEstimate(p) &&
+            p.r1Points != null &&
+            Number.isFinite(p.r1Points)
+        )
+        .map((p) => p.r1Points as number);
+      if (r1Pool.length) {
+        push({
+          id: "r1Points",
+          category: "value",
+          label: "R1 Points",
+          value: seasonStats.r1Points,
+          values: r1Pool,
+          display: formatNumber(seasonStats.r1Points, 1),
+          series: careerSeries((r) =>
+            r.r1Points != null && Number.isFinite(r.r1Points)
+              ? r.r1Points
+              : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    if (
+      seasonStats.r1WinEquivalents != null &&
+      Number.isFinite(seasonStats.r1WinEquivalents)
+    ) {
+      const winEqPool = pool
+        .filter(
+          (p) =>
+            hasValidDrblEstimate(p) &&
+            p.r1WinEquivalents != null &&
+            Number.isFinite(p.r1WinEquivalents)
+        )
+        .map((p) => p.r1WinEquivalents as number);
+      if (winEqPool.length) {
+        push({
+          id: "r1WinEquivalents",
+          category: "value",
+          label: "R1 Win Eq.",
+          value: seasonStats.r1WinEquivalents,
+          values: winEqPool,
+          display: formatNumber(seasonStats.r1WinEquivalents, 2),
+          series: careerSeries((r) =>
+            r.r1WinEquivalents != null && Number.isFinite(r.r1WinEquivalents)
+              ? r.r1WinEquivalents
+              : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    if (Number.isFinite(seasonStats.drblO)) {
+      const oPool = pool
+        .filter(hasValidDrblEstimate)
+        .map((p) => p.drblO)
+        .filter((n): n is number => Number.isFinite(n));
+      if (oPool.length) {
+        push({
+          id: "drblO",
+          category: "value",
+          label: "DRBL-O",
+          value: seasonStats.drblO,
+          values: oPool,
+          display: formatNumber(seasonStats.drblO, 1),
+          series: careerSeries((r) =>
+            hasValidDrblEstimate(r) ? r.drblO : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+    if (Number.isFinite(seasonStats.drblD)) {
+      const dPool = pool
+        .filter(hasValidDrblEstimate)
+        .map((p) => p.drblD)
+        .filter((n): n is number => Number.isFinite(n));
+      if (dPool.length) {
+        push({
+          id: "drblD",
+          category: "value",
+          label: "DRBL-D",
+          value: seasonStats.drblD,
+          values: dPool,
+          display: formatNumber(seasonStats.drblD, 1),
+          series: careerSeries((r) =>
+            hasValidDrblEstimate(r) ? r.drblD : null
+          ),
+          interpretation: "higher_is_better",
+        });
+      }
+    }
+  }
+
+  // --- Value (external impact) ---
   if (seasonStats.darkoDpm != null) {
     const darkoPool = pool
       .map((p) => p.darkoDpm)

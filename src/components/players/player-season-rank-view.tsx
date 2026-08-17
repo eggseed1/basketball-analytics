@@ -16,6 +16,7 @@ import {
 } from "@/analytics";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 function CoverageLine({ entry }: { entry: SeasonRankEntry }) {
@@ -241,6 +242,31 @@ export function PlayerSeasonRankView({
                 </p>
               </div>
               <CoverageLine entry={entry} />
+              {entry.drbl100 != null ? (
+                <p className="text-[12px] text-muted-foreground">
+                  <MetricHelp conceptId="drbl">DRBL/100</MetricHelp>
+                  {": "}
+                  <span className="font-semibold tabular-nums text-foreground">
+                    {formatNumber(entry.drbl100, 2)}
+                  </span>
+                  {entry.drblLeagueRank != null
+                    ? ` · league DRBL rank #${entry.drblLeagueRank}`
+                    : ""}
+                  {entry.drblSelectedPercentile != null
+                    ? ` · ${Math.round(entry.drblSelectedPercentile)}th %ile among selected`
+                    : ""}
+                </p>
+              ) : null}
+              {entry.r1PointsSelectedRank != null ? (
+                <p className="text-[12px] text-muted-foreground">
+                  <MetricHelp conceptId="r1_points">R1 Points</MetricHelp>
+                  {" rank among selected: "}
+                  <span className="font-semibold tabular-nums text-foreground">
+                    #{entry.r1PointsSelectedRank}
+                  </span>
+                  {" (not DRBL rank)"}
+                </p>
+              ) : null}
               {entry.categoryWins.length ? (
                 <p className="text-[12px] text-muted-foreground">
                   Most often stronger in: {entry.categoryWins.join(", ")}

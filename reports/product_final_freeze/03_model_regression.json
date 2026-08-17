@@ -1,0 +1,24 @@
+{
+  "CURRENT_2024_25_DRBL_MISMATCHES": 0,
+  "CURRENT_2024_25_R1_MISMATCHES": 0,
+  "CURRENT_2024_25_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2024_25_RANK_MISMATCHES": 0,
+  "CURRENT_2025_26_DRBL_MISMATCHES": 0,
+  "CURRENT_2025_26_R1_MISMATCHES": 0,
+  "CURRENT_2025_26_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2025_26_RANK_MISMATCHES": 0,
+  "method": "git_hash_object_equality_vs_28827fb_integration_commit + P17.2 report equality",
+  "integrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "precomputedEqual": true,
+  "abilityVersion": "drbl-ability-eb1600-r1-v1",
+  "k": 1600,
+  "priorMean": 0,
+  "calibration": "identity",
+  "P1": 37.490662671779255,
+  "DRBL_V1_REOPENED": "NO",
+  "MODEL_PARAMETER_CHANGED": "NO",
+  "sourceReports": [
+    "reports/product_completeness_v1_2/12_current_production_regression.json",
+    "reports/product_completeness_v1_1/19_current_production_regression.json"
+  ]
+}

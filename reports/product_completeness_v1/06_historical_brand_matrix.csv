@@ -1,0 +1,31 @@
+canonical_espn_id,modern_abbr,modern_name,era_start,era_end,era_abbr,era_display_name,era_city,era_nickname,change_kind,notes
+25,OKC,Oklahoma City Thunder,1967-68,2007-08,SEA,Seattle SuperSonics,Seattle,SuperSonics,relocation_or_rebrand,Relocated 2008-09; blocks current OKC logo
+25,OKC,Oklahoma City Thunder,2008-09,,OKC,Oklahoma City Thunder,Oklahoma City,Thunder,modern_era,Current
+17,BKN,Brooklyn Nets,1977-78,2011-12,NJN,New Jersey Nets,New Jersey,Nets,relocation_or_rebrand,Moved to Brooklyn 2012-13; blocks NJ logo reuse
+17,BKN,Brooklyn Nets,2012-13,,BKN,Brooklyn Nets,Brooklyn,Nets,modern_era,Current
+27,WAS,Washington Wizards,1961-62,1961-62,CHP,Chicago Packers,Chicago,Packers,rename,Franchise lineage start
+27,WAS,Washington Wizards,1962-63,1962-63,CHZ,Chicago Zephyrs,Chicago,Zephyrs,rename,One-season rename
+27,WAS,Washington Wizards,1963-64,1972-73,BAL,Baltimore Bullets,Baltimore,Bullets,relocation_or_rebrand,Bullets era; blocks current logo
+27,WAS,Washington Wizards,1973-74,1973-74,CAP,Capital Bullets,Washington,Bullets,relocation_or_rebrand,Transitional
+27,WAS,Washington Wizards,1974-75,1996-97,WSB,Washington Bullets,Washington,Bullets,abbr_or_label,Bullets; blocks current logo
+27,WAS,Washington Wizards,1997-98,,WAS,Washington Wizards,Washington,Wizards,rename,Current
+30,CHA,Charlotte Hornets,2004-05,2013-14,CHA,Charlotte Bobcats,Charlotte,Bobcats,rename,Same abbr CHA; blocks current Hornets logo
+30,CHA,Charlotte Hornets,2014-15,,CHA,Charlotte Hornets,Charlotte,Hornets,modern_era,Current
+10,HOU,Houston Rockets,1967-68,1970-71,SDR,San Diego Rockets,San Diego,Rockets,relocation_or_rebrand,Blocks current HOU logo
+10,HOU,Houston Rockets,1971-72,,HOU,Houston Rockets,Houston,Rockets,modern_era,Current
+12,LAC,LA Clippers,1970-71,1977-78,BUF,Buffalo Braves,Buffalo,Braves,relocation_or_rebrand,Blocks current logo
+12,LAC,LA Clippers,1978-79,1983-84,SDC,San Diego Clippers,San Diego,Clippers,relocation_or_rebrand,Blocks current logo
+12,LAC,LA Clippers,1984-85,,LAC,LA Clippers,Los Angeles,Clippers,modern_era,Current
+29,MEM,Memphis Grizzlies,1995-96,2000-01,VAN,Vancouver Grizzlies,Vancouver,Grizzlies,relocation_or_rebrand,Blocks current MEM logo
+29,MEM,Memphis Grizzlies,2001-02,,MEM,Memphis Grizzlies,Memphis,Grizzlies,modern_era,Current
+9,GSW,Golden State Warriors,1946-47,1961-62,PHW,Philadelphia Warriors,Philadelphia,Warriors,relocation_or_rebrand,Sample early relocation
+9,GSW,Golden State Warriors,1962-63,1970-71,SFW,San Francisco Warriors,San Francisco,Warriors,relocation_or_rebrand,Intermediate brand
+9,GSW,Golden State Warriors,1971-72,,GSW,Golden State Warriors,Golden State,Warriors,modern_era,Current
+23,SAC,Sacramento Kings,1972-73,1984-85,KCK,Kansas City Kings,Kansas City,Kings,relocation_or_rebrand,Blocks current SAC logo
+23,SAC,Sacramento Kings,1985-86,,SAC,Sacramento Kings,Sacramento,Kings,modern_era,Current
+26,UTA,Utah Jazz,1974-75,1978-79,NOJ,New Orleans Jazz,New Orleans,Jazz,relocation_or_rebrand,Blocks current UTA logo
+26,UTA,Utah Jazz,1979-80,,UTA,Utah Jazz,Utah,Jazz,modern_era,Current
+13,LAL,Los Angeles Lakers,1948-49,1959-60,MNL,Minneapolis Lakers,Minneapolis,Lakers,relocation_or_rebrand,Classic relocation sample
+13,LAL,Los Angeles Lakers,1960-61,,LAL,Los Angeles Lakers,Los Angeles,Lakers,modern_era,Current
+1,ATL,Atlanta Hawks,1955-56,1967-68,STL,St. Louis Hawks,St. Louis,Hawks,relocation_or_rebrand,Relocation sample
+1,ATL,Atlanta Hawks,1968-69,,ATL,Atlanta Hawks,Atlanta,Hawks,modern_era,Current

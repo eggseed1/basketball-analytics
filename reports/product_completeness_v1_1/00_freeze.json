@@ -1,0 +1,18 @@
+﻿{
+  "milestone": "P17.1_DRBL_PRODUCT_COMPLETENESS_REPAIR",
+  "timestamp": "2026-08-17T13:32:46.3604360-04:00",
+  "sourceIntegrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "sourceP17Branch": "product/drbl-site-completeness-v1",
+  "sourceP17Head": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "p17_1Branch": "product/drbl-site-completeness-v1_1",
+  "HEAD": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "worktree": "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+  "firewall": {
+    "DRBL_V1_REOPENED": "NO",
+    "MODEL_PARAMETER_CHANGED": "NO",
+    "M17C_STARTED": "NO"
+  },
+  "canonical": { "K": 1600, "P1": 37.490662671779255 },
+  "runtime": { "node": "v24.19.0", "npm": "11.17.0" },
+  "phase": "IDENTITY_HARDENING_THEN_SURFACES"
+}

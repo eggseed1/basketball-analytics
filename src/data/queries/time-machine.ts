@@ -8,6 +8,13 @@ import { getFilteredGames } from "@/data/queries/games";
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { listTransactionEvents } from "@/data/queries/offseason-tracker";
+import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
+import { isDrblSeason } from "@/data/drbl/season-registry";
+import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
+import {
+  getPlayerIdAliasIndex,
+} from "@/data/identity/player-identity";
+import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import type { GameSummary } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { TeamSeasonStats } from "@/data/types/team-season";
@@ -35,7 +42,7 @@ export type HistoricalTeamDirectoryRow = {
   palette: HistoricalTeamBrandPalette | null;
 };
 
-export type LeaderMetric = "ppg" | "rpg" | "apg";
+export type LeaderMetric = "ppg" | "rpg" | "apg" | "drbl100";
 
 export type HistoricalLeaderRow = {
   playerId: string;
@@ -138,7 +145,7 @@ function directoryFromBoardRow(
 
 function perGameRate(
   row: { points: number; rebounds: number; assists: number; gamesPlayed: number },
-  metric: LeaderMetric
+  metric: Exclude<LeaderMetric, "drbl100">
 ): number {
   const gp = Math.max(1, row.gamesPlayed);
   if (metric === "ppg") return row.points / gp;
@@ -149,7 +156,7 @@ function perGameRate(
 function leadersFromBoard(
   rows: Awaited<ReturnType<typeof getPlayerSeasonBoardSnapshot>>["rows"],
   season: string,
-  metric: LeaderMetric,
+  metric: Exclude<LeaderMetric, "drbl100">,
   limit: number,
   warning?: string
 ): { leaders: HistoricalLeaderRow[]; warning?: string } {
@@ -187,6 +194,13 @@ export async function getHistoricalLeaders(
   metric: LeaderMetric,
   limit = 10
 ): Promise<{ leaders: HistoricalLeaderRow[]; warning?: string }> {
+  if (metric === "drbl100") {
+    const bundle = await getHistoricalLeadersBundle(season, limit);
+    return {
+      leaders: bundle.drbl,
+      warning: bundle.drblNote ?? bundle.warning,
+    };
+  }
   try {
     const snap = await getPlayerSeasonBoardSnapshot({
       season,
@@ -207,7 +221,7 @@ export async function getHistoricalLeaders(
   }
 }
 
-/** One player-board load → scoring / rebound / assist leaders. */
+/** One player-board load → scoring / rebound / assist leaders (+ DRBL when registry). */
 export async function getHistoricalLeadersBundle(
   season: string,
   limit = 10
@@ -215,6 +229,8 @@ export async function getHistoricalLeadersBundle(
   ppg: HistoricalLeaderRow[];
   rpg: HistoricalLeaderRow[];
   apg: HistoricalLeaderRow[];
+  drbl: HistoricalLeaderRow[];
+  drblNote?: string;
   warning?: string;
 }> {
   try {
@@ -223,17 +239,68 @@ export async function getHistoricalLeadersBundle(
       minimumGames: 10,
     });
     const warning = snap.warnings[0];
-    return {
+    const base = {
       ppg: leadersFromBoard(snap.rows, season, "ppg", limit, warning).leaders,
       rpg: leadersFromBoard(snap.rows, season, "rpg", limit, warning).leaders,
       apg: leadersFromBoard(snap.rows, season, "apg", limit, warning).leaders,
       warning,
+    };
+
+    if (!isDrblSeason(season)) {
+      return {
+        ...base,
+        drbl: [],
+        drblNote: `DRBL/100 is not published for ${season} (registry seasons only).`,
+      };
+    }
+
+    const [drblRows, aliases] = await Promise.all([
+      fetchDrblSeason(season).catch(() => []),
+      getPlayerIdAliasIndex().catch(() => ({
+        byEspn: new Map(),
+        byNba: new Map(),
+      })),
+    ]);
+    const valid = drblRows.filter((row) =>
+      hasValidatedDrblEstimate({
+        validatedDRBL100: row.drbl100,
+        validatedRawP100: row.rawAbilityRate,
+        validatedActualPossessions:
+          row.actualPossessions ?? row.possessions ?? 0,
+      })
+    );
+    valid.sort((a, b) => b.drbl100 - a.drbl100);
+    const drbl: HistoricalLeaderRow[] = valid.slice(0, limit).map((row) => {
+      const nbaId = String(row.playerId);
+      const alias = aliases.byNba.get(nbaId);
+      const profileId =
+        alias && isProductionApprovedPlayerAlias(alias)
+          ? alias.espnPlayerId
+          : nbaId;
+      return {
+        playerId: profileId,
+        playerName: row.playerName,
+        teamAbbr: row.teamId || "—",
+        teamId: row.teamId,
+        value: row.drbl100,
+        metric: "drbl100" as const,
+      };
+    });
+
+    return {
+      ...base,
+      drbl,
+      drblNote:
+        drbl.length === 0
+          ? "DRBL overlay returned no valid estimates for this season."
+          : undefined,
     };
   } catch {
     return {
       ppg: [],
       rpg: [],
       apg: [],
+      drbl: [],
       warning: "Player leaders unavailable for this season.",
     };
   }

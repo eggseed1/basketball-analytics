@@ -1,0 +1,16 @@
+public_label,field_or_concept,glossary_key,glossary_status,learn_drbl_page,learn_registry_concept,explore_players_column,player_page_snapshot,tooltip_via_MetricHelp,status_notes
+DRBL/100,drbl100,DRBL/100,PRESENT_CORRECTED,YES,NO_DEDICATED_CONCEPT_ID,YES,YES,YES,Canonical ability rate; glossary updated with EB1600 wording
+R1 Points,r1Points,R1 Points,PRESENT_CORRECTED,YES,NO,YES,YES,YES,Accounting value; prefer DRBL/100 for rate ranking
+R1 Win Equivalents,r1WinEquivalents,R1 Win Equivalents / R1 Win Eq.,PRESENT_CORRECTED,YES,NO,YES,YES,YES,Frozen P1; not traditional WAR
+DRBL-O,drblO,DRBL-O,PRESENT_CORRECTED,YES,NO,NO,NO,YES_if_surfaced,Diagnostic; O+D ≠ DRBL/100
+DRBL-D,drblD,DRBL-D,PRESENT_CORRECTED,YES,NO,NO,NO,YES_if_surfaced,Diagnostic
+DRBL-P,drblP,DRBL-P,PRESENT_CORRECTED,YES,NO,NO,NO,YES_if_surfaced,Diagnostic non-additive; not fringe replacement
+DRBL-LN,drblLn,DRBL-LN,PRESENT_CORRECTED,YES,NO,NO,NO,YES_if_surfaced,Diagnostic non-additive
+DRBL-B,drblB,DRBL-B,PRESENT_CORRECTED,YES,NO,NO,NO,YES_if_surfaced,Gravity wording removed; behavioral diagnostic
+DRBL-L,drblL,DRBL-L,PRESENT,PARTIAL,NO,NO,NO,YES_if_surfaced,Diagnostic leverage; not in public ranking columns
+DRBL Δ,drblDisagreement,DRBL Δ,PRESENT,PARTIAL,NO,NO,NO,YES_if_surfaced,Diagnostic disagreement
+DRBL ±,drblUncertainty,DRBL ±,PRESENT_LEGACY,YES_retired_section,NO,NO,NO,YES_legacy,Deprecated calibrated uncertainty framing
+DRBL WAR,drblWar,(sort alias only),NO_PUBLIC_ENTRY,YES_retired_section,NO,NO_redirect_to_r1WinEq,NO,NO,Deprecated; ?sort=drblWar → r1WinEquivalents
+DRBL impact,drblSeasonalImpact,DRBL impact,PRESENT_LEGACY,NO,NO,NO,NO,YES_legacy,Deprecated seasonal impact
+ASK DRBL,ask_drbl,n/a,n/a,n/a,YES_ask-drbl,n/a,n/a,n/a,Learn concept exists; ASK engine still has no DRBL metrics
+UIR-C,UIR-C,n/a,ABSENT_PUBLIC,MENTIONED_LIMITATIONS,NO,NO,NO,NO,Research-only; not public canonical

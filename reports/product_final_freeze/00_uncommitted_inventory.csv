@@ -1,0 +1,242 @@
+path,git_status,category,stage
+data/impact/player-id-aliases.json, M,PLAYER CROSSWALK / ALIASES,INCLUDE
+package-lock.json, M,PRODUCT SOURCE,INCLUDE
+package.json, M,PRODUCT SOURCE,INCLUDE
+reports/product_completeness_v1/00_freeze.json,AM,P17 REPORTS,INCLUDE
+reports/project_workbook_v1/00_PROJECT_FREEZE.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/01_MASTER_PROJECT_WORKBOOK.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/02_CANONICAL_METRIC_CONTRACT.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/03_APPROACH_B_AND_ATTRIBUTION.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/04_UIR_AND_OFFBALL_RESEARCH.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/05_RESEARCH_TIMELINE.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/06_VALIDATION_EVIDENCE.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/07_HISTORICAL_DATA_COVERAGE.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/08_SEASON_REGISTRY.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/09_DATA_PIPELINE.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/10_DATASET_MANIFEST.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/11_WEBSITE_INFORMATION_ARCHITECTURE.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/12_ROUTE_MANIFEST.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/13_COMPONENT_INVENTORY.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/14_DESIGN_SYSTEM.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/15_SCREENSHOT_INDEX.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/16_API_AND_DATA_CONTRACT.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/17_TYPE_SCHEMA_INDEX.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/18_SOURCE_CODE_MAP.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/19_CRITICAL_SOURCE_MANIFEST.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/20_REPOSITORY_TREE.txt,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/21_COMMANDS_AND_WORKFLOWS.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/22_TEST_INVENTORY.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/23_ENGINEERING_HEALTH.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/24_PRODUCTION_INVARIANTS.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/25_RESEARCH_PRODUCTION_MATRIX.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/26_KNOWN_LIMITATIONS_AND_OPEN_QUESTIONS.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/27_TECHNICAL_DEBT.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/28_SECURITY_AND_ACCESS.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/29_RESEARCH_ROADMAP.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/30_PRODUCT_ROADMAP.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/31_PUBLIC_COPY_AND_DEFINITIONS.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/32_EXAMPLE_DATA_RECORD.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/33_EXAMPLE_HISTORICAL_RECORD.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/34_EXAMPLE_STINT_RECORD.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/35_PROJECT_CONTEXT.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/36_REVIEWER_QUICKSTART.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/37_CRITICAL_FACTS_CHEATSHEET.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/38_WORKBOOK_MANIFEST.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/DRBL_PROJECT_WORKBOOK_V1.zip,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/constants.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/historical/adapters/nba-cdn-playbyplayv3.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/historical/normalized-event-schema.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/historical/season-registry.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/ingest/normalize.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/ability-lineage.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/compute-season.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/epv-model.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/expected-points.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/lineup-model.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/pipeline-value.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/player-value.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/research-ability-v1.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/research-rate-v1.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/validated-ability-cutover.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/validated-ability-v1.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/models/war-math.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/research/m18/__tests__/m18-lineup-uir.test.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/research/m18/lineup-impact.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/research/m18/uir.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/drbl/types.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/scripts/drbl-m17a_2.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/scripts/drbl-m17b.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/scripts/drbl-m18a.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/scripts/drbl-m18b_0.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/ask/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/explore/players/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/layout.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/learn/drbl/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/players/[playerId]/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/app/teams/[teamId]/page.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/components/explore/drbl-season-support-notice.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/components/explore/player-season-table.tsx,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/drbl/season-registry.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/providers/index.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/providers/nba/compute-advanced.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/providers/nba/drbl-loader.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/queries/players.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/transformers/espn.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/transformers/player-season-defaults.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/data/types/player-season.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/lib/player-explore-sort.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/lib/player-season-sort.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/critical_source_snapshot/src/lib/stat-glossary.ts,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/ask-drbl-desktop.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-desktop-2019-20-unsupported.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-desktop-2020-21.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-desktop-2023-24-historical.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-desktop-2024-25.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-desktop-2025-26.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-players-mobile-2025-26.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/explore-teams-desktop.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/home-desktop.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/learn-drbl-desktop.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/page-2026-08-11T21-41-21-008Z.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/page-2026-08-11T21-51-29-033Z.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/page-2026-08-12T18-21-43-296Z.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/page-2026-08-17T16-47-54-868Z.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/player-jabari-smith-jr-desktop.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/player-jabari-smith-jr-mobile.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/screenshots/savant-above-fold.png,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/00_branch_inventory.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/03_overlap_matrix.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/04_conflict_resolution_log.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/05_api_contract_audit.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/06_sensitive_file_diff.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/07_ui_design_preservation.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/09_current_production_regression.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/10_historical_regression.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/12_engineering_results.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/13_integration_health.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/14_integration_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/integration/15_full_audit.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m16j_17_model_health.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m16j_19_final_response_values.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m16l2_22_reserved_result_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m16l3_30_product_migration_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17a2_40_historical_corpus_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_04_season_to_next_pooled.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_08_early_late_pooled.csv,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_17_pre_name_verdict.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_19_validation_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_20_model_health.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m17b_21_full_audit.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18a_27_model_health.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18a_28_full_audit.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18a_29_m18a_seal.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18b0_13_model_health.json,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18b0_14_full_audit.md,A,WORKBOOK v1,INCLUDE
+reports/project_workbook_v1/supporting_reports/research/m18b0_15_readiness_seal.json,A,WORKBOOK v1,INCLUDE
+scripts/test-ask-drbl.ts, M,TESTS,INCLUDE
+scripts/test-game-shell.ts, M,TESTS,INCLUDE
+scripts/test-team-identity.ts, M,TESTS,INCLUDE
+src/analytics/compare-player-seasons.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/analytics/compare-players.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/analytics/rank-player-seasons.ts, M,PRODUCT SOURCE,INCLUDE
+src/analytics/types.ts, M,PRODUCT SOURCE,INCLUDE
+src/app/compare/page.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/app/dashboard/page.tsx, M,PRODUCT SOURCE,INCLUDE
+src/app/history/page.tsx, M,PRODUCT SOURCE,INCLUDE
+src/app/learn/drbl/page.tsx, M,LEARN / GLOSSARY,INCLUDE
+src/app/page.tsx, M,PRODUCT SOURCE,INCLUDE
+src/app/players/[playerId]/page.tsx, M,PRODUCT SOURCE,INCLUDE
+src/components/brand/team-logo.tsx, M,TEAM IDENTITY,INCLUDE
+src/components/compare/player-compare-view.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/explore/player-board-health-banner.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/explore/player-season-table.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/home/findings-section.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/home/top-performers-panel.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/players/player-core-island.tsx, M,PRODUCT SOURCE,INCLUDE
+src/components/players/player-destination-identity.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/players/player-season-compare-view.tsx, M,DRBL PRODUCT SURFACES,INCLUDE
+src/components/players/player-season-rank-view.tsx, M,PRODUCT SOURCE,INCLUDE
+src/components/teams/team-roster-section.tsx, M,PRODUCT SOURCE,INCLUDE
+src/components/time-machine/time-machine-snapshot.tsx, M,PRODUCT SOURCE,INCLUDE
+src/content/learn/registry.ts, M,LEARN / GLOSSARY,INCLUDE
+src/data/identity/game-id.ts, M,GAME ROUTING,INCLUDE
+src/data/identity/team-map.ts, M,TEAM IDENTITY,INCLUDE
+src/data/providers/historical/historical-nba-service.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/providers/impact/player-id-aliases.ts, M,PLAYER CROSSWALK / ALIASES,INCLUDE
+src/data/providers/nba-data-provider.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/providers/nba/nba-team-meta.ts, M,TEAM IDENTITY,INCLUDE
+src/data/providers/nba/schedule-client.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/queries/explore-players-board.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/data/queries/games.ts, M,GAME ROUTING,INCLUDE
+src/data/queries/home.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/data/queries/index.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/queries/player-season-compare.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/data/queries/player-season-rank.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/queries/players.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/queries/time-machine.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/transformers/stats-nba.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/types/game.ts, M,PRODUCT SOURCE,INCLUDE
+src/data/types/player-season.ts, M,PRODUCT SOURCE,INCLUDE
+src/lib/game-team-identity.ts, M,TEAM IDENTITY,INCLUDE
+src/lib/learn-column-concepts.ts, M,LEARN / GLOSSARY,INCLUDE
+src/lib/nba-brand.ts, M,TEAM IDENTITY,INCLUDE
+src/lib/player-destination.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/lib/player-percentile-metrics.ts, M,PRODUCT SOURCE,INCLUDE
+src/lib/player-stat-comps.ts, M,PRODUCT SOURCE,INCLUDE
+src/lib/stat-glossary.ts, M,LEARN / GLOSSARY,INCLUDE
+src/lib/team-explorer.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/lib/team-identity.ts, M,TEAM IDENTITY,INCLUDE
+src/query-engine/ask-examples.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/coverage.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/execute.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/index.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/interpret.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/metrics.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/types.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+src/query-engine/validate.ts, M,DRBL PRODUCT SURFACES,INCLUDE
+reports/product_completeness_v1/01_surface_matrix.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/02_metric_surface_inventory.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/03_team_identity_forensics.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/04_team_id_namespace_matrix.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/05_team_identity_completeness.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/06_historical_brand_matrix.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/07_player_identity_forensics.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/08_player_identity_crosswalk.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/09_player_drbl_join_coverage.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/10_glossary_coverage.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/11_player_page_drbl_coverage.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/12_final_surface_matrix.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/13_product_gap_log.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/14_public_copy_audit.csv,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/15_performance_audit.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/16_accessibility_audit.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/17_current_production_regression.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/18_historical_regression.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/19_research_seal_integrity.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/20_engineering_results.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/21_ui_smoke.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/22_model_health.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/23_full_audit.md,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1/24_product_completeness_seal.json,??,P17 REPORTS,INCLUDE
+reports/product_completeness_v1_1/,??,P17.1 REPORTS,INCLUDE
+reports/product_completeness_v1_2/,??,P17.2 REPORTS,INCLUDE
+reports/project_workbook_v2/,??,WORKBOOK v2,INCLUDE
+reports/project_workbook_v2_1/,??,WORKBOOK v2.1,INCLUDE
+scripts/audit-player-id-crosswalk.ts,??,PLAYER CROSSWALK / ALIASES,INCLUDE
+scripts/build-player-id-crosswalk.ts,??,PLAYER CROSSWALK / ALIASES,INCLUDE
+scripts/p17_1_capture_screenshots.mjs,??,VISUAL QA,INCLUDE
+scripts/p17_1_history_drbl_shot.mjs,??,PRODUCT SOURCE,INCLUDE
+scripts/p17_2_capture_current_design_pair.mjs,??,PRODUCT SOURCE,INCLUDE
+scripts/p17_2_capture_design_reference.mjs,??,VISUAL QA,INCLUDE
+scripts/p17_2_capture_screenshots.mjs,??,VISUAL QA,INCLUDE
+scripts/p17_2_write_reports.ts,??,PRODUCT SOURCE,INCLUDE
+scripts/sample-live-player-route-qa.ts,??,PRODUCT SOURCE,INCLUDE
+scripts/test-compare-drbl.ts,??,TESTS,INCLUDE
+scripts/test-game-route-contract.ts,??,TESTS,INCLUDE
+scripts/test-learn-drbl-page.ts,??,TESTS,INCLUDE
+scripts/test-player-destination-merge.ts,??,TESTS,INCLUDE
+scripts/test-player-team-render-contract.ts,??,TESTS,INCLUDE
+src/data/identity/__tests__/,??,TESTS,INCLUDE
+src/data/identity/player-identity.ts,??,PLAYER CROSSWALK / ALIASES,INCLUDE
+src/query-engine/drbl-vocabulary.ts,??,DRBL PRODUCT SURFACES,INCLUDE

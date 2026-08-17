@@ -73,6 +73,23 @@ async function loadSeasonRow(
       row.trueShootingPct != null && row.trueShootingPct > 0
         ? row.trueShootingPct
         : fromPeers?.trueShootingPct ?? row.trueShootingPct,
+    drbl100: fromPeers?.drbl100 ?? row.drbl100,
+    rawAbilityRate: fromPeers?.rawAbilityRate ?? row.rawAbilityRate,
+    drblPossessions: fromPeers?.drblPossessions ?? row.drblPossessions,
+    abilityModelVersion:
+      fromPeers?.abilityModelVersion ?? row.abilityModelVersion,
+    drblRank: fromPeers?.drblRank ?? row.drblRank,
+    drblO: fromPeers?.drblO ?? row.drblO,
+    drblD: fromPeers?.drblD ?? row.drblD,
+    drblP: fromPeers?.drblP ?? row.drblP,
+    drblLn: fromPeers?.drblLn ?? row.drblLn,
+    drblB: fromPeers?.drblB ?? row.drblB,
+    r1Points: fromPeers?.r1Points ?? row.r1Points,
+    r1WinEquivalents: fromPeers?.r1WinEquivalents ?? row.r1WinEquivalents,
+    r1PointValueVersion:
+      fromPeers?.r1PointValueVersion ?? row.r1PointValueVersion,
+    r1WinEquivalentVersion:
+      fromPeers?.r1WinEquivalentVersion ?? row.r1WinEquivalentVersion,
   };
 }
 

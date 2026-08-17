@@ -1,0 +1,175 @@
+﻿{
+    "workbook":  "project_workbook_v2",
+    "generatedAt":  "2026-08-17T15:47:15.7351796-04:00",
+    "repo":  "basketball-analytics-integration",
+    "productThesis":  "NBA analytics site: DRBL ability + R1 value with ESPN-backed browsing, identity-gated DRBL overlays, and historical BallDontLie depth",
+    "stack":  {
+                  "framework":  "Next.js App Router",
+                  "ui":  "React 19 + Tailwind 4",
+                  "language":  "TypeScript"
+              },
+    "branch":  "product/drbl-site-completeness-v1_1",
+    "HEAD":  "64cc231a215c579f3498e6122a0230f7388971cc",
+    "dirtyWorktree":  true,
+    "integrationCommit":  "28827fbdfb6509756b35284f80c27bafac1f356c",
+    "frozenConstants":  {
+                            "K":  1600,
+                            "P1":  37.490662671779255,
+                            "P1_exact":  true,
+                            "abilityVersion":  "drbl-ability-eb1600-r1-v1",
+                            "r1PointsVersion":  "drbl-r1-points-v1",
+                            "r1WinEqVersion":  "drbl-r1-wineq-v1"
+                        },
+    "seasons":  {
+                    "canonicalProduction":  [
+                                                "2024-25",
+                                                "2025-26"
+                                            ],
+                    "retrospectiveFrozenV1":  [
+                                                  "2020-21",
+                                                  "2021-22",
+                                                  "2022-23",
+                                                  "2023-24"
+                                              ],
+                    "registrySingleSource":  true
+                },
+    "crosswalk":  {
+                      "version":  "player-crosswalk-v1.1",
+                      "aliasCount":  676,
+                      "productionApproved":  619,
+                      "classes":  {
+                                      "VERIFIED_MULTI_FIELD":  270,
+                                      "HIGH_CONFIDENCE_MULTI_FIELD":  349,
+                                      "UNIQUE_NAME_ONLY":  57,
+                                      "EXACT_PROVIDER_MAPPING":  0
+                                  },
+                      "runtimeRejectsUniqueNameOnly":  true,
+                      "unresolvedExample":  {
+                                                "nbaPlayerId":  "1642935",
+                                                "name":  "Chucky Hepburn",
+                                                "status":  "UNRESOLVED"
+                                            }
+                  },
+    "joinCoverage":  {
+                         "staticAnyAlias":  {
+                                                "2024-25":  1.0,
+                                                "2025-26":  0.998261
+                                            },
+                         "staticVerifiedProductionApproved":  {
+                                                                  "2024-25":  0.920721,
+                                                                  "2025-26":  0.944348
+                                                              },
+                         "live":  {
+                                      "nbaBoardJoinRate":  0.9879725085910653,
+                                      "nbaBoardRows":  582,
+                                      "nbaHasValidDrblEstimate":  575,
+                                      "espnEstimatedJoinRate":  0.9394463667820069,
+                                      "espnBoardRows":  578,
+                                      "espnEstimatedJoins":  543
+                                  },
+                         "claim100PctJoin":  false
+                     },
+    "teamIdentityCompleteness":  {
+                                     "modern":  "YES",
+                                     "historicalText":  "YES",
+                                     "historicalPalette":  "YES",
+                                     "historicalLogo":  "NO",
+                                     "historicalLogosPolicy":  "EMPTY_INTENTIONAL"
+                                 },
+    "seals":  {
+                  "PRODUCT_COMPLETENESS":  "PASS",
+                  "INTEGRATION_SEAL_HASH":  "7616954121ce6263018a364d205aa10681ac95cfca89fa2a489fd15dfd692e15",
+                  "M18B_0_READINESS_SEAL_HASH":  "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+                  "M18A_SEAL_HASH":  "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+                  "M18A_RESERVED_VERDICT":  "STRONG_PASS",
+                  "M17B_SEAL_HASH":  "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+                  "M17B_VERDICT":  "STRONG_MULTI_SEASON_PASS",
+                  "M17A_2_HISTORICAL_CORPUS_SEAL_HASH":  "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+                  "M16L3_PRODUCT_MIGRATION_HASH":  "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+                  "M16L2_RESERVED_RESULT_SEAL_HASH":  "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+                  "UIR_STATUS":  "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+                  "UIR_SELECTED":  "UIR-C",
+                  "M18B_READINESS_VERDICT":  "TRACKING_ACCESS_REQUIRED",
+                  "NEXT_MILESTONE_INTEGRATION":  "M17c_EXTERNAL_COMMON_TARGET_BENCHMARK",
+                  "NEXT_MILESTONE_AFTER_P17_1":  "M17c_EXTERNAL_COMMON_TARGET_BENCHMARK"
+              },
+    "verdicts":  {
+                     "productCompleteness":  "PASS",
+                     "integrationReadyForResearch":  "YES",
+                     "productionMetricSemanticsPreserved":  "YES",
+                     "webDesignIntentPreserved":  "YES",
+                     "drblV1Reopened":  "NO",
+                     "modelParameterChanged":  "NO",
+                     "precomputedEqualVs28827fb":  "YES_ALL_SIX_SEASONS",
+                     "currentProductionRegression":  {
+                                                         "CURRENT_DRBL_MISMATCHES":  0,
+                                                         "method":  "git_hash_object_equality_and_product_regression_scripts"
+                                                     },
+                     "historicalRegression":  {
+                                                  "HISTORICAL_DRBL_MISMATCHES":  0
+                                              },
+                     "uirPublicCanonical":  "NO",
+                     "legacyWarPublic":  "NO",
+                     "m18bMethodPrototypeAuthorized":  "YES",
+                     "m18bPlayerValueValidationAuthorized":  "NO"
+                 },
+    "surfaceHierarchy":  {
+                             "ASK_HAS_DRBL":  "YES",
+                             "COMPARE_HAS_DRBL":  "YES",
+                             "HOME_DRBL_FIRST":  "YES",
+                             "SEASON_COMPARE_DRBL":  "YES",
+                             "SEASON_RANK_DRBL":  "YES",
+                             "HISTORY_SEASON_DRBL_LEADERS":  "YES",
+                             "HISTORY_ALL_TIME_DRBL":  "INTENTIONALLY_NOT_SUPPORTED",
+                             "DASHBOARD_DRBL":  "INTENTIONALLY_DEFERRED",
+                             "PLAYER_DESTINATION_DRBL":  "YES",
+                             "ROSTER_DRBL_PREFERRED":  "YES",
+                             "LEARN_DRBL_EXPANDED":  "YES"
+                         },
+    "engineering":  {
+                        "TYPECHECK":  "PASS",
+                        "BUILD":  "PASS",
+                        "TEST_COUNT":  "201/201",
+                        "DRBL_TESTS":  "PASS",
+                        "DATA_TRUTH":  "PASS",
+                        "SITE_NAV":  "PASS",
+                        "WORKTREE_PATH":  "C:\\Users\\parkh\\Projects\\basketball-analytics-integration"
+                    },
+    "researchStatus":  {
+                           "M17b":  "STRONG_MULTI_SEASON_PASS",
+                           "M18a":  "STRONG_PASS",
+                           "M18a_UIR":  "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+                           "OFFBALL_VALUE_ESTABLISHED":  "NO",
+                           "M18b_0":  "TRACKING_ACCESS_REQUIRED",
+                           "M17c":  "NOT_STARTED",
+                           "M18b":  "NOT_STARTED"
+                       },
+    "artifacts":  {
+                      "productSeal":  "supporting_reports/product_completeness_v1_1/26_product_completion_seal.json",
+                      "crosswalkFreeze":  "supporting_reports/product_completeness_v1_1/02_player_crosswalk_freeze.json",
+                      "liveJoin":  "supporting_reports/product_completeness_v1_1/04_live_join_coverage.json",
+                      "criticalSourceSnapshot":  "critical_source_snapshot",
+                      "workbookV1":  "../project_workbook_v1"
+                  },
+    "envVarNamesFromExample":  [
+                                   "DATA_PROVIDER",
+                                   "DRBL_CANONICAL_ABILITY_SOURCE",
+                                   "DRBL_VALIDATED_ABILITY_SHADOW",
+                                   "BALLDONTLIE_API_KEY",
+                                   "PBP_DATA_PATH"
+                               ],
+    "knownProductDebt":  [
+                             "UNIQUE_NAME_ONLY_retained_not_runtime_57",
+                             "1642935_Chucky_Hepburn_unresolved",
+                             "historical_verified_logos_empty",
+                             "dashboard_drbl_intentionally_deferred",
+                             "ask_example_chips_box_score_heavy",
+                             "minor_ui_ordinal_grammar"
+                         ],
+    "visualQa":  {
+                     "screenshotCount":  27,
+                     "index":  "supporting_reports/product_completeness_v1_1/13_visual_qa_index.md",
+                     "desktop":  "PASS",
+                     "mobile":  "PASS"
+                 }
+}

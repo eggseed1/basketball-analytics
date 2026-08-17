@@ -4,6 +4,7 @@ import {
   canonicalSeasonFromEspnYear,
   espnYearFromCanonicalSeason,
 } from "@/data/providers/nba/season";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 
 export type StatComp = {
   playerId: string;
@@ -49,6 +50,16 @@ export type StatCompRow = {
   oLebron?: number;
   dLebron?: number;
   winsAdded?: number;
+  drbl100?: number;
+  rawAbilityRate?: number;
+  drblPossessions?: number;
+  r1Points?: number | null;
+  r1WinEquivalents?: number | null;
+  drblO?: number;
+  drblD?: number;
+  drblP?: number;
+  drblLn?: number;
+  drblB?: number;
 };
 
 export function shiftCanonicalSeason(season: string, deltaYears: number): string {
@@ -70,6 +81,45 @@ type MetricPicker = {
 
 /** Value extractors keyed by percentile metric id. */
 export const METRIC_PICKERS: Record<string, MetricPicker> = {
+  drbl100: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drbl100)
+        ? (r.drbl100 as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  r1Points: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) &&
+      r.r1Points != null &&
+      Number.isFinite(r.r1Points)
+        ? r.r1Points
+        : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  r1WinEq: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) &&
+      r.r1WinEquivalents != null &&
+      Number.isFinite(r.r1WinEquivalents)
+        ? r.r1WinEquivalents
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  drblO: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drblO)
+        ? (r.drblO as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  drblD: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drblD)
+        ? (r.drblD as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
   darko: {
     pick: (r) => (r.darkoDpm != null ? r.darkoDpm : null),
     format: (v) => formatNumber(v, 2),

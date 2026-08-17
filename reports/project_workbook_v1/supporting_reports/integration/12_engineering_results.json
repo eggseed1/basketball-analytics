@@ -1,0 +1,10 @@
+{
+    "TYPECHECK":  "PASS",
+    "UNRESOLVED_CONFLICT_MARKERS":  0,
+    "TEST_COUNT":  "201/201",
+    "SEPARATE_WORKTREE_USED":  "YES",
+    "BUILD":  "PASS",
+    "DRBL_TESTS":  "PASS",
+    "WEB_SPECIFIC":  "test:data-truth PASS; test:site-nav PASS; test:drbl-release:fixture PARTIAL (team-identity live schedule sample miss)",
+    "WORKTREE_PATH":  "C:\\Users\\parkh\\Projects\\basketball-analytics-integration"
+}

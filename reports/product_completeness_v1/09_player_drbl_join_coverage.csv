@@ -1,0 +1,16 @@
+season,corpus,metric,count,pct_of_corpus,notes
+2024-25,precomputed_drbl,players_with_drbl100,555,1.000,src/data/drbl/precomputed/2024-25.json
+2024-25,precomputed_drbl,players_with_alias_nba_id,555,1.000,all 555 NBA ids present in aliases.json
+2024-25,crosswalk_rows,ALIAS,550,,08_player_identity_crosswalk.csv season filter
+2024-25,crosswalk_rows,UNMATCHED_ESPN,10,,ESPN board names without unique DRBL name match
+2024-25,crosswalk_rows,UNMATCHED_NBA,5,,DRBL names without unique ESPN board name match
+2025-26,precomputed_drbl,players_with_drbl100,575,1.000,src/data/drbl/precomputed/2025-26.json
+2025-26,precomputed_drbl,players_with_alias_nba_id,574,0.998,missing NBA id 1642935 Chucky Hepburn
+2025-26,crosswalk_rows,ALIAS,574,,08_player_identity_crosswalk.csv season filter
+2025-26,crosswalk_rows,UNMATCHED_ESPN,4,,
+2025-26,crosswalk_rows,UNMATCHED_NBA,1,,
+ALL,alias_file,alias_entries,676,,data/impact/player-id-aliases.json (was 0 at HEAD)
+ALL,alias_file,confidence,HIGH_CONFIDENCE_UNIQUE_NAME,1.000,name-uniqueness only — not silent; documented
+ALL,alias_file,matchMethod,unique_name_espn_board_drbl,1.000,build-player-id-crosswalk.ts
+ALL,live_espn_board_join,measured_join_rate,NOT_MEASURED,,Do not claim 100% live overlay join
+METHODOLOGY,note,description,"Join coverage derived from (1) 08 crosswalk statuses (2) alias file count (3) precomputed player ids ∩ aliases.byNba. Runtime overlay uses aliases then direct id. Live ESPN byathlete board join rate was not re-sampled for this report.",,

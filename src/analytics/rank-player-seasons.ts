@@ -23,6 +23,7 @@ import {
 } from "@/analytics/compare-player-seasons";
 import type { PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -73,6 +74,14 @@ export type SeasonRankEntry = {
   /** Category labels this season won most often across decisive pairwise categories. */
   categoryWins: string[];
   coverage: SeasonCoverageSnapshot;
+  /** League DRBL/100 rank from overlay when available (not Copeland). */
+  drblLeagueRank: number | null;
+  /** DRBL/100 value when valid. */
+  drbl100: number | null;
+  /** Percentile of DRBL/100 among selected seasons with valid estimates. */
+  drblSelectedPercentile: number | null;
+  /** Rank by R1 Points among selected seasons — labeled distinctly from DRBL. */
+  r1PointsSelectedRank: number | null;
 };
 
 export type PlayerSeasonRankingMethodology = {
@@ -368,6 +377,21 @@ export function rankPlayerSeasons(options: {
     if (p.overallEdge === "b") beats.get(p.seasonB)!.add(p.seasonA);
   }
 
+  const drblPool = seasonRows
+    .filter((r) => hasValidDrblEstimate(r))
+    .map((r) => r.drbl100)
+    .filter((n) => Number.isFinite(n));
+  const r1Sorted = [...seasonRows]
+    .filter(
+      (r) =>
+        hasValidDrblEstimate(r) &&
+        r.r1Points != null &&
+        Number.isFinite(r.r1Points)
+    )
+    .sort((a, b) => (b.r1Points ?? 0) - (a.r1Points ?? 0));
+  const r1RankBySeason = new Map<string, number>();
+  r1Sorted.forEach((r, i) => r1RankBySeason.set(r.season, i + 1));
+
   const entries: SeasonRankEntry[] = seasonRows.map((row) => {
     const a = acc.get(row.season)!;
     const coverage =
@@ -403,6 +427,13 @@ export function rankPlayerSeasons(options: {
       .slice(0, 6)
       .map(([label]) => label);
 
+    const validDrbl = hasValidDrblEstimate(row);
+    let drblSelectedPercentile: number | null = null;
+    if (validDrbl && drblPool.length) {
+      const below = drblPool.filter((v) => v < row.drbl100).length;
+      drblSelectedPercentile = (below / drblPool.length) * 100;
+    }
+
     return {
       rank: null,
       season: row.season,
@@ -415,6 +446,13 @@ export function rankPlayerSeasons(options: {
       copelandPoints: a.points,
       categoryWins,
       coverage,
+      drblLeagueRank:
+        validDrbl && row.drblRank != null && row.drblRank > 0
+          ? row.drblRank
+          : null,
+      drbl100: validDrbl ? row.drbl100 : null,
+      drblSelectedPercentile,
+      r1PointsSelectedRank: r1RankBySeason.get(row.season) ?? null,
     };
   });
 

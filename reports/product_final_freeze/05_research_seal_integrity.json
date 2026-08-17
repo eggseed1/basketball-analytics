@@ -1,0 +1,18 @@
+{
+  "RESEARCH_SEALS_CHANGED": "NO",
+  "M17C_STARTED": "NO",
+  "M17C_EXECUTED": "NO",
+  "seal_hashes": {
+    "M17A_2_HISTORICAL_CORPUS_SEAL_HASH": "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+    "M17B_MULTI_SEASON_VALIDATION_SEAL_HASH": "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+    "M18A_SEAL_HASH": "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+    "M18B_0_READINESS_SEAL_HASH": "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763"
+  },
+  "firewall": {
+    "DRBL_V1_REOPENED": "NO",
+    "MODEL_PARAMETER_CHANGED": "NO",
+    "K": 1600,
+    "P1": 37.490662671779255
+  },
+  "source": "reports/product_completeness_v1_1/21_research_seal_integrity.json"
+}

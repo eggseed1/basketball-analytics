@@ -1,0 +1,14 @@
+﻿originalPath,snapshotPath,lineCount,bytes,sha256
+src/app/learn/drbl/page.tsx,critical_source_snapshot/src/app/learn/drbl/page.tsx,217,9870,0e194c4c4fb820c2b56461d73706c2251594eb06b99f8a55134cf6d3f948be76
+src/components/compare/player-compare-view.tsx,critical_source_snapshot/src/components/compare/player-compare-view.tsx,259,8161,93dc30756626ad9f814c3a11eec1559fbab82991848e8206c0a7163f54a011c2
+src/components/players/player-core-island.tsx,critical_source_snapshot/src/components/players/player-core-island.tsx,802,33393,ffdb680e0057e3c67af11017ca6f1baadef61242d60b2fca9697e8bd37fe903c
+src/data/identity/player-identity.ts,critical_source_snapshot/src/data/identity/player-identity.ts,176,5970,6af65d8976ed0ee6065d9ec22486b9eda253d57810a5698c6b1db66476b6f9d3
+src/data/providers/impact/player-id-aliases.ts,critical_source_snapshot/src/data/providers/impact/player-id-aliases.ts,88,3131,5cb0782e12b72b7b7d4f503180e08cb25173c4e27653f45c44433c3234b6a1ac
+src/data/queries/home.ts,critical_source_snapshot/src/data/queries/home.ts,345,11668,5a8565fc3f7b6656a3b5c0163fbe54635d0becfd173021a7babda3970e48c6f7
+src/data/queries/players.ts,critical_source_snapshot/src/data/queries/players.ts,676,25505,a6b37b91b38d67ef517b7ea1dbe43c084f245a8edfe2a52bb5f445edb4b229aa
+src/lib/game-team-identity.ts,critical_source_snapshot/src/lib/game-team-identity.ts,258,9260,ec1150b5aae232bb02db7adab6cab7eb1faadc9cf7985ce73b1aa7c1327712ff
+src/lib/historical-team-brand.ts,critical_source_snapshot/src/lib/historical-team-brand.ts,226,7396,3b034fc10838f0cc10c575447d5bf390442338718a7670a64a562c3376c0afa8
+src/lib/nba-brand.ts,critical_source_snapshot/src/lib/nba-brand.ts,422,10264,30269c1784469ca9e7b61efb0731fbb7468dfc5397337e2d073025b958aaf4fe
+src/lib/team-identity.ts,critical_source_snapshot/src/lib/team-identity.ts,121,4867,3527ac2344e3e68b67069c07d1c085ef9cd20a0f46e38eaf1d20208ba3d4ac1a
+src/query-engine/drbl-vocabulary.ts,critical_source_snapshot/src/query-engine/drbl-vocabulary.ts,151,4732,f71512613f2c26633d9c7eea31e14eb18c9c0dfb8e5a6d49ba89e7b3765539a3
+src/query-engine/metrics.ts,critical_source_snapshot/src/query-engine/metrics.ts,271,7270,07e01f53a876f0f17c069df6754b260c619e832c94d982f74d2a0572209465fd

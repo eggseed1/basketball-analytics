@@ -1,0 +1,13 @@
+finding_id,surface,old_framing,issue,correction,status,evidence
+PC01,stat-glossary DRBL-P,versus role-matched replacement,Implied conventional fringe replacement,Rewrote to contextual role-matched R1 reference; diagnostic not added into DRBL/100,FIXED,src/lib/stat-glossary.ts
+PC02,stat-glossary DRBL-O/D,versus replacement,Same replacement conflation,R1 reference + O+D ≠ DRBL/100 warning,FIXED,src/lib/stat-glossary.ts
+PC03,stat-glossary DRBL-B,DRBL Gravity Proxy,Suggested measured gravity / tracking,Removed gravity; behavioral box/PBP diagnostic only,FIXED,src/lib/stat-glossary.ts
+PC04,stat-glossary R1 Win Eq.,marginal win-equivalent units (thin),Could be read as WAR,Frozen points-per-win; not traditional WAR; not causal roster-replacement,FIXED,src/lib/stat-glossary.ts
+PC05,stat-glossary DRBL/100,ability rate (pre-order),Needed EB1600 clarity,EB1600 posterior toward 0; k=1600; not cumulative,FIXED,src/lib/stat-glossary.ts
+PC06,stat-glossary DRBL ±,uncertainty display risk,Calibrated CI implication,Legacy diagnostic; predictive intervals unresolved,FIXED_COPY,src/lib/stat-glossary.ts
+PC07,learn/drbl,thin methodology,Missing O/D/P/LN/B + WAR retirement,Expanded page + retired WAR & uncertainty section,FIXED,src/app/learn/drbl/page.tsx
+PC08,learn/drbl historical,career cumulative risk,Could imply career R1 total canonical,Explicit: career cumulative R1 not published as canonical,FIXED,learn/drbl page
+PC09,explore sort bookmarks,?sort=drblWar,Legacy WAR sort,Redirects to r1WinEquivalents (not field alias),FIXED,src/lib/player-explore-sort.ts
+PC10,VORP glossary,Value over replacement player,External box VORP still uses replacement language,Left as external-stat definition (not DRBL),INTENTIONALLY_UNCHANGED,stat-glossary VORP entry
+PC11,public types drblWar,deprecated storage field,Could be shown as cumulative,Type comment forbids display as canonical cumulative / alias to R1 Win Eq.,FIXED_CONTRACT,src/data/types/player-season.ts
+PC12,board banner,silent healthy prod,Users confuse live board with DRBL overlay,Prod healthy hint: live ESPN/NBA board ≠ precomputed DRBL,FIXED,player-board-health-banner.tsx

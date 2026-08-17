@@ -54,10 +54,18 @@ export function TeamLogo({
     : logoUrl ??
       (logoSource === "historical_verified" ? undefined : teamLogoUrl(teamKey));
   const px = PX[size];
-  const markAbbr = (textAbbr ?? brand?.abbr ?? teamKey ?? "?")
+  // Never use raw provider numeric ids (e.g. NBA Stats 1610612760 → "161") as marks.
+  const rawKey = teamKey?.toString().trim() ?? "";
+  const keyIsProviderNumeric = /^\d{6,}$/.test(rawKey);
+  const markAbbr = (
+    textAbbr ??
+    brand?.abbr ??
+    (keyIsProviderNumeric ? "" : rawKey) ??
+    "?"
+  )
     .toString()
     .slice(0, 3)
-    .toUpperCase();
+    .toUpperCase() || "?";
 
   if (!src || failed) {
     const fallbackLabel = markAbbr || "?";

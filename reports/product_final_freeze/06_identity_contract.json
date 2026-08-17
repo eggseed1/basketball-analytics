@@ -1,0 +1,35 @@
+{
+  "canonicalProductTeamKey": "ESPN team id (string)",
+  "providers": ["espn", "nba", "bdl"],
+  "NBA_TEAM_IDS_RESOLVED": "30/30",
+  "duplicates": 0,
+  "crossProviderGuessing": "NO",
+  "PlayerSeason.teamId": "canonical ESPN product team id",
+  "providerProvenanceFields": ["providerTeamId", "nbaTeamId", "teamIdProvider"],
+  "rawNbaTeamIdRenderedAsLabel": 0,
+  "playerCrosswalk": {
+    "version": "player-crosswalk-v1.1",
+    "aliasFile": "data/impact/player-id-aliases.json",
+    "aliasCount": 676,
+    "sha256_after": "104ae0e91b8928a494a14b2855240750962751ff764e31f1d315d22de64673a6",
+    "countsByClass": {
+      "VERIFIED_MULTI_FIELD": 270,
+      "HIGH_CONFIDENCE_MULTI_FIELD": 349,
+      "UNIQUE_NAME_ONLY": 57
+    },
+    "productionApprovedCount": 619,
+    "weakMappingsExcludedFromRuntime": 57,
+    "ambiguousAccepted": 0,
+    "runtimeNameGuessing": "NO",
+    "unresolvedExample": {
+      "nbaPlayerId": "1642935",
+      "playerName": "Chucky Hepburn",
+      "status": "UNRESOLVED"
+    }
+  },
+  "source": [
+    "reports/product_completeness_v1_1/02_player_crosswalk_freeze.json",
+    "reports/product_completeness_v1_2/02_nba_to_canonical_team_crosswalk.csv",
+    "reports/product_completeness_v1_2/18_product_health.json"
+  ]
+}

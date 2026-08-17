@@ -1,0 +1,158 @@
+﻿{
+    "workbook":  "project_workbook_v2",
+    "purpose":  "P17.1 product-completeness review package (identity + DRBL surfaces + seals)",
+    "PROJECT_SEMANTICS_CHANGED_BY_WORKBOOK":  "NO",
+    "milestone":  "P17.1_DRBL_PRODUCT_COMPLETENESS_REPAIR",
+    "timestamp":  "2026-08-17T19:40:00-04:00",
+    "branch":  "product/drbl-site-completeness-v1_1",
+    "HEAD":  "64cc231a215c579f3498e6122a0230f7388971cc",
+    "HEAD_NOTE":  "Same docs-seal SHA as integration; uncommitted P17 + P17.1 product work present on dirty worktree",
+    "workingTree":  {
+                        "dirtyRelativeToHead":  true,
+                        "modelOrProductSourcesModified":  "YES",
+                        "note":  "Alias file, identity, ASK/compare/home/history/player surfaces, and product_completeness_v1_1 reports uncommitted relative to 64cc231"
+                    },
+    "integrationCommit":  "28827fbdfb6509756b35284f80c27bafac1f356c",
+    "analyticsPremergeCommit":  "72272b23fe6e037b6d463de2c840f1ad2980b562",
+    "webPremergeCommit":  "7e764ceb5c834a19696dad84ed6696e7e3289a6a",
+    "companionWorkbookV1":  "reports/project_workbook_v1/",
+    "productCompletenessPackage":  "reports/product_completeness_v1_1/",
+    "worktreePath":  "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+    "platform":  {
+                     "os":  "win32",
+                     "release":  "10.0.26200",
+                     "arch":  "x64"
+                 },
+    "runtime":  {
+                    "node":  "v24.19.0",
+                    "npm":  "11.17.0"
+                },
+    "canonicalModel":  {
+                           "CANONICAL_ABILITY_VERSION":  "drbl-ability-eb1600-r1-v1",
+                           "R1_POINTS_VERSION":  "drbl-r1-points-v1",
+                           "R1_WINEQ_VERSION":  "drbl-r1-wineq-v1",
+                           "K":  1600,
+                           "PRIOR_MEAN":  0,
+                           "CALIBRATION":  "IDENTITY",
+                           "P1":  37.490662671779255,
+                           "P1_EXACT":  true,
+                           "P1_ERA_ROBUSTNESS":  "NOT_ESTABLISHED"
+                       },
+    "crosswalk":  {
+                      "version":  "player-crosswalk-v1.1",
+                      "aliasCount":  676,
+                      "productionApprovedCount":  619,
+                      "countsByClass":  {
+                                            "VERIFIED_MULTI_FIELD":  270,
+                                            "HIGH_CONFIDENCE_MULTI_FIELD":  349,
+                                            "UNIQUE_NAME_ONLY":  57,
+                                            "EXACT_PROVIDER_MAPPING":  0
+                                        },
+                      "runtimeRejectsUniqueNameOnly":  true,
+                      "freezeArtifact":  "supporting_reports/product_completeness_v1_1/02_player_crosswalk_freeze.json"
+                  },
+    "joinCoverage":  {
+                         "staticAnyAlias_2024_25":  1.0,
+                         "staticAnyAlias_2025_26":  0.998261,
+                         "staticVerified_2024_25":  0.920721,
+                         "staticVerified_2025_26":  0.944348,
+                         "liveNbaBoardJoin":  0.9879725085910653,
+                         "liveEspnJoinEstimated":  0.9394463667820069,
+                         "claim100PctJoin":  false,
+                         "liveArtifact":  "supporting_reports/product_completeness_v1_1/04_live_join_coverage.json"
+                     },
+    "productionSeasons":  [
+                              "2024-25",
+                              "2025-26"
+                          ],
+    "supportedHistoricalSeasons_TierB":  [
+                                             "2020-21",
+                                             "2021-22",
+                                             "2022-23",
+                                             "2023-24"
+                                         ],
+    "EARLIEST_TIER_A_SEASON":  "NONE",
+    "EARLIEST_TIER_B_SEASON":  "2020-21",
+    "seals":  {
+                  "POINT_ESTIMATE_FREEZE_HASH":  "942b21ef78ba0a142549f8a2b62338993e133f17b8bb1ff7b94fc8844ad9297c",
+                  "M16J_RESERVED_POINT_SEAL_HASH":  "84f4eadccb536f058194acb4db730c044ea413036456e072952d89a64600d742",
+                  "M16L2_RESERVED_RESULT_SEAL_HASH":  "dc556c3560c567d52139f991be9d17ecea8b94a6951ac5c6fedf59abb17342aa",
+                  "M16L3_PRODUCT_MIGRATION_HASH":  "48a9d39ec21cf57c91b57d5ddbc4891a38e0ec18ddf1d578e37b2d8e3c948305",
+                  "M17A_2_HISTORICAL_CORPUS_SEAL_HASH":  "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+                  "M17B_MULTI_SEASON_VALIDATION_SEAL_HASH":  "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+                  "M17B_VERDICT":  "STRONG_MULTI_SEASON_PASS",
+                  "M18A_SEAL_HASH":  "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+                  "M18A_RESERVED_VERDICT":  "STRONG_PASS",
+                  "UIR_STATUS":  "PERSISTENT_PLAYER_RESIDUAL_ESTABLISHED",
+                  "OFFBALL_VALUE_ESTABLISHED":  "NO",
+                  "M18B_0_READINESS_SEAL_HASH":  "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+                  "INTEGRATION_SEAL_HASH":  "7616954121ce6263018a364d205aa10681ac95cfca89fa2a489fd15dfd692e15",
+                  "ANALYTICS_WEB_INTEGRATION_COMMIT":  "28827fbdfb6509756b35284f80c27bafac1f356c",
+                  "PRODUCT_COMPLETION_SEAL":  "supporting_reports/product_completeness_v1_1/26_product_completion_seal.json",
+                  "PRODUCT_COMPLETENESS":  "PASS_WITH_DEBT"
+              },
+    "firewall":  {
+                     "DRBL_V1_REOPENED":  "NO",
+                     "MODEL_PARAMETER_CHANGED":  "NO",
+                     "M17C_STARTED":  "NO",
+                     "K_UNCHANGED":  true,
+                     "P1_UNCHANGED":  true,
+                     "PRECOMPUTED_EQUAL_VS_28827FB":  "YES_ALL_SIX_SEASONS",
+                     "CURRENT_DRBL_MISMATCHES":  0,
+                     "HISTORICAL_DRBL_MISMATCHES":  0,
+                     "RESEARCH_SEALS_UNCHANGED":  "YES"
+                 },
+    "milestoneStatus":  {
+                            "M17c":  "NOT_STARTED",
+                            "M17C_AUTHORIZED":  "YES",
+                            "M17C_EXECUTED":  "NO",
+                            "M17C_AUTHORIZED_AFTER_P17_1_REVIEW":  "NO",
+                            "M18b":  "NOT_STARTED",
+                            "M18b_0":  "COMPLETE_READINESS_ONLY"
+                        },
+    "productGates":  {
+                         "PRODUCT_COMPLETENESS":  "PASS_WITH_DEBT",
+                         "ASK_HAS_DRBL":  "YES",
+                         "COMPARE_HAS_DRBL":  "YES",
+                         "HOME_DRBL_FIRST":  "YES",
+                         "HISTORY_SEASON_DRBL_LEADERS":  "YES",
+                         "HISTORY_ALL_TIME_DRBL":  "INTENTIONALLY_NOT_SUPPORTED",
+                         "DASHBOARD_DRBL":  "INTENTIONALLY_DEFERRED",
+                         "MODERN_TEAM_IDENTITY_COMPLETE":  "YES",
+                         "HISTORICAL_TEXT_IDENTITY_COMPLETE":  "YES",
+                         "HISTORICAL_PALETTE_IDENTITY_COMPLETE":  "YES",
+                         "HISTORICAL_LOGO_IDENTITY_COMPLETE":  "NO",
+                         "BUILD":  "PASS",
+                         "TYPECHECK":  "PASS",
+                         "TEST_COUNT":  "201/201",
+                         "DATA_TRUTH":  "PASS",
+                         "SITE_NAV":  "PASS"
+                     },
+    "knownProductDebt":  [
+                             {
+                                 "id":  "UNIQUE_NAME_ONLY_RETAINED_NOT_RUNTIME",
+                                 "summary":  "57 UNIQUE_NAME_ONLY aliases retained in file; rejected for silent production joins"
+                             },
+                             {
+                                 "id":  "DRBL_ID_1642935_UNRESOLVED",
+                                 "summary":  "Chucky Hepburn present in DRBL 2025-26; no invented ESPN alias"
+                             },
+                             {
+                                 "id":  "HISTORICAL_LOGOS_EMPTY",
+                                 "summary":  "Verified historical logo assets intentionally empty"
+                             },
+                             {
+                                 "id":  "VISUAL_QA_PARTIAL",
+                                 "summary":  "Screenshot capture present in workbook; seal still notes PARTIAL visual QA"
+                             }
+                         ],
+    "screenshots":  "AVAILABLE",
+    "screenshotSource":  "reports/product_completeness_v1_1/screenshots/",
+    "engineeringRecheck":  {
+                               "drblTest":  "PASS_201_201",
+                               "typecheck":  "PASS",
+                               "dataTruth":  "PASS",
+                               "siteNav":  "PASS",
+                               "secretScan":  "PASS"
+                           }
+}

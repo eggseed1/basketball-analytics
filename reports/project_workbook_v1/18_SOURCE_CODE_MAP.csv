@@ -1,0 +1,53 @@
+severity,path,purpose,bytes,lineCount,sha256
+CRITICAL,src/data/drbl/season-registry.ts,Canonical season registry bridge,559,20,cb1556e5162171ebec3314b78f48d3d9c87516da1ba5798e298aa86345237480
+CRITICAL,drbl/historical/season-registry.ts,Season registry source of truth,8131,198,016c3e6267c09ae45290b15037e5acbd1b8a074c8d4bb1cbcc79635ebe6fbdbf
+CRITICAL,src/data/providers/nba/drbl-loader.ts,DRBL precomputed loader,4724,160,737e2690ddf73dd2022691a127bc94bc844c8b3562350beddd5a449001f32941
+CRITICAL,src/data/types/player-season.ts,PlayerSeason contract incl DRBL fields,5203,166,6939f9b54d6b0f9b9baca51567a4ab98f02c9120128a30f221d4f48fcadbfccb
+CRITICAL,src/data/queries/players.ts,Player query layer,21013,600,eb74a63da4d34c45ec7438424e548d8bc7179a4db3daa4499bc3ed3e95bfe1a4
+CRITICAL,src/data/providers/index.ts,Provider selection,1410,44,30bb9d1d18778776daa5170bad222fd9cab12836114a648c7f91af9bfc31d119
+CRITICAL,src/data/transformers/espn.ts,ESPN transformer,20122,659,e203c8c950b98898fc6d2b52757fb944e959fcd46ab1544f27ddba4106284163
+CRITICAL,src/data/transformers/player-season-defaults.ts,Player season defaults,2352,105,d3ab2b6885cc6fd02bbc6e182dea25affd05729d2ab8e4e832adea77c5e8d182
+CRITICAL,src/data/providers/nba/compute-advanced.ts,Advanced stats compute,5975,208,90768103a8140dc68846f5a6ab2c0498796ea39339cb42bfcb5a59d0647842bd
+CRITICAL,src/lib/stat-glossary.ts,Public metric definitions,11751,309,ba246b29298a97e38a9a77cde9ec8434ee23a6fa709a798a2536ec4716214981
+CRITICAL,src/lib/player-season-sort.ts,Season sort/rank semantics,1601,76,955bb28f457f62f1f9717df2f4ab9d9503e4475a53e1dc78e337747fcfb0b838
+CRITICAL,src/lib/player-explore-sort.ts,Explore board sort,6546,253,9eee641bf2bfc9bb785723a286393364c06d478a6766e04e11eb85eaecdfc0a9
+CRITICAL,src/components/explore/player-season-table.tsx,DRBL board UI,24910,688,75225a3f061ad22fc7094ca4031c96c2502a392695caa55bc7903d533854052e
+CRITICAL,src/components/explore/drbl-season-support-notice.tsx,Support notice,2336,76,3db205cfcf9456088eebf0f2fa00656f87842e7bd745ec2ff33449e19bff6719
+CRITICAL,src/app/explore/players/page.tsx,Players explore route,6207,173,e0f3c54c5df6e04a6723a23f9a1cbdff49f4a16bc19ab8caa38c5c25fd1142c1
+CRITICAL,src/app/learn/drbl/page.tsx,DRBL methodology page,6880,166,1ca7ec3d89829a7b383b69f7a123e7ddd3c82e766ff8a7d0d6f458233ffe4755
+CRITICAL,src/app/players/[playerId]/page.tsx,Player destination,7686,217,2a295b59929bbd32e30219b6ad90d3e0f9e20030776a28a81683c0e7906bc2ea
+CRITICAL,src/app/teams/[teamId]/page.tsx,Team destination,21012,600,13987341aaab28fbd1baa9f54dcaada7718cf607f0aee18e9dba157289696a58
+CRITICAL,src/app/page.tsx,Home,3140,99,e777582305bd1f5d08d63af7ccb9003cd73caede01203befd06d45ac9b60ef28
+CRITICAL,src/app/ask/page.tsx,Ask route,2292,80,fbfc9d3bce1922fc2a056209ddef1cf6d70b7616684a2287c304e8b6a0d80d90
+CRITICAL,src/app/layout.tsx,Root layout,1550,54,aafd163d9aaf4e468f67657b34549ae37401ad7c58d67ad78a7361cd8699f080
+CRITICAL,drbl/types.ts,DRBL core types,5067,209,9d6ad4802842bbfc4c33f73b8fe09ea99c9cccb77adee8bb7b7b7ea8d9cc7c0a
+CRITICAL,drbl/models/validated-ability-v1.ts,Validated ability model,5005,130,1cb6f78a6e01f1c497a41225b1a13a950551021c6bf0b600e047d6ffb2eeb82b
+CRITICAL,drbl/models/validated-ability-cutover.ts,Ability cutover,5256,162,4d1ee096fbc5361dd3ca74dd7c8318994a134a19af4fec66a7125ceace3e9807
+CRITICAL,drbl/models/research-ability-v1.ts,Research ability,3184,91,e75ef28af7e31f6a13c85b3a63e0c7f2b4d8483af44f93dfd7007e56d9e444a0
+CRITICAL,drbl/models/research-rate-v1.ts,Research rate,4201,138,e2811aed883a8e795033342faf933af500665af11a3080dbc944f1ad16f1744e
+CRITICAL,drbl/models/player-value.ts,Player value,31542,896,a8969688905417f7f1982d12293a3950b2082e6f8302bb52a0dbb32b7e631e03
+CRITICAL,drbl/models/pipeline-value.ts,Pipeline value,22669,721,9e8119db9fd877a5b358f8bd1c9a00686f93881c4c7f32b8c92607fbddd1c8cf
+CRITICAL,drbl/models/war-math.ts,WAR math (legacy/noncanonical paths),15879,498,e2345ae7da2d38d15baa4acbcbafd24f0222db2ca2339ec08a02281f2a80c18e
+CRITICAL,drbl/models/lineup-model.ts,Lineup model,8529,283,8d43442f131abdee84e7adf5a9153e90d39a31519622539036bb4db42dca8ba4
+CRITICAL,drbl/models/epv-model.ts,EPV model,4165,157,dae66c43d0b82c36cdf026dd33fe54b286463620f66b198122fc958320de6f31
+CRITICAL,drbl/models/expected-points.ts,Expected points,3004,110,2512410a4cd017dff072d68b3cebc13752d8159ea4e61d3f227ae2b6a373326a
+CRITICAL,drbl/models/compute-season.ts,Season compute,19014,621,27a541c5e904fec26550cc9e32c7cf0e98b79d8ffa64d01d3c863e3047f85f65
+CRITICAL,drbl/models/ability-lineage.ts,Ability lineage,13857,437,9d5d844b7fcdc675f91087e186d11482e6b2afd202d8a261ea686e1109ac9093
+CRITICAL,drbl/research/m18/uir.ts,UIR research,8860,324,fffa7049e49171513df3faa9e028a0a65f7f033cee1e67126191b431494ead39
+CRITICAL,drbl/research/m18/lineup-impact.ts,Lineup impact / UIR,11610,344,551deb509a6b63a7559a85a08445d8c498afa97bfe06bd4ff6f12ac6d7408039
+CRITICAL,scripts/drbl-m18b_0.ts,M18b.0 readiness,24813,721,0fcc28cd213235e8f8a144e3a4db377062282a767a89ba61444f41b3deb37712
+CRITICAL,scripts/drbl-m18a.ts,M18a seal script,48958,1512,12e7bdf3f4f78c79919d43c477537f8e9ffd4836ad5d006bd848a506c7312608
+CRITICAL,scripts/drbl-m17b.ts,M17b validation,48764,1434,6c4f0f2b98d65b02ddf1ca5ccbc6cc6c703f7481a23ecdb30c61a5c13486d280
+CRITICAL,scripts/drbl-m17a_2.ts,M17a.2 historical corpus,42016,1252,134150f7a4d4e5fca8fb9a92fa1594eceb5991085cd51ad1f3db6acd08f308a7
+HIGH,src/components/sports/site-nav.ts,Site nav contract,3696,153,ef3937f926fce45c88e03e52f0c7090589c73e0613bdfc9ea400f973d3de0b19
+HIGH,src/components/sports/sports-shell.tsx,Shell,11549,330,2adf4b689835f028f3de22bb7931bb974f9ba002ca257d964520550be7ebf071
+HIGH,next.config.ts,Next config,836,36,a9c5474c6bf8c6915faa41549402af5cfadafaf62edfdcb59adb970bcb1ed45a
+HIGH,package.json,Scripts and deps,8886,165,1c99ad8fcd4803ea1ef3a0eca7f6c95766277430f381354669b893439a0c816d
+HIGH,src/data/types/index.ts,Types barrel,805,23,77df42f894596d9f5b8d03e2ad1a87c0ce38cac29979634951b8e582b2823b85
+HIGH,src/data/types/team-season.ts,TeamSeason type,2559,96,031ac4cc08614b013b3b47b0fb4a7bfb3d99bc806b44cf7917209d8c681b494d
+HIGH,src/data/types/game.ts,Game type,2181,67,92cd9c53a8c1a1150203d9bd875b94d778d38238c97d139fdc14401b71698bbc
+HIGH,src/data/types/advanced-stats.ts,Advanced stats type,709,28,6fecab5e2fd6290c7a0594399288f2bc7a4a343b2b79f952f2bfe2ce98aa815e
+HIGH,drbl/models/war-team-stint-allocation-v1.ts,Stint allocation,8480,280,867f96eaab804527cef5ea5ab325ec41263988aa06677c2e5bc16c79659bd4cd
+HIGH,scripts/test-data-truth.ts,Data truth tests,12331,421,fa6e2ea4a68a89b91f0820b93ecdefef84b8f2a565d0d8857335fa48aacb03f8
+HIGH,scripts/test-site-nav.ts,Site nav tests,2058,86,6fb4a9470cc1daf48cfa28681040cc14a7ae7db5773860b3c19963f9ec11e4df
+HIGH,scripts/test-drbl-release.ts,DRBL release gate,3864,101,2b7bd3ca6991aeb47cfbfb2e807ea663e55c11c28c3a956301fa623812fd9a23

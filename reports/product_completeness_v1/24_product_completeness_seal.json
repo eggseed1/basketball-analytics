@@ -1,0 +1,56 @@
+{
+  "milestone": "P17_DRBL_PRODUCT_COMPLETENESS",
+  "PRODUCT_COMPLETENESS": "PARTIAL",
+  "sealedAt": "2026-08-17T17:30:00-04:00",
+  "productBranch": "product/drbl-site-completeness-v1",
+  "productHEAD_at_freeze": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "worktree": "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+  "honest_fields": {
+    "ASK_HAS_DRBL": "NO",
+    "COMPARE_HAS_DRBL": "NO",
+    "HOME_DRBL_FIRST": "NO",
+    "PLAYER_DESTINATION_DRBL": "YES",
+    "ROSTER_DRBL_PREFERRED": "YES",
+    "LEARN_DRBL_EXPANDED": "YES",
+    "ALIASES_COUNT": 676,
+    "ALIAS_CONFIDENCE": "HIGH_CONFIDENCE_UNIQUE_NAME",
+    "LIVE_JOIN_RATE_MEASURED": "NO",
+    "CLAIM_100_PCT_JOIN": "NO",
+    "HISTORICAL_LOGOS": "EMPTY_INTENTIONAL",
+    "SCREENSHOTS": "DEFERRED",
+    "BUILD": "PASS",
+    "M17C_STARTED": "NO",
+    "DRBL_V1_REOPENED": "NO",
+    "K": 1600,
+    "P1_UNCHANGED": "YES",
+    "CURRENT_DRBL_MISMATCHES": 0,
+    "HISTORICAL_DRBL_MISMATCHES": 0,
+    "RESEARCH_SEALS_UNCHANGED": "YES",
+    "TEST_COUNT": "201/201",
+    "TYPECHECK": "PASS",
+    "DATA_TRUTH": "PASS",
+    "SITE_NAV": "PASS"
+  },
+  "partial_because": [
+    "ASK lacks DRBL metrics",
+    "compare lacks DRBL",
+    "home remains DARKO-first",
+    "UI screenshots deferred",
+    "live board join rate not measured",
+    "ASK/compare/home still lack first-party DRBL hierarchy"
+  ],
+  "fixed_highlights": [
+    "player ESPN↔NBA aliases 0→676 with documented HIGH_CONFIDENCE_UNIQUE_NAME",
+    "player destination DRBL Snapshot + merge gap fix",
+    "roster DRBL-before-DARKO",
+    "explore teams full names",
+    "learn/glossary/banner copy corrections"
+  ],
+  "artifacts": {
+    "freeze": "00_freeze.json",
+    "surface_matrix_final": "12_final_surface_matrix.csv",
+    "gap_log": "13_product_gap_log.md",
+    "full_audit": "23_full_audit.md",
+    "workbook_v2": "reports/project_workbook_v2/"
+  }
+}

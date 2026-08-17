@@ -4,6 +4,7 @@ export {
   getPlayerSeason,
   getPlayerCareerSeasons,
   getPlayerCareerTimelineSeasons,
+  attachDrblToPlayerSeasons,
   getPlayerGameLog,
   getPlayersBySeason,
   getTeamPlayers,

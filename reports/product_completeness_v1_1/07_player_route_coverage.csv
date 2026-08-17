@@ -1,0 +1,17 @@
+season,metric,value,rate,notes
+2024-25,precomputed_rows,555,,DRBL precomputed player-season rows
+2024-25,valid_drbl_estimates,555,1.000000,hasValidDrblEstimate proxy
+2024-25,any_alias_file_join,555,1.000000,Any alias class present
+2024-25,verified_alias_production_approved,511,0.920721,productionApproved aliases only
+2024-25,unique_name_only_aliases,44,0.079279,Retained; not used for silent runtime join
+2024-25,approved_alias_and_valid_drbl,511,0.920721,productionApproved ∩ valid DRBL
+2024-25,unresolved_no_alias,0,0.000000,No alias entry (e.g. 1642935)
+2024-25,sample_live_route_qa_rows,n/a,,See 06_live_player_route_qa.csv (30/30 teams)
+2025-26,precomputed_rows,575,,DRBL precomputed player-season rows
+2025-26,valid_drbl_estimates,575,1.000000,hasValidDrblEstimate proxy
+2025-26,any_alias_file_join,574,0.998261,Any alias class present
+2025-26,verified_alias_production_approved,543,0.944348,productionApproved aliases only
+2025-26,unique_name_only_aliases,31,0.053913,Retained; not used for silent runtime join
+2025-26,approved_alias_and_valid_drbl,543,0.944348,productionApproved ∩ valid DRBL
+2025-26,unresolved_no_alias,1,0.001739,No alias entry (e.g. 1642935)
+2025-26,sample_live_route_qa_rows,30,,See 06_live_player_route_qa.csv (30/30 teams)

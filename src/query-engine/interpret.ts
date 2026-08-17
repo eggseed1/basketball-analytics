@@ -7,6 +7,7 @@ import {
   detectVagueCompetitiveLanguage,
   possessivePlayerHintFromText,
 } from "./interpret-helpers";
+import { matchDrblGlossaryQuery } from "./drbl-vocabulary";
 import type { BasketballQueryAst, QueryOperation } from "./types";
 
 function possessivePlayerHint(text: string): string | null {
@@ -37,6 +38,25 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
     seasonNotes: notes.length ? notes : undefined,
     interpretation: [] as string[],
   };
+
+  // Glossary / methodology — safe learn copy only (no player claims).
+  const glossary = matchDrblGlossaryQuery(text);
+  if (glossary && !possessivePlayerHint(text)) {
+    return {
+      ...base,
+      operation: "season_stat",
+      entities: [],
+      metricId: glossary.id as BasketballQueryAst["metricId"],
+      interpretation: [
+        `Methodology: ${glossary.label}`,
+        glossary.tier === "diagnostic"
+          ? "Diagnostic component (not additive into DRBL/100)"
+          : "Canonical DRBL vocabulary",
+        glossary.glossary,
+      ],
+      when: seasons.length ? { seasons } : undefined,
+    };
+  }
 
   // Vague competitive language without a documented methodology.
   if (vague && !unsupportedHits.length) {

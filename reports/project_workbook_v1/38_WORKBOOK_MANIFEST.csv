@@ -1,0 +1,131 @@
+relative_path,description,bytes,sha256
+"00_PROJECT_FREEZE.json","project freeze",4782,13e54a9132e036638a754e838b7d44f7917bec7408557d3e5f9ddedd527efbfa
+"01_MASTER_PROJECT_WORKBOOK.md","master workbook",15026,5405e708c4e470a32cb17ca69156c5bdfd5ffcbead4bf8dcb271c60b6851e2ff
+"02_CANONICAL_METRIC_CONTRACT.md","workbook artifact",6928,ade865a93655f31c29242dc36116a64d6313020691164669da4d71a39ae29b4f
+"03_APPROACH_B_AND_ATTRIBUTION.md","workbook artifact",4167,5a82c02e1f2112e081dd0ed68af62cbbe4130e6fec4f230c4e7cd76ddce39dd5
+"04_UIR_AND_OFFBALL_RESEARCH.md","workbook artifact",2594,ef3d8bb27773e5f9fcc3540a484132e50faaa1d2a44d1c3b53b3e31f52548baa
+"05_RESEARCH_TIMELINE.md","workbook artifact",1937,712a9eb03cf0811fdf308bf805470db78ba75f9b612037438fd3c5acf22c2654
+"06_VALIDATION_EVIDENCE.md","workbook artifact",3528,061f50433c0da2920e4ddd5070cf92016a9726b26bb97febb5e9af3220cc3aaa
+"07_HISTORICAL_DATA_COVERAGE.md","workbook artifact",2184,57d80cca0930099957daa9f56e7136fea923c12ac0830e24dab6f25c6844fe86
+"08_SEASON_REGISTRY.csv","workbook artifact",3013,d1e4d374bb2461b0163ef140f20935cb578709fe76ce00a905a7210cf3ad3eb3
+"09_DATA_PIPELINE.md","workbook artifact",1764,285a78443e5555ef663624fac074992b2d42a332ced23b5e243a85dbf2aea9e7
+"10_DATASET_MANIFEST.csv","workbook artifact",6685,4465c4e115751b119abde5107ee9bf129c7b220f3dea86fe6d16f5fdf1b5b039
+"11_WEBSITE_INFORMATION_ARCHITECTURE.md","workbook artifact",1753,251a140e95d2472478075ff32c819c6ebd279af6c86abae5fed2b24cb4ca7223
+"12_ROUTE_MANIFEST.csv","workbook artifact",2140,c3441459159cdbe35652a41a170bd23de9efd503dd6214c95f801f7e44492cfa
+"13_COMPONENT_INVENTORY.csv","workbook artifact",2341,20e84bbe83f54f65ceaa17fd6994fef5356769a69bf788abfdc9af90c7d67fd5
+"14_DESIGN_SYSTEM.md","workbook artifact",1472,825ca834299c8e593e8a4567b3ad98e5c12c57e61f8f6239b5c2b21ba56e3c33
+"15_SCREENSHOT_INDEX.md","screenshot index",2080,99f9b29c0e16553069c963398ee74f4af8c1adf39e2b5e6f4e192c4db3ff812f
+"16_API_AND_DATA_CONTRACT.md","workbook artifact",1840,b9789df2305e9803034861b499c883bb21df3aa658d5f173eaefe3ef625503df
+"17_TYPE_SCHEMA_INDEX.md","workbook artifact",5152,f62448becf76a3fc0faf22b3e62ad4ec4e77542eebb4f3dd67b4b368da4960b3
+"18_SOURCE_CODE_MAP.csv","workbook artifact",6818,fc113bc92d8a0fc312933319583b73bcb104eaa237082afbd9b54aac137d2af8
+"19_CRITICAL_SOURCE_MANIFEST.csv","workbook artifact",8355,d1b71c61d9261a0c4f97c1c49ebf67fb263fac07ed1617aa724ccf1caa237720
+"20_REPOSITORY_TREE.txt","workbook artifact",118478,c542c9c1d21f7967cdab6aaad6d1e42b3be063a89d1371e4a15d7911f5cc17a0
+"21_COMMANDS_AND_WORKFLOWS.md","workbook artifact",3679,c910664eb0349e993a59b2b5cd3cea0cb7d13b7b154af8e75868a3aad6bc6c4a
+"22_TEST_INVENTORY.md","workbook artifact",6388,48cf47f88866d0e92e736863846c03fcd3ef038c4ba01b9efd3a3ff709217eb9
+"23_ENGINEERING_HEALTH.md","workbook artifact",1079,afa1e0861510ab56fbe88c9e6a5ca8d276c2985463d0f79cef4003b3b3c4c944
+"24_PRODUCTION_INVARIANTS.md","workbook artifact",1691,0df304467bdb6db386a5e215b4d0e53d29a8c750793673f98bf83e25be72be09
+"25_RESEARCH_PRODUCTION_MATRIX.csv","workbook artifact",1534,f12b8c2acf193d0da8d3c520b41e2c42d46f761db513cafcea5dc3ad4efad315
+"26_KNOWN_LIMITATIONS_AND_OPEN_QUESTIONS.md","workbook artifact",2432,137da6c9c6a074775065d414cd517f3303b0e27bd82443c6b9c53a650b2e73e7
+"27_TECHNICAL_DEBT.md","workbook artifact",2878,c5973fc2fbb2afa84f4a29aad9dcb5cb88d0fecff135ba859e7d9528788cbdf0
+"28_SECURITY_AND_ACCESS.md","workbook artifact",764,906570212d6b842a0face14983529c46265f9633c7aa31fd9958723d428b1914
+"29_RESEARCH_ROADMAP.md","workbook artifact",1482,d9c3ae70499380bf5bd94bc80a2fe2e2a0045d09452cf43559d48936a54a0551
+"30_PRODUCT_ROADMAP.md","workbook artifact",1493,2852862a90e60a0853c5c3d2cdbe2fb91eeafabd10acdae8d99d62dbae47cdeb
+"31_PUBLIC_COPY_AND_DEFINITIONS.md","workbook artifact",8278,695add275cbbdff4ac5d46aab46258aad185c8d458587b64a5784c0d07ae8c5f
+"32_EXAMPLE_DATA_RECORD.json","workbook artifact",584,01eb05187fed81f2222f31992a3677ffdd3e7be3cf876f42eebdba1e89ce5187
+"33_EXAMPLE_HISTORICAL_RECORD.json","workbook artifact",581,f8986225c086c5607de0bd7095a79a62ea58236c7a67b53d0c46ce911a47b6c7
+"34_EXAMPLE_STINT_RECORD.json","workbook artifact",1117,0adf0f72b09237d3947cc8348fdc8c73e251f15d8b1b4ce1df6ac0521861e913
+"35_PROJECT_CONTEXT.json","machine-readable project context",5066,9e34373f8ff0de545372ac0bedf18749e47139c945f2b36d242c2feddb52a2c0
+"36_REVIEWER_QUICKSTART.md","workbook artifact",1985,f084def76c91697036f2ea511c3035b1fa54269a58ed08a2b6bd4d4d7f62e285
+"37_CRITICAL_FACTS_CHEATSHEET.md","critical facts cheatsheet",2008,159105c7810ed47229f99a6aa205d3f3a90d1602eb0aace16dcd7a72d66c3ec3
+"critical_source_snapshot/drbl/constants.ts","source snapshot copy",261,13765321dc29bbf7ba0bf6894cdb0020d6818268fc18c16fba4346597187a494
+"critical_source_snapshot/drbl/historical/adapters/nba-cdn-playbyplayv3.ts","source snapshot copy",4015,43517a5d9006781815820328a103645c366099708507aba136621a109ffb190b
+"critical_source_snapshot/drbl/historical/normalized-event-schema.ts","source snapshot copy",1821,1c6692da28d118911069d7f568c71483cf73abf4fd6b2f4c86e9cb6677f2a2c1
+"critical_source_snapshot/drbl/historical/season-registry.ts","source snapshot copy",8131,016c3e6267c09ae45290b15037e5acbd1b8a074c8d4bb1cbcc79635ebe6fbdbf
+"critical_source_snapshot/drbl/ingest/normalize.ts","source snapshot copy",14897,0456f4cff0d0a44932d3cc41f83ff573e3283d42aa0d89708c4000f3b08d1b60
+"critical_source_snapshot/drbl/models/ability-lineage.ts","source snapshot copy",13857,9d5d844b7fcdc675f91087e186d11482e6b2afd202d8a261ea686e1109ac9093
+"critical_source_snapshot/drbl/models/compute-season.ts","source snapshot copy",19014,27a541c5e904fec26550cc9e32c7cf0e98b79d8ffa64d01d3c863e3047f85f65
+"critical_source_snapshot/drbl/models/epv-model.ts","source snapshot copy",4165,dae66c43d0b82c36cdf026dd33fe54b286463620f66b198122fc958320de6f31
+"critical_source_snapshot/drbl/models/expected-points.ts","source snapshot copy",3004,2512410a4cd017dff072d68b3cebc13752d8159ea4e61d3f227ae2b6a373326a
+"critical_source_snapshot/drbl/models/lineup-model.ts","source snapshot copy",8529,8d43442f131abdee84e7adf5a9153e90d39a31519622539036bb4db42dca8ba4
+"critical_source_snapshot/drbl/models/pipeline-value.ts","source snapshot copy",22669,9e8119db9fd877a5b358f8bd1c9a00686f93881c4c7f32b8c92607fbddd1c8cf
+"critical_source_snapshot/drbl/models/player-value.ts","source snapshot copy",31542,a8969688905417f7f1982d12293a3950b2082e6f8302bb52a0dbb32b7e631e03
+"critical_source_snapshot/drbl/models/research-ability-v1.ts","source snapshot copy",3184,e75ef28af7e31f6a13c85b3a63e0c7f2b4d8483af44f93dfd7007e56d9e444a0
+"critical_source_snapshot/drbl/models/research-rate-v1.ts","source snapshot copy",4201,e2811aed883a8e795033342faf933af500665af11a3080dbc944f1ad16f1744e
+"critical_source_snapshot/drbl/models/validated-ability-cutover.ts","source snapshot copy",5256,4d1ee096fbc5361dd3ca74dd7c8318994a134a19af4fec66a7125ceace3e9807
+"critical_source_snapshot/drbl/models/validated-ability-v1.ts","source snapshot copy",5005,1cb6f78a6e01f1c497a41225b1a13a950551021c6bf0b600e047d6ffb2eeb82b
+"critical_source_snapshot/drbl/models/war-math.ts","source snapshot copy",15879,e2345ae7da2d38d15baa4acbcbafd24f0222db2ca2339ec08a02281f2a80c18e
+"critical_source_snapshot/drbl/research/m18/__tests__/m18-lineup-uir.test.ts","source snapshot copy",1766,47039cd922af0e2763f7e0d4eda90e62d0c0bb1e0622666a17b3f1ed21cb0d4d
+"critical_source_snapshot/drbl/research/m18/lineup-impact.ts","source snapshot copy",11610,551deb509a6b63a7559a85a08445d8c498afa97bfe06bd4ff6f12ac6d7408039
+"critical_source_snapshot/drbl/research/m18/uir.ts","source snapshot copy",8860,fffa7049e49171513df3faa9e028a0a65f7f033cee1e67126191b431494ead39
+"critical_source_snapshot/drbl/types.ts","source snapshot copy",5067,9d6ad4802842bbfc4c33f73b8fe09ea99c9cccb77adee8bb7b7b7ea8d9cc7c0a
+"critical_source_snapshot/scripts/drbl-m17a_2.ts","source snapshot copy",42016,134150f7a4d4e5fca8fb9a92fa1594eceb5991085cd51ad1f3db6acd08f308a7
+"critical_source_snapshot/scripts/drbl-m17b.ts","source snapshot copy",48764,6c4f0f2b98d65b02ddf1ca5ccbc6cc6c703f7481a23ecdb30c61a5c13486d280
+"critical_source_snapshot/scripts/drbl-m18a.ts","source snapshot copy",48958,12e7bdf3f4f78c79919d43c477537f8e9ffd4836ad5d006bd848a506c7312608
+"critical_source_snapshot/scripts/drbl-m18b_0.ts","source snapshot copy",24813,0fcc28cd213235e8f8a144e3a4db377062282a767a89ba61444f41b3deb37712
+"critical_source_snapshot/src/app/ask/page.tsx","source snapshot copy",2292,fbfc9d3bce1922fc2a056209ddef1cf6d70b7616684a2287c304e8b6a0d80d90
+"critical_source_snapshot/src/app/explore/players/page.tsx","source snapshot copy",6207,e0f3c54c5df6e04a6723a23f9a1cbdff49f4a16bc19ab8caa38c5c25fd1142c1
+"critical_source_snapshot/src/app/layout.tsx","source snapshot copy",1550,aafd163d9aaf4e468f67657b34549ae37401ad7c58d67ad78a7361cd8699f080
+"critical_source_snapshot/src/app/learn/drbl/page.tsx","source snapshot copy",6880,1ca7ec3d89829a7b383b69f7a123e7ddd3c82e766ff8a7d0d6f458233ffe4755
+"critical_source_snapshot/src/app/page.tsx","source snapshot copy",3140,e777582305bd1f5d08d63af7ccb9003cd73caede01203befd06d45ac9b60ef28
+"critical_source_snapshot/src/app/players/[playerId]/page.tsx","source snapshot copy",7686,2a295b59929bbd32e30219b6ad90d3e0f9e20030776a28a81683c0e7906bc2ea
+"critical_source_snapshot/src/app/teams/[teamId]/page.tsx","source snapshot copy",21012,13987341aaab28fbd1baa9f54dcaada7718cf607f0aee18e9dba157289696a58
+"critical_source_snapshot/src/components/explore/drbl-season-support-notice.tsx","source snapshot copy",2336,3db205cfcf9456088eebf0f2fa00656f87842e7bd745ec2ff33449e19bff6719
+"critical_source_snapshot/src/components/explore/player-season-table.tsx","source snapshot copy",24910,75225a3f061ad22fc7094ca4031c96c2502a392695caa55bc7903d533854052e
+"critical_source_snapshot/src/data/drbl/season-registry.ts","source snapshot copy",559,cb1556e5162171ebec3314b78f48d3d9c87516da1ba5798e298aa86345237480
+"critical_source_snapshot/src/data/providers/index.ts","source snapshot copy",1410,30bb9d1d18778776daa5170bad222fd9cab12836114a648c7f91af9bfc31d119
+"critical_source_snapshot/src/data/providers/nba/compute-advanced.ts","source snapshot copy",5975,90768103a8140dc68846f5a6ab2c0498796ea39339cb42bfcb5a59d0647842bd
+"critical_source_snapshot/src/data/providers/nba/drbl-loader.ts","source snapshot copy",4724,737e2690ddf73dd2022691a127bc94bc844c8b3562350beddd5a449001f32941
+"critical_source_snapshot/src/data/queries/players.ts","source snapshot copy",21013,eb74a63da4d34c45ec7438424e548d8bc7179a4db3daa4499bc3ed3e95bfe1a4
+"critical_source_snapshot/src/data/transformers/espn.ts","source snapshot copy",20122,e203c8c950b98898fc6d2b52757fb944e959fcd46ab1544f27ddba4106284163
+"critical_source_snapshot/src/data/transformers/player-season-defaults.ts","source snapshot copy",2352,d3ab2b6885cc6fd02bbc6e182dea25affd05729d2ab8e4e832adea77c5e8d182
+"critical_source_snapshot/src/data/types/player-season.ts","source snapshot copy",5203,6939f9b54d6b0f9b9baca51567a4ab98f02c9120128a30f221d4f48fcadbfccb
+"critical_source_snapshot/src/lib/player-explore-sort.ts","source snapshot copy",6546,9eee641bf2bfc9bb785723a286393364c06d478a6766e04e11eb85eaecdfc0a9
+"critical_source_snapshot/src/lib/player-season-sort.ts","source snapshot copy",1601,955bb28f457f62f1f9717df2f4ab9d9503e4475a53e1dc78e337747fcfb0b838
+"critical_source_snapshot/src/lib/stat-glossary.ts","source snapshot copy",11751,ba246b29298a97e38a9a77cde9ec8434ee23a6fa709a798a2536ec4716214981
+"screenshots/ask-drbl-desktop.png","UI screenshot evidence",198089,560702d64bb4269fd9256f5af608ffa2e1bacebf2952e951fc0dcfc191ba3400
+"screenshots/explore-players-desktop-2019-20-unsupported.png","UI screenshot evidence",401921,3a0d87947ffa873fbe9a235cc8da5254b9e0ab1cc277ab22a023fe4575af6a9a
+"screenshots/explore-players-desktop-2020-21.png","UI screenshot evidence",409756,b84d3f8afce4af752792e22337ba0967fba2d7966dbdb3fd2ab1866ea7749094
+"screenshots/explore-players-desktop-2023-24-historical.png","UI screenshot evidence",407394,a3c480f64f94b9b64f350396cea1d53bd6612f56a27b85de43b9dac4a7bb2d78
+"screenshots/explore-players-desktop-2024-25.png","UI screenshot evidence",421778,2b1de7f4de7af34dce37a7c12fb67244555f5600ef4c3f59d49b16d72755c537
+"screenshots/explore-players-desktop-2025-26.png","UI screenshot evidence",426231,831a26bb2307687a7e89fdce88cbe24e6064e26db491a1c5fdb9ec2475967e61
+"screenshots/explore-players-mobile-2025-26.png","UI screenshot evidence",176577,d5cdd8ba28741fdc76d33925c4202df81fec3036196bdf1afcb3281edc038ce8
+"screenshots/explore-teams-desktop.png","UI screenshot evidence",590147,8e13e6d3e7e0af4b2cff45c63006566bf2d23dfa305197945fb779cd23361745
+"screenshots/home-desktop.png","UI screenshot evidence",615396,fa4ef2c82652ab426847429886779a839e2b3861646316f4ee8a9deb27067671
+"screenshots/learn-drbl-desktop.png","UI screenshot evidence",244894,1120a96ebcc797a1affabff511a103b5204862299fe301ba9919fca2c2156742
+"screenshots/page-2026-08-11T21-41-21-008Z.png","UI screenshot evidence",277172,31277c022bfd16546bd6ba2090b4cfd70600fbcb320840bf5ed325c63a8ef11d
+"screenshots/page-2026-08-11T21-51-29-033Z.png","UI screenshot evidence",276916,6bf3b9e58da4c8d2a50b71210cf282895d6ac42ee416818b5fd160b9680fc6a1
+"screenshots/page-2026-08-12T18-21-43-296Z.png","UI screenshot evidence",398512,41ba10f3a80dee2af60962ef4ec7612a9119c303fa02040e634bd5977beddd5f
+"screenshots/page-2026-08-17T16-47-54-868Z.png","UI screenshot evidence",616548,cdbeddafe2a6a29260a5aeb617c272cea933e02690b5255bed958897fc90054c
+"screenshots/player-jabari-smith-jr-desktop.png","UI screenshot evidence",812431,40f246bba29c40b0c63dfb5b2fcdabc713d8d6cd5edee52b8e571de95e6a994d
+"screenshots/player-jabari-smith-jr-mobile.png","UI screenshot evidence",325694,d43a38d889c23e7b6cf582a938d270f267a46c9a2242e340dbcf7ec191412b04
+"screenshots/savant-above-fold.png","UI screenshot evidence",704388,967b554c9e30689c32bd6d002f8e1c77c418a8b43ad37050bee4ecd2aa15102b
+"supporting_reports/integration/00_branch_inventory.md","supporting report copy",2290,a3833987c1149354a347a93249ef7a2ad3108395cf204dd6ab91557f81d36c6e
+"supporting_reports/integration/03_overlap_matrix.csv","supporting report copy",145716,82a2f7430b3691ad38870ffe8b77eb97f7173d191b4cf73fb212718b6030928b
+"supporting_reports/integration/04_conflict_resolution_log.md","supporting report copy",4965,96c76fd2bf57befe1e92d3d16765e6b088ae60b9c403f964d04355a779f760b9
+"supporting_reports/integration/05_api_contract_audit.md","supporting report copy",1122,2cae83b43b95416f6e6cbc7474fb19c92e014ea627b96caf040f7c40a4989646
+"supporting_reports/integration/06_sensitive_file_diff.md","supporting report copy",1008,38b1a9c2426fc139031c560b895b9f489ccaacad838cad6e4444031f639e3481
+"supporting_reports/integration/07_ui_design_preservation.md","supporting report copy",1043,62256c7e30b61fe6ee62dda49b521505f83ec198d5c04a0436a4020338767667
+"supporting_reports/integration/09_current_production_regression.json","supporting report copy",442,301bde51247dae518e80b72a7ac73594f563b5cf5cbdcad45bf24b8860df887f
+"supporting_reports/integration/10_historical_regression.json","supporting report copy",273,7478bdd56980dd43f09ea80a06d485103838ee8bbae2b6589385e8703fbc7ee9
+"supporting_reports/integration/12_engineering_results.json","supporting report copy",423,6e10de60a250eb3213c4c437e07fd1a3d0dfac4255aa8b7e29e5c130fc09b836
+"supporting_reports/integration/13_integration_health.json","supporting report copy",2235,2b7533b55d60d4fa146a79eaa71b9b298f4e6a760dc7c3e00788cca8f89df778
+"supporting_reports/integration/14_integration_seal.json","supporting report copy",3203,2c4f7fef249aadfec3094bd450bad0ee9d54fdc855ace3683a6d11dddf5ca35e
+"supporting_reports/integration/15_full_audit.md","supporting report copy",813,ca8337ae3ec57e390d48b6c66f5a75c26fb2cb484604af8438de6093e12107b9
+"supporting_reports/research/m16j_17_model_health.json","supporting report copy",3672,55afa3c8c30a7c153699f57c607e5e1f190947ae77a67b765a04d78da6b78092
+"supporting_reports/research/m16j_19_final_response_values.json","supporting report copy",7368,68acda3656a04082bfd850eb4f8827edc08779610a4c09f50381b4bf175ff1ab
+"supporting_reports/research/m16l2_22_reserved_result_seal.json","supporting report copy",1345,33e2c47f1f044b1bf0dfa3cb376a44adc5440492d663c196fd17596fb8a6c2d5
+"supporting_reports/research/m16l3_30_product_migration_seal.json","supporting report copy",2681,3395408e13cd03a23de60e1eb5486ec1c9968e998739ae67bf8165d721aecaa7
+"supporting_reports/research/m17a2_40_historical_corpus_seal.json","supporting report copy",4128,fa6bca60775aab4153feef85ae9e096f61465216213b3112e76493e8194c371c
+"supporting_reports/research/m17b_04_season_to_next_pooled.csv","supporting report copy",573,6485832c57ebd66da3e691c55398b15f5d910df18307cbddcbf6ee2d2bfb9e81
+"supporting_reports/research/m17b_08_early_late_pooled.csv","supporting report copy",518,db10817b2c3e65785ea12854048dd9b2355daff508466abd0a528a4ead3cdbcc
+"supporting_reports/research/m17b_17_pre_name_verdict.json","supporting report copy",1386,53e68beaad1713372faf9675941190d10c07aafcd1d45af41d23129561336c49
+"supporting_reports/research/m17b_19_validation_seal.json","supporting report copy",6199,774c132678e962548d60c14a0fb5d6e522f715ea22bc41a18f0193854f48a4d2
+"supporting_reports/research/m17b_20_model_health.json","supporting report copy",2528,303f496f099873cdfecd30ca4fdcd5266734262eaaef762c4ac6585a65102f84
+"supporting_reports/research/m17b_21_full_audit.md","supporting report copy",739,4059a47a062bffa98dd49b08845ec205989ed25ed8739d039a2d1ba47d398222
+"supporting_reports/research/m18a_27_model_health.json","supporting report copy",3477,fe534ed627bf1ebf6e0a49968bdf885295bcc60a739b375a603f799e0ab8d751
+"supporting_reports/research/m18a_28_full_audit.md","supporting report copy",409,ffb86e2eb7497ef6edaf8cfc641a65a7a4e981d64504537dc7db9363ce447582
+"supporting_reports/research/m18a_29_m18a_seal.json","supporting report copy",5187,12c967638011ae76379770dd8c508987b87167786807144c506d76cc9779b9c9
+"supporting_reports/research/m18b0_13_model_health.json","supporting report copy",2121,91231ed041b0de6d880e077c0e9b71486046e89128b3d1f659b5776b60d79582
+"supporting_reports/research/m18b0_14_full_audit.md","supporting report copy",1470,e0cbecdc035b44a1d7fbb65dd463c96ca9ce5089d9d96e340c2cda590c85aaa8
+"supporting_reports/research/m18b0_15_readiness_seal.json","supporting report copy",3378,d0207ca052f080b783990989f807cffe024c6702f255361bb2079e58c8695fbe
+"38_WORKBOOK_MANIFEST.csv","workbook manifest",18445,5d706e4f0feae4053efbad7c3b66521b0cbb874d001a221a98740f62f7f9bd0e

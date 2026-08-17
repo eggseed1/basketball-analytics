@@ -1,0 +1,39 @@
+{
+  "milestone": "P17.1_DRBL_PRODUCT_COMPLETENESS_REPAIR",
+  "productBranch": "product/drbl-site-completeness-v1_1",
+  "productHEAD_at_freeze": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "dirty_worktree": "YES",
+  "TYPECHECK": "PASS",
+  "TYPECHECK_NOTE": "PASS after time-machine fix",
+  "DRBL_TESTS": "PASS",
+  "TEST_COUNT": "201/201",
+  "DATA_TRUTH": "PASS",
+  "SITE_NAV": "PASS",
+  "IDENTITY": "PASS",
+  "ASK": "PASS",
+  "COMPARE": "PASS",
+  "LEARN": "PASS",
+  "MERGE": "PASS",
+  "NEW_OR_EXTENDED_TESTS": {
+    "test:compare-drbl": "PASS",
+    "test:ask-drbl": "PASS",
+    "test:player-identity": "PASS",
+    "test:player-destination-merge": "PASS",
+    "test:learn-drbl-page": "PASS",
+    "note": "Product surface tests exercised in P17.1 verification loop; drbl:test remains 201/201"
+  },
+  "UI_SMOKE_SCREENSHOTS": "PASS",
+  "UI_SMOKE_SCREENSHOT_COUNT": 27,
+  "SEPARATE_WORKTREE_USED": "YES",
+  "WORKTREE_PATH": "C:\\Users\\parkh\\Projects\\basketball-analytics-integration",
+  "BUILD": "PASS",
+  "precomputed_vs_28827fb": {
+    "2020-21": "EQUAL",
+    "2021-22": "EQUAL",
+    "2022-23": "EQUAL",
+    "2023-24": "EQUAL",
+    "2024-25": "EQUAL",
+    "2025-26": "EQUAL"
+  },
+  "note": "P17.1 does not reopen model tests; engineering gate is product + firewall regression only."
+}

@@ -1,0 +1,20 @@
+{
+  "CURRENT_2024_25_DRBL_MISMATCHES": 0,
+  "CURRENT_2024_25_R1_MISMATCHES": 0,
+  "CURRENT_2024_25_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2024_25_RANK_MISMATCHES": 0,
+  "CURRENT_2025_26_DRBL_MISMATCHES": 0,
+  "CURRENT_2025_26_R1_MISMATCHES": 0,
+  "CURRENT_2025_26_R1WINEQ_MISMATCHES": 0,
+  "CURRENT_2025_26_RANK_MISMATCHES": 0,
+  "method": "git_hash_object_equality_vs_28827fb_integration_commit",
+  "baseline": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "precomputed_untouched": "YES",
+  "product_branch": "product/drbl-site-completeness-v1_1",
+  "productHEAD_at_freeze": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "note": "P17.1 product/identity/UI work did not rewrite sealed precomputed season JSON; all listed seasons EQUAL vs integration baseline.",
+  "seasons": {
+    "2024-25": "equal",
+    "2025-26": "equal"
+  }
+}

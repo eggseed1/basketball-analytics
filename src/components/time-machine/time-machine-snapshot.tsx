@@ -52,6 +52,8 @@ export function TimeMachineSnapshot({
   leadersPpg,
   leadersRpg,
   leadersApg,
+  leadersDrbl = [],
+  leadersDrblNote,
   leadersWarning,
   teams,
   teamsWarning,
@@ -69,6 +71,8 @@ export function TimeMachineSnapshot({
   leadersPpg: HistoricalLeaderRow[];
   leadersRpg: HistoricalLeaderRow[];
   leadersApg: HistoricalLeaderRow[];
+  leadersDrbl?: HistoricalLeaderRow[];
+  leadersDrblNote?: string;
   leadersWarning?: string;
   teams: HistoricalTeamDirectoryRow[];
   teamsWarning?: string;
@@ -141,11 +145,32 @@ export function TimeMachineSnapshot({
         )}
       </Section>
 
-      <Section title="League leaders">
+      <Section
+        title="League leaders"
+        action={
+          leadersDrbl.length ? (
+            <TransitionLink
+              href={`/explore/players?season=${encodeURIComponent(season)}&sort=drbl100&dir=desc`}
+              className="text-[13px] text-muted-foreground underline-offset-4 hover:underline"
+            >
+              Full DRBL board
+            </TransitionLink>
+          ) : undefined
+        }
+      >
         {leadersWarning ? (
           <p className="text-sm text-muted-foreground">{leadersWarning}</p>
         ) : null}
-        <div className="grid gap-4 md:grid-cols-3">
+        {leadersDrblNote ? (
+          <p className="text-sm text-muted-foreground">{leadersDrblNote}</p>
+        ) : null}
+        <div
+          className={
+            leadersDrbl.length
+              ? "grid gap-4 md:grid-cols-2 xl:grid-cols-4"
+              : "grid gap-4 md:grid-cols-3"
+          }
+        >
           <LeaderColumn
             title="Scoring"
             rows={leadersPpg}
@@ -167,6 +192,15 @@ export function TimeMachineSnapshot({
             unit="APG"
             theme={theme}
           />
+          {leadersDrbl.length ? (
+            <LeaderColumn
+              title="DRBL/100"
+              rows={leadersDrbl}
+              season={season}
+              unit=""
+              theme={theme}
+            />
+          ) : null}
         </div>
       </Section>
 
@@ -409,10 +443,12 @@ function LeaderColumn({
                 <span className="text-muted-foreground"> · {r.teamAbbr}</span>
               </span>
               <span className="tabular-nums font-semibold">
-                {formatNumber(r.value, 1)}
-                <span className="ml-1 text-[11px] font-normal text-muted-foreground">
-                  {unit}
-                </span>
+                {formatNumber(r.value, r.metric === "drbl100" ? 2 : 1)}
+                {unit ? (
+                  <span className="ml-1 text-[11px] font-normal text-muted-foreground">
+                    {unit}
+                  </span>
+                ) : null}
               </span>
             </TransitionLink>
           </li>

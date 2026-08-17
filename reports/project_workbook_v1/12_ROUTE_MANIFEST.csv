@@ -1,0 +1,35 @@
+route,page_file,nav_domain,notes
+/,src/app/page.tsx,home,Landing
+/ask,src/app/ask/page.tsx,ask,ASK DRBL
+/scores,src/app/scores/page.tsx,games,Scores / schedule views
+/explore/games,src/app/explore/games/page.tsx,games,Explore games
+/games/[gameId],src/app/games/[gameId]/page.tsx,games,Game destination
+/explore/players,src/app/explore/players/page.tsx,players,DRBL leaderboard / explore board
+/players/[playerId],src/app/players/[playerId]/page.tsx,players,Progressive player destination
+/players/[playerId]/season-rank,src/app/players/[playerId]/season-rank/page.tsx,players,Season rank tool
+/players/[playerId]/season-compare,src/app/players/[playerId]/season-compare/page.tsx,players,Season compare tool
+/explore/teams,src/app/explore/teams/page.tsx,teams,Teams explore
+/teams/[teamId],src/app/teams/[teamId]/page.tsx,teams,Team destination
+/standings,src/app/standings/page.tsx,teams,Standings
+/compare,src/app/compare/page.tsx,compare,Compare
+/offseason,src/app/offseason/page.tsx,transactions,Transactions / offseason
+/learn,src/app/learn/page.tsx,learn,Learn index
+/learn/[slug],src/app/learn/[slug]/page.tsx,learn,Learn articles
+/learn/drbl,src/app/learn/drbl/page.tsx,learn,Canonical DRBL explanation
+/history,src/app/history/page.tsx,history,Time Machine
+/franchises,src/app/franchises/page.tsx,history,Franchise list
+/franchises/[id],src/app/franchises/[id]/page.tsx,history,Franchise detail
+/dashboard,src/app/dashboard/page.tsx,other,Dashboard
+/gm,src/app/gm/page.tsx,gm,GM hub
+/gm/roster,src/app/gm/roster/page.tsx,gm,GM roster
+/gm/lineup,src/app/gm/lineup/page.tsx,gm,GM lineup
+/gm/schedule,src/app/gm/schedule/page.tsx,gm,GM schedule
+/gm/standings,src/app/gm/standings/page.tsx,gm,GM standings
+/gm/staff,src/app/gm/staff/page.tsx,gm,GM staff
+/gm/medical,src/app/gm/medical/page.tsx,gm,GM medical
+/gm/cap,src/app/gm/cap/page.tsx,gm,GM cap
+/gm/draft,src/app/gm/draft/page.tsx,gm,GM draft
+/gm/free-agency,src/app/gm/free-agency/page.tsx,gm,GM free agency
+/gm/trade,src/app/gm/trade/page.tsx,gm,GM trade
+/gm/offseason,src/app/gm/offseason/page.tsx,gm,GM offseason
+/gm/game/[gameId],src/app/gm/game/[gameId]/page.tsx,gm,GM game

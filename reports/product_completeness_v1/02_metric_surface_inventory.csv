@@ -1,0 +1,24 @@
+﻿field,display_name,status,currently_public,where_displayed,should_public,canonical,diagnostic,research,deprecated,Learn_coverage,tooltip_coverage
+drbl100,DRBL/100,CANONICAL,YES,/explore/players,YES,YES,NO,NO,NO,PARTIAL,YES
+r1Points,R1 Points,CANONICAL,YES,/explore/players,YES,YES,NO,NO,NO,PARTIAL,YES
+r1WinEquivalents,R1 Win Equivalents,CANONICAL,YES,/explore/players,YES,YES,NO,NO,NO,PARTIAL,YES
+rawAbilityRate,raw ability rate,DIAGNOSTIC,NO,types/overlay,ADVANCED_DISCLOSURE,NO,YES,NO,NO,NO,NO
+drblPossessions,possessions N,DIAGNOSTIC,NO,types,ADVANCED_DISCLOSURE,NO,YES,NO,NO,NO,NO
+drblP,DRBL-P,DIAGNOSTIC,NO,savant orphaned,ADVANCED_DISCLOSURE,NO,YES,NO,NO,NO,YES_stale_replacement
+drblLn,DRBL-LN,DIAGNOSTIC,NO,savant orphaned,ADVANCED_DISCLOSURE,NO,YES,NO,NO,NO,YES
+drblB,DRBL-B,DIAGNOSTIC,NO,savant orphaned,ADVANCED_DISCLOSURE,NO,YES,NO,NO,NO,YES_stale_gravity
+drblO,DRBL-O,DIAGNOSTIC,NO,savant orphaned,YES_disclosure,NO,YES,NO,NO,NO,YES_stale_replacement
+drblD,DRBL-D,DIAGNOSTIC,NO,savant orphaned,YES_disclosure,NO,YES,NO,NO,NO,YES_stale_replacement
+drblL,DRBL-L,DIAGNOSTIC,NO,BREF orphaned,INTERNAL_ONLY,NO,YES,NO,NO,NO,YES
+drblMeanLeverage,mean leverage,DIAGNOSTIC,NO,types,INTERNAL_ONLY,NO,YES,NO,NO,NO,NO
+drblDisagreement,DRBL Δ,DIAGNOSTIC,NO,BREF orphaned,INTERNAL_ONLY,NO,YES,NO,NO,NO,YES
+drblUncertainty,DRBL ±,DEPRECATED,NO,types/glossary,NO,NO,NO,NO,YES,NO,YES_legacy
+drblIntervalLo,interval lo,DEPRECATED,NO,types,NO,NO,NO,NO,YES,NO,via_DRBL_pm
+drblIntervalHi,interval hi,DEPRECATED,NO,types,NO,NO,NO,NO,YES,NO,via_DRBL_pm
+sdv100,SDV/100,DIAGNOSTIC,NO,types,INTERNAL_ONLY,NO,YES,NO,NO,NO,NO
+shotMaking100,Shot-Making/100,DIAGNOSTIC,NO,types,INTERNAL_ONLY,NO,YES,NO,NO,NO,NO
+epvShootMean,EPV Shoot Mean,DIAGNOSTIC,NO,types,INTERNAL_ONLY,NO,YES,NO,NO,NO,NO
+vContMean,V Cont Mean,DIAGNOSTIC,NO,types,INTERNAL_ONLY,NO,YES,NO,NO,NO,NO
+drblWar,DRBL WAR,DEPRECATED,NO,sort_alias_only,NO,NO,NO,NO,YES,disclaimer_only,NO
+drblSeasonalImpact,DRBL impact,DEPRECATED,NO,orphaned,NO,NO,NO,NO,YES,NO,YES
+UIR-C,UIR-C,RESEARCH,NO,research,NO,NO,NO,YES,NO,NO,NO

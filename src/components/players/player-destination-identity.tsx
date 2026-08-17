@@ -44,6 +44,7 @@ export function PlayerDestinationIdentity({
   displayName,
   season,
   teamKey,
+  teamName,
   historicalBrand,
   useHistoricalBranding = false,
   bioBits,
@@ -121,7 +122,13 @@ export function PlayerDestinationIdentity({
                 {historicalBrand ? (
                   <HistoricalTeamMark brand={historicalBrand} size="sm" />
                 ) : teamKey ? (
-                  <TeamLogo teamKey={teamKey} size="sm" />
+                  <TransitionLink
+                    href={`/teams/${encodeURIComponent(teamKey)}`}
+                    aria-label={teamName ?? modernBrand?.abbr ?? "Team"}
+                    className="inline-flex shrink-0"
+                  >
+                    <TeamLogo teamKey={teamKey} size="sm" />
+                  </TransitionLink>
                 ) : null}
                 <span>{bioBits.join(" · ") || "Player profile"}</span>
               </p>

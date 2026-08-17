@@ -30,7 +30,15 @@ export {
   ASK_DRBL_VERSION,
 } from "./types";
 
-export { ASK_METRICS, resolveMetric } from "./metrics";
+export { ASK_METRICS, resolveMetric, metricById } from "./metrics";
+export {
+  DRBL_VOCABULARY,
+  FORBIDDEN_DRBL_CLAIMS,
+  NON_ADDITIVE_COMPONENT_WARNING,
+  glossaryForMetricId,
+  isForbiddenDrblClaimText,
+  matchDrblGlossaryQuery,
+} from "./drbl-vocabulary";
 export { resolveSeasonPhrases, extractCanonicalSeasons } from "./seasons";
 export { detectUnsupportedClauses } from "./unsupported";
 export { planPartialSupport } from "./partial";

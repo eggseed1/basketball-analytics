@@ -1,0 +1,67 @@
+{
+  "seal": "P17_FINAL_PRODUCT_SEAL",
+  "timestamp": "2026-08-17T21:05:00-04:00",
+  "integrationCommit": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "preProductDocumentationHEAD": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "finalProductBranch": "product/drbl-site-completeness-v1_2",
+  "P17": "PARTIAL (initial product completeness)",
+  "P17_1": "PASS then REOPENED_FOR_PRODUCT_DEFECT (human visual)",
+  "P17_2": "PASS",
+  "PRODUCT_COMPLETENESS": "PASS",
+  "teamProviderContract": {
+    "canonicalKey": "ESPN team id",
+    "providers": ["espn", "nba", "bdl"],
+    "nbaMappings": "30/30",
+    "duplicates": 0,
+    "crossProviderGuessing": "NO"
+  },
+  "playerIdentityCrosswalk": {
+    "version": "player-crosswalk-v1.1",
+    "hash": "104ae0e91b8928a494a14b2855240750962751ff764e31f1d315d22de64673a6",
+    "productionApproved": 619,
+    "weakExcluded": 57,
+    "ambiguous": 0,
+    "unresolved": 1,
+    "runtimeNameGuessing": "NO"
+  },
+  "gameIdContract": "espn(40…)/nba(00########)/bdl; no cross-guess",
+  "analyticsRegression": {
+    "currentMismatches": 0,
+    "historicalMismatches": 0
+  },
+  "researchSeals": {
+    "changed": "NO",
+    "M17a2": "60ef99542ec2e27be8eb54f2b6f86cbcef7b40ac62fd0862232e3451a8704e11",
+    "M17b": "b606cf603c7f10acbad9ad6fd1b1869d2f12fcfa4bd461a1e689b82477fb238c",
+    "M18a": "ba98a6529b18d63ab825eab92f1b606a974b4950b3d1c879eb5378054427391f",
+    "M18b0": "ade47897cd8ca7c0786bee5d0925e86778c2f27c122e5cd332076e7d259e1763",
+    "M17c": "NOT_STARTED"
+  },
+  "designReferenceCommit": "7e764ceb5c834a19696dad84ed6696e7e3289a6a",
+  "visualRegression": {
+    "DESIGN_INTENT_PRESERVED": "YES",
+    "UNINTENTIONAL_DESIGN_DRIFT": 0,
+    "referenceScreenshots": 11,
+    "pairedScreenshots": 11
+  },
+  "engineering": {
+    "drbl:test": "PASS",
+    "typecheck": "PASS",
+    "build": "PASS"
+  },
+  "workbookV2_1": {
+    "path": "reports/project_workbook_v2_1/DRBL_PROJECT_WORKBOOK_V2_1.zip",
+    "sha256": "C1BCB2828B7FA549AA7FB30EB44E73C356AE6676EF2B830BE8CEDCDD689DBDE9",
+    "bytes": 1338049
+  },
+  "intentionalDebt": [
+    "historical logos empty intentional",
+    "live BDL/NBA optional samples may skip in env",
+    "data/drbl junction workflow (env engineering)",
+    "historical player screenshot not re-captured in P17.2",
+    "UNRESOLVED player 1642935 Chucky Hepburn"
+  ],
+  "M17C_STARTED": "NO",
+  "M17C_AUTHORIZED_AFTER_HUMAN_REVIEW": "YES",
+  "M17C_STARTING_COMMIT": "PENDING_AFTER_GIT_COMMIT"
+}

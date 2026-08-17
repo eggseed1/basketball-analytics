@@ -1,0 +1,16 @@
+{
+  "drbl:test": "PASS (201/201)",
+  "test:team-identity": "PASS",
+  "test:player-team-render": "PASS",
+  "test:game-route-contract": "PASS",
+  "test:data-truth": "PASS",
+  "test:site-nav": "PASS",
+  "test:learn-drbl-page": "PASS",
+  "test:compare-drbl": "PASS",
+  "test:player-destination-merge": "PASS",
+  "player-identity-tests": "PASS (5/5)",
+  "typecheck": "PASS",
+  "build": "PASS",
+  "dataDrblJunctionAtBuild": "ABSENT",
+  "precomputedVs28827fb": "EQUAL"
+}

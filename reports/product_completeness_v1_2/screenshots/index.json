@@ -1,0 +1,32 @@
+[
+  {
+    "file": "explore-players-team-identity-fixed.png",
+    "url": "/explore/players?season=2025-26",
+    "status": "ok",
+    "note": "leakedNbaTeamId=false;page404=false"
+  },
+  {
+    "file": "explore-players-team-identity-fixed-mobile.png",
+    "url": "/explore/players?season=2025-26",
+    "status": "ok",
+    "note": "leakedNbaTeamId=false;page404=false"
+  },
+  {
+    "file": "game-from-scores.png",
+    "url": "/games/401584893",
+    "status": "ok",
+    "note": "leakedNbaTeamId=false;page404=false"
+  },
+  {
+    "file": "game-from-home.png",
+    "url": "/games/401584893",
+    "status": "ok",
+    "note": "leakedNbaTeamId=false;page404=false"
+  },
+  {
+    "file": "player-page-team-identity.png",
+    "url": "/players/1631095",
+    "status": "ok",
+    "note": "leakedNbaTeamId=false;page404=false"
+  }
+]

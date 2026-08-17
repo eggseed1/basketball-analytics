@@ -1,0 +1,19 @@
+{
+  "path": "reports/project_workbook_v2_1/DRBL_PROJECT_WORKBOOK_V2_1.zip",
+  "bytes": 1338049,
+  "sha256": "C1BCB2828B7FA549AA7FB30EB44E73C356AE6676EF2B830BE8CEDCDD689DBDE9",
+  "archiveFileCount": 35,
+  "integrity": "PASS_READABLE_ZIP",
+  "identityRoutingSourceIncluded": "YES",
+  "contains": [
+    "TEAM_PROVIDER_NAMESPACE_CONTRACT.md",
+    "PLAYER_TEAM_IDENTITY_PIPELINE.md",
+    "GAME_IDENTITY_AND_ROUTING.md",
+    "GAME_LINK_CONTRACT.md",
+    "RAW_PROVIDER_ID_LEAK_AUDIT.md",
+    "SOURCE_CODE_MAP.csv",
+    "critical_source_snapshot (team-map, games page, stats-nba, explore table, etc.)",
+    "screenshots"
+  ],
+  "directory": "reports/project_workbook_v2_1/"
+}

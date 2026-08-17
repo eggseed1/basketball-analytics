@@ -279,6 +279,27 @@ export function PlayerSeasonCompareView({
       </section>
 
       <CategoryBlock
+        title="Rate / ability"
+        rows={byCategory("ability")}
+        seasonA={seasonA}
+        seasonB={seasonB}
+        edge={categoryEdge("ability")}
+      />
+      <CategoryBlock
+        title="Realized value"
+        rows={byCategory("realized_value")}
+        seasonA={seasonA}
+        seasonB={seasonB}
+        edge={categoryEdge("realized_value")}
+      />
+      <CategoryBlock
+        title="Diagnostic (non-additive)"
+        rows={byCategory("diagnostic")}
+        seasonA={seasonA}
+        seasonB={seasonB}
+        edge={categoryEdge("diagnostic")}
+      />
+      <CategoryBlock
         title="Production"
         rows={byCategory("production")}
         seasonA={seasonA}

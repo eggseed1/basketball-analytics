@@ -51,24 +51,19 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
     title: "DARKO on/off DPM",
     body: "On/off component of DARKO DPM — impact estimated from lineup plus/minus when the player is on the floor.",
   },
-  "DRBL/100": {
-    title: "DRBL ability rate",
-    body: "Estimated player impact rate relative to a contextual, role-matched R1 reference, per 100 combined possession appearances. This is an ability/rate statistic — not season cumulative value.",
-    learnMoreHref: "/learn/drbl",
-  },
   "DRBL-P": {
     title: "DRBL possession component",
-    body: "DRBL-P — Approach B marginal contribution from expected-possession residuals versus role-matched replacement.",
+    body: "DRBL-P — Approach B marginal contribution from expected-possession residuals versus a contextual, role-matched R1 reference (not conventional fringe replacement). Diagnostic component — not added into DRBL/100.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL-LN": {
     title: "DRBL lineup component",
-    body: "DRBL-LN — regularized possession lineup (RAPM-style) rating. Adjusted association, not a causal claim.",
+    body: "DRBL-LN — regularized possession lineup (RAPM-style) rating. Adjusted association, not a causal claim. Diagnostic only — not additive with P/B into DRBL/100.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL-B": {
     title: "DRBL behavior component",
-    body: "DRBL-B — regularized prediction from public box/PBP behavior features (usage, creation, shot mix, DRBL Gravity Proxy). Not optical tracking.",
+    body: "DRBL-B — regularized prediction from public box/PBP behavior features (usage, creation, shot mix). A behavioral diagnostic — not optical tracking and not a measured gravity metric.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL-L": {
@@ -83,27 +78,32 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL-O": {
     title: "DRBL offense",
-    body: "Offensive half of DRBL-P — value added on offensive possessions versus replacement.",
+    body: "Offensive half of DRBL-P — value added on offensive possessions versus the role-matched R1 reference. Higher is better. Diagnostic — DRBL-O + DRBL-D is not DRBL/100.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL-D": {
     title: "DRBL defense",
-    body: "Defensive half of DRBL-P — value added on defensive possessions versus replacement.",
+    body: "Defensive half of DRBL-P — value added on defensive possessions versus the role-matched R1 reference. Higher is better (more defensive value). Diagnostic — DRBL-O + DRBL-D is not DRBL/100.",
     learnMoreHref: "/learn/drbl",
   },
   "R1 Points": {
     title: "R1 Points",
-    body: "Realized player-attributed point residual above the contextual role-matched R1 reference over actual season exposure. Accounting value — not latent ability.",
+    body: "Realized player-attributed point residual above the contextual role-matched R1 reference over actual season exposure. Accounting value — not latent ability. Prefer DRBL/100 for rate ranking.",
     learnMoreHref: "/learn/drbl",
   },
   "R1 Win Eq.": {
     title: "R1 Win Equivalents",
-    body: "R1 Points expressed in marginal win-equivalent units. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
+    body: "R1 Points expressed in marginal win-equivalent units via a frozen points-per-win factor. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
     learnMoreHref: "/learn/drbl",
   },
   "R1 Win Equivalents": {
     title: "R1 Win Equivalents",
-    body: "R1 Points expressed in marginal win-equivalent units. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
+    body: "R1 Points expressed in marginal win-equivalent units via a frozen points-per-win factor. Not traditional WAR; not a causal roster-replacement effect. R1 is not claimed to equal conventional NBA fringe replacement.",
+    learnMoreHref: "/learn/drbl",
+  },
+  "DRBL/100": {
+    title: "DRBL ability rate",
+    body: "Estimated player impact rate relative to a contextual, role-matched R1 reference, per 100 combined possession appearances. Validated as an EB1600 posterior of the raw ability rate toward zero (prior mean 0, k = 1600). Ability/rate statistic — not season cumulative value.",
     learnMoreHref: "/learn/drbl",
   },
   "DRBL impact": {

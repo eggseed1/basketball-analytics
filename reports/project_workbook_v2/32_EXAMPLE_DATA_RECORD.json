@@ -1,0 +1,22 @@
+{
+  "playerId": "1631095",
+  "playerName": "Jabari Smith Jr.",
+  "teamId": "1610612745",
+  "season": "2024-25",
+  "possessions": 6903,
+  "drbl100": 0.07,
+  "rawAbilityRate": 0.0842,
+  "r1Points": 5.814599072147124,
+  "r1WinEquivalents": 0.15509459310048443,
+  "r1PointsPerWin": 37.490662671779255,
+  "drblO": 0.66,
+  "drblD": -0.5,
+  "drblP": 0.08,
+  "drblLn": -0.5,
+  "drblB": -0.16,
+  "rank": 257,
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "r1PointValueVersion": "drbl-r1-points-v1",
+  "r1WinEquivalentVersion": "drbl-r1-wineq-v1",
+  "PURPOSE": "SCHEMA_EXAMPLE_ONLY"
+}

@@ -1,0 +1,156 @@
+[
+  {
+    "file": "home-desktop.png",
+    "url": "/",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "home-mobile.png",
+    "url": "/",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "explore-players-2025-26-desktop.png",
+    "url": "/explore/players?season=2025-26",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "explore-players-mobile.png",
+    "url": "/explore/players?season=2025-26",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "explore-players-2019-20-unsupported.png",
+    "url": "/explore/players?season=2019-20",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "player-jabari-desktop.png",
+    "url": "/players/1631095",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "player-jabari-mobile.png",
+    "url": "/players/1631095",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  },
+  {
+    "file": "player-season-compare.png",
+    "url": "/players/1631095/season-compare?a=2024-25&b=2025-26",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "player-season-rank.png",
+    "url": "/players/1631095/season-rank",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "compare-desktop.png",
+    "url": "/compare",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "compare-mobile.png",
+    "url": "/compare",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "ask-desktop.png",
+    "url": "/ask",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "ask-mobile.png",
+    "url": "/ask",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "explore-teams-desktop.png",
+    "url": "/explore/teams",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "explore-teams-mobile.png",
+    "url": "/explore/teams",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "team-okc-desktop.png",
+    "url": "/teams/25",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "team-okc-mobile.png",
+    "url": "/teams/25",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=false;darkoText=false"
+  },
+  {
+    "file": "history-2023-24.png",
+    "url": "/history?season=2023-24",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "learn-drbl-top.png",
+    "url": "/learn/drbl",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "learn-drbl-full.png",
+    "url": "/learn/drbl",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "learn-drbl-mobile.png",
+    "url": "/learn/drbl",
+    "viewport": "mobile",
+    "status": "ok",
+    "note": "drblText=true;darkoText=false"
+  },
+  {
+    "file": "player-espn-jokic.png",
+    "url": "/players/3112335",
+    "viewport": "desktop",
+    "status": "ok",
+    "note": "drblText=true;darkoText=true"
+  }
+]

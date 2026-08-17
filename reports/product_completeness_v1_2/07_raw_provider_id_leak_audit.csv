@@ -1,0 +1,8 @@
+surface,file,field,before,after,status
+Explore Players TM,player-season-table.tsx,teamId label,raw 16106127xx,canonical abbr+logo,FIXED
+Explore Players badge,team-logo.tsx,fallback slice,161,logo or TOT,FIXED
+Player page header,player-core-island.tsx,teamKey,raw NBA id possible,canonical ESPN,FIXED
+Player explore sort,player-explore-sort.ts,nbaTeamAbbr,NBA meta only,brand fallback for ESPN ids,FIXED
+Schedule home list,schedule-client.ts,homeTeamId,NBA ids,canonical ESPN + provider ids,FIXED
+NBA season games,nba-data-provider.ts,homeTeamId,NBA ids,canonical ESPN,FIXED
+Game Lab sides,game-team-identity.ts,provider,espn|bdl only,espn|bdl|nba,FIXED

@@ -1,0 +1,79 @@
+[
+  {
+    "file": "home-desktop.png",
+    "url": "/",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "home-mobile.png",
+    "url": "/",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "explore-players-desktop.png",
+    "url": "/explore/players",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "explore-players-mobile.png",
+    "url": "/explore/players",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "player-page-desktop.png",
+    "url": "/players/1631095",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "explore-teams-desktop.png",
+    "url": "/explore/teams",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "team-page-desktop.png",
+    "url": "/teams/10",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "game-page-desktop.png",
+    "url": "/games/401584893",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "compare-desktop.png",
+    "url": "/compare",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "ask-desktop.png",
+    "url": "/ask",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  },
+  {
+    "file": "learn-desktop.png",
+    "url": "/learn",
+    "status": "ok",
+    "note": "page404=false",
+    "base": "http://127.0.0.1:3001"
+  }
+]

@@ -1,0 +1,44 @@
+season,metric,value,rate,notes
+2020-21,precomputed_rows,532,,DRBL precomputed players
+2020-21,verified_join_approved_class,235,0.441729,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2020-21,unique_name_only_aliases,26,0.048872,Present in alias file but excluded from verified join
+2020-21,any_alias_file_join,261,0.490602,All alias classes including UNIQUE_NAME_ONLY
+2020-21,possession_exposure_total,2158437,,Sum actualPossessions/possessions
+2020-21,possession_exposure_verified_join,1331383,0.616827,Possessions on approved-class aliased players
+2020-21,possession_exposure_unique_name_only_excluded,141193,0.065414,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2021-22,precomputed_rows,573,,DRBL precomputed players
+2021-22,verified_join_approved_class,289,0.504363,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2021-22,unique_name_only_aliases,30,0.052356,Present in alias file but excluded from verified join
+2021-22,any_alias_file_join,319,0.556719,All alias classes including UNIQUE_NAME_ONLY
+2021-22,possession_exposure_total,2435369,,Sum actualPossessions/possessions
+2021-22,possession_exposure_verified_join,1720300,0.706382,Possessions on approved-class aliased players
+2021-22,possession_exposure_unique_name_only_excluded,156154,0.064119,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2022-23,precomputed_rows,524,,DRBL precomputed players
+2022-23,verified_join_approved_class,350,0.667939,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2022-23,unique_name_only_aliases,34,0.064885,Present in alias file but excluded from verified join
+2022-23,any_alias_file_join,384,0.732824,All alias classes including UNIQUE_NAME_ONLY
+2022-23,possession_exposure_total,2464164,,Sum actualPossessions/possessions
+2022-23,possession_exposure_verified_join,1986402,0.806116,Possessions on approved-class aliased players
+2022-23,possession_exposure_unique_name_only_excluded,166192,0.067444,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2023-24,precomputed_rows,554,,DRBL precomputed players
+2023-24,verified_join_approved_class,414,0.747292,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2023-24,unique_name_only_aliases,38,0.068592,Present in alias file but excluded from verified join
+2023-24,any_alias_file_join,452,0.815884,All alias classes including UNIQUE_NAME_ONLY
+2023-24,possession_exposure_total,2444004,,Sum actualPossessions/possessions
+2023-24,possession_exposure_verified_join,2160864,0.884149,Possessions on approved-class aliased players
+2023-24,possession_exposure_unique_name_only_excluded,153780,0.062921,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2024-25,precomputed_rows,555,,DRBL precomputed players
+2024-25,verified_join_approved_class,511,0.920721,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2024-25,unique_name_only_aliases,44,0.079279,Present in alias file but excluded from verified join
+2024-25,any_alias_file_join,555,1.000000,All alias classes including UNIQUE_NAME_ONLY
+2024-25,possession_exposure_total,2442496,,Sum actualPossessions/possessions
+2024-25,possession_exposure_verified_join,2304180,0.943371,Possessions on approved-class aliased players
+2024-25,possession_exposure_unique_name_only_excluded,138316,0.056629,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2025-26,precomputed_rows,575,,DRBL precomputed players
+2025-26,verified_join_approved_class,543,0.944348,productionApproved aliases only (UNIQUE_NAME_ONLY excluded)
+2025-26,unique_name_only_aliases,31,0.053913,Present in alias file but excluded from verified join
+2025-26,any_alias_file_join,574,0.998261,All alias classes including UNIQUE_NAME_ONLY
+2025-26,possession_exposure_total,2464221,,Sum actualPossessions/possessions
+2025-26,possession_exposure_verified_join,2370468,0.961954,Possessions on approved-class aliased players
+2025-26,possession_exposure_unique_name_only_excluded,93700,0.038024,Possessions on UNIQUE_NAME_ONLY aliased players (not verified join)
+2025-26,target_nba_id_1642935,UNRESOLVED,,Present in DRBL 2025-26; no ESPN byathlete board row with matching unique name; no alias invented

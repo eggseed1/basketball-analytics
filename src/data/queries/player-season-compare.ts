@@ -1,6 +1,7 @@
 /**
  * Query wrapper for same-player season comparison.
  * Loads career once; joins season-true impact + team board without N+1 career fetches.
+ * DRBL overlay via approved identity when registry seasons are selected.
  */
 
 import { comparePlayerSeasons } from "@/analytics/compare-player-seasons";
@@ -9,6 +10,7 @@ import type {
   SeasonImpactSnapshot,
 } from "@/analytics/compare-player-seasons";
 import {
+  attachDrblToPlayerSeasons,
   getPlayer,
   getPlayerCareerSeasons,
   getPlayerHistoricalImpact,
@@ -16,6 +18,8 @@ import {
 } from "@/data/queries";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import type { PlayerSeason } from "@/data/types";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -36,8 +40,18 @@ function pickSeason(
 async function impactSnapshot(
   playerId: string,
   season: string,
-  playerName: string
+  playerName: string,
+  seasonRow: PlayerSeason | null
 ): Promise<SeasonImpactSnapshot | null> {
+  if (seasonRow && isDrblSeason(season) && hasValidDrblEstimate(seasonRow)) {
+    return {
+      metricId: "drbl100",
+      label: "DRBL/100",
+      value: seasonRow.drbl100,
+      source: "DRBL season overlay (validated ability)",
+    };
+  }
+
   const rows = await getPlayerHistoricalImpact(playerId, season, {
     playerName,
   }).catch(() => []);
@@ -97,8 +111,8 @@ export async function getPlayerSeasonComparison(options: {
     career[0]?.playerName ||
     options.playerId;
 
-  const a = pickSeason(career, seasonA);
-  const b = pickSeason(career, seasonB);
+  let a = pickSeason(career, seasonA);
+  let b = pickSeason(career, seasonB);
   if (!a || !b) {
     return {
       comparison: null,
@@ -107,23 +121,29 @@ export async function getPlayerSeasonComparison(options: {
     };
   }
 
+  const [overlaid] = await Promise.all([
+    attachDrblToPlayerSeasons(options.playerId, [a, b]),
+  ]);
+  a = overlaid.find((r) => r.season === seasonA) ?? a;
+  b = overlaid.find((r) => r.season === seasonB) ?? b;
+
   const [impactA, impactB, teamBoardA, teamBoardB] = await Promise.all([
-    impactSnapshot(options.playerId, seasonA, name),
-    impactSnapshot(options.playerId, seasonB, name),
+    impactSnapshot(options.playerId, seasonA, name, a),
+    impactSnapshot(options.playerId, seasonB, name, b),
     getTeamSeasonStats(seasonA).catch(() => [] as Awaited<ReturnType<typeof getTeamSeasonStats>>),
     getTeamSeasonStats(seasonB).catch(() => [] as Awaited<ReturnType<typeof getTeamSeasonStats>>),
   ]);
 
   const teamA =
-    teamBoardA.find((t) => t.teamId === a.teamId) ?? null;
+    teamBoardA.find((t) => t.teamId === a!.teamId) ?? null;
   const teamB =
-    teamBoardB.find((t) => t.teamId === b.teamId) ?? null;
+    teamBoardB.find((t) => t.teamId === b!.teamId) ?? null;
 
   const comparison = comparePlayerSeasons({
     playerId: options.playerId,
     playerName: name,
-    seasonA: a,
-    seasonB: b,
+    seasonA: a!,
+    seasonB: b!,
     impactA,
     impactB,
     teamA,

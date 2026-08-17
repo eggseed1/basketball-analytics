@@ -232,7 +232,11 @@ export class HistoricalNbaService {
   }
 
   async getGame(gameId: string): Promise<Game | null> {
-    if (this.bdl && /^\d+$/.test(gameId)) {
+    // NBA Stats GameIDs must not enter the BallDontLie numeric path.
+    if (/^00\d{8}$/.test(gameId)) {
+      return this.espn.getGame(gameId);
+    }
+    if (this.bdl && /^\d+$/.test(gameId) && !/^40\d{7,}$/.test(gameId)) {
       try {
         const game = await this.bdl.getGame(Number(gameId));
         return transformBdlGame(game);
@@ -245,7 +249,7 @@ export class HistoricalNbaService {
       }
     }
     // Disk cache covers historical BDL ids when the live client is unavailable.
-    if (/^\d+$/.test(gameId) && !/^40\d{7,}$/.test(gameId)) {
+    if (/^\d+$/.test(gameId) && !/^40\d{7,}$/.test(gameId) && !/^00\d{8}$/.test(gameId)) {
       const cached = await findCachedGame(gameId);
       if (cached) return cached;
     }
@@ -259,6 +263,11 @@ export class HistoricalNbaService {
   async getGameBoxScore(gameId: string): Promise<GameBoxScore | null> {
     // ESPN event ids must not enter the BallDontLie path (different id space).
     if (/^40\d{7,}$/.test(gameId)) {
+      return this.espn.getGameBoxScore(gameId);
+    }
+
+    // NBA Stats GameID — use ESPN-named NBADataProvider (stats.nba.com).
+    if (/^00\d{8}$/.test(gameId)) {
       return this.espn.getGameBoxScore(gameId);
     }
 

@@ -1,6 +1,7 @@
 /**
  * Query wrapper for Rank My Seasons.
  * Loads career once; batches impact + team boards for the selected set.
+ * DRBL overlay via approved identity for registry seasons.
  */
 
 import {
@@ -13,6 +14,7 @@ import {
 import type { SeasonImpactSnapshot } from "@/analytics/compare-player-seasons";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import {
+  attachDrblToPlayerSeasons,
   getPlayer,
   getPlayerCareerSeasons,
 } from "@/data/queries/players";
@@ -20,6 +22,8 @@ import { getPlayerHistoricalImpact } from "@/data/queries/historical-impact";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import type { PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -40,8 +44,17 @@ function pickSeason(
 async function impactSnapshot(
   playerId: string,
   season: string,
-  playerName: string
+  playerName: string,
+  seasonRow: PlayerSeason | null
 ): Promise<SeasonImpactSnapshot | null> {
+  if (seasonRow && isDrblSeason(season) && hasValidDrblEstimate(seasonRow)) {
+    return {
+      metricId: "drbl100",
+      label: "DRBL/100",
+      value: seasonRow.drbl100,
+      source: "DRBL season overlay (validated ability)",
+    };
+  }
   const rows = await getPlayerHistoricalImpact(playerId, season, {
     playerName,
   }).catch(() => []);
@@ -111,7 +124,7 @@ export async function getPlayerSeasonRanking(options: {
     selected = selected.slice(0, PLAYER_SEASON_RANK_MAX);
   }
 
-  const rows: PlayerSeason[] = [];
+  let rows: PlayerSeason[] = [];
   for (const season of selected) {
     const row = pickSeason(career, season);
     if (!row) {
@@ -124,11 +137,19 @@ export async function getPlayerSeasonRanking(options: {
     rows.push(row);
   }
 
+  rows = await attachDrblToPlayerSeasons(options.playerId, rows);
+
   const uniqueSeasons = [...new Set(selected)];
   const [impactsList, teamBoards] = await Promise.all([
     Promise.all(
       uniqueSeasons.map(async (season) => {
-        const snap = await impactSnapshot(options.playerId, season, name);
+        const seasonRow = rows.find((r) => r.season === season) ?? null;
+        const snap = await impactSnapshot(
+          options.playerId,
+          season,
+          name,
+          seasonRow
+        );
         return [season, snap] as const;
       })
     ),
@@ -148,7 +169,7 @@ export async function getPlayerSeasonRanking(options: {
     Pick<TeamSeasonStats, "avgDiff" | "abbreviation"> | null
   >();
   for (const [season, board] of teamBoards) {
-    const row = pickSeason(career, season);
+    const row = rows.find((r) => r.season === season);
     const team =
       row != null
         ? board.find((t) => t.teamId === row.teamId) ?? null

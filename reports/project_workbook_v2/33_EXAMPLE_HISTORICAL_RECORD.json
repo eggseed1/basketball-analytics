@@ -1,0 +1,22 @@
+{
+  "playerId": "1629690",
+  "playerName": "Adam Mokoka",
+  "teamId": "1610612741",
+  "season": "2020-21",
+  "possessions": 240,
+  "drbl100": 0.08,
+  "rawAbilityRate": 0.6306,
+  "r1Points": 1.5133358564416048,
+  "r1WinEquivalents": 0.040365673706289386,
+  "r1PointsPerWin": 37.490662671779255,
+  "drblO": -2.11,
+  "drblD": 2.56,
+  "drblP": 0.34,
+  "drblLn": 0.14,
+  "drblB": -0.16,
+  "rank": 237,
+  "abilityModelVersion": "drbl-ability-eb1600-r1-v1",
+  "r1PointValueVersion": "drbl-r1-points-v1",
+  "r1WinEquivalentVersion": "drbl-r1-wineq-v1",
+  "PURPOSE": "SCHEMA_EXAMPLE_ONLY"
+}

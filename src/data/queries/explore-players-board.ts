@@ -23,6 +23,7 @@ export type ExplorePlayerBoardRow = {
   playerName: string;
   teamId: string;
   teamName: string;
+  teamAbbreviation?: string;
   season: string;
   position?: string;
   gamesPlayed: number;
@@ -95,6 +96,7 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
     playerName: p.playerName,
     teamId: p.teamId,
     teamName: p.teamName,
+    teamAbbreviation: p.teamAbbreviation,
     season: p.season,
     position: p.position,
     gamesPlayed: p.gamesPlayed,

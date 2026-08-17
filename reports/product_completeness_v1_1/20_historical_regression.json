@@ -1,0 +1,19 @@
+{
+  "HISTORICAL_DRBL_MISMATCHES": 0,
+  "HISTORICAL_R1_MISMATCHES": 0,
+  "HISTORICAL_R1WINEQ_MISMATCHES": 0,
+  "HISTORICAL_RANK_MISMATCHES": 0,
+  "HISTORICAL_SUPPORT_MISMATCHES": 0,
+  "seasons": [
+    "2020-21",
+    "2021-22",
+    "2022-23",
+    "2023-24"
+  ],
+  "method": "git_hash_object_equality_vs_28827fb_integration_commit",
+  "baseline": "28827fbdfb6509756b35284f80c27bafac1f356c",
+  "precomputed_untouched": "YES",
+  "product_branch": "product/drbl-site-completeness-v1_1",
+  "productHEAD_at_freeze": "64cc231a215c579f3498e6122a0230f7388971cc",
+  "note": "Historical precomputed DRBL artifacts unchanged by P17.1; EQUAL vs integration baseline for all four historical registry seasons."
+}

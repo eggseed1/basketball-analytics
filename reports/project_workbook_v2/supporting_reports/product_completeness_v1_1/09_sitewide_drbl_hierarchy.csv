@@ -1,0 +1,12 @@
+surface,route,priority,classification,drbl_hierarchy_status,primary_metric,secondary_metrics,notes
+Home,/,High,PRIMARY,FIXED,DRBL/100,"DARKO DPM (comparison), TS%, USG","TopPerformers default sort DRBL when overlay ok; transparent fallback copy when not"
+ASK DRBL,/ask,High,PRIMARY,FIXED,"DRBL/100, R1 Points, R1 WinEq, O/D/P/LN/B","Box + DARKO/LEBRON","Vocabulary + coverage + glossary methodology; forbidden claims tested; identity-gated player answers"
+Compare,/compare,High,PRIMARY,FIXED,DRBL/100,"R1 Points, R1 WinEq, DRBL-O/D, DARKO","Groups: rate_ability / realized_value / external / box; asymmetric DRBL → Unavailable"
+Season compare,/players/[id]/season-compare,High,PRIMARY,FIXED,DRBL/100,"R1 Points, R1 WinEq, O/D, diagnostic P/LN/B","attachDrblToPlayerSeasons; non-additive warning on P/LN/B"
+Season rank,/players/[id]/season-rank,High,PRIMARY,FIXED,Copeland + DRBL/100,"League DRBL rank, selected DRBL percentile, R1 Points rank (labeled distinctly)","R1 rank never labeled DRBL rank"
+History,/history,Medium,PRIMARY,FIXED,Season DRBL/100 leaders,"PPG/RPG/APG","Registry seasons only 2020-21..2025-26; no all-time/GOAT/career cumulative"
+Dashboard,/dashboard,Low,SECONDARY_LAB,INTENTIONALLY_DEFERRED,n/a,Box Contour metrics,"DEFER_DRBL — do not invest heavily in P17.1"
+Player destination,/players/[id],High,PRIMARY,ALREADY_FIXED,DRBL Snapshot,DARKO comparison,"Prior P17 work; firewall preserved"
+Explore players,/explore/players,High,PRIMARY,ALREADY_FIXED,drbl100 sort,R1 columns,"Prior P17 work"
+Savant UI,(orphaned),Cleanup,ORPHAN_UI,INTENTIONALLY_NOT_REMOUNTED,n/a,n/a,"Do not revive parallel hierarchy; Snapshot is canonical"
+All-time DRBL leaders,n/a,n/a,INTENTIONALLY_NOT_SUPPORTED,INTENTIONALLY_NOT_SUPPORTED,n/a,n/a,"No career/GOAT cumulative DRBL product surface"

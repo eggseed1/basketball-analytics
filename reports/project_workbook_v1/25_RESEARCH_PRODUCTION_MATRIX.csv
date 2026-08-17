@@ -1,0 +1,13 @@
+layer,research,production,public,status
+ability_point_estimate,drbl-ability-eb1600-r1-v1 / research-ability-v1,PlayerSeason.drbl100 via drbl-loader precomputed,YES,CANONICAL
+r1_points,Approach-B attributed residual; drbl-r1-points-v1,PlayerSeason.r1Points,YES,CANONICAL
+r1_win_equivalents,R1Points / P1=37.490662671779255; drbl-r1-wineq-v1,PlayerSeason.r1WinEquivalents,YES,CANONICAL
+legacy_drbl_war,Historical WAR generations / war-math,PlayerSeason.drblWar retained for compatibility,NO (retired),DEPRECATED_NONCANONICAL
+stint_allocation,war-team-stint-allocation-v1 / observed primitive stints,*-r1-stints.json consumed for team splits,PARTIAL,CANONICAL_CONSERVED
+season_registry,drbl/historical/season-registry.ts,src/data/drbl/season-registry.ts re-export,YES (support notice),SINGLE_SOURCE
+uir_m18a,UIR-C lineup residual (lambda=3200); STRONG_PASS reserved,NOT public canonical metric,NO,RESEARCH_ONLY
+offball_tracking_m18b,M18b.0 readiness — TRACKING_ACCESS_REQUIRED,unchanged,NO,BLOCKED_ON_DATA
+historical_seasons,M17a.2 corpus + M17b multi-season validation,2020-21..2023-24 RETROSPECTIVE_FROZEN_V1 in registry,YES (tier-B notice),PUBLISHED_FROZEN_V1
+current_seasons,M16l2 reserved + M16l3 product migration,2024-25 / 2025-26 CANONICAL_PRODUCTION precomputed,YES,CANONICAL
+darko_lebron_overlay,External public feeds,optional PlayerSeason.darko*/lebron* fields,YES (non-DRBL),OVERLAY_NONCANONICAL
+epv_shot_models,epv-model / expected-points / M6 SDV,component fields (sdv100 etc.); not fused into drbl100,PARTIAL,SUPPORTING

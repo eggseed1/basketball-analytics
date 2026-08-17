@@ -48,12 +48,26 @@ import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { metricById } from "./metrics";
 import { metricSeasonAvailability, coverageForMetric } from "./coverage";
 import { buildQueryPlan } from "./followups";
+import { glossaryForMetricId } from "./drbl-vocabulary";
+import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { resolveNbaIdForDrbl } from "@/data/identity/player-identity";
 import type {
   AskDrblResult,
   AskMetricId,
   BasketballQueryAst,
 } from "./types";
 import { ASK_DRBL_VERSION } from "./types";
+
+const DRBL_ASK_METRICS = new Set<AskMetricId>([
+  "drbl100",
+  "r1_points",
+  "r1_win_eq",
+  "drbl_o",
+  "drbl_d",
+  "drbl_p",
+  "drbl_ln",
+  "drbl_b",
+]);
 
 function perGame(total: number, gp: number): number {
   return total / Math.max(1, gp);
@@ -102,6 +116,40 @@ function readPlayerMetric(
       return row.darkoDpm ?? null;
     case "lebron":
       return row.lebron ?? null;
+    case "drbl100":
+      return hasValidDrblEstimate(row) ? row.drbl100 : null;
+    case "r1_points":
+      return hasValidDrblEstimate(row) &&
+        row.r1Points != null &&
+        Number.isFinite(row.r1Points)
+        ? row.r1Points
+        : null;
+    case "r1_win_eq":
+      return hasValidDrblEstimate(row) &&
+        row.r1WinEquivalents != null &&
+        Number.isFinite(row.r1WinEquivalents)
+        ? row.r1WinEquivalents
+        : null;
+    case "drbl_o":
+      return hasValidDrblEstimate(row) && Number.isFinite(row.drblO)
+        ? row.drblO
+        : null;
+    case "drbl_d":
+      return hasValidDrblEstimate(row) && Number.isFinite(row.drblD)
+        ? row.drblD
+        : null;
+    case "drbl_p":
+      return hasValidDrblEstimate(row) && Number.isFinite(row.drblP)
+        ? row.drblP
+        : null;
+    case "drbl_ln":
+      return hasValidDrblEstimate(row) && Number.isFinite(row.drblLn)
+        ? row.drblLn
+        : null;
+    case "drbl_b":
+      return hasValidDrblEstimate(row) && Number.isFinite(row.drblB)
+        ? row.drblB
+        : null;
     case "cpi":
       return careerProductionIndex(row);
     default:
@@ -142,6 +190,9 @@ function sourceForPlayerMetric(metricId: AskMetricId, season: string): string {
   const cov = coverageForMetric(metricId);
   if (metricId === "darko" || metricId === "lebron") {
     return cov?.sourceLabel ?? "Verified historical impact data";
+  }
+  if (DRBL_ASK_METRICS.has(metricId)) {
+    return cov?.sourceLabel ?? `DRBL overlay · ${season}`;
   }
   if (metricId === "cpi") return "Career Resume (CPI)";
   return `${season} Player Season Board`;
@@ -184,6 +235,38 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
   const player = ast.entities.find((e) => e.kind === "player");
   const season = ast.when?.seasons?.[0];
   const metricId = ast.metricId;
+
+  // Methodology-only (no player): grounded glossary from learn vocabulary.
+  if (!player && metricId && glossaryForMetricId(metricId)) {
+    const gloss = glossaryForMetricId(metricId)!;
+    const def = metricById(metricId);
+    return {
+      status: "ok",
+      version: ASK_DRBL_VERSION,
+      rawQuery: ast.rawQuery ?? "",
+      ast,
+      interpretation: ast.interpretation,
+      errors: [],
+      queryPlan: buildQueryPlan(ast),
+      headline: def?.label ?? metricId,
+      valueDisplay: def?.label ?? metricId,
+      detailLines: [gloss],
+      contextLines: [
+        "Answered from DRBL learn vocabulary — not a player-season lookup.",
+      ],
+      methodology: [
+        gloss,
+        ...(def?.learnHref
+          ? [`Full methodology: ${def.learnHref}`]
+          : ["Full methodology: /learn/drbl"]),
+      ],
+      links: [
+        { label: "Learn DRBL →", href: def?.learnHref ?? "/learn/drbl" },
+        { label: "Explore players →", href: "/explore/players?sort=drbl100" },
+      ],
+    };
+  }
+
   if (!player?.id || !season || !metricId) {
     return emptyResult(ast, "invalid", ["Missing player, season, or metric."]);
   }
@@ -203,10 +286,13 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     };
   }
 
+  // Prefer DRBL-overlaid board rows for DRBL metrics (career path skips overlay).
+  const boardRow = (
+    await getFilteredPlayerSeasons({ season, player: player.id })
+  )[0];
   const career = await getPlayerCareerSeasons(player.id);
   const row =
-    career.find((r) => r.season === season) ??
-    (await getFilteredPlayerSeasons({ season, player: player.id }))[0];
+    boardRow ?? career.find((r) => r.season === season) ?? undefined;
 
   if (!row) {
     return {
@@ -222,14 +308,47 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     };
   }
 
+  if (DRBL_ASK_METRICS.has(metricId)) {
+    const nbaId = await resolveNbaIdForDrbl(player.id);
+    if (!nbaId && !hasValidDrblEstimate(row)) {
+      return {
+        ...emptyResult(ast, "insufficient_data", [
+          `Player-specific ${metricById(metricId)?.label ?? "DRBL"} requires a production-approved ESPN↔NBA identity join or an NBA-id board row with a valid DRBL estimate. That join is not available for this player.`,
+        ]),
+        interpretation: [
+          row.playerName,
+          season,
+          metricById(metricId)?.label ?? metricId,
+        ],
+        limitations: [
+          "ASK DRBL will not invent DRBL values or substitute DARKO when identity or estimate is missing.",
+        ],
+        links: [
+          {
+            label: "View player →",
+            href: `/players/${player.id}?season=${encodeURIComponent(season)}`,
+          },
+          { label: "Learn DRBL →", href: "/learn/drbl" },
+        ],
+      };
+    }
+  }
+
   const value = readPlayerMetric(row, metricId);
   if (value == null || !Number.isFinite(value)) {
     const cov = coverageForMetric(metricId);
+    const drblMissing = DRBL_ASK_METRICS.has(metricId);
     return {
       ...emptyResult(ast, "insufficient_data", [
-        `${metricById(metricId)?.label ?? metricId} is not available for this season row.`,
+        drblMissing
+          ? `${metricById(metricId)?.label ?? metricId} is not available for this player-season (missing valid DRBL estimate or unpublished field). ASK DRBL will not substitute DARKO or invent 0.`
+          : `${metricById(metricId)?.label ?? metricId} is not available for this season row.`,
       ]),
-      interpretation: [row.playerName, season, metricById(metricId)?.label ?? metricId],
+      interpretation: [
+        row.playerName,
+        season,
+        metricById(metricId)?.label ?? metricId,
+      ],
       limitations: [
         cov?.notes ??
           "The board row exists but this metric does not meet ASK DRBL’s reliability threshold for this season.",
@@ -274,14 +393,23 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     detailLines: contextLines,
     contextLines,
     methodology: [
-      `Metric: ${def.label} from the player-season board.`,
-      "Counting rates use season totals ÷ games played.",
+      `Metric: ${def.label} from ${sourceForPlayerMetric(metricId, season)}.`,
+      ...(DRBL_ASK_METRICS.has(metricId)
+        ? [
+            glossaryForMetricId(metricId) ??
+              "DRBL overlay — sealed parameters; no model recompute in ASK.",
+          ]
+        : ["Counting rates use season totals ÷ games played."]),
       ...(def.learnHref ? [`How is this calculated? See methodology.`] : []),
     ],
     source: sourceForPlayerMetric(metricId, season),
-    limitations: [
-      "ASK DRBL answers from existing season boards — not possession-level DRBL.",
-    ],
+    limitations: DRBL_ASK_METRICS.has(metricId)
+      ? [
+          "Player-specific DRBL answers require a valid overlay estimate — never invented zeros.",
+        ]
+      : [
+          "ASK DRBL answers from existing season boards — not possession-level DRBL.",
+        ],
     links: [
       {
         label: "Explore player →",

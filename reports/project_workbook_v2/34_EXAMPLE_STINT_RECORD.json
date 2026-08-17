@@ -1,0 +1,36 @@
+{
+  "PURPOSE": "SCHEMA_EXAMPLE_ONLY",
+  "season": "2024-25",
+  "source": "src/data/drbl/precomputed/2024-25-r1-stints.json",
+  "playerId": "1626153",
+  "playerName": "Delon Wright",
+  "teamCount": 2,
+  "stints": [
+    {
+      "playerId": "1626153",
+      "teamId": "1610612749",
+      "teamN": 1665,
+      "r1Points": -10.338845002670313,
+      "r1WinEquivalents": -0.27577119916988774
+    },
+    {
+      "playerId": "1626153",
+      "teamId": "1610612752",
+      "teamN": 906,
+      "r1Points": -4.09679344803219,
+      "r1WinEquivalents": -0.10927503426382519
+    }
+  ],
+  "stintFieldSums": {
+    "r1Points": -14.435638450702502,
+    "r1WinEquivalents": -0.3850462334337129
+  },
+  "seasonTotalsFromPrecomputed": {
+    "r1Points": -14.435638450702502,
+    "r1WinEquivalents": -0.3850462334337129,
+    "possessions": 2571,
+    "teamId": "1610612749"
+  },
+  "STINT_SUM_DEMONSTRATION": "Per-team stint r1Points and r1WinEquivalents sum exactly to player-season totals in 2024-25.json (conservation).",
+  "STINT_VS_SEASON_NOTE": "Season row teamId is primary team; multi-team value is recovered via stint allocation."
+}

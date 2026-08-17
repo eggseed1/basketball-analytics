@@ -13,7 +13,8 @@ export function FindingsSection({ insights }: { insights: ComputedInsight[] }) {
           What the board is saying right now
         </h2>
         <p className="text-[13px] text-muted-foreground">
-          Live takeaways from this season&apos;s impact and efficiency boards.
+          Live takeaways from this season&apos;s DRBL ability, impact, and
+          efficiency boards.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">

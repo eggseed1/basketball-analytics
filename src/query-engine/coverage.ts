@@ -8,6 +8,11 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import {
+  isDrblSeason,
+  listCanonicalR1Seasons,
+  listDrblSeasons,
+} from "@/data/drbl/season-registry";
 
 export type MetricCoverage = {
   metricId: AskMetricId;
@@ -145,6 +150,88 @@ export function getAskMetricCoverageAudit(
         "Season-keyed only. Missing seasons stay missing — no substitute metric.",
     },
     {
+      metricId: "drbl100",
+      label: "DRBL/100",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage:
+        "Precomputed DRBL overlay via production-approved ESPN↔NBA identity",
+      reliable: true,
+      sourceLabel: "DRBL season overlay (validated ability)",
+      notes:
+        "Only registry DRBL seasons. Requires valid estimate + identity join — never invent 0 or substitute DARKO.",
+    },
+    {
+      metricId: "r1_points",
+      label: "R1 Points",
+      earliestSeason: listCanonicalR1Seasons()[0] ?? "2020-21",
+      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
+      playerCoverage: "Canonical R1 seasons in DRBL registry",
+      reliable: true,
+      sourceLabel: "DRBL R1 Points (realized value)",
+      notes: "Accounting residual — not ability, not WAR. Null when unpublished.",
+    },
+    {
+      metricId: "r1_win_eq",
+      label: "R1 Win Equivalents",
+      earliestSeason: listCanonicalR1Seasons()[0] ?? "2020-21",
+      latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
+      playerCoverage: "Canonical R1 seasons in DRBL registry",
+      reliable: true,
+      sourceLabel: "DRBL R1 Win Equivalents",
+      notes: "Frozen points-per-win conversion of R1 Points — not WAR.",
+    },
+    {
+      metricId: "drbl_o",
+      label: "DRBL-O",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage: "DRBL overlay O split",
+      reliable: true,
+      sourceLabel: "DRBL offensive split",
+      notes: "Canonical O split when estimate valid.",
+    },
+    {
+      metricId: "drbl_d",
+      label: "DRBL-D",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage: "DRBL overlay D split",
+      reliable: true,
+      sourceLabel: "DRBL defensive split",
+      notes: "Canonical D split when estimate valid.",
+    },
+    {
+      metricId: "drbl_p",
+      label: "DRBL-P",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage: "Diagnostic DRBL component",
+      reliable: true,
+      sourceLabel: "DRBL-P (diagnostic)",
+      notes: "Diagnostic only — does not sum with LN+B into DRBL/100.",
+    },
+    {
+      metricId: "drbl_ln",
+      label: "DRBL-LN",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage: "Diagnostic DRBL component",
+      reliable: true,
+      sourceLabel: "DRBL-LN (diagnostic)",
+      notes: "Diagnostic only — does not sum with P+B into DRBL/100.",
+    },
+    {
+      metricId: "drbl_b",
+      label: "DRBL-B",
+      earliestSeason: listDrblSeasons()[0] ?? "2020-21",
+      latestSeason: listDrblSeasons().at(-1) ?? current,
+      playerCoverage: "Diagnostic DRBL component",
+      reliable: true,
+      sourceLabel: "DRBL-B (diagnostic)",
+      notes: "Diagnostic only — does not sum with P+LN into DRBL/100.",
+    },
+    {
       metricId: "cpi",
       label: "CPI",
       earliestSeason: null,
@@ -256,6 +343,32 @@ export function metricSeasonAvailability(
       return {
         ok: false,
         message: `Verified season-true LEBRON data is not available for ${season} in this repository.`,
+      };
+    }
+    return { ok: true };
+  }
+  const drblIds: AskMetricId[] = [
+    "drbl100",
+    "drbl_o",
+    "drbl_d",
+    "drbl_p",
+    "drbl_ln",
+    "drbl_b",
+  ];
+  if (drblIds.includes(metricId)) {
+    if (!isDrblSeason(season)) {
+      return {
+        ok: false,
+        message: `DRBL metrics are not published for ${season}. Supported DRBL seasons: ${listDrblSeasons().join(", ")}.`,
+      };
+    }
+    return { ok: true };
+  }
+  if (metricId === "r1_points" || metricId === "r1_win_eq") {
+    if (!listCanonicalR1Seasons().includes(season)) {
+      return {
+        ok: false,
+        message: `R1 value metrics are not published for ${season}. Canonical R1 seasons: ${listCanonicalR1Seasons().join(", ")}.`,
       };
     }
     return { ok: true };
