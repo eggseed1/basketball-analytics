@@ -1,0 +1,400 @@
+/**
+ * Time Machine snapshot queries — reuse existing boards / games / events.
+ */
+
+import { teamEraDisplay, resolveTeamEra } from "@/data/identity/team-era";
+import { listCanonicalTeams } from "@/data/identity/team-map";
+import { getFilteredGames } from "@/data/queries/games";
+import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
+import { getTeamSeasonStats } from "@/data/queries/team-seasons";
+import { listTransactionEvents } from "@/data/queries/offseason-tracker";
+import type { GameSummary } from "@/data/types";
+import type { NbaTransactionEvent } from "@/data/types/transaction-event";
+import type { TeamSeasonStats } from "@/data/types/team-season";
+import {
+  resolveHistoricalTeamBrand,
+  type HistoricalLogoSource,
+  type HistoricalTeamBrandPalette,
+} from "@/lib/historical-team-brand";
+import {
+  clampDateToSeason,
+  seasonDateBounds,
+} from "@/themes/era-theme";
+
+export type HistoricalTeamDirectoryRow = {
+  canonicalTeamId: string;
+  abbr: string;
+  displayName: string;
+  conference?: "East" | "West";
+  avgDiff?: number;
+  fromEra: boolean;
+  /** Resolved logo URL when verified historical or safe current; null = text mark. */
+  logoUrl: string | null;
+  logoSource: HistoricalLogoSource;
+  /** Era palette for historical_text monograms. */
+  palette: HistoricalTeamBrandPalette | null;
+};
+
+export type LeaderMetric = "ppg" | "rpg" | "apg";
+
+export type HistoricalLeaderRow = {
+  playerId: string;
+  playerName: string;
+  teamAbbr: string;
+  teamId?: string;
+  value: number;
+  metric: LeaderMetric;
+};
+
+/**
+ * Teams that existed in the selected season (stats board), with era labels.
+ * Falls back to era-mapped canonical franchises when the board is empty.
+ */
+export async function getHistoricalTeamDirectory(
+  season: string
+): Promise<{
+  teams: HistoricalTeamDirectoryRow[];
+  source: "season-board" | "era-fallback" | "unavailable";
+  warning?: string;
+}> {
+  try {
+    const board = await getTeamSeasonStats(season);
+    if (board.length > 0) {
+      const teams = board
+        .map((row) => directoryFromBoardRow(row, season))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+      return { teams, source: "season-board" };
+    }
+  } catch {
+    /* fall through */
+  }
+
+  return eraFallbackDirectory(season);
+}
+
+function eraFallbackDirectory(season: string): {
+  teams: HistoricalTeamDirectoryRow[];
+  source: "era-fallback" | "unavailable";
+  warning?: string;
+} {
+  // Graceful degradation: only franchises with an era covering this season.
+  // Continuous franchises without relocation eras need the season board.
+  const teams: HistoricalTeamDirectoryRow[] = [];
+  for (const t of listCanonicalTeams()) {
+    const era = resolveTeamEra(t.canonicalTeamId, season);
+    if (!era) continue;
+    const brand = resolveHistoricalTeamBrand(
+      t.canonicalTeamId,
+      season,
+      "era"
+    );
+    teams.push({
+      canonicalTeamId: t.canonicalTeamId,
+      abbr: era.abbr,
+      displayName: era.displayName,
+      fromEra: true,
+      logoUrl: brand?.logoUrl ?? null,
+      logoSource: brand?.source ?? "text_fallback",
+      palette: brand?.palette ?? null,
+    });
+  }
+  teams.sort((a, b) => a.displayName.localeCompare(b.displayName));
+  if (teams.length === 0) {
+    return {
+      teams: [],
+      source: "unavailable",
+      warning: "Team directory unavailable for this season.",
+    };
+  }
+  return {
+    teams,
+    source: "era-fallback",
+    warning:
+      "Season team board unavailable; showing relocation-era franchises only (incomplete).",
+  };
+}
+
+function directoryFromBoardRow(
+  row: TeamSeasonStats,
+  season: string
+): HistoricalTeamDirectoryRow {
+  const era = teamEraDisplay(row.teamId, season, {
+    abbr: row.abbreviation,
+    displayName: row.fullName,
+  });
+  const brand = resolveHistoricalTeamBrand(row.teamId, season, "era");
+  return {
+    canonicalTeamId: row.teamId,
+    abbr: era.abbr,
+    displayName: era.displayName,
+    conference: row.conference,
+    avgDiff: row.avgDiff,
+    fromEra: era.fromEra,
+    logoUrl: brand?.logoUrl ?? null,
+    logoSource: brand?.source ?? "text_fallback",
+    palette: brand?.palette ?? null,
+  };
+}
+
+function perGameRate(
+  row: { points: number; rebounds: number; assists: number; gamesPlayed: number },
+  metric: LeaderMetric
+): number {
+  const gp = Math.max(1, row.gamesPlayed);
+  if (metric === "ppg") return row.points / gp;
+  if (metric === "rpg") return row.rebounds / gp;
+  return row.assists / gp;
+}
+
+function leadersFromBoard(
+  rows: Awaited<ReturnType<typeof getPlayerSeasonBoardSnapshot>>["rows"],
+  season: string,
+  metric: LeaderMetric,
+  limit: number,
+  warning?: string
+): { leaders: HistoricalLeaderRow[]; warning?: string } {
+  if (rows.length === 0) {
+    return {
+      leaders: [],
+      warning: warning ?? "No player-season rows for this season.",
+    };
+  }
+  const sorted = [...rows].sort(
+    (a, b) => perGameRate(b, metric) - perGameRate(a, metric)
+  );
+  const leaders = sorted.slice(0, limit).map((row) => {
+    const teamId = row.teamId ? String(row.teamId) : undefined;
+    const era =
+      teamId != null
+        ? teamEraDisplay(teamId, season, {
+            displayName: row.teamName,
+          })
+        : null;
+    return {
+      playerId: String(row.playerId),
+      playerName: row.playerName,
+      teamAbbr: era?.abbr ?? "—",
+      teamId,
+      value: perGameRate(row, metric),
+      metric,
+    };
+  });
+  return { leaders, warning };
+}
+
+export async function getHistoricalLeaders(
+  season: string,
+  metric: LeaderMetric,
+  limit = 10
+): Promise<{ leaders: HistoricalLeaderRow[]; warning?: string }> {
+  try {
+    const snap = await getPlayerSeasonBoardSnapshot({
+      season,
+      minimumGames: 10,
+    });
+    return leadersFromBoard(
+      snap.rows,
+      season,
+      metric,
+      limit,
+      snap.warnings[0]
+    );
+  } catch {
+    return {
+      leaders: [],
+      warning: "Player leaders unavailable for this season.",
+    };
+  }
+}
+
+/** One player-board load → scoring / rebound / assist leaders. */
+export async function getHistoricalLeadersBundle(
+  season: string,
+  limit = 10
+): Promise<{
+  ppg: HistoricalLeaderRow[];
+  rpg: HistoricalLeaderRow[];
+  apg: HistoricalLeaderRow[];
+  warning?: string;
+}> {
+  try {
+    const snap = await getPlayerSeasonBoardSnapshot({
+      season,
+      minimumGames: 10,
+    });
+    const warning = snap.warnings[0];
+    return {
+      ppg: leadersFromBoard(snap.rows, season, "ppg", limit, warning).leaders,
+      rpg: leadersFromBoard(snap.rows, season, "rpg", limit, warning).leaders,
+      apg: leadersFromBoard(snap.rows, season, "apg", limit, warning).leaders,
+      warning,
+    };
+  } catch {
+    return {
+      ppg: [],
+      rpg: [],
+      apg: [],
+      warning: "Player leaders unavailable for this season.",
+    };
+  }
+}
+
+/**
+ * One team-board load → directory + standings proxy.
+ */
+export async function getHistoricalTeamSnapshot(season: string): Promise<{
+  directory: HistoricalTeamDirectoryRow[];
+  directorySource: "season-board" | "era-fallback" | "unavailable";
+  directoryWarning?: string;
+  standings: {
+    east: HistoricalTeamDirectoryRow[];
+    west: HistoricalTeamDirectoryRow[];
+    available: boolean;
+    warning?: string;
+  };
+}> {
+  try {
+    const board = await getTeamSeasonStats(season);
+    if (board.length > 0) {
+      const directory = board
+        .map((row) => directoryFromBoardRow(row, season))
+        .sort((a, b) => a.displayName.localeCompare(b.displayName));
+      const byDiff = [...directory].sort(
+        (a, b) => (b.avgDiff ?? 0) - (a.avgDiff ?? 0)
+      );
+      return {
+        directory,
+        directorySource: "season-board",
+        standings: {
+          east: byDiff.filter((r) => r.conference === "East"),
+          west: byDiff.filter((r) => r.conference === "West"),
+          available: true,
+        },
+      };
+    }
+  } catch {
+    /* fall through */
+  }
+
+  const fallback = eraFallbackDirectory(season);
+  return {
+    directory: fallback.teams,
+    directorySource: fallback.source,
+    directoryWarning: fallback.warning,
+    standings: {
+      east: [],
+      west: [],
+      available: false,
+      warning:
+        fallback.warning ??
+        "Standings require season team board coverage.",
+    },
+  };
+}
+
+export async function getHistoricalGamesForDate(
+  season: string,
+  date: string
+): Promise<{ games: GameSummary[]; date: string; warning?: string }> {
+  const clamped = clampDateToSeason(date, season);
+  const load = async () => {
+    const games = await getFilteredGames({
+      season,
+      dateRange: { start: clamped, end: clamped },
+    });
+    return { games, date: clamped };
+  };
+  try {
+    // Bound network crawls so Time Machine primary UI stays responsive.
+    const result = await Promise.race([
+      load(),
+      new Promise<{ games: GameSummary[]; date: string; warning: string }>(
+        (resolve) =>
+          setTimeout(
+            () =>
+              resolve({
+                games: [],
+                date: clamped,
+                warning:
+                  "Games for this date are still loading from the historical provider. Try again shortly, or prefetch the season archive.",
+              }),
+            8000
+          )
+      ),
+    ]);
+    return result;
+  } catch {
+    return {
+      games: [],
+      date: clamped,
+      warning: "Games unavailable for this date.",
+    };
+  }
+}
+
+/**
+ * Pick a useful default date: mid-season calendar point (cheap; no fan-out).
+ */
+export async function resolveTimeMachineDate(
+  season: string,
+  dateParam?: string
+): Promise<string> {
+  if (dateParam) return clampDateToSeason(dateParam, season);
+  const { start } = seasonDateBounds(season);
+  const y = Number(start.slice(0, 4));
+  return clampDateToSeason(`${y + 1}-01-15`, season);
+}
+
+export async function getHistoricalTransactionsForDate(
+  date: string
+): Promise<{ events: NbaTransactionEvent[]; warning?: string }> {
+  try {
+    const page = await listTransactionEvents(
+      { dateFrom: date, dateTo: date },
+      { page: 1, pageSize: 30, force: false }
+    );
+    return { events: page.events };
+  } catch {
+    return {
+      events: [],
+      warning: "Transaction archive unavailable for this date.",
+    };
+  }
+}
+
+/** Season standings proxy: team board sorted by avgDiff (when available). */
+export async function getHistoricalStandingsProxy(
+  season: string
+): Promise<{
+  east: HistoricalTeamDirectoryRow[];
+  west: HistoricalTeamDirectoryRow[];
+  available: boolean;
+  warning?: string;
+}> {
+  try {
+    const board = await getTeamSeasonStats(season);
+    if (board.length === 0) {
+      return {
+        east: [],
+        west: [],
+        available: false,
+        warning: "Standings require season team board coverage.",
+      };
+    }
+    const rows = board
+      .map((r) => directoryFromBoardRow(r, season))
+      .sort((a, b) => (b.avgDiff ?? 0) - (a.avgDiff ?? 0));
+    return {
+      east: rows.filter((r) => r.conference === "East"),
+      west: rows.filter((r) => r.conference === "West"),
+      available: true,
+    };
+  } catch {
+    return {
+      east: [],
+      west: [],
+      available: false,
+      warning: "Standings unavailable for this season.",
+    };
+  }
+}
