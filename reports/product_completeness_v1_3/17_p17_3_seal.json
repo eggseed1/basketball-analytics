@@ -21,5 +21,9 @@
   "branch": "product/drbl-site-completeness-v1_3",
   "coverageHash": "b013cd4218f08093460d5a7a8cefd051749eaefe7578ec411853ee04b6b3fa52",
   "reproductionHash": "12934a4fc37ccb39b6666ddac5fd2381754d7378d69734f79f5e9e46e0606cc5",
-  "P17_3_SEAL": "b61831f9c03d930f193e548479093ca15ab67a2452de962c36d499ecfb817ba3"
+  "P17_3_SEAL": "b61831f9c03d930f193e548479093ca15ab67a2452de962c36d499ecfb817ba3",
+  "P17_3_FINAL_COMMIT": "5614ce3e54d46354adc41fc269a37a07db49d896",
+  "M17C_STARTING_COMMIT": "5614ce3e54d46354adc41fc269a37a07db49d896",
+  "OLD_M17C_STARTING_COMMIT": "a229b076f85efe88c5e980b43cd1d471a60ac34d",
+  "clean": true
 }
