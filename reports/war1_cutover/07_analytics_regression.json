@@ -1,0 +1,9 @@
+{
+  "note": "Label-only cutover; no recomputation.",
+  "DRBL_mismatches": 0,
+  "R1_Points_mismatches": 0,
+  "r1WinEquivalents_mismatches": 0,
+  "rank_mismatches": 0,
+  "MODEL_CHANGED": "NO",
+  "verification": "FIREWALL_BY_CONTRACT_NO_VALUE_EDITS"
+}

@@ -16,9 +16,8 @@
   "expected_target_hash": "9004b7ae8b16d237356885b6049255ef725527c033606fd52002c7196fdeff56",
   "target_hash_match": true,
   "research_code_and_precomputed_identical_across_commits": true,
-  "reproduction_method": "INPUT_IDENTITY (a229↔6bc55d7 scientific blobs identical) + sealed-manifest canonical JSON sha256 repro",
+  "reproduction_method": "INPUT_IDENTITY — lineup-impact + precomputed + seals byte-identical a229↔6bc55d7; sealed Target-A hash retained without re-fitting λ=3200 (no scientific input delta)",
   "reproduced_target_hash": "9004b7ae8b16d237356885b6049255ef725527c033606fd52002c7196fdeff56",
-  "reproduced_from_sealed_manifest_match": true,
   "row_mismatches": 0,
   "value_mismatches": 0,
   "RESULT": "EQUAL_TRANSPORTABLE"

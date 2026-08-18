@@ -68,7 +68,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL-L": {
     title: "DRBL leverage",
-    body: "Leverage-weighted seasonal impact Σ BaseValue × λ*, where λ* ∝ ∂WP/∂ExpectedPoints normalized to mean 1. Descriptive only — never added into R1 Points or R1 Win Equivalents.",
+    body: "Leverage-weighted seasonal impact Σ BaseValue × λ*, where λ* ∝ ∂WP/∂ExpectedPoints normalized to mean 1. Descriptive only — never added into R1 Points or WAR1.",
     learnMoreHref: "/learn/drbl-limitations",
   },
   "DRBL Δ": {
@@ -88,28 +88,28 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "R1 Points": {
     title: "R1 Points",
-    body: "Advanced accounting: point-equivalent attribution above R1. Public boards prefer Wins Above R1 (same ordering).",
+    body: "Advanced accounting: point-equivalent attribution above R1. Public boards prefer WAR1 (same ordering).",
     learnMoreHref: "/learn/r1-points",
   },
-  "Wins Above R1": {
-    title: "Wins Above R1",
-    body: "How much season value the player accumulated, in win-equivalent units. Not traditional WAR.",
-    learnMoreHref: "/learn/wins-above-r1",
-  },
   WAR1: {
-    title: "Wins Above R1",
-    body: "Compact label for Wins Above R1 — realized season value in win-equivalent units. Not traditional WAR.",
-    learnMoreHref: "/learn/wins-above-r1",
+    title: "WAR1",
+    body: "Realized season value above DRBL's contextual R1 reference, in win-equivalent units. Not traditional replacement-level WAR.",
+    learnMoreHref: "/learn/drbl/war1",
+  },
+  "Wins Above R1": {
+    title: "WAR1",
+    body: "Legacy search alias for WAR1 — realized season value in win-equivalent units. Not traditional WAR.",
+    learnMoreHref: "/learn/drbl/war1",
   },
   "R1 Win Eq.": {
-    title: "Wins Above R1",
-    body: "Legacy label for Wins Above R1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
-    learnMoreHref: "/learn/wins-above-r1",
+    title: "WAR1",
+    body: "Legacy label for WAR1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
+    learnMoreHref: "/learn/drbl/war1",
   },
   "R1 Win Equivalents": {
-    title: "Wins Above R1",
-    body: "Legacy label for Wins Above R1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
-    learnMoreHref: "/learn/wins-above-r1",
+    title: "WAR1",
+    body: "Legacy label for WAR1 (R1 Points ÷ frozen P1). Not traditional WAR. Ranking identical to R1 Points.",
+    learnMoreHref: "/learn/drbl/war1",
   },
   "DRBL/100": {
     title: "DRBL/100",
@@ -118,8 +118,8 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL impact": {
     title: "DRBL seasonal impact",
-    body: "Legacy companion field related to realized Approach-B attribution. Prefer Wins Above R1 for public realized value; R1 Points remain the underlying accounting total.",
-    learnMoreHref: "/learn/wins-above-r1",
+    body: "Legacy companion field related to realized Approach-B attribution. Prefer WAR1 for public realized value; R1 Points remain the underlying accounting total.",
+    learnMoreHref: "/learn/drbl/war1",
   },
   "DRBL ±": {
     title: "DRBL uncertainty (legacy diagnostic)",
@@ -128,7 +128,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DRBL: {
     title: "Differential Replacement Basketball Level",
-    body: "Estimated player impact from play-by-play. DRBL/100 is how good (rate); Wins Above R1 is how much (season value). R1 Points are the underlying accounting total.",
+    body: "Estimated player impact from play-by-play. DRBL/100 is how good (rate); WAR1 is how much (season value). R1 Points are the underlying accounting total.",
     learnMoreHref: "/learn/drbl",
   },
   BPM: {
@@ -259,12 +259,12 @@ const ALIASES: Record<string, string> = {
   onOffDpm: "On/Off DPM",
   drbl100: "DRBL/100",
   r1Points: "R1 Points",
-  r1WinEquivalents: "Wins Above R1",
-  r1WinEq: "Wins Above R1",
-  WAR1: "Wins Above R1",
-  "Wins Above R1": "Wins Above R1",
-  "R1 Win Eq.": "Wins Above R1",
-  "R1 Win Equivalents": "Wins Above R1",
+  r1WinEquivalents: "WAR1",
+  r1WinEq: "WAR1",
+  WAR1: "WAR1",
+  "Wins Above R1": "WAR1",
+  "R1 Win Eq.": "WAR1",
+  "R1 Win Equivalents": "WAR1",
   drblP: "DRBL-P",
   drblLn: "DRBL-LN",
   drblB: "DRBL-B",

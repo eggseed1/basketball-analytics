@@ -130,77 +130,96 @@
   }
 }
 
+/* ==========================================================================
+ * FROZEN — TEAM WASH GRADIENT SYSTEM
+ * Do not weaken, hollow the mid, or revert to ~9–14% edge fades.
+ * Freeze: reports/team_wash_gradient_freeze/00_freeze.json
+ * Test:   npm run test:team-wash-gradient
+ * Rule:   .cursor/rules/team-wash-gradient-freeze.mdc
+ * ========================================================================== */
 /* Soft dual-team wash for score / brand cards (light mode).
-   Neutral fallbacks — never Apple chart blue/purple. */
+   Neutral fallbacks — never Apple chart blue/purple.
+   Opaque tint plateaus (not edge→transparent fades) so mid never hollows. */
 .score-card-wash {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 14%, var(--card, white)) 0%,
-      var(--card, white) 42%,
-      color-mix(in oklab, var(--home-color, #aeaeb2) 14%, var(--card, white)) 100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 26%, var(--card, #ffffff)) 0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 22%, var(--card, #ffffff))
+      42%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 22%, var(--card, #ffffff))
+      58%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 26%, var(--card, #ffffff))
+      100%
+  );
 }
 
 .dark .score-card-wash {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 20%, var(--card, #1c1c1e))
-        0%,
-      var(--card, #1c1c1e) 42%,
-      color-mix(in oklab, var(--home-color, #636366) 20%, var(--card, #1c1c1e))
-        100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 24%, var(--card, #1c1c1e))
+      0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 20%, var(--card, #1c1c1e))
+      42%,
+    color-mix(in oklab, var(--home-color, #636366) 20%, var(--card, #1c1c1e))
+      58%,
+    color-mix(in oklab, var(--home-color, #636366) 24%, var(--card, #1c1c1e))
+      100%
+  );
 }
 
-/* Game matchup wash — away (left) → home (right) */
+/* Game matchup wash — away (left) → home (right), opaque plateaus. */
 .matchup-wash {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 18%, var(--card, white)) 0%,
-      color-mix(in oklab, var(--card, white) 92%, transparent) 38%,
-      var(--card, white) 50%,
-      color-mix(in oklab, var(--card, white) 92%, transparent) 62%,
-      color-mix(in oklab, var(--home-color, #aeaeb2) 18%, var(--card, white))
-        100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 28%, var(--card, #ffffff)) 0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 24%, var(--card, #ffffff))
+      42%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 24%, var(--card, #ffffff))
+      58%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 28%, var(--card, #ffffff))
+      100%
+  );
 }
 
 .matchup-wash--subtle {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 9%, var(--card, white)) 0%,
-      var(--card, white) 45%,
-      color-mix(in oklab, var(--home-color, #aeaeb2) 9%, var(--card, white))
-        100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 24%, var(--card, #ffffff)) 0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 20%, var(--card, #ffffff))
+      42%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 20%, var(--card, #ffffff))
+      58%,
+    color-mix(in oklab, var(--home-color, #aeaeb2) 24%, var(--card, #ffffff))
+      100%
+  );
 }
 
 .dark .matchup-wash {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 24%, var(--card, #1c1c1e))
-        0%,
-      var(--card, #1c1c1e) 48%,
-      color-mix(in oklab, var(--home-color, #636366) 24%, var(--card, #1c1c1e))
-        100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 26%, var(--card, #1c1c1e))
+      0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 22%, var(--card, #1c1c1e))
+      42%,
+    color-mix(in oklab, var(--home-color, #636366) 22%, var(--card, #1c1c1e))
+      58%,
+    color-mix(in oklab, var(--home-color, #636366) 26%, var(--card, #1c1c1e))
+      100%
+  );
 }
 
 .dark .matchup-wash--subtle {
-  background:
-    linear-gradient(
-      105deg,
-      color-mix(in oklab, var(--away-color, #8e8e93) 12%, var(--card, #1c1c1e))
-        0%,
-      var(--card, #1c1c1e) 48%,
-      color-mix(in oklab, var(--home-color, #636366) 12%, var(--card, #1c1c1e))
-        100%
-    );
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklab, var(--away-color, #8e8e93) 18%, var(--card, #1c1c1e))
+      0%,
+    color-mix(in oklab, var(--away-color, #8e8e93) 15%, var(--card, #1c1c1e))
+      42%,
+    color-mix(in oklab, var(--home-color, #636366) 15%, var(--card, #1c1c1e))
+      58%,
+    color-mix(in oklab, var(--home-color, #636366) 18%, var(--card, #1c1c1e))
+      100%
+  );
 }
 
 /* Left accent stripe for rows tied to a team brand */

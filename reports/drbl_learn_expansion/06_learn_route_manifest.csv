@@ -1,7 +1,7 @@
 topic,route,kind,exists
 DRBL overview,/learn/drbl,portal,YES
 DRBL/100,/learn/drbl-100,guide,YES
-Wins Above R1,/learn/wins-above-r1,guide,YES
+WAR1,/learn/drbl/war1,missing,NO
 DRBL-O,/learn/drbl-o,guide,YES
 DRBL-D,/learn/drbl-d,guide,YES
 DRBL-P,/learn/drbl-p,guide,YES

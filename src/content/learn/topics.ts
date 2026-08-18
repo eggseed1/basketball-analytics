@@ -989,7 +989,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howDrblUses: [
       "Approach-B attribution vs a role-matched R1 expected-points baseline.",
       "Validated DRBL/100 = EB1600 shrinkage of the raw ability rate (k = 1600, prior mean 0).",
-      "Wins Above R1 converts accumulated R1 Points by the frozen P1 constant.",
+      "WAR1 converts accumulated R1 Points by the frozen P1 constant.",
     ],
     calculation: [
       "Possession begins → expected scoring value is set.",
@@ -997,7 +997,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Credit is attributed for observable contributions.",
       "Possessions accumulate into a raw ability rate.",
       "Small samples are shrunk toward zero (EB1600).",
-      "Season value accumulates as R1 Points → Wins Above R1.",
+      "Season value accumulates as R1 Points → WAR1.",
     ],
     caveats: [
       "Public PBP does not observe every spatial or off-ball action.",
@@ -1030,20 +1030,22 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howDrblUses: [
       "Published ability rates use the validated EB1600 path sealed in research.",
-      "Product boards do not claim DRBL beats DARKO, BPM, or other externals until that comparison is authorized and complete.",
+      "Product boards do not claim DRBL beats DARKO, BPM, or other externals.",
     ],
     calculation: [
       "Review reserved / out-of-time protocols from the sealed research reports.",
       "Inspect sample sizes, RMSE-style summaries, bootstrap checks, team-changer slices, and exposure bins where published.",
+      "M17c (external common-target): DRBL and BPM were statistically indistinguishable on the reserved independent comparison; broader external benchmarking was blocked by insufficient historical coverage for other primary external metrics.",
     ],
     caveats: [
-      "External common-target superiority is not an established product claim (M17c not authorized here).",
+      "Do not read M17c as “DRBL beat BPM” or “DRBL is the best public metric.”",
+      "M17c broader external superiority remains blocked by coverage — not a product ranking claim.",
       "Individual predictive uncertainty intervals are not currently shipped.",
       "Validation does not erase PBP observability limits.",
     ],
     relatedIds: ["drbl", "how_drbl_works", "drbl_limitations", "drbl_historical"],
     seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],
-    sources: ["reports/m16j/", "reports/m17b/"],
+    sources: ["reports/m16j/", "reports/m17b/", "reports/m17c/", "reports/m17c_provenance/"],
   },
   {
     id: "drbl_historical",
@@ -1095,11 +1097,11 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Standard PBP misses some spatial / off-ball behavior.",
       "Lineup context can retain system effects — LN is not proven off-ball value.",
       "Individual predictive uncertainty is not currently shipped.",
-      "R1 is not conventional replacement; Wins Above R1 is not traditional WAR.",
+      "R1 is not conventional replacement; WAR1 is not traditional WAR.",
       "Cross-era comparability and external superiority are not established product claims.",
     ],
     howDrblUses: [
-      "Primary surfaces stay on DRBL/100 and Wins Above R1.",
+      "Primary surfaces stay on DRBL/100 and WAR1.",
       "P / LN / B remain diagnostic disclosures with Learn links.",
       "Retired WAR / uncertainty framing stays out of public ranking.",
     ],

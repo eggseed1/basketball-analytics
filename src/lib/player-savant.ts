@@ -137,7 +137,7 @@ export function buildSavantSections(
         metric(
           percentiles,
           "r1WinEquivalents",
-          "Wins Above R1",
+          "WAR1",
           row.r1WinEquivalents != null
             ? formatSigned(row.r1WinEquivalents, 1)
             : null,
@@ -492,7 +492,7 @@ export const CAREER_TIMELINE_METRICS: CareerTimelineMetric[] = [
   },
   {
     key: "r1WinEquivalents",
-    label: "Wins Above R1",
+    label: "WAR1",
     value: (r) => r.r1WinEquivalents ?? 0,
     format: (v) => formatSigned(v, 1),
     kind: "plusMinus",

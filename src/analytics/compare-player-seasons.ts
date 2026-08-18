@@ -692,7 +692,7 @@ export function comparePlayerSeasons(options: {
   );
   pushDrblOrUnavailable(
     "r1_win_eq",
-    "Wins Above R1",
+    "WAR1",
     "realized_value",
     aDrbl &&
       a.r1WinEquivalents != null &&

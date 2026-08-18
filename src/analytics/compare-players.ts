@@ -38,7 +38,7 @@ const DIMENSIONS: DimSpec[] = [
   { id: "drbl_d", label: "DRBL-D", metricId: "drblD", group: "rate_ability" },
   {
     id: "r1_win_eq",
-    label: "Wins Above R1",
+    label: "WAR1",
     metricId: "r1WinEq",
     group: "realized_value",
   },

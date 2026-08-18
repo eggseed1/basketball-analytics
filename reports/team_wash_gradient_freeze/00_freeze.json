@@ -1,0 +1,31 @@
+{
+  "freeze": "TEAM_WASH_GRADIENT_SYSTEM",
+  "status": "FROZEN",
+  "frozenAt": "2026-08-17T23:33:00.000Z",
+  "sourceFile": "src/app/globals.css",
+  "canonicalBlockMarker": "/* Soft dual-team wash",
+  "blockSha256": "4d38e38dc3b6fabb3f91187573be7f61c517ae4e0c2cc89bd744f22bde5a41f6",
+  "snapshot": "reports/team_wash_gradient_freeze/wash_block.css",
+  "contract": {
+    "angle": "90deg",
+    "shape": "opaque_tint_plateaus",
+    "stops": ["0%", "42%", "58%", "100%"],
+    "forbidHollowMid": true,
+    "forbidFaintLegacyMix": true,
+    "lightMixPct": {
+      "score-card-wash": [26, 22, 22, 26],
+      "matchup-wash": [28, 24, 24, 28],
+      "matchup-wash--subtle": [24, 20, 20, 24]
+    },
+    "darkMixPct": {
+      "score-card-wash": [24, 20, 20, 24],
+      "matchup-wash": [26, 22, 22, 26],
+      "matchup-wash--subtle": [18, 15, 15, 18]
+    },
+    "cssVariables": ["--away-color", "--home-color"],
+    "neutralFallbacks": ["#8e8e93", "#aeaeb2", "#636366"]
+  },
+  "note": "User-accepted stronger continuous team washes. Supersedes any prior revert to faint/hollow mid fades.",
+  "regressionTest": "scripts/test-team-wash-gradient-freeze.ts",
+  "cursorRule": ".cursor/rules/team-wash-gradient-freeze.mdc"
+}

@@ -146,11 +146,12 @@ function main() {
   assert.equal(a, c);
 
   assert.equal(learnHrefFor("drbl"), "/learn/drbl-100");
-  assert.equal(learnHrefFor("r1_win_eq"), "/learn/wins-above-r1");
+  assert.equal(learnHrefFor("r1_win_eq"), "/learn/drbl/war1");
   assert.equal(learnHrefFor("drbl_p"), "/learn/drbl-p");
   assert.ok(resolveLearnPage("drbl")?.kind === "portal");
   for (const slug of [
     "drbl-100",
+    "war1",
     "wins-above-r1",
     "drbl-o",
     "drbl-d",
@@ -165,6 +166,13 @@ function main() {
     "drbl-limitations",
   ]) {
     assert.ok(resolveLearnPage(slug), `missing DRBL learn page ${slug}`);
+  }
+  assert.equal(resolveLearnPage("war1")?.kind, "guide");
+  assert.equal(resolveLearnPage("wins-above-r1")?.kind, "guide");
+  const war1 = resolveLearnPage("war1");
+  if (war1?.kind === "guide") {
+    assert.equal(war1.guide.name, "WAR1");
+    assert.equal(war1.guide.slug, "war1");
   }
 
   console.log("test-learn-explanations: all assertions passed");

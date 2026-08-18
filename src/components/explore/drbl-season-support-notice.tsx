@@ -18,7 +18,7 @@ export function DrblSeasonSupportNotice({ season }: { season: string }) {
           <span className="font-medium text-foreground">
             DRBL unavailable for this season.
           </span>{" "}
-          Canonical DRBL/100 and Wins Above R1 require play-by-play seasons that
+          Canonical DRBL/100 and WAR1 require play-by-play seasons that
           pass frozen-v1 support gates. Box-score stats may still load.
         </p>
         <p className="mt-1">

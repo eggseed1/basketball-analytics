@@ -164,7 +164,7 @@ export interface PlayerSeason {
   drblSeasonalImpact: number;
   /**
    * Leverage-weighted seasonal impact Σ BaseValue × λ*
-   * (formal WP derivative; excluded from R1 Points / R1 Win Equivalents).
+   * (formal WP derivative; excluded from R1 Points / WAR1).
    */
   drblL: number;
   /** Mean normalized leverage λ* on the player's possessions. */

@@ -259,7 +259,7 @@ export function PlayerSeasonRankView({
               ) : null}
               {entry.r1PointsSelectedRank != null ? (
                 <p className="text-[12px] text-muted-foreground">
-                  <MetricHelp conceptId="r1_win_eq">Wins Above R1</MetricHelp>
+                  <MetricHelp conceptId="r1_win_eq">WAR1</MetricHelp>
                   {" rank among selected: "}
                   <span className="font-semibold tabular-nums text-foreground">
                     #{entry.r1PointsSelectedRank}

@@ -142,7 +142,7 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
   },
   {
     key: "r1WinEquivalents",
-    label: "Wins Above R1",
+    label: "WAR1",
     defaultDir: "desc",
     numeric: true,
     value: (r) => r.r1WinEquivalents ?? Number.NEGATIVE_INFINITY,
@@ -192,9 +192,11 @@ const OPTION_BY_KEY = new Map(
 );
 
 export function getPlayerSortOption(key: string | null | undefined): PlayerSortOption {
-  // Old bookmarks: drblWar / r1Points → Wins Above R1 (identical ordering).
+  // Old bookmarks + public alias: drblWar / r1Points / war1 → r1WinEquivalents.
   const normalized =
-    key === "drblWar" || key === "r1Points" ? "r1WinEquivalents" : key;
+    key === "drblWar" || key === "r1Points" || key === "war1"
+      ? "r1WinEquivalents"
+      : key;
   if (normalized && OPTION_BY_KEY.has(normalized as PlayerSortKey)) {
     return OPTION_BY_KEY.get(normalized as PlayerSortKey)!;
   }

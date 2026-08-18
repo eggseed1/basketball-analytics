@@ -403,7 +403,7 @@ export function PlayerSeasonTable({
                       dir={sortDir}
                       onClick={() => toggleSort("r1WinEquivalents")}
                     >
-                      Wins Above R1
+                      WAR1
                     </SortableTableHead>
                   </>
                 ) : null}
@@ -655,7 +655,7 @@ const COLUMN_META: Partial<Record<SortKey, { label: string }>> = {
   darkoDpm: { label: "DARKO" },
   lebron: { label: "LEBRON" },
   drbl100: { label: "DRBL/100" },
-  r1WinEquivalents: { label: "Wins Above R1" },
+  r1WinEquivalents: { label: "WAR1" },
 };
 
 function formatSigned(n: number): string {

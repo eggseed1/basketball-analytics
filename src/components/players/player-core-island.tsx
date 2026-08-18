@@ -351,10 +351,10 @@ export async function PlayerCoreIsland({
                         <div>
                           <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
                             <Link
-                              href="/learn/wins-above-r1"
+                              href="/learn/drbl/war1"
                               className="underline-offset-2 hover:underline"
                             >
-                              Wins Above R1
+                              WAR1
                             </Link>
                           </dt>
                           <dd className="mt-0.5 text-[22px] font-bold tabular-nums leading-none">

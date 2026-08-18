@@ -7,7 +7,7 @@ import { P1_POINTS_PER_WIN } from "@/lib/drbl-public-labels";
 export const metadata: Metadata = {
   title: "What is DRBL?",
   description:
-    "DRBL/100 answers how good. Wins Above R1 answers how much. Go deeper only when you want to.",
+    "DRBL/100 answers how good. WAR1 answers how much. Go deeper only when you want to.",
 };
 
 function Card({
@@ -44,8 +44,8 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
     blurb: "Impact rate — how good on a per-100 scale.",
   },
   {
-    href: "/learn/wins-above-r1",
-    label: "Wins Above R1",
+    href: "/learn/drbl/war1",
+    label: "WAR1",
     blurb: "Season value accumulated in win-equivalent units.",
   },
   {
@@ -81,7 +81,7 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
   {
     href: "/learn/r1-points",
     label: "R1 Points",
-    blurb: "Advanced accounting behind Wins Above R1.",
+    blurb: "Advanced accounting behind WAR1.",
   },
   {
     href: "/learn/how-drbl-works",
@@ -145,7 +145,7 @@ export default function LearnDrblPage() {
               Estimated impact per 100 possessions. Canonical ranking rate.
             </p>
           </Card>
-          <Card title="Wins Above R1" href="/learn/wins-above-r1">
+          <Card title="WAR1" href="/learn/drbl/war1">
             <p className="font-medium text-foreground">How much?</p>
             <p className="mt-1">
               Realized season value in win-equivalent units. Not traditional WAR.
@@ -163,7 +163,7 @@ export default function LearnDrblPage() {
             below.
           </li>
           <li>
-            <strong className="text-foreground">Wins Above R1</strong> — how much
+            <strong className="text-foreground">WAR1</strong> — how much
             value stacked up this season (minutes and volume matter).
           </li>
           <li>
@@ -212,24 +212,26 @@ export default function LearnDrblPage() {
             team decomposition, and research.
           </p>
           <p>
-            <strong className="text-foreground">Wins Above R1</strong> is a
+            <strong className="text-foreground">WAR1</strong> is a
             fixed linear conversion of the same quantity:
           </p>
           <p className="font-mono text-[12px] text-foreground/85">
-            Wins Above R1 = R1 Points / {P1_POINTS_PER_WIN}
+            WAR1 = R1 Points / {P1_POINTS_PER_WIN}
           </p>
           <p>
             Because the denominator is a fixed positive constant,{" "}
             <strong className="text-foreground">
-              rank(R1 Points) = rank(Wins Above R1)
+              rank(R1 Points) = rank(WAR1)
             </strong>{" "}
-            exactly. The product surface prefers Wins Above R1 so casual readers
+            exactly. The product surface prefers WAR1 so casual readers
             see interpretable win-equivalent units without needing residual
             accounting.
           </p>
           <p>
-            Wins Above R1 is <strong className="text-foreground">not</strong>{" "}
-            traditional WAR. Not traditional WAR phrasing stays intentional.
+            WAR1 is <strong className="text-foreground">not</strong>{" "}
+            traditional WAR. The name is intended as “Wins Above R1,” but the
+            public product label is WAR1 — and R1 is a contextual role-matched
+            reference, not conventional replacement level.
           </p>
           <p className="font-mono text-[12px] text-foreground/85">
             validatedDRBL100 = EB<sub>1600</sub>(rawAbilityRate) toward 0 · k = 1600
@@ -240,7 +242,7 @@ export default function LearnDrblPage() {
       <section className="sports-card border border-border bg-card px-4 py-4">
         <h2 className="text-lg font-semibold">Explore the numbers</h2>
         <p className="mt-1 text-sm text-muted-foreground">
-          Sort by DRBL/100 (ability) or Wins Above R1 (realized value).
+          Sort by DRBL/100 (ability) or WAR1 (realized value).
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           <Link
@@ -253,7 +255,7 @@ export default function LearnDrblPage() {
             href="/explore/players?sort=r1WinEquivalents&dir=desc"
             className="rounded-md border border-border px-3 py-1.5 text-sm font-medium hover:bg-muted"
           >
-            Wins Above R1
+            WAR1
           </Link>
         </div>
       </section>

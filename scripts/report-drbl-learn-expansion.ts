@@ -33,7 +33,7 @@ const PUBLIC_DRBL: Array<{
   },
   {
     field: "r1WinEquivalents",
-    publicLabel: "Wins Above R1",
+    publicLabel: "WAR1",
     surface: "player left rail, Overview, explore, ASK",
     status: "PRIMARY",
     conceptId: "r1_win_eq",
@@ -114,7 +114,7 @@ const PUBLIC_DRBL: Array<{
   {
     field: "drblSeasonalImpact",
     publicLabel: "DRBL impact",
-    surface: "legacy companion — prefer Wins Above R1",
+    surface: "legacy companion — prefer WAR1",
     status: "RETIRED",
     conceptId: "r1_win_eq",
     keepPublic: "NO",
@@ -201,7 +201,7 @@ function main() {
   const routes: Array<[string, string]> = [
     ["DRBL overview", "/learn/drbl"],
     ["DRBL/100", "/learn/drbl-100"],
-    ["Wins Above R1", "/learn/wins-above-r1"],
+    ["WAR1", "/learn/drbl/war1"],
     ["DRBL-O", "/learn/drbl-o"],
     ["DRBL-D", "/learn/drbl-d"],
     ["DRBL-P", "/learn/drbl-p"],
@@ -230,18 +230,22 @@ function main() {
   );
 
   const keep = PUBLIC_DRBL.filter((m) => m.keepPublic === "YES");
-  const covered = keep.filter((m) => {
-    const href = learnHrefFor(m.conceptId);
+  function learnCovered(href: string | null): boolean {
     if (!href) return false;
-    const slug = href.replace("/learn/", "");
-    return resolveLearnPage(slug) != null;
-  });
+    const slug = href.replace(/^\/learn\//, "");
+    if (resolveLearnPage(slug) != null) return true;
+    if (listDiscoverableLearnSlugs().includes(slug)) return true;
+    // Nested WAR1 App Router page ↔ StatGuide slug war1
+    if (slug === "drbl/war1" && resolveLearnPage("war1") != null) return true;
+    return false;
+  }
+  const covered = keep.filter((m) => learnCovered(learnHrefFor(m.conceptId)));
   const coverageHeader =
     "field,public_label,short_explanation,tooltip,Learn_destination,covered";
   const coverageRows = keep.map((m) => {
     const href = learnHrefFor(m.conceptId) ?? "";
     const concept = LEARN_CONCEPTS.find((c) => c.id === m.conceptId);
-    const ok = href && resolveLearnPage(href.replace("/learn/", "")) != null;
+    const ok = learnCovered(href);
     return [
       m.field,
       m.publicLabel,
@@ -268,7 +272,7 @@ function main() {
     ],
     [
       "replacement",
-      "Wins Above R1 copy",
+      "WAR1 copy",
       "LOW",
       "Explicitly not conventional replacement / not WAR",
     ],
@@ -276,7 +280,7 @@ function main() {
       "WAR",
       "public labels",
       "LOW",
-      "Wins Above R1 never called traditional WAR",
+      "WAR1 never called traditional WAR",
     ],
     [
       "off-ball",
@@ -319,7 +323,7 @@ function main() {
   const dedicatedGuides = listStatGuides().filter((g) =>
     [
       "drbl-100",
-      "wins-above-r1",
+      "war1",
       "drbl-o",
       "drbl-d",
       "drbl-p",
@@ -335,7 +339,7 @@ function main() {
     DEEP_RABBIT_HOLE: "YES",
     PLAYER_HEADLINE_DRBL_CONCEPT_COUNT: 4,
     PRIMARY_RATE: "DRBL/100",
-    PRIMARY_VALUE: "Wins Above R1",
+    PRIMARY_VALUE: "WAR1",
     R1_POINTS_PRIMARY: "NO",
     P_LN_B_FIRST_VIEW: "NO",
     OFFENSE_DEFENSE_CASUAL_LABELS: "YES",

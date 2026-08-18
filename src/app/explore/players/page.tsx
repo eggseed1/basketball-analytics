@@ -22,7 +22,7 @@ import { filtersFromSearchParams } from "@/lib/search-params";
 export const metadata = {
   title: "Players",
   description:
-    "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and Wins Above R1 for registry seasons.",
+    "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and WAR1 for registry seasons.",
 };
 
 interface ExplorePlayersPageProps {
@@ -128,8 +128,8 @@ export default async function ExplorePlayersPage({
           Leaderboard
         </h1>
         <p className="max-w-2xl text-[13px] text-muted-foreground">
-          Box-score exploration spans the archive. Canonical DRBL/100 and Wins
-          Above R1 appear only for DRBL registry seasons ({drblSeasons.join(", ")}
+          Box-score exploration spans the archive. Canonical DRBL/100 and WAR1
+          appear only for DRBL registry seasons ({drblSeasons.join(", ")}
           ).
         </p>
         {parsePlayerSeasonSortKey(params.sort) ? (

@@ -1,0 +1,39 @@
+---
+description: Frozen team-color wash gradient system — do not weaken or hollow mid fades
+globs: src/app/globals.css,src/components/brand/team-wash-card.tsx,src/lib/game-matchup-theme.ts,src/components/**/*wash*
+alwaysApply: false
+---
+
+# Team wash gradient freeze
+
+The team-color wash system in `src/app/globals.css` is **FROZEN**.
+
+Canonical classes:
+
+- `.score-card-wash` / `.dark .score-card-wash`
+- `.matchup-wash` / `.matchup-wash--subtle`
+- `.dark .matchup-wash` / `.dark .matchup-wash--subtle`
+
+## Locked contract
+
+1. **Direction:** `90deg` left → right (away → home / primary → secondary).
+2. **Shape:** Opaque **tint plateaus** at ~0% / 42% / 58% / 100%. Mid must stay tinted.
+3. **Forbidden:** Edge→transparent / white-hole middles (e.g. `var(--card) 42%` or `transparent` mid stops that hollow the wash).
+4. **Strength (light):** mix strengths roughly **20–28%** team color into card — not the old faint ~9–14% system.
+5. **CSS variables:** `--away-color` / `--home-color` (set by `TeamWashCard` / matchup wash via `brandWashColor`).
+
+## Do not
+
+- Revert to the pre-fix faint washes without an explicit user request to unfreeze.
+- “Improve” by fading to pure card/white in the center.
+- Replace with purple/blue Apple-style fallbacks (neutrals `#8e8e93` / `#aeaeb2` only).
+
+## Change process
+
+Any intentional change requires:
+
+1. User explicitly asks to update the freeze
+2. Update `reports/team_wash_gradient_freeze/*`
+3. Keep `npm run test:team-wash-gradient` green
+
+Regression test: `scripts/test-team-wash-gradient-freeze.ts`

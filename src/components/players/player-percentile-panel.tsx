@@ -36,7 +36,7 @@ const CATEGORY_META: Array<{
   label: string;
   blurb: string;
 }> = [
-  { id: "value", label: "Overview", blurb: "How good — rate, value, O/D" },
+  { id: "value", label: "Overview", blurb: "Peer exploration — WAR1, O/D, and other value metrics" },
   { id: "offense", label: "Offense", blurb: "Creation & scoring volume" },
   { id: "shooting", label: "Shooting", blurb: "Efficiency" },
   { id: "defense", label: "Defense", blurb: "Stocks & impact" },
@@ -359,7 +359,9 @@ export function PlayerPercentilePanel({
 }) {
   const categories = useMemo(
     () =>
-      CATEGORY_META.filter((c) => metrics.some((m) => m.category === c.id)),
+      CATEGORY_META.filter((c) =>
+        metrics.some((m) => m.category === c.id && !m.profileHidden)
+      ),
     [metrics]
   );
 
@@ -370,7 +372,10 @@ export function PlayerPercentilePanel({
   const accent = teamChartColor(teamKey).color;
 
   const visible = useMemo(
-    () => metrics.filter((m) => m.category === categoryId),
+    () =>
+      metrics.filter(
+        (m) => m.category === categoryId && !m.profileHidden
+      ),
     [metrics, categoryId]
   );
 

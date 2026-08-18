@@ -1,0 +1,7 @@
+{
+  "seal": "TEAM_WASH_GRADIENT_FREEZE",
+  "status": "PASS",
+  "blockSha256": "4d38e38dc3b6fabb3f91187573be7f61c517ae4e0c2cc89bd744f22bde5a41f6",
+  "sealedAt": "2026-08-17T23:33:00.000Z",
+  "unfreezeRequires": "explicit user request + freeze artifact update + green test:team-wash-gradient"
+}

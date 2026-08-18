@@ -60,8 +60,9 @@ export function parsePlayerSeasonSortKey(
 ): PlayerSeasonSortKey | undefined {
   const raw = Array.isArray(value) ? value[0] : value;
   if (!raw) return undefined;
-  // R1 Points sort bookmarks → Wins Above R1 (identical ordering).
-  const normalized = raw === "r1Points" ? "r1WinEquivalents" : raw;
+  // R1 Points / war1 sort bookmarks → r1WinEquivalents (identical ordering).
+  const normalized =
+    raw === "r1Points" || raw === "war1" ? "r1WinEquivalents" : raw;
   if (!SORT_KEYS.has(normalized)) return undefined;
   return normalized as PlayerSeasonSortKey;
 }
@@ -73,6 +74,6 @@ export function defaultPlayerSeasonSortDir(
     return "asc";
   }
   if (key === "defensiveRating" || key === "tov") return "asc";
-  // DRBL/100 and Wins Above R1 default to descending.
+  // DRBL/100 and WAR1 default to descending.
   return "desc";
 }

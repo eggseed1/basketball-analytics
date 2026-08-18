@@ -170,16 +170,16 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "DRBL R1 Points (accounting / advanced)",
       notes:
-        "Underlying point-equivalent attribution — prefer Wins Above R1 on the public surface. Null when unpublished.",
+        "Underlying point-equivalent attribution — prefer WAR1 on the public surface. Null when unpublished.",
     },
     {
       metricId: "r1_win_eq",
-      label: "Wins Above R1",
+      label: "WAR1",
       earliestSeason: listCanonicalR1Seasons()[0] ?? "2020-21",
       latestSeason: listCanonicalR1Seasons().at(-1) ?? current,
       playerCoverage: "Canonical R1 seasons in DRBL registry",
       reliable: true,
-      sourceLabel: "DRBL Wins Above R1",
+      sourceLabel: "DRBL WAR1",
       notes:
         "R1 Points ÷ frozen P1. Not traditional WAR. Identical ordering to R1 Points.",
     },

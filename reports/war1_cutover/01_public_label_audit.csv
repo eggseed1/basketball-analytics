@@ -1,0 +1,139 @@
+file,line/context,old text,surface,allowed legacy/explanatory?,replacement,status
+src/app/learn/drbl/page.tsx,"L232: traditional WAR. The name is intended as “Wins Above R1,” but the",Wins Above R1,app,yes,WAR1 (primary),ALLOWLISTED:EXPLANATORY_PROSE
+src/content/stats/drbl-guides.ts,"L101: ""The name is intended as Wins Above R1 — but the public product label is WAR1, and it is not traditional replacement-level WAR."",",Wins Above R1,content,yes,WAR1 (primary),ALLOWLISTED:EXPLANATORY_PROSE
+src/content/stats/drbl-guides.ts,"L127: ""WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 ",Wins Above R1,content,yes,WAR1 (primary),ALLOWLISTED:EXPLANATORY_PROSE
+src/lib/drbl-public-labels.ts,"L42: ""Wins Above R1"",",Wins Above R1,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L43: ""R1 Win Eq."",",R1 Win Eq.,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L44: ""R1 WinEq"",",R1 WinEq,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L45: ""R1 Win Equivalent"",",R1 Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L45: ""R1 Win Equivalent"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L46: ""R1 Win Equivalents"",",R1 Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L46: ""R1 Win Equivalents"",",R1 Win Equivalents,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L46: ""R1 Win Equivalents"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L46: ""R1 Win Equivalents"",",Win Equivalents,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L47: ""Wins over R1"",",Wins over R1,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L48: ""Win Equivalent"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L49: ""Win Equivalents"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/drbl-public-labels.ts,"L49: ""Win Equivalents"",",Win Equivalents,lib,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+src/lib/learn-column-concepts.ts,"L37: ""Wins Above R1"": ""r1_win_eq"",",Wins Above R1,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/learn-column-concepts.ts,"L38: ""R1 Win Eq."": ""r1_win_eq"",",R1 Win Eq.,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/learn-column-concepts.ts,"L39: ""R1 Win Equivalents"": ""r1_win_eq"",",R1 Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/learn-column-concepts.ts,"L39: ""R1 Win Equivalents"": ""r1_win_eq"",",R1 Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/learn-column-concepts.ts,"L39: ""R1 Win Equivalents"": ""r1_win_eq"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/learn-column-concepts.ts,"L39: ""R1 Win Equivalents"": ""r1_win_eq"",",Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L99: ""Wins Above R1"": {",Wins Above R1,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L104: ""R1 Win Eq."": {",R1 Win Eq.,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L109: ""R1 Win Equivalents"": {",R1 Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L109: ""R1 Win Equivalents"": {",R1 Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L109: ""R1 Win Equivalents"": {",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L109: ""R1 Win Equivalents"": {",Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L265: ""Wins Above R1"": ""WAR1"",",Wins Above R1,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L266: ""R1 Win Eq."": ""WAR1"",",R1 Win Eq.,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L267: ""R1 Win Equivalents"": ""WAR1"",",R1 Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L267: ""R1 Win Equivalents"": ""WAR1"",",R1 Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L267: ""R1 Win Equivalents"": ""WAR1"",",Win Equivalent,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/lib/stat-glossary.ts,"L267: ""R1 Win Equivalents"": ""WAR1"",",Win Equivalents,lib,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+src/query-engine/drbl-vocabulary.ts,"L120: ""Win Equivalents are WAR"",",Win Equivalent,lib,yes,n/a (forbidden-claim detector),ALLOWLISTED:LEGACY_ALIAS
+src/query-engine/drbl-vocabulary.ts,"L120: ""Win Equivalents are WAR"",",Win Equivalents,lib,yes,n/a (forbidden-claim detector),ALLOWLISTED:LEGACY_ALIAS
+scripts/drbl-m16l1_1.ts,L1251: - Wins Above R1,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_1.ts,L1253: - Player-Attributed Wins Above R1,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L581: name: ""R1 Win Equivalents"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L581: name: ""R1 Win Equivalents"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L581: name: ""R1 Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L581: name: ""R1 Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L588: name: ""Player-Attributed Wins Above R1"",",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L897: **R1 Win Equivalents**,R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L897: **R1 Win Equivalents**,R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L897: **R1 Win Equivalents**,Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L897: **R1 Win Equivalents**,Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L950: winEq: ""R1 Win Equivalents"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L950: winEq: ""R1 Win Equivalents"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L950: winEq: ""R1 Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L950: winEq: ""R1 Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L1116: PREFERRED_WIN_EQUIVALENT_NAME: ""R1 Win Equivalents"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L1116: PREFERRED_WIN_EQUIVALENT_NAME: ""R1 Win Equivalents"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L1116: PREFERRED_WIN_EQUIVALENT_NAME: ""R1 Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,"L1116: PREFERRED_WIN_EQUIVALENT_NAME: ""R1 Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L1179: - **R1 Win Equivalents** = R1Points / ${P1},R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L1179: - **R1 Win Equivalents** = R1Points / ${P1},R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L1179: - **R1 Win Equivalents** = R1Points / ${P1},Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l1_2.ts,L1179: - **R1 Win Equivalents** = R1Points / ${P1},Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L567: 3. R1 Win Equivalents = R1 Points / P1 (${P1}),R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L567: 3. R1 Win Equivalents = R1 Points / P1 (${P1}),R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L567: 3. R1 Win Equivalents = R1 Points / P1 (${P1}),Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L567: 3. R1 Win Equivalents = R1 Points / P1 (${P1}),Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L825: ""R1 Win Equivalents"": ""1-2 decimals"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L825: ""R1 Win Equivalents"": ""1-2 decimals"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L825: ""R1 Win Equivalents"": ""1-2 decimals"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L825: ""R1 Win Equivalents"": ""1-2 decimals"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1321: - Leaderboard/explore sort includes R1 Points and R1 Win Equivalents,R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1321: - Leaderboard/explore sort includes R1 Points and R1 Win Equivalents,R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1321: - Leaderboard/explore sort includes R1 Points and R1 Win Equivalents,Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1321: - Leaderboard/explore sort includes R1 Points and R1 Win Equivalents,Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1323: - Glossary distinguishes DRBL/100 vs R1 Points vs R1 WinEq (noncausal),R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L1447: displayLabels: [""R1 Points"", ""R1 Win Equivalents""],",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L1447: displayLabels: [""R1 Points"", ""R1 Win Equivalents""],",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L1447: displayLabels: [""R1 Points"", ""R1 Win Equivalents""],",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,"L1447: displayLabels: [""R1 Points"", ""R1 Win Equivalents""],",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1495: - New cumulative system is explicitly R1-specific (R1 Points / R1 Win Equivalents),R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1495: - New cumulative system is explicitly R1-specific (R1 Points / R1 Win Equivalents),R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1495: - New cumulative system is explicitly R1-specific (R1 Points / R1 Win Equivalents),Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/drbl-m16l3.ts,L1495: - New cumulative system is explicitly R1-specific (R1 Points / R1 Win Equivalents),Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:BACKWARD_COMPATIBILITY
+scripts/report-war1-cutover.ts,"L24: ""R1 Win Eq."",",R1 Win Eq.,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L25: ""R1 WinEq"",",R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L26: ""R1 Win Equivalent"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L26: ""R1 Win Equivalent"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L27: ""R1 Win Equivalents"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L27: ""R1 Win Equivalents"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L27: ""R1 Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L27: ""R1 Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L28: ""Wins Above R1"",",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L29: ""Wins over R1"",",Wins over R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L30: ""Win Equivalent"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L31: ""Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L31: ""Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L70: if (/FORBIDDEN_DRBL_CLAIMS|Win Equivalents are WAR|R1 Win Equivalents = WAR/i.test(line)) {,R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L70: if (/FORBIDDEN_DRBL_CLAIMS|Win Equivalents are WAR|R1 Win Equivalents = WAR/i.test(line)) {,R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L70: if (/FORBIDDEN_DRBL_CLAIMS|Win Equivalents are WAR|R1 Win Equivalents = WAR/i.test(line)) {,Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L70: if (/FORBIDDEN_DRBL_CLAIMS|Win Equivalents are WAR|R1 Win Equivalents = WAR/i.test(line)) {,Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L78: if (/intended as Wins Above R1|name is intended/i.test(line)) {,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L102: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""|wins above r1|r1 wineq/i.test(",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L102: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""|wins above r1|r1 wineq/i.test(",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L102: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""|wins above r1|r1 wineq/i.test(",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L102: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""|wins above r1|r1 wineq/i.test(",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L102: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""|wins above r1|r1 wineq/i.test(",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L288: `Explore Players,WAR1,HTTP 200 localhost:3000/explore/players — WAR1 column/header present; Wins Above R1 absent,RENDER_PASS`,",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L366: | Learn DRBL | YES | NO (explanatory etymology may mention Wins Above R1) |,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L383: Acceptance for reviewer: no \`R1 Win Eq.\` / \`Wins Above R1\` as current metric headings.,R1 Win Eq.,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,L383: Acceptance for reviewer: no \`R1 Win Eq.\` / \`Wins Above R1\` as current metric headings.,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/report-war1-cutover.ts,"L400: (r) => r.file.startsWith(""src/"") && r.oldText.includes(""Wins Above R1"")",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:RETIRED_HISTORY
+scripts/test-ask-drbl.ts,"L450: assert.equal(resolveMetric(""Wins Above R1"")?.id, ""r1_win_eq"");",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L451: assert.equal(resolveMetric(""R1 WinEq"")?.id, ""r1_win_eq"");",R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L452: assert.equal(resolveMetric(""R1 Win Equivalent"")?.id, ""r1_win_eq"");",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L452: assert.equal(resolveMetric(""R1 Win Equivalent"")?.id, ""r1_win_eq"");",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L453: assert.equal(resolveMetric(""R1 Win Equivalents"")?.id, ""r1_win_eq"");",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L453: assert.equal(resolveMetric(""R1 Win Equivalents"")?.id, ""r1_win_eq"");",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L453: assert.equal(resolveMetric(""R1 Win Equivalents"")?.id, ""r1_win_eq"");",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L453: assert.equal(resolveMetric(""R1 Win Equivalents"")?.id, ""r1_win_eq"");",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L462: assert.doesNotMatch(war1Gloss!.glossary, /Wins Above R1/);",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L465: ""What is his R1 WinEq?"",",R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L466: ""How many Wins Above R1?"",",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L470: assert.equal(resolveMetric(q.includes(""WinEq"") ? ""R1 WinEq"" : ""Wins Above R1"")?.id, ""r1_win_eq"");",R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-ask-drbl.ts,"L470: assert.equal(resolveMetric(q.includes(""WinEq"") ? ""R1 WinEq"" : ""Wins Above R1"")?.id, ""r1_win_eq"");",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-learn-drbl-page.ts,"L50: !simpleBlock.includes(""Wins Above R1""),",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-learn-drbl-page.ts,"L51: ""Wins Above R1 must not be a simple-surface primary label""",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,L41: /intended as Wins Above R1|Legacy (search )?alias|legacy label|@deprecated|redirect|synonym|retired primary/i.test(,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,L49: /Wins Above R1/.test(line) &&,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,L56: /Wins Above R1/.test(line) &&,Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L64: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""/.test(line)",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L64: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""/.test(line)",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L64: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""/.test(line)",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L64: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""/.test(line)",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L64: /""(Wins Above R1|R1 Win Eq\.|R1 Win Equivalents)""/.test(line)",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L72: ""R1 Win Eq."",",R1 Win Eq.,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L73: ""R1 WinEq"",",R1 WinEq,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L74: ""R1 Win Equivalents"",",R1 Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L74: ""R1 Win Equivalents"",",R1 Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L74: ""R1 Win Equivalents"",",Win Equivalent,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L74: ""R1 Win Equivalents"",",Win Equivalents,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS
+scripts/test-war1-public-labels.ts,"L75: ""Wins Above R1"",",Wins Above R1,scripts,yes,WAR1,ALLOWLISTED:LEGACY_ALIAS

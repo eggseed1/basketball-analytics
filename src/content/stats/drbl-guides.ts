@@ -21,7 +21,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Who ranks high when the question is ability/rate, not accumulated value.",
       ],
       doesnt: [
-        "Season cumulative value (use Wins Above R1 for that).",
+        "Season cumulative value (use WAR1 for that).",
         "Traditional WAR, DARKO superiority claims, or roster-replacement causality.",
         "Calibrated individual predictive uncertainty — those intervals are not shipped.",
         "What you get by adding DRBL-P + DRBL-LN + DRBL-B (those do not sum to DRBL/100).",
@@ -34,11 +34,11 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       downsides: [
         "Needs play-by-play seasons with DRBL coverage — not every archive year.",
         "Cross-era comparability is not fully established.",
-        "Easy to confuse with Wins Above R1 when minutes or volume differ.",
+        "Easy to confuse with WAR1 when minutes or volume differ.",
       ],
       apply: [
         "Sort and rank by DRBL/100 when asking “who is better at the rate level?”",
-        "Pair with Wins Above R1 when minutes and season accrual matter.",
+        "Pair with WAR1 when minutes and season accrual matter.",
         "Treat O/D and P/LN/B as diagnostics — never as a rebuild of this total.",
       ],
     },
@@ -76,7 +76,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       apply: [
         "Use as the headline ability sort on player explorers.",
-        "When DRBL/100 and Wins Above R1 diverge, check minutes and volume first.",
+        "When DRBL/100 and WAR1 diverge, check minutes and volume first.",
         "Never reconstruct DRBL/100 as O+D or P+LN+B.",
       ],
       sources: [
@@ -87,21 +87,22 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
   },
   {
     id: "r1_win_eq",
-    slug: "wins-above-r1",
-    name: "Wins Above R1",
+    slug: "war1",
+    name: "WAR1",
     shortName: "WAR1",
     category: "impact",
     blurb:
-      "How much realized value did the player accumulate this season? Win-equivalent units from R1 Points ÷ a frozen P1 constant — not traditional WAR.",
+      "DRBL's realized season-value statistic — how much value a player accumulated above the contextual R1 reference.",
     plain: {
       teaches: [
-        "Season body of work in interpretable win-equivalent units.",
-        "Realized value above a contextual role-matched R1 reference, not a fringe “replacement” WAR baseline.",
-        "The same player ordering as R1 Points — just rescaled for readers.",
+        "DRBL/100 tells you the rate of impact; WAR1 tells you how much season value accrued.",
+        "Two players can have similar DRBL/100 but different WAR1 when one played much more.",
+        "Season body of work in win-equivalent units above a role-matched R1 reference.",
+        "The name is intended as Wins Above R1 — but the public product label is WAR1, and it is not traditional replacement-level WAR.",
       ],
       doesnt: [
         "Traditional WAR or causal roster-replacement effects.",
-        "Ability rate (use DRBL/100 for “how strong at the rate?”).",
+        "Ability rate (use DRBL/100 for how good at the rate).",
         "A different ranking from R1 Points — the ranks match exactly.",
         "Proof that DRBL wins beat other public win metrics.",
       ],
@@ -116,26 +117,27 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Still silent on contracts, injuries, and scheme fit.",
       ],
       apply: [
-        "Sort by Wins Above R1 for “who accrued the most this season?”",
+        "Sort by WAR1 for who accrued the most this season.",
         "Always pair with DRBL/100 when comparing players with different minute loads.",
         "Prefer this label over R1 Points on primary UI surfaces.",
       ],
     },
     deep: {
       definition:
-        "Wins Above R1 is realized season value in win-equivalent units: a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. It is not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(Wins Above R1) exactly.",
+        "WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. The name is intended as Wins Above R1, but WAR1 is the public product label. It is not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly.",
       formula:
-        "Wins Above R1 = R1 Points / 37.490662671779255  (frozen P1);  rank(R1 Points) = rank(Wins Above R1)",
+        "WAR1 = R1 Points / 37.490662671779255  (frozen P1);  rank(R1 Points) = rank(WAR1)",
       calculation: [
         "Accumulate Approach-B attribution above the role-matched R1 baseline into R1 Points (accounting total).",
         "Divide by the frozen P1 constant 37.490662671779255 to express win-equivalent units.",
-        "Publish Wins Above R1 as the preferred public cumulative metric; keep R1 Points for research/accounting.",
+        "Publish WAR1 as the preferred public cumulative metric; keep R1 Points for research/accounting.",
         "Do not interpret the result as causal replacement wins or as traditional WAR.",
       ],
       teaches: [
         "Linear rescaling of R1 Points into win-equivalent language.",
         "Exact rank equivalence with the underlying accounting total.",
         "Separation from ability-rate ranking (DRBL/100).",
+        "Why playing time matters for value even when rates look similar.",
       ],
       doesnt: [
         "Independent information from R1 Points beyond unit choice.",
@@ -153,7 +155,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Cross-era win meaning is not fully validated.",
       ],
       apply: [
-        "Use for season-value leaderboards and “body of work” debates.",
+        "Use for season-value leaderboards and body-of-work debates.",
         "Bookmark sorts on R1 Points should map to this ordering.",
         "Never stack with traditional WAR as if independent.",
       ],
@@ -216,7 +218,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       doesnt: [
         "Half of validated DRBL/100 by construction.",
         "Shot-quality process grades or tracking gravity.",
-        "Independent season win totals (see Wins Above R1 / R1 Points).",
+        "Independent season win totals (see WAR1 / R1 Points).",
       ],
       upsides: [
         "Supports two-way storytelling without inventing a second ranking system.",
@@ -378,7 +380,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       apply: [
         "Use as the possession column in diagnostic panels.",
         "When P disagrees with LN or B, treat disagreement as a signal to investigate — not a ranking penalty.",
-        "Anchor public ranks to DRBL/100 and Wins Above R1.",
+        "Anchor public ranks to DRBL/100 and WAR1.",
       ],
       sources: [
         "/learn/drbl",
@@ -491,7 +493,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       apply: [
         "Use when debating creation, usage, and shot profile vs impact.",
         "Cross-check against P and LN without adding them.",
-        "Keep public ranking on DRBL/100 and season value on Wins Above R1.",
+        "Keep public ranking on DRBL/100 and season value on WAR1.",
       ],
     },
     deep: {
@@ -544,7 +546,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       teaches: [
         "What “above R1” means: better than the role-matched expectation used in DRBL attribution.",
         "Why DRBL value is relative to a frozen contextual baseline, not a vibes average.",
-        "How Wins Above R1 and R1 Points inherit their meaning from this reference.",
+        "How WAR1 and R1 Points inherit their meaning from this reference.",
       ],
       doesnt: [
         "Conventional fringe-player replacement level (not currently claimed).",
@@ -564,18 +566,18 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       apply: [
         "Read every DRBL total as “versus R1,” not “versus a free agent minimum archetype.”",
         "When someone says replacement, translate back to role-matched R1.",
-        "Use R1 Points / Wins Above R1 for accumulated value above this baseline.",
+        "Use R1 Points / WAR1 for accumulated value above this baseline.",
       ],
     },
     deep: {
       definition:
-        "R1 is the contextual, role-matched expected-points reference used for Approach-B attribution in DRBL. Player value is measured relative to this cutoff-frozen baseline. It is not currently claimed to equal conventional NBA fringe-player replacement level, and Wins Above R1 must not be marketed as traditional WAR.",
+        "R1 is the contextual, role-matched expected-points reference used for Approach-B attribution in DRBL. Player value is measured relative to this cutoff-frozen baseline. It is not currently claimed to equal conventional NBA fringe-player replacement level, and WAR1 must not be marketed as traditional WAR.",
       formula:
         "R1 = contextual role-matched expected-points baseline (cutoff-frozen);  attribution is vs R1, not classic replacement",
       calculation: [
         "Define role-matched expected points for possessions under the frozen R1 specification.",
         "Attribute Approach-B residuals relative to that expectation.",
-        "Accumulate player credit above R1 into R1 Points; convert to Wins Above R1 via frozen P1 when displaying win units.",
+        "Accumulate player credit above R1 into R1 Points; convert to WAR1 via frozen P1 when displaying win units.",
       ],
       teaches: [
         "Baseline semantics behind every DRBL “above R1” statement.",
@@ -595,7 +597,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       downsides: [
         "Easy to smuggle “replacement” rhetoric into product copy.",
         "Harder elevator pitch than “vs average.”",
-        "Requires ongoing education next to Wins Above R1.",
+        "Requires ongoing education next to WAR1.",
       ],
       apply: [
         "Anchor methodology pages and tooltips on “role-matched R1,” not WAR.",
@@ -612,21 +614,21 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "R1 Pts",
     category: "impact",
     blurb:
-      "Underlying point-equivalent credit above the role-matched R1 baseline. Accounting and research currency — normally hidden from the primary UI in favor of Wins Above R1.",
+      "Underlying point-equivalent credit above the role-matched R1 baseline. Accounting and research currency — normally hidden from the primary UI in favor of WAR1.",
     plain: {
       teaches: [
         "The raw accumulated attribution total that win-equivalents are built from.",
-        "That ranking matches Wins Above R1 exactly — same order, different units.",
+        "That ranking matches WAR1 exactly — same order, different units.",
         "Why researchers care about an additive point-equivalent ledger.",
       ],
       doesnt: [
-        "The preferred casual label (Wins Above R1 is the public face).",
+        "The preferred casual label (WAR1 is the public face).",
         "Ability rate (use DRBL/100).",
-        "Traditional WAR or a different ordering from Wins Above R1.",
+        "Traditional WAR or a different ordering from WAR1.",
       ],
       upsides: [
         "Canonical for accounting, additivity, stint conservation, and team decomposition.",
-        "Exact linear parent of Wins Above R1.",
+        "Exact linear parent of WAR1.",
         "Keeps research math in point units without win rhetoric.",
       ],
       downsides: [
@@ -636,15 +638,15 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       apply: [
         "Use in methodology, audits, and advanced disclosures.",
-        "Convert to Wins Above R1 for primary boards via ÷ frozen P1.",
+        "Convert to WAR1 for primary boards via ÷ frozen P1.",
         "Prefer DRBL/100 when the question is rate, not accumulated points.",
       ],
     },
     deep: {
       definition:
-        "R1 Points are the underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. They remain canonical for accounting, additivity, stint conservation, team decomposition, and research. The product surface normally hides them from primary UI and prefers Wins Above R1, a fixed linear conversion of the same quantity. rank(R1 Points) = rank(Wins Above R1).",
+        "R1 Points are the underlying point-equivalent accumulated attribution above the contextual role-matched R1 reference. They remain canonical for accounting, additivity, stint conservation, team decomposition, and research. The product surface normally hides them from primary UI and prefers WAR1, a fixed linear conversion of the same quantity. rank(R1 Points) = rank(WAR1).",
       formula:
-        "R1 Points = accumulated point-equivalent attribution above R1;  Wins Above R1 = R1 Points / 37.490662671779255;  rank(R1 Points) = rank(Wins Above R1)",
+        "R1 Points = accumulated point-equivalent attribution above R1;  WAR1 = R1 Points / 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
       calculation: [
         "Attribute Approach-B residuals versus the role-matched R1 expected-points baseline.",
         "Sum player point-equivalent credit into the R1 Points accounting total.",
@@ -652,12 +654,12 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Omit R1 Points from primary simple surfaces; expose in deep/methodology contexts.",
       ],
       teaches: [
-        "Accounting parent of Wins Above R1.",
+        "Accounting parent of WAR1.",
         "Exact rank equivalence under positive constant scaling.",
         "Why point units matter for stint and team decomposition.",
       ],
       doesnt: [
-        "A second independent ranking signal beyond Wins Above R1.",
+        "A second independent ranking signal beyond WAR1.",
         "Validated ability rate after EB1600 shrinkage.",
         "Shipped individual predictive uncertainty.",
       ],
@@ -668,11 +670,11 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       downsides: [
         "Primary-UI promotion confuses ability vs value vs accounting.",
-        "Readers may think a hidden metric is “more true” than Wins Above R1 — it is the same ordering.",
+        "Readers may think a hidden metric is “more true” than WAR1 — it is the same ordering.",
         "No external superiority claim attached (M17c not done).",
       ],
       apply: [
-        "Keep as advanced/accounting field; map sorts to Wins Above R1 publicly.",
+        "Keep as advanced/accounting field; map sorts to WAR1 publicly.",
         "Use when verifying team sums, stints, and conservation.",
         "Never present as traditional WAR.",
       ],

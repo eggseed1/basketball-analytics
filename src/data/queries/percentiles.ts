@@ -337,7 +337,7 @@ export const PLAYER_PERCENTILE_METRICS: PercentileMetricDef[] = [
   },
   {
     key: "r1WinEquivalents",
-    label: "Wins Above R1",
+    label: "WAR1",
     shortLabel: "WAR1",
     direction: "higherBetter",
     value: (r) => r.r1WinEquivalents ?? Number.NaN,

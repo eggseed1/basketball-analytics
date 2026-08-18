@@ -50,6 +50,7 @@
     "test:transaction-player-resolve": "tsx scripts/test-transaction-player-resolve.ts",
     "test:team-identity": "tsx scripts/test-team-identity.ts",
     "test:player-team-render": "tsx scripts/test-player-team-render-contract.ts",
+    "test:team-wash-gradient": "tsx scripts/test-team-wash-gradient-freeze.ts",
     "test:player-team-context": "tsx scripts/test-player-team-context.ts",
     "test:r1-wins-sort-equivalence": "tsx scripts/test-r1-wins-sort-equivalence.ts",
     "p17:3": "tsx scripts/p17-3-temporal-identity-audit.ts",

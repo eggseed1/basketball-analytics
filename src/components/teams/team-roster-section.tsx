@@ -21,7 +21,7 @@ function valueDetail(player: PlayerSeason): string {
         ? formatNumber(player.darkoDpm, 2)
         : null;
     const parts = [`${drbl} DRBL/100`];
-    if (war1 != null) parts.push(`${war1} Wins Above R1`);
+    if (war1 != null) parts.push(`${war1} WAR1`);
     if (darko != null) parts.push(`${darko} DPM`);
     return parts.join(" · ");
   }
@@ -121,7 +121,7 @@ export function TeamRosterSection({
               <>
                 <MetricHelp conceptId="drbl100">DRBL/100</MetricHelp> when
                 available (ability rate);{" "}
-                <MetricHelp conceptId="r1_win_eq">Wins Above R1</MetricHelp>{" "}
+                <MetricHelp conceptId="r1_win_eq">WAR1</MetricHelp>{" "}
                 is realized season value.{" "}
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> shown as
                 secondary context when present — rows do not sum to team value.

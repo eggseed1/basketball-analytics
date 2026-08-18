@@ -38,7 +38,14 @@ export function listAllLearnSlugs(): string[] {
 
 /** Includes custom portal routes (e.g. /learn/drbl) for coverage audits. */
 export function listDiscoverableLearnSlugs(): string[] {
-  return [...new Set([...listAllLearnSlugs(), ...CUSTOM_LEARN_PORTALS])];
+  return [
+    ...new Set([
+      ...listAllLearnSlugs(),
+      ...CUSTOM_LEARN_PORTALS,
+      // Nested App Router pages that mirror StatGuide content.
+      "drbl/war1",
+    ]),
+  ];
 }
 
 export function relatedLearnLinks(ids: string[]): Array<{
@@ -50,7 +57,10 @@ export function relatedLearnLinks(ids: string[]): Array<{
   for (const id of ids) {
     const concept = getLearnConcept(id);
     if (!concept?.learnSlug) continue;
-    const href = `/learn/${concept.learnSlug}`;
+    const href =
+      concept.id === "r1_win_eq" || concept.learnSlug === "war1"
+        ? "/learn/drbl/war1"
+        : `/learn/${concept.learnSlug}`;
     if (seen.has(href)) continue;
     seen.add(href);
     out.push({ label: concept.shortName, href });

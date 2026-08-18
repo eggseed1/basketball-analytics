@@ -420,7 +420,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1 Pts",
     category: "impact",
     tooltip:
-      "Advanced accounting: point-equivalent attribution above R1. Public boards prefer Wins Above R1 (same ordering).",
+      "Advanced accounting: point-equivalent attribution above R1. Public boards prefer WAR1 (same ordering).",
     showTooltip: true,
     learnSlug: "r1-points",
     relatedIds: ["r1_win_eq", "drbl", "r1"],
@@ -434,13 +434,13 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
       "wins_above_r1",
       "war1",
     ],
-    label: "Wins Above R1",
-    shortName: "Wins Above R1",
+    label: "WAR1",
+    shortName: "WAR1",
     category: "impact",
     tooltip:
-      "How much season value the player accumulated, in win-equivalent units. Not traditional WAR.",
+      "Realized season value above DRBL's contextual R1 reference, in win-equivalent units. Not traditional replacement-level WAR.",
     showTooltip: true,
-    learnSlug: "wins-above-r1",
+    learnSlug: "war1",
     relatedIds: ["drbl", "r1_points", "r1"],
   },
   {
@@ -1073,7 +1073,12 @@ export function listLearnConceptsByCategory(
 
 export function learnHrefFor(idOrAlias: string): string | null {
   const c = getLearnConcept(idOrAlias);
-  return c?.learnSlug ? `/learn/${c.learnSlug}` : null;
+  if (!c?.learnSlug) return null;
+  // Canonical nested WAR1 route (flat /learn/war1 redirects here).
+  if (c.id === "r1_win_eq" || c.learnSlug === "war1") {
+    return "/learn/drbl/war1";
+  }
+  return `/learn/${c.learnSlug}`;
 }
 
 export function searchLearnConcepts(query: string): LearnConcept[] {

@@ -42,6 +42,8 @@ export type PercentileMetric = {
   interpretation: MetricInterpretation;
   showPercentile: boolean;
   showGrade: boolean;
+  /** Present for left-rail snapshot; omit from Analytical Profile lists. */
+  profileHidden?: boolean;
 };
 
 function percentileOf(value: number, pool: number[]): number {
@@ -150,6 +152,7 @@ export function buildPlayerPercentileMetrics(
     invert?: boolean;
     showPercentile?: boolean;
     showGrade?: boolean;
+    profileHidden?: boolean;
   }) => {
     if (!Number.isFinite(opts.value) || opts.values.length === 0) return;
 
@@ -188,10 +191,12 @@ export function buildPlayerPercentileMetrics(
       interpretation,
       showPercentile,
       showGrade,
+      profileHidden: opts.profileHidden,
     });
   };
 
-  // --- Value (impact) — DRBL/100 first when valid; O/D are halves of P, not of DRBL/100 ---
+  // --- Value (impact) — WAR1 + O/D for peer exploration in Overview.
+  // DRBL/100 grade/rate/percentile stay on the left snapshot (profileHidden).
   if (hasValidDrblEstimate(seasonStats)) {
     const drblPool = pool
       .filter(hasValidDrblEstimate)
@@ -210,6 +215,7 @@ export function buildPlayerPercentileMetrics(
           { rejectFlatOverlay: true }
         ),
         interpretation: "higher_is_better",
+        profileHidden: true,
       });
     }
     if (
@@ -228,7 +234,7 @@ export function buildPlayerPercentileMetrics(
         push({
           id: "r1WinEquivalents",
           category: "value",
-          label: "Wins Above R1",
+          label: "WAR1",
           value: seasonStats.r1WinEquivalents,
           values: winEqPool,
           display: formatNumber(seasonStats.r1WinEquivalents, 1),

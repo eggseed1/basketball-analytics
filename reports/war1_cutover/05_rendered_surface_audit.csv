@@ -1,0 +1,11 @@
+surface,expected_label,source_evidence,status
+Explore Players,WAR1,HTTP 200 localhost:3000/explore/players — WAR1 column/header present; Wins Above R1 absent,RENDER_PASS
+player page,WAR1,player-core-island WAR1 dt + /learn/drbl/war1,SOURCE_PASS
+team roster,WAR1,team-roster-section MetricHelp WAR1,SOURCE_PASS
+Compare,WAR1,compare-players label WAR1,SOURCE_PASS
+season compare,WAR1,compare-player-seasons WAR1,SOURCE_PASS
+Learn DRBL,WAR1,HTTP 200 /learn/drbl primary card WAR1,RENDER_PASS
+Learn WAR1,WAR1,HTTP 200 /learn/drbl/war1; redirects 308 from /learn/war1 and /learn/wins-above-r1,RENDER_PASS
+ASK response fixture,WAR1,metricById(r1_win_eq).label=WAR1,SOURCE_PASS
+mobile Explore,WAR1,same table compact label WAR1,SOURCE_PASS
+mobile player,WAR1,same core island label WAR1,SOURCE_PASS

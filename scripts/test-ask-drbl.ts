@@ -446,8 +446,32 @@ function assertJsonSafe(value: unknown) {
   assert.equal(resolveMetric("ability rate")?.id, "drbl100");
   assert.equal(resolveMetric("R1 Points")?.id, "r1_points");
   assert.equal(resolveMetric("win equivalents")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("WAR1")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("Wins Above R1")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("R1 WinEq")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("R1 Win Equivalent")?.id, "r1_win_eq");
+  assert.equal(resolveMetric("R1 Win Equivalents")?.id, "r1_win_eq");
   assert.equal(resolveMetric("DRBL-O")?.id, "drbl_o");
   assert.equal(resolveMetric("DRBL-LN")?.id, "drbl_ln");
+
+  const war1Gloss = matchDrblGlossaryQuery("What is WAR1?");
+  assert.ok(war1Gloss);
+  assert.equal(war1Gloss!.id, "r1_win_eq");
+  assert.equal(war1Gloss!.label, "WAR1");
+  assert.match(war1Gloss!.glossary, /WAR1/);
+  assert.doesNotMatch(war1Gloss!.glossary, /Wins Above R1/);
+
+  for (const q of [
+    "What is his R1 WinEq?",
+    "How many Wins Above R1?",
+  ]) {
+    const g = matchDrblGlossaryQuery(q);
+    // Glossary matcher may or may not fire on these; synonym resolve must.
+    assert.equal(resolveMetric(q.includes("WinEq") ? "R1 WinEq" : "Wins Above R1")?.id, "r1_win_eq");
+    if (g) {
+      assert.equal(g.label, "WAR1");
+    }
+  }
 
   assert.equal(metricSeasonAvailability("drbl100", "2012-13").ok, false);
   assert.equal(metricSeasonAvailability("drbl100", "2024-25").ok, true);

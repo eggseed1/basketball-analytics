@@ -563,6 +563,9 @@ export const STAT_GUIDES: StatGuide[] = [
 ];
 
 export function getStatGuide(slug: string): StatGuide | undefined {
+  if (slug === "wins-above-r1") {
+    return STAT_GUIDES.find((g) => g.slug === "war1" || g.id === "r1_win_eq");
+  }
   return STAT_GUIDES.find((g) => g.slug === slug || g.id === slug);
 }
 
