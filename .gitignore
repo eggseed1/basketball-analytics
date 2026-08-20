@@ -58,3 +58,7 @@ next-env.d.ts
 /reports/m17a_1/07_raw_manifest.csv
 
 /reports/m17a_1/import/
+
+# Local raw acquisition dumps (not product runtime)
+/data/raw/
+
