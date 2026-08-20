@@ -3,11 +3,9 @@
 import Image from "next/image";
 import { useState } from "react";
 
+import { resolvePlayerPortraitCandidates } from "@/lib/player-media-resolve";
+import { playerInitials } from "@/lib/nba-media";
 import { cn } from "@/lib/utils";
-import {
-  nbaPlayerHeadshotUrl,
-  playerInitials,
-} from "@/lib/nba-media";
 
 const SIZE_PX = {
   xs: 28,
@@ -28,10 +26,13 @@ export function PlayerHeadshot({
   className?: string;
 }) {
   const px = SIZE_PX[size];
-  const src = nbaPlayerHeadshotUrl(
+  // NBA-person-id surface (dashboard/home) — never fall through to ESPN namespace.
+  const candidates = resolvePlayerPortraitCandidates({
     playerId,
-    size === "lg" || size === "md" ? "large" : "small"
-  );
+    nbaId: /^\d+$/.test(playerId) ? playerId : null,
+    role: "PLAYER",
+  });
+  const src = candidates[0] ?? null;
   const [failed, setFailed] = useState(false);
 
   if (!src || failed) {
@@ -52,7 +53,7 @@ export function PlayerHeadshot({
   return (
     <Image
       src={src}
-      alt=""
+      alt={name ? name : ""}
       width={px}
       height={px}
       className={cn(
