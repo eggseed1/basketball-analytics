@@ -1,0 +1,24 @@
+{
+  "methodologyVersion": "p18c2-1.0",
+  "snapshotDate": "2026-08-20",
+  "retrievedAt": "2026-08-20T04:09:43.939Z",
+  "sourceHash": "e54d5ceebabc66015ee267e282b6adbde7aa3182a6d65d3dd1ebf7cef180bbff",
+  "status": "VALIDATED",
+  "season": "2025-26",
+  "teamCount": 30,
+  "teamsWithPayroll": 30,
+  "playersWithSalary": 393,
+  "capabilities": {
+    "PAYROLL": "PARTIAL",
+    "CONTRACTS": "PARTIAL",
+    "CAP_THRESHOLDS": "SUPPORTED",
+    "FULL_CAP_ACCOUNTING": "UNAVAILABLE",
+    "FIRST_ROUND_ASSETS": "UNAVAILABLE",
+    "SECOND_ROUND_ASSETS": "UNAVAILABLE",
+    "SWAPS": "UNAVAILABLE",
+    "PROTECTIONS": "UNAVAILABLE",
+    "TRANSACTION_PROVENANCE": "UNAVAILABLE",
+    "CAP_HOLDS": "UNAVAILABLE",
+    "DEAD_MONEY": "UNAVAILABLE"
+  }
+}

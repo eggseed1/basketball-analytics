@@ -1,0 +1,500 @@
+{
+  "meta": {
+    "methodologyVersion": "p18c2-1.0",
+    "snapshotDate": "2026-08-20",
+    "retrievedAt": "2026-08-20T04:09:43.939Z",
+    "sourceSet": [
+      "data/salaries/player-salaries-2000-2025.csv",
+      "data/drbl/history/drbl-history-v1/players/by-season/2025-26.json",
+      "data/cba/league-cap-seasons.json"
+    ],
+    "sourceHash": "e54d5ceebabc66015ee267e282b6adbde7aa3182a6d65d3dd1ebf7cef180bbff",
+    "status": "VALIDATED",
+    "season": "2025-26",
+    "seasonStartYear": 2025
+  },
+  "cap": {
+    "season": "2025-26",
+    "seasonStartYear": 2025,
+    "salaryCap": 154647000,
+    "luxuryTax": 187895000,
+    "firstApron": 195945000,
+    "secondApron": 207824000,
+    "minimumTeamSalary": 139182000,
+    "status": "OFFICIAL",
+    "source": "NBA Communications — Salary Cap for 2025-26 season",
+    "sourceDate": "2025-06-30",
+    "sourceUrl": "https://pr.nba.com/nba-salary-cap-2025-26-season/"
+  },
+  "capabilities": {
+    "PAYROLL": "PARTIAL",
+    "CONTRACTS": "PARTIAL",
+    "CAP_THRESHOLDS": "SUPPORTED",
+    "FULL_CAP_ACCOUNTING": "UNAVAILABLE",
+    "FIRST_ROUND_ASSETS": "UNAVAILABLE",
+    "SECOND_ROUND_ASSETS": "UNAVAILABLE",
+    "SWAPS": "UNAVAILABLE",
+    "PROTECTIONS": "UNAVAILABLE",
+    "TRANSACTION_PROVENANCE": "UNAVAILABLE",
+    "CAP_HOLDS": "UNAVAILABLE",
+    "DEAD_MONEY": "UNAVAILABLE"
+  },
+  "team": {
+    "franchiseId": "16",
+    "abbr": "MIN",
+    "displayName": "Minnesota Timberwolves",
+    "payroll": {
+      "franchiseId": "16",
+      "abbr": "MIN",
+      "displayName": "Minnesota Timberwolves",
+      "season": "2025-26",
+      "contractRows": [
+        {
+          "playerId": "203497",
+          "playerName": "Rudy Gobert",
+          "age": null,
+          "contractId": "cy-203497-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-203497-2025",
+              "playerId": "203497",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 43827586,
+              "capHit": 43827586,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/203497"
+        },
+        {
+          "playerId": "1630162",
+          "playerName": "Anthony Edwards",
+          "age": null,
+          "contractId": "cy-1630162-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630162-2025",
+              "playerId": "1630162",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 42176400,
+              "capHit": 42176400,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630162"
+        },
+        {
+          "playerId": "203944",
+          "playerName": "Julius Randle",
+          "age": null,
+          "contractId": "cy-203944-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-203944-2025",
+              "playerId": "203944",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 33073920,
+              "capHit": 33073920,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/203944"
+        },
+        {
+          "playerId": "1630183",
+          "playerName": "Jaden McDaniels",
+          "age": null,
+          "contractId": "cy-1630183-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630183-2025",
+              "playerId": "1630183",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 23017242,
+              "capHit": 23017242,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630183"
+        },
+        {
+          "playerId": "1629675",
+          "playerName": "Naz Reid",
+          "age": null,
+          "contractId": "cy-1629675-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1629675-2025",
+              "playerId": "1629675",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 13986432,
+              "capHit": 13986432,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1629675"
+        },
+        {
+          "playerId": "1628978",
+          "playerName": "Donte DiVincenzo",
+          "age": null,
+          "contractId": "cy-1628978-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1628978-2025",
+              "playerId": "1628978",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 11445000,
+              "capHit": 11445000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1628978"
+        },
+        {
+          "playerId": "201144",
+          "playerName": "Mike Conley",
+          "age": null,
+          "contractId": "cy-201144-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-201144-2025",
+              "playerId": "201144",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 9975962,
+              "capHit": 9975962,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/201144"
+        },
+        {
+          "playerId": "203937",
+          "playerName": "Kyle Anderson",
+          "age": null,
+          "contractId": "cy-203937-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-203937-2025",
+              "playerId": "203937",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 8780488,
+              "capHit": 8780488,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/203937"
+        },
+        {
+          "playerId": "1630245",
+          "playerName": "Ayo Dosunmu",
+          "age": null,
+          "contractId": "cy-1630245-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630245-2025",
+              "playerId": "1630245",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 7000000,
+              "capHit": 7000000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630245"
+        },
+        {
+          "playerId": "1630538",
+          "playerName": "Bones Hyland",
+          "age": null,
+          "contractId": "cy-1630538-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630538-2025",
+              "playerId": "1630538",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 4158439,
+              "capHit": 4158439,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630538"
+        },
+        {
+          "playerId": "1630545",
+          "playerName": "Terrence Shannon Jr",
+          "age": null,
+          "contractId": "cy-1630545-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630545-2025",
+              "playerId": "1630545",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 2546640,
+              "capHit": 2546640,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630545"
+        },
+        {
+          "playerId": "204060",
+          "playerName": "Joe Ingles",
+          "age": null,
+          "contractId": "cy-204060-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-204060-2025",
+              "playerId": "204060",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 2087519,
+              "capHit": 2087519,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/204060"
+        },
+        {
+          "playerId": "1641763",
+          "playerName": "Julian Phillips",
+          "age": null,
+          "contractId": "cy-1641763-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641763-2025",
+              "playerId": "1641763",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 1891857,
+              "capHit": 1891857,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641763"
+        },
+        {
+          "playerId": "1641740",
+          "playerName": "Jaylen Clark",
+          "age": null,
+          "contractId": "cy-1641740-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1641740-2025",
+              "playerId": "1641740",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": 492323,
+              "capHit": 492323,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-2000-2025"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1641740"
+        },
+        {
+          "playerId": "1642866",
+          "playerName": "Joan Beringer",
+          "age": null,
+          "contractId": "cy-1642866-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642866-2025",
+              "playerId": "1642866",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "roster-board-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642866"
+        },
+        {
+          "playerId": "1642402",
+          "playerName": "Enrique Freeman",
+          "age": null,
+          "contractId": "cy-1642402-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642402-2025",
+              "playerId": "1642402",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "roster-board-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642402"
+        },
+        {
+          "playerId": "1642389",
+          "playerName": "Zyon Pullin",
+          "age": null,
+          "contractId": "cy-1642389-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642389-2025",
+              "playerId": "1642389",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "roster-board-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642389"
+        },
+        {
+          "playerId": "1642911",
+          "playerName": "Rocco Zikarsky",
+          "age": null,
+          "contractId": "cy-1642911-2025",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642911-2025",
+              "playerId": "1642911",
+              "franchiseId": "16",
+              "season": "2025-26",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "roster-board-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642911"
+        }
+      ],
+      "futureCommitments": [
+        {
+          "season": "2025-26",
+          "totalSalaryDollars": 204459808,
+          "playersUnderContract": 14
+        }
+      ],
+      "playerSalaryCommitments": 204459808,
+      "playersWithSalary": 14,
+      "playersWithoutSalary": 4
+    },
+    "draftAssets": {
+      "franchiseId": "16",
+      "abbr": "MIN",
+      "displayName": "Minnesota Timberwolves",
+      "assets": [],
+      "swaps": [],
+      "unavailableReason": "No product-approved structured draft-asset ledger in repository. ESPN free-text transactions are not used as ownership truth."
+    },
+    "capabilities": {
+      "PAYROLL": "PARTIAL",
+      "CONTRACTS": "PARTIAL",
+      "CAP_THRESHOLDS": "SUPPORTED",
+      "FULL_CAP_ACCOUNTING": "UNAVAILABLE",
+      "FIRST_ROUND_ASSETS": "UNAVAILABLE",
+      "SECOND_ROUND_ASSETS": "UNAVAILABLE",
+      "SWAPS": "UNAVAILABLE",
+      "PROTECTIONS": "UNAVAILABLE",
+      "TRANSACTION_PROVENANCE": "UNAVAILABLE",
+      "CAP_HOLDS": "UNAVAILABLE",
+      "DEAD_MONEY": "UNAVAILABLE"
+    }
+  }
+}

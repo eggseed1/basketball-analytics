@@ -1,0 +1,33 @@
+{
+  "_comment": "Normalized LeagueCapSeason records. Monetary fields are integer USD dollars. status OFFICIAL only when sourced from NBA Communications / CBA announcements.",
+  "methodologyVersion": "p18c2-1.0",
+  "semanticsVersion": "cba-2023-aprons-v1",
+  "seasons": [
+    {
+      "season": "2024-25",
+      "seasonStartYear": 2024,
+      "salaryCap": 140588000,
+      "luxuryTax": 170814000,
+      "firstApron": 178132000,
+      "secondApron": 188931000,
+      "minimumTeamSalary": null,
+      "status": "OFFICIAL",
+      "source": "NBA Communications / CBA threshold history (repo data/cba)",
+      "sourceDate": "2024-07-01",
+      "sourceUrl": null
+    },
+    {
+      "season": "2025-26",
+      "seasonStartYear": 2025,
+      "salaryCap": 154647000,
+      "luxuryTax": 187895000,
+      "firstApron": 195945000,
+      "secondApron": 207824000,
+      "minimumTeamSalary": 139182000,
+      "status": "OFFICIAL",
+      "source": "NBA Communications — Salary Cap for 2025-26 season",
+      "sourceDate": "2025-06-30",
+      "sourceUrl": "https://pr.nba.com/nba-salary-cap-2025-26-season/"
+    }
+  ]
+}
