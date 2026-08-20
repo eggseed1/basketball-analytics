@@ -46,9 +46,42 @@
   --radius-2xl: calc(var(--radius) * 1.75);
   --radius-3xl: calc(var(--radius) * 2);
   --radius-4xl: calc(var(--radius) * 2.25);
+
+  /* Even-px type scale (no odd sizes, no rem decimals). */
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-title: 18px;
+  --text-title--line-height: 24px;
+  --text-heading: 20px;
+  --text-heading--line-height: 28px;
+  --text-page: 24px;
+  --text-page--line-height: 32px;
+  --text-display: 32px;
+  --text-display--line-height: 40px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 32px;
+  --text-3xl--line-height: 40px;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 40px;
 }
 
 :root {
+  color-scheme: light;
   /* Apple Sports-inspired light mode */
   --background: #f2f2f7;
   --foreground: #1d1d1f;
@@ -85,6 +118,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #000000;
   --foreground: #f5f5f7;
   --card: #1c1c1e;
@@ -123,10 +157,20 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-base text-foreground antialiased;
   }
   html {
     @apply font-sans;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
   }
 }
 
@@ -228,11 +272,367 @@
 }
 
 .sports-card {
-  @apply rounded-md border border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  @apply rounded-md border;
+  /* Contrast-safe glass: raised from Hannah 42% → 68% for primary text readability */
+  background: rgb(255 255 255 / 68%);
+  border-color: rgb(255 255 255 / 62%);
+  color: var(--foreground);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  backdrop-filter: saturate(190%) blur(20px);
+  -webkit-backdrop-filter: saturate(190%) blur(20px);
+}
+
+.dark .sports-card {
+  background: rgb(28 28 30 / 72%);
+  border-color: rgb(255 255 255 / 18%);
+  color: var(--foreground);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+html:not([data-surface="glass"]) .sports-card {
+  @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html:not([data-surface="glass"]).dark .sports-card,
+html.dark:not([data-surface="glass"]) .sports-card {
+  background: var(--card);
+  border-color: rgb(255 255 255 / 8%);
+}
+
+html[data-surface="glass"] .bg-card {
+  background-color: rgb(255 255 255 / 68%);
+  backdrop-filter: saturate(190%) blur(20px);
+  -webkit-backdrop-filter: saturate(190%) blur(20px);
+}
+
+html.dark[data-surface="glass"] .bg-card {
+  background-color: rgb(28 28 30 / 72%);
+}
+
+/* Explicit glass surface component (CSS-only; no liquid SVG). */
+.glass-surface {
+  background: color-mix(
+    in oklab,
+    var(--glass-accent-a, transparent) 6%,
+    rgb(255 255 255 / 68%)
+  );
+  border: 1px solid rgb(255 255 255 / 62%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 55%);
+  color: var(--foreground);
+  backdrop-filter: saturate(190%) blur(var(--glass-blur, 16px));
+  -webkit-backdrop-filter: saturate(190%) blur(var(--glass-blur, 16px));
+}
+
+.dark .glass-surface {
+  background: color-mix(
+    in oklab,
+    var(--glass-accent-a, transparent) 8%,
+    rgb(28 28 30 / 72%)
+  );
+  border-color: rgb(255 255 255 / 18%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 10%);
+}
+
+html:not([data-surface="glass"]) .glass-surface {
+  background: var(--card);
+  border-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: 0 1px 2px rgb(0 0 0 / 4%);
+}
+
+.site-chrome {
+  border-bottom: 1px solid rgb(255 255 255 / 45%);
+}
+
+.dark .site-chrome {
+  border-bottom-color: rgb(255 255 255 / 12%);
+}
+
+html:not([data-surface="glass"]) .site-chrome {
+  border-bottom-color: rgb(0 0 0 / 5%);
 }
 
 .sports-pill {
-  @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-[#dcdce0];
+  @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-muted;
+}
+
+/* Glass material - denser fill for readable primary text. */
+.glass-card {
+  background: rgb(255 255 255 / 78%);
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: var(--radius-md);
+  color: var(--foreground);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.dark .glass-card {
+  background: rgb(28 28 30 / 78%);
+  border-color: rgb(255 255 255 / 14%);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+.glass-pill {
+  background: rgb(255 255 255 / 62%);
+  border: 1px solid rgb(255 255 255 / 45%);
+  color: var(--foreground);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.dark .glass-pill {
+  background: rgb(44 44 46 / 62%);
+  border-color: rgb(255 255 255 / 12%);
+}
+
+.glass-pill-active {
+  background: rgb(255 255 255 / 88%);
+  border-color: rgb(255 255 255 / 72%);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 85%);
+}
+
+.dark .glass-pill-active {
+  background: rgb(255 255 255 / 18%);
+  border-color: rgb(255 255 255 / 24%);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+/* Frosted floats — higher opacity than Hannah 22% for contrast P0. */
+.select-popup,
+.hover-frost {
+  background: rgb(255 255 255 / 78%);
+  border: 1px solid rgb(255 255 255 / 62%);
+  color: var(--popover-foreground);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  filter: none;
+  transform: none;
+  backdrop-filter: saturate(190%) blur(24px);
+  -webkit-backdrop-filter: saturate(190%) blur(24px);
+}
+
+.dark .select-popup,
+.dark .hover-frost {
+  background: rgb(28 28 30 / 82%);
+  border-color: rgb(255 255 255 / 18%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+html:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
+  background: var(--popover);
+  border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html:not([data-surface="glass"]).dark .select-popup:not(.hover-frost),
+html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
+  border-color: rgb(255 255 255 / 10%);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 36%);
+}
+
+/* Dense boards: avoid nested blur stacking. */
+.sports-card.board-scroll-host {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgb(255 255 255 / 88%);
+}
+
+.dark .sports-card.board-scroll-host {
+  background: rgb(28 28 30 / 88%);
+}
+
+html:not([data-surface="glass"]) .sports-card.board-scroll-host {
+  background: var(--card);
+}
+
+.board-sticky-frost {
+  background: rgb(255 255 255 / 82%);
+  border-right: 1px solid rgb(255 255 255 / 45%);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 22%);
+  filter: none;
+  transform: none;
+  backdrop-filter: saturate(190%) blur(16px);
+  -webkit-backdrop-filter: saturate(190%) blur(16px);
+}
+
+.dark .board-sticky-frost {
+  background: rgb(28 28 30 / 86%);
+  border-right-color: rgb(255 255 255 / 12%);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 55%);
+}
+
+html:not([data-surface="glass"]) .board-sticky-frost {
+  background: var(--card);
+  border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.site-search-field,
+.color-scheme-switch {
+  background: rgb(255 255 255 / 62%);
+  border: 1px solid rgb(255 255 255 / 48%);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+html.dark .site-search-field,
+html.dark .color-scheme-switch {
+  background: rgb(44 44 46 / 62%);
+  border-color: rgb(255 255 255 / 14%);
+}
+
+html:not([data-surface="glass"]) .site-search-field,
+html:not([data-surface="glass"]) .color-scheme-switch {
+  background: var(--secondary);
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Page wash — glass samples this color. */
+.page-atmosphere {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse 110% 70% at 0% -6%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 36%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 100% 65% at 100% 4%,
+      color-mix(in oklab, var(--atmosphere-b, transparent) 32%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 108%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
+      transparent 74%
+    );
+}
+
+.dark .page-atmosphere {
+  background:
+    radial-gradient(
+      ellipse 110% 70% at 0% -6%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 46%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 100% 65% at 100% 4%,
+      color-mix(in oklab, var(--atmosphere-b, transparent) 40%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 108%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 28%, transparent),
+      transparent 74%
+    );
+}
+
+/* Reduce expensive blur on small viewports while keeping frost intent. */
+@media (max-width: 767px) {
+  html[data-surface="glass"] .sports-card,
+  html[data-surface="glass"] .glass-surface,
+  html[data-surface="glass"] .glass-card {
+    backdrop-filter: saturate(160%) blur(12px);
+    -webkit-backdrop-filter: saturate(160%) blur(12px);
+  }
+}
+
+/* Typography roles — even px only. */
+.type-caption {
+  font-size: 12px;
+  line-height: 16px;
+}
+.type-body-sm {
+  font-size: 14px;
+  line-height: 20px;
+}
+.type-body {
+  font-size: 16px;
+  line-height: 24px;
+}
+.type-title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.type-heading {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.type-page {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.type-display {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.type-link {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+}
+.type-link:hover {
+  text-decoration-color: var(--foreground);
+}
+
+/* Capability / null language */
+.capability-badge--supported {
+  background: color-mix(in oklab, #34c759 22%, var(--secondary));
+  color: var(--foreground);
+}
+.capability-badge--partial {
+  background: color-mix(in oklab, #ff9f0a 28%, var(--secondary));
+  color: var(--foreground);
+}
+.capability-badge--unavailable {
+  background: color-mix(in oklab, #ff3b30 18%, var(--secondary));
+  color: var(--foreground);
+}
+.capability-badge--empty {
+  background: var(--secondary);
+  color: var(--muted-foreground);
+}
+.null-display--unavailable,
+.null-display--unknown {
+  font-style: italic;
 }
 
 .score-num {
