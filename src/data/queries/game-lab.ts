@@ -12,6 +12,7 @@ import { getGameShellCached } from "@/data/queries/request-cache";
 import { getFilteredPlayerSeasons } from "@/data/queries/players";
 import { getTeam } from "@/data/queries/teams";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
+import { getGamePlayByPlay } from "@/data/queries/games";
 import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { teamEraDisplay } from "@/data/identity/team-era";
@@ -20,6 +21,7 @@ import {
   gameSideBrandKey,
   inferGameTeamProvider,
 } from "@/lib/game-team-identity";
+import { alignGameWithPbpHomeAway } from "@/lib/game-flow/resolve-score-timeline";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
 
@@ -129,21 +131,24 @@ export async function getGameAnalysis(
   const { players, availability } = shell;
 
   const needPlayerBoard = players.length > 0;
+  const playByPlay = await getGamePlayByPlay(gameId).catch(() => null);
+  const orientedGame = alignGameWithPbpHomeAway(game, playByPlay);
+
   const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([
-    resolveSideLabels(game, "home"),
-    resolveSideLabels(game, "away"),
+    resolveSideLabels(orientedGame, "home"),
+    resolveSideLabels(orientedGame, "away"),
     needPlayerBoard
       ? getFilteredPlayerSeasons({
-          season: game.season,
+          season: orientedGame.season,
           minimumGames: 5,
         }).catch(() => [] as PlayerSeason[])
       : Promise.resolve([] as PlayerSeason[]),
-    getTeamSeasonStats(game.season).catch(() => [] as TeamSeasonStats[]),
+    getTeamSeasonStats(orientedGame.season).catch(() => [] as TeamSeasonStats[]),
   ]);
 
   const seasonByPlayerId = new Map<string, PlayerSeason>();
   for (const row of seasonBoard) {
-    if (row.season !== game.season) continue;
+    if (row.season !== orientedGame.season) continue;
     const existing = seasonByPlayerId.get(row.playerId);
     if (!existing || row.gamesPlayed > existing.gamesPlayed) {
       seasonByPlayerId.set(row.playerId, row);
@@ -152,8 +157,7 @@ export async function getGameAnalysis(
 
   const analysis = analyzeGame({
     game: {
-      ...game,
-      // Align identity with resolved brands when schedule id/abbr disagree.
+      ...orientedGame,
       homeTeamId: homeLabels.themeKey,
       awayTeamId: awayLabels.themeKey,
       homeTeamAbbr: homeLabels.label,
@@ -177,12 +181,13 @@ export async function getGameAnalysis(
       awayLabels.label
     ),
     seasonByPlayerId,
+    playByPlay,
   });
 
   return {
     analysis,
     game: {
-      ...game,
+      ...orientedGame,
       homeTeamId: homeLabels.themeKey,
       awayTeamId: awayLabels.themeKey,
       homeTeamAbbr: homeLabels.label,

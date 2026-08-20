@@ -19,7 +19,7 @@ import {
 } from "@/components/explore/leaderboard-row-context";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { TeamLogo } from "@/components/brand/team-logo";
+import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import {
   TransitionLink,
   useQueryNav,
@@ -36,7 +36,7 @@ import {
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
 import { formatNumber, formatPct } from "@/lib/format";
-import { resolveTeamBrand } from "@/lib/nba-brand";
+import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { cn } from "@/lib/utils";
 import {
   defaultPlayerSeasonSortDir,
@@ -145,6 +145,10 @@ export function PlayerSeasonTable({
   const from = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
   const to = Math.min(page * pageSize, totalCount);
 
+  const directoryMode = hasDrbl
+    ? "All Players (DRBL columns available for this season)"
+    : "All Players — factual season directory (not a DRBL leaderboard)";
+
   const pageHref = (p: number) => {
     const next = new URLSearchParams(searchParams.toString());
     if (p <= 1) next.delete("page");
@@ -165,8 +169,11 @@ export function PlayerSeasonTable({
             id="player-table-heading"
             className="text-xl font-bold tracking-tight"
           >
-            Player table
+            All Players
           </h2>
+          <p className="text-sm text-muted-foreground">
+            {directoryMode}
+          </p>
           <p className="text-sm text-muted-foreground">
             {totalCount} player{totalCount === 1 ? "" : "s"}
             {totalCount > 0 ? (
@@ -426,18 +433,25 @@ export function PlayerSeasonTable({
                     ["TOT", "2TM", "3TM", "4TM"].includes(
                       (player.teamAbbreviation ?? "").toUpperCase()
                     );
-                  const brand = isMultiTeam
-                    ? undefined
-                    : resolveTeamBrand(player.teamId);
+                  const histBrand = isMultiTeam
+                    ? null
+                    : resolveHistoricalTeamBrand(
+                        player.teamId,
+                        player.season,
+                        "era"
+                      );
                   const teamLabel = isMultiTeam
                     ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
                       player.teamAbbreviation?.toUpperCase() === "3TM" ||
                       player.teamAbbreviation?.toUpperCase() === "4TM"
                       ? "Multiple"
                       : "TOT"
-                    : (brand?.abbr ??
+                    : (player.historicalTeamAbbr ??
+                      histBrand?.abbreviation ??
                       player.teamAbbreviation ??
                       ( /^\d{6,}$/.test(player.teamId) ? "—" : player.teamId));
+                  const stripeColor =
+                    histBrand?.palette?.primary ?? "var(--primary)";
                   const rowContext = buildLeaderboardRowContext(
                     player,
                     contextIndex
@@ -452,8 +466,7 @@ export function PlayerSeasonTable({
                         )}
                         style={
                           {
-                            "--team-primary":
-                              brand?.primary ?? "var(--primary)",
+                            "--team-primary": stripeColor,
                           } as CSSProperties
                         }
                       >
@@ -476,12 +489,14 @@ export function PlayerSeasonTable({
                                   teamKey={
                                     isMultiTeam ? undefined : player.teamId
                                   }
+                                  portraitUrl={player.portraitUrl}
+                                  registryOnly
                                   size="sm"
                                 />
-                                {!isMultiTeam ? (
+                                {!isMultiTeam && histBrand ? (
                                   <span className="absolute -right-1 -bottom-1 rounded-full bg-card p-px ring-1 ring-border">
-                                    <TeamLogo
-                                      teamKey={player.teamId}
+                                    <HistoricalTeamMark
+                                      brand={histBrand}
                                       size="2xs"
                                     />
                                   </span>
@@ -506,8 +521,11 @@ export function PlayerSeasonTable({
                         </TableCell>
                         <TableCell>
                           <span className="inline-flex items-center gap-1">
-                            {!isMultiTeam ? (
-                              <TeamLogo teamKey={player.teamId} size="xs" />
+                            {!isMultiTeam && histBrand ? (
+                              <HistoricalTeamMark
+                                brand={histBrand}
+                                size="xs"
+                              />
                             ) : null}
                             <span className="text-[11px] font-semibold uppercase tracking-wide">
                               {teamLabel}

@@ -15,6 +15,7 @@ const DEFAULT_SECTIONS: TeamPageSection[] = [
   { id: "identity", label: "Identity" },
   { id: "arc", label: "Arc" },
   { id: "roster", label: "Roster" },
+  { id: "front-office", label: "Front Office" },
   { id: "games", label: "Games" },
   { id: "evidence", label: "Evidence" },
   { id: "transactions", label: "Transactions" },

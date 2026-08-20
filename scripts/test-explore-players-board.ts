@@ -55,7 +55,7 @@ function fakeSeason(
 }
 
 function main() {
-  assert.equal(EXPLORE_PLAYERS_PAGE_SIZE, 100);
+  assert.equal(EXPLORE_PLAYERS_PAGE_SIZE, 50);
   assert.equal(parseExplorePlayersPage(undefined), 1);
   assert.equal(parseExplorePlayersPage("3"), 3);
   assert.equal(parseExplorePlayersPage("0"), 1);

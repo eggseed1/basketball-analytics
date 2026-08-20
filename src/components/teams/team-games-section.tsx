@@ -47,6 +47,7 @@ export function TeamGamesSection({
               <li key={`${n.kind}-${n.game.id}`}>
                 <TransitionLink
                   href={gameLabHref(n.game.id, season)}
+                  prefetch={false}
                   className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
                 >
                   <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
@@ -126,6 +127,7 @@ function GameList({
               <li key={g.id}>
                 <TransitionLink
                   href={gameLabHref(g.id, season)}
+                  prefetch={false}
                   className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[13px] hover:bg-secondary/40"
                 >
                   <span className="font-semibold">

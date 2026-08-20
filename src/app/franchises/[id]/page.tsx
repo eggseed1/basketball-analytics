@@ -3,7 +3,9 @@ import { notFound } from "next/navigation";
 import type { CSSProperties } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
 import type { FranchiseHistory, FranchiseLeader } from "@/data/franchises/history";
+import { getFranchiseByToken } from "@/data/identity/franchise-registry";
 import {
   franchiseHistoryAsOf,
   franchisePlayoffWinPct,
@@ -126,6 +128,7 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
     f.championships.length > 0
       ? f.championships.join(" · ")
       : "Still hunting the first banner";
+  const lineage = getFranchiseByToken(f.id) ?? getFranchiseByToken(f.abbr);
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
@@ -280,6 +283,13 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
           ) : null}
         </div>
       </section>
+
+      {lineage ? (
+        <FranchiseTimeline
+          canonicalTeamId={lineage.canonicalTeamId}
+          franchise={lineage}
+        />
+      ) : null}
 
       <section className="rounded-md border border-border bg-card px-4 py-4 sm:px-5">
         <h2 className="text-[18px] font-bold tracking-tight">Fan lore</h2>

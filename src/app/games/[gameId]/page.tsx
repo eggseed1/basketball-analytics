@@ -4,13 +4,18 @@ import { notFound } from "next/navigation";
 import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
+import { HistoricalGameExperience } from "@/components/history/historical-game-experience";
+import { GameUnavailablePanel } from "@/components/games/game-unavailable";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
+import { getHistoricalProductGame } from "@/data/history/product";
+import { loadRawArchiveShotEvents } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import type { PlayerGame } from "@/data/types";
+import { validateGamePresentation } from "@/lib/game-presentation";
 import {
   parseThemeMode,
   resolveActiveEraTheme,
@@ -97,6 +102,50 @@ async function GameLabDeepBody({
   );
 }
 
+async function HistoricalDeepBody({
+  gameId,
+  seasonHint,
+  homeLabel,
+  awayLabel,
+}: {
+  gameId: string;
+  seasonHint?: string;
+  homeLabel: string;
+  awayLabel: string;
+}) {
+  // Artifact + shots load inside this Suspense boundary (not in the page
+  // parent) so GameIdentityShell can flush first.
+  const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
+  const shots = loadRawArchiveShotEvents(gameId);
+
+  if (historyArtifact) {
+    const slim = {
+      ...historyArtifact,
+      // Unused on the historical surface — drop before Flight serialization.
+      teamGames: [] as Record<string, unknown>[],
+    };
+    return (
+      <HistoricalGameExperience
+        artifact={slim}
+        shots={shots}
+        homeLabel={homeLabel}
+        awayLabel={awayLabel}
+      />
+    );
+  }
+
+  if (shots.length > 0) {
+    return (
+      <p className="text-[13px] text-muted-foreground">
+        Historical summary not precomputed for this game; box / Game Lab below
+        still load when available.
+      </p>
+    );
+  }
+
+  return null;
+}
+
 /**
  * Stable identity/score header stays mounted; deep Game Lab streams below.
  * No identity → hero remount when analysis arrives.
@@ -107,11 +156,23 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const arrival = parseSeasonEvidenceArrival(sp);
 
   const shell = await getGameShellCached(gameId);
-  if (!shell) notFound();
-
   const fromHistory = first(sp.from) === "history";
   const themeParam = first(sp.theme);
+  const seasonParam = first(sp.season);
   const themeMode = parseThemeMode(themeParam);
+
+  if (!shell) {
+    return (
+      <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
+        <GameUnavailablePanel
+          gameId={gameId}
+          backHref={fromHistory ? "/history" : "/explore/games"}
+        />
+      </main>
+    );
+  }
+
+  const presentation = validateGamePresentation(shell.game);
   const applyEraTheme =
     fromHistory || themeParam === "historical" || themeParam === "modern";
   const eraTheme = applyEraTheme
@@ -121,20 +182,33 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const brandPresentation =
     applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
+  const seasonHint = seasonParam ?? shell.game.season;
+  // Lightweight season decode for back-link only (no artifact parse).
+  const historySeasonForNav = seasonHint;
+
   const backHref = fromHistory
-    ? `/history?season=${encodeURIComponent(shell.game.season)}${
-        themeMode === "modern" ? "&theme=modern" : ""
-      }`
+    ? `/history/${encodeURIComponent(historySeasonForNav)}`
     : "/explore/games";
 
   const body = (
     <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
       <p>
         <TransitionLink
-          href={backHref}
+          href={
+            fromHistory && !seasonParam
+              ? `/history?season=${encodeURIComponent(shell.game.season)}${
+                  themeMode === "modern" ? "&theme=modern" : ""
+                }`
+              : backHref
+          }
           className="text-sm text-muted-foreground underline-offset-4 hover:underline"
         >
-          ← {fromHistory ? "Back to Time Machine" : "Back to explore games"}
+          ←{" "}
+          {fromHistory
+            ? seasonParam
+              ? `Back to ${seasonParam}`
+              : "Back to Time Machine"
+            : "Back to explore games"}
         </TransitionLink>
       </p>
 
@@ -144,13 +218,32 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
         arrivalLabel={arrival?.label}
       />
 
-      <Suspense
-        fallback={
-          <DestinationSectionSkeleton label="Loading Game Lab analysis…" />
-        }
-      >
-        <GameLabDeepBody gameId={gameId} arrival={arrival} />
-      </Suspense>
+      {presentation.canRenderDeepFeatures ? (
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading Game Flow & shots…" />
+          }
+        >
+          <HistoricalDeepBody
+            gameId={gameId}
+            seasonHint={seasonHint}
+            homeLabel={shell.game.homeTeamAbbr ?? "Home"}
+            awayLabel={shell.game.awayTeamAbbr ?? "Away"}
+          />
+        </Suspense>
+      ) : null}
+
+      {presentation.canRenderDeepFeatures ? (
+        <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading Game Lab analysis…" />
+          }
+        >
+          <GameLabDeepBody gameId={gameId} arrival={arrival} />
+        </Suspense>
+      ) : (
+        <GameUnavailablePanel gameId={gameId} backHref={backHref} />
+      )}
     </main>
   );
 

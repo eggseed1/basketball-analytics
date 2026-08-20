@@ -22,7 +22,7 @@ import { filtersFromSearchParams } from "@/lib/search-params";
 export const metadata = {
   title: "Players",
   description:
-    "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and WAR1 for registry seasons.",
+    "NBA player directory from 1946-47. DRBL/100 and WAR1 for registry seasons from 2020-21.",
 };
 
 interface ExplorePlayersPageProps {
@@ -125,12 +125,13 @@ export default async function ExplorePlayersPage({
           Players
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          Leaderboard
+          All Players
         </h1>
         <p className="max-w-2xl text-[13px] text-muted-foreground">
-          Box-score exploration spans the archive. Canonical DRBL/100 and WAR1
-          appear only for DRBL registry seasons ({drblSeasons.join(", ")}
-          ).
+          Season directory of every player with factual game participation
+          (1996-97+ archive). This is not the DRBL leaderboard — DRBL/100 and
+          WAR1 appear only for supported seasons ({drblSeasons.join(", ")}) via
+          left join and never decide who is listed.
         </p>
         {parsePlayerSeasonSortKey(params.sort) ? (
           <p className="text-[13px] text-muted-foreground">

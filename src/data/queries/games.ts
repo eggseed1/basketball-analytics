@@ -11,6 +11,11 @@ import { applyGameFilters, toGameSummary } from "./filter-utils";
 import { getHistoricalBoxScore, getHistoricalGame, getHistoricalGames } from "./historical";
 import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 import {
+  isMalformedEmptyFinalShell,
+  validateGamePresentation,
+} from "@/lib/game-presentation";
+import { loadRawArchiveBoxScore } from "@/data/history/raw-archive-box";
+import {
   addDaysIso,
   fetchRecentScoreboardGames,
   monthKeyFromDate,
@@ -248,28 +253,52 @@ function shellFromGame(
   };
 }
 
+function acceptShell(shell: GameShell | null): GameShell | null {
+  if (!shell?.game) return null;
+  if (isMalformedEmptyFinalShell(shell.game)) return null;
+  const v = validateGamePresentation(shell.game);
+  if (!v.canRenderScoreHeader && v.state !== "PARTIAL") return null;
+  if (
+    v.issues.includes("MISSING_HOME_TEAM") ||
+    v.issues.includes("MISSING_AWAY_TEAM")
+  ) {
+    return null;
+  }
+  return shell;
+}
+
 export async function getGameShell(gameId: string): Promise<GameShell | null> {
   const id = String(gameId ?? "").trim();
   if (!id) return null;
+
+  // Local raw archive first for NBA GameIDs — complete teams/scores without inventing shells.
+  if (looksLikeNbaStatsGameId(id)) {
+    const archived = loadRawArchiveBoxScore(id);
+    if (archived?.game) {
+      const shell = acceptShell(shellFromBox(archived));
+      if (shell) return shell;
+    }
+  }
 
   // ESPN event ids: ESPN summary is the matching lookup contract for Scores/Home.
   if (looksLikeEspnEventId(id)) {
     try {
       const box = await fetchEspnEventBoxScore(id);
-      if (box?.game) return shellFromBox(box);
+      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      if (shell) return shell;
     } catch {
       // NETWORK_FAILURE: do not pretend the game is invalid — try scoreboard row.
       try {
         const fromProvider = await getDataProvider().getGame(id);
-        if (fromProvider) return shellFromGame(fromProvider, "provider");
+        const shell = fromProvider
+          ? acceptShell(shellFromGame(fromProvider, "provider"))
+          : null;
+        if (shell) return shell;
       } catch {
-        // still network — fall through to null only after exhaustive attempts
+        // still network
       }
-      // Re-throw classification: return null would become false 404. Prefer
-      // scoreboard-only when we can recover; otherwise null (invalid/unavailable).
       return null;
     }
-    // ESPN returned a definitive miss (404 / empty header).
     return null;
   }
 
@@ -277,13 +306,17 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
   if (looksLikeNbaStatsGameId(id)) {
     try {
       const box = await getDataProvider().getGameBoxScore(id);
-      if (box?.game) return shellFromBox(box);
+      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      if (shell) return shell;
     } catch {
       // fall through to schedule row
     }
     try {
       const fromProvider = await getDataProvider().getGame(id);
-      if (fromProvider) return shellFromGame(fromProvider, "provider");
+      const shell = fromProvider
+        ? acceptShell(shellFromGame(fromProvider, "provider"))
+        : null;
+      if (shell) return shell;
     } catch {
       return null;
     }
@@ -301,13 +334,19 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   const box = await getGameBoxScore(id);
   if (box?.game) {
-    const fromBox = shellFromBox(box);
-    if (fromBox.hasBoxScore || fromBox.hasPeriodScores || !historical) {
+    const fromBox = acceptShell(shellFromBox(box));
+    if (
+      fromBox &&
+      (fromBox.hasBoxScore || fromBox.hasPeriodScores || !historical)
+    ) {
       return fromBox;
     }
   }
 
-  if (historical) return shellFromGame(historical, "historical");
+  if (historical) {
+    const shell = acceptShell(shellFromGame(historical, "historical"));
+    if (shell) return shell;
+  }
 
   // Do not fan out ESPN season schedules for non-event ids — different id space.
   return null;
@@ -462,7 +501,7 @@ export type TeamSeasonGamesResult = {
 
 /**
  * Team-scoped season games for destination Games / Evidence islands.
- * Shared archive load → in-memory team filter. No duplicate BDL discovery.
+ * Prefer compact history-product indexes when present (no full archive filter).
  */
 export async function getTeamSeasonGames(
   options: {
@@ -472,6 +511,26 @@ export async function getTeamSeasonGames(
     limit?: number;
   }
 ): Promise<TeamSeasonGamesResult> {
+  const {
+    hasHistoryTeamGameIndex,
+    getCompactTeamSeasonGames,
+    compactRowsToGameSummaries,
+  } = await import("@/data/history/team-matchup-index");
+
+  if (hasHistoryTeamGameIndex(options.season)) {
+    let compact = getCompactTeamSeasonGames(options.teamId, options.season);
+    if (options.limit != null) {
+      compact = compact.slice(0, options.limit);
+    }
+    if (compact.length > 0) {
+      return {
+        games: compactRowsToGameSummaries(compact),
+        source: "disk_cache",
+      };
+    }
+    // Index exists but no games for this team — fall through for modern seasons.
+  }
+
   const archive = await getSeasonGamesArchive(options.season);
   if (archive.games.length === 0) {
     return {

@@ -67,6 +67,7 @@ export function LeaderboardContextBody({
       <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-border pt-2">
         <Link
           href={context.playerHref}
+          prefetch={false}
           className="text-[12px] font-semibold underline-offset-2 hover:underline"
         >
           View player →

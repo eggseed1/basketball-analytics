@@ -116,6 +116,53 @@ function main() {
   assert.equal(bos78!.source, "current");
   assert.ok(bos78!.logoUrl);
 
+  // --- LA Clippers: current logo despite "LA" vs "Los Angeles" label drift ---
+  const lacUrl = teamLogoUrl("LAC");
+  assert.ok(lacUrl);
+  for (const id of ["12", "LAC", "1610612746"] as const) {
+    const lac = resolveHistoricalTeamBrand(id, "2024-25", "era");
+    assert.ok(lac, `LAC resolve failed for ${id}`);
+    assert.equal(lac!.abbreviation, "LAC");
+    assert.equal(lac!.source, "current");
+    assert.equal(lac!.logoUrl, lacUrl);
+    assert.equal(lac!.isHistorical, false);
+  }
+  // San Diego Clippers must never reuse the modern LAC mark
+  const sdc = resolveHistoricalTeamBrand("12", "1982-83", "era");
+  assert.ok(sdc);
+  assert.equal(sdc!.abbreviation, "SDC");
+  assert.equal(sdc!.source, "historical_text");
+  assert.equal(sdc!.logoUrl, null);
+
+  // --- Washington Wizards: current logo; Bullets stay historical text ---
+  const wasUrl = teamLogoUrl("WAS");
+  assert.ok(wasUrl);
+  for (const id of ["27", "WAS", "1610612764"] as const) {
+    const was = resolveHistoricalTeamBrand(id, "2024-25", "era");
+    assert.ok(was, `WAS resolve failed for ${id}`);
+    assert.equal(was!.abbreviation, "WAS");
+    assert.equal(was!.source, "current");
+    assert.equal(was!.logoUrl, wasUrl);
+    assert.equal(was!.isHistorical, false);
+  }
+  const bullets = resolveHistoricalTeamBrand("27", "1982-83", "era");
+  assert.ok(bullets);
+  assert.equal(bullets!.abbreviation, "WSB");
+  assert.equal(bullets!.source, "historical_text");
+  assert.equal(bullets!.logoUrl, null);
+
+  // --- Indiana Pacers: current logo (no era table entry; continuous franchise) ---
+  const indUrl = teamLogoUrl("IND");
+  assert.ok(indUrl);
+  for (const id of ["11", "IND", "1610612754"] as const) {
+    const ind = resolveHistoricalTeamBrand(id, "2024-25", "era");
+    assert.ok(ind, `IND resolve failed for ${id}`);
+    assert.equal(ind!.abbreviation, "IND");
+    assert.equal(ind!.source, "current");
+    assert.equal(ind!.logoUrl, indUrl);
+    assert.equal(ind!.isHistorical, false);
+  }
+
   // --- Bobcats: orange/navy, not Hornets ---
   const chaBobcats = resolveHistoricalTeamBrand("30", "2008-09", "era");
   assert.ok(chaBobcats);

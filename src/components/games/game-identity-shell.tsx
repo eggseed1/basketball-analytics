@@ -14,6 +14,7 @@ import {
   shouldDisplayScores,
   statusHeadline,
 } from "@/lib/game-status";
+import { validateGamePresentation } from "@/lib/game-presentation";
 import { cn } from "@/lib/utils";
 import type { CSSProperties } from "react";
 
@@ -21,15 +22,17 @@ function resolveSideBrand(
   game: Game,
   side: "home" | "away",
   presentation: HistoricalBrandPresentation
-): HistoricalTeamBrand {
+): HistoricalTeamBrand | null {
   const canonicalId = gameSideCanonicalTeamId(game, side);
+  if (!canonicalId) return null;
   const brand = resolveHistoricalTeamBrand(
     canonicalId,
     game.season,
     presentation
   );
   if (brand) return brand;
-  const key = String(gameSideBrandKey(game, side));
+  const key = String(gameSideBrandKey(game, side) || "").trim();
+  if (!key) return null;
   return {
     displayName: key,
     abbreviation: key.slice(0, 3).toUpperCase(),
@@ -45,7 +48,7 @@ function resolveSideBrand(
 
 /**
  * Stable game identity frame — teams, score, date.
- * Stays mounted while deeper Game Lab analysis streams below.
+ * Refuses malformed empty FINAL shells (? 0-0 ?).
  */
 export function GameIdentityShell({
   game,
@@ -56,19 +59,57 @@ export function GameIdentityShell({
   game: Game;
   brandPresentation?: HistoricalBrandPresentation;
   arrivalLabel?: string | null;
-  /** Soft cue while analysis Suspense is pending (identity stays mounted). */
   pendingAnalysis?: boolean;
 }) {
+  const validation = validateGamePresentation(game);
+  if (!validation.canRenderScoreHeader) {
+    return (
+      <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
+        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+          {game.season || "Game"}
+        </p>
+        <p className="text-[15px] font-semibold tracking-tight">
+          Game details incomplete
+        </p>
+        <p className="text-[13px] text-muted-foreground">
+          Team identity or final score could not be verified for this link.
+          Deep features are hidden until the game resolves.
+        </p>
+      </header>
+    );
+  }
+
   const awayKey = gameSideBrandKey(game, "away");
   const homeKey = gameSideBrandKey(game, "home");
   const awayBrand = resolveSideBrand(game, "away", brandPresentation);
   const homeBrand = resolveSideBrand(game, "home", brandPresentation);
+  if (!awayBrand || !homeBrand) {
+    return (
+      <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
+        <p className="text-[15px] font-semibold tracking-tight">
+          Game details incomplete
+        </p>
+        <p className="text-[13px] text-muted-foreground">
+          Team branding could not be resolved.
+        </p>
+      </header>
+    );
+  }
+
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const showScores = shouldDisplayScores({
-    status: game.status,
-    homeScore: game.homeScore,
-    awayScore: game.awayScore,
-  });
+  const showScores =
+    validation.canRenderScoreHeader &&
+    shouldDisplayScores({
+      status: game.status,
+      homeScore: game.homeScore,
+      awayScore: game.awayScore,
+    }) &&
+    !(
+      game.status === "final" &&
+      game.homeScore === 0 &&
+      game.awayScore === 0 &&
+      !game.gameDate
+    );
 
   return (
     <header

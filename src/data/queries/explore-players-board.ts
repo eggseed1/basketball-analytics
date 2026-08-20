@@ -7,6 +7,7 @@ import {
   buildLeaderboardContextIndex,
   type LeaderboardContextIndex,
 } from "@/analytics/leaderboard-context";
+import { getPlayerMedia } from "@/data/media/get-player-media";
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters, PlayerSeason } from "@/data/types";
@@ -14,8 +15,9 @@ import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
 } from "@/lib/player-season-sort";
+import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 
-export const EXPLORE_PLAYERS_PAGE_SIZE = 100;
+export const EXPLORE_PLAYERS_PAGE_SIZE = 50;
 
 /** Display + Level-2 context fields only — not the full canonical PlayerSeason. */
 export type ExplorePlayerBoardRow = {
@@ -55,6 +57,13 @@ export type ExplorePlayerBoardRow = {
   r1Points?: number | null;
   /** null/omitted when DRBL overlay absent — never coerce missing to 0. */
   r1WinEquivalents?: number | null;
+  /** Precomputed verified portrait URL (never request-time probed). */
+  portraitUrl?: string | null;
+  /** Temporal season team abbreviation (SEA not OKC). */
+  historicalTeamAbbr?: string;
+  historicalTeamName?: string;
+  historicalLogoUrl?: string | null;
+  historicalLogoSource?: string;
   mpg: number;
   ppg: number;
   rpg: number;
@@ -91,12 +100,17 @@ function perGame(total: number, gp: number): number {
 
 export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow {
   const gp = p.gamesPlayed || 0;
+  const media = getPlayerMedia([p.playerId]).get(p.playerId);
+  const hist =
+    p.teamId && p.teamId !== "TOT"
+      ? resolveHistoricalTeamBrand(p.teamId, p.season, "era")
+      : null;
   const row: ExplorePlayerBoardRow = {
     playerId: p.playerId,
     playerName: p.playerName,
     teamId: p.teamId,
-    teamName: p.teamName,
-    teamAbbreviation: p.teamAbbreviation,
+    teamName: hist?.displayName ?? p.teamName,
+    teamAbbreviation: hist?.abbreviation ?? p.teamAbbreviation,
     season: p.season,
     position: p.position,
     gamesPlayed: p.gamesPlayed,
@@ -110,6 +124,11 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
     fieldGoalPct: p.fieldGoalPct,
     threePointPct: p.threePointPct,
     freeThrowPct: p.freeThrowPct,
+    portraitUrl: media?.sourceUrl ?? null,
+    historicalTeamAbbr: hist?.abbreviation,
+    historicalTeamName: hist?.displayName,
+    historicalLogoUrl: hist?.logoUrl ?? null,
+    historicalLogoSource: hist?.source,
     mpg: perGame(p.minutes, gp),
     ppg: perGame(p.points, gp),
     rpg: perGame(p.rebounds, gp),
@@ -246,9 +265,10 @@ export async function getExplorePlayersBoardView(options: {
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
   const hasLebron = board.rows.some((p) => p.lebron != null);
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
-  // Prefer DRBL/100 for registry seasons when present; else DARKO; else PPG.
+  // Directory default: DRBL only when supported; never invent DRBL rank for
+  // pre-2020 / unsupported seasons. Prefer counting basketball (PPG).
   const sortKey =
-    options.sortKey ?? (hasDrbl ? "drbl100" : hasDarko ? "darkoDpm" : "ppg");
+    options.sortKey ?? (hasDrbl ? "drbl100" : "ppg");
   const sortDir =
     options.sortDir ?? defaultPlayerSeasonSortDir(sortKey);
   const pageSize = options.pageSize ?? EXPLORE_PLAYERS_PAGE_SIZE;

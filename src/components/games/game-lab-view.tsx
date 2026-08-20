@@ -3,6 +3,7 @@
 import { useMemo, useState, type ReactNode } from "react";
 
 import type { GameAnalysisSummary, GameWinningFactor } from "@/analytics/game-lab";
+import type { ScoreTimelinePoint } from "@/lib/history/score-flow";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -25,6 +26,120 @@ import {
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import type { GameSummary } from "@/data/types";
 import { cn } from "@/lib/utils";
+
+function GameLabMarginChart({
+  timeline,
+  homeLabel,
+  awayLabel,
+}: {
+  timeline: ScoreTimelinePoint[];
+  homeLabel: string;
+  awayLabel: string;
+}) {
+  const [hover, setHover] = useState<number | null>(null);
+  const { poly, maxAbs, maxT, periodMarks } = useMemo(() => {
+    if (!timeline.length)
+      return { poly: "", maxAbs: 1, maxT: 1, periodMarks: [] as number[] };
+    const maxT = Math.max(...timeline.map((p) => p.elapsedGameTime), 1);
+    const maxAbs = Math.max(...timeline.map((p) => Math.abs(p.margin)), 1);
+    const w = 320;
+    const h = 120;
+    const mid = h / 2;
+    const coords = timeline.map((p) => {
+      const x = (p.elapsedGameTime / maxT) * w;
+      const y = mid - (p.margin / maxAbs) * (h / 2 - 8);
+      return `${x},${y}`;
+    });
+    const marks: number[] = [];
+    const maxPeriod = Math.max(...timeline.map((p) => p.period), 4);
+    for (let p = 1; p < maxPeriod; p++) {
+      const end =
+        p <= 4 ? p * 12 * 60 : 4 * 12 * 60 + (p - 4) * 5 * 60;
+      if (end < maxT) marks.push(end);
+    }
+    return { poly: coords.join(" "), maxAbs, maxT, periodMarks: marks };
+  }, [timeline]);
+
+  if (!timeline.length) return null;
+  const w = 320;
+  const h = 120;
+  const mid = h / 2;
+  const active = hover != null ? timeline[hover] : null;
+
+  return (
+    <div className="rounded-md border border-border/70 bg-background/40 p-3">
+      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        Margin over game time
+      </p>
+      <p className="mt-0.5 text-[11px] text-muted-foreground">
+        {homeLabel} lead up · {awayLabel} lead down
+      </p>
+      <svg
+        viewBox={`0 0 ${w} ${h}`}
+        className="mt-2 h-auto w-full max-w-xl"
+        role="img"
+        aria-label="Score margin chart"
+      >
+        <line
+          x1={0}
+          y1={mid}
+          x2={w}
+          y2={mid}
+          stroke="currentColor"
+          strokeOpacity={0.2}
+        />
+        {periodMarks.map((t) => {
+          const x = (t / maxT) * w;
+          return (
+            <line
+              key={t}
+              x1={x}
+              y1={4}
+              x2={x}
+              y2={h - 4}
+              stroke="currentColor"
+              strokeOpacity={0.12}
+              strokeDasharray="2 3"
+            />
+          );
+        })}
+        <polyline
+          fill="none"
+          stroke="currentColor"
+          strokeWidth={2}
+          points={poly}
+        />
+        {timeline.map((p, i) => {
+          const x = (p.elapsedGameTime / maxT) * w;
+          const y = mid - (p.margin / maxAbs) * (h / 2 - 8);
+          return (
+            <circle
+              key={i}
+              cx={x}
+              cy={y}
+              r={hover === i ? 4 : 2.5}
+              className="fill-foreground"
+              onMouseEnter={() => setHover(i)}
+              onMouseLeave={() => setHover(null)}
+            />
+          );
+        })}
+      </svg>
+      {active ? (
+        <p className="mt-2 text-[12px] tabular-nums text-muted-foreground">
+          Q{active.period} {active.clock} · {awayLabel} {active.awayScore}–
+          {homeLabel} {active.homeScore}
+          {active.scorerId ? ` · scorer ${active.scorerId}` : ""} · +
+          {active.points}
+        </p>
+      ) : (
+        <p className="mt-2 text-[12px] text-muted-foreground">
+          Hover or tap a point for clock and score.
+        </p>
+      )}
+    </div>
+  );
+}
 
 function FactorLabel({ id, label }: { id: string; label: string }) {
   const conceptId = conceptIdForFactorId(id);
@@ -389,20 +504,67 @@ export function GameLabView({
           <h2 className="text-[17px] font-bold tracking-tight">Game flow</h2>
           <p className="text-[13px] text-muted-foreground">
             {flow.available
-              ? "Period scoring and end-of-period lead — when did the score shift?"
-              : "Period scoring is not available for this game."}
+              ? "How the score moved — quarters, margin, leads, and runs."
+              : "Game flow isn't available for this game."}
           </p>
-          {!flow.available ? (
-            <p className="mt-1 text-[12px] text-muted-foreground">
-              <MetricHelp conceptId="unavailable">Unavailable</MetricHelp>
-              {" — "}
-              linescores were not provided for this game.
-            </p>
-          ) : null}
         </div>
 
         {flow.available ? (
           <>
+            {flow.story ? (
+              <dl className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+                <div>
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Largest lead
+                  </dt>
+                  <dd className="mt-0.5 text-[14px] font-semibold tabular-nums">
+                    {flow.story.largestHomeLead >= flow.story.largestAwayLead
+                      ? `${outcome.homeLabel} +${flow.story.largestHomeLead}`
+                      : `${outcome.awayLabel} +${flow.story.largestAwayLead}`}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Lead changes
+                  </dt>
+                  <dd className="mt-0.5 text-[14px] font-semibold tabular-nums">
+                    {flow.story.leadChanges}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Largest run
+                  </dt>
+                  <dd className="mt-0.5 text-[14px] font-semibold tabular-nums">
+                    {(() => {
+                      const hr = flow.story.largestStrictRunHome ?? 0;
+                      const ar = flow.story.largestStrictRunAway ?? 0;
+                      if (hr <= 0 && ar <= 0) return "—";
+                      return hr >= ar
+                        ? `${outcome.homeLabel} ${hr}-0`
+                        : `${outcome.awayLabel} ${ar}-0`;
+                    })()}
+                  </dd>
+                </div>
+                <div>
+                  <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                    Ties
+                  </dt>
+                  <dd className="mt-0.5 text-[14px] font-semibold tabular-nums">
+                    {flow.story.ties}
+                  </dd>
+                </div>
+              </dl>
+            ) : null}
+
+            {flow.timeline.length > 0 ? (
+              <GameLabMarginChart
+                timeline={flow.timeline}
+                homeLabel={outcome.homeLabel}
+                awayLabel={outcome.awayLabel}
+              />
+            ) : null}
+
             <div className="overflow-x-auto">
               <table className="w-full min-w-[320px] border-collapse text-left text-[12px]">
                 <thead>
@@ -443,39 +605,13 @@ export function GameLabView({
                 </tbody>
               </table>
             </div>
-
-            {/* Compact cumulative bars */}
-            <ul className="flex flex-col gap-2">
-              {flow.periods.map((p) => {
-                const total = Math.max(1, p.homeCumulative + p.awayCumulative);
-                const homePct = (p.homeCumulative / total) * 100;
-                return (
-                  <li key={`bar-${p.periodIndex}`} className="flex items-center gap-2">
-                    <span className="w-8 shrink-0 text-[11px] font-semibold tabular-nums text-muted-foreground">
-                      {p.label}
-                    </span>
-                    <div className="relative h-2.5 flex-1 overflow-hidden rounded-full bg-black/[0.06]">
-                      <div
-                        className="absolute inset-y-0 left-0 rounded-full bg-foreground/80"
-                        style={{ width: `${homePct}%` }}
-                        title={`${outcome.homeLabel} share of cumulative points`}
-                      />
-                    </div>
-                    <span className="w-16 shrink-0 text-right text-[11px] tabular-nums text-muted-foreground">
-                      {p.awayCumulative}–{p.homeCumulative}
-                    </span>
-                  </li>
-                );
-              })}
-            </ul>
-            <p className="text-[11px] text-muted-foreground">
-              Bar fill = {outcome.homeLabel} share of cumulative points after each
-              period.
-            </p>
           </>
         ) : (
           <p className="text-[13px] text-muted-foreground">
-            {flow.notes[0]}
+            {flow.notes[0] === "Game flow unavailable"
+              ? `${flow.notes[0]}. ${flow.notes[1] ?? "The scoring timeline is incomplete."}`
+              : flow.notes[0] ??
+                "Play-by-play scoring for this game isn't complete enough to reconstruct the score timeline."}
           </p>
         )}
 
@@ -557,8 +693,8 @@ export function GameLabView({
           <h2 className="text-[17px] font-bold tracking-tight">What changed?</h2>
           <p className="text-[13px] text-muted-foreground">
             {analysis.whatChanged.length
-              ? "Period-level scoring swings from available linescores."
-              : "Period scoring unavailable for this game."}
+              ? "Period-level scoring swings from the validated score timeline."
+              : "No period scoring swings to highlight for this game."}
           </p>
         </div>
         {analysis.whatChanged.length ? (

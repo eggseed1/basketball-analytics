@@ -11,7 +11,7 @@ export async function TeamRosterIsland({
   season: string;
   teamKey: string;
 }) {
-  const roster = await getTeamRosterCached(teamId, season, 10);
+  const roster = await getTeamRosterCached(teamId, season, 0);
   const buckets = buildRosterBuckets(roster.players);
 
   return (

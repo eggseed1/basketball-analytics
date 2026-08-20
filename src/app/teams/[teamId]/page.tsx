@@ -11,10 +11,13 @@ import { TeamAskLinks } from "@/components/teams/team-ask-links";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
+import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamPageNav } from "@/components/teams/team-page-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
+import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
+import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import {
   canonicalSeasonFromStartYear,
@@ -84,6 +87,8 @@ export default async function TeamProfilePage({
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const arcParam = Array.isArray(sp.arc) ? sp.arc[0] : sp.arc;
+  const gamesPageRaw = Array.isArray(sp.gamesPage) ? sp.gamesPage[0] : sp.gamesPage;
+  const gamesPage = Math.max(1, Number.parseInt(gamesPageRaw ?? "1", 10) || 1);
   const showingFullArc = arcParam === "full";
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = seasonParam ?? currentSeason;
@@ -510,14 +515,29 @@ export default async function TeamProfilePage({
         </Suspense>
 
         <Suspense
+          fallback={
+            <DestinationSectionSkeleton label="Loading front office…" />
+          }
+        >
+          <TeamFrontOfficeIsland teamId={resolvedTeamId} season={season} />
+        </Suspense>
+
+        <Suspense
           fallback={<DestinationSectionSkeleton label="Loading games…" />}
         >
           <TeamGamesIsland
             team={identityTeam}
             brand={modernBrand}
             season={season}
+            gamesPage={gamesPage}
+            fromHistory={fromHistory}
+            theme={themeMode === "modern" ? "modern" : undefined}
           />
         </Suspense>
+
+        <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
+
+        <TeamMatchupPreview canonicalTeamId={resolvedTeamId} />
 
         <Suspense
           fallback={
