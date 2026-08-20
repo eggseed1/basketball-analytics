@@ -22,6 +22,7 @@ import {
 } from "@/data/providers/nba/compute-advanced";
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
 import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
+import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 
 export function transformBdlTeam(raw: BdlTeam): Team {
   const fullName = raw.full_name ?? raw.name ?? String(raw.id);
@@ -257,13 +258,7 @@ function transformBoxLine(
 }
 
 function parseMinutes(value: string | null | undefined): number {
-  if (!value || value === "00" || value === "0") return 0;
-  if (value.includes(":")) {
-    const [m, s] = value.split(":").map(Number);
-    return (m || 0) + (s || 0) / 60;
-  }
-  const n = Number(value);
-  return Number.isFinite(n) ? n : 0;
+  return parseBasketballMinutes(value);
 }
 
 function mapStatus(

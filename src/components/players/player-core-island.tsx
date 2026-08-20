@@ -29,9 +29,9 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import {
-  getFilteredPlayerSeasons,
-} from "@/data/queries";
-import { getPlayerSeasonCached } from "@/data/queries/request-cache";
+  getFilteredPlayerSeasonsCached,
+  getPlayerSeasonCached,
+} from "@/data/queries/request-cache";
 import type { PlayerSeason } from "@/data/types";
 import { formatMinutes, formatNumber, formatOrdinal, formatPct } from "@/lib/format";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -42,6 +42,7 @@ import {
   mergePlayerSeasonStats,
   playerSeasonChipHref,
 } from "@/lib/player-destination";
+import { playerHref } from "@/lib/player-page-contract";
 import {
   brandableTeamKey,
   brandableTeamKeyFromRow,
@@ -99,14 +100,12 @@ export async function PlayerCoreIsland({
   const priorSeason = shiftCanonicalSeason(season, -1);
   const [seasonRaw, peers, priorBoard] = await Promise.all([
     getPlayerSeasonCached(playerId, season),
-    getFilteredPlayerSeasons({
-      season,
-      minimumGames: 15,
-    }).catch(() => [] as PlayerSeason[]),
-    getFilteredPlayerSeasons({
-      season: priorSeason,
-      minimumGames: 15,
-    }).catch(() => [] as PlayerSeason[]),
+    getFilteredPlayerSeasonsCached(season, 15).catch(
+      () => [] as PlayerSeason[]
+    ),
+    getFilteredPlayerSeasonsCached(priorSeason, 15).catch(
+      () => [] as PlayerSeason[]
+    ),
   ]);
 
   const careerSeason =
@@ -683,12 +682,20 @@ export async function PlayerCoreIsland({
               compareHref={`/compare?a=${playerId}&season=${season}`}
             />
             <p className="mt-2 text-[12px] text-muted-foreground">
-              <a
-                href="#seasons"
+              <TransitionLink
+                href={playerHref({
+                  playerId,
+                  season,
+                  view: "career",
+                  fromHistory,
+                  themeMode,
+                })}
+                scroll={false}
+                prefetch={false}
                 className="font-semibold underline-offset-2 hover:underline"
               >
                 View season details →
-              </a>
+              </TransitionLink>
               {" · "}
               <TransitionLink
                 href={`/players/${playerId}/season-compare?a=${encodeURIComponent(season)}${
@@ -734,6 +741,8 @@ export async function PlayerCoreIsland({
             viewingSeason={season}
             peakSeason={careerResume.peak?.season}
             rankDefaults={rankDefaultSeasons}
+            fromHistory={fromHistory}
+            themeMode={themeMode}
           />
         </TeamWashCard>
         <PlayerSeasonAnalysisControl

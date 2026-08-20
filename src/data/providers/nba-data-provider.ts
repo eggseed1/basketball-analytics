@@ -28,6 +28,7 @@ import {
   type DrblPlayerRow,
 } from "./nba/drbl-loader";
 import { fetchRawPlayByPlay } from "./nba/play-by-play-client";
+import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
 import {
   enrichCareerRowKeepTeam,
@@ -886,20 +887,28 @@ export class NBADataProvider implements BasketballDataProvider {
     const teamRows = resultSetToObjects(teamSet);
     // TeamStats usually lists away then home or by scoreboard order; use game cache.
     const known = await this.findCachedGame(gameId);
-    const season = known?.season ?? defaultCanonicalSeasons(1)[0];
+    const seasonFromId = (() => {
+      const m = /^002(\d{2})\d{5}$/.exec(gameId);
+      if (!m) return null;
+      const yy = Number(m[1]);
+      const start = yy >= 50 ? 1900 + yy : 2000 + yy;
+      return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+    })();
+    const season =
+      known?.season ?? seasonFromId ?? defaultCanonicalSeasons(1)[0];
 
     let homeProviderTeamId = known?.homeProviderTeamId ?? "";
     let awayProviderTeamId = known?.awayProviderTeamId ?? "";
     let homeTeamId = known?.homeTeamId ?? "";
     let awayTeamId = known?.awayTeamId ?? "";
-    let homeScore = known?.homeScore ?? 0;
-    let awayScore = known?.awayScore ?? 0;
+    let homeScore: number | null = known?.homeScore ?? null;
+    let awayScore: number | null = known?.awayScore ?? null;
 
     if (teamRows.length >= 2) {
       const a = teamRows[0];
       const b = teamRows[1];
       if (!homeTeamId) {
-        // Prefer known; else treat first as home (NBA often home last — swap if known).
+        // Prefer known; else treat first as away, second as home (NBA TeamStats order).
         awayProviderTeamId = String(a.TEAM_ID);
         homeProviderTeamId = String(b.TEAM_ID);
         awayTeamId =
@@ -925,6 +934,34 @@ export class NBADataProvider implements BasketballDataProvider {
           }
         }
       }
+    } else if (playerSet) {
+      // Derive teams from player rows when TeamStats incomplete.
+      const playerRows = resultSetToObjects(playerSet);
+      const teamIds = [
+        ...new Set(
+          playerRows
+            .map((r) => String(r.TEAM_ID ?? ""))
+            .filter((id) => id && id !== "0")
+        ),
+      ];
+      if (teamIds.length === 2 && !homeTeamId) {
+        awayProviderTeamId = teamIds[0]!;
+        homeProviderTeamId = teamIds[1]!;
+        awayTeamId =
+          getCanonicalTeamFromProvider("nba", awayProviderTeamId)
+            ?.canonicalTeamId ?? awayProviderTeamId;
+        homeTeamId =
+          getCanonicalTeamFromProvider("nba", homeProviderTeamId)
+            ?.canonicalTeamId ?? homeProviderTeamId;
+      }
+    }
+
+    // Integrity: never invent blank-team FINAL 0-0 shells.
+    if (!homeTeamId || !awayTeamId) {
+      return null;
+    }
+    if (homeScore == null || awayScore == null) {
+      return null;
     }
 
     const game: Game = {
@@ -1149,6 +1186,19 @@ export class NBADataProvider implements BasketballDataProvider {
       const hit = games.find((g) => g.id === gameId);
       if (hit) return hit;
     }
+    // Derive season from NBA GameID and load that season schedule once.
+    const m = /^002(\d{2})\d{5}$/.exec(gameId);
+    if (m) {
+      const yy = Number(m[1]);
+      const start = yy >= 50 ? 1900 + yy : 2000 + yy;
+      const season = `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+      try {
+        const games = await this.loadGamesForSeason(season);
+        return games.find((g) => g.id === gameId);
+      } catch {
+        return undefined;
+      }
+    }
     return undefined;
   }
 }
@@ -1293,13 +1343,7 @@ function parseNbaGameDate(raw: string): string {
 }
 
 function parseMinutes(value: string | number | null): number {
-  if (typeof value === "number") return value;
-  if (!value) return 0;
-  if (value.includes(":")) {
-    const [m, s] = value.split(":").map((p) => Number(p) || 0);
-    return m + s / 60;
-  }
-  return Number(value) || 0;
+  return parseBasketballMinutes(value);
 }
 
 function matchesShotFilters(shot: Shot, filters: ShotFilters): boolean {

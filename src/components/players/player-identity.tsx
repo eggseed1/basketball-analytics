@@ -171,7 +171,7 @@ export function PlayerIdentity({
     <PreviewCard.Root open={open} onOpenChange={onOpenChange}>
       <span className={cn("inline-flex max-w-full items-center", className)}>
         <PreviewCard.Trigger
-          render={<TransitionLink href={target} />}
+          render={<TransitionLink href={target} prefetch={false} />}
           delay={cfg.openDelay}
           closeDelay={cfg.closeDelay}
           className={cn(
@@ -242,6 +242,7 @@ export function PlayerIdentity({
             {resolved === "chip" ? (
               <TransitionLink
                 href={target}
+                prefetch={false}
                 className="block px-2.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => onOpenChange(false)}
               >
@@ -258,6 +259,7 @@ export function PlayerIdentity({
             ) : resolved === "compact" ? (
               <TransitionLink
                 href={target}
+                prefetch={false}
                 className={cn(
                   "flex items-center gap-2 px-2 py-1.5",
                   "hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -289,6 +291,7 @@ export function PlayerIdentity({
             ) : (
               <TransitionLink
                 href={target}
+                prefetch={false}
                 className={cn(
                   "flex items-center gap-3 p-2.5",
                   "hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"

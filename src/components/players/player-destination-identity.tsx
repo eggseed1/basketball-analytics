@@ -33,6 +33,8 @@ export type PlayerDestinationIdentityProps = {
   themeMode?: ThemeMode;
   backHref: string;
   backLabel?: string;
+  /** Precomputed verified portrait from media registry. */
+  portraitUrl?: string | null;
   children?: ReactNode;
 };
 
@@ -56,6 +58,7 @@ export function PlayerDestinationIdentity({
   themeMode = "historical",
   backHref,
   backLabel,
+  portraitUrl = null,
   children,
 }: PlayerDestinationIdentityProps) {
   const modernBrand = resolveTeamBrand(teamKey);
@@ -112,6 +115,8 @@ export function PlayerDestinationIdentity({
               playerId={playerId}
               name={displayName}
               teamKey={teamKey}
+              portraitUrl={portraitUrl}
+              registryOnly
               size="xl"
               priority
             />

@@ -14,9 +14,6 @@ import {
   isCurrentCanonicalSeason,
 } from "./cache-policy";
 
-import drbl2024_25 from "@/data/drbl/precomputed/2024-25.json";
-import drbl2025_26 from "@/data/drbl/precomputed/2025-26.json";
-
 export type DrblPlayerRow = DrblPlayerSeasonRow;
 
 type CacheEntry = {
@@ -27,32 +24,27 @@ type CacheEntry = {
 const memoryCache = new Map<string, CacheEntry>();
 const artifactCache = new Map<string, DrblSeasonArtifact>();
 
-/** Bundled site artifacts — always available without waiting on disk/cache. */
-const BUNDLED: Record<string, DrblSeasonArtifact> = {
-  "2024-25": drbl2024_25 as DrblSeasonArtifact,
-  "2025-26": drbl2025_26 as DrblSeasonArtifact,
-};
-
+/** Disk paths for known seasons — loaded once per process (not webpack-bundled). */
 const BUNDLED_PATH: Record<string, string> = {
   "2024-25": "src/data/drbl/precomputed/2024-25.json",
   "2025-26": "src/data/drbl/precomputed/2025-26.json",
 };
 
 /**
- * Prefer already-parsed bundled JSON for known seasons (avoids ~800KB
- * readFile + JSON.parse on every cache miss). Disk is only consulted for
- * seasons that are not bundled, or when explicitly refreshing.
+ * Prefer process-cached disk JSON for known seasons (avoids bundling ~2.5MB
+ * of DRBL artifacts into the webpack graph / every client shared chunk).
+ * Disk is consulted once per season per process.
  */
 async function readPrecomputed(
   season: string
 ): Promise<DrblSeasonArtifact | null> {
-  const bundled = BUNDLED[season];
-  if (bundled?.players?.length) {
-    artifactCache.set(season, bundled);
-    return bundled;
-  }
+  const cachedArtifact = artifactCache.get(season);
+  if (cachedArtifact?.players?.length) return cachedArtifact;
 
   const candidates = [
+    BUNDLED_PATH[season]
+      ? path.join(process.cwd(), BUNDLED_PATH[season])
+      : null,
     path.join(
       process.cwd(),
       "src",
@@ -69,7 +61,7 @@ async function readPrecomputed(
       season,
       "player_season.json"
     ),
-  ];
+  ].filter(Boolean) as string[];
   for (const file of candidates) {
     try {
       const raw = await readFile(file, "utf8");

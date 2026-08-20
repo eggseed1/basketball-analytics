@@ -12,6 +12,7 @@ import {
   mergePlayerSeasonStats,
   playerSeasonChipHref,
 } from "@/lib/player-destination";
+import { playerHref } from "@/lib/player-page-contract";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { teamChartColor } from "@/lib/nba-brand";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -30,8 +31,8 @@ export type PlayerGamesIslandProps = {
 };
 
 /**
- * Layer 3 — game log Suspense island (notable games + table).
- * Season mini-stats merge from career (peers live in core island).
+ * Overview games island — notables + last-5 preview only.
+ * Full season log lives at ?view=games (paginated).
  */
 export async function PlayerGamesIsland({
   playerId,
@@ -51,7 +52,6 @@ export async function PlayerGamesIsland({
 
   const careerSeason = career.find((row) => row.season === season);
   const seasonStats = mergePlayerSeasonStats(seasonRaw, careerSeason, null);
-  // P17.3: Layer-1 selected-season identity wins over board stint row.
   const teamKey =
     brandableTeamKey(identityTeamKey) ??
     brandableTeamKey(seasonStats?.teamId) ??
@@ -69,6 +69,14 @@ export async function PlayerGamesIsland({
     }
     return teamChartColor(teamId).color;
   };
+
+  const recent = [...gameLog]
+    .sort((a, b) =>
+      a.gameDate === b.gameDate
+        ? b.id.localeCompare(a.id)
+        : b.gameDate.localeCompare(a.gameDate)
+    )
+    .slice(0, 5);
 
   return (
     <section id="games" className="scroll-mt-16" aria-label="Games">
@@ -95,6 +103,7 @@ export async function PlayerGamesIsland({
                       themeMode,
                     })}
                     scroll={false}
+                    prefetch={false}
                     className={
                       option === season
                         ? "rounded-md px-3 py-1 text-[12px] font-semibold text-white"
@@ -142,20 +151,6 @@ export async function PlayerGamesIsland({
                   : "—"
               }
             />
-            <MiniStat
-              label="USG"
-              value={
-                seasonStats.usagePct != null && seasonStats.usagePct > 0
-                  ? formatPct(seasonStats.usagePct)
-                  : "—"
-              }
-            />
-            {seasonStats.darkoDpm != null ? (
-              <MiniStat
-                label="DARKO"
-                value={formatNumber(seasonStats.darkoDpm, 2)}
-              />
-            ) : null}
           </dl>
         ) : null}
 
@@ -168,70 +163,43 @@ export async function PlayerGamesIsland({
             No game log for {season}.
           </p>
         ) : (
-          <div className="overflow-x-auto rounded-xl border border-border">
-            <table className="w-full min-w-[800px] text-left text-[13px]">
-              <thead className="border-b border-border bg-secondary/50 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-                <tr>
-                  <th className="px-3 py-2">Date</th>
-                  <th className="px-2 py-2 text-right">MIN</th>
-                  <th className="px-2 py-2 text-right">PTS</th>
-                  <th className="px-2 py-2 text-right">AST</th>
-                  <th className="px-2 py-2 text-right">REB</th>
-                  <th className="px-2 py-2 text-right">STL</th>
-                  <th className="px-2 py-2 text-right">BLK</th>
-                  <th className="px-2 py-2 text-right">FG</th>
-                  <th className="px-2 py-2 text-right">3P</th>
-                  <th className="px-2 py-2 text-right">+/-</th>
-                  <th className="px-3 py-2 text-right">TS%</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {gameLog.map((g) => (
-                  <tr key={g.id} className="hover:bg-secondary/40">
-                    <td className="px-3 py-2">
-                      <TransitionLink
-                        href={`/games/${g.gameId}`}
-                        className="font-semibold hover:underline"
-                      >
-                        {g.gameDate}
-                      </TransitionLink>
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {formatNumber(g.minutes, 1)}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.points}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.assists}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.rebounds}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.steals}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.blocks}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.fieldGoalsMade}-{g.fieldGoalsAttempted}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.threePointersMade}-{g.threePointersAttempted}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {g.plusMinus}
-                    </td>
-                    <td className="px-3 py-2 text-right tabular-nums">
-                      {g.trueShootingPct != null
-                        ? formatPct(g.trueShootingPct)
-                        : "—"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="flex flex-col gap-2">
+            <h3 className="text-[14px] font-bold tracking-tight">
+              Last {recent.length} games
+            </h3>
+            <ul className="divide-y divide-border rounded-xl border border-border">
+              {recent.map((g) => (
+                <li key={g.id}>
+                  <TransitionLink
+                    href={`/games/${g.gameId}?from=history&season=${encodeURIComponent(season)}`}
+                    prefetch={false}
+                    className="flex flex-wrap items-baseline justify-between gap-2 px-3 py-2.5 text-[13px] hover:bg-secondary/40"
+                  >
+                    <span className="font-semibold">{g.gameDate}</span>
+                    <span className="tabular-nums text-muted-foreground">
+                      {g.points} PTS · {g.rebounds} REB · {g.assists} AST
+                    </span>
+                  </TransitionLink>
+                </li>
+              ))}
+            </ul>
+            <p className="text-[13px]">
+              <TransitionLink
+                href={playerHref({
+                  playerId,
+                  season,
+                  view: "games",
+                  fromHistory,
+                  themeMode:
+                    themeMode === "modern" ? "modern" : "historical",
+                })}
+                scroll={false}
+                prefetch={false}
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                View full game log ({gameLog.length}) →
+              </TransitionLink>
+            </p>
           </div>
         )}
       </TeamWashCard>

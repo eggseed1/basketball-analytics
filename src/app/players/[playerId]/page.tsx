@@ -5,22 +5,35 @@ import { computeCareerResume } from "@/analytics";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
+import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
 import { PlayerAskLinks } from "@/components/players/player-ask-links";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCoreIsland } from "@/components/players/player-core-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
+import { PlayerDepthNav } from "@/components/players/player-depth-nav";
 import { PlayerGamesIsland } from "@/components/players/player-games-island";
-import { PlayerPageNav } from "@/components/players/player-page-nav";
+import { PlayerStatDepthIsland } from "@/components/players/player-stat-depth-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { assessProductionProviderGuard } from "@/data/diagnostics/production-provider-guard";
+import {
+  getHistoryCareerForPlayer,
+  getHistorySeasonsForPlayer,
+} from "@/data/history/player-career";
 import { getDataProvider } from "@/data/providers";
 import { getPlayerCareerSeasons } from "@/data/queries";
 import { getPlayerCached } from "@/data/queries/request-cache";
+import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import {
   buildSeasonTeamsMap,
   resolvePlayerSeason,
 } from "@/lib/player-destination";
+import {
+  parsePlayerPageView,
+  parsePlayerStatMode,
+  parseGameLogTableMode,
+  playerPageCapabilities,
+} from "@/lib/player-page-contract";
 import {
   brandableTeamKey,
   multiTeamDisplayLabel,
@@ -49,9 +62,8 @@ export async function generateMetadata({ params }: PlayerPageProps) {
 
 /**
  * Progressive player destination:
- * Layer 1 identity (player + career) outside Suspense
- * Layer 2 core season / analytics in Suspense
- * Layer 3 games in separate Suspense
+ * Layer 1 identity outside Suspense
+ * Layer 2 core / games (overview) + deep stats islands
  */
 export default async function PlayerPage({
   params,
@@ -60,6 +72,16 @@ export default async function PlayerPage({
   const { playerId } = await params;
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
+  const viewParam = Array.isArray(sp.view) ? sp.view[0] : sp.view;
+  const pageParam = Array.isArray(sp.page) ? sp.page[0] : sp.page;
+  const statParam = Array.isArray(sp.stat) ? sp.stat[0] : sp.stat;
+  const filterParam = Array.isArray(sp.filter) ? sp.filter[0] : sp.filter;
+  const modeParam = Array.isArray(sp.mode) ? sp.mode[0] : sp.mode;
+  const view = parsePlayerPageView(viewParam);
+  const statMode = parsePlayerStatMode(statParam);
+  const gameLogMode = parseGameLogTableMode(modeParam);
+  const gamesPage = Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1);
+  const filter = filterParam ?? "ALL";
   const { fromHistory, themeMode, applyEraTheme } =
     parseDestinationHistoryArrival(sp);
 
@@ -67,12 +89,30 @@ export default async function PlayerPage({
     getPlayerCached(playerId),
     getPlayerCareerSeasons(playerId),
   ]);
+  const historyCareer = getHistoryCareerForPlayer(playerId);
+  const historySeasons = getHistorySeasonsForPlayer(playerId);
+  const { getMasterPlayer, getUniverseSeasonsForPlayer } = await import(
+    "@/data/history/player-universe"
+  );
+  const masterPlayer = getMasterPlayer(playerId);
+  const universeSeasons =
+    historySeasons.length > 0
+      ? historySeasons
+      : getUniverseSeasonsForPlayer(playerId);
 
-  if (!player && career.length === 0) notFound();
+  if (!player && career.length === 0 && !historyCareer && !masterPlayer) {
+    notFound();
+  }
 
-  const season = resolvePlayerSeason(career, seasonParam);
+  const historySeasonIds = [
+    ...new Set([
+      ...historySeasons.map((s) => s.season),
+      ...universeSeasons.map((s) => s.season),
+    ]),
+  ];
+  const season = resolvePlayerSeason(career, seasonParam, historySeasonIds);
   const seasonOptions = [
-    ...new Set(career.map((row) => row.season)),
+    ...new Set([...career.map((row) => row.season), ...historySeasonIds]),
   ].sort((a, b) => b.localeCompare(a));
   const seasonTeams = buildSeasonTeamsMap(career);
   const seasonTeamCtx = resolveSelectedSeasonTeamContext(career, season);
@@ -85,8 +125,7 @@ export default async function PlayerPage({
       (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
         ? "Team unavailable"
         : null);
-  const useHistoricalBranding =
-    applyEraTheme && themeMode !== "modern";
+  const useHistoricalBranding = applyEraTheme && themeMode !== "modern";
   const historicalBrand =
     useHistoricalBranding && teamKey
       ? resolveHistoricalTeamBrand(teamKey, season, "era")
@@ -98,7 +137,12 @@ export default async function PlayerPage({
     careerRowCount: career.length,
   });
 
-  const displayName = player?.fullName ?? career[0]?.playerName ?? playerId;
+  const displayName =
+    player?.fullName ??
+    career[0]?.playerName ??
+    historyCareer?.playerName ??
+    masterPlayer?.displayName ??
+    playerId;
   const careerResume = computeCareerResume({
     playerId,
     playerName: displayName,
@@ -133,9 +177,21 @@ export default async function PlayerPage({
       })
     : "/explore/players";
 
+  const portraitUrl = getPlayerPortraitUrl(playerId);
   const eraTheme = applyEraTheme
     ? resolveActiveEraTheme(season, themeMode)
     : null;
+
+  const caps = playerPageCapabilities({
+    selectedSeason: season,
+    careerFirstSeason:
+      historyCareer?.firstSeason ??
+      masterPlayer?.firstSeason ??
+      seasonOptions.at(-1),
+  });
+
+  const careerSeasonsForTable =
+    historySeasons.length > 0 ? historySeasons : universeSeasons;
 
   const body = (
     <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
@@ -155,50 +211,94 @@ export default async function PlayerPage({
           fromHistory={fromHistory}
           themeMode={themeMode}
           backHref={backHref}
+          portraitUrl={portraitUrl}
         >
-          <PlayerPageNav />
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
+          <PlayerDepthNav
+            playerId={playerId}
+            season={season}
+            view={view}
+            caps={caps}
+            fromHistory={fromHistory}
+            themeMode={themeMode === "modern" ? "modern" : "historical"}
+          />
         </PlayerDestinationIdentity>
 
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading season analysis…" />
-          }
-        >
-          <PlayerCoreIsland
-            playerId={playerId}
-            displayName={displayName}
-            season={season}
-            career={career}
-            seasonOptions={seasonOptions}
-            seasonTeams={seasonTeams}
-            careerDataGuardSilentEmpty={
-              careerDataGuard.isSilentEmptyCareerRisk
-            }
-            identityTeamKey={teamKey}
-            useHistoricalBranding={useHistoricalBranding}
-            fromHistory={fromHistory}
-            themeMode={themeMode}
-          />
-        </Suspense>
+        {view === "overview" ? (
+          <>
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading season analysis…" />
+              }
+            >
+              <PlayerCoreIsland
+                playerId={playerId}
+                displayName={displayName}
+                season={season}
+                career={career}
+                seasonOptions={seasonOptions}
+                seasonTeams={seasonTeams}
+                careerDataGuardSilentEmpty={
+                  careerDataGuard.isSilentEmptyCareerRisk
+                }
+                identityTeamKey={teamKey}
+                useHistoricalBranding={useHistoricalBranding}
+                fromHistory={fromHistory}
+                themeMode={themeMode}
+              />
+            </Suspense>
+
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading game log…" />
+              }
+            >
+              <PlayerGamesIsland
+                playerId={playerId}
+                season={season}
+                career={career}
+                seasonOptions={seasonOptions}
+                seasonTeams={seasonTeams}
+                identityTeamKey={teamKey}
+                useHistoricalBranding={useHistoricalBranding}
+                fromHistory={fromHistory}
+                themeMode={themeMode}
+              />
+            </Suspense>
+          </>
+        ) : null}
 
         <Suspense
           fallback={
-            <DestinationSectionSkeleton label="Loading game log…" />
+            <DestinationSectionSkeleton label="Loading player statistics…" />
           }
         >
-          <PlayerGamesIsland
+          <PlayerStatDepthIsland
             playerId={playerId}
             season={season}
+            view={view}
+            page={gamesPage}
+            statMode={statMode}
+            gameLogMode={gameLogMode}
+            filter={filter}
+            historySeasons={careerSeasonsForTable}
             career={career}
-            seasonOptions={seasonOptions}
-            seasonTeams={seasonTeams}
-            identityTeamKey={teamKey}
-            useHistoricalBranding={useHistoricalBranding}
+            careerFirstSeason={
+              historyCareer?.firstSeason ?? masterPlayer?.firstSeason
+            }
             fromHistory={fromHistory}
-            themeMode={themeMode}
+            themeMode={themeMode === "modern" ? "modern" : "historical"}
           />
         </Suspense>
+
+        {view === "overview" && historyCareer && historySeasons.length > 0 ? (
+          <HistoricalCareerSurface
+            career={historyCareer}
+            seasons={historySeasons}
+            playerId={playerId}
+            viewingSeason={season}
+          />
+        ) : null}
 
         <section
           id="ask"

@@ -6,6 +6,7 @@ import { useState, type ReactNode } from "react";
 import type { CareerResume } from "@/analytics";
 import { formatCpi, formatOfPeak, formatTsContext } from "@/analytics";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
@@ -435,13 +436,14 @@ function ResumeStat({
         <p className="text-[11px] text-muted-foreground">{tertiary}</p>
       ) : null}
       {href && hrefLabel ? (
-        <Link
+        <TransitionLink
           href={href}
           scroll={false}
+          prefetch={false}
           className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
         >
           {hrefLabel}
-        </Link>
+        </TransitionLink>
       ) : null}
     </div>
   );

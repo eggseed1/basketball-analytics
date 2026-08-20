@@ -3,8 +3,11 @@
  * Canonical: "2024-25"  ↔  ending calendar year 2025
  */
 
-/** First season with usable stats.nba.com leagueleaders rows (1951-52). */
-export const EARLIEST_NBA_STATS_ESPN_YEAR = 1952;
+/** First season with factual NBA-lineage player membership (1946-47 BAA). */
+export const EARLIEST_NBA_STATS_ESPN_YEAR = 1947;
+
+/** First season where stats.nba.com leagueleaders returns rows (1951-52). */
+export const EARLIEST_LEAGUELEADERS_ESPN_YEAR = 1952;
 
 /** First season where leaguedashplayerstats / teamstats return data (1996-97). */
 export const MODERN_LEAGUE_DASH_ESPN_YEAR = 1997;
@@ -60,7 +63,7 @@ export function isModernLeagueDashSeason(season: string): boolean {
 
 /**
  * Season picker list for explore / dashboard.
- * Goes back to 1951-52 (earliest season with stats.nba.com leaders data).
+ * Goes back to 1946-47 (NBA-recognized lineage player registry).
  * Each season loads on demand when selected.
  */
 export function availableCanonicalSeasons(
