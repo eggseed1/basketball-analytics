@@ -12,8 +12,11 @@ import {
 } from "react";
 import { Menu, Search, X } from "lucide-react";
 
+import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { RouteTransitionProvider, useRouteTransitionOptional } from "@/components/continuity/route-transition";
+import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
+import { SiteChrome } from "@/components/sports/site-chrome";
 import { cn } from "@/lib/utils";
 import { assertInternalHref } from "@/lib/navigation";
 import {
@@ -51,7 +54,7 @@ function SiteSearch() {
       <label className="sr-only" htmlFor="site-search">
         Search players and teams
       </label>
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md bg-secondary px-3 py-2">
+      <div className="site-search-field flex min-w-0 flex-1 items-center gap-2 rounded-md px-3 py-2">
         <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
         <input
           id="site-search"
@@ -63,7 +66,7 @@ function SiteSearch() {
       </div>
       <button
         type="submit"
-        className="flex size-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background"
+        className="flex size-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
         aria-label="Search"
       >
         <Search className="size-4" />
@@ -137,7 +140,7 @@ function PrimaryLink({
     <TransitionLink
       href={tab.href}
       className={cn(
-        "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
+        "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
         tab.prominent && !active && "text-foreground",
         active
           ? "bg-foreground text-background"
@@ -166,6 +169,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   const moreRef = useRef<HTMLDivElement>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
   const isMoreOpen = moreOpen && moreOpenedAt === pathname;
+  const destinationWash =
+    pathname.startsWith("/teams/") ||
+    pathname.startsWith("/players/") ||
+    pathname.startsWith("/games/");
 
   const mobilePinned = PRIMARY_NAV.filter((t) => MOBILE_PINNED_IDS.has(t.id));
   const mobileMore = PRIMARY_NAV.filter((t) => !MOBILE_PINNED_IDS.has(t.id));
@@ -209,13 +216,19 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RouteTransitionProvider>
-      <div className="flex min-h-full flex-1 flex-col bg-background">
-        <header className="sticky top-0 z-40 border-b border-black/5 bg-[color-mix(in_oklab,#f2f2f7_92%,white)] backdrop-blur-xl">
+      <div className="relative flex min-h-full flex-1 flex-col">
+        {destinationWash ? null : (
+          <PageAtmosphere
+            colorA={NBA_ATMOSPHERE.colorA}
+            colorB={NBA_ATMOSPHERE.colorB}
+          />
+        )}
+        <SiteChrome>
           <div className="site-shell flex flex-col gap-2 py-3">
             <div className="flex items-center gap-4">
               <TransitionLink href="/" className="flex shrink-0 items-center gap-2">
                 <span
-                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[11px] font-bold tracking-wide text-background"
+                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[12px] font-bold tracking-wide text-background"
                   aria-hidden
                 >
                   DRBL
@@ -224,8 +237,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   DRBL
                 </span>
               </TransitionLink>
-              <div className="ml-auto flex min-w-0 flex-1 justify-end sm:flex-initial">
+              <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial">
                 <SiteSearch />
+                <ColorSchemeSwitch />
               </div>
             </div>
 
@@ -320,9 +334,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               </Suspense>
             ) : null}
           </div>
-        </header>
+        </SiteChrome>
 
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        <div className="relative z-[1] flex min-h-0 flex-1 flex-col">{children}</div>
       </div>
     </RouteTransitionProvider>
   );
