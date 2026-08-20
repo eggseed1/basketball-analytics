@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SportsShell } from "@/components/sports/sports-shell";
 import { DataProviderDevBadge } from "@/components/sports/data-provider-dev-badge";
 import { SmoothScroll } from "@/components/smooth-scroll";
+import { WebVitalsReporter } from "@/components/system/web-vitals-reporter";
 
 import "./globals.css";
 const geistSans = Geist({
@@ -37,6 +38,7 @@ export default function RootLayout({
     >
       <body className="min-h-full bg-background font-sans text-foreground">
         <SmoothScroll />
+        <WebVitalsReporter />
         <a
           href="#main-content"
           className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-md focus:bg-foreground focus:px-3 focus:py-2 focus:text-background"

@@ -64,6 +64,49 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
         </button>
       </form>
 
+      <section className="sports-card mx-auto w-full max-w-md p-5 text-left">
+        <h2 className="text-[15px] font-semibold tracking-tight">
+          Explore NBA History
+        </h2>
+        <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+          Seasons, players, teams, and games — start small, then go deeper.
+        </p>
+        <ul className="mt-3 flex flex-col gap-2 text-[14px] font-semibold">
+          <li>
+            <Link
+              href="/history/2005-06"
+              className="underline-offset-4 hover:underline"
+            >
+              Seasons · 2005-06 games →
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/explore/players?season=2005-06"
+              className="underline-offset-4 hover:underline"
+            >
+              Players directory →
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/explore/teams?season=2005-06"
+              className="underline-offset-4 hover:underline"
+            >
+              Teams · 2005-06 →
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/franchises"
+              className="underline-offset-4 hover:underline"
+            >
+              Franchises →
+            </Link>
+          </li>
+        </ul>
+      </section>
+
       <p className="mx-auto max-w-md text-center text-[13px] text-muted-foreground">
         Prefer franchise scrapbooks?{" "}
         <Link href="/franchises" className="underline underline-offset-4">

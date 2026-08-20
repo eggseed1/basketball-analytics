@@ -41,8 +41,10 @@ const nextConfig: NextConfig = {
   },
   // Historical BDL season JSON lives under data/cache (gitignored locally but
   // required at runtime for Explore Games / Game Lab when present).
+  // Scope tracing to game routes only — never attach the full tree to every page.
   outputFileTracingIncludes: {
-    "/**": ["./data/cache/games/**/*"],
+    "/games/[gameId]": ["./data/cache/games/**/*"],
+    "/explore/games": ["./data/cache/games/**/*"],
   },
 };
 

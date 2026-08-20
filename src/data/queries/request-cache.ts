@@ -64,3 +64,11 @@ export const getGameShellCached = cache((gameId: string) =>
 );
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
+
+/** Request-scoped peer boards for player core / compare (dedupe identical loads). */
+export const getFilteredPlayerSeasonsCached = cache(
+  async (season: string, minimumGames: number) => {
+    const { getFilteredPlayerSeasons } = await import("@/data/queries/players");
+    return getFilteredPlayerSeasons({ season, minimumGames });
+  }
+);
