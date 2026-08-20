@@ -90,7 +90,13 @@ function blocksCurrentLogo(era: TeamEra): boolean {
   return false;
 }
 
-/** Today's franchise mark is safe only when the era identity matches current branding. */
+/**
+ * Today's franchise mark is safe when the era abbr matches the current franchise
+ * and the era is not a blocked historical identity (Bullets, San Diego Clippers, etc.).
+ *
+ * Do not require exact displayName equality — canonical labels drift
+ * ("LA Clippers" vs "Los Angeles Clippers") and that must not strip modern logos.
+ */
 function mayUseCurrentLogo(
   era: TeamEra | null,
   team: CanonicalTeam | null
@@ -98,10 +104,7 @@ function mayUseCurrentLogo(
   if (!team) return false;
   if (!era) return true;
   if (blocksCurrentLogo(era)) return false;
-  return (
-    era.abbr.toUpperCase() === team.abbr.toUpperCase() &&
-    era.displayName === team.displayName
-  );
+  return era.abbr.toUpperCase() === team.abbr.toUpperCase();
 }
 
 function currentFranchiseLogoUrl(team: CanonicalTeam): string | null {
@@ -159,11 +162,7 @@ export function resolveHistoricalTeamBrand(
   const city = era?.city ?? "";
   const nickname = era?.nickname ?? "";
   const isHistorical = Boolean(
-    era &&
-      team &&
-      (era.displayName !== team.displayName ||
-        era.abbr.toUpperCase() !== team.abbr.toUpperCase() ||
-        blocksCurrentLogo(era))
+    era && team && !mayUseCurrentLogo(era, team)
   );
 
   const fields = baseFields(

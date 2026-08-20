@@ -6,17 +6,20 @@ import {
   primaryTeamForSeason as primaryTeamForSeasonContext,
 } from "@/lib/player-team-context";
 
-/** Resolve selected season from URL or latest career row. */
+/** Resolve selected season from URL or latest career / history row. */
 export function resolvePlayerSeason(
   career: PlayerSeason[],
-  seasonParam?: string | null
+  seasonParam?: string | null,
+  historySeasons?: string[]
 ): string {
   if (seasonParam) return seasonParam;
-  return (
-    [...new Set(career.map((row) => row.season))].sort((a, b) =>
-      b.localeCompare(a)
-    )[0] ?? "2024-25"
-  );
+  const seasons = [
+    ...new Set([
+      ...career.map((row) => row.season),
+      ...(historySeasons ?? []),
+    ]),
+  ].sort((a, b) => b.localeCompare(a));
+  return seasons[0] ?? "2024-25";
 }
 
 /**
@@ -198,10 +201,12 @@ export function playerSeasonChipHref(
   opts?: {
     fromHistory?: boolean;
     themeMode?: "historical" | "modern";
+    view?: string;
   }
 ): string {
   const q = new URLSearchParams();
   q.set("season", season);
+  if (opts?.view) q.set("view", opts.view);
   if (opts?.fromHistory) {
     q.set("from", "history");
     if (opts.themeMode === "modern") q.set("theme", "modern");

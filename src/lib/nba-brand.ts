@@ -396,32 +396,28 @@ export function nbaHeadshotUrl(playerId?: string | null): string | undefined {
   return `https://cdn.nba.com/headshots/nba/latest/260x190/${playerId}.png`;
 }
 
+import { resolvePlayerPortraitCandidates } from "@/lib/player-media-resolve";
+
 /**
- * Ordered headshot candidates. Prefer NBA CDN when we have an NBA person id
- * (DARKO); prefer ESPN when the route id is an ESPN athlete id.
+ * Ordered headshot candidates. Prefer typed NBA / ESPN ids.
+ * Never treat one numeric id as both ESPN athlete and NBA person namespaces
+ * (that fallthrough caused coach-role and wrong-person portraits).
  */
 export function playerHeadshotCandidates(options: {
   playerId?: string | null;
   espnId?: string | null;
   nbaId?: string | null;
+  approvedUrl?: string | null;
+  registryOnly?: boolean;
 }): string[] {
-  const { playerId, espnId, nbaId } = options;
-  const urls: string[] = [];
-  const push = (url?: string) => {
-    if (url && !urls.includes(url)) urls.push(url);
-  };
-
-  // Explicit ids first.
-  push(nbaHeadshotUrl(nbaId));
-  push(espnHeadshotUrl(espnId));
-
-  // Ambiguous single id - try both CDNs (ESPN first for site player routes).
-  if (isNumericId(playerId)) {
-    if (playerId !== espnId) push(espnHeadshotUrl(playerId));
-    if (playerId !== nbaId) push(nbaHeadshotUrl(playerId));
-  }
-
-  return urls;
+  return resolvePlayerPortraitCandidates({
+    playerId: options.playerId,
+    espnId: options.espnId,
+    nbaId: options.nbaId,
+    role: "PLAYER",
+    approvedUrl: options.approvedUrl,
+    registryOnly: options.registryOnly,
+  });
 }
 
 /** @deprecated Prefer playerHeadshotCandidates - kept for simple call sites. */

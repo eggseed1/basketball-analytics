@@ -3,7 +3,7 @@
  * Canonical form: "YYYY-YY" (e.g. "1969-70"). BallDontLie season = start year.
  */
 
-export const HISTORICAL_START_YEAR = 1960;
+export const HISTORICAL_START_YEAR = 1946;
 
 export function currentNbaStartYear(now = new Date()): number {
   // Season labeled by start year; flips around October.
