@@ -247,6 +247,27 @@ export async function getPlayerSeason(
   return null;
 }
 
+export async function getPlayerPlayoffCareerSeasons(
+  playerId: string
+): Promise<PlayerSeason[]> {
+  const provider = getDataProvider();
+  const fn = (
+    provider as {
+      getPlayerPlayoffCareerSeasons?: (
+        id: string
+      ) => Promise<PlayerSeason[]>;
+    }
+  ).getPlayerPlayoffCareerSeasons;
+  if (typeof fn !== "function") return [];
+  const nbaId = await resolveNbaIdForDrbl(playerId);
+  const statsId = nbaId && nbaId !== playerId ? nbaId : playerId;
+  let seasons = await fn.call(provider, statsId);
+  if (seasons.length === 0 && statsId !== playerId) {
+    seasons = await fn.call(provider, playerId);
+  }
+  return seasons;
+}
+
 export async function getPlayerCareerSeasons(
   playerId: string
 ): Promise<PlayerSeason[]> {

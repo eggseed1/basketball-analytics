@@ -8,6 +8,7 @@ import {
   explainMetric,
 } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
@@ -282,9 +283,72 @@ export async function PlayerCoreIsland({
 
   return (
     <>
+      {seasonStats ? (
+        <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-5">
+          {(
+            [
+              {
+                label: "PTS / G",
+                value: formatNumber(
+                  seasonStats.points / Math.max(1, seasonStats.gamesPlayed),
+                  1
+                ),
+              },
+              {
+                label: "REB / G",
+                value: formatNumber(
+                  seasonStats.rebounds / Math.max(1, seasonStats.gamesPlayed),
+                  1
+                ),
+              },
+              {
+                label: "AST / G",
+                value: formatNumber(
+                  seasonStats.assists / Math.max(1, seasonStats.gamesPlayed),
+                  1
+                ),
+              },
+              {
+                label: "TS%",
+                value:
+                  seasonStats.trueShootingPct != null &&
+                  seasonStats.trueShootingPct > 0
+                    ? formatPct(seasonStats.trueShootingPct)
+                    : "—",
+              },
+              {
+                label: isDrblSeason(season) ? "DRBL/100" : "USG%",
+                value: isDrblSeason(season)
+                  ? hasValidDrblEstimate(seasonStats)
+                    ? formatSignedImpact(seasonStats.drbl100, 1)
+                    : "—"
+                  : seasonStats.usagePct != null && seasonStats.usagePct > 0
+                    ? formatPct(seasonStats.usagePct)
+                    : "—",
+              },
+            ] as const
+          ).map((m) => (
+            <GlassSurface
+              key={m.label}
+              effect="css"
+              className="px-3 py-3"
+              accentColor={resolveTeamBrand(teamKey)?.primary}
+            >
+              <p className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+                {m.label}
+              </p>
+              <p className="mt-1 text-[22px] font-bold tabular-nums leading-none">
+                {m.value}
+              </p>
+            </GlassSurface>
+          ))}
+        </div>
+      ) : null}
+
       <div className="grid items-start gap-4 lg:grid-cols-12">
         <aside className="flex flex-col gap-4 lg:col-span-4">
           <div className="sports-card overflow-hidden px-4 py-5">
+            <div className="glass-text-scrim -mx-2 rounded-md px-2 py-1">
             {resumeBits.length ? (
               <p className="text-[13px] font-medium leading-snug text-foreground">
                 {resumeBits.join(" · ")}
@@ -628,6 +692,7 @@ export async function PlayerCoreIsland({
                   </table>
                 </div>
               )}
+            </div>
             </div>
           </div>
         </aside>

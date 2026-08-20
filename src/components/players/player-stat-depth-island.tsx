@@ -732,11 +732,13 @@ async function ShootingView({
 
   return (
     <section id="shooting" className="scroll-mt-16 flex flex-col gap-4">
-      <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Shooting</h2>
+      <div className="sports-card glass-text-scrim p-4">
+        <h2 className="type-title text-[17px] font-bold tracking-tight">
+          Shooting
+        </h2>
         <p className="text-[13px] text-muted-foreground">
-          Traditional core always · season court when coordinates indexed ·
-          no synthetic coordinates
+          Traditional core always · Hannah-style season court when coordinates
+          indexed · no synthetic coordinates
         </p>
       </div>
 
@@ -789,21 +791,27 @@ async function ShootingView({
             slices={zoneSlices}
           />
 
-          {courtShots.length > 0 ? (
+          {shotIndex ? (
             <PlayerSeasonCourtChart
+              season={season}
+              shotIndex={shotIndex}
               shots={courtShots}
-              coverageLabel={`Coordinate-covered FGA: ${shotIndex!.coordinateShots} of ${shotIndex!.boxFga} box FGA (${(
-                shotIndex!.coverage * 100
+              teamLabel={
+                career.find((r) => r.season === season && r.teamId !== "TOT")
+                  ?.teamId ??
+                career.find((r) => r.season === season)?.teamId ??
+                "—"
+              }
+              coverageLabel={`Coordinate-covered FGA: ${shotIndex.coordinateShots} of ${shotIndex.boxFga} box FGA (${(
+                shotIndex.coverage * 100
               ).toFixed(1)}%)`}
             />
           ) : (
-            <div className="rounded-md border border-border px-3 py-2 text-[12px] text-muted-foreground">
-              Season court chart unavailable for {season}
-              {shotIndex
-                ? " (index present but zero coordinate shots)."
-                : " (no precomputed player-season shot index for this season)."}{" "}
-              Traditional shooting above remains complete. Open a game for
-              per-game CourtShotChart when that game has coordinates.
+            <div className="sports-card glass-text-scrim px-3 py-2 text-[12px] text-muted-foreground">
+              Season court chart unavailable for {season} (no precomputed
+              player-season shot index). Traditional shooting above remains
+              complete. Open a game for per-game CourtShotChart when that game
+              has coordinates.
             </div>
           )}
 

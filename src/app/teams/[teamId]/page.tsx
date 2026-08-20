@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 
 import { analyzeTeamProfile } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
+import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -241,8 +242,19 @@ export default async function TeamProfilePage({
     : `/explore/teams?season=${encodeURIComponent(season)}`;
 
   const body = (
-    <DestinationClientShell>
-      <main className="site-shell flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+    <DestinationClientShell className="relative">
+      <PageAtmosphere
+        colorA={
+          historicalBrand?.palette?.primary ?? modernBrand?.primary ?? null
+        }
+        colorB={
+          historicalBrand?.palette?.secondary ??
+          modernBrand?.secondary ??
+          modernBrand?.primary ??
+          null
+        }
+      />
+      <main className="relative z-[1] site-shell flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
         <p>
           <TransitionLink
             href={backHref}

@@ -3,6 +3,7 @@ export {
   getPlayer,
   getPlayerSeason,
   getPlayerCareerSeasons,
+  getPlayerPlayoffCareerSeasons,
   getPlayerCareerTimelineSeasons,
   attachDrblToPlayerSeasons,
   getPlayerGameLog,

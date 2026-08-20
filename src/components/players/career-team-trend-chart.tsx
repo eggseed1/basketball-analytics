@@ -236,7 +236,15 @@ function CareerChartTooltip({
   active,
   payload,
   label,
-}: TooltipProps<number, string>) {
+}: {
+  active?: boolean;
+  payload?: Array<{
+    dataKey?: string | number;
+    value?: number | string;
+    payload?: ChartRow;
+  }>;
+  label?: string | number;
+}) {
   if (!active || !payload?.length) return null;
   const row = payload[0]?.payload as ChartRow | undefined;
   const item =

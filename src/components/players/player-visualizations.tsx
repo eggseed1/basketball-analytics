@@ -1,10 +1,10 @@
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerShotMapView } from "@/components/players/player-shot-map";
-import { getShots } from "@/data/queries";
 import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
-import { buildPlayerShotMap } from "@/lib/player-shot-map";
+import { loadPlayerSeasonShotIndex } from "@/data/history/player-season-shots";
+import { playerSeasonShotIndexToMap } from "@/lib/player-season-shot-map-adapter";
 import type { PlayerSeasonKind } from "@/lib/player-destination";
 import { cn } from "@/lib/utils";
 
@@ -65,8 +65,9 @@ export function PlayerPlannedVisualizations({
       <div>
         <h2 className={type.heading}>Planned visualizations</h2>
         <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          Shot maps ship now. The rest stay listed until the underlying feed
-          is wired - no placeholder charts.
+          Shot maps ship now from the P18 player-season shot index. The rest
+          stay listed until the underlying feed is wired - no placeholder
+          charts.
         </p>
       </div>
       <ul className="flex flex-col gap-3">
@@ -83,9 +84,12 @@ export function PlayerPlannedVisualizations({
   );
 }
 
+/**
+ * Hannah Visualizations island — exact frontend, P18 shot index data.
+ * No synthetic coordinates. Coverage disclosed when incomplete.
+ */
 export async function PlayerVisualizationsIsland({
   playerId,
-  nbaId,
   season,
   seasons,
   seasonType,
@@ -100,34 +104,41 @@ export async function PlayerVisualizationsIsland({
   teamKey?: string | null;
   teamLabel?: string | null;
 }) {
-  const kindLabel =
-    seasonType === "playoffs" ? "Playoffs" : "Regular season";
-  const shotPlayerId = nbaId || playerId;
-  const shots = shotPlayerId
-    ? await getShots({
-        player: shotPlayerId,
-        season,
-        seasonType,
-      })
-    : [];
-  const map = buildPlayerShotMap({
-    shots,
+  const index = loadPlayerSeasonShotIndex(playerId, season);
+  const label = teamLabel || teamKey || "NBA";
+  const coverageLabel = index
+    ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
+        index.coverage * 100
+      ).toFixed(1)}%)`
+    : null;
+  const map = playerSeasonShotIndexToMap({
+    index,
     season,
+    teamLabel: label,
     seasonType,
-    team: teamLabel || teamKey || "NBA",
-    emptyReason: shots.length
-      ? null
-      : !nbaId
-        ? "Shot locations need an NBA Stats player id."
-        : `No ${kindLabel.toLowerCase()} shot chart for ${season}.`,
+    emptyReason: index
+      ? index.coordinateShots <= 0
+        ? `No coordinate shots in the P18 index for ${season} (${seasonType}). Coverage disclosed above when present.`
+        : null
+      : `No precomputed player-season shot index for ${season}.`,
   });
 
   return (
     <section
-      id="visualizations"
+      id="shooting"
       className="scroll-mt-16 flex flex-col gap-4"
-      aria-label="Visualizations"
+      aria-label="Shooting"
     >
+      {coverageLabel ? (
+        <GlassSurface effect="css" className="px-3 py-2">
+          <p className={cn(type.caption, "font-semibold text-foreground")}>
+            Season shot chart · {season}
+          </p>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            {coverageLabel}
+          </p>
+        </GlassSurface>
+      ) : null}
       <PlayerShotMapView map={map} seasons={seasons} />
       <PlayerPlannedVisualizations teamKey={teamKey} />
     </section>

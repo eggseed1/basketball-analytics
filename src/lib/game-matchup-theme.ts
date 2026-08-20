@@ -110,6 +110,31 @@ export function buildGameMatchupTheme(
   };
 }
 
+/**
+ * Page-atmosphere pair from a franchise palette.
+ * Drops black / white / silver so the gradient reads as the team color.
+ * Exact Hannah frontend helper — presentation only.
+ */
+export function brandAtmosphereColors(
+  primary?: string | null,
+  secondary?: string | null
+): { colorA: string; colorB: string } | null {
+  const p = primary?.trim() ?? "";
+  const s = secondary?.trim() ?? "";
+  const colorful = [p, s].filter(
+    (c) => isValidCssHex(c) && !isNearNeutralInk(c)
+  );
+  if (colorful.length >= 2) {
+    return { colorA: colorful[0]!, colorB: colorful[1]! };
+  }
+  if (colorful.length === 1) {
+    return { colorA: colorful[0]!, colorB: colorful[0]! };
+  }
+  if (isValidCssHex(p)) return { colorA: p, colorB: p };
+  if (isValidCssHex(s)) return { colorA: s, colorB: s };
+  return null;
+}
+
 /** Stable string fingerprint for tests (ordering-sensitive). */
 export function matchupThemeFingerprint(theme: GameMatchupTheme): string {
   return `${theme.awayWash}|${theme.homeWash}`;

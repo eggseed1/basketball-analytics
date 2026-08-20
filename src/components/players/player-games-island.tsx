@@ -21,7 +21,7 @@ export async function PlayerGamesIsland({
   teamKey?: string | null;
 }) {
   const log = await getPlayerGameLogCached(playerId, season);
-  const gameLog = log.filter((g) => (g.seasonType ?? "regular") === seasonType);
+  const gameLog = log;
   const wash = brandAtmosphereColors(
     resolveTeamBrand(teamKey)?.primary,
     resolveTeamBrand(teamKey)?.secondary
