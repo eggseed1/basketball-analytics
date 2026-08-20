@@ -17,7 +17,11 @@ function rawGamesRoot(): string {
 }
 
 function parseMinutes(raw: unknown): number {
-  return parseBasketballMinutes(raw);
+  if (raw == null) return 0;
+  if (typeof raw === "number" || typeof raw === "string") {
+    return parseBasketballMinutes(raw);
+  }
+  return parseBasketballMinutes(String(raw));
 }
 
 /**
