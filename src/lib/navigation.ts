@@ -1,5 +1,5 @@
 /**
- * Href classification for navigation — keep external destinations off Next.js router.
+ * Href classification for navigation - keep external destinations off Next.js router.
  */
 
 /** True for http(s), protocol-relative, mailto, tel, and other absolute schemes. */
@@ -48,7 +48,7 @@ export function isModifiedClickEvent(event: {
 }
 
 /**
- * Guard for programmatic navigation helpers — never feed external URLs to router.push.
+ * Guard for programmatic navigation helpers - never feed external URLs to router.push.
  * Returns the href so it can be used inline: `router.push(assertInternalHref(path))`.
  */
 export function assertInternalHref(href: string, context = "navigation"): string {

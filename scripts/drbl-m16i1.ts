@@ -1,5 +1,5 @@
 /**
- * M16i1 — conditional coverage repair via direct absolute-error quantiles.
+ * M16i1 - conditional coverage repair via direct absolute-error quantiles.
  *   npm run drbl:m16i1
  *
  * Point estimate LOCKED. M16i corrected: NO_ELIGIBLE_CANDIDATE.
@@ -778,7 +778,7 @@ async function main() {
       Q2_converged: pQ2.converged,
     });
 
-    // Also need U2 intervals for same eval rows (already in m16iEval) — match by fold+N+player later
+    // Also need U2 intervals for same eval rows (already in m16iEval) - match by fold+N+player later
     for (const i of evalIdxs) {
       const r = rows[i]!;
       const w0 = widthsOf("Q0_CONSTANT", r.N, pQ0);

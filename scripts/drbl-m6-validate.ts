@@ -1,5 +1,5 @@
 /**
- * M6 validation CLI — standalone (does NOT update DRBL fusion / site artifacts).
+ * M6 validation CLI - standalone (does NOT update DRBL fusion / site artifacts).
  *
  *   npm run drbl:m6 -- --season 2024-25 --limit 150
  *   npm run drbl:m6 -- --seasons 2024-25,2025-26 --limit 200
@@ -547,7 +547,7 @@ Key rules enforced:
 
 ## Known limitations (this pass)
 
-1. \`EPV_continue\` uses M5 possession-state EPV at the shot timestamp — a coarse proxy for the true pass/dribble counterfactual (no shot-clock residual / action-graph model).
+1. \`EPV_continue\` uses M5 possession-state EPV at the shot timestamp - a coarse proxy for the true pass/dribble counterfactual (no shot-clock residual / action-graph model).
 2. Make model is linear probability ridge (not logistic); gains vs distance-bucket baseline are small on this sample.
 3. Lineup features are prior make-rate averages of on-court players (not a full RAPM lineup model).
 4. SDV vs *next* offense possession is a weak diagnostic target; decision quality primarily concerns the *current* shot/continuation tradeoff.

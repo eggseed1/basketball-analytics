@@ -33,7 +33,7 @@ async function classify(
 }
 
 /**
- * Minimal access check — one page / one player where possible.
+ * Minimal access check - one page / one player where possible.
  * Skip network when `skipNetwork` is true (unit tests).
  */
 export async function probeBallDontLieAdvancedAccess(options?: {

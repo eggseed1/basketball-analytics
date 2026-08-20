@@ -55,7 +55,7 @@ export interface TeamSeason {
   gamesPlayed: number;
   wins: number;
   losses: number;
-  /** Win percentage as fraction 0–1. */
+  /** Win percentage as fraction 0-1. */
   winPct: number;
 
   /** Per-game counting (from NBA Stats PerGame). */

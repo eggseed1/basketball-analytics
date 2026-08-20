@@ -7,7 +7,7 @@ import { formatNumber } from "@/lib/format";
 import { AppLink } from "@/components/ui/app-link";
 
 /**
- * Team Cap / Assets strip — only shows verified categories.
+ * Team Cap / Assets strip - only shows verified categories.
  * Draft capital / TPEs / rights remain honest “unavailable” until structured ingest.
  */
 export function TeamAssetsSection({
@@ -25,12 +25,12 @@ export function TeamAssetsSection({
   return (
     <div className="flex flex-col gap-5">
       <div>
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           Verified inventory only.{" "}
           <MetricHelp conceptId="structured_transaction">
             Structured transactions
           </MetricHelp>{" "}
-          and asset genealogy stay blocked until a licensed ledger exists —
+          and asset genealogy stay blocked until a licensed ledger exists -
           ESPN source events never invent picks or exceptions.
         </p>
       </div>
@@ -45,7 +45,7 @@ export function TeamAssetsSection({
           ) : null}
         </h3>
         {ledger.players.length === 0 ? (
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             {playerCat?.availability === "unsupported"
               ? (playerCat.note ??
                 ledger.warning ??
@@ -103,14 +103,14 @@ export function TeamAssetsSection({
               key={c.id}
               className="rounded-md border border-dashed border-border/80 px-3 py-2.5"
             >
-              <p className="text-[13px] font-semibold">{c.label}</p>
+              <p className="text-[14px] font-semibold">{c.label}</p>
               <p className="mt-0.5 text-[12px] text-muted-foreground">
                 {c.id === "trade_exceptions" ? (
                   <>
                     <MetricHelp conceptId="trade_exception">
                       Trade Exception
                     </MetricHelp>{" "}
-                    data unavailable —{" "}
+                    data unavailable -{" "}
                   </>
                 ) : null}
                 {c.id === "draft_capital" ? (
@@ -118,19 +118,19 @@ export function TeamAssetsSection({
                     <MetricHelp conceptId="draft_capital">
                       Draft capital
                     </MetricHelp>{" "}
-                    —{" "}
+                    -{" "}
                   </>
                 ) : null}
                 {c.note}
               </p>
               {c.id === "trade_exceptions" ? (
-                <p className="mt-1 text-[11px] text-muted-foreground">
+                <p className="mt-1 text-[12px] text-muted-foreground">
                   <MetricHelp conceptId="salary_fit">Salary fit</MetricHelp>{" "}
                   lists and{" "}
                   <MetricHelp conceptId="trade_legality">
                     trade legality
                   </MetricHelp>{" "}
-                  stay separate — fit will never imply a legal trade until a
+                  stay separate - fit will never imply a legal trade until a
                   deterministic validator exists.
                 </p>
               ) : null}
@@ -139,7 +139,7 @@ export function TeamAssetsSection({
         </ul>
       </section>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-[12px] text-muted-foreground">
         Genealogy UI ready: {ledger.genealogyUiReady ? "yes" : "no"} ·{" "}
         <AppLink
           href="/offseason"

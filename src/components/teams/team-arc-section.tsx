@@ -42,9 +42,9 @@ export function TeamArcSection({
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">{arc.label}</h2>
-          <p className="text-[13px] text-muted-foreground">
-            How this team got here — season board history, not asset genealogy.
+          <h2 className="text-[20px] font-bold tracking-tight">{arc.label}</h2>
+          <p className="text-[14px] text-muted-foreground">
+            How this team got here - season board history, not asset genealogy.
           </p>
         </div>
         <div className="flex flex-wrap gap-3 text-[12px] font-semibold">
@@ -70,7 +70,7 @@ export function TeamArcSection({
       </div>
 
       <p className="text-[12px] text-muted-foreground">{arc.coverageNote}</p>
-      <p className="text-[11px] text-muted-foreground">{arc.continuityNote}</p>
+      <p className="text-[12px] text-muted-foreground">{arc.continuityNote}</p>
 
       {arc.transitions.length ? (
         <div>
@@ -78,7 +78,7 @@ export function TeamArcSection({
             Biggest team changes
           </h3>
           <p className="mb-2 text-[12px] text-muted-foreground">
-            Same noise floors as analyzeTeamProfile — not a second trend
+            Same noise floors as analyzeTeamProfile - not a second trend
             methodology.
           </p>
           <ul className="flex flex-col gap-2">
@@ -87,7 +87,7 @@ export function TeamArcSection({
                 key={`${t.fromSeason}-${t.toSeason}`}
                 className="rounded-xl border border-border bg-white/45 px-3 py-2.5"
               >
-                <p className="text-[13px] font-semibold">
+                <p className="text-[14px] font-semibold">
                   {t.fromSeason} → {t.toSeason}
                 </p>
                 <ul className="mt-1 flex flex-col gap-0.5">
@@ -108,20 +108,20 @@ export function TeamArcSection({
           </ul>
         </div>
       ) : (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           No multi-season deltas cleared the documented noise filter in this
           window.
         </p>
       )}
 
       {arc.rows.length === 0 ? (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           No team-season rows available for this arc window.
         </p>
       ) : (
         <div className="overflow-x-auto rounded-xl border border-border bg-white/40">
-          <table className="w-full min-w-[640px] text-left text-[13px]">
-            <thead className="border-b border-border bg-white/50 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+          <table className="w-full min-w-[640px] text-left text-[14px]">
+            <thead className="border-b border-border bg-white/50 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Season</th>
                 <th className="px-2 py-2 text-right">Diff</th>

@@ -37,7 +37,7 @@ export function createEmptyAdmitState(): AdvancedStatsAdmitState {
 
 /**
  * Detect when the same ESPN id maps to different BDL/NBA ids within a batch
- * (or vice versa) — collision, not silent merge.
+ * (or vice versa) - collision, not silent merge.
  */
 function recordIdentityCollisions(
   state: AdvancedStatsAdmitState,

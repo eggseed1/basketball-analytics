@@ -8,6 +8,7 @@ import {
   explainMetric,
 } from "@/analytics";
 import { StatDisclosure } from "@/components/analytics/stat-disclosure";
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
@@ -77,10 +78,12 @@ export type PlayerCoreIslandProps = {
   useHistoricalBranding?: boolean;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
+  showPercentilePanel?: boolean;
+  showRecentSeasons?: boolean;
 };
 
 /**
- * Layer 2 — season stats + peers, analytical profile, career deep sections.
+ * Layer 2 - season stats + peers, analytical profile, career deep sections.
  * Games stay in a separate Suspense island.
  */
 export async function PlayerCoreIsland({
@@ -95,6 +98,8 @@ export async function PlayerCoreIsland({
   useHistoricalBranding = false,
   fromHistory = false,
   themeMode = "historical",
+  showPercentilePanel = true,
+  showRecentSeasons = true,
 }: PlayerCoreIslandProps) {
   const priorSeason = shiftCanonicalSeason(season, -1);
   const [seasonRaw, peers, priorBoard] = await Promise.all([
@@ -133,7 +138,7 @@ export async function PlayerCoreIsland({
   );
 
   const historicalPeers = priorBoard;
-  // P17.3: selected-season identity brands Layer 2 — never let first-stint
+  // P17.3: selected-season identity brands Layer 2 - never let first-stint
   // seasonStats.teamId overwrite the page context team.
   const teamKey =
     brandableTeamKey(identityTeamKey) ??
@@ -144,7 +149,7 @@ export async function PlayerCoreIsland({
   const careerChrono = Object.keys(seasonTeams).sort((a, b) =>
     a.localeCompare(b)
   );
-  // Career-arc wash only for explicit career resume — not season explorer.
+  // Career-arc wash only for explicit career resume - not season explorer.
   const careerStartTeamKey = careerChrono.length
     ? brandableTeamKey(seasonTeams[careerChrono[0]!])
     : teamKey;
@@ -200,7 +205,7 @@ export async function PlayerCoreIsland({
         headlineExplain?.plain,
         headlineMetric.showPercentile
           ? `${headlineMetric.label} sits at the ${Math.round(headlineMetric.percentile)}th percentile among qualified peers in ${season}.`
-          : `${headlineMetric.label} is ${headlineMetric.display} in ${season} (descriptive — not a skill grade).`,
+          : `${headlineMetric.label} is ${headlineMetric.display} in ${season} (descriptive - not a skill grade).`,
       ]
         .filter(Boolean)
         .join(" ")
@@ -285,14 +290,17 @@ export async function PlayerCoreIsland({
     <>
       <div className="grid items-start gap-4 lg:grid-cols-12">
         <aside className="flex flex-col gap-4 lg:col-span-4">
-          <div className="sports-card overflow-hidden px-4 py-5">
+          <GlassSurface
+            accentColor={resolveTeamBrand(teamKey)?.primary}
+            className="px-4 py-5"
+          >
             {resumeBits.length ? (
-              <p className="text-[13px] font-medium leading-snug text-foreground">
+              <p className="text-[14px] font-medium leading-snug text-foreground">
                 {resumeBits.join(" · ")}
               </p>
             ) : null}
 
-            {/* DRBL Snapshot — simple surface: interpretation + two headlines + O/D */}
+            {/* DRBL Snapshot - simple surface: interpretation + two headlines + O/D */}
             <div
               className={
                 resumeBits.length
@@ -301,12 +309,12 @@ export async function PlayerCoreIsland({
               }
             >
               <div className="mb-2 flex items-baseline justify-between gap-2">
-                <h2 className="text-[13px] font-bold tracking-tight">
+                <h2 className="text-[14px] font-bold tracking-tight">
                   DRBL
                 </h2>
                 <Link
                   href="/learn/drbl"
-                  className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                  className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
                 >
                   Learn →
                 </Link>
@@ -344,7 +352,7 @@ export async function PlayerCoreIsland({
                               DRBL/100
                             </Link>
                           </dt>
-                          <dd className="mt-0.5 text-[22px] font-bold tabular-nums leading-none">
+                          <dd className="mt-0.5 text-[24px] font-bold tabular-nums leading-none">
                             {formatSignedImpact(seasonStats.drbl100, 1)}
                           </dd>
                         </div>
@@ -357,13 +365,13 @@ export async function PlayerCoreIsland({
                               WAR1
                             </Link>
                           </dt>
-                          <dd className="mt-0.5 text-[22px] font-bold tabular-nums leading-none">
+                          <dd className="mt-0.5 text-[24px] font-bold tabular-nums leading-none">
                             {seasonStats.r1WinEquivalents != null
                               ? formatSignedImpact(
                                   seasonStats.r1WinEquivalents,
                                   1
                                 )
-                              : "—"}
+                              : "-"}
                           </dd>
                         </div>
                       </dl>
@@ -377,7 +385,7 @@ export async function PlayerCoreIsland({
                               Offense
                             </Link>
                           </dt>
-                          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums">
+                          <dd className="mt-0.5 text-[16px] font-semibold tabular-nums">
                             {formatSignedImpact(seasonStats.drblO, 1)}
                           </dd>
                         </div>
@@ -390,7 +398,7 @@ export async function PlayerCoreIsland({
                               Defense
                             </Link>
                           </dt>
-                          <dd className="mt-0.5 text-[15px] font-semibold tabular-nums">
+                          <dd className="mt-0.5 text-[16px] font-semibold tabular-nums">
                             {formatSignedImpact(seasonStats.drblD, 1)}
                           </dd>
                         </div>
@@ -407,7 +415,7 @@ export async function PlayerCoreIsland({
                   );
                 })()
               ) : (
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                <p className="text-[14px] leading-relaxed text-muted-foreground">
                   {drblEmptyReason === "UNSUPPORTED"
                     ? `DRBL is not published for ${season} yet. Box-score stats may still load.`
                     : drblEmptyReason === "IDENTITY_UNRESOLVED"
@@ -423,7 +431,7 @@ export async function PlayerCoreIsland({
               )}
             </div>
 
-            {/* Non-DRBL headline only — avoid duplicating DRBL/100 from the snapshot */}
+            {/* Non-DRBL headline only - avoid duplicating DRBL/100 from the snapshot */}
             {headlineContext && !(hasDrbl && headlineMetric?.id === "drbl100") ? (
               <div className="mt-5 border-t border-border pt-4">
                 <StatDisclosure
@@ -432,7 +440,7 @@ export async function PlayerCoreIsland({
                   conceptId={headlineMetric?.id}
                 />
                 {plainSummary ? (
-                  <p className="mt-3 text-[13px] leading-relaxed text-muted-foreground">
+                  <p className="mt-3 text-[14px] leading-relaxed text-muted-foreground">
                     {plainSummary}
                   </p>
                 ) : null}
@@ -441,10 +449,10 @@ export async function PlayerCoreIsland({
 
             {seasonStats && careerAvg ? (
               <div className="mt-5 border-t border-border pt-4">
-                <h2 className="mb-2 text-[13px] font-bold tracking-tight">
+                <h2 className="mb-2 text-[14px] font-bold tracking-tight">
                   Current season vs career
                 </h2>
-                <p className="mb-2 text-[11px] text-muted-foreground">
+                <p className="mb-2 text-[12px] text-muted-foreground">
                   Career = mean of resume-qualifying seasons only · counting /
                   efficiency rates already on the board.
                 </p>
@@ -464,10 +472,10 @@ export async function PlayerCoreIsland({
                       seasonStats.trueShootingPct != null &&
                       seasonStats.trueShootingPct > 0
                         ? formatPct(seasonStats.trueShootingPct)
-                        : "—"
+                        : "-"
                     }
                     career={
-                      careerAvg.ts != null ? formatPct(careerAvg.ts) : "—"
+                      careerAvg.ts != null ? formatPct(careerAvg.ts) : "-"
                     }
                   />
                   <VsStat
@@ -476,10 +484,10 @@ export async function PlayerCoreIsland({
                       seasonStats.usagePct != null &&
                       seasonStats.usagePct > 0
                         ? formatPct(seasonStats.usagePct)
-                        : "—"
+                        : "-"
                     }
                     career={
-                      careerAvg.usg != null ? formatPct(careerAvg.usg) : "—"
+                      careerAvg.usg != null ? formatPct(careerAvg.usg) : "-"
                     }
                   />
                 </dl>
@@ -488,7 +496,7 @@ export async function PlayerCoreIsland({
 
             {seasonStats ? (
               <div className="mt-5 border-t border-border pt-4">
-                <h2 className="mb-2 text-[13px] font-bold tracking-tight">
+                <h2 className="mb-2 text-[14px] font-bold tracking-tight">
                   Season rates
                 </h2>
                 <dl className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -522,7 +530,7 @@ export async function PlayerCoreIsland({
                       seasonStats.trueShootingPct != null &&
                       seasonStats.trueShootingPct > 0
                         ? formatPct(seasonStats.trueShootingPct)
-                        : "—"
+                        : "-"
                     }
                   />
                   <MiniStat
@@ -531,7 +539,7 @@ export async function PlayerCoreIsland({
                       seasonStats.usagePct != null &&
                       seasonStats.usagePct > 0
                         ? formatPct(seasonStats.usagePct)
-                        : "—"
+                        : "-"
                     }
                   />
                 </dl>
@@ -544,7 +552,7 @@ export async function PlayerCoreIsland({
                   `What was ${displayName}'s peak production?`,
                   playerId
                 )}
-                className="text-[13px] font-semibold underline-offset-2 hover:underline"
+                className="text-[14px] font-semibold underline-offset-2 hover:underline"
               >
                 Ask DRBL about {displayName} →
               </TransitionLink>
@@ -554,96 +562,104 @@ export async function PlayerCoreIsland({
               </p>
             </div>
 
-            <div className="mt-5 border-t border-border pt-4">
-              <div className="mb-2 flex items-center justify-between gap-2">
-                <h2 className="text-[13px] font-bold tracking-tight">
-                  Recent seasons
-                </h2>
-                <a
-                  href="#seasons"
-                  className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-                >
-                  Full explorer →
-                </a>
-              </div>
-              {recentSeasons.length === 0 ? (
-                <p className="py-4 text-[13px] text-muted-foreground">
-                  {careerDataGuardSilentEmpty
-                    ? "Career seasons unavailable — data provider misconfiguration (see notice above)."
-                    : "No season rows yet."}
-                </p>
-              ) : (
-                <div className="overflow-x-auto">
-                  <table className="w-full min-w-[280px] text-left text-[12px]">
-                    <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
-                      <tr>
-                        <th className="pb-1.5 pr-2 font-semibold">Season</th>
-                        <th className="px-1.5 pb-1.5 text-right font-semibold">
-                          PTS
-                        </th>
-                        <th className="px-1.5 pb-1.5 text-right font-semibold">
-                          AST
-                        </th>
-                        <th className="px-1.5 pb-1.5 text-right font-semibold">
-                          REB
-                        </th>
-                        <th className="pb-1.5 pl-1.5 text-right font-semibold">
-                          TS%
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody className="divide-y divide-border">
-                      {recentSeasons.map((row) => (
-                        <tr key={`${row.season}-${row.teamId}`}>
-                          <td className="py-1.5 pr-2">
-                            <TransitionLink
-                              href={playerSeasonChipHref(
-                                playerId,
-                                row.season,
-                                { fromHistory, themeMode }
-                              )}
-                              scroll={false}
-                              className="font-semibold underline-offset-2 hover:underline"
-                            >
-                              {row.season}
-                            </TransitionLink>
-                          </td>
-                          <td className="px-1.5 py-1.5 text-right tabular-nums">
-                            {formatNumber(row.points)}
-                          </td>
-                          <td className="px-1.5 py-1.5 text-right tabular-nums">
-                            {formatNumber(row.assists)}
-                          </td>
-                          <td className="px-1.5 py-1.5 text-right tabular-nums">
-                            {formatNumber(row.rebounds)}
-                          </td>
-                          <td className="py-1.5 pl-1.5 text-right tabular-nums">
-                            {row.trueShootingPct != null &&
-                            row.trueShootingPct > 0
-                              ? formatPct(row.trueShootingPct)
-                              : "—"}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
+            {showRecentSeasons ? (
+              <div className="mt-5 border-t border-border pt-4">
+                <div className="mb-2 flex items-center justify-between gap-2">
+                  <h2 className="text-[14px] font-bold tracking-tight">
+                    Per game average
+                  </h2>
+                  <a
+                    href="#seasons"
+                    className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                  >
+                    Full explorer →
+                  </a>
                 </div>
-              )}
-            </div>
-          </div>
+                {recentSeasons.length === 0 ? (
+                  <p className="py-4 text-[14px] text-muted-foreground">
+                    {careerDataGuardSilentEmpty
+                      ? "Career seasons unavailable - data provider misconfiguration (see notice above)."
+                      : "No season rows yet."}
+                  </p>
+                ) : (
+                  <div className="overflow-x-auto">
+                    <table className="w-full min-w-[280px] text-left text-[12px]">
+                      <thead className="text-[10px] uppercase tracking-wide text-muted-foreground">
+                        <tr>
+                          <th className="pb-1.5 pr-2 font-semibold">Season</th>
+                          <th className="px-1.5 pb-1.5 text-right font-semibold">
+                            PPG
+                          </th>
+                          <th className="px-1.5 pb-1.5 text-right font-semibold">
+                            APG
+                          </th>
+                          <th className="px-1.5 pb-1.5 text-right font-semibold">
+                            RPG
+                          </th>
+                          <th className="pb-1.5 pl-1.5 text-right font-semibold">
+                            TS%
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="divide-y divide-border">
+                        {recentSeasons.map((row) => (
+                          <tr key={`${row.season}-${row.teamId}`}>
+                            <td className="py-1.5 pr-2">
+                              <TransitionLink
+                                href={playerSeasonChipHref(
+                                  playerId,
+                                  row.season,
+                                  { fromHistory, themeMode }
+                                )}
+                                scroll={false}
+                                className="font-semibold underline-offset-2 hover:underline"
+                              >
+                                {row.season}
+                              </TransitionLink>
+                            </td>
+                            <td className="px-1.5 py-1.5 text-right tabular-nums">
+                              {row.gamesPlayed > 0
+                                ? formatNumber(row.points / row.gamesPlayed, 1)
+                                : "-"}
+                            </td>
+                            <td className="px-1.5 py-1.5 text-right tabular-nums">
+                              {row.gamesPlayed > 0
+                                ? formatNumber(row.assists / row.gamesPlayed, 1)
+                                : "-"}
+                            </td>
+                            <td className="px-1.5 py-1.5 text-right tabular-nums">
+                              {row.gamesPlayed > 0
+                                ? formatNumber(row.rebounds / row.gamesPlayed, 1)
+                                : "-"}
+                            </td>
+                            <td className="py-1.5 pl-1.5 text-right tabular-nums">
+                              {row.trueShootingPct != null &&
+                              row.trueShootingPct > 0
+                                ? formatPct(row.trueShootingPct)
+                                : "-"}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
+              </div>
+            ) : null}
+          </GlassSurface>
         </aside>
 
+        {showPercentilePanel ? (
         <div className="flex flex-col gap-4 lg:col-span-8">
           <div>
-            <h2 className="mb-1 text-[17px] font-bold tracking-tight">
+            <h2 className="mb-1 text-[20px] font-bold tracking-tight">
               Analytical profile
             </h2>
-            <p className="mb-3 text-[13px] text-muted-foreground">
-              How good is this player in the selected season — percentiles
+            <p className="mb-3 text-[14px] text-muted-foreground">
+              How good is this player in the selected season - percentiles
               among qualified peers.
             </p>
             <PlayerPercentilePanel
-              key={`${playerId}-${season}`}
               season={season}
               seasons={seasonOptions}
               playerId={playerId}
@@ -654,6 +670,7 @@ export async function PlayerCoreIsland({
             />
           </div>
         </div>
+        ) : null}
       </div>
 
       <section
@@ -662,9 +679,9 @@ export async function PlayerCoreIsland({
         aria-label="Career"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Career</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Resume first — then what changed over time.
+          <h2 className="text-[20px] font-bold tracking-tight">Career</h2>
+          <p className="text-[14px] text-muted-foreground">
+            Resume first - then what changed over time.
           </p>
         </div>
         <PlayerCareerResume
@@ -715,11 +732,11 @@ export async function PlayerCoreIsland({
         aria-label="Seasons"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
+          <h2 className="text-[20px] font-bold tracking-tight">
             Season explorer
           </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Move through the career · compare · rank · ask — without a giant
+          <p className="text-[14px] text-muted-foreground">
+            Move through the career · compare · rank · ask - without a giant
             new table.
           </p>
         </div>
@@ -749,7 +766,7 @@ export async function PlayerCoreIsland({
         />
 
         <details className="group">
-          <summary className="cursor-pointer list-none text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
+          <summary className="cursor-pointer list-none text-[14px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">
             <span className="group-open:hidden">Show full season table →</span>
             <span className="hidden group-open:inline">
               Hide full season table
@@ -760,23 +777,23 @@ export async function PlayerCoreIsland({
             className="mt-3 flex flex-col gap-3 p-4 sm:p-5"
           >
             <div>
-              <h3 className="text-[15px] font-bold tracking-tight">
+              <h3 className="text-[16px] font-bold tracking-tight">
                 Season depth
               </h3>
-              <p className="text-[13px] text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 Full counting / efficiency rows · accent = team that season.
               </p>
             </div>
             {career.length === 0 ? (
-              <p className="text-[13px] text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 {careerDataGuardSilentEmpty
-                  ? "Career seasons unavailable — data provider misconfiguration (see notice above)."
+                  ? "Career seasons unavailable - data provider misconfiguration (see notice above)."
                   : "No career season rows available."}
               </p>
             ) : (
               <div className="overflow-x-auto rounded-xl border border-border bg-white/40">
-                <table className="w-full min-w-[720px] text-left text-[13px]">
-                  <thead className="border-b border-border bg-white/50 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                <table className="w-full min-w-[720px] text-left text-[14px]">
+                  <thead className="border-b border-border bg-white/50 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2">Season</th>
                       <th className="px-2 py-2">Team</th>
@@ -842,18 +859,18 @@ export async function PlayerCoreIsland({
                           {row.trueShootingPct != null &&
                           row.trueShootingPct > 0
                             ? formatPct(row.trueShootingPct)
-                            : "—"}
+                            : "-"}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {row.effectiveFieldGoalPct != null &&
                           row.effectiveFieldGoalPct > 0
                             ? formatPct(row.effectiveFieldGoalPct)
-                            : "—"}
+                            : "-"}
                         </td>
                         <td className="px-3 py-2 text-right tabular-nums">
                           {row.usagePct != null && row.usagePct > 0
                             ? formatPct(row.usagePct)
-                            : "—"}
+                            : "-"}
                         </td>
                       </tr>
                     ))}
@@ -871,8 +888,8 @@ export async function PlayerCoreIsland({
         aria-label="Context"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Context</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-[20px] font-bold tracking-tight">Context</h2>
+          <p className="text-[14px] text-muted-foreground">
             Similar players from the existing comps · then full compare.
           </p>
         </div>
@@ -885,7 +902,7 @@ export async function PlayerCoreIsland({
               compareHref={`/compare?a=${playerId}&season=${season}`}
             />
           ) : (
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-[14px] text-muted-foreground">
               <TransitionLink
                 href={`/compare?a=${playerId}&season=${season}`}
                 className="font-semibold underline-offset-2 hover:underline"

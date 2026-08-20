@@ -1,5 +1,5 @@
 /**
- * M16k1.1 — post-cutover typecheck/build provenance audit + certification.
+ * M16k1.1 - post-cutover typecheck/build provenance audit + certification.
  *   npm run drbl:m16k1_1
  *
  * Does NOT change validated DRBL math. Does NOT mass-cleanup repo debt.
@@ -519,7 +519,7 @@ async function main() {
   }
 
   const sourceReconstruction =
-    "FAIL_FULL_SOURCE — rollback contains precomputed artifacts only; dirty-tree source was never content-addressed pre-cutover";
+    "FAIL_FULL_SOURCE - rollback contains precomputed artifacts only; dirty-tree source was never content-addressed pre-cutover";
   await writeFile(
     path.join(OUT, "03_pre_cutover_reconstruction.json"),
     JSON.stringify(
@@ -730,10 +730,10 @@ async function main() {
   // - compute-season abilityModelVersion (fixed in k1 already)
   // - ui-metric blank() teamName
   // - validated-ability ProcessEnv
-  // These are in cutover-touched test files — fix only if classified cutover-induced
+  // These are in cutover-touched test files - fix only if classified cutover-induced
 
   // Soften: ui-metric and validated-ability test env issues are test harness, fix them
-  // as engineering repairs if they appear in changed test files — they improve certification
+  // as engineering repairs if they appear in changed test files - they improve certification
   // without model change.
 
   // Fix ProcessEnv in validated-ability test if present
@@ -870,7 +870,7 @@ async function main() {
         resolvesTo: "next build",
         deploymentRelevant: "YES",
         notes:
-          "package.json build script is next build — canonical Next.js production build",
+          "package.json build script is next build - canonical Next.js production build",
         environmentAssumptions: "local node_modules; DATA_PROVIDER not required for compile",
       },
       null,
@@ -1042,8 +1042,8 @@ M16k1 correctly described the **actual production artifact \`rank\` assignment p
 
 These were **different ranking surfaces** being summarized under the ambiguous label "rank":
 
-1. Ability metric ordering (legacy drbl100) — M16k0 audit lens
-2. Serialized artifact \`rank\` field (WAR sort) — M16k1 cutover old-source lens
+1. Ability metric ordering (legacy drbl100) - M16k0 audit lens
+2. Serialized artifact \`rank\` field (WAR sort) - M16k1 cutover old-source lens
 
 ## Current validated rank
 
@@ -1085,8 +1085,8 @@ Open a separate **repository TypeScript cleanup** milestone. Do not block valida
 
 ## Do not conflate
 
-- DRBL cutover correctness (numerical + semantic) — certified separately
-- Repository \`tsc --noEmit\` cleanliness — backlog
+- DRBL cutover correctness (numerical + semantic) - certified separately
+- Repository \`tsc --noEmit\` cleanliness - backlog
 `
   );
 
@@ -1279,7 +1279,7 @@ That pairing was **TOO_BROAD**.
 
 ## Numerical invariants
 
-PASS — ${rows} rows, 0 mismatches; rank/WAR/O/D firewalls intact.
+PASS - ${rows} rows, 0 mismatches; rank/WAR/O/D firewalls intact.
 
 ## Typecheck
 

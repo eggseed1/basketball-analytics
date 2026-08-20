@@ -1,5 +1,5 @@
 /**
- * Rank Team Seasons — Copeland aggregation of pairwise compareTeamSeasons.
+ * Rank Team Seasons - Copeland aggregation of pairwise compareTeamSeasons.
  *
  * Same product philosophy as Player Rank My Seasons:
  * compare → aggregate → explain. No opaque team-season score.
@@ -99,8 +99,8 @@ export const TEAM_SEASON_RANK_METHODOLOGY: TeamSeasonRankingMethodology = {
     "Copeland ranking: each overall pairwise win = 1 point, essentially even = 0.5, loss/unavailable = 0. Sort by points, then wins, then fewer losses, then season id. No opaque team-season score.",
   tieRule: `Equal Copeland points (and win/loss tie-breakers) share a contested band. Close top when the leaders differ by ≤${TEAM_SEASON_RANK_CLOSE_TOP} points.`,
   cycleRule:
-    "If the win graph among eligible seasons contains a cycle (A>B>C>A), the ranking is marked contested — Copeland order is still shown but is not claimed uniquely objective.",
-  setLimits: `Select ${TEAM_SEASON_RANK_MIN}–${TEAM_SEASON_RANK_MAX} seasons (default ${TEAM_SEASON_RANK_DEFAULT}). Pairwise cost is O(n²) on the selected set only.`,
+    "If the win graph among eligible seasons contains a cycle (A>B>C>A), the ranking is marked contested - Copeland order is still shown but is not claimed uniquely objective.",
+  setLimits: `Select ${TEAM_SEASON_RANK_MIN}-${TEAM_SEASON_RANK_MAX} seasons (default ${TEAM_SEASON_RANK_DEFAULT}). Pairwise cost is O(n²) on the selected set only.`,
   qualificationNote: TEAM_SEASON_COMPARE_METHODOLOGY.qualifyingRule,
 };
 
@@ -214,7 +214,7 @@ function buildTopWhy(
   );
   if (beaten.length) {
     lines.push(
-      `${top.season} wins its overall pairwise comparisons against ${beaten.join(", ")} (${top.pairwiseWins}–${top.pairwiseLosses}${top.pairwiseEvens ? `, ${top.pairwiseEvens} even` : ""}).`
+      `${top.season} wins its overall pairwise comparisons against ${beaten.join(", ")} (${top.pairwiseWins}-${top.pairwiseLosses}${top.pairwiseEvens ? `, ${top.pairwiseEvens} even` : ""}).`
     );
   } else if (top.pairwiseEvens > 0) {
     lines.push(
@@ -233,7 +233,7 @@ function buildTopWhy(
   }
 
   lines.push(
-    "This season ranks first under the current Team Season Ranking methodology — not a universal “best team” score."
+    "This season ranks first under the current Team Season Ranking methodology - not a universal “best team” score."
   );
 
   if (closeTop) {
@@ -384,7 +384,7 @@ export function rankTeamSeasons(options: {
       bumpCats(p.categoryWinsA, aAcc.categoryCounts);
       bumpCats(p.categoryWinsB, bAcc.categoryCounts);
     } else {
-      // unavailable — do NOT convert into losses/points
+      // unavailable - do NOT convert into losses/points
       aAcc.unavailable += 1;
       bAcc.unavailable += 1;
     }
@@ -418,10 +418,10 @@ export function rankTeamSeasons(options: {
     let eligibilityNote: string | null = null;
     if (!coverage.qualifying) {
       eligibilityNote =
-        "Not eligible — insufficient sample for overall verdicts (<20 GP).";
+        "Not eligible - insufficient sample for overall verdicts (<20 GP).";
     } else if (coverage.incomplete) {
       eligibilityNote =
-        "Current season in progress — limited evidence; not ranked as a completed season.";
+        "Current season in progress - limited evidence; not ranked as a completed season.";
     }
 
     const categoryWins = [...a.categoryCounts.entries()]
@@ -469,7 +469,7 @@ export function rankTeamSeasons(options: {
   const eligibleIds = eligible.map((e) => e.season);
   const contested = seasonWinGraphHasCycle(eligibleIds, beats);
   const contestedNote = contested
-    ? "The ordering is contested because the season comparisons contain mixed/cyclic results. Copeland order is shown — inspect the matrix."
+    ? "The ordering is contested because the season comparisons contain mixed/cyclic results. Copeland order is shown - inspect the matrix."
     : null;
 
   const closeTop =

@@ -17,6 +17,10 @@ import { AnalysisBoard } from "@/components/dashboard/analysis-board";
 import type { DashboardPlayer } from "@/lib/dashboard-player";
 import { formatPct } from "@/lib/format";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 type Point = DashboardPlayer & {
   usageDisplay: number;
@@ -93,21 +97,19 @@ export function ScatterBoard({
               <ZAxis range={[28, 28]} />
               <Tooltip
                 cursor={{ strokeDasharray: "3 3" }}
+                wrapperStyle={rechartsFrostWrapperStyle}
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const p = payload[0].payload as Point;
                   return (
-                    <div
-                      role="tooltip"
-                      className="rounded border border-border bg-popover px-2 py-1.5 text-xs shadow-sm"
-                    >
+                    <FrostRechartsTooltip active={active}>
                       <p className="font-medium">{p.playerName}</p>
                       <p className="text-muted-foreground">
                         {nbaTeamAbbr(p.teamId, p.teamAbbreviation)}
                       </p>
                       <p>USG {formatPct(p.usagePct)}</p>
                       <p>TS {formatPct(p.trueShootingPct)}</p>
-                    </div>
+                    </FrostRechartsTooltip>
                   );
                 }}
               />

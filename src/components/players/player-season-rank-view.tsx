@@ -28,13 +28,13 @@ function CoverageLine({ entry }: { entry: SeasonRankEntry }) {
     ["Team context", c.teamContext],
   ] as const;
   return (
-    <p className="text-[11px] text-muted-foreground">
+    <p className="text-[12px] text-muted-foreground">
       <span className="mr-1 font-medium text-muted-foreground/80">
         Data available:
       </span>
       {bits.map(([label, ok]) => (
         <span key={label} className="mr-2">
-          {ok ? "✓" : "—"} {label}
+          {ok ? "✓" : "-"} {label}
         </span>
       ))}
     </p>
@@ -53,7 +53,7 @@ function MatrixCellLabel(result: string): string {
     case "unavailable":
       return "Unavailable";
     case "self":
-      return "—";
+      return "-";
     default:
       return result;
   }
@@ -108,11 +108,11 @@ export function SeasonRankPicker({
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-[15px] font-bold tracking-tight">
+          <h2 className="text-[16px] font-bold tracking-tight">
             Selected seasons
           </h2>
           <p className="text-[12px] text-muted-foreground">
-            Pick {PLAYER_SEASON_RANK_MIN}–{PLAYER_SEASON_RANK_MAX} regular-season
+            Pick {PLAYER_SEASON_RANK_MIN}-{PLAYER_SEASON_RANK_MAX} regular-season
             years ({picked.length} selected).
           </p>
         </div>
@@ -120,7 +120,7 @@ export function SeasonRankPicker({
           type="button"
           onClick={go}
           disabled={pending || picked.length < PLAYER_SEASON_RANK_MIN}
-          className="rounded-md bg-foreground px-4 py-2 text-[13px] font-bold text-background disabled:opacity-50"
+          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
         >
           {pending ? "Ranking…" : "Rank seasons"}
         </button>
@@ -184,7 +184,7 @@ export function PlayerSeasonRankView({
       </header>
 
       {(result.contested || result.closeTop) && (
-        <section className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-[13px] text-muted-foreground">
+        <section className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-[14px] text-muted-foreground">
           {result.closeTopNote ? (
             <p>
               <MetricHelp conceptId="close_top" labelClassName="font-semibold">
@@ -207,7 +207,7 @@ export function PlayerSeasonRankView({
       )}
 
       <section className="sports-card px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           Season ranking
         </h2>
         <p className="mt-1 text-[12px] text-muted-foreground">
@@ -278,7 +278,7 @@ export function PlayerSeasonRankView({
       </section>
 
       <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           {topSeason
             ? `Why ${topSeason} ranks first`
             : "Why the top season ranks first"}
@@ -302,7 +302,7 @@ export function PlayerSeasonRankView({
       </section>
 
       <section className="sports-card px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           Head-to-head results
         </h2>
         <p className="mt-1 text-[12px] text-muted-foreground">
@@ -319,7 +319,7 @@ export function PlayerSeasonRankView({
             </caption>
             <thead>
               <tr>
-                <th className="px-2 py-2 text-left text-[11px] font-medium text-muted-foreground">
+                <th className="px-2 py-2 text-left text-[12px] font-medium text-muted-foreground">
                   Row season
                 </th>
                 {seasons.map((s) => (
@@ -382,14 +382,14 @@ export function PlayerSeasonRankView({
       </section>
 
       <section className="sports-card px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           Open any two-season comparison
         </h2>
         <p className="mt-1 text-[12px] text-muted-foreground">
-          Same engine as the matrix — overall edge is which season won more
+          Same engine as the matrix - overall edge is which season won more
           category comparisons.
         </p>
-        <ul className="mt-2 flex flex-col gap-1.5 text-[13px]">
+        <ul className="mt-2 flex flex-col gap-1.5 text-[14px]">
           {result.pairwise.map((p) => (
             <li key={`${p.seasonA}-${p.seasonB}`}>
               <Link
@@ -418,7 +418,7 @@ export function PlayerSeasonRankView({
         <button
           type="button"
           onClick={() => setShowMethod((v) => !v)}
-          className="text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+          className="text-[14px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
           aria-expanded={showMethod}
         >
           How is this ranking calculated?
@@ -473,22 +473,22 @@ export function PlayerSeasonAnalysisControl({
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Season analysis</h2>
-        <p className="text-[13px] text-muted-foreground">
-          Compare two seasons, or rank a selected set — without a fake universal
+        <h2 className="text-[20px] font-bold tracking-tight">Season analysis</h2>
+        <p className="text-[14px] text-muted-foreground">
+          Compare two seasons, or rank a selected set - without a fake universal
           score.
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
         <Link
           href={twoHref}
-          className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
         >
           Compare two seasons
         </Link>
         <Link
           href={seasonRankPath(playerId, rankSeasons)}
-          className="rounded-md bg-foreground px-3 py-1.5 text-[13px] font-semibold text-background"
+          className="rounded-md bg-foreground px-3 py-1.5 text-[14px] font-semibold text-background"
         >
           Rank my seasons
         </Link>

@@ -67,6 +67,8 @@ function seedLastGood(season: string, unfiltered: PlayerSeason[]) {
 function hasNarrowingFilters(filters: BasketballFilters): boolean {
   return (
     Boolean(filters.team) ||
+    Boolean(filters.conference) ||
+    Boolean(filters.draftClass) ||
     Boolean(filters.position) ||
     Boolean(filters.player) ||
     (filters.minimumMinutes != null && filters.minimumMinutes > 0) ||
@@ -84,53 +86,58 @@ export async function getPlayerSeasonBoardSnapshot(
   const season = filters.season ?? "";
   const load = boardLoaderOverride ?? getFilteredPlayerSeasonsDetailed;
 
-  const loaded = await load(filters);
-  let rows = loaded.rows;
-  const error = loaded.error;
-  let source: PlayerBoardSource =
-    provider.name === "local" && !boardLoaderOverride
-      ? "local-sample"
-      : "live-espn";
-  const warnings: string[] = [];
-  let fromCachedRealBoard = false;
-
   if (provider.name === "local" && !boardLoaderOverride) {
-    // Intentionally no last-good path for sample — keep sample explicit.
+    const loaded = await load(filters);
     const health = await buildHealth({
       providerName: provider.name,
       season,
-      rowCount: rows.length,
-      error,
+      rowCount: loaded.rows.length,
+      error: loaded.error,
       fromCachedRealBoard: false,
     });
-    return { rows, health, source: "local-sample", warnings: [] };
+    return {
+      rows: loaded.rows,
+      health,
+      source: "local-sample",
+      warnings: [],
+    };
   }
 
-  // Seed last-good from a successful real board (prefer unfiltered season board).
+  const cached = season ? lastGoodBySeason.get(season) : undefined;
+  const narrowing = hasNarrowingFilters(filters);
+
+  // Draft class / team / position / minutes only re-filter the season snapshot.
+  if (cached && cached.unfiltered.length > 0 && narrowing) {
+    const rows = applyPlayerSeasonFilters(cached.unfiltered, filters);
+    const health = await buildHealth({
+      providerName: boardLoaderOverride ? "nba" : provider.name,
+      season,
+      rowCount: rows.length,
+      error: null,
+      fromCachedRealBoard: false,
+    });
+    return {
+      rows,
+      health,
+      source: "live-espn",
+      warnings: [],
+    };
+  }
+
+  const loaded = await load(narrowing && season ? { season } : filters);
+  let rows = loaded.rows;
+  const error = loaded.error;
+  let source: PlayerBoardSource = "live-espn";
+  const warnings: string[] = [];
+  let fromCachedRealBoard = false;
+
   if (error == null && rows.length > 0 && season) {
-    if (!hasNarrowingFilters(filters)) {
-      seedLastGood(season, rows);
-    } else {
-      try {
-        const full = await getFilteredPlayerSeasonsDetailed({ season });
-        if (full.error == null && full.rows.length > 0) {
-          seedLastGood(season, full.rows);
-        }
-      } catch {
-        /* ignore */
-      }
-    }
-  } else if (
-    boardLoaderOverride &&
-    error == null &&
-    rows.length > 0 &&
-    season
-  ) {
     seedLastGood(season, rows);
+    rows = applyPlayerSeasonFilters(rows, filters);
   }
 
   // Live miss → process-local last-good real board for this season.
-  // Only activate on provider failure — not on a successful empty filter result.
+  // Only activate on provider failure - not on a successful empty filter result.
   if (error != null && season) {
     const cached = lastGoodBySeason.get(season);
     if (cached && cached.unfiltered.length > 0) {
@@ -186,7 +193,7 @@ async function buildHealth(input: {
   });
 }
 
-/** Provider identity for badges — no board fetch. */
+/** Provider identity for badges - no board fetch. */
 export function getActiveProviderChip(): {
   name: string;
   description: string;
@@ -199,7 +206,7 @@ export function getActiveProviderChip(): {
   return {
     ...meta,
     label: meta.isSample
-      ? `Sample data — ${meta.description}`
+      ? `Sample data - ${meta.description}`
       : meta.isLive
         ? "Data: Live NBA"
         : `Data: ${meta.name}`,

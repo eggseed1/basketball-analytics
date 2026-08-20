@@ -1,5 +1,5 @@
 /**
- * M17b — Repeated multi-season temporal validation of frozen DRBL v1.
+ * M17b - Repeated multi-season temporal validation of frozen DRBL v1.
  *   npm run drbl:m17b
  *
  * Model firewall: k=1600, priorMean=0, identity calibration, no retune.
@@ -228,7 +228,7 @@ function playerBootstrapDeltas(
 
 async function loadPlayerSeason(season: string): Promise<Map<string, PlayerSeason>> {
   // Prefer site precomputed (includes R1 Points). Offline normalized copies for
-  // 2024-25/2025-26 may omit r1Points — do not treat missing as 0.
+  // 2024-25/2025-26 may omit r1Points - do not treat missing as 0.
   const candidates = [
     path.join(ROOT, "src/data/drbl/precomputed", `${season}.json`),
     path.join(ROOT, "data/drbl/normalized", season, "player_season.json"),
@@ -539,7 +539,7 @@ async function main() {
   const sealedTestCount = health.TEST_COUNT;
   let metadataRepairRequired = false;
   if (sealedTests !== "PASS" || sealedTestCount !== "198/198") {
-    // Only engineering metadata repair if needed — do not recompute model outputs.
+    // Only engineering metadata repair if needed - do not recompute model outputs.
     health.TESTS = "PASS";
     health.TEST_COUNT = "198/198";
     metadataRepairRequired = true;
@@ -588,7 +588,7 @@ async function main() {
     sealedTestCount,
     metadataRepairRequired,
     supportTableSha256: sha256(supportCsv),
-    note: "Frozen DRBL v1 temporal validation — no model retune",
+    note: "Frozen DRBL v1 temporal validation - no model retune",
   };
   await writeFile(path.join(OUT, "00_freeze.json"), JSON.stringify(freeze, null, 2) + "\n");
   console.log("Phase 0 freeze written. EARLY_FRAC=", EARLY_FRAC, "M16C=", M16C_EARLY_FRAC);
@@ -956,7 +956,7 @@ async function main() {
         includedInPrimaryInference: false,
         note: pass
           ? "Matches sealed M16j within tolerance"
-          : "Material mismatch — investigate before primary claims",
+          : "Material mismatch - investigate before primary claims",
       };
       if (!pass) {
         console.error("M16J_REPLICATION_FAILURE", checks, m16jReplication.observed);
@@ -1024,13 +1024,13 @@ async function main() {
 
 HISTORICAL_TEMPORAL_EVIDENCE_SOURCE_TIER = B
 
-All pre-2024 supported seasons are Tier B (CDN-era; raw lineup completeness ~98.6–99.1%, below strict 99.9% Tier A).
+All pre-2024 supported seasons are Tier B (CDN-era; raw lineup completeness ~98.6-99.1%, below strict 99.9% Tier A).
 
 ## Could Tier B bias temporal estimates?
 
 - Attribution uses the same frozen Approach-B + lineup filters as production.
 - Incomplete lineups remove/under-attribute some possessions rather than inventing players.
-- Bias risk: classical measurement noise / selection toward better-reconstructed possessions — not parameter retuning.
+- Bias risk: classical measurement noise / selection toward better-reconstructed possessions - not parameter retuning.
 - 2020-21 has a shortened schedule; kept in primary tables; report sensitivity descriptively.
 
 ## Conclusion
@@ -1065,7 +1065,7 @@ causal claim: NO
 `
   );
 
-  // Production regression (hash compare of precomputed artifacts — no rewrite)
+  // Production regression (hash compare of precomputed artifacts - no rewrite)
   const hashSeason = async (season: string) => {
     const p = path.join(ROOT, "src/data/drbl/precomputed", `${season}.json`);
     return sha256(await readFile(p));
@@ -1073,7 +1073,7 @@ causal claim: NO
   const h2425 = await hashSeason("2024-25");
   const h2526 = await hashSeason("2025-26");
   const regression = {
-    method: "Artifact hash check — M17b does not rewrite production precomputed JSON",
+    method: "Artifact hash check - M17b does not rewrite production precomputed JSON",
     "2024-25": {
       sha256: h2425,
       DRBL_changed: "NO",
@@ -1095,7 +1095,7 @@ causal claim: NO
     JSON.stringify(regression, null, 2) + "\n"
   );
 
-  // Model firewall search (canonical paths only — report presence)
+  // Model firewall search (canonical paths only - report presence)
   const firewallPaths = [
     "drbl/models/research-ability-v1.ts",
     "drbl/models/research-rate-v1.ts",
@@ -1387,7 +1387,7 @@ causal claim: NO
 
   await writeFile(
     path.join(OUT, "21_full_audit.md"),
-    `# M17b full audit — STOP FOR AUDIT
+    `# M17b full audit - STOP FOR AUDIT
 
 ## Verdict
 

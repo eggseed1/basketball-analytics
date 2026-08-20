@@ -1,5 +1,5 @@
 /**
- * Box-score Level-2 context — deterministic, season-aware, no PBP.
+ * Box-score Level-2 context - deterministic, season-aware, no PBP.
  *
  * Primary lens: player-self vs season average (when a season board row exists).
  * Secondary: in-game rank / percentile among players who played (minutes > 0).
@@ -257,7 +257,7 @@ function buildLine(options: {
 
 /**
  * Context for one box-score row.
- * Pure — no network. Pass season board row / optional log for richer lines.
+ * Pure - no network. Pass season board row / optional log for richer lines.
  */
 export function buildBoxScorePlayerContext(options: {
   player: PlayerGame;
@@ -380,7 +380,7 @@ export function buildBoxScoreTeamContext(options: {
 
 /**
  * Build context for every box-score player (+ optional team scoring context).
- * One season board map + optional per-player logs — no fabricated values.
+ * One season board map + optional per-player logs - no fabricated values.
  */
 export function buildBoxScoreGameContext(options: {
   gameId: string;
@@ -413,7 +413,7 @@ export function buildBoxScoreGameContext(options: {
 
   const byPlayerId: Record<string, BoxScorePlayerContext> = {};
   for (const player of players) {
-    // Enforce season identity — skip attaching wrong-season averages.
+    // Enforce season identity - skip attaching wrong-season averages.
     const seasonRow = seasonByPlayerId?.get(player.playerId);
     const safeRow =
       seasonRow && seasonRow.season === season ? seasonRow : null;
@@ -454,7 +454,7 @@ export function formatBoxScorePercentile(p: number): string {
   return `${formatOrdinal(Math.round(p))} pct`;
 }
 
-/** Primary line for compact disclosure — prefer PTS, else first line. */
+/** Primary line for compact disclosure - prefer PTS, else first line. */
 export function primaryBoxScoreLine(
   ctx: BoxScorePlayerContext
 ): BoxScoreStatLine | null {

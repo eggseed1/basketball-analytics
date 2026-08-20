@@ -1,5 +1,5 @@
 /**
- * M16k0 — validated DRBL production shadow + cutover readiness.
+ * M16k0 - validated DRBL production shadow + cutover readiness.
  *   npm run drbl:m16k0
  *
  * Does NOT flip live drbl100 / rank. Does NOT retune the validated estimator.
@@ -604,7 +604,7 @@ async function main() {
           wouldBeWrongIfZeroAssumed: Number(p.drbl100) === 0,
         });
         if (Number(p.drbl100) === 0 && Number(p.uncertainty ?? 0) <= 0) {
-          // left-join style missing — not validated zero
+          // left-join style missing - not validated zero
         }
       } else if (!validIds.has(p.playerId)) {
         coerced++;
@@ -1249,7 +1249,7 @@ Mechanism:
 
 \`CUTOVER_ROLLBACK_AVAILABLE = YES\`
 
-Rollback does **not** change the validated estimator mathematics — it restores the previous published artifact/source pointer.
+Rollback does **not** change the validated estimator mathematics - it restores the previous published artifact/source pointer.
 `
   );
 
@@ -1324,7 +1324,7 @@ Rollback does **not** change the validated estimator mathematics — it restores
   const PERCENTILE_POPULATION_DECISION_REQUIRED = "YES";
   const blockers = [
     "PERCENTILE_POPULATION_DECISION_REQUIRED: replace uncertainty>0 eligibility with approved metadata/exposure rule before cutover",
-    "Glossary still describes DRBL/100 as fused posterior — update at cutover (classified; not model change)",
+    "Glossary still describes DRBL/100 as fused posterior - update at cutover (classified; not model change)",
   ];
   const PRODUCTION_CUTOVER_READY = "NO"; // percentile blocker
   const PRODUCTION_READINESS_RESULT = "READY_WITH_BLOCKERS";

@@ -27,7 +27,7 @@ type CacheEntry = {
 const memoryCache = new Map<string, CacheEntry>();
 const artifactCache = new Map<string, DrblSeasonArtifact>();
 
-/** Bundled site artifacts — always available without waiting on disk/cache. */
+/** Bundled site artifacts - always available without waiting on disk/cache. */
 const BUNDLED: Record<string, DrblSeasonArtifact> = {
   "2024-25": drbl2024_25 as DrblSeasonArtifact,
   "2025-26": drbl2025_26 as DrblSeasonArtifact,
@@ -137,7 +137,7 @@ export async function fetchDrblSeason(season: string): Promise<DrblPlayerRow[]> 
 
   const artifact = await readPrecomputed(season);
   const rows = artifact?.players ?? [];
-  // Do not sticky-cache empty loads — precomputed files may appear mid-session.
+  // Do not sticky-cache empty loads - precomputed files may appear mid-session.
   if (rows.length > 0) {
     memoryCache.set(season, {
       value: rows,

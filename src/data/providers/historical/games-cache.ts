@@ -29,7 +29,7 @@ export async function readGamesCache(
     const raw = await readFile(gamesCachePath(season), "utf8");
     const parsed = JSON.parse(raw) as GamesCachePayload;
     if (!Array.isArray(parsed.games) || parsed.games.length === 0) return null;
-    // Legacy cache rows may still carry raw BDL team ids — normalize cheaply.
+    // Legacy cache rows may still carry raw BDL team ids - normalize cheaply.
     return {
       ...parsed,
       games: parsed.games.map((g) => ensureGameTeamIdentity(g, "bdl")),
@@ -110,7 +110,7 @@ export function isAdequateSeasonGamesCache(
 
 /**
  * Resolve a single game id from season disk caches (normalized on read).
- * Prefer newer seasons first. Sync identity only — no network.
+ * Prefer newer seasons first. Sync identity only - no network.
  */
 export async function findCachedGame(gameId: string): Promise<Game | null> {
   const id = String(gameId).trim();

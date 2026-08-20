@@ -101,7 +101,7 @@ function main() {
   assert.ok(desktopPortalClass.includes("hidden"));
   assert.ok(desktopPortalClass.includes("sm:block"));
 
-  console.log("OK — leaderboard-context-panel");
+  console.log("OK - leaderboard-context-panel");
 }
 
 main();

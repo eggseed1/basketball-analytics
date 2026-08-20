@@ -1,5 +1,5 @@
 /**
- * Human-readable provider metadata — derived from provider `name` values.
+ * Human-readable provider metadata - derived from provider `name` values.
  */
 
 export type KnownProviderName = "nba" | "local" | string;

@@ -82,7 +82,7 @@ function main() {
     assert.equal(result.ranking[0]?.rank, 1);
   }
 
-  // Three seasons — clear winner
+  // Three seasons - clear winner
   {
     const seasons = [
       team({ ...base, season: "2021-22", avgDiff: 2 }),
@@ -194,7 +194,7 @@ function main() {
   // Constructed cycle via rotated category strengths
   {
     // A beats B on performance; B beats C on efficiency; C beats A on shooting
-    // — plus secondary edges so overall flips in a cycle when possible.
+    // - plus secondary edges so overall flips in a cycle when possible.
     const A = team({
       ...base,
       season: "2019-20",
@@ -252,7 +252,7 @@ function main() {
     assert.ok(result.contestedNote === null || result.contested);
   }
 
-  // Missing metric — unavailable does NOT become a loss
+  // Missing metric - unavailable does NOT become a loss
   {
     const strong = team({
       ...base,
@@ -288,7 +288,7 @@ function main() {
     const top = result.ranking[0]!;
     assert.equal(top.season, "2023-24");
     assert.equal(top.pairwiseLosses, 0);
-    // Unavailable overall would increment pairwiseUnavailable — a decisive win must not.
+    // Unavailable overall would increment pairwiseUnavailable - a decisive win must not.
     assert.equal(top.pairwiseUnavailable, 0);
     assert.equal(top.pairwiseWins, 1);
   }

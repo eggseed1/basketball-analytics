@@ -2,7 +2,7 @@
  * Client-safe Offseason Tracker presentation helpers.
  * Normalizes trade-related UX without inventing structured trade ledgers.
  *
- * Data model still distinguishes source_event vs related_event_cluster —
+ * Data model still distinguishes source_event vs related_event_cluster -
  * this module only shapes what the user sees at the top level.
  */
 
@@ -10,7 +10,7 @@ import type { OffseasonFeedItem } from "@/data/types/transaction-event";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { TransactionType } from "@/offseason";
 
-/** ESPN source-text category `trade` — wording only, not a verified package. */
+/** ESPN source-text category `trade` - wording only, not a verified package. */
 export function isTradeRelatedSourceCategory(
   category: TransactionType | string | null | undefined
 ): boolean {
@@ -68,7 +68,7 @@ export function tradeRelatedPresentation(
   };
 }
 
-/** Single ESPN archive row — trade-related when source-text category is trade. */
+/** Single ESPN archive row - trade-related when source-text category is trade. */
 export function presentationForSourceEvent(
   event: NbaTransactionEvent
 ): OffseasonFeedPresentation {
@@ -85,7 +85,7 @@ export function presentationForSourceEvent(
 }
 
 /**
- * Related-event cluster — trade-related when any member is trade-classified.
+ * Related-event cluster - trade-related when any member is trade-classified.
  * Source count = all ESPN records in the cluster (evidence size).
  */
 export function presentationForRelatedCluster(

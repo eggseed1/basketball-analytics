@@ -1,5 +1,5 @@
 /**
- * P17.2 — game link generator ↔ destination lookup contract.
+ * P17.2 - game link generator ↔ destination lookup contract.
  * Run: npx tsx scripts/test-game-route-contract.ts
  */
 import assert from "node:assert/strict";
@@ -40,12 +40,12 @@ async function main() {
         );
       } else {
         console.log(
-          `  (skip live ESPN shell — ${sampleEspn} unavailable; helpers still pass)`
+          `  (skip live ESPN shell - ${sampleEspn} unavailable; helpers still pass)`
         );
       }
     } catch (err) {
       console.log(
-        `  (skip live ESPN shell — network: ${err instanceof Error ? err.message : err})`
+        `  (skip live ESPN shell - network: ${err instanceof Error ? err.message : err})`
       );
     }
   }
@@ -62,12 +62,12 @@ async function main() {
         );
       } else {
         console.log(
-          `  (skip live NBA shell — ${sampleNba} unavailable; helpers still pass)`
+          `  (skip live NBA shell - ${sampleNba} unavailable; helpers still pass)`
         );
       }
     } catch (err) {
       console.log(
-        `  (skip live NBA shell — network: ${err instanceof Error ? err.message : err})`
+        `  (skip live NBA shell - network: ${err instanceof Error ? err.message : err})`
       );
     }
   }
@@ -94,7 +94,7 @@ async function main() {
     assert.equal(guessGameProvider(bdlId), "bdl");
   }
 
-  console.log("OK — game-route-contract");
+  console.log("OK - game-route-contract");
 }
 
 main().catch((err) => {

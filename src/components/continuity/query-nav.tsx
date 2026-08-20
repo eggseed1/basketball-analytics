@@ -136,7 +136,7 @@ export function QueryNavProvider({
   );
 }
 
-/** Subtle top cue — never a full-page spinner. */
+/** Subtle top cue - never a full-page spinner. */
 export function QueryUpdatingChrome({ pending }: { pending: boolean }) {
   if (!pending) return null;
   return (

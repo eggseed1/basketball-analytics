@@ -1,5 +1,5 @@
 /**
- * M16g1 — shrinkage boundary extension + posterior lineage lock.
+ * M16g1 - shrinkage boundary extension + posterior lineage lock.
  *   npm run drbl:m16g1
  *
  * Reuses exact M16g fold rows. Extends k grid beyond 800.
@@ -564,7 +564,7 @@ component EB → fusion of shrunk components → EB on fused rate.
 This is **intentional multi-stage** relative to research single-EB on raw P_B.
 ACCIDENTAL_DOUBLE_SHRINKAGE on the *same* conceptual estimator is NO for research
 (research does not re-EB posteriorAbilityRate). For production \`drblP\` alone: one EB.
-For production \`drbl100\`: component EB + fused EB = two stages (documented, not "accidental" if intentional product design — flagged MULTI_STAGE).
+For production \`drbl100\`: component EB + fused EB = two stages (documented, not "accidental" if intentional product design - flagged MULTI_STAGE).
 `
   );
 
@@ -1130,17 +1130,17 @@ See \`17_field_naming_audit.csv\`.
     toCsv([
       {
         field: "rawAbilityRate",
-        accurate: "YES — unshrunk seq rate",
+        accurate: "YES - unshrunk seq rate",
         recommendedName: "approachB_rawRate_per100",
       },
       {
         field: "drblP",
-        accurate: "NO — implies raw P but is EB200",
+        accurate: "NO - implies raw P but is EB200",
         recommendedName: "approachB_eb200_per100",
       },
       {
         field: "fusedRateRaw",
-        accurate: "PARTIAL — 'raw' but inputs are pre-shrunk",
+        accurate: "PARTIAL - 'raw' but inputs are pre-shrunk",
         recommendedName: "fusedAbility_prePublishEb_per100",
       },
       {
@@ -1304,7 +1304,7 @@ See \`17_field_naming_audit.csv\`.
   const audit = `# M16g1 Full Audit
 
 ## Reproduction
-PASS — k0/k200/k800 match M16g exactly.
+PASS - k0/k200/k800 match M16g exactly.
 
 ## Lineage
 - rawAbilityRate: UNSHRUNK Approach B PASS

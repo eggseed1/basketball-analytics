@@ -3,7 +3,9 @@
 import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
 
+import { GlassSurface } from "@/components/brand/glass-surface"
 import { cn } from "@/lib/utils"
+import { stripFloatingTransform } from "@/lib/strip-floating-transform"
 import { ChevronDownIcon, CheckIcon, ChevronUpIcon } from "lucide-react"
 
 const Select = SelectPrimitive.Root
@@ -61,9 +63,9 @@ function SelectContent({
   children,
   side = "bottom",
   sideOffset = 4,
-  align = "center",
+  align = "start",
   alignOffset = 0,
-  alignItemWithTrigger = true,
+  alignItemWithTrigger = false,
   ...props
 }: SelectPrimitive.Popup.Props &
   Pick<
@@ -78,16 +80,57 @@ function SelectContent({
         align={align}
         alignOffset={alignOffset}
         alignItemWithTrigger={alignItemWithTrigger}
-        className="isolate z-50"
+        positionMethod="fixed"
+        className="z-50"
+        render={(positionerProps) => (
+          <div
+            {...positionerProps}
+            style={stripFloatingTransform(positionerProps.style)}
+          />
+        )}
       >
         <SelectPrimitive.Popup
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
-          className={cn("relative isolate z-50 max-h-(--available-height) w-(--anchor-width) min-w-36 origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-lg bg-popover text-popover-foreground shadow-md ring-1 ring-foreground/10 duration-100 data-[align-trigger=true]:animate-none data-[side=bottom]:slide-in-from-top-2 data-[side=inline-end]:slide-in-from-left-2 data-[side=inline-start]:slide-in-from-right-2 data-[side=left]:slide-in-from-right-2 data-[side=right]:slide-in-from-left-2 data-[side=top]:slide-in-from-bottom-2 data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95 data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95", className )}
+          className={cn(
+            "relative z-50 flex max-h-(--available-height) w-(--anchor-width) min-w-36 flex-col text-popover-foreground",
+            className
+          )}
+          render={(popupProps) => {
+            const {
+              className: popupClassName,
+              style: popupStyle,
+              children: popupChildren,
+              ...popupRest
+            } = popupProps
+            const frostStyle: React.CSSProperties = {
+              ...stripFloatingTransform(popupStyle),
+              transform: "none",
+              filter: "none",
+              willChange: "auto",
+            }
+            delete frostStyle.overflow
+            delete frostStyle.overflowX
+            delete frostStyle.overflowY
+            return (
+              <GlassSurface
+                {...popupRest}
+                effect="css"
+                overflowVisible
+                backdropBlur={24}
+                className={cn(popupClassName, "select-popup")}
+                style={frostStyle}
+              >
+                {popupChildren}
+              </GlassSurface>
+            )
+          }}
           {...props}
         >
           <SelectScrollUpButton />
-          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectPrimitive.List className="relative z-[1] min-h-0 flex-1 overflow-x-hidden overflow-y-auto">
+            {children}
+          </SelectPrimitive.List>
           <SelectScrollDownButton />
         </SelectPrimitive.Popup>
       </SelectPrimitive.Positioner>
@@ -157,7 +200,7 @@ function SelectScrollUpButton({
     <SelectPrimitive.ScrollUpArrow
       data-slot="select-scroll-up-button"
       className={cn(
-        "top-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        "relative z-[1] top-0 flex w-full cursor-default items-center justify-center bg-transparent py-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}
@@ -176,7 +219,7 @@ function SelectScrollDownButton({
     <SelectPrimitive.ScrollDownArrow
       data-slot="select-scroll-down-button"
       className={cn(
-        "bottom-0 z-10 flex w-full cursor-default items-center justify-center bg-popover py-1 [&_svg:not([class*='size-'])]:size-4",
+        "relative z-[1] bottom-0 flex w-full cursor-default items-center justify-center bg-transparent py-1 [&_svg:not([class*='size-'])]:size-4",
         className
       )}
       {...props}

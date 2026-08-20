@@ -161,7 +161,7 @@ function fromLebronRating(
 
 function fromCsvNote(sourceVersion: string): string | undefined {
   if (sourceVersion.startsWith("seed:")) {
-    return "In-repo seed fallback — not a full historical LEBRON archive.";
+    return "In-repo seed fallback - not a full historical LEBRON archive.";
   }
   return "Season-keyed CSV row.";
 }
@@ -203,7 +203,7 @@ function fromDarkoRating(
       dataset: "darko.app-live",
       importedAt,
       notes:
-        "Live DARKO leaderboard snapshot admitted only for the stamped season — not a multi-year historical archive.",
+        "Live DARKO leaderboard snapshot admitted only for the stamped season - not a multi-year historical archive.",
     },
   };
 
@@ -256,7 +256,7 @@ export async function buildHistoricalImpactIndex(
 
   if (options.includeLebron !== false) {
     try {
-      // Detect csv vs seed by comparing to a forced path — loadLebronRatings
+      // Detect csv vs seed by comparing to a forced path - loadLebronRatings
       // already prefers CSV. Annotate via file presence check in notes.
       const rows = await loadLebronRatings();
       const { access } = await import("node:fs/promises");
@@ -362,7 +362,7 @@ function matchesLookup(
 }
 
 /**
- * Pure filter over an index — used by queries and tests.
+ * Pure filter over an index - used by queries and tests.
  * Does not invent missing seasons.
  */
 export function queryHistoricalImpact(

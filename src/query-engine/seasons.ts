@@ -4,7 +4,7 @@ import {
   parseSeasonParam,
 } from "@/data/providers/historical/season-range";
 
-const SEASON_RE = /\b((?:19|20)\d{2})\s*[-–/]\s*(\d{2})\b/g;
+const SEASON_RE = /\b((?:19|20)\d{2})\s*[--/]\s*(\d{2})\b/g;
 const YEAR_SEASON_RE = /\b((?:19|20)\d{2})\s+season\b/gi;
 
 export function extractCanonicalSeasons(text: string): string[] {
@@ -47,7 +47,7 @@ export function resolveSeasonPhrases(
   }
 
   // "from 2008-09 through 2015-16" / "from X to Y"
-  const range = /from\s+((?:19|20)\d{2}\s*[-–/]\s*\d{2})\s+(?:through|to|until|-)\s+((?:19|20)\d{2}\s*[-–/]\s*\d{2})/i.exec(
+  const range = /from\s+((?:19|20)\d{2}\s*[--/]\s*\d{2})\s+(?:through|to|until|-)\s+((?:19|20)\d{2}\s*[--/]\s*\d{2})/i.exec(
     text
   );
   if (range) {

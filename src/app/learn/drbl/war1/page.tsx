@@ -24,7 +24,7 @@ export default function LearnWar1Page() {
       <div className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
         <AppLink
           href="/learn/drbl"
-          className="text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
+          className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
           ← DRBL overview
         </AppLink>

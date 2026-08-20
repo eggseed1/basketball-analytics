@@ -1,5 +1,5 @@
 /**
- * PBP coverage report — corpus attach status + declarative manifest counts.
+ * PBP coverage report - corpus attach status + declarative manifest counts.
  * Does not scan event files. Does not unlock ASK PBP execution.
  * Run: npm run report:pbp-coverage
  */
@@ -21,8 +21,8 @@ async function main() {
     executable: status.executable,
     availability: {
       local: status.attachment === "attached" ? "manifest-attached" : "not-attached",
-      preview: "unknown — corpus must be mounted/configured on the host",
-      production: "not-configured — do not treat local attach as prod-ready",
+      preview: "unknown - corpus must be mounted/configured on the host",
+      production: "not-configured - do not treat local attach as prod-ready",
     },
     corpus: m
       ? {
@@ -41,8 +41,8 @@ async function main() {
         }
       : null,
     identity: {
-      playerMapping: "not-audited — no event scan until corpus format is known",
-      teamMapping: "not-audited — reuse canonical team + team-era after format known",
+      playerMapping: "not-audited - no event scan until corpus format is known",
+      teamMapping: "not-audited - reuse canonical team + team-era after format known",
       gameMapping: "not-audited",
       distinction: {
         absentFromSource: "field never present in source files",
@@ -52,12 +52,12 @@ async function main() {
     },
     shotZones: {
       vocabularyObserved: [] as string[],
-      geometryObserved: "unknown — no event schema inspected",
+      geometryObserved: "unknown - no event schema inspected",
       collegeThreeSupported: false,
       note: "college_three remains ASK AST / unsupported until verified source zones or geometry exist.",
     },
     clock: {
-      semantics: "unknown — no event corpus",
+      semantics: "unknown - no event corpus",
       note: "Do not implement under-6:00 Q4 filters until clock audit against real rows.",
     },
     nextStep:

@@ -6,7 +6,7 @@
  * Next.js application code must import `@/pbp/corpus.server` instead so
  * client bundles cannot pull this module.
  *
- * Keep `@/pbp` (index) free of this module — Turbopack will otherwise pull
+ * Keep `@/pbp` (index) free of this module - Turbopack will otherwise pull
  * `node:fs` into any client chunk that imports `@/pbp` via `@/analytics`.
  */
 
@@ -255,7 +255,7 @@ export async function getPbpCorpusManifest(options?: {
 
 /**
  * Future: load one game’s raw/normalized record.
- * Deferred until the real corpus format is observed — always null today.
+ * Deferred until the real corpus format is observed - always null today.
  */
 export async function getPbpGameRecord(
   _gameId: string,

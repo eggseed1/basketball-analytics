@@ -1,6 +1,6 @@
 /**
  * Website bridge to the canonical DRBL season registry.
- * Single source — do not hardcode DRBL season lists in UI components.
+ * Single source - do not hardcode DRBL season lists in UI components.
  */
 export {
   SEASON_REGISTRY,

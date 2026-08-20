@@ -1,5 +1,5 @@
 /**
- * Trusted ASK DRBL executor — only calls existing query / analytics modules.
+ * Trusted ASK DRBL executor - only calls existing query / analytics modules.
  */
 
 import {
@@ -256,7 +256,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
       valueDisplay: def?.label ?? metricId,
       detailLines: [gloss],
       contextLines: [
-        "Answered from DRBL learn vocabulary — not a player-season lookup.",
+        "Answered from DRBL learn vocabulary - not a player-season lookup.",
       ],
       methodology: [
         gloss,
@@ -406,7 +406,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
       ...(DRBL_ASK_METRICS.has(metricId)
         ? [
             glossaryForMetricId(metricId) ??
-              "DRBL overlay — sealed parameters; no model recompute in ASK.",
+              "DRBL overlay - sealed parameters; no model recompute in ASK.",
           ]
         : ["Counting rates use season totals ÷ games played."]),
       ...(def.learnHref ? [`How is this calculated? See methodology.`] : []),
@@ -414,10 +414,10 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     source: sourceForPlayerMetric(metricId, season),
     limitations: DRBL_ASK_METRICS.has(metricId)
       ? [
-          "Player-specific DRBL answers require a valid overlay estimate — never invented zeros.",
+          "Player-specific DRBL answers require a valid overlay estimate - never invented zeros.",
         ]
       : [
-          "ASK DRBL answers from existing season boards — not possession-level DRBL.",
+          "ASK DRBL answers from existing season boards - not possession-level DRBL.",
         ],
     links: [
       {
@@ -581,7 +581,7 @@ async function execLeaderboard(ast: BasketballQueryAst): Promise<AskDrblResult> 
     valueDisplay: `${leader.r.playerName} · ${formatMetric(metricId, leader.v as number)}`,
     detailLines: top.map(
       (t, i) =>
-        `${i + 1}. ${t.r.playerName} — ${formatMetric(metricId, t.v as number)}`
+        `${i + 1}. ${t.r.playerName} - ${formatMetric(metricId, t.v as number)}`
     ),
     methodology: [
       "Existing player-season board with minimumGames=20 and minimumMinutes=500.",
@@ -790,7 +790,7 @@ async function execTeamSeasonGameEvidence(
   const lines = evidence.games.flatMap((g) => {
     const reasons = g.findings.map((f) => f.label).join(", ");
     return [
-      `${g.gameDate} ${g.isHome ? "vs" : "@"} ${g.opponentLabel} · ${g.result} ${g.teamScore}–${g.opponentScore} · ${reasons}`,
+      `${g.gameDate} ${g.isHome ? "vs" : "@"} ${g.opponentLabel} · ${g.result} ${g.teamScore}-${g.opponentScore} · ${reasons}`,
     ];
   });
 
@@ -802,7 +802,7 @@ async function execTeamSeasonGameEvidence(
     interpretation: [
       evidence.subject.fullName,
       `Season evidence for ${season}`,
-      "Descriptive schedule-score games under DRBL Season Evidence — not “most important”",
+      "Descriptive schedule-score games under DRBL Season Evidence - not “most important”",
       ...(ast.seasonNotes ?? []),
     ],
     headline: `${evidence.subject.fullName} · ${season} evidence`,
@@ -881,7 +881,7 @@ async function execTeamSeasonRank(
     ],
     methodology: [
       ranking.methodology.rankingRule,
-      "“Best season” here means Team Season Ranking — not a universal best-team score.",
+      "“Best season” here means Team Season Ranking - not a universal best-team score.",
     ],
     source: "Rank Team Seasons",
     queryPlan: buildQueryPlan(ast),
@@ -947,7 +947,7 @@ async function execSeasonRank(ast: BasketballQueryAst): Promise<AskDrblResult> {
     ],
     methodology: [
       ranking.methodology.rankingRule,
-      "“Best season” here means Rank My Seasons — not a universal best-season score.",
+      "“Best season” here means Rank My Seasons - not a universal best-season score.",
     ],
     source: "Rank My Seasons",
     queryPlan: buildQueryPlan(ast),
@@ -1198,7 +1198,7 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       ast,
       interpretation: [
         brand?.abbr ?? team?.name ?? "Transaction",
-        "Related ESPN transaction events may exist — no verified structured trade ledger",
+        "Related ESPN transaction events may exist - no verified structured trade ledger",
       ],
       headline: "No verified structured trade ledger",
       valueDisplay: "Source-event reconstruction only",
@@ -1256,7 +1256,7 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       valueDisplay: `${activity?.eventCount ?? page.total} events`,
       detailLines: page.events.slice(0, 5).map((e) => e.description),
       methodology: [
-        "Counts ESPN free-text transaction events only — not structured trades or contracts.",
+        "Counts ESPN free-text transaction events only - not structured trades or contracts.",
       ],
       source: "Offseason transaction event archive",
       queryPlan: buildQueryPlan(ast),
@@ -1289,7 +1289,7 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
     ].filter(Boolean),
     source: "Offseason transaction event archive",
     queryPlan: buildQueryPlan(ast),
-    limitations: ["Factual event archive only — genealogy UI blocked."],
+    limitations: ["Factual event archive only - genealogy UI blocked."],
     links: [{ label: "Open Offseason Tracker →", href: "/offseason" }],
   };
 }

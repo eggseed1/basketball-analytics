@@ -58,7 +58,7 @@ export function AskBuilderForm({
       <div className="flex flex-col gap-1.5">
         <label
           htmlFor="ask-builder-op"
-          className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+          className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
         >
           Operation
         </label>
@@ -83,7 +83,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="ask-builder-player"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               Player
             </label>
@@ -108,7 +108,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="ask-builder-team"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               {opt.needsTeamB ? "Team A" : "Team"}
             </label>
@@ -132,7 +132,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="ask-builder-team-b"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               {state.operation === "game_lab" ? "Opponent" : "Team B (optional)"}
             </label>
@@ -160,7 +160,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="ask-builder-season"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               {opt.needsSeasonB ? "Season A" : "Season"}
             </label>
@@ -183,7 +183,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5">
             <label
               htmlFor="ask-builder-season-b"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               Season B
             </label>
@@ -206,7 +206,7 @@ export function AskBuilderForm({
           <div className="flex flex-col gap-1.5 sm:col-span-2">
             <label
               htmlFor="ask-builder-metric"
-              className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+              className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground"
             >
               Metric
             </label>
@@ -250,14 +250,14 @@ export function AskBuilderForm({
       </div>
 
       <div className="rounded-md border border-border/70 bg-background/80 px-3 py-2.5">
-        <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
           Query preview
         </p>
         <p className="mt-1 text-[14px] font-semibold tracking-tight">{preview}</p>
       </div>
 
       {!validation.ok ? (
-        <ul className="flex flex-col gap-1 text-[13px] text-muted-foreground">
+        <ul className="flex flex-col gap-1 text-[14px] text-muted-foreground">
           {validation.errors.map((e) => (
             <li key={e}>{e}</li>
           ))}
@@ -269,7 +269,7 @@ export function AskBuilderForm({
         disabled={pending || !validation.ok}
         onClick={onSubmit}
         className={cn(
-          "rounded-md bg-foreground px-4 py-2.5 text-[13px] font-bold text-background",
+          "rounded-md bg-foreground px-4 py-2.5 text-[14px] font-bold text-background",
           "disabled:opacity-50"
         )}
       >

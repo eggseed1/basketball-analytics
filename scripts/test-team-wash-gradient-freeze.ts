@@ -43,7 +43,7 @@ function mixesInSelector(block: string, selector: string): number[] {
   const mixes = [...m[0].matchAll(/\)\s+(\d+)%\s*,/g)].map((x) =>
     Number(x[1])
   );
-  // color-mix(... N%, ...) — capture the team-color percentage
+  // color-mix(... N%, ...) - capture the team-color percentage
   const pcts = [
     ...m[0].matchAll(
       /color-mix\(in oklab,\s*var\(--(?:away|home)-color[^)]*\)\s+(\d+)%/g

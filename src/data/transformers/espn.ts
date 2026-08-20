@@ -226,7 +226,7 @@ export function transformEspnPlayerSeason(
   const offensiveRating =
     possessions > 0 ? (points / possessions) * 100 : undefined;
   // ESPN athlete season stats do not include individual DRtg. Do not invent
-  // DRtg=0 or NET≈ORtg−110 — Missing ≠ zero / never invent a number.
+  // DRtg=0 or NET≈ORtg−110 - Missing ≠ zero / never invent a number.
 
   return withPlayerSeasonDefaults({
     playerId: String(athlete.id),
@@ -382,6 +382,11 @@ export interface EspnScheduleEvent {
         displayName?: string;
       };
       id?: string;
+      records?: Array<{
+        name?: string;
+        type?: string;
+        summary?: string;
+      }>;
     }>;
   }>;
 }
@@ -406,6 +411,22 @@ function parseEspnLinescores(
   });
   if (!values.every((n) => Number.isFinite(n))) return undefined;
   return values;
+}
+
+function espnCompetitorRecord(
+  competitor: NonNullable<
+    NonNullable<EspnScheduleEvent["competitions"]>[number]["competitors"]
+  >[number]
+): string | undefined {
+  const records = competitor.records ?? [];
+  if (!records.length) return undefined;
+  const overall =
+    records.find((r) => (r.type ?? "").toLowerCase() === "total") ||
+    records.find((r) => (r.name ?? "").toLowerCase() === "overall") ||
+    records[0];
+  const summary = overall?.summary?.trim();
+  if (!summary || !/^\d+\s*-\s*\d+/.test(summary)) return undefined;
+  return summary.replace(/\s*-\s*/, "-");
 }
 
 export function transformEspnScheduleEvent(
@@ -433,6 +454,8 @@ export function transformEspnScheduleEvent(
 
   const homePeriodScores = parseEspnLinescores(home.linescores);
   const awayPeriodScores = parseEspnLinescores(away.linescores);
+  const homeRecord = espnCompetitorRecord(home);
+  const awayRecord = espnCompetitorRecord(away);
   const broadcasts = mapEspnBroadcasts({
     broadcasts: competition.broadcasts,
     geoBroadcasts: competition.geoBroadcasts,
@@ -468,6 +491,8 @@ export function transformEspnScheduleEvent(
     awayTeamAbbr: awaySide.abbr,
     homeTeamName: homeSide.name,
     awayTeamName: awaySide.name,
+    ...(homeRecord ? { homeRecord } : {}),
+    ...(awayRecord ? { awayRecord } : {}),
     teamIdProvider: "espn",
     homeProviderTeamId: homeSide.providerTeamId,
     awayProviderTeamId: awaySide.providerTeamId,

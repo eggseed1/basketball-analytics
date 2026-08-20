@@ -1,5 +1,5 @@
 /**
- * Time Machine URL builders — season, theme, date roundtrip.
+ * Time Machine URL builders - season, theme, date roundtrip.
  */
 
 import { parseThemeMode, type ThemeMode } from "@/themes/era-theme";
@@ -33,7 +33,7 @@ export function historyHref(state: HistorySearchState): string {
   const q = new URLSearchParams();
   if (state.season) q.set("season", state.season);
   if (state.theme === "modern") q.set("theme", "modern");
-  // historical is default — omit from URL for cleanliness
+  // historical is default - omit from URL for cleanliness
   if (state.date) q.set("date", state.date);
   const qs = q.toString();
   return qs ? `/history?${qs}` : "/history";

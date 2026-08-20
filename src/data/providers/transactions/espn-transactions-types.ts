@@ -2,7 +2,7 @@
  * ESPN site.api transaction feed shapes.
  * Endpoint: GET https://site.api.espn.com/apis/site/v2/sports/basketball/nba/transactions
  *
- * Observed fields (2000–present): date, description, team.
+ * Observed fields (2000-present): date, description, team.
  * No athlete ids, pick ids, or structured multi-team asset graph.
  */
 

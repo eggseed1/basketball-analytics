@@ -1,5 +1,5 @@
 /**
- * P17.2 — player team render contract after NBA→canonical normalize.
+ * P17.2 - player team render contract after NBA→canonical normalize.
  * Run: npx tsx scripts/test-player-team-render-contract.ts
  */
 import assert from "node:assert/strict";
@@ -27,7 +27,7 @@ function exploreTmLabel(row: {
   const brand = resolveTeamBrand(row.teamId);
   if (brand?.abbr) return brand.abbr;
   if (row.teamAbbreviation) return row.teamAbbreviation;
-  if (/^\d{6,}$/.test(row.teamId)) return "—";
+  if (/^\d{6,}$/.test(row.teamId)) return "-";
   return row.teamId;
 }
 
@@ -70,4 +70,4 @@ assert.equal(
   "Multiple"
 );
 
-console.log("OK — player-team-render-contract");
+console.log("OK - player-team-render-contract");

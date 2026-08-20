@@ -3,6 +3,7 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from "react";
 import Link from "next/link";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useGmStore } from "@/gm/state/gm-store";
 import { useMyLeagueStore } from "@/gm/myleague/store";
@@ -74,21 +75,21 @@ export function GmShell({ children }: { children: ReactNode }) {
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
             My Teams
           </h1>
-          <p className="mt-1 max-w-2xl text-[15px] text-muted-foreground">
+          <p className="mt-1 max-w-2xl text-[16px] text-muted-foreground">
             Real NBA rosters (ESPN + DARKO/LEBRON) from{" "}
             {ESPN_PLAYER_SEASON_HORIZON_START} onward, with era CBA caps.
           </p>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <label className="text-[13px] font-semibold text-muted-foreground">
+          <label className="text-[14px] font-semibold text-muted-foreground">
             Season
           </label>
           <select
             value={season}
             disabled={seeding}
             onChange={(e) => setSeason(e.target.value)}
-            className="rounded-full border-0 bg-secondary px-3 py-1.5 text-[13px] font-semibold outline-none"
+            className="rounded-full border-0 bg-secondary px-3 py-1.5 text-[14px] font-semibold outline-none"
           >
             {seasonOptions.map((s) => (
               <option key={s} value={s}>
@@ -99,13 +100,13 @@ export function GmShell({ children }: { children: ReactNode }) {
         </div>
 
         {seeding ? (
-          <div className="sports-card px-4 py-6 text-center text-[15px] text-muted-foreground">
+          <div className="sports-card px-4 py-6 text-center text-[16px] text-muted-foreground">
             Loading real players for {season}…
           </div>
         ) : null}
 
         {seedError ? (
-          <div className="sports-card px-4 py-3 text-[13px] text-muted-foreground">
+          <div className="sports-card px-4 py-3 text-[14px] text-muted-foreground">
             Live seed issue: {seedError}. Falling back to a generated league if
             a team was selected.
           </div>
@@ -134,7 +135,7 @@ export function GmShell({ children }: { children: ReactNode }) {
                 >
                   <TeamLogo teamKey={f.id} size="lg" />
                 </span>
-                <span className="text-center text-[13px] font-medium">
+                <span className="text-center text-[14px] font-medium">
                   {f.abbr}
                 </span>
               </button>
@@ -146,7 +147,7 @@ export function GmShell({ children }: { children: ReactNode }) {
           type="button"
           disabled={seeding}
           onClick={() => newGeneratedLeague("bos")}
-          className="self-start text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
+          className="self-start text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
           Use generated demo league instead
         </button>
@@ -167,32 +168,28 @@ export function GmShell({ children }: { children: ReactNode }) {
         } as CSSProperties
       }
     >
-      <header
-        className="sports-card score-card-wash overflow-hidden px-4 py-4"
-        style={
-          {
-            "--away-color": brand?.primary ?? "#0071e3",
-            "--home-color": brand?.secondary ?? "#af52de",
-          } as CSSProperties
-        }
+      <GlassSurface
+        as="header"
+        accentColor={brand?.primary}
+        className="px-4 py-4"
       >
         <div className="flex items-center gap-3">
           <TeamLogo teamKey={team.id} size="xl" priority />
           <div className="min-w-0">
-            <p className="text-[13px] font-semibold text-muted-foreground">
+            <p className="text-[14px] font-semibold text-muted-foreground">
               Franchise Lab · Real NBA
             </p>
-            <h1 className="truncate text-[22px] font-bold tracking-tight">
+            <h1 className="truncate text-[24px] font-bold tracking-tight">
               {team.city} {team.name}
             </h1>
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-[14px] text-muted-foreground">
               {league.season - 1}-{String(league.season).slice(-2)} ·{" "}
               {league.phase}
             </p>
           </div>
           <Link
             href="/"
-            className="ml-auto rounded-full bg-foreground/90 px-3 py-1.5 text-[13px] font-semibold text-background"
+            className="ml-auto rounded-full bg-foreground/90 px-3 py-1.5 text-[14px] font-semibold text-background"
           >
             Home
           </Link>
@@ -213,7 +210,7 @@ export function GmShell({ children }: { children: ReactNode }) {
             Leave league
           </button>
         </div>
-      </header>
+      </GlassSurface>
       <GmNav />
       <div className="pb-8">{children}</div>
     </main>

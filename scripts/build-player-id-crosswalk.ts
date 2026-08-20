@@ -204,7 +204,7 @@ async function main() {
         continue;
       }
       matchedKeys.add(key);
-      // Name-only evidence — not production-approved until audit upgrades.
+      // Name-only evidence - not production-approved until audit upgrades.
       const confidence = "UNIQUE_NAME_ONLY";
       const matchMethod =
         espnSource === "byathlete"

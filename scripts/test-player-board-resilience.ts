@@ -1,5 +1,5 @@
 /**
- * Player Explore board resilience — never sample under nba; cached real → degraded.
+ * Player Explore board resilience - never sample under nba; cached real → degraded.
  */
 import assert from "node:assert/strict";
 
@@ -83,13 +83,64 @@ async function main() {
   assert.equal(cached.health.status, "cached_board");
   assert.ok(cached.warnings[0]?.includes("verified"));
 
-  // Team filter preserved on cached board
+  // Team filter on a seeded board is in-memory - don't wait on a live miss.
   const filtered = await getPlayerSeasonBoardSnapshot({
     season: "2025-26",
     team: "BOS",
   });
-  assert.equal(filtered.source, "cached-espn");
+  assert.equal(filtered.source, "live-espn");
   assert.ok(filtered.rows.every((r) => r.teamId === "2"));
+  assert.equal(filtered.warnings.length, 0);
+
+  // Draft class reuses the season snapshot (no second board fetch).
+  let loads = 0;
+  __resetPlayerBoardCacheForTests();
+  __seedPlayerBoardCacheForTests("2025-26", [
+    { ...fakeRow("a"), draftYear: 2018 },
+    { ...fakeRow("b"), draftYear: 2022 },
+    { ...fakeRow("c") },
+  ]);
+  __setPlayerBoardLoaderForTests(async () => {
+    loads += 1;
+    return { rows: [], error: espnError(403) };
+  });
+  const draft = await getPlayerSeasonBoardSnapshot({
+    season: "2025-26",
+    draftClass: 2018,
+  });
+  assert.equal(loads, 0);
+  assert.equal(draft.source, "live-espn");
+  assert.equal(draft.rows.length, 1);
+  assert.equal(draft.rows[0]?.playerId, "a");
+  const undrafted = await getPlayerSeasonBoardSnapshot({
+    season: "2025-26",
+    draftClass: "undrafted",
+  });
+  assert.equal(loads, 0);
+  assert.equal(undrafted.rows.length, 1);
+  assert.equal(undrafted.rows[0]?.playerId, "c");
+
+  // Cold draft-class filter loads the season once, then filters in memory.
+  let coldLoads = 0;
+  __resetPlayerBoardCacheForTests();
+  __setPlayerBoardLoaderForTests(async (filters) => {
+    coldLoads += 1;
+    assert.equal(filters.draftClass, undefined);
+    return {
+      rows: [
+        { ...fakeRow("a"), draftYear: 2018 },
+        { ...fakeRow("b"), draftYear: 2022 },
+      ],
+      error: null,
+    };
+  });
+  const cold = await getPlayerSeasonBoardSnapshot({
+    season: "2025-26",
+    draftClass: 2018,
+  });
+  assert.equal(coldLoads, 1);
+  assert.equal(cold.rows.length, 1);
+  assert.equal(cold.rows[0]?.playerId, "a");
 
   // 429 with no cache → unavailable degraded (not sample)
   __resetPlayerBoardCacheForTests();

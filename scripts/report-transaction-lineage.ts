@@ -14,10 +14,10 @@ async function main() {
   console.log(`Assets: ${report.assetCount}`);
   console.log(`Ownership edges: ${report.ownershipEdgeCount}`);
   console.log(
-    `Date range: ${report.earliestDate ?? "—"} → ${report.latestDate ?? "—"}`
+    `Date range: ${report.earliestDate ?? "-"} → ${report.latestDate ?? "-"}`
   );
   console.log(
-    `Season range: ${report.earliestSeason ?? "—"} → ${report.latestSeason ?? "—"}`
+    `Season range: ${report.earliestSeason ?? "-"} → ${report.latestSeason ?? "-"}`
   );
   console.log(
     `Draft-pick assets: ${report.draftPickAssetCount} · Player assets: ${report.playerAssetCount}`

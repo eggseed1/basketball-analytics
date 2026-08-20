@@ -1,5 +1,5 @@
 /**
- * M16h — post-posterior calibration selection.
+ * M16h - post-posterior calibration selection.
  *   npm run drbl:m16h
  *
  * Candidates: identity | zero-preserving linear | affine diagnostic.
@@ -552,13 +552,13 @@ Both predictor and target are R1-centered Approach-B residual rates
       )
     );
     // Use futureDateMin of eval fold vs max history of train folds' asOf / historyDateMax
-    // Chronology: max(train future? No — max calibration training *date* should be
+    // Chronology: max(train future? No - max calibration training *date* should be
     // the max asOf / history end of train folds, which is historyDateMax of last train fold.
     const lastTrain = m16gFolds.folds.find((f) => f.foldId === evalId - 1)!;
     const evalFold = m16gFolds.folds.find((f) => f.foldId === evalId)!;
     const chronoOk = lastTrain.historyDateMax < evalFold.futureDateMin;
     // Stronger: last train fold's futureDateMax < eval futureDateMin? Training uses
-    // historical P and future targets from train folds — those future blocks end
+    // historical P and future targets from train folds - those future blocks end
     // before next fold's future starts by construction.
     const trainFutureMax = lastTrain.futureDateMax;
     const strictOk = trainFutureMax < evalFold.futureDateMin;
@@ -687,7 +687,7 @@ Both predictor and target are R1-centered Approach-B residual rates
     // 
     // Important: within each evaluation fold, b is constant so ranks within fold unchanged.
     // Globally across folds with different b, ranks CAN change.
-    // The requirement: "player ordering unchanged on unrounded values" for b>0 —
+    // The requirement: "player ordering unchanged on unrounded values" for b>0 -
     // this applies when a SINGLE b is applied. For rolling evaluation with different b,
     // we must check within-fold rank invariance, and for final rate with single b_final.
   }
@@ -923,7 +923,7 @@ Both predictor and target are R1-centered Approach-B residual rates
     allPositive &&
     CALIBRATION_COEFFICIENT_STABILITY !== "UNSTABLE";
 
-  // Secondary contradiction check: if MAE and R2 both worsen materially while RMSE improves — flag
+  // Secondary contradiction check: if MAE and R2 both worsen materially while RMSE improves - flag
   const secondaryOk =
     !(zlM.MAE > idM.MAE * 1.05 && zlM.R2 < idM.R2 - 0.05);
 
@@ -1256,7 +1256,7 @@ ${
 
   await writeFile(
     path.join(OUT, "18_production_alignment_update.md"),
-    `# Production alignment update (M16h) — conceptual only
+    `# Production alignment update (M16h) - conceptual only
 
 ## Legacy production
 \`\`\`text

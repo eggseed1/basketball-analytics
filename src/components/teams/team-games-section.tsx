@@ -39,7 +39,7 @@ export function TeamGamesSection({
             Notable games
           </h3>
           <p className="mb-2 text-[12px] text-muted-foreground">
-            Transparent scoreboard dimensions from the recent slate — not Game
+            Transparent scoreboard dimensions from the recent slate - not Game
             Lab.
           </p>
           <ul className="grid gap-2 sm:grid-cols-2">
@@ -49,7 +49,7 @@ export function TeamGamesSection({
                   href={gameLabHref(n.game.id, season)}
                   className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
                 >
-                  <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {n.label}
                   </span>
                   <span className="text-[14px] font-bold">{n.detail}</span>
@@ -82,7 +82,7 @@ export function TeamGamesSection({
         upcoming
       />
 
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         <TransitionLink
           href="/scores"
           className="font-semibold underline-offset-2 hover:underline"
@@ -117,7 +117,7 @@ function GameList({
     <div>
       <h3 className="text-[14px] font-bold tracking-tight">{title}</h3>
       {games.length === 0 ? (
-        <p className="mt-1 text-[13px] text-muted-foreground">{empty}</p>
+        <p className="mt-1 text-[14px] text-muted-foreground">{empty}</p>
       ) : (
         <ul className="mt-1 divide-y divide-border">
           {games.map((g) => {
@@ -126,7 +126,7 @@ function GameList({
               <li key={g.id}>
                 <TransitionLink
                   href={gameLabHref(g.id, season)}
-                  className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[13px] hover:bg-secondary/40"
+                  className="flex flex-wrap items-baseline justify-between gap-2 py-2.5 text-[14px] hover:bg-secondary/40"
                 >
                   <span className="font-semibold">
                     {g.gameDate}
@@ -137,7 +137,7 @@ function GameList({
                   <span className="tabular-nums text-muted-foreground">
                     {upcoming
                       ? g.statusDetail ?? "Scheduled"
-                      : `${line.teamScore}–${line.oppScore} · Game Lab →`}
+                      : `${line.teamScore}-${line.oppScore} · Game Lab →`}
                   </span>
                 </TransitionLink>
               </li>

@@ -25,7 +25,7 @@ export async function getTeam(teamId: string): Promise<Team | null> {
   const hit = catalog.teams.find((t) => t.id === teamId);
   if (hit) return hit;
   // Preserve prior provider lookup semantics for non-catalog ids when live works;
-  // when catalog is fallback, provider may still throw — catch.
+  // when catalog is fallback, provider may still throw - catch.
   try {
     return await getDataProvider().getTeam(teamId);
   } catch {

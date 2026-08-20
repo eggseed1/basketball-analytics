@@ -46,9 +46,42 @@
   --radius-2xl: calc(var(--radius) * 1.75);
   --radius-3xl: calc(var(--radius) * 2);
   --radius-4xl: calc(var(--radius) * 2.25);
+
+  /* Even-px type scale (no odd sizes, no rem decimals). */
+  --text-caption: 12px;
+  --text-caption--line-height: 16px;
+  --text-body-sm: 14px;
+  --text-body-sm--line-height: 20px;
+  --text-body: 16px;
+  --text-body--line-height: 24px;
+  --text-title: 18px;
+  --text-title--line-height: 24px;
+  --text-heading: 20px;
+  --text-heading--line-height: 28px;
+  --text-page: 24px;
+  --text-page--line-height: 32px;
+  --text-display: 32px;
+  --text-display--line-height: 40px;
+  --text-xs: 12px;
+  --text-xs--line-height: 16px;
+  --text-sm: 14px;
+  --text-sm--line-height: 20px;
+  --text-base: 16px;
+  --text-base--line-height: 24px;
+  --text-lg: 18px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+  --text-3xl: 32px;
+  --text-3xl--line-height: 40px;
+  --text-4xl: 36px;
+  --text-4xl--line-height: 40px;
 }
 
 :root {
+  color-scheme: light;
   /* Apple Sports-inspired light mode */
   --background: #f2f2f7;
   --foreground: #1d1d1f;
@@ -85,6 +118,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: #000000;
   --foreground: #f5f5f7;
   --card: #1c1c1e;
@@ -123,7 +157,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background text-base text-foreground antialiased;
   }
   html {
     @apply font-sans;
@@ -131,14 +165,14 @@
 }
 
 /* ==========================================================================
- * FROZEN — TEAM WASH GRADIENT SYSTEM
- * Do not weaken, hollow the mid, or revert to ~9–14% edge fades.
+ * FROZEN - TEAM WASH GRADIENT SYSTEM
+ * Do not weaken, hollow the mid, or revert to ~9-14% edge fades.
  * Freeze: reports/team_wash_gradient_freeze/00_freeze.json
  * Test:   npm run test:team-wash-gradient
  * Rule:   .cursor/rules/team-wash-gradient-freeze.mdc
  * ========================================================================== */
 /* Soft dual-team wash for score / brand cards (light mode).
-   Neutral fallbacks — never Apple chart blue/purple.
+   Neutral fallbacks - never Apple chart blue/purple.
    Opaque tint plateaus (not edge→transparent fades) so mid never hollows. */
 .score-card-wash {
   background: linear-gradient(
@@ -167,7 +201,7 @@
   );
 }
 
-/* Game matchup wash — away (left) → home (right), opaque plateaus. */
+/* Game matchup wash - away (left) → home (right), opaque plateaus. */
 .matchup-wash {
   background: linear-gradient(
     90deg,
@@ -228,11 +262,317 @@
 }
 
 .sports-card {
-  @apply rounded-md border border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  @apply rounded-md border;
+  background: rgb(255 255 255 / 42%);
+  border-color: rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  backdrop-filter: saturate(190%) blur(24px);
+  -webkit-backdrop-filter: saturate(190%) blur(24px);
+}
+
+.dark .sports-card {
+  background: rgb(28 28 30 / 38%);
+  border-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+html:not([data-surface="glass"]) .sports-card {
+  @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html:not([data-surface="glass"]).dark .sports-card,
+html.dark:not([data-surface="glass"]) .sports-card {
+  background: var(--card);
+  border-color: rgb(255 255 255 / 8%);
+}
+
+html[data-surface="glass"] .bg-card {
+  background-color: rgb(255 255 255 / 42%);
+  backdrop-filter: saturate(190%) blur(24px);
+  -webkit-backdrop-filter: saturate(190%) blur(24px);
+}
+
+html.dark[data-surface="glass"] .bg-card {
+  background-color: rgb(28 28 30 / 38%);
 }
 
 .sports-pill {
-  @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-[#dcdce0];
+  @apply inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1.5 text-sm font-medium text-foreground transition hover:bg-muted;
+}
+
+/* Glass material - translucent fill + blur, light and dark. */
+.glass-card {
+  background: rgb(255 255 255 / 72%);
+  border: 1px solid rgb(255 255 255 / 55%);
+  border-radius: var(--radius-md);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  backdrop-filter: saturate(180%) blur(20px);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+}
+
+.dark .glass-card {
+  background: rgb(28 28 30 / 72%);
+  border-color: rgb(255 255 255 / 12%);
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+.glass-pill {
+  background: rgb(255 255 255 / 55%);
+  border: 1px solid rgb(255 255 255 / 40%);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.dark .glass-pill {
+  background: rgb(44 44 46 / 55%);
+  border-color: rgb(255 255 255 / 10%);
+}
+
+.glass-pill-active {
+  background: rgb(255 255 255 / 82%);
+  border-color: rgb(255 255 255 / 72%);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 85%);
+}
+
+.dark .glass-pill-active {
+  background: rgb(255 255 255 / 16%);
+  border-color: rgb(255 255 255 / 22%);
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+/* Frosted select menus. No transform/overflow on this node: both prevent
+   backdrop-filter from sampling the page. Fill stays thin so blur shows. */
+.select-popup,
+.hover-frost {
+  background: rgb(255 255 255 / 22%);
+  border: 1px solid rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+  /* filter/transform on this node (even identity) cancel backdrop-filter. */
+  filter: none;
+  transform: none;
+  backdrop-filter: saturate(190%) blur(24px);
+  -webkit-backdrop-filter: saturate(190%) blur(24px);
+}
+
+.dark .select-popup,
+.dark .hover-frost {
+  background: rgb(28 28 30 / 28%);
+  border-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+html:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
+  background: var(--popover);
+  border: 1px solid color-mix(in oklab, var(--foreground) 10%, transparent);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 8%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+html:not([data-surface="glass"]).dark .select-popup:not(.hover-frost),
+html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
+  border-color: rgb(255 255 255 / 10%);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 36%);
+}
+
+/* Sticky player column - frost must sample scrolling stats. An ancestor
+   with backdrop-filter (e.g. .sports-card) flattens that backdrop, so
+   board tables opt out via .board-scroll-host. No isolation/transform. */
+.sports-card.board-scroll-host {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  background: rgb(255 255 255 / 28%);
+}
+
+.dark .sports-card.board-scroll-host {
+  background: rgb(28 28 30 / 28%);
+}
+
+html:not([data-surface="glass"]) .sports-card.board-scroll-host {
+  background: var(--card);
+}
+
+.board-sticky-frost {
+  background: rgb(255 255 255 / 32%);
+  border-right: 1px solid rgb(255 255 255 / 45%);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 22%);
+  filter: none;
+  transform: none;
+  backdrop-filter: saturate(190%) blur(20px);
+  -webkit-backdrop-filter: saturate(190%) blur(20px);
+}
+
+.dark .board-sticky-frost {
+  background: rgb(28 28 30 / 36%);
+  border-right-color: rgb(255 255 255 / 12%);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 55%);
+}
+
+html:not([data-surface="glass"]) .board-sticky-frost {
+  background: var(--card);
+  border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+tr:hover > .board-sticky-frost {
+  background: rgb(255 255 255 / 48%);
+}
+
+.dark tr:hover > .board-sticky-frost {
+  background: rgb(44 44 46 / 52%);
+}
+
+html:not([data-surface="glass"]) tr:hover > .board-sticky-frost {
+  background: color-mix(in oklab, var(--muted) 45%, var(--card));
+}
+
+.board-scroll-host thead th {
+  background: rgb(255 255 255 / 40%);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+.dark .board-scroll-host thead th {
+  background: rgb(28 28 30 / 42%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-host thead th {
+  background: var(--card);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.site-search-field,
+.color-scheme-switch {
+  background: rgb(255 255 255 / 50%);
+  border: 1px solid rgb(255 255 255 / 45%);
+  backdrop-filter: saturate(180%) blur(16px);
+  -webkit-backdrop-filter: saturate(180%) blur(16px);
+}
+
+html.dark .site-search-field,
+html.dark .color-scheme-switch {
+  background: rgb(44 44 46 / 50%);
+  border-color: rgb(255 255 255 / 12%);
+}
+
+html:not([data-surface="glass"]) .site-search-field,
+html:not([data-surface="glass"]) .color-scheme-switch {
+  background: var(--secondary);
+  border: none;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Page wash - glass samples this color (Apple materials). */
+.page-atmosphere {
+  pointer-events: none;
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(
+      ellipse 110% 70% at 0% -6%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 36%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 100% 65% at 100% 4%,
+      color-mix(in oklab, var(--atmosphere-b, transparent) 32%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 108%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 22%, transparent),
+      transparent 74%
+    );
+}
+
+.dark .page-atmosphere {
+  background:
+    radial-gradient(
+      ellipse 110% 70% at 0% -6%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 46%, transparent),
+      transparent 72%
+    ),
+    radial-gradient(
+      ellipse 100% 65% at 100% 4%,
+      color-mix(in oklab, var(--atmosphere-b, transparent) 40%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      ellipse 80% 50% at 50% 108%,
+      color-mix(in oklab, var(--atmosphere-a, transparent) 28%, transparent),
+      transparent 74%
+    );
+}
+
+/* Typography roles - even px only; use instead of one-off text-[NNpx]. */
+.type-caption {
+  font-size: 12px;
+  line-height: 16px;
+}
+.type-body-sm {
+  font-size: 14px;
+  line-height: 20px;
+}
+.type-body {
+  font-size: 16px;
+  line-height: 24px;
+}
+.type-title {
+  font-size: 18px;
+  line-height: 24px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.type-heading {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.type-page {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.type-display {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.type-link {
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-color: color-mix(in oklab, var(--foreground) 40%, transparent);
+}
+.type-link:hover {
+  text-decoration-color: var(--foreground);
 }
 
 .score-num {
@@ -251,7 +591,7 @@
   @apply mx-auto w-full max-w-3xl;
 }
 
-/* ─── NBA Time Machine — era theme layer (CSS variables only) ───
+/* ─── NBA Time Machine - era theme layer (CSS variables only) ───
    Immersion without costume: no CRT, scanlines, or grain overlays.
    Applied via [data-era-theme] on a scoped wrapper. */
 
@@ -392,7 +732,7 @@
 }
 
 .tm-scope[data-era-theme="modern"] {
-  /* Inherit root DRBL tokens — no override. */
+  /* Inherit root DRBL tokens - no override. */
   background-color: var(--background);
   color: var(--foreground);
 }
@@ -444,4 +784,10 @@
   opacity: 0.72;
   transition: opacity 160ms ease;
   pointer-events: none;
+}
+
+/* Skip layout/paint for off-screen scoreboard rows while scrolling. */
+.score-row {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 6.25rem;
 }

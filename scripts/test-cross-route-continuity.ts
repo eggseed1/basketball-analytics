@@ -1,5 +1,5 @@
 /**
- * Cross-route navigation continuity — soft nav, loading frames, context.
+ * Cross-route navigation continuity - soft nav, loading frames, context.
  * Run: npx tsx scripts/test-cross-route-continuity.ts
  */
 import assert from "node:assert/strict";

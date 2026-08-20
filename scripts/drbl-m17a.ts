@@ -1,5 +1,5 @@
 /**
- * M17a — Historical multi-season PBP archive inventory + frozen-v1 backfill gate.
+ * M17a - Historical multi-season PBP archive inventory + frozen-v1 backfill gate.
  *   npm run drbl:m17a
  *
  * Does NOT retune DRBL v1 / k / P1 / R1 / EPV.
@@ -188,7 +188,7 @@ async function main() {
   };
   await writeJson("00_current_generation_freeze.json", freeze);
 
-  // ── Phase 1–2: inventory + fingerprint raw archive ────────────────
+  // ── Phase 1-2: inventory + fingerprint raw archive ────────────────
   console.log("Fingerprinting raw archive…");
   const reuseManifest =
     process.env.M17A_REUSE_MANIFEST === "1" &&
@@ -206,7 +206,7 @@ async function main() {
     HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH = sha256Text(existing);
     const lines = existing.trim().split(/\r?\n/).slice(1);
     for (const line of lines) {
-      // relativePath,bytes,sha256 — path may contain commas only if quoted; our paths do not
+      // relativePath,bytes,sha256 - path may contain commas only if quoted; our paths do not
       const [relativePath, bytesStr, sha] = line.split(",");
       const rel = (relativePath ?? "").replace(/^data\/drbl\/raw\/games\//, "");
       const parts = rel.split("/");
@@ -320,7 +320,7 @@ async function main() {
     archivePresence: "CURRENT_TWO_SEASONS_ONLY",
     multiSeasonHistoricalArchiveSupplied: false,
     blocker:
-      "M17A_BLOCKER_MISSING_MULTI_SEASON_HISTORICAL_PBP_ARCHIVE — only 2024-25 and 2025-26 raw CDN games found under data/drbl/raw/games",
+      "M17A_BLOCKER_MISSING_MULTI_SEASON_HISTORICAL_PBP_ARCHIVE - only 2024-25 and 2025-26 raw CDN games found under data/drbl/raw/games",
   });
   await writeJson("04_raw_archive_fingerprint.json", {
     HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH,
@@ -330,14 +330,14 @@ async function main() {
     algorithm: "sha256(relativePath,bytes,sha256 CSV manifest)",
   });
 
-  // ── Phase 3–5: schema + adapters ──────────────────────────────────
+  // ── Phase 3-5: schema + adapters ──────────────────────────────────
   await writeText(
     "05_source_schema_families.md",
     `# Source schema families (M17a)
 
 ## Family count: 1
 
-### Family A — \`nba-cdn-playbyplayv3\`
+### Family A - \`nba-cdn-playbyplayv3\`
 
 - **Provider:** NBA CDN / Stats playbyplayv3 + boxscore
 - **Seasons observed in archive:** ${seasonsPresent.join(", ") || "(none)"}
@@ -369,7 +369,7 @@ Defined in \`drbl/historical/normalized-event-schema.ts\`.
 
 Minimum fields: season, gameId, eventIndex, period, clockSecondsRemaining, eventType, subType, offense/defense team IDs, primary/secondary/tertiary player IDs, points, scoreHome/Away, shot fields, FT fields, rebound/turnover/foul types, substitution in/out, sourceProvider, sourceEventId, normalizationVersion, rawSourcePointer.
 
-Unknowns remain \`null\` — never coerced to fake known values.
+Unknowns remain \`null\` - never coerced to fake known values.
 `
   );
 
@@ -473,7 +473,7 @@ Unknowns remain \`null\` — never coerced to fake known values.
       "Double-run adapter equality on sample games; per-season hash of first-5 adapted games",
   });
 
-  // ── Phase 6–13: identity + quality audits from normalized ─────────
+  // ── Phase 6-13: identity + quality audits from normalized ─────────
   console.log("Auditing games / lineups / possessions…");
   const gameIdentity: Record<string, unknown>[] = [];
   const scoreboardRows: Record<string, unknown>[] = [];
@@ -916,16 +916,16 @@ Within the supplied archive (CDN 2024-25 / 2025-26 only):
     "20_support_tier_contract.md",
     `# Support tier contract (M17a)
 
-## Tier A — A_FULL_CANONICAL
+## Tier A - A_FULL_CANONICAL
 Require: complete required games; scoreboard PASS; team IDs complete; player IDs complete enough; lineup coverage ≥ 99.9%; required event support FULL; role-feature FULL; EPV FULL/exact; R1_FORMULA_IDENTICAL=YES; accounting identities PASS.
 
-## Tier B — B_CANONICAL_WITH_LIMITATIONS
+## Tier B - B_CANONICAL_WITH_LIMITATIONS
 Allow small documented structural/data gaps only if core formulas unchanged, missingness explicit, accounting identities still pass on supported possessions. Public UI must show a quality indicator.
 
-## Tier C — C_PARTIAL_ONLY
+## Tier C - C_PARTIAL_ONLY
 Structural/partial metrics only; no canonical DRBL/R1 leaderboard.
 
-## Tier D — D_UNSUPPORTED
+## Tier D - D_UNSUPPORTED
 Insufficient/corrupted input; do not fabricate values.
 
 ## Archive blocker
@@ -933,7 +933,7 @@ Multi-season historical cutover is **BLOCKED** until a pre-2024 (or broader) imm
 `
   );
 
-  // ── Phase 22–25: regression + shadow from precomputed (no retune) ─
+  // ── Phase 22-25: regression + shadow from precomputed (no retune) ─
   console.log("Shadow + regression from precomputed boards…");
   type BoardPlayer = {
     playerId: string;
@@ -1120,7 +1120,7 @@ Multi-season historical cutover is **BLOCKED** until a pre-2024 (or broader) imm
 
   // ── Future research docs ──────────────────────────────────────────
   await writeJson("34_future_research_dataset_manifest.json", {
-    purpose: "Analysis-ready fields for future M17b — DO NOT TUNE with this in M17a",
+    purpose: "Analysis-ready fields for future M17b - DO NOT TUNE with this in M17a",
     seasons: seasonsPresent,
     fields: [
       "season",
@@ -1145,7 +1145,7 @@ Multi-season historical cutover is **BLOCKED** until a pre-2024 (or broader) imm
 
   await writeText(
     "35_future_temporal_validation_protocol.md",
-    `# Future temporal validation protocol (M17b) — document only
+    `# Future temporal validation protocol (M17b) - document only
 
 Do **not** execute model tuning in M17a.
 
@@ -1167,7 +1167,7 @@ for as many historical years as feasible once the archive exists.
 
   await writeText(
     "36_future_external_benchmark_protocol.md",
-    `# Future external common-target benchmark protocol — document only
+    `# Future external common-target benchmark protocol - document only
 
 ## Goal
 Compare DRBL and external metrics on the **same** future target.
@@ -1252,10 +1252,10 @@ Automated browser smoke not executed in this run. Checklist:
 - [ ] historical season selector (box seasons still listed; DRBL support banner)
 - [ ] earliest DRBL-supported season = ${earliest}
 - [ ] 2025-26 loads
-- [ ] player history shows DRBL only when overlay present (else —)
+- [ ] player history shows DRBL only when overlay present (else -)
 - [ ] traded-player stints conserve on supported seasons
 - [ ] negative R1 values display (not coerced to 0)
-- [ ] unsupported metric shows unavailable / —, not 0.0 as missing
+- [ ] unsupported metric shows unavailable / -, not 0.0 as missing
 - [ ] Tier B quality indicator when tier is B
 - [ ] methodology historical section
 - [ ] mobile/narrow layout

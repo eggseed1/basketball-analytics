@@ -33,10 +33,10 @@ export async function TeamTransactionsIsland({
       aria-label="Transactions"
     >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">
+        <h2 className="text-[20px] font-bold tracking-tight">
           {offseasonYear} Offseason
         </h2>
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           Latest ESPN archive events involving this team.
         </p>
       </div>

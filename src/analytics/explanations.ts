@@ -1,5 +1,5 @@
 /**
- * Metric pedagogy — derived from the canonical Learn registry + guides.
+ * Metric pedagogy - derived from the canonical Learn registry + guides.
  * Keep UI short; full copy lives on /learn/[slug].
  */
 

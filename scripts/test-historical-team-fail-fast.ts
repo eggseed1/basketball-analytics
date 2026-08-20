@@ -1,5 +1,5 @@
 /**
- * Historical team destination must fail fast — never multi-minute provider waits.
+ * Historical team destination must fail fast - never multi-minute provider waits.
  * Run: npx tsx scripts/test-historical-team-fail-fast.ts
  *
  * Provider mode: ESPN NBADataProvider is constructed inside getTeamRoster /
@@ -69,7 +69,7 @@ async function main() {
   assert.equal(brand!.displayName, "Seattle SuperSonics");
   assert.notEqual(brand!.abbreviation, "OKC");
 
-  // Roster / assets: instant unsupported — never ESPN athlete board.
+  // Roster / assets: instant unsupported - never ESPN athlete board.
   const tr = Date.now();
   const roster1978 = await getTeamRoster("25", "1978-79", { minimumGames: 10 });
   const rosterMs = Date.now() - tr;
@@ -97,7 +97,7 @@ async function main() {
   assert.equal(playersCat?.availability, "unsupported");
   assert.ok(assetsMs < 200, `1978 assets must be instant, got ${assetsMs}ms`);
 
-  // 1995-96 New Jersey — identity preserved; no modern Brooklyn roster.
+  // 1995-96 New Jersey - identity preserved; no modern Brooklyn roster.
   const njIdentity = resolveTeamIdentityFallback("17", "1995-96", "era");
   assert.ok(njIdentity);
   assert.match(njIdentity!.fullName, /New Jersey Nets/i);
@@ -105,7 +105,7 @@ async function main() {
   assert.equal(njRoster.status, "unsupported");
   assert.equal(njRoster.players.length, 0);
 
-  // Games / evidence: local archive only — no BDL rediscovery.
+  // Games / evidence: local archive only - no BDL rediscovery.
   const {
     getSeasonGamesArchive,
     getTeamSeasonGames,

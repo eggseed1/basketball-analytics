@@ -154,17 +154,17 @@ export function buildAdvancedMetricCoverage(
       const blockers: string[] = [];
       if (grain !== "player_season") {
         blockers.push(
-          "Grain is not player_season — game rows are not season-true without an approved rollup methodology."
+          "Grain is not player_season - game rows are not season-true without an approved rollup methodology."
         );
       }
       if (semantics === "derived_approx") {
         blockers.push(
-          "Semantics are derived_approx — not provider-published season-true ratings."
+          "Semantics are derived_approx - not provider-published season-true ratings."
         );
       }
       if (semantics === "on_court_team") {
         blockers.push(
-          "Semantics are on_court_team ratings — not individual ORtg/DRtg; do not relabel."
+          "Semantics are on_court_team ratings - not individual ORtg/DRtg; do not relabel."
         );
       }
       if (semantics === "unknown") {
@@ -258,7 +258,7 @@ export async function buildAdvancedStatsCoverageReport(
   const admitted = admitAdvancedObservations(observations);
 
   const notes: string[] = [
-    "This report is diagnostic only — metrics are not user-facing.",
+    "This report is diagnostic only - metrics are not user-facing.",
     "MISSING ≠ ZERO; SOURCE EXISTS ≠ SOURCE IS TRUSTWORTHY.",
     "FIELD NAME ≠ VERIFIED SEMANTICS; GAME RATING ≠ PLAYER SEASON RATING.",
     "Do not merge advanced ratings into HistoricalPlayerImpact.",

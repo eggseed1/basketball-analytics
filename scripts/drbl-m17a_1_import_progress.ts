@@ -680,7 +680,7 @@ async function once(): Promise<{
           updatedAt: progress.updatedAt,
           status: progress.status,
           M17A_1_STATUS: "RAW_IMPORT_IN_PROGRESS",
-          note: "Season checkpoint — not a final seal",
+          note: "Season checkpoint - not a final seal",
         },
         null,
         2
@@ -853,7 +853,7 @@ async function maybeValidateCompleted(rows: SeasonProgress[]) {
     const acq = path.join(OUT, `${r.season}_acquisition_validation.json`);
     if (existsSync(acq) || existsSync(summary)) continue;
     console.log(
-      `Season ${r.season} terminal — data-quality validation only (no model)…`
+      `Season ${r.season} terminal - data-quality validation only (no model)…`
     );
     try {
       execSync(
@@ -944,7 +944,7 @@ async function main() {
             M17A_1_STATUS: "RAW_IMPORT_TERMINAL",
             M17A_1_RESULT: "RAW_IMPORT_COMPLETE_PENDING_NORMALIZATION",
             M17B_AUTHORIZED: "NO",
-            note: "STOP FOR AUDIT — do not auto-start normalization/backfill/M17b",
+            note: "STOP FOR AUDIT - do not auto-start normalization/backfill/M17b",
             updatedAt: new Date().toISOString(),
           },
           null,
@@ -960,7 +960,7 @@ async function main() {
           {
             at: new Date().toISOString(),
             health,
-            note: "Importer not running while archive incomplete — classify stop reason before resume",
+            note: "Importer not running while archive incomplete - classify stop reason before resume",
             M17A_1_STATUS: "RAW_IMPORT_IN_PROGRESS",
             doNotAutoStartDuplicate: true,
           },

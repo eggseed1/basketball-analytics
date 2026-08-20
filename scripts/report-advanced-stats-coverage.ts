@@ -1,6 +1,6 @@
 /**
  * Advanced stats source coverage + BDL season_averages advanced probe.
- * Diagnostic only — does not expose metrics to users.
+ * Diagnostic only - does not expose metrics to users.
  *
  * Run: npm run report:advanced-stats-coverage
  */
@@ -46,7 +46,7 @@ async function main() {
   console.log(`  endpoint = ${probe.endpoint}`);
   for (const s of probe.seasons) {
     console.log(
-      `  season ${s.canonicalSeason}: http=${s.httpStatus ?? "—"} access=${s.access} rows=${s.rowCount}`
+      `  season ${s.canonicalSeason}: http=${s.httpStatus ?? "-"} access=${s.access} rows=${s.rowCount}`
     );
   }
   console.log("");

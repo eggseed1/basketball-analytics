@@ -71,7 +71,7 @@ function main() {
       awayTeamId: "25",
       awayTeamAbbr: "OKC",
     }),
-    // Best defense (lowest opp) — home win 100-89
+    // Best defense (lowest opp) - home win 100-89
     game({
       id: "g-def",
       gameDate: "2024-02-15",
@@ -91,7 +91,7 @@ function main() {
       homeScore: 95,
       awayScore: 112,
     }),
-    // Playoff — must be ignored
+    // Playoff - must be ignored
     game({
       id: "g-playoff",
       gameDate: "2024-05-01",
@@ -99,7 +99,7 @@ function main() {
       awayScore: 70,
       gameType: "playoff",
     }),
-    // Scheduled — ignored
+    // Scheduled - ignored
     game({
       id: "g-sched",
       gameDate: "2024-04-01",
@@ -128,12 +128,12 @@ function main() {
     assert.equal(byCat.highest_scoring?.gameId, "g-win");
     assert.equal(byCat.highest_scoring?.valueDisplay, "140 pts");
     assert.equal(byCat.lowest_scoring?.gameId, "g-loss");
-    // Opp scored 88 in g-win — that is also the best defensive result.
+    // Opp scored 88 in g-win - that is also the best defensive result.
     assert.equal(byCat.best_defense?.gameId, "g-win");
     assert.equal(byCat.best_defense?.valueDisplay, "88 opp pts");
   }
 
-  // Ties — later date wins when margins equal
+  // Ties - later date wins when margins equal
   {
     const tied = [
       game({
@@ -184,7 +184,7 @@ function main() {
     assert.ok(winCard!.href.includes("evidence=largest_win"));
   }
 
-  // Team Profile summary — same findings, compact order, max 4
+  // Team Profile summary - same findings, compact order, max 4
   {
     const result = buildTeamSeasonEvidence({
       subject,
@@ -196,7 +196,7 @@ function main() {
     assert.equal(summary[0]?.categoryId, "largest_win");
     assert.equal(summary[0]?.valueDisplay, "+52");
     assert.ok(summary.some((s) => s.categoryId === "best_defense"));
-    // lowest_scoring is 5th in order — omitted when earlier four exist
+    // lowest_scoring is 5th in order - omitted when earlier four exist
     assert.ok(!summary.some((s) => s.categoryId === "lowest_scoring"));
     for (const item of summary) {
       assert.ok(result.findings.some((f) => f.gameId === item.gameId));
@@ -268,7 +268,7 @@ function main() {
     );
   }
 
-  // Thin season — still produces scoreboard categories; no fake eFG
+  // Thin season - still produces scoreboard categories; no fake eFG
   {
     const thin = [
       game({

@@ -17,7 +17,7 @@ export const ADVANCED_STATS_READINESS_CRITERIA = {
   minLeaguePlayerSeasonCoveragePct: 0.8,
   requiredMetrics: ["ortg", "drtg", "net"] as const,
   requiredGrain: "player_season" as const,
-  /** Individual season ratings only — on-court team ratings stay labeled separately. */
+  /** Individual season ratings only - on-court team ratings stay labeled separately. */
   allowedSemantics: ["individual"] as const,
 } as const;
 
@@ -295,7 +295,7 @@ export function evaluateAdvancedStatsReadiness(
     )
   ) {
     reasons.push(
-      "Inventory: ESPN↔BDL/NBA player-id alias file is empty — identity join blocked for full league."
+      "Inventory: ESPN↔BDL/NBA player-id alias file is empty - identity join blocked for full league."
     );
   }
 
@@ -324,11 +324,11 @@ export function evaluateAdvancedStatsReadiness(
     coverage: coverageLabel,
     reasons: productionReady
       ? [
-          "productionReady: YES — all readiness gates passed.",
+          "productionReady: YES - all readiness gates passed.",
           ...reasons.filter((r) => r.startsWith("Inventory:")),
         ]
       : [
-          `productionReady: NO — gate=${gate}`,
+          `productionReady: NO - gate=${gate}`,
           ...reasons,
         ],
     requiredMetricsReady,

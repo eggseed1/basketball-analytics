@@ -1,5 +1,5 @@
 /**
- * Season-true advanced player stats — diagnostic / admission types only.
+ * Season-true advanced player stats - diagnostic / admission types only.
  *
  * Distinct from:
  * - HistoricalPlayerImpact (DARKO / LEBRON)
@@ -56,7 +56,7 @@ export type AdvancedStatProvenance = {
 
 /**
  * One candidate advanced observation.
- * Missing metrics are absent rows — never zero-filled.
+ * Missing metrics are absent rows - never zero-filled.
  */
 export type AdvancedSeasonObservation = {
   /** ESPN / site player id when confidently mapped. */

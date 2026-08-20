@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 import { askDrblHref } from "./player-ask-links";
 
 /**
- * Compact career season surface — high-value fields + Compare / Rank / Ask.
+ * Compact career season surface - high-value fields + Compare / Rank / Ask.
  * Not a replacement for Season depth or Rank My Seasons methodology.
  */
 export function PlayerSeasonExplorer({
@@ -38,7 +38,7 @@ export function PlayerSeasonExplorer({
 }) {
   if (seasons.length === 0) {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         No career seasons available to explore.
       </p>
     );
@@ -137,7 +137,7 @@ function SeasonList({
               <div className="flex min-w-0 items-center gap-2">
                 <TeamLogo teamKey={row.teamId} size="2xs" />
                 <div className="min-w-0">
-                  <p className="text-[15px] font-bold tracking-tight">
+                  <p className="text-[16px] font-bold tracking-tight">
                     <Link
                       href={`/players/${playerId}?season=${encodeURIComponent(row.season)}`}
                       scroll={false}
@@ -146,12 +146,12 @@ function SeasonList({
                       {row.season}
                     </Link>
                     {isViewing ? (
-                      <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      <span className="ml-2 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                         Viewing
                       </span>
                     ) : null}
                     {row.season === peakSeason ? (
-                      <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      <span className="ml-2 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                         Peak
                       </span>
                     ) : null}
@@ -172,16 +172,16 @@ function SeasonList({
             </div>
 
             <dl className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
-              <Mini label="CPI" value={cpi != null ? formatCpi(cpi) : "—"} />
+              <Mini label="CPI" value={cpi != null ? formatCpi(cpi) : "-"} />
               <Mini
                 label="TS%"
                 value={
                   row.trueShootingPct != null && row.trueShootingPct > 0
                     ? formatPct(row.trueShootingPct)
-                    : "—"
+                    : "-"
                 }
               />
-              <Mini label="USG%" value={usg != null ? formatPct(usg) : "—"} />
+              <Mini label="USG%" value={usg != null ? formatPct(usg) : "-"} />
               <Mini label="GP" value={formatNumber(row.gamesPlayed)} />
               <Mini label="MIN" value={formatMinutes(row.minutes)} />
             </dl>

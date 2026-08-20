@@ -1,5 +1,5 @@
 /**
- * M15 diagnostic audit — READ-ONLY analysis of frozen DRBL artifacts.
+ * M15 diagnostic audit - READ-ONLY analysis of frozen DRBL artifacts.
  * Does not modify model mathematics or rewrite site precomputed JSON.
  *
  *   npx tsx scripts/drbl-m15-audit.ts
@@ -133,7 +133,7 @@ async function writeFreezeManifest(artifacts: DrblSeasonArtifact[]) {
     epvCoefficients: epv,
     m13WarVersions: artifacts.map((a) => a.warModel),
     m14LeverageVersions: artifacts.map((a) => a.leverageModel),
-    m6Status: "NOT IMPLEMENTED — no shot-decision/continuation module in codebase",
+    m6Status: "NOT IMPLEMENTED - no shot-decision/continuation module in codebase",
   };
 
   await writeFile(
@@ -466,7 +466,7 @@ async function main() {
     "utf8"
   );
 
-  // 07 replacement — document Approach B limitations
+  // 07 replacement - document Approach B limitations
   await writeFile(
     path.join(OUT, "07_replacement_analysis.csv"),
     toCsv([
@@ -483,7 +483,7 @@ async function main() {
     "utf8"
   );
 
-  // 08 defensive ablation — cannot run full OOS without redesign; report availability
+  // 08 defensive ablation - cannot run full OOS without redesign; report availability
   await writeFile(
     path.join(OUT, "08_defensive_ablation.csv"),
     toCsv([
@@ -568,7 +568,7 @@ async function main() {
         risk: "post_game_box_features_in_DRBL_B",
         severity: "HIGH_for_realtime",
         status: "PRESENT",
-        notes: "AST/TOV/STL/BLK from final box — fine for retrospective, invalid for live",
+        notes: "AST/TOV/STL/BLK from final box - fine for retrospective, invalid for live",
       },
       {
         risk: "future_replacement_performance",
@@ -609,7 +609,7 @@ async function main() {
     "utf8"
   );
 
-  // 13/14 WAR — published + extended
+  // 13/14 WAR - published + extended
   console.log("Running extended WAR validation on cached games (read-only for site)…");
   const warExt = await extendedWarValidation();
   await writeFile(path.join(OUT, "13_war_validation.csv"), toCsv([
@@ -665,7 +665,7 @@ async function main() {
     "utf8"
   );
 
-  // 16/17 benchmarks — not runnable without external baselines wired; stub honesty
+  // 16/17 benchmarks - not runnable without external baselines wired; stub honesty
   await writeFile(
     path.join(OUT, "16_full_benchmark.csv"),
     toCsv([
@@ -691,7 +691,7 @@ async function main() {
         season_2025_26_oofMae: a25.fusionModel?.oofMae,
         equalMae: a25.fusionModel?.equalMae,
         liteMae: a25.fusionModel?.liteMae,
-        note: "Target is same-season residual/100 — not external next-game margin",
+        note: "Target is same-season residual/100 - not external next-game margin",
       },
       {
         ablation: "full_without_M6",
@@ -714,7 +714,7 @@ async function main() {
         milestone: "M6",
         status: "NOT_IMPLEMENTED",
         files: "NONE",
-        sdv_formula: "EPV(shoot)-EPV(continuation) — not coded",
+        sdv_formula: "EPV(shoot)-EPV(continuation) - not coded",
         integrated_into_drbl100: "NO",
         oos_validation: "N/A",
         blocker_for_finalization: "YES",

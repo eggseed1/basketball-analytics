@@ -7,7 +7,7 @@ import {
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
-/** ESPN athlete ids are numeric (typically 3–8 digits). */
+/** ESPN athlete ids are numeric (typically 3-8 digits). */
 export function looksLikeEspnAthleteId(playerId: string): boolean {
   return /^\d{3,8}$/.test(playerId.trim());
 }

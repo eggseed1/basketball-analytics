@@ -2,7 +2,7 @@ import type { PlayerSeason } from "@/data/types";
 
 /**
  * Fill analytics-required PlayerSeason fields for slim ESPN/career adapters.
- * R1 fields stay null when absent — never coerce missing R1 to 0.
+ * R1 fields stay null when absent - never coerce missing R1 to 0.
  */
 export function withPlayerSeasonDefaults(
   partial: Partial<PlayerSeason> &

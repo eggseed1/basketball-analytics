@@ -37,7 +37,7 @@ export function subscribePlayerIdentityPreview(listener: Listener): () => void {
   };
 }
 
-/** Test helper — clear exclusive lock between cases. */
+/** Test helper - clear exclusive lock between cases. */
 export function resetPlayerIdentityPreviewLock(): void {
   activeId = null;
   notify();

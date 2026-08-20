@@ -37,12 +37,14 @@ function mergeById(
       statusDetail: next.statusDetail ?? g.statusDetail,
       tipOffAt: next.tipOffAt ?? g.tipOffAt,
       retrievedAt: next.retrievedAt ?? g.retrievedAt,
+      awayRecord: next.awayRecord ?? g.awayRecord,
+      homeRecord: next.homeRecord ?? g.homeRecord,
     };
   });
 }
 
 /**
- * One timer for a set of scoreboard games — never N independent loops.
+ * One timer for a set of scoreboard games - never N independent loops.
  * Polls `/api/scores/live` in a batch; stops when all games are final/cancelled.
  */
 export function useLiveScoreboardRefresh(

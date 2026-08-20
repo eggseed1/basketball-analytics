@@ -39,7 +39,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
     interpretation: [] as string[],
   };
 
-  // Glossary / methodology — safe learn copy only (no player claims).
+  // Glossary / methodology - safe learn copy only (no player claims).
   const glossary = matchDrblGlossaryQuery(text);
   if (glossary && !possessivePlayerHint(text)) {
     return {
@@ -225,7 +225,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
           season
             ? `Season evidence for ${season}`
             : "Season evidence (default recent season)",
-          "Descriptive schedule-score games — not “most important” or PBP filters",
+          "Descriptive schedule-score games - not “most important” or PBP filters",
         ],
       };
     }
@@ -278,7 +278,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
           seasons.length
             ? `Rank seasons (${seasons[0]} → ${seasons[seasons.length - 1]})`
             : "Rank career seasons (eligible set)",
-          "Under DRBL's Rank My Seasons (Copeland) methodology — not a universal “best” score",
+          "Under DRBL's Rank My Seasons (Copeland) methodology - not a universal “best” score",
         ],
       };
     }
@@ -324,7 +324,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
         : [{ kind: "team", id: "", name: "league" }],
       interpretation: [
         team ? team.name : "Transaction question",
-        "Related ESPN source events may exist — no verified structured trade ledger",
+        "Related ESPN source events may exist - no verified structured trade ledger",
       ],
     };
   }

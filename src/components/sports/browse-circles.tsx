@@ -35,7 +35,7 @@ export function BrowseCircles({
               <span className="flex size-[4.5rem] items-center justify-center rounded-full bg-secondary shadow-inner">
                 <TeamLogo teamKey={abbr} size="lg" />
               </span>
-              <span className="text-[13px] font-medium">{brand.abbr}</span>
+              <span className="text-[14px] font-medium">{brand.abbr}</span>
             </Link>
           );
         })}
@@ -58,7 +58,7 @@ export function BrowseCircles({
           >
             <TeamLogo teamKey={item.key} size="lg" />
           </span>
-          <span className="text-center text-[13px] font-medium">
+          <span className="text-center text-[14px] font-medium">
             {item.label}
           </span>
         </Link>

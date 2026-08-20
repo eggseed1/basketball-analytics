@@ -1,5 +1,5 @@
 /**
- * Player-season board health — distinguish sample / empty / unsupported / failure.
+ * Player-season board health - distinguish sample / empty / unsupported / failure.
  * Pure assessment over already-fetched rows (no network).
  */
 
@@ -94,7 +94,7 @@ export function assessPlayerBoardHealth(
   };
 
   if (input.error != null) {
-    // Pre-modern boards often 500 from ESPN — not the same as a live outage.
+    // Pre-modern boards often 500 from ESPN - not the same as a live outage.
     if (!espnBoardExpected) {
       const cacheNote =
         gamesCache === true
@@ -175,7 +175,7 @@ export function assessPlayerBoardHealth(
       isSampleData: false,
       status: "board_unavailable",
       label: "Board unavailable",
-      message: `No player-season board rows returned for ${input.season}. This is not automatically data loss — the live source may be empty or unreachable for this season.`,
+      message: `No player-season board rows returned for ${input.season}. This is not automatically data loss - the live source may be empty or unreachable for this season.`,
     };
   }
 
@@ -190,7 +190,7 @@ export function assessPlayerBoardHealth(
       isSampleData: false,
       status: "sample_sized_unexpected",
       label: "Unexpectedly small board",
-      message: `Only ${input.rowCount} player-season rows for ${input.season} under the live provider. A modern NBA board is usually hundreds of rows — check that DATA_PROVIDER was not intended to be local, and that filters are not over-narrow.`,
+      message: `Only ${input.rowCount} player-season rows for ${input.season} under the live provider. A modern NBA board is usually hundreds of rows - check that DATA_PROVIDER was not intended to be local, and that filters are not over-narrow.`,
     };
   }
 
@@ -200,7 +200,7 @@ export function assessPlayerBoardHealth(
       isSampleData: false,
       status: "empty_qualifying",
       label: "Thin board",
-      message: `${input.rowCount} qualifying player-season rows for ${input.season}. Below the usual modern live-board range (≥${MODERN_LIVE_BOARD_HEALTHY_MIN}) — verify filters and season.`,
+      message: `${input.rowCount} qualifying player-season rows for ${input.season}. Below the usual modern live-board range (≥${MODERN_LIVE_BOARD_HEALTHY_MIN}) - verify filters and season.`,
     };
   }
 

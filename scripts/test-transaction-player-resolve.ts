@@ -89,7 +89,7 @@ console.log("extract: waived / signed / multi…");
   );
   assert.equal(acquired.length, 1);
   assert.equal(acquired[0]!.rawName, "Paul George");
-  // Philadelphia is a team city — not extracted as a player.
+  // Philadelphia is a team city - not extracted as a player.
   assert.ok(!acquired.some((m) => /Philadelphia/i.test(m.rawName)));
 
   const jr = extractTransactionPlayerMentions("Waived F RJ Luis Jr.");
@@ -110,7 +110,7 @@ assert.equal(
   0
 );
 
-console.log("partition only links resolved…");
+console.log("partition links unresolved players for hover…");
 {
   const description = "Waived G Ethan Thompson.";
   const mentions = extractTransactionPlayerMentions(description);
@@ -125,8 +125,12 @@ console.log("partition only links resolved…");
     reason: "test",
   }));
   const partsU = partitionTransactionDescription(description, unresolved);
-  assert.equal(partsU.length, 1);
-  assert.equal(partsU[0]!.kind, "text");
+  assert.ok(partsU.some((p) => p.kind === "player"));
+  const playerPart = partsU.find((p) => p.kind === "player");
+  assert.equal(playerPart?.kind, "player");
+  if (playerPart?.kind === "player") {
+    assert.equal(playerPart.resolution.status, "unresolved");
+  }
 
   const resolved: TransactionPlayerResolution[] = mentions.map((mention) => ({
     status: "resolved",
@@ -144,13 +148,26 @@ console.log("partition only links resolved…");
   assert.equal(canLinkTransactionPlayer(null), false);
 }
 
+console.log("partition extracts team nicknames…");
+{
+  const parts = partitionTransactionDescription(
+    "The Lakers waived G Ethan Thompson.",
+    []
+  );
+  const team = parts.find((p) => p.kind === "team");
+  assert.equal(team?.kind, "team");
+  if (team?.kind === "team") {
+    assert.equal(team.teamKey, "lal");
+  }
+}
+
 console.log("normalize exact match keys…");
 assert.equal(
   normalizePlayerName("De'Anthony Melton"),
   normalizePlayerName("DeAnthony Melton")
 );
 
-console.log("client import boundary — no Node queries in Transactions UI…");
+console.log("client import boundary - no Node queries in Transactions UI…");
 {
   const root = path.join(path.dirname(fileURLToPath(import.meta.url)), "..");
   const read = (rel: string) => fs.readFileSync(path.join(root, rel), "utf8");
@@ -195,4 +212,4 @@ console.log("client import boundary — no Node queries in Transactions UI…");
   );
 }
 
-console.log("OK — transaction-player-resolve / team brands");
+console.log("OK - transaction-player-resolve / team brands");

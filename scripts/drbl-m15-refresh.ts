@@ -1,5 +1,5 @@
 /**
- * M15 refresh — READ-ONLY diagnostics against CURRENT live artifacts.
+ * M15 refresh - READ-ONLY diagnostics against CURRENT live artifacts.
  * Does NOT modify model mathematics, fusion, WAR formulas, or site math.
  *
  *   npx tsx scripts/drbl-m15-refresh.ts
@@ -405,7 +405,7 @@ async function main() {
   );
   await writeFile(path.join(OUT, "06_team_contamination.csv"), toCsv(teamRows));
 
-  // ---- 07–11 structural audits (code-documented, no math changes) ----
+  // ---- 07-11 structural audits (code-documented, no math changes) ----
   await writeFile(
     path.join(OUT, "07_replacement_analysis.csv"),
     toCsv([
@@ -587,7 +587,7 @@ async function main() {
       {
         ablation: "Full_DRBL_vs_Full_without_M6",
         result: "IDENTICAL_for_published_drbl100",
-        reason: "fusedIntoDrbl100=false — M6 fields exist but do not enter fusion",
+        reason: "fusedIntoDrbl100=false - M6 fields exist but do not enter fusion",
         incremental_oos_on_published_metric: 0,
       },
       {
@@ -714,7 +714,7 @@ async function main() {
   );
 
   // Implementation audit + final recommendations
-  const impl = `# M15 — Implementation Audit (REFRESH — live artifacts)
+  const impl = `# M15 - Implementation Audit (REFRESH - live artifacts)
 
 **Frozen at:** \`freeze/00_model_freeze_live.json\`  
 **Method:** Code inspection of \`drbl/\` + tests + **live** precomputed artifacts.  
@@ -750,7 +750,7 @@ async function main() {
 | Seq | Sequential attribution | COMPLETE (v1) | Affects P totals |
 | M15 | This audit | IN PROGRESS | N/A |
 
-### M6 verification (frozen — not rewritten)
+### M6 verification (frozen - not rewritten)
 
 - **Files:** \`shot-decision.ts\`, \`continuation-value.ts\`, \`shot-components.ts\`
 - **Tests:** \`shot-decision.test.ts\`, \`continuation-value.test.ts\`
@@ -776,7 +776,7 @@ async function main() {
     )
     .join("\n");
 
-  const finalRec = `# M15 Final Diagnostic Report — STOP (no model changes)
+  const finalRec = `# M15 Final Diagnostic Report - STOP (no model changes)
 
 **Pass:** live-400game refresh  
 **Frozen:** \`reports/m15/freeze/00_model_freeze_live.json\`  
@@ -815,17 +815,17 @@ async function main() {
 - R1 replacement pool cutoff-frozen  
 - Sequential attribution version present on 2024-25 live artifact  
 
-## 4. Unusual rankings — primary causes (ordered)
+## 4. Unusual rankings - primary causes (ordered)
 
-1. **Partial-season sample (400 games)** — not a final season board  
-2. **Fusion to residual/100** — not outcome bakeoff  
-3. **Approach B residual sharing** — role/context inflation risk  
-4. **LN association** — not causal on/off  
-5. **Not M6** — M6 does not move published \`drbl100\` today  
+1. **Partial-season sample (400 games)** - not a final season board  
+2. **Fusion to residual/100** - not outcome bakeoff  
+3. **Approach B residual sharing** - role/context inflation risk  
+4. **LN association** - not causal on/off  
+5. **Not M6** - M6 does not move published \`drbl100\` today  
 
 ## 5. Does M6 provide measurable incremental OOS value on published DRBL?
 
-**On published \`drbl100\` / WAR: NO — by construction (\`fusedIntoDrbl100: false\`).**  
+**On published \`drbl100\` / WAR: NO - by construction (\`fusedIntoDrbl100: false\`).**  
 Incremental improvement of Full vs Full−M6 on the **published** metric = **0**.
 
 Standalone M6 diagnostics (2024-25 artifact): continueCorrC2 ≈ ${Number((a24.shotDecisionModel as { continueCorrC2?: number })?.continueCorrC2 ?? 0).toFixed(3)} (weak continuation signal in-season).  
@@ -833,7 +833,7 @@ Standalone M6 diagnostics (2024-25 artifact): continueCorrC2 ≈ ${Number((a24.s
 
 ## 6. Is M13 WAR genuinely validated?
 
-**NO — provisional.**  
+**NO - provisional.**  
 Live artifacts still carry provisional conversion semantics; prior multi-limit study (\`14_war_multi_season_calibration.csv\`) showed instability (e.g. fail at ~400 vs 1/30, stronger corr at full cache).  
 **1/30 remains a necessary explicit fallback.**
 
@@ -851,9 +851,9 @@ Live artifacts still carry provisional conversion semantics; prior multi-limit s
 ## 9. Should the 50-game leaderboard be discarded?
 
 **YES as a “final season” product.**  
-Live board is **400-game** — still **not** full-season. Do not market either as final season WAR/DRBL until full-season recompute **without model changes** (data prep only) is approved.
+Live board is **400-game** - still **not** full-season. Do not market either as final season WAR/DRBL until full-season recompute **without model changes** (data prep only) is approved.
 
-## 10. What should change (PROPOSED — not implemented)
+## 10. What should change (PROPOSED - not implemented)
 
 1. Full-season recompute for validation artifacts (no formula change)  
 2. Reserved chronological test protocol + external bakeoff  
@@ -870,7 +870,7 @@ Live board is **400-game** — still **not** full-season. Do not market either a
 - Manual star boosts / consensus ranking fits  
 - Silent deletion of 1/30 fallback  
 
-## 12–13. Mathematical proposals & expected OOS impact
+## 12-13. Mathematical proposals & expected OOS impact
 
 Deferred to approval. No coefficients proposed for automatic application.
 
@@ -899,13 +899,13 @@ Await approval before any model implementation.
   );
 
   console.log(`
-M15 REFRESH COMPLETE (diagnostics only — no model changes)
+M15 REFRESH COMPLETE (diagnostics only - no model changes)
 ==========================================================
 Freeze: reports/m15/freeze/00_model_freeze_live.json
 Games: 2024-25=${a24.gamesProcessed}, 2025-26=${a25.gamesProcessed}
 M6 fused into drbl100: ${String(a24.shotDecisionModel?.fusedIntoDrbl100 ?? false)}
 Reports written under reports/m15/
-STOP — await approval before model changes.
+STOP - await approval before model changes.
 `);
 }
 

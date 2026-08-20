@@ -1,5 +1,5 @@
 /**
- * Progressive destination shells — identity outside Suspense, deep islands.
+ * Progressive destination shells - identity outside Suspense, deep islands.
  * Run: npx tsx scripts/test-progressive-destinations.ts
  */
 import assert from "node:assert/strict";
@@ -13,16 +13,18 @@ function read(rel: string): string {
 function main() {
   const root = process.cwd();
 
-  // ——— PLAYER ———
+  // --- PLAYER ---
   const playerPage = read("src/app/players/[playerId]/page.tsx");
   assert.ok(
     playerPage.includes("PlayerDestinationIdentity"),
     "Player identity component"
   );
   assert.ok(
-    playerPage.includes("PlayerCoreIsland") &&
-      playerPage.includes("PlayerGamesIsland"),
-    "Player core + games islands"
+    playerPage.includes("PlayerCareerIsland") &&
+      playerPage.includes("PlayerGamesIsland") &&
+      playerPage.includes("PlayerVisualizationsIsland") &&
+      playerPage.includes("PlayerStatsIsland"),
+    "Player career + stats + games + visualizations islands"
   );
   assert.ok(
     playerPage.includes("DestinationClientShell"),
@@ -57,10 +59,16 @@ function main() {
     existsSync(join(root, "src/components/players/player-destination-identity.tsx"))
   );
   assert.ok(
-    existsSync(join(root, "src/components/players/player-core-island.tsx"))
+    existsSync(join(root, "src/components/players/player-career-island.tsx"))
   );
   assert.ok(
     existsSync(join(root, "src/components/players/player-games-island.tsx"))
+  );
+  assert.ok(
+    existsSync(join(root, "src/components/players/player-stats-island.tsx"))
+  );
+  assert.ok(
+    existsSync(join(root, "src/components/players/player-visualizations.tsx"))
   );
   assert.ok(existsSync(join(root, "src/lib/player-destination.ts")));
 
@@ -68,9 +76,10 @@ function main() {
     "src/components/players/player-destination-identity.tsx"
   );
   assert.ok(
-    playerIdentity.includes("scroll={false}") ||
-      playerIdentity.includes("scroll={false}"),
-    "Season chips use scroll false"
+    playerIdentity.includes("PlayerDepthNav") &&
+      (playerIdentity.includes("scroll={false}") ||
+        playerIdentity.includes("scroll={false}")),
+    "Depth nav uses scroll false"
   );
   assert.ok(
     playerIdentity.includes("HistoricalTeamMark") ||
@@ -78,16 +87,11 @@ function main() {
     "Identity supports historical mark"
   );
 
-  const playerCore = read("src/components/players/player-core-island.tsx");
+  const playerCareer = read("src/components/players/player-career-island.tsx");
   assert.ok(
-    playerCore.includes("getPlayerSeasonCached") ||
-      playerCore.includes("getPlayerSeason"),
-    "Core fetches season"
-  );
-  assert.ok(
-    playerCore.includes("PlayerPercentilePanel") ||
-      playerCore.includes("PlayerCareerResume"),
-    "Core includes deep analytics sections"
+    playerCareer.includes("getPlayerPlayoffCareerSeasons") ||
+      playerCareer.includes("getPlayerCareerSeasons"),
+    "Career island loads season rows"
   );
 
   const playerGames = read("src/components/players/player-games-island.tsx");
@@ -95,11 +99,13 @@ function main() {
     playerGames.includes("getPlayerGameLogCached") ||
       playerGames.includes("getPlayerGameLog")
   );
-  assert.ok(playerGames.includes("PlayerNotableGames"));
+  assert.ok(playerGames.includes("Game logs"));
 
-  // ——— TEAM ———
+  // --- TEAM ---
   const teamPage = read("src/app/teams/[teamId]/page.tsx");
   assert.ok(teamPage.includes("TeamDestinationIdentity"));
+  assert.ok(teamPage.includes("TeamPrimaryNav"));
+  assert.ok(teamPage.includes("parseTeamPageTab"));
   assert.ok(teamPage.includes("DestinationClientShell"));
   assert.ok(teamPage.includes("parseDestinationHistoryArrival"));
   assert.ok(teamPage.includes("EraThemeScope"));
@@ -131,7 +137,7 @@ function main() {
     "Team must not key Suspense on season"
   );
 
-  // ——— HISTORY URLS ———
+  // --- HISTORY URLS ---
   const historyUrl = read("src/themes/history-url.ts");
   assert.ok(
     historyUrl.includes('set("from", "history")') &&
@@ -160,7 +166,7 @@ function main() {
     "History team links pass theme"
   );
 
-  // ——— GAME STABLE HEADER ———
+  // --- GAME STABLE HEADER ---
   const gamePage = read("src/app/games/[gameId]/page.tsx");
   assert.ok(gamePage.includes("GameIdentityShell"));
   assert.ok(gamePage.includes("omitHero"));
@@ -175,7 +181,7 @@ function main() {
   assert.ok(gameLab.includes("omitHero"));
   assert.ok(gameLab.includes("!omitHero"));
 
-  // ——— CACHE ———
+  // --- CACHE ---
   const cache = read("src/data/queries/request-cache.ts");
   assert.ok(cache.includes("getPlayerSeasonCached"));
   assert.ok(cache.includes("getPlayerGameLogCached"));

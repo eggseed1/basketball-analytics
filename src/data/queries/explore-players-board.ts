@@ -1,6 +1,7 @@
 /**
- * Explore Players board view — server-side filter/sort/window + slim rows.
- * Full board stays in the query/cache layer; the browser gets one page.
+ * Explore Players board view - server-side filter/sort/window + slim rows.
+ * Full board stays in the query/cache layer; the browser gets the first
+ * window, then later pages via infinite scroll.
  */
 
 import {
@@ -17,7 +18,7 @@ import {
 
 export const EXPLORE_PLAYERS_PAGE_SIZE = 100;
 
-/** Display + Level-2 context fields only — not the full canonical PlayerSeason. */
+/** Display + Level-2 context fields only - not the full canonical PlayerSeason. */
 export type ExplorePlayerBoardRow = {
   playerId: string;
   playerName: string;
@@ -51,9 +52,9 @@ export type ExplorePlayerBoardRow = {
   dLebron?: number;
   /** Unrounded validated DRBL/100 when overlay present; omit when missing. */
   drbl100?: number;
-  /** null/omitted when DRBL overlay absent — never coerce missing to 0. */
+  /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
   r1Points?: number | null;
-  /** null/omitted when DRBL overlay absent — never coerce missing to 0. */
+  /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
   r1WinEquivalents?: number | null;
   mpg: number;
   ppg: number;
@@ -62,6 +63,15 @@ export type ExplorePlayerBoardRow = {
   spg: number;
   bpg: number;
   tov: number;
+  age?: number;
+  twoPointPct?: number;
+  turnoverPct?: number;
+  threePointersAttempted?: number;
+  freeThrowsAttempted?: number;
+  offensiveRebounds?: number;
+  defensiveRebounds?: number;
+  /** Player TS% minus board mean TS% (fraction). */
+  relativeTrueShootingPct?: number;
 };
 
 export type ExplorePlayersBoardView = {
@@ -128,10 +138,20 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.netRating != null) row.netRating = p.netRating;
   if (p.darkoDpm != null) row.darkoDpm = p.darkoDpm;
   if (p.darkoOff != null) row.darkoOff = p.darkoOff;
+  else if (p.oDpm) row.darkoOff = p.oDpm;
   if (p.darkoDef != null) row.darkoDef = p.darkoDef;
+  else if (p.dDpm) row.darkoDef = p.dDpm;
+  if (row.darkoDpm == null && p.dpm) row.darkoDpm = p.dpm;
   if (p.lebron != null) row.lebron = p.lebron;
   if (p.oLebron != null) row.oLebron = p.oLebron;
   if (p.dLebron != null) row.dLebron = p.dLebron;
+  if (p.age != null && p.age > 0) row.age = p.age;
+  if (p.twoPointPct) row.twoPointPct = p.twoPointPct;
+  if (p.turnoverPct) row.turnoverPct = p.turnoverPct;
+  row.threePointersAttempted = p.threePointersAttempted;
+  row.freeThrowsAttempted = p.freeThrowsAttempted;
+  row.offensiveRebounds = p.offensiveRebounds;
+  row.defensiveRebounds = p.defensiveRebounds;
   if (hasValidDrblEstimate(p)) {
     row.drbl100 = p.drbl100;
     row.r1Points = p.r1Points ?? null;
@@ -141,7 +161,12 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
 }
 
 function sortKeyIsImpact(key: PlayerSeasonSortKey): boolean {
-  return key === "darkoDpm" || key === "lebron";
+  return (
+    key === "darkoDpm" ||
+    key === "darkoOff" ||
+    key === "darkoDef" ||
+    key === "lebron"
+  );
 }
 
 function sortKeyIsDrbl(key: PlayerSeasonSortKey): boolean {
@@ -158,6 +183,10 @@ function sortKeyIsOptionalRating(key: PlayerSeasonSortKey): boolean {
     key === "trueShootingPct" ||
     key === "effectiveFieldGoalPct" ||
     key === "usagePct" ||
+    key === "age" ||
+    key === "twoPointPct" ||
+    key === "turnoverPct" ||
+    key === "relativeTrueShootingPct" ||
     sortKeyIsImpact(key) ||
     sortKeyIsDrbl(key)
   );
@@ -222,6 +251,23 @@ export function parseExplorePlayersSortDir(
   return defaultPlayerSeasonSortDir(sortKey);
 }
 
+function attachRelativeTrueShooting(
+  rows: ExplorePlayerBoardRow[]
+): ExplorePlayerBoardRow[] {
+  const ts = rows
+    .map((row) => row.trueShootingPct)
+    .filter((n): n is number => n != null && Number.isFinite(n) && n > 0);
+  if (!ts.length) return rows;
+  const mean = ts.reduce((sum, n) => sum + n, 0) / ts.length;
+  return rows.map((row) => {
+    if (row.trueShootingPct == null || !(row.trueShootingPct > 0)) return row;
+    return {
+      ...row,
+      relativeTrueShootingPct: row.trueShootingPct - mean,
+    };
+  });
+}
+
 function serializeContextPools(
   index: LeaderboardContextIndex
 ): Record<string, number[]> {
@@ -241,20 +287,24 @@ export async function getExplorePlayersBoardView(options: {
   sortDir?: "asc" | "desc";
   page?: number;
   pageSize?: number;
+  /** Skip percentile pools - used for infinite-scroll page fetches. */
+  includeContext?: boolean;
 }): Promise<ExplorePlayersBoardView> {
   const board = await getPlayerSeasonBoardSnapshot(options.filters);
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
   const hasLebron = board.rows.some((p) => p.lebron != null);
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
-  // Prefer DRBL/100 for registry seasons when present; else DARKO; else PPG.
+  // Prefer WAR1 for registry seasons when present; else DARKO; else PPG.
   const sortKey =
-    options.sortKey ?? (hasDrbl ? "drbl100" : hasDarko ? "darkoDpm" : "ppg");
+    options.sortKey ??
+    (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg");
   const sortDir =
     options.sortDir ?? defaultPlayerSeasonSortDir(sortKey);
   const pageSize = options.pageSize ?? EXPLORE_PLAYERS_PAGE_SIZE;
 
   const mapped = board.rows.map(toExplorePlayerBoardRow);
-  const sorted = sortExplorePlayerRows(mapped, sortKey, sortDir);
+  const withRelativeTs = attachRelativeTrueShooting(mapped);
+  const sorted = sortExplorePlayerRows(withRelativeTs, sortKey, sortDir);
   const totalCount = sorted.length;
   const pageCount = Math.max(1, Math.ceil(totalCount / pageSize) || 1);
   const page = Math.min(
@@ -264,8 +314,10 @@ export async function getExplorePlayersBoardView(options: {
   const start = (page - 1) * pageSize;
   const rows = sorted.slice(start, start + pageSize);
 
-  // Percentiles over the full filtered board (not just the page).
-  const contextIndex = buildLeaderboardContextIndex(board.rows, sortKey);
+  const includeContext = options.includeContext !== false;
+  const contextIndex = includeContext
+    ? buildLeaderboardContextIndex(board.rows, sortKey)
+    : null;
 
   return {
     rows,
@@ -278,8 +330,8 @@ export async function getExplorePlayersBoardView(options: {
     hasDarko,
     hasLebron,
     hasDrbl,
-    boardSampleSize: contextIndex.sampleSize,
-    contextPools: serializeContextPools(contextIndex),
+    boardSampleSize: contextIndex?.sampleSize ?? totalCount,
+    contextPools: contextIndex ? serializeContextPools(contextIndex) : {},
     health: board.health,
     source: board.source,
     warnings: board.warnings,

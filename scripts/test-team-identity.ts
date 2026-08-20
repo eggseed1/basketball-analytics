@@ -280,6 +280,90 @@ console.log("URL / filter normalization…");
   assert.ok(expandPlayerSeasonTeamMatchIds("25").includes("25"));
   assert.ok(expandPlayerSeasonTeamMatchIds("25").includes("okc"));
 
+  const conferenceBoard = [
+    {
+      playerId: "east",
+      playerName: "East",
+      teamId: "2",
+      season: "2024-25",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "west",
+      playerName: "West",
+      teamId: "25",
+      season: "2024-25",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "tot",
+      playerName: "TOT",
+      teamId: "TOT",
+      season: "2024-25",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+  ] as never;
+  assert.deepEqual(
+    applyPlayerSeasonFilters(
+      conferenceBoard,
+      filtersFromSearchParams({ conference: "West" })
+    ).map((row) => row.playerId),
+    ["west"]
+  );
+  assert.deepEqual(
+    applyPlayerSeasonFilters(
+      conferenceBoard,
+      filtersFromSearchParams({ conference: "east" })
+    ).map((row) => row.playerId),
+    ["east"]
+  );
+
+  const draftBoard = [
+    {
+      playerId: "a",
+      playerName: "A",
+      teamId: "2",
+      season: "2024-25",
+      draftYear: 2018,
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "b",
+      playerName: "B",
+      teamId: "25",
+      season: "2024-25",
+      draftYear: 2021,
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+    {
+      playerId: "c",
+      playerName: "C",
+      teamId: "2",
+      season: "2024-25",
+      minutes: 1000,
+      gamesPlayed: 50,
+    },
+  ] as never;
+  assert.deepEqual(
+    applyPlayerSeasonFilters(
+      draftBoard,
+      filtersFromSearchParams({ draftClass: "2018" })
+    ).map((row) => row.playerId),
+    ["a"]
+  );
+  assert.deepEqual(
+    applyPlayerSeasonFilters(
+      draftBoard,
+      filtersFromSearchParams({ draftClass: "undrafted" })
+    ).map((row) => row.playerId),
+    ["c"]
+  );
+
   const mixedBoard = [
     {
       playerId: "phx-star",
@@ -536,7 +620,7 @@ async function liveOkcRegression() {
     fullName: "Oklahoma City Thunder",
   });
   if (ev.error) {
-    console.log(`  (skip OKC evidence assert — ${ev.error})`);
+    console.log(`  (skip OKC evidence assert - ${ev.error})`);
   } else {
     const okc = resolveCanonicalTeam("25");
     assert.equal(okc.status, "resolved");
@@ -558,7 +642,7 @@ async function liveOkcRegression() {
     assert.equal(ensured.homeProviderTeamId, "25");
     assert.equal(gameSideBrandKey(ensured, "home"), "POR");
   } else {
-    console.log("  (skip shell assert — game 15908541 unavailable in this environment)");
+    console.log("  (skip shell assert - game 15908541 unavailable in this environment)");
   }
   const por = await getTeamSeasonEvidence({
     teamId: "22",
@@ -568,7 +652,7 @@ async function liveOkcRegression() {
   if (por.games.length) {
     assert.ok(por.games.some((g) => g.gameId === "15908541"));
   } else {
-    console.log("  (skip POR evidence assert — schedule unavailable)");
+    console.log("  (skip POR evidence assert - schedule unavailable)");
   }
 }
 
@@ -627,7 +711,7 @@ async function runP17_2IdentityExtensions() {
 runP17_2IdentityExtensions()
   .then(() => liveOkcRegression())
   .then(() => {
-    console.log("OK — team-identity");
+    console.log("OK - team-identity");
   })
   .catch((err) => {
     console.error(err);

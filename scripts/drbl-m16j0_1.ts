@@ -1,5 +1,5 @@
 /**
- * M16j0.1 — BASELINE_M16A comparator semantic audit + reserved authorization repair.
+ * M16j0.1 - BASELINE_M16A comparator semantic audit + reserved authorization repair.
  *   npm run drbl:m16j0_1
  *
  * Does NOT open RESERVED_TEST. Does NOT compute reserved metrics.
@@ -201,7 +201,7 @@ async function main() {
     JSON.stringify(reproduction, null, 2)
   );
 
-  // ---- Phases 2–3: lineage + freeze hash ----
+  // ---- Phases 2-3: lineage + freeze hash ----
   const baselineRoles: Record<string, { exports: string[]; role: string }> = {
     "drbl/models/compute-season.ts": {
       exports: ["computeSeasonDrbl"],
@@ -343,7 +343,7 @@ weights is **not** the frozen BASELINE evaluation procedure.
 
 ## BASELINE_M16A_MODIFIED
 
-\`NO\` — audit only; no source edits.
+\`NO\` - audit only; no source edits.
 `
   );
 
@@ -426,7 +426,7 @@ weights is **not** the frozen BASELINE evaluation procedure.
       requiresExternalFrozenArtifact: "NO",
       predictionTimeValid: "NO",
       parameterClass: "REQUIRES_RESERVED_FUTURE",
-      notes: "Required by fitFusionOof — core leakage for reserved cutoff",
+      notes: "Required by fitFusionOof - core leakage for reserved cutoff",
     },
     {
       inputField: "fusion OOF / ridge betas",
@@ -459,7 +459,7 @@ weights is **not** the frozen BASELINE evaluation procedure.
       requiresExternalFrozenArtifact: "YES",
       predictionTimeValid: "YES if harness existed",
       parameterClass: "FROZEN_PRE_RESERVED",
-      notes: "Fixed-fit harness NOT_IDENTIFIABLE / not part of frozen BASELINE evaluation procedure — cannot redefine B2 as this without changing baseline",
+      notes: "Fixed-fit harness NOT_IDENTIFIABLE / not part of frozen BASELINE evaluation procedure - cannot redefine B2 as this without changing baseline",
     },
     {
       inputField: "EB priorStrength / priorMean",
@@ -481,7 +481,7 @@ weights is **not** the frozen BASELINE evaluation procedure.
       requiresExternalFrozenArtifact: "NO",
       predictionTimeValid: "NO under current builders without code change",
       parameterClass: "REQUIRES_RESERVED_FUTURE",
-      notes: "History-only R1 would be allowed formula application but current BASELINE builders use full set — repairing builders would modify baseline path",
+      notes: "History-only R1 would be allowed formula application but current BASELINE builders use full set - repairing builders would modify baseline path",
     },
     {
       inputField: "calibration layer",
@@ -551,19 +551,19 @@ weights is **not** the frozen BASELINE evaluation procedure.
 | B0_RAW_P | Approach-B attributed residual value | historical N | yes | R1 | no | YES |
 | B1_P_EB200 | Approach-B residual (EB200) | historical N | yes | R1 | no | YES |
 | B2_BASELINE_M16A | OOF-fused P+LN+B residual prediction | published uses full-season N for EB | yes | R1 / priorMean=0 | none | YES **if** prediction existed leakage-free |
-| TARGET | future-block Approach-B residual value | future-block possessions | yes | R1 | n/a | — |
+| TARGET | future-block Approach-B residual value | future-block possessions | yes | R1 | n/a | - |
 
 ## Key question
 
 Can all predictions be directly compared via RMSE against \`future_block_residual_per_100\` without a new conversion?
 
 - RESEARCH / B0 / B1: **YES**
-- B2 unit family: **YES** (\`B2_UNIT_COMPATIBLE=YES\`) — same residual points/100 R1 scale
-- B2 availability at cutoff: **NO** — cannot form the frozen prediction without future/full-season inputs
+- B2 unit family: **YES** (\`B2_UNIT_COMPATIBLE=YES\`) - same residual points/100 R1 scale
+- B2 availability at cutoff: **NO** - cannot form the frozen prediction without future/full-season inputs
 
 \`B2_TARGET_COMPATIBLE=YES\` (estimand matches) does **not** override leakage / reconstruction failure.
 
-No new reserved calibration/conversion is introduced (\`UNFROZEN_TARGET_SCALE_CONVERSION_REQUIRED\` not used as reason; conversion is unnecessary because unit already matches — the blocker is prediction-time construction).
+No new reserved calibration/conversion is introduced (\`UNFROZEN_TARGET_SCALE_CONVERSION_REQUIRED\` not used as reason; conversion is unnecessary because unit already matches - the blocker is prediction-time construction).
 `
   );
 
@@ -609,7 +609,7 @@ No new reserved calibration/conversion is introduced (\`UNFROZEN_TARGET_SCALE_CO
           "No preexisting cutoff-evaluable BASELINE harness produces the published OOF+EB scalar from history-only inputs. Fixed-fit was NOT_IDENTIFIABLE / not frozen as BASELINE procedure. Substituting cross-season weights would change the baseline definition (forbidden).",
       },
       invalidExclusionReasonRejected:
-        "DIFFERENT_ARCHITECTURE / uses fusion / uses LN/B / different k — explicitly NOT used",
+        "DIFFERENT_ARCHITECTURE / uses fusion / uses LN/B / different k - explicitly NOT used",
       BASELINE_M16A_MODIFIED: "NO",
     },
     hierarchy: {
@@ -643,7 +643,7 @@ No new reserved calibration/conversion is introduced (\`UNFROZEN_TARGET_SCALE_CO
           "PRIMARY_RESERVED_SUCCESS = YES",
           "no severe integrity/calibration anomaly",
         ],
-        note: "B2 N/A — incumbent 0.5% regression rule not applicable",
+        note: "B2 N/A - incumbent 0.5% regression rule not applicable",
       },
       SCIENTIFIC_PASS_PRODUCTION_MIXED: {
         require: [

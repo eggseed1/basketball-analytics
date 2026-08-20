@@ -1,6 +1,6 @@
 /**
  * Client-safe player deep-link helpers.
- * Sync only — never import data queries or Node filesystem here.
+ * Sync only - never import data queries or Node filesystem here.
  *
  * Async season resolution lives in `player-season-resolve.server.ts`.
  */

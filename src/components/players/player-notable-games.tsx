@@ -18,7 +18,7 @@ type NotableGame = {
 
 /**
  * Small evidence strip from the already-fetched season game log.
- * Transparent dimensions only — no universal Game Score.
+ * Transparent dimensions only - no universal Game Score.
  */
 export function pickNotableGames(
   games: PlayerGame[],
@@ -79,7 +79,7 @@ export function pickNotableGames(
     }
   }
 
-  // Dedupe games that win multiple dimensions — keep first label.
+  // Dedupe games that win multiple dimensions - keep first label.
   const seen = new Set<string>();
   return out.filter((n) => {
     if (seen.has(n.game.id)) return false;
@@ -101,7 +101,7 @@ export function PlayerNotableGames({
   return (
     <div className="flex flex-col gap-2">
       <p className="text-[12px] text-muted-foreground">
-        Notable performances this season — transparent box-score dimensions, not
+        Notable performances this season - transparent box-score dimensions, not
         a composite Game Score.
       </p>
       <ul className="grid gap-2 sm:grid-cols-2">
@@ -111,7 +111,7 @@ export function PlayerNotableGames({
               href={`/games/${n.game.gameId}`}
               className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
             >
-              <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                 {n.label}
               </span>
               <span className="text-[14px] font-bold">{n.detail}</span>

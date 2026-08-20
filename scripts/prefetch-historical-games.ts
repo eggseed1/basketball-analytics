@@ -36,7 +36,7 @@ async function main() {
   }
 
   const seasons = listCanonicalSeasons(from, to);
-  console.log(`Prefetching ${seasons.length} seasons (${from}–${to})…`);
+  console.log(`Prefetching ${seasons.length} seasons (${from}-${to})…`);
 
   const failed: string[] = [];
 
@@ -56,7 +56,7 @@ async function main() {
             seasonType: "regular",
             cursor,
           }),
-        // Free tier is strict — keep page pacing slow for deep history.
+        // Free tier is strict - keep page pacing slow for deep history.
         { maxPages: 80, delayMs: 1200 }
       );
       const games = rows

@@ -148,7 +148,7 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
     value: (r) => r.r1WinEquivalents ?? Number.NEGATIVE_INFINITY,
     format: (r) =>
       r.r1WinEquivalents == null
-        ? "—"
+        ? "-"
         : formatNumber(r.r1WinEquivalents, 1),
   },
   {
@@ -159,7 +159,7 @@ export const PLAYER_SORT_OPTIONS: PlayerSortOption[] = [
     value: (r) =>
       hasValidDrblEstimate(r) ? r.drbl100 : Number.NEGATIVE_INFINITY,
     format: (r) =>
-      hasValidDrblEstimate(r) ? formatNumber(r.drbl100, 1) : "—",
+      hasValidDrblEstimate(r) ? formatNumber(r.drbl100, 1) : "-",
   },
   {
     key: "minutes",

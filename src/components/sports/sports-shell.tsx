@@ -1,21 +1,22 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import {
-  FormEvent,
   Suspense,
   useEffect,
   useMemo,
   useRef,
   useState,
 } from "react";
-import { Menu, Search, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 
+import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { RouteTransitionProvider, useRouteTransitionOptional } from "@/components/continuity/route-transition";
+import { RouteTransitionProvider } from "@/components/continuity/route-transition";
+import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
+import { SiteChrome } from "@/components/sports/site-chrome";
+import { SiteSearch } from "@/components/sports/site-search";
 import { cn } from "@/lib/utils";
-import { assertInternalHref } from "@/lib/navigation";
 import {
   PRIMARY_NAV,
   activePrimaryNav,
@@ -23,58 +24,9 @@ import {
   type PrimaryNavItem,
 } from "@/components/sports/site-nav";
 
-function SiteSearch() {
-  const router = useRouter();
-  const [q, setQ] = useState("");
-  const routeTransition = useRouteTransitionOptional();
-  const pending = Boolean(routeTransition?.pending);
-
-  const onSubmit = (e: FormEvent) => {
-    e.preventDefault();
-    const term = q.trim();
-    const href = !term
-      ? assertInternalHref("/explore/players")
-      : assertInternalHref(
-          `/explore/players?player=${encodeURIComponent(term)}`
-        );
-    const go = () => router.push(href);
-    if (routeTransition) routeTransition.startRouteTransition(go);
-    else go();
-  };
-
-  return (
-    <form
-      onSubmit={onSubmit}
-      className="flex min-w-0 flex-1 items-center gap-2 sm:max-w-md sm:flex-none lg:max-w-lg"
-      data-updating={pending ? "true" : "false"}
-    >
-      <label className="sr-only" htmlFor="site-search">
-        Search players and teams
-      </label>
-      <div className="flex min-w-0 flex-1 items-center gap-2 rounded-md bg-secondary px-3 py-2">
-        <Search className="size-4 shrink-0 text-muted-foreground" aria-hidden />
-        <input
-          id="site-search"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search players / teams"
-          className="min-w-0 flex-1 bg-transparent text-[14px] outline-none placeholder:text-muted-foreground"
-        />
-      </div>
-      <button
-        type="submit"
-        className="flex size-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background"
-        aria-label="Search"
-      >
-        <Search className="size-4" />
-      </button>
-    </form>
-  );
-}
-
 function subnavActive(link: NavLink, pathname: string, search: string): boolean {
   if (link.match) {
-    // Schedule vs Scores both live on /scores — disambiguate by view=.
+    // Schedule vs Scores both live on /scores - disambiguate by view=.
     if (link.href.includes("view=week")) {
       return (
         (pathname === "/scores" || pathname.startsWith("/scores/")) &&
@@ -166,6 +118,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
   const moreRef = useRef<HTMLDivElement>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
   const isMoreOpen = moreOpen && moreOpenedAt === pathname;
+  const destinationWash =
+    pathname.startsWith("/teams/") ||
+    pathname.startsWith("/players/") ||
+    pathname.startsWith("/games/");
 
   const mobilePinned = PRIMARY_NAV.filter((t) => MOBILE_PINNED_IDS.has(t.id));
   const mobileMore = PRIMARY_NAV.filter((t) => !MOBILE_PINNED_IDS.has(t.id));
@@ -209,13 +165,19 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RouteTransitionProvider>
-      <div className="flex min-h-full flex-1 flex-col bg-background">
-        <header className="sticky top-0 z-40 border-b border-black/5 bg-[color-mix(in_oklab,#f2f2f7_92%,white)] backdrop-blur-xl">
+      <div className="flex min-h-full flex-1 flex-col">
+        {destinationWash ? null : (
+          <PageAtmosphere
+            colorA={NBA_ATMOSPHERE.colorA}
+            colorB={NBA_ATMOSPHERE.colorB}
+          />
+        )}
+        <SiteChrome>
           <div className="site-shell flex flex-col gap-2 py-3">
             <div className="flex items-center gap-4">
               <TransitionLink href="/" className="flex shrink-0 items-center gap-2">
                 <span
-                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[11px] font-bold tracking-wide text-background"
+                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[12px] font-bold tracking-wide text-background"
                   aria-hidden
                 >
                   DRBL
@@ -224,8 +186,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   DRBL
                 </span>
               </TransitionLink>
-              <div className="ml-auto flex min-w-0 flex-1 justify-end sm:flex-initial">
+              <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial">
                 <SiteSearch />
+                <ColorSchemeSwitch />
               </div>
             </div>
 
@@ -243,7 +206,15 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   />
                 ))}
               </nav>
-              <TransitionLink href="/gm" className="sports-pill shrink-0 text-[13px]">
+              <TransitionLink
+                href="/gm"
+                className={cn(
+                  "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
+                  pathname.startsWith("/gm")
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
                 GM mode
               </TransitionLink>
             </div>
@@ -305,7 +276,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     <TransitionLink
                       href="/gm"
                       onClick={closeMore}
-                      className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[13px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[14px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
                     >
                       GM mode
                     </TransitionLink>
@@ -320,9 +291,11 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               </Suspense>
             ) : null}
           </div>
-        </header>
+        </SiteChrome>
 
-        <div className="flex min-h-0 flex-1 flex-col">{children}</div>
+        <div className="relative z-[1] flex min-h-0 flex-1 flex-col">
+          {children}
+        </div>
       </div>
     </RouteTransitionProvider>
   );

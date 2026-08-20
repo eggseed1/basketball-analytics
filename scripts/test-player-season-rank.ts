@@ -65,7 +65,7 @@ function main() {
     assert.ok(result.ranking[0]?.rank === 1);
   }
 
-  // 3–4 seasons obvious production winner
+  // 3-4 seasons obvious production winner
   {
     const seasons = [
       row({ ...base, season: "2010-11", points: 70 * 20 }),
@@ -125,7 +125,7 @@ function main() {
     assert.equal(cur?.eligible, false);
   }
 
-  // Missing impact on one season — still ranks on available dims
+  // Missing impact on one season - still ranks on available dims
   {
     const seasons = [
       row({ ...base, season: "2021-22" }),

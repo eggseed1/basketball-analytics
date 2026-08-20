@@ -1,5 +1,5 @@
 /**
- * Data-truth hardening — guard against fabricated missing values.
+ * Data-truth hardening - guard against fabricated missing values.
  * Run: npm run test:data-truth
  *
  * Protects the failure class: provider missing field → transformer invents 0
@@ -203,7 +203,7 @@ async function main() {
     );
   }
 
-  // 5–6. ESPN DRtg / NET unavailable (never 0 / never ORtg−110)
+  // 5-6. ESPN DRtg / NET unavailable (never 0 / never ORtg−110)
   {
     const row = espnBoardRow();
     assert.equal(row.defensiveRating, undefined);
@@ -218,7 +218,7 @@ async function main() {
     assert.equal(noTeam.usagePct, undefined);
   }
 
-  // 7–8. DARKO / LEBRON season-truth — reuse existing index contracts via source + fixture API
+  // 7-8. DARKO / LEBRON season-truth - reuse existing index contracts via source + fixture API
   {
     const impactIndexSrc = readFileSync(
       join(
@@ -322,7 +322,7 @@ async function main() {
     assert.ok(providerSrc.includes('VERCEL ? "nba"'));
   }
 
-  // 10. ASK unavailable metric — coverage gaps keep DRtg/NET unsupported
+  // 10. ASK unavailable metric - coverage gaps keep DRtg/NET unsupported
   {
     const gaps = getAskCoverageGaps();
     const drtg = gaps.find((g) => g.label.includes("DRtg"));
@@ -360,7 +360,7 @@ async function main() {
     assert.equal(mixed[mixed.length - 1]!.defensiveRating, undefined);
   }
 
-  // 12. Historical season — no modern metric leakage (DARKO season gate in source)
+  // 12. Historical season - no modern metric leakage (DARKO season gate in source)
   {
     const playersSrc = readFileSync(
       join(process.cwd(), "src/data/queries/players.ts"),

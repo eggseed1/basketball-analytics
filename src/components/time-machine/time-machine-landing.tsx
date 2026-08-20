@@ -29,7 +29,7 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
         <h1 className="mt-3 text-[32px] font-bold tracking-tight sm:text-[40px]">
           Enter the NBA Time Machine
         </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
+        <p className="mt-3 text-[16px] leading-relaxed text-muted-foreground">
           Choose a season. The data, team identities, and site atmosphere travel
           with you.
         </p>
@@ -58,13 +58,13 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
         <button
           type="submit"
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-3 text-[15px] font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
+          className="rounded-md bg-foreground px-4 py-3 text-[16px] font-semibold text-background transition hover:opacity-90 disabled:opacity-60"
         >
           {pending ? "Entering…" : "Enter"}
         </button>
       </form>
 
-      <p className="mx-auto max-w-md text-center text-[13px] text-muted-foreground">
+      <p className="mx-auto max-w-md text-center text-[14px] text-muted-foreground">
         Prefer franchise scrapbooks?{" "}
         <Link href="/franchises" className="underline underline-offset-4">
           Franchise History

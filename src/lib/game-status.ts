@@ -1,5 +1,5 @@
 /**
- * Canonical NBA game status — provider-normalized, never inferred from 0–0.
+ * Canonical NBA game status - provider-normalized, never inferred from 0-0.
  *
  * Mapping docs: docs/game-status-and-watch.md
  */
@@ -17,14 +17,14 @@ export type GameStatusKind =
   | "delayed"
   | "unknown";
 
-/** Structured broadcast row from provider — service/discovery only. */
+/** Structured broadcast row from provider - service/discovery only. */
 export type GameBroadcastOption = {
   id: string;
   /** Display name, e.g. ESPN, NBC, YES Network. */
   label: string;
   market: "national" | "local" | "unknown";
   medium: "tv" | "streaming" | "radio" | "unknown";
-  /** Official watch URL when provider supplies one — never invent. */
+  /** Official watch URL when provider supplies one - never invent. */
   watchUrl?: string | null;
   source: "espn";
 };
@@ -47,7 +47,7 @@ export type EspnLiveClockInput = {
 
 /**
  * Normalize ESPN competition/event status.type → canonical GameStatusKind.
- * Never maps scheduled 0–0 to final. Unknown provider names → unknown.
+ * Never maps scheduled 0-0 to final. Unknown provider names → unknown.
  */
 export function normalizeEspnStatusType(
   statusType: EspnStatusTypeInput | null | undefined,
@@ -109,7 +109,7 @@ export function normalizeEspnStatusType(
     return "in_progress";
   }
   if (name.includes("STATUS_FINAL") || name === "STATUS_FULL_TIME") {
-    // Never treat 0–0 as a completed final — ESPN occasionally marks empty
+    // Never treat 0-0 as a completed final - ESPN occasionally marks empty
     // events completed. Prefer unknown over inventing FINAL / TIED.
     if (bothZero) return "unknown";
     return "final";
@@ -122,7 +122,7 @@ export function normalizeEspnStatusType(
     return "scheduled";
   }
   if (state === "post" || statusType.completed) {
-    // Critical regression guard: completed/post + 0–0 is NOT automatically final.
+    // Critical regression guard: completed/post + 0-0 is NOT automatically final.
     if (bothZero) {
       if (
         description.includes("postpon") ||
@@ -136,7 +136,7 @@ export function normalizeEspnStatusType(
             ? "suspended"
             : "postponed";
       }
-      // Prefer scheduled over inventing FINAL 0–0.
+      // Prefer scheduled over inventing FINAL 0-0.
       return "scheduled";
     }
     return "final";

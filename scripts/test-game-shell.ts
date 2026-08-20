@@ -299,7 +299,7 @@ async function liveRegression() {
   const shell = await getGameShell("15908541");
   if (!shell) {
     console.log(
-      "  (skip live shell — 15908541 unavailable in this environment)"
+      "  (skip live shell - 15908541 unavailable in this environment)"
     );
     return;
   }
@@ -338,7 +338,7 @@ async function liveRegression() {
   const missingAnalysis = await getGameAnalysis("not-a-real-game-id");
   assert.equal(missingAnalysis, null);
 
-  console.log("OK — game-shell");
+  console.log("OK - game-shell");
 }
 
 liveRegression().catch((err) => {

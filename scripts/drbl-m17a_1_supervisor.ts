@@ -185,7 +185,7 @@ function acquisitionTerminal(status: Record<string, unknown> | null): boolean {
     if (lines.length >= 28) {
       const allTerminal = lines.every((ln) => {
         const parts = ln.split(",");
-        // terminal column near end — also accept status COMPLETE
+        // terminal column near end - also accept status COMPLETE
         return parts.includes("YES") || parts.includes("COMPLETE") || parts.includes("PARTIAL_FAILURES");
       });
       // Safer: check terminal column index from header
@@ -220,7 +220,7 @@ function ensureWatcher() {
   const procs = watcherProcs();
   const roots = watcherRoots(procs);
   if (roots.length > 1) {
-    // Leave the oldest; kill newer cmd roots' trees carefully — only watcher cmds
+    // Leave the oldest; kill newer cmd roots' trees carefully - only watcher cmds
     const sorted = roots.sort((a, b) => a.pid - b.pid);
     for (const extra of sorted.slice(1)) {
       try {
@@ -252,7 +252,7 @@ function ensureImporter() {
         {
           at: new Date().toISOString(),
           roots: roots.map((r) => ({ pid: r.pid, cmd: r.cmd })),
-          note: "Multiple importer roots detected — supervisor will NOT start another; human may need to resolve",
+          note: "Multiple importer roots detected - supervisor will NOT start another; human may need to resolve",
         },
         null,
         2
@@ -271,7 +271,7 @@ function ensureImporter() {
     return { running: true, duplicate: false, leafPid: leaf };
   }
 
-  // No importer — resume if not terminal
+  // No importer - resume if not terminal
   clearOrphanLock();
   const lockState = observeImportLock();
   if (lockState.state === "ORPHANED" || lockState.state === "STALE") {
@@ -350,7 +350,7 @@ async function main() {
           {
             at: new Date().toISOString(),
             freeGb: free,
-            note: "Insufficient disk — preserving raw archive; do not resume until space freed",
+            note: "Insufficient disk - preserving raw archive; do not resume until space freed",
           },
           null,
           2
@@ -372,7 +372,7 @@ async function main() {
         JSON.stringify({ at: new Date().toISOString(), roots }, null, 2) + "\n"
       );
       log("blocker_duplicate");
-      // Do not kill arbitrarily — wait for human. Keep watcher.
+      // Do not kill arbitrarily - wait for human. Keep watcher.
       await new Promise((r) => setTimeout(r, POLL_MS));
       continue;
     }
@@ -428,7 +428,7 @@ async function main() {
       }
     }
 
-    // If importer idle but progress claims complete seasons only for prefix — wait for watcher
+    // If importer idle but progress claims complete seasons only for prefix - wait for watcher
     if (roots.length === 0 && status && Number(status.remainingGames) === 0) {
       const sealed = await sealIfNeeded();
       if (sealed) {

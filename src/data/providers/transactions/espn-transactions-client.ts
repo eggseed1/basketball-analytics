@@ -17,7 +17,7 @@ export const ESPN_TRANSACTIONS_EARLIEST_YEAR = 2000;
 const BASE =
   "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/transactions";
 
-/** Drop logo payloads — they dominate disk and are unused for lineage. */
+/** Drop logo payloads - they dominate disk and are unused for lineage. */
 export function sanitizeEspnTransactionRow(
   row: EspnTransactionRow
 ): EspnTransactionRow {
@@ -55,7 +55,7 @@ export async function fetchEspnTransactionsPage(
 
 /**
  * Pull every page for one ESPN calendar-year bucket.
- * ESPN's `season` query param for this endpoint is a calendar year (Jan–Dec),
+ * ESPN's `season` query param for this endpoint is a calendar year (Jan-Dec),
  * not an NBA season label.
  */
 export async function fetchEspnTransactionsCalendarYear(

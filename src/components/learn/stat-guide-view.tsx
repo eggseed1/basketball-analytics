@@ -12,13 +12,13 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           {guide.category}
         </p>
         <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
           {guide.name}
         </h1>
-        <p className="max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+        <p className="max-w-xl text-[16px] leading-relaxed text-muted-foreground">
           {guide.blurb}
         </p>
         <div
@@ -43,14 +43,14 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
 
       {depth === "deep" ? (
         <section className="sports-card flex flex-col gap-3 p-4">
-          <h2 className="text-[15px] font-bold">Definition</h2>
+          <h2 className="text-[16px] font-bold">Definition</h2>
           <p className="text-[14px] leading-relaxed text-muted-foreground">
             {guide.deep.definition}
           </p>
-          <div className="rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[13px] leading-snug">
+          <div className="rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[14px] leading-snug">
             {guide.deep.formula}
           </div>
-          <h3 className="text-[13px] font-semibold">Calculation</h3>
+          <h3 className="text-[14px] font-semibold">Calculation</h3>
           <ol className="list-decimal space-y-2 pl-5 text-[14px] leading-relaxed text-muted-foreground">
             {guide.deep.calculation.map((step) => (
               <li key={step}>{step}</li>
@@ -69,8 +69,8 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
 
       {depth === "deep" && guide.deep.sources?.length ? (
         <section className="pb-4">
-          <h2 className="mb-2 text-[15px] font-bold">Sources & lineage</h2>
-          <ul className="space-y-1 text-[13px] text-muted-foreground">
+          <h2 className="mb-2 text-[16px] font-bold">Sources & lineage</h2>
+          <ul className="space-y-1 text-[14px] text-muted-foreground">
             {guide.deep.sources.map((s) => (
               <li key={s}>· {s}</li>
             ))}
@@ -95,7 +95,7 @@ function DepthButton({
       type="button"
       onClick={onClick}
       className={cn(
-        "rounded-full px-3.5 py-1.5 text-[13px] font-semibold transition-colors",
+        "rounded-full px-3.5 py-1.5 text-[14px] font-semibold transition-colors",
         active
           ? "bg-foreground text-background"
           : "text-muted-foreground hover:text-foreground"
@@ -109,7 +109,7 @@ function DepthButton({
 function Section({ title, items }: { title: string; items: string[] }) {
   return (
     <section className="sports-card p-4">
-      <h2 className="text-[15px] font-bold">{title}</h2>
+      <h2 className="text-[16px] font-bold">{title}</h2>
       <ul className="mt-2 space-y-2 text-[14px] leading-relaxed text-muted-foreground">
         {items.map((item) => (
           <li key={item} className="flex gap-2">

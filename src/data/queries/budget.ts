@@ -1,7 +1,7 @@
 /**
  * Soft time budget for secondary / historical provider work.
  * Resolves fallback when the promise exceeds `ms` (does not cancel the
- * underlying work — prefer AbortSignal at the fetch boundary when available).
+ * underlying work - prefer AbortSignal at the fetch boundary when available).
  */
 
 export async function withBudget<T>(

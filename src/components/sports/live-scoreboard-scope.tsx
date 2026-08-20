@@ -6,7 +6,7 @@ import { useLiveScoreboardRefresh } from "@/components/sports/use-live-scoreboar
 import type { GameSummary } from "@/data/types";
 
 /**
- * Single scoreboard refresh controller — render-prop so list/week/home share one timer.
+ * Single scoreboard refresh controller - render-prop so list/week/home share one timer.
  */
 export function LiveScoreboardScope({
   games: initialGames,

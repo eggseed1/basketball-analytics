@@ -61,7 +61,7 @@ async function main() {
     "/players/4065648?season=2023-24"
   );
 
-  // Season resolver — newest-first list preferred; no forever-hardcoded season.
+  // Season resolver - newest-first list preferred; no forever-hardcoded season.
   assert.equal(
     resolvePlayerDefaultSeason([
       { season: "2024-25", gamesPlayed: 70 },
@@ -127,7 +127,7 @@ async function main() {
   assertBlockedCategory(ledger, "draft_rights");
   assertBlockedCategory(ledger, "other");
 
-  // Every player asset must have a canonical ESPN id + href — never free-text-only
+  // Every player asset must have a canonical ESPN id + href - never free-text-only
   // and never local-sample slugs if the ESPN board succeeded.
   if (ledger.playerBoardStatus === "ok") {
     assert.ok(

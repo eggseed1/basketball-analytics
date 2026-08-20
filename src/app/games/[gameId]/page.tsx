@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { GameBoxScoreTables } from "@/components/games/game-box-score-tables";
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
+import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
@@ -11,6 +12,10 @@ import { parseSeasonEvidenceArrival } from "@/analytics/game-season-context";
 import { getGameAnalysis } from "@/data/queries";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import type { PlayerGame } from "@/data/types";
+import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
+import {
+  gameSideBrandKey,
+} from "@/lib/game-team-identity";
 import {
   parseThemeMode,
   resolveActiveEraTheme,
@@ -76,10 +81,10 @@ async function GameLabDeepBody({
           <p className="text-[14px] font-semibold tracking-tight">
             Box score unavailable
           </p>
-          <p className="mt-1 text-[13px] text-muted-foreground">
+          <p className="mt-1 text-[14px] text-muted-foreground">
             Detailed player and team box-score data is not currently available
             for this game. Scoreboard and season context above still reflect
-            the known result — player lines are not fabricated.
+            the known result - player lines are not fabricated.
           </p>
         </div>
       ) : (
@@ -127,8 +132,18 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
       }`
     : "/explore/games";
 
+  const matchup = buildGameMatchupTheme(
+    gameSideBrandKey(shell.game, "away"),
+    gameSideBrandKey(shell.game, "home")
+  );
+
   const body = (
-    <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
+    <>
+      <PageAtmosphere
+        colorA={matchup.awayWash}
+        colorB={matchup.homeWash}
+      />
+    <main className="site-shell relative z-[1] flex flex-1 flex-col gap-6 py-6 sm:py-8">
       <p>
         <TransitionLink
           href={backHref}
@@ -152,6 +167,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
         <GameLabDeepBody gameId={gameId} arrival={arrival} />
       </Suspense>
     </main>
+    </>
   );
 
   if (!eraTheme) return body;

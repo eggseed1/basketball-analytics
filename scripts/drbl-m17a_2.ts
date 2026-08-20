@@ -1,5 +1,5 @@
 /**
- * M17a.2 — Multi-era normalization audit + support freeze + optional frozen-v1 backfill.
+ * M17a.2 - Multi-era normalization audit + support freeze + optional frozen-v1 backfill.
  * Does NOT retune DRBL/k/P1/R1/EPV. Does NOT restart raw import.
  *
  *   npm run drbl:m17a_2
@@ -206,7 +206,7 @@ async function phase0_freeze(seal: Record<string, unknown>) {
     K_REFIT: "NO",
     M17B_AUTHORIZED: "NO",
     M18_AUTHORIZED: "NO",
-    note: "M17a.2 freeze — raw archive immutable; no model retune",
+    note: "M17a.2 freeze - raw archive immutable; no model retune",
     fingerprintSnapshot: fingerprint,
   };
   writeJson("00_freeze.json", freeze);
@@ -439,7 +439,7 @@ async function phase6_7_normalizedManifest(vals: SeasonVal[]) {
   }
   writeCsv("06_normalized_dataset_manifest.csv", rows);
 
-  // Determinism: structural — same raw + same code path; mark PASS if normalized dirs stable
+  // Determinism: structural - same raw + same code path; mark PASS if normalized dirs stable
   const det = {
     method:
       "Idempotent processGame(force:false) from sealed raw; representative seasons already validated twice via season_validation + seal scan",
@@ -675,7 +675,7 @@ function phase11_21_quality(vals: SeasonVal[]) {
       "2. RAW_LINEUP_COMPLETENESS_RATE >= 0.95 (current-production neighborhood)",
       "3. Explicit qualityFlags disclosure",
       "",
-      "Historical seasons in this archive have raw lineup completeness typically **0.47–0.73**, far below Tier A/B lineup gates.",
+      "Historical seasons in this archive have raw lineup completeness typically **0.47-0.73**, far below Tier A/B lineup gates.",
       "Therefore they are classified **Tier C / D** for frozen-v1 product publication until lineup reconstruction improves **without inventing players**.",
       "",
       "This is DATA QUALITY policy only. Model computation unchanged.",
@@ -917,10 +917,10 @@ function assignTiers(vals: SeasonVal[]) {
 }
 
 function phaseControlsAndFirewall() {
-  // Compare production artifacts exist — exact mismatch requires deep compare;
+  // Compare production artifacts exist - exact mismatch requires deep compare;
   // record structural PASS if freeze hashes unchanged and no code retune.
   const control = {
-    method: "Structural control — freeze hashes verified; no compute mutation of current artifacts in M17a.2 path",
+    method: "Structural control - freeze hashes verified; no compute mutation of current artifacts in M17a.2 path",
     "2024-25": {
       DRBL_mismatches: 0,
       R1_mismatches: 0,
@@ -1130,15 +1130,15 @@ function phaseSeal(
   writeMd(
     "42_full_audit.md",
     [
-      "# M17a.2 full audit — STOP FOR AUDIT",
+      "# M17a.2 full audit - STOP FOR AUDIT",
       "",
       `M17A_2_RESULT = PARTIAL_HISTORICAL_BACKFILL_COMPLETE`,
       "",
       "## Verdict",
       "",
       "Raw archive reproduces (33,087 COMPLETE). Schema/vocabulary/scoreboard/lineup audits complete.",
-      "Historical seasons fail Tier A/B lineup gates (raw 5v5 typically 47–73%).",
-      "Frozen-v1 historical DRBL/R1 **not published** — would invent estimand coverage the data cannot support.",
+      "Historical seasons fail Tier A/B lineup gates (raw 5v5 typically 47-73%).",
+      "Frozen-v1 historical DRBL/R1 **not published** - would invent estimand coverage the data cannot support.",
       "Current production seasons unchanged. M17b/M18 not authorized.",
       "",
       `M17A_2_HISTORICAL_CORPUS_SEAL_HASH = ${corpusHash}`,
@@ -1156,7 +1156,7 @@ function phaseSeal(
 
 async function main() {
   if (!existsSync(SEAL_PATH) || !existsSync(FINGERPRINT_PATH)) {
-    console.error("STOP RAW_IMPORT_PROVENANCE_FAILURE — missing M17a.1 seal");
+    console.error("STOP RAW_IMPORT_PROVENANCE_FAILURE - missing M17a.1 seal");
     process.exit(2);
   }
   const seal = JSON.parse(readFileSync(SEAL_PATH, "utf8")) as Record<
@@ -1164,7 +1164,7 @@ async function main() {
     unknown
   >;
   if (!seal.M17A_1_RAW_IMPORT_SEAL_HASH) {
-    console.error("STOP — M17A_1_RAW_IMPORT_SEAL_HASH missing");
+    console.error("STOP - M17A_1_RAW_IMPORT_SEAL_HASH missing");
     process.exit(2);
   }
 
@@ -1181,23 +1181,23 @@ async function main() {
   const vals = loadSeasonValidations();
   console.log(`Loaded ${vals.length} season validations`);
 
-  console.log("Phases 2–5 schema/vocab/normalization decision…");
+  console.log("Phases 2-5 schema/vocab/normalization decision…");
   const vocabMeta = phase2_3_schemaAndVocabulary(vals);
   phase4_5_normalizationDecision();
 
-  console.log("Phases 6–7 normalized manifest…");
+  console.log("Phases 6-7 normalized manifest…");
   await phase6_7_normalizedManifest(vals);
 
-  console.log("Phases 8–10 identity…");
+  console.log("Phases 8-10 identity…");
   await phase8_10_identity();
 
-  console.log("Phases 11–21 quality…");
+  console.log("Phases 11-21 quality…");
   phase11_21_quality(vals);
 
-  console.log("Phases 22–28 features…");
+  console.log("Phases 22-28 features…");
   phase22_28_features(vals);
 
-  console.log("Phases 29–30 support tiers (pre-name)…");
+  console.log("Phases 29-30 support tiers (pre-name)…");
   const tiersMeta = assignTiers(vals);
 
   console.log("Controls + firewall…");

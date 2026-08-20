@@ -69,7 +69,7 @@ export default async function LearnStatPage({
       <div className="site-prose flex w-full flex-col gap-8 lg:mx-0 lg:max-w-4xl">
         <AppLink
           href="/learn"
-          className="text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
+          className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
           All concepts
         </AppLink>
@@ -84,13 +84,13 @@ export default async function LearnStatPage({
           <section className="flex flex-col gap-4">
             {relatedFromConcept.length ? (
               <div>
-                <h2 className="mb-2 text-[15px] font-bold">Related concepts</h2>
+                <h2 className="mb-2 text-[16px] font-bold">Related concepts</h2>
                 <div className="flex flex-wrap gap-2">
                   {relatedFromConcept.map((r) => (
                     <AppLink
                       key={r.href}
                       href={r.href}
-                      className="rounded-full bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                      className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold"
                     >
                       {r.label}
                     </AppLink>
@@ -100,7 +100,7 @@ export default async function LearnStatPage({
             ) : null}
             {seeInAction.length ? (
               <div>
-                <h2 className="mb-2 text-[15px] font-bold">See it in DRBL</h2>
+                <h2 className="mb-2 text-[16px] font-bold">See it in DRBL</h2>
                 <ul className="flex flex-col gap-1.5">
                   {seeInAction.map((a) => (
                     <li key={a.href}>
@@ -119,7 +119,7 @@ export default async function LearnStatPage({
         ) : null}
 
         <section className="mb-8 flex flex-col gap-2">
-          <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <h2 className="text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             More in Learn
           </h2>
           <div className="flex flex-wrap gap-2">
@@ -127,7 +127,7 @@ export default async function LearnStatPage({
               <AppLink
                 key={o.slug}
                 href={`/learn/${o.slug}`}
-                className="rounded-full bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 {o.label}
               </AppLink>

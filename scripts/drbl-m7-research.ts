@@ -1,5 +1,5 @@
 /**
- * M7 research diagnostics — isolated; does NOT modify M6 or DRBL fusion.
+ * M7 research diagnostics - isolated; does NOT modify M6 or DRBL fusion.
  *
  * Quantifies whether ÊPV_continue ≈ M5(S_t) is nearly constant at shot moments,
  * and sketches a non-shot mid-possession remaining-points target for comparison.
@@ -82,7 +82,7 @@ function isFg(e: DrblEvent): boolean {
 /**
  * Non-shot mid-possession states: events on a possession that are NOT the
  * first FGA of that possession. Target = remaining possession points from
- * this event forward (includes later FGA points — used only as TARGET for
+ * this event forward (includes later FGA points - used only as TARGET for
  * continue-labeled moments where the immediate action is not a shot).
  */
 function collectContinueCandidateRows(
@@ -225,7 +225,7 @@ async function main() {
   const sdv = holdout.map((r) => r.sdv);
   const making = holdout.map((r) => r.shotMaking);
 
-  // Possession age at shot (from row we don't have start clock — approx via
+  // Possession age at shot (from row we don't have start clock - approx via
   // period clock alone is insufficient). Use continue-candidate ages instead.
 
   const ageBuckets = [

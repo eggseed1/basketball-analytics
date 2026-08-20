@@ -93,7 +93,7 @@ function main() {
       ...peakTopic.topic.caveats,
     ].join(" ");
     assert.match(text, /overlap|⊂|nest/i);
-    assert.match(text, /Longevity-only|70–89|70-89/i);
+    assert.match(text, /Longevity-only|70-89|70-89/i);
     assert.match(text, /contiguous/i);
     assert.match(text, /percentile/i);
     assert.match(text, /durability|years played/i);

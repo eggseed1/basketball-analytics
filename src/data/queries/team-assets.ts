@@ -5,7 +5,7 @@
  * Draft capital / TPEs / draft rights: blocked until a structured ledger exists.
  * Never parses ESPN free-text transactions into assets.
  *
- * Pre-modern seasons never hit ESPN athlete boards — fail fast with diagnosed
+ * Pre-modern seasons never hit ESPN athlete boards - fail fast with diagnosed
  * unsupported state (same floor as team roster / player-board health).
  */
 
@@ -132,7 +132,7 @@ function emptyStructuredCategories(): TeamAssetCategoryCoverage[] {
 
 /**
  * Build the team asset ledger for a season snapshot.
- * Roster players require canonical board playerIds — never free-text names.
+ * Roster players require canonical board playerIds - never free-text names.
  */
 export async function getTeamAssets(options: {
   teamId: string;
@@ -189,7 +189,7 @@ export async function getTeamAssets(options: {
   }
 
   // Pre-modern: do not touch ESPN athlete boards (or modern roster substitution).
-  // Skip genealogy coverage scan — irrelevant without a supported player board.
+  // Skip genealogy coverage scan - irrelevant without a supported player board.
   if (!isTeamRosterBoardSupported(season)) {
     const warning = `Historical player assets unavailable for ${season}.`;
     notes.push(warning);
@@ -287,7 +287,7 @@ export async function getTeamAssets(options: {
 }
 
 /**
- * TPE salary-fit placeholder — always unavailable until structured TPE + salary data exist.
+ * TPE salary-fit placeholder - always unavailable until structured TPE + salary data exist.
  * Does not invent fits from free text.
  */
 export async function getTradeExceptionFits(options: {
@@ -297,6 +297,6 @@ export async function getTradeExceptionFits(options: {
   return EMPTY_TRADE_EXCEPTION_FIT(
     options.exceptionId,
     options.teamId,
-    "Structured trade-exception and salary data are not available. Fit lists stay empty — DRBL will not invent them."
+    "Structured trade-exception and salary data are not available. Fit lists stay empty - DRBL will not invent them."
   );
 }

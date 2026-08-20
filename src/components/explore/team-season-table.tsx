@@ -1,9 +1,9 @@
 "use client";
 
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import {
   Table,
   TableBody,
@@ -146,7 +146,7 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
               type="button"
               onClick={() => setConf(c)}
               className={cn(
-                "rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
+                "rounded-full px-3 py-1.5 text-[14px] font-semibold transition-colors",
                 conf === c
                   ? "bg-foreground text-background"
                   : "bg-secondary text-foreground hover:bg-foreground/10"
@@ -202,15 +202,18 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                           key={col.key}
                           className="sticky left-0 z-10 bg-card"
                         >
-                          <TransitionLink
-                            href={`/teams/${row.teamId}?season=${row.season}`}
-                            className="flex items-center gap-2 font-semibold hover:underline"
+                          <TeamIdentity
+                            teamKey={row.teamId}
+                            label={row.abbreviation}
+                            season={row.season}
+                            className="min-w-0"
+                            nameClassName="flex items-center gap-2"
                           >
                             <TeamLogo teamKey={row.abbreviation} size="xs" />
-                            <span className="whitespace-nowrap">
+                            <span className="whitespace-nowrap font-semibold underline decoration-foreground/40 underline-offset-2">
                               {row.abbreviation}
                             </span>
-                          </TransitionLink>
+                          </TeamIdentity>
                         </TableCell>
                       );
                     }

@@ -11,7 +11,7 @@ import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /**
- * Compact Career Resume — Peak / Prime / Longevity with progressive disclosure.
+ * Compact Career Resume - Peak / Prime / Longevity with progressive disclosure.
  */
 export function PlayerCareerResume({
   resume,
@@ -23,7 +23,7 @@ export function PlayerCareerResume({
   resume: CareerResume;
   /** Current / viewing season team. */
   teamKey?: string | null;
-  /** Earliest career team — pairs with teamKey for the wash. */
+  /** Earliest career team - pairs with teamKey for the wash. */
   careerStartTeamKey?: string | null;
   /** In-page anchor for the evolution panel. */
   evolutionAnchorId?: string;
@@ -43,7 +43,7 @@ export function PlayerCareerResume({
     >
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
+          <h2 className="text-[20px] font-bold tracking-tight">
             <MetricHelp
               conceptId="career_resume"
               labelClassName="font-bold tracking-tight"
@@ -51,13 +51,13 @@ export function PlayerCareerResume({
               Career resume
             </MetricHelp>
           </h2>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             <MetricHelp conceptId="career_peak">Peak</MetricHelp>
             {" · "}
             <MetricHelp conceptId="career_prime">Prime</MetricHelp>
             {" · "}
             <MetricHelp conceptId="career_longevity">Longevity</MetricHelp>
-            {" — "}
+            {" - "}
             <MetricHelp conceptId="career_self_comparison">
               relative to this player&apos;s own peak
             </MetricHelp>
@@ -106,7 +106,7 @@ export function PlayerCareerResume({
       ) : null}
 
       {resume.limitedReason && !peak ? (
-        <p className="text-[13px] text-muted-foreground">{resume.limitedReason}</p>
+        <p className="text-[14px] text-muted-foreground">{resume.limitedReason}</p>
       ) : null}
 
       {peak ? (
@@ -144,14 +144,14 @@ export function PlayerCareerResume({
                 ? resume.prime.contiguousFrom && resume.prime.contiguousTo
                   ? `${resume.prime.contiguousFrom} → ${resume.prime.contiguousTo}`
                   : `${resume.prime.seasonCount} season${resume.prime.seasonCount === 1 ? "" : "s"}`
-                : "—"
+                : "-"
             }
             secondary={
               resume.prime
                 ? `${resume.prime.contiguousCount} contiguous · ${resume.prime.seasonCount} ≥90% of peak`
                 : resume.limitedReason
                   ? "Need 2+ seasons"
-                  : "—"
+                  : "-"
             }
           />
           <ResumeStat
@@ -166,14 +166,14 @@ export function PlayerCareerResume({
             primary={
               resume.longevity
                 ? `${resume.longevity.seasonCount} season${resume.longevity.seasonCount === 1 ? "" : "s"}`
-                : "—"
+                : "-"
             }
             secondary={
               resume.longevity
                 ? `≥70% of peak CPI`
                 : resume.limitedReason
                   ? "Need 2+ seasons"
-                  : "—"
+                  : "-"
             }
           />
         </div>
@@ -189,7 +189,7 @@ export function PlayerCareerResume({
 
       {resume.trajectory.phases.length ? (
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             <MetricHelp
               conceptId="career_arc"
               labelClassName="font-bold uppercase tracking-wide"
@@ -197,7 +197,7 @@ export function PlayerCareerResume({
               Career arc
             </MetricHelp>
           </p>
-          <p className="mt-1 text-[13px] leading-relaxed text-foreground">
+          <p className="mt-1 text-[14px] leading-relaxed text-foreground">
             {resume.trajectory.phases
               .filter((p) => p.id !== "current")
               .map((p) => p.label)
@@ -207,7 +207,7 @@ export function PlayerCareerResume({
               : null}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            {resume.trajectory.summary} Trajectory phases describe arc shape —
+            {resume.trajectory.summary} Trajectory phases describe arc shape -
             not separate scoring thresholds.{" "}
             <MetricHelp conceptId="career_development">Development</MetricHelp>{" "}
             is descriptive in Career Resume v1.
@@ -217,14 +217,14 @@ export function PlayerCareerResume({
 
       {resume.transitions.length ? (
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             Biggest career changes
           </p>
           <ul className="mt-2 flex flex-col gap-1.5">
             {resume.transitions.map((t) => (
               <li
                 key={`${t.fromSeason}-${t.toSeason}-${t.label}`}
-                className="flex flex-wrap items-baseline justify-between gap-2 text-[13px]"
+                className="flex flex-wrap items-baseline justify-between gap-2 text-[14px]"
               >
                 <span>
                   <Link
@@ -247,7 +247,7 @@ export function PlayerCareerResume({
         <button
           type="button"
           onClick={() => setShowWhy((v) => !v)}
-          className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+          className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
           aria-expanded={showWhy}
         >
           {showWhy ? "Hide qualifying seasons" : "Show qualifying seasons"}
@@ -366,12 +366,12 @@ export function PlayerCareerResume({
                       {formatOfPeak(s.ofPeak)}
                     </td>
                     <td className="px-2 py-2 text-right tabular-nums">
-                      {formatTsContext(s.breakdown.ts) ?? "—"}
+                      {formatTsContext(s.breakdown.ts) ?? "-"}
                     </td>
                     <td className="px-3 py-2">
                       <span
                         className={cn(
-                          "text-[11px] font-semibold",
+                          "text-[12px] font-semibold",
                           s.season === peak?.season && "text-foreground",
                           s.inPrimeBand &&
                             s.season !== peak?.season &&
@@ -386,10 +386,10 @@ export function PlayerCareerResume({
                 ))}
             </tbody>
           </table>
-          <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
+          <p className="border-t border-border px-3 py-2 text-[12px] text-muted-foreground">
             Bands overlap (Peak ⊂ Prime ⊂ Longevity).{" "}
             <MetricHelp conceptId="longevity_only">Longevity-only</MetricHelp>{" "}
-            means 70–89% of peak.
+            means 70-89% of peak.
           </p>
         </div>
       ) : null}
@@ -426,13 +426,13 @@ function ResumeStat({
 }) {
   return (
     <div className="rounded-md bg-secondary/50 px-3 py-3">
-      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
       <p className="mt-1 text-[16px] font-bold tracking-tight">{primary}</p>
       <p className="text-[12px] text-muted-foreground">{secondary}</p>
       {tertiary ? (
-        <p className="text-[11px] text-muted-foreground">{tertiary}</p>
+        <p className="text-[12px] text-muted-foreground">{tertiary}</p>
       ) : null}
       {href && hrefLabel ? (
         <Link

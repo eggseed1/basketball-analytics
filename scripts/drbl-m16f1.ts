@@ -1,5 +1,5 @@
 /**
- * M16f1 — player-sensitive counterfactual EPV engine (no A/B bakeoff).
+ * M16f1 - player-sensitive counterfactual EPV engine (no A/B bakeoff).
  *   npm run drbl:m16f1
  *
  * ENGINE_FIT / ENGINE_HOLDOUT chronological split inside frozen M16b TRAIN.
@@ -118,7 +118,7 @@ async function main() {
     R1_version: "buildReplacementPool R1 k=8 equal weight",
     WAR_version: WAR_FORMULA_VERSION,
     WAR_exposureUnit: WAR_EXPOSURE_UNIT,
-    posteriorVersion: "eb-fused-v1 — untouched",
+    posteriorVersion: "eb-fused-v1 - untouched",
     epvEngineVersion: COUNTERFACTUAL_EPV_VERSION,
     FROZEN_VALIDATION_ACCESSED_FOR_EPV_SELECTION: false,
     RESERVED_TEST_ACCESSED: false,
@@ -650,7 +650,7 @@ No future shot result, future shooter, future pass/TO/rebound/foul, later posses
 
   await writeFile(
     path.join(OUT, "03_feature_contract.md"),
-    `# Feature contract — ${COUNTERFACTUAL_EPV_VERSION}
+    `# Feature contract - ${COUNTERFACTUAL_EPV_VERSION}
 
 ## Possession-start state (M5)
 period, clockSeconds, scoreDiff, offenseIsHome (via epvFeatureVector / stateBasis)
@@ -676,7 +676,7 @@ No post-outcome features.
 
   await writeFile(
     path.join(OUT, "08_epv_model_card.md"),
-    `# Model card — ${COUNTERFACTUAL_EPV_VERSION}
+    `# Model card - ${COUNTERFACTUAL_EPV_VERSION}
 
 - **Family:** regularized linear (ridge / SGD ridge)
 - **Lambda:** ${lambda} (chrono CV on ENGINE_FIT; grid ${JSON.stringify([0.1, 1, 3, 8, 20, 50, 100])})

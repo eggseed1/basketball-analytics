@@ -10,7 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Subtle freshness line for live games — does not change canonical status.
+ * Subtle freshness line for live games - does not change canonical status.
  */
 export function LiveFreshness({
   retrievedAt,
@@ -39,7 +39,7 @@ export function LiveFreshness({
       )}
       title={
         band === "stale"
-          ? "Provider feed has not updated recently — status still from last trusted snapshot"
+          ? "Provider feed has not updated recently - status still from last trusted snapshot"
           : undefined
       }
     >

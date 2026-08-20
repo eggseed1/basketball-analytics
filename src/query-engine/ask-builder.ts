@@ -1,5 +1,5 @@
 /**
- * Structured ASK builder — composes natural-language queries for the existing
+ * Structured ASK builder - composes natural-language queries for the existing
  * interpret → validate → execute pipeline. Does not create a second engine.
  */
 
@@ -363,7 +363,7 @@ export function validateAskBuilderState(
     state.teamAbbrB === state.teamAbbr &&
     !state.seasonB
   ) {
-    // same-team compare needs two seasons — checked below
+    // same-team compare needs two seasons - checked below
   }
   if (opt.needsSeason && !state.season.trim()) {
     errors.push("Choose a season.");

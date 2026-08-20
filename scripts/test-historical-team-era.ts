@@ -1,5 +1,5 @@
 /**
- * Historical team-era identity — Seattle ≠ Oklahoma City in the 1970s.
+ * Historical team-era identity - Seattle ≠ Oklahoma City in the 1970s.
  */
 import assert from "node:assert/strict";
 

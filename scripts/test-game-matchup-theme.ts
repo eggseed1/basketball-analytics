@@ -1,5 +1,5 @@
 /**
- * Matchup theme resolution — CHA/BOS identity, home/away order, fallbacks.
+ * Matchup theme resolution - CHA/BOS identity, home/away order, fallbacks.
  * Run: npx tsx scripts/test-game-matchup-theme.ts
  */
 import assert from "node:assert/strict";
@@ -11,6 +11,7 @@ import {
 } from "../src/lib/nba-brand";
 import {
   MATCHUP_THEME_NEUTRAL,
+  brandAtmosphereColors,
   brandWashColor,
   buildGameMatchupTheme,
   isValidCssHex,
@@ -110,4 +111,30 @@ const gswPhx = buildGameMatchupTheme("gsw", "phx");
 assert.equal(gswPhx.awayBrand?.abbr, "GSW");
 assert.equal(gswPhx.homeBrand?.abbr, "PHX");
 
-console.log("OK — game-matchup-theme");
+console.log("Page atmosphere uses chromatic team colors…");
+const bosAtm = brandAtmosphereColors(
+  TEAM_BRANDS.bos.primary,
+  TEAM_BRANDS.bos.secondary
+);
+assert.equal(bosAtm?.colorA, TEAM_BRANDS.bos.primary);
+assert.equal(bosAtm?.colorB, TEAM_BRANDS.bos.secondary);
+const porAtm = brandAtmosphereColors(
+  TEAM_BRANDS.por.primary,
+  TEAM_BRANDS.por.secondary
+);
+assert.equal(porAtm?.colorA, TEAM_BRANDS.por.primary);
+assert.equal(porAtm?.colorB, TEAM_BRANDS.por.primary); // skip black
+const lalAtm = brandAtmosphereColors(
+  TEAM_BRANDS.lal.primary,
+  TEAM_BRANDS.lal.secondary
+);
+assert.equal(lalAtm?.colorA, TEAM_BRANDS.lal.primary);
+assert.equal(lalAtm?.colorB, TEAM_BRANDS.lal.secondary);
+const sasAtm = brandAtmosphereColors(
+  TEAM_BRANDS.sas.primary,
+  TEAM_BRANDS.sas.secondary
+);
+assert.equal(sasAtm?.colorA, TEAM_BRANDS.sas.primary);
+assert.equal(sasAtm?.colorB, TEAM_BRANDS.sas.primary);
+
+console.log("OK - game-matchup-theme");

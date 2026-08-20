@@ -37,7 +37,7 @@ export function GmNav() {
             key={link.href}
             href={link.href}
             className={cn(
-              "shrink-0 rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
+              "shrink-0 rounded-full px-3 py-1.5 text-[14px] font-semibold transition-colors",
               active
                 ? "bg-foreground text-background"
                 : "bg-secondary text-muted-foreground hover:text-foreground"

@@ -2,7 +2,7 @@
  * Diagnostic BDL → canonical (ESPN) player identity for advanced-stats audit.
  *
  * NAME MATCH ≠ IDENTITY MATCH.
- * OpenAPI NBAPlayer has no ESPN id / NBA person id — only BDL numeric id.
+ * OpenAPI NBAPlayer has no ESPN id / NBA person id - only BDL numeric id.
  */
 
 import { readFile } from "node:fs/promises";
@@ -126,7 +126,7 @@ export function resolveBdlPlayerIdentity(
 }
 
 /**
- * Name lookup is diagnostic only — returns ambiguous when multiple share a name.
+ * Name lookup is diagnostic only - returns ambiguous when multiple share a name.
  * Never silently picks a canonical id.
  */
 export function resolveBdlIdentityByName(
@@ -150,7 +150,7 @@ export function resolveBdlIdentityByName(
       playerName,
       candidates,
       reason:
-        "Multiple fixture rows share this display name — refusing silent resolution.",
+        "Multiple fixture rows share this display name - refusing silent resolution.",
     };
   }
   const only = candidates[0]!;
@@ -181,7 +181,7 @@ export function summarizeIdentityCapability(fixture: BdlIdentityFixtureFile): {
   return {
     deterministicExternalIdsOnBdlPlayerPayload: ["bdl.id (numeric)"],
     limitation:
-      "BDL OpenAPI NBAPlayer has no espn_id / nba_person_id / external reference — only BDL id + bio fields. Production ESPN joins require an explicit mapping layer (fixture/alias), not payload fields.",
+      "BDL OpenAPI NBAPlayer has no espn_id / nba_person_id / external reference - only BDL id + bio fields. Production ESPN joins require an explicit mapping layer (fixture/alias), not payload fields.",
     fixtureResolvedCount: fixture.mappings.filter((m) => m.canonicalPlayerId)
       .length,
     fixtureUnresolvedCount: fixture.mappings.filter((m) => !m.canonicalPlayerId)

@@ -35,7 +35,7 @@ export type AskExample = {
  * Prefer players/teams the interpreter already recognizes.
  */
 export const ASK_EXAMPLE_POOL: readonly AskExample[] = [
-  // Player season stats — diverse players / eras / metrics
+  // Player season stats - diverse players / eras / metrics
   {
     id: "ps-jokic-drbl-2425",
     prompt: "What was Jokic's DRBL/100 in 2024-25?",
@@ -139,7 +139,7 @@ export const ASK_EXAMPLE_POOL: readonly AskExample[] = [
     metric: "mpg",
   },
 
-  // Team season stats — franchise diversity
+  // Team season stats - franchise diversity
   {
     id: "ts-den-diff-2324",
     prompt: "What was Denver's point differential in 2023-24?",
@@ -584,7 +584,7 @@ export function displayClassesForSeed(seed: number): AskExampleClass[] {
   ];
 }
 
-/** FNV-1a 32-bit — deterministic, no Math.random. */
+/** FNV-1a 32-bit - deterministic, no Math.random. */
 export function hashSeed(input: string): number {
   let h = 2166136261;
   for (let i = 0; i < input.length; i++) {

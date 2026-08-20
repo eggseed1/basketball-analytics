@@ -78,4 +78,4 @@ console.log("precomputed overlay sample (if present)…");
   console.log(`overlay seasons checked: ${checked}`);
 }
 
-console.log("OK — r1-wins-sort-equivalence (R1_WINS_SORT_REDUNDANT_WITH_R1_POINTS=YES)");
+console.log("OK - r1-wins-sort-equivalence (R1_WINS_SORT_REDUNDANT_WITH_R1_POINTS=YES)");

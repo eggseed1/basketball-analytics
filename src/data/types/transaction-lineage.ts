@@ -5,7 +5,7 @@
  * Distinct from Franchise Lab sim trade models (`src/gm`).
  *
  * Methodology v1.0: types + ESPN free-text archive ingest + empty-safe lineage queries.
- * Structured ownership/pick genealogy remains blocked — see docs/transaction-lineage.md.
+ * Structured ownership/pick genealogy remains blocked - see docs/transaction-lineage.md.
  */
 
 import type {
@@ -59,7 +59,7 @@ export type CanonicalAsset = {
   playerId?: string;
   playerName?: string;
   draftPick?: DraftPickIdentity;
-  /** Optional opaque metadata from the source — not interpreted as lineage. */
+  /** Optional opaque metadata from the source - not interpreted as lineage. */
   metadata?: Record<string, string | number | boolean | null>;
   methodologyVersion: string;
 };
@@ -89,7 +89,7 @@ export type TransactionProvenance = {
 };
 
 /**
- * Lineage-ready transaction — extends the offseason TransactionEvent contract
+ * Lineage-ready transaction - extends the offseason TransactionEvent contract
  * with explicit multi-team + asset lists when ingest can supply them.
  */
 export type CanonicalTransaction = TransactionEvent & {

@@ -1,5 +1,5 @@
 /**
- * M16l0.1 — Team-stint allocation + conservation repair (no live WAR / DRBL change).
+ * M16l0.1 - Team-stint allocation + conservation repair (no live WAR / DRBL change).
  *   npm run drbl:m16l0_1
  */
 import { createHash } from "node:crypto";
@@ -334,7 +334,7 @@ async function main() {
       if (!(N > 0) || !Number.isFinite(raw) || !Number.isFinite(impact)) continue;
       publishedResiduals.push(Math.abs((raw * N) / 100 - impact));
       // Exact identity: (100*V/N)*N/100 == V. Using impact as published V proxy:
-      // Reconstruct "exact" rate from impact then multiply back — residual is display rounding only.
+      // Reconstruct "exact" rate from impact then multiply back - residual is display rounding only.
       const rawFromImpact = (100 * impact) / N;
       exactPrimitiveResiduals.push(
         Math.abs((rawFromImpact * N) / 100 - impact)
@@ -430,7 +430,7 @@ One combined possession appearance = one on-court player on offense OR defense f
 
 ## Season accumulation (historical)
 
-Keyed by \`playerId\` only via \`ensurePlayer\`; \`teamId\` metadata was first-seen only — insufficient for stints. M16l0.1 builds stints from the appearance stream instead.
+Keyed by \`playerId\` only via \`ensurePlayer\`; \`teamId\` metadata was first-seen only - insufficient for stints. M16l0.1 builds stints from the appearance stream instead.
 `
   );
 
@@ -486,7 +486,7 @@ Keyed by \`playerId\` only via \`ensurePlayer\`; \`teamId\` metadata was first-s
     )
   );
 
-  // Cap CSV size: write full stints but maybe large — OK for engineering
+  // Cap CSV size: write full stints but maybe large - OK for engineering
   await writeFile(
     path.join(OUT, "06_player_team_season_stints.csv"),
     toCsv(
@@ -875,7 +875,7 @@ Keyed by \`playerId\` only via \`ensurePlayer\`; \`teamId\` metadata was first-s
     )
   );
 
-  // Diagnostic CSV — sample traded + summary stats in header rows via separate small file
+  // Diagnostic CSV - sample traded + summary stats in header rows via separate small file
   const tradedDiag = observedVsAlloc.filter((r) => r.multiTeam === "YES");
   const diagSample = [
     ...tradedDiag.slice(0, 200),
@@ -981,7 +981,7 @@ Team rows allocate season rates by actual combined appearance exposure share onl
 
 Per-game fresh \`attributeGamePlayerValue\` map team sums accumulated during M16l0.1 season build (\`independentTeamValue\`), compared to \`sum observedRawStintAttributedValue\` by team.
 
-This is independent of reading the stint table back — it is a parallel aggregation from game-level accumulators.
+This is independent of reading the stint table back - it is a parallel aggregation from game-level accumulators.
 `
   );
 
@@ -1067,7 +1067,7 @@ This is independent of reading the stint table back — it is a parallel aggrega
     )
   );
 
-  // Future outcome schema — fields only; no 2025-26 metrics
+  // Future outcome schema - fields only; no 2025-26 metrics
   await writeFile(
     path.join(OUT, "21_future_team_outcome_schema_audit.json"),
     JSON.stringify(
@@ -1310,7 +1310,7 @@ This is independent of reading the stint table back — it is a parallel aggrega
     additivityStatus !== "UNAVAILABLE_BLOCKING";
 
   // If additivity PASS_INDEPENDENT_REFERENCE, good.
-  // If somehow unavailable but all conservation gates pass, downgrade per Phase 22 —
+  // If somehow unavailable but all conservation gates pass, downgrade per Phase 22 -
   // we have a reference and tested it, so status is PASS or FAIL only.
 
   const blockers: string[] = [];

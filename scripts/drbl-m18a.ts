@@ -1,8 +1,8 @@
 /**
- * M18a — Persistent Unobserved Impact Residual (UIR) research.
+ * M18a - Persistent Unobserved Impact Residual (UIR) research.
  *   npm run drbl:m18a
  *
- * Sidecar only — does not modify DRBL v1 / production artifacts.
+ * Sidecar only - does not modify DRBL v1 / production artifacts.
  */
 import { createHash } from "node:crypto";
 import { execSync } from "node:child_process";
@@ -305,7 +305,7 @@ async function main() {
     RIDGE_GRID: [...RIDGE_GRID],
     LINEUP_MODEL_VERSION: M18_LINEUP_VERSION,
     RAW_DRBL_LN_MINUS_P_USED: "NO",
-    note: "UIR sidecar research — not off-ball value",
+    note: "UIR sidecar research - not off-ball value",
   };
   await writeFile(path.join(OUT, "00_freeze.json"), JSON.stringify(freeze, null, 2) + "\n");
 
@@ -412,7 +412,7 @@ Offense scores; defense prevents.
 
 ## Garbage-time
 
-NONE (no filter) — frozen before results.
+NONE (no filter) - frozen before results.
 `
   );
 
@@ -424,12 +424,12 @@ NONE (no filter) — frozen before results.
 |---|---|---|---|
 | P_RAW | Approach-B attributed value ×100 | combined possession appearances N | per 100 |
 | L_coef (NET) | scoreboard points association | possession | per possession |
-| L (research) | L_coef × 100 | — | per 100 |
+| L (research) | L_coef × 100 | - | per 100 |
 | Legacy DRBL-LN | (points−EPV) ridge ×100 then EB | N | per 100 (different target) |
 
 ## Direct subtraction L − P_RAW?
 
-**NO** as UIR definition — even after ×100, estimands differ (lineup-adjusted scoreboard association vs Approach-B event attribution). Use statistical residualization:
+**NO** as UIR definition - even after ×100, estimands differ (lineup-adjusted scoreboard association vs Approach-B event attribution). Use statistical residualization:
 
 \`\`\`text
 UIR = L − E[L | P_RAW, log(N), …]
@@ -439,7 +439,7 @@ UIR = L − E[L | P_RAW, log(N), …]
 
 Combined possession appearances (offense+defense) are the DRBL N denominator.  
 Lineup model uses one row per team-possession (not double-counted team pair).  
-FACTOR_TWO_AUDITED = YES — L×100 aligns per-100 scale for residualization inputs; no silent /2 or ×2.
+FACTOR_TWO_AUDITED = YES - L×100 aligns per-100 scale for residualization inputs; no silent /2 or ×2.
 `
   );
 
@@ -521,7 +521,7 @@ FACTOR_TWO_AUDITED = YES — L×100 aligns per-100 scale for residualization inp
     ) + "\n"
   );
 
-  // Negative controls — player identity must not persist cross-season under shuffle
+  // Negative controls - player identity must not persist cross-season under shuffle
   console.log("Negative controls…");
   const realFit = fitM18LineupNet(trainRows, bestLambda);
   const realRatings = [...netRatingsPer100(realFit).values()];
@@ -601,8 +601,8 @@ FACTOR_TWO_AUDITED = YES — L×100 aligns per-100 scale for residualization inp
 
 ## Allowed in residualizer
 
-- P_RAW — remove observable Approach-B explanation
-- log(N+1) — exposure
+- P_RAW - remove observable Approach-B explanation
+- log(N+1) - exposure
 - UIR-B only: roleOffenseLean ≈ drblO, roleDefenseLean ≈ drblD (Approach-B O/D lean; descriptive)
 
 ## Not allowed

@@ -1,5 +1,5 @@
 /**
- * ASK DRBL — example pool, rotation, and structured builder tests.
+ * ASK DRBL - example pool, rotation, and structured builder tests.
  * Does not change AST semantics; validates that curated examples and
  * builder-composed queries feed the existing interpret → validate pipeline.
  */
@@ -44,7 +44,7 @@ const CLASS_TO_OPS: Record<string, string[]> = {
 {
   assert.ok(
     ASK_EXAMPLE_POOL.length >= 40 && ASK_EXAMPLE_POOL.length <= 80,
-    `pool size ${ASK_EXAMPLE_POOL.length} should be 40–80`
+    `pool size ${ASK_EXAMPLE_POOL.length} should be 40-80`
   );
 }
 
@@ -56,7 +56,7 @@ const CLASS_TO_OPS: Record<string, string[]> = {
   }
 }
 
-// --- Interpret + validate (no execute — keep page-cheap validation) ---
+// --- Interpret + validate (no execute - keep page-cheap validation) ---
 {
   const failures: string[] = [];
   for (const ex of ASK_EXAMPLE_POOL) {

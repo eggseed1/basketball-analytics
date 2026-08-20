@@ -150,7 +150,7 @@ export function GmSeasonCalendar({
     <section className="sports-card flex flex-col gap-4 overflow-hidden p-4">
       <header className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             Season calendar
           </p>
           <h2 className="text-[20px] font-bold tracking-tight">{monthTitle}</h2>
@@ -252,7 +252,7 @@ export function GmSeasonCalendar({
               <div className="flex items-start justify-between gap-1">
                 <span
                   className={cn(
-                    "text-[11px] font-semibold tabular-nums",
+                    "text-[12px] font-semibold tabular-nums",
                     won && "text-emerald-800",
                     lost && "text-red-800",
                     !won && !lost && (cell.isToday ? "text-foreground" : "text-muted-foreground")
@@ -352,7 +352,7 @@ export function GmSeasonCalendar({
         </p>
       </footer>
 
-      <p className="text-[11px] text-muted-foreground">
+      <p className="text-[12px] text-muted-foreground">
         Official NBA tips · {userGames.length} games on your slate
         {userGames[0]?.gameDate ? "" : " · dates unavailable (generated schedule)"}
       </p>

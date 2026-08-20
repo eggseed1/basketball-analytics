@@ -1,5 +1,5 @@
 /**
- * M16f2 — one-shot Approach A vs Approach B VALIDATION bakeoff.
+ * M16f2 - one-shot Approach A vs Approach B VALIDATION bakeoff.
  *   npm run drbl:m16f2
  *
  * Decision rules locked in reports/m16f2/01_decision_rules.md BEFORE outcomes.
@@ -659,7 +659,7 @@ async function main() {
     eligibilityVersion: ELIGIBILITY_VERSION,
     target: "future_block_residual_per_100",
     earlyFrac: M16C_EARLY_FRAC,
-    posteriorVersion: "eb-fused-v1 — untouched",
+    posteriorVersion: "eb-fused-v1 - untouched",
     WAR_version: WAR_FORMULA_VERSION,
     WAR_exposureUnit: WAR_EXPOSURE_UNIT,
     practicalRelativeRmseImprovement: PRACTICAL_REL,

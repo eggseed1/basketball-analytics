@@ -1,5 +1,5 @@
 /**
- * M16g2 — research/production alignment shadow architecture.
+ * M16g2 - research/production alignment shadow architecture.
  *   npm run drbl:m16g2
  *
  * Implements research-only:
@@ -523,7 +523,7 @@ where \`N = actualCombinedPossessionAppearances\`.
 \`RESEARCH_POSTERIOR_LAYER_COUNT = ${RESEARCH_POSTERIOR_LAYER_COUNT}\`
 
 ## Calibration boundary
-\`CALIBRATION_NOT_YET_SELECTED\` — researchDRBL100 is pre-calibration posterior ability.
+\`CALIBRATION_NOT_YET_SELECTED\` - researchDRBL100 is pre-calibration posterior ability.
 `
   );
 
@@ -754,7 +754,7 @@ Research isolates a single EB on unshrunk raw Approach-B P.
   const researchOdStatus =
     odCanonical === "PASS" ? "CANONICAL" : "NOT_CANONICAL_YET";
 
-  // --- Phase 16–20: shadow on 2024-25 development artifact ---
+  // --- Phase 16-20: shadow on 2024-25 development artifact ---
   const art = JSON.parse(await readFile(ARTIFACT_2024, "utf8")) as {
     players: Array<Record<string, unknown>>;
   };
@@ -983,7 +983,7 @@ Do not modify production rank.
     path.join(OUT, "15_proposed_field_schema.md"),
     `# Proposed canonical future field schema (NOT deployed)
 
-Design only — production still uses legacy names.
+Design only - production still uses legacy names.
 
 | Proposed field | Meaning |
 |----------------|---------|
@@ -1058,7 +1058,7 @@ Naming rule: never overload \`raw\` / \`posterior\` / \`fused\` / \`calibrated\`
 
   await writeFile(
     path.join(OUT, "17_migration_plan.md"),
-    `# Migration plan (future — not executed in M16g2)
+    `# Migration plan (future - not executed in M16g2)
 
 1. Add canonical research fields (\`research*\` / future \`rawP100\` / \`posteriorP100\`).
 2. Recompute artifacts in shadow.

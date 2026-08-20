@@ -1,5 +1,5 @@
 /**
- * M16f0 — Approach A specification + feasibility (no bakeoff).
+ * M16f0 - Approach A specification + feasibility (no bakeoff).
  *   npm run drbl:m16f0
  *
  * Does not change production P/WAR/posterior.
@@ -87,7 +87,7 @@ async function main() {
     },
     warVersion: WAR_FORMULA_VERSION,
     warExposureUnit: WAR_EXPOSURE_UNIT,
-    posteriorVersion: "eb-fused-v1 (k=200) — untouched",
+    posteriorVersion: "eb-fused-v1 (k=200) - untouched",
     reservedTestAccessedForSelection: false,
     validationRowsUsedInFit: 0,
     note: "Specification + feasibility only. No A/B bakeoff.",
@@ -140,12 +140,12 @@ async function main() {
 - **Inputs:** offense/defense player ID lists + home flag; residual target = points − EPV
 - **Output:** additive player coefficients (points per possession association)
 - **Artifact:** \`data/drbl/models/lineup-2024-25.json\` version=${lnArt.version} players=${lnArt.playerIds.length} λ=${lnArt.lambda}
-- **Synthetic lineup:** **YES** — swap IDs and rescore
+- **Synthetic lineup:** **YES** - swap IDs and rescore
 - **Composite V for Approach A candidate:**
   \`\`\`text
   V(s0, L) = EPV(s0) + predictLineupResidual(L, β)
   \`\`\`
-- **Caveat:** This makes Approach A algebraically close to LN coefficient differences vs replacement. M16c found LN adds no incremental RMSE after P — bakeoff may still be informative, but A is not an independent new value engine.
+- **Caveat:** This makes Approach A algebraically close to LN coefficient differences vs replacement. M16c found LN adds no incremental RMSE after P - bakeoff may still be informative, but A is not an independent new value engine.
 
 ## 3. R1 replacement EP (Approach B)
 
@@ -158,11 +158,11 @@ async function main() {
 
 - **File:** \`drbl/models/sequential-attribution.ts\`
 - Credits \`actualPoints − replacementEp\` along observed events
-- Uses realized path — retrospective, not pre-outcome counterfactual
+- Uses realized path - retrospective, not pre-outcome counterfactual
 
 ## 5. Continuation / SDV
 
-- Shot-decision and M7-CV models — not focal lineup counterfactuals
+- Shot-decision and M7-CV models - not focal lineup counterfactuals
 `;
 
   await writeFile(path.join(OUT, "01_epv_infrastructure_inventory.md"), inventory);
@@ -222,12 +222,12 @@ async function main() {
 
   // --- Replacement compatibility using LN coef table as proxy support ---
   // Build synthetic R1-like pool from bottom 40% of LN coefficients among players
-  // (TRAIN-feasibility proxy — not a new pool; documents coverage against LN support)
+  // (TRAIN-feasibility proxy - not a new pool; documents coverage against LN support)
   const rankedByCoef = [...lnCoef.entries()].sort((a, b) => a[1] - b[1]);
   const cut = Math.max(1, Math.floor(rankedByCoef.length * 0.4));
   const r1ProxyIds = new Set(rankedByCoef.slice(0, cut).map(([id]) => id));
 
-  // Role vectors unavailable without full PBP scan — report coef support coverage
+  // Role vectors unavailable without full PBP scan - report coef support coverage
   const replRows: Record<string, unknown>[] = [];
   let withRepl = 0;
   for (const [pid, coef] of lnCoef) {
@@ -250,7 +250,7 @@ async function main() {
       DIAGNOSTIC_ONLY: true,
     });
   }
-  // Truncate CSV to manageable size — keep summary + sample
+  // Truncate CSV to manageable size - keep summary + sample
   const replSample = [
     ...replRows.filter((r) => r.supportStatus === "UNSUPPORTED").slice(0, 20),
     ...replRows.slice(0, 80),
@@ -335,7 +335,7 @@ Pure \`EPV_M5(s0)\` alone is **not** Approach-A-capable (\`PLAYER_SWAP_CHANGES_E
     // Wait product says: replacementOpponentEPV - actualOpponentEPV
     // actualOpp has -β_i, replacement has -β_r
     // replOpp - actualOpp = -β_r - (-β_i) = β_i - β_r
-    // Positive when β_i > β_r — but for defense, higher β usually means better offense; for defense we want lower opponent scoring.
+    // Positive when β_i > β_r - but for defense, higher β usually means better offense; for defense we want lower opponent scoring.
     // If β is "points for your team when on court":
     // On defense, player contributes -β to opponent points prediction? LN: defense gets -coefficient, meaning higher β ⇒ more negative contribution to residual ⇒ suppresses opponent relative scoring in the model.
     // actualOpp residual contrib includes -β_i
@@ -368,7 +368,7 @@ Pure \`EPV_M5(s0)\` alone is **not** Approach-A-capable (\`PLAYER_SWAP_CHANGES_E
       meanReplacementEPV_ln: meanBetaR,
       credit: creditOff,
       supportStatus: "SUPPORTED",
-      note: "Algebraic LN demo — not possession-level EPV+LN full path; TRAIN-feasibility only",
+      note: "Algebraic LN demo - not possession-level EPV+LN full path; TRAIN-feasibility only",
       DIAGNOSTIC_ONLY: true,
     });
   }
@@ -386,7 +386,7 @@ Pure \`EPV_M5(s0)\` alone is **not** Approach-A-capable (\`PLAYER_SWAP_CHANGES_E
         engine: "LN_coefficient_algebra_proxy",
         maxIdentityResidual: maxResid,
         examples,
-        determinism: "YES — pure arithmetic on frozen coefficients",
+        determinism: "YES - pure arithmetic on frozen coefficients",
         caveat:
           "Full possession-start V=EPV+LN not scored on live possessions in this prototype; identity proven algebraically for LN-swap credits",
       },
@@ -429,11 +429,11 @@ Pure \`EPV_M5(s0)\` alone is **not** Approach-A-capable (\`PLAYER_SWAP_CHANGES_E
     estimatedTotalLnScoreCalls_season: nPossApprox * 10 * (1 + kRepl),
     estimatedTotalEpvCalls_season: nPossApprox,
     runtimeEstimate:
-      "With coef lookup O(1): seconds–minutes; with naive refits: hours. Caching β lookups makes A cheap.",
+      "With coef lookup O(1): seconds-minutes; with naive refits: hours. Caching β lookups makes A cheap.",
     cachingBatching:
-      "Cache EPV(s0) once per possession; credit_off = β_i - mean(β_r) closed form under additive LN — no need to rescore full lineup each time",
+      "Cache EPV(s0) once per possession; credit_off = β_i - mean(β_r) closed form under additive LN - no need to rescore full lineup each time",
     algebraicShortcut:
-      "Under additive LN, offensive credit = β_i - E[β_r]; defensive credit = β_i - E[β_r] under current sign coding — full lineup rescoring optional for verification only",
+      "Under additive LN, offensive credit = β_i - E[β_r]; defensive credit = β_i - E[β_r] under current sign coding - full lineup rescoring optional for verification only",
   };
   await writeFile(path.join(OUT, "09_compute_cost.json"), JSON.stringify(cost, null, 2));
 
@@ -442,14 +442,14 @@ Pure \`EPV_M5(s0)\` alone is **not** Approach-A-capable (\`PLAYER_SWAP_CHANGES_E
 
 **Name:** DRBL-P Counterfactual Presence  
 **Version:** \`drbl-p-counterfactual-v1\`  
-**Status:** PRODUCT DECISIONS LOCKED — implementation **blocked/partial** pending player-sensitive V engine choice  
+**Status:** PRODUCT DECISIONS LOCKED - implementation **blocked/partial** pending player-sensitive V engine choice  
 **Date:** ${new Date().toISOString()}
 
 ## Research question
 
 > Before the possession outcome is known, how much does expected possession value change because this focal player is present instead of a role-matched R1 replacement, holding possession-start context and all other players fixed?
 
-## Locked decisions (1–12)
+## Locked decisions (1-12)
 
 | # | Decision | Lock |
 |---|---|---|
@@ -532,7 +532,7 @@ credit_i - (actualEPV - replacementEPV_i) ≈ 0
 | Status | Definition |
 |---|---|
 | SUPPORTED | Focal and all used replacement IDs have TRAIN-fit LN coefficients (or successor player-sensitive V features); role match succeeds with ≥1 candidate |
-| WEAK_SUPPORT | Focal supported but <k replacements; or replacement feature distance high (predeclared threshold — **not** VAL-tuned; v1 default: k<3) |
+| WEAK_SUPPORT | Focal supported but <k replacements; or replacement feature distance high (predeclared threshold - **not** VAL-tuned; v1 default: k<3) |
 | UNSUPPORTED | Missing coefficient / role match failure / missing lineup |
 
 **Unsupported behavior:** no Approach A credit for that appearance; mark missing; common-universe rule deferred to M16f.
@@ -654,7 +654,7 @@ replacementAggregationRule = equal_weight_mean_over_k_nearest_R1
 \`APPROACH_A_V1_FEASIBILITY = ${feasibility}\`
 \`COUNTERFACTUAL_EPV_FEASIBLE = ${counterfactualFeasible}\`
 
-Product decisions 1–12 are **locked**.
+Product decisions 1-12 are **locked**.
 
 Pure M5 cannot implement Approach A (\`PLAYER_SWAP_CHANGES_EPV_INPUT = NO\`).
 

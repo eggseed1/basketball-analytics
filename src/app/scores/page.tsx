@@ -1,4 +1,3 @@
-import { BrowseCircles } from "@/components/sports/browse-circles";
 import {
   Gamefeed,
   type GamefeedView,
@@ -70,7 +69,6 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   let weekEnd = addDaysIso(weekStart, 6);
   let upcomingGames: GameSummary[] = [];
   let upcomingHasMore = false;
-  let upcomingNextHref: string | null = null;
   let feedSeason = scheduleSeason;
   let feedSource: ScoreboardFeedSource | undefined;
   let feedWarnings: string[] = [];
@@ -126,15 +124,6 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
     recent = recentGames;
     feedSource = upcoming.source;
     feedWarnings = upcoming.warnings ?? [];
-
-    if (upcomingHasMore && upcomingGames.length) {
-      const last = upcomingGames[upcomingGames.length - 1]!;
-      const params = new URLSearchParams({ view: "list" });
-      if (last.tipOffAt) params.set("after", last.tipOffAt);
-      else params.set("after", `${last.gameDate}T00:00:00Z`);
-      params.set("afterId", last.id);
-      upcomingNextHref = `/scores?${params.toString()}`;
-    }
   }
 
   return (
@@ -151,16 +140,15 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         weekGames={weekGames}
         upcomingGames={upcomingGames}
         upcomingHasMore={upcomingHasMore}
-        upcomingNextHref={upcomingNextHref}
       />
 
       {recent.length ? (
         <section className="flex flex-col gap-3">
           <div>
-            <h2 className="text-[17px] font-bold tracking-tight">
+            <h2 className="text-[20px] font-bold tracking-tight">
               Latest results
             </h2>
-            <p className="text-[13px] text-muted-foreground">
+            <p className="text-[14px] text-muted-foreground">
               Jump into a recent box score.
             </p>
           </div>
@@ -171,11 +159,6 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
           </div>
         </section>
       ) : null}
-
-      <section className="sports-card px-4 py-4 sm:px-5">
-        <h2 className="mb-3 text-[15px] font-bold">Browse</h2>
-        <BrowseCircles />
-      </section>
     </main>
   );
 }

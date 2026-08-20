@@ -1,6 +1,6 @@
 /**
  * Multi-season team board loader for Team Arc.
- * Batches season fetches — does not invent metrics or franchise merges.
+ * Batches season fetches - does not invent metrics or franchise merges.
  */
 
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
@@ -89,7 +89,7 @@ export type TeamSeasonArcLoadResult = {
 
 /**
  * Load one team's season rows across seasons (batched board fetches).
- * Continuity is ESPN teamId (+ optional abbr fallback) — no franchise merge.
+ * Continuity is ESPN teamId (+ optional abbr fallback) - no franchise merge.
  */
 export async function getTeamSeasonArc(options: {
   teamId: string;

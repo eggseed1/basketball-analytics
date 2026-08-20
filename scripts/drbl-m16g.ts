@@ -1,5 +1,5 @@
 /**
- * M16g — TRAIN-only posterior / EB shrinkage selection for incumbent P_B.
+ * M16g - TRAIN-only posterior / EB shrinkage selection for incumbent P_B.
  *   npm run drbl:m16g
  *
  * Does NOT use M16b VALIDATION for k selection.
@@ -212,7 +212,7 @@ function buildHistoryFutureRows(
       playerId: p.playerId,
       // Unshrunk Approach B rate (pre component EB). Research shrinkage input.
       rawPB: p.rawAbilityRate,
-      // Published component field (embeds production EB k=200) — diagnostic only.
+      // Published component field (embeds production EB k=200) - diagnostic only.
       publishedDrblP: p.drblP,
       N: p.possessions,
       target: futureTarget,
@@ -337,7 +337,7 @@ async function main() {
     throw new Error(`STOP EVALUATION_PROTOCOL_DRIFT: ${hashCheck.reason}`);
   }
 
-  // ---- PHASE 1–2 audit docs (before loading outcomes for k) ----
+  // ---- PHASE 1-2 audit docs (before loading outcomes for k) ----
   await writeFile(
     path.join(OUT, "01_existing_posterior_audit.md"),
     `# Existing posterior audit (M16g)

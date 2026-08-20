@@ -1,5 +1,5 @@
 /**
- * Production DATA_PROVIDER guard — regression for the silent empty-career footgun.
+ * Production DATA_PROVIDER guard - regression for the silent empty-career footgun.
  * Run: npm run test:production-provider-guard
  */
 import assert from "node:assert/strict";
@@ -106,4 +106,4 @@ assert.doesNotThrow(() =>
   })
 );
 
-console.log("OK — production-provider-guard");
+console.log("OK - production-provider-guard");

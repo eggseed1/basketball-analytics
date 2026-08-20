@@ -71,7 +71,7 @@ export function normalizeNbaPlayerSeasonTeam(input: {
     };
   }
 
-  // Unresolved NBA id — keep provenance only; never put provider id in teamId
+  // Unresolved NBA id - keep provenance only; never put provider id in teamId
   // (TeamLogo would otherwise render digit prefixes as a public badge).
   const meta = NBA_TEAM_META[providerTeamId];
   return {
@@ -282,6 +282,11 @@ export function transformStatsNbaCommonPlayerInfo(
     rawTeamId && rawTeamId !== "0"
       ? normalizeNbaPlayerSeasonTeam({ teamId: rawTeamId })
       : null;
+  const draftInfo = formatNbaDraftInfo(
+    s(row, "DRAFT_YEAR"),
+    s(row, "DRAFT_ROUND"),
+    s(row, "DRAFT_NUMBER")
+  );
   return {
     id,
     fullName,
@@ -292,7 +297,25 @@ export function transformStatsNbaCommonPlayerInfo(
     heightInches: height,
     weightLbs: weight,
     currentTeamId: team?.teamId,
+    college: s(row, "SCHOOL") || undefined,
+    draftInfo,
   };
+}
+
+function formatNbaDraftInfo(
+  yearRaw: string,
+  roundRaw: string,
+  pickRaw: string
+): string | undefined {
+  const year = yearRaw.trim();
+  if (!year || year === "0") return undefined;
+  if (/undrafted/i.test(year)) return "Undrafted";
+  const round = roundRaw.trim();
+  const pick = pickRaw.trim();
+  if (/^\d{4}$/.test(year) && /^\d+$/.test(round) && /^\d+$/.test(pick)) {
+    return `${year}: Rd ${round}, Pk ${pick}`;
+  }
+  return undefined;
 }
 
 function parseHeightInches(raw: string): number | undefined {
@@ -429,7 +452,7 @@ export function transformStatsNbaTeamSeason(
     meta?.fullName ||
     "Team unavailable";
   const abbr =
-    canonical?.abbr ?? meta?.abbreviation ?? "—";
+    canonical?.abbr ?? meta?.abbreviation ?? "-";
 
   return {
     teamId,

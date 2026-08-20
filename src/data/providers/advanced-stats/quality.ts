@@ -1,6 +1,6 @@
 /**
  * Data-quality checks for BDL season_averages advanced probe rows.
- * Problematic rows are reported — never silently dropped.
+ * Problematic rows are reported - never silently dropped.
  */
 
 import type { BdlSeasonAverageRow } from "@/data/providers/balldontlie/client";

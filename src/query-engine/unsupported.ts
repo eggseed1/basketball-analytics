@@ -61,7 +61,7 @@ const PATTERNS: Array<{ re: RegExp; clause: string; reason: string }> = [
     re: /\b(how\s+did\s+.+\s+end\s+up\s+with|trade\s+tree|draft\s+rights\s+chain|asset\s+genealogy|ownership\s+graph)\b/i,
     clause: "transaction genealogy",
     reason:
-      "Structured player/pick ownership genealogy is not available yet — ASK DRBL will not invent it from free-text transaction blurbs.",
+      "Structured player/pick ownership genealogy is not available yet - ASK DRBL will not invent it from free-text transaction blurbs.",
   },
 ];
 

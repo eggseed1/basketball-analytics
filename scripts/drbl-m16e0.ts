@@ -1,5 +1,5 @@
 /**
- * M16e0 — WAR dimensional audit + M6 practical-significance closure.
+ * M16e0 - WAR dimensional audit + M6 practical-significance closure.
  *   npm run drbl:m16e0
  *
  * Diagnostic/governance only. No production math changes. No RESERVED_TEST eval.
@@ -303,7 +303,7 @@ async function main() {
     {
       field: "replacementLevelDRBL100",
       valueType: "rate",
-      unit: "calibrated pts/100 (fringe median finalAbility, 200–800 poss)",
+      unit: "calibrated pts/100 (fringe median finalAbility, 200-800 poss)",
       producer: "estimateReplacementLevel",
       consumer: "aboveReplacementRate",
     },
@@ -370,7 +370,7 @@ LOO team calibration (through-origin):
   finalAbility = 0 + slope * posterior
   (2024-25 slope ≈ ${Number(art2425.warModel?.calibrationSlope)})
         ↓
-replacementLevelDRBL100 = fringe median(finalAbility | 200–800 poss)
+replacementLevelDRBL100 = fringe median(finalAbility | 200-800 poss)
         ↓
 aboveReplacement = finalAbility - replacement
         ↓
@@ -747,7 +747,7 @@ ${fieldLineageAudit()
     REPLACEMENT_LEVEL_SEMANTIC_MISMATCH: {
       status: "WARNING",
       evidence:
-        "Zero on uncalibrated residual scale ≈ R1/league-average-ish; WAR uses fringe calibrated median ≠ 0. Naming 'WAR' is above fringe replacement after calibration — OK if documented. Zero is NOT replacement on calibrated scale.",
+        "Zero on uncalibrated residual scale ≈ R1/league-average-ish; WAR uses fringe calibrated median ≠ 0. Naming 'WAR' is above fringe replacement after calibration - OK if documented. Zero is NOT replacement on calibrated scale.",
       magnitude: repl,
     },
     WAR_TARGET_EXPOSURE_ALREADY_EMBEDDED: {
@@ -869,7 +869,7 @@ ${fieldLineageAudit()
 
   /**
    * Practical significance framework (governance for M16e+).
-   * Not fully preregistered for M16d (results already known) — apply transparently.
+   * Not fully preregistered for M16d (results already known) - apply transparently.
    */
   const practicalFramework = `
 # M6 practical-significance closure
@@ -918,7 +918,7 @@ M6_PRACTICAL_BASE_INCLUDED = false
 M6_STATUS = research_component_needs_redesign_or_stronger_effect
 \`\`\`
 
-Reason: microscopic relative gain (~0.016%), null residual association, negligible effective contribution, unstable coefficient — complexity not earned for Approach A/B base architecture.
+Reason: microscopic relative gain (~0.016%), null residual association, negligible effective contribution, unstable coefficient - complexity not earned for Approach A/B base architecture.
 `;
 
   await writeFile(path.join(OUT, "10_m6_practical_significance.md"), practicalFramework);
@@ -1036,7 +1036,7 @@ Reason: microscopic relative gain (~0.016%), null residual association, negligib
     a1: B[1],
     a2: B[2],
     RMSE: Math.sqrt(quadSs / xs.length),
-    note: "DIAGNOSTIC_ONLY — fitted on VALIDATION for shape only; not a production model",
+    note: "DIAGNOSTIC_ONLY - fitted on VALIDATION for shape only; not a production model",
   });
   await writeFile(
     path.join(OUT, "12_p_calibration_diagnostics.csv"),
@@ -1099,7 +1099,7 @@ APPROACH_AB_BASE = M16E0_RESEARCH_BASE = P
 
 M16D_FORMAL_WINNER remains P+M6 (statistical). Practical research base is P.
 
-## Comparison contract (future milestone — do not execute)
+## Comparison contract (future milestone - do not execute)
 
 - same TRAIN / VALIDATION hashes (drbl-eval-v1)
 - same target: future_block_residual_per_100
@@ -1121,7 +1121,7 @@ Board visibility note: 2025-26 production board has been seen operationally → 
 
 ## Ready?
 
-**YES** — pending audit approval of this M16e0 package (WAR not repaired; A not implemented).
+**YES** - pending audit approval of this M16e0 package (WAR not repaired; A not implemented).
 `;
   await writeFile(path.join(OUT, "14_approach_ab_readiness.md"), approachReady);
 

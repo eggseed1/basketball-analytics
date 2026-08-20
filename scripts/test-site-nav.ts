@@ -71,6 +71,8 @@ for (const banned of [
   "Offseason",
   "Stats",
   "Franchises",
+  "Design system",
+  "Design System",
 ]) {
   assert.ok(
     !PRIMARY_NAV.some((n) => n.label === banned),

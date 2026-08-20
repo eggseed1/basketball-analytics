@@ -66,7 +66,7 @@ function PlayerSearchField({
             teamKey={undefined}
             variant="compact"
             className="min-w-0 flex-1"
-            nameClassName="text-[13px] font-semibold no-underline hover:underline"
+            nameClassName="text-[14px] font-semibold no-underline hover:underline"
           />
           <button
             type="button"
@@ -108,11 +108,11 @@ function PlayerSearchField({
                   size="xs"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-semibold">
+                  <span className="block truncate text-[14px] font-semibold">
                     {hit.name}
                   </span>
                   {hit.subtitle ? (
-                    <span className="block truncate text-[11px] text-muted-foreground">
+                    <span className="block truncate text-[12px] text-muted-foreground">
                       {hit.subtitle}
                     </span>
                   ) : null}

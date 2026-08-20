@@ -10,7 +10,7 @@ export interface Game {
   season: string;
   /** ISO date string YYYY-MM-DD. */
   gameDate: string;
-  /** Full tip-off timestamp when known (ISO). Absolute — not a local wall string. */
+  /** Full tip-off timestamp when known (ISO). Absolute - not a local wall string. */
   tipOffAt?: string;
   /** ESPN short status line, e.g. "10/3 - 7:00 PM EDT". */
   statusDetail?: string;
@@ -24,6 +24,9 @@ export interface Game {
   awayTeamAbbr?: string;
   homeTeamName?: string;
   awayTeamName?: string;
+  /** Overall W-L when the source provides it (e.g. ESPN scoreboard). */
+  homeRecord?: string;
+  awayRecord?: string;
   /**
    * Provider namespace for retained raw team ids.
    * Present on rows that passed through provider transforms.
@@ -45,12 +48,12 @@ export interface Game {
   gameType: "regular" | "playoff" | "play-in" | "preseason";
   /**
    * Canonical provider-normalized status.
-   * Never infer `final` from 0–0 alone.
+   * Never infer `final` from 0-0 alone.
    */
   status?: GameStatusKind;
-  /** Current period when live (1–4, then OT as 5+). */
+  /** Current period when live (1-4, then OT as 5+). */
   period?: number;
-  /** Provider display clock, e.g. "4:21" — do not locally decrement. */
+  /** Provider display clock, e.g. "4:21" - do not locally decrement. */
   displayClock?: string;
   /** Legal broadcast options from provider structured fields. */
   broadcasts?: GameBroadcastOption[];

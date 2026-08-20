@@ -128,7 +128,7 @@ export class HistoricalNbaService {
     const prefer = query.preferSource ?? "auto";
     const hasDateWindow = Boolean(query.startDate || query.endDate);
 
-    // Season disk archive first — including team-scoped queries.
+    // Season disk archive first - including team-scoped queries.
     // Filtering in memory avoids BDL crawls and ESPN↔BDL numeric id collisions
     // (e.g. ESPN 25 OKC ≠ BDL 25 POR).
     if (query.season && !query.startSeason && !query.endSeason) {
@@ -147,7 +147,7 @@ export class HistoricalNbaService {
         }
         if (query.teamId) {
           // Disk rows use canonical (ESPN) team ids. Bare numerics follow DRBL
-          // convention (ESPN) — do not also match BDL provider ids (25≠POR).
+          // convention (ESPN) - do not also match BDL provider ids (25≠POR).
           const needle = String(query.teamId);
           games = games.filter(
             (g) => g.homeTeamId === needle || g.awayTeamId === needle
@@ -253,7 +253,7 @@ export class HistoricalNbaService {
       const cached = await findCachedGame(gameId);
       if (cached) return cached;
     }
-    // ESPN event ids only — do not fan out schedule lookups for foreign ids.
+    // ESPN event ids only - do not fan out schedule lookups for foreign ids.
     if (/^40\d{7,}$/.test(gameId)) {
       return this.espn.getGame(gameId);
     }
@@ -266,7 +266,7 @@ export class HistoricalNbaService {
       return this.espn.getGameBoxScore(gameId);
     }
 
-    // NBA Stats GameID — use ESPN-named NBADataProvider (stats.nba.com).
+    // NBA Stats GameID - use ESPN-named NBADataProvider (stats.nba.com).
     if (/^00\d{8}$/.test(gameId)) {
       return this.espn.getGameBoxScore(gameId);
     }
@@ -333,7 +333,7 @@ export class HistoricalNbaService {
       }
     }
 
-    // Do not call ESPN with a BallDontLie / non-event id — different id space.
+    // Do not call ESPN with a BallDontLie / non-event id - different id space.
     return null;
   }
 
@@ -349,7 +349,7 @@ export class HistoricalNbaService {
 
     return rows.map((row) => {
       const d = darkoByName.get(normalizeName(row.playerName));
-      // Live DARKO is a stamped-season snapshot — never overlay onto other years.
+      // Live DARKO is a stamped-season snapshot - never overlay onto other years.
       const darkoApplies = d != null && d.season === season;
       const l = lebronByName.get(normalizeName(row.playerName));
       return {

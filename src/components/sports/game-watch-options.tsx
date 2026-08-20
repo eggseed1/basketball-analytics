@@ -77,7 +77,7 @@ export function GameWatchOptions({
         </h3>
         <button
           type="button"
-          className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
           onClick={() => setEditing((v) => !v)}
         >
           {location ? "Change location" : "Set location"}
@@ -103,7 +103,7 @@ export function GameWatchOptions({
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             placeholder="City or ZIP (e.g. Boston, MA)"
-            className="min-w-[12rem] flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[13px]"
+            className="min-w-[12rem] flex-1 rounded-md border border-border bg-background px-2 py-1.5 text-[14px]"
             autoComplete="postal-code"
           />
           <button
@@ -129,8 +129,8 @@ export function GameWatchOptions({
             className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 bg-white/40 px-2.5 py-2"
           >
             <div className="min-w-0">
-              <p className="text-[13px] font-semibold">{row.option.label}</p>
-              <p className="text-[11px] text-muted-foreground">{row.note}</p>
+              <p className="text-[14px] font-semibold">{row.option.label}</p>
+              <p className="text-[12px] text-muted-foreground">{row.note}</p>
             </div>
             {row.option.watchUrl ? (
               <AppLink
@@ -143,7 +143,7 @@ export function GameWatchOptions({
                   : "Watch →"}
               </AppLink>
             ) : row.availability === "available" ? (
-              <span className="shrink-0 text-[11px] font-semibold text-muted-foreground">
+              <span className="shrink-0 text-[12px] font-semibold text-muted-foreground">
                 On {row.option.label}
               </span>
             ) : null}

@@ -1,5 +1,5 @@
 /**
- * P17.3 — player-season / multi-team / brand context unit tests.
+ * P17.3 - player-season / multi-team / brand context unit tests.
  * Run: npx tsx scripts/test-player-team-context.ts
  */
 import assert from "node:assert/strict";
@@ -16,6 +16,8 @@ import {
   resolveCurrentTeamId,
   resolveSelectedSeasonTeamContext,
   seasonHasMultipleFranchises,
+  cardStintsForSeason,
+  lastCardStint,
 } from "../src/lib/player-team-context";
 import { buildSeasonTeamsMap } from "../src/lib/player-destination";
 
@@ -113,7 +115,7 @@ console.log("player-season-team-context…");
     }),
     row({
       playerId: "1",
-      teamId: "13", // ESPN LAL — verify via brand
+      teamId: "13", // ESPN LAL - verify via brand
       teamAbbreviation: "LAL",
       season: "2024-25",
       gamesPlayed: 40,
@@ -165,6 +167,39 @@ console.log("player-multi-team-season…");
   assert.equal(ctx.teamLinkId, undefined);
   assert.equal(multiTeamDisplayLabel(primary), "TOT");
   assert.equal(buildSeasonTeamsMap(career)["2024-25"], "TOT");
+  const stints = cardStintsForSeason(career, "2024-25");
+  assert.equal(stints.length, 2);
+  assert.equal(stints[0]!.teamLabel, "BOS");
+  assert.equal(stints[1]!.teamLabel, "DAL");
+  assert.equal(lastCardStint(stints)?.teamLabel, "DAL");
+  const laterLast = cardStintsForSeason(
+    [
+      row({
+        playerId: "2",
+        teamId: "TOT",
+        teamAbbreviation: "TOT",
+        season: "2024-25",
+        gamesPlayed: 60,
+      }),
+      row({
+        playerId: "2",
+        teamId: "dal",
+        teamAbbreviation: "DAL",
+        season: "2024-25",
+        gamesPlayed: 10,
+      }),
+      row({
+        playerId: "2",
+        teamId: "bos",
+        teamAbbreviation: "BOS",
+        season: "2024-25",
+        gamesPlayed: 50,
+      }),
+    ],
+    "2024-25"
+  );
+  // Last franchise row in source order wins - not max games.
+  assert.equal(lastCardStint(laterLast)?.teamLabel, "BOS");
   const deduped = dedupeCareerSeasons(career);
   assert.equal(deduped.length, 1);
   assert.equal(deduped[0]!.teamId, "TOT");
@@ -224,7 +259,7 @@ console.log("brandable + current team precedence…");
   assert.equal(brandableTeamKey("2"), "2"); // ESPN BOS
   assert.equal(brandableTeamKey("1610612738"), "2"); // NBA BOS → canonical
   const cur = resolveCurrentTeamId({
-    currentSeasonRowTeamId: "18", // NYK-ish — resolve via brandable
+    currentSeasonRowTeamId: "18", // NYK-ish - resolve via brandable
     providerCurrentTeamId: "2",
     latestCareerTeamId: "13",
   });
@@ -232,4 +267,4 @@ console.log("brandable + current team precedence…");
   assert.equal(cur.source, "CURRENT_SEASON_PLAYER_ROW");
 }
 
-console.log("OK — player-team-context (P17.3)");
+console.log("OK - player-team-context (P17.3)");

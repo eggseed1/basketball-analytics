@@ -15,6 +15,10 @@ import {
 import { AnalysisBoard } from "@/components/dashboard/analysis-board";
 import type { CategoryBar } from "@/lib/dashboard-aggregates";
 import { cn } from "@/lib/utils";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export function CategoryBarBoard({
   title,
@@ -109,14 +113,12 @@ export function CategoryBarBoard({
               )}
               <Tooltip
                 cursor={{ fill: "currentColor", opacity: 0.06 }}
+                wrapperStyle={rechartsFrostWrapperStyle}
                 content={({ active: tipActive, payload }) => {
                   if (!tipActive || !payload?.length) return null;
                   const bar = payload[0].payload as CategoryBar;
                   return (
-                    <div
-                      role="tooltip"
-                      className="rounded border border-border bg-popover px-2 py-1 text-xs shadow-sm"
-                    >
+                    <FrostRechartsTooltip active={tipActive}>
                       <p className="font-medium">{bar.label}</p>
                       <p>
                         {valueLabel}: {formatValue(bar.value)}
@@ -124,7 +126,7 @@ export function CategoryBarBoard({
                       <p className="text-muted-foreground">
                         {bar.count} players · click to filter
                       </p>
-                    </div>
+                    </FrostRechartsTooltip>
                   );
                 }}
               />

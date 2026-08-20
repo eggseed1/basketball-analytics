@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * DRBL release gate — runs critical tests in labeled sections.
+ * DRBL release gate - runs critical tests in labeled sections.
  *
  * Fixture/unit: offline / injected / source-inspected (no ESPN required).
  * Live ESPN: constructs NBADataProvider inside queries (DATA_PROVIDER may be

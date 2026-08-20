@@ -17,7 +17,7 @@ const KEY_TO_PERCENTILE: Record<string, string> = {
 };
 
 /**
- * Efficiency ladder — shooting and rate metrics stacked for comparison,
+ * Efficiency ladder - shooting and rate metrics stacked for comparison,
  * using BRef shooting percentages.
  */
 export function PlayerEfficiencyProfile({
@@ -41,7 +41,7 @@ export function PlayerEfficiencyProfile({
           Shooting efficiency
         </h2>
         <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
-          BRef FG / 2P / 3P / eFG / TS / FT — bar length is the rate; color is
+          BRef FG / 2P / 3P / eFG / TS / FT - bar length is the rate; color is
           league percentile (blue poor → red elite).
         </p>
       </div>

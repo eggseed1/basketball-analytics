@@ -31,6 +31,8 @@ export interface PlayerSeason {
   season: string;
   position?: Position;
   age?: number;
+  /** Calendar draft year when known (NBA Stats drafthistory). */
+  draftYear?: number;
   gamesPlayed: number;
   gamesStarted: number;
   minutes: number;
@@ -77,7 +79,7 @@ export interface PlayerSeason {
   /** Player Impact Estimate (NBA Stats). */
   pie: number;
 
-  /** Points per 100 possessions — optional when provider omits. */
+  /** Points per 100 possessions - optional when provider omits. */
   offensiveRating?: number;
   defensiveRating?: number;
   netRating?: number;
@@ -116,7 +118,7 @@ export interface PlayerSeason {
   winsAdded?: number;
 
   /**
-   * Canonical DRBL/100 — validated P-only EB1600 point estimate (M16k1+).
+   * Canonical DRBL/100 - validated P-only EB1600 point estimate (M16k1+).
    * Canonical overall ranking uses descending unrounded drbl100.
    */
   drbl100: number;
@@ -144,7 +146,7 @@ export interface PlayerSeason {
   vContMean: number;
   /**
    * Canonical realized R1 Points (Approach-B attributed residual).
-   * null when DRBL overlay is absent — never coerce missing to 0.
+   * null when DRBL overlay is absent - never coerce missing to 0.
    */
   r1Points: number | null;
   /**
@@ -156,7 +158,7 @@ export interface PlayerSeason {
   r1WinEquivalentVersion?: string | null;
   /**
    * @deprecated Legacy seasonalImpact / pointsPerWin (historical WAR generations).
-   * DEPRECATED_NONCANONICAL — retained for storage/API compatibility only.
+   * DEPRECATED_NONCANONICAL - retained for storage/API compatibility only.
    * Do not display as canonical cumulative value; do not alias to r1WinEquivalents.
    */
   drblWar: number;
@@ -171,7 +173,7 @@ export interface PlayerSeason {
   drblMeanLeverage: number;
   /** Scale-standardized component disagreement index (diagnostic). */
   drblDisagreement: number;
-  /** Analytical ± half-width — LEGACY DIAGNOSTIC ONLY; not a validated interval. */
+  /** Analytical ± half-width - LEGACY DIAGNOSTIC ONLY; not a validated interval. */
   drblUncertainty: number;
   drblIntervalLo: number;
   drblIntervalHi: number;

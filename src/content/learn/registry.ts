@@ -1,5 +1,5 @@
 /**
- * Canonical Learn concept registry — tooltip + Learn routing source of truth.
+ * Canonical Learn concept registry - tooltip + Learn routing source of truth.
  * Full pedagogy lives in STAT_GUIDES and LEARN_TOPICS; this file holds Level-1
  * metadata, aliases, and category IA. Do not duplicate long copy here.
  */
@@ -29,7 +29,7 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "shooting",
     label: "Shooting",
-    description: "How shots become points — and how efficiently.",
+    description: "How shots become points - and how efficiently.",
   },
   {
     id: "usage",
@@ -59,7 +59,7 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "transactions",
     label: "Transactions",
-    description: "Source events vs structured trades — and why genealogy waits.",
+    description: "Source events vs structured trades - and why genealogy waits.",
   },
 ];
 
@@ -70,7 +70,7 @@ export type LearnConcept = {
   label: string;
   shortName: string;
   category: LearnCategoryId;
-  /** Level-1 tooltip — keep short. */
+  /** Level-1 tooltip - keep short. */
   tooltip: string;
   /** Whether MetricHelp should render for this concept. */
   showTooltip: boolean;
@@ -142,7 +142,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "TOV",
     category: "basics",
     tooltip:
-      "Possessions lost without a shot attempt. Raw turnovers per game are volume — they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
+      "Possessions lost without a shot attempt. Raw turnovers per game are volume - they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
     showTooltip: true,
     learnSlug: "turnovers",
     relatedIds: ["ast_to", "usg"],
@@ -280,7 +280,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "USG%",
     category: "usage",
     tooltip:
-      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor. Higher usage means more on-ball responsibility — not automatically better play.",
+      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor. Higher usage means more on-ball responsibility - not automatically better play.",
     showTooltip: true,
     learnSlug: "usage",
     relatedIds: ["ts", "tov"],
@@ -318,7 +318,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ORtg",
     category: "team",
     tooltip:
-      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate — missing ratings stay unavailable rather than fabricated.",
+      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate - missing ratings stay unavailable rather than fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],
@@ -340,7 +340,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Net rating",
     shortName: "NET",
     category: "team",
-    tooltip: "ORtg minus DRtg — scoring margin per 100 possessions.",
+    tooltip: "ORtg minus DRtg - scoring margin per 100 possessions.",
     showTooltip: true,
     learnSlug: "net-rating",
     relatedIds: ["ortg", "drtg", "diff"],
@@ -396,7 +396,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL/100",
     category: "impact",
     tooltip:
-      "Estimated impact per 100 possessions — DRBL’s primary ability-rate ranking number.",
+      "Estimated impact per 100 possessions - DRBL’s primary ability-rate ranking number.",
     showTooltip: true,
     learnSlug: "drbl-100",
     relatedIds: [
@@ -450,7 +450,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Offense",
     category: "impact",
     tooltip:
-      "DRBL’s offensive split (DRBL-O) — how much value came on offense vs the role-matched reference. Not a substitute for DRBL/100.",
+      "DRBL’s offensive split (DRBL-O) - how much value came on offense vs the role-matched reference. Not a substitute for DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-o",
     relatedIds: ["drbl_d", "drbl", "drbl_p"],
@@ -462,7 +462,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Defense",
     category: "impact",
     tooltip:
-      "DRBL’s defensive split (DRBL-D) — how much value came on defense vs the role-matched reference. Not a substitute for DRBL/100.",
+      "DRBL’s defensive split (DRBL-D) - how much value came on defense vs the role-matched reference. Not a substitute for DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-d",
     relatedIds: ["drbl_o", "drbl", "drbl_p"],
@@ -498,7 +498,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL-B",
     category: "impact",
     tooltip:
-      "Diagnostic box/behavior component — not optical tracking. Does not sum with P and LN into DRBL/100.",
+      "Diagnostic box/behavior component - not optical tracking. Does not sum with P and LN into DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-b",
     relatedIds: ["drbl", "drbl_p", "drbl_ln"],
@@ -510,7 +510,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1",
     category: "impact",
     tooltip:
-      "DRBL’s contextual role-matched reference baseline — what “Above R1” compares against. Not conventional replacement.",
+      "DRBL’s contextual role-matched reference baseline - what “Above R1” compares against. Not conventional replacement.",
     showTooltip: true,
     learnSlug: "r1",
     relatedIds: ["r1_win_eq", "r1_points", "drbl"],
@@ -533,7 +533,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Validation",
     category: "systems",
     tooltip:
-      "Reserved and out-of-time testing lineage for DRBL — not a claim of external metric superiority.",
+      "Reserved and out-of-time testing lineage for DRBL - not a claim of external metric superiority.",
     showTooltip: true,
     learnSlug: "drbl-validation",
     relatedIds: ["drbl", "drbl_limitations"],
@@ -571,7 +571,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "CPI",
     category: "systems",
     tooltip:
-      "DRBL’s transparent counting composite for Career Resume peak/prime/longevity — not DARKO or LEBRON.",
+      "DRBL’s transparent counting composite for Career Resume peak/prime/longevity - not DARKO or LEBRON.",
     showTooltip: true,
     learnSlug: "cpi",
     relatedIds: ["career_resume", "career_peak", "career_prime", "career_longevity"],
@@ -633,7 +633,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Longevity",
     category: "systems",
     tooltip:
-      "Qualifying seasons at or above 70% of the player’s own Career Resume peak CPI — not merely years in the league.",
+      "Qualifying seasons at or above 70% of the player’s own Career Resume peak CPI - not merely years in the league.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: [
@@ -651,7 +651,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Longevity-only",
     category: "systems",
     tooltip:
-      "A qualifying season at 70–89% of peak CPI — longevity-level production outside the prime band.",
+      "A qualifying season at 70-89% of peak CPI - longevity-level production outside the prime band.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_longevity", "career_prime", "career_arc"],
@@ -663,7 +663,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Contiguous prime",
     category: "systems",
     tooltip:
-      "Career Resume prime is the longest unbroken run of ≥90% seasons — a gap below 90% splits prime windows.",
+      "Career Resume prime is the longest unbroken run of ≥90% seasons - a gap below 90% splits prime windows.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_prime", "career_peak"],
@@ -675,7 +675,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Development",
     category: "systems",
     tooltip:
-      "Descriptive rise toward peak on the career arc — not a formal Career Resume v1 scoring band.",
+      "Descriptive rise toward peak on the career arc - not a formal Career Resume v1 scoring band.",
     showTooltip: true,
     learnSlug: "career-arc",
     relatedIds: ["career_arc", "career_peak", "career_prime", "career_resume"],
@@ -687,7 +687,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Career Arc",
     category: "systems",
     tooltip:
-      "How Peak, Prime, Longevity, and trajectory phases fit together — overlapping performance bands, not exclusive buckets.",
+      "How Peak, Prime, Longevity, and trajectory phases fit together - overlapping performance bands, not exclusive buckets.",
     showTooltip: true,
     learnSlug: "career-arc",
     relatedIds: [
@@ -705,7 +705,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Career-self",
     category: "systems",
     tooltip:
-      "Peak/Prime/Longevity use % of this player’s own peak CPI — not a league or board percentile.",
+      "Peak/Prime/Longevity use % of this player’s own peak CPI - not a league or board percentile.",
     showTooltip: true,
     learnSlug: "career-self-comparison",
     relatedIds: ["career_peak", "career_prime", "career_longevity", "percentiles", "cpi"],
@@ -717,7 +717,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Rank My Seasons",
     category: "systems",
     tooltip:
-      "Ranks a player’s seasons with pairwise comparisons and Copeland points — no opaque season score.",
+      "Ranks a player’s seasons with pairwise comparisons and Copeland points - no opaque season score.",
     showTooltip: true,
     learnSlug: "rank-my-seasons",
     relatedIds: ["copeland", "contested", "close_top"],
@@ -744,7 +744,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Team Compare",
     category: "systems",
     tooltip:
-      "Head-to-head team seasons using board metrics, tolerances, and category plurality — no composite score.",
+      "Head-to-head team seasons using board metrics, tolerances, and category plurality - no composite score.",
     showTooltip: true,
     learnSlug: "team-season-compare",
     relatedIds: ["essentially_even", "team_rank_seasons"],
@@ -756,7 +756,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season Compare",
     category: "systems",
     tooltip:
-      "Head-to-head player seasons by category edges — the building block for Rank My Seasons.",
+      "Head-to-head player seasons by category edges - the building block for Rank My Seasons.",
     showTooltip: true,
     learnSlug: "player-season-compare",
     relatedIds: ["rank_my_seasons", "essentially_even"],
@@ -780,7 +780,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Game Lab",
     category: "systems",
     tooltip:
-      "Box-score story of a game: what stood out, what changed, and team context — without PBP claims.",
+      "Box-score story of a game: what stood out, what changed, and team context - without PBP claims.",
     showTooltip: true,
     learnSlug: "game-lab",
     relatedIds: ["season_evidence", "season_baseline", "scoreboard_only"],
@@ -792,7 +792,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season evidence",
     category: "systems",
     tooltip:
-      "Representative games (largest win, highest scoring, etc.) that illustrate a season — descriptive, not “most important.”",
+      "Representative games (largest win, highest scoring, etc.) that illustrate a season - descriptive, not “most important.”",
     showTooltip: true,
     learnSlug: "season-evidence",
     relatedIds: ["game_lab", "team_rank_seasons", "season_baseline"],
@@ -816,7 +816,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season baseline",
     category: "systems",
     tooltip:
-      "The team's average performance across qualifying games from the same season — used to describe how unusual a single game was.",
+      "The team's average performance across qualifying games from the same season - used to describe how unusual a single game was.",
     showTooltip: true,
     learnSlug: "season-baseline",
     relatedIds: ["game_lab", "season_evidence", "essentially_even"],
@@ -832,7 +832,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ASK DRBL",
     category: "systems",
     tooltip:
-      "Natural-language questions routed to existing DRBL analyzers — not a free-form AI fantasy.",
+      "Natural-language questions routed to existing DRBL analyzers - not a free-form AI fantasy.",
     showTooltip: true,
     learnSlug: "ask-drbl",
     seeInAction: [{ label: "Open ASK DRBL", href: "/ask" }],
@@ -954,7 +954,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Source event",
     category: "transactions",
     tooltip:
-      "A verbatim ESPN transaction blurb. Reporting context — not a structured asset ledger.",
+      "A verbatim ESPN transaction blurb. Reporting context - not a structured asset ledger.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["related_event_cluster", "structured_transaction"],
@@ -967,7 +967,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Related cluster",
     category: "transactions",
     tooltip:
-      "Multiple source events safely linked as related reporting — still not a verified trade package.",
+      "Multiple source events safely linked as related reporting - still not a verified trade package.",
     showTooltip: true,
     learnSlug: "transaction-layers",
   },
@@ -978,7 +978,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Structured tx",
     category: "transactions",
     tooltip:
-      "Verified asset-level transaction. Currently 0 in production — trade genealogy stays blocked.",
+      "Verified asset-level transaction. Currently 0 in production - trade genealogy stays blocked.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: [
@@ -995,7 +995,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "TPE",
     category: "transactions",
     tooltip:
-      "A CBA mechanism that may let a team absorb qualifying salary without matching outgoing salary — only when a structured TPE ledger exists.",
+      "A CBA mechanism that may let a team absorb qualifying salary without matching outgoing salary - only when a structured TPE ledger exists.",
     showTooltip: true,
     learnSlug: "trade-exception",
     relatedIds: ["salary_fit", "trade_legality", "structured_transaction"],
@@ -1020,7 +1020,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Legality",
     category: "transactions",
     tooltip:
-      "Whether a full proposed transaction satisfies applicable CBA and roster rules. Requires a deterministic validator — never inferred from fit lists.",
+      "Whether a full proposed transaction satisfies applicable CBA and roster rules. Requires a deterministic validator - never inferred from fit lists.",
     showTooltip: true,
     learnSlug: "salary-fit-vs-legality",
     relatedIds: ["salary_fit", "trade_exception"],
@@ -1032,7 +1032,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Draft capital",
     category: "transactions",
     tooltip:
-      "Owned draft picks and related rights from a structured pick ledger — not inferred from ESPN free text.",
+      "Owned draft picks and related rights from a structured pick ledger - not inferred from ESPN free text.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["structured_transaction", "source_event"],

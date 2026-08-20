@@ -5,6 +5,10 @@ import {
   espnYearFromCanonicalSeason,
 } from "@/data/providers/nba/season";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import {
+  cardStintsForSeason,
+  type PlayerCardStint,
+} from "@/lib/player-team-context";
 
 export type StatComp = {
   playerId: string;
@@ -12,10 +16,13 @@ export type StatComp = {
   season: string;
   teamName?: string;
   teamKey?: string;
+  stints?: PlayerCardStint[];
   value: number;
   display: string;
   /** Comp value minus focal value. */
   delta: number;
+  /** 0-100 vs the same peer pool as the ranking (inverted when lower is better). */
+  percentile: number;
 };
 
 /**
@@ -278,6 +285,12 @@ function toCandidates(
   return out;
 }
 
+function percentileAmong(value: number, pool: number[]): number {
+  if (!pool.length || !Number.isFinite(value)) return 50;
+  const below = pool.filter((v) => v < value).length;
+  return (below / pool.length) * 100;
+}
+
 /** Closest players on a single metric (by absolute distance). */
 export function findSimilarForMetric(options: {
   metricId: string;
@@ -286,35 +299,64 @@ export function findSimilarForMetric(options: {
   leagueRows: PlayerSeason[];
   historicalRows: PlayerSeason[];
   limit?: number;
+  invert?: boolean;
 }): { leagueComps: StatComp[]; historicalComps: StatComp[] } {
   const picker = METRIC_PICKERS[options.metricId];
   if (!picker) return { leagueComps: [], historicalComps: [] };
   const limit = options.limit ?? 6;
+  const invert = Boolean(options.invert);
 
-  const nearest = (
-    candidates: ReturnType<typeof toCandidates>
-  ): StatComp[] =>
-    candidates
+  const nearest = (rows: PlayerSeason[]): StatComp[] => {
+    const stintsByPlayerSeason = new Map<string, PlayerCardStint[]>();
+    const grouped = new Map<string, PlayerSeason[]>();
+    for (const row of rows) {
+      const key = `${row.playerId}|${row.season}`;
+      const list = grouped.get(key);
+      if (list) list.push(row);
+      else grouped.set(key, [row]);
+    }
+    for (const [key, list] of grouped) {
+      const season = key.slice(key.indexOf("|") + 1);
+      stintsByPlayerSeason.set(key, cardStintsForSeason(list, season));
+    }
+
+    const candidates = toCandidates(rows, picker.pick);
+    const poolValues = candidates.map((c) => c.value);
+    const toPercentile = (value: number) => {
+      const raw = percentileAmong(value, poolValues);
+      return invert ? 100 - raw : raw;
+    };
+
+    return candidates
       .filter((c) => c.playerId !== options.focalPlayerId)
-      .map((c) => ({
-        playerId: c.playerId,
-        playerName: c.playerName,
-        season: c.season,
-        teamName: c.teamName,
-        teamKey: c.teamKey,
-        value: c.value,
-        display: picker.format(c.value),
-        delta: c.value - options.focalValue,
-        distance: Math.abs(c.value - options.focalValue),
-      }))
-      .sort((a, b) => a.distance - b.distance || a.playerName.localeCompare(b.playerName))
+      .map((c) => {
+        const stints =
+          stintsByPlayerSeason.get(`${c.playerId}|${c.season}`) ?? [];
+        const last = stints.at(-1);
+        return {
+          playerId: c.playerId,
+          playerName: c.playerName,
+          season: c.season,
+          teamName: last?.teamLabel ?? c.teamName,
+          teamKey: last?.teamKey ?? c.teamKey,
+          stints: stints.length > 0 ? stints : undefined,
+          value: c.value,
+          display: picker.format(c.value),
+          delta: c.value - options.focalValue,
+          percentile: toPercentile(c.value),
+          distance: Math.abs(c.value - options.focalValue),
+        };
+      })
+      .sort(
+        (a, b) =>
+          a.distance - b.distance || a.playerName.localeCompare(b.playerName)
+      )
       .slice(0, limit)
       .map(({ distance: _d, ...rest }) => rest);
+  };
 
   return {
-    leagueComps: nearest(toCandidates(options.leagueRows, picker.pick)),
-    historicalComps: nearest(
-      toCandidates(options.historicalRows, picker.pick)
-    ),
+    leagueComps: nearest(options.leagueRows),
+    historicalComps: nearest(options.historicalRows),
   };
 }

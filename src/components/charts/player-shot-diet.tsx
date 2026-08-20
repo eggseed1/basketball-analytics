@@ -11,6 +11,10 @@ import {
 
 import type { ShotDietSlice } from "@/lib/player-stat-views";
 import { formatNumber, formatPct } from "@/lib/format";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 const SLICE_FILL: Record<string, string> = {
   "2pa": "oklch(0.45 0.08 250)",
@@ -70,18 +74,16 @@ export function PlayerShotDiet({ slices }: { slices: ShotDietSlice[] }) {
                   ))}
                 </Pie>
                 <Tooltip
+                  wrapperStyle={rechartsFrostWrapperStyle}
                   content={({ active, payload }) => {
                     if (!active || !payload?.length) return null;
                     const row = payload[0]?.payload as ShotDietSlice;
                     return (
-                      <div
-                        role="tooltip"
-                        className="rounded-lg border border-border bg-popover px-3 py-2 text-sm shadow-md"
-                      >
+                      <FrostRechartsTooltip active={active}>
                         <p className="font-medium">{row.label}</p>
                         <p>{formatNumber(row.attempts)} attempts</p>
                         <p>{formatPct(row.share)} of attempts</p>
-                      </div>
+                      </FrostRechartsTooltip>
                     );
                   }}
                 />

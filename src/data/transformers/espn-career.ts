@@ -189,7 +189,7 @@ export function transformEspnAthleteCareerStats(
         freeThrowPct,
         ...(ts != null ? { trueShootingPct: ts } : {}),
         ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
-        // Career ESPN totals lack team possessions — do not invent USG%=0.
+        // Career ESPN totals lack team possessions - do not invent USG%=0.
         ...(offensiveRating != null ? { offensiveRating } : {}),
         // Career ESPN totals do not include individual DRtg/NET.
       })

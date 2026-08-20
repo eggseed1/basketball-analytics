@@ -1,5 +1,5 @@
 /**
- * Learn topics — standard template for DRBL education pages.
+ * Learn topics - standard template for DRBL education pages.
  * Existing advanced-stat pedagogy remains in STAT_GUIDES; this covers
  * systems, status labels, and additional concepts with a consistent shape.
  */
@@ -38,7 +38,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howToInterpret: [
       "Higher CPI means more combined scoring, playmaking, rebounding, and defensive counting stats after turnovers.",
-      "Compare a player only to their own peak — not to the league board — inside Career Resume.",
+      "Compare a player only to their own peak - not to the league board - inside Career Resume.",
     ],
     howDrblUses: [
       "Primary metric for Career Resume Peak / Prime / Longevity.",
@@ -53,7 +53,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "CPI is not BPM, DARKO, or LEBRON.",
       "It does not measure defense beyond steals/blocks and ignores lineup context.",
-      "DARKO on career rows is currently a live overlay — not used as historical peak.",
+      "DARKO on career rows is currently a live overlay - not used as historical peak.",
     ],
     relatedIds: ["career_resume", "career_peak", "career_prime", "career_longevity", "career_self_comparison", "ts"],
     seeInAction: [
@@ -71,7 +71,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Career Resume",
     category: "systems",
     oneSentence:
-      "Career Resume answers what a career looks like analytically: Peak, Prime, Longevity, and Trajectory — using overlapping career-self bands, not mutually exclusive buckets.",
+      "Career Resume answers what a career looks like analytically: Peak, Prime, Longevity, and Trajectory - using overlapping career-self bands, not mutually exclusive buckets.",
     whyItMatters: [
       "Casual fans get a readable career arc without inventing a single “GOAT score.”",
       "Peak, Prime, and Longevity stack: a peak season is also prime and longevity; prime seasons remain longevity seasons.",
@@ -80,8 +80,8 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Peak = the single qualifying season with the highest CPI.",
       "Prime = the longest contiguous run of qualifying seasons at ≥90% of that peak CPI.",
       "Longevity = count of qualifying seasons at ≥70% of peak CPI (includes all prime seasons).",
-      "Longevity-only = 70–89% of peak — still meaningful production outside the prime band.",
-      "Bands are career_self — relative to this player’s own peak, not a league percentile.",
+      "Longevity-only = 70-89% of peak - still meaningful production outside the prime band.",
+      "Bands are career_self - relative to this player’s own peak, not a league percentile.",
     ],
     howDrblUses: [
       "Player pages and ASK DRBL career questions.",
@@ -97,7 +97,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "Incomplete current seasons below the GP floor are shown but excluded from Peak/Prime/Longevity.",
       "Official awards are not included (no award feed yet).",
-      "“Development / Emergence” on the arc is descriptive — not a formal Career Resume v1 scoring band.",
+      "“Development / Emergence” on the arc is descriptive - not a formal Career Resume v1 scoring band.",
     ],
     relatedIds: [
       "cpi",
@@ -122,27 +122,27 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Peak · Prime · Longevity",
     category: "systems",
     oneSentence:
-      "Peak is one highest-CPI season; Prime is the longest contiguous ≥90% run; Longevity is every qualifying season at ≥70% of that same peak — and these bands overlap.",
+      "Peak is one highest-CPI season; Prime is the longest contiguous ≥90% run; Longevity is every qualifying season at ≥70% of that same peak - and these bands overlap.",
     whyItMatters: [
       "Fans often treat “prime years” and “longevity years” as separate piles. Under Career Resume v1 they nest.",
       "Understanding overlap prevents reading a 75% season as “career over.”",
     ],
     howToInterpret: [
       "Peak (100% of peak) ⊂ Prime (≥90%) ⊂ Longevity (≥70%).",
-      "Example — Season A at 100%: Peak + Prime + Longevity. Season B at 96%: Prime + Longevity. Season D at 84%: Longevity-only. Season F at 61%: neither.",
-      "Longevity-only (70–89%) means strong, peak-relative production that is outside the prime band — not a weak season by default.",
+      "Example - Season A at 100%: Peak + Prime + Longevity. Season B at 96%: Prime + Longevity. Season D at 84%: Longevity-only. Season F at 61%: neither.",
+      "Longevity-only (70-89%) means strong, peak-relative production that is outside the prime band - not a weak season by default.",
       "Longevity can continue after the contiguous prime ends; a player need not stay at 90% to still clear the 70% floor.",
-      "Prime contiguity: 94%, 96%, 88%, 93%, 95% is not one five-year prime — the 88% gap splits two prime windows, and Career Resume keeps the longest run.",
+      "Prime contiguity: 94%, 96%, 88%, 93%, 95% is not one five-year prime - the 88% gap splits two prime windows, and Career Resume keeps the longest run.",
       "Peak ≠ “best season” in a league-percentile sense; Prime ≠ every season that ever hit 90%.",
       "Longevity ≠ years played or durability (games played). It is production sustained vs own peak.",
     ],
     howDrblUses: [
       "Career Resume Peak / Prime / Longevity cards on player pages.",
       "Qualifying-season table bands should be read as overlapping labels.",
-      "Primary metric remains CPI (Career Resume methodology v1.0) — unchanged by this Learn page.",
+      "Primary metric remains CPI (Career Resume methodology v1.0) - unchanged by this Learn page.",
     ],
     formula:
-      "100% ─ PEAK\n │\n │  PRIME  (≥90%)\n │\n │  Longevity-only  (70–89%)\n │\n70% ─ LONGEVITY FLOOR\n │\n │  Below longevity threshold",
+      "100% ─ PEAK\n │\n │  PRIME  (≥90%)\n │\n │  Longevity-only  (70-89%)\n │\n70% ─ LONGEVITY FLOOR\n │\n │  Below longevity threshold",
     calculation: [
       "CPI = PPG + 1.5×APG + 1.2×RPG + 2.0×SPG + 2.0×BPG − TOV (per game).",
       "Peak = max CPI among qualifying seasons.",
@@ -152,7 +152,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "90% of peak is not the 90th league percentile.",
       "Incomplete / non-qualifying seasons never enter these bands.",
-      "Do not invent a Development Score from this diagram — Development is explanatory on the Career Arc page.",
+      "Do not invent a Development Score from this diagram - Development is explanatory on the Career Arc page.",
     ],
     relatedIds: [
       "career_peak",
@@ -181,7 +181,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Career Arc",
     category: "systems",
     oneSentence:
-      "A career arc describes how a player moves through development/rise, prime, longevity-only, and late phases — while Peak/Prime/Longevity remain overlapping performance bands.",
+      "A career arc describes how a player moves through development/rise, prime, longevity-only, and late phases - while Peak/Prime/Longevity remain overlapping performance bands.",
     whyItMatters: [
       "Phase language (rise, late, current) is easy to confuse with the 90%/70% production thresholds.",
       "Separating trajectory phases from performance bands keeps Career Resume honest.",
@@ -190,15 +190,15 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Typical story: Development / rise → contiguous Prime → Longevity-only seasons → below the longevity floor.",
       "Late career is a trajectory phase (where the season sits on the arc), not automatically “below 70%.”",
       "A late-career season can still be longevity-only or even inside a late prime window.",
-      "Development / Emergence means production still below established prime level while the measured arc is building toward peak — DRBL does not claim to know why the player improved.",
+      "Development / Emergence means production still below established prime level while the measured arc is building toward peak - DRBL does not claim to know why the player improved.",
     ],
     howDrblUses: [
       "Career Resume trajectory strip (e.g. Development → rise → Prime → Late career → Current).",
-      "Biggest career changes reuse Player Evolution YoY deltas — descriptive evidence, not a Development Score.",
+      "Biggest career changes reuse Player Evolution YoY deltas - descriptive evidence, not a Development Score.",
       "Formal Development Season labeling is not part of Career Resume methodology v1.0.",
     ],
     caveats: [
-      "Trajectory phases are labeled from CPI shape only — no causal claims.",
+      "Trajectory phases are labeled from CPI shape only - no causal claims.",
       "Do not treat every pre-prime season as automatically “developmental.”",
       "Player Evolution YoY changes are available separately and are not a proprietary development model.",
     ],
@@ -232,7 +232,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howToInterpret: [
       "career_self = % of this player’s peak CPI.",
       "Leaderboard / peer percentiles compare to other players on a board or in a season.",
-      "Filtered-board percentiles change when you change the explore filters — Career Resume bands do not.",
+      "Filtered-board percentiles change when you change the explore filters - Career Resume bands do not.",
       "A short career can still show a high share of longevity seasons; a long career can show few if production fell off vs peak.",
     ],
     howDrblUses: [
@@ -264,7 +264,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Rank My Seasons",
     category: "systems",
     oneSentence:
-      "Rank My Seasons orders a player’s selected seasons by pairwise comparisons and Copeland points — not by a hidden universal score.",
+      "Rank My Seasons orders a player’s selected seasons by pairwise comparisons and Copeland points - not by a hidden universal score.",
     whyItMatters: [
       "“Best season” is ambiguous; DRBL states the methodology instead of pretending objectivity.",
     ],
@@ -275,11 +275,11 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howDrblUses: [
       "Player season-rank routes and ASK “best season” questions for players.",
-      "Set size 2–8 seasons.",
+      "Set size 2-8 seasons.",
     ],
     caveats: [
       "Unavailable evidence is not treated as a substantive loss.",
-      "CPI appears only as production context — never as the ranking model.",
+      "CPI appears only as production context - never as the ranking model.",
     ],
     relatedIds: ["copeland", "player_season_compare", "contested", "close_top"],
     seeInAction: [
@@ -311,7 +311,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Team pages and ASK team “best season” questions.",
     ],
     caveats: [
-      "Within-franchise only — not cross-era normalized greatness.",
+      "Within-franchise only - not cross-era normalized greatness.",
       "No opaque team-season score.",
     ],
     relatedIds: ["team_season_compare", "copeland", "season_evidence"],
@@ -409,7 +409,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Game Lab",
     category: "systems",
     oneSentence:
-      "Game Lab explains a finished game from the box score and team context — not from play-by-play yet.",
+      "Game Lab explains a finished game from the box score and team context - not from play-by-play yet.",
     whyItMatters: [
       "Connects seasons and leaderboards to a specific night’s evidence.",
     ],
@@ -435,12 +435,12 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Season evidence",
     category: "systems",
     oneSentence:
-      "Representative schedule-score games that illustrate a season profile — largest win, highest scoring, best defensive result, and similar.",
+      "Representative schedule-score games that illustrate a season profile - largest win, highest scoring, best defensive result, and similar.",
     whyItMatters: [
       "Turns “this season ranked #1” into concrete nights you can open in Game Lab.",
     ],
     howToInterpret: [
-      "Descriptive only — never “most important game.”",
+      "Descriptive only - never “most important game.”",
       "Categories without schedule data (eFG, rebounds) stay unavailable.",
     ],
     howDrblUses: [
@@ -449,7 +449,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "ASK biggest-wins / best-games questions.",
     ],
     caveats: [
-      "Uses lightweight GameSummary rows — no Game Lab fetch during selection.",
+      "Uses lightweight GameSummary rows - no Game Lab fetch during selection.",
       "Regular season finals only.",
     ],
     relatedIds: ["game_lab", "team_rank_seasons", "season_baseline"],
@@ -468,13 +468,13 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Season baseline",
     category: "systems",
     oneSentence:
-      "The team's average performance across qualifying games from the same season — the yardstick for how unusual a single game was.",
+      "The team's average performance across qualifying games from the same season - the yardstick for how unusual a single game was.",
     whyItMatters: [
       "Turns a box score into context: was this night loud offense, quiet defense, or both?",
     ],
     howToInterpret: [
       "Game Lab compares scoreboard points and (when available) box rates to the same-season board.",
-      "Inside tolerance means near normal — not a highlight.",
+      "Inside tolerance means near normal - not a highlight.",
       "Lower opponent points or turnovers can be a positive story; direction is explicit.",
     ],
     howDrblUses: [
@@ -503,7 +503,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howToInterpret: [
       "Interpretation lines show how DRBL understood the question.",
-      "Unsupported / partial / insufficient data are honest status states — not soft failures.",
+      "Unsupported / partial / insufficient data are honest status states - not soft failures.",
     ],
     howDrblUses: [
       "/ask and deep links from team/player pages.",
@@ -522,14 +522,14 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Percentiles",
     category: "systems",
     oneSentence:
-      "A percentile answers “what share of a defined population sits below this value?” — not “how many points.”",
+      "A percentile answers “what share of a defined population sits below this value?” - not “how many points.”",
     whyItMatters: [
       "DRBL uses several populations; mixing them up misreads the number.",
     ],
     howToInterpret: [
       "90th percentile ≈ above ~90% of that population.",
       "Leaderboard percentiles use the filtered board.",
-      "Career Resume “% of peak” is career_self — not a peer percentile.",
+      "Career Resume “% of peak” is career_self - not a peer percentile.",
       "Game-log percentiles use that player’s games, not the league.",
     ],
     howDrblUses: [
@@ -549,7 +549,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Historical impact",
     category: "systems",
     oneSentence:
-      "Historical impact on DRBL requires season-true archives — current-only overlays are not treated as backfilled history.",
+      "Historical impact on DRBL requires season-true archives - current-only overlays are not treated as backfilled history.",
     whyItMatters: [
       "Prevents fake career peaks from today’s DARKO pasted onto old seasons.",
     ],
@@ -573,13 +573,13 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "DIFF",
     category: "basics",
     oneSentence:
-      "Point differential is scoring margin — points scored minus points allowed.",
+      "Point differential is scoring margin - points scored minus points allowed.",
     whyItMatters: [
       "One of the simplest signals of team strength across a season.",
     ],
     howToInterpret: [
       "Positive = outscoring opponents on average.",
-      "Larger absolute values usually mean clearer separation — still check sample size.",
+      "Larger absolute values usually mean clearer separation - still check sample size.",
     ],
     howDrblUses: [
       "Team boards, Team Season Compare Performance category, season evidence largest win/loss.",
@@ -597,7 +597,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     oneSentence:
       "Plus/minus is the team’s scoring margin while a player is on the floor.",
     whyItMatters: [
-      "Connects individual minutes to team results — with heavy teammate/opponent noise.",
+      "Connects individual minutes to team results - with heavy teammate/opponent noise.",
     ],
     howToInterpret: [
       "Positive means the team outscored opponents during those minutes.",
@@ -615,7 +615,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Pace",
     category: "basics",
     oneSentence:
-      "Pace estimates how many possessions a team plays — how fast the game flows.",
+      "Pace estimates how many possessions a team plays - how fast the game flows.",
     whyItMatters: [
       "Faster pace inflates raw counting stats; efficiency metrics help compare across speeds.",
     ],
@@ -638,7 +638,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "TOV",
     category: "basics",
     oneSentence:
-      "A turnover ends a possession without a shot attempt — the ball is lost.",
+      "A turnover ends a possession without a shot attempt - the ball is lost.",
     whyItMatters: ["Turnovers erase offensive chances and feed the opponent."],
     howToInterpret: [
       "Lower team turnovers (or higher AST/TO) usually signal cleaner offense.",
@@ -646,7 +646,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howDrblUses: [
       "Player and team boards; CPI subtracts TOV; Team Compare Possessions category.",
     ],
-    caveats: ["Context matters — high-usage creators often carry more turnovers."],
+    caveats: ["Context matters - high-usage creators often carry more turnovers."],
     relatedIds: ["ast_to", "usg", "cpi"],
     seeInAction: [{ label: "Player leaderboard", href: "/explore/players" }],
   },
@@ -657,7 +657,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "FG%",
     category: "shooting",
     oneSentence:
-      "FG% is makes ÷ attempts for all field goals — twos and threes count the same.",
+      "FG% is makes ÷ attempts for all field goals - twos and threes count the same.",
     whyItMatters: ["Classic shooting rate, but it undervalues threes."],
     howToInterpret: [
       "Use eFG% or TS% when three-point volume differs.",
@@ -676,7 +676,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     oneSentence: "Made threes divided by three-point attempts.",
     whyItMatters: ["Measures accuracy from beyond the arc."],
     howToInterpret: [
-      "Pair with attempt volume — tiny samples swing wildly.",
+      "Pair with attempt volume - tiny samples swing wildly.",
     ],
     howDrblUses: ["Shooting categories in player/team compares."],
     caveats: ["High 3P% on low volume is not the same as high volume accuracy."],
@@ -690,11 +690,11 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "3PAr",
     category: "shooting",
     oneSentence:
-      "Share of field goal attempts that come from three — a style/volume signal.",
+      "Share of field goal attempts that come from three - a style/volume signal.",
     whyItMatters: ["Separates “shoots a lot of threes” from “makes threes.”"],
     howToInterpret: ["Higher 3PAr means a more perimeter-oriented shot diet."],
     howDrblUses: ["Team profile traits and shooting context."],
-    caveats: ["Not accuracy — pair with 3P% / eFG%."],
+    caveats: ["Not accuracy - pair with 3P% / eFG%."],
     relatedIds: ["fg3", "efg"],
     seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
   },
@@ -704,7 +704,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     name: "Assist-to-turnover ratio",
     shortName: "AST/TO",
     category: "usage",
-    oneSentence: "Assists divided by turnovers — a simple care-vs-creation ratio.",
+    oneSentence: "Assists divided by turnovers - a simple care-vs-creation ratio.",
     whyItMatters: ["Helps read playmaking cleanliness."],
     howToInterpret: ["Higher is generally better; role still matters."],
     howDrblUses: ["Team Compare Possessions; player boards when present."],
@@ -746,7 +746,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Player and team season compares; Rank My Seasons / Rank Team Seasons.",
     ],
     caveats: [
-      "Tolerance is product policy — not a claim that the true difference is zero.",
+      "Tolerance is product policy - not a claim that the true difference is zero.",
     ],
     relatedIds: ["copeland", "unavailable", "team_season_compare"],
     seeInAction: [{ label: "Compare teams", href: "/compare?mode=teams" }],
@@ -783,7 +783,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Different from unavailable (missing) and from a decisive loss.",
     ],
     howDrblUses: ["ASK status states; eligibility messaging."],
-    caveats: ["Thresholds differ by feature — read the local methodology."],
+    caveats: ["Thresholds differ by feature - read the local methodology."],
     relatedIds: ["not_eligible", "incomplete_season"],
     seeInAction: [{ label: "ASK DRBL", href: "/ask" }],
   },
@@ -815,7 +815,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Incomplete",
     category: "status",
     oneSentence:
-      "A current season still in progress — or below the games threshold — is incomplete for completed-season comparisons.",
+      "A current season still in progress - or below the games threshold - is incomplete for completed-season comparisons.",
     whyItMatters: [
       "Stops midseason samples from being treated like finished 82-game profiles.",
     ],
@@ -878,13 +878,13 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Transactions",
     category: "transactions",
     oneSentence:
-      "DRBL separates ESPN source events, related-event clusters, and structured transactions — and only the last can unlock trade genealogy.",
+      "DRBL separates ESPN source events, related-event clusters, and structured transactions - and only the last can unlock trade genealogy.",
     whyItMatters: [
       "Prevents free-text blurbs from being mistaken for verified asset moves.",
     ],
     howToInterpret: [
       "Source event = verbatim ESPN report.",
-      "Related cluster = safely linked reports — still not a full trade package.",
+      "Related cluster = safely linked reports - still not a full trade package.",
       "Structured transaction = verified assets (currently 0 in production).",
     ],
     howDrblUses: [
@@ -915,7 +915,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "TPE",
     category: "transactions",
     oneSentence:
-      "A Trade Exception is a CBA mechanism that may allow a team to acquire qualifying salary without sending equal salary back — subject to league rules and only when structured TPE data exists.",
+      "A Trade Exception is a CBA mechanism that may allow a team to acquire qualifying salary without sending equal salary back - subject to league rules and only when structured TPE data exists.",
     whyItMatters: [
       "Fans often confuse “fits the dollar amount” with “this trade is legal.”",
       "Teams use TPEs as flexible acquisition tools after outgoing trades.",
@@ -950,9 +950,9 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "A future Trade Builder needs these stages as explicit product steps.",
     ],
     howToInterpret: [
-      "Salary fit — does the dollar amount fit the selected mechanism?",
-      "Eligibility — are there restrictions on moving that player?",
-      "Legality — does the whole package satisfy CBA / roster / timing rules?",
+      "Salary fit - does the dollar amount fit the selected mechanism?",
+      "Eligibility - are there restrictions on moving that player?",
+      "Legality - does the whole package satisfy CBA / roster / timing rules?",
     ],
     howDrblUses: [
       "Cap asset UI keeps tiers separate.",
@@ -977,7 +977,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     oneSentence:
       "DRBL follows a possession from expected scoring value through observable actions, attribution, shrinkage, and season totals.",
     whyItMatters: [
-      "The player page answers “how good?” without teaching the model — this page is for fans who want the story of a possession.",
+      "The player page answers “how good?” without teaching the model - this page is for fans who want the story of a possession.",
       "Formulas make more sense after the basketball sequence is clear.",
     ],
     howToInterpret: [
@@ -1026,7 +1026,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howToInterpret: [
       "Reserved testing holds out data the model did not tune against.",
       "Out-of-time testing checks whether earlier seasons help later ones.",
-      "M16j and M17b are research milestones in that lineage — not public ranking knobs.",
+      "M16j and M17b are research milestones in that lineage - not public ranking knobs.",
     ],
     howDrblUses: [
       "Published ability rates use the validated EB1600 path sealed in research.",
@@ -1039,7 +1039,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     caveats: [
       "Do not read M17c as “DRBL beat BPM” or “DRBL is the best public metric.”",
-      "M17c broader external superiority remains blocked by coverage — not a product ranking claim.",
+      "M17c broader external superiority remains blocked by coverage - not a product ranking claim.",
       "Individual predictive uncertainty intervals are not currently shipped.",
       "Validation does not erase PBP observability limits.",
     ],
@@ -1087,7 +1087,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Limitations",
     category: "systems",
     oneSentence:
-      "DRBL is useful impact estimation — not causal player value, complete off-ball measurement, traditional WAR, or proven cross-era superiority.",
+      "DRBL is useful impact estimation - not causal player value, complete off-ball measurement, traditional WAR, or proven cross-era superiority.",
     whyItMatters: [
       "Honest limits deepen trust more than burying caveats.",
       "Advanced diagnostics (especially LN and B) are easy to over-read.",
@@ -1095,7 +1095,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     howToInterpret: [
       "Not causal roster-replacement value.",
       "Standard PBP misses some spatial / off-ball behavior.",
-      "Lineup context can retain system effects — LN is not proven off-ball value.",
+      "Lineup context can retain system effects - LN is not proven off-ball value.",
       "Individual predictive uncertainty is not currently shipped.",
       "R1 is not conventional replacement; WAR1 is not traditional WAR.",
       "Cross-era comparability and external superiority are not established product claims.",

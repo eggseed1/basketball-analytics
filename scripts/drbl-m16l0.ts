@@ -1,5 +1,5 @@
 /**
- * M16l0 — WAR semantic specification + dimensional re-audit (no live WAR change).
+ * M16l0 - WAR semantic specification + dimensional re-audit (no live WAR change).
  *   npm run drbl:m16l0
  */
 import { createHash } from "node:crypto";
@@ -473,7 +473,7 @@ No LOO slope. No fringe replacement. Different PPW. **Not cross-season comparabl
     )
   );
 
-  // ---- Phase 7–8 replacement ----
+  // ---- Phase 7-8 replacement ----
   await writeFile(
     path.join(OUT, "07_replacement_zero_proof.md"),
     `# Replacement-zero proof
@@ -596,7 +596,7 @@ Not equal to raw attributed points (shrinkage). Not a forecast. Not future posse
   const multiTeamHeuristic: Record<string, unknown>[] = [];
   for (const s of SEASONS) {
     const byPlayer = new Map<string, Set<string>>();
-    // Only one teamId per player in DRBL board — prove uniqueness
+    // Only one teamId per player in DRBL board - prove uniqueness
     for (const p of boards[s]!.players) {
       const set = byPlayer.get(p.playerId) ?? new Set();
       if (p.teamId) set.add(String(p.teamId));
@@ -638,7 +638,7 @@ Not equal to raw attributed points (shrinkage). Not a forecast. Not future posse
         leagueResidual: "",
         maxTeamResidual: "",
         result: "UNAVAILABLE",
-        note: "Same — player-season only",
+        note: "Same - player-season only",
       },
     ])
   );
@@ -699,7 +699,7 @@ rate × paired / 100     undercounts by ~2× relative to attributed value
 - **Origin:** leave-one-out team regression slope mapping player **posterior ability** onto a **team netRating-like** target (pts/100 paired).
 - **Fit type:** through-origin team-level LOO (\`calibrationIntercept=0\`, \`calibrationSource=learned_leave_one_out\`).
 - **Input:** posterior (not raw).
-- **Role:** ability-scale transform into netRating units — **not** a pure points→wins conversion.
+- **Role:** ability-scale transform into netRating units - **not** a pure points→wins conversion.
 
 ## ≈2.918
 
@@ -856,11 +856,11 @@ and wins
   const warExposureDenom = "COMBINED_APPEARANCE_POSSESSIONS";
   const warRateDenom = "COMBINED_APPEARANCE_POSSESSIONS";
   const addlRepl = "NO";
-  // bakeoff ready requires stint allocation — BLOCKED
+  // bakeoff ready requires stint allocation - BLOCKED
   const m16l1Ready = false;
   const blockers = [
-    "TEAM_STINT_VALUE_ALLOCATION_AVAILABLE=NO — traded-player team-stint rows required before team WAR validation",
-    "TEAM_ATTRIBUTION_ADDITIVITY=UNAVAILABLE — no team attribution reference",
+    "TEAM_STINT_VALUE_ALLOCATION_AVAILABLE=NO - traded-player team-stint rows required before team WAR validation",
+    "TEAM_ATTRIBUTION_ADDITIVITY=UNAVAILABLE - no team attribution reference",
   ];
 
   await writeFile(
@@ -997,7 +997,7 @@ and wins
 
 WAR semantic specification **FROZEN**.
 
-M16l1 bakeoff **NOT READY** — blockers: team-stint allocation + team attribution reference.
+M16l1 bakeoff **NOT READY** - blockers: team-stint allocation + team attribution reference.
 
 ## Current live WAR
 

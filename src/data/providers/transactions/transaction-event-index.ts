@@ -1,5 +1,5 @@
 /**
- * Transaction EVENT index — ESPN free-text archive for the Offseason Tracker.
+ * Transaction EVENT index - ESPN free-text archive for the Offseason Tracker.
  * Does not build ownership edges or player assets.
  */
 
@@ -364,7 +364,7 @@ export async function buildTransactionEventCoverage(
       "ESPN's historical transaction archive provides event-level free-text records. Some records describe only one side of a transaction.",
       "DRBL does not infer player/pick consideration from free text.",
       "When related source events can be safely connected (same date + reciprocal team mentions), DRBL may display them together as a source-event cluster.",
-      "Source-text categories are keyword classifications, not official ESPN enums — and do not imply a complete trade package.",
+      "Source-text categories are keyword classifications, not official ESPN enums - and do not imply a complete trade package.",
       "Structured transactions / ownership edges: 0. Asset genealogy UI remains blocked (genealogyUiReady = false).",
       `Event index methodology v${TRANSACTION_EVENT_ARCHIVE_VERSION}.`,
     ],

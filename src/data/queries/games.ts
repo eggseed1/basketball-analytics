@@ -8,6 +8,7 @@ import type {
   PlayerGame,
 } from "@/data/types";
 import { applyGameFilters, toGameSummary } from "./filter-utils";
+import { withStandingRecords } from "./standings";
 import { getHistoricalBoxScore, getHistoricalGame, getHistoricalGames } from "./historical";
 import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 import {
@@ -70,7 +71,7 @@ async function fetchEspnEventBoxScore(
     const msg = error instanceof Error ? error.message : String(error);
     // ESPN 404 → invalid / unknown event (semantic miss).
     if (/\(404\)/.test(msg)) return null;
-    // Network / 5xx — do not classify as not-found at this layer.
+    // Network / 5xx - do not classify as not-found at this layer.
     throw error;
   }
 
@@ -98,7 +99,7 @@ export async function getGame(gameId: string): Promise<Game | null> {
       const box = await fetchEspnEventBoxScore(gameId);
       if (box?.game) return box.game;
     } catch {
-      // network — fall through to provider
+      // network - fall through to provider
     }
   }
 
@@ -258,12 +259,12 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       const box = await fetchEspnEventBoxScore(id);
       if (box?.game) return shellFromBox(box);
     } catch {
-      // NETWORK_FAILURE: do not pretend the game is invalid — try scoreboard row.
+      // NETWORK_FAILURE: do not pretend the game is invalid - try scoreboard row.
       try {
         const fromProvider = await getDataProvider().getGame(id);
         if (fromProvider) return shellFromGame(fromProvider, "provider");
       } catch {
-        // still network — fall through to null only after exhaustive attempts
+        // still network - fall through to null only after exhaustive attempts
       }
       // Re-throw classification: return null would become false 404. Prefer
       // scoreboard-only when we can recover; otherwise null (invalid/unavailable).
@@ -291,7 +292,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
   }
 
   // Schedule / BallDontLie ids: resolve the scoreboard row first (lightweight).
-  // Only attempt box when we may upgrade — never 404 solely for a missing box.
+  // Only attempt box when we may upgrade - never 404 solely for a missing box.
   let historical: Game | null = null;
   try {
     historical = await getHistoricalGame(id);
@@ -309,7 +310,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
 
   if (historical) return shellFromGame(historical, "historical");
 
-  // Do not fan out ESPN season schedules for non-event ids — different id space.
+  // Do not fan out ESPN season schedules for non-event ids - different id space.
   return null;
 }
 
@@ -323,7 +324,7 @@ export async function getFilteredGames(
     maxPages?: number;
     /**
      * When false (team destinations), skip remote historical crawls if the
-     * local season archive is missing — return empty instead of multi-page BDL.
+     * local season archive is missing - return empty instead of multi-page BDL.
      */
     allowRemoteHistoricalCrawl?: boolean;
   }
@@ -348,7 +349,7 @@ export async function getFilteredGames(
     options?.maxPages ??
     (hasDateWindow ? 4 : start != null && start < 2000 ? 20 : 8);
 
-  // Prefer disk / modern archive — filter in memory (no ESPN→BDL id footgun).
+  // Prefer disk / modern archive - filter in memory (no ESPN→BDL id footgun).
   if (season && !hasDateWindow) {
     const archive = await getSeasonGamesArchive(season);
     if (archive.games.length > 0) {
@@ -520,7 +521,7 @@ export async function getRecentGameSummaries(
   try {
     const recent = await fetchRecentScoreboardGames({ season, limit });
     if (recent.length) {
-      return recent.map(toGameSummary);
+      return withStandingRecords(recent.map(toGameSummary), season);
     }
   } catch {
     // fall through
@@ -534,7 +535,7 @@ export async function getRecentGameSummaries(
     }
   })();
 
-  // Historical: local season archive only — no multi-page BDL rediscovery.
+  // Historical: local season archive only - no multi-page BDL rediscovery.
   if (start != null && start < 2000) {
     const archive = await getSeasonGamesArchive(season);
     return archive.games
@@ -579,13 +580,17 @@ export async function getHomeWeekStripSummaries(
   const strip = feed.data;
   try {
     const withStarters = await attachStartersToGames(strip.games);
-    return {
-      mode: strip.mode,
-      games: withStarters.map((g) => ({
+    const games = await withStandingRecords(
+      withStarters.map((g) => ({
         ...toGameSummary(g),
         awayStarters: g.awayStarters,
         homeStarters: g.homeStarters,
       })),
+      options.season
+    );
+    return {
+      mode: strip.mode,
+      games,
       source: feed.source,
       warnings: feed.warnings,
       isStale: feed.isStale,
@@ -593,11 +598,14 @@ export async function getHomeWeekStripSummaries(
   } catch {
     return {
       mode: strip.mode,
-      games: strip.games.map((g) => ({
-        ...toGameSummary(g),
-        awayStarters: [],
-        homeStarters: [],
-      })),
+      games: await withStandingRecords(
+        strip.games.map((g) => ({
+          ...toGameSummary(g),
+          awayStarters: [],
+          homeStarters: [],
+        })),
+        options.season
+      ),
       source: feed.source,
       warnings: feed.warnings,
       isStale: feed.isStale,
@@ -642,6 +650,7 @@ export async function getScoreboardMonthSummaries(options: {
   const feed = await getScoreboardMonthFeed({ monthKey, season });
   return {
     ...feed.data,
+    games: await withStandingRecords(feed.data.games, season),
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,
@@ -664,6 +673,7 @@ export async function getScoreboardWeekSummaries(options: {
   const feed = await getScoreboardWeekFeed(options);
   return {
     ...feed.data,
+    games: await withStandingRecords(feed.data.games, feed.data.season),
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,
@@ -692,6 +702,7 @@ export async function getUpcomingGameSummaries(
   const feed = await getUpcomingScoreboardFeed(options);
   return {
     ...feed.data,
+    games: await withStandingRecords(feed.data.games, feed.data.season),
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,
@@ -700,7 +711,7 @@ export async function getUpcomingGameSummaries(
 
 /**
  * Batched live scoreboard snapshot for today (ET).
- * Soft-fails with stale cache labeling — never throws for provider outage.
+ * Soft-fails with stale cache labeling - never throws for provider outage.
  */
 export async function getLiveScoreboardSummaries(options: {
   season?: string;
@@ -720,7 +731,7 @@ export async function getLiveScoreboardSummaries(options: {
   return {
     season: feed.data.season,
     retrievedAt: feed.data.retrievedAt ?? new Date().toISOString(),
-    games: feed.data.games,
+    games: await withStandingRecords(feed.data.games, feed.data.season),
     source: feed.source,
     warnings: feed.warnings,
     isStale: feed.isStale,

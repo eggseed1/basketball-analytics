@@ -5,7 +5,7 @@
 
 export const ASK_DRBL_VERSION = 1;
 
-/** @deprecated Prefer pickAskExamples() — kept for older imports. */
+/** @deprecated Prefer pickAskExamples() - kept for older imports. */
 export const ASK_DRBL_EXAMPLE_PROMPTS = [
   "What was Jokic's TS% in 2024-25?",
   "What was Denver's point differential in 2023-24?",
@@ -59,7 +59,7 @@ export type QueryEvent =
   | "foul"
   | "possession";
 
-/** Legacy stub metrics — prefer AskMetricId for ASK DRBL v1. */
+/** Legacy stub metrics - prefer AskMetricId for ASK DRBL v1. */
 export type QueryMetric =
   | "fg_pct"
   | "efg_pct"
@@ -148,7 +148,7 @@ export type BasketballQueryAst = {
   event?: QueryEvent;
   /** Canonical ASK metric when the operation needs one. */
   metricId?: AskMetricId;
-  /** Legacy stub field — kept for compatibility; prefer metricId. */
+  /** Legacy stub field - kept for compatibility; prefer metricId. */
   metric?: QueryMetric;
   /** Human-readable interpretation shown with the result. */
   interpretation: string[];
@@ -169,9 +169,9 @@ export type BasketballQueryAst = {
    * Precedence: explicit query > builder (via composed text) > Time Machine/URL > default.
    */
   seasonSource?: "explicit" | "time_machine" | "url" | "default";
-  /** Time Machine date on the shareable URL — display only until date-capable executors exist. */
+  /** Time Machine date on the shareable URL - display only until date-capable executors exist. */
   contextDate?: string;
-  /** Always false in v1 — date is never applied to season-level executors. */
+  /** Always false in v1 - date is never applied to season-level executors. */
   contextDateApplied?: boolean;
   /** When partial: deterministic rewrite for the supported clause. */
   partialSupportedQuery?: string;

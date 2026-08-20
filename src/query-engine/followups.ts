@@ -40,7 +40,7 @@ export function buildQueryPlan(ast: BasketballQueryAst): QueryPlanRow[] {
       label: "Date context",
       value: ast.contextDateApplied
         ? ast.contextDate
-        : `${ast.contextDate} (not applied — season-level ASK only)`,
+        : `${ast.contextDate} (not applied - season-level ASK only)`,
     });
   }
   if (ast.metricId) {

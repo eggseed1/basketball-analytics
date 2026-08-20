@@ -113,7 +113,7 @@ export async function writeTransactionArchive(
     contentHash,
     limitations: [
       "Source rows are team-centric free-text descriptions (date + team + description).",
-      "No athlete ids — player identity remains unresolved; no player assets emitted.",
+      "No athlete ids - player identity remains unresolved; no player assets emitted.",
       "No structured draft-pick identity, protections, swaps, or ownership edges.",
       "Multi-team trades are NOT merged into a single graph transaction.",
       "Transaction type is a documented keyword classification of the description.",

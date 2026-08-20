@@ -18,7 +18,7 @@ export function offseasonWindowForYear(labelYear: number): OffseasonWindow {
 
 /**
  * Default offseason label year for "what's happening now?"
- * June–December → this calendar year; January–May → previous summer.
+ * June-December → this calendar year; January-May → previous summer.
  */
 export function currentOffseasonLabelYear(now = new Date()): number {
   const y = now.getUTCFullYear();

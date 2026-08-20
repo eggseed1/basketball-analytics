@@ -145,7 +145,7 @@ const okc25 = team({
   const r = compareTeamSeasons({ teamA: thinA, teamB: bos25 });
   const ts = r.metrics.find((m) => m.id === "ts")!;
   assert.equal(ts.edge, "unavailable");
-  assert.equal(ts.aDisplay, "—");
+  assert.equal(ts.aDisplay, "-");
   assert.ok(ts.note?.toLowerCase().includes("missing"));
 }
 

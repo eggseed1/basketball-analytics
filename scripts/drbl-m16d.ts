@@ -1,5 +1,5 @@
 /**
- * M16d — M6 incremental validation test vs frozen P base.
+ * M16d - M6 incremental validation test vs frozen P base.
  *   npm run drbl:m16d
  *
  * TRAIN fit only. VALIDATION score only. RESERVED_TEST never used for metrics.

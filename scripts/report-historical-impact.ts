@@ -16,7 +16,7 @@ async function main() {
   console.log("");
   for (const m of report.byMetric) {
     console.log(
-      `${m.source}/${m.metric}: ${m.observationCount} obs · ${m.playerKeyCount} players · ${m.earliestSeason ?? "—"} → ${m.latestSeason ?? "—"} · unmatched/null ESPN id: ${m.unmatchedIdentityCount}`
+      `${m.source}/${m.metric}: ${m.observationCount} obs · ${m.playerKeyCount} players · ${m.earliestSeason ?? "-"} → ${m.latestSeason ?? "-"} · unmatched/null ESPN id: ${m.unmatchedIdentityCount}`
     );
   }
   console.log("");

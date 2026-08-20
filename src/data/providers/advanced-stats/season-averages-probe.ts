@@ -211,7 +211,7 @@ export async function probeSeasonAveragesAdvanced(options?: {
       semantics,
       identity: identitySummary,
       admittedObservationCount: 0,
-      notes: ["skipNetwork=true — no live season_averages probe."],
+      notes: ["skipNetwork=true - no live season_averages probe."],
     };
   }
 
@@ -280,7 +280,7 @@ export async function probeSeasonAveragesAdvanced(options?: {
           paginationMeta: null,
           quality: null,
           notes: [
-            "HTTP 401 Unauthorized — not an empty dataset; GOAT access required.",
+            "HTTP 401 Unauthorized - not an empty dataset; GOAT access required.",
           ],
         });
         continue;

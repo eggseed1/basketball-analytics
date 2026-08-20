@@ -1,5 +1,5 @@
 /**
- * P17.1 identity hardening — audit + reclassify ESPN↔NBA player aliases.
+ * P17.1 identity hardening - audit + reclassify ESPN↔NBA player aliases.
  *
  * Does NOT invent new id mappings or fame-match. Does NOT touch DRBL model math.
  *

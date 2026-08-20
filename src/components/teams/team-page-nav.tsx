@@ -53,11 +53,8 @@ export function TeamPageNav({
   }, [sections]);
 
   return (
-    <nav
-      aria-label="Team page sections"
-      className="sticky top-0 z-20 -mx-1 border-b border-border/80 bg-background/90 px-1 py-2 backdrop-blur-md"
-    >
-      <ul className="flex gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+    <nav aria-label="Team page sections" className="min-w-0">
+      <ul className="flex justify-end gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {sections.map((section) => {
           const isActive = active === section.id;
           return (

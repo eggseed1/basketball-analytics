@@ -48,7 +48,7 @@ const det = normalizeNbaPlayerSeasonTeam({
 
 writeFileSync(
   path.join(ROOT, "01_team_namespace_contract.md"),
-  `# 01 — Team namespace contract (P17.2)
+  `# 01 - Team namespace contract (P17.2)
 
 ## Canonical product key
 ESPN team id string (\`CanonicalTeamId\`), same as \`TeamBrand.espnTeamId\`.
@@ -57,15 +57,15 @@ ESPN team id string (\`CanonicalTeamId\`), same as \`TeamBrand.espnTeamId\`.
 
 | Namespace | Example | Source | Stored | Normalized | Allowed in UI | Forbidden in UI |
 |---|---|---|---|---|---|---|
-| ESPN / canonical | \`25\` (OKC) | ESPN site API / brand map | \`PlayerSeason.teamId\`, routes | n/a (already canonical) | logo, abbr, links | — |
+| ESPN / canonical | \`25\` (OKC) | ESPN site API / brand map | \`PlayerSeason.teamId\`, routes | n/a (already canonical) | logo, abbr, links | - |
 | NBA Stats | \`1610612760\` | \`NBA_TEAM_META\` / stats.nba.com | \`providerTeamId\` / \`nbaTeamId\` | \`getCanonicalTeamFromProvider("nba", id)\` at transform | debug/provenance only | TM cell label, badge text |
 | BDL | \`21\` (OKC) | BallDontLie | schedule \`homeProviderTeamId\` | \`getCanonicalTeamFromProvider("bdl", id)\` | never as bare route id | bare numeric in \`?team=\` without \`bdl:\` |
-| Abbr | \`OKC\` | brand / meta | filters | \`resolveCanonicalTeam\` | yes | — |
-| Brand slug | \`okc\` | \`TEAM_BRANDS\` | lore | \`resolveCanonicalTeam\` | yes | — |
+| Abbr | \`OKC\` | brand / meta | filters | \`resolveCanonicalTeam\` | yes | - |
+| Brand slug | \`okc\` | \`TEAM_BRANDS\` | lore | \`resolveCanonicalTeam\` | yes | - |
 | Multi-team | \`TOT\` | NBA Stats aggregate | \`teamId=TOT\` | explicit TOT/Multiple policy | text mark only | invented franchise logo |
 
 ## Format inference
-Bare \`16106127xx\` (10 digits) is format-inferred as **nba** only — never espn/bdl.
+Bare \`16106127xx\` (10 digits) is format-inferred as **nba** only - never espn/bdl.
 Bare short numerics remain ESPN/canonical (existing product convention). Namespaced keys \`nba:\`, \`espn:\`, \`bdl:\` always win.
 
 ## providerIds
@@ -75,7 +75,7 @@ All 30 franchises now expose \`providerIds.espn\`, \`providerIds.bdl\`, and \`pr
 
 writeFileSync(
   path.join(ROOT, "03_explore_player_team_lineage.md"),
-  `# 03 — Explore Players team lineage
+  `# 03 - Explore Players team lineage
 
 ## Path
 \`stats.nba.com leaguedashplayerstats\`
@@ -100,7 +100,7 @@ AFTER fix, \`teamId\` is ESPN canonical; logo+abbr render; \`providerTeamId\` re
 
 writeFileSync(
   path.join(ROOT, "04_player_destination_team_lineage.md"),
-  `# 04 — Player destination team lineage
+  `# 04 - Player destination team lineage
 
 ## Path
 \`/players/[playerId]\`
@@ -122,12 +122,12 @@ Same three NBA TEAM_IDs as \`03_\` normalize to ESPN \`25\` / \`12\` / \`8\` bef
 
 writeFileSync(
   path.join(ROOT, "05_game_route_forensics.md"),
-  `# 05 — Game route forensics
+  `# 05 - Game route forensics
 
 ## Reproduction
 1. Home week strip / Scores list emit \`href=/games/{espnEventId}\` (e.g. \`401584893\`) from ESPN scoreboard transforms.
 2. \`/games/[gameId]\` called \`getGameShell\` → \`looksLikeEspnEventId\` true → \`getDataProvider().getGameBoxScore(espnId)\`.
-3. With \`DATA_PROVIDER=nba\`, box path used **stats.nba.com boxscoretraditionalv2?GameID={espnId}** — wrong id space → null → \`notFound()\` **404**.
+3. With \`DATA_PROVIDER=nba\`, box path used **stats.nba.com boxscoretraditionalv2?GameID={espnId}** - wrong id space → null → \`notFound()\` **404**.
 
 ## Root cause
 \`GAME_ROUTE_LOOKUP_CONTRACT_BROKEN\`: link namespace = ESPN event id; destination lookup = NBA Stats GameID.
@@ -144,7 +144,7 @@ writeFileSync(
 | VALID_GAME_PROVIDER_MISMATCH | id valid in another provider; wrong lookup path (pre-fix) |
 | INVALID_GAME_ID | ESPN 404 / unknown opaque id |
 | VALID_GAME_DATA_UNAVAILABLE | shell exists, box empty |
-| NETWORK_FAILURE | fetch 5xx / throw — must not be silently equated with invalid |
+| NETWORK_FAILURE | fetch 5xx / throw - must not be silently equated with invalid |
 `
 );
 
@@ -208,7 +208,7 @@ fixture-det,any,1610612765,8,DET,/teams/8,PASS
 
 writeFileSync(
   path.join(ROOT, "11_visual_qa_index.md"),
-  `# 11 — Visual QA index
+  `# 11 - Visual QA index
 
 Screenshots under \`screenshots/\` via \`scripts/p17_2_capture_screenshots.mjs\` against \`http://localhost:3000\`.
 
@@ -280,12 +280,12 @@ writeFileSync(
 
 writeFileSync(
   path.join(ROOT, "16_workbook_review_coverage.md"),
-  `# 16 — Workbook v2.1 coverage\n\nSee \`reports/project_workbook_v2_1/\` for identity/game routing docs + critical source snapshot + SOURCE_CODE_MAP.csv.\n`
+  `# 16 - Workbook v2.1 coverage\n\nSee \`reports/project_workbook_v2_1/\` for identity/game routing docs + critical source snapshot + SOURCE_CODE_MAP.csv.\n`
 );
 
 writeFileSync(
   path.join(ROOT, "17_remaining_debt.md"),
-  `# 17 — Remaining debt
+  `# 17 - Remaining debt
 
 - Live BDL game \`15908541\` unavailable in this environment (skipped, not product regression)
 - \`drbl:test\` 2 failures require local \`data/drbl/normalized/2024-25\` corpus (env)
@@ -318,7 +318,7 @@ writeFileSync(
 
 writeFileSync(
   path.join(ROOT, "19_full_audit.md"),
-  `# 19 — P17.2 full audit
+  `# 19 - P17.2 full audit
 
 Provider identity boundary repaired: NBA Stats team ids normalize at transform; ESPN game links resolve via ESPN summary. Model firewall intact. M17c not started.
 `

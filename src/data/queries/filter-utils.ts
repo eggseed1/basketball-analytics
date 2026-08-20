@@ -4,11 +4,31 @@ import type {
   GameSummary,
   PlayerSeason,
 } from "@/data/types";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { expandPlayerSeasonTeamMatchIds } from "@/lib/team-identity";
 import {
   ensureGameTeamIdentity,
   inferGameTeamProvider,
 } from "@/lib/game-team-identity";
+
+function conferenceForPlayerSeason(
+  row: PlayerSeason
+): "East" | "West" | undefined {
+  const keys = [row.teamId, row.teamAbbreviation].filter(
+    (key): key is string => Boolean(key)
+  );
+  for (const key of keys) {
+    const resolved = resolveCanonicalTeam(key);
+    if (resolved.status === "resolved") {
+      const conf = ESPN_TEAM_META[resolved.team.canonicalTeamId]?.conference;
+      if (conf) return conf;
+    }
+    const direct = ESPN_TEAM_META[key]?.conference;
+    if (direct) return direct;
+  }
+  return undefined;
+}
 
 /**
  * Single source of truth for PlayerSeason filtering.
@@ -16,7 +36,7 @@ import {
  *
  * `filters.team` is treated as a loose team identity (canonical ESPN id, abbr,
  * brand slug, or namespaced provider key) and expanded via player-season ids
- * only — never BDL schedule ids (BDL OKC 21 is ESPN PHX).
+ * only - never BDL schedule ids (BDL OKC 21 is ESPN PHX).
  */
 export function applyPlayerSeasonFilters(
   seasons: PlayerSeason[],
@@ -30,6 +50,16 @@ export function applyPlayerSeasonFilters(
     if (filters.season && row.season !== filters.season) return false;
 
     if (teamIds && !teamIds.has(row.teamId)) return false;
+
+    if (filters.conference) {
+      if (conferenceForPlayerSeason(row) !== filters.conference) return false;
+    }
+
+    if (filters.draftClass === "undrafted") {
+      if (row.draftYear != null) return false;
+    } else if (filters.draftClass != null) {
+      if (row.draftYear !== filters.draftClass) return false;
+    }
 
     if (filters.player) {
       const needle = filters.player.toLowerCase();

@@ -1,5 +1,5 @@
 /**
- * Game ID namespaces — ESPN event ids, NBA Stats GameIDs, and BallDontLie
+ * Game ID namespaces - ESPN event ids, NBA Stats GameIDs, and BallDontLie
  * game ids do not share a space.
  *
  * Public routes `/games/[gameId]` accept provider-native ids when the lookup
@@ -29,14 +29,14 @@ export function looksLikeEspnEventId(gameId: string): boolean {
 
 /**
  * NBA Stats GameID: 10 digits starting with `00`.
- * Format-inferred as `nba` only — never query BDL/ESPN with this id.
+ * Format-inferred as `nba` only - never query BDL/ESPN with this id.
  */
 export function looksLikeNbaStatsGameId(gameId: string): boolean {
   return /^00\d{8}$/.test(String(gameId).trim());
 }
 
 /**
- * Heuristic only for routing hints — never treat as proof of identity.
+ * Heuristic only for routing hints - never treat as proof of identity.
  */
 export function guessGameProvider(
   gameId: string

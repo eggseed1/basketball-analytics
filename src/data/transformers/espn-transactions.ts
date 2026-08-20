@@ -26,7 +26,7 @@ export type EspnTransactionNormalizeResult = {
   issues: string[];
 };
 
-/** NBA season from calendar date: July–June flip (month >= 7 → that start year). */
+/** NBA season from calendar date: July-June flip (month >= 7 → that start year). */
 export function canonicalSeasonFromIsoDate(isoDate: string): string | null {
   const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(isoDate.trim());
   if (!m) return null;

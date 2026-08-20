@@ -12,7 +12,7 @@ import type { AskDrblResult, BasketballQueryAst } from "./types";
 import { ASK_DRBL_VERSION } from "./types";
 
 export type RunAskDrblOptions = {
-  /** Continue after ambiguity — force-resolve the player entity. */
+  /** Continue after ambiguity - force-resolve the player entity. */
   playerId?: string;
   /** Force-resolve the team entity (e.g. deep link from a team page). */
   teamId?: string;
@@ -47,7 +47,7 @@ async function enrichAmbiguousCandidates(
                 .sort();
               const years =
                 seasons.length > 0
-                  ? `${seasons[0]}–${seasons[seasons.length - 1]}`
+                  ? `${seasons[0]}-${seasons[seasons.length - 1]}`
                   : undefined;
               const bits = [
                 brand?.abbr,

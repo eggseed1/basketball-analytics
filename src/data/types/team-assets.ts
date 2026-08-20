@@ -51,7 +51,7 @@ export type TeamAssetCategoryCoverage = {
   note: string | null;
 };
 
-/** Verified roster player — requires canonical playerId. */
+/** Verified roster player - requires canonical playerId. */
 export type TeamPlayerAsset = {
   kind: "player";
   playerId: string;
@@ -59,7 +59,7 @@ export type TeamPlayerAsset = {
   teamId: string;
   season: string;
   position?: string;
-  /** Optional board stats for display — never invented. */
+  /** Optional board stats for display - never invented. */
   pointsPerGame?: number;
   minutesPerGame?: number;
   href: string;
@@ -141,7 +141,7 @@ export type TeamAssetLedger = {
 };
 
 /**
- * Future TPE “what can fit?” result shape — empty until salary + TPE sources exist.
+ * Future TPE “what can fit?” result shape - empty until salary + TPE sources exist.
  * Tiers stay separate by design.
  */
 export type TradeExceptionFitResult = {
@@ -150,7 +150,7 @@ export type TradeExceptionFitResult = {
   remainingAmount: number | null;
   salaryFit: TeamPlayerAsset[];
   potentiallyEligible: TeamPlayerAsset[];
-  /** Always empty until validateTrade exists — never imply legality. */
+  /** Always empty until validateTrade exists - never imply legality. */
   legalityValidated: TeamPlayerAsset[];
   disclaimer: string;
   available: boolean;
@@ -158,7 +158,7 @@ export type TradeExceptionFitResult = {
 };
 
 export const TRADE_EXCEPTION_FIT_DISCLAIMER =
-  "Salary fit only. Full trade legality requires additional roster, timing, and CBA rules — DRBL does not treat fit as permission to trade.";
+  "Salary fit only. Full trade legality requires additional roster, timing, and CBA rules - DRBL does not treat fit as permission to trade.";
 
 export const EMPTY_TRADE_EXCEPTION_FIT = (
   exceptionId: string,

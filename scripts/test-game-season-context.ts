@@ -1,5 +1,5 @@
 /**
- * Game Lab V1.1 — Game vs Season Context.
+ * Game Lab V1.1 - Game vs Season Context.
  * Run: npx tsx scripts/test-game-season-context.ts
  */
 import assert from "node:assert/strict";
@@ -491,4 +491,4 @@ for (const f of ctx.findings) {
   assert.ok(!/won the game/i.test(f.text), f.text);
 }
 
-console.log("OK — game-season-context");
+console.log("OK - game-season-context");

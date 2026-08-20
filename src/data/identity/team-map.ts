@@ -5,10 +5,10 @@
  * DRBL canonical team id = ESPN team id (existing UI / ASK / brand convention).
  *
  * NBA Stats TEAM_ID format `16106127xx` (10 digits) may be format-inferred as the
- * `nba` namespace only — never treated as ESPN or BDL. Bare short numerics are never
+ * `nba` namespace only - never treated as ESPN or BDL. Bare short numerics are never
  * cross-guessed across providers.
  *
- * Lookup is static in-memory — never network.
+ * Lookup is static in-memory - never network.
  */
 
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
@@ -23,7 +23,7 @@ export type TeamDataProviderId = "espn" | "bdl" | "nba" | (string & {});
 export type ProviderTeamKey = `${string}:${string}`;
 
 /**
- * Canonical DRBL team id — ESPN numeric team id as string.
+ * Canonical DRBL team id - ESPN numeric team id as string.
  * Same space as `TeamBrand.espnTeamId` / ASK team entities.
  */
 export type CanonicalTeamId = string;
@@ -38,7 +38,7 @@ export type CanonicalTeam = {
 
 /**
  * Unambiguous NBA Stats TEAM_ID shape: 10 digits, prefix `16106127`.
- * Format-inferred as `nba` namespace only — never as espn/bdl.
+ * Format-inferred as `nba` namespace only - never as espn/bdl.
  */
 export function isNbaStatsTeamIdFormat(id: string): boolean {
   return /^16106127\d{2}$/.test(String(id).trim());
@@ -213,7 +213,7 @@ export function getCanonicalTeamById(
 
 /**
  * Map a provider-scoped team id → canonical DRBL team.
- * Never treats bare `25` as global — provider is required.
+ * Never treats bare `25` as global - provider is required.
  */
 export function getCanonicalTeamId(
   provider: TeamDataProviderId | string,
@@ -253,7 +253,7 @@ export function getProviderTeamId(
 
 /**
  * Resolve loose UI / ASK input (ESPN id, abbr, brand id, or `provider:id`)
- * into a canonical team. Does not guess across providers for bare numerics —
+ * into a canonical team. Does not guess across providers for bare numerics -
  * bare short numbers are interpreted as ESPN/canonical (existing DRBL convention).
  * Bare `16106127xx` is format-inferred as `nba` only (never espn/bdl).
  */
@@ -279,7 +279,7 @@ export function resolveCanonicalTeam(
     return { status: "resolved", team };
   }
 
-  // Unambiguous NBA Stats TEAM_ID shape — never interpret as ESPN/BDL.
+  // Unambiguous NBA Stats TEAM_ID shape - never interpret as ESPN/BDL.
   if (isNbaStatsTeamIdFormat(raw)) {
     const team = getCanonicalTeamFromProvider("nba", raw);
     if (!team) {

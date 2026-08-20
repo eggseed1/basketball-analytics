@@ -143,10 +143,10 @@ function team(
     avgDiff: -1.2,
   });
   const row = toTeamArcSeasonRow(sparse);
-  assert.equal(row.tsDisplay, "—");
-  assert.equal(row.efgDisplay, "—");
-  assert.equal(row.ppgDisplay, "—");
-  assert.equal(row.oppPpgDisplay, "—");
+  assert.equal(row.tsDisplay, "-");
+  assert.equal(row.efgDisplay, "-");
+  assert.equal(row.ppgDisplay, "-");
+  assert.equal(row.oppPpgDisplay, "-");
   assert.ok(row.avgDiffDisplay.includes("-1.2") || row.avgDiffDisplay.includes("-1.20") || row.avgDiffDisplay === "-1.2");
 }
 
@@ -184,7 +184,7 @@ function team(
     (viaProfile.vsPrior?.changes ?? []).map((c) => c.id).sort()
   );
 
-  // Below noise floor — no transition
+  // Below noise floor - no transition
   const tiny = team({
     ...next,
     avgDiff: 5.2,

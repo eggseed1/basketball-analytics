@@ -43,7 +43,7 @@ function StaffBody() {
               <h3 className="font-medium">Director of scouting</h3>
               {scout ? (
                 <>
-                  <p className="mt-1 text-[15px] font-semibold tracking-tight">
+                  <p className="mt-1 text-[16px] font-semibold tracking-tight">
                     {scout.name}
                   </p>
                   <p className="mt-1 text-sm text-muted-foreground">
@@ -51,7 +51,7 @@ function StaffBody() {
                     {expertiseLabel(scout.expertise)} · Eye {scout.eye}/5 · $
                     {scout.salaryM.toFixed(1)}M
                   </p>
-                  <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
                     {scout.bio} Expertise sharpens grades on matching positions
                     and tools; eye + experience cut fog on the war-room board.
                   </p>
@@ -76,7 +76,7 @@ function StaffBody() {
 
           <div className="mt-4 border-t border-border pt-3">
             <div className="mb-2 flex items-center justify-between gap-2">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+              <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                 Available hires
               </p>
               <Button size="sm" variant="ghost" onClick={() => refreshScoutMarket()}>
@@ -94,7 +94,7 @@ function StaffBody() {
                     {s.yearsExperience} yrs · {expertiseLabel(s.expertise)} · Eye{" "}
                     {s.eye}/5
                   </p>
-                  <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
+                  <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
                     {s.bio}
                   </p>
                   <Button

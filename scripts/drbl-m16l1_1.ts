@@ -1,5 +1,5 @@
 /**
- * M16l1.1 — WAR scale + R1 replacement semantics forensic audit.
+ * M16l1.1 - WAR scale + R1 replacement semantics forensic audit.
  * Development 2024-25 only. No live WAR/DRBL change. No 2025-26 outcomes.
  * No empirical scale rescue. No PPW refit.
  *   npm run drbl:m16l1_1
@@ -413,7 +413,7 @@ async function main() {
     )
   );
   if (!netValid) {
-    throw new Error("STOP net points invalid — P1 invalidated path");
+    throw new Error("STOP net points invalid - P1 invalidated path");
   }
 
   // ---- Primitive equation docs (static from source) ----
@@ -483,7 +483,7 @@ Target_p = AssignedOffenseCredits_p + Unobserved_p
 
 Player-booked O+D sum ≈ −Unobserved_p (near 0 when U≈0).
 
-Unobserved is intentional parking (missing shooter, block contest half, assist age boost bookkeeping, float residue)—not assigned to players.
+Unobserved is intentional parking (missing shooter, block contest half, assist age boost bookkeeping, float residue)-not assigned to players.
 `
   );
 
@@ -1169,7 +1169,7 @@ Target role = usage-weighted mean of **current offense lineup** roles.
 
 ## Quality restriction
 
-Lower residual quintile (bottom 40%) — **not** a pure fringe minutes definition alone; minutes band is secondary.
+Lower residual quintile (bottom 40%) - **not** a pure fringe minutes definition alone; minutes band is secondary.
 `
   );
 
@@ -1256,7 +1256,7 @@ Reason: R1 is a role-matched reference baseline from construction; conventional 
 `
   );
 
-  // Scale gap decomposition — based on measured quantities
+  // Scale gap decomposition - based on measured quantities
   // Original: Net ~ a + b*W0, b≈2.18
   // Algebra: Net = Attr + Baseline + U
   // W0 allocated ≈ season-rate allocation of player stable totals ≈ Attr (stable)

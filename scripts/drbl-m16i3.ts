@@ -1,5 +1,5 @@
 /**
- * M16i3 — outcome-blind prediction-time reliability feature audit + freeze.
+ * M16i3 - outcome-blind prediction-time reliability feature audit + freeze.
  *   npm run drbl:m16i3
  *
  * Does NOT compute future-error associations, WIS, or coverage.
@@ -135,7 +135,7 @@ type FoldCsvRow = {
   rawPB: number;
   N: number;
   asOfDate: string;
-  // target intentionally NOT stored — outcome-blind
+  // target intentionally NOT stored - outcome-blind
 };
 
 function parseFoldRowsBlind(csv: string): FoldCsvRow[] {
@@ -563,7 +563,7 @@ Future-block games are never attributed for feature construction.
       const residual = reconRaw - row.rawPB;
       reconResiduals.push(Math.abs(residual));
       if (Math.abs(residual) > 1e-6) {
-        // Material mismatch vs CSV — still record; fail later if P99 huge
+        // Material mismatch vs CSV - still record; fail later if P99 huge
       }
 
       const stream = { appearances: apps };
@@ -935,7 +935,7 @@ Future-block games are never attributed for feature construction.
     singleSets.F3 = ["N", "APPEARANCE_VALUE_DISPERSION"];
   const F_ALL = ["N", ...eligibleFeatures];
   const futureSetCount = 1 + Object.keys(singleSets).length + (eligibleFeatures.length ? 1 : 0);
-  // F0 + singles + F_ALL (F_ALL only if >=1 eligible); if 1 eligible, F_ALL == that single — still count both? Spec says F_ALL = [N, all eligible]. If one eligible, F_ALL duplicates single set. Count: F0 + singles + F_ALL when eligible.length>=1. Max 4 new uncertainty feature sets meaning F0 is reference + up to 3 singles + F_ALL but "Maximum new uncertainty feature sets: 4" = singles + F_ALL with F0 as reference. So total labeled sets = 1 + singles + (eligible?1:0) but if all 3 eligible: F0,F1,F2,F3,F_ALL = 5 labels with F0 reference → 4 new. Good.
+  // F0 + singles + F_ALL (F_ALL only if >=1 eligible); if 1 eligible, F_ALL == that single - still count both? Spec says F_ALL = [N, all eligible]. If one eligible, F_ALL duplicates single set. Count: F0 + singles + F_ALL when eligible.length>=1. Max 4 new uncertainty feature sets meaning F0 is reference + up to 3 singles + F_ALL but "Maximum new uncertainty feature sets: 4" = singles + F_ALL with F0 as reference. So total labeled sets = 1 + singles + (eligible?1:0) but if all 3 eligible: F0,F1,F2,F3,F_ALL = 5 labels with F0 reference → 4 new. Good.
 
   let auditResult:
     | "FEATURE_SET_FROZEN"

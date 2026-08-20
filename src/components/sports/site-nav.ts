@@ -67,13 +67,6 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: "Players",
     match: (p) =>
       p.startsWith("/explore/players") || p.startsWith("/players/"),
-    subnav: [
-      {
-        href: "/explore/players",
-        label: "Leaderboard",
-        match: (p) => p.startsWith("/explore/players"),
-      },
-    ],
   },
   {
     id: "teams",

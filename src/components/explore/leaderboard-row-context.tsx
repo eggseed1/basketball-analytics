@@ -4,13 +4,12 @@ import Link from "next/link";
 import { Popover } from "@base-ui/react/popover";
 import { useRef } from "react";
 
-import {
-  formatLeaderboardPercentile,
-  type LeaderboardRowContext,
-} from "@/analytics/leaderboard-context";
+import { formatLeaderboardPercentile, type LeaderboardRowContext } from "@/analytics/leaderboard-context";
+import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
+import { stripFloatingTransform } from "@/lib/strip-floating-transform";
 import { cn } from "@/lib/utils";
 
-/** Shared with PlayerIdentity floating policy (PreviewCard) — same Floating UI knobs. */
+/** Shared with PlayerIdentity floating policy (PreviewCard) - same Floating UI knobs. */
 export const LEADERBOARD_CONTEXT_COLLISION = {
   preferredSide: "bottom" as const,
   align: "start" as const,
@@ -35,10 +34,10 @@ export function LeaderboardContextBody({
 }) {
   return (
     <div className={cn("text-left", className)}>
-      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
         Player context · {context.season}
       </p>
-      <p className="mt-1 text-[15px] font-semibold tracking-tight">
+      <p className="mt-1 text-[16px] font-semibold tracking-tight">
         {context.primary.label}
       </p>
       <p className="text-[20px] font-bold tabular-nums leading-tight">
@@ -86,9 +85,9 @@ export function LeaderboardContextBody({
 
 /**
  * Compact accessible Level-2 context for a leaderboard row.
- * Keyboard + tap friendly — not hover-only.
+ * Keyboard + tap friendly - not hover-only.
  * Desktop (sm+): portaled Popover with viewport collision (same Floating UI family as PlayerIdentity).
- * Mobile: trigger only — sibling expanded row in the table renders LeaderboardContextBody.
+ * Mobile: trigger only - sibling expanded row in the table renders LeaderboardContextBody.
  */
 export function LeaderboardRowContextPanel({
   context,
@@ -115,7 +114,7 @@ export function LeaderboardRowContextPanel({
           type="button"
           className={cn(
             "inline-flex size-7 shrink-0 items-center justify-center rounded-md",
-            "text-[11px] font-bold text-muted-foreground",
+            "text-[12px] font-bold text-muted-foreground",
             "hover:bg-secondary hover:text-foreground",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
             open && "bg-secondary text-foreground"
@@ -150,19 +149,29 @@ export function LeaderboardRowContextPanel({
                 closingForHiddenRef.current = false;
               });
             }
-            // Desktop floating only — mobile keeps the inline expanded row.
+            // Desktop floating only - mobile keeps the inline expanded row.
             return "z-50 hidden outline-none sm:block";
           }}
+          render={(positionerProps) => (
+            <div
+              {...positionerProps}
+              style={stripFloatingTransform(positionerProps.style)}
+            />
+          )}
         >
           <Popover.Popup
             id={panelId}
             role="region"
             aria-label={`${context.playerName} context`}
-            className={cn(
-              "w-72 max-w-[min(18rem,calc(100vw-1rem))] origin-(--transform-origin) rounded-lg border border-border bg-card px-3 py-3 text-card-foreground shadow-md outline-none",
-              "motion-safe:data-open:animate-in motion-safe:data-open:fade-in-0 motion-safe:data-open:zoom-in-95",
-              "motion-safe:data-closed:animate-out motion-safe:data-closed:fade-out-0 motion-safe:data-closed:zoom-out-95",
-              "motion-safe:data-[side=bottom]:slide-in-from-top-1 motion-safe:data-[side=top]:slide-in-from-bottom-1"
+            className="w-72 max-w-[min(18rem,calc(100vw-1rem))]"
+            render={(popupProps) => (
+              <FrostFloatingSurface
+                {...popupProps}
+                className={cn(
+                  popupProps.className,
+                  "px-3 py-3 text-card-foreground"
+                )}
+              />
             )}
           >
             <LeaderboardContextBody context={context} />

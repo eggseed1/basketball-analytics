@@ -1,5 +1,5 @@
 /**
- * M16l3 — R1 VALUE PRODUCT MIGRATION (no modeling / no P1 refit).
+ * M16l3 - R1 VALUE PRODUCT MIGRATION (no modeling / no P1 refit).
  * Patches precomputed boards + stint artifacts from frozen research; audits product cutover.
  *   npm run drbl:m16l3
  */
@@ -874,8 +874,8 @@ Research-frozen values are written onto boards; UI/API must not recompute R1.
     `# M16l3 API contract
 
 ## Player-season fields
-- \`r1Points\`: number | null — SCOREBOARD_POINT_EQUIVALENT_RESIDUAL
-- \`r1WinEquivalents\`: number | null — r1Points / ${P1}
+- \`r1Points\`: number | null - SCOREBOARD_POINT_EQUIVALENT_RESIDUAL
+- \`r1WinEquivalents\`: number | null - r1Points / ${P1}
 - \`r1PointValueVersion\`: \`${R1_POINT_VALUE_VERSION}\`
 - \`r1WinEquivalentVersion\`: \`${R1_WIN_EQUIVALENT_VERSION}\`
 - \`abilityModelVersion\`: \`${VALIDATED_ABILITY_MODEL_VERSION}\`
@@ -1491,7 +1491,7 @@ Engineering-only rollback:
 - Previous WAR generations used incompatible formulas and exposure conventions
 - Historical paired-exposure issues existed in earlier pipelines
 - Legacy calibration factors (e.g. 5.835 / 2.918 era) are noncanonical
-- R1 is contextual role-matched — not conventional NBA fringe replacement
+- R1 is contextual role-matched - not conventional NBA fringe replacement
 - New cumulative system is explicitly R1-specific (R1 Points / R1 Win Equivalents)
 - Legacy \`drblWar\` values remain on rows as DEPRECATED_NONCANONICAL compatibility fields
 - Legacy WAR was not fraudulent; it is superseded for public cumulative value
@@ -1601,7 +1601,7 @@ Engineering-only rollback:
 
 ## What did not change
 - DRBL/100, rank, rawAbilityRate, research reports under m16l1_2/m16l2
-- P1 (${P1}) — no refit
+- P1 (${P1}) - no refit
 - Model ability formula / k=1600
 
 ## Equality
@@ -1640,7 +1640,7 @@ Engineering-only rollback:
   );
 
   if (!allGates) {
-    console.warn("[m16l3] completed with BLOCKED gates — see 33_model_health.json");
+    console.warn("[m16l3] completed with BLOCKED gates - see 33_model_health.json");
   }
 }
 

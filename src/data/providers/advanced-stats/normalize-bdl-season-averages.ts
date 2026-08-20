@@ -81,7 +81,7 @@ export function normalizeBdlSeasonAveragesAdvanced(
   }
   if (options.admitDespiteUnverifiedSemantics) {
     notes.push(
-      "admitDespiteUnverifiedSemantics=true — diagnostic fixture path only; not production."
+      "admitDespiteUnverifiedSemantics=true - diagnostic fixture path only; not production."
     );
   }
 

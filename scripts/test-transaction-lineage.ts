@@ -109,7 +109,7 @@ const fixtures = {
         { asset: player, direction: "incoming", teamId: "bos" },
       ],
     }),
-    // Multi-team trade fixture (3 teams) — structure only
+    // Multi-team trade fixture (3 teams) - structure only
     tx({
       id: "tx-three-team",
       date: "2018-01-15",
@@ -170,7 +170,7 @@ async function main() {
     assert.equal(ready, false);
     const coverage = await getTransactionLineageCoverage({ force: true });
     assert.equal(coverage.genealogyUiReady, false);
-    // Ownership edges / structured assets are required for UI — ESPN blurbs alone do not unlock.
+    // Ownership edges / structured assets are required for UI - ESPN blurbs alone do not unlock.
     assert.equal(coverage.ownershipEdgeCount, 0);
     assert.equal(coverage.draftPickAssetCount, 0);
     assert.ok(coverage.readiness.failures.length > 0);

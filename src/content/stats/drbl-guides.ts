@@ -13,7 +13,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "DRBL/100",
     category: "impact",
     blurb:
-      "How strong was the player’s estimated impact rate? Validated ability per 100 possession appearances versus a role-matched R1 reference — the canonical DRBL ranking number.",
+      "How strong was the player’s estimated impact rate? Validated ability per 100 possession appearances versus a role-matched R1 reference - the canonical DRBL ranking number.",
     plain: {
       teaches: [
         "Estimated impact rate relative to a contextual, role-matched R1 baseline.",
@@ -23,7 +23,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       doesnt: [
         "Season cumulative value (use WAR1 for that).",
         "Traditional WAR, DARKO superiority claims, or roster-replacement causality.",
-        "Calibrated individual predictive uncertainty — those intervals are not shipped.",
+        "Calibrated individual predictive uncertainty - those intervals are not shipped.",
         "What you get by adding DRBL-P + DRBL-LN + DRBL-B (those do not sum to DRBL/100).",
       ],
       upsides: [
@@ -32,26 +32,26 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Canonical public ranking statistic for DRBL boards.",
       ],
       downsides: [
-        "Needs play-by-play seasons with DRBL coverage — not every archive year.",
+        "Needs play-by-play seasons with DRBL coverage - not every archive year.",
         "Cross-era comparability is not fully established.",
         "Easy to confuse with WAR1 when minutes or volume differ.",
       ],
       apply: [
         "Sort and rank by DRBL/100 when asking “who is better at the rate level?”",
         "Pair with WAR1 when minutes and season accrual matter.",
-        "Treat O/D and P/LN/B as diagnostics — never as a rebuild of this total.",
+        "Treat O/D and P/LN/B as diagnostics - never as a rebuild of this total.",
       ],
     },
     deep: {
       definition:
-        "DRBL/100 is the validated ability rate: estimated player impact per 100 combined possession appearances versus a contextual, role-matched R1 reference. It is the EB1600 posterior of the raw ability rate shrunk toward zero, and the canonical DRBL ranking statistic — not traditional WAR and not a claim that DRBL outperforms external models (M17c not done).",
+        "DRBL/100 is the validated ability rate: estimated player impact per 100 combined possession appearances versus a contextual, role-matched R1 reference. It is the EB1600 posterior of the raw ability rate shrunk toward zero, and the canonical DRBL ranking statistic - not traditional WAR and not a claim that DRBL outperforms external models (M17c not done).",
       formula:
         "rawAbilityRate = attributedValue / combinedPossessionAppearances × 100;  validatedDRBL100 = EB₁₆₀₀(rawAbilityRate) toward 0  ≡  (N/(N+k))×rawAbilityRate + (k/(N+k))×0  with k = 1600, prior mean = 0",
       calculation: [
         "Reconstruct possessions from public play-by-play and attribute Approach-B residuals vs a cutoff-frozen R1 expected-points baseline.",
         "Form rawAbilityRate as attributed value per combined possession appearances, scaled to per-100.",
         "Apply exact empirical-Bayes shrinkage EB1600: pull rawAbilityRate toward prior mean 0 with k = 1600.",
-        "Publish the shrunk posterior as validated DRBL/100 — the public ranking rate.",
+        "Publish the shrunk posterior as validated DRBL/100 - the public ranking rate.",
         "Do not fuse LN or B into this canonical v1 point estimate; P/LN/B remain non-additive diagnostics.",
       ],
       teaches: [
@@ -92,18 +92,18 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "WAR1",
     category: "impact",
     blurb:
-      "DRBL's realized season-value statistic — how much value a player accumulated above the contextual R1 reference.",
+      "DRBL's realized season-value statistic - how much value a player accumulated above the contextual R1 reference.",
     plain: {
       teaches: [
         "DRBL/100 tells you the rate of impact; WAR1 tells you how much season value accrued.",
         "Two players can have similar DRBL/100 but different WAR1 when one played much more.",
         "Season body of work in win-equivalent units above a role-matched R1 reference.",
-        "The name is intended as Wins Above R1 — but the public product label is WAR1, and it is not traditional replacement-level WAR.",
+        "The name is intended as Wins Above R1 - but the public product label is WAR1, and it is not traditional replacement-level WAR.",
       ],
       doesnt: [
         "Traditional WAR or causal roster-replacement effects.",
         "Ability rate (use DRBL/100 for how good at the rate).",
-        "A different ranking from R1 Points — the ranks match exactly.",
+        "A different ranking from R1 Points - the ranks match exactly.",
         "Proof that DRBL wins beat other public win metrics.",
       ],
       upsides: [
@@ -112,7 +112,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Fixed conversion keeps ranking identical to the accounting total.",
       ],
       downsides: [
-        "Volume-driven — high minutes can inflate totals without a higher rate.",
+        "Volume-driven - high minutes can inflate totals without a higher rate.",
         "Name invites WAR confusion; R1 is role-matched context, not classic replacement.",
         "Still silent on contracts, injuries, and scheme fit.",
       ],
@@ -124,7 +124,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. The name is intended as Wins Above R1, but WAR1 is the public product label. It is not traditional WAR — R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly.",
+        "WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. The name is intended as Wins Above R1, but WAR1 is the public product label. It is not traditional WAR - R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly.",
       formula:
         "WAR1 = R1 Points / 37.490662671779255  (frozen P1);  rank(R1 Points) = rank(WAR1)",
       calculation: [
@@ -172,7 +172,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "DRBL-O",
     category: "impact",
     blurb:
-      "How much value did the player add on offense versus the role-matched R1 reference? Offensive half of the possession component (DRBL-P) — higher is better.",
+      "How much value did the player add on offense versus the role-matched R1 reference? Offensive half of the possession component (DRBL-P) - higher is better.",
     plain: {
       teaches: [
         "Where offensive value sits relative to the player’s R1 expectation.",
@@ -180,7 +180,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Whether offense is carrying more of the possession-side story than defense.",
       ],
       doesnt: [
-        "Equal half of DRBL/100 — O and D are halves of DRBL-P, not of the validated ability rate.",
+        "Equal half of DRBL/100 - O and D are halves of DRBL-P, not of the validated ability rate.",
         "A rebuild of DRBL/100 when added to DRBL-D.",
         "Playmaking chemistry or scheme proof by itself.",
       ],
@@ -190,7 +190,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Useful when building offensive-fit narratives next to the total rate.",
       ],
       downsides: [
-        "Diagnostic — easy to over-weight versus canonical DRBL/100.",
+        "Diagnostic - easy to over-weight versus canonical DRBL/100.",
         "Still tied to possession attribution noise.",
         "Not a claim of optical off-ball creation.",
       ],
@@ -202,7 +202,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-O is the offensive half of the possession component (DRBL-P): value added on offensive possessions versus the contextual role-matched R1 reference. Higher is better. DRBL-O + DRBL-D describes the P split — it is not DRBL/100 and must not be treated as additive halves of the validated ability rate.",
+        "DRBL-O is the offensive half of the possession component (DRBL-P): value added on offensive possessions versus the contextual role-matched R1 reference. Higher is better. DRBL-O + DRBL-D describes the P split - it is not DRBL/100 and must not be treated as additive halves of the validated ability rate.",
       formula:
         "DRBL-O = offensive half of DRBL-P (vs role-matched R1);  DRBL-O + DRBL-D ≠ DRBL/100",
       calculation: [
@@ -245,7 +245,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "DRBL-D",
     category: "impact",
     blurb:
-      "How much value did the player add on defense versus the role-matched R1 reference? Defensive half of the possession component (DRBL-P) — higher is better.",
+      "How much value did the player add on defense versus the role-matched R1 reference? Defensive half of the possession component (DRBL-P) - higher is better.",
     plain: {
       teaches: [
         "Defensive value relative to the player’s role-matched R1 expectation.",
@@ -253,7 +253,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "Whether defense is a meaningful part of the possession-side story.",
       ],
       doesnt: [
-        "Half of DRBL/100 — O and D split DRBL-P, not the validated ability rate.",
+        "Half of DRBL/100 - O and D split DRBL-P, not the validated ability rate.",
         "Steals/blocks as a complete defensive grade.",
         "Proven optical off-ball or “gravity” defense from tracking cameras.",
       ],
@@ -264,7 +264,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       downsides: [
         "Defense remains noisier than offense in possession attribution.",
-        "Diagnostic only — not a substitute ranking number.",
+        "Diagnostic only - not a substitute ranking number.",
         "Individual predictive uncertainty not shipped.",
       ],
       apply: [
@@ -275,7 +275,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-D is the defensive half of the possession component (DRBL-P): value added on defensive possessions versus the contextual role-matched R1 reference. Higher is better (more defensive value). With DRBL-O it partitions P — it does not partition validated DRBL/100.",
+        "DRBL-D is the defensive half of the possession component (DRBL-P): value added on defensive possessions versus the contextual role-matched R1 reference. Higher is better (more defensive value). With DRBL-O it partitions P - it does not partition validated DRBL/100.",
       formula:
         "DRBL-D = defensive half of DRBL-P (vs role-matched R1);  DRBL-O + DRBL-D ≠ DRBL/100",
       calculation: [
@@ -318,7 +318,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "DRBL-P",
     category: "possession",
     blurb:
-      "Possession-side diagnostic: Approach-B value from expected-possession residuals versus role-matched R1. Useful context — not a piece you add with LN and B to rebuild DRBL/100.",
+      "Possession-side diagnostic: Approach-B value from expected-possession residuals versus role-matched R1. Useful context - not a piece you add with LN and B to rebuild DRBL/100.",
     plain: {
       teaches: [
         "How the possession-attribution slice looks relative to R1.",
@@ -337,7 +337,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       downsides: [
         "Easy to misuse as a second ranking total.",
-        "Non-additive with LN and B — summing invents a false overall.",
+        "Non-additive with LN and B - summing invents a false overall.",
         "Still not a causal replacement estimate.",
       ],
       apply: [
@@ -348,7 +348,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-P is the diagnostic possession component: Approach-B marginal contribution from expected-possession residuals versus a contextual, role-matched R1 reference. DRBL-O and DRBL-D are its offensive and defensive halves. P, LN, and B are non-additive diagnostics — they do not sum to DRBL/100 and are not fused into the canonical v1 validated rate as a three-way total.",
+        "DRBL-P is the diagnostic possession component: Approach-B marginal contribution from expected-possession residuals versus a contextual, role-matched R1 reference. DRBL-O and DRBL-D are its offensive and defensive halves. P, LN, and B are non-additive diagnostics - they do not sum to DRBL/100 and are not fused into the canonical v1 validated rate as a three-way total.",
       formula:
         "DRBL-P = possession-component diagnostic (Approach-B vs R1);  DRBL-O + DRBL-D = P split;  P + LN + B ≠ DRBL/100",
       calculation: [
@@ -379,7 +379,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       apply: [
         "Use as the possession column in diagnostic panels.",
-        "When P disagrees with LN or B, treat disagreement as a signal to investigate — not a ranking penalty.",
+        "When P disagrees with LN or B, treat disagreement as a signal to investigate - not a ranking penalty.",
         "Anchor public ranks to DRBL/100 and WAR1.",
       ],
       sources: [
@@ -399,7 +399,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     plain: {
       teaches: [
         "How lineup-adjusted association looks next to the possession and behavior slices.",
-        "A regularized on/off-style readout for context — not a causal stamp.",
+        "A regularized on/off-style readout for context - not a causal stamp.",
         "Why teammates and stint structure can move the eye test without rewriting the ability rate.",
       ],
       doesnt: [
@@ -425,7 +425,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-LN is a diagnostic lineup-context component: a regularized possession lineup (RAPM-style) rating expressing adjusted association, not a causal claim. It is not proven off-ball impact, is not optical tracking, and is not fused into canonical validated DRBL/100 in v1. With P and B it is non-additive — P + LN + B ≠ DRBL/100.",
+        "DRBL-LN is a diagnostic lineup-context component: a regularized possession lineup (RAPM-style) rating expressing adjusted association, not a causal claim. It is not proven off-ball impact, is not optical tracking, and is not fused into canonical validated DRBL/100 in v1. With P and B it is non-additive - P + LN + B ≠ DRBL/100.",
       formula:
         "DRBL-LN = regularized lineup-context diagnostic (RAPM-style association);  P + LN + B ≠ DRBL/100  (LN not fused into canonical v1)",
       calculation: [
@@ -488,7 +488,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       downsides: [
         "Behavior ≠ proven on-court gravity.",
         "Can overweight shot mix and usage narratives.",
-        "Non-additive — summing with P and LN invents a false total.",
+        "Non-additive - summing with P and LN invents a false total.",
       ],
       apply: [
         "Use when debating creation, usage, and shot profile vs impact.",
@@ -498,7 +498,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     },
     deep: {
       definition:
-        "DRBL-B is a diagnostic behavior/shot-decision component: a regularized prediction from public box and play-by-play behavior features (usage, creation, shot mix). It is a behavioral/box diagnostic — not optical tracking and not a measured gravity metric. It is not additive with P and LN into DRBL/100.",
+        "DRBL-B is a diagnostic behavior/shot-decision component: a regularized prediction from public box and play-by-play behavior features (usage, creation, shot mix). It is a behavioral/box diagnostic - not optical tracking and not a measured gravity metric. It is not additive with P and LN into DRBL/100.",
       formula:
         "DRBL-B = regularized behavior/box diagnostic (public box + PBP features);  P + LN + B ≠ DRBL/100",
       calculation: [
@@ -508,7 +508,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       teaches: [
         "Box/behavior association as a third diagnostic lens.",
-        "Why gravity language is reserved for tracking — not this field.",
+        "Why gravity language is reserved for tracking - not this field.",
         "Non-additivity with possession and lineup components.",
       ],
       doesnt: [
@@ -614,11 +614,11 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
     shortName: "R1 Pts",
     category: "impact",
     blurb:
-      "Underlying point-equivalent credit above the role-matched R1 baseline. Accounting and research currency — normally hidden from the primary UI in favor of WAR1.",
+      "Underlying point-equivalent credit above the role-matched R1 baseline. Accounting and research currency - normally hidden from the primary UI in favor of WAR1.",
     plain: {
       teaches: [
         "The raw accumulated attribution total that win-equivalents are built from.",
-        "That ranking matches WAR1 exactly — same order, different units.",
+        "That ranking matches WAR1 exactly - same order, different units.",
         "Why researchers care about an additive point-equivalent ledger.",
       ],
       doesnt: [
@@ -670,7 +670,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       ],
       downsides: [
         "Primary-UI promotion confuses ability vs value vs accounting.",
-        "Readers may think a hidden metric is “more true” than WAR1 — it is the same ordering.",
+        "Readers may think a hidden metric is “more true” than WAR1 - it is the same ordering.",
         "No external superiority claim attached (M17c not done).",
       ],
       apply: [

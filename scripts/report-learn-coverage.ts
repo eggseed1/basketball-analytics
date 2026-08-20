@@ -79,7 +79,7 @@ const UI_SURFACES: Array<{
   },
   {
     page: "Compare picker",
-    metricHelp: "—",
+    metricHelp: "-",
     playerIdentity: "selected player chips (not dropdown rows)",
   },
   {
@@ -109,14 +109,14 @@ const UI_SURFACES: Array<{
   },
   {
     page: "Player context strip",
-    metricHelp: "—",
+    metricHelp: "-",
     playerIdentity: "similar-player comps",
   },
   {
     page: "Career Resume (player page)",
     metricHelp:
       "Peak, Prime, Longevity, Career Arc, career-self, longevity-only, Development",
-    playerIdentity: "— (season links only)",
+    playerIdentity: "- (season links only)",
   },
   {
     page: "Offseason / Transactions",
@@ -150,9 +150,9 @@ function main() {
     const href = learnHrefFor(id);
     const page = href ? resolveLearnPage(href.replace("/learn/", "")) : null;
     const ex = explainMetric(id);
-    const tip = c?.showTooltip ? "✓" : "—";
-    const learn = href ? "✓" : "—";
-    const pageOK = !href ? "—" : page ? "✓" : "✗";
+    const tip = c?.showTooltip ? "✓" : "-";
+    const learn = href ? "✓" : "-";
+    const pageOK = !href ? "-" : page ? "✓" : "✗";
     const explain = ex ? "✓" : "✗";
     if (c?.showTooltip && !href) missingLearn += 1;
     if (href && !page) brokenPage += 1;

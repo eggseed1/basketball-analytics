@@ -30,7 +30,7 @@ function PlayDescription({ event }: { event: PlayByPlayEvent }) {
         >
           {event.playerName}
         </Link>
-        {text ? ` — ${text}` : null}
+        {text ? ` - ${text}` : null}
       </>
     );
   }
@@ -147,7 +147,7 @@ export function GamePlayByPlayPanel({
                   {event.clock}
                 </td>
                 <td className="px-3 py-1.5 font-mono text-xs uppercase text-muted-foreground">
-                  {event.teamTricode ?? "—"}
+                  {event.teamTricode ?? "-"}
                 </td>
                 <td
                   className={cn(

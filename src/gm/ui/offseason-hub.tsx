@@ -77,7 +77,7 @@ export function OffseasonHub() {
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-1">
         <h1 className="text-[28px] font-bold tracking-tight">Offseason Hub</h1>
-        <p className="text-[15px] text-muted-foreground">
+        <p className="text-[16px] text-muted-foreground">
           Front-office workspace for the annual loop. Deep decision flows land
           in later milestones - links below jump into the live tools.
         </p>
@@ -85,24 +85,24 @@ export function OffseasonHub() {
 
       <section className="grid gap-3 sm:grid-cols-2">
         <div className="sports-card p-4">
-          <p className="text-[13px] font-semibold text-muted-foreground">
+          <p className="text-[14px] font-semibold text-muted-foreground">
             MyLeague phase
           </p>
           <p className="mt-1 text-[20px] font-bold tracking-tight">
             {phase.replaceAll("_", " ")}
           </p>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             Next playable: {upcoming.replaceAll("_", " ")}
           </p>
         </div>
         <div className="sports-card p-4">
-          <p className="text-[13px] font-semibold text-muted-foreground">
+          <p className="text-[14px] font-semibold text-muted-foreground">
             Reality snapshot
           </p>
           <p className="mt-1 text-[20px] font-bold tracking-tight">
             {snapCount} season{snapCount === 1 ? "" : "s"}
           </p>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             {myLeague?.settings.realDataProviderId ?? "scaffold"} ·{" "}
             {myLeague?.settings.mode?.replaceAll("_", " ") ?? "-"}
           </p>
@@ -110,8 +110,8 @@ export function OffseasonHub() {
       </section>
 
       <section className="sports-card flex flex-col gap-3 p-4">
-        <h2 className="text-[15px] font-bold">Club snapshot</h2>
-        <p className="text-[15px] text-muted-foreground">
+        <h2 className="text-[16px] font-bold">Club snapshot</h2>
+        <p className="text-[16px] text-muted-foreground">
           {record?.wins ?? 0}-{record?.losses ?? 0} · payroll $
           {formatNumber(cap.payrollM, 1)}M / cap $
           {formatNumber(league.settings.salaryCapM, 1)}M
@@ -125,13 +125,13 @@ export function OffseasonHub() {
           )}
           <Link
             href="/gm/draft"
-            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[13px] font-semibold"
+            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[14px] font-semibold"
           >
             Draft board
           </Link>
           <Link
             href="/gm/free-agency"
-            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[13px] font-semibold"
+            className="inline-flex h-8 items-center justify-center rounded-lg border border-border bg-background px-3 text-[14px] font-semibold"
           >
             Free agency
           </Link>
@@ -139,7 +139,7 @@ export function OffseasonHub() {
       </section>
 
       <section className="flex flex-col gap-2">
-        <h2 className="text-[15px] font-bold">Hub desks</h2>
+        <h2 className="text-[16px] font-bold">Hub desks</h2>
         <ul className="grid gap-2 sm:grid-cols-2">
           {HUB_SECTIONS.map((section) => (
             <li key={section.id}>
@@ -147,11 +147,11 @@ export function OffseasonHub() {
                 href={section.href}
                 className="sports-card flex h-full flex-col gap-1 p-4 transition-colors hover:bg-secondary/60"
               >
-                <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                   {section.phase.replaceAll("_", " ")}
                 </span>
                 <span className="text-[16px] font-bold">{section.title}</span>
-                <span className="text-[13px] text-muted-foreground">
+                <span className="text-[14px] text-muted-foreground">
                   {section.blurb}
                 </span>
               </Link>
@@ -161,12 +161,12 @@ export function OffseasonHub() {
       </section>
 
       <section className="sports-card p-4">
-        <h2 className="text-[15px] font-bold">Salary cap by year</h2>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        <h2 className="text-[16px] font-bold">Salary cap by year</h2>
+        <p className="mt-1 text-[14px] text-muted-foreground">
           Official cap / tax (and aprons when they exist) for each season.
         </p>
         <div className="mt-3 overflow-x-auto">
-          <table className="w-full min-w-[520px] text-left text-[13px]">
+          <table className="w-full min-w-[520px] text-left text-[14px]">
             <thead className="text-muted-foreground">
               <tr>
                 <th className="py-1 pr-3 font-semibold">Season</th>

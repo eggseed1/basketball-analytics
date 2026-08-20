@@ -50,12 +50,12 @@ export async function TeamGamesIsland({
       aria-label="Games"
     >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
-        <p className="text-[13px] text-muted-foreground">{archiveNote}</p>
+        <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
+        <p className="text-[14px] text-muted-foreground">{archiveNote}</p>
       </div>
       <div className="sports-card p-4 sm:p-5">
         {teamGames.source === "unavailable" && teamGames.games.length === 0 ? (
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             {teamGames.warning ??
               `Historical games unavailable for ${season}.`}
           </p>

@@ -4,15 +4,18 @@ import type { ComputedInsight } from "@/data/queries/home";
 import type { AnalyticsArticle } from "@/data/providers/insights/analytics-news";
 import { AppLink } from "@/components/ui/app-link";
 
+/** Homepage insight cards - hidden until the Figma layout is ready for them. */
+const SHOW_HOME_FINDINGS = false;
+
 export function FindingsSection({ insights }: { insights: ComputedInsight[] }) {
-  if (!insights.length) return null;
+  if (!SHOW_HOME_FINDINGS || !insights.length) return null;
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">
+        <h2 className="type-heading">
           What the board is saying right now
         </h2>
-        <p className="text-[13px] text-muted-foreground">
+        <p className="type-body-sm text-muted-foreground">
           Live takeaways from this season&apos;s DRBL ability, impact, and
           efficiency boards.
         </p>
@@ -37,26 +40,26 @@ export function AnalyticsDesk({
 }) {
   const body = (
     <>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            {embedded ? "Recent news" : "Analytics desk"}
-          </h2>
-          <p className="text-[13px] text-muted-foreground">
+      <div>
+        <h2 className="type-heading">
+          {embedded ? "Recent News" : "Analytics desk"}
+        </h2>
+        {embedded ? null : (
+          <p className="type-body-sm text-muted-foreground">
             Recent NBA analytics coverage - credited to the outlet and writer.
           </p>
-        </div>
+        )}
       </div>
 
       {articles.length === 0 ? (
-        <div className="rounded-md border border-dashed border-black/10 px-4 py-8 text-center text-[13px] text-muted-foreground">
+        <div className="type-body-sm rounded-md border border-dashed border-black/10 px-4 py-8 text-center text-muted-foreground">
           No fresh headlines right now.
         </div>
       ) : (
         <ul
           className={
             embedded
-              ? "flex flex-col gap-px overflow-hidden rounded-xl border border-black/5 bg-black/5"
+              ? "flex flex-col gap-px overflow-hidden rounded-[9px] border border-black/5 bg-black/5"
               : "grid gap-px overflow-hidden rounded-md border border-black/5 bg-black/5 sm:grid-cols-2 lg:grid-cols-3"
           }
         >
@@ -66,22 +69,43 @@ export function AnalyticsDesk({
                 href={a.url}
                 className="flex h-full flex-col gap-2 px-4 py-3.5 transition-colors hover:bg-secondary/40"
               >
-                <div className="flex flex-col gap-0.5">
-                  <p className="text-[11px] font-bold uppercase tracking-[0.08em] text-foreground">
-                    {a.publication}
-                  </p>
-                  <p className="text-[12px] text-muted-foreground">
-                    {a.author ?? "Byline pending"}
-                  </p>
-                </div>
-                <h3 className="text-[14px] font-semibold leading-snug tracking-tight text-foreground">
-                  {a.title}
-                </h3>
-                {a.publishedAt ? (
-                  <p className="mt-auto pt-1 text-[11px] tabular-nums text-muted-foreground">
-                    {a.publishedAt}
-                  </p>
-                ) : null}
+                {embedded ? (
+                  <>
+                    <h3 className="text-[18px] font-semibold leading-snug tracking-tight text-foreground">
+                      {a.title}
+                    </h3>
+                    <div className="flex items-center justify-between gap-3">
+                      <p className="min-w-0 truncate text-[12px] text-muted-foreground">
+                        {a.publication}
+                        {a.author ? ` · ${a.author}` : ""}
+                      </p>
+                      {a.publishedAt ? (
+                        <p className="shrink-0 text-[12px] tabular-nums text-muted-foreground">
+                          {a.publishedAt}
+                        </p>
+                      ) : null}
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <div className="flex flex-col gap-0.5">
+                      <p className="text-[12px] font-bold uppercase tracking-[0.08em] text-foreground">
+                        {a.publication}
+                      </p>
+                      <p className="text-[12px] text-muted-foreground">
+                        {a.author ?? "Byline pending"}
+                      </p>
+                    </div>
+                    <h3 className="text-[14px] font-semibold leading-snug tracking-tight text-foreground">
+                      {a.title}
+                    </h3>
+                    {a.publishedAt ? (
+                      <p className="mt-auto pt-1 text-[12px] tabular-nums text-muted-foreground">
+                        {a.publishedAt}
+                      </p>
+                    ) : null}
+                  </>
+                )}
               </AppLink>
             </li>
           ))}
@@ -92,7 +116,7 @@ export function AnalyticsDesk({
 
   if (embedded) {
     return (
-      <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
         {body}
       </section>
     );
@@ -108,7 +132,7 @@ export function AnalyticsDesk({
 function InsightCard({ insight }: { insight: ComputedInsight }) {
   return (
     <article className="sports-card flex flex-col gap-1.5 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {insight.eyebrow}
       </p>
       {insight.players?.length ? (

@@ -18,6 +18,9 @@ import {
   resolveWatchAvailability,
 } from "../src/lib/game-watch";
 import { transformEspnScheduleEvent } from "../src/data/transformers/espn";
+import { applyStandingRecords } from "../src/data/queries/standings";
+import type { Game } from "../src/data/types";
+import type { LeagueStandings } from "../src/data/types/standings";
 
 function main() {
   // --- Critical regression: scheduled 0-0 never final ---
@@ -194,6 +197,48 @@ function main() {
     );
   }
 
+  // Transformer copies overall W-L and uses an en dash
+  {
+    const game = transformEspnScheduleEvent(
+      {
+        id: "401902644",
+        date: "2026-10-03T23:00:00Z",
+        competitions: [
+          {
+            status: {
+              type: {
+                state: "pre",
+                completed: false,
+                name: "STATUS_SCHEDULED",
+              },
+            },
+            competitors: [
+              {
+                homeAway: "home",
+                score: "0",
+                team: { id: "28", abbreviation: "TOR", displayName: "Toronto Raptors" },
+                records: [
+                  { name: "overall", type: "total", summary: "30-52" },
+                  { name: "Home", type: "home", summary: "18-23" },
+                ],
+              },
+              {
+                homeAway: "away",
+                score: "0",
+                team: { id: "14", abbreviation: "MIA", displayName: "Miami Heat" },
+                records: [{ name: "overall", type: "total", summary: "37-45" }],
+              },
+            ],
+          },
+        ],
+      },
+      "2026-27"
+    );
+    assert.ok(game);
+    assert.equal(game!.awayRecord, "37-45");
+    assert.equal(game!.homeRecord, "30-52");
+  }
+
   // Countdown formatting
   {
     const tip = "2030-01-15T00:00:00.000Z";
@@ -251,6 +296,96 @@ function main() {
   {
     const mapped = mapEspnBroadcasts({});
     assert.equal(mapped.length, 0);
+  }
+
+  // Standings fill missing W-L for the matching season only
+  {
+    const game: Game = {
+      id: "g1",
+      season: "2025-26",
+      gameDate: "2026-01-15",
+      homeTeamId: "2",
+      awayTeamId: "14",
+      homeTeamAbbr: "BOS",
+      awayTeamAbbr: "MIA",
+      homeScore: 0,
+      awayScore: 0,
+      gameType: "regular",
+    };
+    const standings: LeagueStandings = {
+      season: "2025-26",
+      conferences: [
+        {
+          conference: "East",
+          rows: [
+            {
+              teamId: "2",
+              abbreviation: "BOS",
+              displayName: "Boston Celtics",
+              conference: "East",
+              rank: 1,
+              wins: 60,
+              losses: 22,
+              winPct: 0.732,
+              gamesBehind: 0,
+              differential: 8,
+              ppg: 116,
+              oppPpg: 108,
+              streak: "W2",
+              homeRecord: "32-9",
+              roadRecord: "28-13",
+              lastTen: "7-3",
+              playoffSeed: 1,
+            },
+            {
+              teamId: "14",
+              abbreviation: "MIA",
+              displayName: "Miami Heat",
+              conference: "East",
+              rank: 8,
+              wins: 37,
+              losses: 45,
+              winPct: 0.451,
+              gamesBehind: 23,
+              differential: -1,
+              ppg: 110,
+              oppPpg: 111,
+              streak: "L1",
+              homeRecord: "21-20",
+              roadRecord: "16-25",
+              lastTen: "4-6",
+              playoffSeed: 8,
+            },
+          ],
+        },
+        { conference: "West", rows: [] },
+      ],
+    };
+    const filled = applyStandingRecords([game], standings);
+    assert.equal(filled[0]!.awayRecord, "37-45");
+    assert.equal(filled[0]!.homeRecord, "60-22");
+
+    const kept = applyStandingRecords(
+      [{ ...game, awayRecord: "1-0", homeRecord: "2-0" }],
+      standings
+    );
+    assert.equal(kept[0]!.awayRecord, "1-0");
+    assert.equal(kept[0]!.homeRecord, "2-0");
+
+    const skipped = applyStandingRecords(
+      [{ ...game, season: "2026-27" }],
+      standings
+    );
+    assert.equal(skipped[0]!.awayRecord, undefined);
+    assert.equal(skipped[0]!.homeRecord, undefined);
+
+    const cross = applyStandingRecords(
+      [{ ...game, season: "2026-27" }],
+      standings,
+      { requireSeasonMatch: false }
+    );
+    assert.equal(cross[0]!.awayRecord, "37-45");
+    assert.equal(cross[0]!.homeRecord, "60-22");
   }
 
   console.log("test-game-status: all assertions passed");

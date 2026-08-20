@@ -70,7 +70,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
     grain: "player-game",
     meaning: "Player usage share while on floor (game grain)",
     candidateDrblUse: "do_not_admit",
-    evidence: "BDL docs Game Advanced Stats Attributes — game grain only",
+    evidence: "BDL docs Game Advanced Stats Attributes - game grain only",
   },
   {
     field: "true_shooting_percentage (game advanced)",
@@ -79,7 +79,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
     grain: "player-game",
     meaning: "Player TS% for that game",
     candidateDrblUse: "do_not_admit",
-    evidence: "BDL docs Game Advanced Stats Attributes — game grain only",
+    evidence: "BDL docs Game Advanced Stats Attributes - game grain only",
   },
   {
     field: "effective_field_goal_percentage (game advanced)",
@@ -88,7 +88,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
     grain: "player-game",
     meaning: "Player eFG% for that game",
     candidateDrblUse: "do_not_admit",
-    evidence: "BDL docs Game Advanced Stats Attributes — game grain only",
+    evidence: "BDL docs Game Advanced Stats Attributes - game grain only",
   },
   {
     field: "offensive_rating (season_averages general?type=advanced)",
@@ -96,7 +96,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
       "Not field-documented in season_averages docs; stats keys are type-specific with additionalProperties",
     grain: "unknown",
     meaning:
-      "Unknown — must not assume individual player ORtg or transplant game-advanced on-court definition",
+      "Unknown - must not assume individual player ORtg or transplant game-advanced on-court definition",
     candidateDrblUse: "unverified",
     evidence:
       "BDL season_averages docs: shared row shape (player, season, season_type, stats); no advanced-type field glossary",
@@ -107,7 +107,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
       "Not field-documented in season_averages docs",
     grain: "unknown",
     meaning:
-      "Unknown — must not assume individual player DRtg",
+      "Unknown - must not assume individual player DRtg",
     candidateDrblUse: "unverified",
     evidence:
       "BDL season_averages docs lack per-field definitions for type=advanced",
@@ -118,7 +118,7 @@ export const BDL_ADVANCED_FIELD_SEMANTICS: AdvancedFieldSemanticRow[] = [
       "Not field-documented in season_averages docs",
     grain: "unknown",
     meaning:
-      "Unknown — must not assume individual player NET",
+      "Unknown - must not assume individual player NET",
     candidateDrblUse: "unverified",
     evidence:
       "BDL season_averages docs lack per-field definitions for type=advanced",
@@ -171,13 +171,13 @@ export function assessBdlSeasonAveragesAdvancedSemantics(options?: {
 }): SeasonAveragesSemanticAssessment {
   const notes: string[] = [
     "Season averages rows are documented as player + season + season_type + stats (player-season shaped).",
-    "Advanced type stats keys are not glossary-documented — FIELD NAME ≠ VERIFIED SEMANTICS.",
+    "Advanced type stats keys are not glossary-documented - FIELD NAME ≠ VERIFIED SEMANTICS.",
     "Game-advanced on-court rating definitions must not be transplanted onto season averages.",
   ];
 
   if (options?.access === "unauthorized") {
     notes.push(
-      "Live response not observed (unauthorized) — Access remains the sole blocker to semantic verification of live field keys."
+      "Live response not observed (unauthorized) - Access remains the sole blocker to semantic verification of live field keys."
     );
   }
 
@@ -197,7 +197,7 @@ export function assessBdlSeasonAveragesAdvancedSemantics(options?: {
       "BDL season_averages example: one object with player, season, season_type, stats",
     ratingSemantics: "unverified",
     multiTeamRepresentation:
-      "Unknown — documented example has no team split fields; do not aggregate multi-team rows if they appear",
+      "Unknown - documented example has no team split fields; do not aggregate multi-team rows if they appear",
     notes,
     table: BDL_ADVANCED_FIELD_SEMANTICS,
   };

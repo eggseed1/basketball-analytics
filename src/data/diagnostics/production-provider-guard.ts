@@ -1,5 +1,5 @@
 /**
- * Production data-provider guard — distinguish sample/misconfig from empty careers.
+ * Production data-provider guard - distinguish sample/misconfig from empty careers.
  *
  * Pure / sync. No secrets. No network.
  *
@@ -26,7 +26,7 @@ export type ProductionProviderGuard = {
   status: ProductionProviderGuardStatus;
   /** Operator-facing short label */
   label: string;
-  /** Safe user/operator message — never includes secrets or filesystem paths */
+  /** Safe user/operator message - never includes secrets or filesystem paths */
   message: string;
   provider: ProviderStatus;
   configuredKey: string;
@@ -113,7 +113,7 @@ export function assessProductionProviderGuard(
     return {
       ...base,
       status: "sample_provider_empty_career",
-      label: "Sample dataset — no seasons for this id",
+      label: "Sample dataset - no seasons for this id",
       message:
         "No career seasons in the local sample for this player id. Sample data is for offline demos only and is not a substitute for production NBA data.",
       isSilentEmptyCareerRisk: expectsLiveNba,
@@ -131,7 +131,7 @@ export function assessProductionProviderGuard(
       status: "live_provider_empty_career",
       label: "Empty career from live provider",
       message:
-        "The live NBA provider returned no career seasons for this athlete id. That can mean a bad id, a temporary ESPN gap, or a brand-new player — not a sample-dataset misconfiguration.",
+        "The live NBA provider returned no career seasons for this athlete id. That can mean a bad id, a temporary ESPN gap, or a brand-new player - not a sample-dataset misconfiguration.",
       isSilentEmptyCareerRisk: false,
     };
   }

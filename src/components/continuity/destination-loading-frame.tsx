@@ -1,5 +1,5 @@
 /**
- * Shared destination loading frame — same visual language as query-updating.
+ * Shared destination loading frame - same visual language as query-updating.
  * Used by route-level loading.tsx files (not a full-page spinner).
  */
 
@@ -28,7 +28,7 @@ export function DestinationLoadingFrame({
         <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           Loading
         </p>
-        <h1 className="text-[22px] font-bold tracking-tight sm:text-[26px]">
+        <h1 className="text-[24px] font-bold tracking-tight sm:text-[24px]">
           {title}
         </h1>
         {subtitle ? (

@@ -12,7 +12,7 @@ import { daySeed } from "@/query-engine/ask-examples";
 export const metadata = {
   title: "ASK DRBL",
   description:
-    "Natural-language basketball analytics — structured queries over trusted DRBL data.",
+    "Natural-language basketball analytics - structured queries over trusted DRBL data.",
 };
 
 interface AskPageProps {

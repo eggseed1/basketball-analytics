@@ -1,5 +1,5 @@
 /**
- * Season-true historical player impact — canonical product types.
+ * Season-true historical player impact - canonical product types.
  *
  * Distinct from live provider DTOs (`DarkoRating` / `LebronRating`) and from
  * Career Resume CPI (production). See docs/historical-impact.md.
@@ -40,7 +40,7 @@ export type HistoricalImpactProvenance = {
 
 /**
  * One season-true impact observation for one metric.
- * Missing seasons are absent — never interpolated.
+ * Missing seasons are absent - never interpolated.
  */
 export type HistoricalPlayerImpact = {
   /**

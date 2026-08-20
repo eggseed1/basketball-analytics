@@ -17,6 +17,10 @@ import type { GameSummary } from "@/data/types";
 import { formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export interface GameScoringScatterProps {
   games: GameSummary[];
@@ -44,10 +48,7 @@ function AccessibleTooltip({
   const summary = `${matchupLabel(g)} on ${g.gameDate}. Final ${g.awayScore}-${g.homeScore}. Total points ${g.totalPoints}. Margin ${g.margin}.`;
 
   return (
-    <div
-      role="tooltip"
-      className="max-w-xs rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-    >
+    <FrostRechartsTooltip active={active} className="max-w-xs">
       <p className="font-semibold">{matchupLabel(g)}</p>
       <p className="text-muted-foreground">{g.gameDate}</p>
       <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 tabular-nums">
@@ -64,7 +65,7 @@ function AccessibleTooltip({
         </dd>
       </dl>
       <p className="sr-only">{summary}</p>
-    </div>
+    </FrostRechartsTooltip>
   );
 }
 
@@ -170,6 +171,7 @@ export function GameScoringScatter({ games }: GameScoringScatterProps) {
               <ZAxis range={[60, 60]} />
               <Tooltip
                 content={<AccessibleTooltip />}
+                wrapperStyle={rechartsFrostWrapperStyle}
                 cursor={{ strokeDasharray: "4 4" }}
               />
               <Scatter

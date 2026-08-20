@@ -93,7 +93,7 @@ export function isDarkoSeasonAvailable(canonicalSeason: string): boolean {
 function darkoDataUrl(canonicalSeason: string): string {
   const base =
     "https://www.darko.app/__data.json?x-sveltekit-trailing-slash=1&x-sveltekit-invalidated=01";
-  // "Current" board is the nightly live projection — prefer it for the
+  // "Current" board is the nightly live projection - prefer it for the
   // active season. Historical seasons use the ending calendar year.
   if (isCurrentCanonicalSeason(canonicalSeason)) {
     return base;
@@ -164,7 +164,7 @@ export async function fetchDarkoSeason(
   return scrapeDarko(url, ttlMs, staleMs);
 }
 
-/** Last known DARKO rows even if stale — used when the critical path times out. */
+/** Last known DARKO rows even if stale - used when the critical path times out. */
 export function peekDarkoSeason(
   canonicalSeason: string
 ): DarkoPlayerRow[] | null {

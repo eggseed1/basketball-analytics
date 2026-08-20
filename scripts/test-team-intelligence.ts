@@ -1,5 +1,5 @@
 /**
- * Team Intelligence V2 helpers — deterministic assembly tests.
+ * Team Intelligence V2 helpers - deterministic assembly tests.
  * Run: npx tsx scripts/test-team-intelligence.ts
  */
 import assert from "node:assert/strict";

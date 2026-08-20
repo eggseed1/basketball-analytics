@@ -18,7 +18,7 @@ export function ScoreboardFeedNotice({
   const message =
     warnings?.[0] ??
     (source === "cached-espn"
-      ? "Showing recently cached scoreboard data — not a live update."
+      ? "Showing recently cached scoreboard data - not a live update."
       : "Live scores temporarily unavailable.");
 
   return (

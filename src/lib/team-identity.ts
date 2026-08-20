@@ -1,11 +1,11 @@
 /**
  * Client-safe team identity helpers for URL params, links, and filters.
- * Sync / in-memory only — never import data queries or Node modules.
+ * Sync / in-memory only - never import data queries or Node modules.
  *
  * Policy:
  * - Canonical team id = ESPN team id string (see `@/data/identity/team-map`)
  * - Public `?team=` / `/teams/[teamId]` accept canonical id, abbr, brand slug,
- *   or namespaced `espn:` / `bdl:` / `nba:` keys — all normalize at the boundary
+ *   or namespaced `espn:` / `bdl:` / `nba:` keys - all normalize at the boundary
  * - Provider-specific ids belong at provider/query boundaries only
  */
 
@@ -38,7 +38,7 @@ export function teamMatchIds(team: CanonicalTeam): string[] {
 /**
  * IDs that appear on PlayerSeason.teamId:
  * ESPN canonical numeric id, plus local-sample brand slug / abbr.
- * Never includes BallDontLie ids — those collide with ESPN (BDL OKC 21 = ESPN PHX).
+ * Never includes BallDontLie ids - those collide with ESPN (BDL OKC 21 = ESPN PHX).
  */
 export function playerSeasonTeamMatchIds(team: CanonicalTeam): string[] {
   const ids = new Set<string>();
@@ -85,7 +85,7 @@ export function expandPlayerSeasonTeamMatchIds(raw?: string | null): string[] {
   return token ? [token] : [];
 }
 
-/** `/teams/{canonicalTeamId}` — never brand slug as the public id. */
+/** `/teams/{canonicalTeamId}` - never brand slug as the public id. */
 export function teamProfileHref(
   teamKey: string,
   season?: string | null
@@ -97,14 +97,14 @@ export function teamProfileHref(
   return `${base}?season=${encodeURIComponent(season.trim())}`;
 }
 
-/** Leaderboard deep link — always writes canonical ESPN id into `?team=`. */
+/** Leaderboard deep link - always writes canonical ESPN id into `?team=`. */
 export function playersExploreTeamHref(teamKey: string): string {
   const normalized = normalizeTeamParam(teamKey);
   const id = normalized?.canonicalTeamId ?? teamKey.trim();
   return `/explore/players?team=${encodeURIComponent(id)}`;
 }
 
-/** Games explore deep link — canonical id + abbr handled by filtersFromSearchParams. */
+/** Games explore deep link - canonical id + abbr handled by filtersFromSearchParams. */
 export function gamesExploreTeamHref(
   teamKey: string,
   season?: string | null
@@ -116,7 +116,7 @@ export function gamesExploreTeamHref(
   return `/explore/games?${params.toString()}`;
 }
 
-/** Offseason filter link — canonical ESPN id (archive is ESPN-scoped). */
+/** Offseason filter link - canonical ESPN id (archive is ESPN-scoped). */
 export function offseasonTeamHref(teamKey: string): string {
   const normalized = normalizeTeamParam(teamKey);
   const id = normalized?.canonicalTeamId ?? teamKey.trim();

@@ -1,6 +1,6 @@
 /**
  * Query layer for season-true historical player impact.
- * Pages should use these helpers — never read impact CSVs directly.
+ * Pages should use these helpers - never read impact CSVs directly.
  */
 
 import {
@@ -55,7 +55,7 @@ export async function getPlayerHistoricalImpact(
 
 /**
  * All season-true impact observations for a player (career impact series).
- * Gaps remain gaps — no interpolation between seasons.
+ * Gaps remain gaps - no interpolation between seasons.
  */
 export async function getPlayerCareerImpact(
   playerId: string,
@@ -72,7 +72,7 @@ export async function getPlayerCareerImpact(
 }
 
 /**
- * Generic lookup — useful for diagnostics and multi-metric boards.
+ * Generic lookup - useful for diagnostics and multi-metric boards.
  */
 export async function lookupHistoricalImpact(
   key: HistoricalImpactLookupKey = {},

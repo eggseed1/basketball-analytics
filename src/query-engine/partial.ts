@@ -1,5 +1,5 @@
 /**
- * Partial-support decomposition — never silently drop unsupported clauses.
+ * Partial-support decomposition - never silently drop unsupported clauses.
  */
 
 import { detectUnsupportedClauses, type UnsupportedHit } from "./unsupported";
@@ -35,7 +35,7 @@ function stripUnsupportedLanguage(text: string): string {
 
 /**
  * Only when the user clearly asks for an independent supported clause
- * alongside unsupported PBP dimensions — never from leftover words alone.
+ * alongside unsupported PBP dimensions - never from leftover words alone.
  */
 function hasIndependentSupportedClause(raw: string): boolean {
   if (

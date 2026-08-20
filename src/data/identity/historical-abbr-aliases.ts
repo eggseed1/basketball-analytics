@@ -1,7 +1,7 @@
 /**
  * Historical abbreviations → current franchise brand abbr.
  * Shared by canonical resolution (filters) and team-era display.
- * No imports — keeps team-map ↔ team-era free of cycles.
+ * No imports - keeps team-map ↔ team-era free of cycles.
  */
 export const HISTORICAL_ABBR_ALIASES: Record<string, string> = {
   SEA: "OKC",

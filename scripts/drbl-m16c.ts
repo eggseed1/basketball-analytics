@@ -1,5 +1,5 @@
 /**
- * M16c — validation-only component ablation.
+ * M16c - validation-only component ablation.
  *   npm run drbl:m16c
  *
  * TRAIN fit only. VALIDATION score only. RESERVED_TEST never loaded for metrics.
@@ -293,7 +293,7 @@ async function main() {
     rationale: "",
     train: trainGames,
     validation: validationGames,
-    reservedTest: [], // intentionally empty — never use reserved games
+    reservedTest: [], // intentionally empty - never use reserved games
     trainSplitHash: expectedTrain,
     validationSplitHash: expectedVal,
     reservedTestSplitHash: expectedRes,

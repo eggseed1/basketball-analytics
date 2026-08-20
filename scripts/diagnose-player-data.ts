@@ -48,7 +48,7 @@ async function main() {
   console.log(
     `Configured DATA_PROVIDER: ${process.env.DATA_PROVIDER ?? `(unset → ${process.env.VERCEL ? "nba on Vercel" : "local"})`}`
   );
-  console.log(`Resolved provider: ${provider.name} — ${meta.description}`);
+  console.log(`Resolved provider: ${provider.name} - ${meta.description}`);
 
   // Career-season probe: distinguishes “player page shell OK, seasons empty”
   // (typical when DATA_PROVIDER=local) from live ESPN careers.

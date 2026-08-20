@@ -143,7 +143,7 @@ async function main() {
       description: "Signed G Prior Year.",
       parties: [{ teamId: "2", teamAbbr: "BOS" }],
     }),
-    // duplicate id should be excluded by archive write validation path — we won't include dup here
+    // duplicate id should be excluded by archive write validation path - we won't include dup here
   ];
 
   await withTempArchive(fixtures, async (cwd) => {
@@ -261,7 +261,7 @@ async function main() {
         description:
           "Signed G Anfernee Simons and F Dean Wade to contracts. Acquired G Jaylen Brown from the Boston Celtics. Signed C Ariel Hukporti to a contract.",
       }),
-      // Unrelated same-day signing — must NOT cluster
+      // Unrelated same-day signing - must NOT cluster
       tx({
         id: "espn-tx-unrelated-ny",
         date: "2026-07-06",
@@ -271,7 +271,7 @@ async function main() {
         parties: [{ teamId: "18", teamAbbr: "NY" }],
         description: "Signed C Andre Drummond to a contract.",
       }),
-      // One-sided trade note with no reciprocal — stays source event
+      // One-sided trade note with no reciprocal - stays source event
       tx({
         id: "espn-tx-mia-one-side",
         date: "2026-07-06",
@@ -320,7 +320,7 @@ async function main() {
       assert.equal(cluster.eventIds.includes("espn-tx-unrelated-ny"), false);
       assert.equal(cluster.eventIds.includes("espn-tx-mia-one-side"), false);
 
-      // Duplicate safety — rebuild yields same single cluster
+      // Duplicate safety - rebuild yields same single cluster
       const again = buildRelatedTransactionEventClusters(index.events);
       assert.equal(again.clusters.length, 1);
       assert.equal(again.clusters[0]!.id, cluster.id);
@@ -428,7 +428,7 @@ async function main() {
     assert.equal(busyFeed.length, 4);
     assert.ok(busyFeed.every((i) => i.kind === "source_event"));
 
-    // Same day, different types across teams — never merge on date alone
+    // Same day, different types across teams - never merge on date alone
     const mixedTypes = [
       mk({
         id: "den-trade",

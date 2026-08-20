@@ -18,7 +18,7 @@ export type PbpEventType =
 
 /**
  * Stub event shape until a real corpus schema is observed.
- * Extend only from imported fields — do not invent columns.
+ * Extend only from imported fields - do not invent columns.
  */
 export type PbpEvent = {
   id: string;
@@ -49,7 +49,7 @@ export type Possession = {
   eventIds: string[];
 };
 
-/** Executable ASK / Game Lab gates — stay false until Phase B+ wiring. */
+/** Executable ASK / Game Lab gates - stay false until Phase B+ wiring. */
 export type PbpCapability = {
   gamesIndexed: boolean;
   possessionsDerived: boolean;
@@ -60,7 +60,7 @@ export type PbpCapability = {
 /**
  * Dataset identity for an attached corpus.
  * Written by the import pipeline; read by coverage / future loaders.
- * Counts are declarative — do not scan the full corpus to build this.
+ * Counts are declarative - do not scan the full corpus to build this.
  */
 export type PbpCorpusManifest = {
   /** Logical source label (e.g. vendor / pipeline name). */
@@ -77,7 +77,7 @@ export type PbpCorpusManifest = {
   earliestSeason: string | null;
   latestSeason: string | null;
   fileCount: number;
-  /** e.g. jsonl, parquet, sqlite — as observed, not aspirational. */
+  /** e.g. jsonl, parquet, sqlite - as observed, not aspirational. */
   format: string;
   notes?: string[];
 };

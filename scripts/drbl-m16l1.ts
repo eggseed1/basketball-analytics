@@ -1,5 +1,5 @@
 /**
- * M16l1 — Frozen WAR rate-source + PPW development selection (no live WAR/DRBL change).
+ * M16l1 - Frozen WAR rate-source + PPW development selection (no live WAR/DRBL change).
  * Development only: 2024-25. 2025-26 outcomes untouched.
  *   npm run drbl:m16l1
  */
@@ -1312,7 +1312,7 @@ FREE_SLOPE_REGRESSION_USED_TO_SELECT_PPW = NO
     path.join(OUT, "19_pre_reserved_war_freeze.json"),
     JSON.stringify(freezeWithHash, null, 2)
   );
-  // Re-hash including the hash field would change it — keep primary hash of contract body
+  // Re-hash including the hash field would change it - keep primary hash of contract body
   const authoritativeHash = freezeHash;
 
   await writeFile(
@@ -1390,14 +1390,14 @@ Reproduce \`WAR_PRE_RESERVED_FREEZE_HASH = ${authoritativeHash}\` before opening
 
 ## Primary tests
 
-### Q1 — Point scale
+### Q1 - Point scale
 \`actualNetPoints = a + selectedTeamPoints + e\` (slope 1 fixed)
 
-### Q2 — Win scale
+### Q2 - Win scale
 \`actualWins = a + selectedTeamWAR + e\` (slope 1 fixed)
 
-### Q3 — Free-slope diagnostic
-\`actualWins = a + b*selectedTeamWAR + e\` — report b; do not rescale.
+### Q3 - Free-slope diagnostic
+\`actualWins = a + b*selectedTeamWAR + e\` - report b; do not rescale.
 
 ## Success rule
 

@@ -113,7 +113,7 @@ export async function getTeamSeasonBoard(
 }
 
 /**
- * Compatibility wrapper — returns rows only.
+ * Compatibility wrapper - returns rows only.
  * Prefer getTeamSeasonBoard when callers need diagnosed unavailable state.
  */
 export async function getTeamSeasonStats(

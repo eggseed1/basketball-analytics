@@ -5,7 +5,7 @@
  * Lineage / asset genealogy types and empty-safe queries live under
  * `src/data/types/transaction-lineage.ts` and
  * `src/data/queries/transaction-lineage.ts`.
- * See docs/transaction-lineage.md — genealogy UI is blocked until ingest exists.
+ * See docs/transaction-lineage.md - genealogy UI is blocked until ingest exists.
  * Real Offseason Tracker (event archive): `/offseason` · docs/offseason-tracker.md
  */
 
@@ -55,7 +55,7 @@ export type TransactionEvent = {
   contract?: ContractTerms;
   source?: string;
   sourceUrl?: string;
-  /** Short analytical note — only when grounded in measurable context. */
+  /** Short analytical note - only when grounded in measurable context. */
   whyItMatters?: string;
 };
 
@@ -85,7 +85,7 @@ const SOURCE_TEXT_CATEGORY_LABELS: Record<TransactionType, string> = {
 
 /**
  * Display label for ESPN free-text category (server + client safe).
- * These labels classify source wording — they do not mean DRBL has a
+ * These labels classify source wording - they do not mean DRBL has a
  * complete structured transaction package.
  */
 export function sourceTextCategoryLabel(cat: TransactionType): string {

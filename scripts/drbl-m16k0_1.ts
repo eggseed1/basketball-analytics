@@ -1,5 +1,5 @@
 /**
- * M16k0.1 — percentile + product semantics blocker repair (no live cutover).
+ * M16k0.1 - percentile + product semantics blocker repair (no live cutover).
  *   npm run drbl:m16k0_1
  *
  * Does NOT change validated DRBL math, k, priorMean, WAR, O/D, or live sources.
@@ -416,8 +416,8 @@ drblUncertainty > 0
 \`\`\`
 
 Sources:
-- \`src/data/queries/percentiles.ts\` — \`hasValidDrblEstimate\`, \`computePlayerPercentiles\`
-- \`src/app/players/[playerId]/page.tsx\` — \`PERCENTILE_MIN_MINUTES = 500\`
+- \`src/data/queries/percentiles.ts\` - \`hasValidDrblEstimate\`, \`computePlayerPercentiles\`
+- \`src/app/players/[playerId]/page.tsx\` - \`PERCENTILE_MIN_MINUTES = 500\`
 
 ## Decomposition
 

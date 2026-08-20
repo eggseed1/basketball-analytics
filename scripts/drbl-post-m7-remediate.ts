@@ -335,12 +335,12 @@ async function main() {
 
 ## Left unchanged (and why)
 
-- PM7-003 Approach A — product/underdetermined; Approach B labeled
-- PM7-009/024 bakeoff harness — limitation / out of scope
-- PM7-012 shrinkage k=200 — research
-- PM7-016/031 LN LOO — research
-- PM7-022 SDV→fusion weights — explicit NO-GO until future review
-- PM7-019 true shot clock — unavailable
+- PM7-003 Approach A - product/underdetermined; Approach B labeled
+- PM7-009/024 bakeoff harness - limitation / out of scope
+- PM7-012 shrinkage k=200 - research
+- PM7-016/031 LN LOO - research
+- PM7-022 SDV→fusion weights - explicit NO-GO until future review
+- PM7-019 true shot clock - unavailable
 
 ## Fusion recommendation
 
@@ -390,7 +390,7 @@ WAR (stricter gate) + DRBL-L (isolated) →
 
   const regressionMd = `# Regression Report (post-M7 vs frozen baseline)
 
-Baseline is the **pre-remediation** artifact (typically 50-game). Large deltas are **expected** from PM7-005 sample expansion + attribution/fusion corrections — not automatic failures.
+Baseline is the **pre-remediation** artifact (typically 50-game). Large deltas are **expected** from PM7-005 sample expansion + attribution/fusion corrections - not automatic failures.
 
 | Summary | Value |
 |---------|------:|

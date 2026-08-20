@@ -1,5 +1,5 @@
 /**
- * M16l2 — ONE-SHOT 2025-26 R1 value reserved test.
+ * M16l2 - ONE-SHOT 2025-26 R1 value reserved test.
  * Holdout permanently consumed once outcomes are opened.
  * No retuning. No PPW refit. No scale multiplier. No conventional WAR.
  *   npm run drbl:m16l2
@@ -327,7 +327,7 @@ async function main() {
   );
 
   // ---- Phase 2: structural precheck (no outcome aggregation) ----
-  console.log(`[${RES}] structural precheck — listing games…`);
+  console.log(`[${RES}] structural precheck - listing games…`);
   const metas = await listSeasonGames(RES);
   console.log(`[${RES}] loading ${metas.length} normalized games (structure)…`);
   const games = await loadSeasonGames(RES);
@@ -400,7 +400,7 @@ async function main() {
       2
     )
   );
-  console.log("RESERVED OPEN — 2025-26 outcomes CONSUMED_ONCE");
+  console.log("RESERVED OPEN - 2025-26 outcomes CONSUMED_ONCE");
 
   // ---- Phase 4: team outcomes ----
   type Outcome = {
@@ -484,7 +484,7 @@ async function main() {
     )
   );
 
-  // ---- Phase 5–11: attribution + baseline (IDs only; no player names in primary files) ----
+  // ---- Phase 5-11: attribution + baseline (IDs only; no player names in primary files) ----
   console.log(`[${RES}] building R1 pool…`);
   const roleAccum = new Map();
   let cutoff = "";
@@ -910,7 +910,7 @@ async function main() {
   const winEqPass =
     winEqResiduals.every((x) => x <= ACCOUNTING_TOL / Math.max(P1, 1));
 
-  // ---- Phase 13–15: P1 calibration ----
+  // ---- Phase 13-15: P1 calibration ----
   const leagueMeanWins = leagueWins / outcomes.length;
   const actualWins = outcomes.map((t) => t.wins);
   const predWins = outcomes.map(
@@ -970,7 +970,7 @@ async function main() {
     )
   );
 
-  // ---- Phase 17–21: stability / ability diagnostics ----
+  // ---- Phase 17-21: stability / ability diagnostics ----
   const baselines = outcomes.map(
     (t) => (teamAcc.get(t.teamId)?.offV0 ?? 0) - (teamAcc.get(t.teamId)?.defV0 ?? 0)
   );
@@ -1187,7 +1187,7 @@ async function main() {
     )
   );
 
-  // ---- Phase 23–26: PRIMARY VERDICT (before named output) ----
+  // ---- Phase 23-26: PRIMARY VERDICT (before named output) ----
   const rawIdPass = idMismatch === 0;
   const stintPass = stintMismatch === 0;
   const additivityPass = stintPass; // stint→season; transitive games

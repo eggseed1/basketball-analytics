@@ -1,5 +1,5 @@
 /**
- * M16j0 — reserved-test scope decision + point-estimate freeze certification.
+ * M16j0 - reserved-test scope decision + point-estimate freeze certification.
  *   npm run drbl:m16j0
  *
  * Does NOT open RESERVED_TEST. Does NOT compute reserved metrics.
@@ -87,7 +87,7 @@ async function loadSplitList(
     name === "reserved_test"
       ? "reserved_test_game_ids.json"
       : `${name}_game_ids.json`;
-  // Hash-only: game ids / dates / seasons — NOT player outcomes or residuals.
+  // Hash-only: game ids / dates / seasons - NOT player outcomes or residuals.
   const raw = JSON.parse(
     await readFile(path.join(M16B, "splits", file), "utf8")
   ) as { games?: SplitGame[] } | SplitGame[];
@@ -180,7 +180,7 @@ async function main() {
   });
   if (!foldHashOk) throw new Error("STOP EVALUATION_PROTOCOL_DRIFT fold hashes");
 
-  // Confirm membership hashes (ids/dates only) match expected — no player residuals.
+  // Confirm membership hashes (ids/dates only) match expected - no player residuals.
   const trainGames = await loadSplitList("train");
   const valGames = await loadSplitList("validation");
   const reservedGames = await loadSplitList("reserved_test");
@@ -480,7 +480,7 @@ Do **not** call the result perfectly blind external validation.
 `
   );
 
-  // ---- Phase 8–9: reserved row protocol ----
+  // ---- Phase 8-9: reserved row protocol ----
   // Preexisting: buildFutureBlockStackRows with earlyFrac=0.7 (drbl-eval-v1 / M16c / production).
   // M16g expanding folds are TRAIN-development only; applying them to RESERVED would invent new cuts.
   const reservedRowProtocol = {
@@ -509,7 +509,7 @@ Do **not** call the result perfectly blind external validation.
     },
     explicitlyNotUsed: {
       m16gExpandingFolds:
-        "TRAIN-development only; applying to RESERVED would create new date cuts — forbidden",
+        "TRAIN-development only; applying to RESERVED would create new date cuts - forbidden",
       adHocCutoffs: "forbidden",
     },
     newCutoffInvented: "NO",
@@ -791,7 +791,7 @@ Raw sealed result artifact must be written before player-name inspection / narra
 
 ## Point estimate
 
-\`FINAL_RESEARCH_DRBL100 = N/(N+1600)*rawAbilityRate\` — frozen.
+\`FINAL_RESEARCH_DRBL100 = N/(N+1600)*rawAbilityRate\` - frozen.
 POINT_ESTIMATE_FREEZE_HASH = \`${POINT_ESTIMATE_FREEZE_HASH}\`
 
 ## Uncertainty
@@ -811,7 +811,7 @@ No new cutoffs invented.
 
 ## Next
 
-M16j one-shot point-estimate-only reserved test — after audit acceptance.
+M16j one-shot point-estimate-only reserved test - after audit acceptance.
 Production deployment remains disallowed until M16j result + audit.
 `
   );

@@ -215,7 +215,7 @@ async function main() {
     metricRowComponent: "src/components/player/player-savant-summary.tsx",
     percentileHelper: "src/data/queries/percentiles.ts computePlayerPercentiles",
     classification:
-      "H — claimed identical 88/13 DRBL pattern not reproducible on current league binding; live page shows distinct metric-specific percentiles. Residual G (metadata-zero contamination) repaired by eligible filter.",
+      "H - claimed identical 88/13 DRBL pattern not reproducible on current league binding; live page shows distinct metric-specific percentiles. Residual G (metadata-zero contamination) repaired by eligible filter.",
   };
 
   await writeFile(
@@ -256,7 +256,7 @@ artifact field (drblWar / drbl100 / drblP / …)
 | DRBL-D | drblD | drblDPercentile |
 
 ## Bar position
-\`barPositionPercent = clamp(percentile, 0, 100)\` (marker CSS clamps 2–98 for visibility).
+\`barPositionPercent = clamp(percentile, 0, 100)\` (marker CSS clamps 2-98 for visibility).
 
 ## Career playback note
 Scrub/play switches to career-relative ranks from \`buildSavantCareerFrames\`. Playback end now resets to league percentiles for the selected season.
@@ -273,7 +273,7 @@ Scrub/play switches to career-relative ranks from \`buildSavantCareerFrames\`. P
         liveLeagueModeNote:
           "Browser verification 2025-26: WAR94 /100=100 P99 LN96 B100 O98 D73 (distinct).",
         claimedSymptom:
-          "WAR13 + five 88s + D13 — NOT reproduced; O-DPM=88 and 3PAr=13 appear on same page for other metrics.",
+          "WAR13 + five 88s + D13 - NOT reproduced; O-DPM=88 and 3PAr=13 appear on same page for other metrics.",
         rows: rowInputs,
         warProvenance: {
           abilityInput: "rawAbilityRate",
@@ -301,7 +301,7 @@ Scrub/play switches to career-relative ranks from \`buildSavantCareerFrames\`. P
         "page season (2025-26)",
         "minutes>=500 AND hasValidDrblEstimate (uncertainty>0)",
         def.direction === "higherBetter",
-        "omit percentile row / display —",
+        "omit percentile row / display -",
         "midrank 0.5",
         "round(100 * below_or_tie_midrank / N) clamped [1,100]",
         "integer percentile",
@@ -480,17 +480,17 @@ Scrub/play switches to career-relative ranks from \`buildSavantCareerFrames\`. P
 **H (other)** for the claimed identical DRBL 88/13 pattern: **not reproducible**.
 Live \`/players/202710?season=2025-26\` league mode shows distinct percentiles
 (WAR 94, /100 100, P 99, LN 96, B 100, O 98, D 73). Page also shows O-DPM=88
-and 3PAr=13 — matching the numeric pattern on *other* metrics.
+and 3PAr=13 - matching the numeric pattern on *other* metrics.
 
 **G (metadata-zero contamination)** was a real residual risk: explore left-join
 defaults (\`drbl*?=0\`, \`uncertainty=0\`) could enter the minutes cohort. Fixed by
 \`eligible: hasValidDrblEstimate\` on all DRBL percentile defs.
 
 ## Fixes
-- \`src/data/queries/percentiles.ts\` — per-metric eligible universe + percentileField
-- \`src/data/queries/players.ts\` — career timeline merges DRBL artifact fields
-- \`src/components/player/player-savant-summary.tsx\` — playback end resets to league view
-- \`src/lib/player-savant.ts\` — career ranks skip DRBL default zeros
+- \`src/data/queries/percentiles.ts\` - per-metric eligible universe + percentileField
+- \`src/data/queries/players.ts\` - career timeline merges DRBL artifact fields
+- \`src/components/player/player-savant-summary.tsx\` - playback end resets to league view
+- \`src/lib/player-savant.ts\` - career ranks skip DRBL default zeros
 - tests: \`drbl/models/__tests__/ui-metric-integrity.test.ts\`
 
 ## Result

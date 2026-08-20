@@ -243,7 +243,7 @@ async function main() {
       Number(artifactMeta.gameCount) !== games.length
     ) {
       throw new Error(
-        `GenerationMismatchError: refusing sequential merge — published gameCount=${artifactMeta.gameCount} but sequential loaded ${games.length} games`
+        `GenerationMismatchError: refusing sequential merge - published gameCount=${artifactMeta.gameCount} but sequential loaded ${games.length} games`
       );
     }
     const merged = old.players.map((op) => {

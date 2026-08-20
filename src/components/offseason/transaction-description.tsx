@@ -1,6 +1,7 @@
 "use client";
 
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import type {
   DescriptionPart,
   TransactionPlayerResolution,
@@ -9,7 +10,9 @@ import { partitionTransactionDescription } from "@/lib/transaction-player-resolu
 import { canLinkTransactionPlayer } from "@/lib/transaction-player-link";
 
 /**
- * ESPN free-text description with PlayerIdentity only for resolved mentions.
+ * ESPN free-text description with player/team mentions.
+ * Played players and teams are hoverable + clickable.
+ * Players who have never appeared in an NBA game are hoverable only.
  */
 export function TransactionDescription({
   description,
@@ -20,9 +23,10 @@ export function TransactionDescription({
   resolutions?: TransactionPlayerResolution[];
   className?: string;
 }) {
-  const parts: DescriptionPart[] = resolutions?.length
-    ? partitionTransactionDescription(description, resolutions)
-    : [{ kind: "text", text: description }];
+  const parts: DescriptionPart[] = partitionTransactionDescription(
+    description,
+    resolutions ?? []
+  );
 
   return (
     <p className={className}>
@@ -30,30 +34,37 @@ export function TransactionDescription({
         if (part.kind === "text") {
           return <span key={`t-${i}`}>{part.text}</span>;
         }
-        const r = part.resolution;
-        if (
-          r.status !== "resolved" ||
-          !canLinkTransactionPlayer(r.playerId) ||
-          !r.playerId ||
-          !r.playerName
-        ) {
-          return <span key={`u-${i}`}>{r.mention.rawName}</span>;
+        if (part.kind === "team") {
+          return (
+            <TeamIdentity
+              key={`tm-${part.teamKey}-${i}`}
+              teamKey={part.teamKey}
+              label={part.label}
+              className="inline-flex align-baseline"
+              nameClassName="inline"
+            />
+          );
         }
+        const r = part.resolution;
+        const played =
+          r.status === "resolved" &&
+          canLinkTransactionPlayer(r.playerId) &&
+          Boolean(r.playerId);
+        const name = r.playerName ?? r.mention.rawName;
         return (
           <PlayerIdentity
-            key={`p-${r.playerId}-${i}`}
-            playerId={r.playerId}
-            name={r.playerName}
+            key={`p-${r.playerId ?? r.mention.rawName}-${i}`}
+            playerId={r.playerId ?? undefined}
+            name={name}
             teamKey={r.teamKey}
             teamLabel={r.teamKey}
             href={r.href ?? undefined}
+            hasPlayedNba={played}
             variant="compact"
             className="inline-flex align-baseline"
-            nameClassName="inline font-semibold underline-offset-2 hover:underline"
+            nameClassName="inline"
           >
-            <span className="font-semibold underline-offset-2 hover:underline">
-              {r.playerName}
-            </span>
+            {name}
           </PlayerIdentity>
         );
       })}

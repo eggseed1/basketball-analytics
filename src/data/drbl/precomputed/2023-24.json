@@ -73,7 +73,7 @@
     "pointsToWins": 0.033333,
     "provisionalPointsToWins": 0.03333333333333333,
     "calibrated": false,
-    "reason": "holdout MAE worse than provisional — keeping provisional conversion",
+    "reason": "holdout MAE worse than provisional - keeping provisional conversion",
     "holdoutMae": 5.805,
     "holdoutCorr": 0.866
   },

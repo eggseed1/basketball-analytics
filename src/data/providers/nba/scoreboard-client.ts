@@ -19,11 +19,11 @@ type ScoreboardResponse = {
 
 /**
  * Season that owns the next tip-offs.
- * Jul–Sep (offseason) → upcoming fall campaign; otherwise the active season.
+ * Jul-Sep (offseason) → upcoming fall campaign; otherwise the active season.
  */
 export function upcomingScheduleSeason(now = new Date()): string {
   const y = now.getUTCFullYear();
-  const m = now.getUTCMonth(); // 0–11
+  const m = now.getUTCMonth(); // 0-11
   const startYear = m >= 6 ? y : y - 1;
   return canonicalSeasonFromStartYear(startYear);
 }
@@ -131,7 +131,7 @@ export async function fetchRecentScoreboardGames(options: {
 }
 
 /**
- * Games in the current local week (Sun–Sat). When the week is empty
+ * Games in the current local week (Sun-Sat). When the week is empty
  * (offseason / break), returns upcoming scheduled tip-offs as a preview.
  */
 export async function fetchHomeWeekStrip(options: {
@@ -279,7 +279,7 @@ export function addDaysIso(isoDate: string, n: number): string {
   return toIsoDate(d);
 }
 
-/** All games (final / live / scheduled) for a Sun–Sat week via ESPN months. */
+/** All games (final / live / scheduled) for a Sun-Sat week via ESPN months. */
 export async function fetchScoreboardWeek(options: {
   weekStartIso?: string;
   season?: string;
@@ -447,7 +447,7 @@ export function espnScoreboardDateKey(now = new Date()): string {
 }
 
 /**
- * Lightweight day scoreboard for live refresh — short TTL, optional bypass.
+ * Lightweight day scoreboard for live refresh - short TTL, optional bypass.
  * One ESPN request covers all games that day (batch, not N per game).
  */
 export async function fetchScoreboardDay(options: {

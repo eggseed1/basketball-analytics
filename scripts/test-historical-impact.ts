@@ -2,7 +2,7 @@
  * Deterministic season-true historical impact checks (fixture-only).
  * Run: npx tsx scripts/test-historical-impact.ts
  *
- * These fixtures are synthetic TEST data — not real LEBRON/DARKO archives.
+ * These fixtures are synthetic TEST data - not real LEBRON/DARKO archives.
  */
 import assert from "node:assert/strict";
 
@@ -49,7 +49,7 @@ function fixture(
     provenance: partial.provenance ?? {
       dataset: "test-fixture",
       importedAt,
-      notes: "Synthetic test observation — not production impact data.",
+      notes: "Synthetic test observation - not production impact data.",
     },
   };
 }

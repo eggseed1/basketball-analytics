@@ -11,6 +11,6 @@
   "fileCount": 1,
   "format": "manifest-only",
   "notes": [
-    "Synthetic fixture for unit tests — must never unlock production PBP capability."
+    "Synthetic fixture for unit tests - must never unlock production PBP capability."
   ]
 }

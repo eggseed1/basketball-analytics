@@ -1,5 +1,5 @@
 /**
- * M16f1b — counterfactual signal reliability gate (no architecture change).
+ * M16f1b - counterfactual signal reliability gate (no architecture change).
  *   npm run drbl:m16f1b
  *
  * Frozen: drbl-counterfactual-epv-v1, lambda=100, k=8.
@@ -56,7 +56,7 @@ const EXPECTED_FIT =
 const EXPECTED_HOLD =
   "6d8790e7973c42f6f8fb776d416391750baee48e8cb8f03f001da299e63fe00a";
 
-/** Frozen M16f1 hyperparameters — do not change. */
+/** Frozen M16f1 hyperparameters - do not change. */
 const FROZEN_LAMBDA = 100;
 const MIN_APPEAR = 100;
 const MAX_PLAYERS = 160;
@@ -402,7 +402,7 @@ async function main() {
     ApproachB_version: SEQUENTIAL_ATTRIBUTION_VERSION,
     WAR_version: WAR_FORMULA_VERSION,
     WAR_exposureUnit: WAR_EXPOSURE_UNIT,
-    posteriorVersion: "eb-fused-v1 — untouched",
+    posteriorVersion: "eb-fused-v1 - untouched",
     FROZEN_VALIDATION_ACCESSED: false,
     RESERVED_TEST_ACCESSED: false,
     MODEL_ARCHITECTURE_CHANGED: false,
@@ -546,7 +546,7 @@ async function main() {
   }
   console.log("M16f1 reproduction PASS");
 
-  // ---- PHASE 3–4: support failure audit ----
+  // ---- PHASE 3-4: support failure audit ----
   console.log("Auditing support failures…");
   const reasonAgg = new Map<
     string,
@@ -741,7 +741,7 @@ async function main() {
     ])
   );
 
-  // ---- PHASE 6–7: refits + reference panel ----
+  // ---- PHASE 6-7: refits + reference panel ----
   console.log("Building reference panel…");
   type Cand = PanelItem & { stratum: string };
   const candidates: Cand[] = [];
@@ -1217,7 +1217,7 @@ async function main() {
     ])
   );
 
-  // ---- PHASE 13–15: replacement sensitivity on FULL frozen model ----
+  // ---- PHASE 13-15: replacement sensitivity on FULL frozen model ----
   console.log("Replacement sensitivity…");
   const kPa = new Map<number, Map<string, number>>();
   for (const k of [4, 8, 12]) {
@@ -1354,7 +1354,7 @@ Shared blocks: offense-role⊗state and defense-role⊗state.
 
 ${
   stateChanges === 0
-    ? "FLAG: CONTEXT_INTERACTION_INTERPRETATION_ERROR — state interactions never moved."
+    ? "FLAG: CONTEXT_INTERACTION_INTERPRETATION_ERROR - state interactions never moved."
     : "Prior M16f1 claim that contextual variation exists under focal swaps is **supported** for state (+ shared offense-role) terms."
 }
 
@@ -1362,7 +1362,7 @@ FOCAL_CONTEXT_INTERACTIONS_VALID = ${focalCtxValid && stateChanges > 0 ? "PASS" 
 `;
   await writeFile(path.join(OUT, "12_focal_interaction_audit.md"), focalAuditMd);
 
-  // ---- PHASE 17–21: aggregate holdout signal ----
+  // ---- PHASE 17-21: aggregate holdout signal ----
   await writeFile(
     path.join(OUT, "13_aggregate_outcome_definition.md"),
     `# Aggregate ENGINE_HOLDOUT outcome proxy

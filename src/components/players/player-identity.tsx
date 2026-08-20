@@ -12,23 +12,37 @@ import {
 } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
 import {
   claimPlayerIdentityPreview,
   releasePlayerIdentityPreview,
   subscribePlayerIdentityPreview,
 } from "@/components/players/player-identity-preview-lock";
+import {
+  textHintClassName,
+  textLinkClassName,
+  type,
+} from "@/lib/design-system";
+import { stripFloatingTransform } from "@/lib/strip-floating-transform";
+import { resolveTeamBrand } from "@/lib/nba-brand";
+import type { PlayerCardStint } from "@/lib/player-team-context";
+import { lastCardStint } from "@/lib/player-team-context";
 import { cn } from "@/lib/utils";
 
-/** Presentation density — same identity, different preview weight. */
+/** Presentation density - same identity, different preview weight. */
 export type PlayerIdentityVariant = "default" | "compact" | "chip";
 
 export type PlayerIdentityProps = {
-  playerId: string;
+  /** Canonical player id. Required to link to a player page. */
+  playerId?: string;
   name: string;
   teamKey?: string | null;
   teamLabel?: string | null;
   position?: string | null;
+  /** Franchise stops this season; last item brands the preview. */
+  stints?: PlayerCardStint[];
   season?: string | null;
   espnId?: string | null;
   nbaId?: string | null;
@@ -37,10 +51,15 @@ export type PlayerIdentityProps = {
   className?: string;
   nameClassName?: string;
   /**
+   * When false, the name is hoverable but not a link.
+   * Defaults to true when `playerId` is present.
+   */
+  hasPlayedNba?: boolean;
+  /**
    * Preview density.
-   * - `default` — rich card (spacious contexts)
-   * - `compact` — small card for dense tables (prefers side placement)
-   * - `chip` — name tooltip for avatar strips
+   * - `default` - rich card (spacious contexts)
+   * - `compact` - small card for dense tables (prefers side placement)
+   * - `chip` - name tooltip for avatar strips
    */
   variant?: PlayerIdentityVariant;
   /**
@@ -96,6 +115,8 @@ const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
   },
 };
 
+const NEVER_PLAYED_COPY = "This player has not played in an NBA game.";
+
 function resolveVariant(
   variant: PlayerIdentityVariant | undefined,
   compact: boolean | undefined
@@ -106,9 +127,9 @@ function resolveVariant(
 }
 
 /**
- * Consistent player identity: name remains a real link; hover/focus reveals a
- * portaled floating preview. Density follows `variant` so dense tables and
- * avatar chips stay scannable.
+ * Consistent player identity: name remains a real link when they have NBA
+ * games; hover/focus reveals a portaled floating preview. Players with no
+ * NBA games stay hoverable (never-played hint) but are not clickable.
  */
 export function PlayerIdentity({
   playerId,
@@ -116,23 +137,30 @@ export function PlayerIdentity({
   teamKey,
   teamLabel,
   position,
+  stints,
   season,
   espnId,
   nbaId,
   href,
   className,
   nameClassName,
+  hasPlayedNba,
   variant,
   compact,
   children,
 }: PlayerIdentityProps) {
   const resolved = resolveVariant(variant, compact);
   const cfg = VARIANT_CONFIG[resolved];
+  const id = playerId?.trim() ?? "";
+  const played = hasPlayedNba ?? Boolean(id);
+  const linkable = Boolean(id) && played;
   const target =
     href ??
-    `/players/${encodeURIComponent(playerId)}${
-      season ? `?season=${encodeURIComponent(season)}` : ""
-    }`;
+    (id
+      ? `/players/${encodeURIComponent(id)}${
+          season ? `?season=${encodeURIComponent(season)}` : ""
+        }`
+      : "");
   const instanceId = useId();
   const panelId = `${instanceId}-preview`;
   const [open, setOpen] = useState(false);
@@ -163,38 +191,75 @@ export function PlayerIdentity({
     [instanceId]
   );
 
+  const resolvedStints: PlayerCardStint[] =
+    stints && stints.length > 0
+      ? stints
+      : teamKey || teamLabel
+        ? [
+            {
+              teamKey: teamKey?.trim() || "",
+              teamLabel: teamLabel ?? "",
+              position: position ?? null,
+            },
+          ]
+        : [];
+  const brandTeamKey =
+    lastCardStint(resolvedStints)?.teamKey || teamKey || undefined;
+  const brand = resolveTeamBrand(brandTeamKey);
+  const multiTeam = resolvedStints.length > 1;
   const metaLine =
     [teamLabel, position, season].filter(Boolean).join(" · ") || null;
   const teamOnly = teamLabel || null;
+  const popupWidth = multiTeam
+    ? "w-[min(18rem,calc(100vw-1rem))]"
+    : cfg.popupWidth;
+
+  const nameIsText = children == null || typeof children === "string";
+  const trigger = linkable ? (
+    <TransitionLink href={target} />
+  ) : (
+    <span />
+  );
 
   return (
     <PreviewCard.Root open={open} onOpenChange={onOpenChange}>
       <span className={cn("inline-flex max-w-full items-center", className)}>
         <PreviewCard.Trigger
-          render={<TransitionLink href={target} />}
+          render={trigger}
           delay={cfg.openDelay}
           closeDelay={cfg.closeDelay}
           className={cn(
-            "inline-flex min-w-0 max-w-full items-center gap-2 font-medium underline-offset-4 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            "inline-flex min-w-0 max-w-full items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+            resolved !== "chip" && type.body,
             resolved === "chip" && "gap-0 no-underline hover:no-underline",
+            resolved !== "chip" && nameIsText && linkable && textLinkClassName,
+            resolved !== "chip" && nameIsText && !linkable && textHintClassName,
             nameClassName
           )}
           aria-describedby={open ? panelId : undefined}
+          {...(!linkable
+            ? {
+                title: NEVER_PLAYED_COPY,
+                "aria-label": `${name}. ${NEVER_PLAYED_COPY}`,
+              }
+            : {})}
         >
           {children ?? (
             <>
-              <PlayerHeadshot
-                playerId={playerId}
-                espnId={espnId}
-                nbaId={nbaId}
-                name={name}
-                teamKey={teamKey}
-                size={
-                  compact || resolved !== "default"
-                    ? "xs"
-                    : cfg.triggerHeadshot
-                }
-              />
+              {id ? (
+                <PlayerHeadshot
+                  playerId={id}
+                  espnId={espnId}
+                  nbaId={nbaId}
+                  name={name}
+                  teamKey={brandTeamKey}
+                  size={
+                    compact || resolved !== "default"
+                      ? "xs"
+                      : cfg.triggerHeadshot
+                  }
+                />
+              ) : null}
               {resolved === "chip" ? null : (
                 <span className="truncate">{name}</span>
               )}
@@ -227,19 +292,38 @@ export function PlayerIdentity({
             }
             return "z-50 outline-none";
           }}
+          render={(positionerProps) => (
+            <div
+              {...positionerProps}
+              style={stripFloatingTransform(positionerProps.style)}
+            />
+          )}
         >
           <PreviewCard.Popup
             id={panelId}
             role="tooltip"
             className={cn(
-              cfg.popupWidth,
-              "origin-(--transform-origin) rounded-lg border border-border bg-card text-card-foreground shadow-md outline-none",
-              "motion-safe:data-open:animate-in motion-safe:data-open:fade-in-0 motion-safe:data-open:zoom-in-95",
-              "motion-safe:data-closed:animate-out motion-safe:data-closed:fade-out-0 motion-safe:data-closed:zoom-out-95",
-              resolved === "chip" && "rounded-md shadow-sm"
+              popupWidth,
+              resolved === "chip" && "rounded-md"
+            )}
+            render={(popupProps) => (
+              <FrostFloatingSurface
+                {...popupProps}
+                accentColor={brand?.primary}
+                accentColorB={brand?.secondary}
+              />
             )}
           >
-            {resolved === "chip" ? (
+            {!linkable ? (
+              <div className="px-2.5 py-2">
+                <p className="truncate text-[14px] font-semibold tracking-tight">
+                  {name}
+                </p>
+                <p className="mt-1 text-[12px] leading-4 text-muted-foreground">
+                  {NEVER_PLAYED_COPY}
+                </p>
+              </div>
+            ) : resolved === "chip" ? (
               <TransitionLink
                 href={target}
                 className="block px-2.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
@@ -248,9 +332,20 @@ export function PlayerIdentity({
                 <span className="block max-w-[12rem] truncate text-[12px] font-semibold tracking-tight">
                   {name}
                 </span>
-                {teamOnly ? (
-                  <span className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground">
-                    {teamKey ? <TeamLogo teamKey={teamKey} size="2xs" /> : null}
+                {multiTeam ? (
+                  <PlayerTeamPositionLine
+                    stints={resolvedStints}
+                    season={season}
+                    fallbackPosition={position}
+                    density="preview"
+                    interactive={false}
+                    className="mt-0.5 justify-start"
+                  />
+                ) : teamOnly ? (
+                  <span className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
+                    {brandTeamKey ? (
+                      <TeamLogo teamKey={brandTeamKey} size="2xs" />
+                    ) : null}
                     <span className="truncate">{teamOnly}</span>
                   </span>
                 ) : null}
@@ -260,30 +355,48 @@ export function PlayerIdentity({
                 href={target}
                 className={cn(
                   "flex items-center gap-2 px-2 py-1.5",
-                  "hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  "hover:bg-foreground/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 )}
                 onClick={() => onOpenChange(false)}
               >
                 <PlayerHeadshot
-                  playerId={playerId}
+                  playerId={id}
                   espnId={espnId}
                   nbaId={nbaId}
                   name={name}
-                  teamKey={teamKey}
+                  teamKey={brandTeamKey}
                   size="xs"
                 />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-[12px] font-bold tracking-tight">
                     {name}
                   </span>
-                  <span className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground">
-                    {teamKey ? (
-                      <TeamLogo teamKey={teamKey} size="2xs" />
-                    ) : null}
-                    <span className="truncate">
-                      {metaLine ?? "View player →"}
+                  {multiTeam ? (
+                    <>
+                      <PlayerTeamPositionLine
+                        stints={resolvedStints}
+                        season={season}
+                        fallbackPosition={position}
+                        density="preview"
+                        interactive={false}
+                        className="mt-0.5 justify-start"
+                      />
+                      {season ? (
+                        <span className="mt-0.5 block text-[12px] text-muted-foreground">
+                          {season}
+                        </span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
+                      {brandTeamKey ? (
+                        <TeamLogo teamKey={brandTeamKey} size="2xs" />
+                      ) : null}
+                      <span className="truncate">
+                        {metaLine ?? "View player →"}
+                      </span>
                     </span>
-                  </span>
+                  )}
                 </span>
               </TransitionLink>
             ) : (
@@ -291,31 +404,49 @@ export function PlayerIdentity({
                 href={target}
                 className={cn(
                   "flex items-center gap-3 p-2.5",
-                  "hover:bg-secondary/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                  "hover:bg-foreground/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 )}
                 onClick={() => onOpenChange(false)}
               >
                 <PlayerHeadshot
-                  playerId={playerId}
+                  playerId={id}
                   espnId={espnId}
                   nbaId={nbaId}
                   name={name}
-                  teamKey={teamKey}
+                  teamKey={brandTeamKey}
                   size="md"
                 />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[13px] font-bold tracking-tight">
+                  <span className="block truncate text-[14px] font-bold tracking-tight">
                     {name}
                   </span>
-                  <span className="mt-0.5 flex items-center gap-1.5 text-[11px] text-muted-foreground">
-                    {teamKey ? (
-                      <TeamLogo teamKey={teamKey} size="2xs" />
-                    ) : null}
-                    <span className="truncate">
-                      {metaLine ?? "View player"}
+                  {multiTeam ? (
+                    <>
+                      <PlayerTeamPositionLine
+                        stints={resolvedStints}
+                        season={season}
+                        fallbackPosition={position}
+                        density="preview"
+                        interactive={false}
+                        className="mt-0.5 justify-start"
+                      />
+                      {season ? (
+                        <span className="mt-0.5 block text-[12px] text-muted-foreground">
+                          {season}
+                        </span>
+                      ) : null}
+                    </>
+                  ) : (
+                    <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                      {brandTeamKey ? (
+                        <TeamLogo teamKey={brandTeamKey} size="2xs" />
+                      ) : null}
+                      <span className="truncate">
+                        {metaLine ?? "View player"}
+                      </span>
                     </span>
-                  </span>
-                  <span className="mt-1 block text-[11px] font-semibold">
+                  )}
+                  <span className="mt-1 block text-[12px] font-semibold underline underline-offset-2">
                     View player →
                   </span>
                 </span>

@@ -18,12 +18,12 @@ async function main() {
       row.playerName.padEnd(28),
       (row.teamAbbreviation ?? row.teamName).padEnd(24),
       `USG ${
-        row.usagePct != null ? `${(row.usagePct * 100).toFixed(1)}%` : "—"
+        row.usagePct != null ? `${(row.usagePct * 100).toFixed(1)}%` : "-"
       }`.padEnd(12),
       `TS ${
         row.trueShootingPct != null
           ? `${(row.trueShootingPct * 100).toFixed(1)}%`
-          : "—"
+          : "-"
       }`.padEnd(11),
       `MIN ${Math.round(row.minutes)}`,
       row.per != null ? `PER ${row.per.toFixed(1)}` : ""
@@ -39,11 +39,11 @@ async function main() {
       usg:
         lebron.usagePct != null
           ? `${(lebron.usagePct * 100).toFixed(1)}%`
-          : "—",
+          : "-",
       ts:
         lebron.trueShootingPct != null
           ? `${(lebron.trueShootingPct * 100).toFixed(1)}%`
-          : "—",
+          : "-",
       per: lebron.per,
       gp: lebron.gamesPlayed,
       pts: lebron.points,
@@ -54,15 +54,15 @@ async function main() {
     sga && {
       id: sga.playerId,
       usg:
-        sga.usagePct != null ? `${(sga.usagePct * 100).toFixed(1)}%` : "—",
+        sga.usagePct != null ? `${(sga.usagePct * 100).toFixed(1)}%` : "-",
       ts:
         sga.trueShootingPct != null
           ? `${(sga.trueShootingPct * 100).toFixed(1)}%`
-          : "—",
+          : "-",
       efg:
         sga.effectiveFieldGoalPct != null
           ? `${(sga.effectiveFieldGoalPct * 100).toFixed(1)}%`
-          : "—",
+          : "-",
       gp: sga.gamesPlayed,
       pts: sga.points,
     }

@@ -1,5 +1,5 @@
 /**
- * M18b.0 — Tracking acquisition + spatial identification readiness.
+ * M18b.0 - Tracking acquisition + spatial identification readiness.
  * Inventory/contracts only. Does not download proprietary feeds or retune UIR/DRBL.
  *   npm run drbl:m18b_0
  */
@@ -86,7 +86,7 @@ async function main() {
     CANONICAL_ABILITY_VERSION: "drbl-ability-eb1600-r1-v1",
     M17B_MULTI_SEASON_VALIDATION_SEAL_HASH: EXPECTED_M17B,
     M17C_STATUS: "AUTHORIZED_INDEPENDENT_PARALLEL_BRANCH",
-    note: "Readiness / contracts only — no proprietary download, no UIR retune",
+    note: "Readiness / contracts only - no proprietary download, no UIR retune",
   };
   await writeFile(
     path.join(OUT, "00_freeze.json"),
@@ -111,7 +111,7 @@ TRACKING_LOCAL_TIER = **T3_SHOT_LOCATION_ONLY** (with T2 public aggregate *API h
 ## What exists in-repo
 
 1. **Shot location x/y** in CDN/normalized PBP/events (not optical tracking).
-2. **Public aggregate clients** in \`drbl/models/public-tracking.ts\` (\`leaguedashptstats\`, \`leaguehustlestatsplayer\`) — season totals, not frames.
+2. **Public aggregate clients** in \`drbl/models/public-tracking.ts\` (\`leaguedashptstats\`, \`leaguehustlestatsplayer\`) - season totals, not frames.
 3. **No** full-frame SportVU / Second Spectrum / Hawk-Eye raw files in this workspace.
 
 ## Classification
@@ -145,7 +145,7 @@ Candidate sources evaluated without bypassing authentication or downloading prop
 | Overlap with M18a UIR seasons (2020-25) | **NONE** |
 | Confidence | High that data exist; medium on perfect completeness |
 
-**Role:** method prototype / alignment lab only — cannot mediate 2020–25 UIR.
+**Role:** method prototype / alignment lab only - cannot mediate 2020-25 UIR.
 
 ## 2. stats.nba.com tracking aggregates (live)
 
@@ -158,9 +158,9 @@ Candidate sources evaluated without bypassing authentication or downloading prop
 | Access | Already used by repo helpers (\`public-tracking.ts\`) |
 | Tier | **T2** |
 
-**Role:** exploratory association features only — not counterfactual OBV / tracking EPV.
+**Role:** exploratory association features only - not counterfactual OBV / tracking EPV.
 
-## 3. Second Spectrum / Sportradar optical (2017–~2023)
+## 3. Second Spectrum / Sportradar optical (2017-~2023)
 
 | Field | Value |
 |---|---|
@@ -202,7 +202,7 @@ FULL_FRAME_TRACKING_SOURCE_KNOWN (external) = YES (SportVU 15-16 public; modern 
 
   await writeFile(
     path.join(OUT, "03_tracking_data_contract.md"),
-    `# Tracking data contract — target schema
+    `# Tracking data contract - target schema
 
 Version: \`drbl-tracking-normalized-v1\` (design only; implement when T0/T1 acquired)
 
@@ -252,7 +252,7 @@ sourceEventId
 - Court: 94 × 50
 - Baskets at (±41.75, 0) in half-court transforms as documented per adapter
 - Canonical orientation: **offense always attacks +X** after period/side flip normalization
-- Origin: mid-court (0,0) or basket-relative — adapter must declare one and convert
+- Origin: mid-court (0,0) or basket-relative - adapter must declare one and convert
 - Period flips / side changes must be applied before feature generation
 
 ## PBP ↔ tracking alignment architecture (design)
@@ -288,7 +288,7 @@ FULL_TRACKING | PARTIAL_TRACKING | NO_TRACKING | CLOCK_AMBIGUOUS
 
 ### Lineup agreement
 
-Compare tracking-observed 10 players vs DRBL lineup; report 10/10, 9/10, … — do **not** silently replace canonical DRBL lineups.
+Compare tracking-observed 10 players vs DRBL lineup; report 10/10, 9/10, … - do **not** silently replace canonical DRBL lineups.
 
 ### Candidate quality gates (freeze before player results)
 
@@ -309,7 +309,7 @@ Final thresholds may be tightened from source characteristics; never lowered bec
 
 ### Physics sanity (versioned cleaner)
 
-Flag teleports, impossible speeds, out-of-court coords, frozen zero-length paths, impossible ball locations — without over-filtering genuine sprint speeds.
+Flag teleports, impossible speeds, out-of-court coords, frozen zero-length paths, impossible ball locations - without over-filtering genuine sprint speeds.
 
 ## Non-goals
 
@@ -380,7 +380,7 @@ A tracking model that includes raw player identity can learn “Player X is good
 
 1. **Player-neutral spatial state:** features computed from coordinates/roles without player ID in the value function.
 2. **Cross-fitted identity:** if player effects exist, estimate OOF (never score a player with identity fit on their own evaluation frames).
-3. **Role controls:** usage / three-rate / starter / mpg / creation axes — not listed position alone.
+3. **Role controls:** usage / three-rate / starter / mpg / creation axes - not listed position alone.
 4. **Ablation:** drop identity; require spatial features retain predictive content.
 
 ## Forbidden
@@ -424,7 +424,7 @@ COUNTERFACTUAL_OBV_FEASIBLE = NOT_YET (requires licensed continuous tracking + b
     path.join(OUT, "09_proposed_tracking_eval_protocol.md"),
     `# Proposed tracking evaluation protocol (not executed)
 
-## Branch A — Licensed modern optical (preferred for UIR mediation)
+## Branch A - Licensed modern optical (preferred for UIR mediation)
 
 Contingent on user/license access covering ≥ 2022-23…2024-25.
 
@@ -438,11 +438,11 @@ RESERVED: latest season never opened for tracking-model selection
 
 Note: 2024-25 was consumed for **UIR** reserved validation; it is **not** automatically a pristine tracking holdout. Prefer a later season or a pre-registered tracking-only reserved window.
 
-## Branch B — SportVU 2015-16 method prototype
+## Branch B - SportVU 2015-16 method prototype
 
 \`\`\`text
 TRAIN/VAL within 2015-16 games only
-No claim about 2020–25 UIR mediation
+No claim about 2020-25 UIR mediation
 \`\`\`
 
 Authorize: \`M18b_1_TRACKING_METHOD_PROTOTYPE\` only.
@@ -463,7 +463,7 @@ UIR_REFIT_FOR_TRACKING = NO
 
 ## Sample planning (association)
 
-Frames are clustered within player / game / team. Effective N ≪ frame count. Plan power on player-possession and player-season units with clustered SEs — not millions of frames as independent samples.
+Frames are clustered within player / game / team. Effective N ≪ frame count. Plan power on player-possession and player-season units with clustered SEs - not millions of frames as independent samples.
 
 ## Coverage bias protocol
 
@@ -480,7 +480,7 @@ Pre-register controls for team, role axes (usage, three-rate, starter, mpg, crea
 ## Rules
 
 - Freeze tracking features/model before reserved opens
-- UIR-C sealed (λ=3200) — no refit for tracking
+- UIR-C sealed (λ=3200) - no refit for tracking
 - Source selection before named player inspection
 - Any tracking EPV = \`tracking-epv-research-v1\` only
 `
@@ -511,9 +511,9 @@ No commercial acquisition attempted. No SportVU bulk mirror download started (co
 
 | Source | Est. raw |
 |---|---|
-| SportVU one game (~25 Hz) | ~5–15 MB compressed typical in public mirrors |
-| ~636 games (2015-16 mirror) | ~4–10 GB compressed; larger uncompressed |
-| Modern optical full season | tens–hundreds of GB (vendor-dependent) |
+| SportVU one game (~25 Hz) | ~5-15 MB compressed typical in public mirrors |
+| ~636 games (2015-16 mirror) | ~4-10 GB compressed; larger uncompressed |
+| Modern optical full season | tens-hundreds of GB (vendor-dependent) |
 
 ## Before any download
 
@@ -666,7 +666,7 @@ No commercial acquisition attempted. No SportVU bulk mirror download started (co
 ## Why
 
 - Local workspace: **T3** shot x/y only; no T0/T1 frames.
-- Public SportVU **2015-16** can authorize a **method prototype** but has **zero overlap** with sealed UIR seasons (2020–25).
+- Public SportVU **2015-16** can authorize a **method prototype** but has **zero overlap** with sealed UIR seasons (2020-25).
 - Mediating UIR requires licensed modern optical (Second Spectrum / Hawk-Eye) overlapping validation/reserved eras.
 - T2 aggregates are insufficient for tracking-EPV / counterfactual OBV.
 - Ordinary PBP cannot identify gravity/spacing/deterrence; UIR must not be relabeled as off-ball.

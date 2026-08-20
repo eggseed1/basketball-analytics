@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <DestinationLoadingFrame
       title="Game Lab"
-      subtitle="Matchup identity and score load first — deeper analysis follows."
+      subtitle="Matchup identity and score load first - deeper analysis follows."
     />
   );
 }

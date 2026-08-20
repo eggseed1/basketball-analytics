@@ -230,7 +230,7 @@ writeFileSync(
 
 writeFileSync(
   path.join(OUT, "02_metric_registry_audit.md"),
-  `# Metric registry audit — WAR1
+  `# Metric registry audit - WAR1
 
 | Field | Value |
 |------|-------|
@@ -252,7 +252,7 @@ R1 Points remains ADVANCED / ACCOUNTING (not primary public).
 
 writeFileSync(
   path.join(OUT, "03_learn_route_audit.md"),
-  `# Learn route audit — WAR1
+  `# Learn route audit - WAR1
 
 | Route | Role |
 |-------|------|
@@ -268,7 +268,7 @@ Guide resolve alias: \`wins-above-r1\` → StatGuide \`war1\`.
 
 writeFileSync(
   path.join(OUT, "04_ask_alias_audit.md"),
-  `# ASK alias audit — WAR1
+  `# ASK alias audit - WAR1
 
 Output terminology: **WAR1** (\`DRBL_VOCABULARY.r1_win_eq.label\`).
 
@@ -285,7 +285,7 @@ writeFileSync(
   path.join(OUT, "05_rendered_surface_audit.csv"),
   [
     "surface,expected_label,source_evidence,status",
-    `Explore Players,WAR1,HTTP 200 localhost:3000/explore/players — WAR1 column/header present; Wins Above R1 absent,RENDER_PASS`,
+    `Explore Players,WAR1,HTTP 200 localhost:3000/explore/players - WAR1 column/header present; Wins Above R1 absent,RENDER_PASS`,
     "player page,WAR1,player-core-island WAR1 dt + /learn/drbl/war1,SOURCE_PASS",
     "team roster,WAR1,team-roster-section MetricHelp WAR1,SOURCE_PASS",
     "Compare,WAR1,compare-players label WAR1,SOURCE_PASS",
@@ -357,7 +357,7 @@ writeFileSync(
 
 writeFileSync(
   path.join(OUT, "09_visual_qa.md"),
-  `# Visual QA — WAR1 cutover
+  `# Visual QA - WAR1 cutover
 
 ## Rendered HTTP checks (localhost:3000)
 | Surface | WAR1 visible | Old primary heading |
@@ -436,7 +436,7 @@ writeFileSync(
 
 writeFileSync(
   path.join(OUT, "11_full_audit.md"),
-  `# WAR1 public naming cutover — full audit
+  `# WAR1 public naming cutover - full audit
 
 ## Contract
 - Internal: \`r1WinEquivalents\`

@@ -35,13 +35,13 @@ const identityCols: BrefColumn[] = [
     format: (r) =>
       nbaTeamAbbr(r.teamId, r.teamAbbreviation) ||
       r.teamAbbreviation ||
-      "—",
+      "-",
   },
   {
     key: "pos",
     label: "Pos",
     align: "left",
-    format: (r) => r.position ?? "—",
+    format: (r) => r.position ?? "-",
   },
   {
     key: "g",
@@ -420,7 +420,7 @@ export const BREF_PER_36_COLUMNS: BrefColumn[] = [
 ];
 
 /**
- * Advanced columns — stats.nba.com Advanced + BRef PER/WS/BPM/VORP + DARKO DPM.
+ * Advanced columns - stats.nba.com Advanced + BRef PER/WS/BPM/VORP + DARKO DPM.
  */
 export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
   ...identityCols,
@@ -558,14 +558,14 @@ export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [
     key: "r1Points",
     label: "R1 Points",
     format: (r) =>
-      r.r1Points == null ? "—" : formatNumber(r.r1Points, 1),
+      r.r1Points == null ? "-" : formatNumber(r.r1Points, 1),
   },
   {
     key: "r1WinEquivalents",
     label: "WAR1",
     format: (r) =>
       r.r1WinEquivalents == null
-        ? "—"
+        ? "-"
         : formatNumber(r.r1WinEquivalents, 1),
   },
   {

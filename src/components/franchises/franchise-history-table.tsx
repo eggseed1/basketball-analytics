@@ -107,7 +107,7 @@ export function FranchiseHistoryTable({
             type="button"
             onClick={() => setConf(c)}
             className={cn(
-              "rounded-md px-3 py-1.5 text-[13px] font-semibold transition-colors",
+              "rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
               conf === c
                 ? "bg-foreground text-background"
                 : "bg-secondary text-foreground hover:bg-foreground/10"

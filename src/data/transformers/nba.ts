@@ -32,7 +32,7 @@ export interface NbaLeagueDashPlayerStatsRow {
 
 /**
  * Translates NBA Stats API league-dash rows into canonical PlayerSeason.
- * Missing advanced rates stay omitted (undefined) — never invent 0.
+ * Missing advanced rates stay omitted (undefined) - never invent 0.
  */
 export function transformNbaPlayerSeason(
   raw: NbaLeagueDashPlayerStatsRow,

@@ -3,11 +3,11 @@ import Link from "next/link";
 import type { TeamSeasonEvidence } from "@/analytics/season-evidence";
 import { cn } from "@/lib/utils";
 
-function ResultBadge({ result }: { result: "W" | "L" | "—" }) {
+function ResultBadge({ result }: { result: "W" | "L" | "-" }) {
   return (
     <span
       className={cn(
-        "text-[11px] font-bold uppercase tracking-wide",
+        "text-[12px] font-bold uppercase tracking-wide",
         result === "W" && "text-foreground",
         result === "L" && "text-muted-foreground"
       )}
@@ -18,13 +18,13 @@ function ResultBadge({ result }: { result: "W" | "L" | "—" }) {
 }
 
 /**
- * Calm evidence cards — season profile → Game Lab gateway.
+ * Calm evidence cards - season profile → Game Lab gateway.
  * No “most important game” language.
  */
 export function TeamSeasonEvidenceSection({
   evidence,
   title = "See the evidence",
-  subtitle = "Representative regular-season games from schedule scores — descriptive, not causal. Open Game Lab for the box.",
+  subtitle = "Representative regular-season games from schedule scores - descriptive, not causal. Open Game Lab for the box.",
   highlightCategoryIds,
   compact,
 }: {
@@ -42,16 +42,16 @@ export function TeamSeasonEvidenceSection({
   return (
     <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div>
-        <h3 className="text-[15px] font-bold tracking-tight">{title}</h3>
+        <h3 className="text-[16px] font-bold tracking-tight">{title}</h3>
         <p className="mt-1 text-[12px] text-muted-foreground">{subtitle}</p>
-        <p className="mt-1 text-[11px] text-muted-foreground">
+        <p className="mt-1 text-[12px] text-muted-foreground">
           {evidence.season} · {evidence.coverage.gameCount} final regular-season
           games in sample
         </p>
       </div>
 
       {evidence.error ? (
-        <p className="text-[13px] text-muted-foreground">{evidence.error}</p>
+        <p className="text-[14px] text-muted-foreground">{evidence.error}</p>
       ) : null}
 
       {evidence.games.length ? (
@@ -68,18 +68,18 @@ export function TeamSeasonEvidenceSection({
                 className="flex h-full flex-col gap-2 rounded-xl border border-border bg-background/60 px-3 py-3 transition-colors hover:bg-secondary/50"
               >
                 <div className="flex flex-wrap items-baseline justify-between gap-2">
-                  <p className="text-[13px] font-bold tracking-tight">
+                  <p className="text-[14px] font-bold tracking-tight">
                     {card.isHome ? "vs" : "@"} {card.opponentLabel}
                   </p>
                   <ResultBadge result={card.result} />
                 </div>
                 <p className="text-[12px] tabular-nums text-muted-foreground">
-                  {card.gameDate} · {card.teamScore}–{card.opponentScore} (
+                  {card.gameDate} · {card.teamScore}-{card.opponentScore} (
                   {card.margin > 0 ? "+" : ""}
                   {card.margin})
                 </p>
                 <div>
-                  <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                     Why it appears
                   </p>
                   <ul className="mt-1 flex flex-col gap-0.5">
@@ -87,7 +87,7 @@ export function TeamSeasonEvidenceSection({
                       <li
                         key={f.categoryId}
                         className={cn(
-                          "text-[13px]",
+                          "text-[14px]",
                           highlight.has(f.categoryId)
                             ? "font-semibold text-foreground"
                             : "text-muted-foreground"
@@ -109,19 +109,19 @@ export function TeamSeasonEvidenceSection({
           ))}
         </ul>
       ) : !evidence.error ? (
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           No representative games available for this season sample.
         </p>
       ) : null}
 
-      <details className="text-[11px] text-muted-foreground">
+      <details className="text-[12px] text-muted-foreground">
         <summary className="cursor-pointer font-semibold">
           Evidence coverage &amp; methodology
         </summary>
         <ul className="mt-2 flex flex-col gap-1">
           {evidence.coverage.categories.map((c) => (
             <li key={c.id}>
-              {c.available ? "✓" : "—"} {c.label}
+              {c.available ? "✓" : "-"} {c.label}
               {c.note ? ` (${c.note})` : ""}
             </li>
           ))}
@@ -155,11 +155,11 @@ export function TeamSeasonEvidenceCompareSection({
   return (
     <section className="flex flex-col gap-4">
       <div>
-        <h3 className="text-[15px] font-bold tracking-tight">
+        <h3 className="text-[16px] font-bold tracking-tight">
           Compare the evidence
         </h3>
         <p className="mt-1 text-[12px] text-muted-foreground">
-          Representative games for each season — same descriptive rules, not a
+          Representative games for each season - same descriptive rules, not a
           cross-season game-matching algorithm.
         </p>
       </div>

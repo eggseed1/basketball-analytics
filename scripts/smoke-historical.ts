@@ -37,7 +37,7 @@ async function main() {
       console.log("sample game", games[0]);
     }
   } else {
-    console.log("Skipping BallDontLie game pull — set BALLDONTLIE_API_KEY to exercise 1960s games.");
+    console.log("Skipping BallDontLie game pull - set BALLDONTLIE_API_KEY to exercise 1960s games.");
   }
 }
 

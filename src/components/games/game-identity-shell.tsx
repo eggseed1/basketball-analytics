@@ -1,3 +1,4 @@
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import type { Game } from "@/data/types";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
@@ -15,7 +16,6 @@ import {
   statusHeadline,
 } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
-import type { CSSProperties } from "react";
 
 function resolveSideBrand(
   game: Game,
@@ -44,7 +44,7 @@ function resolveSideBrand(
 }
 
 /**
- * Stable game identity frame — teams, score, date.
+ * Stable game identity frame - teams, score, date.
  * Stays mounted while deeper Game Lab analysis streams below.
  */
 export function GameIdentityShell({
@@ -71,9 +71,11 @@ export function GameIdentityShell({
   });
 
   return (
-    <header
-      className="sports-card matchup-wash matchup-wash--subtle flex flex-col gap-3 p-4 sm:p-5"
-      style={matchup.cssVars as CSSProperties}
+    <GlassSurface
+      as="header"
+      accentColor={matchup.awayWash}
+      accentColorB={matchup.homeWash}
+      className="flex flex-col gap-3 p-4 sm:p-5"
     >
       <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
         {game.gameDate} · {game.season}
@@ -83,7 +85,7 @@ export function GameIdentityShell({
         <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-5">
           <div className="flex items-center gap-2">
             <HistoricalTeamMark brand={awayBrand} size="md" />
-            <span className="text-[18px] font-bold tracking-tight sm:text-[22px]">
+            <span className="text-[18px] font-bold tracking-tight sm:text-[24px]">
               {awayBrand.abbreviation}
             </span>
             {showScores ? (
@@ -93,7 +95,7 @@ export function GameIdentityShell({
             ) : null}
           </div>
           <span className="text-[14px] font-bold text-muted-foreground">
-            {showScores ? "—" : "vs"}
+            {showScores ? "-" : "vs"}
           </span>
           <div className="flex items-center gap-2">
             {showScores ? (
@@ -101,13 +103,13 @@ export function GameIdentityShell({
                 {game.homeScore}
               </span>
             ) : null}
-            <span className="text-[18px] font-bold tracking-tight sm:text-[22px]">
+            <span className="text-[18px] font-bold tracking-tight sm:text-[24px]">
               {homeBrand.abbreviation}
             </span>
             <HistoricalTeamMark brand={homeBrand} size="md" />
           </div>
         </div>
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           {awayBrand.displayName} at {homeBrand.displayName}
         </p>
       </div>
@@ -119,6 +121,6 @@ export function GameIdentityShell({
         {statusHeadline(game.status)}
         {pendingAnalysis ? " · loading analysis…" : null}
       </p>
-    </header>
+    </GlassSurface>
   );
 }

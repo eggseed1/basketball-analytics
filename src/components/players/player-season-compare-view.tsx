@@ -46,7 +46,7 @@ function CoverageDots({
         {items.map(([name, ok]) => (
           <li key={name}>
             <span className={ok ? "text-foreground" : ""}>
-              {ok ? "✓" : "—"} {name}
+              {ok ? "✓" : "-"} {name}
             </span>
           </li>
         ))}
@@ -96,10 +96,10 @@ function CategoryBlock({
   return (
     <section className="sports-card px-4 py-3 sm:px-5">
       <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-[15px] font-bold tracking-tight">{title}</h3>
+        <h3 className="text-[16px] font-bold tracking-tight">{title}</h3>
         <EdgeBadge edge={edge} seasonA={seasonA} seasonB={seasonB} />
       </div>
-      <p className="mb-2 text-[11px] text-muted-foreground">
+      <p className="mb-2 text-[12px] text-muted-foreground">
         Left = {seasonA} · Right = {seasonB} · badge = category winner
       </p>
       {rows.map((d) => (
@@ -153,7 +153,7 @@ export function SeasonComparePicker({
 
   if (seasons.length < 2) {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         Need at least two career seasons to compare.
       </p>
     );
@@ -196,7 +196,7 @@ export function SeasonComparePicker({
         type="button"
         onClick={go}
         disabled={pending || !a || !b || a === b}
-        className="rounded-md bg-foreground px-4 py-2 text-[13px] font-bold text-background disabled:opacity-50"
+        className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
       >
         {pending ? "Loading…" : "Compare"}
       </button>
@@ -241,7 +241,7 @@ export function PlayerSeasonCompareView({
 
       <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
         <div className="flex flex-wrap items-center justify-between gap-2">
-          <h2 className="text-[15px] font-bold tracking-tight">
+          <h2 className="text-[16px] font-bold tracking-tight">
             Overall verdict
           </h2>
           <EdgeBadge
@@ -259,14 +259,14 @@ export function PlayerSeasonCompareView({
           </p>
         ) : null}
         <p className="text-[12px] text-muted-foreground">
-          There is no single universal “best season” score — overall is which
+          There is no single universal “best season” score - overall is which
           season wins more category groups (production, efficiency, etc.) from
           the metrics below.
         </p>
       </section>
 
       <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           What data each season has
         </h2>
         <p className="text-[12px] text-muted-foreground">
@@ -378,7 +378,7 @@ export function PlayerSeasonCompareView({
       />
 
       <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           Where each season is stronger
         </h2>
         {result.howDifferent.aStronger.length ? (
@@ -420,7 +420,7 @@ export function PlayerSeasonCompareView({
         <button
           type="button"
           onClick={() => setShowMethod((v) => !v)}
-          className="text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+          className="text-[14px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
           aria-expanded={showMethod}
         >
           How is this comparison calculated?
@@ -458,9 +458,9 @@ export function PlayerSeasonCompareControl({
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Compare seasons</h2>
-        <p className="text-[13px] text-muted-foreground">
-          Which version of this player was better — by production, efficiency,
+        <h2 className="text-[20px] font-bold tracking-tight">Compare seasons</h2>
+        <p className="text-[14px] text-muted-foreground">
+          Which version of this player was better - by production, efficiency,
           and more.
         </p>
       </div>

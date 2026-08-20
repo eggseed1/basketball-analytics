@@ -1,5 +1,5 @@
 /**
- * P17.1 visual QA screenshot capture — read-only against localhost:3000
+ * P17.1 visual QA screenshot capture - read-only against localhost:3000
  */
 import { chromium } from "playwright";
 import fs from "node:fs";

@@ -1,5 +1,5 @@
 /**
- * NBA Time Machine — era theme resolution, URL roundtrip, identity checks.
+ * NBA Time Machine - era theme resolution, URL roundtrip, identity checks.
  * Run: npx tsx scripts/test-time-machine.ts
  */
 import assert from "node:assert/strict";

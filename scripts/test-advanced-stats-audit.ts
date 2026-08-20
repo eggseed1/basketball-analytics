@@ -70,7 +70,7 @@ function obs(
       dataset: "test-fixture",
       importedAt,
       retrieval: "fixture",
-      notes: "Synthetic — not production advanced stats.",
+      notes: "Synthetic - not production advanced stats.",
     },
   };
 }

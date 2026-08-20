@@ -10,6 +10,10 @@ import type {
 } from "@/data/types";
 import { applyPlayerSeasonFilters } from "./filter-utils";
 import {
+  getDraftYearByPlayerId,
+  overlayDraftYears,
+} from "@/data/providers/nba/draft-history";
+import {
   getDarkoRatings,
   getHistoricalPlayerSeasons,
   getLebronRatings,
@@ -92,8 +96,8 @@ function classifyRosterError(error: unknown): string {
 }
 
 /**
- * Team destination roster uses the ESPN athlete board — same source as
- * getTeamSeasonBoard — not DATA_PROVIDER=local sample rows (slug ids like
+ * Team destination roster uses the ESPN athlete board - same source as
+ * getTeamSeasonBoard - not DATA_PROVIDER=local sample rows (slug ids like
  * "okc" never match canonical ESPN "25").
  */
 let espnRosterProvider: NBADataProvider | null = null;
@@ -199,7 +203,7 @@ async function loadEspnTeamRoster(
   let seasons = await espnPlayerSeasonProvider().getPlayerSeasons(season);
   const darko = await getDarkoRatings().catch(() => []);
   seasons = overlayDarko(seasons, season, darko);
-  // Canonical ESPN team id only — do not expand BDL ids (ESPN 21 = PHX, BDL 21 = OKC).
+  // Canonical ESPN team id only - do not expand BDL ids (ESPN 21 = PHX, BDL 21 = OKC).
   const players = applyPlayerSeasonFilters(seasons, {
     ...filters,
     season,
@@ -290,7 +294,7 @@ export async function getPlayerCareerSeasons(
 
     return seasons.map((row) => {
       const d = darkoByName.get(normalizePlayerName(row.playerName));
-      // Live DARKO is a current-season snapshot — never stamp it onto other years.
+      // Live DARKO is a current-season snapshot - never stamp it onto other years.
       const darkoApplies = d != null && d.season === row.season;
       const l = lebronByKey.get(
         `${normalizePlayerName(row.playerName)}:${row.season}`
@@ -311,11 +315,34 @@ export async function getPlayerCareerSeasons(
   }
 }
 
+export async function getPlayerPlayoffCareerSeasons(
+  playerId: string
+): Promise<PlayerSeason[]> {
+  const provider = getDataProvider();
+  if (typeof provider.getPlayerPlayoffCareerSeasons !== "function") {
+    return [];
+  }
+  const nbaId = await resolveNbaIdForDrbl(playerId);
+  const statsId = nbaId && nbaId !== playerId ? nbaId : playerId;
+  let seasons = await provider.getPlayerPlayoffCareerSeasons(statsId);
+  if (seasons.length === 0 && statsId !== playerId) {
+    seasons = await provider.getPlayerPlayoffCareerSeasons(playerId);
+  }
+  return seasons;
+}
+
 export async function getPlayerGameLog(
   playerId: string,
   season: string
 ): Promise<PlayerGame[]> {
-  return getDataProvider().getPlayerGameLog(playerId, season);
+  const provider = getDataProvider();
+  const nbaId = await resolveNbaIdForDrbl(playerId);
+  const statsId = nbaId && nbaId !== playerId ? nbaId : playerId;
+  let games = await provider.getPlayerGameLog(statsId, season);
+  if (games.length === 0 && statsId !== playerId) {
+    games = await provider.getPlayerGameLog(playerId, season);
+  }
+  return games;
 }
 
 /**
@@ -417,6 +444,7 @@ export async function getFilteredPlayerSeasonsDetailed(
 ): Promise<{ rows: PlayerSeason[]; error: unknown | null }> {
   let seasons: PlayerSeason[] = [];
   let error: unknown | null = null;
+  const draftPromise = getDraftYearByPlayerId();
   const start = filters.season
     ? (() => {
         try {
@@ -427,7 +455,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       })()
     : null;
 
-  // Pre-modern ESPN athlete boards are unsupported — fail fast, no network.
+  // Pre-modern ESPN athlete boards are unsupported - fail fast, no network.
   if (
     start != null &&
     start < TEAM_ROSTER_BOARD_EARLIEST_START_YEAR &&
@@ -506,6 +534,11 @@ export async function getFilteredPlayerSeasonsDetailed(
     seasons = await overlayDrblRows(seasons, drblRows);
   }
 
+  const draftById = await draftPromise;
+  if (seasons.length > 0) {
+    seasons = overlayDraftYears(seasons, draftById);
+  }
+
   return {
     rows: applyPlayerSeasonFilters(seasons, filters),
     error,
@@ -515,7 +548,7 @@ export async function getFilteredPlayerSeasonsDetailed(
 export async function getAvailableSeasons(): Promise<string[]> {
   // Full NBA archive window for filters (1960 → current).
   // DRBL availability is gated separately via getDrblAvailableSeasons /
-  // listDrblSeasons — never invent DRBL for unsupported years.
+  // listDrblSeasons - never invent DRBL for unsupported years.
   return [...listCanonicalSeasons()].reverse();
 }
 
@@ -526,7 +559,7 @@ export async function getDrblAvailableSeasons(): Promise<string[]> {
 
 /**
  * Career rows enriched with DARKO + BRef advanced + DRBL so timeline charts
- * can show impact metrics across seasons — not just counting stats.
+ * can show impact metrics across seasons - not just counting stats.
  */
 export async function getPlayerCareerTimelineSeasons(
   playerId: string
@@ -535,7 +568,7 @@ export async function getPlayerCareerTimelineSeasons(
   if (career.length === 0) return [];
 
   const uniqueSeasons = [...new Set(career.map((row) => row.season))];
-  // Cap expensive scrapes — recent seasons matter most for the timeline.
+  // Cap expensive scrapes - recent seasons matter most for the timeline.
   const overlaySeasons = [...uniqueSeasons]
     .sort((a, b) => b.localeCompare(a))
     .slice(0, 8);

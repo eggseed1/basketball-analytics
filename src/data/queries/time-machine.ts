@@ -1,5 +1,5 @@
 /**
- * Time Machine snapshot queries — reuse existing boards / games / events.
+ * Time Machine snapshot queries - reuse existing boards / games / events.
  */
 
 import { teamEraDisplay, resolveTeamEra } from "@/data/identity/team-era";
@@ -180,7 +180,7 @@ function leadersFromBoard(
     return {
       playerId: String(row.playerId),
       playerName: row.playerName,
-      teamAbbr: era?.abbr ?? "—",
+      teamAbbr: era?.abbr ?? "-",
       teamId,
       value: perGameRate(row, metric),
       metric,
@@ -280,7 +280,7 @@ export async function getHistoricalLeadersBundle(
       return {
         playerId: profileId,
         playerName: row.playerName,
-        teamAbbr: row.teamId || "—",
+        teamAbbr: row.teamId || "-",
         teamId: row.teamId,
         value: row.drbl100,
         metric: "drbl100" as const,

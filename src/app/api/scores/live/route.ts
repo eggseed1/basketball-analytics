@@ -2,7 +2,7 @@ import { jsonError, jsonOk } from "@/app/api/_lib/http";
 import { getLiveScoreboardSummaries } from "@/data/queries";
 
 /**
- * Batched live scoreboard refresh — one day fetch, optional id filter.
+ * Batched live scoreboard refresh - one day fetch, optional id filter.
  * Query: season?, force=1, ids=id1,id2
  */
 export async function GET(request: Request) {

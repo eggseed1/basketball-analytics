@@ -1,5 +1,5 @@
 /**
- * ASK DRBL — natural-language interface to trusted basketball queries.
+ * ASK DRBL - natural-language interface to trusted basketball queries.
  *
  * Pipeline (mandatory):
  *   natural language → intent → BasketballQueryAst → validate → execute → result

@@ -1,6 +1,6 @@
 /**
  * Deterministic validation for ingested transaction archives.
- * Does not invent missing links — only counts structural problems.
+ * Does not invent missing links - only counts structural problems.
  */
 
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
@@ -67,7 +67,7 @@ export function validateCanonicalTransactionArchive(
     if (!tx.provenance?.datasetVersion) {
       bump(issueCounts, "missing_provenance_dataset_version");
     }
-    // ESPN blurbs intentionally have zero assets — that is not a validation error.
+    // ESPN blurbs intentionally have zero assets - that is not a validation error.
     acceptedTransactions.push(tx);
   }
 

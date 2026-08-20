@@ -55,7 +55,7 @@ export function DrblSeasonSupportNotice({ season }: { season: string }) {
           <span className="font-medium text-foreground">
             Historical data quality: Limited
           </span>
-          {entry.dataQualityNote ? ` — ${entry.dataQualityNote}` : ""}
+          {entry.dataQualityNote ? ` - ${entry.dataQualityNote}` : ""}
         </p>
         <p className="mt-1">
           Frozen v1 applied retrospectively.{" "}

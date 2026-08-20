@@ -1,5 +1,5 @@
 /**
- * M16i4 — frozen reliability-feature uncertainty bakeoff.
+ * M16i4 - frozen reliability-feature uncertainty bakeoff.
  *   npm run drbl:m16i4
  *
  * Fixed U2-style sigma × exp(γ·zR). Feature sets F0/F1/F2/F3/F_ALL only.
@@ -625,7 +625,7 @@ async function main() {
       lastTrain.historyDateMax < evalFold.futureDateMin;
   }
   if (protocol.some((p) => !p.chronological)) {
-    // historyDateMax of train fold vs futureDateMin of eval — F2 train is F1
+    // historyDateMax of train fold vs futureDateMin of eval - F2 train is F1
     // Use futureDateMax of last train fold vs futureDateMin of eval (same as prior milestones)
   }
   // Align with m16i1: trainFutureDateMax = last train fold's futureDateMax
@@ -637,7 +637,7 @@ async function main() {
     const trainFutureDateMax = (
       lastTrain as { futureDateMax?: string }
     ).futureDateMax;
-    // fold json may not have futureDateMax on typed object — read from file fields
+    // fold json may not have futureDateMax on typed object - read from file fields
     return {
       name: `EVAL_F${evalId + 1}`,
       evalFoldId: evalId,
@@ -836,7 +836,7 @@ async function main() {
   if (new Set(featureSets.map((fs) => evalOut.length)).size !== 1) {
     throw new Error("STOP FEATURE_SET_EVALUATION_UNIVERSE_MISMATCH");
   }
-  // same rows for all — already true by construction
+  // same rows for all - already true by construction
   const nEval = evalOut.length;
   for (const fs of featureSets) {
     if (evalOut.some((r) => !r.iv[fs])) {
@@ -1428,7 +1428,7 @@ No predictive interval formula promoted.
 Point estimate remains locked. Uncertainty unresolved.
 RESERVED_TEST stays closed. Checkpoint required.
 `
-      : `# Interval contract (M16i4) — ${SELECTED}
+      : `# Interval contract (M16i4) - ${SELECTED}
 
 \`\`\`
 sigmaBase = sqrt(sf^2 + c^2/N)

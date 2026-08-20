@@ -1,5 +1,5 @@
 /**
- * P17.3 temporal identity audit — reproduction, coverage, reports.
+ * P17.3 temporal identity audit - reproduction, coverage, reports.
  * Run: npx tsx scripts/p17-3-temporal-identity-audit.ts
  */
 import { createHash } from "node:crypto";
@@ -234,7 +234,7 @@ Source: that season's membership via \`primaryTeamForSeason\` (TOT preferred).
 Used for stint disclosure / game log rows (matchup-derived team when available).
 
 ## MULTI_TEAM_AGGREGATE_BRAND
-\`NEUTRAL\` — no franchise logo/link/wash for TOT/2TM–4TM aggregates.
+\`NEUTRAL\` - no franchise logo/link/wash for TOT/2TM-4TM aggregates.
 `
   );
 
@@ -514,7 +514,7 @@ Used for stint disclosure / game log rows (matchup-derived team when available).
 | \`careerCache\` (provider) | playerId | career teams | rows include season |
 | React memo headshot | playerId (+ teamKey prop) | ring uses \`teamKey\` prop | parent must pass season team |
 
-Season chips use \`?season=\` URL — brand recomputed on navigation (no client memo of team-only-by-playerId on destination).
+Season chips use \`?season=\` URL - brand recomputed on navigation (no client memo of team-only-by-playerId on destination).
 `
   );
 
@@ -544,7 +544,7 @@ Season chips use \`?season=\` URL — brand recomputed on navigation (no client 
     r1Mismatches: 0,
     winEqMismatches: 0,
     rankMismatches: 0,
-    note: "Model firewall — no analytics source changes in P17.3",
+    note: "Model firewall - no analytics source changes in P17.3",
   };
   fs.writeFileSync(
     path.join(OUT, "09_current_regression.json"),
@@ -609,7 +609,7 @@ Season chips use \`?season=\` URL — brand recomputed on navigation (no client 
 - Live browser screenshots still optional (placeholders written).
 - ASK ambiguity subtitles still use **current** team (intentional for search-like UX).
 - Historical ASK answers now prefer season-primary row; deepen stint-aware ASK later.
-- EPM/LEBRON historical acquisition remains M17c concern — not started.
+- EPM/LEBRON historical acquisition remains M17c concern - not started.
 `
   );
 

@@ -54,17 +54,17 @@ let memoryIndex: { expiresAt: number; value: TransactionLineageIndex } | null =
 const INDEX_TTL_MS = 1000 * 60 * 30;
 
 const NO_STRUCTURED_LINEAGE_NOTE =
-  "ESPN archive is free-text team blurbs only — no ownership edges or structured pick/player assets for genealogy.";
+  "ESPN archive is free-text team blurbs only - no ownership edges or structured pick/player assets for genealogy.";
 
 export const MISSING_REQUIREMENTS = [
-  "Structured multi-asset trade graph (players + picks) with athlete/pick ids — ESPN blurbs alone are insufficient",
+  "Structured multi-asset trade graph (players + picks) with athlete/pick ids - ESPN blurbs alone are insufficient",
   "Draft results archive (year × round × pick × drafting team × player id)",
   "Owned/future pick ledger with protections/swaps only when source-known",
   "Ownership edges derived from structured transfers (not description parsing)",
   "High-confidence player identity on transaction parties (ESPN athlete ids or mapped aliases)",
 ];
 
-/** Conservative genealogy UI gate — fixtures can never pass. */
+/** Conservative genealogy UI gate - fixtures can never pass. */
 export const GENEALOGY_READINESS_THRESHOLDS = {
   minTransactions: 1_000,
   minOwnershipEdges: 500,
@@ -163,7 +163,7 @@ export async function buildTransactionLineageIndex(
   if (options.fixtures) {
     const state = emptyIndex(
       now,
-      ["Built from synthetic/test fixtures — not production historical claims."],
+      ["Built from synthetic/test fixtures - not production historical claims."],
       { isSynthetic: true }
     );
     admitTransactions(state, options.fixtures.transactions ?? []);
@@ -242,8 +242,8 @@ export function traceAssetBackward(
       truncatedReason: state.assets.size
         ? "Asset not found in the lineage index."
         : state.transactions.length
-          ? "Historical lineage unavailable — archive has no structured assets/ownership edges."
-          : "Historical lineage unavailable — no transaction archive ingested.",
+          ? "Historical lineage unavailable - archive has no structured assets/ownership edges."
+          : "Historical lineage unavailable - no transaction archive ingested.",
       methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
     };
   }
@@ -261,7 +261,7 @@ export function traceAssetBackward(
       nodes,
       edges,
       truncatedReason:
-        "Historical lineage unavailable beyond this point — no ownership edges.",
+        "Historical lineage unavailable beyond this point - no ownership edges.",
       methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
     };
   }
@@ -275,7 +275,7 @@ export function traceAssetBackward(
         direction: "backward",
         nodes,
         edges,
-        truncatedReason: "Broken lineage edge — transaction missing.",
+        truncatedReason: "Broken lineage edge - transaction missing.",
         methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
       };
     }
@@ -328,7 +328,7 @@ export function traceAssetBackward(
     nodes,
     edges,
     truncatedReason: exhausted
-      ? "Historical lineage unavailable beyond this point — chain exhausted."
+      ? "Historical lineage unavailable beyond this point - chain exhausted."
       : `Stopped at max depth (${maxDepth}).`,
     methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
   };
@@ -350,8 +350,8 @@ export function traceAssetForward(
       truncatedReason: state.assets.size
         ? "Asset not found in the lineage index."
         : state.transactions.length
-          ? "Historical lineage unavailable — archive has no structured assets/ownership edges."
-          : "Historical lineage unavailable — no transaction archive ingested.",
+          ? "Historical lineage unavailable - archive has no structured assets/ownership edges."
+          : "Historical lineage unavailable - no transaction archive ingested.",
       methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
     };
   }
@@ -381,7 +381,7 @@ export function traceAssetForward(
         direction: "forward",
         nodes,
         edges,
-        truncatedReason: "Broken lineage edge — transaction missing.",
+        truncatedReason: "Broken lineage edge - transaction missing.",
         methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
       };
     }
@@ -418,7 +418,7 @@ export function traceAssetForward(
         nodes,
         edges,
         truncatedReason:
-          "Forward lineage ends — asset consumed / left transferable state.",
+          "Forward lineage ends - asset consumed / left transferable state.",
         methodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
       };
     }
@@ -623,7 +623,7 @@ export function buildTransactionLineageCoverageReport(
     notes: [
       ...state.notes,
       genealogyUiReady
-        ? "Genealogy readiness criteria met — UI may be considered."
+        ? "Genealogy readiness criteria met - UI may be considered."
         : `Genealogy UI blocked (${readiness.failures.join("; ") || "criteria unmet"}).`,
     ],
     missingRequirements: genealogyUiReady ? [] : [...MISSING_REQUIREMENTS],

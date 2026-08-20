@@ -158,7 +158,7 @@ async function main() {
       p.fusedRateRaw != null
         ? Number(p.fusedRateRaw)
         : p.posteriorAbilityRate != null
-          ? // back out roughly if only posterior stored — use posterior as observed proxy
+          ? // back out roughly if only posterior stored - use posterior as observed proxy
             Number(p.posteriorAbilityRate)
           : raw;
     const posterior =
@@ -246,7 +246,7 @@ async function main() {
   const warCalibrationAbilityInput: "posterior" | "raw" = posteriorClearlyWorse
     ? "raw"
     : "posterior";
-  // Legacy alias — identical value; prefer warCalibrationAbilityInput in new code.
+  // Legacy alias - identical value; prefer warCalibrationAbilityInput in new code.
   const abilityInput = warCalibrationAbilityInput;
   const calib = abilityInput === "posterior" ? postCal : rawCal;
 
@@ -543,7 +543,7 @@ async function main() {
       fusedOrObservedForPosterior:
         abilityInput === "posterior" ? e.posterior : e.raw,
       // When abilityInput is posterior, fusedOrObserved already IS posterior;
-      // tracePlayerValue re-shrinks — pass fusedRateRaw to recompute, or pass
+      // tracePlayerValue re-shrinks - pass fusedRateRaw to recompute, or pass
       // posterior with priorStrength=0 to lock. Lock posterior:
       actualOnCourtPossessions: e.n,
       priorStrength: 0,
@@ -748,12 +748,12 @@ archetypes mixed quality signals
 
 ## 2. Bugs found
 
-1. **POSTERIOR_COMPUTED_BUT_UNUSED** — WAR calibrated raw, not posterior.
-2. **Legacy 2.519** — in-sample through-origin slope raw-team-rate → net rating; global multiplier; not OOF.
-3. **replacementLevel=0** — made WAR ≈ WAA on calibrated scale.
-4. **Circular impliedReplacement** — algebraic identity, not validation.
-5. **POSITION_PROXY_INVALID** — invented PG for centers.
-6. **Archetype quality leakage risk** — prior labels used O/D impact rates with quality-like thresholds.
+1. **POSTERIOR_COMPUTED_BUT_UNUSED** - WAR calibrated raw, not posterior.
+2. **Legacy 2.519** - in-sample through-origin slope raw-team-rate → net rating; global multiplier; not OOF.
+3. **replacementLevel=0** - made WAR ≈ WAA on calibrated scale.
+4. **Circular impliedReplacement** - algebraic identity, not validation.
+5. **POSITION_PROXY_INVALID** - invented PG for centers.
+6. **Archetype quality leakage risk** - prior labels used O/D impact rates with quality-like thresholds.
 
 ## 3. Posterior bypass diagnosis
 
@@ -767,9 +767,9 @@ Class: **learned in-sample scale factor**, not theoretical constant. Replaced by
 ## 5. Replacement-level diagnosis
 
 Zero was R1-embedded on raw residual scale, but after multiplicative calibration and with EB prior at 0, treating 0 as replacement made WAR≈WAA.
-New: fringe median of **finalAbility** (poss 200–800).
+New: fringe median of **finalAbility** (poss 200-800).
 
-## 6–7. Position / archetype
+## 6-7. Position / archetype
 
 Position = \`UNKNOWN\` / \`unavailable\` (no false proxies).
 Archetypes = behavior-only category rates with EB shrink; no DRBL/WAR inputs.
@@ -783,14 +783,14 @@ raw → posterior (EB) → LOO calibrate → finalAbility
 metadata: position/archetype diagnostics only
 \`\`\`
 
-## 9–12. Derivations
+## 9-12. Derivations
 
 - Posterior: EB fused rate, prior 0, k=${priorStrength}
 - Calibration: LOO team net rating, input=\`${abilityInput}\`, intercept=${calibrationIntercept}, slope=${calibrationSlope.toFixed(4)}, oofMae=${calib.oofMae.toFixed(3)}, oofCorr=${calib.oofCorr.toFixed(3)}
 - Replacement: ${repl.method}, value=${warAvailable ? replacementLevelDRBL100.toFixed(4) : "unavailable"}, n=${repl.sampleSize}
 - Points/win: median margin/(wins−.500*G) = ${pointsPerWin.toFixed(3)}
 
-## 15–18. Ablation / OOF / accounting
+## 15-18. Ablation / OOF / accounting
 
 | Model | OOF MAE | OOF Corr | Slope |
 |---|---:|---:|---:|

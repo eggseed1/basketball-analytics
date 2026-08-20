@@ -1,5 +1,5 @@
 /**
- * M16a — full-season vs repaired-400 diagnostics (no model-math changes).
+ * M16a - full-season vs repaired-400 diagnostics (no model-math changes).
  *
  *   npx tsx scripts/drbl-m16a-diagnostics.ts
  *

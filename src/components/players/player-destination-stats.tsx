@@ -16,7 +16,7 @@ export function VsStat({
       </dt>
       <dd className="mt-0.5 flex flex-col gap-0.5">
         <span className="font-bold tabular-nums">{current}</span>
-        <span className="text-[11px] text-muted-foreground tabular-nums">
+        <span className="text-[12px] text-muted-foreground tabular-nums">
           vs {career} career
         </span>
       </dd>
@@ -27,7 +27,7 @@ export function VsStat({
 export function MiniStat({ label, value }: { label: string; value: string }) {
   return (
     <div>
-      <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <dt className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </dt>
       <dd className="text-[16px] font-bold tabular-nums">{value}</dd>

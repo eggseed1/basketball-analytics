@@ -1,5 +1,5 @@
 /**
- * M16i — P-only predictive uncertainty selection.
+ * M16i - P-only predictive uncertainty selection.
  *   npm run drbl:m16i
  *
  * Point estimate LOCKED (identity EB1600). Uncertainty does not modify DRBL/100.
@@ -1060,7 +1060,7 @@ player impact around the locked DRBL/100.
 
 ## Single display number
 Choosing PI50 vs PI80 vs PI95 for a single UI half-width is a **product** decision
-after scientific lock — not part of M16i model selection.
+after scientific lock - not part of M16i model selection.
 `
   );
 

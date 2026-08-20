@@ -1,5 +1,5 @@
 /**
- * Explore Players board window contract — sort/filter/page without full payload.
+ * Explore Players board window contract - sort/filter/page without full payload.
  * Also guards DRtg/NET missing≠zero (ESPN boards omit individual DRtg).
  * Run: npx tsx scripts/test-explore-players-board.ts
  */
@@ -20,6 +20,10 @@ import {
 } from "../src/analytics/leaderboard-context";
 import { transformEspnPlayerSeason } from "../src/data/transformers/espn";
 import type { PlayerSeason } from "../src/data/types";
+import {
+  filterPlayerBoardViewColumns,
+  PLAYER_BOARD_VIEW_COLUMNS,
+} from "../src/lib/explore-players-display";
 import { normalizeTeamParam } from "../src/lib/team-identity";
 
 function fakeSeason(
@@ -62,6 +66,30 @@ function main() {
   assert.equal(parseExplorePlayersSortDir("asc", "ppg"), "asc");
   assert.equal(parseExplorePlayersSortDir(undefined, "ppg"), "desc");
   assert.equal(parseExplorePlayersSortDir(undefined, "tov"), "asc");
+  assert.equal(parseExplorePlayersSortDir(undefined, "r1WinEquivalents"), "desc");
+
+  const allCols = PLAYER_BOARD_VIEW_COLUMNS.all;
+  assert.ok(allCols.includes("r1WinEquivalents"));
+  assert.ok(allCols.includes("drbl100"));
+  assert.ok(
+    allCols.indexOf("r1WinEquivalents") < allCols.indexOf("drbl100"),
+    "WAR1 should appear before DRBL/100 on Show all stats"
+  );
+  assert.equal(
+    filterPlayerBoardViewColumns("all", {
+      hasDarko: true,
+      hasLebron: false,
+      hasDrbl: false,
+    }).includes("drbl100"),
+    false
+  );
+  assert.ok(
+    filterPlayerBoardViewColumns("all", {
+      hasDarko: true,
+      hasLebron: false,
+      hasDrbl: true,
+    }).includes("r1WinEquivalents")
+  );
 
   const board: PlayerSeason[] = [
     fakeSeason("a", {

@@ -1,5 +1,5 @@
 /**
- * M16j — one-shot point-estimate RESERVED_TEST.
+ * M16j - one-shot point-estimate RESERVED_TEST.
  *   npm run drbl:m16j
  *
  * Opens 2025-26 RESERVED_TEST exactly once for POINT_ESTIMATE_ONLY scoring.
@@ -352,7 +352,7 @@ async function main() {
 
   if (await fileExists(SEALED_PATH)) {
     throw new Error(
-      "STOP RESERVED_TEST already sealed under M16j — refuse second official scoring run"
+      "STOP RESERVED_TEST already sealed under M16j - refuse second official scoring run"
     );
   }
 
@@ -645,7 +645,7 @@ async function main() {
     JSON.stringify(chronology, null, 2)
   );
 
-  // ---- Phases 7–10: predictions then targets via shared builder ----
+  // ---- Phases 7-10: predictions then targets via shared builder ----
   console.log("Constructing history predictors + future targets…");
   const rows = buildReservedEvalRows(historyGames, futureGames);
   if (!rows.length) throw new Error("STOP empty reserved evaluation universe");
@@ -758,7 +758,7 @@ async function main() {
     )
   );
 
-  // ---- Phase 12–19: ONE-SHOT SCORING (no name inspection for decision) ----
+  // ---- Phase 12-19: ONE-SHOT SCORING (no name inspection for decision) ----
   console.log("Official one-shot scoring…");
   const y = rows.map((r) => r.target);
   const yResearch = rows.map((r) => r.research);
@@ -863,7 +863,7 @@ async function main() {
     M16J_RESERVED_VERDICT = "STRONG_PASS";
     POINT_ESTIMATE_RESERVED_VALIDATION = "PASSED";
   } else if (PRIMARY_RESERVED_SUCCESS === "YES" && SEVERE_INTEGRITY_ANOMALY === "YES") {
-    // e.g. negative calibration slope with primary success — production-mixed technical issue
+    // e.g. negative calibration slope with primary success - production-mixed technical issue
     M16J_RESERVED_VERDICT = "SCIENTIFIC_PASS_PRODUCTION_MIXED";
     POINT_ESTIMATE_RESERVED_VALIDATION = "PASSED";
   } else if (deltaRMSE_vs_raw < 0 && bootRaw.probCandidateBeatsBaseline < 0.95) {

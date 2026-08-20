@@ -1,5 +1,5 @@
 /**
- * NBA transaction EVENT model — factual ESPN free-text archive rows.
+ * NBA transaction EVENT model - factual ESPN free-text archive rows.
  *
  * Distinct from structured CanonicalTransaction asset/ownership genealogy.
  * Events answer "what was recorded?" not "which assets moved?"
@@ -21,7 +21,7 @@ export type RelatedTransactionEventCluster = {
   date: string;
   eventIds: string[];
   teamIds: string[];
-  /** Evidence summary — never an asset ledger. */
+  /** Evidence summary - never an asset ledger. */
   evidence: string[];
   status: "related_event_cluster";
   /** Always false for ESPN archive clusters. */
@@ -44,7 +44,7 @@ export type OffseasonFeedItem =
 
 /**
  * One provenance-backed free-text transaction event.
- * No player assets / pick ownership — those require a structured ledger.
+ * No player assets / pick ownership - those require a structured ledger.
  */
 export type NbaTransactionEvent = {
   id: string;
@@ -53,12 +53,12 @@ export type NbaTransactionEvent = {
   season: string;
   teamId: string;
   teamAbbr?: string;
-  /** Raw ESPN description — never rewritten into fake structure. */
+  /** Raw ESPN description - never rewritten into fake structure. */
   description: string;
   /**
    * Keyword classification of the description.
    * This is SOURCE-TEXT CLASSIFICATION, not an official ESPN type enum.
-   * `trade` means the source text looked trade-related — not that DRBL
+   * `trade` means the source text looked trade-related - not that DRBL
    * knows the complete trade package.
    */
   sourceTextCategory: TransactionType;
@@ -88,7 +88,7 @@ export type OffseasonWindow = {
 export type TransactionEventFilters = {
   /** Offseason summer year (e.g. 2026). Mutually contextual with date range. */
   offseasonYear?: number;
-  /** Canonical season YYYY-YY — filters by derived season field. */
+  /** Canonical season YYYY-YY - filters by derived season field. */
   season?: string;
   teamId?: string;
   /** Inclusive YYYY-MM-DD */
@@ -113,7 +113,7 @@ export type TeamOffseasonActivity = {
   teamId: string;
   teamAbbr?: string;
   eventCount: number;
-  /** Counts by source-text category — not official trade counts. */
+  /** Counts by source-text category - not official trade counts. */
   bySourceTextCategory: Partial<Record<TransactionType, number>>;
   activeDays: number;
 };

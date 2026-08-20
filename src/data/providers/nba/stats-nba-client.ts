@@ -11,7 +11,7 @@ const memoryCache = new Map<string, CacheEntry<unknown>>();
 
 const DEFAULT_TTL_MS = CACHE_TTL_MS.currentSeasonStats;
 const DEFAULT_STALE_MS = CACHE_TTL_MS.currentSeasonStale;
-const DEFAULT_RETRIES = 3;
+const DEFAULT_RETRIES = 2;
 const BASE_URL = "https://stats.nba.com/stats";
 
 const NBA_HEADERS: Record<string, string> = {
@@ -135,7 +135,7 @@ async function fetchStatsNba(
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
-        signal: options.signal,
+        signal: options.signal ?? AbortSignal.timeout(8_000),
         headers: NBA_HEADERS,
       });
       if (!response.ok) {

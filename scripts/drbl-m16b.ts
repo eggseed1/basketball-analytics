@@ -217,7 +217,7 @@ async function main() {
   ];
   await writeFile(path.join(OUT, "01_data_inventory.csv"), toCsv(invRows));
 
-  // Split distribution diagnostics (aggregate dates only — no reserved player ranks)
+  // Split distribution diagnostics (aggregate dates only - no reserved player ranks)
   await writeFile(
     path.join(OUT, "05_split_distribution_diagnostics.csv"),
     toCsv(
@@ -255,7 +255,7 @@ async function main() {
   void developmentGames(bundle);
 
   // ---- Targets ----
-  const targetDefs = `# Target definitions (frozen documentation — no redesign)
+  const targetDefs = `# Target definitions (frozen documentation - no redesign)
 
 evaluationProtocolVersion: ${EVALUATION_PROTOCOL_VERSION}
 targetVersion: ${TARGET_VERSION}
@@ -290,7 +290,7 @@ Horizons: ${EVALUATION_HORIZONS.map((h) => h.id).join(", ")}
       "WARNING_behavior_box_features_are_post_game_within_block",
     TARGET_LEAKAGE_OVERLAPPING_WINDOW: "PASS_earlyFrac_disjoint_late",
     notes: [
-      "Fusion stack uses earlyFrac games for features and late games for Y — intended.",
+      "Fusion stack uses earlyFrac games for features and late games for Y - intended.",
       "DRBL-B features from final box within a game are post-tip; retrospective OK, live-invalid.",
       "No redesign in M16b.",
     ],
@@ -421,7 +421,7 @@ Horizons: ${EVALUATION_HORIZONS.map((h) => h.id).join(", ")}
       const score400 = Number(o.posteriorAbilityRate ?? o.drbl100);
       const scoreFullRefit = Number(p.posteriorAbilityRate ?? p.drbl100);
       // Fixed-fit fusion scoring not executed here (requires frozen 400-game betas applied
-      // to full-sample P/LN/B) — mark null.
+      // to full-sample P/LN/B) - mark null.
       const decomp = decomposeConvergence({
         score400,
         scoreFullFixed: null,
@@ -437,7 +437,7 @@ Horizons: ${EVALUATION_HORIZONS.map((h) => h.id).join(", ")}
         deltaRefit: "",
         deltaTotal: decomp.deltaTotal,
         status: decomp.status,
-        note: "FIXED_FIT_MORE_DATA for fusion requires applying frozen 400-game fold betas — framework ready, run deferred to validation harness",
+        note: "FIXED_FIT_MORE_DATA for fusion requires applying frozen 400-game fold betas - framework ready, run deferred to validation harness",
       });
     }
   }
@@ -483,7 +483,7 @@ Illustrative \`deltaTotal\` (refit only) is in \`13_fixed_fit_vs_refit_players.c
 
 ${METRIC_CONTRACT.decisionRule.map((r) => `- ${r}`).join("\n")}
 
-Primary metric: **${METRIC_CONTRACT.primary.name}** — ${METRIC_CONTRACT.primary.description}
+Primary metric: **${METRIC_CONTRACT.primary.name}** - ${METRIC_CONTRACT.primary.description}
 
 Practical significance: paired block-bootstrap CI required; categories ${METRIC_CONTRACT.practicalSignificance.categories.join(", ")}.
 

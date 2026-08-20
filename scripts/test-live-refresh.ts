@@ -65,7 +65,7 @@ function main() {
   assert.equal(needsLivePolling("in_progress"), true);
   assert.equal(needsLivePolling("scheduled"), true);
 
-  // Stale freshness — status is independent
+  // Stale freshness - status is independent
   {
     const now = Date.now();
     assert.equal(

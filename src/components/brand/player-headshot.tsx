@@ -3,10 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import {
-  playerHeadshotCandidates,
-  resolveTeamBrand,
-} from "@/lib/nba-brand";
+import { playerHeadshotCandidates, resolveTeamBrand } from "@/lib/nba-brand";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 

@@ -107,7 +107,7 @@ async function main() {
   console.log("");
   console.log("=== ESPN transaction ingest complete ===");
   console.log(`Source: ${manifest.source} v${manifest.datasetVersion}`);
-  console.log(`Years: ${manifest.espnCalendarYears[0]}–${manifest.espnCalendarYears.at(-1)}`);
+  console.log(`Years: ${manifest.espnCalendarYears[0]}-${manifest.espnCalendarYears.at(-1)}`);
   console.log(`Transactions: ${manifest.transactionCount}`);
   console.log(`Ownership edges: ${manifest.ownershipEdgeCount}`);
   console.log(`Date range: ${manifest.earliestDate} → ${manifest.latestDate}`);

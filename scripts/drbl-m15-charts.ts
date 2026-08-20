@@ -1,5 +1,5 @@
 /**
- * M15 charts — SVG only, no model changes.
+ * M15 charts - SVG only, no model changes.
  *   npx tsx scripts/drbl-m15-charts.ts
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";

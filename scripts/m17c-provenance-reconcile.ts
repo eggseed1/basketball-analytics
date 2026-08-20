@@ -1,5 +1,5 @@
 /**
- * M17c provenance reconciliation — dependency hashes + target/DRBL equality.
+ * M17c provenance reconciliation - dependency hashes + target/DRBL equality.
  * Does NOT rerun M17c. Reads sealed manifest + git blobs.
  *
  * Run from product worktree that contains both commits:
@@ -211,7 +211,7 @@ function main() {
     );
   }
 
-  // Script lives only on research worktree — hash there for audit completeness
+  // Script lives only on research worktree - hash there for audit completeness
   const m17cScript = path.join(
     ROOT,
     "..",
@@ -233,7 +233,7 @@ function main() {
     );
   }
 
-  // External snapshots (research worktree artifacts — not in product commits)
+  // External snapshots (research worktree artifacts - not in product commits)
   const extDir = path.join(M17C_REPORTS, "external_snapshots");
   if (existsSync(extDir)) {
     for (const name of [
@@ -292,7 +292,7 @@ function main() {
       tc: Number(r.teamChanged),
     })),
   });
-  // Note: exact field set in original may differ — read from 04 if needed
+  // Note: exact field set in original may differ - read from 04 if needed
   const sealedHashDoc = JSON.parse(
     readFileSync(path.join(M17C_REPORTS, "04_target_hashes.json"), "utf8")
   ) as { M17C_TARGET_CONTENT_HASH: string; rowCount: number };
@@ -342,7 +342,7 @@ function main() {
       b.teamId && bFut?.teamId && b.teamId !== bFut.teamId ? 1 : 0;
     if (tcA !== tcB) teamIdMismatches++;
     if (Number(r.teamChanged) !== tcA) {
-      // sealed vs a229 classification — should match research tree
+      // sealed vs a229 classification - should match research tree
       teamIdMismatches += 0; // don't count display; sealed is source of truth for run
     }
   }
@@ -381,7 +381,7 @@ function main() {
       sealedHashDoc.M17C_TARGET_CONTENT_HASH === EXPECTED_TARGET,
     research_code_and_precomputed_identical_across_commits: sciChanged === 0,
     reproduction_method:
-      "INPUT_IDENTITY — lineup-impact + precomputed + seals byte-identical a229↔6bc55d7; sealed Target-A hash retained without re-fitting λ=3200 (no scientific input delta)",
+      "INPUT_IDENTITY - lineup-impact + precomputed + seals byte-identical a229↔6bc55d7; sealed Target-A hash retained without re-fitting λ=3200 (no scientific input delta)",
     reproduced_target_hash: sealedHashDoc.M17C_TARGET_CONTENT_HASH,
     row_mismatches: 0,
     value_mismatches: 0,

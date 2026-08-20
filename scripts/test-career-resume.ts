@@ -333,13 +333,13 @@ function assertFinite(n: number, label: string) {
       season: "2019-20",
       gamesPlayed: 70,
       minutes: 70 * 30,
-      points: 70 * 24, // 80% — longevity-only
+      points: 70 * 24, // 80% - longevity-only
     }),
     row({
       season: "2020-21",
       gamesPlayed: 70,
       minutes: 70 * 30,
-      points: 70 * 28, // ~93% — prime
+      points: 70 * 28, // ~93% - prime
     }),
     row({
       season: "2021-22",
@@ -357,7 +357,7 @@ function assertFinite(n: number, label: string) {
       season: "2023-24",
       gamesPlayed: 70,
       minutes: 70 * 30,
-      points: 70 * 27, // prime again — shorter contiguous than earlier? 1 season
+      points: 70 * 27, // prime again - shorter contiguous than earlier? 1 season
     }),
   ];
   const resume = computeCareerResume({

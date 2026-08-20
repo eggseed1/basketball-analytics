@@ -1,5 +1,5 @@
 /**
- * Continuity helpers — transition-aware URL updates must not blank UI.
+ * Continuity helpers - transition-aware URL updates must not blank UI.
  * Run: npx tsx scripts/test-ui-continuity.ts
  */
 import assert from "node:assert/strict";

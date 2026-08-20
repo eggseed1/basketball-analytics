@@ -1,5 +1,5 @@
 /**
- * M16e1 — WAR unit-consistent diagnostic candidates.
+ * M16e1 - WAR unit-consistent diagnostic candidates.
  *   npm run drbl:m16e1
  *
  * DIAGNOSTIC_CANDIDATE only. No production WAR/DRBL changes.
@@ -354,7 +354,7 @@ async function main() {
     JSON.stringify([...pairedMap.values()])
   );
 
-  // --- Phase 4–5 exposure + rate conversion ---
+  // --- Phase 4-5 exposure + rate conversion ---
   const exposureRows: Record<string, unknown>[] = [];
   const rateConvRows: Record<string, unknown>[] = [];
   const ratios: number[] = [];
@@ -971,7 +971,7 @@ async function main() {
 
   const repairMd = `# WAR_REPAIR_CANDIDATE_V1 (NOT DEPLOYED)
 
-Status: **DIAGNOSTIC_CANDIDATE** — do not deploy without separate approval.
+Status: **DIAGNOSTIC_CANDIDATE** - do not deploy without separate approval.
 
 ## Verdict
 

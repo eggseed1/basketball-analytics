@@ -20,7 +20,7 @@ export const metadata = {
 
 /**
  * P17.1 classification: SECONDARY_LAB / DEFER_DRBL (INTENTIONALLY_DEFERRED).
- * Not a primary DRBL hierarchy surface — box Contour boards only for now.
+ * Not a primary DRBL hierarchy surface - box Contour boards only for now.
  */
 
 interface DashboardPageProps {
@@ -33,7 +33,7 @@ export default async function DashboardPage({
   searchParams,
 }: DashboardPageProps) {
   const sp = await searchParams;
-  // Instant — no league fetch.
+  // Instant - no league fetch.
   const seasons = await getAvailableSeasons();
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
   const season = seasonParam ?? seasons[0] ?? "2024-25";
@@ -48,7 +48,7 @@ export default async function DashboardPage({
           <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
             Histograms, categorical bars, and scatters with chart-to-chart
-            filtering — click bars to keep matching players across every board.
+            filtering - click bars to keep matching players across every board.
           </p>
           <AutoRefresh />
         </div>

@@ -148,4 +148,4 @@ assert.deepEqual(
   `next/link must not take external hrefs:\n${bad.join("\n")}`
 );
 
-console.log("OK — external links use a single browser navigation path.");
+console.log("OK - external links use a single browser navigation path.");

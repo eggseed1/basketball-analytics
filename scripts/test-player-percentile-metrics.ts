@@ -59,7 +59,7 @@ function main() {
     usagePct: 0.302,
     trueShootingPct: 0.65,
     offensiveRating: 113.4,
-    // DRtg / NET missing — must not appear
+    // DRtg / NET missing - must not appear
   });
 
   const lowMinute = row({
@@ -122,11 +122,11 @@ function main() {
 
   const byId = Object.fromEntries(metrics.map((m) => [m.id, m]));
 
-  // Minutes → role / descriptive (no skill percentile / grade)
-  assert.equal(byId.min?.category, "role");
-  assert.equal(byId.min?.interpretation, "descriptive");
-  assert.equal(byId.min?.showPercentile, false);
-  assert.equal(byId.min?.showGrade, false);
+  // Minutes / games live on Statistics, not the ranking card
+  assert.equal(byId.min, undefined);
+  assert.equal(byId.gp, undefined);
+  assert.equal(byId.pts, undefined);
+  assert.equal(byId.stl, undefined);
 
   // Usage → role (percentile OK, no skill grade)
   assert.equal(byId.usg?.category, "role");
@@ -134,10 +134,8 @@ function main() {
   assert.equal(byId.usg?.showPercentile, true);
   assert.equal(byId.usg?.showGrade, false);
 
-  // Games → role descriptive
-  assert.equal(byId.gp?.category, "role");
-  assert.equal(byId.gp?.showPercentile, false);
-  assert.equal(byId.gp?.showGrade, false);
+  // Games → Statistics tab
+  assert.equal(byId.gp, undefined);
 
   // Raw TOVPG is not shown as a skill metric on the offense chart.
   assert.equal(byId.tov, undefined);
@@ -148,6 +146,15 @@ function main() {
   assert.equal(byId.atr?.showPercentile, true);
   assert.equal(byId.atr?.showGrade, true);
   assert.ok(byId.atr!.percentile > 50);
+
+  for (const comp of byId.atr!.leagueComps) {
+    assert.ok(Number.isFinite(comp.percentile));
+    assert.ok(comp.percentile >= 0 && comp.percentile <= 100);
+  }
+  assert.ok(
+    byId.atr!.percentile < 100,
+    "focal player sits on the league scale, not glued to 100 among close comps"
+  );
 
   // ORtg in advanced when present
   assert.equal(byId.ortg?.category, "advanced");
@@ -165,7 +172,7 @@ function main() {
     );
   }
 
-  // Legitimate zero steals still ranks (higher_is_better with 0 value)
+  // Steal volume lives on Statistics, not ranking
   const zeroStl = row({
     playerId: "zero",
     playerName: "Zero Steals",
@@ -180,10 +187,10 @@ function main() {
     peers,
     "zero"
   );
-  const stl = zeroMetrics.find((m) => m.id === "stl");
-  assert.ok(stl);
-  assert.equal(stl!.value, 0);
-  assert.equal(stl!.showPercentile, true);
+  assert.equal(
+    zeroMetrics.find((m) => m.id === "stl"),
+    undefined
+  );
 
   // Missing usage stays missing (not zero)
   const noUsg = row({
@@ -250,7 +257,7 @@ function main() {
     [],
     "def"
   );
-  assert.equal(defMetrics.find((m) => m.id === "drtg")?.category, "advanced");
+  assert.equal(defMetrics.find((m) => m.id === "drtg")?.category, "defense");
   assert.equal(
     defMetrics.find((m) => m.id === "drtg")?.interpretation,
     "lower_is_better"

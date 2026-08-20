@@ -14,7 +14,7 @@ const PBP_FIELDS_PRESENT = (ast: BasketballQueryAst): string[] => {
   return bad;
 };
 
-/** Capability-aware validator — refuses unsupported / ambiguous / incomplete ASTs. */
+/** Capability-aware validator - refuses unsupported / ambiguous / incomplete ASTs. */
 export function validateBasketballQuery(
   ast: BasketballQueryAst
 ): QueryValidation {
@@ -118,7 +118,7 @@ export function validateBasketballQuery(
     return {
       ok: false,
       status: "invalid",
-      errors: ["This metric cannot be calculated — no supported metric matched."],
+      errors: ["This metric cannot be calculated - no supported metric matched."],
       ast,
     };
   }

@@ -1,7 +1,7 @@
 /**
  * ESPN athlete id ↔ NBA Stats PLAYER_ID resolution for DRBL overlays.
  *
- * Uses optional aliases from data/impact/player-id-aliases.json only —
+ * Uses optional aliases from data/impact/player-id-aliases.json only -
  * never invents mappings and never accepts ambiguous name matches at runtime.
  *
  * Production auto-join policy (P17.1):
@@ -74,7 +74,7 @@ export async function getPlayerIdAliasIndex(): Promise<PlayerIdAliasIndex> {
   return aliasIndexPromise;
 }
 
-/** Test / script helper — clears memoized alias load. */
+/** Test / script helper - clears memoized alias load. */
 export function clearPlayerIdAliasCache(): void {
   aliasIndexPromise = null;
 }
@@ -170,7 +170,7 @@ export async function resolvePlayerIdentity(
  *
  * UNIQUE_NAME_ONLY is rejected unless opts.allowNonProductionAliases.
  * When the route id is itself an NBA id present in the alias file, returns that
- * id only if the alias is production-approved (or opt-in) — ESPN→NBA mapping
+ * id only if the alias is production-approved (or opt-in) - ESPN→NBA mapping
  * is never taken from non-approved rows on the default path.
  */
 export async function resolveNbaIdForDrbl(

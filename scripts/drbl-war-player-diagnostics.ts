@@ -108,7 +108,7 @@ function groupStats(
     .sort((a, b) => String(a.key).localeCompare(String(b.key)));
 }
 
-/** Soft position proxy removed — incorrect labels are worse than missing. */
+/** Soft position proxy removed - incorrect labels are worse than missing. */
 function resolvePosition(_p: Player): { position: string; positionSource: string } {
   return { position: "UNKNOWN", positionSource: "unavailable" };
 }

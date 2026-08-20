@@ -1,7 +1,7 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { notFound } from "next/navigation";
-import type { CSSProperties } from "react";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { FranchiseHistory, FranchiseLeader } from "@/data/franchises/history";
 import {
@@ -45,10 +45,10 @@ function StatTile({
 }) {
   return (
     <div className="rounded-md border border-border bg-card px-4 py-3">
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-[22px] font-bold tabular-nums tracking-tight">
+      <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
         {value}
       </p>
       {hint ? (
@@ -71,7 +71,7 @@ function LeaderRow({
         <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           {label}
         </p>
-        <p className="truncate text-[15px] font-semibold">{leader.player}</p>
+        <p className="truncate text-[16px] font-semibold">{leader.player}</p>
         {leader.note ? (
           <p className="text-[12px] text-muted-foreground">{leader.note}</p>
         ) : null}
@@ -101,13 +101,13 @@ function SeasonLine({
           : "border-rose-500/25 bg-rose-500/5"
       )}
     >
-      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
       <p className="mt-1 text-[20px] font-bold tabular-nums">
         {season.wins}-{season.losses}
       </p>
-      <p className="text-[13px] text-muted-foreground">{season.season}</p>
+      <p className="text-[14px] text-muted-foreground">{season.season}</p>
     </div>
   );
 }
@@ -132,35 +132,29 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
       <p>
         <TransitionLink
           href="/franchises"
-          className="text-[13px] font-semibold text-muted-foreground"
+          className="text-[14px] font-semibold text-muted-foreground"
         >
           ← Franchises
         </TransitionLink>
       </p>
 
-      <header
-        className="sports-card score-card-wash overflow-hidden px-4 py-5 sm:px-6"
-        style={
-          brand
-            ? ({
-                "--away-color": brand.primary,
-                "--home-color": brand.secondary,
-              } as CSSProperties)
-            : undefined
-        }
+      <GlassSurface
+        as="header"
+        accentColor={brand?.primary}
+        className="px-4 py-5 sm:px-6"
       >
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
             <TeamLogo teamKey={f.abbr} size="lg" />
             <div>
-              <p className="text-[13px] font-semibold text-muted-foreground">
+              <p className="text-[14px] font-semibold text-muted-foreground">
                 {f.conference} · {f.division} · since {f.firstSeason}
               </p>
-              <h1 className="text-[28px] font-bold tracking-tight sm:text-[34px]">
+              <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
                 {f.city} {f.name}
               </h1>
               {f.previousHomes?.length ? (
-                <p className="mt-1 text-[13px] text-muted-foreground">
+                <p className="mt-1 text-[14px] text-muted-foreground">
                   Also known as: {f.previousHomes.join(" → ")}
                 </p>
               ) : null}
@@ -169,19 +163,19 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
           <div className="flex flex-wrap gap-2">
             <TransitionLink
               href="/explore/teams"
-              className="rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold"
+              className="rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold"
             >
               This season
             </TransitionLink>
             <TransitionLink
               href="/gm"
-              className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+              className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
             >
               Franchise Lab
             </TransitionLink>
           </div>
         </div>
-      </header>
+      </GlassSurface>
 
       <section className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <StatTile
@@ -219,24 +213,24 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
               tone="bad"
             />
             <div className="rounded-md border border-border bg-card px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest win streak
               </p>
               <p className="mt-1 text-[20px] font-bold tabular-nums">
                 {f.longestWinStreak.games}
               </p>
-              <p className="text-[13px] text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 {f.longestWinStreak.note}
               </p>
             </div>
             <div className="rounded-md border border-border bg-card px-4 py-3">
-              <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+              <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                 Longest losing streak
               </p>
               <p className="mt-1 text-[20px] font-bold tabular-nums">
                 {f.longestLosingStreak.games}
               </p>
-              <p className="text-[13px] text-muted-foreground">
+              <p className="text-[14px] text-muted-foreground">
                 {f.longestLosingStreak.note}
               </p>
             </div>
@@ -263,7 +257,7 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
           <h2 className="text-[18px] font-bold tracking-tight">
             Franchise leaders
           </h2>
-          <p className="mb-1 text-[13px] text-muted-foreground">
+          <p className="mb-1 text-[14px] text-muted-foreground">
             Career totals in this continuous franchise.
           </p>
           <LeaderRow label="Points" leader={f.leaders.points} />
@@ -283,14 +277,14 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
 
       <section className="rounded-md border border-border bg-card px-4 py-4 sm:px-5">
         <h2 className="text-[18px] font-bold tracking-tight">Fan lore</h2>
-        <p className="mt-0.5 text-[13px] text-muted-foreground">
+        <p className="mt-0.5 text-[14px] text-muted-foreground">
           The weird, wonderful, and argument-starting stuff.
         </p>
         <ul className="mt-3 flex flex-col gap-2.5">
           {f.funFacts.map((fact) => (
             <li
               key={fact}
-              className="flex gap-3 text-[15px] leading-relaxed"
+              className="flex gap-3 text-[16px] leading-relaxed"
             >
               <span
                 className="mt-2 size-1.5 shrink-0 rounded-md bg-foreground/40"

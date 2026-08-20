@@ -3,6 +3,7 @@ export {
   getPlayer,
   getPlayerSeason,
   getPlayerCareerSeasons,
+  getPlayerPlayoffCareerSeasons,
   getPlayerCareerTimelineSeasons,
   attachDrblToPlayerSeasons,
   getPlayerGameLog,
@@ -88,7 +89,11 @@ export {
 } from "./historical";
 export { getHomeAnalytics } from "./home";
 export type { HomeAnalytics, ComputedInsight, HomeDarkoLeader } from "./home";
-export { getLeagueStandings } from "./standings";
+export {
+  getLeagueStandings,
+  applyStandingRecords,
+  withStandingRecords,
+} from "./standings";
 export {
   getTeamSeasonStats,
   getTeamExploreSeasons,

@@ -1,5 +1,5 @@
 /**
- * M16i2 — final exposure-only monotone conditional uncertainty generation.
+ * M16i2 - final exposure-only monotone conditional uncertainty generation.
  *   npm run drbl:m16i2
  *
  * Point estimate LOCKED. Candidates: M1 three-regime / M2 logN PWL.
@@ -938,7 +938,7 @@ async function main() {
     path.join(OUT, "06_exposure_information_diagnostic.md"),
     `# M16i2 exposure information diagnostic
 
-Diagnostic only — does not alter candidate family.
+Diagnostic only - does not alter candidate family.
 
 - Spearman(N, absError) = ${spN.toFixed(4)}
 - Spearman(logN, absError) = ${spLogN.toFixed(4)}
@@ -951,7 +951,7 @@ Diagnostic only — does not alter candidate family.
 - Fold directional stability (Q1 median > Q4 median): ${stableCount}/4 → ${shapeStable}
 
 Interpretation: exposure contains real information about future |error| magnitude,
-but row-level R² is modest — N alone cannot explain most residual variation.
+but row-level R² is modest - N alone cannot explain most residual variation.
 `
   );
 
@@ -1385,7 +1385,7 @@ same outcomes would be gate-chasing.
 ## Constraint
 
 Any next milestone must be a **new preregistered uncertainty generation**,
-not iterative retuning of exposure-only curves on F1–F5.
+not iterative retuning of exposure-only curves on F1-F5.
 `
   );
 
@@ -1473,7 +1473,7 @@ Point estimate remains:
 Uncertainty remains unresolved. RESERVED_TEST stays closed.
 `
       : SELECTED === "M1"
-        ? `# Interval contract (M16i2) — M1
+        ? `# Interval contract (M16i2) - M1
 
 \`\`\`
 width_p(N) =
@@ -1487,7 +1487,7 @@ PI_p = DRBL100 ± width_p(N)
 See \`18_final_parameters.json\` for T1/T2 and widths.
 Semantics: empirical future predictive intervals (not talent credible intervals).
 `
-        : `# Interval contract (M16i2) — M2
+        : `# Interval contract (M16i2) - M2
 
 \`\`\`
 x = log(N)
@@ -1817,14 +1817,14 @@ See \`18_final_parameters.json\` for knots and widths.
 
 | Model | WIS | CCE | Q1 PI80 | pooled | catastrophic | eligible |
 |-------|-----|-----|---------|--------|--------------|----------|
-| U2 | ${u2Wis.toFixed(4)} | ${u2Cce.toFixed(4)} | ${quartileCov("U2", 1, 80).toFixed(3)} | — | YES | NO |
-| Q2 | ${q2Wis.toFixed(4)} | ${q2Cce.toFixed(4)} | ${quartileCov("Q2", 1, 80).toFixed(3)} | — | — | NO |
+| U2 | ${u2Wis.toFixed(4)} | ${u2Cce.toFixed(4)} | ${quartileCov("U2", 1, 80).toFixed(3)} | - | YES | NO |
+| Q2 | ${q2Wis.toFixed(4)} | ${q2Cce.toFixed(4)} | ${quartileCov("Q2", 1, 80).toFixed(3)} | - | - | NO |
 | M1 | ${mM1.WIS.toFixed(4)} | ${mM1.CCE.toFixed(4)} | ${mM1.Q1_PI80.toFixed(3)} | ${mM1.pooledOk} | ${mM1.catastrophic} | ${mM1.eligible} |
 | M2 | ${mM2.WIS.toFixed(4)} | ${mM2.CCE.toFixed(4)} | ${mM2.Q1_PI80.toFixed(3)} | ${mM2.pooledOk} | ${mM2.catastrophic} | ${mM2.eligible} |
 
 ## Point estimate
 
-LOCKED: N/(N+1600)*rawAbilityRate — unchanged.
+LOCKED: N/(N+1600)*rawAbilityRate - unchanged.
 
 ## Production / WAR / RESERVED_TEST
 

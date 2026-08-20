@@ -1,5 +1,5 @@
 /**
- * M7-CV validation — C0 vs C1 vs C2 continuation + experimental SDV.
+ * M7-CV validation - C0 vs C1 vs C2 continuation + experimental SDV.
  * Does NOT modify M6 coefficients, fusion, or public leaderboards.
  *
  *   npm run drbl:m7-cv -- --season 2024-25 --limit 200

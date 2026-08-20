@@ -1,6 +1,6 @@
 /**
  * Live refresh cadence + freshness policy.
- * Does not change canonical game status — only how often we ask the provider.
+ * Does not change canonical game status - only how often we ask the provider.
  *
  * Thresholds (ms) are documented for ops; adjust carefully vs ESPN rate limits.
  */
@@ -31,7 +31,7 @@ export const REFRESH_INTERVAL_MS: Record<GameStatusKind, number | null> = {
   unknown: 90_000,
 };
 
-/** Soft: emphasize “updated Xs ago”. Hard: show Updating… — status unchanged. */
+/** Soft: emphasize “updated Xs ago”. Hard: show Updating… - status unchanged. */
 export const FRESHNESS_SOFT_MS = 45_000;
 export const FRESHNESS_HARD_MS = 90_000;
 
@@ -135,7 +135,7 @@ export function mergeLiveGameOverlay<T extends { id: string }>(
   return { ...current, ...overlay };
 }
 
-/** Dev-only counters — never shown to end users. */
+/** Dev-only counters - never shown to end users. */
 export type LiveRefreshDiagnostics = {
   polls: number;
   successes: number;

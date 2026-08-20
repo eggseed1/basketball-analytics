@@ -60,8 +60,8 @@ function StepRow({
         {status === "done" ? "✓" : n}
       </span>
       <div className="min-w-0 flex-1">
-        <p className="text-[15px] font-semibold">{title}</p>
-        <p className="text-[13px] text-muted-foreground">{detail}</p>
+        <p className="text-[16px] font-semibold">{title}</p>
+        <p className="text-[14px] text-muted-foreground">{detail}</p>
         {action ? <div className="mt-2">{action}</div> : null}
       </div>
     </li>
@@ -105,8 +105,8 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     return (
       <section className="sports-card flex flex-col gap-4 p-4">
         <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-[20px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[14px] text-muted-foreground">
             Playoffs - advance one day of series games at a time.
           </p>
         </header>
@@ -131,8 +131,8 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     return (
       <section className="sports-card flex flex-col gap-4 p-4">
         <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-[20px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[14px] text-muted-foreground">
             Draft is open - scout the codenames, take your swing, then start the
             next season.
           </p>
@@ -169,8 +169,8 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     return (
       <section className="sports-card flex flex-col gap-4 p-4">
         <header>
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">Offseason break.</p>
+          <h2 className="text-[20px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[14px] text-muted-foreground">Offseason break.</p>
         </header>
         <StepRow
           n={1}
@@ -206,8 +206,8 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
     <div className="flex flex-col gap-4">
       <section className="sports-card flex flex-col gap-4 p-4">
         <header className="flex flex-col gap-1">
-          <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-[20px] font-bold tracking-tight">Your plan</h2>
+          <p className="text-[14px] text-muted-foreground">
             Follow these steps for each game. You’ve played{" "}
             <span className="font-semibold text-foreground">{played}</span> ·{" "}
             <span className="font-semibold text-foreground">{remaining}</span>{" "}
@@ -233,7 +233,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
               ) : (
                 <Link
                   href="/gm/lineup"
-                  className="text-[13px] font-semibold underline-offset-4 hover:underline"
+                  className="text-[14px] font-semibold underline-offset-4 hover:underline"
                 >
                   Edit lineup
                 </Link>
@@ -285,7 +285,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
               lastBox ? (
                 <Link
                   href={`/gm/game/${lastBox.id}`}
-                  className="text-[13px] font-semibold underline-offset-4 hover:underline"
+                  className="text-[14px] font-semibold underline-offset-4 hover:underline"
                 >
                   Open last box score
                 </Link>

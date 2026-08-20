@@ -20,7 +20,7 @@ export function DataProviderDevBadge() {
 
   return (
     <div
-      className="border-b border-border/60 bg-secondary/40 px-3 py-1.5 text-center text-[11px] font-semibold tracking-wide text-muted-foreground"
+      className="border-b border-border/60 bg-secondary/40 px-3 py-1.5 text-center text-[12px] font-semibold tracking-wide text-muted-foreground"
       role="status"
     >
       {text}
@@ -28,8 +28,8 @@ export function DataProviderDevBadge() {
       <span className="font-normal">
         {meta.description}
         {meta.isSample
-          ? " — not the full NBA board"
-          : " — player boards load from ESPN"}
+          ? " - not the full NBA board"
+          : " - player boards load from ESPN"}
       </span>
     </div>
   );

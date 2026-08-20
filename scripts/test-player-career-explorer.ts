@@ -1,5 +1,5 @@
 /**
- * Player career explorer helpers — notable games dimensions stay transparent.
+ * Player career explorer helpers - notable games dimensions stay transparent.
  * Run: npx tsx scripts/test-player-career-explorer.ts
  */
 import assert from "node:assert/strict";

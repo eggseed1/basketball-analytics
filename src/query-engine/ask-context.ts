@@ -1,5 +1,5 @@
 /**
- * ASK DRBL historical context — Time Machine season inheritance.
+ * ASK DRBL historical context - Time Machine season inheritance.
  *
  * Precedence (highest → lowest):
  * 1. Explicit season in the natural-language query
@@ -19,7 +19,7 @@ export type AskContextSource = "time_machine" | "url" | "explicit" | "default";
 export type AskContext = {
   /** Canonical YYYY-YY when present. */
   season?: string;
-  /** YYYY-MM-DD — display / future only; not applied to executors yet. */
+  /** YYYY-MM-DD - display / future only; not applied to executors yet. */
   date?: string;
   source: AskContextSource;
 };
@@ -37,7 +37,7 @@ const SEASON_INHERIT_OPS = new Set<QueryOperation>([
 const SEASON_NEVER_INHERIT_OPS = new Set<QueryOperation>([
   "offseason_summary",
   "career_resume",
-  "season_compare", // needs two seasons — do not invent the second
+  "season_compare", // needs two seasons - do not invent the second
   "season_rank",
   "team_season_rank",
   "game_lab",

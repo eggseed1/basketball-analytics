@@ -48,14 +48,14 @@ export default async function ExploreTeamsPage({
           <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
             Team boards
           </h1>
-          <p className="mt-1 max-w-xl text-[15px] text-muted-foreground">
+          <p className="mt-1 max-w-xl text-[16px] text-muted-foreground">
             Team efficiency board for {season} - sorted by point differential by
             default. Click a team to open its analytical profile.
           </p>
         </div>
         <Link
           href="/standings"
-          className="rounded-full bg-secondary px-4 py-2 text-[13px] font-semibold"
+          className="rounded-full bg-secondary px-4 py-2 text-[14px] font-semibold"
         >
           Standings
         </Link>
@@ -70,7 +70,7 @@ export default async function ExploreTeamsPage({
       </Suspense>
 
       <section className="sports-card px-4 py-4">
-        <h2 className="mb-3 text-[15px] font-bold">Jump to team profile</h2>
+        <h2 className="mb-3 text-[16px] font-bold">Jump to team profile</h2>
         <BrowseCircles mode="teams" />
       </section>
 

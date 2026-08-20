@@ -56,7 +56,7 @@ export const TEAM_ERAS_BY_CANONICAL_ID: Record<string, TeamEra[]> = {
       nickname: "Nets",
     },
   ],
-  // Washington Wizards lineage (ESPN 27) — see FRANCHISE_HISTORIES.was previousHomes
+  // Washington Wizards lineage (ESPN 27) - see FRANCHISE_HISTORIES.was previousHomes
   "27": [
     {
       startSeason: "1961-62",
@@ -106,8 +106,8 @@ export const TEAM_ERAS_BY_CANONICAL_ID: Record<string, TeamEra[]> = {
       nickname: "Wizards",
     },
   ],
-  // Charlotte Hornets / Bobcats (ESPN 30) — 2004 expansion Bobcats lineage.
-  // Note: BDL may attach 1988–2002 original Hornets games to id 30 after the
+  // Charlotte Hornets / Bobcats (ESPN 30) - 2004 expansion Bobcats lineage.
+  // Note: BDL may attach 1988-2002 original Hornets games to id 30 after the
   // NBA history reassignment; display often already says “Charlotte Hornets”.
   // Continuous CHH→NOH→NOP eras live under ESPN 3 for provider continuity.
   "30": [
@@ -215,7 +215,7 @@ export const TEAM_ERAS_BY_CANONICAL_ID: Record<string, TeamEra[]> = {
       nickname: "Warriors",
     },
   ],
-  // Sacramento Kings lineage (ESPN 23) — major modern eras
+  // Sacramento Kings lineage (ESPN 23) - major modern eras
   "23": [
     {
       startSeason: "1972-73",
@@ -269,7 +269,7 @@ export const TEAM_ERAS_BY_CANONICAL_ID: Record<string, TeamEra[]> = {
       nickname: "Lakers",
     },
   ],
-  // Atlanta Hawks lineage — St. Louis era common in 1960s cache
+  // Atlanta Hawks lineage - St. Louis era common in 1960s cache
   "1": [
     {
       startSeason: "1955-56",

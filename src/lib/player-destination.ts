@@ -42,7 +42,7 @@ function pickAbilitySource(
   return seasonRaw ?? peerRow ?? careerSeason ?? null;
 }
 
-/** Never invent zeros for R1* — keep null when all sources are missing. */
+/** Never invent zeros for R1* - keep null when all sources are missing. */
 function pickR1Number(
   ...vals: Array<number | null | undefined>
 ): number | null {
@@ -94,7 +94,7 @@ export function mergePlayerSeasonStats(
         seasonRaw.winsAdded ??
         careerSeason?.winsAdded ??
         peerRow?.winsAdded,
-      // Ability / rate fields — peer overlay when seasonRaw lacks valid DRBL.
+      // Ability / rate fields - peer overlay when seasonRaw lacks valid DRBL.
       drbl100: ability?.drbl100 ?? seasonRaw.drbl100,
       rawAbilityRate: ability?.rawAbilityRate ?? seasonRaw.rawAbilityRate,
       drblPossessions: ability?.drblPossessions ?? seasonRaw.drblPossessions,
@@ -110,7 +110,7 @@ export function mergePlayerSeasonStats(
       shotMaking100: ability?.shotMaking100 ?? seasonRaw.shotMaking100,
       epvShootMean: ability?.epvShootMean ?? seasonRaw.epvShootMean,
       vContMean: ability?.vContMean ?? seasonRaw.vContMean,
-      // Realized value — never invent zeros.
+      // Realized value - never invent zeros.
       r1Points: pickR1Number(
         seasonRaw.r1Points,
         peerRow?.r1Points,
@@ -191,21 +191,69 @@ export function buildSeasonTeamsMap(
   return seasonTeams;
 }
 
-/** Season chip href — preserves Time Machine arrival when present. */
+export type PlayerDepthTab = "career" | "stats" | "games" | "viz";
+export type PlayerSeasonKind = "regular" | "playoffs";
+
+export function parsePlayerDepthTab(
+  raw?: string | null
+): PlayerDepthTab {
+  if (raw === "stats" || raw === "games" || raw === "viz") return raw;
+  return "career";
+}
+
+export function parsePlayerSeasonKind(
+  raw?: string | null
+): PlayerSeasonKind {
+  return raw === "playoffs" ? "playoffs" : "regular";
+}
+
+function historyParams(
+  q: URLSearchParams,
+  opts?: { fromHistory?: boolean; themeMode?: "historical" | "modern" }
+) {
+  if (!opts?.fromHistory) return;
+  q.set("from", "history");
+  q.set("theme", opts.themeMode === "modern" ? "modern" : "historical");
+}
+
+/** Season chip href - preserves Time Machine arrival when present. */
 export function playerSeasonChipHref(
   playerId: string,
   season: string,
   opts?: {
     fromHistory?: boolean;
     themeMode?: "historical" | "modern";
+    depth?: PlayerDepthTab;
+    seasonType?: PlayerSeasonKind;
+  }
+): string {
+  return playerDepthHref(playerId, {
+    season,
+    depth: opts?.depth,
+    seasonType: opts?.seasonType,
+    fromHistory: opts?.fromHistory,
+    themeMode: opts?.themeMode,
+  });
+}
+
+export function playerDepthHref(
+  playerId: string,
+  opts: {
+    season: string;
+    depth?: PlayerDepthTab;
+    seasonType?: PlayerSeasonKind;
+    compare?: string;
+    fromHistory?: boolean;
+    themeMode?: "historical" | "modern";
   }
 ): string {
   const q = new URLSearchParams();
-  q.set("season", season);
-  if (opts?.fromHistory) {
-    q.set("from", "history");
-    if (opts.themeMode === "modern") q.set("theme", "modern");
-    else q.set("theme", "historical");
+  q.set("season", opts.season);
+  if (opts.depth && opts.depth !== "career") q.set("depth", opts.depth);
+  if (opts.seasonType && opts.seasonType !== "regular") {
+    q.set("seasonType", opts.seasonType);
   }
+  if (opts.compare) q.set("compare", opts.compare);
+  historyParams(q, opts);
   return `/players/${encodeURIComponent(playerId)}?${q.toString()}`;
 }

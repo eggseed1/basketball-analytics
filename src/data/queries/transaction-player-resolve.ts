@@ -1,5 +1,5 @@
 /**
- * Safe transaction player resolution — exact canonical identity only.
+ * Safe transaction player resolution - exact canonical identity only.
  * Never fuzzy-matches. Never invents picks/assets from free text.
  *
  * Server-only: builds a board name index via data queries (may touch fs).

@@ -1,5 +1,5 @@
 /**
- * M16l1.2 — Cumulative R1 value estimand + baseline-aware development refreeze.
+ * M16l1.2 - Cumulative R1 value estimand + baseline-aware development refreeze.
  * Semantic/accounting only. No bakeoff. No 2025-26 outcomes. No live WAR/DRBL change.
  *   npm run drbl:m16l1_2
  */
@@ -289,7 +289,7 @@ Not latent ability. Not forecast. Not posterior estimated season value.
 `
   );
 
-  // Phase 4–6 additivity / stint conservation
+  // Phase 4-6 additivity / stint conservation
   let stintMismatch = 0;
   const stintResiduals: number[] = [];
   let multi = 0;
@@ -983,7 +983,7 @@ Not a conventional WAR predictive validation.
 
 Reproduce freeze hash \`${freezeHash}\` before opening 2025-26 outcomes.
 
-## Q1 — Accounting reproduction
+## Q1 - Accounting reproduction
 
 \`\`\`text
 ActualNetPoints
@@ -997,20 +997,20 @@ UnassignedResidual
 
 Must reproduce on 2025-26 structures.
 
-## Q2 — Ability generalization
+## Q2 - Ability generalization
 
 Keep existing DRBL/100 reserved evidence separate. Do not reopen.
 
-## Q3 — Cumulative semantic stability
+## Q3 - Cumulative semantic stability
 
 R1Point unit, baseline construction, unassigned residual behavior, league accounting identities.
 
-## Q4 — P1 conversion check
+## Q4 - P1 conversion check
 
 Check frozen P1=37.490662671779255 remains reasonably calibrated for 2025-26 net-points→wins.
 Do NOT refit.
 
-## Q5 — Win-equivalent team scale (optional diagnostic)
+## Q5 - Win-equivalent team scale (optional diagnostic)
 
 Do **not** use:
 
@@ -1161,7 +1161,7 @@ and must not fit a rescue multiplier.
         M16L1_2_R1_VALUE_FREEZE_HASH: freezeHash,
         CUMULATIVE_ESTIMAND: "PLAYER_ATTRIBUTED_R1_WIN_EQUIVALENTS",
         blockers: [],
-        note: "Reserved test is R1 value semantic stability / accounting reproduction — not conventional WAR validation",
+        note: "Reserved test is R1 value semantic stability / accounting reproduction - not conventional WAR validation",
       },
       null,
       2

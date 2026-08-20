@@ -73,7 +73,7 @@ async function reportHistoricalCaches() {
   console.log("\nHistorical game identity (disk cache sample):\n");
   const seasons = await listCachedSeasons();
   if (!seasons.length) {
-    console.log("  (no data/cache/games/*.json — skip live historical counts)");
+    console.log("  (no data/cache/games/*.json - skip live historical counts)");
     return;
   }
   for (const row of seasons.slice(0, 5)) {
@@ -100,8 +100,8 @@ async function main() {
   );
   console.log("-".repeat(50));
   for (const t of teams) {
-    const espn = t.providerIds.espn ?? "—";
-    const bdl = t.providerIds.bdl ?? "—";
+    const espn = t.providerIds.espn ?? "-";
+    const bdl = t.providerIds.bdl ?? "-";
     const valid = t.providerIds.espn && t.providerIds.bdl ? "✓" : "✗";
     console.log(
       `${pad(t.displayName, 22)} ${pad(espn, 6)} ${pad(bdl, 6)} ${pad(t.abbr, 5)} ${valid}`

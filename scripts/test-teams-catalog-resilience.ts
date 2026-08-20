@@ -107,7 +107,7 @@ async function main() {
     resolveTeamFilterAgainstCatalog("espn:2", catalog.teams).team?.id,
     "2"
   );
-  // BDL 25 is Portland — must not become OKC
+  // BDL 25 is Portland - must not become OKC
   const bdl25 = resolveTeamFilterAgainstCatalog("bdl:25", catalog.teams);
   assert.equal(bdl25.status, "resolved");
   assert.equal(bdl25.team?.abbreviation, "POR");

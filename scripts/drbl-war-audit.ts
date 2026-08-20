@@ -184,7 +184,7 @@ async function main() {
   });
 
   // Multiplicative through-origin map only.
-  // Do NOT apply the team-level OLS intercept to player rates — that intercept is
+  // Do NOT apply the team-level OLS intercept to player rates - that intercept is
   // an aggregate offset (R1 vs league average), not a per-player additive term.
   const rateCalibrationSlope = Math.max(1, Math.min(12, calib.throughOriginSlope));
   const rateCalibrationIntercept = 0;
@@ -641,14 +641,14 @@ where \`pointsPerWinField\` was stored as \`1/30\` (wins per point) despite the 
 | --- | --- | --- |
 | rawAbilityRate / drbl100 | points / 100 poss | Approach B residual shares / 100 poss |
 | seasonalImpact | points | residual-share points vs R1 |
-| pointsPerWin | points / win | **wins / point (1/30)** — naming bug |
+| pointsPerWin | points / win | **wins / point (1/30)** - naming bug |
 | DRBL_WAR | wins | wins (arithmetically impact/30) |
 
 ## 3. Bugs discovered
 
-1. **POINTS_PER_WIN_UNIT_MISMATCH** — config field named \`pointsPerWin\` held \`1/30\` and \`warFromImpact\` multiplied.
-2. **DRBL_RATE_NOT_TRUE_POINTS_PER_100** — Approach B team rates ≈ 3 pts/100 while NBA net ratings ≈ ±10; residual shares are compressed vs true margin.
-3. Season WAR used raw rate (correct for totalValue conservation) while ability boards used posterior — documented, not silent \`drblP\` substitution.
+1. **POINTS_PER_WIN_UNIT_MISMATCH** - config field named \`pointsPerWin\` held \`1/30\` and \`warFromImpact\` multiplied.
+2. **DRBL_RATE_NOT_TRUE_POINTS_PER_100** - Approach B team rates ≈ 3 pts/100 while NBA net ratings ≈ ±10; residual shares are compressed vs true margin.
+3. Season WAR used raw rate (correct for totalValue conservation) while ability boards used posterior - documented, not silent \`drblP\` substitution.
 4. \`replacementLevelRate = 0\` is correct for Approach B (R1 embedded); fringe raw median ≈ ${fringeReplacement.toFixed(3)}.
 5. No double-/100 and no prior-as-exposure in current realized impact path.
 
@@ -668,12 +668,12 @@ Identity \`impact = rate * n / 100\` holds. No double division detected.
 
 ## 7. Prior/exposure diagnosis
 
-PASS — prior not in exposure.
+PASS - prior not in exposure.
 
 ## 8. Replacement-level diagnosis
 
 Production replacement = **0** (residuals already vs R1).
-Fringe empirical median (200–800 poss) = **${fringeReplacement.toFixed(4)}** pts/100.
+Fringe empirical median (200-800 poss) = **${fringeReplacement.toFixed(4)}** pts/100.
 
 ## 9. Points-per-win diagnosis
 
@@ -715,7 +715,7 @@ DRBL team pts/100 (impact / (playerPoss/5)) vs net rating: corr=${calib.corr.toF
 
 ## 15. Synthetic test results
 
-See \`drbl/models/__tests__/war-math.test.ts\` (Tests A–I).
+See \`drbl/models/__tests__/war-math.test.ts\` (Tests A-I).
 
 ## 16. Before/after leaderboard
 

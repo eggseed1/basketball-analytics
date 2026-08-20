@@ -2,7 +2,7 @@
  * Related Transaction Event clustering.
  *
  * Groups ESPN free-text source records that appear to describe the SAME
- * underlying real-world transaction — WITHOUT promoting them to a structured
+ * underlying real-world transaction - WITHOUT promoting them to a structured
  * ledger.
  *
  * Hierarchy:
@@ -13,7 +13,7 @@
  * Prefer under-grouping over false merging.
  *
  * Safe evidence for a 2-record cluster (all required):
- * - same calendar date (candidate window only — not identity)
+ * - same calendar date (candidate window only - not identity)
  * - distinct teamIds (structured source fields)
  * - reciprocal counterparty trade context (from/to/traded/acquired + brand aliases)
  * - exactly one reciprocal partner each (ambiguous multi-partner same-day → no merge)
@@ -83,7 +83,7 @@ function escapeRegExp(s: string): string {
   return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
-/** Brand aliases used only for counterparty team detection — not players. */
+/** Brand aliases used only for counterparty team detection - not players. */
 export function teamMentionAliases(teamId: string): string[] {
   const brand = resolveTeamBrand(teamId);
   const meta = ESPN_TEAM_META[teamId];
@@ -125,7 +125,7 @@ export function hasCounterpartyTradeContext(
 ): boolean {
   if (!descriptionMentionsTeam(description, counterpartTeamId)) return false;
   const d = description.toLowerCase();
-  // Must look like a move involving another club — not a pure signing blurb
+  // Must look like a move involving another club - not a pure signing blurb
   // that happens to name a former team casually without from/to/trade language.
   if (
     /\b(acquired|traded|sent|received|waived|claimed)\b/.test(d) &&
@@ -173,7 +173,7 @@ function clusterIdFor(date: string, eventIds: string[]): string {
 export function buildRelatedTransactionEventClusters(
   events: NbaTransactionEvent[]
 ): TransactionEventClusterIndex {
-  // Group by date for O(n_day²) pairwise checks — date is a search window only.
+  // Group by date for O(n_day²) pairwise checks - date is a search window only.
   const byDate = new Map<string, NbaTransactionEvent[]>();
   for (const e of events) {
     const list = byDate.get(e.date) ?? [];
@@ -248,8 +248,8 @@ export function buildRelatedTransactionEventClusters(
       evidence: [
         "Reciprocal counterparty trade language between distinct teams.",
         `Teams: ${abbrs.join(" ↔ ")}.`,
-        `Shared calendar date (${date}) used only as a candidate window — not transaction identity.`,
-        "Cluster groups ESPN source records for one underlying transaction event — not a verified structured trade ledger.",
+        `Shared calendar date (${date}) used only as a candidate window - not transaction identity.`,
+        "Cluster groups ESPN source records for one underlying transaction event - not a verified structured trade ledger.",
       ],
       status: "related_event_cluster",
       structuredLedgerAvailable: false,

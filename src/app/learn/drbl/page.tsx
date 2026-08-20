@@ -21,7 +21,7 @@ function Card({
 }) {
   return (
     <div className="sports-card border border-border px-4 py-4">
-      <h3 className="text-[15px] font-semibold tracking-tight">
+      <h3 className="text-[16px] font-semibold tracking-tight">
         {href ? (
           <Link href={href} className="underline-offset-2 hover:underline">
             {title}
@@ -30,7 +30,7 @@ function Card({
           title
         )}
       </h3>
-      <div className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
+      <div className="mt-2 text-[14px] leading-relaxed text-muted-foreground">
         {children}
       </div>
     </div>
@@ -41,7 +41,7 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
   {
     href: "/learn/drbl-100",
     label: "DRBL/100",
-    blurb: "Impact rate — how good on a per-100 scale.",
+    blurb: "Impact rate - how good on a per-100 scale.",
   },
   {
     href: "/learn/drbl/war1",
@@ -66,12 +66,12 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
   {
     href: "/learn/drbl-ln",
     label: "DRBL-LN",
-    blurb: "Lineup-context diagnostic — not proven off-ball value.",
+    blurb: "Lineup-context diagnostic - not proven off-ball value.",
   },
   {
     href: "/learn/drbl-b",
     label: "DRBL-B",
-    blurb: "Box/behavior diagnostic — not optical tracking.",
+    blurb: "Box/behavior diagnostic - not optical tracking.",
   },
   {
     href: "/learn/r1",
@@ -91,7 +91,7 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
   {
     href: "/learn/drbl-validation",
     label: "Validation",
-    blurb: "Reserved tests, M16j / M17b lineage — no external superiority claim.",
+    blurb: "Reserved tests, M16j / M17b lineage - no external superiority claim.",
   },
   {
     href: "/learn/drbl-historical-data",
@@ -130,8 +130,8 @@ export default function LearnDrblPage() {
       <section className="flex flex-col gap-3">
         <h2 className="text-xl font-semibold">What is DRBL?</h2>
         <p className="text-muted-foreground">
-          DRBL estimates how much a player helped or hurt expected scoring —
-          using public play-by-play — relative to a fair role-matched baseline.
+          DRBL estimates how much a player helped or hurt expected scoring -
+          using public play-by-play - relative to a fair role-matched baseline.
           You do not need the model vocabulary to use the player page.
         </p>
       </section>
@@ -158,16 +158,16 @@ export default function LearnDrblPage() {
         <h2 className="text-xl font-semibold">How to read them</h2>
         <ul className="list-disc space-y-2 pl-5 text-muted-foreground">
           <li>
-            <strong className="text-foreground">DRBL/100</strong> — positive is
+            <strong className="text-foreground">DRBL/100</strong> - positive is
             above the reference rate; near zero is roughly even; negative is
             below.
           </li>
           <li>
-            <strong className="text-foreground">WAR1</strong> — how much
+            <strong className="text-foreground">WAR1</strong> - how much
             value stacked up this season (minutes and volume matter).
           </li>
           <li>
-            Offense and Defense on the player page are intuitive splits — deeper
+            Offense and Defense on the player page are intuitive splits - deeper
             labels are DRBL-O and DRBL-D.
           </li>
         </ul>
@@ -177,7 +177,7 @@ export default function LearnDrblPage() {
         <h2 className="text-xl font-semibold">Go deeper</h2>
         <p className="text-muted-foreground">
           Diagnostics DRBL-P, DRBL-LN, and DRBL-B are{" "}
-          <strong className="text-foreground">non-additive</strong> — they do
+          <strong className="text-foreground">non-additive</strong> - they do
           not sum to DRBL/100. Research lineage includes UIR, M16j, and M17b
           behind the research boundary.
         </p>
@@ -230,7 +230,7 @@ export default function LearnDrblPage() {
           <p>
             WAR1 is <strong className="text-foreground">not</strong>{" "}
             traditional WAR. The name is intended as “Wins Above R1,” but the
-            public product label is WAR1 — and R1 is a contextual role-matched
+            public product label is WAR1 - and R1 is a contextual role-matched
             reference, not conventional replacement level.
           </p>
           <p className="font-mono text-[12px] text-foreground/85">

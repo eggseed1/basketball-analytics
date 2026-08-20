@@ -119,10 +119,10 @@ export function buildPlayerComparison(options: {
       const aDrbl = METRIC_PICKERS.drbl100.pick(a);
       const bDrbl = METRIC_PICKERS.drbl100.pick(b);
       if (aDrbl != null && bDrbl != null) {
-        // Same-season comparable DRBL — keep picker.
+        // Same-season comparable DRBL - keep picker.
         label = "Overall (DRBL/100)";
       } else if (aDrbl != null || bDrbl != null) {
-        // Asymmetric DRBL — unavailable for overall (never cross-metric).
+        // Asymmetric DRBL - unavailable for overall (never cross-metric).
         dimensions.push({
           id: "overall",
           label: "Overall (DRBL/100)",
@@ -131,7 +131,7 @@ export function buildPlayerComparison(options: {
           aValue: aDrbl ?? undefined,
           bValue: bDrbl ?? undefined,
           group: "rate_ability",
-          note: "Overall DRBL edge requires valid estimates on both sides — never cross-compared to DARKO.",
+          note: "Overall DRBL edge requires valid estimates on both sides - never cross-compared to DARKO.",
         });
         continue;
       } else {
@@ -144,7 +144,7 @@ export function buildPlayerComparison(options: {
             invert: false,
           };
           label = "Overall (DARKO)";
-          note = "DRBL unavailable for both — using season-true DARKO as external overall.";
+          note = "DRBL unavailable for both - using season-true DARKO as external overall.";
         } else if (aValMissingBoth(a, b)) {
           picker = {
             pick: fallbackOverall,
@@ -164,7 +164,7 @@ export function buildPlayerComparison(options: {
     const bRaw = picker.pick(b);
     if (aRaw == null && bRaw == null) continue;
 
-    // Same-metric both-sides for rate/value groups — show Unavailable not 0.
+    // Same-metric both-sides for rate/value groups - show Unavailable not 0.
     if (
       (spec.group === "rate_ability" || spec.group === "realized_value") &&
       (aRaw == null || bRaw == null)
@@ -198,13 +198,13 @@ export function buildPlayerComparison(options: {
         ? `${Math.round(aPct)}th %ile`
         : aRaw != null
           ? picker.format(aRaw)
-          : "—";
+          : "-";
     const bDisplay =
       bPct != null
         ? `${Math.round(bPct)}th %ile`
         : bRaw != null
           ? picker.format(bRaw)
-          : "—";
+          : "-";
 
     let delta: number | undefined;
     if (aPct != null && bPct != null) delta = aPct - bPct;
@@ -239,8 +239,8 @@ export function buildPlayerComparison(options: {
       dimensions.push({
         id: "shooting",
         label: "Shooting",
-        aDisplay: aTs != null ? formatPct(aTs) : "—",
-        bDisplay: bTs != null ? formatPct(bTs) : "—",
+        aDisplay: aTs != null ? formatPct(aTs) : "-",
+        bDisplay: bTs != null ? formatPct(bTs) : "-",
         aValue: aTs ?? undefined,
         bValue: bTs ?? undefined,
         delta: aTs != null && bTs != null ? aTs - bTs : undefined,

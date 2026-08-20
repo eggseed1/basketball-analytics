@@ -4,7 +4,7 @@ import { listLearnConcepts } from "@/content/learn/registry";
 export const metadata = {
   title: "Learn",
   description:
-    "DRBL glossary — stats, labels, and methodologies a casual fan needs to understand the product.",
+    "DRBL glossary - stats, labels, and methodologies a casual fan needs to understand the product.",
 };
 
 export default function LearnIndexPage() {
@@ -19,9 +19,9 @@ export default function LearnIndexPage() {
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           Understand every number
         </h1>
-        <p className="max-w-2xl text-[15px] text-muted-foreground">
+        <p className="max-w-2xl text-[16px] text-muted-foreground">
           Short explanations on the page. Deeper methodology here. Simple
-          surface → extremely deep rabbit hole — without getting lost.
+          surface → extremely deep rabbit hole - without getting lost.
         </p>
       </header>
 

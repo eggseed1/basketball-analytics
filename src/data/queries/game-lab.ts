@@ -1,5 +1,5 @@
 /**
- * Game Lab query — assemble best-available game shell + optional box + boards.
+ * Game Lab query - assemble best-available game shell + optional box + boards.
  *
  * Missing box ≠ missing game. Scoreboard-only shells still analyze.
  */
@@ -29,7 +29,7 @@ export type GameAnalysisPayload = {
   analysis: GameAnalysisSummary;
   game: Game;
   players: PlayerGame[];
-  /** Shell availability — mirrors coverage.availability. */
+  /** Shell availability - mirrors coverage.availability. */
   availability: "full" | "partial" | "scoreboard";
 };
 
@@ -58,7 +58,7 @@ function matchTeamSeason(
 /**
  * Prefer schedule abbreviation for brand identity.
  * Never resolve branding from a bare numeric id when the provider namespace
- * is required (BDL ids collide with ESPN — e.g. BDL 25 = POR, ESPN 25 = OKC).
+ * is required (BDL ids collide with ESPN - e.g. BDL 25 = POR, ESPN 25 = OKC).
  */
 async function resolveSideLabels(
   game: Game,
@@ -71,7 +71,7 @@ async function resolveSideLabels(
   const brand = resolveTeamBrand(brandKey);
   const canonical = resolveCanonicalTeam(teamId);
   const fromBrandKey = resolveCanonicalTeam(brandKey);
-  // themeKey = franchise/canonical id for board joins — not historical abbr.
+  // themeKey = franchise/canonical id for board joins - not historical abbr.
   const lookupId =
     (canonical.status === "resolved"
       ? canonical.team.canonicalTeamId
@@ -196,7 +196,7 @@ export async function getGameAnalysis(
 }
 
 /**
- * Focused Game vs Season Context — uses the same shell as Game Lab (no N+1).
+ * Focused Game vs Season Context - uses the same shell as Game Lab (no N+1).
  */
 export async function getGameSeasonContext(
   gameId: string

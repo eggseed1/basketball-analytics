@@ -19,7 +19,7 @@ export function detectVagueCompetitiveLanguage(text: string): string | null {
     /\blate\s+in\s+close\s+games?\b/i.test(text) ||
     /\bclutch\b/i.test(text) && !/\bclutch\s+possession\b/i.test(text)
   ) {
-    return "Phrases like “late in close games” or “clutch” are not deterministic filters in ASK DRBL. Specify quarter, clock, and score margin explicitly — and note those still require PBP execution that is not available yet.";
+    return "Phrases like “late in close games” or “clutch” are not deterministic filters in ASK DRBL. Specify quarter, clock, and score margin explicitly - and note those still require PBP execution that is not available yet.";
   }
   if (
     /\b(most\s+valuable|greatest|dominant|how\s+good)\b/i.test(text) &&

@@ -154,7 +154,7 @@ function main() {
     [100, 120]
   );
 
-  console.log("OK — player-identity-preview");
+  console.log("OK - player-identity-preview");
 }
 
 main();

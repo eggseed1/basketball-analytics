@@ -39,13 +39,13 @@ export function MyLeagueStatusCard() {
   return (
     <section className="sports-card flex flex-col gap-3 px-4 py-4">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           MyLeague · Milestone 2
         </p>
-        <h2 className="text-[17px] font-bold tracking-tight">
+        <h2 className="text-[20px] font-bold tracking-tight">
           {simulation.phase.replaceAll("_", " ")}
         </h2>
-        <p className="text-[13px] text-muted-foreground">
+        <p className="text-[14px] text-muted-foreground">
           Season {simulation.currentSeason} · day {simulation.day} ·{" "}
           {myLeague.settings.mode.replaceAll("_", " ")}
         </p>
@@ -77,7 +77,7 @@ export function MyLeagueStatusCard() {
           {upcoming.replaceAll("_", " ")}
         </span>
         . Universes persist in IndexedDB (
-        <code className="text-[11px]">franchise-lab-myleague</code>
+        <code className="text-[12px]">franchise-lab-myleague</code>
         ). Historical ingest is Milestone 3.
       </p>
       {!gate.ok && (

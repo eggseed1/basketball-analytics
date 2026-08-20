@@ -1,5 +1,5 @@
 /**
- * M16k1 — controlled validated DRBL/100 production cutover.
+ * M16k1 - controlled validated DRBL/100 production cutover.
  *   npm run drbl:m16k1
  *
  * Snapshots legacy artifacts, applies validated ability cutover to precomputed
@@ -525,7 +525,7 @@ async function main() {
       }
     }
 
-    // Rank equality on unrounded values before display rounding — recompute from raw
+    // Rank equality on unrounded values before display rounding - recompute from raw
     const rankUniverse = post.players
       .filter((p) => p.eligibilityStatus !== "insufficient_sample")
       .map((p) => {

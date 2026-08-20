@@ -1,5 +1,5 @@
 /**
- * Rank My Seasons — multi-season aggregation of pairwise comparePlayerSeasons.
+ * Rank My Seasons - multi-season aggregation of pairwise comparePlayerSeasons.
  *
  * No opaque universal season score. Ordering = Copeland-style pairwise points
  * from the existing overall category-plurality comparisons.
@@ -80,7 +80,7 @@ export type SeasonRankEntry = {
   drbl100: number | null;
   /** Percentile of DRBL/100 among selected seasons with valid estimates. */
   drblSelectedPercentile: number | null;
-  /** Rank by R1 Points among selected seasons — labeled distinctly from DRBL. */
+  /** Rank by R1 Points among selected seasons - labeled distinctly from DRBL. */
   r1PointsSelectedRank: number | null;
 };
 
@@ -105,10 +105,10 @@ export const PLAYER_SEASON_RANK_METHODOLOGY: PlayerSeasonRankingMethodology = {
   tieRule:
     "Equal Copeland points (and win/loss tie-breakers) share a contested band. UI reports close separations when the top two differ by ≤0.5 points.",
   cycleRule:
-    "If the win graph among eligible seasons contains a cycle (A>B>C>A), the ranking is marked contested — order is still shown via Copeland points but is not claimed to be uniquely objective.",
+    "If the win graph among eligible seasons contains a cycle (A>B>C>A), the ranking is marked contested - order is still shown via Copeland points but is not claimed to be uniquely objective.",
   impactRule: PLAYER_SEASON_COMPARE_METHODOLOGY.impactRule,
   cpiNote: PLAYER_SEASON_COMPARE_METHODOLOGY.cpiNote,
-  setLimits: `Select ${PLAYER_SEASON_RANK_MIN}–${PLAYER_SEASON_RANK_MAX} seasons (default ${PLAYER_SEASON_RANK_DEFAULT}). Pairwise cost is O(n²) on the selected set only.`,
+  setLimits: `Select ${PLAYER_SEASON_RANK_MIN}-${PLAYER_SEASON_RANK_MAX} seasons (default ${PLAYER_SEASON_RANK_DEFAULT}). Pairwise cost is O(n²) on the selected set only.`,
 };
 
 export type PlayerSeasonRanking = {
@@ -125,7 +125,7 @@ export type PlayerSeasonRanking = {
   closeTop: boolean;
   closeTopNote: string | null;
   methodology: PlayerSeasonRankingMethodology;
-  /** Production-only appendix (CPI) — not the ranking model. */
+  /** Production-only appendix (CPI) - not the ranking model. */
   productionAppendix: Array<{ season: string; cpi: number }>;
   error: string | null;
 };
@@ -179,7 +179,7 @@ function buildTopWhy(
   );
   if (beaten.length) {
     lines.push(
-      `${top.season} wins its overall pairwise comparisons against ${beaten.join(", ")} (${top.pairwiseWins}–${top.pairwiseLosses}${top.pairwiseEvens ? `, ${top.pairwiseEvens} even` : ""}).`
+      `${top.season} wins its overall pairwise comparisons against ${beaten.join(", ")} (${top.pairwiseWins}-${top.pairwiseLosses}${top.pairwiseEvens ? `, ${top.pairwiseEvens} even` : ""}).`
     );
   } else if (top.pairwiseEvens > 0) {
     lines.push(
@@ -198,7 +198,7 @@ function buildTopWhy(
   }
 
   lines.push(
-    "This is a Copeland aggregation of existing season comparisons — not a universal 'best season' score."
+    "This is a Copeland aggregation of existing season comparisons - not a universal 'best season' score."
   );
 
   if (closeTop) {
@@ -208,7 +208,7 @@ function buildTopWhy(
   }
   if (contested) {
     lines.push(
-      "Pairwise results include a cycle among eligible seasons — treat the order as contested."
+      "Pairwise results include a cycle among eligible seasons - treat the order as contested."
     );
   }
   return lines;
@@ -416,9 +416,9 @@ export function rankPlayerSeasons(options: {
     const eligible = coverage.qualifying && !coverage.incomplete;
     let eligibilityNote: string | null = null;
     if (!coverage.qualifying) {
-      eligibilityNote = "Not eligible — insufficient sample for overall verdicts.";
+      eligibilityNote = "Not eligible - insufficient sample for overall verdicts.";
     } else if (coverage.incomplete) {
-      eligibilityNote = "Limited evidence — current season still in progress.";
+      eligibilityNote = "Limited evidence - current season still in progress.";
     }
 
     const categoryWins = [...a.categoryCounts.entries()]
@@ -479,7 +479,7 @@ export function rankPlayerSeasons(options: {
   const eligibleIds = eligible.map((e) => e.season);
   const contested = hasWinCycle(eligibleIds, beats);
   const contestedNote = contested
-    ? "Pairwise wins among eligible seasons form a cycle. The Copeland order is shown, but seasons are closely contested — inspect the matrix."
+    ? "Pairwise wins among eligible seasons form a cycle. The Copeland order is shown, but seasons are closely contested - inspect the matrix."
     : null;
 
   const closeTop =

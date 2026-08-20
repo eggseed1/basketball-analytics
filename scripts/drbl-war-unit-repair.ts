@@ -1,5 +1,5 @@
 /**
- * M16e1 deploy — WAR 4.0.1 unit repair only.
+ * M16e1 deploy - WAR 4.0.1 unit repair only.
  *
  * Freezes LOO slope / replacement / PPW from the existing 2024-25 artifact.
  * Changes only the exposure basis for calibrated WAR:
@@ -320,7 +320,7 @@ Freeze WAR. Proceed to Approach A vs B on research base P.
   // Update m16e1 repair candidate status
   await writeFile(
     path.join(ROOT, "reports/m16e1/12_war_repair_candidate.md"),
-    `# WAR_REPAIR_CANDIDATE_V1 — DEPLOYED as WAR 4.0.1
+    `# WAR_REPAIR_CANDIDATE_V1 - DEPLOYED as WAR 4.0.1
 
 Status: **DEPLOYED** (unit repair only; ${new Date().toISOString()})
 

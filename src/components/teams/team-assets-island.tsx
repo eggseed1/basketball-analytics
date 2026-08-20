@@ -53,11 +53,11 @@ export async function TeamAssetsIsland({
       aria-label="Cap and assets"
     >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">
+        <h2 className="text-[20px] font-bold tracking-tight">
           Cap &amp; assets
         </h2>
-        <p className="text-[13px] text-muted-foreground">
-          Verified inventory for this season — structured picks and exceptions
+        <p className="text-[14px] text-muted-foreground">
+          Verified inventory for this season - structured picks and exceptions
           stay unavailable until a licensed ledger exists.
         </p>
       </div>

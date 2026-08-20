@@ -52,7 +52,7 @@ export function DecadeChips({
             key={decade.id}
             href={href}
             className={cn(
-              "shrink-0 rounded-full px-3 py-1.5 text-[13px] font-semibold transition-colors",
+              "shrink-0 rounded-full px-3 py-1.5 text-[14px] font-semibold transition-colors",
               active || (pathname === hrefBase && decade.id === "1960s" && !currentSeason)
                 ? "bg-foreground text-background"
                 : "bg-secondary text-muted-foreground hover:text-foreground"

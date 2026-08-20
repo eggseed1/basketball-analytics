@@ -337,7 +337,7 @@ function teamSeason(
     index.byPlayerId.p5!.lines.find((l) => l.id === "points")?.vsSeason != null
   );
   assert.equal(index.teams.length, 2);
-  // Plain object — JSON round-trip safe
+  // Plain object - JSON round-trip safe
   const json = JSON.parse(JSON.stringify(index));
   assert.ok(json.byPlayerId.p5);
 }

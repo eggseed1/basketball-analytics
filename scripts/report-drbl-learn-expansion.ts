@@ -98,7 +98,7 @@ const PUBLIC_DRBL: Array<{
   {
     field: "drblL",
     publicLabel: "DRBL-L",
-    surface: "legacy column defs — not player first view",
+    surface: "legacy column defs - not player first view",
     status: "RETIRED",
     conceptId: "drbl_limitations",
     keepPublic: "NO",
@@ -106,7 +106,7 @@ const PUBLIC_DRBL: Array<{
   {
     field: "drblDisagreement",
     publicLabel: "DRBL Δ",
-    surface: "legacy column defs — not player first view",
+    surface: "legacy column defs - not player first view",
     status: "RETIRED",
     conceptId: "drbl_limitations",
     keepPublic: "NO",
@@ -114,7 +114,7 @@ const PUBLIC_DRBL: Array<{
   {
     field: "drblSeasonalImpact",
     publicLabel: "DRBL impact",
-    surface: "legacy companion — prefer WAR1",
+    surface: "legacy companion - prefer WAR1",
     status: "RETIRED",
     conceptId: "r1_win_eq",
     keepPublic: "NO",

@@ -46,7 +46,7 @@ export type HistoricalTeamBrand = {
  * Key: `${canonicalId}:${abbr}` or bare `abbr` for unambiguous historical marks.
  * Path: site-root URL under /logos/historical/
  *
- * Intentionally empty until real assets are committed — do not scrape.
+ * Intentionally empty until real assets are committed - do not scrape.
  */
 export const HISTORICAL_TEAM_LOGO_ASSETS: Readonly<
   Record<string, { path: string; label: string }>
@@ -219,7 +219,7 @@ export function resolveHistoricalTeamBrand(
     }
   }
 
-  // Historical identity without a verified palette — neutral mark (never modern CDN).
+  // Historical identity without a verified palette - neutral mark (never modern CDN).
   if (isHistorical) {
     return {
       ...fields,
@@ -237,7 +237,7 @@ export function resolveHistoricalTeamBrand(
   };
 }
 
-/** Brand for one side of a game — never the opposing franchise's modern mark. */
+/** Brand for one side of a game - never the opposing franchise's modern mark. */
 export function resolveGameSideBrand(
   canonicalTeamId: string,
   season: string | null | undefined,

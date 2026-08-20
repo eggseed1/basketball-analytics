@@ -1,5 +1,5 @@
 /**
- * M16b.1 — Production board provenance closure.
+ * M16b.1 - Production board provenance closure.
  *   npx tsx scripts/drbl-m16b1.ts
  *
  * Path / metadata / auditability only. No model math. No M16c.
@@ -489,7 +489,7 @@ PlayerSeasonTable  ("Showing N of M players")
 | Site bundle | \`src/data/drbl/precomputed/2025-26.json\` | static import | same bytes as M16a full | \`DrblSeasonArtifact\` | 2025-26 | same | 575 |
 | Loader | \`src/data/providers/nba/drbl-loader.ts\` | \`fetchDrblSeason\` | bundled JSON | player rows | 2025-26 | same | 575 |
 | Board universe | \`src/data/providers/nba-data-provider.ts\` | \`fetchPlayerSeasons\` | league dash + DRBL join | \`PlayerSeason[]\` | 2025-26 | n/a (NBA live) | **582** |
-| Table | \`src/components/explore/player-season-table.tsx\` | render | filtered rows | UI | 2025-26 | — | Showing 50 of 582 |
+| Table | \`src/components/explore/player-season-table.tsx\` | render | filtered rows | UI | 2025-26 | - | Showing 50 of 582 |
 
 ## Official DRBL ranking universe
 
@@ -618,7 +618,7 @@ Displayed DRBL/100 uses \`posteriorAbilityRate\` (\`drbl100\`). Therefore WAR in
 
   await writeFile(
     path.join(OUT, "10_full_audit.md"),
-    `# M16b.1 Full audit — production board provenance
+    `# M16b.1 Full audit - production board provenance
 
 ## Freeze
 
@@ -645,7 +645,7 @@ Exact extra players (league-dash only; DRBL metrics default to 0):
 ${boardOnly
   .map((id) => {
     const r = nbaById.get(id)!;
-    return `- ${r.PLAYER_NAME} (${id}) ${r.TEAM_ABBREVIATION} GP=${r.GP} — site_only_metadata_row`;
+    return `- ${r.PLAYER_NAME} (${id}) ${r.TEAM_ABBREVIATION} GP=${r.GP} - site_only_metadata_row`;
   })
   .join("\n")}
 

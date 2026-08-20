@@ -1,6 +1,6 @@
 /**
  * M17a.1 current-season lineup incompleteness forensics (Phase 16).
- * Read-only on normalized possessions — safe while historical import runs.
+ * Read-only on normalized possessions - safe while historical import runs.
  */
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, existsSync, mkdirSync, writeFileSync } from "node:fs";

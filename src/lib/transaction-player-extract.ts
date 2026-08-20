@@ -1,6 +1,6 @@
 /**
  * Deterministic extraction of player-name candidates from ESPN transaction blurbs.
- * Pattern-based only — not NLP, not fuzzy matching.
+ * Pattern-based only - not NLP, not fuzzy matching.
  */
 
 import { ALL_TEAM_ABBRS, TEAM_BRANDS, resolveTeamBrand } from "@/lib/nba-brand";
@@ -24,7 +24,7 @@ const NAME_TOKEN =
 
 const SUFFIX = "(?:\\s+(?:Jr\\.?|Sr\\.?|II|III|IV|V))?";
 
-/** One player name (1–4 tokens + optional suffix). */
+/** One player name (1-4 tokens + optional suffix). */
 const PLAYER_NAME = `${NAME_TOKEN}(?:\\s+${NAME_TOKEN}){0,3}${SUFFIX}`;
 
 const TEAM_BLOCKLIST = buildTeamBlocklist();
@@ -160,7 +160,7 @@ export function extractTransactionPlayerMentions(
   }
 
   // Plural position then A and B: "Gs Jamaree Bouyea and Cormac Ryan"
-  // (no second position letter — avoids swallowing "F Name")
+  // (no second position letter - avoids swallowing "F Name")
   const pluralPair = new RegExp(
     `\\b(Gs|Fs|Cs)\\s+(${PLAYER_NAME})\\s+and\\s+(${PLAYER_NAME})`,
     "gi"
@@ -193,7 +193,7 @@ export function extractTransactionPlayerMentions(
   return filtered;
 }
 
-/** True when text looks like draft/cash compensation — never an asset invent. */
+/** True when text looks like draft/cash compensation - never an asset invent. */
 export function descriptionLooksLikeDraftCompensation(description: string): boolean {
   return /\bdraft considerations?\b|\bfuture (draft )?considerations?\b|\bcash considerations?\b/i.test(
     description
