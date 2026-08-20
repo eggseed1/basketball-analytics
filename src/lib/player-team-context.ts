@@ -1,5 +1,5 @@
 /**
- * P17.3 — temporal player-team identity contexts.
+ * P17.3 - temporal player-team identity contexts.
  *
  * PLAYER identity ≠ PLAYER-SEASON team ≠ CURRENT real-world team.
  * Branding must follow the explicit context, never playerId alone.
@@ -84,6 +84,46 @@ export function seasonFranchiseStints(
   );
 }
 
+/** One franchise stop on a player-season identity card. */
+export type PlayerCardStint = {
+  teamKey: string;
+  teamLabel: string;
+  position?: string | null;
+};
+
+/**
+ * Franchise stops for a season, in source order.
+ * NBA Stats lists TOT then clubs chronologically - the last item is the
+ * last team the player was on that year.
+ */
+export function cardStintsForSeason(
+  career: PlayerSeason[],
+  season: string
+): PlayerCardStint[] {
+  const seen = new Set<string>();
+  const out: PlayerCardStint[] = [];
+  for (const row of seasonFranchiseStints(career, season)) {
+    const key = brandableTeamKeyFromRow(row);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      teamKey: key,
+      teamLabel:
+        resolveTeamBrand(key)?.abbr ??
+        row.teamAbbreviation ??
+        row.teamName,
+      position: row.position ?? null,
+    });
+  }
+  return out;
+}
+
+export function lastCardStint(
+  stints: PlayerCardStint[]
+): PlayerCardStint | undefined {
+  return stints.at(-1);
+}
+
 export function seasonHasMultipleFranchises(
   career: PlayerSeason[],
   season: string
@@ -100,7 +140,7 @@ export type ResolvedSeasonTeamContext = {
   kind: PlayerTeamContextKind;
   season: string;
   row: PlayerSeason | null;
-  /** Brand / logo / wash key — undefined when NEUTRAL. */
+  /** Brand / logo / wash key - undefined when NEUTRAL. */
   brandTeamKey: string | undefined;
   /** Display label (abbr, TOT, Multiple, or team name). */
   displayLabel: string | null;

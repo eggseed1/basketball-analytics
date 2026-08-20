@@ -37,7 +37,7 @@ export function applyOwnerTheme(options: {
   }
 }
 
-/** Inline boot script — first paint matches stored prefs. Default: light + glass. */
+/** Inline boot script - first paint matches stored prefs. Default: light + glass. */
 export const OWNER_THEME_BOOT_SCRIPT = `(function(){
   try {
     var t = localStorage.getItem("${COLOR_SCHEME_KEY}");

@@ -11,7 +11,9 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
+import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { getStatGlossaryEntry } from "@/lib/stat-glossary";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 /**
@@ -67,8 +69,12 @@ export function StatTooltip({
       Math.max(8, rect.left + rect.width / 2 - width / 2),
       window.innerWidth - width - 8
     );
+    const tipHeight = 120;
     setCoords({
-      top: side === "top" ? rect.top - 8 : rect.bottom + 8,
+      top:
+        side === "top"
+          ? Math.max(8, rect.top - 8 - tipHeight)
+          : rect.bottom + 8,
       left,
     });
   }, [open, side]);
@@ -109,33 +115,29 @@ export function StatTooltip({
         open &&
         coords &&
         createPortal(
-          <span
+          <FrostFloatingSurface
             id={tipId}
             role="tooltip"
-            className={cn(
-              // Interactive so Learn more is clickable; below Select (z-50).
-              "fixed z-40 w-[280px] rounded-md border border-border bg-popover px-3 py-2 text-left text-xs text-popover-foreground shadow-md",
-              side === "top" && "-translate-y-full"
-            )}
-            style={{ top: coords.top, left: coords.left }}
+            className="fixed z-40 w-[280px] px-3 py-2 text-left"
+            style={{ top: coords.top, left: coords.left, position: "fixed" }}
             onMouseEnter={cancelClose}
             onMouseLeave={scheduleClose}
           >
-            <span className="block font-semibold text-foreground">
+            <span className={cn(type.caption, "block font-semibold text-foreground")}>
               {entry.title}
             </span>
-            <span className="mt-1 block leading-snug text-muted-foreground">
+            <span className={cn(type.caption, "mt-1 block leading-snug text-muted-foreground")}>
               {entry.body}
             </span>
             {entry.learnMoreHref ? (
               <Link
                 href={entry.learnMoreHref}
-                className="mt-2 inline-flex rounded-md border border-border bg-background px-2 py-1 text-[11px] font-medium text-foreground underline-offset-2 hover:bg-muted hover:underline"
+                className="mt-2 inline-flex rounded-md border border-border px-2 py-1 text-[12px] font-medium text-foreground underline-offset-2 hover:underline"
               >
                 Learn more
               </Link>
             ) : null}
-          </span>,
+          </FrostFloatingSurface>,
           document.body
         )}
     </>

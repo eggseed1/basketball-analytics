@@ -43,10 +43,6 @@ function readSurface(): SurfaceStyle {
   return "glass";
 }
 
-/**
- * Thin client island for light/dark + glass/solid.
- * Does not own app data and must not wrap RootLayout as a client component.
- */
 export function OwnerThemeProvider({ children }: { children: ReactNode }) {
   const [scheme, setSchemeState] = useState<ColorScheme>("light");
   const [surface, setSurfaceState] = useState<SurfaceStyle>("glass");

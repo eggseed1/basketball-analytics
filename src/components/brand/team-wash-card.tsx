@@ -1,5 +1,8 @@
+"use client";
+
 import type { CSSProperties, ReactNode } from "react";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import {
   MATCHUP_THEME_NEUTRAL,
   brandWashColor,
@@ -9,9 +12,9 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 /**
- * Soft dual-tone wash for a single team or career dual-brand.
+ * Team-tinted liquid-glass card.
  * For game matchups prefer {@link MatchupWashCard}.
- * No teamKey → NEUTRAL wash (multi-team aggregate / unresolved).
+ * No teamKey → neutral frost (multi-team aggregate / unresolved).
  */
 export function TeamWashCard({
   teamKey,
@@ -29,21 +32,7 @@ export function TeamWashCard({
 }) {
   const primary = resolveTeamBrand(teamKey);
   const secondary = resolveTeamBrand(secondaryTeamKey);
-  if (!primary && !secondary) {
-    return (
-      <Tag
-        className={cn(
-          "sports-card score-card-wash overflow-hidden",
-          className
-        )}
-        style={NEUTRAL_WASH_STYLE}
-      >
-        {children}
-      </Tag>
-    );
-  }
   const left = brandWashColor(primary);
-  // Dual brand → second team's primary wash; single brand → that team's secondary wash.
   const right = secondary
     ? brandWashColor(secondary)
     : primary && isValidSecondary(primary.secondary)
@@ -51,20 +40,14 @@ export function TeamWashCard({
       : brandWashColor(primary);
 
   return (
-    <Tag
-      className={cn(
-        "sports-card score-card-wash overflow-hidden",
-        className
-      )}
-      style={
-        {
-          "--away-color": left,
-          "--home-color": right,
-        } as CSSProperties
-      }
+    <GlassSurface
+      as={Tag}
+      accentColor={primary || secondary ? left : MATCHUP_THEME_NEUTRAL}
+      accentColorB={primary || secondary ? right : "#aeaeb2"}
+      className={cn(className)}
     >
       {children}
-    </Tag>
+    </GlassSurface>
   );
 }
 
@@ -97,22 +80,21 @@ export function MatchupWashCard({
   const theme = buildGameMatchupTheme(awayTeamKey, homeTeamKey);
 
   return (
-    <Tag
-      className={cn(
-        "sports-card matchup-wash overflow-hidden",
-        intensity === "subtle" && "matchup-wash--subtle",
-        className
-      )}
-      style={theme.cssVars}
-      data-matchup-away={theme.awayBrand?.abbr ?? "—"}
-      data-matchup-home={theme.homeBrand?.abbr ?? "—"}
+    <GlassSurface
+      as={Tag}
+      accentColor={theme.awayWash}
+      accentColorB={theme.homeWash}
+      className={className}
+      data-matchup-away={theme.awayBrand?.abbr ?? "-"}
+      data-matchup-home={theme.homeBrand?.abbr ?? "-"}
+      data-matchup-intensity={intensity}
     >
       {children}
-    </Tag>
+    </GlassSurface>
   );
 }
 
-/** Neutral vars when no brands — avoids Apple blue/purple CSS defaults. */
+/** Neutral vars when no brands - avoids Apple blue/purple CSS defaults. */
 export const NEUTRAL_WASH_STYLE = {
   "--away-color": MATCHUP_THEME_NEUTRAL,
   "--home-color": "#aeaeb2",

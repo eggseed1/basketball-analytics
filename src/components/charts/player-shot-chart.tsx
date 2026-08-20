@@ -2,7 +2,9 @@
 
 import { useId, useMemo, useState } from "react";
 
+import { NbaHalfCourtLines } from "@/components/charts/nba-half-court-lines";
 import type { Shot } from "@/data/types";
+import { COURT_SVG, courtX, courtY } from "@/lib/nba-court";
 import { cn } from "@/lib/utils";
 
 export interface PlayerShotChartProps {
@@ -32,12 +34,6 @@ export function PlayerShotChart({ shots, playerName }: PlayerShotChartProps) {
 
   const made = filtered.filter((s) => s.made).length;
   const fg = filtered.length ? made / filtered.length : 0;
-
-  // Court: basket at (0,0), viewBox covers x [-25,25], y [-2, 47]
-  const width = 500;
-  const height = 470;
-  const toX = (locX: number) => ((locX + 25) / 50) * width;
-  const toY = (locY: number) => height - ((locY + 2) / 49) * height;
 
   return (
     <figure
@@ -93,58 +89,16 @@ export function PlayerShotChart({ shots, playerName }: PlayerShotChartProps) {
           </p>
         ) : (
           <svg
-            viewBox={`0 0 ${width} ${height}`}
+            viewBox={`0 0 ${COURT_SVG.width} ${COURT_SVG.height}`}
             className="h-auto w-full rounded-lg bg-[oklch(0.97_0.01_145)] dark:bg-[oklch(0.22_0.02_145)]"
             role="img"
             aria-label={`Shot chart with ${made} makes and ${filtered.length - made} misses`}
           >
-            {/* Court lines */}
-            <rect
-              x="0"
-              y="0"
-              width={width}
-              height={height}
-              fill="none"
-              stroke="currentColor"
-              strokeOpacity="0.35"
-            />
-            {/* Paint */}
-            <rect
-              x={toX(-8)}
-              y={toY(19)}
-              width={toX(8) - toX(-8)}
-              height={toY(-2) - toY(19)}
-              fill="none"
-              stroke="currentColor"
-              strokeOpacity="0.45"
-            />
-            {/* Restricted area */}
-            <path
-              d={`M ${toX(-4)} ${toY(0)} A ${((toX(4) - toX(-4)) / 2)} ${((toY(0) - toY(4)))} 0 0 1 ${toX(4)} ${toY(0)}`}
-              fill="none"
-              stroke="currentColor"
-              strokeOpacity="0.45"
-            />
-            {/* Hoop */}
-            <circle
-              cx={toX(0)}
-              cy={toY(0)}
-              r="6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-            />
-            {/* Three-point arc (approx) */}
-            <path
-              d={`M ${toX(-22)} ${toY(0)} L ${toX(-22)} ${toY(14)} A ${toX(22) - toX(0)} ${toY(0) - toY(23.75)} 0 0 1 ${toX(22)} ${toY(14)} L ${toX(22)} ${toY(0)}`}
-              fill="none"
-              stroke="currentColor"
-              strokeOpacity="0.45"
-            />
+            <NbaHalfCourtLines />
 
             {filtered.map((shot) => {
-              const cx = toX(shot.locX);
-              const cy = toY(shot.locY);
+              const cx = courtX(shot.locX);
+              const cy = courtY(shot.locY);
               const isThree = shot.shotType === "3PT";
               return (
                 <g key={shot.id}>

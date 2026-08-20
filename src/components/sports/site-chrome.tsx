@@ -1,10 +1,11 @@
+"use client";
+
 import type { ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 
 /**
- * Site header material — CSS glass (no liquid SVG).
- * Sticky chrome; overflow visible for mobile More menu.
+ * Site header material - same liquid-glass surface as page cards.
  */
 export function SiteChrome({ children }: { children: ReactNode }) {
   return (

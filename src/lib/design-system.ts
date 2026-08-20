@@ -1,9 +1,6 @@
 /**
- * Site type scale — even pixel sizes only.
+ * Site type scale - even pixel sizes only.
  * Prefer these names over one-off text-[NNpx] classes.
- *
- * Roles: display | page | heading | title | body | bodySm | caption
- * Data: use `.tabular-nums` / `.score-num` with mono or sans.
  */
 export const type = {
   caption: "text-[12px] leading-4",
@@ -19,15 +16,6 @@ export const type = {
 export const textLinkClassName =
   "font-semibold underline decoration-foreground/40 underline-offset-2 hover:decoration-foreground";
 
-/** Hover-only (not a link) — never-played player mentions. */
+/** Hover-only (not a link) - never-played player mentions. */
 export const textHintClassName =
   "cursor-help font-semibold underline decoration-dotted decoration-foreground/40 underline-offset-2";
-
-/**
- * Glass nesting policy (MERGE.1):
- * - Page background → base/raised panel → at most one glass layer → optional frost float
- * - Never nest glass inside glass inside glass
- * - Dense lists/tables: solid or `.board-scroll-host` (no liquid / no stacked blur)
- */
-export const GLASS_NESTING_POLICY =
-  "PAGE > BASE|RAISED > GLASS(max1) > FROST_FLOAT(optional); no glass-in-glass-in-glass; lists use solid/css only";

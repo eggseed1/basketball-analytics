@@ -1,64 +1,117 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
+"use client";
 
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { usePlayerViewSeason } from "@/components/players/player-view-season";
+import { type } from "@/lib/design-system";
 import {
-  playerHref,
-  playerPageNavViews,
-  type PlayerPageCapabilities,
-  type PlayerPageView,
-} from "@/lib/player-page-contract";
+  playerDepthHref,
+  type PlayerDepthTab,
+  type PlayerSeasonKind,
+} from "@/lib/player-destination";
+import type { ThemeMode } from "@/themes/era-theme";
 import { cn } from "@/lib/utils";
 
-/** URL-addressable deep-stat nav — no dead tabs. */
+const TABS: Array<{ id: PlayerDepthTab; label: string }> = [
+  { id: "career", label: "Career" },
+  { id: "stats", label: "Statistics" },
+  { id: "games", label: "Game logs" },
+  { id: "viz", label: "Visualizations" },
+];
+
 export function PlayerDepthNav({
   playerId,
   season,
-  view,
-  caps,
-  fromHistory,
-  themeMode,
+  depth,
+  seasonType,
+  compare,
+  fromHistory = false,
+  themeMode = "historical",
 }: {
   playerId: string;
   season: string;
-  view: PlayerPageView;
-  caps: PlayerPageCapabilities;
+  depth: PlayerDepthTab;
+  seasonType: PlayerSeasonKind;
+  compare?: string;
   fromHistory?: boolean;
-  themeMode?: "historical" | "modern";
+  themeMode?: ThemeMode;
 }) {
-  const items = playerPageNavViews(caps);
+  const viewSeason = usePlayerViewSeason(season);
   return (
-    <nav
-      aria-label="Player statistics views"
-      className="sticky top-0 z-20 -mx-1 border-b border-border/80 bg-background/90 px-1 py-2 backdrop-blur-md"
-    >
-      <ul className="flex gap-1 overflow-x-auto pb-0.5 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-        {items.map((item) => {
-          const active = item.id === view;
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+      <div
+        role="tablist"
+        aria-label="Player depth"
+        className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
+      >
+        {TABS.map((tab) => {
+          const selected = tab.id === depth;
           return (
-            <li key={item.id} className="shrink-0">
+            <TransitionLink
+              key={tab.id}
+              role="tab"
+              aria-selected={selected}
+              href={playerDepthHref(playerId, {
+                season: viewSeason,
+                depth: tab.id,
+                seasonType,
+                compare,
+                fromHistory,
+                themeMode,
+              })}
+              scroll={false}
+              className={cn(
+                type.bodySm,
+                "px-2 py-1 font-bold tracking-tight",
+                selected
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {tab.label}
+            </TransitionLink>
+          );
+        })}
+      </div>
+      {depth === "games" ? null : (
+        <div
+          role="group"
+          aria-label="Season type"
+          className="flex flex-wrap gap-1.5"
+        >
+          {(
+            [
+              ["regular", "Regular season"],
+              ["playoffs", "Playoffs"],
+            ] as const
+          ).map(([id, label]) => {
+            const selected = id === seasonType;
+            return (
               <TransitionLink
-                href={playerHref({
-                  playerId,
-                  season,
-                  view: item.id === "overview" ? undefined : item.id,
+                key={id}
+                href={playerDepthHref(playerId, {
+                  season: viewSeason,
+                  depth,
+                  seasonType: id,
+                  compare,
                   fromHistory,
                   themeMode,
                 })}
                 scroll={false}
-                prefetch={false}
+                aria-pressed={selected}
                 className={cn(
-                  "inline-flex rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors",
-                  active
+                  type.caption,
+                  "rounded-md px-2.5 py-1 font-semibold",
+                  selected
                     ? "bg-foreground text-background"
-                    : "bg-secondary/70 text-muted-foreground hover:text-foreground"
+                    : "bg-white/55 text-foreground hover:bg-white/80"
                 )}
-                aria-current={active ? "page" : undefined}
               >
-                {item.label}
+                {label}
               </TransitionLink>
-            </li>
-          );
-        })}
-      </ul>
-    </nav>
+            );
+          })}
+        </div>
+      )}
+    </div>
   );
 }
