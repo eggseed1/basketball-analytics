@@ -1,5 +1,90 @@
 import type { PlayerGame } from "@/data/types";
-import { gameUsagePct } from "@/data/providers/nba/compute-advanced";
+import {
+  approxOffensiveRating,
+  effectiveFieldGoalPct,
+  gameScore,
+  gameUsagePct,
+  trueShootingPct,
+  turnoverPct,
+} from "@/data/providers/nba/compute-advanced";
+
+/**
+ * Fill derived box rates / Game Score when a provider omits them.
+ * Never invent counting stats; only compute rates from present inputs.
+ */
+export function withDerivedBoxScoreMetrics(player: PlayerGame): PlayerGame {
+  const oreb = player.offensiveRebounds;
+  const dreb =
+    player.defensiveRebounds ??
+    (oreb != null && Number.isFinite(player.rebounds)
+      ? Math.max(0, player.rebounds - oreb)
+      : undefined);
+  const pf = player.personalFouls ?? 0;
+
+  const ts =
+    player.trueShootingPct ??
+    trueShootingPct(
+      player.points,
+      player.fieldGoalsAttempted,
+      player.freeThrowsAttempted
+    );
+  const efg =
+    player.effectiveFieldGoalPct ??
+    effectiveFieldGoalPct(
+      player.fieldGoalsMade,
+      player.threePointersMade,
+      player.fieldGoalsAttempted
+    );
+  const ortg =
+    player.offensiveRating ??
+    approxOffensiveRating(
+      player.points,
+      player.fieldGoalsAttempted,
+      player.freeThrowsAttempted,
+      player.turnovers
+    );
+  const tovPct =
+    player.turnoverPct ??
+    turnoverPct(
+      player.turnovers,
+      player.fieldGoalsAttempted,
+      player.freeThrowsAttempted
+    );
+
+  const derivedGameScore =
+    player.gameScore ??
+    gameScore({
+      points: player.points,
+      fieldGoalsMade: player.fieldGoalsMade,
+      fieldGoalsAttempted: player.fieldGoalsAttempted,
+      freeThrowsMade: player.freeThrowsMade,
+      freeThrowsAttempted: player.freeThrowsAttempted,
+      offensiveRebounds: oreb ?? 0,
+      defensiveRebounds: dreb ?? 0,
+      steals: player.steals,
+      assists: player.assists,
+      blocks: player.blocks,
+      personalFouls: pf,
+      turnovers: player.turnovers,
+    });
+
+  return {
+    ...player,
+    ...(dreb != null && player.defensiveRebounds == null
+      ? { defensiveRebounds: dreb }
+      : {}),
+    ...(ts != null ? { trueShootingPct: ts } : {}),
+    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+    ...(ortg != null ? { offensiveRating: ortg } : {}),
+    ...(tovPct != null ? { turnoverPct: tovPct } : {}),
+    gameScore: derivedGameScore,
+  };
+}
+
+/** Derive rates then attach team-relative usage / assist / rebound shares. */
+export function finalizeBoxScorePlayers(players: PlayerGame[]): PlayerGame[] {
+  return enrichBoxScoreAdvanced(players.map(withDerivedBoxScoreMetrics));
+}
 
 /** Attach team-relative usage / rates after all lines for a game are known. */
 export function enrichBoxScoreAdvanced(players: PlayerGame[]): PlayerGame[] {

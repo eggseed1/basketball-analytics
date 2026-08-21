@@ -17,10 +17,9 @@ import type {
   BdlTeam,
 } from "@/data/providers/balldontlie/client";
 import {
-  effectiveFieldGoalPct,
-  trueShootingPct,
-} from "@/data/providers/nba/compute-advanced";
-import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
+  finalizeBoxScorePlayers,
+  withDerivedBoxScoreMetrics,
+} from "@/data/providers/nba/enrich-box-score";
 import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 
@@ -105,29 +104,49 @@ export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
   const fg3m = raw.fg3m ?? 0;
   const fta = raw.fta ?? 0;
   const pts = raw.pts ?? 0;
-  const ts = trueShootingPct(pts, fga, fta);
-  const efg = effectiveFieldGoalPct(fgm, fg3m, fga);
+  const team = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(raw.team.id),
+    abbr: raw.team.abbreviation,
+    name: raw.team.full_name ?? raw.team.name,
+  });
+  const home = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(raw.game.home_team.id),
+    abbr: raw.game.home_team.abbreviation,
+    name: raw.game.home_team.full_name ?? raw.game.home_team.name,
+  });
+  const away = normalizeGameTeamSide({
+    provider: "bdl",
+    providerTeamId: String(raw.game.visitor_team.id),
+    abbr: raw.game.visitor_team.abbreviation,
+    name: raw.game.visitor_team.full_name ?? raw.game.visitor_team.name,
+  });
+  const isHome = team.canonicalTeamId === home.canonicalTeamId;
+  const oreb = raw.oreb ?? undefined;
+  const dreb = raw.dreb ?? undefined;
+  const pf = raw.pf ?? undefined;
 
-  return {
+  return withDerivedBoxScoreMetrics({
     id: String(raw.id),
     gameId: String(raw.game.id),
     playerId: String(raw.player.id),
     playerName: `${raw.player.first_name} ${raw.player.last_name}`.trim(),
-    teamId: String(raw.team.id),
+    teamId: team.canonicalTeamId,
     season,
     gameDate: (raw.game.date ?? "").slice(0, 10),
-    opponentTeamId:
-      raw.team.id === raw.game.home_team.id
-        ? String(raw.game.visitor_team.id)
-        : String(raw.game.home_team.id),
-    isHome: raw.team.id === raw.game.home_team.id,
+    opponentTeamId: isHome ? away.canonicalTeamId : home.canonicalTeamId,
+    isHome,
     minutes,
     points: pts,
     assists: raw.ast ?? 0,
     rebounds: raw.reb ?? 0,
+    ...(oreb != null ? { offensiveRebounds: oreb } : {}),
+    ...(dreb != null ? { defensiveRebounds: dreb } : {}),
     steals: raw.stl ?? 0,
     blocks: raw.blk ?? 0,
     turnovers: raw.turnover ?? 0,
+    ...(pf != null ? { personalFouls: pf } : {}),
     fieldGoalsMade: fgm,
     fieldGoalsAttempted: fga,
     threePointersMade: fg3m,
@@ -135,9 +154,7 @@ export function transformBdlStatsRow(raw: BdlStats): PlayerGame {
     freeThrowsMade: raw.ftm ?? 0,
     freeThrowsAttempted: fta,
     plusMinus: raw.plus_minus ?? 0,
-    ...(ts != null ? { trueShootingPct: ts } : {}),
-    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
-  };
+  });
 }
 
 export function transformBdlBoxScore(raw: BdlBoxScore): GameBoxScore {
@@ -184,7 +201,7 @@ export function transformBdlBoxScore(raw: BdlBoxScore): GameBoxScore {
     ),
   ];
 
-  return { game, players: enrichBoxScoreAdvanced(players) };
+  return { game, players: finalizeBoxScorePlayers(players) };
 }
 
 export function transformBdlAdvanced(
@@ -226,8 +243,9 @@ function transformBoxLine(
   const fg3m = line.fg3m ?? 0;
   const fta = line.fta ?? 0;
   const pts = line.pts ?? 0;
-  const ts = trueShootingPct(pts, fga, fta);
-  const efg = effectiveFieldGoalPct(fgm, fg3m, fga);
+  const oreb = line.oreb;
+  const dreb = line.dreb;
+  const pf = line.pf;
   return {
     id: `${game.id}-${line.player.id}-${index}`,
     gameId: game.id,
@@ -242,9 +260,12 @@ function transformBoxLine(
     points: pts,
     assists: line.ast ?? 0,
     rebounds: line.reb ?? 0,
+    ...(oreb != null ? { offensiveRebounds: oreb } : {}),
+    ...(dreb != null ? { defensiveRebounds: dreb } : {}),
     steals: line.stl ?? 0,
     blocks: line.blk ?? 0,
     turnovers: line.turnover ?? 0,
+    ...(pf != null ? { personalFouls: pf } : {}),
     fieldGoalsMade: fgm,
     fieldGoalsAttempted: fga,
     threePointersMade: fg3m,
@@ -252,8 +273,6 @@ function transformBoxLine(
     freeThrowsMade: line.ftm ?? 0,
     freeThrowsAttempted: fta,
     plusMinus: line.plus_minus ?? 0,
-    ...(ts != null ? { trueShootingPct: ts } : {}),
-    ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
   };
 }
 

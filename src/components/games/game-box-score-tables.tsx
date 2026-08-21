@@ -309,14 +309,20 @@ function TraditionalRow({
       <Num>
         {p.freeThrowsMade}-{p.freeThrowsAttempted}
       </Num>
-      <Num>{formatNumber(p.offensiveRebounds ?? 0)}</Num>
-      <Num>{formatNumber(p.defensiveRebounds ?? 0)}</Num>
+      <Num>
+        {p.offensiveRebounds != null ? formatNumber(p.offensiveRebounds) : "-"}
+      </Num>
+      <Num>
+        {p.defensiveRebounds != null ? formatNumber(p.defensiveRebounds) : "-"}
+      </Num>
       <Num>{formatNumber(p.rebounds)}</Num>
       <Num>{formatNumber(p.assists)}</Num>
       <Num>{formatNumber(p.steals)}</Num>
       <Num>{formatNumber(p.blocks)}</Num>
       <Num>{formatNumber(p.turnovers)}</Num>
-      <Num>{formatNumber(p.personalFouls ?? 0)}</Num>
+      <Num>
+        {p.personalFouls != null ? formatNumber(p.personalFouls) : "-"}
+      </Num>
       <Num>
         {p.plusMinus > 0 ? "+" : ""}
         {formatNumber(p.plusMinus)}

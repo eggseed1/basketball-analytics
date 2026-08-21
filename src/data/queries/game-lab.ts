@@ -24,6 +24,7 @@ import {
 import { alignGameWithPbpHomeAway } from "@/lib/game-flow/resolve-score-timeline";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
 
 export type { GameAnalysisSummary };
 
@@ -55,6 +56,76 @@ function matchTeamSeason(
     ) ??
     null
   );
+}
+
+function collectTeamKeys(
+  game: Game,
+  side: "home" | "away",
+  themeKey: string
+): Set<string> {
+  const keys = new Set<string>();
+  const add = (value?: string | null) => {
+    const trimmed = value?.trim();
+    if (trimmed) keys.add(trimmed);
+  };
+  add(themeKey);
+  if (side === "home") {
+    add(game.homeTeamId);
+    add(game.homeProviderTeamId);
+    add(game.homeTeamAbbr);
+  } else {
+    add(game.awayTeamId);
+    add(game.awayProviderTeamId);
+    add(game.awayTeamAbbr);
+  }
+  for (const key of [...keys]) {
+    const brand = resolveTeamBrand(key);
+    add(brand?.id);
+    add(brand?.espnTeamId);
+    add(brand?.abbr);
+    const canonical = resolveCanonicalTeam(key);
+    if (canonical.status === "resolved") {
+      add(canonical.team.canonicalTeamId);
+      add(canonical.team.abbr);
+    }
+  }
+  return keys;
+}
+
+/**
+ * Align player teamIds to the analyzed game's theme keys so totals, filters,
+ * and season joins share one namespace after PBP orientation / brand resolve.
+ */
+export function alignBoxPlayersToGameSides(
+  players: PlayerGame[],
+  orientedGame: Game,
+  homeThemeKey: string,
+  awayThemeKey: string
+): PlayerGame[] {
+  const homeKeys = collectTeamKeys(orientedGame, "home", homeThemeKey);
+  const awayKeys = collectTeamKeys(orientedGame, "away", awayThemeKey);
+
+  const aligned = players.map((player) => {
+    if (homeKeys.has(player.teamId)) {
+      return {
+        ...player,
+        teamId: homeThemeKey,
+        opponentTeamId: awayThemeKey,
+        isHome: true,
+      };
+    }
+    if (awayKeys.has(player.teamId)) {
+      return {
+        ...player,
+        teamId: awayThemeKey,
+        opponentTeamId: homeThemeKey,
+        isHome: false,
+      };
+    }
+    return player;
+  });
+
+  return finalizeBoxScorePlayers(aligned);
 }
 
 /**
@@ -155,6 +226,13 @@ export async function getGameAnalysis(
     }
   }
 
+  const alignedPlayers = alignBoxPlayersToGameSides(
+    players,
+    orientedGame,
+    homeLabels.themeKey,
+    awayLabels.themeKey
+  );
+
   const analysis = analyzeGame({
     game: {
       ...orientedGame,
@@ -165,7 +243,7 @@ export async function getGameAnalysis(
       homeTeamName: homeLabels.name,
       awayTeamName: awayLabels.name,
     },
-    players,
+    players: alignedPlayers,
     homeLabel: homeLabels.label,
     awayLabel: awayLabels.label,
     homeName: homeLabels.name,
@@ -195,7 +273,7 @@ export async function getGameAnalysis(
       homeTeamName: homeLabels.name,
       awayTeamName: awayLabels.name,
     },
-    players,
+    players: alignedPlayers,
     availability,
   };
 }

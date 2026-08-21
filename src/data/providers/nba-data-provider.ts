@@ -28,6 +28,7 @@ import {
   type DrblPlayerRow,
 } from "./nba/drbl-loader";
 import { fetchRawPlayByPlay } from "./nba/play-by-play-client";
+import { finalizeBoxScorePlayers } from "./nba/enrich-box-score";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
 import {
@@ -1043,41 +1044,51 @@ export class NBADataProvider implements BasketballDataProvider {
       awayProviderTeamId: awayProviderTeamId || undefined,
     };
 
-    const players: PlayerGame[] = resultSetToObjects(playerSet)
-      .filter((row) => row.PLAYER_ID != null && String(row.COMMENT ?? "") === "")
-      .map((row) => {
-        const providerTeamId = String(row.TEAM_ID ?? "");
-        const teamId =
-          getCanonicalTeamFromProvider("nba", providerTeamId)
-            ?.canonicalTeamId ?? providerTeamId;
-        const isHome = teamId === homeTeamId;
-        return {
-          id: `${row.PLAYER_ID}-${gameId}`,
-          gameId,
-          playerId: String(row.PLAYER_ID),
-          playerName: String(row.PLAYER_NAME ?? ""),
-          teamId,
-          season,
-          gameDate: game.gameDate,
-          opponentTeamId: isHome ? awayTeamId : homeTeamId,
-          isHome,
-          startPosition: String(row.START_POSITION ?? "").trim() || undefined,
-          minutes: parseMinutes(row.MIN),
-          points: n(row, "PTS"),
-          assists: n(row, "AST"),
-          rebounds: n(row, "REB"),
-          steals: n(row, "STL"),
-          blocks: n(row, "BLK"),
-          turnovers: n(row, "TO"),
-          fieldGoalsMade: n(row, "FGM"),
-          fieldGoalsAttempted: n(row, "FGA"),
-          threePointersMade: n(row, "FG3M"),
-          threePointersAttempted: n(row, "FG3A"),
-          freeThrowsMade: n(row, "FTM"),
-          freeThrowsAttempted: n(row, "FTA"),
-          plusMinus: n(row, "PLUS_MINUS"),
-        };
-      });
+    const players: PlayerGame[] = finalizeBoxScorePlayers(
+      resultSetToObjects(playerSet)
+        .filter(
+          (row) => row.PLAYER_ID != null && String(row.COMMENT ?? "") === ""
+        )
+        .map((row) => {
+          const providerTeamId = String(row.TEAM_ID ?? "");
+          const teamId =
+            getCanonicalTeamFromProvider("nba", providerTeamId)
+              ?.canonicalTeamId ?? providerTeamId;
+          const isHome = teamId === homeTeamId;
+          const oreb = optionalN(row, "OREB");
+          const dreb = optionalN(row, "DREB");
+          const pf = optionalN(row, "PF");
+          return {
+            id: `${row.PLAYER_ID}-${gameId}`,
+            gameId,
+            playerId: String(row.PLAYER_ID),
+            playerName: String(row.PLAYER_NAME ?? ""),
+            teamId,
+            season,
+            gameDate: game.gameDate,
+            opponentTeamId: isHome ? awayTeamId : homeTeamId,
+            isHome,
+            startPosition: String(row.START_POSITION ?? "").trim() || undefined,
+            minutes: parseMinutes(row.MIN),
+            points: n(row, "PTS"),
+            assists: n(row, "AST"),
+            rebounds: n(row, "REB"),
+            ...(oreb != null ? { offensiveRebounds: oreb } : {}),
+            ...(dreb != null ? { defensiveRebounds: dreb } : {}),
+            steals: n(row, "STL"),
+            blocks: n(row, "BLK"),
+            turnovers: n(row, "TO"),
+            ...(pf != null ? { personalFouls: pf } : {}),
+            fieldGoalsMade: n(row, "FGM"),
+            fieldGoalsAttempted: n(row, "FGA"),
+            threePointersMade: n(row, "FG3M"),
+            threePointersAttempted: n(row, "FG3A"),
+            freeThrowsMade: n(row, "FTM"),
+            freeThrowsAttempted: n(row, "FTA"),
+            plusMinus: n(row, "PLUS_MINUS"),
+          };
+        })
+    );
 
     return { game, players };
   }
@@ -1388,6 +1399,21 @@ function n(
     return Number.isFinite(parsed) ? parsed : 0;
   }
   return 0;
+}
+
+/** Prefer null over inventing 0 when a traditional box field is absent. */
+function optionalN(
+  row: Record<string, string | number | null>,
+  key: string
+): number | null {
+  const value = row[key];
+  if (value == null || value === "") return null;
+  if (typeof value === "number" && Number.isFinite(value)) return value;
+  if (typeof value === "string") {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : null;
+  }
+  return null;
 }
 
 function parseNbaGameDate(raw: string): string {

@@ -6,6 +6,7 @@ import path from "node:path";
 
 import type { Game, GameBoxScore, PlayerGame } from "@/data/types";
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
+import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
 import { seasonFromNbaGameId } from "@/lib/game-presentation";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 
@@ -22,6 +23,34 @@ function parseMinutes(raw: unknown): number {
     return parseBasketballMinutes(raw);
   }
   return parseBasketballMinutes(String(raw));
+}
+
+function numField(st: Record<string, unknown>, ...keys: string[]): number {
+  for (const key of keys) {
+    const v = st[key];
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+    if (typeof v === "string" && v !== "") {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+  }
+  return 0;
+}
+
+function optionalNumField(
+  st: Record<string, unknown>,
+  ...keys: string[]
+): number | null {
+  for (const key of keys) {
+    const v = st[key];
+    if (v == null || v === "") continue;
+    if (typeof v === "number" && Number.isFinite(v)) return v;
+    if (typeof v === "string") {
+      const n = Number(v);
+      if (Number.isFinite(n)) return n;
+    }
+  }
+  return null;
 }
 
 /**
@@ -142,6 +171,25 @@ export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
       const starter =
         pl.starter === true || pl.starter === 1 || pl.starter === "1";
       if (!played && !starter) continue;
+      const oreb = optionalNumField(
+        st,
+        "reboundsOffensive",
+        "offensiveRebounds",
+        "oreb"
+      );
+      const dreb = optionalNumField(
+        st,
+        "reboundsDefensive",
+        "defensiveRebounds",
+        "dreb"
+      );
+      const pf = optionalNumField(
+        st,
+        "foulsPersonal",
+        "personalFouls",
+        "fouls",
+        "pf"
+      );
       out.push({
         id: `${personId}-${id}`,
         gameId: id,
@@ -158,19 +206,22 @@ export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
         isHome,
         startPosition: starter ? String(pl.position ?? "G") : undefined,
         minutes,
-        points: Number(st.points) || 0,
-        rebounds: Number(st.reboundsTotal) || 0,
-        assists: Number(st.assists) || 0,
-        steals: Number(st.steals) || 0,
-        blocks: Number(st.blocks) || 0,
-        turnovers: Number(st.turnovers) || 0,
-        fieldGoalsMade: Number(st.fieldGoalsMade) || 0,
-        fieldGoalsAttempted: Number(st.fieldGoalsAttempted) || 0,
-        threePointersMade: Number(st.threePointersMade) || 0,
-        threePointersAttempted: Number(st.threePointersAttempted) || 0,
-        freeThrowsMade: Number(st.freeThrowsMade) || 0,
-        freeThrowsAttempted: Number(st.freeThrowsAttempted) || 0,
-        plusMinus: Number(st.plusMinusPoints) || 0,
+        points: numField(st, "points"),
+        rebounds: numField(st, "reboundsTotal", "rebounds", "reb"),
+        ...(oreb != null ? { offensiveRebounds: oreb } : {}),
+        ...(dreb != null ? { defensiveRebounds: dreb } : {}),
+        assists: numField(st, "assists"),
+        steals: numField(st, "steals"),
+        blocks: numField(st, "blocks"),
+        turnovers: numField(st, "turnovers"),
+        ...(pf != null ? { personalFouls: pf } : {}),
+        fieldGoalsMade: numField(st, "fieldGoalsMade"),
+        fieldGoalsAttempted: numField(st, "fieldGoalsAttempted"),
+        threePointersMade: numField(st, "threePointersMade"),
+        threePointersAttempted: numField(st, "threePointersAttempted"),
+        freeThrowsMade: numField(st, "freeThrowsMade"),
+        freeThrowsAttempted: numField(st, "freeThrowsAttempted"),
+        plusMinus: numField(st, "plusMinusPoints", "plusMinus"),
       });
     }
     return out;
@@ -178,6 +229,9 @@ export function loadRawArchiveBoxScore(gameId: string): GameBoxScore | null {
 
   return {
     game,
-    players: [...mapPlayers(home, true), ...mapPlayers(away, false)],
+    players: finalizeBoxScorePlayers([
+      ...mapPlayers(home, true),
+      ...mapPlayers(away, false),
+    ]),
   };
 }

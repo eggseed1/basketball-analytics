@@ -28,7 +28,7 @@ import {
   transformBdlStatsRow,
   transformBdlTeam,
 } from "@/data/transformers/balldontlie";
-import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
+import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
 import {
   findCachedGame,
   readGamesCache,
@@ -287,7 +287,7 @@ export class HistoricalNbaService {
               const transformed = transformBdlBoxScore(match);
               return {
                 game: { ...transformed.game, id: String(game.id) },
-                players: enrichBoxScoreAdvanced(
+                players: finalizeBoxScorePlayers(
                   transformed.players.map((p) => ({
                     ...p,
                     gameId: String(game.id),
@@ -312,7 +312,7 @@ export class HistoricalNbaService {
           if (stats.length) {
             return {
               game: transformBdlGame(game),
-              players: enrichBoxScoreAdvanced(stats.map(transformBdlStatsRow)),
+              players: finalizeBoxScorePlayers(stats.map(transformBdlStatsRow)),
             };
           }
         } catch (error) {
