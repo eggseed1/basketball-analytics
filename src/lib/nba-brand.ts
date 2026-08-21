@@ -3,6 +3,8 @@
  * Used for UI chrome only - not a data-provider dependency.
  */
 
+import { resolvePlayerPortraitCandidates } from "@/lib/player-media-resolve";
+
 export type TeamBrand = {
   id: string;
   abbr: string;
@@ -417,6 +419,9 @@ export function nbaHeadshotUrl(playerId?: string | null): string | undefined {
  * Ordered headshot candidates. Never pair an ESPN athlete id with the NBA CDN
  * (that CDN returns HTTP 200 fallback.png - a blank image, no onError).
  * Never prefer ESPN CDN for an NBA person id (404s; Next/Image often won't fall back).
+ *
+ * Uses portrait-lookup registry first (ESPN athlete → NBA person CDN URL), then
+ * typed ids, then ESPN-before-NBA guesses for a bare numeric playerId.
  */
 export function playerHeadshotCandidates(options: {
   playerId?: string | null;
@@ -424,18 +429,27 @@ export function playerHeadshotCandidates(options: {
   nbaId?: string | null;
 }): string[] {
   const { playerId, espnId, nbaId } = options;
-  const urls: string[] = [];
+  const urls = resolvePlayerPortraitCandidates({
+    playerId,
+    espnId,
+    nbaId,
+  });
   const push = (url?: string) => {
     if (url && !urls.includes(url)) urls.push(url);
   };
 
-  push(espnHeadshotUrl(espnId));
-  push(nbaHeadshotUrl(nbaId));
-
+  // Typed ids are already handled by the portrait resolver; keep explicit
+  // fallthrough for call sites that only pass playerId.
   if (isNumericId(playerId) && playerId !== espnId && playerId !== nbaId) {
-    // Explore board rows are NBA person ids with no espnId/nbaId split.
-    push(nbaHeadshotUrl(playerId));
+    // ESPN first: real 404 triggers onError. NBA CDN silently returns fallback.png.
     push(espnHeadshotUrl(playerId));
+    const nbaGuess = nbaHeadshotUrl(playerId);
+    if (
+      nbaGuess &&
+      !urls.some((u) => u.includes(`/260x190/${playerId}.png`))
+    ) {
+      push(nbaGuess);
+    }
   }
 
   return urls;
