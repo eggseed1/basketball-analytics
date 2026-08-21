@@ -729,23 +729,35 @@ export async function getPlayerCareerTimelineSeasons(
   if (career.length === 0) return [];
 
   const uniqueSeasons = [...new Set(career.map((row) => row.season))];
-  // Cap expensive scrapes — recent seasons matter most for the timeline.
-  const overlaySeasons = [...uniqueSeasons]
+  // Cap expensive DARKO / BRef scrapes — recent seasons matter most.
+  const scrapeSeasons = [...uniqueSeasons]
     .sort((a, b) => b.localeCompare(a))
     .slice(0, 8);
+  // Always overlay every DRBL registry season the player has (precomputed, cheap).
+  const drblSeasons = uniqueSeasons.filter((season) => isDrblSeason(season));
+  const overlaySeasons = [
+    ...new Set([...scrapeSeasons, ...drblSeasons]),
+  ];
 
   const overlays = await Promise.all(
     overlaySeasons.map(async (season) => {
+      const scrape = scrapeSeasons.includes(season);
       const [darkoRows, brefRows, drblRows] = await Promise.all([
-        fetchDarkoSeason(season, {
-          ttlMs: darkoTtlMs(season),
-          staleMs: darkoStaleMs(season),
-        }).catch(() => []),
-        fetchBrefAdvancedSeason(season, {
-          ttlMs: brefTtlMs(season),
-          staleMs: brefStaleMs(season),
-        }).catch(() => []),
-        fetchDrblSeason(season).catch(() => []),
+        scrape
+          ? fetchDarkoSeason(season, {
+              ttlMs: darkoTtlMs(season),
+              staleMs: darkoStaleMs(season),
+            }).catch(() => [])
+          : Promise.resolve([]),
+        scrape
+          ? fetchBrefAdvancedSeason(season, {
+              ttlMs: brefTtlMs(season),
+              staleMs: brefStaleMs(season),
+            }).catch(() => [])
+          : Promise.resolve([]),
+        isDrblSeason(season)
+          ? fetchDrblSeason(season).catch(() => [])
+          : Promise.resolve([]),
       ]);
       const darkoById = new Map(darkoRows.map((row) => [row.nbaId, row]));
       const brefByKey = new Map(

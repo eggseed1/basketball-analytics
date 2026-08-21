@@ -4,6 +4,7 @@ import {
   type CareerBoardRow,
 } from "@/components/players/player-career-board";
 import { getPlayerPlayoffCareerSeasons } from "@/data/queries";
+import { attachDrblToPlayerSeasons } from "@/data/queries/players";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { PlayerSeason } from "@/data/types";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
@@ -96,7 +97,7 @@ export async function PlayerCareerIsland({
   const source =
     seasonType === "playoffs"
       ? await getPlayerPlayoffCareerSeasons(playerId)
-      : career;
+      : await attachDrblToPlayerSeasons(playerId, career).catch(() => career);
   const rows = toBoardRows(source);
   const seasons = rows.map((row) => row.season);
   const compare = pickCompare(seasons, season, compareSeason);
