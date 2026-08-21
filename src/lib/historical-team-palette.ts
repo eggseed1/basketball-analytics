@@ -1,7 +1,7 @@
 /**
  * Era-aware historical team color palettes for text marks.
  *
- * These are DRBL presentation colors for monograms — not official logo art.
+ * These are DRBL presentation colors for monograms - not official logo art.
  * Only high-confidence franchise-era colors are registered; uncertain eras
  * stay unregistered so the UI uses a neutral mark instead of guessing.
  *
@@ -65,12 +65,12 @@ function palette(
 }
 
 /**
- * Static registry — keyed by canonical ESPN id + historical abbr.
+ * Static registry - keyed by canonical ESPN id + historical abbr.
  * Do not map SEA → OKC Thunder blues/oranges.
  */
 export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
   {
-    // Seattle SuperSonics — classic green / gold (1967–2008)
+    // Seattle SuperSonics - classic green / gold (1967-2008)
     "25:SEA": palette(
       "#00653A",
       "#FFC200",
@@ -78,7 +78,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // New Jersey Nets — red / navy (pre-Brooklyn)
+    // New Jersey Nets - red / navy (pre-Brooklyn)
     "17:NJN": palette(
       "#002A5C",
       "#E03A3E",
@@ -106,15 +106,15 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // Charlotte Bobcats — orange / blue (not modern Hornets teal/purple)
+    // Charlotte Bobcats - orange / blue (not modern Hornets teal/purple)
     "30:CHA:Bobcats": palette(
       "#F26522",
       "#2B2C65",
-      "Charlotte Bobcats orange/navy identity (2004–14); not Hornets teal/purple.",
+      "Charlotte Bobcats orange/navy identity (2004-14); not Hornets teal/purple.",
       "high"
     ),
 
-    // Vancouver Grizzlies — turquoise / bronze
+    // Vancouver Grizzlies - turquoise / bronze
     "29:VAN": palette(
       "#00B2A9",
       "#F56600",
@@ -122,7 +122,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // New Orleans Jazz — purple / green
+    // New Orleans Jazz - purple / green
     "26:NOJ": palette(
       "#4A2583",
       "#6BB32E",
@@ -130,7 +130,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // Buffalo Braves — black / orange
+    // Buffalo Braves - black / orange
     "12:BUF": palette(
       "#E35205",
       "#000000",
@@ -138,7 +138,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // San Diego Clippers — blue / red
+    // San Diego Clippers - blue / red
     "12:SDC": palette(
       "#1D428A",
       "#C8102E",
@@ -146,7 +146,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "high"
     ),
 
-    // San Diego Rockets — red / white
+    // San Diego Rockets - red / white
     "10:SDR": palette(
       "#CE1141",
       "#FFFFFF",
@@ -154,7 +154,7 @@ export const HISTORICAL_TEAM_PALETTES: Readonly<Record<string, PaletteEntry>> =
       "medium"
     ),
 
-    // Kansas City Kings — blue / red
+    // Kansas City Kings - blue / red
     "23:KCK": palette(
       "#753BBD",
       "#C8102E",
@@ -192,7 +192,7 @@ export function resolveHistoricalTeamPalette(input: {
   const abbr = input.abbr.trim().toUpperCase();
   const nick = input.nickname?.trim();
 
-  // Bobcats share CHA abbr with later Hornets — nickname key required.
+  // Bobcats share CHA abbr with later Hornets - nickname key required.
   if (nick === "Bobcats") {
     const bobcats = HISTORICAL_TEAM_PALETTES[`${id}:CHA:Bobcats`];
     if (bobcats) return bobcats;

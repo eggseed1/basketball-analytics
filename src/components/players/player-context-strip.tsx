@@ -4,7 +4,7 @@ import type { StatComp } from "@/lib/player-stat-comps";
 import Link from "next/link";
 
 /**
- * Context section — similar players from the existing percentile comps.
+ * Context section - similar players from the existing percentile comps.
  * Does not replace or recompute the similarity algorithm.
  */
 export function PlayerContextStrip({
@@ -22,7 +22,7 @@ export function PlayerContextStrip({
   const historical = historicalComps.slice(0, 4);
   if (!league.length && !historical.length) {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         Similar-player comps for {metricLabel} are not available for this season
         row.
       </p>
@@ -40,7 +40,7 @@ export function PlayerContextStrip({
           comps={historical}
         />
       ) : null}
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         <Link
           href={compareHref}
           className="font-semibold underline-offset-2 hover:underline"
@@ -55,14 +55,14 @@ export function PlayerContextStrip({
 function CompList({ title, comps }: { title: string; comps: StatComp[] }) {
   return (
     <div>
-      <p className="mb-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
         {title}
       </p>
       <ul className="flex flex-col gap-1.5">
         {comps.map((c) => (
           <li
             key={`${c.playerId}-${c.season}-${c.value}`}
-            className="flex items-center justify-between gap-2 rounded-lg border border-border/70 bg-white/40 px-3 py-2 text-[13px]"
+            className="flex items-center justify-between gap-2 rounded-lg border border-border/70 bg-white/40 px-3 py-2 text-[14px]"
           >
             <PlayerIdentity
               playerId={c.playerId}

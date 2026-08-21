@@ -43,7 +43,7 @@ export const getTeamSeasonBoardCached = cache((season: string) =>
   getTeamSeasonBoardUncached(season)
 );
 
-/** Shared by roster + assets islands — one athlete-board load per request. */
+/** Shared by roster + assets islands - one athlete-board load per request. */
 export const getTeamRosterCached = cache(
   (teamId: string, season: string, minimumGames: number) =>
     getTeamRosterUncached(teamId, season, { minimumGames })
@@ -65,7 +65,7 @@ export const getGameShellCached = cache((gameId: string) =>
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
 
-/** Request-scoped peer boards for player core / compare (dedupe identical loads). */
+/** Shared board cohort for P18 depth islands still on this branch. */
 export const getFilteredPlayerSeasonsCached = cache(
   async (season: string, minimumGames: number) => {
     const { getFilteredPlayerSeasons } = await import("@/data/queries/players");

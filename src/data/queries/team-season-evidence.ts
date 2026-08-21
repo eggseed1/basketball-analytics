@@ -64,7 +64,7 @@ export async function getTeamSeasonEvidence(options: {
   season: string;
   abbreviation?: string;
   fullName?: string;
-  /** Override budget (tests) — unused when archive path returns immediately. */
+  /** Override budget (tests) - unused when archive path returns immediately. */
   budgetMs?: number;
 }): Promise<TeamSeasonEvidence> {
   const resolved = resolveCanonicalTeam(options.teamId);
@@ -72,7 +72,7 @@ export async function getTeamSeasonEvidence(options: {
     return emptyEvidence({
       teamId: options.teamId,
       season: options.season,
-      abbreviation: options.abbreviation ?? options.teamId ?? "—",
+      abbreviation: options.abbreviation ?? options.teamId ?? "-",
       fullName: options.fullName ?? options.abbreviation ?? options.teamId,
       error: `PROVIDER IDENTITY UNAVAILABLE: ${resolved.reason}`,
     });

@@ -88,7 +88,7 @@ export function TimeMachineSnapshot({
         action={
           <TransitionLink
             href={`/explore/games?season=${encodeURIComponent(season)}`}
-            className="text-[13px] text-muted-foreground underline-offset-4 hover:underline"
+            className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
           >
             Explore season
           </TransitionLink>
@@ -151,7 +151,7 @@ export function TimeMachineSnapshot({
           leadersDrbl.length ? (
             <TransitionLink
               href={`/explore/players?season=${encodeURIComponent(season)}&sort=drbl100&dir=desc`}
-              className="text-[13px] text-muted-foreground underline-offset-4 hover:underline"
+              className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
             >
               Full DRBL board
             </TransitionLink>
@@ -251,7 +251,7 @@ export function TimeMachineSnapshot({
         action={
           <TransitionLink
             href="/offseason"
-            className="text-[13px] text-muted-foreground underline-offset-4 hover:underline"
+            className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
           >
             Event archive
           </TransitionLink>
@@ -312,7 +312,7 @@ export function TimeMachineSnapshot({
                   date,
                   fromHistory: true,
                 })}
-                className="sports-pill text-[13px]"
+                className="sports-pill text-[14px]"
               >
                 {item.label}
               </TransitionLink>
@@ -329,7 +329,7 @@ export function TimeMachineSnapshot({
               date,
               fromHistory: true,
             })}
-            className="sports-pill text-[13px]"
+            className="sports-pill text-[14px]"
           >
             What happened on {date}?
           </TransitionLink>
@@ -341,12 +341,12 @@ export function TimeMachineSnapshot({
       </Section>
 
       <div className="flex flex-wrap gap-3 border-t border-border pt-6">
-        <TransitionLink href="/" className="sports-pill text-[13px]">
+        <TransitionLink href="/" className="sports-pill text-[14px]">
           Exit Time Machine
         </TransitionLink>
         <TransitionLink
           href="/history"
-          className="text-[13px] text-muted-foreground underline-offset-4 hover:underline"
+          className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
         >
           Choose another season
         </TransitionLink>
@@ -376,7 +376,7 @@ function StandingsColumn({
           <li key={r.canonicalTeamId}>
             <TransitionLink
               href={teamFromHistoryHref(r.canonicalTeamId, season, theme)}
-              className="flex items-center gap-2 px-3 py-2 text-[13px] hover:bg-secondary/40"
+              className="flex items-center gap-2 px-3 py-2 text-[14px] hover:bg-secondary/40"
             >
               <span className="w-5 tabular-nums text-muted-foreground">
                 {i + 1}
@@ -397,13 +397,13 @@ function StandingsColumn({
               <span className="tabular-nums text-muted-foreground">
                 {r.avgDiff != null
                   ? `${r.avgDiff >= 0 ? "+" : ""}${formatNumber(r.avgDiff, 1)}`
-                  : "—"}
+                  : "-"}
               </span>
             </TransitionLink>
           </li>
         ))}
       </ol>
-      <p className="border-t border-border px-3 py-2 text-[11px] text-muted-foreground">
+      <p className="border-t border-border px-3 py-2 text-[12px] text-muted-foreground">
         Ordered by season point differential (board proxy).
       </p>
     </div>
@@ -433,7 +433,7 @@ function LeaderColumn({
           <li key={`${r.playerId}-${r.metric}`}>
             <TransitionLink
               href={playerFromHistoryHref(r.playerId, season, theme)}
-              className="flex items-center gap-2 px-3 py-2 text-[13px] hover:bg-secondary/40"
+              className="flex items-center gap-2 px-3 py-2 text-[14px] hover:bg-secondary/40"
             >
               <span className="w-5 tabular-nums text-muted-foreground">
                 {i + 1}
@@ -445,7 +445,7 @@ function LeaderColumn({
               <span className="tabular-nums font-semibold">
                 {formatNumber(r.value, r.metric === "drbl100" ? 2 : 1)}
                 {unit ? (
-                  <span className="ml-1 text-[11px] font-normal text-muted-foreground">
+                  <span className="ml-1 text-[12px] font-normal text-muted-foreground">
                     {unit}
                   </span>
                 ) : null}

@@ -32,12 +32,12 @@ export function AnalysisBoard({
       <header className="flex flex-col gap-0.5 border-b border-border px-3 py-2">
         <h2 className="text-sm font-semibold tracking-tight">{title}</h2>
         {subtitle ? (
-          <p className="text-[11px] text-muted-foreground">{subtitle}</p>
+          <p className="text-[12px] text-muted-foreground">{subtitle}</p>
         ) : null}
       </header>
       <div className="min-h-0 flex-1 p-2">{children}</div>
       {footer ? (
-        <footer className="border-t border-border bg-muted/30 px-3 py-1.5 text-[11px] text-muted-foreground">
+        <footer className="border-t border-border bg-muted/30 px-3 py-1.5 text-[12px] text-muted-foreground">
           {footer}
         </footer>
       ) : null}

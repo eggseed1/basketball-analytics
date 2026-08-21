@@ -53,13 +53,13 @@ export function SeasonExplorer({
         {prevSeason ? (
           <TransitionLink
             href={historyHref({ ...base, season: prevSeason, date: undefined })}
-            className="sports-pill shrink-0 text-[13px]"
+            className="sports-pill shrink-0 text-[14px]"
             prefetch={false}
           >
             ← {prevSeason}
           </TransitionLink>
         ) : (
-          <span className="sports-pill shrink-0 text-[13px] opacity-40">←</span>
+          <span className="sports-pill shrink-0 text-[14px] opacity-40">←</span>
         )}
 
         <label className="sr-only" htmlFor="tm-season">
@@ -69,7 +69,7 @@ export function SeasonExplorer({
           id="tm-season"
           value={season}
           onChange={onSelect}
-          className="min-w-0 flex-1 rounded-md border border-border bg-card px-3 py-2 text-[15px] font-semibold tm-heading outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          className="min-w-0 flex-1 rounded-md border border-border bg-card px-3 py-2 text-[16px] font-semibold tm-heading outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           {seasons.map((s) => (
             <option key={s} value={s}>
@@ -81,13 +81,13 @@ export function SeasonExplorer({
         {nextSeason ? (
           <TransitionLink
             href={historyHref({ ...base, season: nextSeason, date: undefined })}
-            className="sports-pill shrink-0 text-[13px]"
+            className="sports-pill shrink-0 text-[14px]"
             prefetch={false}
           >
             {nextSeason} →
           </TransitionLink>
         ) : (
-          <span className="sports-pill shrink-0 text-[13px] opacity-40">→</span>
+          <span className="sports-pill shrink-0 text-[14px] opacity-40">→</span>
         )}
       </div>
     </nav>
@@ -132,13 +132,13 @@ export function DateExplorer({
       {prevDate ? (
         <TransitionLink
           href={historyHref({ season, theme, date: prevDate })}
-          className="sports-pill text-[13px]"
+          className="sports-pill text-[14px]"
           prefetch={false}
         >
           ← Prev day
         </TransitionLink>
       ) : (
-        <span className="sports-pill text-[13px] opacity-40">← Prev day</span>
+        <span className="sports-pill text-[14px] opacity-40">← Prev day</span>
       )}
 
       <label className="sr-only" htmlFor="tm-date">
@@ -155,13 +155,13 @@ export function DateExplorer({
       {nextDate ? (
         <TransitionLink
           href={historyHref({ season, theme, date: nextDate })}
-          className="sports-pill text-[13px]"
+          className="sports-pill text-[14px]"
           prefetch={false}
         >
           Next day →
         </TransitionLink>
       ) : (
-        <span className="sports-pill text-[13px] opacity-40">Next day →</span>
+        <span className="sports-pill text-[14px] opacity-40">Next day →</span>
       )}
     </nav>
   );
@@ -188,7 +188,7 @@ export function ThemeModeControl({
       <TransitionLink
         href={historyHref({ season, date, theme: "historical" })}
         className={cn(
-          "sports-pill text-[13px]",
+          "sports-pill text-[14px]",
           theme === "historical" &&
             "bg-foreground text-background hover:bg-foreground"
         )}
@@ -199,7 +199,7 @@ export function ThemeModeControl({
       <TransitionLink
         href={historyHref({ season, date, theme: "modern" })}
         className={cn(
-          "sports-pill text-[13px]",
+          "sports-pill text-[14px]",
           theme === "modern" &&
             "bg-foreground text-background hover:bg-foreground"
         )}

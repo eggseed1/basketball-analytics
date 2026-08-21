@@ -82,7 +82,7 @@ export function AppLink({
     );
   }
 
-  // Internal — soft client navigation (one path).
+  // Internal - soft client navigation (one path).
   return (
     <TransitionLink
       href={href}

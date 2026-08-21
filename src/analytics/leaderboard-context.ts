@@ -11,7 +11,7 @@ import {
 export type LeaderboardContextLine = {
   id: string;
   label: string;
-  /** 0–100 among the current filtered board. */
+  /** 0-100 among the current filtered board. */
   percentile: number;
   display: string;
   primary?: boolean;
@@ -176,7 +176,7 @@ export type LeaderboardContextIndex = {
 
 /**
  * Build percentile pools once for the current filtered board.
- * Call from the table — O(players × dimensions), no extra network.
+ * Call from the table - O(players × dimensions), no extra network.
  */
 export function buildLeaderboardContextIndex(
   players: readonly StatCompRow[],
@@ -225,7 +225,7 @@ export function leaderboardContextIndexFromPools(options: {
 
 /**
  * Compact Level-2 context for one leaderboard row.
- * Uses only the precomputed board pools — no per-row fetches.
+ * Uses only the precomputed board pools - no per-row fetches.
  */
 export function buildLeaderboardRowContext(
   player: StatCompRow,

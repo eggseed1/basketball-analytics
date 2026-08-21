@@ -42,7 +42,7 @@ type LiveTeamsLoader = () => Promise<Team[]>;
 
 let liveLoaderOverride: LiveTeamsLoader | null = null;
 
-/** Nickname by abbr — mirrors team-map without exporting private maps. */
+/** Nickname by abbr - mirrors team-map without exporting private maps. */
 const NICKNAMES: Record<string, string> = {
   ATL: "Hawks",
   BOS: "Celtics",
@@ -184,7 +184,7 @@ export async function getTeamsSoft(): Promise<Team[]> {
 
 /**
  * Resolve a filter param against the catalog (and identity layer).
- * Invalid tokens stay unresolved — not confused with provider outage.
+ * Invalid tokens stay unresolved - not confused with provider outage.
  */
 export function resolveTeamFilterAgainstCatalog(
   teamParam: string,
@@ -206,7 +206,7 @@ export function resolveTeamFilterAgainstCatalog(
     if (hit) {
       return { status: "resolved", team: hit, canonicalId: id };
     }
-    // Identity knows the team even if catalog row missing — synthesize from identity.
+    // Identity knows the team even if catalog row missing - synthesize from identity.
     const synthesized = teamsFromCanonicalIdentity().find((t) => t.id === id);
     if (synthesized) {
       return { status: "resolved", team: synthesized, canonicalId: id };

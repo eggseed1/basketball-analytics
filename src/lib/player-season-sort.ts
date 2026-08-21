@@ -17,11 +17,21 @@ export type PlayerSeasonSortKey =
   | "freeThrowPct"
   | "effectiveFieldGoalPct"
   | "trueShootingPct"
+  | "relativeTrueShootingPct"
   | "usagePct"
+  | "age"
+  | "twoPointPct"
+  | "turnoverPct"
+  | "threePointersAttempted"
+  | "freeThrowsAttempted"
+  | "offensiveRebounds"
+  | "defensiveRebounds"
   | "offensiveRating"
   | "defensiveRating"
   | "netRating"
   | "darkoDpm"
+  | "darkoOff"
+  | "darkoDef"
   | "lebron"
   | "drbl100"
   | "r1Points"
@@ -44,11 +54,21 @@ const SORT_KEYS = new Set<string>([
   "freeThrowPct",
   "effectiveFieldGoalPct",
   "trueShootingPct",
+  "relativeTrueShootingPct",
   "usagePct",
+  "age",
+  "twoPointPct",
+  "turnoverPct",
+  "threePointersAttempted",
+  "freeThrowsAttempted",
+  "offensiveRebounds",
+  "defensiveRebounds",
   "offensiveRating",
   "defensiveRating",
   "netRating",
   "darkoDpm",
+  "darkoOff",
+  "darkoDef",
   "lebron",
   "drbl100",
   "r1Points",
@@ -73,7 +93,9 @@ export function defaultPlayerSeasonSortDir(
   if (key === "playerName" || key === "teamName" || key === "position") {
     return "asc";
   }
-  if (key === "defensiveRating" || key === "tov") return "asc";
+  if (key === "defensiveRating" || key === "tov" || key === "turnoverPct") {
+    return "asc";
+  }
   // DRBL/100 and WAR1 default to descending.
   return "desc";
 }

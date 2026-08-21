@@ -37,7 +37,7 @@ import {
 export const metadata = {
   title: "Transactions",
   description:
-    "NBA transaction events from the ESPN archive — factual date, team, and description.",
+    "NBA transaction events from the ESPN archive - factual date, team, and description.",
 };
 
 interface PageProps {
@@ -55,7 +55,7 @@ function one(
 function resolveTeamFilter(raw?: string): string | undefined {
   if (!raw?.trim()) return undefined;
   const normalized = normalizeTeamParam(raw.trim());
-  // Offseason archive is ESPN-scoped — canonical id is the ESPN team id.
+  // Offseason archive is ESPN-scoped - canonical id is the ESPN team id.
   return normalized?.canonicalTeamId ?? raw.trim();
 }
 
@@ -184,28 +184,28 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           {offseasonYear} NBA Offseason
         </h1>
-        <p className="max-w-2xl text-[15px] text-muted-foreground">
+        <p className="max-w-2xl text-[16px] text-muted-foreground">
           What was recorded from {window.startDate} to {window.endDate} (into{" "}
-          {window.upcomingSeason}). Free-text ESPN source events — not a
+          {window.upcomingSeason}). Free-text ESPN source events - not a
           structured trade ledger.
         </p>
       </header>
 
       <section className="sports-card grid gap-3 px-4 py-4 sm:grid-cols-3 sm:px-5">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             This offseason
           </p>
-          <p className="mt-1 text-[22px] font-bold tabular-nums tracking-tight">
+          <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
             {pulse.eventCount}
           </p>
           <p className="text-[12px] text-muted-foreground">transaction events</p>
         </div>
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             This week
           </p>
-          <p className="mt-1 text-[22px] font-bold tabular-nums tracking-tight">
+          <p className="mt-1 text-[24px] font-bold tabular-nums tracking-tight">
             {pulse.eventsThisWeek}
           </p>
           <p className="text-[12px] text-muted-foreground">
@@ -213,12 +213,12 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           </p>
         </div>
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
             Most active
           </p>
           {pulse.mostActiveTeam ? (
             <>
-              <p className="mt-1 text-[22px] font-bold tracking-tight">
+              <p className="mt-1 text-[24px] font-bold tracking-tight">
                 {brandFor(
                   pulse.mostActiveTeam.teamId,
                   pulse.mostActiveTeam.teamAbbr
@@ -229,7 +229,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
               </p>
             </>
           ) : (
-            <p className="mt-1 text-[13px] text-muted-foreground">No events yet</p>
+            <p className="mt-1 text-[14px] text-muted-foreground">No events yet</p>
           )}
         </div>
       </section>
@@ -249,7 +249,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         <div className="query-updating-content flex flex-col gap-5">
           {detailBundle ? (
             <section className="flex flex-col gap-2">
-              <h2 className="text-[15px] font-bold tracking-tight">
+              <h2 className="text-[16px] font-bold tracking-tight">
                 Event detail
               </h2>
               <TransactionEventDetail
@@ -262,7 +262,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           ) : null}
 
           <section className="flex flex-col gap-2">
-            <h2 className="text-[15px] font-bold tracking-tight">Latest</h2>
+            <h2 className="text-[16px] font-bold tracking-tight">Latest</h2>
             <div className="sports-card px-4 py-2 sm:px-5">
               {latestFeed.length ? (
                 latestFeed.map((item) =>
@@ -285,7 +285,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                   )
                 )
               ) : (
-                <p className="py-6 text-center text-[13px] text-muted-foreground">
+                <p className="py-6 text-center text-[14px] text-muted-foreground">
                   No events in this view.
                 </p>
               )}
@@ -293,7 +293,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           </section>
 
           <section className="flex flex-col gap-2">
-            <h2 className="text-[15px] font-bold tracking-tight">
+            <h2 className="text-[16px] font-bold tracking-tight">
               Most active teams
             </h2>
             <p className="text-[12px] text-muted-foreground">
@@ -335,7 +335,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                 );
               })}
               {!activity.length ? (
-                <li className="py-6 text-center text-[13px] text-muted-foreground">
+                <li className="py-6 text-center text-[14px] text-muted-foreground">
                   No team activity for these filters.
                 </li>
               ) : null}
@@ -344,7 +344,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
 
           <section className="flex flex-col gap-3">
             <div className="flex flex-wrap items-end justify-between gap-2">
-              <h2 className="text-[15px] font-bold tracking-tight">
+              <h2 className="text-[16px] font-bold tracking-tight">
                 Offseason timeline
               </h2>
               <p className="text-[12px] text-muted-foreground">
@@ -370,7 +370,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                       page: String(timeline.feedPage - 1),
                     }).toString()}`}
                     scroll={false}
-                    className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                    className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
                   >
                     Previous
                   </TransitionLink>
@@ -387,7 +387,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                       page: String(timeline.feedPage + 1),
                     }).toString()}`}
                     scroll={false}
-                    className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                    className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
                   >
                     Next
                   </TransitionLink>
@@ -399,7 +399,7 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
       </OffseasonClientShell>
 
       <section className="sports-card px-4 py-4 text-[12px] leading-relaxed text-muted-foreground sm:px-5">
-        <h2 className="text-[13px] font-bold text-foreground">
+        <h2 className="text-[14px] font-bold text-foreground">
           Archive coverage
         </h2>
         <p className="mt-2">

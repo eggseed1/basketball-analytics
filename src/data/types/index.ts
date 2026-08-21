@@ -8,6 +8,7 @@ export type { GameBoxScore } from "./game-box-score";
 export type { GamePlayByPlay, PlayByPlayEvent } from "./play-by-play";
 export type { Shot } from "./shot";
 export type { BasketballFilters, ShotFilters } from "./filters";
+export { DEFAULT_PLAYER_MINIMUM_MINUTES } from "./filters";
 export type {
   StandingRow,
   ConferenceStandings,

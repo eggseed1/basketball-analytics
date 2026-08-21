@@ -21,12 +21,9 @@ import { type, textLinkClassName } from "@/lib/design-system";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   playerSeasonChipHref,
+  type PlayerDepthTab,
   type PlayerSeasonKind,
 } from "@/lib/player-destination";
-import {
-  type PlayerPageCapabilities,
-  type PlayerPageView,
-} from "@/lib/player-page-contract";
 import type { ThemeMode } from "@/themes/era-theme";
 import { cn } from "@/lib/utils";
 
@@ -51,8 +48,6 @@ export type PlayerDestinationIdentityProps = {
   birthDate?: string | null;
   draftInfo?: string | null;
   college?: string | null;
-  /** Precomputed verified portrait from media registry. */
-  portraitUrl?: string | null;
   /** When set, prefer historical mark / logo over modern franchise branding. */
   historicalBrand?: HistoricalTeamBrand | null;
   /** Resolve chip / row marks via era brands (no modern OKC for Seattle). */
@@ -61,9 +56,9 @@ export type PlayerDestinationIdentityProps = {
   recentSeasons?: PlayerSeason[];
   fromHistory?: boolean;
   themeMode?: ThemeMode;
-  view?: PlayerPageView;
-  caps: PlayerPageCapabilities;
+  depth?: PlayerDepthTab;
   seasonType?: PlayerSeasonKind;
+  compareSeason?: string;
   children?: ReactNode;
   /** Percentile ranking + compare graph - sits beside identity, not inside it. */
   hero?: ReactNode;
@@ -88,16 +83,15 @@ export function PlayerDestinationIdentity({
   birthDate,
   draftInfo,
   college,
-  portraitUrl = null,
   historicalBrand,
   useHistoricalBranding = false,
   seasonOptions,
   recentSeasons = [],
   fromHistory = false,
   themeMode = "historical",
-  view = "overview",
-  caps,
+  depth = "career",
   seasonType = "regular",
+  compareSeason,
   children,
   hero,
 }: PlayerDestinationIdentityProps) {
@@ -139,8 +133,6 @@ export function PlayerDestinationIdentity({
                 nbaId={nbaId}
                 name={displayName}
                 teamKey={teamKey}
-                portraitUrl={portraitUrl}
-                registryOnly
                 size="lg"
                 priority
               />
@@ -227,7 +219,7 @@ export function PlayerDestinationIdentity({
                             href={playerSeasonChipHref(playerId, row.season, {
                               fromHistory,
                               themeMode,
-                              view,
+                              depth,
                               seasonType,
                             })}
                             scroll={false}
@@ -285,9 +277,9 @@ export function PlayerDestinationIdentity({
         <PlayerDepthNav
           playerId={playerId}
           season={season}
-          view={view}
-          caps={caps}
+          depth={depth}
           seasonType={seasonType}
+          compare={compareSeason}
           fromHistory={fromHistory}
           themeMode={themeMode}
         />

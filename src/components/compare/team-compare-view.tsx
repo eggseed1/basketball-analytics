@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 
@@ -17,6 +16,7 @@ import { MetricHelp } from "@/components/learn/metric-help";
 import { TeamSeasonEvidenceCompareSection } from "@/components/compare/team-season-evidence-section";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { TextLink } from "@/components/ui/text-link";
 import { teamComparePath } from "@/analytics/compare-team-seasons";
 import {
   canonicalSeasonFromStartYear,
@@ -75,7 +75,7 @@ function TeamSearchField({
       {selectedId && selectedName ? (
         <div className="flex items-center gap-2 rounded-md border border-border px-3 py-2">
           <TeamLogo teamKey={selectedId} size="xs" />
-          <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
+          <span className="min-w-0 flex-1 truncate text-[14px] font-semibold">
             {selectedName}
           </span>
           <button
@@ -112,7 +112,7 @@ function TeamSearchField({
                 }}
               >
                 <TeamLogo teamKey={hit.teamKey ?? hit.id} size="xs" />
-                <span className="text-[13px] font-semibold">{hit.name}</span>
+                <span className="text-[14px] font-semibold">{hit.name}</span>
                 {hit.subtitle ? (
                   <span className="text-[12px] text-muted-foreground">
                     {hit.subtitle}
@@ -210,7 +210,7 @@ export function TeamComparePicker({
         type="button"
         disabled={pending || !a.id || !b.id}
         onClick={go}
-        className="rounded-md bg-foreground px-3 py-2 text-[13px] font-semibold text-background disabled:opacity-50"
+        className="rounded-md bg-foreground px-3 py-2 text-[14px] font-semibold text-background disabled:opacity-50"
       >
         {pending ? "Loading…" : "Compare teams"}
       </button>
@@ -275,10 +275,10 @@ function CategoryBlock({
   return (
     <section className="sports-card px-4 py-3 sm:px-5">
       <div className="mb-1 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="text-[15px] font-bold tracking-tight">{title}</h3>
+        <h3 className="text-[16px] font-bold tracking-tight">{title}</h3>
         <EdgeBadge edge={edge} labelA={labelA} labelB={labelB} />
       </div>
-      <p className="mb-2 text-[11px] text-muted-foreground">
+      <p className="mb-2 text-[12px] text-muted-foreground">
         Left = {labelA} · Right = {labelB} · badge = category winner
       </p>
       {rows.map((d) => (
@@ -333,14 +333,14 @@ export function TeamCompareView({
             <TeamLogo teamKey={result.sideB.abbreviation} size="lg" />
           ) : null}
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
               {result.mode === "same_team"
                 ? "Team season compare"
                 : "Team vs team"}
               {" · "}
               methodology v{result.methodology.version}
             </p>
-            <h2 className="text-[22px] font-bold tracking-tight sm:text-[26px]">
+            <h2 className="text-[24px] font-bold tracking-tight sm:text-[24px]">
               {title}
             </h2>
           </div>
@@ -401,7 +401,7 @@ export function TeamCompareView({
       />
 
       <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-        <h3 className="text-[15px] font-bold tracking-tight">
+        <h3 className="text-[16px] font-bold tracking-tight">
           How are they different?
         </h3>
         {result.howDifferent.aStronger.length ? (
@@ -409,7 +409,7 @@ export function TeamCompareView({
             <p className="text-[12px] font-semibold text-muted-foreground">
               {labelA} stronger
             </p>
-            <ul className="mt-1 list-disc pl-4 text-[13px]">
+            <ul className="mt-1 list-disc pl-4 text-[14px]">
               {result.howDifferent.aStronger.map((line) => (
                 <li key={line}>{line}</li>
               ))}
@@ -421,7 +421,7 @@ export function TeamCompareView({
             <p className="text-[12px] font-semibold text-muted-foreground">
               {labelB} stronger
             </p>
-            <ul className="mt-1 list-disc pl-4 text-[13px]">
+            <ul className="mt-1 list-disc pl-4 text-[14px]">
               {result.howDifferent.bStronger.map((line) => (
                 <li key={line}>{line}</li>
               ))}
@@ -429,7 +429,7 @@ export function TeamCompareView({
           </div>
         ) : null}
         {result.howDifferent.notes.length ? (
-          <ul className="list-disc pl-4 text-[13px] text-muted-foreground">
+          <ul className="list-disc pl-4 text-[14px] text-muted-foreground">
             {result.howDifferent.notes.map((line) => (
               <li key={line}>{line}</li>
             ))}
@@ -444,19 +444,17 @@ export function TeamCompareView({
         labelB={labelB}
       />
 
-      <p className="flex flex-wrap gap-3 text-[13px] font-semibold">
-        <Link
+      <p className="flex flex-wrap gap-3 text-[14px]">
+        <TextLink
           href={`/teams/${encodeURIComponent(result.sideA.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideA.season)}`}
-          className="underline-offset-2 hover:underline"
         >
           Explore {labelA} →
-        </Link>
-        <Link
+        </TextLink>
+        <TextLink
           href={`/teams/${encodeURIComponent(result.sideB.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideB.season)}`}
-          className="underline-offset-2 hover:underline"
         >
           Explore {labelB} →
-        </Link>
+        </TextLink>
       </p>
 
       <details className="text-[12px] text-muted-foreground">
@@ -481,7 +479,7 @@ function CoverageCard({
 }) {
   return (
     <div className="rounded-lg border border-border/70 bg-white/40 px-3 py-2">
-      <p className="text-[13px] font-semibold">
+      <p className="text-[14px] font-semibold">
         {side.abbreviation} {side.season}
         {side.incomplete ? (
           <span className="ml-2 font-normal text-muted-foreground">

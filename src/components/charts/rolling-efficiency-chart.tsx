@@ -16,6 +16,10 @@ import {
 import type { RollingEfficiencyPoint } from "@/lib/rolling-efficiency";
 import { formatPct } from "@/lib/format";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export interface RollingEfficiencyChartProps {
   points: RollingEfficiencyPoint[];
@@ -78,21 +82,19 @@ export function RollingEfficiencyChart({
                 }}
               />
               <Tooltip
+                wrapperStyle={rechartsFrostWrapperStyle}
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const row = payload[0]?.payload as (typeof data)[number];
                   return (
-                    <div
-                      role="tooltip"
-                      className="rounded-lg border border-border bg-popover px-3 py-2 text-sm shadow-md"
-                    >
+                    <FrostRechartsTooltip active={active}>
                       <p className="font-medium">{row.gameDate}</p>
                       <p>Game TS {formatPct(row.trueShootingPct)}</p>
                       <p>Rolling TS {formatPct(row.rollingTrueShootingPct)}</p>
                       <p className="text-muted-foreground">
                         {row.points} PTS vs {nbaTeamAbbr(row.opponentTeamId)}
                       </p>
-                    </div>
+                    </FrostRechartsTooltip>
                   );
                 }}
               />

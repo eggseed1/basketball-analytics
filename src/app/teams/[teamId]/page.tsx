@@ -6,19 +6,18 @@ import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { TeamArcIsland } from "@/components/teams/team-arc-island";
 import { TeamAskLinks } from "@/components/teams/team-ask-links";
 import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
+import { TeamContextBar } from "@/components/teams/team-context-bar";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
-import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
-import { TeamPageNav } from "@/components/teams/team-page-nav";
+import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
+import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
+import { TeamTabScaffold } from "@/components/teams/team-tab-scaffold";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
-import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
-import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import {
   canonicalSeasonFromStartYear,
@@ -30,11 +29,17 @@ import type { TeamSeasonStats } from "@/data/types";
 import type { StandingRow } from "@/data/types/standings";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
-import { resolveTeamIdentityFallback } from "@/lib/team-destination";
 import {
-  assessTeamCoverage,
-  buildTeamIdentityStatements,
+  parseTeamPageTab,
+  parseTeamRateMode,
+  parseTeamSeasonKind,
+  resolveTeamIdentityFallback,
+  type TeamPageHrefOpts,
+} from "@/lib/team-destination";
+import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
+import {
   enrichTraitsWithPrior,
   findStandingRow,
   formatTraitPriorDelta,
@@ -46,7 +51,6 @@ import {
   resolveActiveEraTheme,
 } from "@/themes/era-theme";
 import {
-  historyHref,
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
 
@@ -87,9 +91,12 @@ export default async function TeamProfilePage({
   const { teamId } = await params;
   const sp = await searchParams;
   const seasonParam = Array.isArray(sp.season) ? sp.season[0] : sp.season;
+  const tab = parseTeamPageTab(Array.isArray(sp.tab) ? sp.tab[0] : sp.tab);
+  const seasonType = parseTeamSeasonKind(
+    Array.isArray(sp.seasonType) ? sp.seasonType[0] : sp.seasonType
+  );
+  const rate = parseTeamRateMode(Array.isArray(sp.rate) ? sp.rate[0] : sp.rate);
   const arcParam = Array.isArray(sp.arc) ? sp.arc[0] : sp.arc;
-  const gamesPageRaw = Array.isArray(sp.gamesPage) ? sp.gamesPage[0] : sp.gamesPage;
-  const gamesPage = Math.max(1, Number.parseInt(gamesPageRaw ?? "1", 10) || 1);
   const showingFullArc = arcParam === "full";
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = seasonParam ?? currentSeason;
@@ -197,21 +204,35 @@ export default async function TeamProfilePage({
     ? findStandingRow(standingRows, boardTeam, modernBrand)
     : null;
 
-  const identity = buildTeamIdentityStatements(traits);
   const grouped = groupTraitsForPerformance(traits);
-  const coverage = assessTeamCoverage({
-    hasTeamBoard: boardAvailable,
-    traitCount: traits.length,
-    rosterCount: 0,
-    gameCount: 0,
-    transactionCount: 0,
-  });
-  const coverageLines = coverage.lines.filter(
-    (l) =>
-      l.label === "Current season board" ||
-      l.label === "League-context traits" ||
-      l.label === "PBP / lineups"
-  );
+  const ranked = boardTeam
+    ? buildTeamRankedMetrics({
+        team: boardTeam,
+        league,
+        prior,
+        standing,
+        traits,
+      })
+    : [];
+  const scorecard = ranked.filter((m) => m.group === "scorecard");
+  const offenseMetrics = ranked.filter((m) => m.group === "offense");
+  const defenseMetrics = ranked.filter((m) => m.group === "defense");
+  const factorMetrics = ranked.filter((m) => m.group === "factors");
+  const strengths = [...traits]
+    .filter((t) => t.percentile >= 67)
+    .slice(0, 3);
+  const weaknesses = [...traits]
+    .filter((t) => t.percentile <= 33)
+    .sort((a, b) => a.percentile - b.percentile)
+    .slice(0, 3);
+  const hrefOpts: TeamPageHrefOpts = {
+    season,
+    tab,
+    seasonType,
+    rate,
+    fromHistory,
+    themeMode: themeMode === "modern" ? "modern" : "historical",
+  };
 
   const seasonChips = [
     ...new Set([
@@ -234,38 +255,22 @@ export default async function TeamProfilePage({
     ? resolveActiveEraTheme(season, themeMode)
     : null;
 
-  const backHref = fromHistory
-    ? historyHref({
-        season,
-        theme: themeMode === "modern" ? "modern" : undefined,
-      })
-    : `/explore/teams?season=${encodeURIComponent(season)}`;
+  const atmosphere = brandAtmosphereColors(
+    useHistoricalMark && historicalBrand?.palette
+      ? historicalBrand.palette.primary
+      : modernBrand?.primary,
+    useHistoricalMark && historicalBrand?.palette
+      ? historicalBrand.palette.secondary
+      : modernBrand?.secondary
+  );
 
   const body = (
-    <DestinationClientShell className="relative">
+    <DestinationClientShell>
       <PageAtmosphere
-        colorA={
-          historicalBrand?.palette?.primary ?? modernBrand?.primary ?? null
-        }
-        colorB={
-          historicalBrand?.palette?.secondary ??
-          modernBrand?.secondary ??
-          modernBrand?.primary ??
-          null
-        }
+        colorA={atmosphere?.colorA}
+        colorB={atmosphere?.colorB}
       />
-      <main className="relative z-[1] site-shell flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-        <p>
-          <TransitionLink
-            href={backHref}
-            className="text-[13px] font-semibold text-muted-foreground"
-          >
-            ← {fromHistory ? "Time Machine" : "Teams board"}
-          </TransitionLink>
-        </p>
-
-        <TeamPageNav />
-
+      <main className="site-shell relative z-[1] flex flex-col gap-4 py-5 sm:gap-5 sm:py-7">
         <TeamDestinationIdentity
           teamId={teamId}
           team={identityTeam}
@@ -275,312 +280,264 @@ export default async function TeamProfilePage({
           modernBrand={modernBrand}
           historicalBrand={historicalBrand}
           useHistoricalMark={useHistoricalMark}
-          askTeamId={askTeamId}
-          txTeamId={txTeamId}
-          priorSeason={priorSeason}
           boardAvailable={boardAvailable}
           fromHistory={fromHistory}
           themeMode={themeMode === "modern" ? "modern" : "historical"}
+          hrefOpts={hrefOpts}
           snapshotExtra={
             traits[0]
-              ? `${Math.round(traits[0].percentile)}th pct · ${traits[0].label}`
+              ? {
+                  value: `${Math.round(traits[0].percentile)}th`,
+                  label: traits[0].label,
+                }
               : boardWarning
-          }
-          coverageSummary={
-            <>
-              Coverage: {coverage.level}
-              {boardWarning ? (
-                <>
-                  {" · "}
-                  <span className="text-foreground">{boardWarning}</span>
-                </>
-              ) : null}
-              {" · "}
-              {coverageLines
-                .map(
-                  (l) =>
-                    `${l.label} ${l.status === "ok" ? "✓" : l.status === "partial" ? "partial" : "—"}`
-                )
-                .join(" · ")}
-              . Deep sections stream below. Missing metrics are not zeroes. PBP
-              unavailable.
-            </>
+                ? { value: "-", label: boardWarning }
+                : null
           }
         />
 
-        {boardAvailable && analysis ? (
-          <>
-        {/* HOW GOOD — core from board */}
-        <section
-          id="performance"
-          className="scroll-mt-16 flex flex-col gap-4"
-          aria-label="Performance"
-        >
-          <div className="flex flex-wrap items-end justify-between gap-2">
-            <div>
-              <h2 className="text-[17px] font-bold tracking-tight">
+        <TeamPrimaryNav
+          teamId={teamId}
+          tab={tab}
+          hrefOpts={hrefOpts}
+        />
+        <TeamContextBar teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
+
+        {tab === "overview" ? (
+          boardAvailable && analysis ? (
+            <TeamOverviewBoard
+              scorecard={scorecard}
+              offense={offenseMetrics}
+              defense={defenseMetrics}
+              factors={factorMetrics}
+              strengths={strengths}
+              weaknesses={weaknesses}
+              howTheyWin={analysis.howTheyWin}
+              traits={traits}
+            />
+          ) : (
+            <section
+              id="performance"
+              className="scroll-mt-16 flex flex-col gap-3"
+              aria-label="Overview"
+            >
+              <h2 className="text-[20px] font-bold tracking-tight">
                 How good are they?
               </h2>
-              <p className="text-[13px] text-muted-foreground">
-                Analytical profile from the team season board — Level-2 context
-                on each number. No invented overall composite.
+              <p className="text-[14px] text-muted-foreground">
+                Season board unavailable for {season}. Identity above uses
+                team-era resolution - rates are not fabricated as zeroes.
               </p>
-            </div>
-            <a
-              href="#identity"
-              className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-            >
-              What&apos;s changing →
-            </a>
-          </div>
+            </section>
+          )
+        ) : null}
 
-          <TraitGroup title="Overall" traits={grouped.overall} />
-          <TraitGroup
-            title="Efficiency & shooting"
-            traits={grouped.efficiency}
+        {tab === "players" ? (
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading roster…" />}
+          >
+            <TeamRosterIsland
+              teamId={resolvedTeamId}
+              season={season}
+              teamKey={identityTeam.abbreviation}
+            />
+          </Suspense>
+        ) : null}
+
+        {tab === "offense" ? (
+          <TeamTabScaffold
+            id="offense"
+            title="Offense"
+            reason="Shot maps, play types, transition splits, and tracking land in P1. Overview already shows offense board percentiles."
+            planned={[
+              "Shot location map",
+              "Play-type profile",
+              "Transition vs half court",
+              "Ball movement / drives",
+              "Clutch offense",
+            ]}
           />
-          <TraitGroup title="Offense" traits={grouped.offense} />
-          <TraitGroup title="Defense" traits={grouped.defense} />
-        </section>
+        ) : null}
 
-        {/* HOW THEY WIN + IDENTITY + TRENDS — same board wave */}
-        <section
-          id="identity"
-          className="scroll-mt-16 flex flex-col gap-4"
-          aria-label="Identity"
-        >
-          <div>
-            <h2 className="text-[17px] font-bold tracking-tight">
-              How do they win?
-            </h2>
-            <p className="text-[13px] text-muted-foreground">
-              Strongest measurable traits vs the league this season.
-            </p>
-          </div>
+        {tab === "defense" ? (
+          <TeamTabScaffold
+            id="defense"
+            title="Defense"
+            reason="Opponent shot maps, rim deterrence, and hustle need tracking feeds. Overview shows opponent PPG and steal/block board ranks."
+            planned={[
+              "Opponent shot map",
+              "Rim protection",
+              "Three-point prevention",
+              "Defensive play types",
+              "Hustle and contests",
+            ]}
+          />
+        ) : null}
 
-          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-            <ul className="flex flex-col gap-3">
-              {analysis.howTheyWin.map((finding) => (
-                <li
-                  key={finding.id}
-                  className="rounded-md bg-secondary/50 px-3 py-3"
-                >
-                  <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
-                    {finding.eyebrow}
-                  </p>
-                  <p className="text-[15px] font-semibold">{finding.title}</p>
-                  <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
-                    {finding.body}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          </div>
+        {tab === "lineups" ? (
+          <TeamTabScaffold
+            id="lineups"
+            title="Lineups"
+            reason="Five-man lineups, on/off, and WOWY require possession-level PBP. Every lineup result will show possessions when that feed ships."
+            planned={[
+              "Five-player lineup table",
+              "On/off explorer",
+              "Pair matrix",
+              "WOWY",
+              "Clutch lineups",
+            ]}
+          />
+        ) : null}
 
-          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-            <div>
-              <h3 className="text-[15px] font-bold tracking-tight">
-                Statistical identity
-              </h3>
-              <p className="text-[13px] text-muted-foreground">
-                Measurable Top / Bottom bands — not stylistic labels. Deeper
-                identity arrives with PBP later.
-              </p>
-            </div>
-            {identity.length === 0 ? (
-              <p className="text-[13px] text-muted-foreground">
-                No Top-10 / Bottom-10 identity traits for this sample yet.
-              </p>
-            ) : (
-              <ul className="flex flex-col gap-2">
-                {identity.map((s) => (
-                  <li
-                    key={s.id}
-                    className="rounded-md border border-border/70 bg-white/40 px-3 py-2 text-[13px]"
-                  >
-                    <span className="font-semibold">{s.text}</span>
-                    <span className="ml-2 text-muted-foreground">
-                      {Math.round(s.percentile)}th pct
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+        {tab === "games" ? (
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading games…" />}
+          >
+            <TeamGamesIsland
+              team={identityTeam}
+              brand={modernBrand}
+              season={season}
+            />
+          </Suspense>
+        ) : null}
 
-          <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-            <div>
-              <h3 className="text-[15px] font-bold tracking-tight">
-                What&apos;s changing?
-              </h3>
-              <p className="text-[13px] text-muted-foreground">
-                {analysis.vsPrior
-                  ? `${analysis.vsPrior.priorSeason} → ${season} · existing team-profile noise floors`
-                  : "Prior-season team board unavailable for comparison."}
-              </p>
-            </div>
-            {analysis.vsPrior?.finding ? (
-              <div className="rounded-md bg-secondary/50 px-3 py-3">
-                <p className="text-[15px] font-semibold">
-                  {analysis.vsPrior.finding.title}
-                </p>
-                <p className="mt-1 text-[13px] text-muted-foreground">
-                  {analysis.vsPrior.finding.body}
+        {tab === "splits" ? (
+          <TeamTabScaffold
+            id="splits"
+            title="Splits"
+            reason="Home/road, rest, clutch, and opponent splits need game-level aggregation endpoints."
+            planned={[
+              "Home / away",
+              "Rest and back-to-backs",
+              "Clutch",
+              "Monthly splits",
+              "Side-by-side split compare",
+            ]}
+          />
+        ) : null}
+
+        {tab === "playoffs" ? (
+          <TeamTabScaffold
+            id="playoffs"
+            title="Playoffs"
+            reason="Series navigation and playoff-only tables stay separate from the regular-season board. Empty until a playoff ledger is wired."
+            planned={[
+              "Seed and series record",
+              "Regular season vs playoffs",
+              "Series game log",
+              "Playoff rotation",
+            ]}
+          />
+        ) : null}
+
+        {tab === "history" ? (
+          <Suspense
+            fallback={
+              <DestinationSectionSkeleton label="Loading Team Arc…" />
+            }
+          >
+            <TeamArcIsland
+              teamRouteKey={teamId}
+              teamId={resolvedTeamId}
+              teamName={displayName}
+              abbreviation={identityTeam.abbreviation}
+              season={season}
+              priorSeason={priorSeason}
+              showingFullArc={showingFullArc}
+              teamEspnId={askTeamId}
+              currentBoard={league}
+              priorBoard={priorLeague}
+            />
+          </Suspense>
+        ) : null}
+
+        {tab === "organization" ? (
+          <div className="flex flex-col gap-4">
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading Cap & assets…" />
+              }
+            >
+              <TeamAssetsIsland
+                teamId={askTeamId}
+                abbreviation={identityTeam.abbreviation}
+                season={season}
+                teamKey={identityTeam.abbreviation}
+              />
+            </Suspense>
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading transactions…" />
+              }
+            >
+              <TeamTransactionsIsland teamFilterId={txTeamId} />
+            </Suspense>
+            <section
+              id="ask"
+              className="scroll-mt-16 flex flex-col gap-3"
+              aria-label="Ask DRBL"
+            >
+              <div>
+                <h2 className="text-[20px] font-bold tracking-tight">
+                  Ask DRBL about this team
+                </h2>
+                <p className="text-[14px] text-muted-foreground">
+                  Prefills supported team-board and offseason queries only.
                 </p>
               </div>
+              <div className="sports-card p-4 sm:p-5">
+                <TeamAskLinks
+                  teamName={displayName}
+                  season={season}
+                  teamId={askTeamId}
+                  priorSeason={priorSeason}
+                />
+              </div>
+            </section>
+          </div>
+        ) : null}
+
+        {tab === "stats" ? (
+          <div className="flex flex-col gap-4">
+            {boardAvailable && analysis ? (
+              <section
+                id="all-stats"
+                className="scroll-mt-16 flex flex-col gap-4"
+                aria-label="All Stats"
+              >
+                <div>
+                  <h2 className="text-[20px] font-bold tracking-tight">
+                    All Stats
+                  </h2>
+                  <p className="text-[14px] text-muted-foreground">
+                    Full board ledger. Overview explains; this tab proves.
+                    Rate mode is stored as {rate} - counting stats stay
+                    per-game until a totals endpoint is selected.
+                  </p>
+                </div>
+                <TraitGroup title="Overall" traits={grouped.overall} />
+                <TraitGroup
+                  title="Efficiency & shooting"
+                  traits={grouped.efficiency}
+                />
+                <TraitGroup title="Offense" traits={grouped.offense} />
+                <TraitGroup title="Defense" traits={grouped.defense} />
+              </section>
             ) : null}
-            {analysis.vsPrior?.changes.length ? (
-              <ul className="flex flex-col">
-                {analysis.vsPrior.changes.map((c) => (
-                  <li
-                    key={c.id}
-                    className="flex items-baseline justify-between gap-3 border-b border-border/60 py-2 last:border-0"
-                  >
-                    <span className="text-[13px] font-semibold">{c.label}</span>
-                    <span className="text-[14px] font-bold tabular-nums">
-                      {c.deltaDisplay}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p className="text-[13px] text-muted-foreground">
-                No clear season-to-season team deltas cleared the noise filter.
-              </p>
-            )}
-            <p className="text-[12px] text-muted-foreground">
-              Season evolution charts are deferred — Team Arc below lists the
-              multi-year board history; selector above switches the profile year.
-            </p>
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading Season Evidence…" />
+              }
+            >
+              <TeamEvidenceIsland
+                teamId={askTeamId}
+                season={season}
+                abbreviation={identityTeam.abbreviation}
+                fullName={displayName}
+              />
+            </Suspense>
           </div>
-        </section>
-          </>
-        ) : (
-          <section
-            id="performance"
-            className="scroll-mt-16 flex flex-col gap-3"
-            aria-label="Performance"
-          >
-            <h2 className="text-[17px] font-bold tracking-tight">
-              How good are they?
-            </h2>
-            <p className="text-[13px] text-muted-foreground">
-              Season board unavailable for {season}. Identity above uses
-              team-era resolution — rates are not fabricated as zeroes.
-            </p>
-          </section>
-        )}
-
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading Team Arc…" />
-          }
-        >
-          <TeamArcIsland
-            teamRouteKey={teamId}
-            teamId={resolvedTeamId}
-            teamName={displayName}
-            abbreviation={identityTeam.abbreviation}
-            season={season}
-            priorSeason={priorSeason}
-            showingFullArc={showingFullArc}
-            teamEspnId={askTeamId}
-            currentBoard={league}
-            priorBoard={priorLeague}
-          />
-        </Suspense>
-
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading Season Evidence…" />
-          }
-        >
-          <TeamEvidenceIsland
-            teamId={askTeamId}
-            season={season}
-            abbreviation={identityTeam.abbreviation}
-            fullName={displayName}
-          />
-        </Suspense>
-
-        <Suspense
-          fallback={<DestinationSectionSkeleton label="Loading roster…" />}
-        >
-          <TeamRosterIsland
-            teamId={resolvedTeamId}
-            season={season}
-            teamKey={identityTeam.abbreviation}
-          />
-        </Suspense>
-
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading Cap & assets…" />
-          }
-        >
-          <TeamAssetsIsland
-            teamId={askTeamId}
-            abbreviation={identityTeam.abbreviation}
-            season={season}
-            teamKey={identityTeam.abbreviation}
-          />
-        </Suspense>
-
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading front office…" />
-          }
-        >
-          <TeamFrontOfficeIsland teamId={resolvedTeamId} season={season} />
-        </Suspense>
-
-        <Suspense
-          fallback={<DestinationSectionSkeleton label="Loading games…" />}
-        >
-          <TeamGamesIsland
-            team={identityTeam}
-            brand={modernBrand}
-            season={season}
-            gamesPage={gamesPage}
-            fromHistory={fromHistory}
-            theme={themeMode === "modern" ? "modern" : undefined}
-          />
-        </Suspense>
-
-        <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
-
-        <TeamMatchupPreview canonicalTeamId={resolvedTeamId} />
-
-        <Suspense
-          fallback={
-            <DestinationSectionSkeleton label="Loading transactions…" />
-          }
-        >
-          <TeamTransactionsIsland teamFilterId={txTeamId} />
-        </Suspense>
-
-        <section
-          id="ask"
-          className="scroll-mt-16 flex flex-col gap-3"
-          aria-label="Ask DRBL"
-        >
-          <div>
-            <h2 className="text-[17px] font-bold tracking-tight">
-              Ask DRBL about this team
-            </h2>
-            <p className="text-[13px] text-muted-foreground">
-              Prefills supported team-board and offseason queries only.
-            </p>
-          </div>
-          <div className="sports-card p-4 sm:p-5">
-            <TeamAskLinks
-              teamName={displayName}
-              season={season}
-              teamId={askTeamId}
-              priorSeason={priorSeason}
-            />
-          </div>
-        </section>
+        ) : null}
       </main>
     </DestinationClientShell>
   );
@@ -599,7 +556,7 @@ function TraitGroup({
   if (!traits.length) return null;
   return (
     <div className="flex flex-col gap-2">
-      <h3 className="text-[13px] font-bold uppercase tracking-wide text-muted-foreground">
+      <h3 className="text-[14px] font-bold uppercase tracking-wide text-muted-foreground">
         {title}
       </h3>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

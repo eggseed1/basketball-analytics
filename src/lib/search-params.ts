@@ -1,5 +1,6 @@
 import type { BasketballFilters, Position } from "@/data/types";
 import { parseMinimumNumber } from "@/data/queries";
+import { parseDraftClassParam } from "@/lib/draft-class";
 import { normalizeTeamParam } from "@/lib/team-identity";
 
 const POSITIONS: Position[] = ["PG", "SG", "SF", "PF", "C"];
@@ -9,6 +10,16 @@ function first(
 ): string | undefined {
   if (Array.isArray(value)) return value[0];
   return value;
+}
+
+export function parseConferenceParam(
+  value: string | string[] | undefined
+): "East" | "West" | undefined {
+  const raw = first(value)?.trim();
+  if (!raw) return undefined;
+  if (raw === "East" || raw.toLowerCase() === "east") return "East";
+  if (raw === "West" || raw.toLowerCase() === "west") return "West";
+  return undefined;
 }
 
 /**
@@ -25,6 +36,8 @@ export function filtersFromSearchParams(
   const teamRaw = first(params.team);
   const player = first(params.player);
   const positionRaw = first(params.position);
+  const conference = parseConferenceParam(params.conference);
+  const draftClass = parseDraftClassParam(params.draftClass);
   const minimumMinutes = parseMinimumNumber(params.minimumMinutes);
   const minimumGames = parseMinimumNumber(params.minimumGames);
   const start = first(params.startDate);
@@ -47,6 +60,8 @@ export function filtersFromSearchParams(
     teamAbbr: normalized?.abbr,
     player: player || undefined,
     position,
+    conference,
+    draftClass,
     minimumMinutes,
     minimumGames,
     dateRange:

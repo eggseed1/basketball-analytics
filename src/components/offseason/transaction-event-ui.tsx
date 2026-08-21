@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { useState } from "react";
 
 import type {
@@ -17,7 +16,8 @@ import { sourceTextCategoryLabel } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNav } from "@/components/continuity/query-nav";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
-import { AppLink } from "@/components/ui/app-link";
+import { TeamIdentity } from "@/components/teams/team-identity";
+import { TextLink } from "@/components/ui/text-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { monthLabel } from "@/data/providers/transactions/offseason-window";
 import { cn } from "@/lib/utils";
@@ -52,34 +52,35 @@ export function TransactionEventRow({
         compact && "py-2"
       )}
     >
-      <Link
-        href={`/teams/${event.teamId}`}
+      <TeamIdentity
+        teamKey={event.teamId}
+        label={abbr}
         className="mt-0.5 shrink-0"
-        aria-label={abbr}
+        nameClassName="no-underline hover:no-underline"
       >
         <TeamLogo teamKey={abbr} size={compact ? "xs" : "sm"} />
-      </Link>
+      </TeamIdentity>
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <time className="text-[12px] font-semibold tabular-nums text-muted-foreground">
             {event.date}
           </time>
-          <Link
-            href={`/teams/${event.teamId}`}
-            className="text-[13px] font-bold underline-offset-2 hover:underline"
-          >
-            {abbr}
-          </Link>
-          <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <TeamIdentity
+            teamKey={event.teamId}
+            label={abbr}
+            className="inline-flex"
+            nameClassName="text-[14px] font-bold"
+          />
+          <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             {presentation.title}
           </span>
           {!isTradeRelated ? (
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
               · {sourceTextCategoryLabel(event.sourceTextCategory)}
             </span>
           ) : null}
         </div>
-        <p className="mt-1 text-[11px] font-semibold text-muted-foreground">
+        <p className="mt-1 text-[12px] font-semibold text-muted-foreground">
           {presentation.sourceCountLabel}
           {isTradeRelated
             ? " · ESPN transaction archive"
@@ -88,33 +89,22 @@ export function TransactionEventRow({
         <TransactionDescription
           description={event.description}
           resolutions={playerResolutions}
-          className={cn(
-            "mt-0.5 text-[14px] leading-relaxed text-foreground",
-            compact && "text-[13px]"
-          )}
+          className="type-body mt-0.5 leading-relaxed text-foreground"
         />
-        <p className="mt-1 text-[11px] text-muted-foreground">
+        <p className="mt-1 text-[12px] text-muted-foreground">
           Season {event.season}
           {!isTradeRelated ? " · ESPN transaction archive" : ""}
           {!hideClusterHint && event.relatedClusterId
             ? " · part of a related-event cluster"
             : ""}{" "}
           ·{" "}
-          <Link
-            href={`/offseason?event=${encodeURIComponent(event.id)}`}
-            className="font-semibold underline-offset-2 hover:underline"
-          >
+          <TextLink href={`/offseason?event=${encodeURIComponent(event.id)}`}>
             Detail
-          </Link>
+          </TextLink>
           {event.sourceUrl ? (
             <>
               {" · "}
-              <AppLink
-                href={event.sourceUrl}
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                ESPN source
-              </AppLink>
+              <TextLink href={event.sourceUrl}>ESPN source</TextLink>
             </>
           ) : null}
         </p>
@@ -157,15 +147,15 @@ export function RelatedEventClusterCard({
             <p className="text-[14px] font-bold tracking-tight">
               {abbrs.join(" ↔ ")}
             </p>
-            <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+            <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
               {presentation.title}
             </span>
           </div>
-          <p className="mt-1 text-[13px] text-muted-foreground">
+          <p className="mt-1 text-[14px] text-muted-foreground">
             {presentation.sourceCountLabel}
             {isTradeRelated
-              ? " — source evidence from the ESPN transaction archive (not a verified structured trade ledger)."
-              : " — assembled from source events, not a verified structured trade ledger."}
+              ? " - source evidence from the ESPN transaction archive (not a verified structured trade ledger)."
+              : " - assembled from source events, not a verified structured trade ledger."}
           </p>
           <button
             type="button"
@@ -198,7 +188,7 @@ export function RelatedEventClusterCard({
                 </p>
                 <p className="mt-1">
                   These source events appear to describe the same{" "}
-                  {abbrs.join("–")} transaction.
+                  {abbrs.join("-")} transaction.
                 </p>
                 <p className="mt-2 font-semibold text-foreground">
                   Assembled from related transaction events
@@ -216,12 +206,11 @@ export function RelatedEventClusterCard({
                   claimed from free text.
                 </p>
                 <p className="mt-2">
-                  <Link
+                  <TextLink
                     href={`/offseason?event=${encodeURIComponent(events[0]!.id)}`}
-                    className="font-semibold underline-offset-2 hover:underline"
                   >
                     Open cluster detail →
-                  </Link>
+                  </TextLink>
                 </p>
               </div>
             </div>
@@ -297,10 +286,10 @@ export function OffseasonFilters({
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           Offseason
           <select
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={year}
             onChange={(e) => setYear(e.target.value)}
           >
@@ -311,10 +300,10 @@ export function OffseasonFilters({
             ))}
           </select>
         </label>
-        <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           Team
           <select
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={team}
             onChange={(e) => setTeam(e.target.value)}
           >
@@ -326,10 +315,10 @@ export function OffseasonFilters({
             ))}
           </select>
         </label>
-        <label className="flex min-w-[160px] flex-1 flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex min-w-[160px] flex-1 flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           Search descriptions
           <input
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Trade, draft, waiver…"
@@ -337,28 +326,28 @@ export function OffseasonFilters({
         </label>
       </div>
       <div className="flex flex-wrap items-end gap-3">
-        <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           From
           <input
             type="date"
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={from}
             onChange={(e) => setFrom(e.target.value)}
           />
         </label>
-        <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           To
           <input
             type="date"
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={to}
             onChange={(e) => setTo(e.target.value)}
           />
         </label>
-        <label className="flex flex-col gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <label className="flex flex-col gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           NBA season
           <input
-            className="rounded-md border border-border bg-background px-3 py-2 text-[13px] font-semibold text-foreground"
+            className="rounded-md border border-border bg-background px-3 py-2 text-[14px] font-semibold text-foreground"
             value={seasonVal}
             onChange={(e) => setSeasonVal(e.target.value)}
             placeholder="Optional YYYY-YY"
@@ -368,13 +357,13 @@ export function OffseasonFilters({
           type="button"
           onClick={apply}
           disabled={pending}
-          className="rounded-md bg-foreground px-4 py-2 text-[13px] font-bold text-background disabled:opacity-50"
+          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
         >
           {pending ? "Updating…" : "Apply"}
         </button>
       </div>
-      <p className="text-[11px] text-muted-foreground">
-        Search matches free-text ESPN descriptions — not entity-aware player
+      <p className="text-[12px] text-muted-foreground">
+        Search matches free-text ESPN descriptions - not entity-aware player
         lookup. Same-day activity stays separate unless reciprocal evidence
         shows one underlying transaction (then source-record count explains
         the evidence).
@@ -392,7 +381,7 @@ export function TimelineByMonth({
 }) {
   if (!byMonth.length) {
     return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
         No transaction events for these filters.
       </p>
     );
@@ -428,7 +417,7 @@ export function TimelineFeedByMonth({
 }) {
   if (!byMonth.length) {
     return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
         No transaction events for these filters.
       </p>
     );
@@ -485,22 +474,28 @@ export function TransactionEventDetail({
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex items-center gap-3">
-        <TeamLogo teamKey={abbr} size="md" />
+        <TeamIdentity
+          teamKey={event.teamId}
+          label={abbr}
+          className="shrink-0"
+          nameClassName="no-underline hover:no-underline"
+        >
+          <TeamLogo teamKey={abbr} size="md" />
+        </TeamIdentity>
         <div>
           <p className="text-[12px] font-semibold tabular-nums text-muted-foreground">
             {event.date} · Season {event.season}
           </p>
-          <Link
-            href={`/teams/${event.teamId}`}
-            className="text-[16px] font-bold underline-offset-2 hover:underline"
-          >
-            {abbr}
-          </Link>
+          <TeamIdentity
+            teamKey={event.teamId}
+            label={abbr}
+            nameClassName="text-[16px] font-bold"
+          />
         </div>
       </div>
 
       <div>
-        <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
           {presentation.title}
         </p>
         <p className="mt-0.5 text-[12px] font-semibold text-muted-foreground">
@@ -515,13 +510,13 @@ export function TransactionEventDetail({
         <TransactionDescription
           description={event.description}
           resolutions={playerResolutionsByEventId?.[event.id]}
-          className="mt-1 text-[15px] leading-relaxed"
+          className="mt-1 text-[16px] leading-relaxed"
         />
       </div>
 
       {cluster && related.length ? (
         <div className="rounded-md border border-border bg-secondary/30 px-3 py-3">
-          <p className="text-[13px] font-bold tracking-tight">
+          <p className="text-[14px] font-bold tracking-tight">
             {clusterAbbrs?.join(" ↔ ") ?? "Related teams"}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
@@ -534,7 +529,7 @@ export function TransactionEventDetail({
                 <TransactionDescription
                   description={e.description}
                   resolutions={playerResolutionsByEventId?.[e.id]}
-                  className="text-[13px] leading-relaxed text-muted-foreground"
+                  className="text-[14px] leading-relaxed text-muted-foreground"
                 />
               </li>
             ))}
@@ -543,7 +538,7 @@ export function TransactionEventDetail({
             <p className="font-semibold text-foreground">Event interpretation</p>
             <p className="mt-1">
               This appears to describe the same{" "}
-              {clusterAbbrs?.join("–") ?? "multi-team"} transaction.
+              {clusterAbbrs?.join("-") ?? "multi-team"} transaction.
             </p>
             <p className="mt-2 font-semibold text-foreground">
               Assembled from related transaction events
@@ -569,7 +564,7 @@ export function TransactionEventDetail({
         <p className="text-[12px] text-muted-foreground">
           This is a single-team ESPN source event. One-sided wording (for
           example “acquired X for draft considerations”) is shown exactly as
-          recorded — DRBL does not invent the other side of the deal from free
+          recorded - DRBL does not invent the other side of the deal from free
           text.
         </p>
       )}
@@ -584,13 +579,13 @@ export function TransactionEventDetail({
             Source-text category
           </dt>
           <dd>
-            {sourceTextCategoryLabel(event.sourceTextCategory)} — classifies
+            {sourceTextCategoryLabel(event.sourceTextCategory)} - classifies
             wording only; not a complete package claim
           </dd>
         </div>
         <div>
           <dt className="font-semibold text-foreground">Record id</dt>
-          <dd className="font-mono text-[11px]">{event.id}</dd>
+          <dd className="font-mono text-[12px]">{event.id}</dd>
         </div>
         <div>
           <dt className="font-semibold text-foreground">Dataset</dt>

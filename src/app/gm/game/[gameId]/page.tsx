@@ -41,14 +41,14 @@ function GameBody() {
     <div className="flex flex-col gap-4">
       <div className="sports-card flex flex-col gap-3 p-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+          <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             Step 3 · Results
           </p>
-          <h2 className="text-[22px] font-bold tracking-tight">
+          <h2 className="text-[24px] font-bold tracking-tight">
             {box.awayTeamId.toUpperCase()} {box.awayScore} @{" "}
             {box.homeTeamId.toUpperCase()} {box.homeScore}
           </h2>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             Day {box.day} · {box.season - 1}-{String(box.season).slice(-2)}
           </p>
         </div>
@@ -63,7 +63,7 @@ function GameBody() {
       <TeamTable title={`${box.homeTeamId.toUpperCase()} box`} rows={home} />
       <Link
         href="/gm"
-        className="text-center text-[13px] font-semibold underline-offset-4 hover:underline"
+        className="text-center text-[14px] font-semibold underline-offset-4 hover:underline"
       >
         Continue to your plan
       </Link>

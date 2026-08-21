@@ -37,6 +37,8 @@ export interface BasketballDataProvider {
   ): Promise<PlayerSeason | null>;
   /** Optional full-career season rows (providers may synthesize from season loads). */
   getPlayerCareerSeasons?(playerId: string): Promise<PlayerSeason[]>;
+  /** Optional playoff career totals - never mix into regular-season career. */
+  getPlayerPlayoffCareerSeasons?(playerId: string): Promise<PlayerSeason[]>;
   getTeamSeasons?(season?: string): Promise<TeamSeason[]>;
   getTeamSeason?(teamId: string, season: string): Promise<TeamSeason | null>;
   getPlayerGameLog(
@@ -46,7 +48,7 @@ export interface BasketballDataProvider {
   getGames(season?: string): Promise<Game[]>;
   getGame(gameId: string): Promise<Game | null>;
   getGameBoxScore(gameId: string): Promise<GameBoxScore | null>;
-  /** Optional — providers without PBP can omit or return null. */
+  /** Optional - providers without PBP can omit or return null. */
   getGamePlayByPlay?(gameId: string): Promise<GamePlayByPlay | null>;
   getShots(filters?: ShotFilters): Promise<Shot[]>;
 }

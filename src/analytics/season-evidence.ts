@@ -1,5 +1,5 @@
 /**
- * Season Evidence — deterministic representative games for a season profile.
+ * Season Evidence - deterministic representative games for a season profile.
  *
  * Uses lightweight GameSummary scoreboard rows only (no Game Lab / box fetch).
  * Descriptive, not causal. No opaque “best game” score.
@@ -29,7 +29,7 @@ export type SeasonEvidenceCategoryDef = {
   rankHints: string[];
 };
 
-/** Supported v1 categories — schedule scores only. */
+/** Supported v1 categories - schedule scores only. */
 export const SEASON_EVIDENCE_CATEGORIES: SeasonEvidenceCategoryDef[] = [
   {
     id: "largest_win",
@@ -70,10 +70,10 @@ export const SEASON_EVIDENCE_CATEGORIES: SeasonEvidenceCategoryDef[] = [
 
 /** Documented as unavailable without per-game team box aggregates. */
 export const SEASON_EVIDENCE_UNSUPPORTED = [
-  "Best / worst eFG% or TS% game — not on schedule rows; requires box/Game Lab aggregates.",
-  "Best rebounding game — no team game rebound fields on GameSummary.",
-  "Turnover differential — not on GameSummary.",
-  "Pace / possessions / win probability / PBP importance — not available.",
+  "Best / worst eFG% or TS% game - not on schedule rows; requires box/Game Lab aggregates.",
+  "Best rebounding game - no team game rebound fields on GameSummary.",
+  "Turnover differential - not on GameSummary.",
+  "Pace / possessions / win probability / PBP importance - not available.",
 ] as const;
 
 export type SeasonEvidenceMethodology = {
@@ -128,7 +128,7 @@ export type SeasonEvidenceGameCard = {
   teamScore: number;
   opponentScore: number;
   margin: number;
-  result: "W" | "L" | "—";
+  result: "W" | "L" | "-";
   findings: Array<{
     categoryId: SeasonEvidenceCategoryId;
     label: string;
@@ -167,7 +167,7 @@ type Perspective = {
   oppScore: number;
   margin: number;
   oppLabel: string;
-  result: "W" | "L" | "—";
+  result: "W" | "L" | "-";
 };
 
 function subjectAbbrs(subject: SeasonEvidenceSubject): Set<string> {
@@ -181,7 +181,7 @@ function subjectAbbrs(subject: SeasonEvidenceSubject): Set<string> {
 
 /**
  * Franchise match for schedule rows.
- * When abbreviations are present on the game, prefer abbr — never treat bare
+ * When abbreviations are present on the game, prefer abbr - never treat bare
  * numeric team ids as cross-provider universal (ESPN 25 ≠ BDL 25).
  * Category formulas are unchanged; this is identity input only.
  */
@@ -233,7 +233,7 @@ function perspective(
   const oppLabel = isHome
     ? game.awayTeamAbbr ?? game.awayTeamName ?? "OPP"
     : game.homeTeamAbbr ?? game.homeTeamName ?? "OPP";
-  let result: "W" | "L" | "—" = "—";
+  let result: "W" | "L" | "-" = "-";
   if (teamScore > oppScore) result = "W";
   else if (teamScore < oppScore) result = "L";
   return {
@@ -501,7 +501,7 @@ export function buildTeamSeasonEvidence(options: {
 /**
  * Prefer evidence categories that illustrate rank ledger advantages.
  * Schedule-level data cannot illustrate Efficiency / Shooting / Rebounding /
- * Possessions with eFG/TS/ORB/TOV — those stay uncovered here.
+ * Possessions with eFG/TS/ORB/TOV - those stay uncovered here.
  */
 export function preferredEvidenceForRankHints(
   categoryLabels: string[]
@@ -516,7 +516,7 @@ export function preferredEvidenceForRankHints(
 }
 
 /**
- * Compact Team Profile glimpse — prefers descriptive categories already present
+ * Compact Team Profile glimpse - prefers descriptive categories already present
  * on the evidence result. Does not re-score games.
  */
 export const TEAM_PROFILE_EVIDENCE_SUMMARY_ORDER: SeasonEvidenceCategoryId[] = [

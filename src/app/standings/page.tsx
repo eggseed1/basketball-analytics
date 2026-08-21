@@ -39,20 +39,20 @@ export default async function StandingsPage() {
           <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
             Standings
           </h1>
-          <p className="mt-1 max-w-xl text-[15px] text-muted-foreground">
+          <p className="mt-1 max-w-xl text-[16px] text-muted-foreground">
             {season} conference race - W/L, games back, and scoring margin.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
             href="/explore/teams"
-            className="rounded-full bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+            className="rounded-full bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
           >
             Team boards
           </Link>
           <Link
             href="/explore/players"
-            className="rounded-full bg-secondary px-4 py-2 text-[13px] font-semibold"
+            className="rounded-full bg-secondary px-4 py-2 text-[14px] font-semibold"
           >
             Players
           </Link>

@@ -16,7 +16,7 @@ export type AskRecentEntry = {
   at: number;
 };
 
-/** Stable empty snapshot — never allocate a new [] for getServerSnapshot / empty. */
+/** Stable empty snapshot - never allocate a new [] for getServerSnapshot / empty. */
 export const EMPTY_ASK_RECENT: readonly AskRecentEntry[] = Object.freeze([]);
 
 let cachedSnapshot: AskRecentEntry[] = EMPTY_ASK_RECENT as AskRecentEntry[];
@@ -54,7 +54,7 @@ function notifySubscribers() {
   window.dispatchEvent(new Event(RECENT_EVENT));
 }
 
-/** SSR / server snapshot — stable forever. */
+/** SSR / server snapshot - stable forever. */
 export function getServerAskRecent(): AskRecentEntry[] {
   return EMPTY_ASK_RECENT as AskRecentEntry[];
 }
@@ -96,7 +96,7 @@ export function subscribeAskRecent(onStoreChange: () => void): () => void {
 
   const onStorage = (event: StorageEvent) => {
     if (event.key !== null && event.key !== ASK_RECENT_STORAGE_KEY) return;
-    // Another tab/window changed localStorage — refresh cache, then notify.
+    // Another tab/window changed localStorage - refresh cache, then notify.
     commitSnapshot(readFromLocalStorage());
     onStoreChange();
   };

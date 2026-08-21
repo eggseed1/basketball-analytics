@@ -1,5 +1,5 @@
 /**
- * Career Resume — deterministic Peak / Prime / Longevity / Trajectory.
+ * Career Resume - deterministic Peak / Prime / Longevity / Trajectory.
  *
  * IMPORTANT DATA CONSTRAINT
  * -------------------------
@@ -140,7 +140,7 @@ function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {
   return total / Math.max(1, row.gamesPlayed);
 }
 
-/** Documented Career Production Index — season-true counting composite. */
+/** Documented Career Production Index - season-true counting composite. */
 export function careerProductionIndex(row: PlayerSeason): number {
   const ppg = perGame(row, "points");
   const apg = perGame(row, "assists");
@@ -166,7 +166,7 @@ export function isCareerQualifyingSeason(row: PlayerSeason): boolean {
   );
 }
 
-/** One row per season — prefer multi-team aggregate, else highest gamesPlayed. */
+/** One row per season - prefer multi-team aggregate, else highest gamesPlayed. */
 export function dedupeCareerSeasons(career: PlayerSeason[]): PlayerSeason[] {
   const bySeason = new Map<string, PlayerSeason[]>();
   for (const row of career) {
@@ -404,13 +404,13 @@ function buildTransitions(
 
 /**
  * Deterministic Career Resume from career PlayerSeason rows.
- * Pure — no network. Does not invent awards or impact history.
+ * Pure - no network. Does not invent awards or impact history.
  */
 export function computeCareerResume(options: {
   playerId: string;
   playerName: string;
   career: PlayerSeason[];
-  /** Season currently viewed — used to flag incomplete current. */
+  /** Season currently viewed - used to flag incomplete current. */
   viewingSeason?: string;
 }): CareerResume {
   const { playerId, playerName, career, viewingSeason } = options;

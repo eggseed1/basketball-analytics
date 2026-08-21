@@ -19,7 +19,7 @@ export interface MetricDef {
   value: (row: DashboardPlayer) => number;
   /** Format for axis / tooltip. */
   format: (value: number) => string;
-  /** Prefer fraction axes as 0–100 display. */
+  /** Prefer fraction axes as 0-100 display. */
   asPercent?: boolean;
 }
 
@@ -102,7 +102,7 @@ export function buildHistogram(
     const displayEnd = metric.asPercent ? end * 100 : end;
     return {
       id: `${metric.key}:${i}`,
-      label: `${displayStart.toFixed(0)}–${displayEnd.toFixed(0)}`,
+      label: `${displayStart.toFixed(0)}-${displayEnd.toFixed(0)}`,
       start,
       end,
       count: 0,

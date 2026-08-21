@@ -1,12 +1,12 @@
 /**
  * Client-safe game-side team identity helpers.
- * Sync / in-memory only — no queries, no Node/fs.
+ * Sync / in-memory only - no queries, no Node/fs.
  *
  * After historical transforms, Game.homeTeamId / awayTeamId are canonical
  * (ESPN string). Provider ids live in homeProviderTeamId / awayProviderTeamId
  * with teamIdProvider naming the namespace.
  *
- * Display abbr/name must use team-era identity for the game season when known —
+ * Display abbr/name must use team-era identity for the game season when known -
  * never current franchise branding alone (e.g. 1969 SEA ≠ OKC Thunder).
  */
 
@@ -95,7 +95,7 @@ export function normalizeGameTeamSide(input: {
   }
 
   // Prefer provider-supplied labels only when they do not look like a known
-  // current-franchise anachronism for this canonical id — era stamping fixes
+  // current-franchise anachronism for this canonical id - era stamping fixes
   // that next. Keep raw abbr when it resolves to the same franchise.
   const rawAbbr = input.abbr?.trim()?.toUpperCase();
   const rawName = input.name?.trim();
@@ -127,7 +127,7 @@ type GameTeamFields = Pick<
 
 /**
  * Stamp season-aware team-era display onto a game row.
- * Canonical ids unchanged — only abbr/name for historical truth.
+ * Canonical ids unchanged - only abbr/name for historical truth.
  *
  * Requires `teamIdProvider` so we know homeTeamId/awayTeamId are canonical
  * ESPN franchise ids (never stamp eras onto ambiguous bare BDL numerics).
@@ -171,7 +171,7 @@ export function applyHistoricalTeamEraToGame(game: Game): Game {
  * 3. Era / canonical fallbacks
  *
  * Historical abbrs (SEA, NJN, …) intentionally do not resolve to modern logos
- * via TEAM_BRANDS — UI shows text identity rather than anachronistic marks.
+ * via TEAM_BRANDS - UI shows text identity rather than anachronistic marks.
  */
 export function gameSideBrandKey(
   game: GameTeamFields,
@@ -251,7 +251,7 @@ export function gameSideDisplayName(
 /**
  * Cheap, sync upgrade for legacy cache rows and mixed provider shells.
  * Idempotent when already normalized. Requires an explicit provider namespace
- * (on the row or as fallback) — never guesses ESPN vs BDL from bare numbers.
+ * (on the row or as fallback) - never guesses ESPN vs BDL from bare numbers.
  * Always applies team-era display for the game season.
  */
 export function ensureGameTeamIdentity(

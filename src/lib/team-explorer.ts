@@ -1,5 +1,5 @@
 /**
- * Team Intelligence V2 helpers — assembly / presentation only.
+ * Team Intelligence V2 helpers - assembly / presentation only.
  * Does not change analyzeTeamProfile methodology.
  */
 
@@ -40,7 +40,7 @@ export type TeamRosterBuckets = {
   rotation: PlayerSeason[];
   /** Leading scorers (PPG). */
   leadingScorers: PlayerSeason[];
-  /** Highest DARKO when present — otherwise empty (no invented value score). */
+  /** Highest DARKO when present - otherwise empty (no invented value score). */
   highestValue: PlayerSeason[];
 };
 
@@ -97,7 +97,7 @@ export function enrichTraitsWithPrior(
   });
 }
 
-/** Measurable identity lines — Top/Bottom bands from league percentiles. */
+/** Measurable identity lines - Top/Bottom bands from league percentiles. */
 export function buildTeamIdentityStatements(
   traits: TeamTrait[],
   limit = 6
@@ -231,7 +231,7 @@ export function teamIdsForMatch(
   return ids;
 }
 
-/** BDL schedule ids — match only against homeProviderTeamId / awayProviderTeamId. */
+/** BDL schedule ids - match only against homeProviderTeamId / awayProviderTeamId. */
 export function teamScheduleProviderIdsForMatch(
   team: TeamSeasonStats,
   brand?: TeamBrand | null
@@ -259,7 +259,7 @@ export function gameInvolvesTeam(
 ): boolean {
   const ids = teamIdsForMatch(team, brand);
   if (ids.has(game.homeTeamId) || ids.has(game.awayTeamId)) return true;
-  // BDL ids only against retained provider ids — never against canonical ESPN ids.
+  // BDL ids only against retained provider ids - never against canonical ESPN ids.
   const scheduleIds = teamScheduleProviderIdsForMatch(team, brand);
   const homeProvider = game.homeProviderTeamId;
   const awayProvider = game.awayProviderTeamId;
@@ -349,7 +349,7 @@ export function askDrblTeamHref(query: string, teamId?: string): string {
   return `/ask?${params.toString()}`;
 }
 
-/** Supported ASK examples only — team season board + offseason + compare. */
+/** Supported ASK examples only - team season board + offseason + compare. */
 export function buildTeamAskLinks(
   teamName: string,
   season: string,
@@ -414,7 +414,7 @@ export function formatTeamGameScoreLine(
   game: GameSummary,
   team: TeamSeasonStats,
   brand?: TeamBrand | null
-): { result: "W" | "L" | "—"; teamScore: number; oppScore: number; oppLabel: string } {
+): { result: "W" | "L" | "-"; teamScore: number; oppScore: number; oppLabel: string } {
   const ids = teamIdsForMatch(team, brand);
   const abbrs = teamAbbrsForMatch(team, brand);
   const isHome =
@@ -426,10 +426,10 @@ export function formatTeamGameScoreLine(
     ? game.awayTeamAbbr ?? game.awayTeamName ?? "OPP"
     : game.homeTeamAbbr ?? game.homeTeamName ?? "OPP";
   if (game.status === "scheduled" || isPreTipStatus(game.status) || (teamScore === 0 && oppScore === 0 && game.status !== "final")) {
-    return { result: "—", teamScore, oppScore, oppLabel };
+    return { result: "-", teamScore, oppScore, oppLabel };
   }
   if (teamScore === oppScore) {
-    return { result: "—", teamScore, oppScore, oppLabel };
+    return { result: "-", teamScore, oppScore, oppLabel };
   }
   return {
     result: teamScore > oppScore ? "W" : "L",
@@ -518,7 +518,7 @@ export function notableTeamGames(
   });
 }
 
-/** Group traits for Performance section — no invented overall composite. */
+/** Group traits for Performance section - no invented overall composite. */
 export function groupTraitsForPerformance(traits: TeamTrait[]): {
   overall: TeamTrait[];
   offense: TeamTrait[];
@@ -553,7 +553,7 @@ export function resolveTeamFromBoard(
   const resolved = resolveCanonicalTeam(key);
   if (resolved.status !== "resolved") return undefined;
   const canonical = resolved.team;
-  // Board rows use canonical ESPN team ids (and abbrs) — never match bare
+  // Board rows use canonical ESPN team ids (and abbrs) - never match bare
   // teamId against a BDL provider id (ESPN 25 = OKC ≠ BDL 25 = POR).
   return rows.find(
     (t) =>

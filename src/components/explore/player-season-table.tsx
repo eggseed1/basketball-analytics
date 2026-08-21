@@ -1,42 +1,32 @@
 "use client";
 
-import {
-  Fragment,
-  useMemo,
-  useState,
-  type CSSProperties,
-  type ReactNode,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import {
-  buildLeaderboardRowContext,
-  leaderboardContextIndexFromPools,
-  type LeaderboardRowContext,
-} from "@/analytics";
-import {
-  LeaderboardContextBody,
-  LeaderboardRowContextPanel,
-} from "@/components/explore/leaderboard-row-context";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
-import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
-import {
-  TransitionLink,
-  useQueryNav,
-} from "@/components/continuity/query-nav";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { TeamLogo } from "@/components/brand/team-logo";
+import { useQueryNav } from "@/components/continuity/query-nav";
 import {
   Table,
   TableBody,
   TableCell,
+  TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
 import { formatNumber, formatPct } from "@/lib/format";
-import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
+import { textLinkClassName, type } from "@/lib/design-system";
+import {
+  filterPlayerBoardViewColumns,
+  parsePlayerBoardRate,
+  parsePlayerBoardViews,
+  playerBoardViewLabel,
+  type PlayerBoardRate,
+  type PlayerBoardView,
+} from "@/lib/explore-players-display";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 import {
   defaultPlayerSeasonSortDir,
@@ -45,10 +35,54 @@ import {
 
 type SortKey = PlayerSeasonSortKey;
 
+type BoardPageResponse = {
+  rows?: ExplorePlayerBoardRow[];
+  page?: number;
+  pageCount?: number;
+  totalCount?: number;
+  error?: string;
+};
+
+function rowKey(player: ExplorePlayerBoardRow) {
+  return `${player.playerId}-${player.season}-${player.teamId}`;
+}
+
+async function fetchBoardPage(
+  searchParams: URLSearchParams,
+  options: {
+    page: number;
+    season: string;
+    sortKey: PlayerSeasonSortKey;
+    sortDir: "asc" | "desc";
+  }
+): Promise<{
+  rows: ExplorePlayerBoardRow[];
+  page: number;
+  pageCount: number;
+  totalCount: number;
+}> {
+  const params = new URLSearchParams(searchParams.toString());
+  params.set("page", String(options.page));
+  params.set("sort", options.sortKey);
+  params.set("dir", options.sortDir);
+  if (!params.get("season")) params.set("season", options.season);
+  const res = await fetch(`/api/explore/players/board?${params.toString()}`, {
+    cache: "no-store",
+  });
+  const body = (await res.json()) as BoardPageResponse;
+  if (!res.ok) throw new Error(body.error ?? `HTTP ${res.status}`);
+  return {
+    rows: body.rows ?? [],
+    page: body.page ?? options.page,
+    pageCount: body.pageCount ?? 1,
+    totalCount: body.totalCount ?? 0,
+  };
+}
+
 export interface PlayerSeasonTableProps {
   players: ExplorePlayerBoardRow[];
+  season: string;
   totalCount: number;
-  page: number;
   pageSize: number;
   pageCount: number;
   sortKey: PlayerSeasonSortKey;
@@ -56,14 +90,12 @@ export interface PlayerSeasonTableProps {
   hasDarko: boolean;
   hasLebron: boolean;
   hasDrbl: boolean;
-  boardSampleSize: number;
-  contextPools: Record<string, number[]>;
 }
 
 export function PlayerSeasonTable({
   players,
+  season,
   totalCount,
-  page,
   pageSize,
   pageCount,
   sortKey,
@@ -71,46 +103,101 @@ export function PlayerSeasonTable({
   hasDarko,
   hasLebron,
   hasDrbl,
-  boardSampleSize,
-  contextPools,
 }: PlayerSeasonTableProps) {
-  const { pending, replaceParams, searchParams, pathname } = useQueryNav();
-  const [openContextId, setOpenContextId] = useState<string | null>(null);
-  const playerQuery = searchParams.get("player") ?? "";
-  const [queryDraft, setQueryDraft] = useState(playerQuery);
-  const [draftSource, setDraftSource] = useState(playerQuery);
+  const { pending, replaceParams, searchParams } = useQueryNav();
+  const [rows, setRows] = useState(players);
+  const [loadedPage, setLoadedPage] = useState(1);
+  const [hasMore, setHasMore] = useState(pageCount > 1 && players.length >= pageSize);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const loadingRef = useRef(false);
+  const requestIdRef = useRef(0);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
-  if (playerQuery !== draftSource) {
-    setDraftSource(playerQuery);
-    setQueryDraft(playerQuery);
-  }
+  useEffect(() => {
+    requestIdRef.current += 1;
+    loadingRef.current = false;
+    setRows(players);
+    setLoadedPage(1);
+    setHasMore(pageCount > 1 && players.length >= pageSize);
+    setLoadingMore(false);
+    setLoadError(null);
+  }, [players, pageCount, pageSize, sortKey, sortDir, season]);
 
-  const contextIndex = useMemo(
-    () =>
-      leaderboardContextIndexFromPools({
+  const loadMore = useCallback(async () => {
+    if (!hasMore || loadingRef.current) return;
+    const requestId = requestIdRef.current;
+    loadingRef.current = true;
+    setLoadingMore(true);
+    setLoadError(null);
+    try {
+      const next = await fetchBoardPage(searchParams, {
+        page: loadedPage + 1,
+        season,
         sortKey,
-        sampleSize: boardSampleSize,
-        pools: contextPools,
-      }),
-    [boardSampleSize, contextPools, sortKey]
-  );
+        sortDir,
+      });
+      if (requestId !== requestIdRef.current) return;
+      const seen = new Set(rows.map(rowKey));
+      const extra = next.rows.filter((row) => !seen.has(rowKey(row)));
+      if (!extra.length) {
+        setHasMore(false);
+      } else {
+        setRows((prev) => [...prev, ...extra]);
+        setHasMore(next.page < next.pageCount);
+      }
+      setLoadedPage(next.page);
+    } catch (err) {
+      if (requestId !== requestIdRef.current) return;
+      setLoadError(
+        err instanceof Error ? err.message : "Could not load more players"
+      );
+    } finally {
+      if (requestId === requestIdRef.current) {
+        loadingRef.current = false;
+        setLoadingMore(false);
+      }
+    }
+  }, [hasMore, loadedPage, rows, searchParams, season, sortDir, sortKey]);
 
-  function patchParams(patch: Record<string, string | null>) {
-    replaceParams(patch);
-  }
+  useEffect(() => {
+    const el = sentinelRef.current;
+    if (!el || !hasMore) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry?.isIntersecting) void loadMore();
+      },
+      { rootMargin: "900px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [hasMore, loadMore]);
+
+  const views = parsePlayerBoardViews(searchParams.get("view"));
+  const rate = parsePlayerBoardRate(searchParams.get("rate"));
+  const flags = { hasDarko, hasLebron, hasDrbl };
+  const groups = views
+    .map((id) => ({
+      id,
+      label: playerBoardViewLabel(id),
+      keys: columnsForView(id, flags),
+    }))
+    .filter((group) => group.keys.length > 0);
+  const grouped = groups.length > 1;
+  const statCount = groups.reduce((sum, group) => sum + group.keys.length, 0);
+  const colCount = 3 + statCount;
 
   function toggleSort(key: SortKey) {
-    setOpenContextId(null);
     if (sortKey === key) {
       const nextDir = sortDir === "asc" ? "desc" : "asc";
-      patchParams({
+      replaceParams({
         sort: key,
         dir: nextDir === defaultPlayerSeasonSortDir(key) ? null : nextDir,
         page: null,
       });
     } else {
       const nextDir = defaultPlayerSeasonSortDir(key);
-      patchParams({
+      replaceParams({
         sort: key,
         dir: nextDir === defaultPlayerSeasonSortDir(key) ? null : nextDir,
         page: null,
@@ -118,112 +205,21 @@ export function PlayerSeasonTable({
     }
   }
 
-  const sortHint = (() => {
-    const label = COLUMN_META[sortKey]?.label ?? sortKey;
-    if (
-      sortKey === "playerName" ||
-      sortKey === "teamName" ||
-      sortKey === "position"
-    ) {
-      return sortDir === "asc" ? `${label} · A → Z` : `${label} · Z → A`;
-    }
-    if (sortKey === "defensiveRating" || sortKey === "tov") {
-      return sortDir === "asc"
-        ? `${label} · best → worst`
-        : `${label} · worst → best`;
-    }
-    return sortDir === "desc"
-      ? `${label} · best → worst`
-      : `${label} · worst → best`;
-  })();
-
-  const colCount =
-    18 +
-    (hasDarko ? 1 : 0) +
-    (hasLebron ? 1 : 0) +
-    (hasDrbl ? 2 : 0);
-  const from = totalCount === 0 ? 0 : (page - 1) * pageSize + 1;
-  const to = Math.min(page * pageSize, totalCount);
-
-  const directoryMode = hasDrbl
-    ? "All Players (DRBL columns available for this season)"
-    : "All Players — factual season directory (not a DRBL leaderboard)";
-
-  const pageHref = (p: number) => {
-    const next = new URLSearchParams(searchParams.toString());
-    if (p <= 1) next.delete("page");
-    else next.set("page", String(p));
-    const qs = next.toString();
-    return qs ? `${pathname}?${qs}` : pathname;
-  };
-
   return (
     <section
-      aria-labelledby="player-table-heading"
+      aria-label="Player table"
       className="query-updating-content flex flex-col gap-3"
       data-pending={pending ? "true" : "false"}
     >
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <h2
-            id="player-table-heading"
-            className="text-xl font-bold tracking-tight"
-          >
-            All Players
-          </h2>
-          <p className="text-sm text-muted-foreground">
-            {directoryMode}
-          </p>
-          <p className="text-sm text-muted-foreground">
-            {totalCount} player{totalCount === 1 ? "" : "s"}
-            {totalCount > 0 ? (
-              <>
-                {" "}
-                · showing {from}–{to}
-              </>
-            ) : null}{" "}
-            · per-game counting stats ·{" "}
-            <span className="font-medium text-foreground">{sortHint}</span>
-            {" · "}
-            tap <span className="font-semibold text-foreground">i</span> for
-            percentile context
-          </p>
-        </div>
-        <form
-          className="flex w-full max-w-xs flex-col gap-1.5"
-          onSubmit={(event) => {
-            event.preventDefault();
-            setOpenContextId(null);
-            patchParams({
-              player: queryDraft.trim() || null,
-              page: null,
-            });
-          }}
-        >
-          <Label htmlFor="table-search">Find in table</Label>
-          <Input
-            id="table-search"
-            value={queryDraft}
-            onChange={(event) => setQueryDraft(event.target.value)}
-            onBlur={() => {
-              const next = queryDraft.trim();
-              if (next === playerQuery) return;
-              setOpenContextId(null);
-              patchParams({ player: next || null, page: null });
-            }}
-            placeholder="Name, team, position"
-            autoComplete="off"
-          />
-        </form>
-      </div>
-
-      <div className="sports-card overflow-hidden">
+      <div className="sports-card board-scroll-host overflow-hidden">
         <div className="overflow-x-auto">
-          <Table container={false} className="min-w-[1100px] text-[12px]">
-            <TableHeader className="sticky top-0 z-20 bg-card">
+          <Table container={false} className="min-w-[1600px] text-[12px]">
+            <TableHeader className="sticky top-0 z-20">
               <TableRow className="hover:bg-transparent">
                 <SortableTableHead
                   sticky
+                  className={grouped ? "align-bottom" : undefined}
+                  rowSpan={grouped ? 2 : 1}
                   active={sortKey === "playerName"}
                   dir={sortDir}
                   onClick={() => toggleSort("playerName")}
@@ -232,6 +228,8 @@ export function PlayerSeasonTable({
                   Player
                 </SortableTableHead>
                 <SortableTableHead
+                  className={grouped ? "align-bottom" : undefined}
+                  rowSpan={grouped ? 2 : 1}
                   active={sortKey === "teamName"}
                   dir={sortDir}
                   onClick={() => toggleSort("teamName")}
@@ -240,6 +238,8 @@ export function PlayerSeasonTable({
                   Tm
                 </SortableTableHead>
                 <SortableTableHead
+                  className={grouped ? "align-bottom" : undefined}
+                  rowSpan={grouped ? 2 : 1}
                   active={sortKey === "position"}
                   dir={sortDir}
                   onClick={() => toggleSort("position")}
@@ -247,177 +247,49 @@ export function PlayerSeasonTable({
                 >
                   Pos
                 </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "gamesPlayed"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("gamesPlayed")}
-                >
-                  GP
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "mpg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("mpg")}
-                >
-                  MPG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "ppg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("ppg")}
-                >
-                  PPG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "rpg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("rpg")}
-                >
-                  RPG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "apg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("apg")}
-                >
-                  APG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "spg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("spg")}
-                >
-                  SPG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "bpg"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("bpg")}
-                >
-                  BPG
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "tov"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("tov")}
-                  helpConceptId="tov"
-                >
-                  TOV
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "fieldGoalPct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("fieldGoalPct")}
-                  helpConceptId="fg"
-                >
-                  FG%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "threePointPct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("threePointPct")}
-                  helpConceptId="fg3"
-                >
-                  3P%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "freeThrowPct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("freeThrowPct")}
-                  helpConceptId="ft"
-                >
-                  FT%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "effectiveFieldGoalPct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("effectiveFieldGoalPct")}
-                  helpConceptId="efg"
-                >
-                  eFG%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "trueShootingPct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("trueShootingPct")}
-                  helpConceptId="ts"
-                >
-                  TS%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "usagePct"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("usagePct")}
-                  helpConceptId="usg"
-                >
-                  USG%
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "offensiveRating"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("offensiveRating")}
-                  helpConceptId="ortg"
-                >
-                  ORtg
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "defensiveRating"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("defensiveRating")}
-                  helpConceptId="drtg"
-                >
-                  DRtg
-                </SortableTableHead>
-                <SortableTableHead
-                  active={sortKey === "netRating"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("netRating")}
-                  helpConceptId="net"
-                >
-                  NET
-                </SortableTableHead>
-                {hasDarko ? (
-                  <SortableTableHead
-                    active={sortKey === "darkoDpm"}
-                    dir={sortDir}
-                    onClick={() => toggleSort("darkoDpm")}
-                    helpConceptId="darko"
-                  >
-                    DARKO
-                  </SortableTableHead>
-                ) : null}
-                {hasLebron ? (
-                  <SortableTableHead
-                    active={sortKey === "lebron"}
-                    dir={sortDir}
-                    onClick={() => toggleSort("lebron")}
-                    helpConceptId="lebron"
-                  >
-                    LEBRON
-                  </SortableTableHead>
-                ) : null}
-                {hasDrbl ? (
-                  <>
-                    <SortableTableHead
-                      active={sortKey === "drbl100"}
-                      dir={sortDir}
-                      onClick={() => toggleSort("drbl100")}
-                    >
-                      DRBL/100
-                    </SortableTableHead>
-                    <SortableTableHead
-                      active={sortKey === "r1WinEquivalents"}
-                      dir={sortDir}
-                      onClick={() => toggleSort("r1WinEquivalents")}
-                    >
-                      WAR1
-                    </SortableTableHead>
-                  </>
-                ) : null}
+                {grouped
+                  ? groups.map((group) => (
+                      <TableHead
+                        key={group.id}
+                        colSpan={group.keys.length}
+                        className="h-8 border-l border-border px-2 text-center text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
+                      >
+                        {group.label}
+                      </TableHead>
+                    ))
+                  : groups.flatMap((group) =>
+                      group.keys.map((col) => (
+                        <StatHead
+                          key={`${group.id}-${col}`}
+                          col={col}
+                          view={group.id}
+                          sortKey={sortKey}
+                          sortDir={sortDir}
+                          onSort={toggleSort}
+                        />
+                      ))
+                    )}
               </TableRow>
+              {grouped ? (
+                <TableRow className="hover:bg-transparent">
+                  {groups.flatMap((group, gi) =>
+                    group.keys.map((col, ki) => (
+                      <StatHead
+                        key={`${group.id}-${col}`}
+                        col={col}
+                        view={group.id}
+                        sortKey={sortKey}
+                        sortDir={sortDir}
+                        onSort={toggleSort}
+                        groupedStart={ki === 0 && gi > 0}
+                      />
+                    ))
+                  )}
+                </TableRow>
+              ) : null}
             </TableHeader>
             <TableBody>
-              {players.length === 0 ? (
+              {rows.length === 0 ? (
                 <TableRow>
                   <TableCell
                     colSpan={colCount}
@@ -427,51 +299,28 @@ export function PlayerSeasonTable({
                   </TableCell>
                 </TableRow>
               ) : (
-                players.map((player) => {
+                rows.map((player) => {
                   const isMultiTeam =
                     player.teamId === "TOT" ||
                     ["TOT", "2TM", "3TM", "4TM"].includes(
                       (player.teamAbbreviation ?? "").toUpperCase()
                     );
-                  const histBrand = isMultiTeam
-                    ? null
-                    : resolveHistoricalTeamBrand(
-                        player.teamId,
-                        player.season,
-                        "era"
-                      );
+                  const brand = isMultiTeam
+                    ? undefined
+                    : resolveTeamBrand(player.teamId);
                   const teamLabel = isMultiTeam
                     ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
                       player.teamAbbreviation?.toUpperCase() === "3TM" ||
                       player.teamAbbreviation?.toUpperCase() === "4TM"
                       ? "Multiple"
                       : "TOT"
-                    : (player.historicalTeamAbbr ??
-                      histBrand?.abbreviation ??
+                    : (brand?.abbr ??
                       player.teamAbbreviation ??
-                      ( /^\d{6,}$/.test(player.teamId) ? "—" : player.teamId));
-                  const stripeColor =
-                    histBrand?.palette?.primary ?? "var(--primary)";
-                  const rowContext = buildLeaderboardRowContext(
-                    player,
-                    contextIndex
-                  );
-                  const open = openContextId === player.playerId;
+                      ( /^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
                   return (
-                    <Fragment key={`${player.playerId}-${player.season}`}>
-                      <TableRow
-                        className={cn(
-                          "team-stripe",
-                          open && "bg-secondary/30"
-                        )}
-                        style={
-                          {
-                            "--team-primary": stripeColor,
-                          } as CSSProperties
-                        }
-                      >
-                        <TableCell className="sticky left-0 z-10 overflow-visible bg-card">
-                          <div className="flex min-w-[11.5rem] items-center gap-1.5">
+                      <TableRow key={rowKey(player)}>
+                        <TableCell className="board-sticky-frost sticky left-0 z-20">
+                          <div className="flex min-w-[11.5rem] items-center">
                             <PlayerIdentity
                               playerId={player.playerId}
                               name={player.playerName}
@@ -481,53 +330,34 @@ export function PlayerSeasonTable({
                               season={player.season}
                               variant="compact"
                               className="min-w-0 flex-1"
+                              nameClassName="gap-2"
                             >
-                              <span className="relative inline-flex shrink-0">
-                                <PlayerHeadshot
-                                  playerId={player.playerId}
-                                  name={player.playerName}
-                                  teamKey={
-                                    isMultiTeam ? undefined : player.teamId
-                                  }
-                                  portraitUrl={player.portraitUrl}
-                                  registryOnly
-                                  size="sm"
-                                />
-                                {!isMultiTeam && histBrand ? (
-                                  <span className="absolute -right-1 -bottom-1 rounded-full bg-card p-px ring-1 ring-border">
-                                    <HistoricalTeamMark
-                                      brand={histBrand}
-                                      size="2xs"
-                                    />
-                                  </span>
-                                ) : null}
-                              </span>
-                              <span className="truncate">
+                              <PlayerHeadshot
+                                playerId={player.playerId}
+                                name={player.playerName}
+                                teamKey={
+                                  isMultiTeam ? undefined : player.teamId
+                                }
+                                size="sm"
+                              />
+                              <span
+                                className={cn(
+                                  "truncate",
+                                  type.body,
+                                  textLinkClassName
+                                )}
+                              >
                                 {player.playerName}
                               </span>
                             </PlayerIdentity>
-                            {rowContext ? (
-                              <LeaderboardRowContextPanel
-                                context={rowContext}
-                                open={open}
-                                onOpenChange={(next) =>
-                                  setOpenContextId(
-                                    next ? player.playerId : null
-                                  )
-                                }
-                              />
-                            ) : null}
                           </div>
                         </TableCell>
                         <TableCell>
                           <span className="inline-flex items-center gap-1">
-                            {!isMultiTeam && histBrand ? (
-                              <HistoricalTeamMark
-                                brand={histBrand}
-                                size="xs"
-                              />
+                            {!isMultiTeam ? (
+                              <TeamLogo teamKey={player.teamId} size="xs" />
                             ) : null}
-                            <span className="text-[11px] font-semibold uppercase tracking-wide">
+                            <span className="text-[12px] font-semibold uppercase tracking-wide">
                               {teamLabel}
                             </span>
                           </span>
@@ -535,53 +365,18 @@ export function PlayerSeasonTable({
                         <TableCell className="text-muted-foreground">
                           {player.position ?? "-"}
                         </TableCell>
-                        <Num>{formatNumber(player.gamesPlayed)}</Num>
-                        <Num>{formatNumber(player.mpg, 1)}</Num>
-                        <Num>{formatNumber(player.ppg, 1)}</Num>
-                        <Num>{formatNumber(player.rpg, 1)}</Num>
-                        <Num>{formatNumber(player.apg, 1)}</Num>
-                        <Num>{formatNumber(player.spg, 1)}</Num>
-                        <Num>{formatNumber(player.bpg, 1)}</Num>
-                        <Num>{formatNumber(player.tov, 1)}</Num>
-                        <Num>{formatPct(player.fieldGoalPct)}</Num>
-                        <Num>{formatPct(player.threePointPct)}</Num>
-                        <Num>{formatPct(player.freeThrowPct)}</Num>
-                        <Num>{formatOptionalPct(player.effectiveFieldGoalPct)}</Num>
-                        <Num>{formatOptionalPct(player.trueShootingPct)}</Num>
-                        <Num>{formatOptionalPct(player.usagePct)}</Num>
-                        <Num>
-                          {formatOptionalRating(player.offensiveRating)}
-                        </Num>
-                        <Num>
-                          {formatOptionalRating(player.defensiveRating)}
-                        </Num>
-                        <Num>{formatOptionalNet(player.netRating)}</Num>
-                        {hasDarko ? (
-                          <Num>{formatOptionalImpact(player.darkoDpm)}</Num>
-                        ) : null}
-                        {hasLebron ? (
-                          <Num>{formatOptionalImpact(player.lebron)}</Num>
-                        ) : null}
-                        {hasDrbl ? (
-                          <>
-                            <Num>{formatOptionalDrbl(player.drbl100)}</Num>
-                            <Num>
-                              {formatOptionalDrbl(player.r1WinEquivalents)}
-                            </Num>
-                          </>
-                        ) : null}
+                        {groups.flatMap((group, gi) =>
+                          group.keys.map((col, ki) => (
+                            <StatCell
+                              key={`${group.id}-${col}`}
+                              col={col}
+                              player={player}
+                              rate={rate}
+                              groupedStart={grouped && ki === 0 && gi > 0}
+                            />
+                          ))
+                        )}
                       </TableRow>
-                      {open && rowContext ? (
-                        <TableRow className="border-0 sm:hidden">
-                          <TableCell
-                            colSpan={colCount}
-                            className="bg-secondary/25 px-3 pb-3 pt-0"
-                          >
-                            <LeaderboardMobileContext context={rowContext} />
-                          </TableCell>
-                        </TableRow>
-                      ) : null}
-                    </Fragment>
                   );
                 })
               )}
@@ -590,129 +385,381 @@ export function PlayerSeasonTable({
         </div>
       </div>
 
-      {pageCount > 1 ? (
-        <nav
-          className="flex flex-wrap items-center justify-between gap-3"
-          aria-label="Player table pages"
+      {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
+      {loadingMore ? (
+        <p className="text-center text-[12px] text-muted-foreground">
+          Loading more players…
+        </p>
+      ) : null}
+      {loadError ? (
+        <button
+          type="button"
+          onClick={() => void loadMore()}
+          className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
         >
-          <p className="text-[13px] text-muted-foreground">
-            Page {page} of {pageCount}
-            <span className="sr-only">
-              {pending ? " Updating results…" : ""}
-            </span>
-          </p>
-          <div className="flex items-center gap-2">
-            {page > 1 ? (
-              <TransitionLink
-                href={pageHref(page - 1)}
-                className="sports-pill text-[13px]"
-                scroll={false}
-                replace
-              >
-                Previous
-              </TransitionLink>
-            ) : (
-              <span className="sports-pill pointer-events-none text-[13px] opacity-40">
-                Previous
-              </span>
-            )}
-            {page < pageCount ? (
-              <TransitionLink
-                href={pageHref(page + 1)}
-                className="sports-pill text-[13px]"
-                scroll={false}
-                replace
-              >
-                Next
-              </TransitionLink>
-            ) : (
-              <span className="sports-pill pointer-events-none text-[13px] opacity-40">
-                Next
-              </span>
-            )}
-          </div>
-        </nav>
+          Couldn’t load more - try again
+        </button>
+      ) : null}
+      {rows.length ? (
+        <p className="text-[12px] text-muted-foreground">
+          Showing {rows.length} of {totalCount} player
+          {totalCount === 1 ? "" : "s"}
+          {hasMore ? " · more appear as you scroll" : ""}
+          <span className="sr-only">
+            {pending ? " Updating results…" : ""}
+          </span>
+        </p>
       ) : null}
     </section>
   );
 }
 
-function LeaderboardMobileContext({
-  context,
+type TableCol = PlayerSeasonSortKey | "pointsCreated" | "rimAssists";
+
+function columnsForView(
+  view: PlayerBoardView,
+  flags: { hasDarko: boolean; hasLebron: boolean; hasDrbl: boolean }
+): TableCol[] {
+  const keys: TableCol[] = [...filterPlayerBoardViewColumns(view, flags)];
+  if (view !== "all") return keys;
+  const withExtras: TableCol[] = [];
+  for (const key of keys) {
+    withExtras.push(key);
+    if (key === "ppg") withExtras.push("pointsCreated");
+    if (key === "apg") withExtras.push("rimAssists");
+  }
+  return withExtras;
+}
+
+function columnLabel(col: TableCol, view: PlayerBoardView): string {
+  const profileLike = view === "all" || view === "profile";
+  switch (col) {
+    case "gamesPlayed":
+      return "GP";
+    case "mpg":
+      return "MIN";
+    case "age":
+      return "Age";
+    case "usagePct":
+      return profileLike ? "OnBall %" : "USG%";
+    case "darkoDpm":
+      return profileLike ? "DPM" : "DARKO";
+    case "darkoOff":
+      return "ODPM";
+    case "darkoDef":
+      return "DDPM";
+    case "ppg":
+      return "PTS";
+    case "pointsCreated":
+      return "PTS Created";
+    case "apg":
+      return "AST";
+    case "rimAssists":
+      return "Rim AST";
+    case "rpg":
+      return "REB";
+    case "tov":
+      return "TOV";
+    case "trueShootingPct":
+      return "TS%";
+    case "relativeTrueShootingPct":
+      return "rTS%";
+    case "turnoverPct":
+      return "cTOV%";
+    case "twoPointPct":
+      return "2P%";
+    case "threePointPct":
+      return "3P%";
+    case "threePointersAttempted":
+      return "3PA";
+    case "freeThrowPct":
+      return "FT%";
+    case "freeThrowsAttempted":
+      return "FTA";
+    case "offensiveRebounds":
+      return "OREB";
+    case "defensiveRebounds":
+      return "DREB";
+    case "spg":
+      return "STL";
+    case "bpg":
+      return "BLK";
+    case "fieldGoalPct":
+      return "FG%";
+    case "effectiveFieldGoalPct":
+      return "eFG%";
+    case "offensiveRating":
+      return "ORtg";
+    case "defensiveRating":
+      return "DRtg";
+    case "netRating":
+      return "NET";
+    case "lebron":
+      return "LEBRON";
+    case "drbl100":
+      return "DRBL/100";
+    case "r1WinEquivalents":
+      return "WAR1";
+    default:
+      return col;
+  }
+}
+
+function columnHelp(col: TableCol): string | null {
+  switch (col) {
+    case "usagePct":
+      return "usg";
+    case "darkoDpm":
+    case "darkoOff":
+    case "darkoDef":
+      return "darko";
+    case "tov":
+    case "turnoverPct":
+      return "tov";
+    case "trueShootingPct":
+    case "relativeTrueShootingPct":
+      return "ts";
+    case "threePointPct":
+      return "fg3";
+    case "freeThrowPct":
+      return "ft";
+    case "fieldGoalPct":
+      return "fg";
+    case "effectiveFieldGoalPct":
+      return "efg";
+    case "offensiveRating":
+      return "ortg";
+    case "defensiveRating":
+      return "drtg";
+    case "netRating":
+      return "net";
+    case "lebron":
+      return "lebron";
+    default:
+      return null;
+  }
+}
+
+function formatStat(
+  col: TableCol,
+  player: ExplorePlayerBoardRow,
+  rate: PlayerBoardRate
+): string {
+  switch (col) {
+    case "gamesPlayed":
+      return formatNumber(player.gamesPlayed);
+    case "mpg":
+      return formatNumber(
+        rate === "totals" ? player.minutes : player.mpg,
+        rate === "totals" ? 0 : 1
+      );
+    case "age":
+      return player.age != null ? formatNumber(player.age, 0) : "-";
+    case "usagePct":
+      return formatOptionalPct(player.usagePct);
+    case "darkoDpm":
+      return formatOptionalImpact(player.darkoDpm);
+    case "darkoOff":
+      return formatOptionalImpact(player.darkoOff);
+    case "darkoDef":
+      return formatOptionalImpact(player.darkoDef);
+    case "ppg":
+      return formatCounting(player.ppg, player.points, player.mpg, rate);
+    case "pointsCreated":
+    case "rimAssists":
+      return "-";
+    case "apg":
+      return formatCounting(player.apg, player.assists, player.mpg, rate);
+    case "rpg":
+      return formatCounting(player.rpg, player.rebounds, player.mpg, rate);
+    case "tov":
+      return formatCounting(player.tov, player.turnovers, player.mpg, rate);
+    case "trueShootingPct":
+      return formatOptionalPct(player.trueShootingPct);
+    case "relativeTrueShootingPct":
+      return formatRelativeTs(player.relativeTrueShootingPct);
+    case "turnoverPct":
+      return formatOptionalPct(player.turnoverPct);
+    case "twoPointPct":
+      return formatOptionalPct(player.twoPointPct);
+    case "threePointPct":
+      return formatPct(player.threePointPct);
+    case "threePointersAttempted":
+      return formatOptionalCounting(
+        player.threePointersAttempted,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "freeThrowPct":
+      return formatPct(player.freeThrowPct);
+    case "freeThrowsAttempted":
+      return formatOptionalCounting(
+        player.freeThrowsAttempted,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "offensiveRebounds":
+      return formatOptionalCounting(
+        player.offensiveRebounds,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "defensiveRebounds":
+      return formatOptionalCounting(
+        player.defensiveRebounds,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "spg":
+      return formatCounting(player.spg, player.steals, player.mpg, rate);
+    case "bpg":
+      return formatCounting(player.bpg, player.blocks, player.mpg, rate);
+    case "fieldGoalPct":
+      return formatPct(player.fieldGoalPct);
+    case "effectiveFieldGoalPct":
+      return formatOptionalPct(player.effectiveFieldGoalPct);
+    case "offensiveRating":
+      return formatOptionalRating(player.offensiveRating);
+    case "defensiveRating":
+      return formatOptionalRating(player.defensiveRating);
+    case "netRating":
+      return formatOptionalNet(player.netRating);
+    case "lebron":
+      return formatOptionalImpact(player.lebron);
+    case "drbl100":
+      return formatOptionalDrbl(player.drbl100);
+    case "r1WinEquivalents":
+      return formatOptionalDrbl(player.r1WinEquivalents);
+    default:
+      return "-";
+  }
+}
+
+function StatHead({
+  col,
+  view,
+  sortKey,
+  sortDir,
+  onSort,
+  groupedStart,
 }: {
-  context: LeaderboardRowContext;
+  col: TableCol;
+  view: PlayerBoardView;
+  sortKey: SortKey;
+  sortDir: "asc" | "desc";
+  onSort: (key: SortKey) => void;
+  groupedStart?: boolean;
 }) {
+  const className = cn(groupedStart && "border-l border-border");
+  if (col === "pointsCreated" || col === "rimAssists") {
+    return (
+      <TableHead className={cn("h-auto p-0", className)}>
+        <div className="flex h-10 w-full min-w-max items-center justify-end px-2">
+          <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+            {columnLabel(col, view)}
+          </span>
+        </div>
+      </TableHead>
+    );
+  }
   return (
-    <div className="rounded-md border border-border bg-card px-3 py-3">
-      <LeaderboardContextBody context={context} />
-    </div>
+    <SortableTableHead
+      className={className}
+      active={sortKey === col}
+      dir={sortDir}
+      onClick={() => onSort(col)}
+      helpConceptId={columnHelp(col)}
+    >
+      {columnLabel(col, view)}
+    </SortableTableHead>
   );
 }
 
-const COLUMN_META: Partial<Record<SortKey, { label: string }>> = {
-  playerName: { label: "Player" },
-  teamName: { label: "Team" },
-  position: { label: "Pos" },
-  gamesPlayed: { label: "GP" },
-  mpg: { label: "MPG" },
-  ppg: { label: "PPG" },
-  rpg: { label: "RPG" },
-  apg: { label: "APG" },
-  spg: { label: "SPG" },
-  bpg: { label: "BPG" },
-  tov: { label: "TOV" },
-  fieldGoalPct: { label: "FG%" },
-  threePointPct: { label: "3P%" },
-  freeThrowPct: { label: "FT%" },
-  effectiveFieldGoalPct: { label: "eFG%" },
-  trueShootingPct: { label: "TS%" },
-  usagePct: { label: "USG%" },
-  offensiveRating: { label: "ORtg" },
-  defensiveRating: { label: "DRtg" },
-  netRating: { label: "NET" },
-  darkoDpm: { label: "DARKO" },
-  lebron: { label: "LEBRON" },
-  drbl100: { label: "DRBL/100" },
-  r1WinEquivalents: { label: "WAR1" },
-};
+function StatCell({
+  col,
+  player,
+  rate,
+  groupedStart,
+}: {
+  col: TableCol;
+  player: ExplorePlayerBoardRow;
+  rate: PlayerBoardRate;
+  groupedStart?: boolean;
+}) {
+  return (
+    <TableCell
+      className={cn(
+        "text-right tabular-nums text-[12px]",
+        groupedStart && "border-l border-border"
+      )}
+    >
+      {formatStat(col, player, rate)}
+    </TableCell>
+  );
+}
+
+function formatCounting(
+  perGame: number,
+  total: number,
+  mpg: number,
+  rate: PlayerBoardRate
+): string {
+  if (rate === "totals") return formatNumber(total, 0);
+  if (rate === "perGame" || mpg <= 0) return formatNumber(perGame, 1);
+  const scaled = rate === "per75" ? (perGame * 75) / mpg : (perGame * 100) / mpg;
+  return formatNumber(scaled, 1);
+}
+
+function formatOptionalCounting(
+  total: number | undefined,
+  gp: number,
+  mpg: number,
+  rate: PlayerBoardRate
+): string {
+  if (total == null || Number.isNaN(total)) return "-";
+  return formatCounting(gp ? total / gp : 0, total, mpg, rate);
+}
+
+function formatRelativeTs(n: number | undefined): string {
+  if (n == null || Number.isNaN(n)) return "-";
+  const pts = n * 100;
+  const sign = pts > 0 ? "+" : "";
+  return `${sign}${formatNumber(pts, 1)}`;
+}
 
 function formatSigned(n: number): string {
   const sign = n > 0 ? "+" : "";
   return `${sign}${formatNumber(n, 1)}`;
 }
 
-/** Missing ≠ zero — ESPN boards omit individual DRtg/NET. */
+/** Missing ≠ zero - ESPN boards omit individual DRtg/NET. */
 function formatOptionalRating(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n)) return "-";
   return formatNumber(n, 1);
 }
 
 function formatOptionalPct(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n)) return "-";
   return formatPct(n);
 }
 
 function formatOptionalNet(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n)) return "-";
   return formatSigned(n);
 }
 
 function formatOptionalImpact(n: number | undefined): string {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n)) return "-";
   const sign = n > 0 ? "+" : "";
   return `${sign}${n.toFixed(2)}`;
 }
 
-/** Missing DRBL ≠ zero — never display placeholder zeros as estimates. */
+/** Missing DRBL ≠ zero - never display placeholder zeros as estimates. */
 function formatOptionalDrbl(n: number | null | undefined): string {
-  if (n == null || Number.isNaN(n)) return "—";
+  if (n == null || Number.isNaN(n)) return "-";
   return formatNumber(n, 1);
-}
-
-function Num({ children }: { children: ReactNode }) {
-  return (
-    <TableCell className="text-right tabular-nums text-[12px]">
-      {children}
-    </TableCell>
-  );
 }

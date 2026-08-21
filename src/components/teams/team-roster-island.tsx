@@ -11,7 +11,7 @@ export async function TeamRosterIsland({
   season: string;
   teamKey: string;
 }) {
-  const roster = await getTeamRosterCached(teamId, season, 0);
+  const roster = await getTeamRosterCached(teamId, season, 10);
   const buckets = buildRosterBuckets(roster.players);
 
   return (
@@ -21,9 +21,9 @@ export async function TeamRosterIsland({
       aria-label="Roster"
     >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Who drives it?</h2>
-        <p className="text-[13px] text-muted-foreground">
-          Compact roster explorer — transparent categories only.
+        <h2 className="text-[20px] font-bold tracking-tight">Who drives it?</h2>
+        <p className="text-[14px] text-muted-foreground">
+          Compact roster explorer - transparent categories only.
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">

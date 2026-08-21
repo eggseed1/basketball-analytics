@@ -1,12 +1,12 @@
 "use client";
 
-import { TransitionLink } from "@/components/continuity/query-nav";
 import { useMemo, useState } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { TextLink } from "@/components/ui/text-link";
 import type {
   HomeDarkoLeader,
   HomeDrblLeader,
@@ -18,6 +18,7 @@ import { formatNumber } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { normalizePlayerName } from "@/lib/player-name";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
+import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 type SortKey = "drbl" | "darko" | "ts" | "usage";
@@ -28,7 +29,7 @@ type OverviewRow = {
   id: string;
   nbaId?: string;
   name: string;
-  /** Canonical ESPN id or abbr — safe for TeamLogo. */
+  /** Canonical ESPN id or abbr - safe for TeamLogo. */
   teamKey?: string;
   teamLabel?: string;
   drbl: number | null;
@@ -70,7 +71,7 @@ function teamIdentityFromLoose(
   raw?: string | null
 ): { teamKey?: string; teamLabel?: string } {
   if (!raw?.trim()) return {};
-  // Reject raw long provider numerics here — parent should already normalize.
+  // Reject raw long provider numerics here - parent should already normalize.
   if (/^\d{6,}$/.test(raw.trim())) return {};
   const brand = resolveTeamBrand(raw);
   if (brand) return { teamKey: brand.espnTeamId, teamLabel: brand.abbr };
@@ -85,6 +86,7 @@ function teamIdentityFromLoose(
 }
 
 export function TopPerformersPanel({
+  season,
   drblLeaders = [],
   darkoLeaders,
   tsLeaders,
@@ -93,6 +95,7 @@ export function TopPerformersPanel({
   drblOverlayOk = false,
   drblFallbackNote = null,
 }: {
+  season?: string;
   drblLeaders?: HomeDrblLeader[];
   darkoLeaders: HomeDarkoLeader[];
   tsLeaders: PlayerSeason[];
@@ -311,97 +314,115 @@ export function TopPerformersPanel({
     ] as const
   );
 
+  const metricHelp =
+    sort === "ts" ? (
+      <MetricHelp
+        conceptId="ts"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        TS%
+      </MetricHelp>
+    ) : sort === "usage" ? (
+      <MetricHelp
+        conceptId="usg"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        USG
+      </MetricHelp>
+    ) : sort === "drbl" ? (
+      <MetricHelp
+        conceptId="drbl"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        DRBL
+      </MetricHelp>
+    ) : (
+      <MetricHelp
+        conceptId="darko"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        DPM
+      </MetricHelp>
+    );
+
+  const leaderboardHref =
+    sort === "ts"
+      ? "/explore/players?sort=trueShootingPct"
+      : sort === "usage"
+        ? "/explore/players?sort=usagePct"
+        : sort === "drbl"
+          ? "/explore/players?sort=drbl100&dir=desc"
+          : "/explore/players?sort=darkoDpm";
+
   return (
-    <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">
-            Top performers
+    <section className="sports-card flex flex-col gap-4 p-4 sm:p-[21px]">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-3">
+          <h2 className="type-heading">
+            {season ? `${season} Top Performers` : "Top performers"}
           </h2>
-          <p className="text-[13px] text-muted-foreground">
-            Overview with{" "}
-            {drblOverlayOk ? (
-              <>
-                <MetricHelp conceptId="drbl">DRBL/100</MetricHelp>
-                {" (primary), "}
-                <MetricHelp conceptId="darko">DARKO</MetricHelp>
-                {" (comparison), "}
-              </>
-            ) : (
-              <>
-                <MetricHelp conceptId="darko">DARKO</MetricHelp>
-                {", "}
-              </>
-            )}
-            <MetricHelp conceptId="ts">TS%</MetricHelp>, and{" "}
-            <MetricHelp conceptId="usg">USG</MetricHelp> — sort to reorder.
-          </p>
+          <div className="flex flex-wrap gap-1">
+            {sortChips.map(([key, label]) => (
+              <button
+                key={key}
+                type="button"
+                onClick={() => setSort(key)}
+                className={cn(
+                  "rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
+                  sort === key
+                    ? "bg-foreground text-background"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           {drblFallbackNote ? (
-            <p className="mt-1 text-[12px] text-muted-foreground">
+            <p className="text-[12px] text-muted-foreground">
               {drblFallbackNote}
             </p>
           ) : null}
         </div>
-        <div className="flex flex-wrap gap-1">
-          {sortChips.map(([key, label]) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setSort(key)}
-              className={cn(
-                "rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
-                sort === key
-                  ? "bg-foreground text-background"
-                  : "bg-secondary text-foreground hover:bg-foreground/10"
-              )}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        <TextLink
+          href={leaderboardHref}
+          className="type-body-sm shrink-0 pt-0.5 text-muted-foreground"
+        >
+          See full leaderboard →
+        </TextLink>
       </div>
 
-      <div className="overflow-hidden rounded-md border border-border bg-card">
-        <div className="grid grid-cols-[minmax(0,1fr)_52px_52px_52px_52px] gap-1 border-b border-border bg-secondary/50 px-3 py-2 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <div className="overflow-hidden">
+        <div
+          className={cn(
+            "flex items-center justify-between gap-2 border-b border-border px-3 py-2 font-semibold uppercase tracking-wide text-muted-foreground",
+            type.caption
+          )}
+        >
           <span>Player</span>
-          <span className="text-right">
-            <MetricHelp
-              conceptId="drbl"
-              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
-            >
-              DRBL
-            </MetricHelp>
-          </span>
-          <span className="text-right">
-            <MetricHelp
-              conceptId="darko"
-              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
-            >
-              DPM
-            </MetricHelp>
-          </span>
-          <span className="text-right">
-            <MetricHelp
-              conceptId="ts"
-              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
-            >
-              TS%
-            </MetricHelp>
-          </span>
-          <span className="text-right">
-            <MetricHelp
-              conceptId="usg"
-              labelClassName="text-[10px] font-semibold uppercase tracking-wide"
-            >
-              USG
-            </MetricHelp>
-          </span>
+          <span className="text-right">{metricHelp}</span>
         </div>
         <ol className="divide-y divide-black/5">
-          {rows.map((row) => (
-            <li key={row.key}>
-              <div className="grid grid-cols-[minmax(0,1fr)_52px_52px_52px_52px] items-center gap-1 px-3 py-2.5">
-                <span className="flex min-w-0 items-center gap-2">
+          {rows.map((row) => {
+            const value =
+              sort === "ts"
+                ? row.ts != null
+                  ? formatPct(row.ts)
+                  : "-"
+                : sort === "usage"
+                  ? row.usg != null
+                    ? formatPct(row.usg)
+                    : "-"
+                  : sort === "drbl"
+                    ? row.drbl != null
+                      ? formatNumber(row.drbl, 2)
+                      : "-"
+                    : row.darko != null
+                      ? formatImpact(row.darko)
+                      : "-";
+            return (
+              <li key={row.key}>
+                <div className="flex items-center gap-2 px-3 py-2.5">
                   <span className="w-4 shrink-0 text-[12px] font-bold tabular-nums text-muted-foreground">
                     {row.rank}
                   </span>
@@ -413,8 +434,11 @@ export function TopPerformersPanel({
                     teamLabel={row.teamLabel}
                     variant="compact"
                     className="min-w-0 flex-1"
-                    nameClassName="w-full gap-2 no-underline hover:underline"
+                    nameClassName="w-full gap-2"
                   >
+                    {row.teamKey ? (
+                      <TeamLogo teamKey={row.teamKey} size="xs" />
+                    ) : null}
                     <PlayerHeadshot
                       playerId={row.id}
                       nbaId={row.nbaId}
@@ -422,78 +446,30 @@ export function TopPerformersPanel({
                       teamKey={row.teamKey}
                       size="xs"
                     />
-                    <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
+                    <span
+                      className={cn(
+                        type.body,
+                        textLinkClassName,
+                        "min-w-0 flex-1 truncate"
+                      )}
+                    >
                       {row.name}
                     </span>
-                    {row.teamKey ? (
-                      <TeamLogo teamKey={row.teamKey} size="xs" />
-                    ) : null}
                   </PlayerIdentity>
-                </span>
-                <Metric
-                  value={
-                    row.drbl != null ? formatNumber(row.drbl, 2) : "-"
-                  }
-                  emphasize={sort === "drbl"}
-                />
-                <Metric
-                  value={
-                    row.darko != null ? formatImpact(row.darko) : "-"
-                  }
-                  emphasize={sort === "darko"}
-                />
-                <Metric
-                  value={row.ts != null ? formatPct(row.ts) : "-"}
-                  emphasize={sort === "ts"}
-                />
-                <Metric
-                  value={row.usg != null ? formatPct(row.usg) : "-"}
-                  emphasize={sort === "usage"}
-                />
-              </div>
-            </li>
-          ))}
+                  <span className="shrink-0 text-right text-[12px] font-medium tabular-nums text-[#535353]">
+                    {value}
+                  </span>
+                </div>
+              </li>
+            );
+          })}
           {rows.length === 0 ? (
-            <li className="px-3 py-6 text-center text-[13px] text-muted-foreground">
+            <li className="type-body-sm px-3 py-6 text-center text-muted-foreground">
               Leaders unavailable.
             </li>
           ) : null}
         </ol>
       </div>
-
-      <TransitionLink
-        href={
-          sort === "ts"
-            ? "/explore/players?sort=trueShootingPct"
-            : sort === "usage"
-              ? "/explore/players?sort=usagePct"
-              : sort === "drbl"
-                ? "/explore/players?sort=drbl100&dir=desc"
-                : "/explore/players?sort=darkoDpm"
-        }
-        className="self-center text-[13px] font-semibold underline-offset-4 hover:underline"
-      >
-        See all leaderboard
-      </TransitionLink>
     </section>
-  );
-}
-
-function Metric({
-  value,
-  emphasize,
-}: {
-  value: string;
-  emphasize?: boolean;
-}) {
-  return (
-    <span
-      className={cn(
-        "text-right text-[12px] tabular-nums",
-        emphasize ? "font-bold text-foreground" : "text-muted-foreground"
-      )}
-    >
-      {value}
-    </span>
   );
 }

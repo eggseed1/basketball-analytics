@@ -325,13 +325,13 @@ export function resolveTeamBrand(
   return TEAM_BRANDS[abbr] ?? TEAM_BRANDS[key.slice(0, 3)];
 }
 
-/** Chart/timeline stroke color for a team — safe for server + client. */
+/** Chart/timeline stroke color for a team - safe for server + client. */
 export function teamChartColor(teamId?: string | null): {
   color: string;
   abbr: string;
 } {
   const brand = resolveTeamBrand(teamId);
-  if (!brand) return { color: "#8e8e93", abbr: "—" };
+  if (!brand) return { color: "#8e8e93", abbr: "-" };
   const primary = brand.primary.toLowerCase();
   const color =
     primary === "#ffffff" || primary === "#fff" ? "#1d1d1f" : brand.primary;
@@ -339,16 +339,33 @@ export function teamChartColor(teamId?: string | null): {
 }
 
 /**
- * Solid accent for bars / chips — always derived from TEAM_BRANDS primary.
+ * Solid accent for bars / chips - always derived from TEAM_BRANDS primary.
  * Never invents a generic green/blue independent of the franchise.
  */
 export function teamBrandBarColor(teamKey?: string | null): string {
   return teamChartColor(teamKey).color;
 }
 
+function chartSafeHex(hex: string, fallback: string): string {
+  const c = hex.trim().toLowerCase();
+  if (c === "#ffffff" || c === "#fff") return fallback;
+  return hex;
+}
+
+/** Primary → secondary wash for similar-player bars (kept quiet on frost). */
+export function teamBrandBarGradient(teamKey?: string | null): string {
+  const brand = resolveTeamBrand(teamKey);
+  if (!brand) {
+    return "linear-gradient(90deg, color-mix(in oklab, var(--foreground) 18%, transparent), color-mix(in oklab, var(--foreground) 8%, transparent))";
+  }
+  const start = chartSafeHex(brand.primary, brand.secondary);
+  const end = chartSafeHex(brand.secondary, start);
+  return `linear-gradient(90deg, color-mix(in oklab, ${start} 36%, var(--background)) 0%, color-mix(in oklab, ${end} 20%, var(--background)) 100%)`;
+}
+
 /**
  * Low-opacity tint of the canonical primary for soft fills.
- * Origin is always TEAM_BRANDS — not a separate palette.
+ * Origin is always TEAM_BRANDS - not a separate palette.
  */
 export function teamBrandTint(
   teamKey?: string | null,
@@ -396,28 +413,32 @@ export function nbaHeadshotUrl(playerId?: string | null): string | undefined {
   return `https://cdn.nba.com/headshots/nba/latest/260x190/${playerId}.png`;
 }
 
-import { resolvePlayerPortraitCandidates } from "@/lib/player-media-resolve";
-
 /**
- * Ordered headshot candidates. Prefer typed NBA / ESPN ids.
- * Never treat one numeric id as both ESPN athlete and NBA person namespaces
- * (that fallthrough caused coach-role and wrong-person portraits).
+ * Ordered headshot candidates. Never pair an ESPN athlete id with the NBA CDN
+ * (that CDN returns HTTP 200 fallback.png - a blank image, no onError).
+ * Never prefer ESPN CDN for an NBA person id (404s; Next/Image often won't fall back).
  */
 export function playerHeadshotCandidates(options: {
   playerId?: string | null;
   espnId?: string | null;
   nbaId?: string | null;
-  approvedUrl?: string | null;
-  registryOnly?: boolean;
 }): string[] {
-  return resolvePlayerPortraitCandidates({
-    playerId: options.playerId,
-    espnId: options.espnId,
-    nbaId: options.nbaId,
-    role: "PLAYER",
-    approvedUrl: options.approvedUrl,
-    registryOnly: options.registryOnly,
-  });
+  const { playerId, espnId, nbaId } = options;
+  const urls: string[] = [];
+  const push = (url?: string) => {
+    if (url && !urls.includes(url)) urls.push(url);
+  };
+
+  push(espnHeadshotUrl(espnId));
+  push(nbaHeadshotUrl(nbaId));
+
+  if (isNumericId(playerId) && playerId !== espnId && playerId !== nbaId) {
+    // Explore board rows are NBA person ids with no espnId/nbaId split.
+    push(nbaHeadshotUrl(playerId));
+    push(espnHeadshotUrl(playerId));
+  }
+
+  return urls;
 }
 
 /** @deprecated Prefer playerHeadshotCandidates - kept for simple call sites. */

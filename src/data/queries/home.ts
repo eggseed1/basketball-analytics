@@ -31,7 +31,7 @@ import {
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
 
-/** Resolve a product team key (ESPN id / abbr) for logos — never raw NBA Stats ids. */
+/** Resolve a product team key (ESPN id / abbr) for logos - never raw NBA Stats ids. */
 function productTeamKeyFromProviderTeamId(
   raw?: string | null
 ): { teamKey?: string; teamAbbr?: string } {
@@ -149,7 +149,7 @@ export type HomeAnalytics = {
   tsLeaders: PlayerSeason[];
   usageStars: PlayerSeason[];
   /**
-   * Season rows for every player appearing in any home leader list —
+   * Season rows for every player appearing in any home leader list -
    * used so Top Performers can show TS%/USG for DRBL/DARKO rows outside
    * the narrow TS/USG top-15 slices.
    */
@@ -374,7 +374,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const drblFallbackNote = drblOverlayOk
     ? null
     : drblSeasonOk
-      ? "DRBL/100 leaders unavailable for this load — showing DARKO as secondary impact context, not as first-party DRBL."
+      ? "DRBL/100 leaders unavailable for this load - showing DARKO as secondary impact context, not as first-party DRBL."
       : `DRBL is not published for ${season}; DARKO shown as external impact context.`;
 
   const insights: ComputedInsight[] = [];
@@ -415,7 +415,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       title:
         bestTs.trueShootingPct != null && bestTs.trueShootingPct > 0
           ? formatPct(bestTs.trueShootingPct)
-          : "—",
+          : "-",
       body: "Best true shooting among qualified minutes.",
       players: [{ id: bestTs.playerId, name: bestTs.playerName }],
       boardHref: "/explore/players?sort=trueShootingPct",
@@ -431,12 +431,12 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       title: `${
         efficientVolume.usagePct != null && efficientVolume.usagePct > 0
           ? formatPct(efficientVolume.usagePct)
-          : "—"
+          : "-"
       } usg · ${
         efficientVolume.trueShootingPct != null &&
         efficientVolume.trueShootingPct > 0
           ? formatPct(efficientVolume.trueShootingPct)
-          : "—"
+          : "-"
       } TS`,
       body: "High usage without giving back efficiency.",
       players: [

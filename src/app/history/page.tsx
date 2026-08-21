@@ -37,7 +37,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "NBA Time Machine",
   description:
-    "Travel through NBA history — season data, team-era identity, and era atmosphere.",
+    "Travel through NBA history - season data, team-era identity, and era atmosphere.",
 };
 
 interface HistoryPageProps {
@@ -115,7 +115,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
     ? parsed.season
     : seasons[0] ?? parsed.season;
   const themeMode: ThemeMode = parsed.theme ?? "historical";
-  // Theme from URL immediately — avoid flashing default chrome before era CSS.
+  // Theme from URL immediately - avoid flashing default chrome before era CSS.
   const eraTheme = resolveActiveEraTheme(season, themeMode);
 
   const date = await resolveTimeMachineDate(season, parsed.date);
@@ -149,8 +149,8 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                 <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
                   {season} NBA · Historical Mode
                 </p>
-                <h1 className="tm-heading mt-1 text-[28px] font-bold tracking-tight sm:text-[34px]">
-                  NBA — {season}
+                <h1 className="tm-heading mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
+                  NBA - {season}
                 </h1>
                 <p className="mt-1 text-[14px] text-muted-foreground">
                   {date}
@@ -166,13 +166,13 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
                     date,
                     fromHistory: true,
                   })}
-                  className="sports-pill shrink-0 text-[13px]"
+                  className="sports-pill shrink-0 text-[14px]"
                 >
                   ASK DRBL
                 </Link>
                 <Link
                   href="/"
-                  className="sports-pill shrink-0 text-[13px]"
+                  className="sports-pill shrink-0 text-[14px]"
                 >
                   Exit Time Machine
                 </Link>
@@ -203,7 +203,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
             <ThemeModeControl season={season} date={date} theme={themeMode} />
           </header>
 
-          {/* No remount key — keep prior snapshot visible during transition. */}
+          {/* No remount key - keep prior snapshot visible during transition. */}
           <Suspense fallback={<SnapshotSkeleton />}>
             <HistorySnapshotLoader
               season={season}

@@ -25,8 +25,8 @@ export function LeaguePulse({
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">League</h2>
-          <p className="text-[13px] text-muted-foreground">
+          <h2 className="text-[20px] font-bold tracking-tight">League</h2>
+          <p className="text-[14px] text-muted-foreground">
             Conference race at a glance - expand here or open the full boards.
           </p>
         </div>
@@ -34,19 +34,19 @@ export function LeaguePulse({
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+            className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
           >
             {expanded ? "Show top 8" : "Expand all"}
           </button>
           <Link
             href="/standings"
-            className="rounded-md bg-foreground px-3 py-1.5 text-[13px] font-semibold text-background"
+            className="rounded-md bg-foreground px-3 py-1.5 text-[14px] font-semibold text-background"
           >
             Full standings
           </Link>
           <Link
             href="/explore/teams"
-            className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+            className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
           >
             Team advanced
           </Link>

@@ -46,7 +46,7 @@ export type HistoricalTeamBrand = {
  * Key: `${canonicalId}:${abbr}` or bare `abbr` for unambiguous historical marks.
  * Path: site-root URL under /logos/historical/
  *
- * Intentionally empty until real assets are committed — do not scrape.
+ * Intentionally empty until real assets are committed - do not scrape.
  */
 export const HISTORICAL_TEAM_LOGO_ASSETS: Readonly<
   Record<string, { path: string; label: string }>
@@ -90,13 +90,7 @@ function blocksCurrentLogo(era: TeamEra): boolean {
   return false;
 }
 
-/**
- * Today's franchise mark is safe when the era abbr matches the current franchise
- * and the era is not a blocked historical identity (Bullets, San Diego Clippers, etc.).
- *
- * Do not require exact displayName equality — canonical labels drift
- * ("LA Clippers" vs "Los Angeles Clippers") and that must not strip modern logos.
- */
+/** Today's franchise mark is safe only when the era identity matches current branding. */
 function mayUseCurrentLogo(
   era: TeamEra | null,
   team: CanonicalTeam | null
@@ -104,7 +98,10 @@ function mayUseCurrentLogo(
   if (!team) return false;
   if (!era) return true;
   if (blocksCurrentLogo(era)) return false;
-  return era.abbr.toUpperCase() === team.abbr.toUpperCase();
+  return (
+    era.abbr.toUpperCase() === team.abbr.toUpperCase() &&
+    era.displayName === team.displayName
+  );
 }
 
 function currentFranchiseLogoUrl(team: CanonicalTeam): string | null {
@@ -162,7 +159,11 @@ export function resolveHistoricalTeamBrand(
   const city = era?.city ?? "";
   const nickname = era?.nickname ?? "";
   const isHistorical = Boolean(
-    era && team && !mayUseCurrentLogo(era, team)
+    era &&
+      team &&
+      (era.displayName !== team.displayName ||
+        era.abbr.toUpperCase() !== team.abbr.toUpperCase() ||
+        blocksCurrentLogo(era))
   );
 
   const fields = baseFields(
@@ -218,7 +219,7 @@ export function resolveHistoricalTeamBrand(
     }
   }
 
-  // Historical identity without a verified palette — neutral mark (never modern CDN).
+  // Historical identity without a verified palette - neutral mark (never modern CDN).
   if (isHistorical) {
     return {
       ...fields,
@@ -236,7 +237,7 @@ export function resolveHistoricalTeamBrand(
   };
 }
 
-/** Brand for one side of a game — never the opposing franchise's modern mark. */
+/** Brand for one side of a game - never the opposing franchise's modern mark. */
 export function resolveGameSideBrand(
   canonicalTeamId: string,
   season: string | null | undefined,

@@ -1,9 +1,9 @@
 /**
- * Analytical foundations — progressive disclosure, context, findings.
+ * Analytical foundations - progressive disclosure, context, findings.
  * UI and queries consume these shapes; never invent unsupported metrics.
  */
 
-/** Progressive rabbit-hole depth (product UX levels 1–5). */
+/** Progressive rabbit-hole depth (product UX levels 1-5). */
 export type DisclosureLevel = 1 | 2 | 3 | 4 | 5;
 
 export type EvidenceKind =
@@ -34,12 +34,12 @@ export type StatContext = {
   /** Raw numeric value when meaningful (fractions stay in [0,1]). */
   value?: number;
   unit?: "pct" | "per100" | "count" | "rate" | "ordinal" | "other";
-  /** 0–100 when ranked in a defined population. */
+  /** 0-100 when ranked in a defined population. */
   percentile?: number;
   population?: StatPopulation;
   populationLabel?: string;
   sampleSize?: number;
-  /** vs career / league / prior window — only when methodologically valid. */
+  /** vs career / league / prior window - only when methodologically valid. */
   vsCareer?: number;
   vsLeague?: number;
   vsPrior?: number;

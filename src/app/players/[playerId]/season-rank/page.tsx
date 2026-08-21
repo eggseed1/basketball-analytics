@@ -72,7 +72,7 @@ export default async function PlayerSeasonRankPage({
       <p>
         <Link
           href={`/players/${playerId}`}
-          className="text-[13px] font-semibold text-muted-foreground"
+          className="text-[14px] font-semibold text-muted-foreground"
         >
           ← Player
         </Link>
@@ -89,17 +89,17 @@ export default async function PlayerSeasonRankPage({
       </Suspense>
 
       {parseError ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           {parseError}
         </p>
       ) : loaded?.error ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           {loaded.error}
         </p>
       ) : loaded?.ranking ? (
         <PlayerSeasonRankView result={loaded.ranking} />
       ) : (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Could not rank these seasons.
         </p>
       )}

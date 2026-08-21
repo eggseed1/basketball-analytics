@@ -8,13 +8,13 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
   return (
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           {topic.category}
         </p>
         <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
           {topic.name}
         </h1>
-        <p className="max-w-xl text-[15px] leading-relaxed text-muted-foreground">
+        <p className="max-w-xl text-[16px] leading-relaxed text-muted-foreground">
           <span className="font-semibold text-foreground">In one sentence. </span>
           {topic.oneSentence}
         </p>
@@ -26,9 +26,9 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
 
       {topic.formula || topic.calculation?.length ? (
         <section className="sports-card flex flex-col gap-3 p-4">
-          <h2 className="text-[15px] font-bold">How it is calculated</h2>
+          <h2 className="text-[16px] font-bold">How it is calculated</h2>
           {topic.formula ? (
-            <div className="whitespace-pre-wrap rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[13px] leading-snug">
+            <div className="whitespace-pre-wrap rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[14px] leading-snug">
               {topic.formula}
             </div>
           ) : null}
@@ -46,13 +46,13 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
 
       {related.length ? (
         <section>
-          <h2 className="mb-2 text-[15px] font-bold">Related concepts</h2>
+          <h2 className="mb-2 text-[16px] font-bold">Related concepts</h2>
           <div className="flex flex-wrap gap-2">
             {related.map((r) => (
               <AppLink
                 key={r.href}
                 href={r.href}
-                className="rounded-full bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 {r.label}
               </AppLink>
@@ -63,7 +63,7 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
 
       {topic.seeInAction.length ? (
         <section>
-          <h2 className="mb-2 text-[15px] font-bold">See it in DRBL</h2>
+          <h2 className="mb-2 text-[16px] font-bold">See it in DRBL</h2>
           <ul className="flex flex-col gap-1.5">
             {topic.seeInAction.map((a) => (
               <li key={a.href}>
@@ -81,7 +81,7 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
 
       {topic.sources?.length ? (
         <section className="pb-2">
-          <h2 className="mb-2 text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <h2 className="mb-2 text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Sources
           </h2>
           <ul className="space-y-1 text-[12px] text-muted-foreground">
@@ -99,7 +99,7 @@ function Section({ title, items }: { title: string; items: string[] }) {
   if (!items.length) return null;
   return (
     <section>
-      <h2 className="mb-2 text-[15px] font-bold">{title}</h2>
+      <h2 className="mb-2 text-[16px] font-bold">{title}</h2>
       <ul className="list-disc space-y-1.5 pl-5 text-[14px] leading-relaxed text-muted-foreground">
         {items.map((item) => (
           <li key={item}>{item}</li>

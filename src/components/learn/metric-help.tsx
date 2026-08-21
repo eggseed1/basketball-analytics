@@ -8,11 +8,12 @@ import {
   useLayoutEffect,
   useRef,
   useState,
-  type CSSProperties,
   type KeyboardEvent,
   type ReactNode,
 } from "react";
+import { createPortal } from "react-dom";
 
+import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { explainMetric } from "@/analytics/explanations";
 import { getLearnConcept } from "@/content/learn/registry";
 import { cn } from "@/lib/utils";
@@ -21,7 +22,7 @@ const PANEL_PAD = 8;
 const PANEL_WIDTH = 288; // ~18rem
 
 /**
- * Compact Level-1 metric/status help — hover, focus, or tap.
+ * Compact Level-1 metric/status help - hover, focus, or tap.
  * Full pedagogy lives on Learn; tooltips stay short.
  * Position is clamped to the viewport so right-edge columns (DARKO, etc.) stay on-screen.
  */
@@ -42,52 +43,50 @@ export function MetricHelp({
   const explanation = explainMetric(conceptId);
   const panelId = useId();
   const rootRef = useRef<HTMLSpanElement>(null);
-  const panelRef = useRef<HTMLSpanElement>(null);
   const [open, setOpen] = useState(false);
-  const [panelStyle, setPanelStyle] = useState<CSSProperties>({
-    left: 0,
-    top: "100%",
-    marginTop: 4,
-  });
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [panelStyle, setPanelStyle] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
 
   const close = useCallback(() => setOpen(false), []);
 
+  function scheduleClose() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 180);
+  }
+
+  function cancelClose() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
+  }
+
   const clampPanel = useCallback(() => {
     const root = rootRef.current;
-    const panel = panelRef.current;
-    if (!root || !panel) return;
+    if (!root) return;
     const anchor = root.getBoundingClientRect();
-    const height = panel.offsetHeight || 120;
+    const height = 120;
     const width = Math.min(PANEL_WIDTH, window.innerWidth - PANEL_PAD * 2);
 
-    let left = 0;
-    const rightOverflow = anchor.left + width + PANEL_PAD - window.innerWidth;
-    if (rightOverflow > 0) left = -rightOverflow;
-    const leftEdge = anchor.left + left;
-    if (leftEdge < PANEL_PAD) left += PANEL_PAD - leftEdge;
+    let left = anchor.left;
+    left = Math.min(
+      Math.max(PANEL_PAD, left),
+      window.innerWidth - width - PANEL_PAD
+    );
 
     const spaceBelow = window.innerHeight - anchor.bottom - PANEL_PAD;
-    const placeAbove = spaceBelow < height + 4 && anchor.top > height + PANEL_PAD;
+    const placeAbove =
+      spaceBelow < height + 4 && anchor.top > height + PANEL_PAD;
 
-    setPanelStyle(
-      placeAbove
-        ? {
-            left,
-            bottom: "100%",
-            top: "auto",
-            marginBottom: 4,
-            marginTop: 0,
-            width,
-          }
-        : {
-            left,
-            top: "100%",
-            bottom: "auto",
-            marginTop: 4,
-            marginBottom: 0,
-            width,
-          }
-    );
+    setPanelStyle({
+      left,
+      width,
+      top: placeAbove
+        ? Math.max(PANEL_PAD, anchor.top - 4 - height)
+        : anchor.bottom + 4,
+    });
   }, []);
 
   useLayoutEffect(() => {
@@ -137,8 +136,8 @@ export function MetricHelp({
     <span
       ref={rootRef}
       className={cn("relative inline-flex max-w-full items-center", className)}
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={cancelClose}
+      onMouseLeave={scheduleClose}
     >
       <button
         type="button"
@@ -155,31 +154,40 @@ export function MetricHelp({
       >
         {label}
       </button>
-      {open ? (
-        <span
-          ref={panelRef}
-          id={panelId}
-          role="tooltip"
-          style={panelStyle}
-          className="absolute z-50 max-w-[min(18rem,calc(100vw-1rem))] rounded-lg border border-border bg-card p-3 text-left shadow-md"
-        >
-          <span className="block text-[12px] font-bold tracking-tight text-foreground">
-            {concept.label}
-          </span>
-          <span className="mt-1 block text-[12px] leading-snug text-muted-foreground">
-            {explanation.plain}
-          </span>
-          {explanation.learnHref ? (
-            <Link
-              href={explanation.learnHref}
-              className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
-              onClick={close}
+      {open && panelStyle
+        ? createPortal(
+            <FrostFloatingSurface
+              id={panelId}
+              role="tooltip"
+              className="z-50 max-w-[min(18rem,calc(100vw-1rem))] p-3 text-left"
+              style={{
+                position: "fixed",
+                top: panelStyle.top,
+                left: panelStyle.left,
+                width: panelStyle.width,
+              }}
+              onMouseEnter={cancelClose}
+              onMouseLeave={scheduleClose}
             >
-              Learn more →
-            </Link>
-          ) : null}
-        </span>
-      ) : null}
+              <span className="block text-[12px] font-bold tracking-tight text-foreground">
+                {concept.label}
+              </span>
+              <span className="mt-1 block text-[12px] leading-snug text-muted-foreground">
+                {explanation.plain}
+              </span>
+              {explanation.learnHref ? (
+                <Link
+                  href={explanation.learnHref}
+                  className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
+                  onClick={close}
+                >
+                  Learn more →
+                </Link>
+              ) : null}
+            </FrostFloatingSurface>,
+            document.body
+          )
+        : null}
     </span>
   );
 }
@@ -198,7 +206,7 @@ export function MetricHelpIcon({
     <MetricHelp
       conceptId={conceptId}
       className={className}
-      labelClassName="text-[11px] font-semibold text-muted-foreground"
+      labelClassName="text-[12px] font-semibold text-muted-foreground"
     >
       <span aria-hidden>?</span>
     </MetricHelp>

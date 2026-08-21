@@ -9,6 +9,7 @@ export interface PlayerGame {
   playerName?: string;
   teamId: string;
   season: string;
+  seasonType?: "regular" | "playoffs";
   /** ISO date string YYYY-MM-DD. */
   gameDate: string;
   opponentTeamId: string;

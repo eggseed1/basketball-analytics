@@ -25,7 +25,7 @@ export interface PercentileMetricDef {
   side?: PercentileSide;
   /**
    * When set, only rows for which this returns true enter the comparison
-   * universe. Model-derived DRBL metrics must require a valid estimate —
+   * universe. Model-derived DRBL metrics must require a valid estimate -
    * metadata-only default zeros must not silently enter the pool.
    */
   eligible?: (row: PlayerSeason) => boolean;
@@ -488,7 +488,7 @@ export interface PlayerPercentile {
   value: number;
   displayValue: string;
   percentile: number;
-  /** 0–1 for bar fill / color scale after direction adjustment. */
+  /** 0-1 for bar fill / color scale after direction adjustment. */
   quality: number;
 }
 
@@ -514,7 +514,7 @@ function percentileRank(
  *
  * Each metric uses its own comparison universe. When `eligible` is set
  * (DRBL metrics), metadata-only default zeros are excluded from the pool.
- * Missing percentile → omitted from result (callers render "—").
+ * Missing percentile → omitted from result (callers render "-").
  */
 export function computePlayerPercentiles(
   player: PlayerSeason,
@@ -553,7 +553,7 @@ export function computePlayerPercentiles(
   return out;
 }
 
-/** Bar marker position from a displayed percentile (0–100). */
+/** Bar marker position from a displayed percentile (0-100). */
 export function barPositionPercent(percentile: number | null | undefined): number | null {
   if (percentile == null || !Number.isFinite(percentile)) return null;
   return Math.max(0, Math.min(100, percentile));

@@ -1,5 +1,5 @@
 /**
- * ASK DRBL query wrapper — one entry for the /ask route.
+ * ASK DRBL query wrapper - one entry for the /ask route.
  */
 
 import {

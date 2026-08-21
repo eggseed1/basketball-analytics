@@ -123,7 +123,7 @@ export function resolveWatchAvailability(options: {
         return {
           option,
           availability: "location_required" as const,
-          note: "Local broadcast — set location for market context",
+          note: "Local broadcast - set location for market context",
         };
       }
       return {
@@ -139,7 +139,7 @@ export function resolveWatchAvailability(options: {
     };
   });
 
-  // League Pass is never an unconditional Watch — blackouts apply.
+  // League Pass is never an unconditional Watch - blackouts apply.
   rows.push({
     option: {
       id: "nba-league-pass",
@@ -152,7 +152,7 @@ export function resolveWatchAvailability(options: {
     availability: location ? "blackout_possible" : "location_required",
     note: location
       ? `Out-of-market streaming may apply in ${location}; local and national blackouts can block League Pass`
-      : "Out-of-market streaming — set location; blackouts may apply",
+      : "Out-of-market streaming - set location; blackouts may apply",
   });
 
   return rows;

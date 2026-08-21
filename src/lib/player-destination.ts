@@ -6,20 +6,17 @@ import {
   primaryTeamForSeason as primaryTeamForSeasonContext,
 } from "@/lib/player-team-context";
 
-/** Resolve selected season from URL or latest career / history row. */
+/** Resolve selected season from URL or latest career row. */
 export function resolvePlayerSeason(
   career: PlayerSeason[],
-  seasonParam?: string | null,
-  historySeasons?: string[]
+  seasonParam?: string | null
 ): string {
   if (seasonParam) return seasonParam;
-  const seasons = [
-    ...new Set([
-      ...career.map((row) => row.season),
-      ...(historySeasons ?? []),
-    ]),
-  ].sort((a, b) => b.localeCompare(a));
-  return seasons[0] ?? "2024-25";
+  return (
+    [...new Set(career.map((row) => row.season))].sort((a, b) =>
+      b.localeCompare(a)
+    )[0] ?? "2024-25"
+  );
 }
 
 /**
@@ -45,7 +42,7 @@ function pickAbilitySource(
   return seasonRaw ?? peerRow ?? careerSeason ?? null;
 }
 
-/** Never invent zeros for R1* — keep null when all sources are missing. */
+/** Never invent zeros for R1* - keep null when all sources are missing. */
 function pickR1Number(
   ...vals: Array<number | null | undefined>
 ): number | null {
@@ -97,7 +94,7 @@ export function mergePlayerSeasonStats(
         seasonRaw.winsAdded ??
         careerSeason?.winsAdded ??
         peerRow?.winsAdded,
-      // Ability / rate fields — peer overlay when seasonRaw lacks valid DRBL.
+      // Ability / rate fields - peer overlay when seasonRaw lacks valid DRBL.
       drbl100: ability?.drbl100 ?? seasonRaw.drbl100,
       rawAbilityRate: ability?.rawAbilityRate ?? seasonRaw.rawAbilityRate,
       drblPossessions: ability?.drblPossessions ?? seasonRaw.drblPossessions,
@@ -113,7 +110,7 @@ export function mergePlayerSeasonStats(
       shotMaking100: ability?.shotMaking100 ?? seasonRaw.shotMaking100,
       epvShootMean: ability?.epvShootMean ?? seasonRaw.epvShootMean,
       vContMean: ability?.vContMean ?? seasonRaw.vContMean,
-      // Realized value — never invent zeros.
+      // Realized value - never invent zeros.
       r1Points: pickR1Number(
         seasonRaw.r1Points,
         peerRow?.r1Points,
@@ -194,7 +191,6 @@ export function buildSeasonTeamsMap(
   return seasonTeams;
 }
 
-/** Hannah depth-tab ids (legacy URL). Prefer P18 `view=` via player-page-contract. */
 export type PlayerDepthTab = "career" | "stats" | "games" | "viz";
 export type PlayerSeasonKind = "regular" | "playoffs";
 
@@ -220,38 +216,26 @@ function historyParams(
   q.set("theme", opts.themeMode === "modern" ? "modern" : "historical");
 }
 
-/**
- * Season chip href — preserves Time Machine arrival.
- * Accepts P18 `view` or Hannah `depth` (mapped for identity chips).
- */
+/** Season chip href - preserves Time Machine arrival when present. */
 export function playerSeasonChipHref(
   playerId: string,
   season: string,
   opts?: {
     fromHistory?: boolean;
     themeMode?: "historical" | "modern";
-    view?: string;
     depth?: PlayerDepthTab;
     seasonType?: PlayerSeasonKind;
   }
 ): string {
-  if (opts?.view || !opts?.depth) {
-    const q = new URLSearchParams();
-    q.set("season", season);
-    if (opts?.view && opts.view !== "overview") q.set("view", opts.view);
-    historyParams(q, opts);
-    return `/players/${encodeURIComponent(playerId)}?${q.toString()}`;
-  }
   return playerDepthHref(playerId, {
     season,
-    depth: opts.depth,
-    seasonType: opts.seasonType,
-    fromHistory: opts.fromHistory,
-    themeMode: opts.themeMode,
+    depth: opts?.depth,
+    seasonType: opts?.seasonType,
+    fromHistory: opts?.fromHistory,
+    themeMode: opts?.themeMode,
   });
 }
 
-/** Hannah-compatible depth href (kept for exact frontend ports). */
 export function playerDepthHref(
   playerId: string,
   opts: {

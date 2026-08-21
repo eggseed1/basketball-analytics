@@ -2,7 +2,7 @@
  * Soft-fail scoreboard / gamefeed catalogs with stale-aware last-good cache.
  *
  * Hierarchy: live ESPN → process-local last-good → unavailable.
- * Cached data is always labeled stale — never presented as live.
+ * Cached data is always labeled stale - never presented as live.
  */
 
 import { classifyProviderFailure } from "@/data/diagnostics/provider-failure";
@@ -53,7 +53,7 @@ export type ScoreboardFeedResult<T> = {
 };
 
 const STALE_WARNING =
-  "Showing recently cached scoreboard data — not a live update.";
+  "Showing recently cached scoreboard data - not a live update.";
 const UNAVAILABLE_WARNING = "Live scores temporarily unavailable.";
 
 type CacheEntry<T> = { value: T; retrievedAt: string };
@@ -201,7 +201,7 @@ export async function getUpcomingScoreboardFeed(
   }>
 > {
   const season = options.season ?? upcomingScheduleSeason();
-  const key = `${season}:${options.fromDate ?? ""}:${options.afterTipOffAt ?? ""}:${options.limit ?? 60}`;
+  const key = `${season}:${options.fromDate ?? ""}:${options.afterTipOffAt ?? ""}:${options.afterId ?? ""}:${options.limit ?? 60}`;
   const result = await softLoad({
     key,
     cache: upcomingCache,

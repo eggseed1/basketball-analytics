@@ -1,13 +1,16 @@
+import { memo, type ReactNode } from "react";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import type { CSSProperties } from "react";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import { GameCountdown } from "@/components/sports/game-countdown";
-import { LiveFreshness } from "@/components/sports/live-freshness";
 import { LiveIndicator } from "@/components/sports/live-indicator";
 import type { GameSummary } from "@/data/types";
+import { textLinkClassName, type } from "@/lib/design-system";
+import { parseTipOffMs } from "@/lib/game-countdown";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import {
   gameSideBrandKey,
@@ -88,10 +91,254 @@ function StarterRow({
 /** Tiny server-safe logo (no client hydration) for dense lists. */
 function StaticTeamMark({
   brand,
+  priority = false,
+  size = "md",
 }: {
   brand: NonNullable<ReturnType<typeof resolveHistoricalTeamBrand>>;
+  priority?: boolean;
+  size?: "sm" | "md";
 }) {
-  return <HistoricalTeamMark brand={brand} size="sm" />;
+  return <HistoricalTeamMark brand={brand} size={size} priority={priority} />;
+}
+
+function sideShortName(
+  brand: ReturnType<typeof resolveSideBrand>
+): string {
+  const nick = brand.nickname?.trim();
+  if (nick) return nick;
+  const display = brand.displayName?.trim() || "";
+  if (/trail blazers/i.test(display)) return "Trail Blazers";
+  if (/76ers/i.test(display)) return "76ers";
+  const parts = display.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return parts[parts.length - 1]!;
+  return display || brand.abbreviation;
+}
+
+function formatTipClock(tipOffAt?: string | null): string | null {
+  const ms = parseTipOffMs(tipOffAt);
+  if (ms == null) return null;
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      hour: "numeric",
+      minute: "2-digit",
+    }).format(new Date(ms));
+  } catch {
+    return null;
+  }
+}
+
+function formatTipDate(tipOffAt?: string | null): string | null {
+  const ms = parseTipOffMs(tipOffAt);
+  if (ms == null) return null;
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      weekday: "short",
+      month: "short",
+      day: "numeric",
+    }).format(new Date(ms));
+  } catch {
+    return null;
+  }
+}
+
+function MatchupSide({
+  brand,
+  teamKey,
+  season,
+  align,
+  record,
+}: {
+  brand: ReturnType<typeof resolveSideBrand>;
+  teamKey: string;
+  season: string;
+  align: "start" | "end";
+  record?: string | null;
+}) {
+  const end = align === "end";
+  const abbr = brand.abbreviation;
+  const name = sideShortName(brand);
+  const meta = record || abbr;
+  return (
+    <div
+      className={cn(
+        "flex min-w-0 flex-col gap-1",
+        end ? "items-end text-right" : "items-start text-left"
+      )}
+    >
+      <div className={cn("flex items-center gap-2", end && "flex-row-reverse")}>
+        <TeamIdentity
+          teamKey={brand.canonicalTeamId || teamKey}
+          label={abbr}
+          season={season}
+          className="pointer-events-auto"
+          nameClassName="flex items-center no-underline hover:no-underline"
+        >
+          <StaticTeamMark brand={brand} priority />
+        </TeamIdentity>
+        <span
+          className={cn(
+            type.caption,
+            "tabular-nums text-muted-foreground"
+          )}
+        >
+          {meta}
+        </span>
+      </div>
+      <TeamIdentity
+        teamKey={brand.canonicalTeamId || teamKey}
+        label={name}
+        season={season}
+        className="pointer-events-auto max-w-full"
+        nameClassName="max-w-full no-underline hover:no-underline"
+      >
+        <span
+          className={cn(
+            type.bodySm,
+            textLinkClassName,
+            "truncate text-muted-foreground decoration-foreground/30"
+          )}
+        >
+          {name}
+        </span>
+      </TeamIdentity>
+    </div>
+  );
+}
+
+function MatchupCenter({
+  game,
+  watch,
+}: {
+  game: GameSummary;
+  watch: string | null;
+}) {
+  const live = isLiveLikeStatus(game.status);
+  const preTip = isPreTipStatus(game.status);
+  const showScores = shouldDisplayScores({
+    status: game.status,
+    homeScore: game.homeScore,
+    awayScore: game.awayScore,
+  });
+  const clock = periodClockLabel({
+    status: game.status,
+    period: game.period,
+    displayClock: game.displayClock,
+    statusDetail: game.statusDetail,
+  });
+  const awayScore = game.awayScore;
+  const homeScore = game.homeScore;
+  const awayLosing =
+    awayScore != null && homeScore != null && awayScore < homeScore;
+  const homeLosing =
+    awayScore != null && homeScore != null && homeScore < awayScore;
+
+  let primary: ReactNode;
+  let secondary: ReactNode = null;
+
+  if (showScores) {
+    primary = (
+      <span className="tabular-nums">
+        <span className={awayLosing ? "text-muted-foreground" : undefined}>
+          {awayScore}
+        </span>
+        <span className="px-1 font-medium text-muted-foreground">-</span>
+        <span className={homeLosing ? "text-muted-foreground" : undefined}>
+          {homeScore}
+        </span>
+      </span>
+    );
+    secondary = live ? (
+      <span className="inline-flex items-center justify-center gap-1.5">
+        <LiveIndicator />
+        {clock}
+      </span>
+    ) : (
+      statusHeadline(game.status)
+    );
+  } else if (live) {
+    primary = <LiveIndicator />;
+    secondary = clock;
+  } else if (preTip) {
+    primary = formatTipClock(game.tipOffAt) ?? "TBD";
+    if (watch) {
+      secondary = watch;
+    } else {
+      const tipMs = parseTipOffMs(game.tipOffAt);
+      const soon =
+        tipMs != null &&
+        tipMs > Date.now() &&
+        tipMs - Date.now() <= 24 * 60 * 60 * 1000;
+      secondary = soon ? (
+        <GameCountdown tipOffAt={game.tipOffAt} variant="line" />
+      ) : (
+        formatTipDate(game.tipOffAt)
+      );
+    }
+  } else {
+    primary = statusHeadline(game.status);
+    secondary = watch;
+  }
+
+  return (
+    <div className="flex min-w-[7.5rem] flex-col items-center justify-center gap-0.5 px-2 text-center">
+      <div className={cn(type.heading, "tabular-nums")}>{primary}</div>
+      {secondary ? (
+        <div className={cn(type.caption, "text-muted-foreground")}>
+          {secondary}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function MatchupBoard({
+  game,
+  brandPresentation,
+  href,
+}: {
+  game: GameSummary;
+  brandPresentation: HistoricalBrandPresentation;
+  href?: string;
+}) {
+  const awayBrand = resolveSideBrand(game, "away", brandPresentation);
+  const homeBrand = resolveSideBrand(game, "home", brandPresentation);
+  const awayKey = gameSideBrandKey(game, "away");
+  const homeKey = gameSideBrandKey(game, "home");
+  const awayAbbr = awayBrand.abbreviation;
+  const homeAbbr = homeBrand.abbreviation;
+  const watch = broadcastHint(game);
+  const gameHref = href ?? `/games/${game.id}`;
+  const awayRecord = game.awayRecord?.trim() || null;
+  const homeRecord = game.homeRecord?.trim() || null;
+  const ariaAway = awayRecord ? `${awayAbbr} ${awayRecord}` : awayAbbr;
+  const ariaHome = homeRecord ? `${homeAbbr} ${homeRecord}` : homeAbbr;
+
+  return (
+    <>
+      <TransitionLink
+        href={gameHref}
+        className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={`${ariaAway} at ${ariaHome}`}
+      />
+      <div className="relative z-[1] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 pointer-events-none">
+        <MatchupSide
+          brand={awayBrand}
+          teamKey={awayKey}
+          season={game.season}
+          align="start"
+          record={awayRecord}
+        />
+        <MatchupCenter game={game} watch={watch} />
+        <MatchupSide
+          brand={homeBrand}
+          teamKey={homeKey}
+          season={game.season}
+          align="end"
+          record={homeRecord}
+        />
+      </div>
+    </>
+  );
 }
 
 function resolveSideBrand(
@@ -120,41 +367,6 @@ function resolveSideBrand(
   };
 }
 
-function GameStatusAside({ game }: { game: GameSummary }) {
-  const live = isLiveLikeStatus(game.status);
-  const preTip = isPreTipStatus(game.status);
-  const clock = periodClockLabel({
-    status: game.status,
-    period: game.period,
-    displayClock: game.displayClock,
-    statusDetail: game.statusDetail,
-  });
-
-  if (live) {
-    return (
-      <span className="flex shrink-0 flex-col items-end gap-0.5 text-right">
-        <LiveIndicator />
-        {clock ? (
-          <span className="text-[11px] font-medium tabular-nums text-muted-foreground">
-            {clock}
-          </span>
-        ) : null}
-        <LiveFreshness retrievedAt={game.retrievedAt} />
-      </span>
-    );
-  }
-
-  if (preTip) {
-    return <GameCountdown tipOffAt={game.tipOffAt} />;
-  }
-
-  return (
-    <span className="shrink-0 text-right text-[12px] font-medium text-muted-foreground">
-      {statusHeadline(game.status)}
-    </span>
-  );
-}
-
 function broadcastHint(game: GameSummary): string | null {
   const names = (game.broadcasts ?? [])
     .filter((b) => b.medium !== "radio")
@@ -165,10 +377,10 @@ function broadcastHint(game: GameSummary): string | null {
 }
 
 /**
- * Lightweight matchup row for the gamefeed list - no client islands except
- * countdown/live when needed (GameCountdown / LiveIndicator are client).
+ * Lightweight matchup row for the gamefeed list - CSS frost (not SVG liquid)
+ * so long scoreboards stay scrollable.
  */
-export function GameMatchupRow({
+export const GameMatchupRow = memo(function GameMatchupRow({
   game,
   className,
   brandPresentation = "era",
@@ -177,66 +389,26 @@ export function GameMatchupRow({
   className?: string;
   brandPresentation?: HistoricalBrandPresentation;
 }) {
-  const awayBrand = resolveSideBrand(game, "away", brandPresentation);
-  const homeBrand = resolveSideBrand(game, "home", brandPresentation);
-  const awayKey = gameSideBrandKey(game, "away");
-  const homeKey = gameSideBrandKey(game, "home");
-  const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayAbbr = awayBrand.abbreviation;
-  const homeAbbr = homeBrand.abbreviation;
-  const showScores = shouldDisplayScores({
-    status: game.status,
-    homeScore: game.homeScore,
-    awayScore: game.awayScore,
-  });
-  const watch = broadcastHint(game);
+  const matchup = buildGameMatchupTheme(
+    gameSideBrandKey(game, "away"),
+    gameSideBrandKey(game, "home")
+  );
 
   return (
-    <TransitionLink
-      href={`/games/${game.id}`}
-      className={cn(
-        "sports-card matchup-wash matchup-wash--subtle flex flex-col gap-1 px-3 py-2.5 transition hover:brightness-[0.98]",
-        className
-      )}
-      style={matchup.cssVars as CSSProperties}
+    <GlassSurface
+      as="article"
+      effect="css"
+      accentColor={matchup.awayWash}
+      accentColorB={matchup.homeWash}
+      className={cn("score-row relative px-3 py-3", className)}
     >
-      <div className="flex items-center gap-3">
-        <div className="flex min-w-0 flex-1 items-center gap-2">
-          <StaticTeamMark brand={awayBrand} />
-          <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
-            {awayAbbr}
-          </span>
-          {showScores ? (
-            <span className="w-8 text-right text-[15px] font-bold tabular-nums">
-              {game.awayScore}
-            </span>
-          ) : null}
-          <span className="shrink-0 px-0.5 text-[11px] font-medium text-muted-foreground">
-            @
-          </span>
-          {showScores ? (
-            <span className="w-8 text-[15px] font-bold tabular-nums">
-              {game.homeScore}
-            </span>
-          ) : null}
-          <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
-            {homeAbbr}
-          </span>
-          <StaticTeamMark brand={homeBrand} />
-        </div>
-        <GameStatusAside game={game} />
-      </div>
-      {watch ? (
-        <p className="pl-9 text-[11px] text-muted-foreground">
-          Where to watch · {watch}
-        </p>
-      ) : null}
-    </TransitionLink>
+      <MatchupBoard game={game} brandPresentation={brandPresentation} />
+    </GlassSurface>
   );
-}
+});
 
 /** Compact matchup card with optional starter fives. */
-export function GameScoreCard({
+export const GameScoreCard = memo(function GameScoreCard({
   game,
   awayStarters = [],
   homeStarters = [],
@@ -257,99 +429,41 @@ export function GameScoreCard({
   const awayKey = gameSideBrandKey(game, "away");
   const homeKey = gameSideBrandKey(game, "home");
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayScore = game.awayScore;
-  const homeScore = game.homeScore;
-  const showScores = shouldDisplayScores({
-    status: game.status,
-    homeScore,
-    awayScore,
-  });
-
-  const awayAbbr = awayBrand.abbreviation;
-  const homeAbbr = homeBrand.abbreviation;
   const hasStarters = awayStarters.length > 0 || homeStarters.length > 0;
-  const watch = broadcastHint(game);
-  const gameHref = href ?? `/games/${game.id}`;
 
   return (
-    <article
+    <GlassSurface
+      as="article"
+      effect="css"
+      accentColor={matchup.awayWash}
+      accentColorB={matchup.homeWash}
       className={cn(
-        "sports-card matchup-wash matchup-wash--subtle flex flex-col gap-2.5 px-3 py-2.5 transition hover:brightness-[0.98]",
+        "score-row relative flex flex-col gap-2.5 px-3 py-3",
         className
       )}
-      style={matchup.cssVars as CSSProperties}
     >
-      <TransitionLink
-        href={gameHref}
-        className="flex flex-col gap-1.5 outline-none focus-visible:ring-2 focus-visible:ring-ring"
-      >
-        <div className="flex items-center gap-3">
-          <div className="flex min-w-0 flex-1 items-center gap-2">
-            <HistoricalTeamMark brand={awayBrand} size="sm" />
-            <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
-              {awayAbbr}
-            </span>
-            {showScores ? (
-              <span
-                className={cn(
-                  "w-8 text-right text-[15px] font-bold tabular-nums",
-                  homeScore != null &&
-                    awayScore != null &&
-                    awayScore < homeScore &&
-                    "text-muted-foreground"
-                )}
-              >
-                {awayScore}
-              </span>
-            ) : null}
-
-            <span className="shrink-0 px-0.5 text-[11px] font-medium text-muted-foreground">
-              @
-            </span>
-
-            {showScores ? (
-              <span
-                className={cn(
-                  "w-8 text-[15px] font-bold tabular-nums",
-                  homeScore != null &&
-                    awayScore != null &&
-                    homeScore < awayScore &&
-                    "text-muted-foreground"
-                )}
-              >
-                {homeScore}
-              </span>
-            ) : null}
-            <span className="w-9 shrink-0 text-[13px] font-semibold tracking-tight">
-              {homeAbbr}
-            </span>
-            <HistoricalTeamMark brand={homeBrand} size="sm" />
-          </div>
-
-          <GameStatusAside game={game} />
-        </div>
-
-        {watch ? (
-          <p className="text-[11px] text-muted-foreground">
-            Where to watch · {watch}
-          </p>
-        ) : null}
-      </TransitionLink>
+      <div className="relative">
+        <MatchupBoard
+          game={game}
+          brandPresentation={brandPresentation}
+          href={href}
+        />
+      </div>
 
       {hasStarters ? (
         <div className="flex flex-col gap-1.5 border-t border-border/70 pt-2">
           <StarterRow
-            label={awayAbbr}
+            label={awayBrand.abbreviation}
             starters={awayStarters}
             teamKey={awayKey}
           />
           <StarterRow
-            label={homeAbbr}
+            label={homeBrand.abbreviation}
             starters={homeStarters}
             teamKey={homeKey}
           />
         </div>
       ) : null}
-    </article>
+    </GlassSurface>
   );
-}
+});

@@ -91,7 +91,7 @@ function MetricRow({
           animate && "transition-colors duration-500"
         )}
       >
-        {metric.display ?? "—"}
+        {metric.display ?? "-"}
       </p>
       <p
         className={cn(
@@ -102,7 +102,7 @@ function MetricRow({
           animate && "transition-colors duration-500"
         )}
       >
-        {metric.percentile ?? "—"}
+        {metric.percentile ?? "-"}
       </p>
       <div className="col-span-3 sm:col-span-1 sm:col-start-3 sm:row-start-1">
         <ScaleTrack
@@ -278,8 +278,8 @@ export function PlayerSavantSummary({
             </h2>
             <p className="text-sm text-muted-foreground">
               {inTimeline
-                ? "Career playback — markers move with this player’s growth or decline."
-                : "Savant-style value and skill percentiles — Poor ← Average → Great."}
+                ? "Career playback - markers move with this player’s growth or decline."
+                : "Savant-style value and skill percentiles - Poor ← Average → Great."}
             </p>
           </div>
 
@@ -330,7 +330,7 @@ export function PlayerSavantSummary({
               aria-label="Scrub career seasons"
               className="w-full accent-foreground"
             />
-            <div className="flex justify-between text-[11px] tabular-nums text-muted-foreground">
+            <div className="flex justify-between text-[12px] tabular-nums text-muted-foreground">
               <span>{careerFrames[0]?.season}</span>
               <span className="font-medium text-foreground">
                 {displaySeason}

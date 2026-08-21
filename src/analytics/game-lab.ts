@@ -1,13 +1,9 @@
 /**
- * Game Lab v1 — deterministic game-level analysis from box score + season boards.
+ * Game Lab v1 - deterministic game-level analysis from box score + season boards.
  *
- * Period / Game Flow hierarchy:
- *   A. validated provider linescores
- *   B. PBP-derived score timeline (exact final-score conservation)
- *   C. unavailable (feature-level only — game header still renders)
- *
+ * No PBP, possessions, lineups, shot maps, win probability, or DRBL.
+ * Period flow only when the Game carries linescores.
  * Team totals are summed from player box lines (no fabricated team rows).
- * No DRBL / lineup inference / shot maps in this module.
  */
 
 import {
@@ -22,41 +18,34 @@ import {
 import { buildStatContext } from "@/analytics/context";
 import type { StatContext } from "@/analytics/types";
 import type { Game, PlayerGame } from "@/data/types";
-import type { GamePlayByPlay } from "@/data/types/play-by-play";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { formatNumber, formatPct } from "@/lib/format";
-import {
-  resolveGameFlowTimeline,
-  type ScoreTimelineSource,
-  type QuarterScoreSource,
-} from "@/lib/game-flow/resolve-score-timeline";
-import type { ScoreTimelinePoint } from "@/lib/history/score-flow";
 import { getPbpCapability } from "@/pbp";
 
-export const GAME_LAB_VERSION = 1.2;
+export const GAME_LAB_VERSION = 1.1;
 
 export const GAME_LAB_METHODOLOGY = {
   version: GAME_LAB_VERSION,
-  scope: "Regular / final box scores with optional period linescores or PBP timeline",
+  scope: "Regular / final box scores with optional period linescores",
   teamTotalsRule:
     "Team game totals are the sum of player box-score lines for that team. Missing OREB on every line means offensive rebounds are unavailable (not zero).",
   winningFactorsRule:
-    "Each metric compares home vs away totals (or rates). A difference counts only when |delta| meets the metric tolerance. Overall edge is a plurality of meaningful advantages — not an opaque game score.",
+    "Each metric compares home vs away totals (or rates). A difference counts only when |delta| meets the metric tolerance. Overall edge is a plurality of meaningful advantages - not an opaque game score.",
   teamContextRule:
     `Team game values compare to that team's same-season board averages when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
   gameSeasonContextRule:
-    "Game Lab V1.1 adds How Unusual / What Stood Out — scoreboard points and box rates vs same-season baselines with explicit direction and tolerances. Descriptive only; not a game grade.",
+    "Game Lab V1.1 adds How Unusual / What Stood Out - scoreboard points and box rates vs same-season baselines with explicit direction and tolerances. Descriptive only; not a game grade.",
   flowRule:
-    "Game Flow prefers validated provider linescores, then a PBP-derived score timeline that conserves the official final exactly. Mid-period leads, lead changes, ties, and strict runs come from the PBP timeline when present.",
+    "Period flow uses ESPN linescores when present. End-of-period cumulative scores and period scoring margins are reported; mid-period largest lead / possession runs are not inferred.",
   playerHighlightsRule:
     "Player sections rank transparent dimensions (points, gameScore when present, plus/minus, vs-season deltas from Level-2 box context). No universal player-of-the-game grade.",
   missingDataRule:
-    "Absent metrics stay absent. Historical thin boxes degrade to partial/minimal coverage. Missing Game Flow never invents period scores.",
+    "Absent metrics stay absent. Historical thin boxes degrade to partial/minimal coverage. PBP layers stay blocked until capability reports true.",
   setLimits:
-    "Possession runs beyond strict scoring runs, transition points, and win probability require data this branch does not yet expose.",
+    "Pace, lead changes, mid-game largest lead, transition points, and possession runs require data this branch does not yet expose.",
 } as const;
 
-/** Absolute tolerances — tiny edges are not “winning factors.” */
+/** Absolute tolerances - tiny edges are not “winning factors.” */
 export const GAME_LAB_TOLERANCE = {
   points: 3,
   /** Fraction points (0.02 = 2 percentage points). */
@@ -153,20 +142,6 @@ export type GameFlowPeriod = {
 export type GameFlowSummary = {
   available: boolean;
   periods: GameFlowPeriod[];
-  scoreTimelineSource: ScoreTimelineSource;
-  quarterScoreSource: QuarterScoreSource;
-  /** Scoring-event margin path when PBP conservation succeeds. */
-  timeline: ScoreTimelinePoint[];
-  /** Mid-game descriptive stats from validated timeline (null if periods-only). */
-  story: {
-    largestHomeLead: number;
-    largestAwayLead: number;
-    leadChanges: number;
-    ties: number;
-    largestStrictRunHome: number | null;
-    largestStrictRunAway: number | null;
-    largestDeficitOvercomeByWinner: number;
-  } | null;
   /** Largest |home−away| cumulative lead observed at a period boundary. */
   largestEndOfPeriodLead?: {
     side: "home" | "away";
@@ -183,8 +158,6 @@ export type GameFlowSummary = {
     summary: string;
   };
   notes: string[];
-  /** Internal diagnostic only. */
-  internalReason?: string;
 };
 
 export type GamePlayerHighlight = {
@@ -208,7 +181,7 @@ export type GamePlayerHighlights = {
 
 export type GameLabDataCoverage = {
   depth: GameLabDepth;
-  /** Scoreboard vs box vs full — missing box ≠ missing game. */
+  /** Scoreboard vs box vs full - missing box ≠ missing game. */
   availability: GameLabAvailability;
   hasBoxScore: boolean;
   hasTeamTotals: boolean;
@@ -225,7 +198,7 @@ export type GameAnalysisSummary = {
   season: string;
   gameDate: string;
   status: string;
-  /** Tip-off ISO when known — for countdown UI only. */
+  /** Tip-off ISO when known - for countdown UI only. */
   tipOffAt?: string;
   period?: number;
   displayClock?: string;
@@ -261,13 +234,19 @@ export type GameAnalysisSummary = {
   overallEdgeDisplay: string;
   overallReason: string;
   teamContext: GameTeamContextMetric[];
-  /** V1.1 — how unusual vs same-season baselines (descriptive). */
+  /** V1.1 - how unusual vs same-season baselines (descriptive). */
   gameSeasonContext: GameSeasonContext;
   playerHighlights: GamePlayerHighlights;
   boxScoreContext: BoxScoreGameContextIndex;
   coverage: GameLabDataCoverage;
   methodology: typeof GAME_LAB_METHODOLOGY;
 };
+
+function periodLabel(index: number, total: number): string {
+  if (index < 4) return `Q${index + 1}`;
+  if (total === 5 && index === 4) return "OT";
+  return `OT${index - 3}`;
+}
 
 function signed(n: number, digits = 0): string {
   const sign = n > 0 ? "+" : "";
@@ -359,7 +338,7 @@ type FactorDef = {
   tolerance: number;
   /** When true, lower values are better (e.g. turnovers). */
   invert?: boolean;
-  /** Rate metrics stored as 0–1 fractions. */
+  /** Rate metrics stored as 0-1 fractions. */
   isPct?: boolean;
   formatValue: (v: number) => string;
   formatDelta: (d: number) => string;
@@ -518,112 +497,84 @@ export function computeWinningFactors(
   return out.sort((a, b) => b.strength - a.strength || a.id.localeCompare(b.id));
 }
 
-export function buildGameFlow(
-  game: Game,
-  playByPlay?: GamePlayByPlay | null
-): GameFlowSummary {
-  const resolved = resolveGameFlowTimeline({ game, playByPlay });
-
-  if (!resolved.available) {
+export function buildGameFlow(game: Game): GameFlowSummary {
+  const homeP = game.homePeriodScores;
+  const awayP = game.awayPeriodScores;
+  if (
+    !homeP?.length ||
+    !awayP?.length ||
+    homeP.length !== awayP.length ||
+    homeP.every((n) => n === 0) && awayP.every((n) => n === 0)
+  ) {
     return {
       available: false,
       periods: [],
-      scoreTimelineSource: "UNAVAILABLE",
-      quarterScoreSource: "UNAVAILABLE",
-      timeline: [],
-      story: null,
-      notes: resolved.notes.length
-        ? resolved.notes
-        : [
-            "Game flow unavailable",
-            "Play-by-play scoring for this game isn't complete enough to reconstruct the score timeline.",
-          ],
-      internalReason: resolved.internalReason,
+      notes: [
+        "Period scoring is unavailable for this game - score-over-time and quarter swings cannot be shown yet.",
+      ],
     };
   }
 
-  const periods: GameFlowPeriod[] = resolved.periods.map((p) => ({
-    periodIndex: p.periodIndex,
-    label: p.label,
-    homePoints: p.homePoints,
-    awayPoints: p.awayPoints,
-    homeCumulative: p.homeCumulative,
-    awayCumulative: p.awayCumulative,
-    leader: p.leader,
-    margin: p.margin,
-  }));
-
+  const periods: GameFlowPeriod[] = [];
+  let homeCum = 0;
+  let awayCum = 0;
   let largest: GameFlowSummary["largestEndOfPeriodLead"];
   let biggestSwing: GameFlowSummary["biggestPeriodSwing"];
-  for (const p of periods) {
-    const absMargin = Math.abs(p.margin);
+
+  for (let i = 0; i < homeP.length; i++) {
+    const hp = homeP[i]!;
+    const ap = awayP[i]!;
+    homeCum += hp;
+    awayCum += ap;
+    const label = periodLabel(i, homeP.length);
+    const margin = homeCum - awayCum;
+    const leader: GameLabSide =
+      margin > 0 ? "home" : margin < 0 ? "away" : "even";
+    periods.push({
+      periodIndex: i,
+      label,
+      homePoints: hp,
+      awayPoints: ap,
+      homeCumulative: homeCum,
+      awayCumulative: awayCum,
+      leader,
+      margin,
+    });
+
+    const absMargin = Math.abs(margin);
     if (absMargin > 0 && (!largest || absMargin > largest.margin)) {
       largest = {
-        side: p.margin > 0 ? "home" : "away",
+        side: margin > 0 ? "home" : "away",
         margin: absMargin,
-        afterPeriodLabel: p.label,
+        afterPeriodLabel: label,
       };
     }
-    const periodDelta = p.homePoints - p.awayPoints;
+
+    const periodDelta = hp - ap;
     if (
       !biggestSwing ||
       Math.abs(periodDelta) > Math.abs(biggestSwing.delta)
     ) {
+      const edge: "home" | "away" = periodDelta >= 0 ? "home" : "away";
       biggestSwing = {
-        periodLabel: p.label,
-        edge: periodDelta >= 0 ? "home" : "away",
-        homePoints: p.homePoints,
-        awayPoints: p.awayPoints,
+        periodLabel: label,
+        edge,
+        homePoints: hp,
+        awayPoints: ap,
         delta: periodDelta,
-        summary: "",
+        summary: "", // filled after labels known by caller optionally
       };
     }
   }
 
-  // Prefer mid-game largest lead from PBP timeline when present.
-  if (resolved.flowStats) {
-    const { largestHomeLead, largestAwayLead } = resolved.flowStats;
-    if (largestHomeLead > 0 || largestAwayLead > 0) {
-      if (largestHomeLead >= largestAwayLead && largestHomeLead > 0) {
-        largest = {
-          side: "home",
-          margin: largestHomeLead,
-          afterPeriodLabel: largest?.afterPeriodLabel ?? "game",
-        };
-      } else if (largestAwayLead > 0) {
-        largest = {
-          side: "away",
-          margin: largestAwayLead,
-          afterPeriodLabel: largest?.afterPeriodLabel ?? "game",
-        };
-      }
-    }
-  }
-
-  const stats = resolved.flowStats;
-  const story = stats
-    ? {
-        largestHomeLead: stats.largestHomeLead,
-        largestAwayLead: stats.largestAwayLead,
-        leadChanges: stats.leadChanges,
-        ties: stats.ties,
-        largestStrictRunHome: stats.largestStrictRunHome?.points ?? null,
-        largestStrictRunAway: stats.largestStrictRunAway?.points ?? null,
-        largestDeficitOvercomeByWinner: stats.largestDeficitOvercomeByWinner,
-      }
-    : null;
-
   return {
     available: true,
     periods,
-    scoreTimelineSource: resolved.scoreTimelineSource,
-    quarterScoreSource: resolved.quarterScoreSource,
-    timeline: resolved.timeline,
-    story,
     largestEndOfPeriodLead: largest,
     biggestPeriodSwing: biggestSwing,
-    notes: resolved.notes,
-    internalReason: resolved.internalReason,
+    notes: [
+      "Lead figures are end-of-period only - mid-period largest lead needs play-by-play.",
+    ],
   };
 }
 
@@ -804,7 +755,7 @@ function buildPlayerHighlights(options: {
     : [...active]
         .map((p) => ({
           p,
-          // Transparent stand-in: counting box contribution — not a universal grade.
+          // Transparent stand-in: counting box contribution - not a universal grade.
           composite: p.points + p.rebounds + p.assists,
         }))
         .sort((a, b) => b.composite - a.composite)
@@ -865,7 +816,6 @@ export function analyzeGame(options: {
   homeSeason?: TeamSeasonStats | null;
   awaySeason?: TeamSeasonStats | null;
   seasonByPlayerId?: Map<string, import("@/data/types").PlayerSeason>;
-  playByPlay?: GamePlayByPlay | null;
 }): GameAnalysisSummary {
   const {
     game,
@@ -877,7 +827,6 @@ export function analyzeGame(options: {
     homeSeason = null,
     awaySeason = null,
     seasonByPlayerId = new Map(),
-    playByPlay = null,
   } = options;
 
   const margin = game.homeScore - game.awayScore;
@@ -889,13 +838,13 @@ export function analyzeGame(options: {
   const home = sumTeamTotals(players, game.homeTeamId, "home", homeLabel);
   const away = sumTeamTotals(players, game.awayTeamId, "away", awayLabel);
 
-  const flow = buildGameFlow(game, playByPlay);
+  const flow = buildGameFlow(game);
   if (flow.biggestPeriodSwing) {
     const swing = flow.biggestPeriodSwing;
     const edgeLabel = swing.edge === "home" ? homeLabel : awayLabel;
     swing.summary = `${edgeLabel} outscored the opponent ${
       swing.edge === "home" ? swing.homePoints : swing.awayPoints
-    }–${swing.edge === "home" ? swing.awayPoints : swing.homePoints} in ${swing.periodLabel}.`;
+    }-${swing.edge === "home" ? swing.awayPoints : swing.homePoints} in ${swing.periodLabel}.`;
   }
 
   const whatChanged: string[] = [];
@@ -915,7 +864,7 @@ export function analyzeGame(options: {
       const edgeLabel = d > 0 ? homeLabel : awayLabel;
       const hi = d > 0 ? period.homePoints : period.awayPoints;
       const lo = d > 0 ? period.awayPoints : period.homePoints;
-      const line = `${edgeLabel} outscored the opponent ${hi}–${lo} in ${period.label}.`;
+      const line = `${edgeLabel} outscored the opponent ${hi}-${lo} in ${period.label}.`;
       if (!whatChanged.includes(line)) whatChanged.push(line);
     }
   }
@@ -933,16 +882,16 @@ export function analyzeGame(options: {
   } else if (!winningFactors.length) {
     overallEdge = "even";
     overallReason =
-      "No metric cleared its meaningful-difference tolerance — the statistical profile is essentially even.";
+      "No metric cleared its meaningful-difference tolerance - the statistical profile is essentially even.";
   } else if (homeAdvantages.length === awayAdvantages.length) {
     overallEdge = "even";
     overallReason = `Each side holds ${homeAdvantages.length} meaningful statistical advantage${homeAdvantages.length === 1 ? "" : "s"}.`;
   } else if (homeAdvantages.length > awayAdvantages.length) {
     overallEdge = "home";
-    overallReason = `${homeLabel} holds more meaningful statistical advantages (${homeAdvantages.length}–${awayAdvantages.length}).`;
+    overallReason = `${homeLabel} holds more meaningful statistical advantages (${homeAdvantages.length}-${awayAdvantages.length}).`;
   } else {
     overallEdge = "away";
-    overallReason = `${awayLabel} holds more meaningful statistical advantages (${awayAdvantages.length}–${homeAdvantages.length}).`;
+    overallReason = `${awayLabel} holds more meaningful statistical advantages (${awayAdvantages.length}-${homeAdvantages.length}).`;
   }
 
   const overallEdgeDisplay =
@@ -1020,9 +969,7 @@ export function analyzeGame(options: {
     );
   }
   if (!hasPeriodScores) {
-    coverageNotes.push(
-      "Game flow unavailable — scoring timeline could not be validated."
-    );
+    coverageNotes.push("Period linescores unavailable - game flow is limited.");
   }
   if (!hasHomeSeasonContext && !hasAwaySeasonContext) {
     coverageNotes.push(
@@ -1085,10 +1032,10 @@ export function analyzeGame(options: {
 
   const summaryLine =
     winner === "even"
-      ? `${awayLabel} ${game.awayScore} — ${homeLabel} ${game.homeScore} (tie)`
+      ? `${awayLabel} ${game.awayScore} - ${homeLabel} ${game.homeScore} (tie)`
       : `${winnerLabel} ${
           winner === "home" ? game.homeScore : game.awayScore
-        } — ${
+        } - ${
           winner === "home" ? awayLabel : homeLabel
         } ${winner === "home" ? game.awayScore : game.homeScore}`;
 

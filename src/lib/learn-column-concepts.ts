@@ -1,6 +1,6 @@
 /**
  * Map dense-table column labels / Game Lab factor ids → Learn concept ids.
- * Header-level MetricHelp only — keep cells clean.
+ * Header-level MetricHelp only - keep cells clean.
  */
 
 import { getLearnConcept } from "@/content/learn/registry";

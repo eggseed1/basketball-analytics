@@ -1,4 +1,4 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
+import Link from "next/link";
 
 import {
   careerProductionIndex,
@@ -10,15 +10,14 @@ import {
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { PlayerSeason } from "@/data/types";
 import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
-import { playerHref } from "@/lib/player-page-contract";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 import { askDrblHref } from "./player-ask-links";
 
 /**
- * Compact career season surface — high-value fields + Compare / Rank / Ask.
- * View Season uses TransitionLink so soft-nav updates selected season.
+ * Compact career season surface - high-value fields + Compare / Rank / Ask.
+ * Not a replacement for Season depth or Rank My Seasons methodology.
  */
 export function PlayerSeasonExplorer({
   playerId,
@@ -27,8 +26,6 @@ export function PlayerSeasonExplorer({
   viewingSeason,
   peakSeason,
   rankDefaults,
-  fromHistory,
-  themeMode,
 }: {
   playerId: string;
   playerName: string;
@@ -38,12 +35,10 @@ export function PlayerSeasonExplorer({
   peakSeason?: string | null;
   /** Seasons used when ranking from a single row. */
   rankDefaults: string[];
-  fromHistory?: boolean;
-  themeMode?: "historical" | "modern";
 }) {
   if (seasons.length === 0) {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         No career seasons available to explore.
       </p>
     );
@@ -63,8 +58,6 @@ export function PlayerSeasonExplorer({
         peakSeason={peakSeason}
         rankDefaults={rankDefaults}
         allChrono={chrono}
-        fromHistory={fromHistory}
-        themeMode={themeMode}
       />
       {rest.length ? (
         <details className="group">
@@ -83,8 +76,6 @@ export function PlayerSeasonExplorer({
               peakSeason={peakSeason}
               rankDefaults={rankDefaults}
               allChrono={chrono}
-              fromHistory={fromHistory}
-              themeMode={themeMode}
             />
           </div>
         </details>
@@ -101,8 +92,6 @@ function SeasonList({
   peakSeason,
   rankDefaults,
   allChrono,
-  fromHistory,
-  themeMode,
 }: {
   rows: PlayerSeason[];
   playerId: string;
@@ -111,8 +100,6 @@ function SeasonList({
   peakSeason?: string | null;
   rankDefaults: string[];
   allChrono: PlayerSeason[];
-  fromHistory?: boolean;
-  themeMode?: "historical" | "modern";
 }) {
   return (
     <ul className="flex flex-col gap-2">
@@ -137,12 +124,6 @@ function SeasonList({
             ? rankDefaults
             : [row.season, ...rankDefaults]),
         ]).slice(0, 5);
-        const seasonHref = playerHref({
-          playerId,
-          season: row.season,
-          fromHistory,
-          themeMode,
-        });
 
         return (
           <li
@@ -156,22 +137,21 @@ function SeasonList({
               <div className="flex min-w-0 items-center gap-2">
                 <TeamLogo teamKey={row.teamId} size="2xs" />
                 <div className="min-w-0">
-                  <p className="text-[15px] font-bold tracking-tight">
-                    <TransitionLink
-                      href={seasonHref}
+                  <p className="text-[16px] font-bold tracking-tight">
+                    <Link
+                      href={`/players/${playerId}?season=${encodeURIComponent(row.season)}`}
                       scroll={false}
-                      prefetch={false}
                       className="underline-offset-2 hover:underline"
                     >
                       {row.season}
-                    </TransitionLink>
+                    </Link>
                     {isViewing ? (
-                      <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      <span className="ml-2 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                         Viewing
                       </span>
                     ) : null}
                     {row.season === peakSeason ? (
-                      <span className="ml-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                      <span className="ml-2 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                         Peak
                       </span>
                     ) : null}
@@ -182,49 +162,48 @@ function SeasonList({
                   </p>
                 </div>
               </div>
-              <TransitionLink
-                href={seasonHref}
+              <Link
+                href={`/players/${playerId}?season=${encodeURIComponent(row.season)}`}
                 scroll={false}
-                prefetch={false}
                 className="rounded-md bg-secondary px-2.5 py-1 text-[12px] font-semibold"
               >
                 View season
-              </TransitionLink>
+              </Link>
             </div>
 
             <dl className="mt-3 grid grid-cols-3 gap-2 sm:grid-cols-5">
-              <Mini label="CPI" value={cpi != null ? formatCpi(cpi) : "—"} />
+              <Mini label="CPI" value={cpi != null ? formatCpi(cpi) : "-"} />
               <Mini
                 label="TS%"
                 value={
                   row.trueShootingPct != null && row.trueShootingPct > 0
                     ? formatPct(row.trueShootingPct)
-                    : "—"
+                    : "-"
                 }
               />
-              <Mini label="USG%" value={usg != null ? formatPct(usg) : "—"} />
+              <Mini label="USG%" value={usg != null ? formatPct(usg) : "-"} />
               <Mini label="GP" value={formatNumber(row.gamesPlayed)} />
               <Mini label="MIN" value={formatMinutes(row.minutes)} />
             </dl>
 
             <div className="mt-3 flex flex-wrap gap-x-3 gap-y-1 text-[12px] font-semibold">
               {compareOther ? (
-                <TransitionLink
+                <Link
                   href={seasonComparePath(playerId, row.season, compareOther)}
                   className="underline-offset-2 hover:underline"
                 >
                   Compare
-                </TransitionLink>
+                </Link>
               ) : null}
               {rankSet.length >= 2 ? (
-                <TransitionLink
+                <Link
                   href={seasonRankPath(playerId, rankSet)}
                   className="underline-offset-2 hover:underline"
                 >
                   Rank
-                </TransitionLink>
+                </Link>
               ) : null}
-              <TransitionLink
+              <Link
                 href={askDrblHref(
                   `${playerName} true shooting ${row.season}`,
                   playerId
@@ -232,7 +211,7 @@ function SeasonList({
                 className="underline-offset-2 hover:underline"
               >
                 Ask DRBL
-              </TransitionLink>
+              </Link>
             </div>
           </li>
         );

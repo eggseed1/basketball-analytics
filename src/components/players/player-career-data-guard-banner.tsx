@@ -3,7 +3,7 @@ import type { ProductionProviderGuard } from "@/data/diagnostics/production-prov
 
 /**
  * Visible when career rows are empty for a reason other than "this player
- * simply has no seasons" — especially sample-provider misconfiguration.
+ * simply has no seasons" - especially sample-provider misconfiguration.
  * Does not crash the page. Does not expose secrets.
  */
 export function PlayerCareerDataGuardBanner({
@@ -16,7 +16,7 @@ export function PlayerCareerDataGuardBanner({
     guard.status === "live_provider_empty_career" &&
     !guard.isSilentEmptyCareerRisk
   ) {
-    // Genuinely empty live career — keep quiet; the page empty copy is enough.
+    // Genuinely empty live career - keep quiet; the page empty copy is enough.
     return null;
   }
 
@@ -28,12 +28,12 @@ export function PlayerCareerDataGuardBanner({
 
   return (
     <section
-      className={cn("rounded-md border px-3 py-2.5 text-[13px]", tone)}
+      className={cn("rounded-md border px-3 py-2.5 text-[14px]", tone)}
       role="status"
     >
       <p className="font-bold tracking-tight">{guard.label}</p>
       <p className="mt-1 text-muted-foreground">{guard.message}</p>
-      <p className="mt-1 text-[11px] text-muted-foreground">
+      <p className="mt-1 text-[12px] text-muted-foreground">
         Provider: {guard.provider.name} · configured: {guard.configuredKey}
       </p>
     </section>

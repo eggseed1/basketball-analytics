@@ -96,14 +96,14 @@ function DraftBody() {
     <div className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div className="max-w-xl">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
             War room
           </p>
           <h2 className="text-lg font-semibold tracking-tight">
             Scouting board
             {league.phase !== "draft" ? " · preview" : ""}
           </h2>
-          <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
             Style tags until pick night. Only true top-of-board talent gets elite
             codenames - most of the class is role projection, not legend cosplay.
           </p>
@@ -175,10 +175,10 @@ function DraftBody() {
 
       {revealFlash ? (
         <div className="sports-card border border-foreground/10 bg-foreground px-4 py-3 text-background">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-background/70">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.16em] text-background/70">
             Identity reveal
           </p>
-          <p className="mt-1 text-[15px] font-semibold">
+          <p className="mt-1 text-[16px] font-semibold">
             <span className="text-background/75">{revealFlash.codename}</span>
             {" → "}
             {revealFlash.name}
@@ -208,7 +208,7 @@ function DraftBody() {
 
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(280px,340px)]">
         <div className="overflow-hidden rounded-md border border-border bg-card">
-          <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             <span>Big board · scouted upside</span>
             <span className="normal-case tracking-normal text-[10px] font-normal">
               Grade · Impact
@@ -235,14 +235,14 @@ function DraftBody() {
                       <span className="block truncate text-[14px] font-semibold tracking-tight">
                         {displayPlayerName(p)}
                       </span>
-                      <span className="block text-[11px] text-muted-foreground">
+                      <span className="block text-[12px] text-muted-foreground">
                         {p.position} · {p.age} ·{" "}
                         {p.scoutProfile?.archetypeLabel ?? "Unknown mold"}
                       </span>
                     </span>
                     <span
                       className={cn(
-                        "text-[13px] font-bold tabular-nums",
+                        "text-[14px] font-bold tabular-nums",
                         gradeTone(upside)
                       )}
                       title={gradeMeaning(upside)}
@@ -312,13 +312,13 @@ function ScoutDossier({
   return (
     <aside className="flex flex-col gap-3 rounded-md border border-border bg-card p-4">
       <div>
-        <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
           Scout dossier
         </p>
         <h3 className="mt-1 text-[1.35rem] font-bold leading-tight tracking-tight">
           {displayPlayerName(player)}
         </h3>
-        <p className="mt-1 text-[13px] text-muted-foreground">
+        <p className="mt-1 text-[14px] text-muted-foreground">
           {player.position} · Age {player.age}
           {profile?.archetypeLabel ? ` · ${profile.archetypeLabel}` : ""}
         </p>
@@ -366,7 +366,7 @@ function ScoutDossier({
       </div>
 
       <div>
-        <p className="mb-1.5 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <p className="mb-1.5 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
           Grades
         </p>
         <ul className="grid grid-cols-2 gap-1.5">
@@ -382,7 +382,7 @@ function ScoutDossier({
                 </span>
                 <span
                   className={cn(
-                    "text-[13px] font-bold tabular-nums",
+                    "text-[14px] font-bold tabular-nums",
                     gradeTone(row.value)
                   )}
                 >
@@ -399,13 +399,13 @@ function ScoutDossier({
 
       {profile?.comps?.length ? (
         <div>
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Comp whispers
           </p>
-          <p className="text-[13px] leading-snug">
+          <p className="text-[14px] leading-snug">
             {profile.comps.join(" · ")}
           </p>
-          <p className="mt-1 text-[11px] text-muted-foreground">
+          <p className="mt-1 text-[12px] text-muted-foreground">
             Style DNA - not a confirmed identity.
           </p>
         </div>
@@ -413,10 +413,10 @@ function ScoutDossier({
 
       {profile?.summary ? (
         <div>
-          <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <p className="mb-1 text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Scout note
           </p>
-          <p className="text-[13px] leading-relaxed text-muted-foreground">
+          <p className="text-[14px] leading-relaxed text-muted-foreground">
             {profile.summary}
           </p>
         </div>
@@ -424,7 +424,7 @@ function ScoutDossier({
 
       {profile?.medicalNote ? (
         <div className="rounded-lg border border-border/80 bg-secondary/40 px-2.5 py-2">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+          <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             Medical
           </p>
           <p className="mt-0.5 text-[12px] leading-snug">{profile.medicalNote}</p>
@@ -460,7 +460,7 @@ function Metric({
       <p className="text-[10px] font-semibold uppercase tracking-[0.1em] text-muted-foreground">
         {label}
       </p>
-      <p className="text-[13px] font-semibold tabular-nums">{value}</p>
+      <p className="text-[14px] font-semibold tabular-nums">{value}</p>
       {hint ? (
         <p className="text-[10px] leading-tight text-muted-foreground">{hint}</p>
       ) : null}

@@ -137,7 +137,7 @@ export function GameSeasonTable({ games }: GameSeasonTableProps) {
               >
                 Matchup
               </SortableTableHead>
-              <TableHead className="h-10 px-2 text-right text-[11px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+              <TableHead className="h-10 px-2 text-right text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
                 Score
               </TableHead>
               <SortableTableHead

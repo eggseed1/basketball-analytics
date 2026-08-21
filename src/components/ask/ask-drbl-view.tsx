@@ -184,13 +184,13 @@ function QueryPlanDisclosure({ result }: { result: AskDrblResult }) {
   if (!rows?.length) return null;
   return (
     <details className="sports-card px-4 py-3 sm:px-5">
-      <summary className="cursor-pointer text-[13px] font-bold tracking-tight">
+      <summary className="cursor-pointer text-[14px] font-bold tracking-tight">
         How did DRBL interpret this?
       </summary>
       <dl className="mt-3 grid gap-2 sm:grid-cols-2">
         {rows.map((row) => (
           <div key={row.label} className="flex flex-col gap-0.5">
-            <dt className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+            <dt className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
               {row.label}
             </dt>
             <dd className="text-[14px] font-semibold">{row.value}</dd>
@@ -213,7 +213,7 @@ function StatusBanner({
   const statusConcept = conceptIdForAskStatus(result.status);
   return (
     <section className={cn("rounded-md border px-4 py-3", meta.className)}>
-      <h2 className="text-[15px] font-bold tracking-tight">
+      <h2 className="text-[16px] font-bold tracking-tight">
         {statusConcept ? (
           <MetricHelp conceptId={statusConcept} labelClassName="font-bold">
             {meta.title}
@@ -313,7 +313,7 @@ function ExamplesList({
             onClick={() => onPick(ex.prompt)}
             className={cn(
               "text-left font-semibold underline-offset-2 hover:underline",
-              compact ? "text-[13px]" : "text-[14px]"
+              compact ? "text-[14px]" : "text-[14px]"
             )}
           >
             {ex.prompt}
@@ -355,13 +355,13 @@ function AskResultBlock({
           </p>
           {seasons.length ? (
             <div className="rounded-md bg-secondary/40 px-3 py-2">
-              <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+              <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
                 Interpreted as
               </p>
               <p className="mt-0.5 text-[14px] font-semibold tracking-tight">
                 {result.rawQuery}
               </p>
-              <p className="mt-1 text-[13px]">
+              <p className="mt-1 text-[14px]">
                 Season:{" "}
                 <span className="font-bold">{seasons.join(" · ")}</span>
               </p>
@@ -412,7 +412,7 @@ function AskResultBlock({
             {quietInterpretation.map((line) => (
               <li
                 key={line}
-                className="text-[15px] font-semibold tracking-tight"
+                className="text-[16px] font-semibold tracking-tight"
               >
                 {line}
               </li>
@@ -426,7 +426,7 @@ function AskResultBlock({
       {(result.source || result.methodology?.length) && (
         <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
           {result.source ? (
-            <p className="text-[13px]">
+            <p className="text-[14px]">
               <span className="font-bold">Source</span> · {result.source}
             </p>
           ) : null}
@@ -460,7 +460,7 @@ function AskResultBlock({
               <AppLink
                 key={l.href + l.label}
                 href={l.href}
-                className="rounded-md bg-foreground px-3 py-2 text-[13px] font-bold text-background"
+                className="rounded-md bg-foreground px-3 py-2 text-[14px] font-bold text-background"
               >
                 {l.label}
               </AppLink>
@@ -602,7 +602,7 @@ export function AskDrblView({
         <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
           DRBL · Analytical search
         </p>
-        <h1 className="text-[34px] font-bold tracking-tight sm:text-[40px]">
+        <h1 className="text-[32px] font-bold tracking-tight sm:text-[40px]">
           <MetricHelp
             conceptId="ask_drbl"
             labelClassName="font-bold tracking-tight"
@@ -610,10 +610,10 @@ export function AskDrblView({
             ASK DRBL
           </MetricHelp>
         </h1>
-        <p className="max-w-2xl text-[15px] text-muted-foreground">
+        <p className="max-w-2xl text-[16px] text-muted-foreground">
           {hasResult
             ? "Ask another question, or refine with the structured builder."
-            : "Natural language or a guided builder — both use the same trusted query engine. Not a chatbot."}
+            : "Natural language or a guided builder - both use the same trusted query engine. Not a chatbot."}
         </p>
       </header>
 
@@ -623,10 +623,10 @@ export function AskDrblView({
           role="status"
         >
           <div className="min-w-0">
-            <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
               Historical context
             </p>
-            <p className="text-[15px] font-bold tracking-tight">
+            <p className="text-[16px] font-bold tracking-tight">
               {askContext!.season}
               {askContext?.source === "time_machine"
                 ? " · Time Machine"
@@ -711,7 +711,7 @@ export function AskDrblView({
             <button
               type="submit"
               disabled={pending || !value.trim()}
-              className="rounded-md bg-foreground px-4 py-2.5 text-[13px] font-bold text-background disabled:opacity-50"
+              className="rounded-md bg-foreground px-4 py-2.5 text-[14px] font-bold text-background disabled:opacity-50"
             >
               {pending ? "Running…" : hasResult ? "Ask another" : "Run query"}
             </button>
@@ -773,7 +773,7 @@ export function AskDrblView({
             <button
               type="button"
               onClick={() => setExamplesOpen((v) => !v)}
-              className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+              className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
             >
               {examplesOpen ? "Hide" : "Show examples"}
             </button>
@@ -815,7 +815,7 @@ function RecentSection({
         <button
           type="button"
           onClick={onClear}
-          className="text-[11px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
         >
           Clear
         </button>
@@ -831,12 +831,12 @@ function RecentSection({
                 compact && "py-1"
               )}
             >
-              <span className="text-[13px] font-semibold">
+              <span className="text-[14px] font-semibold">
                 {entry.title.length > 64
                   ? `${entry.title.slice(0, 64)}…`
                   : entry.title}
               </span>
-              <span className="text-[11px] text-muted-foreground">
+              <span className="text-[12px] text-muted-foreground">
                 {entry.status ? `${entry.status} · ` : ""}
                 {formatRecentTime(entry.at)}
               </span>

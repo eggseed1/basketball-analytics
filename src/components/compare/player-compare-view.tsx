@@ -25,7 +25,7 @@ function EdgeLabel({
       edgeDisplay.toLowerCase() === "even" ||
       edgeDisplay.toLowerCase() === "essentially even";
     return (
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         {even ? (
           <MetricHelp conceptId="essentially_even">{edgeDisplay}</MetricHelp>
         ) : (
@@ -40,13 +40,13 @@ function EdgeLabel({
     Math.abs(delta) < evenThreshold
   ) {
     return (
-      <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+      <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
         <MetricHelp conceptId="essentially_even">Even</MetricHelp>
       </span>
     );
   }
   return (
-    <span className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+    <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
       {delta > 0 ? `${aName} stronger` : `${bName} stronger`}
     </span>
   );
@@ -121,7 +121,7 @@ export function ComparisonDimensionRow({
         >
           {dimension.aDisplay}
         </p>
-        <p className="text-[11px] text-muted-foreground">{aName}</p>
+        <p className="text-[12px] text-muted-foreground">{aName}</p>
       </div>
       <div className="flex flex-col items-center gap-0.5 px-2">
         <p className="text-[12px] font-semibold">
@@ -152,7 +152,7 @@ export function ComparisonDimensionRow({
         >
           {dimension.bDisplay}
         </p>
-        <p className="text-[11px] text-muted-foreground">{bName}</p>
+        <p className="text-[12px] text-muted-foreground">{bName}</p>
       </div>
     </div>
   );
@@ -182,7 +182,7 @@ export function PlayerCompareView({
             {result.aName}
           </span>
         </PlayerIdentity>
-        <p className="text-[13px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        <p className="text-[14px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
           vs
         </p>
         <PlayerIdentity
@@ -204,7 +204,7 @@ export function PlayerCompareView({
       </header>
 
       {result.season ? (
-        <p className="text-center text-[13px] text-muted-foreground">
+        <p className="text-center text-[14px] text-muted-foreground">
           Season {result.season} ·{" "}
           <MetricHelp conceptId="percentiles">percentiles</MetricHelp> among
           qualified peers
@@ -227,7 +227,7 @@ export function PlayerCompareView({
           if (!rows.length) return null;
           return (
             <div key={group} className="mb-3 last:mb-0">
-              <h3 className="border-b border-border/70 py-2 text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
+              <h3 className="border-b border-border/70 py-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
                 {title}
               </h3>
               {rows.map((d) => (
@@ -244,7 +244,7 @@ export function PlayerCompareView({
       </section>
 
       <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
-        <h2 className="text-[15px] font-bold tracking-tight">
+        <h2 className="text-[16px] font-bold tracking-tight">
           How are they different?
         </h2>
         <ul className="flex flex-col gap-2">

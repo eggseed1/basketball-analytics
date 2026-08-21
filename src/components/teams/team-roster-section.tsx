@@ -28,7 +28,7 @@ function valueDetail(player: PlayerSeason): string {
   if (player.darkoDpm != null && Number.isFinite(player.darkoDpm)) {
     return `${formatNumber(player.darkoDpm, 2)} DPM`;
   }
-  return "—";
+  return "-";
 }
 
 function PlayerRow({
@@ -74,13 +74,13 @@ export function TeamRosterSection({
   season: string;
   teamKey: string;
   teamId: string;
-  /** Diagnosed board capability — never treat unsupported as “0 players”. */
+  /** Diagnosed board capability - never treat unsupported as “0 players”. */
   status?: "ok" | "unsupported" | "timeout" | "error";
   unavailableMessage?: string;
 }) {
   if (status === "unsupported") {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         {unavailableMessage ??
           `Historical roster data unavailable for ${season}.`}
       </p>
@@ -89,7 +89,7 @@ export function TeamRosterSection({
 
   if (status === "timeout" || status === "error") {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         {unavailableMessage ??
           `Roster data unavailable for ${season}.`}
       </p>
@@ -103,7 +103,7 @@ export function TeamRosterSection({
 
   if (empty) {
     return (
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         No qualified roster rows for this team-season yet.
       </p>
     );
@@ -124,12 +124,12 @@ export function TeamRosterSection({
                 <MetricHelp conceptId="r1_win_eq">WAR1</MetricHelp>{" "}
                 is realized season value.{" "}
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> shown as
-                secondary context when present — rows do not sum to team value.
+                secondary context when present - rows do not sum to team value.
               </>
             ) : (
               <>
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> DPM when
-                season-true on the board — not a team MVP score.
+                season-true on the board - not a team MVP score.
               </>
             )
           }
@@ -163,7 +163,7 @@ export function TeamRosterSection({
 
       <Bucket
         title="Primary rotation"
-        hint="Highest minutes — gateway into player pages."
+        hint="Highest minutes - gateway into player pages."
       >
         {buckets.rotation.map((p) => (
           <PlayerRow
@@ -176,7 +176,7 @@ export function TeamRosterSection({
         ))}
       </Bucket>
 
-      <p className="text-[13px] text-muted-foreground">
+      <p className="text-[14px] text-muted-foreground">
         <Link
           href={`/explore/players?team=${encodeURIComponent(teamId)}&season=${encodeURIComponent(season)}`}
           className="font-semibold underline-offset-2 hover:underline"

@@ -274,6 +274,15 @@ export function nbaTeamAbbr(
     NBA_TEAM_META[teamId]?.abbreviation ||
     fallbackAbbr ||
     resolveTeamBrand(teamId)?.abbr ||
-    (/^\d+$/.test(teamId) ? "—" : teamId.toUpperCase())
+    (/^\d+$/.test(teamId) ? "-" : teamId.toUpperCase())
   );
+}
+
+export function nbaTeamIdFromAbbr(abbr: string): string | null {
+  const needle = abbr.trim().toUpperCase();
+  if (!needle) return null;
+  for (const [id, meta] of Object.entries(NBA_TEAM_META)) {
+    if (meta.abbreviation === needle) return id;
+  }
+  return null;
 }

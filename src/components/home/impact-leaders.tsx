@@ -11,6 +11,8 @@ import { MetricHelp } from "@/components/learn/metric-help";
 import type { HomeDarkoLeader } from "@/data/queries/home";
 import type { PlayerSeason } from "@/data/types";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
+import { type } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
 
 const IMPACT_COLLAPSED = 8;
 const EFFICIENCY_COLLAPSED = 5;
@@ -34,12 +36,12 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
       <div className="flex items-end justify-between gap-3">
         <div>
           <div className="flex items-baseline gap-2">
-            <h2 className="text-[17px] font-bold tracking-tight">Impact</h2>
+            <h2 className="text-[20px] font-bold tracking-tight">Impact</h2>
             <MetricHelp conceptId="darko" labelClassName="text-[12px] font-semibold text-muted-foreground">
               DARKO
             </MetricHelp>
           </div>
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             Who moves the needle most per 100 possessions.
           </p>
         </div>
@@ -48,14 +50,14 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
             <button
               type="button"
               onClick={() => setExpanded((v) => !v)}
-              className="text-[13px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
+              className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
             >
               {expanded ? "Show less" : `Show all ${leaders.length}`}
             </button>
           ) : null}
           <TransitionLink
             href="/explore/players?sort=darkoDpm"
-            className="text-[13px] font-semibold text-foreground underline-offset-4 hover:underline"
+            className="text-[14px] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             Full board
           </TransitionLink>
@@ -65,7 +67,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
         {visible.map((p, i) => (
           <li key={`${p.profileId}-${p.playerName}`}>
             <div className="flex gap-3 px-4 py-3 transition-colors hover:bg-secondary/50">
-              <span className="w-5 pt-2 text-[13px] font-bold tabular-nums text-muted-foreground">
+              <span className="w-5 pt-2 text-[14px] font-bold tabular-nums text-muted-foreground">
                 {i + 1}
               </span>
               <PlayerIdentity
@@ -86,7 +88,7 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                 />
                 <div className="min-w-0 flex-1 pt-1">
                   <div className="flex items-center gap-2">
-                    <p className="truncate text-[15px] font-semibold">
+                    <p className={cn(type.body, "truncate font-semibold")}>
                       {p.playerName}
                     </p>
                     {p.teamAbbr || p.teamName ? (
@@ -133,17 +135,17 @@ function EfficiencyCard({
   return (
     <div className="sports-card flex flex-col gap-2 p-4">
       <div className="flex items-baseline justify-between gap-2">
-        <h3 className="text-[15px] font-bold">{title}</h3>
+        <h3 className="text-[16px] font-bold">{title}</h3>
         <div className="flex items-center gap-2">
           <TransitionLink
             href={learnHref}
-            className="text-[11px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
+            className="text-[12px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
           >
             Learn
           </TransitionLink>
           <TransitionLink
             href={boardHref}
-            className="text-[11px] font-semibold text-foreground underline-offset-4 hover:underline"
+            className="text-[12px] font-semibold text-foreground underline-offset-4 hover:underline"
           >
             {boardLabel}
           </TransitionLink>
@@ -164,7 +166,7 @@ function EfficiencyCard({
               className="min-w-0 flex-1"
               nameClassName="w-full gap-2 no-underline hover:underline"
             >
-              <span className="min-w-0 flex-1 truncate text-[13px] font-semibold">
+              <span className={cn(type.body, "min-w-0 flex-1 truncate font-semibold")}>
                 {p.playerName}
               </span>
             </PlayerIdentity>
@@ -172,7 +174,7 @@ function EfficiencyCard({
           </li>
         ))}
         {rows.length === 0 ? (
-          <li className="text-[13px] text-muted-foreground">No data yet.</li>
+          <li className="text-[14px] text-muted-foreground">No data yet.</li>
         ) : null}
       </ul>
       {canExpand ? (
@@ -199,7 +201,7 @@ export function EfficiencyLeaders({
     <section className="grid gap-3 sm:grid-cols-2">
       <EfficiencyCard
         title={
-          <MetricHelp conceptId="ts" labelClassName="text-[15px] font-bold">
+          <MetricHelp conceptId="ts" labelClassName="text-[16px] font-bold">
             True shooting
           </MetricHelp>
         }
@@ -208,21 +210,21 @@ export function EfficiencyLeaders({
         boardLabel="Full board"
         rows={tsLeaders}
         renderMeta={(p) => (
-          <span className="tabular-nums text-[13px] font-bold">
+          <span className="tabular-nums text-[14px] font-bold">
             {p.trueShootingPct != null && p.trueShootingPct > 0
               ? formatPct(p.trueShootingPct)
-              : "—"}
+              : "-"}
           </span>
         )}
       />
       <EfficiencyCard
         title={
           <>
-            <MetricHelp conceptId="usg" labelClassName="text-[15px] font-bold">
+            <MetricHelp conceptId="usg" labelClassName="text-[16px] font-bold">
               Usage
             </MetricHelp>
             {" × "}
-            <MetricHelp conceptId="ts" labelClassName="text-[15px] font-bold">
+            <MetricHelp conceptId="ts" labelClassName="text-[16px] font-bold">
               TS%
             </MetricHelp>
           </>
@@ -233,15 +235,15 @@ export function EfficiencyLeaders({
         rows={usageStars}
         renderMeta={(p) => (
           <>
-            <span className="text-[11px] tabular-nums text-muted-foreground">
+            <span className="text-[12px] tabular-nums text-muted-foreground">
               {p.usagePct != null && p.usagePct > 0
                 ? formatPct(p.usagePct)
-                : "—"}
+                : "-"}
             </span>
-            <span className="tabular-nums text-[13px] font-bold">
+            <span className="tabular-nums text-[14px] font-bold">
               {p.trueShootingPct != null && p.trueShootingPct > 0
                 ? formatPct(p.trueShootingPct)
-                : "—"}
+                : "-"}
             </span>
           </>
         )}

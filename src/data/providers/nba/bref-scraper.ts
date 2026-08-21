@@ -9,12 +9,20 @@ type CacheEntry<T> = {
 
 const memoryCache = new Map<string, CacheEntry<unknown>>();
 const DEFAULT_TTL_MS = CACHE_TTL_MS.brefCurrent;
+const BREF_HEADERS = {
+  Accept: "text/html,application/xhtml+xml",
+  "User-Agent":
+    "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; educational)",
+};
 
-export interface BrefAdvancedRow {
+export type BrefGrainRow = {
   playerName: string;
   /** Basketball-Reference player code, e.g. jamesle01 */
   brefId?: string;
   teamAbbr: string;
+};
+
+export interface BrefAdvancedRow extends BrefGrainRow {
   position?: string;
   gamesPlayed: number;
   gamesStarted: number;
@@ -79,10 +87,20 @@ function rateFraction(raw: string | undefined): number {
   return value;
 }
 
+export const BREF_COMBINED_TEAMS = new Set(["TOT", "2TM", "3TM", "4TM"]);
+
+export function isBrefCombinedTeam(abbr: string): boolean {
+  return BREF_COMBINED_TEAMS.has(abbr.trim().toUpperCase());
+}
+
 /**
  * Parse a BRef HTML table that uses data-stat attributes on <td>/<th>.
  */
-export function parseBrefStatTable(html: string): BrefAdvancedRow[] {
+export function parseBrefStatTable(
+  html: string,
+  options: { includeCombined?: boolean } = {}
+): BrefAdvancedRow[] {
+  const includeCombined = options.includeCombined ?? false;
   // Comments wrap some tables; unwrap so regex can see rows.
   const cleaned = html.replace(/<!--|-->/g, "");
   const rowRegex = /<tr[^>]*>([\s\S]*?)<\/tr>/gi;
@@ -110,10 +128,8 @@ export function parseBrefStatTable(html: string): BrefAdvancedRow[] {
     const teamAbbr = (cells.get("team_name_abbr") ?? cells.get("team_id") ?? "")
       .toUpperCase()
       .trim();
-    // Skip league aggregate / multi-team total rows that confuse merges.
-    if (!teamAbbr || teamAbbr === "TOT" || teamAbbr === "2TM" || teamAbbr === "3TM") {
-      continue;
-    }
+    if (!teamAbbr) continue;
+    if (!includeCombined && isBrefCombinedTeam(teamAbbr)) continue;
 
     rows.push({
       playerName,
@@ -182,7 +198,133 @@ export async function fetchBrefAdvancedSeason(
   return scrapeBrefAdvanced(url, ttlMs, staleMs);
 }
 
-/** Last known BRef rows even if stale — used when the critical path times out. */
+/** One combined-or-only-team row per player for percentile cohorts. */
+export function collapseBrefToSeasonGrain<T extends BrefGrainRow>(rows: T[]): T[] {
+  const groups = new Map<string, T[]>();
+  for (const row of rows) {
+    const key = row.brefId ?? normalizePlayerName(row.playerName);
+    const list = groups.get(key) ?? [];
+    list.push(row);
+    groups.set(key, list);
+  }
+  const out: T[] = [];
+  for (const list of groups.values()) {
+    const combined = list.find((r) => isBrefCombinedTeam(r.teamAbbr));
+    out.push(combined ?? list[0]!);
+  }
+  return out;
+}
+
+export type BrefPerGameCohortRow = BrefGrainRow & {
+  gamesPlayed: number;
+  minutes: number;
+  points: number;
+  rebounds: number;
+  assists: number;
+};
+
+export function parseBrefPerGameTable(
+  html: string,
+  options: { includeCombined?: boolean } = {}
+): BrefPerGameCohortRow[] {
+  const includeCombined = options.includeCombined ?? false;
+  const cleaned = html.replace(/<!--|-->/g, "");
+  const cellRegex =
+    /<(td|th)[^>]*data-stat="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/gi;
+  const rows: BrefPerGameCohortRow[] = [];
+  for (const rowMatch of cleaned.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)) {
+    const rowHtml = rowMatch[1] ?? "";
+    const cells = new Map<string, string>();
+    const idMatch = /data-append-csv="([^"]+)"/.exec(rowHtml);
+    for (const cellMatch of rowHtml.matchAll(cellRegex)) {
+      cells.set(cellMatch[2], decodeEntities(cellMatch[3] ?? ""));
+    }
+    const playerName = cells.get("name_display") ?? cells.get("player");
+    if (!playerName || playerName === "Player") continue;
+    const teamAbbr = (cells.get("team_name_abbr") ?? cells.get("team_id") ?? "")
+      .toUpperCase()
+      .trim();
+    if (!teamAbbr) continue;
+    if (!includeCombined && isBrefCombinedTeam(teamAbbr)) continue;
+    rows.push({
+      playerName,
+      brefId: idMatch?.[1],
+      teamAbbr,
+      gamesPlayed: num(cells.get("games") ?? cells.get("g")),
+      minutes: num(cells.get("mp_per_g") ?? cells.get("mp")),
+      points: num(cells.get("pts_per_g") ?? cells.get("pts")),
+      rebounds: num(cells.get("trb_per_g") ?? cells.get("trb")),
+      assists: num(cells.get("ast_per_g") ?? cells.get("ast")),
+    });
+  }
+  return rows;
+}
+
+/**
+ * League advanced including TOT/2TM, collapsed to one row per player.
+ * Separate cache from `fetchBrefAdvancedSeason` (which still drops combined rows).
+ */
+export async function fetchBrefAdvancedCohort(
+  canonicalSeason: string,
+  options: { ttlMs?: number; staleMs?: number } = {}
+): Promise<BrefAdvancedRow[]> {
+  const year = brefSeasonYear(canonicalSeason);
+  const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
+  const cacheKey = `${url}#cohort`;
+  const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
+  const staleMs = options.staleMs ?? 0;
+  const now = Date.now();
+  const cached = memoryCache.get(cacheKey) as
+    | CacheEntry<BrefAdvancedRow[]>
+    | undefined;
+  if (cached && cached.freshUntil > now) return cached.value;
+  if (cached && cached.staleUntil > now) return cached.value;
+
+  const html = await fetchBrefHtml(url);
+  const rows = collapseBrefToSeasonGrain(
+    parseBrefStatTable(html, { includeCombined: true })
+  );
+  memoryCache.set(cacheKey, {
+    value: rows,
+    freshUntil: now + ttlMs,
+    staleUntil: now + ttlMs + staleMs,
+  });
+  return rows;
+}
+
+/**
+ * League per-game including TOT/2TM, collapsed to one row per player.
+ * Used for PTS/REB/AST percentiles (advanced tables have no counting stats).
+ */
+export async function fetchBrefPerGameCohort(
+  canonicalSeason: string,
+  options: { ttlMs?: number; staleMs?: number } = {}
+): Promise<BrefPerGameCohortRow[]> {
+  const year = brefSeasonYear(canonicalSeason);
+  const url = `https://www.basketball-reference.com/leagues/NBA_${year}_per_game.html`;
+  const cacheKey = `${url}#cohort`;
+  const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
+  const staleMs = options.staleMs ?? 0;
+  const now = Date.now();
+  const cached = memoryCache.get(cacheKey) as
+    | CacheEntry<BrefPerGameCohortRow[]>
+    | undefined;
+  if (cached && cached.freshUntil > now) return cached.value;
+  if (cached && cached.staleUntil > now) return cached.value;
+
+  const html = await fetchBrefHtml(url);
+  const rows = collapseBrefToSeasonGrain(
+    parseBrefPerGameTable(html, { includeCombined: true })
+  );
+  memoryCache.set(cacheKey, {
+    value: rows,
+    freshUntil: now + ttlMs,
+    staleUntil: now + ttlMs + staleMs,
+  });
+  return rows;
+}
+
+/** Last known BRef rows even if stale - used when the critical path times out. */
 export function peekBrefAdvancedSeason(
   canonicalSeason: string
 ): BrefAdvancedRow[] | null {
@@ -190,6 +332,25 @@ export function peekBrefAdvancedSeason(
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
   const cached = memoryCache.get(url) as CacheEntry<BrefAdvancedRow[]> | undefined;
   return cached?.value ?? null;
+}
+
+async function fetchBrefHtml(url: string): Promise<string> {
+  let lastError: unknown;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    try {
+      const response = await fetch(url, { headers: BREF_HEADERS });
+      if (!response.ok) {
+        throw new Error(`BRef request failed (${response.status}): ${url}`);
+      }
+      return await response.text();
+    } catch (error) {
+      lastError = error;
+      await delay(500 * (attempt + 1));
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`BRef scrape failed: ${url}`);
 }
 
 async function scrapeBrefAdvanced(
@@ -200,17 +361,7 @@ async function scrapeBrefAdvanced(
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const response = await fetch(url, {
-        headers: {
-          Accept: "text/html,application/xhtml+xml",
-          "User-Agent":
-            "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; educational)",
-        },
-      });
-      if (!response.ok) {
-        throw new Error(`BRef request failed (${response.status}): ${url}`);
-      }
-      const html = await response.text();
+      const html = await fetchBrefHtml(url);
       const rows = parseBrefStatTable(html);
       if (rows.length === 0) {
         throw new Error(`BRef advanced table empty: ${url}`);

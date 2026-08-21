@@ -26,7 +26,7 @@ export default function FranchisesPage() {
           <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
             Franchises
           </h1>
-          <p className="mt-1 text-[15px] leading-relaxed text-muted-foreground">
+          <p className="mt-1 text-[16px] leading-relaxed text-muted-foreground">
             Titles, Finals trips, playoff ledgers, career win percentages, and
             the weird records fans argue about - through {asOf}. Click any club
             for the full scrapbook.
@@ -35,13 +35,13 @@ export default function FranchisesPage() {
         <div className="flex flex-wrap gap-2">
           <TransitionLink
             href="/explore/teams"
-            className="rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold"
+            className="rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold"
           >
             This season
           </TransitionLink>
           <TransitionLink
             href="/gm"
-            className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+            className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
           >
             Franchise Lab
           </TransitionLink>

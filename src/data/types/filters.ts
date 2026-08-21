@@ -7,7 +7,7 @@ import type { Position } from "./player";
 export interface BasketballFilters {
   season?: string;
   /**
-   * Team identity for filters — prefer canonical ESPN id after URL normalization
+   * Team identity for filters - prefer canonical ESPN id after URL normalization
    * (`filtersFromSearchParams` / `normalizeTeamParam`).
    * Player boards match ESPN ids; game filters also expand to BDL via identity
    * or prefer `teamAbbr` when set.
@@ -17,6 +17,10 @@ export interface BasketballFilters {
   teamAbbr?: string;
   player?: string;
   position?: Position | "ALL";
+  /** Explore Players board - East / West. Omitted means the full league. */
+  conference?: "East" | "West";
+  /** Calendar draft year, or undrafted players only. */
+  draftClass?: number | "undrafted";
   minimumMinutes?: number;
   minimumGames?: number;
   dateRange?: {
@@ -25,6 +29,9 @@ export interface BasketballFilters {
   };
 }
 
+/** Explore Players board - omit from URL when this default is active. */
+export const DEFAULT_PLAYER_MINIMUM_MINUTES = 500;
+
 /**
  * Narrow filters used by shot queries (extends the shared bag).
  */
@@ -32,4 +39,5 @@ export interface ShotFilters extends BasketballFilters {
   made?: boolean;
   shotType?: "2PT" | "3PT";
   gameId?: string;
+  seasonType?: "regular" | "playoffs";
 }

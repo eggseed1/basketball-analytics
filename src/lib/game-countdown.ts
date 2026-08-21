@@ -1,6 +1,6 @@
 /**
  * Countdown until a fixed scheduled tip-off timestamp.
- * Client-safe: measures wall-clock to tipOffAt — does NOT simulate game clocks.
+ * Client-safe: measures wall-clock to tipOffAt - does NOT simulate game clocks.
  */
 
 export type CountdownPhase =

@@ -2,15 +2,14 @@
 
 import Link from "next/link";
 
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import {
   QueryNavProvider,
   TransitionLink,
 } from "@/components/continuity/query-nav";
-import {
-  GameMatchupRow,
-} from "@/components/sports/game-score-card";
 import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
+import { UpcomingGameList } from "@/components/sports/upcoming-game-list";
 import type { GameSummary } from "@/data/types";
 import {
   isFinalStatus,
@@ -26,7 +25,7 @@ export type GamefeedView = "week" | "month" | "list";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
-/** Local date helpers — keep Gamefeed client-safe (no data/queries import). */
+/** Local date helpers - keep Gamefeed client-safe (no data/queries import). */
 function toIsoDate(d: Date): string {
   return d.toISOString().slice(0, 10);
 }
@@ -85,16 +84,6 @@ function weekRangeLabel(weekStart: string, weekEnd: string) {
     year: start.getUTCFullYear() === end.getUTCFullYear() ? undefined : "numeric",
   });
   return `${left} - ${right}`;
-}
-
-function dayHeading(iso: string) {
-  return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
-    weekday: "long",
-    month: "short",
-    day: "numeric",
-    year: "numeric",
-    timeZone: "UTC",
-  });
 }
 
 function groupByDate(games: GameSummary[]) {
@@ -193,7 +182,7 @@ function ViewTabs({
           href={tab.href}
           scroll={false}
           className={cn(
-            "rounded-sm px-3 py-1.5 text-[13px] font-semibold transition-colors",
+            "rounded-sm px-3 py-1.5 text-[14px] font-semibold transition-colors",
             view === tab.id
               ? "bg-card text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -228,7 +217,7 @@ function MonthGrid({
 
   return (
     <>
-      <div className="grid grid-cols-7 gap-1 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-2">
+      <div className="grid grid-cols-7 gap-1 text-[12px] font-semibold uppercase tracking-wide text-muted-foreground sm:gap-2">
         {WEEKDAYS.map((d) => (
           <div key={d} className="px-1 py-1 text-center">
             {d}
@@ -251,13 +240,13 @@ function MonthGrid({
             <div
               key={cell.iso}
               className={cn(
-                "flex min-h-[72px] flex-col gap-1 rounded-md border border-border bg-card p-1 sm:min-h-[110px] sm:p-1.5",
+                "sports-card flex min-h-[72px] flex-col gap-1 p-1 sm:min-h-[110px] sm:p-1.5",
                 isToday && "border-foreground/40 ring-1 ring-foreground/20"
               )}
             >
               <p
                 className={cn(
-                  "px-0.5 text-[11px] font-bold tabular-nums",
+                  "px-0.5 text-[12px] font-bold tabular-nums",
                   isToday ? "text-foreground" : "text-muted-foreground"
                 )}
               >
@@ -284,7 +273,7 @@ function MonthGrid({
                           teamKey={g.awayTeamAbbr ?? g.awayTeamId}
                           size="xs"
                         />
-                        <span className="min-w-0 flex-1 truncate text-[10px] font-semibold sm:text-[11px]">
+                        <span className="min-w-0 flex-1 truncate text-[10px] font-semibold sm:text-[12px]">
                           {away}
                           {finalish ? (
                             <span className="tabular-nums text-muted-foreground">
@@ -345,7 +334,7 @@ function WeekBoard({
           <div
             key={iso}
             className={cn(
-              "flex min-h-[140px] flex-col gap-2 rounded-md border border-border bg-card p-2.5",
+              "sports-card flex min-h-[140px] flex-col gap-2 p-2.5",
               isToday && "border-foreground/40 ring-1 ring-foreground/20"
             )}
           >
@@ -358,7 +347,7 @@ function WeekBoard({
               {label}
             </p>
             {dayGames.length === 0 ? (
-              <p className="text-[11px] text-muted-foreground">No games</p>
+              <p className="text-[12px] text-muted-foreground">No games</p>
             ) : (
               <div className="flex flex-col gap-1.5">
                 {dayGames.map((g) => {
@@ -397,74 +386,6 @@ function WeekBoard({
   );
 }
 
-function ListBoard({
-  games,
-  hasMore,
-  nextHref,
-}: {
-  games: GameSummary[];
-  hasMore?: boolean;
-  nextHref?: string | null;
-}) {
-  const live = games.filter((g) => isLiveLikeStatus(g.status));
-  const upcoming = games.filter((g) => !isLiveLikeStatus(g.status));
-  const byDate = groupByDate(upcoming);
-  const dates = [...byDate.keys()].sort();
-
-  if (!games.length) {
-    return (
-      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-        No upcoming games on the ESPN scoreboard yet.
-      </p>
-    );
-  }
-
-  return (
-    <div className="flex flex-col gap-5">
-      {live.length ? (
-        <div className="flex flex-col gap-2">
-          <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            Live now
-          </h2>
-          <div className="flex flex-col gap-1">
-            {live.map((game) => (
-              <GameMatchupRow key={game.id} game={game} />
-            ))}
-          </div>
-        </div>
-      ) : null}
-
-      <div className="flex flex-col gap-4">
-        <h2 className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-          Upcoming
-        </h2>
-        {dates.map((iso) => (
-          <div key={iso} className="flex flex-col gap-1.5">
-            <h3 className="text-[12px] font-bold tracking-tight text-muted-foreground">
-              {dayHeading(iso)}
-            </h3>
-            <div className="flex flex-col gap-1">
-              {(byDate.get(iso) ?? []).map((game) => (
-                <GameMatchupRow key={game.id} game={game} />
-              ))}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      {hasMore && nextHref ? (
-        <TransitionLink
-          href={nextHref}
-          scroll={false}
-          className="self-center rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold hover:bg-secondary/80"
-        >
-          Show more upcoming
-        </TransitionLink>
-      ) : null}
-    </div>
-  );
-}
-
 /** Gamefeed with weekly, monthly, and upcoming list views (ESPN scoreboard). */
 export function Gamefeed({
   view,
@@ -476,7 +397,6 @@ export function Gamefeed({
   weekGames,
   upcomingGames,
   upcomingHasMore = false,
-  upcomingNextHref = null,
 }: {
   view: GamefeedView;
   season: string;
@@ -487,7 +407,6 @@ export function Gamefeed({
   weekGames: GameSummary[];
   upcomingGames: GameSummary[];
   upcomingHasMore?: boolean;
-  upcomingNextHref?: string | null;
 }) {
   const prevMonth = shiftMonthKey(monthKey, -1);
   const nextMonth = shiftMonthKey(monthKey, 1);
@@ -505,42 +424,42 @@ export function Gamefeed({
 
   return (
     <QueryNavProvider className="gap-0">
-      <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-              Scores
-            </h1>
-            <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
+      <div className="flex flex-col gap-4">
+        <GlassSurface as="section" className="flex flex-col gap-4 p-4 sm:p-5">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
+                Scores
+              </h1>
+              <p className="mt-1 text-[14px] text-muted-foreground">{subtitle}</p>
+            </div>
+            <ViewTabs
+              view={view}
+              monthKey={view === "week" ? weekMonthKey : monthKey}
+              weekStart={
+                view === "month"
+                  ? startOfWeekSundayIso(`${monthKey}-01`)
+                  : weekStart
+              }
+            />
           </div>
-          <ViewTabs
-            view={view}
-            monthKey={view === "week" ? weekMonthKey : monthKey}
-            weekStart={
-              view === "month"
-                ? startOfWeekSundayIso(`${monthKey}-01`)
-                : weekStart
-            }
-          />
-        </div>
 
-        <div className="query-updating-content flex flex-col gap-4">
           {view === "month" ? (
             <div className="flex items-center gap-2">
               <TransitionLink
                 href={scoresHref({ view: "month", month: prevMonth })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 Prev
               </TransitionLink>
-              <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+              <p className="min-w-[9rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
                 {monthLabel(monthKey)}
               </p>
               <TransitionLink
                 href={scoresHref({ view: "month", month: nextMonth })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 Next
               </TransitionLink>
@@ -552,28 +471,30 @@ export function Gamefeed({
               <TransitionLink
                 href={scoresHref({ view: "week", week: prevWeek })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 Prev
               </TransitionLink>
-              <p className="min-w-[9rem] flex-1 text-center text-[15px] font-bold tracking-tight sm:flex-none">
+              <p className="min-w-[9rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
                 {weekRangeLabel(weekStart, weekEnd)}
               </p>
               <TransitionLink
                 href={scoresHref({ view: "week", week: nextWeek })}
                 scroll={false}
-                className="rounded-md bg-secondary px-3 py-1.5 text-[13px] font-semibold"
+                className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
               >
                 Next
               </TransitionLink>
             </div>
           ) : null}
+        </GlassSurface>
 
+        <div className="query-updating-content flex flex-col gap-4">
           {view === "month" ? (
             <>
               <MonthGrid monthKey={monthKey} games={monthGames} />
               {monthGames.length === 0 ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
                   No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
                   <TransitionLink
                     href={scoresHref({ view: "list" })}
@@ -594,61 +515,42 @@ export function Gamefeed({
           ) : null}
 
           {view === "week" ? (
-            <>
-              <LiveScoreboardScope games={weekGames} season={season}>
-                {(games) => (
-                  <>
-                    <WeekBoard weekStart={weekStart} games={games} />
-                    {games.length === 0 ? (
-                      <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[13px] text-muted-foreground">
-                        No games this week.{" "}
-                        <TransitionLink
-                          href={scoresHref({ view: "list" })}
-                          scroll={false}
-                          className="underline"
-                        >
-                          See all upcoming
-                        </TransitionLink>
-                        .
-                      </p>
-                    ) : (
-                      <p className="text-[12px] text-muted-foreground">
-                        {games.length} game{games.length === 1 ? "" : "s"} this
-                        week · live scores refresh automatically
-                      </p>
-                    )}
-                  </>
-                )}
-              </LiveScoreboardScope>
-            </>
+            <LiveScoreboardScope games={weekGames} season={season}>
+              {(games) => (
+                <>
+                  <WeekBoard weekStart={weekStart} games={games} />
+                  {games.length === 0 ? (
+                    <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
+                      No games this week.{" "}
+                      <TransitionLink
+                        href={scoresHref({ view: "list" })}
+                        scroll={false}
+                        className="underline"
+                      >
+                        See all upcoming
+                      </TransitionLink>
+                      .
+                    </p>
+                  ) : (
+                    <p className="text-[12px] text-muted-foreground">
+                      {games.length} game{games.length === 1 ? "" : "s"} this
+                      week · live scores refresh automatically
+                    </p>
+                  )}
+                </>
+              )}
+            </LiveScoreboardScope>
           ) : null}
 
           {view === "list" ? (
-            <>
-              <LiveScoreboardScope games={upcomingGames} season={season}>
-                {(games) => (
-                  <>
-                    <ListBoard
-                      games={games}
-                      hasMore={upcomingHasMore}
-                      nextHref={upcomingNextHref}
-                    />
-                    {games.length ? (
-                      <p className="text-[12px] text-muted-foreground">
-                        Showing {games.length} upcoming game
-                        {games.length === 1 ? "" : "s"}
-                        {upcomingHasMore ? " · more available" : ""}
-                        {" · "}
-                        live games refresh without reloading
-                      </p>
-                    ) : null}
-                  </>
-                )}
-              </LiveScoreboardScope>
-            </>
+            <UpcomingGameList
+              initialGames={upcomingGames}
+              hasMore={upcomingHasMore}
+              season={season}
+            />
           ) : null}
         </div>
-      </section>
+      </div>
     </QueryNavProvider>
   );
 }

@@ -1,5 +1,5 @@
 /**
- * Offseason Tracker queries — transaction EVENT archive (not genealogy).
+ * Offseason Tracker queries - transaction EVENT archive (not genealogy).
  */
 
 import {

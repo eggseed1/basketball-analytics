@@ -34,7 +34,7 @@ import type { PlayerSeason } from "@/data/types";
 export const metadata = {
   title: "Compare",
   description:
-    "Side-by-side NBA player and team comparisons — dimension edges, no opaque scores.",
+    "Side-by-side NBA player and team comparisons - dimension edges, no opaque scores.",
 };
 
 interface ComparePageProps {
@@ -103,7 +103,7 @@ function TeamsSubnav({
   rankHref: string;
 }) {
   return (
-    <p className="flex flex-wrap gap-x-3 gap-y-1 text-[13px] font-semibold">
+    <p className="flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-semibold">
       <Link
         href={compareHref}
         className={
@@ -192,11 +192,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
               Compare
             </h1>
-            <p className="max-w-2xl text-[15px] text-muted-foreground">
-              Rank a franchise’s seasons via pairwise Team Season Compare —
+            <p className="max-w-2xl text-[16px] text-muted-foreground">
+              Rank a franchise’s seasons via pairwise Team Season Compare -
               Copeland aggregation, no opaque team score.
             </p>
-            <p className="text-[13px] font-semibold">
+            <p className="text-[14px] font-semibold">
               <Link
                 href="/compare"
                 className="text-muted-foreground underline-offset-2 hover:underline"
@@ -214,7 +214,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           </header>
 
           {!rankTeamId ? (
-            <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+            <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
               Open Rank seasons from a team page, or use{" "}
               <code className="text-[12px]">
                 /compare?mode=teams&view=rank&teamId=…
@@ -247,17 +247,17 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
               </Suspense>
 
               {seasonsError ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
                   {seasonsError}
                 </p>
               ) : loaded.error ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
                   {loaded.error}
                 </p>
               ) : loaded.ranking ? (
                 <TeamRankWithEvidence ranking={loaded.ranking} />
               ) : (
-                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+                <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
                   Could not rank those team seasons.
                 </p>
               )}
@@ -296,11 +296,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
             Compare
           </h1>
-          <p className="max-w-2xl text-[15px] text-muted-foreground">
-            Team season compare and team vs team — transparent board metrics,
+          <p className="max-w-2xl text-[16px] text-muted-foreground">
+            Team season compare and team vs team - transparent board metrics,
             category plurality, no opaque team score.
           </p>
-          <p className="text-[13px] font-semibold">
+          <p className="text-[14px] font-semibold">
             <Link
               href="/compare"
               className="text-muted-foreground underline-offset-2 hover:underline"
@@ -333,18 +333,18 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         </Suspense>
 
         {!teamA || !teamB ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
             Search for Team A and Team B (same franchise + two seasons, or two
             franchises).
           </p>
         ) : loaded.error ? (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
             {loaded.error}
           </p>
         ) : loaded.comparison ? (
           <TeamCompareWithEvidence comparison={loaded.comparison} />
         ) : (
-          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+          <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
             Could not build a team comparison for these inputs.
           </p>
         )}
@@ -377,11 +377,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           Compare
         </h1>
-        <p className="max-w-2xl text-[15px] text-muted-foreground">
+        <p className="max-w-2xl text-[16px] text-muted-foreground">
           Pick two players. See the measurable edges first, then the dimensions
           that drive the difference.
         </p>
-        <p className="text-[13px] font-semibold">
+        <p className="text-[14px] font-semibold">
           <span>Players</span>
           <span className="mx-2 text-muted-foreground">·</span>
           <Link
@@ -404,11 +404,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       </Suspense>
 
       {!aId || !bId ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Search for Player A and Player B to run a comparison.
         </p>
       ) : !result ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Could not load season rows for both players in {season}. Try another
           season or different players.
         </p>

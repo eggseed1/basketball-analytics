@@ -3,7 +3,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Subtle live badge. Animation is presentation only — not freshness proof.
+ * Subtle live badge. Animation is presentation only - not freshness proof.
  */
 export function LiveIndicator({
   label = "LIVE",
@@ -15,7 +15,7 @@ export function LiveIndicator({
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-wide text-foreground",
+        "inline-flex items-center gap-1.5 text-[12px] font-bold uppercase tracking-wide text-foreground",
         className
       )}
       role="status"

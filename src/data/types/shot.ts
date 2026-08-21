@@ -8,6 +8,7 @@ export interface Shot {
   playerId: string;
   teamId: string;
   season: string;
+  seasonType?: "regular" | "playoffs";
   /** ISO date string YYYY-MM-DD. */
   gameDate: string;
   period: number;

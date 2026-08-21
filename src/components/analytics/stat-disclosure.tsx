@@ -9,7 +9,7 @@ import { formatOrdinal } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 /**
- * Level 1–2 progressive disclosure for a single statistic.
+ * Level 1-2 progressive disclosure for a single statistic.
  * Keeps the surface simple; exposes context on demand.
  */
 export function StatDisclosure({
@@ -28,7 +28,7 @@ export function StatDisclosure({
   return (
     <div className={cn("flex flex-col gap-1", className)}>
       {label ? (
-        <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+        <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
           {conceptId ? (
             <MetricHelp
               conceptId={conceptId}
@@ -45,7 +45,7 @@ export function StatDisclosure({
         {context.display}
       </p>
       {context.percentile != null ? (
-        <p className="text-[13px] font-semibold text-foreground">
+        <p className="text-[14px] font-semibold text-foreground">
           <MetricHelp conceptId="percentiles" labelClassName="font-semibold">
             {formatOrdinal(Math.round(context.percentile))} percentile
           </MetricHelp>
@@ -63,7 +63,7 @@ export function StatDisclosure({
       {(context.sampleSize != null ||
         context.timeframe ||
         context.learnHref) && (
-        <p className="text-[11px] text-muted-foreground">
+        <p className="text-[12px] text-muted-foreground">
           {[
             context.timeframe,
             context.sampleSize != null ? `${context.sampleSize} peers` : null,

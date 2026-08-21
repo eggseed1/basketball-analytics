@@ -30,13 +30,13 @@ function CoverageLine({ entry }: { entry: TeamSeasonRankEntry }) {
     ["Possession", c.possession],
   ] as const;
   return (
-    <p className="text-[11px] text-muted-foreground">
+    <p className="text-[12px] text-muted-foreground">
       <span className="mr-1 font-medium text-muted-foreground/80">
         Data available:
       </span>
       {bits.map(([label, ok]) => (
         <span key={label} className="mr-2">
-          {ok ? "✓" : "—"} {label}
+          {ok ? "✓" : "-"} {label}
         </span>
       ))}
     </p>
@@ -54,7 +54,7 @@ function MatrixCellLabel(result: string): string {
     case "unavailable":
       return "Unavailable";
     case "self":
-      return "—";
+      return "-";
     default:
       return result;
   }
@@ -109,11 +109,11 @@ export function TeamSeasonRankPicker({
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="text-[15px] font-bold tracking-tight">
+          <h2 className="text-[16px] font-bold tracking-tight">
             Selected seasons
           </h2>
           <p className="text-[12px] text-muted-foreground">
-            Pick {TEAM_SEASON_RANK_MIN}–{TEAM_SEASON_RANK_MAX} regular-season
+            Pick {TEAM_SEASON_RANK_MIN}-{TEAM_SEASON_RANK_MAX} regular-season
             years ({picked.length} selected).
           </p>
         </div>
@@ -121,7 +121,7 @@ export function TeamSeasonRankPicker({
           type="button"
           onClick={go}
           disabled={pending || picked.length < TEAM_SEASON_RANK_MIN}
-          className="rounded-md bg-foreground px-4 py-2 text-[13px] font-bold text-background disabled:opacity-50"
+          className="rounded-md bg-foreground px-4 py-2 text-[14px] font-bold text-background disabled:opacity-50"
         >
           {pending ? "Ranking…" : "Rank seasons"}
         </button>
@@ -192,13 +192,13 @@ export function TeamSeasonRankView({
       </header>
 
       {(result.contested || result.closeTop) && (
-        <section className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-[13px] text-muted-foreground">
+        <section className="rounded-md border border-border bg-secondary/40 px-4 py-3 text-[14px] text-muted-foreground">
           {result.closeTopNote ? (
             <p>
               <MetricHelp conceptId="close_top" labelClassName="font-semibold">
                 Close top
               </MetricHelp>
-              {" — "}
+              {" - "}
               {result.closeTopNote}
             </p>
           ) : null}
@@ -207,7 +207,7 @@ export function TeamSeasonRankView({
               <MetricHelp conceptId="contested" labelClassName="font-semibold">
                 Contested
               </MetricHelp>
-              {" — "}
+              {" - "}
               {result.contestedNote}
             </p>
           ) : null}
@@ -215,7 +215,7 @@ export function TeamSeasonRankView({
       )}
 
       <section className="sports-card px-4 py-4 sm:px-5">
-        <h3 className="text-[15px] font-bold tracking-tight">Season ranking</h3>
+        <h3 className="text-[16px] font-bold tracking-tight">Season ranking</h3>
         <p className="mt-1 text-[12px] text-muted-foreground">
           Order by Copeland points (win = 1, even = 0.5, loss/unavailable = 0).
         </p>
@@ -258,7 +258,7 @@ export function TeamSeasonRankView({
       </section>
 
       <section className="sports-card flex flex-col gap-2 px-4 py-4 sm:px-5">
-        <h3 className="text-[15px] font-bold tracking-tight">
+        <h3 className="text-[16px] font-bold tracking-tight">
           {topSeason
             ? `Why is ${topSeason} #1?`
             : "Why the top season ranks first"}
@@ -281,23 +281,23 @@ export function TeamSeasonRankView({
         )}
         {ledger &&
         (ledger.wins.length || ledger.close.length || ledger.lost.length) ? (
-          <div className="mt-3 grid gap-2 border-t border-border/70 pt-3 text-[13px] sm:grid-cols-3">
+          <div className="mt-3 grid gap-2 border-t border-border/70 pt-3 text-[14px] sm:grid-cols-3">
             <div>
               <p className="font-semibold">Advantages</p>
               <p className="text-muted-foreground">
-                {ledger.wins.length ? ledger.wins.join(", ") : "—"}
+                {ledger.wins.length ? ledger.wins.join(", ") : "-"}
               </p>
             </div>
             <div>
               <p className="font-semibold">Close</p>
               <p className="text-muted-foreground">
-                {ledger.close.length ? ledger.close.join(", ") : "—"}
+                {ledger.close.length ? ledger.close.join(", ") : "-"}
               </p>
             </div>
             <div>
               <p className="font-semibold">Trailing</p>
               <p className="text-muted-foreground">
-                {ledger.lost.length ? ledger.lost.join(", ") : "—"}
+                {ledger.lost.length ? ledger.lost.join(", ") : "-"}
               </p>
             </div>
           </div>
@@ -312,13 +312,13 @@ export function TeamSeasonRankView({
               ? `See the evidence · ${topSeason}`
               : "See the evidence"
           }
-          subtitle="Representative games that illustrate the #1 season’s scoreboard profile — not “most important” games. Each card opens Game Lab."
+          subtitle="Representative games that illustrate the #1 season’s scoreboard profile - not “most important” games. Each card opens Game Lab."
           highlightCategoryIds={evidenceHighlights}
         />
       ) : null}
 
       <section className="sports-card px-4 py-4 sm:px-5">
-        <h3 className="text-[15px] font-bold tracking-tight">
+        <h3 className="text-[16px] font-bold tracking-tight">
           Head-to-head matrix
         </h3>
         <p className="mt-1 text-[12px] text-muted-foreground">
@@ -334,7 +334,7 @@ export function TeamSeasonRankView({
             </caption>
             <thead>
               <tr>
-                <th className="px-2 py-2 text-left text-[11px] font-medium text-muted-foreground">
+                <th className="px-2 py-2 text-left text-[12px] font-medium text-muted-foreground">
                   Row season
                 </th>
                 {seasons.map((s) => (
@@ -398,7 +398,7 @@ export function TeamSeasonRankView({
         <button
           type="button"
           onClick={() => setShowMethod((v) => !v)}
-          className="text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+          className="text-[14px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
           aria-expanded={showMethod}
         >
           How is this ranking calculated?

@@ -12,7 +12,7 @@ import { dedupeCareerSeasons } from "@/analytics/career-resume";
 export const metadata = {
   title: "Season compare",
   description:
-    "Compare multiple seasons of the same player — production, efficiency, and more.",
+    "Compare multiple seasons of the same player - production, efficiency, and more.",
 };
 
 interface PageProps {
@@ -56,7 +56,7 @@ export default async function PlayerSeasonComparePage({
       <p>
         <Link
           href={`/players/${playerId}`}
-          className="text-[13px] font-semibold text-muted-foreground"
+          className="text-[14px] font-semibold text-muted-foreground"
         >
           ← Player
         </Link>
@@ -74,17 +74,17 @@ export default async function PlayerSeasonComparePage({
       </Suspense>
 
       {!seasonA || !seasonB ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Pick two seasons to compare versions of this player.
         </p>
       ) : loaded?.error ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           {loaded.error}
         </p>
       ) : loaded?.comparison ? (
         <PlayerSeasonCompareView result={loaded.comparison} />
       ) : (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Could not build this season comparison.
         </p>
       )}

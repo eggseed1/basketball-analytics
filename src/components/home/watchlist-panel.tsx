@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import {
   useCallback,
   useEffect,
@@ -14,6 +13,8 @@ import { Plus, Search, X } from "lucide-react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { PlayerIdentity } from "@/components/players/player-identity";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { TEAM_BRANDS } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -112,14 +113,9 @@ export function WatchlistPanel() {
   );
 
   return (
-    <section className="sports-card flex min-h-[220px] flex-col gap-3 p-4 sm:p-5">
-      <div className="flex items-end justify-between gap-2">
-        <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Watchlist</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Favorite players and teams for quick access.
-          </p>
-        </div>
+    <section className="sports-card flex min-h-[220px] flex-col gap-3 p-4 sm:p-[21px]">
+      <div className="flex items-center justify-between gap-2">
+        <h2 className="type-heading">Watchlist</h2>
         <button
           type="button"
           onClick={() => setOpen(true)}
@@ -131,7 +127,7 @@ export function WatchlistPanel() {
       </div>
 
       {!ready ? (
-        <div className="flex flex-1 items-center justify-center text-[13px] text-muted-foreground">
+        <div className="type-body-sm flex flex-1 items-center justify-center text-muted-foreground">
           Loading…
         </div>
       ) : items.length === 0 ? (
@@ -143,12 +139,14 @@ export function WatchlistPanel() {
           <span className="flex size-10 items-center justify-center rounded-md bg-secondary text-foreground">
             <Plus className="size-5" aria-hidden />
           </span>
-          <p className="text-[14px] font-semibold">
-            Add favorite players or team
-          </p>
-          <p className="max-w-xs text-[12px] text-muted-foreground">
-            Search the league and pin names to your home desk.
-          </p>
+          <div className="flex flex-col items-center gap-1 text-center">
+            <p className="text-[14px] font-semibold">
+              Add favorite players or team
+            </p>
+            <p className="text-[12px] text-muted-foreground">
+              Search the league and pin names to your home desk.
+            </p>
+          </div>
         </button>
       ) : (
         <ul className="grid gap-2 sm:grid-cols-2">
@@ -158,32 +156,44 @@ export function WatchlistPanel() {
               className="flex items-center gap-2 rounded-md bg-secondary/50 px-3 py-2"
             >
               {item.kind === "player" ? (
-                <span className="relative inline-flex shrink-0">
-                  <PlayerHeadshot
-                    playerId={item.id}
-                    name={item.name}
-                    teamKey={item.teamKey}
-                    size="xs"
-                  />
-                  {item.teamKey ? (
-                    <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
-                      <TeamLogo teamKey={item.teamKey} size="2xs" />
-                    </span>
-                  ) : null}
-                </span>
+                <PlayerIdentity
+                  playerId={item.id}
+                  name={item.name}
+                  teamKey={item.teamKey}
+                  variant="compact"
+                  className="min-w-0 flex-1"
+                  nameClassName="w-full gap-2"
+                >
+                  <span className="relative inline-flex shrink-0">
+                    <PlayerHeadshot
+                      playerId={item.id}
+                      name={item.name}
+                      teamKey={item.teamKey}
+                      size="xs"
+                    />
+                    {item.teamKey ? (
+                      <span className="absolute -right-1 -bottom-1 rounded-full bg-background p-px ring-1 ring-border">
+                        <TeamLogo teamKey={item.teamKey} size="2xs" />
+                      </span>
+                    ) : null}
+                  </span>
+                  <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                    {item.name}
+                  </span>
+                </PlayerIdentity>
               ) : (
-                <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
+                <TeamIdentity
+                  teamKey={item.teamKey ?? item.id}
+                  label={item.name}
+                  className="min-w-0 flex-1"
+                  nameClassName="w-full gap-2"
+                >
+                  <TeamLogo teamKey={item.teamKey ?? item.id} size="xs" />
+                  <span className="min-w-0 flex-1 truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                    {item.name}
+                  </span>
+                </TeamIdentity>
               )}
-              <Link
-                href={
-                  item.kind === "player"
-                    ? `/players/${item.id}`
-                    : `/explore/players?team=${encodeURIComponent(item.id)}`
-                }
-                className="min-w-0 flex-1 truncate text-[13px] font-semibold hover:underline"
-              >
-                {item.name}
-              </Link>
               <button
                 type="button"
                 onClick={() => remove(item)}
@@ -379,22 +389,22 @@ function WatchlistAddModal({
             placeholder={
               tab === "player" ? "Search players…" : "Filter teams…"
             }
-            className="h-9 w-full rounded-md border border-input bg-transparent pr-3 pl-9 text-[13px] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
+            className="h-9 w-full rounded-md border border-input bg-transparent pr-3 pl-9 text-[14px] outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50"
             autoFocus
           />
         </label>
 
         <div className="max-h-[min(50vh,22rem)] overflow-y-auto rounded-md border border-border">
           {loading ? (
-            <p className="px-3 py-8 text-center text-[13px] text-muted-foreground">
+            <p className="px-3 py-8 text-center text-[14px] text-muted-foreground">
               Searching…
             </p>
           ) : error ? (
-            <p className="px-3 py-8 text-center text-[13px] text-muted-foreground">
+            <p className="px-3 py-8 text-center text-[14px] text-muted-foreground">
               {error}
             </p>
           ) : hits.length === 0 ? (
-            <p className="px-3 py-8 text-center text-[13px] text-muted-foreground">
+            <p className="px-3 py-8 text-center text-[14px] text-muted-foreground">
               {tab === "player" && query.trim().length < 2
                 ? "Type at least 2 letters to search players."
                 : "No matches."}
@@ -427,10 +437,32 @@ function WatchlistAddModal({
                       <TeamLogo teamKey={hit.teamKey ?? hit.id} size="xs" />
                     )}
                     <div className="min-w-0 flex-1">
-                      <p className="truncate text-[13px] font-semibold">
-                        {hit.name}
-                      </p>
-                      <p className="truncate text-[11px] text-muted-foreground">
+                      {hit.kind === "player" ? (
+                        <PlayerIdentity
+                          playerId={hit.id}
+                          name={hit.name}
+                          teamKey={hit.teamKey}
+                          variant="compact"
+                          className="block min-w-0"
+                          nameClassName="inline"
+                        >
+                          <span className="block truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                            {hit.name}
+                          </span>
+                        </PlayerIdentity>
+                      ) : (
+                        <TeamIdentity
+                          teamKey={hit.teamKey ?? hit.id}
+                          label={hit.name}
+                          className="block min-w-0"
+                          nameClassName="inline"
+                        >
+                          <span className="block truncate text-[16px] font-semibold underline decoration-foreground/40 underline-offset-2">
+                            {hit.name}
+                          </span>
+                        </TeamIdentity>
+                      )}
+                      <p className="truncate text-[12px] text-muted-foreground">
                         {hit.subtitle ??
                           (hit.kind === "player" ? "Player" : "Team")}
                       </p>

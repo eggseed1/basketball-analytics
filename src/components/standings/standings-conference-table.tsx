@@ -1,104 +1,126 @@
-import Link from "next/link";
+"use client";
 
 import { TeamLogo } from "@/components/brand/team-logo";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import type { StandingRow } from "@/data/types";
 import { formatNumber } from "@/lib/format";
-import { resolveTeamBrand } from "@/lib/nba-brand";
-import { playersExploreTeamHref } from "@/lib/team-identity";
+import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
+
+const thBase =
+  "py-2 font-semibold text-[12px] uppercase tracking-[0.08em] text-muted-foreground";
+const tdBase = "py-2 text-[14px] leading-5 tabular-nums";
 
 export function StandingsConferenceTable({
   title,
   rows,
   compact = false,
-  linkTeamsToPlayers = true,
 }: {
   title: string;
   rows: StandingRow[];
   /** Fewer columns for homepage. */
   compact?: boolean;
-  linkTeamsToPlayers?: boolean;
 }) {
   return (
-    <section className="overflow-hidden rounded-md border border-border bg-card">
-      <div className="border-b border-border px-3 py-2.5 text-[13px] font-bold tracking-tight">
+    <section className="sports-card overflow-hidden">
+      <div className="border-b border-border px-3 py-2 text-[14px] font-bold tracking-tight">
         {title}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full min-w-[320px] text-left text-[13px]">
-          <thead className="border-b border-border bg-secondary/50 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        <table className="w-full table-fixed text-left">
+          <colgroup>
+            <col className="w-7" />
+            <col />
+            <col className="w-[52px]" />
+            <col className="w-[52px]" />
+            <col className="w-20" />
+            {compact ? (
+              <col className="w-24" />
+            ) : (
+              <>
+                <col className="w-14" />
+                <col className="w-16" />
+                <col className="w-14" />
+                <col className="w-14" />
+                <col className="w-16" />
+              </>
+            )}
+          </colgroup>
+          <thead className="border-b border-border bg-secondary/50">
             <tr>
-              <th className="px-3 py-2 font-semibold">#</th>
-              <th className="px-2 py-2 font-semibold">Team</th>
-              <th className="px-2 py-2 text-right font-semibold">W</th>
-              <th className="px-2 py-2 text-right font-semibold">L</th>
-              <th className="px-2 py-2 text-right font-semibold">PCT</th>
+              <th className={cn(thBase, "pl-3 pr-1")}>#</th>
+              <th className={cn(thBase, "pl-2 pr-2")}>Team</th>
+              <th className={cn(thBase, "px-1 text-right")}>W</th>
+              <th className={cn(thBase, "px-1 text-right")}>L</th>
+              <th className={cn(thBase, "px-1 text-right")}>PCT</th>
               {!compact ? (
                 <>
-                  <th className="px-2 py-2 text-right font-semibold">GB</th>
-                  <th className="px-2 py-2 text-right font-semibold">DIFF</th>
-                  <th className="px-2 py-2 text-right font-semibold">PPG</th>
-                  <th className="px-2 py-2 text-right font-semibold">OPP</th>
-                  <th className="px-3 py-2 text-right font-semibold">STRK</th>
+                  <th className={cn(thBase, "px-1 text-right")}>GB</th>
+                  <th className={cn(thBase, "px-1 text-right")}>DIFF</th>
+                  <th className={cn(thBase, "px-1 text-right")}>PPG</th>
+                  <th className={cn(thBase, "px-1 text-right")}>OPP</th>
+                  <th className={cn(thBase, "pl-1 pr-3 text-right")}>STRK</th>
                 </>
               ) : (
-                <th className="px-3 py-2 text-right font-semibold">DIFF</th>
+                <th className={cn(thBase, "pl-1 pr-3 text-right")}>DIFF</th>
               )}
             </tr>
           </thead>
-          <tbody className="divide-y divide-border">
+          <tbody>
             {rows.map((row) => {
-              const brand = resolveTeamBrand(row.abbreviation);
-              const teamCell = (
-                <span className="flex min-w-0 items-center gap-2">
-                  <TeamLogo teamKey={row.abbreviation} size="xs" />
-                  <span className="truncate font-semibold">
-                    {compact ? row.abbreviation : row.displayName}
-                  </span>
-                </span>
-              );
               return (
                 <tr
                   key={row.teamId}
-                  className="hover:bg-secondary/40"
-                  style={
-                    brand
-                      ? { boxShadow: `inset 3px 0 0 ${brand.primary}` }
-                      : undefined
-                  }
+                  className="border-b border-border last:border-0 hover:bg-secondary/40"
                 >
-                  <td className="px-3 py-2 tabular-nums text-muted-foreground">
+                  <td
+                    className={cn(
+                      tdBase,
+                      "pl-3 pr-1 text-[12px] font-bold leading-4 text-muted-foreground"
+                    )}
+                  >
                     {row.rank}
                   </td>
-                  <td className="px-2 py-2">
-                    {linkTeamsToPlayers ? (
-                      <Link
-                        href={playersExploreTeamHref(row.teamId)}
-                        className="hover:underline"
+                  <td className="py-2 pl-2 pr-2">
+                    <TeamIdentity
+                      teamKey={row.teamId}
+                      label={compact ? row.abbreviation : row.displayName}
+                      className="min-w-0"
+                      nameClassName="flex min-w-0 items-center gap-2 no-underline hover:no-underline"
+                    >
+                      <TeamLogo teamKey={row.abbreviation} size="xs" />
+                      <span
+                        className={cn(
+                          type.body,
+                          textLinkClassName,
+                          "truncate"
+                        )}
                       >
-                        {teamCell}
-                      </Link>
-                    ) : (
-                      teamCell
-                    )}
+                        {compact ? row.abbreviation : row.displayName}
+                      </span>
+                    </TeamIdentity>
                   </td>
-                  <td className="px-2 py-2 text-right tabular-nums">{row.wins}</td>
-                  <td className="px-2 py-2 text-right tabular-nums">
-                    {row.losses}
-                  </td>
-                  <td className="px-2 py-2 text-right tabular-nums">
+                  <td className={cn(tdBase, "px-1 text-right")}>{row.wins}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>{row.losses}</td>
+                  <td className={cn(tdBase, "px-1 text-right")}>
                     {formatNumber(row.winPct, 3)}
                   </td>
                   {!compact ? (
                     <>
-                      <td className="px-2 py-2 text-right tabular-nums text-muted-foreground">
+                      <td
+                        className={cn(
+                          tdBase,
+                          "px-1 text-right text-muted-foreground"
+                        )}
+                      >
                         {row.gamesBehind <= 0
                           ? "-"
                           : formatNumber(row.gamesBehind, 1)}
                       </td>
                       <td
                         className={cn(
-                          "px-2 py-2 text-right tabular-nums font-medium",
+                          tdBase,
+                          "px-1 text-right font-medium",
                           row.differential > 0
                             ? "text-emerald-700"
                             : row.differential < 0
@@ -109,20 +131,26 @@ export function StandingsConferenceTable({
                         {row.differential > 0 ? "+" : ""}
                         {formatNumber(row.differential, 1)}
                       </td>
-                      <td className="px-2 py-2 text-right tabular-nums">
+                      <td className={cn(tdBase, "px-1 text-right")}>
                         {formatNumber(row.ppg, 1)}
                       </td>
-                      <td className="px-2 py-2 text-right tabular-nums text-muted-foreground">
+                      <td
+                        className={cn(
+                          tdBase,
+                          "px-1 text-right text-muted-foreground"
+                        )}
+                      >
                         {formatNumber(row.oppPpg, 1)}
                       </td>
-                      <td className="px-3 py-2 text-right tabular-nums">
+                      <td className={cn(tdBase, "pl-1 pr-3 text-right")}>
                         {row.streak}
                       </td>
                     </>
                   ) : (
                     <td
                       className={cn(
-                        "px-3 py-2 text-right tabular-nums font-medium",
+                        tdBase,
+                        "pl-1 pr-3 text-right font-medium",
                         row.differential > 0
                           ? "text-emerald-700"
                           : row.differential < 0

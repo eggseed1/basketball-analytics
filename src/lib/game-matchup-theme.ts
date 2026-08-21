@@ -1,7 +1,7 @@
 /**
- * Game / matchup visual theme — derived only from canonical TEAM_BRANDS.
+ * Game / matchup visual theme - derived only from canonical TEAM_BRANDS.
  * Away = gradient start (left); home = gradient end (right).
- * UI chrome only — not analytics.
+ * UI chrome only - not analytics.
  */
 
 import type { CSSProperties } from "react";
@@ -44,8 +44,32 @@ function isNearNeutralInk(hex: string): boolean {
     h === "#000000" ||
     h === "#fff" ||
     h === "#ffffff" ||
-    h === "#c4ced4" // Spurs / similar silver — weak wash alone
+    h === "#c4ced4" // Spurs / similar silver - weak wash alone
   );
+}
+
+/**
+ * Page-atmosphere pair from a franchise palette.
+ * Drops black / white / silver so the gradient reads as the team color.
+ */
+export function brandAtmosphereColors(
+  primary?: string | null,
+  secondary?: string | null
+): { colorA: string; colorB: string } | null {
+  const p = primary?.trim() ?? "";
+  const s = secondary?.trim() ?? "";
+  const colorful = [p, s].filter(
+    (c) => isValidCssHex(c) && !isNearNeutralInk(c)
+  );
+  if (colorful.length >= 2) {
+    return { colorA: colorful[0]!, colorB: colorful[1]! };
+  }
+  if (colorful.length === 1) {
+    return { colorA: colorful[0]!, colorB: colorful[0]! };
+  }
+  if (isValidCssHex(p)) return { colorA: p, colorB: p };
+  if (isValidCssHex(s)) return { colorA: s, colorB: s };
+  return null;
 }
 
 export type GameMatchupTheme = {
@@ -108,31 +132,6 @@ export function buildGameMatchupTheme(
       "--home-color": homeWash,
     } as CSSProperties,
   };
-}
-
-/**
- * Page-atmosphere pair from a franchise palette.
- * Drops black / white / silver so the gradient reads as the team color.
- * Exact Hannah frontend helper — presentation only.
- */
-export function brandAtmosphereColors(
-  primary?: string | null,
-  secondary?: string | null
-): { colorA: string; colorB: string } | null {
-  const p = primary?.trim() ?? "";
-  const s = secondary?.trim() ?? "";
-  const colorful = [p, s].filter(
-    (c) => isValidCssHex(c) && !isNearNeutralInk(c)
-  );
-  if (colorful.length >= 2) {
-    return { colorA: colorful[0]!, colorB: colorful[1]! };
-  }
-  if (colorful.length === 1) {
-    return { colorA: colorful[0]!, colorB: colorful[0]! };
-  }
-  if (isValidCssHex(p)) return { colorA: p, colorB: p };
-  if (isValidCssHex(s)) return { colorA: s, colorB: s };
-  return null;
 }
 
 /** Stable string fingerprint for tests (ordering-sensitive). */

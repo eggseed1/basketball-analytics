@@ -1,19 +1,29 @@
-import type { CSSProperties, ReactNode } from "react";
-
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { askDrblTeamHref } from "@/components/teams/team-ask-links";
 import type { StandingRow } from "@/data/types/standings";
 import type { TeamSeasonStats } from "@/data/types";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import type { TeamBrand } from "@/lib/nba-brand";
 import { seasonChipHref } from "@/lib/team-explorer";
-import { teamComparePath } from "@/analytics/compare-team-seasons";
+import {
+  teamPageHref,
+  type TeamPageHrefOpts,
+} from "@/lib/team-destination";
+import { cn } from "@/lib/utils";
+
+type SnapshotCell = {
+  label: string;
+  value: string;
+  hint?: string;
+};
 
 /**
- * Stable team identity frame — name, mark, season chips, jump links.
+ * Stable team identity frame - name, mark, season chips.
  * Stays mounted while deep Suspense islands stream below.
  */
 export function TeamDestinationIdentity({
@@ -25,14 +35,11 @@ export function TeamDestinationIdentity({
   modernBrand,
   historicalBrand,
   useHistoricalMark,
-  askTeamId,
-  txTeamId,
-  priorSeason,
-  coverageSummary,
   snapshotExtra,
   boardAvailable = true,
   fromHistory = false,
   themeMode = "historical",
+  hrefOpts,
 }: {
   teamId: string;
   team: Pick<
@@ -46,15 +53,13 @@ export function TeamDestinationIdentity({
   historicalBrand?: HistoricalTeamBrand | null;
   /** Prefer HistoricalTeamMark / historical logoUrl (never modern OKC for Sonics). */
   useHistoricalMark: boolean;
-  askTeamId: string;
-  txTeamId: string;
-  priorSeason: string;
-  coverageSummary?: ReactNode;
-  snapshotExtra?: string | null;
-  /** When false, never display fabricated zero rates — show em dashes. */
+  /** Optional highlight trait - value then label, e.g. "90th" / "Assist / turnover". */
+  snapshotExtra?: { value: string; label: string } | null;
+  /** When false, never display fabricated zero rates - show em dashes. */
   boardAvailable?: boolean;
   fromHistory?: boolean;
   themeMode?: "historical" | "modern";
+  hrefOpts?: TeamPageHrefOpts;
 }) {
   const displayName =
     useHistoricalMark && historicalBrand?.displayName
@@ -65,32 +70,57 @@ export function TeamDestinationIdentity({
       ? historicalBrand.abbreviation
       : team.abbreviation;
 
-  const washPrimary =
+  const wash = brandAtmosphereColors(
     useHistoricalMark && historicalBrand?.palette?.primary
       ? historicalBrand.palette.primary
-      : modernBrand?.primary;
-  const washSecondary =
+      : modernBrand?.primary,
     useHistoricalMark && historicalBrand?.palette?.secondary
       ? historicalBrand.palette.secondary
-      : modernBrand?.secondary;
+      : modernBrand?.secondary
+  );
 
-  const snapshotBits = boardAvailable
+  const snapshotCells: SnapshotCell[] = boardAvailable
     ? [
         standing
-          ? `${standing.wins}–${standing.losses}`
-          : `${formatNumber(team.ppg, 1)} PPG`,
-        `${team.avgDiff >= 0 ? "+" : ""}${formatNumber(team.avgDiff, 1)} diff`,
-        `${
-          team.trueShootingPct != null && team.trueShootingPct > 0
-            ? formatPct(team.trueShootingPct)
-            : "—"
-        } TS`,
-        snapshotExtra,
-      ].filter(Boolean)
+          ? {
+              label: "Record",
+              value: `${standing.wins}-${standing.losses}`,
+              hint:
+                standing.winPct != null
+                  ? formatPct(standing.winPct, 0)
+                  : undefined,
+            }
+          : {
+              label: "PPG",
+              value: formatNumber(team.ppg, 1),
+            },
+        {
+          label: "Diff",
+          value: `${team.avgDiff >= 0 ? "+" : ""}${formatNumber(team.avgDiff, 1)}`,
+        },
+        {
+          label: "TS%",
+          value:
+            team.trueShootingPct != null && team.trueShootingPct > 0
+              ? formatPct(team.trueShootingPct)
+              : "-",
+        },
+        ...(snapshotExtra
+          ? [
+              {
+                label: snapshotExtra.label,
+                value: snapshotExtra.value,
+              },
+            ]
+          : []),
+      ]
     : [
-        "Season board unavailable",
-        snapshotExtra ?? "Identity from team-era map",
-      ].filter(Boolean);
+        {
+          label: "Board",
+          value: "-",
+          hint: snapshotExtra?.label ?? "Identity from team-era map",
+        },
+      ];
 
   return (
     <section
@@ -98,16 +128,11 @@ export function TeamDestinationIdentity({
       className="scroll-mt-16 flex flex-col gap-4"
       aria-label="Overview"
     >
-      <header
-        className="sports-card score-card-wash overflow-hidden px-4 py-5 sm:px-5"
-        style={
-          washPrimary
-            ? ({
-                "--away-color": washPrimary,
-                "--home-color": washSecondary ?? washPrimary,
-              } as CSSProperties)
-            : undefined
-        }
+      <GlassSurface
+        as="header"
+        accentColor={wash?.colorA}
+        accentColorB={wash?.colorB}
+        className="px-4 py-5 sm:px-5"
       >
         <div className="flex flex-wrap items-center gap-4">
           {useHistoricalMark && historicalBrand ? (
@@ -124,19 +149,19 @@ export function TeamDestinationIdentity({
             />
           )}
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            <p
+              className={cn(
+                type.caption,
+                "font-semibold uppercase tracking-[0.12em] text-muted-foreground"
+              )}
+            >
               {displayAbbr}
               {team.conference ? ` · ${team.conference}` : ""}
               {standing ? ` · #${standing.rank}` : null} · {season}
             </p>
-            <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-              {displayName}
-            </h1>
-            <p className="mt-1 text-[14px] font-medium text-foreground">
-              {snapshotBits.join(" · ")}
-            </p>
+            <h1 className={cn(type.display, "mt-0.5")}>{displayName}</h1>
             {standing ? (
-              <p className="mt-1 text-[12px] text-muted-foreground">
+              <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
                 {standing.streak ? `Streak ${standing.streak}` : null}
                 {standing.lastTen ? ` · L10 ${standing.lastTen}` : null}
                 {" · "}
@@ -148,21 +173,61 @@ export function TeamDestinationIdentity({
                 </TransitionLink>
               </p>
             ) : (
-              <p className="mt-1 text-[12px] text-muted-foreground">
+              <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
                 Live standings shown for the current season only when available.
               </p>
             )}
           </div>
         </div>
 
+        <dl className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {snapshotCells.map((cell) => (
+            <div
+              key={`${cell.label}-${cell.value}`}
+              className="min-w-0 rounded-md bg-white/35 px-3 py-2.5 backdrop-blur-sm"
+            >
+              <dt
+                className={cn(
+                  type.caption,
+                  "truncate font-semibold uppercase tracking-wide text-muted-foreground"
+                )}
+              >
+                {cell.label}
+              </dt>
+              <dd
+                className={cn(
+                  type.title,
+                  "mt-0.5 truncate tabular-nums tracking-tight"
+                )}
+              >
+                {cell.value}
+              </dd>
+              {cell.hint ? (
+                <p
+                  className={cn(
+                    type.caption,
+                    "mt-0.5 truncate text-muted-foreground"
+                  )}
+                >
+                  {cell.hint}
+                </p>
+              ) : null}
+            </div>
+          ))}
+        </dl>
+
         <div className="mt-4 flex flex-wrap gap-1.5">
           {seasonChips.map((option) => (
             <TransitionLink
               key={option}
-              href={seasonChipHref(teamId, option, {
-                fromHistory,
-                themeMode,
-              })}
+              href={
+                hrefOpts
+                  ? teamPageHref(teamId, { ...hrefOpts, season: option })
+                  : seasonChipHref(teamId, option, {
+                      fromHistory,
+                      themeMode,
+                    })
+              }
               scroll={false}
               className={
                 option === season
@@ -174,60 +239,7 @@ export function TeamDestinationIdentity({
             </TransitionLink>
           ))}
         </div>
-
-        <div className="mt-4 flex flex-wrap gap-3 text-[13px] font-semibold">
-          <a href="#performance" className="underline-offset-2 hover:underline">
-            Performance →
-          </a>
-          <a href="#identity" className="underline-offset-2 hover:underline">
-            How they win →
-          </a>
-          <a href="#roster" className="underline-offset-2 hover:underline">
-            Roster →
-          </a>
-          <a href="#games" className="underline-offset-2 hover:underline">
-            Games →
-          </a>
-          <TransitionLink
-            href={askDrblTeamHref(
-              `${displayName} point differential ${season}`,
-              askTeamId
-            )}
-            className="underline-offset-2 hover:underline"
-          >
-            Ask DRBL →
-          </TransitionLink>
-          <TransitionLink
-            href={teamComparePath({
-              teamA: askTeamId,
-              teamB: askTeamId,
-              seasonA: season,
-              seasonB: priorSeason,
-            })}
-            className="underline-offset-2 hover:underline"
-          >
-            Compare seasons →
-          </TransitionLink>
-          <TransitionLink
-            href={`/compare?mode=teams&view=rank&teamId=${encodeURIComponent(askTeamId)}`}
-            className="underline-offset-2 hover:underline"
-          >
-            Rank seasons →
-          </TransitionLink>
-          <TransitionLink
-            href={`/offseason?team=${encodeURIComponent(txTeamId)}`}
-            className="underline-offset-2 hover:underline"
-          >
-            Offseason →
-          </TransitionLink>
-        </div>
-
-        {coverageSummary ? (
-          <p className="mt-4 text-[12px] text-muted-foreground">
-            {coverageSummary}
-          </p>
-        ) : null}
-      </header>
+      </GlassSurface>
     </section>
   );
 }

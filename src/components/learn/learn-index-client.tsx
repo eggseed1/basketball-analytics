@@ -76,7 +76,7 @@ export function LearnIndexClient({
       </div>
 
       {filtered.length === 0 ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[13px] text-muted-foreground">
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           No Learn pages match that search.
         </p>
       ) : (
@@ -89,7 +89,7 @@ export function LearnIndexClient({
             return (
               <section key={meta.id} className="flex flex-col gap-2">
                 <div>
-                  <h2 className="text-[13px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                  <h2 className="text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
                     {meta.label}
                   </h2>
                   <p className="text-[12px] text-muted-foreground">
@@ -104,14 +104,14 @@ export function LearnIndexClient({
                         className="flex items-baseline justify-between gap-3 px-4 py-3 hover:bg-secondary/50"
                       >
                         <span>
-                          <span className="block text-[15px] font-semibold">
+                          <span className="block text-[16px] font-semibold">
                             {g.shortName}
                           </span>
-                          <span className="block text-[13px] text-muted-foreground">
+                          <span className="block text-[14px] text-muted-foreground">
                             {g.tooltip}
                           </span>
                         </span>
-                        <span className="shrink-0 text-[13px] font-semibold text-muted-foreground">
+                        <span className="shrink-0 text-[14px] font-semibold text-muted-foreground">
                           Learn
                         </span>
                       </TransitionLink>

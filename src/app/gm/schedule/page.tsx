@@ -20,7 +20,7 @@ function ScheduleBody() {
     <div className="flex flex-col gap-4">
       <header>
         <h1 className="text-[28px] font-bold tracking-tight">Schedule</h1>
-        <p className="text-[15px] text-muted-foreground">
+        <p className="text-[16px] text-muted-foreground">
           Real NBA tips for your franchise - home and away marked on the
           calendar.
         </p>

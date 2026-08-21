@@ -15,6 +15,10 @@ import {
 import { AnalysisBoard } from "@/components/dashboard/analysis-board";
 import type { HistogramBin } from "@/lib/dashboard-aggregates";
 import { cn } from "@/lib/utils";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export function HistogramBoard({
   title,
@@ -87,18 +91,16 @@ export function HistogramBoard({
               />
               <Tooltip
                 cursor={{ fill: "currentColor", opacity: 0.06 }}
+                wrapperStyle={rechartsFrostWrapperStyle}
                 content={({ active: tipActive, payload }) => {
                   if (!tipActive || !payload?.length) return null;
                   const bin = payload[0].payload as HistogramBin;
                   return (
-                    <div
-                      role="tooltip"
-                      className="rounded border border-border bg-popover px-2 py-1 text-xs shadow-sm"
-                    >
+                    <FrostRechartsTooltip active={tipActive}>
                       <p className="font-medium">{bin.label}</p>
                       <p>{bin.count} players</p>
                       <p className="text-muted-foreground">Click to filter</p>
-                    </div>
+                    </FrostRechartsTooltip>
                   );
                 }}
               />

@@ -19,7 +19,7 @@ import {
 export const TEAM_SEASON_COMPARE_VERSION = "1.0";
 
 /**
- * Absolute tolerances — align with Team Arc / analyzeTeamProfile noise floors
+ * Absolute tolerances - align with Team Arc / analyzeTeamProfile noise floors
  * where those exist; otherwise documented team-board deltas.
  */
 export const TEAM_SEASON_COMPARE_TOLERANCE = {
@@ -27,7 +27,7 @@ export const TEAM_SEASON_COMPARE_TOLERANCE = {
   diff: 0.8,
   ppg: 1.0,
   oppPpg: 1.0,
-  /** Fraction scale — 0.008 ≈ 0.8 percentage points (matches analyzeTeamProfile). */
+  /** Fraction scale - 0.008 ≈ 0.8 percentage points (matches analyzeTeamProfile). */
   pct: 0.008,
   asttov: 0.15,
   tov: 0.4,
@@ -189,15 +189,15 @@ function pushMetric(
       id: options.id,
       label: options.label,
       category: options.category,
-      aDisplay: aRaw != null ? options.format(aRaw) : "—",
-      bDisplay: bRaw != null ? options.format(bRaw) : "—",
+      aDisplay: aRaw != null ? options.format(aRaw) : "-",
+      bDisplay: bRaw != null ? options.format(bRaw) : "-",
       aValue: aRaw ?? undefined,
       bValue: bRaw ?? undefined,
       edge: "unavailable",
       higherIsBetter,
       note:
         options.note ??
-        "Metric missing for one side — excluded from head-to-head edge.",
+        "Metric missing for one side - excluded from head-to-head edge.",
       delta: undefined,
     });
     return;
@@ -275,8 +275,8 @@ function categoryWinner(
     evidenceIds: decisive.map((d) => d.id),
     note:
       edge === "even"
-        ? `Split ${a}–${b} among decisive metrics.`
-        : `Leads ${Math.max(a, b)}–${Math.min(a, b)} among decisive metrics.`,
+        ? `Split ${a}-${b} among decisive metrics.`
+        : `Leads ${Math.max(a, b)}-${Math.min(a, b)} among decisive metrics.`,
   };
 }
 
@@ -288,7 +288,7 @@ function overallFromCategories(
     return {
       edge: "unavailable",
       reason:
-        "Overall verdict withheld — at least one side lacks a qualifying sample (≥20 GP).",
+        "Overall verdict withheld - at least one side lacks a qualifying sample (≥20 GP).",
     };
   }
 
@@ -309,7 +309,7 @@ function overallFromCategories(
   if (a === b) {
     return {
       edge: "even",
-      reason: `Categories split ${a}–${b} (${decisive
+      reason: `Categories split ${a}-${b} (${decisive
         .map((c) => c.label)
         .join(", ")}). Mixed profile.`,
     };
@@ -320,7 +320,7 @@ function overallFromCategories(
     .map((c) => c.label);
   return {
     edge,
-    reason: `Leads ${Math.max(a, b)}–${Math.min(a, b)} categories (${winners.join(", ")}).`,
+    reason: `Leads ${Math.max(a, b)}-${Math.min(a, b)} categories (${winners.join(", ")}).`,
   };
 }
 

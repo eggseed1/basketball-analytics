@@ -10,7 +10,6 @@ import { listDrblSeasons } from "@/data/drbl/season-registry";
 import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
 import {
   getExplorePlayersBoardView,
-  parseExplorePlayersPage,
   parseExplorePlayersSortDir,
 } from "@/data/queries/explore-players-board";
 import {
@@ -18,11 +17,12 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { filtersFromSearchParams } from "@/lib/search-params";
+import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 
 export const metadata = {
   title: "Players",
   description:
-    "NBA player directory from 1946-47. DRBL/100 and WAR1 for registry seasons from 2020-21.",
+    "NBA player leaderboard with seasons from 1960 to present. DRBL/100 and WAR1 for registry seasons.",
 };
 
 interface ExplorePlayersPageProps {
@@ -48,6 +48,8 @@ async function ExplorePlayersBoard({
   const filters = filtersFromSearchParams({
     ...searchParams,
     season: searchParams.season ?? defaultSeason,
+    minimumMinutes:
+      searchParams.minimumMinutes ?? String(DEFAULT_PLAYER_MINIMUM_MINUTES),
   });
   const season = filters.season ?? defaultSeason;
   const initialSortKey = parsePlayerSeasonSortKey(searchParams.sort);
@@ -55,13 +57,12 @@ async function ExplorePlayersBoard({
   const sortDir = sortKey
     ? parseExplorePlayersSortDir(searchParams.dir, sortKey)
     : undefined;
-  const page = parseExplorePlayersPage(searchParams.page);
 
   const view = await getExplorePlayersBoardView({
     filters,
     sortKey,
     sortDir,
-    page,
+    page: 1,
   });
 
   if (view.totalCount === 0) {
@@ -87,11 +88,10 @@ async function ExplorePlayersBoard({
   return (
     <div className="query-updating-content flex flex-col gap-3">
       <DrblSeasonSupportNotice season={season} />
-      <PlayerBoardHealthBanner health={view.health} />
       <PlayerSeasonTable
         players={view.rows}
+        season={season}
         totalCount={view.totalCount}
-        page={view.page}
         pageSize={view.pageSize}
         pageCount={view.pageCount}
         sortKey={view.sortKey}
@@ -99,8 +99,6 @@ async function ExplorePlayersBoard({
         hasDarko={view.hasDarko}
         hasLebron={view.hasLebron}
         hasDrbl={view.hasDrbl}
-        boardSampleSize={view.boardSampleSize}
-        contextPools={view.contextPools}
       />
     </div>
   );
@@ -121,20 +119,16 @@ export default async function ExplorePlayersPage({
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <header className="flex flex-col gap-1">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Players
-        </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          All Players
+          Players
         </h1>
-        <p className="max-w-2xl text-[13px] text-muted-foreground">
-          Season directory of every player with factual game participation
-          (1996-97+ archive). This is not the DRBL leaderboard — DRBL/100 and
-          WAR1 appear only for supported seasons ({drblSeasons.join(", ")}) via
-          left join and never decide who is listed.
+        <p className="max-w-2xl text-[14px] text-muted-foreground">
+          Box-score exploration spans the archive. Canonical DRBL/100 and WAR1
+          appear only for DRBL registry seasons ({drblSeasons.join(", ")}
+          ).
         </p>
         {parsePlayerSeasonSortKey(params.sort) ? (
-          <p className="text-[13px] text-muted-foreground">
+          <p className="text-[14px] text-muted-foreground">
             Sorted by {parsePlayerSeasonSortKey(params.sort)} - change any
             column header to re-rank.
           </p>

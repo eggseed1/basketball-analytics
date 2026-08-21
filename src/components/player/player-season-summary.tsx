@@ -52,7 +52,7 @@ export function PlayerSeasonSummary({
               key={stat.key}
               className="flex flex-col gap-1.5 rounded-lg bg-muted/30 px-2.5 py-2"
             >
-              <dt className="text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+              <dt className="text-[12px] font-medium uppercase tracking-wide text-muted-foreground">
                 <StatTooltip nestable stat={stat.label}>
                   {stat.label}
                 </StatTooltip>

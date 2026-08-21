@@ -4,65 +4,61 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { usePlayerViewSeason } from "@/components/players/player-view-season";
 import { type } from "@/lib/design-system";
 import {
-  playerHref,
-  playerPageNavViews,
-  type PlayerPageCapabilities,
-  type PlayerPageView,
-} from "@/lib/player-page-contract";
-import type { PlayerSeasonKind } from "@/lib/player-destination";
+  playerDepthHref,
+  type PlayerDepthTab,
+  type PlayerSeasonKind,
+} from "@/lib/player-destination";
 import type { ThemeMode } from "@/themes/era-theme";
 import { cn } from "@/lib/utils";
 
-/**
- * Exact Hannah depth-nav frontend (underline tablist + season-type chips),
- * extended to P18's seven-tab universe via `view=` URL semantics.
- */
+const TABS: Array<{ id: PlayerDepthTab; label: string }> = [
+  { id: "career", label: "Career" },
+  { id: "stats", label: "Statistics" },
+  { id: "games", label: "Game logs" },
+  { id: "viz", label: "Visualizations" },
+];
+
 export function PlayerDepthNav({
   playerId,
   season,
-  view,
-  caps,
-  seasonType = "regular",
+  depth,
+  seasonType,
+  compare,
   fromHistory = false,
   themeMode = "historical",
 }: {
   playerId: string;
   season: string;
-  view: PlayerPageView;
-  caps: PlayerPageCapabilities;
-  seasonType?: PlayerSeasonKind;
+  depth: PlayerDepthTab;
+  seasonType: PlayerSeasonKind;
+  compare?: string;
   fromHistory?: boolean;
   themeMode?: ThemeMode;
 }) {
   const viewSeason = usePlayerViewSeason(season);
-  const tabs = playerPageNavViews(caps);
-  const showSeasonType = view === "career" || view === "shooting";
-  const hrefView = view === "overview" ? undefined : view;
-
   return (
     <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
       <div
         role="tablist"
-        aria-label="Player statistics views"
+        aria-label="Player depth"
         className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
       >
-        {tabs.map((tab) => {
-          const selected = tab.id === view;
+        {TABS.map((tab) => {
+          const selected = tab.id === depth;
           return (
             <TransitionLink
               key={tab.id}
               role="tab"
               aria-selected={selected}
-              href={playerHref({
-                playerId,
+              href={playerDepthHref(playerId, {
                 season: viewSeason,
-                view: tab.id === "overview" ? undefined : tab.id,
+                depth: tab.id,
+                seasonType,
+                compare,
                 fromHistory,
-                themeMode:
-                  themeMode === "modern" ? "modern" : "historical",
+                themeMode,
               })}
               scroll={false}
-              prefetch={false}
               className={cn(
                 type.bodySm,
                 "px-2 py-1 font-bold tracking-tight",
@@ -76,7 +72,7 @@ export function PlayerDepthNav({
           );
         })}
       </div>
-      {showSeasonType ? (
+      {depth === "games" ? null : (
         <div
           role="group"
           aria-label="Season type"
@@ -92,16 +88,15 @@ export function PlayerDepthNav({
             return (
               <TransitionLink
                 key={id}
-                href={playerHref({
-                  playerId,
+                href={playerDepthHref(playerId, {
                   season: viewSeason,
-                  view: hrefView,
+                  depth,
+                  seasonType: id,
+                  compare,
                   fromHistory,
-                  themeMode:
-                    themeMode === "modern" ? "modern" : "historical",
+                  themeMode,
                 })}
                 scroll={false}
-                prefetch={false}
                 aria-pressed={selected}
                 className={cn(
                   type.caption,
@@ -116,7 +111,7 @@ export function PlayerDepthNav({
             );
           })}
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

@@ -22,6 +22,10 @@ import {
 import type { PlayerSeason, Position } from "@/data/types";
 import { formatMinutes, formatPct } from "@/lib/format";
 import { cn } from "@/lib/utils";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export interface PlayerUsageTsScatterProps {
   players: PlayerSeason[];
@@ -69,10 +73,7 @@ function AccessibleTooltip({
   const summary = `${p.playerName}, ${p.teamName}. Usage ${formatPct(p.usagePct ?? 0)}, true shooting ${formatPct(p.trueShootingPct ?? 0)}, ${formatMinutes(p.minutes)} minutes, ${p.gamesPlayed} games.`;
 
   return (
-    <div
-      role="tooltip"
-      className="max-w-xs rounded-lg border border-border bg-popover px-3 py-2 text-sm text-popover-foreground shadow-md"
-    >
+    <FrostRechartsTooltip active={active} className="max-w-xs">
       <p className="font-semibold">{p.playerName}</p>
       <p className="text-muted-foreground">{p.teamName}</p>
       <dl className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 tabular-nums">
@@ -86,7 +87,7 @@ function AccessibleTooltip({
         <dd className="text-right">{p.gamesPlayed}</dd>
       </dl>
       <p className="sr-only">{summary}</p>
-    </div>
+    </FrostRechartsTooltip>
   );
 }
 
@@ -320,6 +321,7 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
               <ZAxis range={[60, 60]} />
               <Tooltip
                 content={<AccessibleTooltip />}
+                wrapperStyle={rechartsFrostWrapperStyle}
                 cursor={{ strokeDasharray: "4 4" }}
               />
               <Scatter
@@ -345,7 +347,7 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
         )}
       </div>
 
-      {/* Keyboard-friendly companion list — Recharts dots alone are not enough. */}
+      {/* Keyboard-friendly companion list - Recharts dots alone are not enough. */}
       <div className="border-t border-border pt-3">
         <h3 className="mb-2 text-sm font-medium">Keyboard player list</h3>
         <ul className="grid max-h-40 gap-1 overflow-y-auto sm:grid-cols-2 lg:grid-cols-3">

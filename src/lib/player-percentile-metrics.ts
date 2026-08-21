@@ -1,13 +1,15 @@
 /**
  * Player-page percentile metric definitions and peer ranking.
- * Classification / display semantics only — does not invent stats.
+ * Classification / display semantics only - does not invent stats.
  */
 
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { formatNumber, formatPct } from "@/lib/format";
+import { percentileSavantColor } from "@/lib/player-grade";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
+import { brandableTeamKey } from "@/lib/player-team-context";
 
 export type PercentileCategory =
   | "value"
@@ -32,10 +34,12 @@ export type PercentileMetric = {
   value: number;
   series?: Array<{
     season: string;
+    fullSeason?: string;
     value: number;
     teamId: string;
     teamAbbr: string;
     color: string;
+    percentile?: number;
   }>;
   leagueComps: import("@/lib/player-stat-comps").StatComp[];
   historicalComps: import("@/lib/player-stat-comps").StatComp[];
@@ -66,7 +70,6 @@ export const PLAYER_PERCENTILE_QUALIFY = {
 /** Metrics allowed in the Advanced category (normalized / efficiency / ratings). */
 export const ADVANCED_PERCENTILE_METRIC_IDS = new Set([
   "ortg",
-  "drtg",
   "net",
 ]);
 
@@ -79,10 +82,12 @@ export function isQualifiedPeer(row: PlayerSeason): boolean {
 
 type CareerPoint = {
   season: string;
+  fullSeason: string;
   value: number;
   teamId: string;
   teamAbbr: string;
   color: string;
+  percentile: number;
 };
 
 /**
@@ -104,12 +109,28 @@ export function buildPlayerPercentileMetrics(
 
   const careerSeries = (
     pick: (row: PlayerSeason) => number | null | undefined,
+    poolValues: number[],
+    invert: boolean,
     options?: { rejectFlatOverlay?: boolean }
   ): CareerPoint[] => {
     const bySeason = new Map<string, PlayerSeason>();
     for (const r of career) {
       const existing = bySeason.get(r.season);
-      if (!existing || r.gamesPlayed > existing.gamesPlayed) {
+      const branded = Boolean(brandableTeamKey(r.teamId));
+      const existingBranded = existing
+        ? Boolean(brandableTeamKey(existing.teamId))
+        : false;
+      if (!existing) {
+        bySeason.set(r.season, r);
+        continue;
+      }
+      // Prefer a real franchise stint over TOT aggregates so the line
+      // isn't painted as a dummy "TOT" team.
+      if (branded && !existingBranded) {
+        bySeason.set(r.season, r);
+        continue;
+      }
+      if (branded === existingBranded && r.gamesPlayed > existing.gamesPlayed) {
         bySeason.set(r.season, r);
       }
     }
@@ -118,13 +139,29 @@ export function buildPlayerPercentileMetrics(
       .map((r) => {
         const v = pick(r);
         if (v == null || !Number.isFinite(v)) return null;
-        const { color, abbr } = teamChartColor(r.teamId);
+        const rawPct = percentileOf(v, poolValues);
+        const percentile = invert ? 100 - rawPct : rawPct;
+        const teamKey = brandableTeamKey(r.teamId);
+        if (!teamKey) {
+          return {
+            season: r.season.slice(2),
+            fullSeason: r.season,
+            value: v,
+            percentile,
+            teamId: "2TM",
+            teamAbbr: "2TM",
+            color: percentileSavantColor(percentile),
+          };
+        }
+        const { abbr } = teamChartColor(teamKey);
         return {
           season: r.season.slice(2),
+          fullSeason: r.season,
           value: v,
-          teamId: r.teamId,
+          percentile,
+          teamId: teamKey,
           teamAbbr: abbr,
-          color,
+          color: percentileSavantColor(percentile),
         };
       })
       .filter((x): x is CareerPoint => x != null);
@@ -146,7 +183,8 @@ export function buildPlayerPercentileMetrics(
     value: number;
     values: number[];
     display: string;
-    series: CareerPoint[];
+    seriesPick: (row: PlayerSeason) => number | null | undefined;
+    seriesOptions?: { rejectFlatOverlay?: boolean };
     interpretation: MetricInterpretation;
     /** When true, lower raw values rank higher. */
     invert?: boolean;
@@ -155,6 +193,13 @@ export function buildPlayerPercentileMetrics(
     profileHidden?: boolean;
   }) => {
     if (!Number.isFinite(opts.value) || opts.values.length === 0) return;
+
+    const series = careerSeries(
+      opts.seriesPick,
+      opts.values,
+      opts.invert ?? false,
+      opts.seriesOptions
+    );
 
     const interpretation = opts.interpretation;
     const showPercentile =
@@ -176,6 +221,7 @@ export function buildPlayerPercentileMetrics(
       leagueRows: pool,
       historicalRows: historicalPool,
       limit: 6,
+      invert: opts.invert,
     });
 
     metrics.push({
@@ -185,7 +231,7 @@ export function buildPlayerPercentileMetrics(
       percentile,
       display: opts.display,
       value: opts.value,
-      series: opts.series,
+      series,
       leagueComps: comps.leagueComps,
       historicalComps: comps.historicalComps,
       interpretation,
@@ -195,7 +241,7 @@ export function buildPlayerPercentileMetrics(
     });
   };
 
-  // --- Value (impact) — WAR1 + O/D for peer exploration in Overview.
+  // --- Value (impact) - WAR1 + O/D for peer exploration in Overview.
   // DRBL/100 grade/rate/percentile stay on the left snapshot (profileHidden).
   if (hasValidDrblEstimate(seasonStats)) {
     const drblPool = pool
@@ -210,10 +256,8 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.drbl100,
         values: drblPool,
         display: formatNumber(seasonStats.drbl100, 1),
-        series: careerSeries(
-          (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
-          { rejectFlatOverlay: true }
-        ),
+        seriesPick: (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
+        seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
         profileHidden: true,
       });
@@ -238,11 +282,10 @@ export function buildPlayerPercentileMetrics(
           value: seasonStats.r1WinEquivalents,
           values: winEqPool,
           display: formatNumber(seasonStats.r1WinEquivalents, 1),
-          series: careerSeries((r) =>
+          seriesPick: (r) =>
             r.r1WinEquivalents != null && Number.isFinite(r.r1WinEquivalents)
               ? r.r1WinEquivalents
-              : null
-          ),
+               : null,
           interpretation: "higher_is_better",
         });
       }
@@ -260,9 +303,8 @@ export function buildPlayerPercentileMetrics(
           value: seasonStats.drblO,
           values: oPool,
           display: formatNumber(seasonStats.drblO, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblO : null
-          ),
+          seriesPick: (r) =>
+            hasValidDrblEstimate(r) ? r.drblO  : null,
           interpretation: "higher_is_better",
         });
       }
@@ -280,74 +322,13 @@ export function buildPlayerPercentileMetrics(
           value: seasonStats.drblD,
           values: dPool,
           display: formatNumber(seasonStats.drblD, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblD : null
-          ),
+          seriesPick: (r) =>
+            hasValidDrblEstimate(r) ? r.drblD  : null,
           interpretation: "higher_is_better",
         });
       }
     }
-    // Diagnostics live under Advanced — not first-view Value/Overview.
-    if (Number.isFinite(seasonStats.drblP)) {
-      const pPool = pool
-        .filter(hasValidDrblEstimate)
-        .map((p) => p.drblP)
-        .filter((n): n is number => Number.isFinite(n));
-      if (pPool.length) {
-        push({
-          id: "drblP",
-          category: "advanced",
-          label: "DRBL-P",
-          value: seasonStats.drblP,
-          values: pPool,
-          display: formatNumber(seasonStats.drblP, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblP : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
-    }
-    if (Number.isFinite(seasonStats.drblLn)) {
-      const lnPool = pool
-        .filter(hasValidDrblEstimate)
-        .map((p) => p.drblLn)
-        .filter((n): n is number => Number.isFinite(n));
-      if (lnPool.length) {
-        push({
-          id: "drblLn",
-          category: "advanced",
-          label: "DRBL-LN",
-          value: seasonStats.drblLn,
-          values: lnPool,
-          display: formatNumber(seasonStats.drblLn, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblLn : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
-    }
-    if (Number.isFinite(seasonStats.drblB)) {
-      const bPool = pool
-        .filter(hasValidDrblEstimate)
-        .map((p) => p.drblB)
-        .filter((n): n is number => Number.isFinite(n));
-      if (bPool.length) {
-        push({
-          id: "drblB",
-          category: "advanced",
-          label: "DRBL-B",
-          value: seasonStats.drblB,
-          values: bPool,
-          display: formatNumber(seasonStats.drblB, 1),
-          series: careerSeries((r) =>
-            hasValidDrblEstimate(r) ? r.drblB : null
-          ),
-          interpretation: "higher_is_better",
-        });
-      }
-    }
+    // Diagnostics (DRBL-P / LN / B) stay off the ranking card - Statistics tab covers the box.
   }
 
   // --- Value (external impact) ---
@@ -363,7 +344,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.darkoDpm,
         values: darkoPool,
         display: formatNumber(seasonStats.darkoDpm, 2),
-        series: careerSeries((r) => r.darkoDpm, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.darkoDpm, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -380,7 +361,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.lebron,
         values: lebronPool,
         display: formatNumber(seasonStats.lebron, 2),
-        series: careerSeries((r) => r.lebron, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.lebron, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -397,50 +378,14 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.winsAdded,
         values: waPool,
         display: formatNumber(seasonStats.winsAdded, 2),
-        series: careerSeries((r) => r.winsAdded, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.winsAdded, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
   }
 
-  // --- Offense (volume + creation) ---
-  const ppg = perGame(seasonStats, "points");
-  push({
-    id: "pts",
-    category: "offense",
-    label: "Points",
-    value: ppg,
-    values: pool.map((p) => perGame(p, "points")),
-    display: `${formatNumber(ppg, 1)} PPG`,
-    series: careerSeries((r) => perGame(r, "points")),
-    interpretation: "higher_is_better",
-  });
-
+  // --- Offense (creation quality, not box-score volume) ---
   const apg = perGame(seasonStats, "assists");
-  push({
-    id: "ast",
-    category: "offense",
-    label: "Assists",
-    value: apg,
-    values: pool.map((p) => perGame(p, "assists")),
-    display: `${formatNumber(apg, 1)} APG`,
-    series: careerSeries((r) => perGame(r, "assists")),
-    interpretation: "higher_is_better",
-  });
-
-  const rpg = perGame(seasonStats, "rebounds");
-  push({
-    id: "reb",
-    category: "offense",
-    label: "Rebounds",
-    value: rpg,
-    values: pool.map((p) => perGame(p, "rebounds")),
-    display: `${formatNumber(rpg, 1)} RPG`,
-    series: careerSeries((r) => perGame(r, "rebounds")),
-    interpretation: "higher_is_better",
-  });
-
-  // Assist / turnover — playmaking efficiency (not raw turnover volume).
   const tpg = perGame(seasonStats, "turnovers");
   if (tpg > 0 && apg > 0) {
     const atr = apg / tpg;
@@ -457,11 +402,11 @@ export function buildPlayerPercentileMetrics(
         })
         .filter((n): n is number => n != null),
       display: formatNumber(atr, 2),
-      series: careerSeries((r) => {
+      seriesPick: (r) => {
         const a = perGame(r, "assists");
         const t = perGame(r, "turnovers");
         return t > 0 ? a / t : null;
-      }),
+      },
       interpretation: "higher_is_better",
     });
   }
@@ -478,7 +423,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.darkoOff,
         values: offPool,
         display: formatNumber(seasonStats.darkoOff, 2),
-        series: careerSeries((r) => r.darkoOff, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.darkoOff, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -495,7 +440,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.oLebron,
         values: oPool,
         display: formatNumber(seasonStats.oLebron, 2),
-        series: careerSeries((r) => r.oLebron, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.oLebron, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -512,11 +457,10 @@ export function buildPlayerPercentileMetrics(
         .map((p) => p.trueShootingPct)
         .filter((n): n is number => n != null && n > 0),
       display: formatPct(seasonStats.trueShootingPct),
-      series: careerSeries((r) =>
+      seriesPick: (r) =>
         r.trueShootingPct != null && r.trueShootingPct > 0
           ? r.trueShootingPct * 100
-          : null
-      ),
+           : null,
       interpretation: "higher_is_better",
     });
   }
@@ -533,25 +477,10 @@ export function buildPlayerPercentileMetrics(
         .map((p) => p.effectiveFieldGoalPct)
         .filter((n): n is number => n != null && n > 0),
       display: formatPct(seasonStats.effectiveFieldGoalPct),
-      series: careerSeries((r) =>
+      seriesPick: (r) =>
         r.effectiveFieldGoalPct != null && r.effectiveFieldGoalPct > 0
           ? r.effectiveFieldGoalPct * 100
-          : null
-      ),
-      interpretation: "higher_is_better",
-    });
-  }
-  if (seasonStats.fieldGoalPct > 0) {
-    push({
-      id: "fg",
-      category: "shooting",
-      label: "Field goal %",
-      value: seasonStats.fieldGoalPct,
-      values: pool.map((p) => p.fieldGoalPct).filter((n) => n > 0),
-      display: formatPct(seasonStats.fieldGoalPct),
-      series: careerSeries((r) =>
-        r.fieldGoalPct > 0 ? r.fieldGoalPct * 100 : null
-      ),
+           : null,
       interpretation: "higher_is_better",
     });
   }
@@ -563,50 +492,13 @@ export function buildPlayerPercentileMetrics(
       value: seasonStats.threePointPct,
       values: pool.map((p) => p.threePointPct).filter((n) => n > 0),
       display: formatPct(seasonStats.threePointPct),
-      series: careerSeries((r) =>
-        r.threePointPct > 0 ? r.threePointPct * 100 : null
-      ),
-      interpretation: "higher_is_better",
-    });
-  }
-  if (seasonStats.freeThrowPct > 0) {
-    push({
-      id: "ft",
-      category: "shooting",
-      label: "Free-throw %",
-      value: seasonStats.freeThrowPct,
-      values: pool.map((p) => p.freeThrowPct).filter((n) => n > 0),
-      display: formatPct(seasonStats.freeThrowPct),
-      series: careerSeries((r) =>
-        r.freeThrowPct > 0 ? r.freeThrowPct * 100 : null
-      ),
+      seriesPick: (r) =>
+        r.threePointPct > 0 ? r.threePointPct * 100 : null,
       interpretation: "higher_is_better",
     });
   }
 
-  // --- Defense ---
-  const spg = perGame(seasonStats, "steals");
-  push({
-    id: "stl",
-    category: "defense",
-    label: "Steals",
-    value: spg,
-    values: pool.map((p) => perGame(p, "steals")),
-    display: `${formatNumber(spg, 1)} SPG`,
-    series: careerSeries((r) => perGame(r, "steals")),
-    interpretation: "higher_is_better",
-  });
-  const bpg = perGame(seasonStats, "blocks");
-  push({
-    id: "blk",
-    category: "defense",
-    label: "Blocks",
-    value: bpg,
-    values: pool.map((p) => perGame(p, "blocks")),
-    display: `${formatNumber(bpg, 1)} BPG`,
-    series: careerSeries((r) => perGame(r, "blocks")),
-    interpretation: "higher_is_better",
-  });
+  // --- Defense (impact, not steal/block volume) ---
   if (seasonStats.darkoDef != null) {
     const defPool = pool
       .map((p) => p.darkoDef)
@@ -619,7 +511,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.darkoDef,
         values: defPool,
         display: formatNumber(seasonStats.darkoDef, 2),
-        series: careerSeries((r) => r.darkoDef, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.darkoDef, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -636,7 +528,7 @@ export function buildPlayerPercentileMetrics(
         value: seasonStats.dLebron,
         values: dPool,
         display: formatNumber(seasonStats.dLebron, 2),
-        series: careerSeries((r) => r.dLebron, { rejectFlatOverlay: true }),
+        seriesPick: (r) => r.dLebron, seriesOptions: { rejectFlatOverlay: true },
         interpretation: "higher_is_better",
       });
     }
@@ -653,50 +545,15 @@ export function buildPlayerPercentileMetrics(
         .map((p) => p.usagePct)
         .filter((n): n is number => n != null && n > 0),
       display: formatPct(seasonStats.usagePct),
-      series: careerSeries((r) =>
-        r.usagePct != null && r.usagePct > 0 ? r.usagePct * 100 : null
-      ),
+      seriesPick: (r) =>
+        r.usagePct != null && r.usagePct > 0 ? r.usagePct * 100  : null,
       interpretation: "role",
       showPercentile: true,
       showGrade: false,
     });
   }
 
-  const mpg = perGame(seasonStats, "minutes");
-  if (mpg > 0) {
-    push({
-      id: "min",
-      category: "role",
-      label: "Minutes",
-      value: mpg,
-      values: pool.map((p) => perGame(p, "minutes")).filter((n) => n > 0),
-      display: `${formatNumber(mpg, 1)} MPG`,
-      series: careerSeries((r) => {
-        const m = perGame(r, "minutes");
-        return m > 0 ? m : null;
-      }),
-      interpretation: "descriptive",
-      showPercentile: false,
-      showGrade: false,
-    });
-  }
-
-  if (seasonStats.gamesPlayed > 0) {
-    push({
-      id: "gp",
-      category: "role",
-      label: "Games",
-      value: seasonStats.gamesPlayed,
-      values: pool.map((p) => p.gamesPlayed).filter((n) => n > 0),
-      display: `${seasonStats.gamesPlayed} GP`,
-      series: careerSeries((r) => (r.gamesPlayed > 0 ? r.gamesPlayed : null)),
-      interpretation: "descriptive",
-      showPercentile: false,
-      showGrade: false,
-    });
-  }
-
-  // --- Advanced (normalized rates / ratings only) ---
+  // --- Advanced (ratings only) ---
   // ORtg: include only when present (ESPN approx when derived). Missing stays missing.
   if (
     seasonStats.offensiveRating != null &&
@@ -711,11 +568,10 @@ export function buildPlayerPercentileMetrics(
         .map((p) => p.offensiveRating)
         .filter((n): n is number => n != null && n > 0),
       display: formatNumber(seasonStats.offensiveRating, 1),
-      series: careerSeries((r) =>
+      seriesPick: (r) =>
         r.offensiveRating != null && r.offensiveRating > 0
           ? r.offensiveRating
-          : null
-      ),
+           : null,
       interpretation: "higher_is_better",
     });
   }
@@ -727,18 +583,17 @@ export function buildPlayerPercentileMetrics(
   ) {
     push({
       id: "drtg",
-      category: "advanced",
+      category: "defense",
       label: "Defensive rating",
       value: seasonStats.defensiveRating,
       values: pool
         .map((p) => p.defensiveRating)
         .filter((n): n is number => n != null && Number.isFinite(n)),
       display: formatNumber(seasonStats.defensiveRating, 1),
-      series: careerSeries((r) =>
+      seriesPick: (r) =>
         r.defensiveRating != null && Number.isFinite(r.defensiveRating)
           ? r.defensiveRating
-          : null
-      ),
+          : null,
       invert: true,
       interpretation: "lower_is_better",
     });
@@ -754,9 +609,8 @@ export function buildPlayerPercentileMetrics(
         .map((p) => p.netRating)
         .filter((n): n is number => n != null && Number.isFinite(n)),
       display: formatNumber(seasonStats.netRating, 1),
-      series: careerSeries((r) =>
-        r.netRating != null && Number.isFinite(r.netRating) ? r.netRating : null
-      ),
+      seriesPick: (r) =>
+        r.netRating != null && Number.isFinite(r.netRating) ? r.netRating  : null,
       interpretation: "higher_is_better",
     });
   }

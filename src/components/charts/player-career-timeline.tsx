@@ -17,6 +17,10 @@ import {
   type CareerTimelineMetric,
 } from "@/lib/player-savant";
 import { cn } from "@/lib/utils";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
 
 export function PlayerCareerTimeline({
   seasons,
@@ -95,7 +99,7 @@ export function PlayerCareerTimeline({
             Career timeline
           </h2>
           <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
-            {playerName}&apos;s growth by season — pick a stat to track over
+            {playerName}&apos;s growth by season - pick a stat to track over
             time.
           </p>
         </div>
@@ -155,14 +159,12 @@ export function PlayerCareerTimeline({
                 }
               />
               <Tooltip
+                wrapperStyle={rechartsFrostWrapperStyle}
                 content={({ active, payload }) => {
                   if (!active || !payload?.length) return null;
                   const row = payload[0]?.payload as (typeof data)[number];
                   return (
-                    <div
-                      role="tooltip"
-                      className="rounded-lg border border-border bg-popover px-3 py-2 text-sm shadow-md"
-                    >
+                    <FrostRechartsTooltip active={active}>
                       <p className="font-medium">{row.season}</p>
                       <p>
                         {metric.label} {metric.format(row.value)}
@@ -170,7 +172,7 @@ export function PlayerCareerTimeline({
                       <p className="text-muted-foreground">
                         {row.team} · {row.games} GP
                       </p>
-                    </div>
+                    </FrostRechartsTooltip>
                   );
                 }}
               />

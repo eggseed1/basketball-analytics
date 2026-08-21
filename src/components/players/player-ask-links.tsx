@@ -5,7 +5,7 @@ export type AskDrblHrefOptions = {
   teamId?: string;
   /** Canonical season context (Time Machine / shareable). */
   season?: string;
-  /** Display-only date context — not applied to season-level ASK. */
+  /** Display-only date context - not applied to season-level ASK. */
   date?: string;
   /** Marks context as originating from Time Machine. */
   fromHistory?: boolean;
@@ -32,7 +32,7 @@ export function askDrblHref(
 }
 
 /**
- * Lightweight ASK entry points — prefills only; no custom NLP on the player page.
+ * Lightweight ASK entry points - prefills only; no custom NLP on the player page.
  */
 export function PlayerAskLinks({
   playerId,
@@ -89,12 +89,12 @@ export function PlayerAskLinks({
         <li key={l.href}>
           <TransitionLink
             href={l.href}
-            className="text-[13px] font-semibold underline-offset-4 hover:underline"
+            className="text-[14px] font-semibold underline-offset-4 hover:underline"
           >
             {l.label}
           </TransitionLink>
           {l.hint ? (
-            <span className="ml-2 text-[11px] text-muted-foreground">
+            <span className="ml-2 text-[12px] text-muted-foreground">
               {l.hint}
             </span>
           ) : null}
