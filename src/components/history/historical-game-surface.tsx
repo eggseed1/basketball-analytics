@@ -112,9 +112,10 @@ function MarginChart({
       : -1);
   const active = activeIdx >= 0 ? timeline[activeIdx] : null;
   const scorerName =
-    active?.scorerId != null
+    active?.scorerName?.trim() ||
+    (active?.scorerId != null
       ? events.find((e) => e.playerId === active.scorerId)?.playerName
-      : null;
+      : null);
   const play =
     active?.eventIndex != null
       ? events.find((e) => e.eventIndex === active.eventIndex)

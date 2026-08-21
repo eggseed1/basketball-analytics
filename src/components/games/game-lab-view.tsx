@@ -129,8 +129,12 @@ function GameLabMarginChart({
         <p className="mt-2 text-[12px] tabular-nums text-muted-foreground">
           Q{active.period} {active.clock} · {awayLabel} {active.awayScore}-
           {homeLabel} {active.homeScore}
-          {active.scorerId ? ` · scorer ${active.scorerId}` : ""} · +
-          {active.points}
+          {active.scorerName
+            ? ` · ${active.scorerName}`
+            : active.scorerId
+              ? ` · ${active.scorerId}`
+              : ""}{" "}
+          · +{active.points}
         </p>
       ) : (
         <p className="mt-2 text-[12px] text-muted-foreground">

@@ -67,6 +67,8 @@ export interface ScoreTimelinePoint {
   margin: number;
   scoringTeamId: string;
   scorerId: string | null;
+  /** Display name for the scoring player when known from PBP. */
+  scorerName?: string | null;
   points: number;
   eventIndex: number;
 }
@@ -331,6 +333,7 @@ export function buildScoreTimeline(
       margin: e.homeScore - e.awayScore,
       scoringTeamId,
       scorerId: e.playerId,
+      scorerName: e.playerName,
       points: dh + da,
       eventIndex: e.eventIndex,
     });

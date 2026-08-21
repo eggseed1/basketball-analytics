@@ -170,6 +170,7 @@ export function timelineFromPlayByPlayEvents(
       margin: homeScore - awayScore,
       scoringTeamId,
       scorerId: e.playerId,
+      scorerName: e.playerName,
       points: scoredPoints > 0 ? scoredPoints : Math.abs(dh) + Math.abs(da),
       eventIndex: i,
     });
