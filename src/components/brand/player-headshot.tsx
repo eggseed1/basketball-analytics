@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
-import { playerHeadshotCandidates, resolveTeamBrand } from "@/lib/nba-brand";
+import {
+  playerHeadshotCandidates,
+  resolveTeamBrand,
+} from "@/lib/nba-brand";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -31,6 +34,10 @@ export function PlayerHeadshot({
   size = "sm",
   className,
   priority = false,
+  /** Precomputed verified URL from media registry - preferred. */
+  portraitUrl,
+  /** When set, do not probe CDN - use portraitUrl or initials only. */
+  registryOnly = false,
 }: {
   /** Primary / route id (ESPN athlete or NBA person). */
   playerId?: string | null;
@@ -42,16 +49,25 @@ export function PlayerHeadshot({
   size?: Size;
   className?: string;
   priority?: boolean;
+  portraitUrl?: string | null;
+  registryOnly?: boolean;
 }) {
   const candidates = useMemo(
-    () => playerHeadshotCandidates({ playerId, espnId, nbaId }),
-    [playerId, espnId, nbaId]
+    () =>
+      playerHeadshotCandidates({
+        playerId,
+        espnId,
+        nbaId,
+        approvedUrl: portraitUrl,
+        registryOnly,
+      }),
+    [playerId, espnId, nbaId, portraitUrl, registryOnly]
   );
   const [index, setIndex] = useState(0);
 
   useEffect(() => {
     setIndex(0);
-  }, [playerId, espnId, nbaId]);
+  }, [playerId, espnId, nbaId, portraitUrl, registryOnly]);
 
   const src = candidates[index];
   const brand = resolveTeamBrand(teamKey);

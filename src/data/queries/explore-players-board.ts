@@ -11,6 +11,7 @@ import {
 import { getPlayerSeasonBoardSnapshot } from "@/data/queries/player-data-health";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { BasketballFilters, PlayerSeason } from "@/data/types";
+import { getPlayerMedia } from "@/data/media/get-player-media";
 import {
   defaultPlayerSeasonSortDir,
   type PlayerSeasonSortKey,
@@ -72,6 +73,7 @@ export type ExplorePlayerBoardRow = {
   defensiveRebounds?: number;
   /** Player TS% minus board mean TS% (fraction). */
   relativeTrueShootingPct?: number;
+  portraitUrl?: string | null;
 };
 
 export type ExplorePlayersBoardView = {
@@ -146,6 +148,8 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.oLebron != null) row.oLebron = p.oLebron;
   if (p.dLebron != null) row.dLebron = p.dLebron;
   if (p.age != null && p.age > 0) row.age = p.age;
+  const media = getPlayerMedia([p.playerId]).get(p.playerId);
+  row.portraitUrl = media?.sourceUrl ?? null;
   if (p.twoPointPct) row.twoPointPct = p.twoPointPct;
   if (p.turnoverPct) row.turnoverPct = p.turnoverPct;
   row.threePointersAttempted = p.threePointersAttempted;

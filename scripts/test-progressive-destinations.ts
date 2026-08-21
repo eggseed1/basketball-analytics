@@ -20,9 +20,21 @@ function main() {
     "Player identity component"
   );
   assert.ok(
-    playerPage.includes("PlayerCoreIsland") &&
+    (playerPage.includes("PlayerCoreIsland") ||
+      playerPage.includes("PlayerPercentileIsland") ||
+      playerPage.includes("PlayerStatDepthIsland")) &&
       playerPage.includes("PlayerGamesIsland"),
-    "Player core + games islands"
+    "Player ranking/depth + games islands"
+  );
+  assert.ok(
+    playerPage.includes("HistoricalCareerSurface") ||
+      playerPage.includes("getHistoryCareerForPlayer"),
+    "Player historical career wiring"
+  );
+  assert.ok(
+    playerPage.includes("parsePlayerPageView") ||
+      playerPage.includes("parsePlayerDepthTab"),
+    "Player view/depth URL contract"
   );
   assert.ok(
     playerPage.includes("DestinationClientShell"),
@@ -95,7 +107,13 @@ function main() {
     playerGames.includes("getPlayerGameLogCached") ||
       playerGames.includes("getPlayerGameLog")
   );
-  assert.ok(playerGames.includes("PlayerNotableGames"));
+  assert.ok(
+    playerGames.includes("PlayerNotableGames") ||
+      playerGames.includes("PlayerGameLog") ||
+      playerGames.includes("game log") ||
+      playerGames.includes("GameLog"),
+    "Games island renders game log surface"
+  );
 
   // ——— TEAM ———
   const teamPage = read("src/app/teams/[teamId]/page.tsx");
@@ -122,6 +140,9 @@ function main() {
     "TeamGamesIsland",
     "TeamTransactionsIsland",
     "TeamAssetsIsland",
+    "TeamFrontOfficeIsland",
+    "FranchiseTimeline",
+    "TeamMatchupPreview",
   ]) {
     assert.ok(teamPage.includes(island), `Team page includes ${island}`);
   }

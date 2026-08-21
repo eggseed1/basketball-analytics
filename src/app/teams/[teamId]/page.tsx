@@ -12,7 +12,10 @@ import { TeamAssetsIsland } from "@/components/teams/team-assets-island";
 import { TeamContextBar } from "@/components/teams/team-context-bar";
 import { TeamDestinationIdentity } from "@/components/teams/team-destination-identity";
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
+import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
+import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
+import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
@@ -431,28 +434,42 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "history" ? (
-          <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading Team Arc…" />
-            }
-          >
-            <TeamArcIsland
-              teamRouteKey={teamId}
-              teamId={resolvedTeamId}
-              teamName={displayName}
-              abbreviation={identityTeam.abbreviation}
-              season={season}
-              priorSeason={priorSeason}
-              showingFullArc={showingFullArc}
-              teamEspnId={askTeamId}
-              currentBoard={league}
-              priorBoard={priorLeague}
-            />
-          </Suspense>
+          <div className="flex flex-col gap-4">
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading Team Arc…" />
+              }
+            >
+              <TeamArcIsland
+                teamRouteKey={teamId}
+                teamId={resolvedTeamId}
+                teamName={displayName}
+                abbreviation={identityTeam.abbreviation}
+                season={season}
+                priorSeason={priorSeason}
+                showingFullArc={showingFullArc}
+                teamEspnId={askTeamId}
+                currentBoard={league}
+                priorBoard={priorLeague}
+              />
+            </Suspense>
+            <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
+            <TeamMatchupPreview canonicalTeamId={resolvedTeamId} />
+          </div>
         ) : null}
 
         {tab === "organization" ? (
           <div className="flex flex-col gap-4">
+            <Suspense
+              fallback={
+                <DestinationSectionSkeleton label="Loading front office…" />
+              }
+            >
+              <TeamFrontOfficeIsland
+                teamId={resolvedTeamId}
+                season={season}
+              />
+            </Suspense>
             <Suspense
               fallback={
                 <DestinationSectionSkeleton label="Loading Cap & assets…" />

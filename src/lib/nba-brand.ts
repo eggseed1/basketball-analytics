@@ -420,26 +420,32 @@ export function nbaHeadshotUrl(playerId?: string | null): string | undefined {
  * (that CDN returns HTTP 200 fallback.png - a blank image, no onError).
  * Never prefer ESPN CDN for an NBA person id (404s; Next/Image often won't fall back).
  *
- * Uses portrait-lookup registry first (ESPN athlete → NBA person CDN URL), then
- * typed ids, then ESPN-before-NBA guesses for a bare numeric playerId.
+ * Uses portrait-lookup / approvedUrl first, then typed ids, then ESPN-before-NBA
+ * guesses for a bare numeric playerId (skipped when registryOnly).
  */
 export function playerHeadshotCandidates(options: {
   playerId?: string | null;
   espnId?: string | null;
   nbaId?: string | null;
+  approvedUrl?: string | null;
+  registryOnly?: boolean;
 }): string[] {
-  const { playerId, espnId, nbaId } = options;
+  const { playerId, espnId, nbaId, approvedUrl, registryOnly } = options;
   const urls = resolvePlayerPortraitCandidates({
     playerId,
     espnId,
     nbaId,
+    role: "PLAYER",
+    approvedUrl,
+    registryOnly,
   });
+  if (registryOnly) return urls;
+
   const push = (url?: string) => {
     if (url && !urls.includes(url)) urls.push(url);
   };
 
-  // Typed ids are already handled by the portrait resolver; keep explicit
-  // fallthrough for call sites that only pass playerId.
+  // Fallthrough for call sites that only pass playerId.
   if (isNumericId(playerId) && playerId !== espnId && playerId !== nbaId) {
     // ESPN first: real 404 triggers onError. NBA CDN silently returns fallback.png.
     push(espnHeadshotUrl(playerId));

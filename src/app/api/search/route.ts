@@ -1,5 +1,6 @@
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
+import { searchLocalTeamIdentities } from "@/data/identity/team-search";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -35,19 +36,20 @@ export type WatchlistSearchHit = {
   kind: "player" | "team";
   teamKey?: string;
   subtitle?: string;
+  href?: string;
 };
 
 function playerTeamFromItem(item: EspnSearchItem): {
   teamKey?: string;
   teamName?: string;
 } {
-  const rel = item.teamRelationships?.find((r) => r.type === "team") ??
+  const rel =
+    item.teamRelationships?.find((r) => r.type === "team") ??
     item.teamRelationships?.[0];
   const core = rel?.core;
   const abbr = core?.abbreviation?.trim();
   const id = core?.id != null ? String(core.id) : undefined;
   return {
-    // Prefer abbr for logos; fall back to ESPN team id.
     teamKey: abbr || id,
     teamName:
       core?.displayName ||
@@ -58,7 +60,8 @@ function playerTeamFromItem(item: EspnSearchItem): {
 }
 
 /**
- * Search NBA players and teams via ESPN common search.
+ * Search NBA players and teams via ESPN common search,
+ * plus local historical team / franchise identity documents.
  * GET /api/search?q=curry&kind=player|team|all
  */
 export async function GET(request: Request) {
@@ -73,8 +76,31 @@ export async function GET(request: Request) {
       return jsonOk({ query: q, count: 0, data: [] as WatchlistSearchHit[] });
     }
 
+    const hits: WatchlistSearchHit[] = [];
+    const seen = new Set<string>();
+
+    if (kind === "all" || kind === "team") {
+      for (const local of searchLocalTeamIdentities(q, 10)) {
+        const key = `${local.kind}:${local.href}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        hits.push({
+          id: local.id,
+          name: local.name,
+          kind: "team",
+          teamKey: local.teamKey,
+          subtitle: local.subtitle,
+          href: local.href,
+        });
+      }
+    }
+
     const types =
-      kind === "all" ? (["player", "team"] as const) : ([kind] as const);
+      kind === "all"
+        ? (["player", "team"] as const)
+        : kind === "player"
+          ? (["player"] as const)
+          : (["team"] as const);
 
     const payloads = await Promise.all(
       types.map((type) => {
@@ -89,14 +115,15 @@ export async function GET(request: Request) {
       })
     );
 
-    const hits: WatchlistSearchHit[] = [];
-    const seen = new Set<string>();
-
     for (const payload of payloads) {
       for (const item of payload.items ?? []) {
         if (!item.id || !item.displayName) continue;
         const itemKind =
-          item.type === "team" ? "team" : item.type === "player" ? "player" : null;
+          item.type === "team"
+            ? "team"
+            : item.type === "player"
+              ? "player"
+              : null;
         if (!itemKind) continue;
         if (kind !== "all" && itemKind !== kind) continue;
 
@@ -112,6 +139,7 @@ export async function GET(request: Request) {
             kind: "team",
             teamKey: abbr,
             subtitle: item.abbreviation ?? undefined,
+            href: `/teams/${encodeURIComponent(String(item.id))}`,
           });
         } else {
           const { teamKey, teamName } = playerTeamFromItem(item);
