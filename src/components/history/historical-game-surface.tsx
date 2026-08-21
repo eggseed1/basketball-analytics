@@ -34,6 +34,7 @@ type TimelinePoint = {
   points: number;
   eventIndex?: number;
   scorerId?: string | null;
+  scorerName?: string | null;
   scoringTeamId?: string;
 };
 
