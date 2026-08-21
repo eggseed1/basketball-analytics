@@ -63,7 +63,7 @@ export function GameBoxScoreTables({
       )}
 
       <BoxScoreSection
-        heading={`${awayLabel} - traditional`}
+        heading={`${awayLabel} — traditional`}
         players={awayPlayers}
         mode="traditional"
         contextIndex={contextIndex}
@@ -71,7 +71,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${homeLabel} - traditional`}
+        heading={`${homeLabel} — traditional`}
         players={homePlayers}
         mode="traditional"
         contextIndex={contextIndex}
@@ -79,7 +79,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${awayLabel} - advanced`}
+        heading={`${awayLabel} — advanced`}
         players={awayPlayers}
         mode="advanced"
         contextIndex={contextIndex}
@@ -87,7 +87,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${homeLabel} - advanced`}
+        heading={`${homeLabel} — advanced`}
         players={homePlayers}
         mode="advanced"
         contextIndex={contextIndex}
@@ -112,10 +112,10 @@ function TeamScoringCard({
 }) {
   return (
     <div>
-      <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
         {label} scoring
       </p>
-      <p className="text-[24px] font-bold tabular-nums">{ctx.pointsDisplay}</p>
+      <p className="text-[22px] font-bold tabular-nums">{ctx.pointsDisplay}</p>
       {ctx.seasonPpgDisplay && ctx.vsSeasonDisplay ? (
         <p className="text-[12px] text-muted-foreground">
           Season avg {ctx.seasonPpgDisplay} ·{" "}
@@ -285,7 +285,7 @@ function TraditionalRow({
             season={p.season}
             variant="compact"
             className="min-w-0 flex-1"
-            nameClassName="truncate text-[14px]"
+            nameClassName="truncate text-[13px]"
           >
             <span className="truncate">{p.playerName ?? p.playerId}</span>
           </PlayerIdentity>
@@ -335,7 +335,7 @@ function AdvancedRow({ player: p }: { player: PlayerGame }) {
           teamKey={p.teamId}
           season={p.season}
           variant="compact"
-          nameClassName="truncate text-[14px]"
+          nameClassName="truncate text-[13px]"
         >
           <span className="truncate">{p.playerName ?? p.playerId}</span>
         </PlayerIdentity>

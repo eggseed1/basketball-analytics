@@ -1,5 +1,5 @@
 /**
- * Game Lab V1.1 - Game vs Season Context.
+ * Game Lab V1.1 — Game vs Season Context.
  *
  * Descriptive: how unusual was this game vs each team's same-season board?
  * Not a new game score, not causal, not PBP.
@@ -44,7 +44,7 @@ export const GAME_SEASON_CONTEXT_METHODOLOGY = {
     "Final games with same-season team boards (games gamesPlayed ≥ minimum).",
   baselineRule: `Season baseline = that team's ESPN board averages for the game's season when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
   pointsRule:
-    "Team points and opponent points come from the official scoreboard scores on the Game row - not summed player lines.",
+    "Team points and opponent points come from the official scoreboard scores on the Game row — not summed player lines.",
   boxRule:
     "eFG%, TS%, turnovers, and rebounds compare only when team box totals exist for that side.",
   directionRule:
@@ -52,7 +52,7 @@ export const GAME_SEASON_CONTEXT_METHODOLOGY = {
   toleranceRule:
     "Inside tolerance → near normal. Between 1× and 2× → above/below normal. At/above 2× → unusually high/low (or unusually strong/weak for defense).",
   liveRule:
-    "Hidden while the game is not final - in-progress scores are not compared to completed-game season averages as if final.",
+    "Hidden while the game is not final — in-progress scores are not compared to completed-game season averages as if final.",
   languageRule:
     "Findings are descriptive (“scored well above its normal level”). No causal win claims.",
   setLimits:
@@ -685,7 +685,7 @@ function collectFindings(
 }
 
 /**
- * Pure analyzer - no I/O. Call from Game Lab with already-loaded boards.
+ * Pure analyzer — no I/O. Call from Game Lab with already-loaded boards.
  */
 export function buildGameSeasonContext(options: {
   game: Game;
@@ -728,7 +728,7 @@ export function buildGameSeasonContext(options: {
       ...base,
       availability: liveLike ? "hidden_live" : "hidden_incomplete",
       availabilityNote: liveLike
-        ? "Game vs season context appears after the game is final - live scores are not compared to completed-game averages as if finished."
+        ? "Game vs season context appears after the game is final — live scores are not compared to completed-game averages as if finished."
         : "Game vs season context is available for final games.",
       depth: "none",
       home: null,

@@ -28,6 +28,7 @@ import {
   type DrblPlayerRow,
 } from "./nba/drbl-loader";
 import { fetchRawPlayByPlay } from "./nba/play-by-play-client";
+import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
 import {
   enrichCareerRowKeepTeam,
@@ -200,7 +201,7 @@ export class NBADataProvider implements BasketballDataProvider {
     season: string
   ): Promise<PlayerGame[]> {
     return this.gameLogCache.getOrSet(
-      `${playerId}:${season}:typed`,
+      `${playerId}:${season}`,
       CACHE_TTL_MS.gameLog,
       async () => {
         const [regular, playoffs] = await Promise.all([
@@ -251,7 +252,7 @@ export class NBADataProvider implements BasketballDataProvider {
       return this.fetchShotsForGame(filters.gameId, filters);
     }
     if (filters.player && filters.season) {
-      const key = `shots:${filters.player}:${filters.season}:typed`;
+      const key = `shots:${filters.player}:${filters.season}`;
       return this.shotCache.getOrSet(key, CACHE_TTL_MS.shots, async () => {
         const [regular, playoffs] = await Promise.all([
           this.fetchShotChart(filters.player!, filters.season!, "Regular Season"),
@@ -363,7 +364,7 @@ export class NBADataProvider implements BasketballDataProvider {
     }
 
     if (standings.length === 0) {
-      // No standings - synthesize bare team rows from player aggregates.
+      // No standings — synthesize bare team rows from player aggregates.
       return [...byTeam.entries()]
         .map(([teamId, agg]) => {
           const games = Math.max(1, agg.gp);
@@ -445,7 +446,7 @@ export class NBADataProvider implements BasketballDataProvider {
     const raced = await Promise.race([fetchPromise, budget]);
     if (raced !== null) return raced;
 
-    // Timed out - keep warming cache; drop season cache once BRef arrives
+    // Timed out — keep warming cache; drop season cache once BRef arrives
     // so the next request (or SWR refresh) merges advanced metrics.
     void fetchPromise.then((rows) => {
       if (rows.length > 0) this.playerSeasonCache.delete(season);
@@ -649,7 +650,16 @@ export class NBADataProvider implements BasketballDataProvider {
     const richSeasons = new Set(defaultCanonicalSeasons(2));
     const seasons = await Promise.all(
       rows.map(async (row) => {
-        const season = canonicalNbaSeasonId(String(row.SEASON_ID ?? ""));
+        const seasonId = String(row.SEASON_ID ?? "");
+        // SEASON_ID is usually "2024-25"; older dumps may use "22024".
+        const season = /^\d{4}-\d{2}$/.test(seasonId)
+          ? seasonId
+          : (() => {
+              const endYear = Number(seasonId.slice(-4));
+              return endYear > 1900
+                ? `${endYear - 1}-${String(endYear).slice(-2)}`
+                : seasonId;
+            })();
         const displayName =
           String(row.PLAYER_NAME ?? "").trim() || playerName;
         const rich = richSeasons.has(season)
@@ -692,7 +702,15 @@ export class NBADataProvider implements BasketballDataProvider {
       const playerName = info?.fullName || fromRow || `Player ${playerId}`;
 
       const seasons = rows.map((row) => {
-        const season = canonicalNbaSeasonId(String(row.SEASON_ID ?? ""));
+        const seasonId = String(row.SEASON_ID ?? "");
+        const season = /^\d{4}-\d{2}$/.test(seasonId)
+          ? seasonId
+          : (() => {
+              const endYear = Number(seasonId.slice(-4));
+              return endYear > 1900
+                ? `${endYear - 1}-${String(endYear).slice(-2)}`
+                : seasonId;
+            })();
         const displayName =
           String(row.PLAYER_NAME ?? "").trim() || playerName;
         const basic = transformStatsNbaCareerTotalsRow(
@@ -744,10 +762,6 @@ export class NBADataProvider implements BasketballDataProvider {
             })()
           : undefined;
         const teamId = fromMatchup || fallbackTeamId;
-        const fieldGoalsAttempted = n(row, "FGA");
-        const freeThrowsAttempted = n(row, "FTA");
-        const points = n(row, "PTS");
-        const tsDenom = fieldGoalsAttempted + 0.44 * freeThrowsAttempted;
         return {
           id: `${playerId}-${row.Game_ID}`,
           gameId: String(row.Game_ID ?? ""),
@@ -755,26 +769,23 @@ export class NBADataProvider implements BasketballDataProvider {
           playerName: seasonRow?.playerName,
           teamId,
           season,
-          seasonType: seasonType === "Playoffs" ? "playoffs" : "regular",
           gameDate: parseNbaGameDate(String(row.GAME_DATE ?? "")),
           opponentTeamId: opponent,
           isHome,
           minutes: n(row, "MIN"),
-          points,
+          points: n(row, "PTS"),
           assists: n(row, "AST"),
           rebounds: n(row, "REB"),
           steals: n(row, "STL"),
           blocks: n(row, "BLK"),
           turnovers: n(row, "TOV"),
           fieldGoalsMade: n(row, "FGM"),
-          fieldGoalsAttempted,
+          fieldGoalsAttempted: n(row, "FGA"),
           threePointersMade: n(row, "FG3M"),
           threePointersAttempted: n(row, "FG3A"),
           freeThrowsMade: n(row, "FTM"),
-          freeThrowsAttempted,
+          freeThrowsAttempted: n(row, "FTA"),
           plusMinus: n(row, "PLUS_MINUS"),
-          trueShootingPct:
-            points > 0 && tsDenom > 0 ? points / (2 * tsDenom) : undefined,
         } satisfies PlayerGame;
       });
     } catch {
@@ -877,7 +888,7 @@ export class NBADataProvider implements BasketballDataProvider {
   private async fetchGameBoxScore(
     gameId: string
   ): Promise<GameBoxScore | null> {
-    // ESPN event ids belong to site.api.espn.com - not stats.nba.com GameID.
+    // ESPN event ids belong to site.api.espn.com — not stats.nba.com GameID.
     if (/^40\d{7,}$/.test(gameId)) {
       const { espnFetchJson } = await import("./nba/espn-client");
       const { transformEspnBoxScore } = await import(
@@ -932,20 +943,28 @@ export class NBADataProvider implements BasketballDataProvider {
     const teamRows = resultSetToObjects(teamSet);
     // TeamStats usually lists away then home or by scoreboard order; use game cache.
     const known = await this.findCachedGame(gameId);
-    const season = known?.season ?? defaultCanonicalSeasons(1)[0];
+    const seasonFromId = (() => {
+      const m = /^002(\d{2})\d{5}$/.exec(gameId);
+      if (!m) return null;
+      const yy = Number(m[1]);
+      const start = yy >= 50 ? 1900 + yy : 2000 + yy;
+      return `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+    })();
+    const season =
+      known?.season ?? seasonFromId ?? defaultCanonicalSeasons(1)[0];
 
     let homeProviderTeamId = known?.homeProviderTeamId ?? "";
     let awayProviderTeamId = known?.awayProviderTeamId ?? "";
     let homeTeamId = known?.homeTeamId ?? "";
     let awayTeamId = known?.awayTeamId ?? "";
-    let homeScore = known?.homeScore ?? 0;
-    let awayScore = known?.awayScore ?? 0;
+    let homeScore: number | null = known?.homeScore ?? null;
+    let awayScore: number | null = known?.awayScore ?? null;
 
     if (teamRows.length >= 2) {
       const a = teamRows[0];
       const b = teamRows[1];
       if (!homeTeamId) {
-        // Prefer known; else treat first as home (NBA often home last - swap if known).
+        // Prefer known; else treat first as away, second as home (NBA TeamStats order).
         awayProviderTeamId = String(a.TEAM_ID);
         homeProviderTeamId = String(b.TEAM_ID);
         awayTeamId =
@@ -971,6 +990,34 @@ export class NBADataProvider implements BasketballDataProvider {
           }
         }
       }
+    } else if (playerSet) {
+      // Derive teams from player rows when TeamStats incomplete.
+      const playerRows = resultSetToObjects(playerSet);
+      const teamIds = [
+        ...new Set(
+          playerRows
+            .map((r) => String(r.TEAM_ID ?? ""))
+            .filter((id) => id && id !== "0")
+        ),
+      ];
+      if (teamIds.length === 2 && !homeTeamId) {
+        awayProviderTeamId = teamIds[0]!;
+        homeProviderTeamId = teamIds[1]!;
+        awayTeamId =
+          getCanonicalTeamFromProvider("nba", awayProviderTeamId)
+            ?.canonicalTeamId ?? awayProviderTeamId;
+        homeTeamId =
+          getCanonicalTeamFromProvider("nba", homeProviderTeamId)
+            ?.canonicalTeamId ?? homeProviderTeamId;
+      }
+    }
+
+    // Integrity: never invent blank-team FINAL 0-0 shells.
+    if (!homeTeamId || !awayTeamId) {
+      return null;
+    }
+    if (homeScore == null || awayScore == null) {
+      return null;
     }
 
     const game: Game = {
@@ -1107,7 +1154,6 @@ export class NBADataProvider implements BasketballDataProvider {
           playerId: String(row.PLAYER_ID ?? playerId),
           teamId: String(row.TEAM_ID ?? ""),
           season,
-          seasonType: seasonType === "Playoffs" ? "playoffs" : "regular",
           gameDate: "",
           period: n(row, "PERIOD"),
           secondsRemaining:
@@ -1195,6 +1241,19 @@ export class NBADataProvider implements BasketballDataProvider {
       const games = await promise;
       const hit = games.find((g) => g.id === gameId);
       if (hit) return hit;
+    }
+    // Derive season from NBA GameID and load that season schedule once.
+    const m = /^002(\d{2})\d{5}$/.exec(gameId);
+    if (m) {
+      const yy = Number(m[1]);
+      const start = yy >= 50 ? 1900 + yy : 2000 + yy;
+      const season = `${start}-${String((start + 1) % 100).padStart(2, "0")}`;
+      try {
+        const games = await this.loadGamesForSeason(season);
+        return games.find((g) => g.id === gameId);
+      } catch {
+        return undefined;
+      }
     }
     return undefined;
   }
@@ -1340,35 +1399,17 @@ function parseNbaGameDate(raw: string): string {
 }
 
 function parseMinutes(value: string | number | null): number {
-  if (typeof value === "number") return value;
-  if (!value) return 0;
-  if (value.includes(":")) {
-    const [m, s] = value.split(":").map((p) => Number(p) || 0);
-    return m + s / 60;
-  }
-  return Number(value) || 0;
+  return parseBasketballMinutes(value);
 }
 
 function matchesShotFilters(shot: Shot, filters: ShotFilters): boolean {
   if (filters.season && shot.season !== filters.season) return false;
-  if (filters.seasonType) {
-    const kind = shot.seasonType ?? "regular";
-    if (kind !== filters.seasonType) return false;
-  }
   if (filters.team && shot.teamId !== filters.team) return false;
   if (filters.player && shot.playerId !== filters.player) return false;
   if (filters.gameId && shot.gameId !== filters.gameId) return false;
   if (filters.made !== undefined && shot.made !== filters.made) return false;
   if (filters.shotType && shot.shotType !== filters.shotType) return false;
   return true;
-}
-
-function canonicalNbaSeasonId(seasonId: string): string {
-  if (/^\d{4}-\d{2}$/.test(seasonId)) return seasonId;
-  const endYear = Number(seasonId.slice(-4));
-  return endYear > 1900
-    ? `${endYear - 1}-${String(endYear).slice(-2)}`
-    : seasonId;
 }
 
 export { defaultCanonicalSeasons } from "./nba/season";
