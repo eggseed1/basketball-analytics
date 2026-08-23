@@ -20,6 +20,15 @@ import {
 import { HISTORY_VERSION } from "@/lib/history/capabilities";
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
 import type { PlayerSeason } from "@/data/types";
+import {
+  effectiveFieldGoalPct,
+  freeThrowRate,
+  threePointAttemptRate,
+  trueShootingPct,
+  turnoverPct,
+  twoPointPct,
+} from "@/data/providers/nba/compute-advanced";
+import { mergePlayerSeasonRows } from "@/data/providers/nba/espn-stat-integrity";
 
 const HISTORY_ROOT = path.join(
   process.cwd(),
@@ -217,21 +226,40 @@ export function countSeasonPlayerUniverse(season: string): number {
   return buildBySeasonIndex().get(season)?.length ?? 0;
 }
 
+function historyNumber(value: number | null | undefined): number {
+  return value == null ? Number.NaN : value;
+}
+
 /** Map factual history season rows → PlayerSeason for board/API (no invented DRBL). */
 export function historyUniverseToPlayerSeasons(
   season: string
 ): PlayerSeason[] {
   return getSeasonPlayerUniverse(season).map((h) => {
-    const fga = h.fga ?? 0;
-    const fgm = h.fgm ?? 0;
-    const threePa = h.threePa ?? 0;
-    const threePm = h.threePm ?? 0;
-    const fta = h.fta ?? 0;
-    const ftm = h.ftm ?? 0;
-    const fgPct = fga > 0 ? fgm / fga : 0;
-    const tpPct = threePa > 0 ? threePm / threePa : 0;
-    const ftPct = fta > 0 ? ftm / fta : 0;
-    const multi = h.teamIds.length > 1;
+    const fga = historyNumber(h.fga);
+    const fgm = historyNumber(h.fgm);
+    const threePa = historyNumber(h.threePa);
+    const threePm = historyNumber(h.threePm);
+    const fta = historyNumber(h.fta);
+    const ftm = historyNumber(h.ftm);
+    const points = historyNumber(h.points);
+    const turnovers = historyNumber(h.turnovers);
+    const fgPct =
+      Number.isFinite(fgm) && Number.isFinite(fga) && fga > 0
+        ? fgm / fga
+        : Number.NaN;
+    const tpPct =
+      Number.isFinite(threePm) && Number.isFinite(threePa) && threePa > 0
+        ? threePm / threePa
+        : Number.NaN;
+    const ftPct =
+      Number.isFinite(ftm) && Number.isFinite(fta) && fta > 0
+        ? ftm / fta
+        : Number.NaN;
+    const efg = effectiveFieldGoalPct(fgm, threePm, fga);
+    const ts = trueShootingPct(points, fga, fta);
+    const tovPct = turnoverPct(turnovers, fga, fta);
+    const multi = (h.teamIds ?? []).length > 1;
+
     return withPlayerSeasonDefaults({
       playerId: h.playerId,
       playerName: h.playerName,
@@ -242,14 +270,14 @@ export function historyUniverseToPlayerSeasons(
       nbaTeamId: h.primaryTeamId,
       season: h.season,
       gamesPlayed: h.gp,
-      gamesStarted: h.gs ?? 0,
-      minutes: h.minutes ?? 0,
-      points: h.points ?? 0,
-      rebounds: h.rebounds ?? 0,
-      assists: h.assists ?? 0,
-      steals: h.steals ?? 0,
-      blocks: h.blocks ?? 0,
-      turnovers: h.turnovers ?? 0,
+      gamesStarted: historyNumber(h.gs),
+      minutes: historyNumber(h.minutes),
+      points,
+      rebounds: historyNumber(h.rebounds),
+      assists: historyNumber(h.assists),
+      steals: historyNumber(h.steals),
+      blocks: historyNumber(h.blocks),
+      turnovers,
       fieldGoalsMade: fgm,
       fieldGoalsAttempted: fga,
       threePointersMade: threePm,
@@ -257,8 +285,14 @@ export function historyUniverseToPlayerSeasons(
       freeThrowsMade: ftm,
       freeThrowsAttempted: fta,
       fieldGoalPct: fgPct,
+      twoPointPct: twoPointPct(fgm, threePm, fga, threePa),
       threePointPct: tpPct,
       freeThrowPct: ftPct,
+      threePointAttemptRate: threePointAttemptRate(threePa, fga),
+      freeThrowRate: freeThrowRate(fta, fga),
+      turnoverPct: tovPct ?? Number.NaN,
+      ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
+      ...(ts != null ? { trueShootingPct: ts } : {}),
       r1Points: null,
       r1WinEquivalents: null,
     });
@@ -279,9 +313,9 @@ export function leftJoinPlayerUniverse(
   return universe.map((base) => {
     const o = byId.get(base.playerId);
     if (!o) return base;
+    const merged = mergePlayerSeasonRows(base, o);
     return {
-      ...base,
-      ...o,
+      ...merged,
       // Preserve factual membership / temporal team from universe.
       playerId: base.playerId,
       playerName: base.playerName || o.playerName,
@@ -292,13 +326,6 @@ export function leftJoinPlayerUniverse(
       providerTeamId: base.providerTeamId ?? o.providerTeamId,
       teamIdProvider: base.teamIdProvider ?? o.teamIdProvider,
       nbaTeamId: base.nbaTeamId ?? o.nbaTeamId,
-      gamesPlayed: Math.max(base.gamesPlayed, o.gamesPlayed),
-      minutes: base.minutes > 0 ? base.minutes : o.minutes,
-      points: base.points > 0 ? base.points : o.points,
-      rebounds: base.rebounds > 0 ? base.rebounds : o.rebounds,
-      assists: base.assists > 0 ? base.assists : o.assists,
-      r1Points: o.r1Points ?? null,
-      r1WinEquivalents: o.r1WinEquivalents ?? null,
     };
   });
 }
@@ -335,12 +362,36 @@ export function getMasterPlayer(
   return masterByIdCache?.get(playerId) ?? null;
 }
 
+function historyRowForCanonicalFallback(
+  row: HistoryPlayerSeason
+): HistoryPlayerSeason {
+  return {
+    ...row,
+    gs: row.gs ?? Number.NaN,
+    minutes: row.minutes ?? Number.NaN,
+    points: row.points ?? Number.NaN,
+    rebounds: row.rebounds ?? Number.NaN,
+    assists: row.assists ?? Number.NaN,
+    steals: row.steals ?? Number.NaN,
+    blocks: row.blocks ?? Number.NaN,
+    turnovers: row.turnovers ?? Number.NaN,
+    fgm: row.fgm ?? Number.NaN,
+    fga: row.fga ?? Number.NaN,
+    threePm: row.threePm ?? Number.NaN,
+    threePa: row.threePa ?? Number.NaN,
+    ftm: row.ftm ?? Number.NaN,
+    fta: row.fta ?? Number.NaN,
+  };
+}
+
 /** Seasons across 1996+ history + pre-1996 all-era product. */
 export function getUniverseSeasonsForPlayer(
   playerId: string
 ): HistoryPlayerSeason[] {
   const rows = buildByPlayerSeasonIndex().get(playerId) ?? [];
-  return [...rows].sort((a, b) => b.season.localeCompare(a.season));
+  return rows
+    .map(historyRowForCanonicalFallback)
+    .sort((a, b) => b.season.localeCompare(a.season));
 }
 
 function careerToMaster(c: HistoryCareerSummary): MasterPlayerRecord {
