@@ -7,6 +7,7 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -56,7 +57,9 @@ export async function fetchEspnTeamRosterPlayers(
   const payload = await espnFetchJson<EspnRosterResponse>(url, {
     ttlMs: 10 * 60 * 1000,
     retries: 1,
-    signal: AbortSignal.timeout(5_000),
+    // Roster identity is optional on the player route. Bound a cold miss so
+    // it cannot outlive the primary profile/career request on Vercel.
+    signal: AbortSignal.timeout(runtimeTimeoutMs(5_000, 1_250)),
   });
   const teamId = String(payload.team?.id ?? espnTeamId);
   const teamName = payload.team?.displayName ?? "";
