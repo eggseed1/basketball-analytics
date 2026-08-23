@@ -48,6 +48,48 @@ export function shiftMonthKey(monthKey: string, delta: number): string {
   return `${ny}-${String(nm).padStart(2, "0")}`;
 }
 
+function seasonMonthBounds(season: string): {
+  firstMonth: string;
+  lastMonth: string;
+} {
+  const endYear = espnYearFromCanonicalSeason(season);
+  return {
+    firstMonth: `${endYear - 1}-10`,
+    lastMonth: `${endYear}-06`,
+  };
+}
+
+/**
+ * Resolve the newest started season/month that can contain completed games.
+ * During July–September the league-year season has not tipped, so "recent"
+ * must point at the just-completed season rather than future March–June pages.
+ */
+export function recentScoreboardWindow(
+  requestedSeason: string,
+  now = new Date()
+): {
+  season: string;
+  firstMonth: string;
+  startMonth: string;
+} {
+  const currentMonth = monthKeyFromDate(now);
+  let endYear = espnYearFromCanonicalSeason(requestedSeason);
+  let firstMonth = `${endYear - 1}-10`;
+
+  while (currentMonth < firstMonth) {
+    endYear -= 1;
+    firstMonth = `${endYear - 1}-10`;
+  }
+
+  const season = canonicalSeasonFromStartYear(endYear - 1);
+  const lastMonth = `${endYear}-06`;
+  return {
+    season,
+    firstMonth,
+    startMonth: currentMonth > lastMonth ? lastMonth : currentMonth,
+  };
+}
+
 /**
  * All ESPN scoreboard events for one calendar month (finals + live + scheduled).
  */
@@ -78,44 +120,49 @@ export async function fetchScoreboardMonth(options: {
 }
 
 /**
- * Recent finals via ESPN monthly scoreboards - one request covers ~a month.
- * Avoids 30× team schedule fan-out and empty “upcoming season” calendars.
+ * Recent finals via ESPN monthly scoreboards.
+ *
+ * Fetch newest month first and stop as soon as the requested slate is full.
+ * This avoids four parallel requests on every cold render and avoids querying
+ * future months during the offseason.
  */
 export async function fetchRecentScoreboardGames(options: {
   season?: string;
   limit?: number;
+  now?: Date;
 }): Promise<Game[]> {
-  const limit = options.limit ?? 16;
-  const season =
+  const requestedSeason =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const endYear = espnYearFromCanonicalSeason(season);
-
-  // Newest months first (Finals → late regular season).
-  const months = [
-    `${endYear}06`,
-    `${endYear}05`,
-    `${endYear}04`,
-    `${endYear}03`,
-  ];
-
+  const limit = Math.max(1, options.limit ?? 16);
+  const window = recentScoreboardWindow(requestedSeason, options.now);
   const byId = new Map<string, Game>();
-  const payloads = await Promise.all(
-    months.map((month) =>
-      espnFetchJson<ScoreboardResponse>(
-        `${SITE_API}/apis/site/v2/sports/basketball/nba/scoreboard?dates=${month}&limit=200`,
-        { ttlMs: 1000 * 60 * 15, retries: 1 }
-      ).catch(() => ({ events: [] }) as ScoreboardResponse)
-    )
-  );
 
-  for (const payload of payloads) {
-    for (const event of payload.events ?? []) {
-      const game = transformEspnScheduleEvent(event, season);
-      if (!game) continue;
-      if (game.status !== "final") continue;
-      if (!byId.has(game.id)) byId.set(game.id, game);
+  let cursor = window.startMonth;
+  let successfulMonths = 0;
+  let lastError: unknown;
+
+  for (
+    let attempted = 0;
+    attempted < 8 && cursor >= window.firstMonth && byId.size < limit;
+    attempted += 1
+  ) {
+    try {
+      const games = await fetchScoreboardMonth({
+        monthKey: cursor,
+        season: window.season,
+      });
+      successfulMonths += 1;
+      for (const game of games) {
+        if (game.status !== "final") continue;
+        if (!byId.has(game.id)) byId.set(game.id, game);
+      }
+    } catch (error) {
+      lastError = error;
     }
+    cursor = shiftMonthKey(cursor, -1);
   }
+
+  if (successfulMonths === 0 && lastError) throw lastError;
 
   return [...byId.values()]
     .sort((a, b) =>
@@ -187,10 +234,16 @@ export async function fetchHomeWeekStrip(options: {
   // Quiet week: preview the next tip-offs on the board.
   const upcomingSeason = upcomingScheduleSeason(now);
   const upcomingMonths: string[] = [];
+  const upcomingBounds = seasonMonthBounds(upcomingSeason);
   let cursor = monthKeyFromDate(now);
-  // Three months is enough to bridge the offseason to opening night while
-  // keeping cold homepage loads to at most three parallel scoreboard calls.
-  for (let i = 0; i < 3; i++) {
+  if (cursor < upcomingBounds.firstMonth) cursor = upcomingBounds.firstMonth;
+
+  // Two months normally cover the requested strip; avoid empty offseason months.
+  for (
+    let i = 0;
+    i < 2 && cursor <= upcomingBounds.lastMonth;
+    i += 1
+  ) {
     upcomingMonths.push(cursor);
     cursor = shiftMonthKey(cursor, 1);
   }
@@ -320,9 +373,23 @@ export async function fetchScoreboardWeek(options: {
   return { weekStart, weekEnd, games };
 }
 
+function mergeUpcomingGames(existing: Game[], more: Game[]): Game[] {
+  const byId = new Map(existing.map((game) => [game.id, game]));
+  for (const game of more) {
+    if (!byId.has(game.id)) byId.set(game.id, game);
+  }
+  return [...byId.values()].sort((a, b) => {
+    const ta = a.tipOffAt ?? a.gameDate;
+    const tb = b.tipOffAt ?? b.gameDate;
+    if (ta !== tb) return ta.localeCompare(tb);
+    return a.id.localeCompare(b.id);
+  });
+}
+
 /**
  * Upcoming tip-offs for the gamefeed list.
- * Uses monthly ESPN scoreboards (few parallel requests).
+ * Starts with two relevant months, then fetches one additional month only when
+ * the requested page is still not full. Never fans out across all eight months.
  */
 export async function fetchUpcomingScoreboardGames(options: {
   season?: string;
@@ -335,20 +402,16 @@ export async function fetchUpcomingScoreboardGames(options: {
 }): Promise<{ games: Game[]; hasMore: boolean }> {
   const season = options.season ?? upcomingScheduleSeason();
   const fromDate = options.fromDate ?? new Date().toISOString().slice(0, 10);
-  const monthCount = options.monthCount ?? 8;
-  const limit = options.limit ?? 60;
+  const monthCount = Math.max(0, options.monthCount ?? 8);
+  const limit = Math.max(1, options.limit ?? 60);
   const afterTip = options.afterTipOffAt;
   const afterId = options.afterId;
+  const bounds = seasonMonthBounds(season);
 
-  const months: string[] = [];
   let cursor = monthKeyFromDate(new Date(`${fromDate}T12:00:00Z`));
-  const monthsNeeded = Math.min(
-    monthCount,
-    Math.max(2, Math.ceil(limit / 40) + 1)
-  );
-  for (let i = 0; i < monthsNeeded; i++) {
-    months.push(cursor);
-    cursor = shiftMonthKey(cursor, 1);
+  if (cursor < bounds.firstMonth) cursor = bounds.firstMonth;
+  if (cursor > bounds.lastMonth || monthCount === 0) {
+    return { games: [], hasMore: false };
   }
 
   const collect = async (monthKeys: string[]) => {
@@ -393,41 +456,32 @@ export async function fetchUpcomingScoreboardGames(options: {
       });
   };
 
-  let sorted = await collect(months);
-
-  if (sorted.length < limit + 1 && monthsNeeded < monthCount) {
-    const extraMonths: string[] = [];
-    let extra = cursor;
-    for (let i = monthsNeeded; i < monthCount; i++) {
-      extraMonths.push(extra);
-      extra = shiftMonthKey(extra, 1);
-    }
-    if (extraMonths.length) {
-      const more = await collect(extraMonths);
-      const seen = new Set(sorted.map((g) => g.id));
-      for (const g of more) {
-        if (seen.has(g.id)) continue;
-        sorted.push(g);
-      }
-      sorted.sort((a, b) => {
-        const ta = a.tipOffAt ?? a.gameDate;
-        const tb = b.tipOffAt ?? b.gameDate;
-        if (ta !== tb) return ta.localeCompare(tb);
-        return a.id.localeCompare(b.id);
-      });
-    }
+  const initialMonths: string[] = [];
+  for (
+    let i = 0;
+    i < Math.min(2, monthCount) && cursor <= bounds.lastMonth;
+    i += 1
+  ) {
+    initialMonths.push(cursor);
+    cursor = shiftMonthKey(cursor, 1);
   }
 
-  const seen = new Set<string>();
-  const unique: Game[] = [];
-  for (const g of sorted) {
-    if (seen.has(g.id)) continue;
-    seen.add(g.id);
-    unique.push(g);
+  let sorted = await collect(initialMonths);
+  let fetchedMonths = initialMonths.length;
+
+  while (
+    sorted.length < limit + 1 &&
+    fetchedMonths < monthCount &&
+    cursor <= bounds.lastMonth
+  ) {
+    const more = await collect([cursor]);
+    sorted = mergeUpcomingGames(sorted, more);
+    cursor = shiftMonthKey(cursor, 1);
+    fetchedMonths += 1;
   }
 
-  const hasMore = unique.length > limit;
-  return { games: unique.slice(0, limit), hasMore };
+  const hasMore = sorted.length > limit;
+  return { games: sorted.slice(0, limit), hasMore };
 }
 
 /** America/New_York calendar day as ESPN `dates=YYYYMMDD`. */
