@@ -78,7 +78,7 @@ async function main() {
   assert.doesNotMatch(requestCache, /getPlayerCareerSeasonsUncached/);
 
   const rosterOverlay = readFileSync(
-    join(process.cwd(), "src/data/queries/player-roster-overlay\.server.ts"),
+    join(process.cwd(), "src/data/queries/player-roster-overlay.server.ts"),
     "utf8"
   );
   assert.match(rosterOverlay, /leagueRosterDiscoveryEnabled/);
