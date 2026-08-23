@@ -7,14 +7,16 @@ import { ScoreboardFeedNotice } from "@/components/sports/scoreboard-feed-notice
 import {
   addDaysIso,
   defaultScoreboardMonthKey,
-  getRecentGameSummaries,
   getScoreboardMonthSummaries,
   getScoreboardWeekSummaries,
   getUpcomingGameSummaries,
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/queries";
-import type { ScoreboardFeedSource } from "@/data/queries/scoreboard-feed";
+import {
+  getRecentScoreboardFeed,
+  type ScoreboardFeedSource,
+} from "@/data/queries/scoreboard-feed";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -73,10 +75,15 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   let feedSource: ScoreboardFeedSource | undefined;
   let feedWarnings: string[] = [];
 
-  const recentPromise = getRecentGameSummaries({
+  // Keep the sidebar on the lightweight scoreboard cache. The old helper fell
+  // through to a full-season schedule load when the current league year had no
+  // completed games yet, which made the entire Games page wait on that crawl.
+  const recentPromise = getRecentScoreboardFeed({
     season: statsSeason,
     limit: 6,
-  }).catch(() => [] as GameSummary[]);
+  })
+    .then((feed) => feed.data)
+    .catch(() => [] as GameSummary[]);
 
   let recent: GameSummary[] = [];
 
