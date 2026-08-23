@@ -1,4 +1,5 @@
 import { CACHE_TTL_MS } from "./cache-policy";
+import { statsNbaNetworkEnabled } from "./runtime-policy";
 
 type CacheEntry<T> = {
   freshUntil: number;
@@ -107,7 +108,7 @@ export async function statsNbaFetch(
   }
 
   if (cached && cached.staleUntil > now) {
-    if (!cached.refreshing) {
+    if (!cached.refreshing && statsNbaNetworkEnabled()) {
       cached.refreshing = true;
       void fetchStatsNba(url, ttlMs, staleMs, options)
         .catch(() => undefined)
@@ -119,6 +120,15 @@ export async function statsNbaFetch(
         });
     }
     return cached.value;
+  }
+
+  // Vercel serverless egress is routinely blocked by stats.nba.com. Failing
+  // immediately lets ESPN/local/history fallbacks render instead of holding a
+  // player request open for multiple 4-second network timeouts.
+  if (!statsNbaNetworkEnabled()) {
+    throw new Error(
+      `stats.nba.com disabled on Vercel critical path: ${endpoint}`
+    );
   }
 
   return fetchStatsNba(url, ttlMs, staleMs, options);
@@ -152,7 +162,11 @@ async function fetchStatsNba(
       return value;
     } catch (error) {
       lastError = error;
-      await delay(350 * (attempt + 1));
+      // Do not add a backoff after the final failed attempt; that delay used to
+      // extend a 2-attempt commonplayerinfo miss beyond nine seconds.
+      if (attempt < retries - 1) {
+        await delay(350 * (attempt + 1));
+      }
     }
   }
 
