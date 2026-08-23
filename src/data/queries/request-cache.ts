@@ -9,11 +9,11 @@ import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries
 import {
   enrichPlayerCareerAdvanced as enrichPlayerCareerAdvancedUncached,
   getPlayer as getPlayerUncached,
-  getPlayerCareerSeasons as getPlayerCareerSeasonsUncached,
   getPlayerGameLog as getPlayerGameLogUncached,
   getPlayerSeason as getPlayerSeasonUncached,
   getTeamRoster as getTeamRosterUncached,
 } from "@/data/queries/players";
+import { getPlayerCriticalCareerSeasons } from "@/data/queries/player-critical";
 import {
   getTeamSeasonBoard as getTeamSeasonBoardUncached,
   getTeamSeasonStats as getTeamSeasonStatsUncached,
@@ -25,8 +25,9 @@ import {
 } from "@/data/queries/games";
 import { getHomeAnalytics as getHomeAnalyticsUncached } from "@/data/queries/home";
 
+/** Player identity is allowed to fail open; career/history can still render. */
 export const getPlayerCached = cache((playerId: string) =>
-  getPlayerUncached(playerId)
+  getPlayerUncached(playerId).catch(() => null)
 );
 
 export { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
@@ -45,8 +46,12 @@ export const getPlayerGameLogCached = cache(
     getPlayerGameLogUncached(playerId, season)
 );
 
+/**
+ * Critical player-page career rows only: factual ESPN/history counting data.
+ * Optional impact and roster overlays stream inside their own Suspense islands.
+ */
 export const getPlayerCareerSeasonsCached = cache((playerId: string) =>
-  getPlayerCareerSeasonsUncached(playerId)
+  getPlayerCriticalCareerSeasons(playerId)
 );
 
 /**

@@ -12,6 +12,7 @@ import {
   fetchEspnTeamRosterPlayers,
   isPreseasonRosterSeason,
 } from "@/data/providers/nba/espn-roster-client";
+import { leagueRosterDiscoveryEnabled } from "@/data/providers/nba/runtime-policy";
 import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
 import type { PlayerSeason } from "@/data/types";
 import { brandableTeamKey } from "@/lib/player-team-context";
@@ -70,6 +71,11 @@ export async function resolveRosterSeasonRow(
     const hit = findInRoster(teamRoster, ids, nameKeys);
     if (hit) return hit;
   }
+
+  // A miss on the player's previous team used to trigger 30 parallel roster
+  // requests before the player page could render. On Vercel, fail open with the
+  // existing career/profile identity instead; a durable roster cache can opt in.
+  if (!leagueRosterDiscoveryEnabled()) return null;
 
   const roster = await leagueRosterCache(season);
   return findInRoster(roster, ids, nameKeys);

@@ -1,5 +1,6 @@
 import type { DarkoRating } from "@/data/types";
 import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 
 const DARKO_URL = "https://www.darko.app/";
 const CACHE_TTL_MS = 1000 * 60 * 60 * 6; // 6 hours
@@ -23,7 +24,11 @@ export async function fetchDarkoRatings(
   }
 
   const response = await fetch(DARKO_URL, {
-    signal: options.signal ?? AbortSignal.timeout(8_000),
+    // Live DARKO is a secondary overlay. Never let it hold the player identity
+    // route open for its former eight-second timeout on a cold Vercel function.
+    signal:
+      options.signal ??
+      AbortSignal.timeout(runtimeTimeoutMs(8_000, 1_000)),
     headers: {
       Accept: "text/html",
       "User-Agent":

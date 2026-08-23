@@ -176,11 +176,17 @@ export function TransitionLink({
   const pending = Boolean(
     queryNav?.pending || routeTransition?.pending || localPending
   );
+  // Dense player boards can expose dozens of links at once. Next's automatic
+  // viewport prefetch turned that into dozens of concurrent dynamic player
+  // renders on Vercel. Preserve explicit caller intent, but default expensive
+  // player destinations to click/intent navigation rather than bulk prefetch.
+  const resolvedPrefetch =
+    prefetch ?? (target.startsWith("/players/") ? false : undefined);
 
   return (
     <Link
       href={href}
-      prefetch={prefetch}
+      prefetch={resolvedPrefetch}
       scroll={scroll}
       className={cn(className, pending && "opacity-80")}
       aria-busy={pending || undefined}

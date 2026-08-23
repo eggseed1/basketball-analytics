@@ -1,13 +1,18 @@
+import { runtimeTimeoutMs } from "./runtime-policy";
+
 type CacheEntry<T> = {
   expiresAt: number;
   value: T;
 };
 
 const memoryCache = new Map<string, CacheEntry<unknown>>();
+const inflightCache = new Map<string, Promise<unknown>>();
 
 const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
 const DEFAULT_RETRIES = 2;
-const DEFAULT_TIMEOUT_MS = 4_000;
+// Player identity/career calls sit above the first Suspense boundary. Bound a
+// cold Vercel miss so local/history fallbacks can still render the route.
+const DEFAULT_TIMEOUT_MS = runtimeTimeoutMs(4_000, 2_500);
 
 export interface EspnFetchOptions {
   ttlMs?: number;
@@ -35,8 +40,27 @@ export async function espnFetchJson<T>(
     if (cached && cached.expiresAt > Date.now()) {
       return cached.value as T;
     }
+    // Coalesce concurrent page/metadata/provider reads for the same ESPN URL.
+    // The prior cache only stored completed responses, so one player navigation
+    // could issue duplicate profile requests during a cold serverless render.
+    const inflight = inflightCache.get(url);
+    if (inflight) return inflight as Promise<T>;
   }
 
+  const request = fetchEspnJsonUncached<T>(url, ttlMs, options);
+  if (!options.bypassCache) inflightCache.set(url, request);
+  try {
+    return await request;
+  } finally {
+    if (inflightCache.get(url) === request) inflightCache.delete(url);
+  }
+}
+
+async function fetchEspnJsonUncached<T>(
+  url: string,
+  ttlMs: number,
+  options: EspnFetchOptions
+): Promise<T> {
   const retries = options.retries ?? DEFAULT_RETRIES;
   let lastError: unknown;
 
@@ -90,4 +114,5 @@ function delay(ms: number): Promise<void> {
 
 export function clearEspnCache(): void {
   memoryCache.clear();
+  inflightCache.clear();
 }
