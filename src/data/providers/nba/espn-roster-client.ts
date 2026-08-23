@@ -65,6 +65,11 @@ export async function fetchEspnTeamRosterPlayers(
       season,
       position: mapEspnPosition(athlete.position?.abbreviation),
       age: athlete.age,
+      // A roster shell explicitly represents zero games/minutes before tip-off.
+      // Every other box/advanced field remains unavailable until measured.
+      gamesPlayed: 0,
+      gamesStarted: 0,
+      minutes: 0,
       teamIdProvider: "espn",
       providerTeamId: teamId,
     })
