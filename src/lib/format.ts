@@ -3,11 +3,15 @@
  * Percentages are stored as 0-1 fractions in the data layer.
  */
 
+export const UNAVAILABLE_STAT_LABEL = "—";
+
 export function formatPct(value: number, digits = 1): string {
+  if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
   return `${(value * 100).toFixed(digits)}%`;
 }
 
 export function formatNumber(value: number, digits = 0): string {
+  if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
   return value.toLocaleString(undefined, {
     maximumFractionDigits: digits,
     minimumFractionDigits: digits,
@@ -15,11 +19,13 @@ export function formatNumber(value: number, digits = 0): string {
 }
 
 export function formatMinutes(value: number): string {
+  if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
   return formatNumber(Math.round(value));
 }
 
 /** 1 → 1st, 2 → 2nd, 3 → 3rd, 11 → 11th, 21 → 21st, … */
 export function formatOrdinal(n: number): string {
+  if (!Number.isFinite(n)) return UNAVAILABLE_STAT_LABEL;
   const v = Math.round(n);
   const mod100 = v % 100;
   if (mod100 >= 11 && mod100 <= 13) return `${v}th`;
