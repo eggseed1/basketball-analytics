@@ -9,6 +9,21 @@ import type {
 import { historySeasonSupportsDrbl } from "@/data/history/player-career-types";
 import { playerHref } from "@/lib/player-page-contract";
 
+function perGame(
+  value: number | null | undefined,
+  gamesPlayed: number
+): string {
+  if (
+    value == null ||
+    !Number.isFinite(value) ||
+    !Number.isFinite(gamesPlayed) ||
+    gamesPlayed <= 0
+  ) {
+    return "—";
+  }
+  return (value / gamesPlayed).toFixed(1);
+}
+
 /**
  * Compact historical career surface from precomputed product artifacts.
  * DRBL/WAR1 only where scientifically supported (2020-21+); else —.
@@ -60,9 +75,8 @@ export function HistoricalCareerSurface({
                   {viewingSeason === s.season ? " · Viewing" : ""}
                 </p>
                 <p className="mt-1 text-[12px] tabular-nums text-muted-foreground">
-                  {s.gp} GP · {((s.points ?? 0) / Math.max(1, s.gp)).toFixed(1)}{" "}
-                  PTS · {((s.rebounds ?? 0) / Math.max(1, s.gp)).toFixed(1)} REB
-                  · {((s.assists ?? 0) / Math.max(1, s.gp)).toFixed(1)} AST
+                  {s.gp} GP · {perGame(s.points, s.gp)} PTS ·{" "}
+                  {perGame(s.rebounds, s.gp)} REB · {perGame(s.assists, s.gp)} AST
                 </p>
               </TransitionLink>
             </li>
@@ -104,13 +118,13 @@ export function HistoricalCareerSurface({
                     </td>
                     <td className="px-3 py-2 tabular-nums">{s.gp}</td>
                     <td className="px-3 py-2 tabular-nums">
-                      {((s.points ?? 0) / Math.max(1, s.gp)).toFixed(1)}
+                      {perGame(s.points, s.gp)}
                     </td>
                     <td className="px-3 py-2 tabular-nums">
-                      {((s.rebounds ?? 0) / Math.max(1, s.gp)).toFixed(1)}
+                      {perGame(s.rebounds, s.gp)}
                     </td>
                     <td className="px-3 py-2 tabular-nums">
-                      {((s.assists ?? 0) / Math.max(1, s.gp)).toFixed(1)}
+                      {perGame(s.assists, s.gp)}
                     </td>
                     <td
                       className="px-3 py-2 tabular-nums text-muted-foreground"
