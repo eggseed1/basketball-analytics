@@ -25,8 +25,9 @@ import {
 } from "@/data/queries/games";
 import { getHomeAnalytics as getHomeAnalyticsUncached } from "@/data/queries/home";
 
+/** Player identity is allowed to fail open; career/history can still render. */
 export const getPlayerCached = cache((playerId: string) =>
-  getPlayerUncached(playerId)
+  getPlayerUncached(playerId).catch(() => null)
 );
 
 export { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
