@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils"
 function Table({
   className,
   container = true,
+  ref,
   ...props
 }: React.ComponentProps<"table"> & {
   /** When false, render bare <table> so a parent can own overflow scrolling. */
@@ -14,6 +15,7 @@ function Table({
 }) {
   const table = (
     <table
+      ref={ref}
       data-slot="table"
       className={cn("w-full caption-bottom text-sm", className)}
       {...props}

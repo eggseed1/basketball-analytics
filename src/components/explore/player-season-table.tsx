@@ -1,9 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { BoardScrollFrame } from "@/components/explore/board-scroll-frame";
 import { PlayerIdentity } from "@/components/players/player-identity";
+import { TeamIdentity } from "@/components/teams/team-identity";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNav } from "@/components/continuity/query-nav";
 import {
@@ -116,6 +124,8 @@ export function PlayerSeasonTable({
   const loadingRef = useRef(false);
   const requestIdRef = useRef(0);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const statsTableRef = useRef<HTMLTableElement>(null);
+  const frozenColRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     requestIdRef.current += 1;
@@ -184,7 +194,37 @@ export function PlayerSeasonTable({
   // Shooting) and the partitioned "all stats" layout.
   const grouped = groups.length > 0;
   const statCount = groups.reduce((sum, group) => sum + group.keys.length, 0);
-  const colCount = 3 + statCount;
+  // Stats pane columns: Tm + Pos + stats (Player lives in the frozen glass col).
+  const colCount = 2 + statCount;
+
+  const syncFrozenRowHeights = useCallback(() => {
+    const table = statsTableRef.current;
+    const frozen = frozenColRef.current;
+    if (!table || !frozen) return;
+    const head = frozen.querySelector<HTMLElement>("[data-frozen-head]");
+    const thead = table.tHead;
+    if (head && thead) {
+      head.style.height = `${thead.getBoundingClientRect().height}px`;
+    }
+    const bodyRows = table.tBodies[0]?.rows;
+    const frozenRows = frozen.querySelectorAll<HTMLElement>("[data-frozen-row]");
+    if (!bodyRows) return;
+    for (let i = 0; i < frozenRows.length; i++) {
+      const tr = bodyRows.item(i);
+      const fr = frozenRows[i];
+      if (!tr || !fr) continue;
+      fr.style.height = `${tr.getBoundingClientRect().height}px`;
+    }
+  }, []);
+
+  useLayoutEffect(() => {
+    syncFrozenRowHeights();
+    const table = statsTableRef.current;
+    if (!table || typeof ResizeObserver === "undefined") return;
+    const ro = new ResizeObserver(() => syncFrozenRowHeights());
+    ro.observe(table);
+    return () => ro.disconnect();
+  }, [syncFrozenRowHeights, rows, grouped, groups]);
 
   function toggleSort(key: SortKey) {
     if (sortKey === key) {
@@ -210,74 +250,136 @@ export function PlayerSeasonTable({
       className="query-updating-content flex flex-col gap-3"
       data-pending={pending ? "true" : "false"}
     >
-      <div className="sports-card board-scroll-host overflow-x-auto rounded-md">
-          <Table
-            container={false}
-            className="min-w-[1600px] border-separate border-spacing-0 text-[12px]"
-          >
-            <TableHeader className="sticky top-0 z-20">
-              <TableRow className="hover:bg-transparent">
-                <SortableTableHead
-                  sticky
-                  className={cn(
-                    "w-px whitespace-nowrap",
-                    grouped && "align-bottom"
-                  )}
-                  rowSpan={grouped ? 2 : 1}
-                  active={sortKey === "playerName"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("playerName")}
-                  align="left"
-                >
-                  Player
-                </SortableTableHead>
-                <SortableTableHead
-                  className={grouped ? "align-bottom" : undefined}
-                  rowSpan={grouped ? 2 : 1}
-                  active={sortKey === "teamName"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("teamName")}
-                  align="left"
-                >
-                  Tm
-                </SortableTableHead>
-                <SortableTableHead
-                  className={grouped ? "align-bottom" : undefined}
-                  rowSpan={grouped ? 2 : 1}
-                  active={sortKey === "position"}
-                  dir={sortDir}
-                  onClick={() => toggleSort("position")}
-                  align="left"
-                >
-                  Pos
-                </SortableTableHead>
-                {grouped
-                  ? groups.map((group) => (
-                      <TableHead
-                        key={group.id}
-                        colSpan={group.keys.length}
-                        className="h-8 border-l border-border px-2 text-center text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
+      <BoardScrollFrame
+        frozen={
+          <div ref={frozenColRef} className="flex h-full min-h-0 flex-col">
+            <div
+              data-frozen-head
+              className="flex shrink-0 flex-col justify-end border-b border-white/45 px-2 dark:border-white/12"
+            >
+              <button
+                type="button"
+                onClick={() => toggleSort("playerName")}
+                aria-sort={
+                  sortKey === "playerName"
+                    ? sortDir === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : "none"
+                }
+                className={cn(
+                  "group flex h-10 w-full min-w-max items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors",
+                  sortKey === "playerName"
+                    ? "text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                <span>Player</span>
+                <span className="sr-only">
+                  {sortKey === "playerName"
+                    ? `Sorted ${sortDir === "asc" ? "ascending" : "descending"}`
+                    : "Sort"}
+                </span>
+              </button>
+            </div>
+            <div className="flex min-h-0 flex-col">
+              {rows.map((player) => {
+                const isMultiTeam =
+                  player.teamId === "TOT" ||
+                  ["TOT", "2TM", "3TM", "4TM"].includes(
+                    (player.teamAbbreviation ?? "").toUpperCase()
+                  );
+                const brand = isMultiTeam
+                  ? undefined
+                  : resolveTeamBrand(player.teamId);
+                const teamLabel = isMultiTeam
+                  ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
+                    player.teamAbbreviation?.toUpperCase() === "3TM" ||
+                    player.teamAbbreviation?.toUpperCase() === "4TM"
+                    ? "Multiple"
+                    : "TOT"
+                  : (brand?.abbr ??
+                    player.teamAbbreviation ??
+                    (/^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
+                return (
+                  <div
+                    key={rowKey(player)}
+                    data-frozen-row
+                    className="flex items-center whitespace-nowrap px-2 py-2"
+                  >
+                    <PlayerIdentity
+                      playerId={player.playerId}
+                      name={player.playerName}
+                      teamKey={isMultiTeam ? undefined : player.teamId}
+                      teamLabel={teamLabel}
+                      position={player.position}
+                      season={player.season}
+                      variant="compact"
+                      className="w-max max-w-none"
+                      nameClassName="min-w-max max-w-none gap-2"
+                    >
+                      <PlayerHeadshot
+                        playerId={player.playerId}
+                        name={player.playerName}
+                        teamKey={isMultiTeam ? undefined : player.teamId}
+                        size="sm"
+                      />
+                      <span
+                        className={cn(
+                          "whitespace-nowrap",
+                          type.body,
+                          textLinkClassName
+                        )}
                       >
-                        {group.label}
-                      </TableHead>
-                    ))
-                  : groups.flatMap((group) =>
-                      group.keys.map((col) => (
-                        <StatHead
-                          key={`${group.id}-${col}`}
-                          col={col}
-                          view={group.id}
-                          sortKey={sortKey}
-                          sortDir={sortDir}
-                          onSort={toggleSort}
-                        />
-                      ))
-                    )}
-              </TableRow>
-              {grouped ? (
-                <TableRow className="hover:bg-transparent">
-                  {groups.flatMap((group, gi) =>
-                    group.keys.map((col, ki) => (
+                        {player.playerName}
+                      </span>
+                    </PlayerIdentity>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        }
+      >
+        <Table
+          ref={statsTableRef}
+          container={false}
+          className="min-w-[1400px] border-separate border-spacing-0 text-[12px]"
+        >
+          <TableHeader className="sticky top-0 z-20">
+            <TableRow className="hover:bg-transparent">
+              <SortableTableHead
+                className={grouped ? "align-bottom" : undefined}
+                rowSpan={grouped ? 2 : 1}
+                active={sortKey === "teamName"}
+                dir={sortDir}
+                onClick={() => toggleSort("teamName")}
+                align="left"
+              >
+                Tm
+              </SortableTableHead>
+              <SortableTableHead
+                className={grouped ? "align-bottom" : undefined}
+                rowSpan={grouped ? 2 : 1}
+                active={sortKey === "position"}
+                dir={sortDir}
+                onClick={() => toggleSort("position")}
+                align="left"
+              >
+                Pos
+              </SortableTableHead>
+              {grouped
+                ? groups.map((group) => (
+                    <TableHead
+                      key={group.id}
+                      colSpan={group.keys.length}
+                      className="h-8 border-l border-border px-2 text-center text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
+                    >
+                      {group.label}
+                    </TableHead>
+                  ))
+                : groups.flatMap((group) =>
+                    group.keys.map((col) => (
                       <StatHead
                         key={`${group.id}-${col}`}
                         col={col}
@@ -285,107 +387,102 @@ export function PlayerSeasonTable({
                         sortKey={sortKey}
                         sortDir={sortDir}
                         onSort={toggleSort}
-                        groupedStart={ki === 0 && gi > 0}
                       />
                     ))
                   )}
-                </TableRow>
-              ) : null}
-            </TableHeader>
-            <TableBody>
-              {rows.length === 0 ? (
-                <TableRow>
-                  <TableCell
-                    colSpan={colCount}
-                    className="text-muted-foreground"
-                  >
-                    No players match the current filters.
-                  </TableCell>
-                </TableRow>
-              ) : (
-                rows.map((player) => {
-                  const isMultiTeam =
-                    player.teamId === "TOT" ||
-                    ["TOT", "2TM", "3TM", "4TM"].includes(
-                      (player.teamAbbreviation ?? "").toUpperCase()
-                    );
-                  const brand = isMultiTeam
-                    ? undefined
-                    : resolveTeamBrand(player.teamId);
-                  const teamLabel = isMultiTeam
-                    ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
-                      player.teamAbbreviation?.toUpperCase() === "3TM" ||
-                      player.teamAbbreviation?.toUpperCase() === "4TM"
-                      ? "Multiple"
-                      : "TOT"
-                    : (brand?.abbr ??
-                      player.teamAbbreviation ??
-                      ( /^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
-                  return (
-                      <TableRow key={rowKey(player)} className="hover:bg-transparent">
-                        <TableCell className="board-sticky-frost sticky left-0 z-20 w-px whitespace-nowrap py-2">
-                          <PlayerIdentity
-                            playerId={player.playerId}
-                            name={player.playerName}
-                            teamKey={isMultiTeam ? undefined : player.teamId}
-                            teamLabel={teamLabel}
-                            position={player.position}
-                            season={player.season}
-                            variant="compact"
-                            className="w-max max-w-none"
-                            nameClassName="min-w-max max-w-none gap-2"
-                          >
-                            <PlayerHeadshot
-                              playerId={player.playerId}
-                              name={player.playerName}
-                              teamKey={
-                                isMultiTeam ? undefined : player.teamId
-                              }
-                              size="sm"
-                            />
-                            <span
-                              className={cn(
-                                "whitespace-nowrap",
-                                type.body,
-                                textLinkClassName
-                              )}
-                            >
-                              {player.playerName}
-                            </span>
-                          </PlayerIdentity>
-                        </TableCell>
-                        <TableCell>
-                          <span className="inline-flex items-center gap-1">
-                            {!isMultiTeam ? (
-                              <TeamLogo teamKey={player.teamId} size="xs" />
-                            ) : null}
-                            <span className="text-[12px] font-semibold uppercase tracking-wide">
-                              {teamLabel}
-                            </span>
-                          </span>
-                        </TableCell>
-                        <TableCell className="text-muted-foreground">
-                          {player.position ?? "-"}
-                        </TableCell>
-                        {groups.flatMap((group, gi) =>
-                          group.keys.map((col, ki) => (
-                            <StatCell
-                              key={`${group.id}-${col}`}
-                              col={col}
-                              player={player}
-                              rate={rate}
-                              groupedStart={grouped && ki === 0 && gi > 0}
-                              seasonAwaitingGames={seasonAwaitingGames}
-                            />
-                          ))
-                        )}
-                      </TableRow>
+            </TableRow>
+            {grouped ? (
+              <TableRow className="hover:bg-transparent">
+                {groups.flatMap((group, gi) =>
+                  group.keys.map((col, ki) => (
+                    <StatHead
+                      key={`${group.id}-${col}`}
+                      col={col}
+                      view={group.id}
+                      sortKey={sortKey}
+                      sortDir={sortDir}
+                      onSort={toggleSort}
+                      groupedStart={ki === 0 && gi > 0}
+                    />
+                  ))
+                )}
+              </TableRow>
+            ) : null}
+          </TableHeader>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={colCount}
+                  className="text-muted-foreground"
+                >
+                  No players match the current filters.
+                </TableCell>
+              </TableRow>
+            ) : (
+              rows.map((player) => {
+                const isMultiTeam =
+                  player.teamId === "TOT" ||
+                  ["TOT", "2TM", "3TM", "4TM"].includes(
+                    (player.teamAbbreviation ?? "").toUpperCase()
                   );
-                })
-              )}
-            </TableBody>
-          </Table>
-      </div>
+                const brand = isMultiTeam
+                  ? undefined
+                  : resolveTeamBrand(player.teamId);
+                const teamLabel = isMultiTeam
+                  ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
+                    player.teamAbbreviation?.toUpperCase() === "3TM" ||
+                    player.teamAbbreviation?.toUpperCase() === "4TM"
+                    ? "Multiple"
+                    : "TOT"
+                  : (brand?.abbr ??
+                    player.teamAbbreviation ??
+                    (/^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
+                return (
+                  <TableRow
+                    key={rowKey(player)}
+                    className="hover:bg-transparent"
+                  >
+                    <TableCell>
+                      {isMultiTeam ? (
+                        <span className="text-[12px] font-semibold uppercase tracking-wide">
+                          {teamLabel}
+                        </span>
+                      ) : (
+                        <TeamIdentity
+                          teamKey={player.teamId}
+                          label={teamLabel}
+                          season={player.season}
+                          className="inline-flex"
+                          nameClassName="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-wide"
+                        >
+                          <TeamLogo teamKey={player.teamId} size="xs" />
+                          <span>{teamLabel}</span>
+                        </TeamIdentity>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {player.position ?? "-"}
+                    </TableCell>
+                    {groups.flatMap((group, gi) =>
+                      group.keys.map((col, ki) => (
+                        <StatCell
+                          key={`${group.id}-${col}`}
+                          col={col}
+                          player={player}
+                          rate={rate}
+                          groupedStart={grouped && ki === 0 && gi > 0}
+                          seasonAwaitingGames={seasonAwaitingGames}
+                        />
+                      ))
+                    )}
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+        </Table>
+      </BoardScrollFrame>
 
       {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
       {loadingMore ? (

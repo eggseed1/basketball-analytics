@@ -431,8 +431,97 @@ html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
   box-shadow: 0 12px 32px rgb(0 0 0 / 36%);
 }
 
-/* Sticky player column - liquid frost over scrolling stats.
-   Board host drops ancestor backdrop-filter so these cells can sample the page. */
+/* -------------------------------------------------------------------------
+   Board scroll frame — SiteChrome-model frost for freeze columns.
+
+   WHY sticky `.board-sticky-frost` inside `.overflow-x-auto` never matches the
+   header: `overflow ≠ visible` creates a backdrop root. Descendants can only
+   sample content painted inside that scroller, never the page atmosphere
+   SiteChrome blurs. Matching veil/blur tokens cannot fix that isolation.
+   Also: sports-card backdrop-filter + milky host fill stacked under sticky
+   frost, so even in-scroller blur read as a flat slab.
+
+   Fix: `.board-scroll-frame` keeps glass on a frozen column *outside* the
+   scrollport (samples page wash). Stats scroll in a sibling scroller.
+   ------------------------------------------------------------------------- */
+.board-scroll-frame {
+  @apply rounded-md border;
+  display: flex;
+  align-items: stretch;
+  position: relative;
+  background: transparent;
+  border-color: rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+}
+
+.dark .board-scroll-frame {
+  border-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-frame {
+  @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
+}
+
+.board-frozen-col {
+  position: relative;
+  z-index: 2;
+  flex: 0 0 auto;
+  max-width: min(50vw, 22rem);
+  background: rgb(255 255 255 / 42%);
+  border-right: 1px solid rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    14px 0 28px -12px rgb(0 0 0 / 18%);
+  backdrop-filter: saturate(190%) blur(16px);
+  -webkit-backdrop-filter: saturate(190%) blur(16px);
+  filter: none;
+  transform: none;
+}
+
+.dark .board-frozen-col {
+  background: rgb(28 28 30 / 38%);
+  border-right-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    14px 0 28px -12px rgb(0 0 0 / 45%);
+}
+
+html:not([data-surface="glass"]) .board-frozen-col {
+  background: var(--card);
+  border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.board-scroll-frame > .board-scroll-host {
+  flex: 1 1 auto;
+  min-width: 0;
+  border-radius: 0;
+  background: rgb(255 255 255 / 18%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  box-shadow: none;
+  border: none;
+}
+
+.dark .board-scroll-frame > .board-scroll-host {
+  background: rgb(28 28 30 / 18%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
+  background: transparent;
+}
+
+/* Legacy single-host boards — drop card backdrop so sticky cells can sample
+   in-scroller content (still cannot sample page atmosphere). */
 .sports-card.board-scroll-host {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -449,30 +538,33 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
 
 .board-sticky-frost,
 .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 22%);
-  border-right: 1px solid rgb(255 255 255 / 40%);
-  box-shadow: none;
-  /* filter/transform on this node cancel backdrop-filter sampling. */
+  background: rgb(255 255 255 / 42%);
+  border-right: 1px solid rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    14px 0 28px -12px rgb(0 0 0 / 18%);
   filter: none;
   transform: none;
-  backdrop-filter: saturate(160%) blur(20px);
-  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  backdrop-filter: saturate(190%) blur(16px);
+  -webkit-backdrop-filter: saturate(190%) blur(16px);
 }
 
 .dark .board-sticky-frost,
 .dark .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 28%);
-  border-right-color: rgb(255 255 255 / 12%);
-  box-shadow: none;
+  background: rgb(28 28 30 / 38%);
+  border-right-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    14px 0 28px -12px rgb(0 0 0 / 45%);
 }
 
 html:not([data-surface="glass"]) .board-sticky-frost,
 html:not([data-surface="glass"]) .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--card) 55%, transparent);
+  background: var(--card);
   border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
-  box-shadow: none;
-  backdrop-filter: saturate(140%) blur(16px);
-  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 /* Body sticky column — frost + backdrop-filter live on the sticky td itself. */
@@ -498,12 +590,12 @@ html:not([data-surface="glass"]) .board-scroll-host tbody tr:hover > td:not(.boa
 
 tr:hover > .board-sticky-frost,
 tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 32%);
+  background: rgb(255 255 255 / 52%);
 }
 
 .dark tr:hover > .board-sticky-frost,
 .dark tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(44 44 46 / 36%);
+  background: rgb(44 44 46 / 48%);
 }
 
 html:not([data-surface="glass"]) tr:hover > .board-sticky-frost,
@@ -511,7 +603,7 @@ html:not([data-surface="glass"])
   tr:hover
   > td.board-sticky-frost
   .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--muted) 28%, transparent);
+  background: color-mix(in oklab, var(--muted) 45%, var(--card));
 }
 
 .board-scroll-host tbody tr.board-row-active {
@@ -581,23 +673,27 @@ html:not([data-surface="glass"]) .board-scroll-host thead th {
   -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
-/* Sticky PLAYER head matches body column frost. */
+/* Sticky PLAYER head matches body column / SiteChrome frost. */
 .board-scroll-host thead th.board-sticky-frost,
 .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 22%);
-  border-right: 1px solid rgb(255 255 255 / 40%);
-  border-bottom: 1px solid rgb(255 255 255 / 35%);
-  box-shadow: none;
-  backdrop-filter: saturate(160%) blur(20px);
-  -webkit-backdrop-filter: saturate(160%) blur(20px);
+  background: rgb(255 255 255 / 42%);
+  border-right: 1px solid rgb(255 255 255 / 58%);
+  border-bottom: 1px solid rgb(255 255 255 / 45%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    14px 0 28px -12px rgb(0 0 0 / 18%);
+  backdrop-filter: saturate(190%) blur(16px);
+  -webkit-backdrop-filter: saturate(190%) blur(16px);
 }
 
 .dark .board-scroll-host thead th.board-sticky-frost,
 .dark .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 28%);
-  border-right-color: rgb(255 255 255 / 12%);
-  border-bottom-color: rgb(255 255 255 / 10%);
-  box-shadow: none;
+  background: rgb(28 28 30 / 38%);
+  border-right-color: rgb(255 255 255 / 16%);
+  border-bottom-color: rgb(255 255 255 / 12%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    14px 0 28px -12px rgb(0 0 0 / 45%);
 }
 
 html:not([data-surface="glass"]) .board-scroll-host thead th.board-sticky-frost,
@@ -606,12 +702,12 @@ html:not([data-surface="glass"])
   thead
   th.board-sticky-frost
   .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--card) 55%, transparent);
+  background: var(--card);
   border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
   border-bottom-color: color-mix(in oklab, var(--foreground) 8%, transparent);
-  box-shadow: none;
-  backdrop-filter: saturate(140%) blur(16px);
-  -webkit-backdrop-filter: saturate(140%) blur(16px);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .site-search-field,
