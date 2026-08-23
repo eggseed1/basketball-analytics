@@ -498,6 +498,100 @@ html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
   background: transparent;
 }
 
+/*
+  Mobile stats board — dense BRef-like scale, NOT the web type system.
+  Web (sm+) keeps design-system body/caption sizes.
+*/
+@media (max-width: 639.98px) {
+  .board-scroll-frame {
+    --board-pad-x: 0.22rem;
+    --board-pad-y: 0.14rem;
+    --board-font: 10.5px;
+    --board-font-name: 11px;
+    --board-head: 9.5px;
+    --board-row-h: 1.55rem;
+  }
+
+  .board-scroll-frame,
+  .board-scroll-frame table.board-stats {
+    font-size: var(--board-font);
+    line-height: 1.15;
+  }
+
+  .board-scroll-frame table.board-stats {
+    /* Override ui/table text-sm */
+    font-size: var(--board-font) !important;
+  }
+
+  .board-scroll-frame [data-slot="table-cell"],
+  .board-scroll-frame [data-slot="table-head"] {
+    padding: var(--board-pad-y) var(--board-pad-x) !important;
+    height: auto !important;
+    min-height: 0 !important;
+    font-size: var(--board-font);
+    line-height: 1.15;
+  }
+
+  .board-scroll-frame [data-slot="table-head"] {
+    font-size: var(--board-head);
+    letter-spacing: 0.04em;
+  }
+
+  .board-scroll-frame [data-slot="table-head"] > div {
+    height: var(--board-row-h) !important;
+    min-height: 0 !important;
+    padding-left: var(--board-pad-x) !important;
+    padding-right: var(--board-pad-x) !important;
+    gap: 0.15rem;
+  }
+
+  .board-scroll-frame [data-slot="table-head"] button,
+  .board-scroll-frame [data-frozen-head] button {
+    height: var(--board-row-h) !important;
+    min-height: 0 !important;
+    font-size: var(--board-head) !important;
+    line-height: 1.1 !important;
+    letter-spacing: 0.04em;
+    gap: 0.15rem;
+  }
+
+  .board-scroll-frame [data-slot="table-head"] button svg,
+  .board-scroll-frame [data-frozen-head] button svg {
+    width: 0.65rem;
+    height: 0.65rem;
+  }
+
+  .board-scroll-frame [data-frozen-head] {
+    padding-left: var(--board-pad-x) !important;
+    padding-right: var(--board-pad-x) !important;
+  }
+
+  .board-scroll-frame [data-frozen-row] {
+    padding: var(--board-pad-y) var(--board-pad-x) !important;
+    min-height: var(--board-row-h);
+  }
+
+  .board-scroll-frame .board-name {
+    font-size: var(--board-font-name) !important;
+    line-height: 1.2 !important;
+    font-weight: 600;
+  }
+
+  .board-scroll-frame .board-tm,
+  .board-scroll-frame .board-stat {
+    font-size: var(--board-font) !important;
+    line-height: 1.15 !important;
+  }
+
+  .board-scroll-frame thead th.h-8 {
+    height: 1.35rem !important;
+    font-size: var(--board-head) !important;
+    padding-top: 0.1rem !important;
+    padding-bottom: 0.1rem !important;
+  }
+}
+
+
 /* Transparent sticky spacer under the glass rail.
    Table auto-layout ignores width on empty <td> — pin via an inner slot. */
 .board-frozen-spacer {

@@ -25,7 +25,7 @@ import {
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
 import { formatNumber, formatPct } from "@/lib/format";
-import { textLinkClassName, type } from "@/lib/design-system";
+import { textLinkClassName, boardType } from "@/lib/design-system";
 import {
   filterPlayerBoardViewColumns,
   parsePlayerBoardRate,
@@ -268,7 +268,8 @@ export function PlayerSeasonTable({
                     : "none"
                 }
                 className={cn(
-                  "group flex h-10 w-full min-w-max items-center gap-1 text-[12px] font-semibold uppercase tracking-[0.06em] transition-colors",
+                  "group flex h-7 w-full min-w-max items-center gap-1 font-semibold uppercase transition-colors sm:h-10",
+                  boardType.head,
                   sortKey === "playerName"
                     ? "text-foreground"
                     : "text-muted-foreground hover:text-foreground"
@@ -305,7 +306,7 @@ export function PlayerSeasonTable({
                   <div
                     key={rowKey(player)}
                     data-frozen-row
-                    className="flex items-center whitespace-nowrap px-1.5 py-2 sm:px-2"
+                    className="flex items-center whitespace-nowrap px-1 py-1 sm:px-2 sm:py-2"
                   >
                     <PlayerIdentity
                       playerId={player.playerId}
@@ -327,8 +328,8 @@ export function PlayerSeasonTable({
                       />
                       <span
                         className={cn(
-                          "whitespace-nowrap",
-                          type.body,
+                          "board-name whitespace-nowrap",
+                          boardType.name,
                           textLinkClassName
                         )}
                       >
@@ -345,7 +346,7 @@ export function PlayerSeasonTable({
         <Table
           ref={statsTableRef}
           container={false}
-          className="!w-max border-separate border-spacing-0 text-[12px]"
+          className="board-stats !w-max border-separate border-spacing-0 text-[10.5px] sm:text-[12px]"
         >
           <TableHeader className="sticky top-0 z-20">
             <TableRow className="hover:bg-transparent">
@@ -381,7 +382,10 @@ export function PlayerSeasonTable({
                     <TableHead
                       key={group.id}
                       colSpan={group.keys.length}
-                      className="h-8 border-l border-border px-2 text-center text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground"
+                      className={cn(
+                        "h-8 border-l border-border px-2 text-center font-semibold uppercase text-muted-foreground",
+                        boardType.head
+                      )}
                     >
                       {group.label}
                     </TableHead>
@@ -459,7 +463,12 @@ export function PlayerSeasonTable({
                     </TableCell>
                     <TableCell>
                       {isMultiTeam ? (
-                        <span className="text-[12px] font-semibold uppercase tracking-wide">
+                        <span
+                          className={cn(
+                            "board-tm font-semibold uppercase tracking-wide",
+                            boardType.cell
+                          )}
+                        >
                           {teamLabel}
                         </span>
                       ) : (
@@ -468,14 +477,19 @@ export function PlayerSeasonTable({
                           label={teamLabel}
                           season={player.season}
                           className="inline-flex"
-                          nameClassName="inline-flex items-center gap-1 text-[12px] font-semibold uppercase tracking-wide"
+                          nameClassName={cn(
+                            "board-tm inline-flex items-center gap-1 font-semibold uppercase tracking-wide sm:gap-1",
+                            boardType.cell
+                          )}
                         >
                           <TeamLogo teamKey={player.teamId} size="xs" />
                           <span>{teamLabel}</span>
                         </TeamIdentity>
                       )}
                     </TableCell>
-                    <TableCell className="text-muted-foreground">
+                    <TableCell
+                      className={cn("text-muted-foreground", boardType.cell)}
+                    >
                       {player.position ?? "-"}
                     </TableCell>
                     {groups.flatMap((group, gi) =>
@@ -882,8 +896,13 @@ function StatHead({
   if (col === "pointsCreated" || col === "rimAssists") {
     return (
       <TableHead className={cn("h-auto p-0", className)}>
-        <div className="flex h-10 w-full min-w-max items-center justify-end px-2">
-          <span className="text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground">
+        <div className="flex h-7 w-full min-w-max items-center justify-end px-1 sm:h-10 sm:px-2">
+          <span
+            className={cn(
+              "font-semibold uppercase text-muted-foreground",
+              boardType.head
+            )}
+          >
             {columnLabel(col, view)}
           </span>
         </div>
@@ -919,7 +938,8 @@ function StatCell({
   return (
     <TableCell
       className={cn(
-        "text-right tabular-nums text-[12px]",
+        "board-stat text-right tabular-nums",
+        boardType.cell,
         groupedStart && "border-l border-border",
         seasonAwaitingGames && "text-muted-foreground"
       )}

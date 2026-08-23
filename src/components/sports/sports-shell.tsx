@@ -5,7 +5,6 @@ import {
   Suspense,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import { Menu, X } from "lucide-react";
@@ -101,66 +100,44 @@ function PrimaryLink({
   );
 }
 
-/** Items kept in the always-visible mobile strip; rest go under More. */
-const MOBILE_PINNED_IDS = new Set([
-  "home",
-  "ask",
-  "games",
-  "players",
-  "teams",
-]);
-
 export function SportsShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
-  const [moreOpen, setMoreOpen] = useState(false);
-  const [moreOpenedAt, setMoreOpenedAt] = useState<string | null>(null);
-  const moreRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [menuOpenedAt, setMenuOpenedAt] = useState<string | null>(null);
   const active = useMemo(() => activePrimaryNav(pathname), [pathname]);
-  const isMoreOpen = moreOpen && moreOpenedAt === pathname;
+  const isMenuOpen = menuOpen && menuOpenedAt === pathname;
   const destinationWash =
     pathname.startsWith("/teams/") ||
     pathname.startsWith("/players/") ||
     pathname.startsWith("/games/");
 
-  const mobilePinned = PRIMARY_NAV.filter((t) => MOBILE_PINNED_IDS.has(t.id));
-  const mobileMore = PRIMARY_NAV.filter((t) => !MOBILE_PINNED_IDS.has(t.id));
-  const moreActive = mobileMore.some((t) => t.match(pathname));
-
-  function closeMore() {
-    setMoreOpen(false);
-    setMoreOpenedAt(null);
+  function closeMenu() {
+    setMenuOpen(false);
+    setMenuOpenedAt(null);
   }
 
-  function toggleMore() {
-    if (isMoreOpen) {
-      closeMore();
+  function toggleMenu() {
+    if (isMenuOpen) {
+      closeMenu();
       return;
     }
-    setMoreOpen(true);
-    setMoreOpenedAt(pathname);
+    setMenuOpen(true);
+    setMenuOpenedAt(pathname);
   }
 
   useEffect(() => {
-    if (!isMoreOpen) return;
-    const onPointer = (e: MouseEvent | TouchEvent) => {
-      const el = moreRef.current;
-      if (!el) return;
-      if (e.target instanceof Node && !el.contains(e.target)) {
-        closeMore();
-      }
-    };
+    if (!isMenuOpen) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") closeMore();
+      if (e.key === "Escape") closeMenu();
     };
-    document.addEventListener("mousedown", onPointer);
-    document.addEventListener("touchstart", onPointer);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     document.addEventListener("keydown", onKey);
     return () => {
-      document.removeEventListener("mousedown", onPointer);
-      document.removeEventListener("touchstart", onPointer);
+      document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", onKey);
     };
-  }, [isMoreOpen, pathname]);
+  }, [isMenuOpen]);
 
   return (
     <RouteTransitionProvider>
@@ -187,7 +164,19 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               </TransitionLink>
               <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial">
                 <SiteSearch />
-                <ColorSchemeSwitch />
+                <div className="hidden md:block">
+                  <ColorSchemeSwitch />
+                </div>
+                <button
+                  type="button"
+                  aria-label="Open menu"
+                  aria-expanded={isMenuOpen}
+                  aria-controls="mobile-nav-menu"
+                  onClick={toggleMenu}
+                  className="flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition hover:bg-muted md:hidden"
+                >
+                  <Menu className="size-4" aria-hidden />
+                </button>
               </div>
             </div>
 
@@ -218,72 +207,6 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
               </TransitionLink>
             </div>
 
-            {/* Mobile: pinned destinations + More */}
-            <div className="flex items-center gap-1 md:hidden">
-              <nav
-                aria-label="Primary"
-                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
-              >
-                {mobilePinned.map((tab) => (
-                  <PrimaryLink
-                    key={tab.id}
-                    tab={tab}
-                    active={tab.match(pathname)}
-                  />
-                ))}
-              </nav>
-              <div className="relative shrink-0" ref={moreRef}>
-                <button
-                  type="button"
-                  aria-expanded={isMoreOpen}
-                  aria-controls="mobile-more-nav"
-                  onClick={toggleMore}
-                  className={cn(
-                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
-                    moreActive || isMoreOpen
-                      ? "glass-pill glass-pill-active text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  )}
-                >
-                  {isMoreOpen ? (
-                    <X className="size-3.5" aria-hidden />
-                  ) : (
-                    <Menu className="size-3.5" aria-hidden />
-                  )}
-                  More
-                </button>
-                {isMoreOpen ? (
-                  <div
-                    id="mobile-more-nav"
-                    className="absolute right-0 top-full z-50 mt-1 min-w-[11rem] rounded-md border border-border bg-background p-1 shadow-md"
-                  >
-                    {mobileMore.map((tab) => (
-                      <TransitionLink
-                        key={tab.id}
-                        href={tab.href}
-                        onClick={closeMore}
-                        className={cn(
-                          "block rounded-md px-3 py-2 text-[14px] font-semibold",
-                          tab.match(pathname)
-                            ? "bg-white/70 text-foreground"
-                            : "text-foreground hover:bg-secondary"
-                        )}
-                      >
-                        {tab.label}
-                      </TransitionLink>
-                    ))}
-                    <TransitionLink
-                      href="/gm"
-                      onClick={closeMore}
-                      className="mt-1 block rounded-md border-t border-border px-3 py-2 text-[14px] font-semibold text-muted-foreground hover:bg-secondary hover:text-foreground"
-                    >
-                      GM mode
-                    </TransitionLink>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-
             {active?.subnav?.length ? (
               <Suspense fallback={null}>
                 <DomainSubnav item={active} />
@@ -291,6 +214,70 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             ) : null}
           </div>
         </SiteChrome>
+
+        {isMenuOpen ? (
+          <div
+            id="mobile-nav-menu"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Site menu"
+            className="fixed inset-0 z-[60] flex flex-col bg-background md:hidden"
+          >
+            <div className="site-shell flex shrink-0 items-center justify-between gap-4 border-b border-border py-3">
+              <span className="flex size-8 items-center justify-center rounded-md bg-foreground text-[12px] font-bold tracking-wide text-background">
+                DRBL
+              </span>
+              <button
+                type="button"
+                aria-label="Close menu"
+                onClick={closeMenu}
+                className="flex size-9 shrink-0 items-center justify-center rounded-md text-foreground transition hover:bg-muted"
+              >
+                <X className="size-4" aria-hidden />
+              </button>
+            </div>
+
+            <nav
+              aria-label="Primary"
+              className="site-shell flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto py-4"
+            >
+              {PRIMARY_NAV.map((tab) => (
+                <TransitionLink
+                  key={tab.id}
+                  href={tab.href}
+                  onClick={closeMenu}
+                  className={cn(
+                    "rounded-lg px-3 py-3.5 text-[20px] font-semibold tracking-tight transition-colors",
+                    tab.match(pathname)
+                      ? "bg-secondary text-foreground"
+                      : "text-foreground hover:bg-secondary/70"
+                  )}
+                >
+                  {tab.label}
+                </TransitionLink>
+              ))}
+              <TransitionLink
+                href="/gm"
+                onClick={closeMenu}
+                className={cn(
+                  "mt-2 rounded-lg border-t border-border px-3 py-3.5 text-[18px] font-semibold transition-colors",
+                  pathname.startsWith("/gm")
+                    ? "bg-secondary text-foreground"
+                    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
+                )}
+              >
+                GM mode
+              </TransitionLink>
+            </nav>
+
+            <div className="site-shell flex shrink-0 items-center justify-between gap-3 border-t border-border py-4">
+              <span className="text-[14px] font-semibold text-muted-foreground">
+                Appearance
+              </span>
+              <ColorSchemeSwitch />
+            </div>
+          </div>
+        ) : null}
 
         <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col">
           {children}
