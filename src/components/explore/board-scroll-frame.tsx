@@ -10,11 +10,20 @@ import {
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import { cn } from "@/lib/utils";
 
-const FROZEN_MAX_PX = 22 * 16; // 22rem
+const FROZEN_MAX_DESKTOP_PX = 22 * 16;
+const FROZEN_MAX_MOBILE_PX = 10 * 16;
+
+function frozenWidthCap(viewportW: number): number {
+  if (viewportW < 640) {
+    return Math.min(FROZEN_MAX_MOBILE_PX, Math.floor(viewportW * 0.42));
+  }
+  return Math.min(FROZEN_MAX_DESKTOP_PX, Math.floor(viewportW * 0.5));
+}
 
 /**
  * Board chrome: absolute frost rail over a full-width scroller (SiteChrome model).
  * Veil/blur stay lighter than header chrome so names stay readable.
+ * On small screens the rail is capped tighter so stats remain reachable.
  */
 export function BoardScrollFrame({
   frozen,
@@ -37,8 +46,11 @@ export function BoardScrollFrame({
 
     const sync = () => {
       const raw = Math.ceil(frozenEl.getBoundingClientRect().width);
-      const cap = Math.min(FROZEN_MAX_PX, Math.floor(window.innerWidth * 0.5));
-      frame.style.setProperty("--board-frozen-w", `${Math.max(Math.min(raw, cap), 1)}px`);
+      const cap = frozenWidthCap(window.innerWidth);
+      frame.style.setProperty(
+        "--board-frozen-w",
+        `${Math.max(Math.min(raw, cap), 1)}px`
+      );
     };
     sync();
     const ro = new ResizeObserver(sync);
@@ -53,10 +65,15 @@ export function BoardScrollFrame({
   return (
     <div
       ref={frameRef}
-      className={cn("board-scroll-frame", className)}
-      style={{ "--board-frozen-w": "12rem" } as CSSProperties}
+      className={cn(
+        "board-scroll-frame max-sm:-mx-4 max-sm:rounded-none max-sm:border-x-0",
+        className
+      )}
+      style={{ "--board-frozen-w": "9rem" } as CSSProperties}
     >
-      <div className="board-scroll-host overflow-x-auto">{children}</div>
+      <div className="board-scroll-host overflow-x-auto overscroll-x-contain">
+        {children}
+      </div>
       <div
         className="board-frozen-col pointer-events-none absolute inset-y-0 left-0 z-20"
         style={{
@@ -82,7 +99,7 @@ export function BoardScrollFrame({
       >
         <div
           ref={frozenRef}
-          className="pointer-events-auto h-full w-max max-w-[min(50vw,22rem)]"
+          className="pointer-events-auto h-full w-max max-w-[min(42vw,10rem)] sm:max-w-[min(50vw,22rem)]"
         >
           {frozen}
         </div>

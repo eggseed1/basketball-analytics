@@ -255,7 +255,7 @@ export function PlayerSeasonTable({
           <div ref={frozenColRef} className="flex h-full min-h-0 flex-col">
             <div
               data-frozen-head
-              className="flex shrink-0 flex-col justify-end border-b border-white/45 px-2 dark:border-white/12"
+              className="flex shrink-0 flex-col justify-end border-b border-white/45 px-1.5 dark:border-white/12 sm:px-2"
             >
               <button
                 type="button"
@@ -305,7 +305,7 @@ export function PlayerSeasonTable({
                   <div
                     key={rowKey(player)}
                     data-frozen-row
-                    className="flex items-center whitespace-nowrap px-2 py-2"
+                    className="flex max-w-[var(--board-frozen-w)] items-center px-1.5 py-2 sm:px-2"
                   >
                     <PlayerIdentity
                       playerId={player.playerId}
@@ -315,18 +315,19 @@ export function PlayerSeasonTable({
                       position={player.position}
                       season={player.season}
                       variant="compact"
-                      className="w-max max-w-none"
-                      nameClassName="min-w-max max-w-none gap-2"
+                      className="min-w-0 max-w-full"
+                      nameClassName="min-w-0 max-w-full gap-1.5 sm:gap-2"
                     >
                       <PlayerHeadshot
                         playerId={player.playerId}
                         name={player.playerName}
                         teamKey={isMultiTeam ? undefined : player.teamId}
                         size="sm"
+                        className="max-sm:hidden"
                       />
                       <span
                         className={cn(
-                          "whitespace-nowrap",
+                          "min-w-0 truncate",
                           type.body,
                           textLinkClassName
                         )}
@@ -344,7 +345,7 @@ export function PlayerSeasonTable({
         <Table
           ref={statsTableRef}
           container={false}
-          className="min-w-[1400px] border-separate border-spacing-0 text-[12px]"
+          className="!w-max border-separate border-spacing-0 text-[12px]"
         >
           <TableHeader className="sticky top-0 z-20">
             <TableRow className="hover:bg-transparent">
@@ -553,12 +554,26 @@ const ALL_COLUMN_CATEGORY_HINT: Partial<Record<TableCol, PlayerBoardView>> = {
   rimAssists: "overview",
 };
 
+/**
+ * When a column sits in multiple presets, prefer the more specific band so
+ * Advanced/Impact/TS aren’t emptied by Overview/Profile/Shooting claiming first.
+ */
+const CATEGORY_OWNERSHIP_PRIORITY: readonly PlayerBoardView[] = [
+  "advanced",
+  "impact",
+  "ts",
+  "shooting",
+  "defense",
+  "profile",
+  "overview",
+];
+
 function columnsForView(
   view: PlayerBoardView,
   flags: BoardColumnFlags
 ): TableCol[] {
   const keys: TableCol[] = [...filterPlayerBoardViewColumns(view, flags)];
-  if (view !== "all") return keys;
+  if (view !== "overview" && view !== "all") return keys;
   const withExtras: TableCol[] = [];
   for (const key of keys) {
     withExtras.push(key);
@@ -572,21 +587,21 @@ function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
   const hint = ALL_COLUMN_CATEGORY_HINT[col];
   if (hint) return hint;
   if (col === "pointsCreated" || col === "rimAssists") return "overview";
-  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+  for (const cat of CATEGORY_OWNERSHIP_PRIORITY) {
     if (
-      (filterPlayerBoardViewColumns(cat.id, {
+      (filterPlayerBoardViewColumns(cat, {
         hasDarko: true,
         hasLebron: true,
         hasDrbl: true,
       }) as string[]).includes(col)
     ) {
-      return cat.id;
+      return cat;
     }
   }
   return null;
 }
 
-/** Partition curated "all" columns under Overview / Impact / … band headers. */
+/** Full union of category presets, bucketed under Overview / Impact / … bands. */
 function partitionAllColumnsIntoCategories(
   flags: BoardColumnFlags
 ): BoardGroup[] {
@@ -595,13 +610,19 @@ function partitionAllColumnsIntoCategories(
     buckets.set(cat.id, []);
   }
   const leftover: TableCol[] = [];
+  const seen = new Set<TableCol>();
 
-  for (const col of columnsForView("all", flags)) {
-    const category = resolveColumnCategory(col);
-    if (category && buckets.has(category)) {
-      buckets.get(category)!.push(col);
-    } else {
-      leftover.push(col);
+  // Prefer category order for the flat walk; ownership priority decides the band.
+  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+    for (const col of columnsForView(cat.id, flags)) {
+      if (seen.has(col)) continue;
+      seen.add(col);
+      const category = resolveColumnCategory(col);
+      if (category && buckets.has(category)) {
+        buckets.get(category)!.push(col);
+      } else {
+        leftover.push(col);
+      }
     }
   }
 

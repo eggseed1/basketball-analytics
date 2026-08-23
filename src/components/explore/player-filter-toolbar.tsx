@@ -242,7 +242,7 @@ export function PlayerFilterToolbar({
   return (
     <GlassSurface
       overflowVisible
-      className="relative z-40 p-3"
+      className="relative z-40 p-2 sm:p-3"
     >
     <form
       className="flex flex-col gap-2"
@@ -252,7 +252,7 @@ export function PlayerFilterToolbar({
       }}
       data-pending={pending ? "true" : "false"}
     >
-      <div className="flex flex-wrap items-center gap-2">
+      <div className="flex flex-wrap items-center gap-2 max-sm:gap-1.5">
         <ChipGroup>
           <button
             type="button"
@@ -519,8 +519,11 @@ export function PlayerFilterToolbar({
         </ChipGroup>
       </div>
 
-      <div className="flex flex-wrap items-center gap-2">
-        <ChipGroup className="flex-wrap" aria-label="Stat categories">
+      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <ChipGroup
+          className="max-sm:w-full max-sm:overflow-x-auto max-sm:flex-nowrap [-ms-overflow-style:none] [scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden"
+          aria-label="Stat categories"
+        >
           {PLAYER_BOARD_VIEWS.map((item) => (
             <Chip
               key={item.id}
@@ -537,18 +540,18 @@ export function PlayerFilterToolbar({
                 })
               }
             >
-              {item.label}
+              <span className="whitespace-nowrap">{item.label}</span>
             </Chip>
           ))}
         </ChipGroup>
-        <ChipGroup>
+        <ChipGroup className="max-sm:w-full max-sm:overflow-x-auto max-sm:flex-nowrap [-ms-overflow-style:none] [scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
           {PLAYER_BOARD_RATES.map((item) => (
             <Chip
               key={item.id}
               active={rate === item.id}
               onClick={() => updateParams({ rate: item.id })}
             >
-              {item.label}
+              <span className="whitespace-nowrap">{item.label}</span>
             </Chip>
           ))}
         </ChipGroup>

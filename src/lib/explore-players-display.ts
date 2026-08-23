@@ -83,33 +83,6 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   PlayerBoardView,
   PlayerSeasonSortKey[]
 > = {
-  all: [
-    "gamesPlayed",
-    "mpg",
-    "r1WinEquivalents",
-    "drbl100",
-    "age",
-    "usagePct",
-    "darkoDpm",
-    "darkoOff",
-    "darkoDef",
-    "ppg",
-    "apg",
-    "rpg",
-    "tov",
-    "trueShootingPct",
-    "relativeTrueShootingPct",
-    "turnoverPct",
-    "twoPointPct",
-    "threePointPct",
-    "threePointersAttempted",
-    "freeThrowPct",
-    "freeThrowsAttempted",
-    "offensiveRebounds",
-    "defensiveRebounds",
-    "spg",
-    "bpg",
-  ],
   overview: [
     "gamesPlayed",
     "mpg",
@@ -119,6 +92,8 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
     "spg",
     "bpg",
     "tov",
+    "offensiveRebounds",
+    "defensiveRebounds",
     "drbl100",
     "r1WinEquivalents",
   ],
@@ -141,8 +116,11 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   ],
   shooting: [
     "fieldGoalPct",
+    "twoPointPct",
     "threePointPct",
+    "threePointersAttempted",
     "freeThrowPct",
+    "freeThrowsAttempted",
     "effectiveFieldGoalPct",
     "trueShootingPct",
   ],
@@ -157,6 +135,7 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   ],
   advanced: [
     "usagePct",
+    "turnoverPct",
     "effectiveFieldGoalPct",
     "trueShootingPct",
     "offensiveRating",
@@ -166,12 +145,29 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   defense: ["spg", "bpg", "defensiveRating", "darkoDpm"],
   ts: [
     "trueShootingPct",
+    "relativeTrueShootingPct",
     "effectiveFieldGoalPct",
     "fieldGoalPct",
     "threePointPct",
     "freeThrowPct",
   ],
+  /** Filled below as the deduped union of every category preset. */
+  all: [],
 };
+
+PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
+  const seen = new Set<PlayerSeasonSortKey>();
+  const out: PlayerSeasonSortKey[] = [];
+  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+    for (const key of PLAYER_BOARD_VIEW_COLUMNS[cat.id]) {
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(key);
+    }
+  }
+  return out;
+})();
+
 
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,
