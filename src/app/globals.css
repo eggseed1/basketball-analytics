@@ -449,34 +449,30 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
 
 .board-sticky-frost,
 .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 36%);
-  border-right: 1px solid rgb(255 255 255 / 58%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
-    14px 0 28px -12px rgb(0 0 0 / 22%);
+  background: rgb(255 255 255 / 22%);
+  border-right: 1px solid rgb(255 255 255 / 40%);
+  box-shadow: none;
   /* filter/transform on this node cancel backdrop-filter sampling. */
   filter: none;
   transform: none;
-  backdrop-filter: saturate(180%) blur(48px);
-  -webkit-backdrop-filter: saturate(180%) blur(48px);
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
 }
 
 .dark .board-sticky-frost,
 .dark .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 42%);
-  border-right-color: rgb(255 255 255 / 16%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    14px 0 28px -12px rgb(0 0 0 / 55%);
+  background: rgb(28 28 30 / 28%);
+  border-right-color: rgb(255 255 255 / 12%);
+  box-shadow: none;
 }
 
 html:not([data-surface="glass"]) .board-sticky-frost,
 html:not([data-surface="glass"]) .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--card) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 55%, transparent);
   border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
-  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
-  backdrop-filter: saturate(150%) blur(24px);
-  -webkit-backdrop-filter: saturate(150%) blur(24px);
+  box-shadow: none;
+  backdrop-filter: saturate(140%) blur(16px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
 }
 
 /* Body sticky column — frost + backdrop-filter live on the sticky td itself. */
@@ -502,12 +498,12 @@ html:not([data-surface="glass"]) .board-scroll-host tbody tr:hover > td:not(.boa
 
 tr:hover > .board-sticky-frost,
 tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 50%);
+  background: rgb(255 255 255 / 32%);
 }
 
 .dark tr:hover > .board-sticky-frost,
 .dark tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(44 44 46 / 52%);
+  background: rgb(44 44 46 / 36%);
 }
 
 html:not([data-surface="glass"]) tr:hover > .board-sticky-frost,
@@ -515,7 +511,7 @@ html:not([data-surface="glass"])
   tr:hover
   > td.board-sticky-frost
   .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--muted) 45%, var(--card));
+  background: color-mix(in oklab, var(--muted) 28%, transparent);
 }
 
 .board-scroll-host tbody tr.board-row-active {
@@ -588,24 +584,20 @@ html:not([data-surface="glass"]) .board-scroll-host thead th {
 /* Sticky PLAYER head matches body column frost. */
 .board-scroll-host thead th.board-sticky-frost,
 .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(255 255 255 / 36%);
-  border-right: 1px solid rgb(255 255 255 / 58%);
-  border-bottom: 1px solid rgb(255 255 255 / 45%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
-    14px 0 28px -12px rgb(0 0 0 / 22%);
-  backdrop-filter: saturate(180%) blur(48px);
-  -webkit-backdrop-filter: saturate(180%) blur(48px);
+  background: rgb(255 255 255 / 22%);
+  border-right: 1px solid rgb(255 255 255 / 40%);
+  border-bottom: 1px solid rgb(255 255 255 / 35%);
+  box-shadow: none;
+  backdrop-filter: saturate(160%) blur(20px);
+  -webkit-backdrop-filter: saturate(160%) blur(20px);
 }
 
 .dark .board-scroll-host thead th.board-sticky-frost,
 .dark .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 42%);
-  border-right-color: rgb(255 255 255 / 16%);
-  border-bottom-color: rgb(255 255 255 / 12%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    14px 0 28px -12px rgb(0 0 0 / 55%);
+  background: rgb(28 28 30 / 28%);
+  border-right-color: rgb(255 255 255 / 12%);
+  border-bottom-color: rgb(255 255 255 / 10%);
+  box-shadow: none;
 }
 
 html:not([data-surface="glass"]) .board-scroll-host thead th.board-sticky-frost,
@@ -614,12 +606,12 @@ html:not([data-surface="glass"])
   thead
   th.board-sticky-frost
   .board-sticky-frost-surface {
-  background: color-mix(in oklab, var(--card) 82%, transparent);
+  background: color-mix(in oklab, var(--card) 55%, transparent);
   border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
   border-bottom-color: color-mix(in oklab, var(--foreground) 8%, transparent);
-  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
-  backdrop-filter: saturate(150%) blur(24px);
-  -webkit-backdrop-filter: saturate(150%) blur(24px);
+  box-shadow: none;
+  backdrop-filter: saturate(140%) blur(16px);
+  -webkit-backdrop-filter: saturate(140%) blur(16px);
 }
 
 .site-search-field,

@@ -94,3 +94,20 @@ export function priorSeasonStatsNotice(
 ): string {
   return `${requestSeason} hasn't started — showing ${statsSeason} stats until regular-season games are played.`;
 }
+
+/**
+ * Explore Players board default: keep the last completed season selected until
+ * the new league year tips off (Oct 15). Upcoming season remains pickable.
+ */
+export function defaultExplorePlayersSeason(
+  availableSeasons: readonly string[],
+  now = new Date()
+): string {
+  const leagueSeason = canonicalSeasonFromStartYear(currentNbaStartYear(now));
+  if (isPreseasonRosterSeason(leagueSeason, now)) {
+    const prior = priorSeasonForStats(leagueSeason);
+    if (availableSeasons.includes(prior)) return prior;
+  }
+  if (availableSeasons.includes(leagueSeason)) return leagueSeason;
+  return availableSeasons[0] ?? leagueSeason;
+}

@@ -60,7 +60,7 @@ export function TeamIdentity({
           closeDelay={160}
           className={cn(
             "inline-flex min-w-0 max-w-full items-center gap-1.5",
-            type.body,
+            !nameClassName && type.body,
             nameIsText && textLinkClassName,
             nameClassName
           )}

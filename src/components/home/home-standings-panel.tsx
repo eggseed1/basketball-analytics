@@ -39,11 +39,6 @@ export async function HomeStandingsPanel({ season }: { season: string }) {
         season={displaySeason}
         east={east.slice(0, 8)}
         west={west.slice(0, 8)}
-        subtitle={
-          displaySeason !== season
-            ? `${season} hasn't started — showing ${displaySeason} final standings`
-            : undefined
-        }
       />
     );
   } catch {

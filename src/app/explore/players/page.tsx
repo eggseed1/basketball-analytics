@@ -1,6 +1,5 @@
 import { Suspense } from "react";
 
-import { DrblSeasonSupportNotice } from "@/components/explore/drbl-season-support-notice";
 import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-notice";
 import { ExplorePlayersClientShell } from "@/components/explore/explore-players-client-shell";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
@@ -12,10 +11,7 @@ import {
   getExplorePlayersBoardView,
   parseExplorePlayersSortDir,
 } from "@/data/queries/explore-players-board";
-import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
+import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
 import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params";
 import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 
@@ -72,7 +68,6 @@ async function ExplorePlayersBoard({
   if (view.totalCount === 0) {
     return (
       <div className="query-updating-content flex flex-col gap-3">
-        <DrblSeasonSupportNotice season={season} />
         <PlayerBoardHealthBanner health={view.health} />
         <section className="sports-card px-4 py-8 text-center text-[14px] text-muted-foreground">
           {view.health.status === "provider_failure"
@@ -97,7 +92,6 @@ async function ExplorePlayersBoard({
           statsSeason={view.usingPriorSeasonStats ? view.statsSeason : undefined}
         />
       ) : null}
-      <DrblSeasonSupportNotice season={season} />
       <PlayerSeasonTable
         players={view.rows}
         season={season}
@@ -123,9 +117,7 @@ export default async function ExplorePlayersPage({
     getAvailableSeasons(),
     getTeamsCatalog(),
   ]);
-  const defaultSeason =
-    seasons[0] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-
+  const defaultSeason = defaultExplorePlayersSeason(seasons);
   const { teams, source, warnings } = teamCatalog;
 
   return (

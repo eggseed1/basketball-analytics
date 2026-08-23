@@ -230,7 +230,8 @@ export function PlayerIdentity({
           closeDelay={cfg.closeDelay}
           className={cn(
             "inline-flex min-w-0 max-w-full items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            resolved !== "chip" && type.body,
+            // Default name-only triggers use body; custom children inherit caller size.
+            resolved !== "chip" && children == null && type.body,
             resolved === "chip" && "gap-0 no-underline hover:no-underline",
             resolved !== "chip" && nameIsText && linkable && textLinkClassName,
             resolved !== "chip" && nameIsText && !linkable && textHintClassName,

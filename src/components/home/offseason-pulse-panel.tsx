@@ -50,7 +50,7 @@ export async function OffseasonPulsePanel() {
                 <TransactionDescription
                   description={event.description}
                   resolutions={resolutions.get(event.id)}
-                  className="type-body min-w-0 flex-1 truncate text-foreground"
+                  className="type-body-sm min-w-0 flex-1 truncate text-foreground"
                 />
               </div>
               <time className="type-caption shrink-0 tabular-nums text-[#505050]">

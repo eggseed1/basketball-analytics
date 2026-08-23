@@ -23,6 +23,7 @@ import {
   parsePlayerBoardRate,
   parsePlayerBoardViews,
   playerBoardViewLabel,
+  PLAYER_BOARD_CATEGORY_VIEWS,
   type PlayerBoardRate,
   type PlayerBoardView,
 } from "@/lib/explore-players-display";
@@ -178,14 +179,10 @@ export function PlayerSeasonTable({
   const views = parsePlayerBoardViews(searchParams.get("view"));
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
   const flags = { hasDarko, hasLebron, hasDrbl };
-  const groups = views
-    .map((id) => ({
-      id,
-      label: playerBoardViewLabel(id),
-      keys: columnsForView(id, flags),
-    }))
-    .filter((group) => group.keys.length > 0);
-  const grouped = groups.length > 1;
+  const groups = buildPlayerBoardGroups(views, flags);
+  // Always show category band headers — including a single category (e.g. True
+  // Shooting) and the partitioned "all stats" layout.
+  const grouped = groups.length > 0;
   const statCount = groups.reduce((sum, group) => sum + group.keys.length, 0);
   const colCount = 3 + statCount;
 
@@ -222,7 +219,10 @@ export function PlayerSeasonTable({
               <TableRow className="hover:bg-transparent">
                 <SortableTableHead
                   sticky
-                  className={grouped ? "align-bottom" : undefined}
+                  className={cn(
+                    "w-px whitespace-nowrap",
+                    grouped && "align-bottom"
+                  )}
                   rowSpan={grouped ? 2 : 1}
                   active={sortKey === "playerName"}
                   dir={sortDir}
@@ -323,7 +323,7 @@ export function PlayerSeasonTable({
                       ( /^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
                   return (
                       <TableRow key={rowKey(player)} className="hover:bg-transparent">
-                        <TableCell className="board-sticky-frost sticky left-0 z-20 min-w-[11.5rem] py-2">
+                        <TableCell className="board-sticky-frost sticky left-0 z-20 w-px whitespace-nowrap py-2">
                           <PlayerIdentity
                             playerId={player.playerId}
                             name={player.playerName}
@@ -332,8 +332,8 @@ export function PlayerSeasonTable({
                             position={player.position}
                             season={player.season}
                             variant="compact"
-                            className="min-w-0"
-                            nameClassName="gap-2"
+                            className="w-max max-w-none"
+                            nameClassName="min-w-max max-w-none gap-2"
                           >
                             <PlayerHeadshot
                               playerId={player.playerId}
@@ -345,7 +345,7 @@ export function PlayerSeasonTable({
                             />
                             <span
                               className={cn(
-                                "truncate",
+                                "whitespace-nowrap",
                                 type.body,
                                 textLinkClassName
                               )}
@@ -418,9 +418,34 @@ export function PlayerSeasonTable({
 
 type TableCol = PlayerSeasonSortKey | "pointsCreated" | "rimAssists";
 
+type BoardColumnFlags = {
+  hasDarko: boolean;
+  hasLebron: boolean;
+  hasDrbl: boolean;
+};
+
+type BoardGroup = {
+  id: PlayerBoardView;
+  label: string;
+  keys: TableCol[];
+};
+
+/** Columns that only appear in the curated "all" set — map into a band. */
+const ALL_COLUMN_CATEGORY_HINT: Partial<Record<TableCol, PlayerBoardView>> = {
+  relativeTrueShootingPct: "ts",
+  turnoverPct: "advanced",
+  twoPointPct: "shooting",
+  threePointersAttempted: "shooting",
+  freeThrowsAttempted: "shooting",
+  offensiveRebounds: "overview",
+  defensiveRebounds: "overview",
+  pointsCreated: "overview",
+  rimAssists: "overview",
+};
+
 function columnsForView(
   view: PlayerBoardView,
-  flags: { hasDarko: boolean; hasLebron: boolean; hasDrbl: boolean }
+  flags: BoardColumnFlags
 ): TableCol[] {
   const keys: TableCol[] = [...filterPlayerBoardViewColumns(view, flags)];
   if (view !== "all") return keys;
@@ -431,6 +456,71 @@ function columnsForView(
     if (key === "apg") withExtras.push("rimAssists");
   }
   return withExtras;
+}
+
+function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
+  const hint = ALL_COLUMN_CATEGORY_HINT[col];
+  if (hint) return hint;
+  if (col === "pointsCreated" || col === "rimAssists") return "overview";
+  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+    if (
+      (filterPlayerBoardViewColumns(cat.id, {
+        hasDarko: true,
+        hasLebron: true,
+        hasDrbl: true,
+      }) as string[]).includes(col)
+    ) {
+      return cat.id;
+    }
+  }
+  return null;
+}
+
+/** Partition curated "all" columns under Overview / Impact / … band headers. */
+function partitionAllColumnsIntoCategories(
+  flags: BoardColumnFlags
+): BoardGroup[] {
+  const buckets = new Map<PlayerBoardView, TableCol[]>();
+  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+    buckets.set(cat.id, []);
+  }
+  const leftover: TableCol[] = [];
+
+  for (const col of columnsForView("all", flags)) {
+    const category = resolveColumnCategory(col);
+    if (category && buckets.has(category)) {
+      buckets.get(category)!.push(col);
+    } else {
+      leftover.push(col);
+    }
+  }
+
+  const groups: BoardGroup[] = PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => ({
+    id: cat.id,
+    label: cat.label,
+    keys: buckets.get(cat.id) ?? [],
+  })).filter((group) => group.keys.length > 0);
+
+  if (leftover.length) {
+    groups.push({ id: "all", label: "Other", keys: leftover });
+  }
+  return groups;
+}
+
+function buildPlayerBoardGroups(
+  views: PlayerBoardView[],
+  flags: BoardColumnFlags
+): BoardGroup[] {
+  if (views.length === 1 && views[0] === "all") {
+    return partitionAllColumnsIntoCategories(flags);
+  }
+  return views
+    .map((id) => ({
+      id,
+      label: playerBoardViewLabel(id),
+      keys: columnsForView(id, flags),
+    }))
+    .filter((group) => group.keys.length > 0);
 }
 
 function columnLabel(col: TableCol, view: PlayerBoardView): string {

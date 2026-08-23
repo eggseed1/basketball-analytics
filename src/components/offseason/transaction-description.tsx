@@ -13,6 +13,9 @@ import { canLinkTransactionPlayer } from "@/lib/transaction-player-link";
  * ESPN free-text description with player/team mentions.
  * Played players and teams are hoverable + clickable.
  * Players who have never appeared in an NBA game are hoverable only.
+ *
+ * Mentions inherit the parent text size so call sites can use body-sm / caption
+ * without PlayerIdentity / TeamIdentity forcing 16px body.
  */
 export function TransactionDescription({
   description,
@@ -28,6 +31,8 @@ export function TransactionDescription({
     resolutions ?? []
   );
 
+  const mentionNameClass = "inline font-semibold";
+
   return (
     <p className={className}>
       {parts.map((part, i) => {
@@ -41,7 +46,7 @@ export function TransactionDescription({
               teamKey={part.teamKey}
               label={part.label}
               className="inline-flex align-baseline"
-              nameClassName="inline"
+              nameClassName={mentionNameClass}
             />
           );
         }
@@ -61,8 +66,8 @@ export function TransactionDescription({
             href={r.href ?? undefined}
             hasPlayedNba={played}
             variant="compact"
-            className="inline-flex align-baseline"
-            nameClassName="inline"
+            className="inline-flex max-w-none align-baseline"
+            nameClassName={mentionNameClass}
           >
             {name}
           </PlayerIdentity>
