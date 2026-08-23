@@ -194,8 +194,8 @@ export function PlayerSeasonTable({
   // Shooting) and the partitioned "all stats" layout.
   const grouped = groups.length > 0;
   const statCount = groups.reduce((sum, group) => sum + group.keys.length, 0);
-  // Stats pane columns: Tm + Pos + stats (Player lives in the frozen glass col).
-  const colCount = 2 + statCount;
+  // Stats pane: spacer + Tm + Pos + stats (Player lives on the glass overlay).
+  const colCount = 3 + statCount;
 
   const syncFrozenRowHeights = useCallback(() => {
     const table = statsTableRef.current;
@@ -348,6 +348,13 @@ export function PlayerSeasonTable({
         >
           <TableHeader className="sticky top-0 z-20">
             <TableRow className="hover:bg-transparent">
+              <TableHead
+                aria-hidden
+                rowSpan={grouped ? 2 : 1}
+                className="board-frozen-spacer sticky left-0 z-10"
+              >
+                <span className="board-frozen-spacer-slot" />
+              </TableHead>
               <SortableTableHead
                 className={grouped ? "align-bottom" : undefined}
                 rowSpan={grouped ? 2 : 1}
@@ -443,6 +450,12 @@ export function PlayerSeasonTable({
                     key={rowKey(player)}
                     className="hover:bg-transparent"
                   >
+                    <TableCell
+                      aria-hidden
+                      className="board-frozen-spacer sticky left-0 z-10"
+                    >
+                      <span className="board-frozen-spacer-slot" />
+                    </TableCell>
                     <TableCell>
                       {isMultiTeam ? (
                         <span className="text-[12px] font-semibold uppercase tracking-wide">

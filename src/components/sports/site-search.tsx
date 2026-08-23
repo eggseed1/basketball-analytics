@@ -11,7 +11,7 @@ import {
 } from "react";
 import { useRouter } from "next/navigation";
 import { createPortal } from "react-dom";
-import { Menu, Search } from "lucide-react";
+import { Search } from "lucide-react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -456,13 +456,6 @@ export function SiteSearch() {
             )
           : null}
       </div>
-      <button
-        type="submit"
-        className="flex size-9 shrink-0 items-center justify-center rounded-md bg-foreground text-background"
-        aria-label="Search"
-      >
-        <Menu className="size-4" />
-      </button>
     </form>
   );
 }

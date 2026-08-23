@@ -7,33 +7,28 @@ import {
   type ReactNode,
 } from "react";
 
+import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import { cn } from "@/lib/utils";
 
+const FROZEN_MAX_PX = 22 * 16; // 22rem
+
 /**
- * Board chrome that can actually frost like SiteChrome / GlassSurface.
- *
- * Root cause of sticky-td frost failing: `overflow-x-auto` creates a backdrop
- * root. Descendants (sticky Player cells) can only sample content *inside* that
- * scroller — never the page atmosphere that makes the header look alive. Tuning
- * blur/alpha on `.board-sticky-frost` cannot fix that.
- *
- * Layout: frozen glass column (outside the scrollport) + stats scroller.
- * The frozen column samples the page wash; stats scroll beside it, not under a
- * sticky cell trapped in the overflow root.
+ * Board chrome: absolute frost rail over a full-width scroller (SiteChrome model).
+ * Veil/blur stay lighter than header chrome so names stay readable.
  */
 export function BoardScrollFrame({
   frozen,
   children,
   className,
 }: {
-  /** Player (or other) freeze column — rendered outside the horizontal scroller. */
   frozen: ReactNode;
-  /** Horizontally scrolling board body (table without the frozen column). */
   children: ReactNode;
   className?: string;
 }) {
+  const { resolvedDark, surface } = useOwnerTheme();
   const frameRef = useRef<HTMLDivElement>(null);
   const frozenRef = useRef<HTMLDivElement>(null);
+  const solid = surface === "solid";
 
   useEffect(() => {
     const frame = frameRef.current;
@@ -41,13 +36,18 @@ export function BoardScrollFrame({
     if (!frame || !frozenEl) return;
 
     const sync = () => {
-      const w = frozenEl.getBoundingClientRect().width;
-      frame.style.setProperty("--board-frozen-w", `${Math.ceil(w)}px`);
+      const raw = Math.ceil(frozenEl.getBoundingClientRect().width);
+      const cap = Math.min(FROZEN_MAX_PX, Math.floor(window.innerWidth * 0.5));
+      frame.style.setProperty("--board-frozen-w", `${Math.max(Math.min(raw, cap), 1)}px`);
     };
     sync();
     const ro = new ResizeObserver(sync);
     ro.observe(frozenEl);
-    return () => ro.disconnect();
+    window.addEventListener("resize", sync);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", sync);
+    };
   }, []);
 
   return (
@@ -56,10 +56,37 @@ export function BoardScrollFrame({
       className={cn("board-scroll-frame", className)}
       style={{ "--board-frozen-w": "12rem" } as CSSProperties}
     >
-      <div ref={frozenRef} className="board-frozen-col">
-        {frozen}
-      </div>
       <div className="board-scroll-host overflow-x-auto">{children}</div>
+      <div
+        className="board-frozen-col pointer-events-none absolute inset-y-0 left-0 z-20"
+        style={{
+          width: "var(--board-frozen-w)",
+          background: solid
+            ? "var(--card)"
+            : resolvedDark
+              ? "rgba(28, 28, 30, 0.22)"
+              : "rgba(255, 255, 255, 0.22)",
+          backdropFilter: solid ? undefined : "saturate(160%) blur(10px)",
+          WebkitBackdropFilter: solid ? undefined : "saturate(160%) blur(10px)",
+          borderRight: solid
+            ? "1px solid color-mix(in oklab, var(--foreground) 8%, transparent)"
+            : resolvedDark
+              ? "1px solid rgba(255,255,255,0.12)"
+              : "1px solid rgba(255,255,255,0.40)",
+          boxShadow: solid
+            ? "10px 0 18px -12px rgb(0 0 0 / 12%)"
+            : resolvedDark
+              ? "inset 0 1px 0 rgba(255,255,255,0.08)"
+              : "inset 0 1px 0 rgba(255,255,255,0.45)",
+        }}
+      >
+        <div
+          ref={frozenRef}
+          className="pointer-events-auto h-full w-max max-w-[min(50vw,22rem)]"
+        >
+          {frozen}
+        </div>
+      </div>
     </div>
   );
 }
