@@ -6,7 +6,8 @@ type CacheEntry<T> = {
 const memoryCache = new Map<string, CacheEntry<unknown>>();
 
 const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
-const DEFAULT_RETRIES = 3;
+const DEFAULT_RETRIES = 2;
+const DEFAULT_TIMEOUT_MS = 4_000;
 
 export interface EspnFetchOptions {
   ttlMs?: number;
@@ -42,7 +43,7 @@ export async function espnFetchJson<T>(
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
-        signal: options.signal,
+        signal: options.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
         headers: {
           Accept: "application/json",
           "User-Agent":

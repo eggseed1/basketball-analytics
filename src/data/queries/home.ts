@@ -30,6 +30,7 @@ import {
   priorSeasonForStats,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import {
   getCanonicalTeamFromProvider,
   resolveCanonicalTeam,
@@ -164,7 +165,7 @@ export type HomeAnalytics = {
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
 const HOME_CACHE_VERSION = 11;
-const ESPN_SEASONS_BUDGET_MS = 4000;
+const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 let homeCache: {
   version: number;
@@ -223,25 +224,35 @@ function withProfileId(
 async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const calendarSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const espn = new NBADataProvider();
-
-  const calendarSeasons = await withTimeout(
-    espn.getPlayerSeasons(calendarSeason).catch(() => [] as PlayerSeason[]),
+  const preTip = isPreseasonRosterSeason(calendarSeason);
+  const initialSeason = preTip
+    ? priorSeasonForStats(calendarSeason)
+    : calendarSeason;
+  let seasons = await withTimeout(
+    espn.getPlayerSeasons(initialSeason).catch(() => [] as PlayerSeason[]),
     ESPN_SEASONS_BUDGET_MS,
     [] as PlayerSeason[]
   );
+  let season = initialSeason;
 
-  const season = shouldUsePriorSeasonBoardStats(calendarSeason, calendarSeasons)
-    ? priorSeasonForStats(calendarSeason)
-    : calendarSeason;
-
-  const seasons =
-    season === calendarSeason
-      ? calendarSeasons
-      : await withTimeout(
-          espn.getPlayerSeasons(season).catch(() => [] as PlayerSeason[]),
-          ESPN_SEASONS_BUDGET_MS,
-          calendarSeasons
-        );
+  // Outside the known pre-tip window, only fall back when the live current
+  // board proves empty. During pre-tip we go straight to the completed season
+  // and avoid a 30-team roster crawl on every cold serverless instance.
+  if (
+    !preTip &&
+    shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
+  ) {
+    const prior = priorSeasonForStats(calendarSeason);
+    const priorRows = await withTimeout(
+      espn.getPlayerSeasons(prior).catch(() => [] as PlayerSeason[]),
+      ESPN_SEASONS_BUDGET_MS,
+      [] as PlayerSeason[]
+    );
+    if (priorRows.length > 0) {
+      season = prior;
+      seasons = priorRows;
+    }
+  }
 
   const drblSeasonOk = isDrblSeason(season);
 

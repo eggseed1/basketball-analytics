@@ -24,6 +24,7 @@ import {
   priorSeasonStatsNotice,
   shouldUsePriorSeasonBoardStats,
 } from "@/lib/player-board-season";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 
 export type PlayerBoardSource =
   | "live-espn"
@@ -100,6 +101,19 @@ export async function getPlayerSeasonBoardSnapshot(
   let usingPriorSeasonStats = false;
   const load = boardLoaderOverride ?? getFilteredPlayerSeasonsDetailed;
 
+  // During the known pre-tip window, the current league year only has roster
+  // shells (GP=0). Go straight to the completed season board instead of first
+  // crawling all 30 ESPN team rosters and then loading the prior board.
+  if (
+    season &&
+    season.toUpperCase() !== "ALL" &&
+    (provider.name !== "local" || Boolean(boardLoaderOverride)) &&
+    isPreseasonRosterSeason(season)
+  ) {
+    statsSeason = priorSeasonForStats(season);
+    usingPriorSeasonStats = true;
+  }
+
   if (provider.name === "local" && !boardLoaderOverride) {
     const loaded = await load(filters);
     const health = await buildHealth({
@@ -121,17 +135,20 @@ export async function getPlayerSeasonBoardSnapshot(
   }
 
   const cached =
-    season && season.toUpperCase() !== "ALL"
-      ? lastGoodBySeason.get(season)
+    statsSeason && statsSeason.toUpperCase() !== "ALL"
+      ? lastGoodBySeason.get(statsSeason)
       : undefined;
   const narrowing = hasNarrowingFilters(filters);
 
   // Draft class / team / position / minutes only re-filter the season snapshot.
   if (cached && cached.unfiltered.length > 0 && narrowing) {
-    const rows = applyPlayerSeasonFilters(cached.unfiltered, filters);
+    const rows = applyPlayerSeasonFilters(cached.unfiltered, {
+      ...filters,
+      season: statsSeason,
+    });
     const health = await buildHealth({
       providerName: boardLoaderOverride ? "nba" : provider.name,
-      season,
+      season: statsSeason,
       rowCount: rows.length,
       error: null,
       fromCachedRealBoard: Boolean(cached.servingFromFallback),
@@ -140,7 +157,12 @@ export async function getPlayerSeasonBoardSnapshot(
       rows,
       health,
       source: cached.servingFromFallback ? "cached-espn" : "live-espn",
-      warnings: cached.servingFromFallback ? [CACHED_WARNING] : [],
+      warnings: [
+        ...(usingPriorSeasonStats
+          ? [priorSeasonStatsNotice(requestSeason, statsSeason)]
+          : []),
+        ...(cached.servingFromFallback ? [CACHED_WARNING] : []),
+      ],
       requestSeason,
       statsSeason,
       usingPriorSeasonStats,
@@ -153,15 +175,18 @@ export async function getPlayerSeasonBoardSnapshot(
   const loaded = await load(
     season.toUpperCase() === "ALL"
       ? filters
-      : narrowing && season
-        ? { season }
-        : filters
+      : narrowing && statsSeason
+        ? { season: statsSeason }
+        : { ...filters, season: statsSeason }
   );
   let unfilteredRows = loaded.rows;
   let rows = loaded.rows;
   const error = loaded.error;
   let source: PlayerBoardSource = "live-espn";
   const warnings: string[] = [];
+  if (usingPriorSeasonStats) {
+    warnings.push(priorSeasonStatsNotice(requestSeason, statsSeason));
+  }
   let fromCachedRealBoard = false;
 
   if (
@@ -170,8 +195,11 @@ export async function getPlayerSeasonBoardSnapshot(
     season &&
     season.toUpperCase() !== "ALL"
   ) {
-    seedLastGood(season, unfilteredRows);
-    rows = applyPlayerSeasonFilters(unfilteredRows, filters);
+    seedLastGood(statsSeason, unfilteredRows);
+    rows = applyPlayerSeasonFilters(unfilteredRows, {
+      ...filters,
+      season: statsSeason,
+    });
   } else if (error == null && unfilteredRows.length > 0 && season.toUpperCase() === "ALL") {
     // Loader already applied filters for the all-seasons merge path.
     rows = applyPlayerSeasonFilters(unfilteredRows, { ...filters, season: undefined });
@@ -180,6 +208,7 @@ export async function getPlayerSeasonBoardSnapshot(
   // Pre-tip current season: show last completed season stats on the board.
   if (
     error == null &&
+    !usingPriorSeasonStats &&
     season &&
     season.toUpperCase() !== "ALL" &&
     shouldUsePriorSeasonBoardStats(season, unfilteredRows)
@@ -201,22 +230,25 @@ export async function getPlayerSeasonBoardSnapshot(
   // Live miss → process-local last-good real board for this season.
   // Only activate on provider failure - not on a successful empty filter result.
   if (error != null && season) {
-    const cached = lastGoodBySeason.get(season);
+    const cached = lastGoodBySeason.get(statsSeason);
     if (cached && cached.unfiltered.length > 0) {
-      rows = applyPlayerSeasonFilters(cached.unfiltered, filters);
+      rows = applyPlayerSeasonFilters(cached.unfiltered, {
+        ...filters,
+        season: statsSeason,
+      });
       source = "cached-espn";
       fromCachedRealBoard = true;
       cached.servingFromFallback = true;
-      lastGoodBySeason.set(season, cached);
+      lastGoodBySeason.set(statsSeason, cached);
       warnings.push(CACHED_WARNING);
       console.warn(
-        `[player-board] live board unavailable (${classifyProviderFailure(error).label}); using cached real board for ${season}`
+        `[player-board] live board unavailable (${classifyProviderFailure(error).label}); using cached real board for ${statsSeason}`
       );
     } else {
       source = "unavailable";
       warnings.push(UNAVAILABLE_WARNING);
       console.warn(
-        `[player-board] live board unavailable (${classifyProviderFailure(error).label}); no cached board for ${season}`
+        `[player-board] live board unavailable (${classifyProviderFailure(error).label}); no cached board for ${statsSeason}`
       );
     }
   }

@@ -5,14 +5,24 @@ import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 
 export async function HomeStandingsPanel({ season }: { season: string }) {
   try {
-    const data = await getLeagueStandings(season);
+    // In the offseason, skip a guaranteed-empty current-season request and
+    // load the completed standings directly.
+    const initialSeason = isPreseasonRosterSeason(season)
+      ? shiftCanonicalSeason(season, -1)
+      : season;
+    const data = await getLeagueStandings(initialSeason);
     let east =
       data.conferences.find((c) => c.conference === "East")?.rows ?? [];
     let west =
       data.conferences.find((c) => c.conference === "West")?.rows ?? [];
-    let displaySeason = season;
+    let displaySeason = initialSeason;
 
-    if (!east.length && !west.length && isPreseasonRosterSeason(season)) {
+    if (
+      !east.length &&
+      !west.length &&
+      initialSeason === season &&
+      isPreseasonRosterSeason(season)
+    ) {
       const priorSeason = shiftCanonicalSeason(season, -1);
       const prior = await getLeagueStandings(priorSeason);
       east =

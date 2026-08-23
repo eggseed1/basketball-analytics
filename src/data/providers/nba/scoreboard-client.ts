@@ -188,7 +188,9 @@ export async function fetchHomeWeekStrip(options: {
   const upcomingSeason = upcomingScheduleSeason(now);
   const upcomingMonths: string[] = [];
   let cursor = monthKeyFromDate(now);
-  for (let i = 0; i < 5; i++) {
+  // Three months is enough to bridge the offseason to opening night while
+  // keeping cold homepage loads to at most three parallel scoreboard calls.
+  for (let i = 0; i < 3; i++) {
     upcomingMonths.push(cursor);
     cursor = shiftMonthKey(cursor, 1);
   }

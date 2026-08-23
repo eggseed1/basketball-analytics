@@ -24,9 +24,21 @@ type EspnRosterResponse = {
   team?: { id: string; abbreviation: string; displayName: string };
 };
 
-/** Current league year before regular-season stats exist on NBA Stats. */
+/**
+ * Current league year before regular-season stats exist on NBA Stats.
+ *
+ * The league year flips July 1, but treating the *entire* current season as
+ * preseason caused every board request to fan out across 30 ESPN rosters even
+ * after games started. Keep the roster path to the actual offseason/pre-tip
+ * window; from October 15 onward the league-dash board is the source of truth.
+ */
 export function isPreseasonRosterSeason(season: string, now = new Date()): boolean {
-  return season === canonicalSeasonFromStartYear(currentNbaStartYear(now));
+  if (season !== canonicalSeasonFromStartYear(currentNbaStartYear(now))) {
+    return false;
+  }
+  const month = now.getUTCMonth();
+  const day = now.getUTCDate();
+  return month < 9 || (month === 9 && day < 15);
 }
 
 export async function fetchEspnTeamRosterPlayers(

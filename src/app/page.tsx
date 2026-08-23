@@ -18,6 +18,10 @@ export const metadata = {
   description: "NBA games, standings, impact leaders, and analytics coverage.",
 };
 
+// Cache the assembled homepage briefly at the route level. Provider-specific
+// live-score fetches still keep their own shorter refresh policy.
+export const revalidate = 60;
+
 function BlockSkeleton({ className }: { className?: string }) {
   return (
     <div
