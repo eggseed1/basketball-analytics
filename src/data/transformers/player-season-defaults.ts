@@ -1,8 +1,21 @@
 import type { PlayerSeason } from "@/data/types";
 
 /**
+ * Runtime sentinel for numeric statistics that the source did not publish.
+ *
+ * Keep the canonical interface numeric for compatibility, but never use 0 as
+ * the absence marker: zero is a real basketball value. Non-finite values are
+ * filtered by shared presentation/aggregation helpers and serialize as null in
+ * JSON, while explicitly supplied zeroes remain zero.
+ */
+export const MISSING_PLAYER_STAT = Number.NaN;
+
+/**
  * Fill analytics-required PlayerSeason fields for slim ESPN/career adapters.
- * R1 fields stay null when absent — never coerce missing R1 to 0.
+ *
+ * Callers must explicitly provide every statistic they actually observed.
+ * Omitted numeric fields become MISSING_PLAYER_STAT, not 0. R1 fields remain
+ * null when absent because their public contract already models availability.
  */
 export function withPlayerSeasonDefaults(
   partial: Partial<PlayerSeason> &
@@ -11,82 +24,86 @@ export function withPlayerSeasonDefaults(
       "playerId" | "playerName" | "teamId" | "teamName" | "season"
     >
 ): PlayerSeason {
+  const missing = MISSING_PLAYER_STAT;
   const out: PlayerSeason = {
-    gamesPlayed: 0,
-    gamesStarted: 0,
-    minutes: 0,
-    fieldGoalsMade: 0,
-    fieldGoalsAttempted: 0,
-    threePointersMade: 0,
-    threePointersAttempted: 0,
-    freeThrowsMade: 0,
-    freeThrowsAttempted: 0,
-    offensiveRebounds: 0,
-    defensiveRebounds: 0,
-    rebounds: 0,
-    assists: 0,
-    steals: 0,
-    blocks: 0,
-    turnovers: 0,
-    personalFouls: 0,
-    points: 0,
-    plusMinus: 0,
-    fieldGoalPct: 0,
-    twoPointPct: 0,
-    threePointPct: 0,
-    freeThrowPct: 0,
-    threePointAttemptRate: 0,
-    freeThrowRate: 0,
-    turnoverPct: 0,
-    assistPct: 0,
-    offensiveReboundPct: 0,
-    defensiveReboundPct: 0,
-    reboundPct: 0,
-    stealPct: 0,
-    blockPct: 0,
-    pie: 0,
-    per: 0,
-    ows: 0,
-    dws: 0,
-    winShares: 0,
-    winSharesPer48: 0,
-    obpm: 0,
-    dbpm: 0,
-    bpm: 0,
-    vorp: 0,
-    dpm: 0,
-    oDpm: 0,
-    dDpm: 0,
-    boxDpm: 0,
-    onOffDpm: 0,
-    drbl100: 0,
-    drblP: 0,
-    drblLn: 0,
-    drblB: 0,
-    drblO: 0,
-    drblD: 0,
-    sdv100: 0,
-    shotMaking100: 0,
-    epvShootMean: 0,
-    vContMean: 0,
+    gamesPlayed: missing,
+    gamesStarted: missing,
+    minutes: missing,
+    fieldGoalsMade: missing,
+    fieldGoalsAttempted: missing,
+    threePointersMade: missing,
+    threePointersAttempted: missing,
+    freeThrowsMade: missing,
+    freeThrowsAttempted: missing,
+    offensiveRebounds: missing,
+    defensiveRebounds: missing,
+    rebounds: missing,
+    assists: missing,
+    steals: missing,
+    blocks: missing,
+    turnovers: missing,
+    personalFouls: missing,
+    points: missing,
+    plusMinus: missing,
+    fieldGoalPct: missing,
+    twoPointPct: missing,
+    threePointPct: missing,
+    freeThrowPct: missing,
+    threePointAttemptRate: missing,
+    freeThrowRate: missing,
+    turnoverPct: missing,
+    assistPct: missing,
+    offensiveReboundPct: missing,
+    defensiveReboundPct: missing,
+    reboundPct: missing,
+    stealPct: missing,
+    blockPct: missing,
+    pie: missing,
+    per: missing,
+    ows: missing,
+    dws: missing,
+    winShares: missing,
+    winSharesPer48: missing,
+    obpm: missing,
+    dbpm: missing,
+    bpm: missing,
+    vorp: missing,
+    dpm: missing,
+    oDpm: missing,
+    dDpm: missing,
+    boxDpm: missing,
+    onOffDpm: missing,
+    drbl100: missing,
+    drblP: missing,
+    drblLn: missing,
+    drblB: missing,
+    drblO: missing,
+    drblD: missing,
+    sdv100: missing,
+    shotMaking100: missing,
+    epvShootMean: missing,
+    vContMean: missing,
     r1Points: null,
     r1WinEquivalents: null,
     r1PointValueVersion: null,
     r1WinEquivalentVersion: null,
-    drblWar: 0,
-    drblSeasonalImpact: 0,
-    drblL: 0,
-    drblMeanLeverage: 0,
-    drblDisagreement: 0,
-    drblUncertainty: 0,
-    drblIntervalLo: 0,
-    drblIntervalHi: 0,
+    drblWar: missing,
+    drblSeasonalImpact: missing,
+    drblL: missing,
+    drblMeanLeverage: missing,
+    drblDisagreement: missing,
+    drblUncertainty: missing,
+    drblIntervalLo: missing,
+    drblIntervalHi: missing,
     ...partial,
   };
+
   // Preserve null R1 semantics if partial omitted the fields.
   out.r1Points = partial.r1Points ?? null;
   out.r1WinEquivalents = partial.r1WinEquivalents ?? null;
-  // Do not invent zeros for optional provider-published rates.
+
+  // Optional provider-published fields remain absent rather than NaN so older
+  // consumers using nullish checks continue to behave correctly.
   const optionalKeys = [
     "trueShootingPct",
     "effectiveFieldGoalPct",
@@ -100,5 +117,6 @@ export function withPlayerSeasonDefaults(
       delete out[key];
     }
   }
+
   return out;
 }
