@@ -1,3 +1,5 @@
+import { runtimeTimeoutMs } from "./runtime-policy";
+
 type CacheEntry<T> = {
   expiresAt: number;
   value: T;
@@ -7,7 +9,9 @@ const memoryCache = new Map<string, CacheEntry<unknown>>();
 
 const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
 const DEFAULT_RETRIES = 2;
-const DEFAULT_TIMEOUT_MS = 4_000;
+// Player identity/career calls sit above the first Suspense boundary. Bound a
+// cold Vercel miss so local/history fallbacks can still render the route.
+const DEFAULT_TIMEOUT_MS = runtimeTimeoutMs(4_000, 2_500);
 
 export interface EspnFetchOptions {
   ttlMs?: number;
