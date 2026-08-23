@@ -30,6 +30,13 @@ function num(
   return value != null && Number.isFinite(value) ? value : fallback;
 }
 
+function finiteOr(...values: Array<number | undefined>): number {
+  for (const value of values) {
+    if (value != null && Number.isFinite(value)) return value;
+  }
+  return Number.NaN;
+}
+
 function pctToFraction(value: number): number {
   if (!Number.isFinite(value)) return Number.NaN;
   if (value > 1) return value / 100;
@@ -105,6 +112,7 @@ export async function fetchTeamSeasonStats(
     const stats = completeCategoryMap(row.categories, schema);
     const teamId = String(row.team.id);
     const meta = ESPN_TEAM_META[teamId];
+    const gamesPlayed = num(stats, "gamesPlayed");
     const points = num(stats, "points");
     const fgm = num(stats, "fieldGoalsMade");
     const fga = num(stats, "fieldGoalsAttempted");
@@ -112,9 +120,26 @@ export async function fetchTeamSeasonStats(
     const tpa = num(stats, "threePointFieldGoalsAttempted");
     const ftm = num(stats, "freeThrowsMade");
     const fta = num(stats, "freeThrowsAttempted");
+    const rebounds = num(stats, "totalRebounds", num(stats, "rebounds"));
     const assists = num(stats, "assists");
+    const steals = num(stats, "steals");
+    const blocks = num(stats, "blocks");
     const turnovers = num(stats, "turnovers");
-    const ppg = num(stats, "avgPoints");
+
+    const perGame = (averageKey: string, total: number): number =>
+      finiteOr(
+        num(stats, averageKey),
+        Number.isFinite(total) && gamesPlayed > 0
+          ? total / gamesPlayed
+          : undefined
+      );
+
+    const ppg = perGame("avgPoints", points);
+    const rpg = perGame("avgRebounds", rebounds);
+    const apg = perGame("avgAssists", assists);
+    const spg = perGame("avgSteals", steals);
+    const bpg = perGame("avgBlocks", blocks);
+    const topg = perGame("avgTurnovers", turnovers);
     const avgDiff = num(stats, "avgPointsDifferential");
     const orbPct = num(stats, "offensiveReboundPct");
     const efg = effectiveFieldGoalPct(fgm, tpm, fga);
@@ -124,26 +149,39 @@ export async function fetchTeamSeasonStats(
         ? Math.round((ppg - avgDiff) * 10) / 10
         : Number.NaN;
 
+    const fieldGoalPct = finiteOr(
+      pctToFraction(num(stats, "fieldGoalPct")),
+      fga > 0 ? fgm / fga : undefined
+    );
+    const threePointPct = finiteOr(
+      pctToFraction(
+        num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
+      ),
+      tpa > 0 ? tpm / tpa : undefined
+    );
+    const freeThrowPct = finiteOr(
+      pctToFraction(num(stats, "freeThrowPct")),
+      fta > 0 ? ftm / fta : undefined
+    );
+
     return {
       season,
       teamId,
       abbreviation: row.team.abbreviation,
       fullName: row.team.displayName,
       conference: meta?.conference ?? "East",
-      gamesPlayed: num(stats, "gamesPlayed"),
+      gamesPlayed,
       ppg,
       oppPpg,
       avgDiff,
-      rpg: num(stats, "avgRebounds"),
-      apg: num(stats, "avgAssists"),
-      spg: num(stats, "avgSteals"),
-      bpg: num(stats, "avgBlocks"),
-      topg: num(stats, "avgTurnovers"),
-      fieldGoalPct: pctToFraction(num(stats, "fieldGoalPct")),
-      threePointPct: pctToFraction(
-        num(stats, "threePointFieldGoalPct", num(stats, "threePointPct"))
-      ),
-      freeThrowPct: pctToFraction(num(stats, "freeThrowPct")),
+      rpg,
+      apg,
+      spg,
+      bpg,
+      topg,
+      fieldGoalPct,
+      threePointPct,
+      freeThrowPct,
       ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
       ...(ts != null ? { trueShootingPct: ts } : {}),
       assistToTurnover:
