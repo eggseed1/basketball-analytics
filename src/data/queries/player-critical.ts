@@ -1,4 +1,7 @@
+import "server-only";
+
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { getUniverseSeasonsForPlayer } from "@/data/history/player-universe";
 import { getDataProvider } from "@/data/providers";
 import {
@@ -9,8 +12,13 @@ import {
   turnoverPct,
   twoPointPct,
 } from "@/data/providers/nba/compute-advanced";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
-import type { PlayerSeason } from "@/data/types";
+import type { Player, PlayerSeason } from "@/data/types";
 import {
   firstUsablePlayerDisplayName,
   isSyntheticPlayerDisplayName,
@@ -83,6 +91,81 @@ function historyCareerFallback(playerId: string): PlayerSeason[] {
 }
 
 /**
+ * Preserve current franchise identity during the offseason without a 30-team
+ * roster crawl. ESPN's athlete profile already carries the current team id;
+ * synthesize only the explicit zero-GP preseason shell from that profile.
+ */
+function overlayProfileTeamForPreseason(
+  routePlayerId: string,
+  rows: PlayerSeason[],
+  player: Player | null
+): PlayerSeason[] {
+  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (!isPreseasonRosterSeason(season) || !player?.currentTeamId) return rows;
+
+  const teamId = String(player.currentTeamId).trim();
+  if (!teamId) return rows;
+  const canonical = resolveCanonicalTeam(teamId);
+  const teamName =
+    canonical.status === "resolved"
+      ? canonical.team.displayName
+      : teamId;
+  const teamAbbreviation =
+    canonical.status === "resolved" ? canonical.team.abbr : undefined;
+  const existingIndex = rows.findIndex((row) => row.season === season);
+  const existing = existingIndex >= 0 ? rows[existingIndex]! : null;
+
+  // Never overwrite a season that has actual games.
+  if (existing && Number.isFinite(existing.gamesPlayed) && existing.gamesPlayed > 0) {
+    return rows;
+  }
+
+  const playerName =
+    firstUsablePlayerDisplayName(
+      player.fullName,
+      existing?.playerName,
+      rows[0]?.playerName
+    ) ?? routePlayerId;
+  const row = existing
+    ? {
+        ...existing,
+        playerName,
+        teamId,
+        teamName,
+        teamAbbreviation,
+        teamIdProvider: "espn" as const,
+        providerTeamId: teamId,
+        position: player.position ?? existing.position,
+        age: player.age ?? existing.age,
+        gamesPlayed: 0,
+        gamesStarted: 0,
+        minutes: 0,
+      }
+    : withPlayerSeasonDefaults({
+        playerId: rows[0]?.playerId ?? player.id ?? routePlayerId,
+        playerName,
+        teamId,
+        teamName,
+        teamAbbreviation,
+        teamIdProvider: "espn",
+        providerTeamId: teamId,
+        season,
+        position: player.position,
+        age: player.age,
+        gamesPlayed: 0,
+        gamesStarted: 0,
+        minutes: 0,
+      });
+
+  if (existingIndex >= 0) {
+    const next = [...rows];
+    next[existingIndex] = row;
+    return next;
+  }
+  return [row, ...rows];
+}
+
+/**
  * First-paint career loader for `/players/[playerId]`.
  *
  * It intentionally excludes live DARKO, league-wide roster discovery, and
@@ -96,24 +179,35 @@ export async function getPlayerCriticalCareerSeasons(
   const provider = getDataProvider();
   const statsId = identity?.nbaId ?? playerId;
 
-  let rows =
+  const loadCareer = async (id: string): Promise<PlayerSeason[]> =>
     typeof provider.getPlayerCareerSeasons === "function"
-      ? await provider.getPlayerCareerSeasons(statsId).catch(() => [])
+      ? provider.getPlayerCareerSeasons(id).catch(() => [])
       : [];
 
-  if (
-    rows.length === 0 &&
-    statsId !== playerId &&
-    typeof provider.getPlayerCareerSeasons === "function"
-  ) {
-    rows = await provider.getPlayerCareerSeasons(playerId).catch(() => []);
+  let [rows, player] = await Promise.all([
+    loadCareer(statsId),
+    provider.getPlayer(statsId).catch(() => null),
+  ]);
+
+  if (rows.length === 0 && statsId !== playerId) {
+    const [fallbackRows, fallbackPlayer] = await Promise.all([
+      loadCareer(playerId),
+      player ? Promise.resolve(null) : provider.getPlayer(playerId).catch(() => null),
+    ]);
+    rows = fallbackRows;
+    player = player ?? fallbackPlayer;
   }
 
   if (rows.length === 0) {
     rows = historyCareerFallback(playerId);
   }
 
-  const resolvedName = firstUsablePlayerDisplayName(identity?.displayName);
+  rows = overlayProfileTeamForPreseason(playerId, rows, player);
+
+  const resolvedName = firstUsablePlayerDisplayName(
+    identity?.displayName,
+    player?.fullName
+  );
   if (resolvedName) {
     rows = rows.map((row) =>
       isSyntheticPlayerDisplayName(row.playerName)
