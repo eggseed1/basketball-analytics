@@ -4,11 +4,11 @@ import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
-import {
-  categoryMap,
-  type EspnStatCategorySchema,
-  type EspnTeamStatsRow,
+import type {
+  EspnStatCategorySchema,
+  EspnTeamStatsRow,
 } from "@/data/transformers/espn";
+import { completeCategoryMap } from "@/data/providers/nba/espn-stat-integrity";
 import {
   effectiveFieldGoalPct,
   trueShootingPct,
@@ -21,11 +21,17 @@ type ByTeamResponse = {
   categories?: EspnStatCategorySchema[];
 };
 
-function num(map: Map<string, number>, key: string, fallback = 0): number {
-  return map.get(key) ?? fallback;
+function num(
+  map: Map<string, number>,
+  key: string,
+  fallback = Number.NaN
+): number {
+  const value = map.get(key);
+  return value != null && Number.isFinite(value) ? value : fallback;
 }
 
 function pctToFraction(value: number): number {
+  if (!Number.isFinite(value)) return Number.NaN;
   if (value > 1) return value / 100;
   return value;
 }
@@ -96,7 +102,7 @@ export async function fetchTeamSeasonStats(
   }
 
   return teams.map((row) => {
-    const stats = categoryMap(row.categories, schema);
+    const stats = completeCategoryMap(row.categories, schema);
     const teamId = String(row.team.id);
     const meta = ESPN_TEAM_META[teamId];
     const points = num(stats, "points");
@@ -113,6 +119,10 @@ export async function fetchTeamSeasonStats(
     const orbPct = num(stats, "offensiveReboundPct");
     const efg = effectiveFieldGoalPct(fgm, tpm, fga);
     const ts = trueShootingPct(points, fga, fta);
+    const oppPpg =
+      Number.isFinite(ppg) && Number.isFinite(avgDiff)
+        ? Math.round((ppg - avgDiff) * 10) / 10
+        : Number.NaN;
 
     return {
       season,
@@ -122,7 +132,7 @@ export async function fetchTeamSeasonStats(
       conference: meta?.conference ?? "East",
       gamesPlayed: num(stats, "gamesPlayed"),
       ppg,
-      oppPpg: Math.round((ppg - avgDiff) * 10) / 10,
+      oppPpg,
       avgDiff,
       rpg: num(stats, "avgRebounds"),
       apg: num(stats, "avgAssists"),
@@ -136,8 +146,11 @@ export async function fetchTeamSeasonStats(
       freeThrowPct: pctToFraction(num(stats, "freeThrowPct")),
       ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
       ...(ts != null ? { trueShootingPct: ts } : {}),
-      assistToTurnover: turnovers > 0 ? assists / turnovers : assists,
-      offensiveReboundPct: orbPct > 1 ? orbPct / 100 : orbPct,
+      assistToTurnover:
+        Number.isFinite(assists) && Number.isFinite(turnovers) && turnovers > 0
+          ? assists / turnovers
+          : Number.NaN,
+      offensiveReboundPct: pctToFraction(orbPct),
       points,
       fieldGoalsMade: fgm,
       fieldGoalsAttempted: fga,
