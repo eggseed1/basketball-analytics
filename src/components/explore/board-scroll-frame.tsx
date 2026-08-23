@@ -10,14 +10,15 @@ import {
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
 import { cn } from "@/lib/utils";
 
-const FROZEN_MAX_DESKTOP_PX = 22 * 16;
-const FROZEN_MAX_MOBILE_PX = 10 * 16;
+const FROZEN_MAX_DESKTOP_PX = 24 * 16;
+/** Longest board names (e.g. Gilgeous-Alexander) need ~18rem at body size. */
+const FROZEN_MAX_MOBILE_PX = 18 * 16;
 
 function frozenWidthCap(viewportW: number): number {
   if (viewportW < 640) {
-    return Math.min(FROZEN_MAX_MOBILE_PX, Math.floor(viewportW * 0.38));
+    return Math.min(FROZEN_MAX_MOBILE_PX, Math.floor(viewportW * 0.72));
   }
-  return Math.min(FROZEN_MAX_DESKTOP_PX, Math.floor(viewportW * 0.5));
+  return Math.min(FROZEN_MAX_DESKTOP_PX, Math.floor(viewportW * 0.55));
 }
 
 /**
@@ -44,7 +45,8 @@ export function BoardScrollFrame({
     if (!frame || !frozenEl) return;
 
     const sync = () => {
-      const raw = Math.ceil(frozenEl.getBoundingClientRect().width);
+      // Measure intrinsic name column width (ignore CSS max-width clamps).
+      const raw = Math.ceil(frozenEl.scrollWidth);
       const cap = frozenWidthCap(window.innerWidth);
       frame.style.setProperty(
         "--board-frozen-w",
@@ -93,7 +95,7 @@ export function BoardScrollFrame({
       >
         <div
           ref={frozenRef}
-          className="pointer-events-auto h-full w-max max-w-[min(38vw,10rem)] sm:max-w-[min(50vw,22rem)]"
+          className="pointer-events-auto h-full w-max"
         >
           {frozen}
         </div>

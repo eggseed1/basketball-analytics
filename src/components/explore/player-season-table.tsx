@@ -305,7 +305,7 @@ export function PlayerSeasonTable({
                   <div
                     key={rowKey(player)}
                     data-frozen-row
-                    className="flex max-w-[var(--board-frozen-w)] items-center px-1.5 py-2 sm:px-2"
+                    className="flex items-center whitespace-nowrap px-1.5 py-2 sm:px-2"
                   >
                     <PlayerIdentity
                       playerId={player.playerId}
@@ -315,8 +315,8 @@ export function PlayerSeasonTable({
                       position={player.position}
                       season={player.season}
                       variant="compact"
-                      className="min-w-0 max-w-full"
-                      nameClassName="min-w-0 max-w-full gap-1.5 sm:gap-2"
+                      className="w-max max-w-none"
+                      nameClassName="w-max max-w-none gap-1.5 sm:gap-2"
                     >
                       <PlayerHeadshot
                         playerId={player.playerId}
@@ -327,7 +327,7 @@ export function PlayerSeasonTable({
                       />
                       <span
                         className={cn(
-                          "min-w-0 truncate",
+                          "whitespace-nowrap",
                           type.body,
                           textLinkClassName
                         )}

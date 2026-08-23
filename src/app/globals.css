@@ -465,12 +465,12 @@ html:not([data-surface="glass"]) .board-scroll-frame {
 }
 
 .board-scroll-frame > .board-frozen-col {
-  max-width: min(42vw, 10rem);
+  max-width: min(72vw, 18rem);
 }
 
 @media (min-width: 640px) {
   .board-scroll-frame > .board-frozen-col {
-    max-width: min(50vw, 22rem);
+    max-width: min(55vw, 24rem);
   }
 }
 
