@@ -43,6 +43,24 @@ const nextConfig: NextConfig = {
   // required at runtime for Explore Games / Game Lab when present).
   // Scope tracing to game routes only — never attach the full tree to every page.
   outputFileTracingIncludes: {
+    // Runtime data is intentionally loaded from disk instead of bundled into
+    // client/server chunks. Next cannot statically trace dynamic path.join()
+    // calls, so make the production server output self-contained on Vercel.
+    "/*": [
+      "./src/data/drbl/precomputed/**/*",
+      "./src/data/media/portrait-lookup.json",
+      "./data/cba/**/*",
+      "./data/front-office/v1/**/*",
+      "./data/impact/**/*",
+      "./data/movement-center/v1/**/*",
+      "./data/salaries/**/*",
+      "./data/sentiment/v1/**/*",
+      "./data/transactions/curated/v1/**/*",
+      "./data/transactions/espn-site-v2/v1/manifest.json",
+      "./data/transactions/espn-site-v2/v1/transactions.jsonl",
+      "./data/transactions/espn-site-v2/v1/ownership-edges.jsonl",
+      "./data/transactions/espn-site-v2/v1/validation-summary.json",
+    ],
     "/games/[gameId]": ["./data/cache/games/**/*"],
     "/explore/games": ["./data/cache/games/**/*"],
   },
