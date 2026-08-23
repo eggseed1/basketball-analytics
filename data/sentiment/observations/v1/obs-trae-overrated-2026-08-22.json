@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-trae-overrated-2026-08-22",
+  "collectedAt": "2026-08-22T18:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-trae-fan-001",
+      "entityType": "player",
+      "entityId": "1629027",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "negative",
+      "score": -0.42,
+      "mentionVolume": 186,
+      "language": "en",
+      "topicTags": ["overrated", "playoff_exit", "empty_stats"],
+      "sampledAt": "2026-08-22T17:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-trae-fan-002",
+      "entityType": "player",
+      "entityId": "1629027",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "negative",
+      "score": -0.28,
+      "mentionVolume": 94,
+      "language": "en",
+      "topicTags": ["overrated", "defense", "new_team_fit"],
+      "sampledAt": "2026-08-22T17:45:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-trae-media-001",
+      "entityType": "player",
+      "entityId": "1629027",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "neutral",
+      "score": 0.05,
+      "mentionVolume": 62,
+      "language": "en",
+      "topicTags": ["trade_reaction", "franchise_face", "wizards_fit"],
+      "sampledAt": "2026-08-22T16:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

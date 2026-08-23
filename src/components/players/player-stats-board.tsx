@@ -1,133 +1,150 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 
-import { GlassSurface } from "@/components/brand/glass-surface";
+import {
+  GlassSurface,
+  type GlassSurfaceHonor,
+} from "@/components/brand/glass-surface";
+import { TeamSeasonSwatch } from "@/components/brand/team-season-swatch";
+import { useQueryNavOptional } from "@/components/continuity/query-nav";
+import { TextLink } from "@/components/ui/text-link";
+import type { PlayerSeason } from "@/data/types";
 import { type } from "@/lib/design-system";
-import { formatNumber, formatPct } from "@/lib/format";
+import { formatNumber } from "@/lib/format";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
-import type { PlayerSeasonKind } from "@/lib/player-destination";
-import type { PlayerSeason } from "@/data/types";
+import {
+  playerDepthHref,
+  type PlayerSeasonKind,
+} from "@/lib/player-destination";
+import {
+  cardStintsForSeason,
+  isMultiTeamSeasonRow,
+  multiTeamDisplayLabel,
+} from "@/lib/player-team-context";
+import { teamSeasonIsMulti } from "@/lib/team-season-colors";
+import type { ThemeMode } from "@/themes/era-theme";
 import { cn } from "@/lib/utils";
 
-type RateMode = "perGame" | "totals" | "per36";
+import {
+  SHEET_STAT_CATEGORY_CHIPS,
+  formatSheetStatValue,
+  getSheetStatValue,
+  visibleSheetStats,
+  type SheetRateMode,
+  type SheetStatCategory,
+} from "@/lib/player-stat-sheet-registry";
+
+type RateMode = Extract<SheetRateMode, "perGame" | "totals" | "per100">;
+type StatCategory = "all" | SheetStatCategory;
 
 const RATE_MODES: Array<{ id: RateMode; label: string }> = [
   { id: "perGame", label: "Per game" },
   { id: "totals", label: "Totals" },
-  { id: "per36", label: "Per 36" },
+  { id: "per100", label: "Per 100" },
 ];
 
-function scaleCount(
-  total: number,
-  row: PlayerSeason,
-  mode: RateMode
-): number | null {
-  if (!Number.isFinite(total)) return null;
-  if (mode === "totals") return total;
-  if (mode === "perGame") {
-    return row.gamesPlayed > 0 ? total / row.gamesPlayed : null;
-  }
-  return row.minutes > 0 ? (total / row.minutes) * 36 : null;
-}
+const CATEGORIES = SHEET_STAT_CATEGORY_CHIPS;
 
-function fmt(
-  n: number | null | undefined,
-  digits: number,
-  pct = false
-): string {
-  if (n == null || !Number.isFinite(n)) return "-";
-  return pct ? formatPct(n, digits) : formatNumber(n, digits);
-}
-
-function rate(n: number | null | undefined): number | null {
-  return n != null && Number.isFinite(n) && n !== 0 ? n : n === 0 ? 0 : null;
-}
-
-function StatTable({
-  title,
-  rows,
+function GlassChip({
+  active,
+  onClick,
+  children,
 }: {
-  title: string;
-  rows: Array<{ label: string; value: string }>;
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
 }) {
-  const shown = rows.filter((row) => row.value !== "-");
-  if (!shown.length) return null;
   return (
-    <div>
-      <h3 className={cn(type.bodySm, "mb-2 font-bold")}>{title}</h3>
-      <dl className="grid grid-cols-2 gap-x-4 gap-y-1 sm:grid-cols-3 lg:grid-cols-4">
-        {shown.map((row) => (
-          <div
-            key={row.label}
-            className="flex items-baseline justify-between gap-2 border-b border-dashed border-border/70 py-1"
-          >
-            <dt className={cn(type.caption, "text-muted-foreground")}>
-              {row.label}
-            </dt>
-            <dd
-              className={cn(
-                type.bodySm,
-                "font-semibold tabular-nums text-foreground"
-              )}
-            >
-              {row.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
+    <button
+      type="button"
+      aria-pressed={active}
+      onClick={onClick}
+      className={cn(
+        type.caption,
+        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
+        active
+          ? "glass-pill-active"
+          : "text-muted-foreground hover:text-foreground"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function FilterRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: ReactNode;
+}) {
+  return (
+    <div className="flex flex-wrap items-center gap-1.5">
+      <span
+        className={cn(
+          type.caption,
+          "mr-0.5 font-semibold uppercase tracking-wide text-muted-foreground"
+        )}
+      >
+        {label}
+      </span>
+      {children}
     </div>
   );
 }
 
 export function PlayerStatsBoard({
-  row,
+  playerId,
+  season,
+  statsSeason,
   seasonType,
+  rows,
   teamKey,
-  teamLabel,
+  fromHistory = false,
+  themeMode = "historical",
+  honor,
 }: {
-  row: PlayerSeason | null;
+  playerId: string;
+  season: string;
+  statsSeason?: string;
   seasonType: PlayerSeasonKind;
+  rows: PlayerSeason[];
   teamKey?: string | null;
-  teamLabel?: string | null;
+  fromHistory?: boolean;
+  themeMode?: ThemeMode;
+  honor?: GlassSurfaceHonor;
 }) {
+  const queryNav = useQueryNavOptional();
   const [mode, setMode] = useState<RateMode>("perGame");
+  const [category, setCategory] = useState<StatCategory>("all");
   const wash = brandAtmosphereColors(
     resolveTeamBrand(teamKey)?.primary,
     resolveTeamBrand(teamKey)?.secondary
   );
-  const digits = mode === "totals" ? 0 : 1;
+
+  const highlightSeason = statsSeason ?? season;
+
+  const newestFirst = useMemo(
+    () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
+    [rows]
+  );
+
+  const cols = useMemo(
+    () => visibleSheetStats(newestFirst, category, mode),
+    [newestFirst, category, mode]
+  );
+
+  function setSeasonType(next: PlayerSeasonKind) {
+    queryNav?.replaceParams({
+      seasonType: next === "playoffs" ? "playoffs" : null,
+    });
+  }
+
   const kindLabel =
     seasonType === "playoffs" ? "Playoffs" : "Regular season";
-
-  const scaled = useMemo(() => {
-    if (!row) return null;
-    const s = (key: keyof PlayerSeason) =>
-      scaleCount(Number(row[key]) || 0, row, mode);
-    const twoMade = row.fieldGoalsMade - row.threePointersMade;
-    const twoAtt = row.fieldGoalsAttempted - row.threePointersAttempted;
-    return {
-      pts: s("points"),
-      reb: s("rebounds"),
-      oreb: s("offensiveRebounds"),
-      dreb: s("defensiveRebounds"),
-      ast: s("assists"),
-      stl: s("steals"),
-      blk: s("blocks"),
-      tov: s("turnovers"),
-      pf: s("personalFouls"),
-      plus: s("plusMinus"),
-      fgm: s("fieldGoalsMade"),
-      fga: s("fieldGoalsAttempted"),
-      tpm: scaleCount(twoMade, row, mode),
-      tpa: scaleCount(twoAtt, row, mode),
-      fg3m: s("threePointersMade"),
-      fg3a: s("threePointersAttempted"),
-      ftm: s("freeThrowsMade"),
-      fta: s("freeThrowsAttempted"),
-    };
-  }, [row, mode]);
 
   return (
     <section
@@ -140,145 +157,203 @@ export function PlayerStatsBoard({
         accentColor={wash?.colorA}
         accentColorB={wash?.colorB}
         className="flex flex-col gap-4 p-4 sm:p-5"
+        honor={honor}
       >
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className={type.heading}>Statistics</h2>
-            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-              {row?.season ?? "-"} · {kindLabel}
-              {teamLabel ? ` · ${teamLabel}` : ""}
-              . Counting stats follow the rate toggle; percentages and
-              ratings stay unscaled.
-            </p>
-          </div>
-          <div
-            role="group"
-            aria-label="Rate mode"
-            className="flex flex-wrap gap-1"
-          >
-            {RATE_MODES.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                aria-pressed={item.id === mode}
-                onClick={() => setMode(item.id)}
-                className={cn(
-                  type.caption,
-                  "rounded-md px-2.5 py-1 font-semibold",
-                  item.id === mode
-                    ? "bg-foreground text-background"
-                    : "bg-white/55 text-foreground hover:bg-white/80"
-                )}
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
+        <div>
+          <h2 className={type.heading}>Statistics</h2>
+          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+            Spreadsheet view — scroll sideways for every published column.
+            Counting stats follow the rate toggle; percentages and ratings stay
+            unscaled.
+          </p>
         </div>
 
-        {!row || !scaled ? (
+        <div className="flex flex-col gap-2.5">
+          <FilterRow label="Type">
+            <GlassChip
+              active={seasonType === "regular"}
+              onClick={() => setSeasonType("regular")}
+            >
+              Regular
+            </GlassChip>
+            <GlassChip
+              active={seasonType === "playoffs"}
+              onClick={() => setSeasonType("playoffs")}
+            >
+              Playoffs
+            </GlassChip>
+          </FilterRow>
+          <FilterRow label="Rate">
+            {RATE_MODES.map((item) => (
+              <GlassChip
+                key={item.id}
+                active={mode === item.id}
+                onClick={() => setMode(item.id)}
+              >
+                {item.label}
+              </GlassChip>
+            ))}
+          </FilterRow>
+          <FilterRow label="Cols">
+            {CATEGORIES.map((item) => (
+              <GlassChip
+                key={item.id}
+                active={category === item.id}
+                onClick={() => setCategory(item.id)}
+              >
+                {item.label}
+              </GlassChip>
+            ))}
+          </FilterRow>
+        </div>
+
+        {newestFirst.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            No {kindLabel.toLowerCase()} counting stats for this season.
+            No {kindLabel.toLowerCase()} seasons available.
           </p>
         ) : (
-          <div className="flex flex-col gap-6">
-            <StatTable
-              title="Availability"
-              rows={[
-                { label: "GP", value: fmt(row.gamesPlayed, 0) },
-                { label: "GS", value: fmt(row.gamesStarted, 0) },
-                { label: "MIN", value: fmt(row.minutes, 0) },
-                {
-                  label: "MPG",
-                  value: fmt(
-                    row.gamesPlayed > 0
-                      ? row.minutes / row.gamesPlayed
-                      : null,
-                    1
-                  ),
-                },
-              ]}
-            />
-            <StatTable
-              title="Box score"
-              rows={[
-                { label: "PTS", value: fmt(scaled.pts, digits) },
-                { label: "REB", value: fmt(scaled.reb, digits) },
-                { label: "OREB", value: fmt(scaled.oreb, digits) },
-                { label: "DREB", value: fmt(scaled.dreb, digits) },
-                { label: "AST", value: fmt(scaled.ast, digits) },
-                { label: "STL", value: fmt(scaled.stl, digits) },
-                { label: "BLK", value: fmt(scaled.blk, digits) },
-                { label: "TOV", value: fmt(scaled.tov, digits) },
-                { label: "PF", value: fmt(scaled.pf, digits) },
-                { label: "+/-", value: fmt(scaled.plus, digits) },
-              ]}
-            />
-            <StatTable
-              title="Shooting"
-              rows={[
-                { label: "FGM", value: fmt(scaled.fgm, digits) },
-                { label: "FGA", value: fmt(scaled.fga, digits) },
-                { label: "FG%", value: fmt(rate(row.fieldGoalPct), 1, true) },
-                { label: "2PM", value: fmt(scaled.tpm, digits) },
-                { label: "2PA", value: fmt(scaled.tpa, digits) },
-                { label: "2P%", value: fmt(rate(row.twoPointPct), 1, true) },
-                { label: "3PM", value: fmt(scaled.fg3m, digits) },
-                { label: "3PA", value: fmt(scaled.fg3a, digits) },
-                { label: "3P%", value: fmt(rate(row.threePointPct), 1, true) },
-                { label: "FTM", value: fmt(scaled.ftm, digits) },
-                { label: "FTA", value: fmt(scaled.fta, digits) },
-                { label: "FT%", value: fmt(rate(row.freeThrowPct), 1, true) },
-              ]}
-            />
-            <StatTable
-              title="Efficiency"
-              rows={[
-                { label: "TS%", value: fmt(rate(row.trueShootingPct), 1, true) },
-                {
-                  label: "eFG%",
-                  value: fmt(rate(row.effectiveFieldGoalPct), 1, true),
-                },
-                {
-                  label: "3PAr",
-                  value: fmt(rate(row.threePointAttemptRate), 1, true),
-                },
-                { label: "FTr", value: fmt(rate(row.freeThrowRate), 1, true) },
-                { label: "USG%", value: fmt(rate(row.usagePct), 1, true) },
-                { label: "TOV%", value: fmt(rate(row.turnoverPct), 1, true) },
-                { label: "AST%", value: fmt(rate(row.assistPct), 1, true) },
-                {
-                  label: "ORB%",
-                  value: fmt(rate(row.offensiveReboundPct), 1, true),
-                },
-                {
-                  label: "DRB%",
-                  value: fmt(rate(row.defensiveReboundPct), 1, true),
-                },
-                { label: "TRB%", value: fmt(rate(row.reboundPct), 1, true) },
-                { label: "STL%", value: fmt(rate(row.stealPct), 1, true) },
-                { label: "BLK%", value: fmt(rate(row.blockPct), 1, true) },
-                { label: "PIE", value: fmt(rate(row.pie), 1, true) },
-                { label: "ORtg", value: fmt(row.offensiveRating, 1) },
-                { label: "DRtg", value: fmt(row.defensiveRating, 1) },
-                { label: "NET", value: fmt(row.netRating, 1) },
-              ]}
-            />
-            <StatTable
-              title="Advanced"
-              rows={[
-                { label: "PER", value: fmt(rate(row.per), 1) },
-                { label: "OWS", value: fmt(row.ows, 1) },
-                { label: "DWS", value: fmt(row.dws, 1) },
-                { label: "WS", value: fmt(row.winShares, 1) },
-                { label: "WS/48", value: fmt(rate(row.winSharesPer48), 3) },
-                { label: "OBPM", value: fmt(row.obpm, 1) },
-                { label: "DBPM", value: fmt(row.dbpm, 1) },
-                { label: "BPM", value: fmt(row.bpm, 1) },
-                { label: "VORP", value: fmt(row.vorp, 1) },
-              ]}
-            />
-          </div>
+          <>
+            <div className="sports-card board-scroll-host -mx-1 overflow-x-auto rounded-md px-1">
+              <table className="w-max min-w-full border-collapse text-left">
+                <thead
+                  className={cn(
+                    type.caption,
+                    "uppercase tracking-wide text-muted-foreground"
+                  )}
+                >
+                  <tr className="border-b border-border/60">
+                    <th className="board-sticky-frost sticky left-0 z-20 py-2 pr-3 font-semibold">
+                      Season
+                    </th>
+                    <th className="px-2 py-2 text-right font-semibold">Age</th>
+                    <th className="px-2 py-2 text-right font-semibold">Tm</th>
+                    <th className="px-2 py-2 text-left font-semibold">Pos</th>
+                    <th className="px-2 py-2 text-right font-semibold">G</th>
+                    <th className="px-2 py-2 text-right font-semibold">GS</th>
+                    {cols.map((col) => (
+                      <th
+                        key={col.id}
+                        className="whitespace-nowrap px-2 py-2 text-right font-semibold"
+                      >
+                        {col.label}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  {newestFirst.map((row) => {
+                    const active = row.season === highlightSeason;
+                    const multiTeam = isMultiTeamSeasonRow(row);
+                    const tm = multiTeam
+                      ? multiTeamDisplayLabel(row)
+                      : row.teamAbbreviation ?? "-";
+                    const tmKeys = multiTeam
+                      ? cardStintsForSeason(rows, row.season).map(
+                          (stint) => stint.teamKey
+                        )
+                      : [];
+                    return (
+                      <tr
+                        key={`${row.season}-${row.teamId}`}
+                        className={cn(
+                          "border-b border-border/40",
+                          active && "board-row-active"
+                        )}
+                      >
+                        <td className="board-sticky-frost sticky left-0 z-10 py-1.5 pr-3">
+                          <TextLink
+                            href={playerDepthHref(playerId, {
+                              season: row.season,
+                              depth: "stats",
+                              seasonType,
+                              fromHistory,
+                              themeMode,
+                            })}
+                            scroll={false}
+                            className={cn(
+                              type.caption,
+                              "font-semibold tabular-nums",
+                              active && "underline decoration-foreground/40"
+                            )}
+                          >
+                            {row.season}
+                          </TextLink>
+                        </td>
+                        <td
+                          className={cn(
+                            type.caption,
+                            "px-2 py-1.5 text-right tabular-nums"
+                          )}
+                        >
+                          {row.age != null ? formatNumber(row.age, 0) : "-"}
+                        </td>
+                        <td
+                          className={cn(
+                            type.caption,
+                            "px-2 py-1.5 text-right tabular-nums"
+                          )}
+                        >
+                          <span className="inline-flex items-center justify-end gap-1">
+                            {teamSeasonIsMulti(tmKeys) ? (
+                              <TeamSeasonSwatch teamKeys={tmKeys} size="xs" />
+                            ) : null}
+                            {tm}
+                          </span>
+                        </td>
+                        <td
+                          className={cn(
+                            type.caption,
+                            "px-2 py-1.5 text-left tabular-nums"
+                          )}
+                        >
+                          {row.position ?? "-"}
+                        </td>
+                        <td
+                          className={cn(
+                            type.caption,
+                            "px-2 py-1.5 text-right tabular-nums"
+                          )}
+                        >
+                          {formatNumber(row.gamesPlayed, 0)}
+                        </td>
+                        <td
+                          className={cn(
+                            type.caption,
+                            "px-2 py-1.5 text-right tabular-nums"
+                          )}
+                        >
+                          {formatNumber(row.gamesStarted, 0)}
+                        </td>
+                        {cols.map((col) => (
+                          <td
+                            key={col.id}
+                            className={cn(
+                              type.caption,
+                              "whitespace-nowrap px-2 py-1.5 text-right tabular-nums"
+                            )}
+                          >
+                            {formatSheetStatValue(
+                              getSheetStatValue(row, col.id, mode),
+                              col,
+                              mode
+                            )}
+                          </td>
+                        ))}
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              {kindLabel} · {mode === "perGame"
+                ? "per game"
+                : mode === "totals"
+                  ? "season totals"
+                  : "per 100 possessions (estimated)"}{" "}
+              · {cols.length} columns
+            </p>
+          </>
         )}
       </GlassSurface>
     </section>

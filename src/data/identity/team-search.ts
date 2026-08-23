@@ -29,10 +29,21 @@ function norm(s: string): string {
 function matchesQuery(hay: string, q: string): boolean {
   const h = norm(hay);
   const nq = norm(q);
-  if (!nq) return false;
-  if (h.includes(nq)) return true;
+  if (!nq || !h) return false;
+  if (h === nq || h.startsWith(`${nq} `) || h.endsWith(` ${nq}`)) return true;
+  const tokens = h.split(" ").filter(Boolean);
   const parts = nq.split(" ").filter(Boolean);
-  return parts.every((p) => h.includes(p));
+  // Prefix tokens only — "der" must not match "thunder".
+  return parts.every((part) => tokens.some((token) => token.startsWith(part)));
+}
+
+/** Public helper for filtering remote team search hits the same way. */
+export function teamIdentityQueryMatches(
+  fields: Array<string | null | undefined>,
+  query: string
+): boolean {
+  const hay = fields.filter(Boolean).join(" ");
+  return matchesQuery(hay, query);
 }
 
 /** Search current franchises + historical identities (explicit registry only). */

@@ -16,6 +16,8 @@ import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-isla
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
 import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
+import { TeamMovementIsland } from "@/components/teams/team-movement-island";
+import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overview";
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
@@ -26,10 +28,11 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { getLeagueStandings, getTeamExploreSeasons } from "@/data/queries";
+import { getTeamExploreSeasons } from "@/data/queries";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
 import type { TeamSeasonStats } from "@/data/types";
-import type { StandingRow } from "@/data/types/standings";
+import { formatOrdinal } from "@/lib/format";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
@@ -44,12 +47,15 @@ import {
 import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
 import {
   enrichTraitsWithPrior,
-  findStandingRow,
   formatTraitPriorDelta,
   groupTraitsForPerformance,
   resolveTeamFromBoard,
   transactionTeamFilterId,
 } from "@/lib/team-explorer";
+import {
+  resolveTeamDivisionMeta,
+  resolveTeamStandingsDisplay,
+} from "@/lib/team-standings-context";
 import {
   resolveActiveEraTheme,
 } from "@/themes/era-theme";
@@ -107,22 +113,15 @@ export default async function TeamProfilePage({
   const { fromHistory, themeMode, applyEraTheme } =
     parseDestinationHistoryArrival(sp);
 
-  const [seasonBoard, priorBoard, seasonOptions, standings] = await Promise.all([
+  const [seasonBoard, priorBoard, exploreSeasons] = await Promise.all([
     getTeamSeasonBoardCached(season),
     getTeamSeasonBoardCached(priorSeason),
     getTeamExploreSeasons().catch(() => [currentSeason, priorSeason]),
-    season === currentSeason
-      ? getLeagueStandings(season).catch(() => null)
-      : Promise.resolve(null),
   ]);
 
   const league = seasonBoard.rows;
   const priorLeague = priorBoard.rows;
-  const boardWarning =
-    seasonBoard.status === "ok"
-      ? null
-      : seasonBoard.warning ??
-        `Team metrics unavailable for ${season}.`;
+  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
 
   const boardTeam = resolveTeamFromBoard(league, teamId);
   const brandPresentation =
@@ -176,13 +175,35 @@ export default async function TeamProfilePage({
       null
     : null;
 
-  const analysis = boardTeam
-    ? analyzeTeamProfile({ team: boardTeam, league, prior })
-    : null;
+  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
+  const standingsContext = boardTeam
+    ? await resolveTeamStandingsDisplay({
+        season,
+        currentSeason,
+        team: boardTeam,
+        brand: modernBrand,
+        boardRows: league,
+      })
+    : {
+        standing: null,
+        divisionStanding: null,
+        divisionMeta: resolveTeamDivisionMeta(
+          modernBrand,
+          identityFallback?.teamId ?? teamId
+        ),
+        priorSeasonStanding: null,
+        priorSeasonLabel: null,
+        seasonAwaitingGames,
+        standingsEmpty: false,
+      };
+
+  const analysis =
+    boardTeam && !seasonAwaitingGames
+      ? analyzeTeamProfile({ team: boardTeam, league, prior })
+      : null;
   const traits = analysis
     ? enrichTraitsWithPrior(analysis.traits, boardTeam!, prior)
     : [];
-  const modernBrand = resolveTeamBrand(identityTeam.abbreviation);
   const historicalBrand =
     identityFallback?.historicalBrand ??
     resolveHistoricalTeamBrand(
@@ -201,22 +222,20 @@ export default async function TeamProfilePage({
     : identityFallback!.teamId;
   const askTeamId = modernBrand?.espnTeamId ?? resolvedTeamId;
 
-  const standingRows: StandingRow[] =
-    standings?.conferences.flatMap((c) => c.rows) ?? [];
-  const standing = boardTeam
-    ? findStandingRow(standingRows, boardTeam, modernBrand)
-    : null;
+  const standing = standingsContext.standing;
+  const divisionStanding = standingsContext.divisionStanding;
 
   const grouped = groupTraitsForPerformance(traits);
-  const ranked = boardTeam
-    ? buildTeamRankedMetrics({
-        team: boardTeam,
-        league,
-        prior,
-        standing,
-        traits,
-      })
-    : [];
+  const ranked =
+    boardTeam && !seasonAwaitingGames
+      ? buildTeamRankedMetrics({
+          team: boardTeam,
+          league,
+          prior,
+          standing,
+          traits,
+        })
+      : [];
   const scorecard = ranked.filter((m) => m.group === "scorecard");
   const offenseMetrics = ranked.filter((m) => m.group === "offense");
   const defenseMetrics = ranked.filter((m) => m.group === "defense");
@@ -237,17 +256,33 @@ export default async function TeamProfilePage({
     themeMode: themeMode === "modern" ? "modern" : "historical",
   };
 
-  const seasonChips = [
+  const seasonOptions = [
     ...new Set([
       season,
-      ...seasonOptions.slice(0, 6),
+      ...exploreSeasons,
       priorSeason,
       currentSeason,
     ]),
   ]
     .filter(Boolean)
-    .sort((a, b) => b.localeCompare(a))
-    .slice(0, 8);
+    .sort((a, b) => b.localeCompare(a));
+
+  const snapshotStats = seasonAwaitingGames
+    ? []
+    : scorecard
+        .filter(
+          (m) =>
+            m.key !== "record" &&
+            !m.missingReason &&
+            m.rank != null &&
+            m.rankDenominator != null
+        )
+        .slice(0, 4)
+        .map((m) => ({
+          label: m.label,
+          value: formatOrdinal(m.rank!),
+          hint: m.formattedValue,
+        }));
 
   const displayName =
     useHistoricalMark && historicalBrand?.displayName
@@ -278,25 +313,16 @@ export default async function TeamProfilePage({
           teamId={teamId}
           team={identityTeam}
           season={season}
-          seasonChips={seasonChips}
+          seasonOptions={seasonOptions}
           standing={standing}
+          divisionStanding={divisionStanding}
+          standingsContext={standingsContext}
+          snapshotStats={snapshotStats}
           modernBrand={modernBrand}
           historicalBrand={historicalBrand}
           useHistoricalMark={useHistoricalMark}
           boardAvailable={boardAvailable}
-          fromHistory={fromHistory}
-          themeMode={themeMode === "modern" ? "modern" : "historical"}
           hrefOpts={hrefOpts}
-          snapshotExtra={
-            traits[0]
-              ? {
-                  value: `${Math.round(traits[0].percentile)}th`,
-                  label: traits[0].label,
-                }
-              : boardWarning
-                ? { value: "-", label: boardWarning }
-                : null
-          }
         />
 
         <TeamPrimaryNav
@@ -307,9 +333,15 @@ export default async function TeamProfilePage({
         <TeamContextBar teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
 
         {tab === "overview" ? (
-          boardAvailable && analysis ? (
+          seasonAwaitingGames && boardAvailable ? (
+            <TeamPreseasonOverview
+              season={season}
+              teamName={displayName}
+              teamId={teamId}
+              standings={standingsContext}
+            />
+          ) : boardAvailable && analysis ? (
             <TeamOverviewBoard
-              scorecard={scorecard}
               offense={offenseMetrics}
               defense={defenseMetrics}
               factors={factorMetrics}
@@ -470,6 +502,9 @@ export default async function TeamProfilePage({
                 season={season}
               />
             </Suspense>
+            <Suspense fallback={null}>
+              <TeamMovementIsland teamId={resolvedTeamId} />
+            </Suspense>
             <Suspense
               fallback={
                 <DestinationSectionSkeleton label="Loading Cap & assets…" />
@@ -516,7 +551,7 @@ export default async function TeamProfilePage({
 
         {tab === "stats" ? (
           <div className="flex flex-col gap-4">
-            {boardAvailable && analysis ? (
+            {boardAvailable && analysis && !seasonAwaitingGames ? (
               <section
                 id="all-stats"
                 className="scroll-mt-16 flex flex-col gap-4"

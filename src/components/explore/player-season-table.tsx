@@ -90,6 +90,7 @@ export interface PlayerSeasonTableProps {
   hasDarko: boolean;
   hasLebron: boolean;
   hasDrbl: boolean;
+  seasonAwaitingGames?: boolean;
 }
 
 export function PlayerSeasonTable({
@@ -103,6 +104,7 @@ export function PlayerSeasonTable({
   hasDarko,
   hasLebron,
   hasDrbl,
+  seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
   const [rows, setRows] = useState(players);
@@ -211,9 +213,11 @@ export function PlayerSeasonTable({
       className="query-updating-content flex flex-col gap-3"
       data-pending={pending ? "true" : "false"}
     >
-      <div className="sports-card board-scroll-host overflow-hidden">
-        <div className="overflow-x-auto">
-          <Table container={false} className="min-w-[1600px] text-[12px]">
+      <div className="sports-card board-scroll-host overflow-x-auto rounded-md">
+          <Table
+            container={false}
+            className="min-w-[1600px] border-separate border-spacing-0 text-[12px]"
+          >
             <TableHeader className="sticky top-0 z-20">
               <TableRow className="hover:bg-transparent">
                 <SortableTableHead
@@ -318,39 +322,37 @@ export function PlayerSeasonTable({
                       player.teamAbbreviation ??
                       ( /^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
                   return (
-                      <TableRow key={rowKey(player)}>
-                        <TableCell className="board-sticky-frost sticky left-0 z-20">
-                          <div className="flex min-w-[11.5rem] items-center">
-                            <PlayerIdentity
+                      <TableRow key={rowKey(player)} className="hover:bg-transparent">
+                        <TableCell className="board-sticky-frost sticky left-0 z-20 min-w-[11.5rem] py-2">
+                          <PlayerIdentity
+                            playerId={player.playerId}
+                            name={player.playerName}
+                            teamKey={isMultiTeam ? undefined : player.teamId}
+                            teamLabel={teamLabel}
+                            position={player.position}
+                            season={player.season}
+                            variant="compact"
+                            className="min-w-0"
+                            nameClassName="gap-2"
+                          >
+                            <PlayerHeadshot
                               playerId={player.playerId}
                               name={player.playerName}
-                              teamKey={isMultiTeam ? undefined : player.teamId}
-                              teamLabel={teamLabel}
-                              position={player.position}
-                              season={player.season}
-                              variant="compact"
-                              className="min-w-0 flex-1"
-                              nameClassName="gap-2"
+                              teamKey={
+                                isMultiTeam ? undefined : player.teamId
+                              }
+                              size="sm"
+                            />
+                            <span
+                              className={cn(
+                                "truncate",
+                                type.body,
+                                textLinkClassName
+                              )}
                             >
-                              <PlayerHeadshot
-                                playerId={player.playerId}
-                                name={player.playerName}
-                                teamKey={
-                                  isMultiTeam ? undefined : player.teamId
-                                }
-                                size="sm"
-                              />
-                              <span
-                                className={cn(
-                                  "truncate",
-                                  type.body,
-                                  textLinkClassName
-                                )}
-                              >
-                                {player.playerName}
-                              </span>
-                            </PlayerIdentity>
-                          </div>
+                              {player.playerName}
+                            </span>
+                          </PlayerIdentity>
                         </TableCell>
                         <TableCell>
                           <span className="inline-flex items-center gap-1">
@@ -373,6 +375,7 @@ export function PlayerSeasonTable({
                               player={player}
                               rate={rate}
                               groupedStart={grouped && ki === 0 && gi > 0}
+                              seasonAwaitingGames={seasonAwaitingGames}
                             />
                           ))
                         )}
@@ -382,7 +385,6 @@ export function PlayerSeasonTable({
               )}
             </TableBody>
           </Table>
-        </div>
       </div>
 
       {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
@@ -543,8 +545,10 @@ function columnHelp(col: TableCol): string | null {
 function formatStat(
   col: TableCol,
   player: ExplorePlayerBoardRow,
-  rate: PlayerBoardRate
+  rate: PlayerBoardRate,
+  seasonAwaitingGames: boolean
 ): string {
+  if (seasonAwaitingGames) return "—";
   switch (col) {
     case "gamesPlayed":
       return formatNumber(player.gamesPlayed);
@@ -684,20 +688,23 @@ function StatCell({
   player,
   rate,
   groupedStart,
+  seasonAwaitingGames = false,
 }: {
   col: TableCol;
   player: ExplorePlayerBoardRow;
   rate: PlayerBoardRate;
   groupedStart?: boolean;
+  seasonAwaitingGames?: boolean;
 }) {
   return (
     <TableCell
       className={cn(
         "text-right tabular-nums text-[12px]",
-        groupedStart && "border-l border-border"
+        groupedStart && "border-l border-border",
+        seasonAwaitingGames && "text-muted-foreground"
       )}
     >
-      {formatStat(col, player, rate)}
+      {formatStat(col, player, rate, seasonAwaitingGames)}
     </TableCell>
   );
 }

@@ -5,8 +5,8 @@ import { TeamDraftAssetsView } from "@/components/teams/team-draft-assets-view";
 import {
   buildTeamDraftAssetsPresentation,
   isCurrentFrontOfficeSeason,
-  loadTeamFrontOfficeSlice,
   resolveFrontOfficeFranchiseId,
+  resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
@@ -50,7 +50,7 @@ export default async function TeamDraftAssetsPage({
     );
   }
 
-  const slice = loadTeamFrontOfficeSlice(franchiseId);
+  const slice = await resolveTeamFrontOfficeSlice(franchiseId);
   if (!slice) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-10">

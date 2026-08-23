@@ -32,11 +32,17 @@ type InternalArticle = AnalyticsArticle & {
   analyticsScore: number;
 };
 
-const MAX_AGE_DAYS_GENERAL = 60;
-const MAX_AGE_DAYS_NATIVE = 300;
-const MAX_AGE_DAYS_FILL = 180;
-const PREFER_AGE_DAYS = 45;
+const MAX_AGE_DAYS_GENERAL = 45;
+const MAX_AGE_DAYS_NATIVE = 120;
+const MAX_AGE_DAYS_FILL = 90;
+const PREFER_AGE_DAYS = 21;
+/** Soft window for “this week” rotation on the homepage desk. */
+const FRESH_WEEK_DAYS = 7;
+const FRESH_FORTNIGHT_DAYS = 14;
 const DESK_DEFAULT_LIMIT = 6;
+/** Max pieces from one outlet inside the fresh-week band. */
+const MAX_PER_OUTLET_FRESH = 2;
+const MAX_PER_OUTLET_DEFAULT = 1;
 
 const PUBLISHER_FEEDS: FeedDef[] = [
   {
@@ -335,6 +341,56 @@ function passesDeskBar(
   return article.analyticsScore >= 6;
 }
 
+function pickDeskArticles(
+  ranked: InternalArticle[],
+  limit: number,
+  now: number
+): InternalArticle[] {
+  const picked: InternalArticle[] = [];
+  const pubCounts = new Map<string, number>();
+
+  const take = (article: InternalArticle, maxPerOutlet: number) => {
+    if (picked.length >= limit) return false;
+    const pubKey = article.publication.trim().toLowerCase();
+    const count = pubCounts.get(pubKey) ?? 0;
+    if (count >= maxPerOutlet) return false;
+    if (
+      picked.some(
+        (p) =>
+          p.id === article.id || titlesOverlap(p.title, article.title)
+      )
+    ) {
+      return false;
+    }
+    pubCounts.set(pubKey, count + 1);
+    picked.push(article);
+    return true;
+  };
+
+  // 1) This week first — allow a second piece from the same outlet.
+  for (const article of ranked) {
+    const age = ageDays(article.publishedMs, now);
+    if (age == null || age > FRESH_WEEK_DAYS) continue;
+    take(article, MAX_PER_OUTLET_FRESH);
+  }
+
+  // 2) Last fortnight — still prefer freshness.
+  for (const article of ranked) {
+    if (picked.length >= limit) break;
+    const age = ageDays(article.publishedMs, now);
+    if (age == null || age > FRESH_FORTNIGHT_DAYS) continue;
+    take(article, MAX_PER_OUTLET_DEFAULT);
+  }
+
+  // 3) Fill remaining slots uniquely.
+  for (const article of ranked) {
+    if (picked.length >= limit) break;
+    take(article, MAX_PER_OUTLET_DEFAULT);
+  }
+
+  return picked;
+}
+
 function pickUniqueOutlets(
   ranked: InternalArticle[],
   limit: number,
@@ -369,7 +425,7 @@ function parseXmlItems(xml: string): string[] {
   const blocks: string[] = [];
   const re = /<(?:item|entry)>([\s\S]*?)<\/(?:item|entry)>/gi;
   let m: RegExpExecArray | null;
-  while ((m = re.exec(xml)) !== null && blocks.length < 24) {
+  while ((m = re.exec(xml)) !== null && blocks.length < 20) {
     blocks.push(m[1] ?? "");
   }
   return blocks;
@@ -469,7 +525,8 @@ function escapeReg(s: string): string {
 async function fetchText(
   url: string,
   signal?: AbortSignal,
-  timeoutMs = 4500
+  timeoutMs = 4500,
+  fresh = false
 ): Promise<string | null> {
   const local = new AbortController();
   const onAbort = () => local.abort();
@@ -484,7 +541,9 @@ async function fetchText(
         "User-Agent":
           "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; +educational news aggregation)",
       },
-      next: { revalidate: 60 * 30 },
+      ...(fresh
+        ? { cache: "no-store" as RequestCache }
+        : { next: { revalidate: 60 * 15 } }),
     } as RequestInit);
     if (!res.ok) return null;
     return await res.text();
@@ -563,84 +622,147 @@ function toPublic(article: InternalArticle): AnalyticsArticle {
 }
 
 export async function fetchAnalyticsNews(
-  options: { signal?: AbortSignal; limit?: number } = {}
+  options: {
+    signal?: AbortSignal;
+    limit?: number;
+    /** Bypass Next data cache and re-pull RSS (homepage Refresh). */
+    fresh?: boolean;
+    /** Fetch article HTML for missing bylines (slow; refresh-only by default). */
+    enrichAuthors?: boolean;
+  } = {}
 ): Promise<AnalyticsArticle[]> {
   const limit = options.limit ?? DESK_DEFAULT_LIMIT;
+  const fresh = options.fresh === true;
+  const enrichAuthors = options.enrichAuthors === true || fresh;
   const external = options.signal;
   const now = Date.now();
+  // Keep SSR / default loads snappy; Refresh can wait longer for a full pull.
+  const publisherTimeout = fresh ? 5000 : 2200;
+  const googleTimeout = fresh ? 3500 : 1800;
 
-  // Per-feed timeouts - one slow publisher must not wipe Google results.
-  const batches = await Promise.all([
-    ...PUBLISHER_FEEDS.map(async (feed) => {
-      const xml = await fetchText(feed.url, external, 6000);
-      if (!xml) return [] as InternalArticle[];
-      const items: InternalArticle[] = [];
-      for (const block of parseXmlItems(xml)) {
-        const item = parsePublisherItem(block, feed);
-        if (!item) continue;
-        if (!matchesKeywords(item.title, feed.keywords)) continue;
-        items.push(item);
-      }
-      return items;
-    }),
-    ...GOOGLE_FEEDS.map(async (url) => {
-      const xml = await fetchText(url, external, 4000);
-      if (!xml) return [] as InternalArticle[];
-      const items: InternalArticle[] = [];
-      for (const block of parseXmlItems(xml)) {
-        const item = parseGoogleItem(block);
-        if (!item) continue;
-        items.push(item);
-      }
-      return items;
-    }),
-  ]);
+  const budget = new AbortController();
+  const onExternalAbort = () => budget.abort();
+  external?.addEventListener("abort", onExternalAbort);
+  const budgetKill = setTimeout(() => budget.abort(), fresh ? 8000 : 2800);
 
-  const collected = batches.flat();
-  const deduped: InternalArticle[] = [];
-  const seenKeys = new Set<string>();
-  const seenTitles: string[] = [];
-
-  for (const article of [...collected].sort(compareDeskArticles)) {
-    const key = `${article.publication}|${normalizeTitle(article.title)}`;
-    if (seenKeys.has(key)) continue;
-    if (seenTitles.some((t) => titlesOverlap(t, article.title))) continue;
-    seenKeys.add(key);
-    seenTitles.push(article.title);
-    deduped.push(article);
-  }
-
-  const seenPubs = new Set<string>();
-  const strict = deduped
-    .filter((a) => passesDeskBar(a, now, "strict"))
-    .sort(compareDeskArticles);
-  const shortlist = pickUniqueOutlets(strict, limit, seenPubs);
-
-  if (shortlist.length < limit) {
-    const fill = deduped
-      .filter((a) => passesDeskBar(a, now, "fill"))
-      .sort(compareDeskArticles);
-    shortlist.push(
-      ...pickUniqueOutlets(fill, limit - shortlist.length, seenPubs)
-    );
-  }
-
-  const enrichController = new AbortController();
-  const enrichKill = setTimeout(() => enrichController.abort(), 2500);
   try {
-    await Promise.all(
-      shortlist.map(async (article, idx) => {
-        if (article.author) return;
-        const enriched = await enrichAuthorFromPage(
-          article,
-          enrichController.signal
+    // Per-feed timeouts - one slow publisher must not wipe Google results.
+    const batches = await Promise.all([
+      ...PUBLISHER_FEEDS.map(async (feed) => {
+        const xml = await fetchText(
+          feed.url,
+          budget.signal,
+          publisherTimeout,
+          fresh
         );
-        if (enriched.author) shortlist[idx] = enriched;
-      })
-    );
-  } finally {
-    clearTimeout(enrichKill);
-  }
+        if (!xml) return [] as InternalArticle[];
+        const items: InternalArticle[] = [];
+        for (const block of parseXmlItems(xml)) {
+          const item = parsePublisherItem(block, feed);
+          if (!item) continue;
+          if (!matchesKeywords(item.title, feed.keywords)) continue;
+          items.push(item);
+        }
+        return items;
+      }),
+      ...GOOGLE_FEEDS.map(async (url) => {
+        const xml = await fetchText(
+          url,
+          budget.signal,
+          googleTimeout,
+          fresh
+        );
+        if (!xml) return [] as InternalArticle[];
+        const items: InternalArticle[] = [];
+        for (const block of parseXmlItems(xml)) {
+          const item = parseGoogleItem(block);
+          if (!item) continue;
+          items.push(item);
+        }
+        return items;
+      }),
+    ]);
 
-  return shortlist.slice(0, limit).map(toPublic);
+    const collected = batches.flat();
+    const deduped: InternalArticle[] = [];
+    const seenKeys = new Set<string>();
+    const seenTitles: string[] = [];
+
+    for (const article of [...collected].sort(compareDeskArticles)) {
+      const key = `${article.publication}|${normalizeTitle(article.title)}`;
+      if (seenKeys.has(key)) continue;
+      if (seenTitles.some((t) => titlesOverlap(t, article.title))) continue;
+      seenKeys.add(key);
+      seenTitles.push(article.title);
+      deduped.push(article);
+    }
+
+    const strict = deduped
+      .filter((a) => passesDeskBar(a, now, "strict"))
+      .sort(compareDeskArticles);
+    let shortlist = pickDeskArticles(strict, limit, now);
+
+    if (shortlist.length < limit) {
+      const fill = deduped
+        .filter((a) => passesDeskBar(a, now, "fill"))
+        .sort(compareDeskArticles);
+      const seenPubs = new Set(
+        shortlist.map((a) => a.publication.trim().toLowerCase())
+      );
+      shortlist = [
+        ...shortlist,
+        ...pickUniqueOutlets(fill, limit - shortlist.length, seenPubs),
+      ];
+    }
+
+    // Light weekly shuffle among near-tied fresh pieces so the desk rotates.
+    if (fresh && shortlist.length > 2) {
+      const week = shortlist.filter((a) => {
+        const age = ageDays(a.publishedMs, now);
+        return age != null && age <= FRESH_WEEK_DAYS;
+      });
+      if (week.length >= 2) {
+        const seed = Math.floor(now / (1000 * 60 * 60 * 6)); // changes ~4×/day
+        const rotated = [...week].sort((a, b) => {
+          const ha = hashString(`${seed}:${a.id}`);
+          const hb = hashString(`${seed}:${b.id}`);
+          return ha - hb;
+        });
+        const older = shortlist.filter((a) => !week.includes(a));
+        shortlist = [...rotated, ...older].slice(0, limit);
+      }
+    }
+
+    if (enrichAuthors) {
+      const enrichController = new AbortController();
+      const enrichKill = setTimeout(() => enrichController.abort(), 1800);
+      try {
+        await Promise.all(
+          shortlist.map(async (article, idx) => {
+            if (article.author) return;
+            const enriched = await enrichAuthorFromPage(
+              article,
+              enrichController.signal
+            );
+            if (enriched.author) shortlist[idx] = enriched;
+          })
+        );
+      } finally {
+        clearTimeout(enrichKill);
+      }
+    }
+
+    return shortlist.slice(0, limit).map(toPublic);
+  } finally {
+    clearTimeout(budgetKill);
+    external?.removeEventListener("abort", onExternalAbort);
+  }
+}
+
+function hashString(s: string): number {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) {
+    h = (h * 31 + s.charCodeAt(i)) | 0;
+  }
+  return h;
 }

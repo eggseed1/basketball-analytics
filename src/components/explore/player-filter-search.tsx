@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
+import { createPortal } from "react-dom";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { Input } from "@/components/ui/input";
@@ -25,6 +32,11 @@ function dedupeHits(rows: Hit[]): Hit[] {
   return out.slice(0, 8);
 }
 
+/**
+ * Player name combobox for the explore filter bar.
+ * Menu is portaled + frost sits on a sibling layer so nested toolbar glass
+ * does not soften the top suggestion (headshot / name).
+ */
 export function PlayerFilterSearch({
   season,
   value,
@@ -36,11 +48,17 @@ export function PlayerFilterSearch({
 }) {
   const listId = useId();
   const rootRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState(value);
   const [hits, setHits] = useState<Hit[]>([]);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  const [menuBox, setMenuBox] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
 
   useEffect(() => {
     setDraft(value);
@@ -49,6 +67,29 @@ export function PlayerFilterSearch({
   const trimmed = draft.trim();
   const showList = open && trimmed.length > 0;
   const activeHit = hits[activeIndex];
+
+  useLayoutEffect(() => {
+    if (!showList || !rootRef.current) {
+      setMenuBox(null);
+      return;
+    }
+    const update = () => {
+      const rect = rootRef.current?.getBoundingClientRect();
+      if (!rect) return;
+      setMenuBox({
+        top: rect.bottom + 4,
+        left: rect.left,
+        width: Math.max(rect.width, 16 * 16),
+      });
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, [showList, hits.length, trimmed]);
 
   useEffect(() => {
     if (trimmed.length < 1) {
@@ -61,7 +102,12 @@ export function PlayerFilterSearch({
     const timer = window.setTimeout(async () => {
       setLoading(true);
       try {
-        const params = new URLSearchParams({ q: trimmed, season });
+        const params = new URLSearchParams({ q: trimmed });
+        if (season.toUpperCase() === "ALL") {
+          params.set("scope", "all");
+        } else {
+          params.set("season", season);
+        }
         const res = await fetch(`/api/players/search?${params.toString()}`, {
           signal: controller.signal,
         });
@@ -85,9 +131,10 @@ export function PlayerFilterSearch({
 
   useEffect(() => {
     function onPointerDown(event: MouseEvent) {
-      if (!rootRef.current?.contains(event.target as Node)) {
-        setOpen(false);
-      }
+      const target = event.target as Node;
+      if (rootRef.current?.contains(target)) return;
+      if (menuRef.current?.contains(target)) return;
+      setOpen(false);
     }
     document.addEventListener("mousedown", onPointerDown);
     return () => document.removeEventListener("mousedown", onPointerDown);
@@ -103,6 +150,103 @@ export function PlayerFilterSearch({
     setDraft(hit.name);
     commit(hit.name);
   }
+
+  const menu =
+    showList && menuBox
+      ? createPortal(
+          <div
+            ref={menuRef}
+            className="fixed z-[80]"
+            style={{
+              top: menuBox.top,
+              left: menuBox.left,
+              width: menuBox.width,
+            }}
+          >
+            <div className="relative isolate overflow-hidden rounded-lg border border-white/58 shadow-[inset_0_1px_0_rgb(255_255_255_/_70%),0_8px_24px_rgb(0_0_0_/_8%)] dark:border-white/16 dark:shadow-[inset_0_1px_0_rgb(255_255_255_/_12%),0_12px_32px_rgb(0_0_0_/_36%)]">
+              {/* Frost layer only — keeps list text/headshots crisp. */}
+              <div
+                aria-hidden
+                className="pointer-events-none absolute inset-0 z-0 bg-white/42 backdrop-blur-xl dark:bg-[rgb(28_28_30_/_0.55)]"
+              />
+              <ul
+                id={listId}
+                role="listbox"
+                aria-label="Player suggestions"
+                className="relative z-[1] max-h-72 overflow-auto py-1"
+              >
+                {loading && hits.length === 0 ? (
+                  <li
+                    className={cn(
+                      "px-2.5 py-2 text-muted-foreground",
+                      type.caption
+                    )}
+                  >
+                    Searching…
+                  </li>
+                ) : null}
+                {!loading && hits.length === 0 ? (
+                  <li
+                    className={cn(
+                      "px-2.5 py-2 text-muted-foreground",
+                      type.caption
+                    )}
+                  >
+                    No matching players
+                  </li>
+                ) : null}
+                {hits.map((hit, index) => (
+                  <li key={hit.id} role="presentation">
+                    <button
+                      type="button"
+                      id={`${listId}-option-${hit.id}`}
+                      role="option"
+                      aria-selected={index === activeIndex}
+                      className={cn(
+                        "flex w-full items-center gap-2 px-2.5 py-1.5 text-left",
+                        index === activeIndex
+                          ? "bg-foreground/8 text-foreground"
+                          : "hover:bg-foreground/6"
+                      )}
+                      onMouseEnter={() => setActiveIndex(index)}
+                      onMouseDown={(event) => event.preventDefault()}
+                      onClick={() => pick(hit)}
+                    >
+                      <PlayerHeadshot
+                        playerId={hit.id}
+                        name={hit.name}
+                        teamKey={hit.team}
+                        size="xs"
+                      />
+                      <span className="min-w-0 flex-1">
+                        <span
+                          className={cn(
+                            "block truncate font-semibold",
+                            type.bodySm
+                          )}
+                        >
+                          {hit.name}
+                        </span>
+                        <span
+                          className={cn(
+                            "block truncate text-muted-foreground",
+                            type.caption
+                          )}
+                        >
+                          {[hit.team, hit.position]
+                            .filter(Boolean)
+                            .join(" · ") || "Player"}
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>,
+          document.body
+        )
+      : null;
 
   return (
     <div ref={rootRef} className="relative min-w-0 flex-1">
@@ -128,6 +272,7 @@ export function PlayerFilterSearch({
         onBlur={() => {
           window.setTimeout(() => {
             if (rootRef.current?.contains(document.activeElement)) return;
+            if (menuRef.current?.contains(document.activeElement)) return;
             commit(draft);
           }, 0);
         }}
@@ -156,77 +301,7 @@ export function PlayerFilterSearch({
         autoComplete="off"
         className="h-7 border-0 bg-transparent shadow-none focus-visible:ring-0"
       />
-
-      {showList ? (
-        <div className="select-popup absolute top-[calc(100%+0.25rem)] left-0 z-50 min-w-full rounded-lg">
-          <ul
-            id={listId}
-            role="listbox"
-            aria-label="Player suggestions"
-            className="relative z-[1] max-h-72 overflow-auto py-1"
-          >
-            {loading && hits.length === 0 ? (
-              <li
-                className={cn("px-2.5 py-2 text-muted-foreground", type.caption)}
-              >
-                Searching…
-              </li>
-            ) : null}
-            {!loading && hits.length === 0 ? (
-              <li
-                className={cn("px-2.5 py-2 text-muted-foreground", type.caption)}
-              >
-                No matching players
-              </li>
-            ) : null}
-            {hits.map((hit, index) => (
-              <li key={hit.id} role="presentation">
-                <button
-                  type="button"
-                  id={`${listId}-option-${hit.id}`}
-                  role="option"
-                  aria-selected={index === activeIndex}
-                  className={cn(
-                    "flex w-full items-center gap-2 px-2.5 py-1.5 text-left",
-                    index === activeIndex
-                      ? "bg-foreground/8 text-foreground"
-                      : "hover:bg-foreground/6"
-                  )}
-                  onMouseEnter={() => setActiveIndex(index)}
-                  onMouseDown={(event) => event.preventDefault()}
-                  onClick={() => pick(hit)}
-                >
-                  <PlayerHeadshot
-                    playerId={hit.id}
-                    name={hit.name}
-                    teamKey={hit.team}
-                    size="xs"
-                  />
-                  <span className="min-w-0 flex-1">
-                    <span
-                      className={cn(
-                        "block truncate font-semibold",
-                        type.bodySm
-                      )}
-                    >
-                      {hit.name}
-                    </span>
-                    <span
-                      className={cn(
-                        "block truncate text-muted-foreground",
-                        type.caption
-                      )}
-                    >
-                      {[hit.team, hit.position].filter(Boolean).join(" · ") ||
-                        "Player"}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
+      {menu}
     </div>
   );
 }

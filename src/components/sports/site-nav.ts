@@ -97,15 +97,40 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     match: (p) => p.startsWith("/compare"),
   },
   {
+    id: "sentiment",
+    href: "/sentiment",
+    label: "Sentiment",
+    match: (p) =>
+      p.startsWith("/sentiment") ||
+      (p.startsWith("/players/") && p.includes("view=sentiment")),
+    subnav: [
+      {
+        href: "/sentiment",
+        label: "League board",
+        match: (p) => p === "/sentiment" || p.startsWith("/sentiment?"),
+      },
+      {
+        href: "/sentiment?narrative=overrated",
+        label: "Overrated watch",
+        match: (p) => p.startsWith("/sentiment"),
+      },
+    ],
+  },
+  {
     id: "transactions",
     href: "/offseason",
     label: "Transactions",
-    match: (p) => p.startsWith("/offseason"),
+    match: (p) => p.startsWith("/offseason") || p.startsWith("/movement"),
     subnav: [
       {
         href: "/offseason",
         label: "Current Offseason",
         match: (p) => p.startsWith("/offseason"),
+      },
+      {
+        href: "/movement",
+        label: "Movement Center",
+        match: (p) => p.startsWith("/movement"),
       },
     ],
   },

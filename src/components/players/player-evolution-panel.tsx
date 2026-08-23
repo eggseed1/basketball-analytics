@@ -12,12 +12,11 @@ import { cn } from "@/lib/utils";
  */
 export function PlayerEvolutionPanel({
   evolution,
-  playerId,
   compareHref,
   teamKey,
 }: {
   evolution: PlayerEvolutionResult;
-  playerId: string;
+  playerId?: string;
   compareHref?: string;
   teamKey?: string | null;
 }) {
@@ -31,8 +30,7 @@ export function PlayerEvolutionPanel({
         <div>
           <h2 className="text-[20px] font-bold tracking-tight">What changed?</h2>
           <p className="text-[14px] text-muted-foreground">
-            {evolution.priorSeason} → {evolution.currentSeason} ·{" "}
-            {evolution.priorGames} GP → {evolution.currentGames} GP
+            {evolution.priorSeason} → {evolution.currentSeason}
           </p>
         </div>
         {compareHref ? (
@@ -40,21 +38,15 @@ export function PlayerEvolutionPanel({
             href={compareHref}
             className="text-[14px] font-semibold underline-offset-4 hover:underline"
           >
-            Compare seasons
+            Compare seasons →
           </Link>
         ) : null}
       </div>
 
       {finding ? (
         <div className="rounded-md bg-white/55 px-3 py-3">
-          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            {finding.eyebrow}
-          </p>
-          <p className="mt-0.5 text-[16px] font-semibold tracking-tight">
+          <p className="text-[16px] font-semibold tracking-tight">
             {finding.title}
-          </p>
-          <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
-            {finding.body}
           </p>
         </div>
       ) : null}
@@ -100,16 +92,6 @@ export function PlayerEvolutionPanel({
             {showAll ? "Show biggest changes" : "See all changes"}
           </button>
         ) : null}
-        <Link
-          href={`/players/${playerId}?season=${evolution.currentSeason}`}
-          scroll={false}
-          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-        >
-          Season board
-        </Link>
-        <span className="text-[12px] text-muted-foreground">
-          Game-level evidence needs possession data (not available yet).
-        </span>
       </div>
     </TeamWashCard>
   );

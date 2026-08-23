@@ -6,6 +6,21 @@ import {
 } from "@/data/drbl/season-registry";
 
 export function DrblSeasonSupportNotice({ season }: { season: string }) {
+  if (season.trim().toUpperCase() === "ALL") {
+    return (
+      <div
+        role="status"
+        className="rounded-lg border border-border bg-muted/40 px-3 py-2 text-sm text-muted-foreground"
+      >
+        <p>
+          <span className="font-medium text-foreground">All seasons.</span>{" "}
+          Showing the current board plus career matches from player search.
+          DRBL/WAR1 appear only on registry seasons.
+        </p>
+      </div>
+    );
+  }
+
   const entry: SeasonRegistryEntry | undefined = getSeasonEntry(season);
 
   if (!entry || !entry.drblAvailable) {

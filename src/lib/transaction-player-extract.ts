@@ -145,8 +145,9 @@ export function extractTransactionPlayerMentions(
   const out: ExtractedTransactionPlayerMention[] = [];
 
   // Position + name (singular): "G Ethan Thompson", "F Paul George"
+  // Allow immediate comma ("G Isaiah Thomas, F Jae Crowder").
   const singular = new RegExp(
-    `\\b(${POSITION})\\s+(${PLAYER_NAME})(?=\\s+(?:to|from|for|in|on|with|and|,|\\.|$)|$)`,
+    `\\b(${POSITION})\\s+(${PLAYER_NAME})(?=\\s*(?:,|and|to|from|for|in|on|with|;|\\.|$))`,
     "g"
   );
   for (const m of text.matchAll(singular)) {
@@ -159,11 +160,11 @@ export function extractTransactionPlayerMentions(
     pushMention(out, name, pos, start + pos.length + 1, start + full.length);
   }
 
-  // Plural position then A and B: "Gs Jamaree Bouyea and Cormac Ryan"
-  // (no second position letter - avoids swallowing "F Name")
+  // Plural position then A and B: "Fs Kevin Durant and T.J. Warren"
+  // Do NOT use the i flag — PLAYER_NAME is case-sensitive by design.
   const pluralPair = new RegExp(
     `\\b(Gs|Fs|Cs)\\s+(${PLAYER_NAME})\\s+and\\s+(${PLAYER_NAME})`,
-    "gi"
+    "g"
   );
   for (const m of text.matchAll(pluralPair)) {
     const pos = m[1]!;

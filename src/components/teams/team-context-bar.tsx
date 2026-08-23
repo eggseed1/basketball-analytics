@@ -15,9 +15,6 @@ import { cn } from "@/lib/utils";
 const KINDS: Array<{ id: TeamSeasonKind; label: string }> = [
   { id: "regular", label: "Regular" },
   { id: "playoffs", label: "Playoffs" },
-  { id: "cup", label: "NBA Cup" },
-  { id: "playin", label: "Play-in" },
-  { id: "preseason", label: "Preseason" },
 ];
 
 const RATES: Array<{ id: TeamRateMode; label: string }> = [
@@ -44,10 +41,10 @@ function Chip({
       aria-pressed={active}
       className={cn(
         type.caption,
-        "rounded-md px-2.5 py-1 font-semibold",
+        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
         active
-          ? "bg-foreground text-background"
-          : "bg-white/55 text-foreground hover:bg-white/80"
+          ? "glass-pill-active"
+          : "text-muted-foreground hover:text-foreground"
       )}
     >
       {children}

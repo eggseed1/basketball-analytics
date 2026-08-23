@@ -14,7 +14,6 @@ import { createPortal } from "react-dom";
 import {
   Crosshair,
   Gauge,
-  Shield,
   Target,
   Trophy,
   Users,
@@ -22,7 +21,10 @@ import {
 } from "lucide-react";
 
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
-import { GlassSurface } from "@/components/brand/glass-surface";
+import {
+  GlassSurface,
+  type GlassSurfaceHonor,
+} from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
 import { SeasonBarSlider } from "@/components/players/season-bar-slider";
@@ -40,9 +42,13 @@ import type { StatComp } from "@/lib/player-stat-comps";
 import type { PlayerCardStint } from "@/lib/player-team-context";
 import {
   type MetricInterpretation,
-  type PercentileCategory,
   type PercentileMetric,
 } from "@/lib/player-percentile-metrics";
+import {
+  PERCENTILE_CATEGORY_CHIPS,
+  PERCENTILE_CATEGORY_ORDER,
+  type PercentileCategory,
+} from "@/lib/player-stat-sheet-registry";
 import {
   gradeFromPercentile,
   percentileSavantColor,
@@ -59,18 +65,23 @@ export type {
 };
 export { gradeFromPercentile, type GradeBand };
 
+const CATEGORY_ICONS: Record<PercentileCategory, LucideIcon> = {
+  impact: Trophy,
+  counting: Target,
+  shooting: Crosshair,
+  rates: Users,
+  advanced: Gauge,
+};
+
 const CATEGORY_META: Array<{
   id: PercentileCategory;
   label: string;
   icon: LucideIcon;
-}> = [
-  { id: "value", label: "Overview", icon: Trophy },
-  { id: "offense", label: "Offense", icon: Target },
-  { id: "shooting", label: "Shooting", icon: Crosshair },
-  { id: "defense", label: "Defense", icon: Shield },
-  { id: "role", label: "Role", icon: Users },
-  { id: "advanced", label: "Advanced", icon: Gauge },
-];
+}> = PERCENTILE_CATEGORY_ORDER.map((id) => ({
+  id,
+  label: PERCENTILE_CATEGORY_CHIPS.find((chip) => chip.id === id)?.label ?? id,
+  icon: CATEGORY_ICONS[id],
+}));
 
 const RANK_GRID =
   "grid grid-cols-[minmax(7.5rem,max-content)_minmax(0,1fr)_3.5rem] items-center gap-x-2";
@@ -242,6 +253,7 @@ type CompRowModel = {
   value: number;
   display: string;
   delta: number;
+  /** League percentile (same peer pool as the ranking). Drives the track. */
   percentile: number;
   isSelf: boolean;
 };
@@ -249,6 +261,11 @@ type CompRowModel = {
 const VISIBLE_COMP_ROWS = 3;
 /** Name + bar + padding - keeps exactly three rows in view. */
 const COMP_ROW_HEIGHT_CLASS = "h-[3.5rem]";
+
+function formatPercentileTip(display: string, percentile: number) {
+  const pct = Math.max(0, Math.min(100, Math.round(percentile)));
+  return `${display} · ${pct}th pct`;
+}
 
 function CompMarkTip({
   label,
@@ -340,19 +357,28 @@ function CompRow({
   focalName,
   focalPercentile,
   focalDisplay,
+  focalColor,
 }: {
   row: CompRowModel;
   focalName: string;
+  /** Focal player's league percentile on the same 0–100 track. */
   focalPercentile: number;
   focalDisplay: string;
+  /** Focal player's team color (gap gradient + tick). */
+  focalColor: string;
 }) {
   const pos = Math.max(0, Math.min(100, row.percentile));
   const focalPos = Math.max(0, Math.min(100, focalPercentile));
+  // Single formula for marks + gap so they stay aligned.
   const markLeft = (pct: number) =>
     `calc(8px + (100% - 16px) * ${pct / 100})`;
   const color = teamChartColor(row.teamKey).color;
   const lo = Math.min(pos, focalPos);
   const hi = Math.max(pos, focalPos);
+  const gapWidth = hi - lo;
+  // Gradient follows left→right mark order on the track.
+  const gapFrom = pos <= focalPos ? color : focalColor;
+  const gapTo = pos <= focalPos ? focalColor : color;
 
   return (
     <div
@@ -408,24 +434,17 @@ function CompRow({
         </span>
       </div>
       <div className="relative mt-1 h-4">
-        {([0, 50, 100] as const).map((mark) => (
-          <span
-            key={mark}
-            className="pointer-events-none absolute inset-y-0 w-px -translate-x-1/2 bg-foreground/20"
-            style={{ left: markLeft(mark) }}
-            aria-hidden
-          />
-        ))}
         <div
-          className="absolute inset-x-1 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/[0.08]"
+          className="absolute inset-x-2 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/[0.08]"
           aria-hidden
         />
-        {!row.isSelf ? (
+        {!row.isSelf && gapWidth > 0.5 ? (
           <div
-            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/20"
+            className="absolute top-1/2 h-1.5 -translate-y-1/2 rounded-full"
             style={{
-              left: `calc(4px + (100% - 8px) * ${lo / 100})`,
-              width: `calc((100% - 8px) * ${(hi - lo) / 100})`,
+              left: markLeft(lo),
+              width: `calc((100% - 16px) * ${gapWidth / 100})`,
+              backgroundImage: `linear-gradient(90deg, ${gapFrom}, ${gapTo})`,
             }}
             aria-hidden
           />
@@ -433,19 +452,20 @@ function CompRow({
         {!row.isSelf ? (
           <CompMarkTip
             label={focalName}
-            value={focalDisplay}
+            value={formatPercentileTip(focalDisplay, focalPercentile)}
             left={markLeft(focalPos)}
             className="z-[1]"
           >
             <span
-              className="block h-3.5 w-1 rounded-sm bg-foreground/70 ring-1 ring-background"
+              className="block h-3.5 w-1 rounded-sm ring-1 ring-background"
+              style={{ backgroundColor: focalColor }}
               aria-hidden
             />
           </CompMarkTip>
         ) : null}
         <CompMarkTip
           label={row.playerName}
-          value={row.display}
+          value={formatPercentileTip(row.display, row.percentile)}
           left={markLeft(pos)}
           className="z-[2]"
         >
@@ -469,6 +489,7 @@ function CompComparePanel({
   viewSeason,
   seasons,
   onSeasonSelect,
+  inline = false,
 }: {
   metric: PercentileMetric | undefined;
   playerId: string;
@@ -478,6 +499,8 @@ function CompComparePanel({
   viewSeason: string;
   seasons: string[];
   onSeasonSelect: (season: string) => void;
+  /** Renders under the selected metric row — no duplicate title. */
+  inline?: boolean;
 }) {
   const [mode, setMode] = useState<"league" | "history">("league");
 
@@ -491,7 +514,7 @@ function CompComparePanel({
 
   const comps =
     mode === "league" ? metric.leagueComps : metric.historicalComps;
-  const rows = [
+  const baseRows = [
     {
       playerId,
       playerName,
@@ -504,15 +527,29 @@ function CompComparePanel({
       percentile: metric.percentile,
       isSelf: true,
     },
-    ...comps.map((c) => ({ ...c, isSelf: false })),
-  ].sort((a, b) => b.percentile - a.percentile);
+    ...comps.map((c) => ({ ...c, isSelf: false as const })),
+  ];
+  // Sort by raw metric so the list reads like a mini leaderboard for this set.
+  const invert = metric.interpretation === "lower_is_better";
+  baseRows.sort((a, b) =>
+    invert ? a.value - b.value : b.value - a.value
+  );
+
+  const rows: CompRowModel[] = baseRows;
+  const focalPercentile =
+    rows.find((r) => r.isSelf)?.percentile ?? metric.percentile;
+  const focalColor = teamChartColor(teamKey).color;
 
   const hasSeries = Boolean(metric.series && metric.series.length > 1);
 
   const resolveSeason = (raw: string) => {
     if (seasons.includes(raw)) return raw;
-    const short = raw.length === 5 && raw.includes("-") ? raw : raw.slice(2);
-    return seasons.find((s) => s.slice(2) === short) ?? raw;
+    const short =
+      raw.length <= 5 && raw.includes("-") ? raw : raw.slice(2);
+    return (
+      seasons.find((s) => s === raw || s.slice(2) === short || s.endsWith(short)) ??
+      raw
+    );
   };
 
   const handleChartSeason = (raw: string) => {
@@ -520,15 +557,22 @@ function CompComparePanel({
     if (next && seasons.includes(next)) onSeasonSelect(next);
   };
 
-  return (
-    <div className="flex h-full min-h-0 flex-col gap-3">
-      <h2 className={type.heading}>{metric.label}</h2>
+  const chartHeight = inline ? 140 : 180;
 
-      <div className="h-[180px] shrink-0">
+  return (
+    <div
+      className={cn(
+        "flex min-h-0 flex-col",
+        inline ? "gap-2 py-2" : "h-full gap-3"
+      )}
+    >
+      {!inline ? <h2 className={type.heading}>{metric.label}</h2> : null}
+
+      <div className="shrink-0" style={{ height: chartHeight }}>
         {hasSeries ? (
           <CareerTeamTrendChart
             points={metric.series!}
-            height={180}
+            height={chartHeight}
             savantScale
             selectedSeason={viewSeason}
             onSeasonSelect={handleChartSeason}
@@ -548,7 +592,7 @@ function CompComparePanel({
 
       <div className="h-px shrink-0 bg-border" aria-hidden />
 
-      <div className="flex min-h-0 flex-1 flex-col gap-1.5">
+      <div className="flex min-h-0 flex-col gap-1.5">
         <div className="flex h-7 shrink-0 items-center justify-between gap-2">
           <p className={cn(type.caption, "min-w-0 truncate font-semibold text-foreground")}>
             Closest {metric.label} this season
@@ -593,10 +637,14 @@ function CompComparePanel({
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span
-              className="h-3 w-1 rounded-sm bg-foreground/70"
+              className="h-3 w-1 rounded-sm ring-1 ring-background"
+              style={{ backgroundColor: focalColor }}
               aria-hidden
             />
-            {playerName}
+            {playerName} on this scale
+          </span>
+          <span className="text-muted-foreground/80">
+            Bar = league percentile
           </span>
         </p>
 
@@ -622,8 +670,9 @@ function CompComparePanel({
                 <CompRow
                   row={row}
                   focalName={playerName}
-                  focalPercentile={metric.percentile}
+                  focalPercentile={focalPercentile}
                   focalDisplay={metric.display}
+                  focalColor={focalColor}
                 />
               </li>
             ))}
@@ -660,16 +709,20 @@ function writeCache(
 
 async function fetchPercentiles(
   playerId: string,
-  season: string
+  season: string,
+  mode: "fast" | "full" = "full"
 ): Promise<SeasonMetricsCache | null> {
   const res = await fetch(
-    `/api/players/${encodeURIComponent(playerId)}/percentiles?season=${encodeURIComponent(season)}`
+    `/api/players/${encodeURIComponent(playerId)}/percentiles?season=${encodeURIComponent(season)}&mode=${mode}`
   );
   if (!res.ok) return null;
   const json = (await res.json()) as SeasonMetricsCache & { season?: string };
   if (!json.metrics) return null;
   const payload = { metrics: json.metrics, teamKey: json.teamKey };
-  writeCache(playerId, json.season ?? season, payload);
+  // Never cache empty payloads — historical peer boards can fail transiently.
+  if (payload.metrics.length > 0) {
+    writeCache(playerId, json.season ?? season, payload);
+  }
   return payload;
 }
 
@@ -693,6 +746,7 @@ export function PlayerPercentilePanel({
   metrics,
   seasonTeams,
   stintsBySeason,
+  honor,
 }: {
   season: string;
   seasons: string[];
@@ -702,6 +756,7 @@ export function PlayerPercentilePanel({
   metrics: PercentileMetric[];
   seasonTeams?: Record<string, string>;
   stintsBySeason?: Record<string, PlayerCardStint[]>;
+  honor?: GlassSurfaceHonor;
 }) {
   const queryNav = useQueryNavOptional();
   const setViewSeasonShared = useSetPlayerViewSeason();
@@ -724,13 +779,45 @@ export function PlayerPercentilePanel({
   );
 
   useEffect(() => {
-    writeCache(playerId, season, { metrics, teamKey });
+    if (metrics.length > 0) {
+      writeCache(playerId, season, { metrics, teamKey });
+    }
     if (season !== desiredSeason.current) return;
     setViewSeason(season);
-    setViewMetrics(metrics);
-    setViewTeamKey(teamKey);
+    if (metrics.length > 0) {
+      setViewMetrics(metrics);
+      setViewTeamKey(teamKey);
+    }
     setBusy(false);
   }, [metrics, playerId, season, teamKey]);
+
+  // SSR ships fast metrics; upgrade sparklines + YoY peers when idle.
+  const hydratedFull = useRef(false);
+  useEffect(() => {
+    if (hydratedFull.current) return;
+    hydratedFull.current = true;
+    let cancelled = false;
+    const targetSeason = season;
+    const hydrate = () => {
+      void fetchPercentiles(playerId, targetSeason, "full").then((json) => {
+        if (cancelled || !json) return;
+        if (desiredSeason.current !== targetSeason) return;
+        applyCached(targetSeason, json);
+      });
+    };
+    if (typeof requestIdleCallback === "function") {
+      const idleId = requestIdleCallback(hydrate);
+      return () => {
+        cancelled = true;
+        cancelIdleCallback(idleId);
+      };
+    }
+    const timeoutId = window.setTimeout(hydrate, 120);
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timeoutId);
+    };
+  }, [applyCached, playerId, season]);
 
   const urlSeason = queryNav?.searchParams.get("season");
   useEffect(() => {
@@ -738,7 +825,7 @@ export function PlayerPercentilePanel({
     desiredSeason.current = urlSeason;
     setViewSeason(urlSeason);
     const cached = readCache(playerId, urlSeason);
-    if (cached) {
+    if (cached && cached.metrics.length > 0) {
       setViewMetrics(cached.metrics);
       setViewTeamKey(cached.teamKey);
       setBusy(false);
@@ -750,6 +837,10 @@ export function PlayerPercentilePanel({
       .then((json) => {
         if (gen !== fetchGen.current || !json) return;
         if (desiredSeason.current !== urlSeason) return;
+        if (json.metrics.length === 0) {
+          setBusy(false);
+          return;
+        }
         applyCached(urlSeason, json);
         setBusy(false);
       })
@@ -772,7 +863,7 @@ export function PlayerPercentilePanel({
       for (const s of nearby.slice(0, 4)) {
         if (cancelled) return;
         try {
-          await fetchPercentiles(playerId, s);
+          await fetchPercentiles(playerId, s, "fast");
         } catch {
           /* slider still works from the active season */
         }
@@ -805,7 +896,7 @@ export function PlayerPercentilePanel({
       setViewSeason(next);
       setViewSeasonShared?.(next);
       const cached = readCache(playerId, next);
-      if (cached) {
+      if (cached && cached.metrics.length > 0) {
         setViewMetrics(cached.metrics);
         setViewTeamKey(cached.teamKey);
         setBusy(false);
@@ -816,6 +907,10 @@ export function PlayerPercentilePanel({
           .then((json) => {
             if (gen !== fetchGen.current || !json) return;
             if (desiredSeason.current !== next) return;
+            if (json.metrics.length === 0) {
+              setBusy(false);
+              return;
+            }
             applyCached(next, json);
             setBusy(false);
           })
@@ -854,7 +949,7 @@ export function PlayerPercentilePanel({
 
   const [activeId, setActiveId] = useState(viewMetrics[0]?.id ?? "");
   const [openCategory, setOpenCategory] = useState<PercentileCategory>(
-    grouped[0]?.id ?? "value"
+    grouped[0]?.id ?? "impact"
   );
   const accent = teamChartColor(viewTeamKey).color;
 
@@ -866,7 +961,9 @@ export function PlayerPercentilePanel({
       setOpenCategory(id);
       if (id === openCategory) return;
       const first = grouped.find((section) => section.id === id)?.metrics[0];
-      if (first) setActiveId(first.id);
+      if (first) {
+        setActiveId(first.id);
+      }
     },
     [grouped, openCategory]
   );
@@ -884,91 +981,97 @@ export function PlayerPercentilePanel({
     resolveTeamBrand(viewTeamKey)?.secondary
   );
 
-  const maxCategoryRows = grouped.reduce(
-    (n, section) => Math.max(n, section.metrics.length),
-    0
-  );
+  const seasonTeamKeys = useMemo(() => {
+    if (!stintsBySeason) return undefined;
+    return Object.fromEntries(
+      Object.entries(stintsBySeason).map(([option, stints]) => [
+        option,
+        stints.map((stint) => stint.teamKey),
+      ])
+    );
+  }, [stintsBySeason]);
 
   return (
     <GlassSurface
       effect="css"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
-      className="flex min-h-0 flex-col md:flex-row"
+      className="flex min-h-0 flex-col p-4"
+      honor={honor}
     >
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col gap-4 p-4">
-        <div>
-          <h2 className={type.heading}>{viewSeason} percentile ranking</h2>
+      <h2 className={type.heading}>{viewSeason} percentile ranking</h2>
+
+      {timeline.length > 0 ? (
+        <div className={cn(busy && "opacity-80")}>
+          <SeasonBarSlider
+            seasons={timeline}
+            value={viewSeason}
+            seasonTeams={seasonTeams}
+            seasonTeamKeys={seasonTeamKeys}
+            accentColor={accent}
+            onCommit={commitSeason}
+          />
         </div>
+      ) : null}
 
-        {timeline.length > 0 ? (
-          <div className={cn(busy && "opacity-80")}>
-            <SeasonBarSlider
-              seasons={timeline}
-              value={viewSeason}
-              seasonTeams={seasonTeams}
-              accentColor={accent}
-              onCommit={commitSeason}
-            />
+      {!viewMetrics.length ? (
+        <p className={cn(type.bodySm, "py-8 text-center text-muted-foreground")}>
+          Percentile rankings unavailable for this season.
+        </p>
+      ) : grouped.length === 0 ? (
+        <p
+          className={cn(
+            type.bodySm,
+            "py-6 text-center text-muted-foreground"
+          )}
+        >
+          No verified advanced rates for this season. Missing ratings stay
+          unavailable rather than fabricated.
+        </p>
+      ) : (
+        <div className="flex min-h-0 flex-col gap-4">
+          <div
+            role="tablist"
+            aria-label="Percentile categories"
+            className="flex flex-wrap items-center gap-x-2 gap-y-2 border-b-2 border-foreground/70 px-1 py-2"
+          >
+            {grouped.map((section) => {
+              const Icon = section.icon;
+              const selected = section.id === openSection?.id;
+              return (
+                <button
+                  key={section.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  id={`pct-tab-${section.id}`}
+                  onClick={() => selectCategory(section.id)}
+                  className={cn(
+                    type.bodySm,
+                    "inline-flex items-center gap-1 px-2 py-1 font-bold tracking-tight",
+                    selected
+                      ? "text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
+                  )}
+                >
+                  <Icon
+                    className="size-3.5 shrink-0"
+                    strokeWidth={2.25}
+                    aria-hidden
+                  />
+                  {section.label}
+                </button>
+              );
+            })}
           </div>
-        ) : null}
 
-        {!viewMetrics.length ? (
-          <p className={cn(type.bodySm, "py-8 text-center text-muted-foreground")}>
-            Percentile rankings unavailable for this season.
-          </p>
-        ) : grouped.length === 0 ? (
-          <p
+          <div
             className={cn(
-              type.bodySm,
-              "py-6 text-center text-muted-foreground"
+              "grid items-start gap-4",
+              "min-[800px]:grid-cols-[minmax(0,1fr)_minmax(11rem,15rem)]"
             )}
           >
-            No verified advanced rates for this season. Missing ratings stay
-            unavailable rather than fabricated.
-          </p>
-        ) : (
-          <div className="flex min-h-0 flex-1 flex-col overflow-y-auto pr-1">
-            <div
-              role="tablist"
-              aria-label="Percentile categories"
-              className="flex flex-wrap items-center gap-x-2 gap-y-2 px-1 py-2 border-b-2 border-foreground/70"
-            >
-              {grouped.map((section) => {
-                const Icon = section.icon;
-                const selected = section.id === openSection?.id;
-                return (
-                  <button
-                    key={section.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={selected}
-                    id={`pct-tab-${section.id}`}
-                    onClick={() => selectCategory(section.id)}
-                    className={cn(
-                      type.bodySm,
-                      "inline-flex items-center gap-1 px-2 py-1 font-bold tracking-tight",
-                      selected
-                        ? "text-foreground"
-                        : "text-muted-foreground hover:text-foreground"
-                    )}
-                  >
-                    <Icon
-                      className="size-3.5 shrink-0"
-                      strokeWidth={2.25}
-                      aria-hidden
-                    />
-                    {section.label}
-                  </button>
-                );
-              })}
-            </div>
-            <div
-              className="relative mt-2"
-              style={{
-                minHeight: `calc(22px + ${maxCategoryRows} * 2.5rem)`,
-              }}
-            >
+            <div className="relative min-w-0">
               {grouped.map((section) => {
                 const selected = section.id === openSection?.id;
                 return (
@@ -980,47 +1083,69 @@ export function PlayerPercentilePanel({
                   >
                     <ScaleLegend />
                     <ul>
-                      {section.metrics.map((m, i) => (
-                        <li
-                          key={m.id}
-                          className={cn(
-                            i < section.metrics.length - 1 &&
-                              "border-b border-dashed border-border/80"
-                          )}
-                        >
-                          <MetricRow
-                            metric={m}
-                            selected={selected && active?.id === m.id}
-                            onSelect={() => setActiveId(m.id)}
-                          />
-                        </li>
-                      ))}
+                      {section.metrics.map((m, i) => {
+                        const isActive = selected && active?.id === m.id;
+                        return (
+                          <li
+                            key={m.id}
+                            className={cn(
+                              !isActive &&
+                                i < section.metrics.length - 1 &&
+                                "border-b border-dashed border-border/80"
+                            )}
+                          >
+                            <MetricRow
+                              metric={m}
+                              selected={isActive}
+                              onSelect={() => setActiveId(m.id)}
+                            />
+                          </li>
+                        );
+                      })}
                     </ul>
                   </section>
                 );
               })}
             </div>
+
+            {active ? (
+              <aside
+                className="min-w-0 self-start min-[800px]:sticky min-[800px]:top-4"
+                aria-label="Metric chart and comparisons"
+              >
+                <div
+                  className="rounded-md border border-border/60 bg-white/30 p-3"
+                  style={{ borderLeftColor: accent, borderLeftWidth: 2 }}
+                >
+                  <div className="mb-2 flex flex-col gap-0.5 border-b border-border/50 pb-2">
+                    <span className={cn(type.caption, "font-semibold text-foreground")}>
+                      {active.label}
+                    </span>
+                    <span className={cn(type.caption, "text-muted-foreground")}>
+                      Chart & similar players
+                    </span>
+                  </div>
+                  <CompComparePanel
+                    inline
+                    metric={active}
+                    playerId={playerId}
+                    playerName={playerName}
+                    teamKey={viewTeamKey}
+                    stints={stintsBySeason?.[viewSeason]}
+                    viewSeason={viewSeason}
+                    seasons={timeline}
+                    onSeasonSelect={commitSeason}
+                  />
+                </div>
+              </aside>
+            ) : (
+              <p className={cn(type.caption, "text-muted-foreground")}>
+                Select a ranking to compare.
+              </p>
+            )}
           </div>
-        )}
-      </div>
-
-      <div
-        className="h-px shrink-0 bg-border md:h-auto md:w-px"
-        aria-hidden
-      />
-
-      <div className="flex min-h-0 min-w-0 flex-1 flex-col p-4">
-        <CompComparePanel
-          metric={active}
-          playerId={playerId}
-          playerName={playerName}
-          teamKey={viewTeamKey}
-          stints={stintsBySeason?.[viewSeason]}
-          viewSeason={viewSeason}
-          seasons={timeline}
-          onSeasonSelect={commitSeason}
-        />
-      </div>
+        </div>
+      )}
     </GlassSurface>
   );
 }

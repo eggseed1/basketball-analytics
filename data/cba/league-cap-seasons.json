@@ -28,6 +28,19 @@
       "source": "NBA Communications — Salary Cap for 2025-26 season",
       "sourceDate": "2025-06-30",
       "sourceUrl": "https://pr.nba.com/nba-salary-cap-2025-26-season/"
+    },
+    {
+      "season": "2026-27",
+      "seasonStartYear": 2026,
+      "salaryCap": 164961000,
+      "luxuryTax": 200428000,
+      "firstApron": 209015000,
+      "secondApron": 221686000,
+      "minimumTeamSalary": 148465000,
+      "status": "OFFICIAL",
+      "source": "NBA Communications — Salary Cap for 2026-27 season",
+      "sourceDate": "2026-06-30",
+      "sourceUrl": "https://www.nba.com/news/nba-salary-cap-2026-27-season"
     }
   ]
 }

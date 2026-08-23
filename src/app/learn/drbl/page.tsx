@@ -41,47 +41,47 @@ const DEEPER: Array<{ href: string; label: string; blurb: string }> = [
   {
     href: "/learn/drbl-100",
     label: "DRBL/100",
-    blurb: "Impact rate - how good on a per-100 scale.",
+    blurb: "How good? Impact quality per 100 possessions — the main ranking number.",
   },
   {
     href: "/learn/drbl/war1",
     label: "WAR1",
-    blurb: "Season value accumulated in win-equivalent units.",
+    blurb: "How much? Season value piled up in win-style units (not classic WAR).",
   },
   {
     href: "/learn/drbl-o",
-    label: "Offense (DRBL-O)",
-    blurb: "Offensive half of the possession diagnostic.",
+    label: "DRBL-O",
+    blurb: "Offense half of the possession diagnostic — context, not a second ranking.",
   },
   {
     href: "/learn/drbl-d",
-    label: "Defense (DRBL-D)",
-    blurb: "Defensive half of the possession diagnostic.",
+    label: "DRBL-D",
+    blurb: "Defense half of the possession diagnostic — higher is better.",
   },
   {
     href: "/learn/drbl-p",
     label: "DRBL-P",
-    blurb: "Possession attribution diagnostic.",
+    blurb: "Possession attribution diagnostic (parent of O and D).",
   },
   {
     href: "/learn/drbl-ln",
     label: "DRBL-LN",
-    blurb: "Lineup-context diagnostic - not proven off-ball value.",
+    blurb: "Lineup / teammate-context diagnostic — not proven off-ball value.",
   },
   {
     href: "/learn/drbl-b",
     label: "DRBL-B",
-    blurb: "Box/behavior diagnostic - not optical tracking.",
+    blurb: "Box / behavior diagnostic — not camera tracking.",
   },
   {
     href: "/learn/r1",
     label: "R1",
-    blurb: "What “Above R1” compares against.",
+    blurb: "The role-aware baseline “Above R1” compares against.",
   },
   {
     href: "/learn/r1-points",
     label: "R1 Points",
-    blurb: "Advanced accounting behind WAR1.",
+    blurb: "Point ledger behind WAR1 — same order, different units.",
   },
   {
     href: "/learn/how-drbl-works",
@@ -142,13 +142,13 @@ export default function LearnDrblPage() {
           <Card title="DRBL/100" href="/learn/drbl-100">
             <p className="font-medium text-foreground">How good?</p>
             <p className="mt-1">
-              Estimated impact per 100 possessions. Canonical ranking rate.
+              Impact quality per 100 possessions — the main ranking number.
             </p>
           </Card>
           <Card title="WAR1" href="/learn/drbl/war1">
             <p className="font-medium text-foreground">How much?</p>
             <p className="mt-1">
-              Realized season value in win-equivalent units. Not traditional WAR.
+              Season value piled up in win-style units. Not classic replacement-level WAR.
             </p>
           </Card>
         </div>

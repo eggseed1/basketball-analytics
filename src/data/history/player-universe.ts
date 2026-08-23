@@ -65,7 +65,9 @@ export type SeasonPlayerDirectoryRow = HistoryPlayerSeason & {
 };
 
 let bySeasonCache: Map<string, HistoryPlayerSeason[]> | null = null;
+let byPlayerSeasonCache: Map<string, HistoryPlayerSeason[]> | null = null;
 let masterCache: MasterPlayerRecord[] | null = null;
+let masterByIdCache: Map<string, MasterPlayerRecord> | null = null;
 
 /** Historical box/precompute complete through this season (inclusive). */
 export const HISTORICAL_COMPLETE_THROUGH = "2023-24";
@@ -73,7 +75,9 @@ export const HISTORICAL_COMPLETE_THROUGH = "2023-24";
 /** Test / sync helper — clears memoized registry + season indexes. */
 export function clearPlayerUniverseCaches() {
   bySeasonCache = null;
+  byPlayerSeasonCache = null;
   masterCache = null;
+  masterByIdCache = null;
 }
 
 function normalizeSearchText(s: string): string {
@@ -159,7 +163,22 @@ function buildBySeasonIndex(): Map<string, HistoryPlayerSeason[]> {
   }
 
   bySeasonCache = map;
+  const byPlayer = new Map<string, HistoryPlayerSeason[]>();
+  for (const rows of map.values()) {
+    for (const row of rows) {
+      const list = byPlayer.get(row.playerId);
+      if (list) list.push(row);
+      else byPlayer.set(row.playerId, [row]);
+    }
+  }
+  byPlayerSeasonCache = byPlayer;
   return map;
+}
+
+function buildByPlayerSeasonIndex(): Map<string, HistoryPlayerSeason[]> {
+  if (byPlayerSeasonCache) return byPlayerSeasonCache;
+  buildBySeasonIndex();
+  return byPlayerSeasonCache ?? new Map();
 }
 
 /** Seasons with a factual player-season registry on disk. */
@@ -293,6 +312,7 @@ export function getMasterPlayerRegistry(): MasterPlayerRecord[] {
   );
   if (allEra?.players?.length) {
     masterCache = allEra.players;
+    masterByIdCache = new Map(masterCache.map((p) => [p.playerId, p]));
     return masterCache;
   }
   const disk = readJson<{ players: MasterPlayerRecord[] }>(
@@ -300,29 +320,27 @@ export function getMasterPlayerRegistry(): MasterPlayerRecord[] {
   );
   if (disk?.players?.length) {
     masterCache = disk.players;
+    masterByIdCache = new Map(masterCache.map((p) => [p.playerId, p]));
     return masterCache;
   }
   masterCache = getHistoryCareerSummaries().map(careerToMaster);
+  masterByIdCache = new Map(masterCache.map((p) => [p.playerId, p]));
   return masterCache;
 }
 
 export function getMasterPlayer(
   playerId: string
 ): MasterPlayerRecord | null {
-  return getMasterPlayerRegistry().find((p) => p.playerId === playerId) ?? null;
+  getMasterPlayerRegistry();
+  return masterByIdCache?.get(playerId) ?? null;
 }
 
 /** Seasons across 1996+ history + pre-1996 all-era product. */
 export function getUniverseSeasonsForPlayer(
   playerId: string
 ): HistoryPlayerSeason[] {
-  const out: HistoryPlayerSeason[] = [];
-  for (const rows of buildBySeasonIndex().values()) {
-    for (const r of rows) {
-      if (r.playerId === playerId) out.push(r);
-    }
-  }
-  return out.sort((a, b) => b.season.localeCompare(a.season));
+  const rows = buildByPlayerSeasonIndex().get(playerId) ?? [];
+  return [...rows].sort((a, b) => b.season.localeCompare(a.season));
 }
 
 function careerToMaster(c: HistoryCareerSummary): MasterPlayerRecord {
@@ -366,6 +384,9 @@ export function searchMasterPlayers(
   return scored
     .sort((a, b) => {
       if (a.score !== b.score) return a.score - b.score;
+      const aActive = a.row.isActive ? 0 : 1;
+      const bActive = b.row.isActive ? 0 : 1;
+      if (aActive !== bActive) return aActive - bActive;
       return b.row.lastSeason.localeCompare(a.row.lastSeason);
     })
     .slice(0, limit)

@@ -6,6 +6,7 @@ export {
   getPlayerPlayoffCareerSeasons,
   getPlayerCareerTimelineSeasons,
   attachDrblToPlayerSeasons,
+  enrichPlayerCareerAdvanced,
   getPlayerGameLog,
   getPlayersBySeason,
   getTeamPlayers,
@@ -126,7 +127,6 @@ export {
 } from "./player-season-rank";
 export { getGameAnalysis, getGameSeasonContext } from "./game-lab";
 export type { GameAnalysisPayload, GameAnalysisSummary } from "./game-lab";
-export { getAskDrblAnswer } from "./ask-drbl";
 export type { AskDrblResult } from "./ask-drbl";
 export {
   getOffseasonPulse,
@@ -217,6 +217,8 @@ export {
   getPlayerCached,
   getPlayerSeasonCached,
   getPlayerGameLogCached,
+  getPlayerCareerSeasonsCached,
+  enrichPlayerCareerAdvancedCached,
   getTeamSeasonStatsCached,
   getTeamSeasonBoardCached,
   getTeamRosterCached,

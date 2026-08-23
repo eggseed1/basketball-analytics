@@ -1,16 +1,31 @@
-import { isCareerQualifyingSeason } from "@/analytics";
+import { isCareerQualifyingSeason, peakCareerSeason } from "@/analytics";
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import {
+  cardStintsForSeason,
   isMultiTeamSeasonRow,
+  isRetiredPlayerCareer,
   primaryTeamForSeason as primaryTeamForSeasonContext,
 } from "@/lib/player-team-context";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
 
-/** Resolve selected season from URL or latest career / history row. */
+/** Resolve selected season from URL, or a smart default. */
 export function resolvePlayerSeason(
   career: PlayerSeason[],
   seasonParam?: string | null,
-  historySeasons?: string[]
+  historySeasons?: string[],
+  options?: {
+    /**
+     * For retired / inactive careers, default to Career Resume peak season
+     * instead of the most recent (often decline) year.
+     */
+    preferPeakWhenHistorical?: boolean;
+    nowSeason?: string;
+    isActive?: boolean | null;
+  }
 ): string {
   if (seasonParam) return seasonParam;
   const seasons = [
@@ -19,7 +34,27 @@ export function resolvePlayerSeason(
       ...(historySeasons ?? []),
     ]),
   ].sort((a, b) => b.localeCompare(a));
-  return seasons[0] ?? "2024-25";
+  const latest = seasons[0];
+  const nowSeason =
+    options?.nowSeason ??
+    canonicalSeasonFromStartYear(currentNbaStartYear());
+
+  if (options?.preferPeakWhenHistorical !== false && career.length > 0) {
+    const historical = isRetiredPlayerCareer({
+      lastSeason: latest,
+      nowSeason,
+      isActive: options?.isActive,
+      hasCurrentSeasonGames: career.some(
+        (row) => row.season === nowSeason && row.gamesPlayed > 0
+      ),
+    });
+    if (historical) {
+      const peak = peakCareerSeason(career);
+      if (peak) return peak;
+    }
+  }
+
+  return latest ?? "2024-25";
 }
 
 /**
@@ -173,6 +208,19 @@ export function careerSeasonAverages(career: PlayerSeason[]): {
     ts: tsN > 0 ? tsSum / tsN : null,
     usg: usgN > 0 ? usgSum / usgN : null,
   };
+}
+
+export function buildSeasonTeamKeysMap(
+  career: PlayerSeason[]
+): Record<string, string[]> {
+  const seasonTeamKeys: Record<string, string[]> = {};
+  const seasons = [...new Set(career.map((row) => row.season))];
+  for (const season of seasons) {
+    seasonTeamKeys[season] = cardStintsForSeason(career, season).map(
+      (stint) => stint.teamKey
+    );
+  }
+  return seasonTeamKeys;
 }
 
 /**

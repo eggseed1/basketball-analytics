@@ -12,6 +12,7 @@ export const DRBL_SUPPORTED_START = "2020-21";
 
 export type PlayerPageView =
   | "overview"
+  | "sentiment"
   | "career"
   | "games"
   | "splits"
@@ -32,6 +33,8 @@ export type PlayerPageCapabilities = {
   advancedDrbl: boolean;
   gameHighs: boolean;
   gameHighsScopeLabel: "Career high" | "Game highs since 1996-97";
+  /** Fan/media sentiment + trade track tab (active players). */
+  sentiment: boolean;
 };
 
 export function parsePlayerPageView(
@@ -39,6 +42,7 @@ export function parsePlayerPageView(
 ): PlayerPageView {
   const v = (raw ?? "overview").toLowerCase();
   if (
+    v === "sentiment" ||
     v === "career" ||
     v === "games" ||
     v === "splits" ||
@@ -69,6 +73,7 @@ export function parseGameLogTableMode(
 export function playerPageCapabilities(options: {
   selectedSeason: string;
   careerFirstSeason?: string | null;
+  showSentiment?: boolean;
 }): PlayerPageCapabilities {
   const season = options.selectedSeason;
   const gameLogs = season >= PLAYER_GAME_LOG_SUPPORTED_START;
@@ -87,6 +92,7 @@ export function playerPageCapabilities(options: {
     gameHighsScopeLabel: entireCareerInArchive
       ? "Career high"
       : "Game highs since 1996-97",
+    sentiment: options.showSentiment ?? false,
   };
 }
 
@@ -96,9 +102,10 @@ export function playerPageNavViews(
 ): Array<{ id: PlayerPageView; label: string }> {
   const out: Array<{ id: PlayerPageView; label: string }> = [
     { id: "overview", label: "Overview" },
-    { id: "career", label: "Career" },
   ];
+  if (caps.sentiment) out.push({ id: "sentiment", label: "Sentiment" });
   if (caps.gameLogs) out.push({ id: "games", label: "Game Logs" });
+  out.push({ id: "career", label: "Career" });
   if (caps.splits) out.push({ id: "splits", label: "Splits" });
   out.push({ id: "shooting", label: "Shooting" });
   out.push({ id: "advanced", label: "Advanced" });

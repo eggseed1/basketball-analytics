@@ -55,7 +55,8 @@ The tag SHA and HEAD must match.
 
 ## Current known blockers
 
-- PBP corpus absent (capability all false; attach-only)
+- Per-game PBP: on-demand via CDN/stats (`getGamePossessions`, Game Lab flow)
+- Bulk PBP corpus (`PBP_DATA_PATH`): optional for batch; attach-only gate via `getPbpCapability()`
 - BDL GOAT advanced season access unavailable (401 / `accessBlocked`)
 - Historical advanced ratings not production-ready
 - Historical official logo assets absent (text marks only)

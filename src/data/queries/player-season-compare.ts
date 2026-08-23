@@ -9,13 +9,13 @@ import type {
   PlayerSeasonComparison,
   SeasonImpactSnapshot,
 } from "@/analytics/compare-player-seasons";
+import { getPlayerHistoricalImpact } from "@/data/queries/historical-impact";
 import {
   attachDrblToPlayerSeasons,
   getPlayer,
   getPlayerCareerSeasons,
-  getPlayerHistoricalImpact,
-  getTeamSeasonStats,
-} from "@/data/queries";
+} from "@/data/queries/players";
+import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";

@@ -5,9 +5,13 @@ import { createPortal } from "react-dom";
 
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { TeamSeasonSwatch } from "@/components/brand/team-season-swatch";
 import { type } from "@/lib/design-system";
-import { teamChartColor } from "@/lib/nba-brand";
-import { normalizeTeamParam } from "@/lib/team-identity";
+import {
+  normalizeSeasonTeamKeys,
+  teamSeasonFillStyle,
+  teamSeasonLabel,
+} from "@/lib/team-season-colors";
 import { cn } from "@/lib/utils";
 
 function shortSeason(season: string) {
@@ -34,21 +38,38 @@ function ratioFromClientX(clientX: number, rect: DOMRect): number {
   return clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
 }
 
-function seasonTeamLabel(teamKey?: string) {
-  if (!teamKey || teamKey === "TOT") return "Multiple teams";
-  return (
-    normalizeTeamParam(teamKey)?.displayName ??
-    teamChartColor(teamKey).abbr
+/** Segment centered on each season tick so bar colors match franchise stints. */
+function seasonSegmentStyle(
+  index: number,
+  count: number
+): { left: number; width: number } {
+  if (count <= 1) return { left: 0, width: 100 };
+  const last = count - 1;
+  const tickPos = (i: number) => (i / last) * 100;
+  const left = index === 0 ? 0 : (tickPos(index - 1) + tickPos(index)) / 2;
+  const right =
+    index === count - 1 ? 100 : (tickPos(index) + tickPos(index + 1)) / 2;
+  return { left, width: right - left };
+}
+
+function resolveSeasonKeys(
+  season: string,
+  seasonTeamKeys?: Record<string, string[]>,
+  seasonTeams?: Record<string, string>
+): string[] {
+  return normalizeSeasonTeamKeys(
+    seasonTeamKeys?.[season],
+    seasonTeams?.[season]
   );
 }
 
 function TickHoverTip({
   season,
-  teamKey,
+  teamKeys,
   align,
 }: {
   season: string;
-  teamKey?: string;
+  teamKeys: string[];
   align: "left" | "right" | "center";
 }) {
   const triggerRef = useRef<HTMLSpanElement>(null);
@@ -61,15 +82,15 @@ function TickHoverTip({
       return;
     }
     const rect = triggerRef.current.getBoundingClientRect();
-    const width = 160;
+    const width = 180;
     let left = rect.left + rect.width / 2 - width / 2;
     if (align === "left") left = rect.left;
     if (align === "right") left = rect.right - width;
     setPos({
-      top: Math.max(8, rect.top - 8 - 36),
+      top: Math.max(8, rect.top - 8 - 40),
       left: Math.min(Math.max(8, left), window.innerWidth - width - 8),
     });
-  }, [open, align]);
+  }, [open, align, teamKeys.length]);
 
   return (
     <span
@@ -82,18 +103,22 @@ function TickHoverTip({
         ? createPortal(
             <FrostFloatingSurface
               role="tooltip"
-              className="pointer-events-none z-[80] w-max max-w-[12rem] px-2 py-1.5"
+              className="pointer-events-none z-[80] w-max max-w-[14rem] px-2 py-1.5"
               style={{ position: "fixed", top: pos.top, left: pos.left }}
             >
               <span className="flex items-center gap-1.5">
-                {teamKey && teamKey !== "TOT" ? (
-                  <TeamLogo teamKey={teamKey} size="2xs" />
+                {teamKeys.length > 0 ? (
+                  <span className="flex items-center -space-x-1">
+                    {teamKeys.slice(0, 3).map((teamKey) => (
+                      <TeamLogo key={teamKey} teamKey={teamKey} size="2xs" />
+                    ))}
+                  </span>
                 ) : null}
                 <span className={cn(type.caption, "font-semibold tabular-nums")}>
                   {season}
                 </span>
                 <span className={cn(type.caption, "text-muted-foreground")}>
-                  {seasonTeamLabel(teamKey)}
+                  {teamSeasonLabel(teamKeys)}
                 </span>
               </span>
             </FrostFloatingSurface>,
@@ -108,12 +133,14 @@ export function SeasonBarSlider({
   seasons,
   value,
   seasonTeams,
+  seasonTeamKeys,
   accentColor,
   onCommit,
 }: {
   seasons: string[];
   value: string;
   seasonTeams?: Record<string, string>;
+  seasonTeamKeys?: Record<string, string[]>;
   accentColor?: string;
   onCommit: (season: string) => void;
 }) {
@@ -128,8 +155,16 @@ export function SeasonBarSlider({
   const ratio = dragRatio ?? snappedRatio;
   const previewIndex = Math.round(ratio * last);
   const preview = seasons[previewIndex] ?? value;
-  const thumbColor =
-    teamChartColor(seasonTeams?.[preview]).color || accentColor || "#1d1d1f";
+  const previewKeys = resolveSeasonKeys(
+    preview,
+    seasonTeamKeys,
+    seasonTeams
+  );
+  const thumbStyle = teamSeasonFillStyle(previewKeys);
+  const thumbFallback =
+    !previewKeys.length && accentColor
+      ? { backgroundColor: accentColor }
+      : thumbStyle;
 
   const moveTo = useCallback(
     (clientX: number, snap: boolean) => {
@@ -215,20 +250,40 @@ export function SeasonBarSlider({
           className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/10"
           aria-hidden
         />
-        <div
-          className="absolute top-1/2 left-0 h-1.5 -translate-y-1/2 rounded-full"
-          style={{
-            width: `${ratio * 100}%`,
-            backgroundColor: thumbColor,
-            opacity: 0.55,
-            transition: dragging ? undefined : "width 160ms ease-out",
-          }}
-          aria-hidden
-        />
+        {seasons.map((season, i) => {
+          const teamKeys = resolveSeasonKeys(
+            season,
+            seasonTeamKeys,
+            seasonTeams
+          );
+          const { left, width } = seasonSegmentStyle(i, seasons.length);
+          const active = i <= previewIndex;
+          return (
+            <div
+              key={`segment-${season}`}
+              className={cn(
+                "absolute top-1/2 h-1.5 -translate-y-1/2",
+                i === 0 && "rounded-l-full",
+                i === seasons.length - 1 && "rounded-r-full"
+              )}
+              style={{
+                left: `${left}%`,
+                width: `${width}%`,
+                ...teamSeasonFillStyle(teamKeys),
+                opacity: active ? 0.85 : 0.3,
+                transition: dragging ? undefined : "opacity 160ms ease-out",
+              }}
+              aria-hidden
+            />
+          );
+        })}
         {seasons.map((season, i) => {
           const left = last === 0 ? 0 : (i / last) * 100;
-          const teamKey = seasonTeams?.[season];
-          const color = teamChartColor(teamKey).color;
+          const teamKeys = resolveSeasonKeys(
+            season,
+            seasonTeamKeys,
+            seasonTeams
+          );
           const align =
             i === 0 ? "left" : i === last ? "right" : "center";
           return (
@@ -242,15 +297,11 @@ export function SeasonBarSlider({
                 onCommit(season);
               }}
             >
-              <span
-                className="size-1.5 rounded-full"
-                style={{ backgroundColor: color }}
-                aria-hidden
-              />
+              <TeamSeasonSwatch teamKeys={teamKeys} size="xs" />
               {!dragging ? (
                 <TickHoverTip
                   season={season}
-                  teamKey={teamKey}
+                  teamKeys={teamKeys}
                   align={align}
                 />
               ) : null}
@@ -261,7 +312,7 @@ export function SeasonBarSlider({
           className="pointer-events-none absolute top-1/2 z-[1] size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background shadow-sm"
           style={{
             left: `${ratio * 100}%`,
-            backgroundColor: thumbColor,
+            ...thumbFallback,
             transition: dragging ? undefined : "left 160ms ease-out",
           }}
           aria-hidden

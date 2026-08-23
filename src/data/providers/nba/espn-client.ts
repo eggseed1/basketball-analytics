@@ -48,7 +48,9 @@ export async function espnFetchJson<T>(
           "User-Agent":
             "BasketballAnalytics/0.1 (+local; educational data exploration)",
         },
-      });
+        // Next.js Data Cache — ignored outside the App Router fetch runtime.
+        next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },
+      } as RequestInit);
 
       if (!response.ok) {
         const err = new Error(

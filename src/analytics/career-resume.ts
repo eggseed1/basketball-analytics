@@ -151,6 +151,28 @@ export function careerProductionIndex(row: PlayerSeason): number {
   return ppg + 1.5 * apg + 1.2 * rpg + 2.0 * spg + 2.0 * bpg - tov;
 }
 
+/**
+ * Highest-CPI qualifying season for a career (Career Resume peak).
+ * Pure helper for default season selection on historical players.
+ */
+export function peakCareerSeason(career: PlayerSeason[]): string | null {
+  if (!career.length) return null;
+  const deduped = dedupeCareerSeasons(career);
+  let best: { season: string; cpi: number } | null = null;
+  for (const row of deduped) {
+    if (!isCareerQualifyingSeason(row)) continue;
+    const cpi = careerProductionIndex(row);
+    if (
+      !best ||
+      cpi > best.cpi ||
+      (cpi === best.cpi && row.season.localeCompare(best.season) > 0)
+    ) {
+      best = { season: row.season, cpi };
+    }
+  }
+  return best?.season ?? null;
+}
+
 export function isCareerQualifyingSeason(row: PlayerSeason): boolean {
   if (!row.gamesPlayed || row.gamesPlayed < 0) return false;
   const mpg = perGame(row, "minutes");

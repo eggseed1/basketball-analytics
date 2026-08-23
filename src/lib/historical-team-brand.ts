@@ -90,7 +90,7 @@ function blocksCurrentLogo(era: TeamEra): boolean {
   return false;
 }
 
-/** Today's franchise mark is safe only when the era identity matches current branding. */
+/** Today's franchise mark is safe when the era identity matches current branding. */
 function mayUseCurrentLogo(
   era: TeamEra | null,
   team: CanonicalTeam | null
@@ -98,10 +98,8 @@ function mayUseCurrentLogo(
   if (!team) return false;
   if (!era) return true;
   if (blocksCurrentLogo(era)) return false;
-  return (
-    era.abbr.toUpperCase() === team.abbr.toUpperCase() &&
-    era.displayName === team.displayName
-  );
+  // Abbreviation match is sufficient — "LA Clippers" vs "Los Angeles Clippers" drift is OK.
+  return era.abbr.toUpperCase() === team.abbr.toUpperCase();
 }
 
 function currentFranchiseLogoUrl(team: CanonicalTeam): string | null {
@@ -161,8 +159,7 @@ export function resolveHistoricalTeamBrand(
   const isHistorical = Boolean(
     era &&
       team &&
-      (era.displayName !== team.displayName ||
-        era.abbr.toUpperCase() !== team.abbr.toUpperCase() ||
+      (era.abbr.toUpperCase() !== team.abbr.toUpperCase() ||
         blocksCurrentLogo(era))
   );
 

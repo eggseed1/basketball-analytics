@@ -1,0 +1,143 @@
+[
+  {
+    "id": "cl-sga-ext-26",
+    "headline": "Thunder extension framework discussions",
+    "primaryClaimId": "clm-sga-ext-1",
+    "claimIds": [
+      "clm-sga-ext-1",
+      "clm-sga-ext-2",
+      "clm-sga-ext-agg"
+    ],
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "firstSeenAt": "2026-08-10T14:00:00Z",
+    "lastMeaningfulAt": "2026-08-21T09:30:00Z",
+    "linkedPlayerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "linkedTeamIds": [
+      "25"
+    ]
+  },
+  {
+    "id": "cl-sga-trade-spec",
+    "headline": "Hypothetical SGA trade packages",
+    "primaryClaimId": "clm-sga-spec-1",
+    "claimIds": [
+      "clm-sga-spec-1"
+    ],
+    "evidenceClass": "speculative",
+    "state": "unresolved",
+    "firstSeenAt": "2026-08-18T16:00:00Z",
+    "lastMeaningfulAt": "2026-08-18T16:00:00Z",
+    "linkedPlayerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "linkedTeamIds": [
+      "25",
+      "13",
+      "14"
+    ]
+  },
+  {
+    "id": "cl-doncic-avail",
+    "headline": "Lakers monitoring Dončić workload / availability",
+    "primaryClaimId": "clm-doncic-1",
+    "claimIds": [
+      "clm-doncic-1",
+      "clm-doncic-2"
+    ],
+    "evidenceClass": "rumored",
+    "state": "unresolved",
+    "firstSeenAt": "2026-08-15T11:00:00Z",
+    "lastMeaningfulAt": "2026-08-20T18:00:00Z",
+    "linkedPlayerIds": [
+      "3945274",
+      "203999"
+    ],
+    "linkedTeamIds": [
+      "13"
+    ]
+  },
+  {
+    "id": "cl-tatum-ext",
+    "headline": "Celtics early extension conversations",
+    "primaryClaimId": "clm-tatum-1",
+    "claimIds": [
+      "clm-tatum-1"
+    ],
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "firstSeenAt": "2026-08-12T10:00:00Z",
+    "lastMeaningfulAt": "2026-08-12T10:00:00Z",
+    "linkedPlayerIds": [
+      "4065648",
+      "1628369"
+    ],
+    "linkedTeamIds": [
+      "2"
+    ]
+  },
+  {
+    "id": "cl-giannis-interest",
+    "headline": "Giannis Antetokounmpo traded to Miami",
+    "primaryClaimId": "clm-giannis-complete",
+    "claimIds": [
+      "clm-giannis-1",
+      "clm-giannis-2",
+      "clm-giannis-deny",
+      "clm-giannis-complete"
+    ],
+    "evidenceClass": "reported",
+    "state": "completed",
+    "firstSeenAt": "2026-08-08T13:00:00Z",
+    "lastMeaningfulAt": "2026-08-20T16:00:00Z",
+    "linkedPlayerIds": [
+      "203507"
+    ],
+    "linkedTeamIds": [
+      "14"
+    ]
+  },
+  {
+    "id": "cl-lebron-phi-26",
+    "headline": "LeBron James signs with Philadelphia",
+    "primaryClaimId": "clm-lebron-phi-complete",
+    "claimIds": [
+      "clm-lebron-phi-complete"
+    ],
+    "evidenceClass": "reported",
+    "state": "completed",
+    "firstSeenAt": "2026-08-14T10:00:00Z",
+    "lastMeaningfulAt": "2026-08-18T12:00:00Z",
+    "linkedPlayerIds": [
+      "2544",
+      "1966"
+    ],
+    "linkedTeamIds": [
+      "20"
+    ]
+  },
+  {
+    "id": "cl-trae-wsh-26",
+    "headline": "Trae Young traded to Washington",
+    "primaryClaimId": "clm-trae-wsh-complete",
+    "claimIds": [
+      "clm-trae-wsh-complete"
+    ],
+    "evidenceClass": "reported",
+    "state": "completed",
+    "firstSeenAt": "2026-08-18T10:00:00Z",
+    "lastMeaningfulAt": "2026-08-19T14:00:00Z",
+    "linkedPlayerIds": [
+      "1629027",
+      "4277905"
+    ],
+    "linkedTeamIds": [
+      "27",
+      "1"
+    ]
+  }
+]

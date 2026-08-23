@@ -1,0 +1,275 @@
+[
+  {
+    "id": "clm-sga-ext-1",
+    "clusterId": "cl-sga-ext-26",
+    "summary": "OKC and Shai Gilgeous-Alexander have opened preliminary extension framework talks for a supermax-scale deal.",
+    "claimType": "extension_talks",
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-10T14:00:00Z",
+    "sourceId": "src-tier1-a",
+    "sourceLabel": "National insider (Tier 1)",
+    "reporterLabel": "Curated prototype A",
+    "playerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "teamIds": [
+      "25"
+    ],
+    "isOriginal": true,
+    "negotiationSpecificity": "framework"
+  },
+  {
+    "id": "clm-sga-ext-2",
+    "clusterId": "cl-sga-ext-26",
+    "summary": "Second national outlet corroborates that OKC prioritizes an extension before the season rather than exploring trades.",
+    "claimType": "extension_talks",
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-21T09:30:00Z",
+    "sourceId": "src-tier1-b",
+    "sourceLabel": "National insider (Tier 1)",
+    "reporterLabel": "Curated prototype B",
+    "playerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "teamIds": [
+      "25"
+    ],
+    "isOriginal": true,
+    "negotiationSpecificity": "active_talks"
+  },
+  {
+    "id": "clm-sga-ext-agg",
+    "clusterId": "cl-sga-ext-26",
+    "summary": "Aggregator reposts first extension report without additional reporting.",
+    "claimType": "extension_talks",
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "provenanceKind": "aggregation",
+    "publishedAt": "2026-08-10T16:00:00Z",
+    "sourceId": "src-agg-a",
+    "sourceLabel": "Aggregator citing Tier 1",
+    "playerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "teamIds": [
+      "25"
+    ],
+    "citesClaimId": "clm-sga-ext-1",
+    "isOriginal": false
+  },
+  {
+    "id": "clm-sga-spec-1",
+    "clusterId": "cl-sga-trade-spec",
+    "summary": "Trade-machine column explores hypothetical three-team framework sending SGA to LAL — no sourced team interest claimed.",
+    "claimType": "trade_interest",
+    "evidenceClass": "speculative",
+    "state": "unresolved",
+    "provenanceKind": "hypothetical_analysis",
+    "publishedAt": "2026-08-18T16:00:00Z",
+    "sourceId": "src-spec-a",
+    "sourceLabel": "Trade-machine analysis",
+    "playerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "teamIds": [
+      "25",
+      "13",
+      "14"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-doncic-1",
+    "clusterId": "cl-doncic-avail",
+    "summary": "Lakers staff monitoring minutes plan for Luka Dončić early in 2026-27 — described as internal workload management, not a trade.",
+    "claimType": "availability",
+    "evidenceClass": "rumored",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-15T11:00:00Z",
+    "sourceId": "src-tier2-a",
+    "sourceLabel": "Regional beat (Tier 2)",
+    "playerIds": [
+      "3945274",
+      "203999"
+    ],
+    "teamIds": [
+      "13"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-doncic-2",
+    "clusterId": "cl-doncic-avail",
+    "summary": "National outlet characterizes Lakers as 'comfortable' with early-season load management plan.",
+    "claimType": "availability",
+    "evidenceClass": "rumored",
+    "state": "unresolved",
+    "provenanceKind": "cites_report",
+    "publishedAt": "2026-08-20T18:00:00Z",
+    "sourceId": "src-tier1-b",
+    "sourceLabel": "National insider (Tier 1)",
+    "playerIds": [
+      "3945274",
+      "203999"
+    ],
+    "teamIds": [
+      "13"
+    ],
+    "citesClaimId": "clm-doncic-1",
+    "isOriginal": false
+  },
+  {
+    "id": "clm-tatum-1",
+    "clusterId": "cl-tatum-ext",
+    "summary": "Celtics have opened early extension conversations with Jayson Tatum's representation ahead of 2026-27.",
+    "claimType": "extension_talks",
+    "evidenceClass": "reported",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-12T10:00:00Z",
+    "sourceId": "src-tier1-a",
+    "sourceLabel": "National insider (Tier 1)",
+    "playerIds": [
+      "4065648",
+      "1628369"
+    ],
+    "teamIds": [
+      "2"
+    ],
+    "isOriginal": true,
+    "negotiationSpecificity": "contact"
+  },
+  {
+    "id": "clm-giannis-1",
+    "clusterId": "cl-giannis-interest",
+    "summary": "Multiple teams have gauged Bucks openness on Giannis Antetokounmpo — described as very preliminary.",
+    "claimType": "trade_interest",
+    "evidenceClass": "rumored",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-08T13:00:00Z",
+    "sourceId": "src-tier1-a",
+    "sourceLabel": "National insider (Tier 1)",
+    "playerIds": [
+      "203507"
+    ],
+    "teamIds": [
+      "15",
+      "14",
+      "17"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-giannis-2",
+    "clusterId": "cl-giannis-interest",
+    "summary": "Second outlet links Lakers and Warriors as teams that asked about framework — not an offer.",
+    "claimType": "trade_interest",
+    "evidenceClass": "rumored",
+    "state": "unresolved",
+    "provenanceKind": "original_report",
+    "publishedAt": "2026-08-19T12:00:00Z",
+    "sourceId": "src-tier1-b",
+    "sourceLabel": "National insider (Tier 1)",
+    "playerIds": [
+      "203507"
+    ],
+    "teamIds": [
+      "15",
+      "14",
+      "9"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-giannis-deny",
+    "clusterId": "cl-giannis-interest",
+    "summary": "Bucks front office tells local beat they are not shopping Giannis.",
+    "claimType": "trade_interest",
+    "evidenceClass": "rumored",
+    "state": "denied",
+    "provenanceKind": "official_statement",
+    "publishedAt": "2026-08-19T15:00:00Z",
+    "sourceId": "src-tier2-a",
+    "sourceLabel": "Regional beat (Tier 2)",
+    "playerIds": [
+      "203507"
+    ],
+    "teamIds": [
+      "15"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-giannis-complete",
+    "clusterId": "cl-giannis-interest",
+    "summary": "Giannis Antetokounmpo is traded to the Miami Heat in a blockbuster deal — prior trade-interest cluster resolved.",
+    "claimType": "trade_interest",
+    "evidenceClass": "reported",
+    "state": "completed",
+    "provenanceKind": "completed_transaction",
+    "publishedAt": "2026-08-20T16:00:00Z",
+    "sourceId": "src-tier1-a",
+    "sourceLabel": "National insider (Tier 1)",
+    "sourceUrl": "/offseason",
+    "playerIds": [
+      "203507"
+    ],
+    "teamIds": [
+      "14"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-lebron-phi-complete",
+    "clusterId": "cl-lebron-phi-26",
+    "summary": "LeBron James agrees to join the Philadelphia 76ers for the 2026-27 season.",
+    "claimType": "free_agent_interest",
+    "evidenceClass": "reported",
+    "state": "completed",
+    "provenanceKind": "completed_transaction",
+    "publishedAt": "2026-08-18T12:00:00Z",
+    "sourceId": "src-tier1-b",
+    "sourceLabel": "National insider (Tier 1)",
+    "sourceUrl": "/offseason",
+    "playerIds": [
+      "2544",
+      "1966"
+    ],
+    "teamIds": [
+      "20"
+    ],
+    "isOriginal": true
+  },
+  {
+    "id": "clm-trae-wsh-complete",
+    "clusterId": "cl-trae-wsh-26",
+    "summary": "Trae Young is traded to the Washington Wizards in exchange for CJ McCollum and Corey Kispert.",
+    "claimType": "trade_interest",
+    "evidenceClass": "reported",
+    "state": "completed",
+    "provenanceKind": "completed_transaction",
+    "publishedAt": "2026-08-19T14:00:00Z",
+    "sourceId": "src-tier1-a",
+    "sourceLabel": "National insider (Tier 1)",
+    "sourceUrl": "/offseason",
+    "playerIds": [
+      "1629027",
+      "4277905"
+    ],
+    "teamIds": [
+      "27",
+      "1"
+    ],
+    "isOriginal": true
+  }
+]

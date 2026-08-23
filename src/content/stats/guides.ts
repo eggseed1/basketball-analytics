@@ -10,7 +10,7 @@ export type StatGuide = {
   slug: string;
   name: string;
   shortName: string;
-  category: "impact" | "efficiency" | "possession" | "team";
+  category: "impact" | "efficiency" | "possession" | "team" | "proprietary";
   /** One line under the title on /learn/[slug] */
   blurb: string;
   plain: {

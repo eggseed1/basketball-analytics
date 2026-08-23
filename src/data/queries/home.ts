@@ -27,6 +27,10 @@ import {
 import { formatNumber } from "@/lib/format";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
+  priorSeasonForStats,
+  shouldUsePriorSeasonBoardStats,
+} from "@/lib/player-board-season";
+import {
   getCanonicalTeamFromProvider,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
@@ -159,7 +163,7 @@ export type HomeAnalytics = {
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 10;
+const HOME_CACHE_VERSION = 11;
 const ESPN_SEASONS_BUDGET_MS = 4000;
 const DRBL_BUDGET_MS = 2000;
 let homeCache: {
@@ -217,17 +221,32 @@ function withProfileId(
 }
 
 async function loadHomeAnalytics(): Promise<HomeAnalytics> {
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+  const calendarSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const espn = new NBADataProvider();
+
+  const calendarSeasons = await withTimeout(
+    espn.getPlayerSeasons(calendarSeason).catch(() => [] as PlayerSeason[]),
+    ESPN_SEASONS_BUDGET_MS,
+    [] as PlayerSeason[]
+  );
+
+  const season = shouldUsePriorSeasonBoardStats(calendarSeason, calendarSeasons)
+    ? priorSeasonForStats(calendarSeason)
+    : calendarSeason;
+
+  const seasons =
+    season === calendarSeason
+      ? calendarSeasons
+      : await withTimeout(
+          espn.getPlayerSeasons(season).catch(() => [] as PlayerSeason[]),
+          ESPN_SEASONS_BUDGET_MS,
+          calendarSeasons
+        );
+
   const drblSeasonOk = isDrblSeason(season);
 
-  const [darko, seasons, drblRows, aliasIndex] = await Promise.all([
+  const [darko, drblRows, aliasIndex] = await Promise.all([
     getDarkoRatings().catch(() => [] as DarkoRating[]),
-    withTimeout(
-      espn.getPlayerSeasons(season).catch(() => [] as PlayerSeason[]),
-      ESPN_SEASONS_BUDGET_MS,
-      [] as PlayerSeason[]
-    ),
     drblSeasonOk
       ? withTimeout(
           fetchDrblSeason(season).catch(() => []),

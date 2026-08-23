@@ -22,27 +22,30 @@ type ColId =
   | "season"
   | "age"
   | "team"
-  | "gp"
+  | "g"
   | "gs"
-  | "min"
-  | "fg"
-  | "fga"
-  | "fgPct"
-  | "threeP"
-  | "threePa"
-  | "threePct"
-  | "twoP"
-  | "twoPa"
-  | "twoPct"
-  | "ft"
-  | "fta"
-  | "ftPct"
-  | "reb"
+  | "mp"
+  | "pts"
+  | "trb"
+  | "orb"
+  | "drb"
   | "ast"
   | "stl"
   | "blk"
   | "tov"
-  | "pts"
+  | "pf"
+  | "fg"
+  | "fga"
+  | "fgPct"
+  | "fg3"
+  | "fg3a"
+  | "fg3Pct"
+  | "fg2"
+  | "fg2a"
+  | "fg2Pct"
+  | "ft"
+  | "fta"
+  | "ftPct"
   | "efg"
   | "ts"
   | "view";
@@ -54,32 +57,35 @@ type ColDef = {
   align?: "left" | "right";
 };
 
-/** Single column contract for header / body / footer. */
+/** Single column contract — order matches docs/player-stats-catalog.md. */
 export const CAREER_TABLE_COLUMNS: ColDef[] = [
   { id: "season", label: "Season", sticky: "season", align: "left" },
   { id: "age", label: "Age", sticky: "age", align: "right" },
-  { id: "team", label: "Team", sticky: "team", align: "left" },
-  { id: "gp", label: "GP", align: "right" },
+  { id: "team", label: "Tm", sticky: "team", align: "left" },
+  { id: "g", label: "G", align: "right" },
   { id: "gs", label: "GS", align: "right" },
-  { id: "min", label: "MIN", align: "right" },
-  { id: "fg", label: "FG", align: "right" },
-  { id: "fga", label: "FGA", align: "right" },
-  { id: "fgPct", label: "FG%", align: "right" },
-  { id: "threeP", label: "3P", align: "right" },
-  { id: "threePa", label: "3PA", align: "right" },
-  { id: "threePct", label: "3P%", align: "right" },
-  { id: "twoP", label: "2P", align: "right" },
-  { id: "twoPa", label: "2PA", align: "right" },
-  { id: "twoPct", label: "2P%", align: "right" },
-  { id: "ft", label: "FT", align: "right" },
-  { id: "fta", label: "FTA", align: "right" },
-  { id: "ftPct", label: "FT%", align: "right" },
-  { id: "reb", label: "REB", align: "right" },
+  { id: "mp", label: "MP", align: "right" },
+  { id: "pts", label: "PTS", align: "right" },
+  { id: "trb", label: "TRB", align: "right" },
+  { id: "orb", label: "ORB", align: "right" },
+  { id: "drb", label: "DRB", align: "right" },
   { id: "ast", label: "AST", align: "right" },
   { id: "stl", label: "STL", align: "right" },
   { id: "blk", label: "BLK", align: "right" },
   { id: "tov", label: "TOV", align: "right" },
-  { id: "pts", label: "PTS", align: "right" },
+  { id: "pf", label: "PF", align: "right" },
+  { id: "fg", label: "FG", align: "right" },
+  { id: "fga", label: "FGA", align: "right" },
+  { id: "fgPct", label: "FG%", align: "right" },
+  { id: "fg3", label: "3P", align: "right" },
+  { id: "fg3a", label: "3PA", align: "right" },
+  { id: "fg3Pct", label: "3P%", align: "right" },
+  { id: "fg2", label: "2P", align: "right" },
+  { id: "fg2a", label: "2PA", align: "right" },
+  { id: "fg2Pct", label: "2P%", align: "right" },
+  { id: "ft", label: "FT", align: "right" },
+  { id: "fta", label: "FTA", align: "right" },
+  { id: "ftPct", label: "FT%", align: "right" },
   { id: "efg", label: "eFG%", align: "right" },
   { id: "ts", label: "TS%", align: "right" },
   { id: "view", label: "", align: "left" },
@@ -134,38 +140,20 @@ function cellFor(
       return age;
     case "team":
       return teamAbbr(t);
-    case "gp":
+    case "g":
       return t.gp;
     case "gs":
       return t.gs == null ? "—" : t.gs;
-    case "min":
+    case "mp":
       return presentMinutes(t.minutesTotal, mode, t.gp);
-    case "fg":
-      return presentAdditive(t.fgm, mode, t.gp, t.minutesTotal);
-    case "fga":
-      return presentAdditive(t.fga, mode, t.gp, t.minutesTotal);
-    case "fgPct":
-      return presentPct(rates.fgPct);
-    case "threeP":
-      return presentAdditive(t.threePm, mode, t.gp, t.minutesTotal);
-    case "threePa":
-      return presentAdditive(t.threePa, mode, t.gp, t.minutesTotal);
-    case "threePct":
-      return presentPct(rates.threePct);
-    case "twoP":
-      return presentAdditive(t.twoPm, mode, t.gp, t.minutesTotal);
-    case "twoPa":
-      return presentAdditive(t.twoPa, mode, t.gp, t.minutesTotal);
-    case "twoPct":
-      return presentPct(rates.twoPct);
-    case "ft":
-      return presentAdditive(t.ftm, mode, t.gp, t.minutesTotal);
-    case "fta":
-      return presentAdditive(t.fta, mode, t.gp, t.minutesTotal);
-    case "ftPct":
-      return presentPct(rates.ftPct);
-    case "reb":
+    case "pts":
+      return presentAdditive(t.pts, mode, t.gp, t.minutesTotal);
+    case "trb":
       return presentAdditive(t.reb, mode, t.gp, t.minutesTotal);
+    case "orb":
+      return presentAdditive(t.orb, mode, t.gp, t.minutesTotal);
+    case "drb":
+      return presentAdditive(t.drb, mode, t.gp, t.minutesTotal);
     case "ast":
       return presentAdditive(t.ast, mode, t.gp, t.minutesTotal);
     case "stl":
@@ -174,8 +162,32 @@ function cellFor(
       return presentAdditive(t.blk, mode, t.gp, t.minutesTotal);
     case "tov":
       return presentAdditive(t.tov, mode, t.gp, t.minutesTotal);
-    case "pts":
-      return presentAdditive(t.pts, mode, t.gp, t.minutesTotal);
+    case "pf":
+      return presentAdditive(t.pf, mode, t.gp, t.minutesTotal);
+    case "fg":
+      return presentAdditive(t.fgm, mode, t.gp, t.minutesTotal);
+    case "fga":
+      return presentAdditive(t.fga, mode, t.gp, t.minutesTotal);
+    case "fgPct":
+      return presentPct(rates.fgPct);
+    case "fg3":
+      return presentAdditive(t.threePm, mode, t.gp, t.minutesTotal);
+    case "fg3a":
+      return presentAdditive(t.threePa, mode, t.gp, t.minutesTotal);
+    case "fg3Pct":
+      return presentPct(rates.threePct);
+    case "fg2":
+      return presentAdditive(t.twoPm, mode, t.gp, t.minutesTotal);
+    case "fg2a":
+      return presentAdditive(t.twoPa, mode, t.gp, t.minutesTotal);
+    case "fg2Pct":
+      return presentPct(rates.twoPct);
+    case "ft":
+      return presentAdditive(t.ftm, mode, t.gp, t.minutesTotal);
+    case "fta":
+      return presentAdditive(t.fta, mode, t.gp, t.minutesTotal);
+    case "ftPct":
+      return presentPct(rates.ftPct);
     case "efg":
       return presentPct(rates.efgPct);
     case "ts":
@@ -248,6 +260,9 @@ function sumCareer(rows: PlayerSeasonTotals[]): PlayerSeasonTotals {
     if (r.stl != null) acc.stl = (acc.stl ?? 0) + r.stl;
     if (r.blk != null) acc.blk = (acc.blk ?? 0) + r.blk;
     if (r.tov != null) acc.tov = (acc.tov ?? 0) + r.tov;
+    if (r.pf != null) acc.pf = (acc.pf ?? 0) + r.pf;
+    if (r.orb != null) acc.orb = (acc.orb ?? 0) + r.orb;
+    if (r.drb != null) acc.drb = (acc.drb ?? 0) + r.drb;
     if (r.pts != null) acc.pts = (acc.pts ?? 0) + r.pts;
   }
   acc.twoPm =

@@ -29,6 +29,14 @@ export const TRANSACTION_ARCHIVE_RELATIVE = path.join(
   "v1"
 );
 
+export const CURATED_TRANSACTIONS_RELATIVE = path.join(
+  "data",
+  "transactions",
+  "curated",
+  "v1",
+  "transactions.jsonl"
+);
+
 export type TransactionArchiveManifest = {
   source: string;
   datasetVersion: string;
@@ -165,6 +173,19 @@ export async function loadTransactionArchive(
     const transactions = parseJsonl<CanonicalTransaction>(
       await readFile(path.join(root, "transactions.jsonl"), "utf8")
     );
+    let curated: CanonicalTransaction[] = [];
+    try {
+      curated = parseJsonl<CanonicalTransaction>(
+        await readFile(path.join(cwd, CURATED_TRANSACTIONS_RELATIVE), "utf8")
+      );
+    } catch {
+      curated = [];
+    }
+    const mergedById = new Map(transactions.map((tx) => [tx.id, tx]));
+    for (const tx of curated) mergedById.set(tx.id, tx);
+    const mergedTransactions = [...mergedById.values()].sort((a, b) =>
+      a.date.localeCompare(b.date)
+    );
     let ownershipEdges: OwnershipEdge[] = [];
     try {
       ownershipEdges = parseJsonl<OwnershipEdge>(
@@ -184,7 +205,7 @@ export async function loadTransactionArchive(
     }
     return {
       manifest,
-      transactions,
+      transactions: mergedTransactions,
       ownershipEdges,
       validationIssueCounts,
     };

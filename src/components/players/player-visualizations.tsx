@@ -4,7 +4,9 @@ import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { loadPlayerSeasonShotIndex } from "@/data/history/player-season-shots";
+import { getPlayerSeasonShotMap } from "@/data/queries/player-shots";
 import { playerSeasonShotIndexToMap } from "@/lib/player-season-shot-map-adapter";
+import type { PlayerShotMap } from "@/lib/player-shot-map";
 import type { PlayerSeasonKind } from "@/lib/player-destination";
 import { cn } from "@/lib/utils";
 
@@ -65,9 +67,8 @@ export function PlayerPlannedVisualizations({
       <div>
         <h2 className={type.heading}>Planned visualizations</h2>
         <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          Shot maps ship now from the P18 player-season shot index. The rest
-          stay listed until the underlying feed is wired - no placeholder
-          charts.
+          Shot maps load from the offline index when present, otherwise NBA
+          Stats live. The rest stay listed until the underlying feed is wired.
         </p>
       </div>
       <ul className="flex flex-col gap-3">
@@ -90,11 +91,13 @@ export function PlayerPlannedVisualizations({
  */
 export async function PlayerVisualizationsIsland({
   playerId,
+  nbaId,
   season,
   seasons,
   seasonType,
   teamKey,
   teamLabel,
+  teamAbbr,
 }: {
   playerId: string;
   nbaId?: string | null;
@@ -103,25 +106,35 @@ export async function PlayerVisualizationsIsland({
   seasonType: PlayerSeasonKind;
   teamKey?: string | null;
   teamLabel?: string | null;
+  teamAbbr?: string | null;
 }) {
   const index = loadPlayerSeasonShotIndex(playerId, season);
   const label = teamLabel || teamKey || "NBA";
-  const coverageLabel = index
-    ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
-        index.coverage * 100
-      ).toFixed(1)}%)`
-    : null;
-  const map = playerSeasonShotIndexToMap({
-    index,
-    season,
-    teamLabel: label,
-    seasonType,
-    emptyReason: index
-      ? index.coordinateShots <= 0
-        ? `No coordinate shots in the P18 index for ${season} (${seasonType}). Coverage disclosed above when present.`
-        : null
-      : `No precomputed player-season shot index for ${season}.`,
-  });
+  const coverageLabel =
+    index && index.coordinateShots > 0
+      ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
+          index.coverage * 100
+        ).toFixed(1)}%)`
+      : null;
+
+  let map: PlayerShotMap;
+  if (index && index.coordinateShots > 0) {
+    map = playerSeasonShotIndexToMap({
+      index,
+      season,
+      teamLabel: label,
+      seasonType,
+    });
+  } else {
+    map = await getPlayerSeasonShotMap({
+      playerId,
+      nbaId,
+      season,
+      seasonType,
+      teamAbbr: teamAbbr ?? "TOT",
+      teamLabel: label,
+    });
+  }
 
   return (
     <section

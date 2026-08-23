@@ -20,6 +20,8 @@ interface SearchHit {
   team: string;
   position: string | null;
   season: string;
+  careerSpan?: string;
+  draftProspect?: boolean;
 }
 
 export function GlobalPlayerSearch({
@@ -51,7 +53,7 @@ export function GlobalPlayerSearch({
       setLoading(true);
       try {
         const res = await fetch(
-          `/api/players/search?q=${encodeURIComponent(q)}`,
+          `/api/players/search?q=${encodeURIComponent(q)}&scope=all`,
           { signal: controller.signal }
         );
         if (!res.ok) throw new Error("search failed");
@@ -196,7 +198,9 @@ export function GlobalPlayerSearch({
               >
                 <span className="min-w-0 truncate font-medium">{hit.name}</span>
                 <span className="shrink-0 font-mono text-xs uppercase text-muted-foreground">
-                  {[hit.team, hit.position].filter(Boolean).join(" · ")}
+                  {hit.draftProspect
+                    ? [hit.team, hit.careerSpan].filter(Boolean).join(" · ")
+                    : [hit.team, hit.position].filter(Boolean).join(" · ")}
                 </span>
               </button>
             </li>

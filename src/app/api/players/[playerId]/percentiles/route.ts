@@ -1,7 +1,10 @@
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
-import { getPlayerCareerSeasons } from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { resolvePlayerSeason } from "@/lib/player-destination";
-import { loadPlayerPercentileMetrics } from "@/lib/player-percentile-load";
+import {
+  loadPlayerPercentileMetrics,
+  type PercentileLoadMode,
+} from "@/lib/player-percentile-load";
 import {
   cardStintsForSeason,
   lastCardStint,
@@ -16,7 +19,10 @@ export async function GET(
     const { playerId } = await context.params;
     const url = new URL(request.url);
     const seasonParam = url.searchParams.get("season");
-    const career = await getPlayerCareerSeasons(playerId);
+    const modeParam = url.searchParams.get("mode");
+    const mode: PercentileLoadMode =
+      modeParam === "fast" ? "fast" : "full";
+    const career = await getPlayerCareerSeasonsCached(playerId);
     if (career.length === 0) {
       return jsonError(new Error("Player not found"), 404);
     }
@@ -28,13 +34,15 @@ export async function GET(
       playerId,
       season,
       career,
-      identityTeamKey
+      identityTeamKey,
+      { mode }
     );
     return jsonOk({
       playerId,
       season,
       teamKey,
       metrics,
+      mode,
     });
   } catch (error) {
     return jsonError(error);

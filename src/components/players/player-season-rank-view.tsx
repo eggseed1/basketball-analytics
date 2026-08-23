@@ -446,53 +446,13 @@ export function PlayerSeasonRankView({
   );
 }
 
-/** Compact player-page entry for ranking + two-season compare. */
-export function PlayerSeasonAnalysisControl({
-  playerId,
-  seasons,
-  defaultA,
-  defaultB,
-  defaultRankSeasons,
-}: {
+/** Compact player-page entry for ranking + two-season compare — hidden for now. */
+export function PlayerSeasonAnalysisControl(_props: {
   playerId: string;
   seasons: string[];
   defaultA?: string;
   defaultB?: string;
   defaultRankSeasons?: string[];
 }) {
-  if (seasons.length < 2) return null;
-  const rankSeasons =
-    defaultRankSeasons && defaultRankSeasons.length >= 2
-      ? defaultRankSeasons
-      : seasons.slice(0, 4);
-  const twoHref =
-    defaultA && defaultB && defaultA !== defaultB
-      ? seasonComparePath(playerId, defaultA, defaultB)
-      : `/players/${playerId}/season-compare`;
-
-  return (
-    <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
-      <div>
-        <h2 className="text-[20px] font-bold tracking-tight">Season analysis</h2>
-        <p className="text-[14px] text-muted-foreground">
-          Compare two seasons, or rank a selected set - without a fake universal
-          score.
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        <Link
-          href={twoHref}
-          className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
-        >
-          Compare two seasons
-        </Link>
-        <Link
-          href={seasonRankPath(playerId, rankSeasons)}
-          className="rounded-md bg-foreground px-3 py-1.5 text-[14px] font-semibold text-background"
-        >
-          Rank my seasons
-        </Link>
-      </div>
-    </div>
-  );
+  return null;
 }

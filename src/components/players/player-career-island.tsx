@@ -4,18 +4,21 @@ import {
   type CareerBoardRow,
 } from "@/components/players/player-career-board";
 import { getPlayerPlayoffCareerSeasons } from "@/data/queries";
-import { attachDrblToPlayerSeasons } from "@/data/queries/players";
+import { enrichPlayerCareerAdvancedCached } from "@/data/queries/request-cache";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { PlayerSeason } from "@/data/types";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
+import {
+  darkoDefense,
+  darkoOffense,
+  darkoTotal,
+  finiteNum,
+  publishedAdvanced,
+} from "@/lib/player-stat-sheet-registry";
 import type { ThemeMode } from "@/themes/era-theme";
 
 function perGame(total: number, games: number) {
   return games > 0 ? total / games : 0;
-}
-
-function finite(n: number | null | undefined): number | null {
-  return n != null && Number.isFinite(n) ? n : null;
 }
 
 function rate(n: number | null | undefined): number | null {
@@ -37,11 +40,12 @@ function toBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
       ppg: perGame(row.points, gp),
       apg,
       rpg: perGame(row.rebounds, gp),
-      orpg: finite(perGame(row.offensiveRebounds, gp)),
-      drpg: finite(perGame(row.defensiveRebounds, gp)),
-      spg: finite(perGame(row.steals, gp)),
-      bpg: finite(perGame(row.blocks, gp)),
-      tov: finite(tpg),
+      orpg: finiteNum(perGame(row.offensiveRebounds, gp)),
+      drpg: finiteNum(perGame(row.defensiveRebounds, gp)),
+      spg: finiteNum(perGame(row.steals, gp)),
+      bpg: finiteNum(perGame(row.blocks, gp)),
+      tov: finiteNum(tpg),
+      pf: finiteNum(perGame(row.personalFouls, gp)),
       atr: tpg > 0 ? apg / tpg : null,
       fgPct: rate(row.fieldGoalPct),
       twoPct: rate(row.twoPointPct),
@@ -52,18 +56,36 @@ function toBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
       usg: rate(row.usagePct),
       threePar: rate(row.threePointAttemptRate),
       ftr: rate(row.freeThrowRate),
-      ortg: finite(row.offensiveRating),
-      drtg: finite(row.defensiveRating),
-      net: finite(row.netRating),
-      per: finite(row.per),
-      bpm: finite(row.bpm),
-      vorp: finite(row.vorp),
-      ws: finite(row.winShares),
+      ortg: rate(row.offensiveRating),
+      drtg:
+        rate(row.offensiveRating) != null &&
+        row.defensiveRating != null &&
+        row.defensiveRating > 0
+          ? finiteNum(row.defensiveRating)
+          : null,
+      net:
+        rate(row.offensiveRating) != null &&
+        row.defensiveRating != null &&
+        row.defensiveRating > 0
+          ? finiteNum(row.netRating)
+          : null,
+      // Career totals zero-fill BRef/Advanced until overlay — never show fake 0.0
+      per: publishedAdvanced(row.per),
+      bpm: publishedAdvanced(row.bpm),
+      vorp: publishedAdvanced(row.vorp),
+      ws: publishedAdvanced(row.winShares),
       cpi: careerProductionIndex(row),
-      war1: finite(row.r1WinEquivalents),
-      drbl100: drbl ? finite(row.drbl100) : null,
-      drblO: drbl ? finite(row.drblO) : null,
-      drblD: drbl ? finite(row.drblD) : null,
+      darko: darkoTotal(row),
+      darkoOff: darkoOffense(row),
+      darkoDef: darkoDefense(row),
+      lebron: finiteNum(row.lebron),
+      oLebron: finiteNum(row.oLebron),
+      dLebron: finiteNum(row.dLebron),
+      winsAdded: finiteNum(row.winsAdded),
+      war1: finiteNum(row.r1WinEquivalents),
+      drbl100: drbl ? finiteNum(row.drbl100) : null,
+      drblO: drbl ? finiteNum(row.drblO) : null,
+      drblD: drbl ? finiteNum(row.drblD) : null,
     };
   });
 }
@@ -97,7 +119,9 @@ export async function PlayerCareerIsland({
   const source =
     seasonType === "playoffs"
       ? await getPlayerPlayoffCareerSeasons(playerId)
-      : await attachDrblToPlayerSeasons(playerId, career).catch(() => career);
+      : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
+          () => career
+        );
   const rows = toBoardRows(source);
   const seasons = rows.map((row) => row.season);
   const compare = pickCompare(seasons, season, compareSeason);

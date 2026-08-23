@@ -1,4 +1,11 @@
 import { TeamAssetsSection } from "@/components/teams/team-assets-section";
+import {
+  buildTeamDraftAssetsPresentation,
+  buildTeamPayrollPresentation,
+  getCurrentFrontOfficeSeason,
+  resolveFrontOfficeFranchiseId,
+  resolveTeamFrontOfficeSlice,
+} from "@/data/front-office/load-team-front-office";
 import { getTeamAssets } from "@/data/queries/team-assets";
 import type { TeamAssetLedger } from "@/data/types/team-assets";
 
@@ -13,15 +20,28 @@ export async function TeamAssetsIsland({
   season: string;
   teamKey: string;
 }) {
+  const franchiseId = resolveFrontOfficeFranchiseId(teamId);
+  const frontOfficeSeason = getCurrentFrontOfficeSeason();
+  const viewingHistoricalStats = season !== frontOfficeSeason;
+  const frontOffice = franchiseId
+    ? await resolveTeamFrontOfficeSlice(franchiseId, frontOfficeSeason)
+    : null;
+  const payroll = frontOffice
+    ? buildTeamPayrollPresentation(frontOffice)
+    : null;
+  const draftAssets = frontOffice
+    ? buildTeamDraftAssetsPresentation(frontOffice)
+    : null;
+
   const assetLedger = await getTeamAssets({
     teamId,
     abbreviation,
-    season,
+    season: frontOfficeSeason,
     minimumGames: 10,
   }).catch(
     (): TeamAssetLedger => ({
       teamId,
-      asOfSeason: season,
+      asOfSeason: frontOfficeSeason,
       asOfDate: null,
       methodologyVersion: "1.0",
       lineageMethodologyVersion: "1.0",
@@ -57,12 +77,28 @@ export async function TeamAssetsIsland({
           Cap &amp; assets
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Verified inventory for this season - structured picks and exceptions
-          stay unavailable until a licensed ledger exists.
+          {frontOfficeSeason} payroll, cap space, and draft picks from the
+          current roster snapshot.
+          {viewingHistoricalStats ? (
+            <>
+              {" "}
+              Team stats elsewhere on this page are {season}.
+            </>
+          ) : null}
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">
-        <TeamAssetsSection ledger={assetLedger} teamKey={teamKey} />
+        <TeamAssetsSection
+          ledger={assetLedger}
+          payroll={payroll}
+          draftAssets={draftAssets}
+          payrollHref={
+            franchiseId ? `/teams/${franchiseId}/payroll` : undefined
+          }
+          draftAssetsHref={
+            franchiseId ? `/teams/${franchiseId}/draft-assets` : undefined
+          }
+        />
       </div>
     </section>
   );

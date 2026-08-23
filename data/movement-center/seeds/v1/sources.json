@@ -1,0 +1,22 @@
+{
+  "src-tier1-a": {
+    "label": "National insider (Tier 1)",
+    "credibility": 32
+  },
+  "src-tier1-b": {
+    "label": "National insider (Tier 1)",
+    "credibility": 30
+  },
+  "src-tier2-a": {
+    "label": "Regional beat (Tier 2)",
+    "credibility": 22
+  },
+  "src-agg-a": {
+    "label": "Aggregator citing Tier 1",
+    "credibility": 8
+  },
+  "src-spec-a": {
+    "label": "Trade-machine analysis",
+    "credibility": 5
+  }
+}

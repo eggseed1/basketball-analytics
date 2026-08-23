@@ -52,14 +52,38 @@ const LOCAL_TEAMS: SiteHit[] = (() => {
   return rows.sort((a, b) => a.name.localeCompare(b.name));
 })();
 
+function normTeamQuery(s: string): string {
+  return s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+/**
+ * Team match: token / abbreviation prefixes only.
+ * Avoids mid-word hits like "der" inside "Thunder".
+ */
+function teamTextMatches(haystack: string, query: string): boolean {
+  const q = normTeamQuery(query);
+  if (!q) return false;
+  const h = normTeamQuery(haystack);
+  if (!h) return false;
+  if (h === q || h.startsWith(`${q} `) || h.endsWith(` ${q}`)) return true;
+  const tokens = h.split(" ").filter(Boolean);
+  const parts = q.split(" ").filter(Boolean);
+  return parts.every((part) => tokens.some((token) => token.startsWith(part)));
+}
+
 function matchLocalTeams(query: string): SiteHit[] {
-  const needle = query.trim().toLowerCase();
+  const needle = query.trim();
   if (!needle) return [];
   return LOCAL_TEAMS.filter((team) => {
     return (
-      team.name.toLowerCase().includes(needle) ||
-      (team.subtitle ?? "").toLowerCase().includes(needle) ||
-      (team.teamKey ?? "").includes(needle)
+      teamTextMatches(team.name, needle) ||
+      teamTextMatches(team.subtitle ?? "", needle) ||
+      teamTextMatches(team.teamKey ?? "", needle)
     );
   }).slice(0, 6);
 }
@@ -68,14 +92,29 @@ function hitKey(hit: SiteHit): string {
   return `${hit.kind}:${hit.id}`;
 }
 
+function normalizePlayerName(name: string): string {
+  return name.trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+/**
+ * Merge search groups in priority order.
+ * Players dedupe by id AND display name so ESPN + NBA board rows for the
+ * same athlete (different provider ids / stale team subtitles) collapse.
+ */
 function mergeHits(...groups: SiteHit[][]): SiteHit[] {
-  const seen = new Set<string>();
+  const seenIds = new Set<string>();
+  const seenPlayerNames = new Set<string>();
   const out: SiteHit[] = [];
   for (const group of groups) {
     for (const hit of group) {
       const key = hitKey(hit);
-      if (seen.has(key)) continue;
-      seen.add(key);
+      if (seenIds.has(key)) continue;
+      if (hit.kind === "player") {
+        const nameKey = normalizePlayerName(hit.name);
+        if (nameKey && seenPlayerNames.has(nameKey)) continue;
+        if (nameKey) seenPlayerNames.add(nameKey);
+      }
+      seenIds.add(key);
       out.push(hit);
     }
   }
@@ -134,22 +173,39 @@ export function SiteSearch() {
       setLoading(true);
       try {
         const requests: Promise<SiteHit[]>[] = [
-          fetch(`/api/players/search?q=${encodeURIComponent(trimmed)}`, {
-            signal: controller.signal,
-          })
+          fetch(
+            `/api/players/search?q=${encodeURIComponent(trimmed)}&scope=all`,
+            {
+              signal: controller.signal,
+            }
+          )
             .then((res) => (res.ok ? res.json() : { results: [] }))
-            .then((body: { results?: Array<{
-              id: string;
-              name: string;
-              team: string;
-              position: string | null;
-            }> }) =>
+            .then((body: {
+              results?: Array<{
+                id: string;
+                name: string;
+                team: string;
+                position: string | null;
+                careerSpan?: string;
+                current?: boolean;
+                draftProspect?: boolean;
+              }>;
+            }) =>
               (body.results ?? []).map((row) => ({
                 id: row.id,
                 name: row.name,
                 kind: "player" as const,
-                teamKey: row.team,
-                subtitle: [row.team, row.position].filter(Boolean).join(" · "),
+                teamKey: row.team || undefined,
+                subtitle: row.draftProspect
+                  ? [row.team, row.careerSpan].filter(Boolean).join(" · ") ||
+                    "Draft prospect"
+                  : row.current
+                    ? [row.team, row.position].filter(Boolean).join(" · ") ||
+                      "Player"
+                    : row.careerSpan
+                      ? row.careerSpan
+                      : [row.team, row.position].filter(Boolean).join(" · ") ||
+                        "Past player",
               }))
             )
             .catch(() => [] as SiteHit[]),

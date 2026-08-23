@@ -8,15 +8,14 @@ import {
 } from "@/components/offseason/transaction-event-ui";
 import { OffseasonClientShell } from "@/components/offseason/offseason-client-shell";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { TeamLogo } from "@/components/brand/team-logo";
 import {
   getOffseasonPulse,
   getOffseasonTimeline,
-  getTeamOffseasonActivity,
   getTransactionEventWithRelations,
   getTransactionEventCoverage,
   listAvailableOffseasonYears,
 } from "@/data/queries/offseason-tracker";
+import { TradeTreeIsland } from "@/components/offseason/trade-tree-island";
 import { buildOffseasonFeedItems } from "@/data/providers/transactions/transaction-event-clusters";
 import { buildTransactionEventIndex } from "@/data/providers/transactions/transaction-event-index";
 import {
@@ -97,6 +96,8 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   const dateFrom = one(sp, "from");
   const dateTo = one(sp, "to");
   const eventId = one(sp, "event");
+  const rootEventId = one(sp, "root");
+  const focusPlayer = one(sp, "player");
   const page = Math.max(1, Number(one(sp, "page") ?? "1") || 1);
 
   let season: string | undefined;
@@ -120,14 +121,10 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   };
 
   // One index build (or cache hit); derive coverage/pulse/timeline from shared TTL.
-  const [pulse, timeline, activity, coverage, detailBundle, index] =
+  const [pulse, timeline, coverage, detailBundle, index] =
     await Promise.all([
       getOffseasonPulse({ offseasonYear }),
       getOffseasonTimeline(filters, { page, pageSize: 50 }),
-      getTeamOffseasonActivity(
-        { offseasonYear: season ? undefined : offseasonYear, season, teamId },
-        { limit: 8 }
-      ),
       getTransactionEventCoverage(),
       eventId
         ? getTransactionEventWithRelations(eventId)
@@ -246,7 +243,24 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           season={season}
         />
 
+        {teamId ? (
+          <TransitionLink
+            href={`/teams/${encodeURIComponent(teamId)}`}
+            className="text-[13px] font-semibold text-primary hover:underline"
+          >
+            Open team page
+          </TransitionLink>
+        ) : null}
+
         <div className="query-updating-content flex flex-col gap-5">
+          <TradeTreeIsland
+            teamId={teamId}
+            rootEventId={rootEventId}
+            focusPlayer={focusPlayer}
+            offseasonYear={offseasonYear}
+            teams={teamOptions.map((t) => ({ id: t.teamId, label: t.label }))}
+          />
+
           {detailBundle ? (
             <section className="flex flex-col gap-2">
               <h2 className="text-[16px] font-bold tracking-tight">
@@ -290,56 +304,6 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
                 </p>
               )}
             </div>
-          </section>
-
-          <section className="flex flex-col gap-2">
-            <h2 className="text-[16px] font-bold tracking-tight">
-              Most active teams
-            </h2>
-            <p className="text-[12px] text-muted-foreground">
-              Counts are transaction events recorded for each team. Categories
-              are source-text classifications, not official trade tallies.
-            </p>
-            <ul className="sports-card divide-y divide-border/70 px-4 py-1 sm:px-5">
-              {activity.map((t) => {
-                const brand = brandFor(t.teamId, t.teamAbbr);
-                const tradeRelated = t.bySourceTextCategory.trade ?? 0;
-                return (
-                  <li key={t.teamId} className="flex items-center gap-3 py-3">
-                    <TeamLogo
-                      teamKey={brand?.abbr ?? t.teamAbbr ?? t.teamId}
-                      size="sm"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <TransitionLink
-                        href={`/offseason?year=${offseasonYear}&team=${t.teamId}`}
-                        scroll={false}
-                        className="text-[14px] font-bold underline-offset-2 hover:underline"
-                      >
-                        {brand?.abbr ?? t.teamAbbr ?? t.teamId}
-                      </TransitionLink>
-                      <p className="text-[12px] text-muted-foreground">
-                        {t.eventCount} events · {t.activeDays} active days
-                        {tradeRelated
-                          ? ` · ${tradeRelated} classified as trade-related by source text`
-                          : ""}
-                      </p>
-                    </div>
-                    <TransitionLink
-                      href={`/teams/${t.teamId}`}
-                      className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-                    >
-                      Profile
-                    </TransitionLink>
-                  </li>
-                );
-              })}
-              {!activity.length ? (
-                <li className="py-6 text-center text-[14px] text-muted-foreground">
-                  No team activity for these filters.
-                </li>
-              ) : null}
-            </ul>
           </section>
 
           <section className="flex flex-col gap-3">

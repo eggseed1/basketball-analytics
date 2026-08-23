@@ -27,7 +27,12 @@ const COLUMN_CONCEPT: Record<string, string> = {
   OREB: "orb",
   "ORB%": "orb",
   DARKO: "darko",
+  "DARKO-O": "darko",
+  "DARKO-D": "darko",
   LEBRON: "lebron",
+  "O-LEBRON": "lebron",
+  "D-LEBRON": "lebron",
+  "Wins added": "lebron",
   CPI: "cpi",
   DIFF: "diff",
   "DRBL/100": "drbl",
@@ -40,6 +45,8 @@ const COLUMN_CONCEPT: Record<string, string> = {
   "DRBL-O": "drbl_o",
   "DRBL-D": "drbl_d",
   "DARKO DPM": "darko",
+  "DARKO offense": "darko",
+  "DARKO defense": "darko",
 };
 
 /** Game Lab winning-factor / hero metric ids → concept. */

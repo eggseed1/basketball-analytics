@@ -1,49 +1,103 @@
 "use client";
 
 import Link from "next/link";
-import { useState, type ReactNode } from "react";
+import { useMemo, type ReactNode } from "react";
+import {
+  ComposedChart,
+  Line,
+  ReferenceArea,
+  ReferenceLine,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 
 import type { CareerResume } from "@/analytics";
-import { formatCpi, formatOfPeak, formatTsContext } from "@/analytics";
+import { formatCpi } from "@/analytics";
+import {
+  FrostRechartsTooltip,
+  rechartsFrostWrapperStyle,
+} from "@/components/brand/frost-recharts-tooltip";
+import { TeamLogo } from "@/components/brand/team-logo";
 import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { MetricHelp } from "@/components/learn/metric-help";
+import {
+  buildTeamSegmentedChart,
+  type CareerSeriesPoint,
+} from "@/components/players/career-team-trend-chart";
+import { type } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
+import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
+import {
+  resolveTeamBrand,
+  teamBrandBarColor,
+  teamBrandTint,
+  teamChartColor,
+} from "@/lib/nba-brand";
+import { brandableTeamKey } from "@/lib/player-team-context";
 import { cn } from "@/lib/utils";
 
 /**
- * Compact Career Resume - Peak / Prime / Longevity with progressive disclosure.
+ * Visual Career Resume — Peak / Prime / Longevity with franchise team colors.
  */
 export function PlayerCareerResume({
   resume,
   teamKey,
   careerStartTeamKey,
-  evolutionAnchorId = "player-evolution",
-  seasonsAnchorId = "seasons",
 }: {
   resume: CareerResume;
-  /** Current / viewing season team. */
   teamKey?: string | null;
-  /** Earliest career team - pairs with teamKey for the wash. */
   careerStartTeamKey?: string | null;
-  /** In-page anchor for the evolution panel. */
-  evolutionAnchorId?: string;
-  /** In-page anchor for the season explorer. */
-  seasonsAnchorId?: string;
 }) {
-  const [showWhy, setShowWhy] = useState(false);
-  const [showMethod, setShowMethod] = useState(false);
-  const m = resume.methodology;
   const peak = resume.peak;
+
+  const brandKey = brandableTeamKey(teamKey) ?? brandableTeamKey(careerStartTeamKey);
+  const brand = resolveTeamBrand(brandKey);
+  const accent = teamBrandBarColor(brandKey);
+  const wash = brandAtmosphereColors(brand?.primary, brand?.secondary);
+
+  const seriesPoints: CareerSeriesPoint[] = useMemo(() => {
+    return [...resume.qualifyingSeasons]
+      .sort((a, b) => a.season.localeCompare(b.season))
+      .map((s) => {
+        const { color, abbr } = teamChartColor(s.teamId);
+        return {
+          season: s.season.slice(2),
+          fullSeason: s.season,
+          value: Number(s.cpi.toFixed(1)),
+          teamId: s.teamId,
+          teamAbbr: abbr !== "-" ? abbr : s.teamName.slice(0, 3).toUpperCase(),
+          color,
+          percentile: Math.round(s.ofPeak * 100),
+        };
+      });
+  }, [resume.qualifyingSeasons]);
+
+  const { data, segments, legend } = useMemo(
+    () => buildTeamSegmentedChart(seriesPoints),
+    [seriesPoints]
+  );
+
+  const peakCpi = peak?.cpi ?? 0;
+  const primeFloor = peakCpi * 0.9;
+  const longevityFloor = peakCpi * 0.7;
+  const peakTeamKey = peak ? brandableTeamKey(peak.teamId) : undefined;
+
+  const franchiseLegend = legend.filter(
+    (t) => t.teamId !== "TOT" && t.teamId !== "2TM" && t.teamAbbr !== "-"
+  );
 
   return (
     <TeamWashCard
       teamKey={careerStartTeamKey ?? teamKey}
       secondaryTeamKey={teamKey}
-      className="flex flex-col gap-4 p-4 sm:p-5"
+      className="flex flex-col gap-5 p-4 sm:p-5"
     >
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <h2 className="text-[20px] font-bold tracking-tight">
+      <div className="flex min-w-0 items-center gap-2.5">
+        {brandKey ? <TeamLogo teamKey={brandKey} size="sm" /> : null}
+        <div className="min-w-0">
+          <h2 className={cn(type.heading, "tracking-tight")}>
             <MetricHelp
               conceptId="career_resume"
               labelClassName="font-bold tracking-tight"
@@ -51,62 +105,144 @@ export function PlayerCareerResume({
               Career resume
             </MetricHelp>
           </h2>
-          <p className="text-[14px] text-muted-foreground">
-            <MetricHelp conceptId="career_peak">Peak</MetricHelp>
-            {" · "}
-            <MetricHelp conceptId="career_prime">Prime</MetricHelp>
-            {" · "}
-            <MetricHelp conceptId="career_longevity">Longevity</MetricHelp>
-            {" - "}
-            <MetricHelp conceptId="career_self_comparison">
-              relative to this player&apos;s own peak
-            </MetricHelp>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Production vs this player&apos;s own peak
           </p>
         </div>
-        <button
-          type="button"
-          onClick={() => setShowMethod((v) => !v)}
-          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-          aria-expanded={showMethod}
-        >
-          How is this calculated?
-        </button>
       </div>
 
-      {showMethod ? (
-        <div
-          className="rounded-md border border-border bg-secondary/40 px-3 py-3 text-[12px] leading-relaxed text-muted-foreground"
-          role="region"
-          aria-label="Career resume methodology"
-        >
-          <p>
-            <span className="font-semibold text-foreground">
-              {m.primaryMetric}
-            </span>{" "}
-            (v{m.version}): {m.cpiFormula}
-          </p>
-          <ul className="mt-2 list-disc space-y-1 pl-4">
-            <li>{m.peakDefinition}</li>
-            <li>{m.primeDefinition}</li>
-            <li>{m.longevityDefinition}</li>
-            <li>{m.qualifyingRule}</li>
-          </ul>
-          <p className="mt-2">{m.populationNote}</p>
-          <p className="mt-1">{m.impactCaveat}</p>
-          <p className="mt-2">
-            Bands overlap: Peak ⊂ Prime ⊂ Longevity.{" "}
-            <Link
-              href="/learn/peak-prime-longevity"
-              className="font-semibold text-foreground underline-offset-2 hover:underline"
-            >
-              Learn Peak, Prime &amp; Longevity →
-            </Link>
-          </p>
-        </div>
+      {resume.limitedReason && !peak ? (
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          {resume.limitedReason}
+        </p>
       ) : null}
 
-      {resume.limitedReason && !peak ? (
-        <p className="text-[14px] text-muted-foreground">{resume.limitedReason}</p>
+      {peak && data.length > 0 ? (
+        <figure className="min-w-0">
+          <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
+            <LegendSwatch
+              color={teamBrandTint(brandKey, 0.14)}
+              border={accent}
+              label="Longevity ≥70%"
+            />
+            <LegendSwatch
+              color={teamBrandTint(brandKey, 0.28)}
+              border={accent}
+              label="Prime ≥90%"
+            />
+            {franchiseLegend.map((t) => (
+              <span
+                key={t.teamId}
+                className={cn(
+                  type.caption,
+                  "inline-flex items-center gap-1 text-muted-foreground"
+                )}
+              >
+                <TeamLogo teamKey={t.teamId} size="2xs" />
+                <span
+                  className="size-2 rounded-full"
+                  style={{ backgroundColor: t.color }}
+                  aria-hidden
+                />
+                {t.teamAbbr}
+              </span>
+            ))}
+          </div>
+          <div className="h-[200px] w-full sm:h-[220px]">
+            <ResponsiveContainer width="100%" height="100%">
+              <ComposedChart
+                data={data}
+                margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
+              >
+                <XAxis
+                  dataKey="season"
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                  interval="preserveStartEnd"
+                />
+                <YAxis
+                  domain={[
+                    (dataMin: number) =>
+                      Math.max(
+                        0,
+                        Math.floor(Math.min(dataMin, longevityFloor) * 0.85)
+                      ),
+                    (dataMax: number) =>
+                      Math.ceil(Math.max(dataMax, peakCpi) * 1.05),
+                  ]}
+                  width={36}
+                  tickLine={false}
+                  axisLine={false}
+                  tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
+                  tickFormatter={(v) => formatNumber(Number(v), 0)}
+                />
+                <Tooltip
+                  content={<CareerCpiTooltip />}
+                  wrapperStyle={rechartsFrostWrapperStyle}
+                  cursor={{ stroke: accent, strokeWidth: 1, strokeOpacity: 0.35 }}
+                />
+                {peakCpi > 0 ? (
+                  <>
+                    <ReferenceArea
+                      y1={longevityFloor}
+                      y2={peakCpi * 1.08}
+                      fill={accent}
+                      fillOpacity={0.07}
+                      ifOverflow="extendDomain"
+                    />
+                    <ReferenceArea
+                      y1={primeFloor}
+                      y2={peakCpi * 1.08}
+                      fill={accent}
+                      fillOpacity={0.14}
+                      ifOverflow="extendDomain"
+                    />
+                    <ReferenceLine
+                      y={peakCpi}
+                      stroke={accent}
+                      strokeDasharray="4 4"
+                      strokeOpacity={0.7}
+                    />
+                  </>
+                ) : null}
+                {segments.map((seg) => (
+                  <Line
+                    key={seg.key}
+                    type="monotone"
+                    dataKey={seg.key}
+                    stroke={seg.color}
+                    strokeWidth={2.5}
+                    connectNulls={false}
+                    dot={(props) => {
+                      const { cx, cy, payload } = props;
+                      if (cx == null || cy == null || !payload) return null;
+                      const value = payload[seg.key];
+                      if (value == null) return null;
+                      const isPeak = payload.fullSeason === peak.season;
+                      const ofPeak =
+                        typeof payload.percentile === "number"
+                          ? payload.percentile
+                          : 0;
+                      return (
+                        <circle
+                          cx={cx}
+                          cy={cy}
+                          r={isPeak ? 5.5 : ofPeak >= 90 ? 3.75 : 2.75}
+                          fill={seg.color}
+                          stroke={isPeak ? "var(--background)" : undefined}
+                          strokeWidth={isPeak ? 2 : 0}
+                        />
+                      );
+                    }}
+                    activeDot={{ r: 5, stroke: "var(--background)", strokeWidth: 2 }}
+                    isAnimationActive={false}
+                  />
+                ))}
+              </ComposedChart>
+            </ResponsiveContainer>
+          </div>
+        </figure>
       ) : null}
 
       {peak ? (
@@ -121,14 +257,11 @@ export function PlayerCareerResume({
               </MetricHelp>
             }
             primary={peak.season}
-            secondary={`CPI ${formatCpi(peak.cpi)}`}
-            tertiary={
-              formatTsContext(peak.breakdown.ts)
-                ? `TS% ${formatTsContext(peak.breakdown.ts)}`
-                : `${formatNumber(peak.breakdown.ppg, 1)} PPG`
-            }
+            secondary={`${formatNumber(peak.breakdown.ppg, 1)} / ${formatNumber(peak.breakdown.rpg, 1)} / ${formatNumber(peak.breakdown.apg, 1)}`}
+            tertiary={`CPI ${formatCpi(peak.cpi)}`}
             href={peak.seasonHref}
-            hrefLabel="View season →"
+            accent={teamBrandBarColor(peak.teamId) || accent}
+            teamKey={peakTeamKey}
           />
           <ResumeStat
             label={
@@ -140,19 +273,18 @@ export function PlayerCareerResume({
               </MetricHelp>
             }
             primary={
-              resume.prime
-                ? resume.prime.contiguousFrom && resume.prime.contiguousTo
-                  ? `${resume.prime.contiguousFrom} → ${resume.prime.contiguousTo}`
-                  : `${resume.prime.seasonCount} season${resume.prime.seasonCount === 1 ? "" : "s"}`
-                : "-"
+              resume.prime?.contiguousFrom && resume.prime?.contiguousTo
+                ? `${shortSeason(resume.prime.contiguousFrom)}–${shortSeason(resume.prime.contiguousTo)}`
+                : resume.prime
+                  ? `${resume.prime.seasonCount} yrs`
+                  : "—"
             }
             secondary={
               resume.prime
-                ? `${resume.prime.contiguousCount} contiguous · ${resume.prime.seasonCount} ≥90% of peak`
-                : resume.limitedReason
-                  ? "Need 2+ seasons"
-                  : "-"
+                ? `${resume.prime.seasonCount} seasons ≥90% of peak`
+                : "Need 2+ seasons"
             }
+            accent={accent}
           />
           <ResumeStat
             label={
@@ -165,248 +297,93 @@ export function PlayerCareerResume({
             }
             primary={
               resume.longevity
-                ? `${resume.longevity.seasonCount} season${resume.longevity.seasonCount === 1 ? "" : "s"}`
-                : "-"
+                ? `${resume.longevity.seasonCount} seasons`
+                : "—"
             }
-            secondary={
-              resume.longevity
-                ? `≥70% of peak CPI`
-                : resume.limitedReason
-                  ? "Need 2+ seasons"
-                  : "-"
-            }
+            secondary="≥70% of peak CPI"
+            accent={wash?.colorB ?? accent}
           />
         </div>
       ) : null}
 
       {resume.incompleteCurrent ? (
-        <p className="text-[12px] text-muted-foreground">
-          {resume.incompleteCurrent.season} is underway (
-          {resume.incompleteCurrent.gamesPlayed} GP) and is not counted in Peak /
-          Prime / Longevity yet.
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          {resume.incompleteCurrent.season} ({resume.incompleteCurrent.gamesPlayed}{" "}
+          GP) not counted yet.
         </p>
-      ) : null}
-
-      {resume.trajectory.phases.length ? (
-        <div>
-          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            <MetricHelp
-              conceptId="career_arc"
-              labelClassName="font-bold uppercase tracking-wide"
-            >
-              Career arc
-            </MetricHelp>
-          </p>
-          <p className="mt-1 text-[14px] leading-relaxed text-foreground">
-            {resume.trajectory.phases
-              .filter((p) => p.id !== "current")
-              .map((p) => p.label)
-              .join(" → ")}
-            {resume.trajectory.phases.some((p) => p.id === "current")
-              ? ` → Current (${resume.trajectory.phases.find((p) => p.id === "current")!.seasonFrom})`
-              : null}
-          </p>
-          <p className="mt-1 text-[12px] text-muted-foreground">
-            {resume.trajectory.summary} Trajectory phases describe arc shape -
-            not separate scoring thresholds.{" "}
-            <MetricHelp conceptId="career_development">Development</MetricHelp>{" "}
-            is descriptive in Career Resume v1.
-          </p>
-        </div>
-      ) : null}
-
-      {resume.transitions.length ? (
-        <div>
-          <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
-            Biggest career changes
-          </p>
-          <ul className="mt-2 flex flex-col gap-1.5">
-            {resume.transitions.map((t) => (
-              <li
-                key={`${t.fromSeason}-${t.toSeason}-${t.label}`}
-                className="flex flex-wrap items-baseline justify-between gap-2 text-[14px]"
-              >
-                <span>
-                  <Link
-                    href={t.href}
-                    scroll={false}
-                    className="font-semibold underline-offset-2 hover:underline"
-                  >
-                    {t.fromSeason} → {t.toSeason}
-                  </Link>
-                  <span className="text-muted-foreground"> · {t.label}</span>
-                </span>
-                <span className="font-bold tabular-nums">{t.deltaDisplay}</span>
-              </li>
-            ))}
-          </ul>
-        </div>
-      ) : null}
-
-      <div className="flex flex-wrap items-center gap-3">
-        <button
-          type="button"
-          onClick={() => setShowWhy((v) => !v)}
-          className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
-          aria-expanded={showWhy}
-        >
-          {showWhy ? "Hide qualifying seasons" : "Show qualifying seasons"}
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            document
-              .getElementById(seasonsAnchorId)
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }}
-          className="text-[12px] font-semibold underline-offset-2 hover:underline"
-        >
-          Explore career →
-        </button>
-        <button
-          type="button"
-          onClick={() => {
-            document
-              .getElementById(evolutionAnchorId)
-              ?.scrollIntoView({ behavior: "smooth", block: "start" });
-          }}
-          className="text-[12px] font-semibold underline-offset-2 hover:underline"
-        >
-          Explore evolution →
-        </button>
-        <Link
-          href={`/compare?a=${resume.playerId}`}
-          className="text-[12px] font-semibold underline-offset-2 hover:underline"
-        >
-          Compare players →
-        </Link>
-        {peak ? (
-          <>
-            <Link
-              href={peak.seasonHref}
-              scroll={false}
-              className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-            >
-              Open peak season →
-            </Link>
-            {(() => {
-              const alts = [...resume.qualifyingSeasons]
-                .filter((s) => s.season !== peak.season)
-                .sort((a, b) => b.cpi - a.cpi)
-                .slice(0, 3)
-                .map((s) => s.season);
-              const rankSeasons = [peak.season, ...alts];
-              return (
-                <>
-                  <Link
-                    href={`/players/${resume.playerId}/season-compare?a=${encodeURIComponent(peak.season)}${
-                      alts[0]
-                        ? `&b=${encodeURIComponent(alts[0])}`
-                        : ""
-                    }`}
-                    className="text-[12px] font-semibold underline-offset-2 hover:underline"
-                  >
-                    Compare this season →
-                  </Link>
-                  {rankSeasons.length >= 2 ? (
-                    <Link
-                      href={`/players/${resume.playerId}/season-rank?seasons=${rankSeasons
-                        .map(encodeURIComponent)
-                        .join(",")}`}
-                      className="text-[12px] font-semibold underline-offset-2 hover:underline"
-                    >
-                      Rank my seasons →
-                    </Link>
-                  ) : null}
-                </>
-              );
-            })()}
-          </>
-        ) : null}
-      </div>
-
-      {showWhy ? (
-        <div
-          className="overflow-x-auto rounded-md border border-border"
-          role="region"
-          aria-label="Qualifying seasons"
-        >
-          <table className="w-full min-w-[520px] text-left text-[12px]">
-            <thead className="border-b border-border bg-secondary/50 text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2">Season</th>
-                <th className="px-2 py-2 text-right">GP</th>
-                <th className="px-2 py-2 text-right">CPI</th>
-                <th className="px-2 py-2 text-right">vs peak</th>
-                <th className="px-2 py-2 text-right">TS%</th>
-                <th className="px-3 py-2">Band</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {[...resume.qualifyingSeasons]
-                .sort((a, b) => b.season.localeCompare(a.season))
-                .map((s) => (
-                  <tr key={s.season} className="hover:bg-secondary/30">
-                    <td className="px-3 py-2 font-semibold">
-                      <Link
-                        href={s.seasonHref}
-                        scroll={false}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        {s.season}
-                      </Link>
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {s.gamesPlayed}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {formatCpi(s.cpi)}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {formatOfPeak(s.ofPeak)}
-                    </td>
-                    <td className="px-2 py-2 text-right tabular-nums">
-                      {formatTsContext(s.breakdown.ts) ?? "-"}
-                    </td>
-                    <td className="px-3 py-2">
-                      <span
-                        className={cn(
-                          "text-[12px] font-semibold",
-                          s.season === peak?.season && "text-foreground",
-                          s.inPrimeBand &&
-                            s.season !== peak?.season &&
-                            "text-foreground",
-                          !s.inLongevityBand && "text-muted-foreground"
-                        )}
-                      >
-                        {bandLabel(s, peak?.season)}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-            </tbody>
-          </table>
-          <p className="border-t border-border px-3 py-2 text-[12px] text-muted-foreground">
-            Bands overlap (Peak ⊂ Prime ⊂ Longevity).{" "}
-            <MetricHelp conceptId="longevity_only">Longevity-only</MetricHelp>{" "}
-            means 70-89% of peak.
-          </p>
-        </div>
       ) : null}
     </TeamWashCard>
   );
 }
 
-function bandLabel(
-  s: CareerResume["qualifyingSeasons"][number],
-  peakSeason?: string
-): string {
-  if (peakSeason && s.season === peakSeason) {
-    return "Peak · Prime · Longevity";
-  }
-  if (s.inPrimeBand) return "Prime · Longevity";
-  if (s.inLongevityBand) return "Longevity-only";
-  return "Below longevity";
+function shortSeason(season: string): string {
+  return season.length >= 7 ? season.slice(2) : season;
+}
+
+function CareerCpiTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{
+    value?: number | string;
+    color?: string;
+    payload?: {
+      fullSeason?: string;
+      value?: number;
+      percentile?: number;
+      teamAbbr?: string;
+      color?: string;
+    };
+  }>;
+}) {
+  if (!active || !payload?.length) return null;
+  const row = payload[0]?.payload;
+  const color = row?.color ?? payload[0]?.color;
+  return (
+    <FrostRechartsTooltip active={active} className="w-max max-w-[14rem]">
+      <p className={cn(type.caption, "font-semibold text-foreground")}>
+        {row?.fullSeason ?? "Season"}
+        {row?.teamAbbr ? ` · ${row.teamAbbr}` : ""}
+      </p>
+      <p
+        className={cn(type.caption, "mt-0.5 tabular-nums")}
+        style={{ color: color ?? "var(--muted-foreground)" }}
+      >
+        CPI {formatNumber(Number(row?.value ?? payload[0]?.value), 1)}
+        {row?.percentile != null ? ` · ${row.percentile}% of peak` : ""}
+      </p>
+    </FrostRechartsTooltip>
+  );
+}
+
+function LegendSwatch({
+  color,
+  border,
+  label,
+}: {
+  color: string;
+  border: string;
+  label: string;
+}) {
+  return (
+    <span
+      className={cn(
+        type.caption,
+        "inline-flex items-center gap-1.5 text-muted-foreground"
+      )}
+    >
+      <span
+        className="inline-block size-2.5 rounded-[2px]"
+        style={{
+          backgroundColor: color,
+          boxShadow: `inset 0 0 0 1px ${border}`,
+        }}
+        aria-hidden
+      />
+      {label}
+    </span>
+  );
 }
 
 function ResumeStat({
@@ -415,34 +392,53 @@ function ResumeStat({
   secondary,
   tertiary,
   href,
-  hrefLabel,
+  accent,
+  teamKey,
 }: {
   label: ReactNode;
   primary: string;
   secondary: string;
   tertiary?: string;
   href?: string;
-  hrefLabel?: string;
+  accent: string;
+  teamKey?: string | null;
 }) {
-  return (
-    <div className="rounded-md bg-secondary/50 px-3 py-3">
-      <p className="text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
+  const body = (
+    <>
+      <p className="text-[11px] font-bold uppercase tracking-wide text-muted-foreground">
         {label}
       </p>
-      <p className="mt-1 text-[16px] font-bold tracking-tight">{primary}</p>
-      <p className="text-[12px] text-muted-foreground">{secondary}</p>
+      <p className="mt-1 flex items-center gap-1.5 text-[18px] font-bold tracking-tight tabular-nums">
+        {teamKey ? <TeamLogo teamKey={teamKey} size="2xs" /> : null}
+        {primary}
+      </p>
+      <p className={cn(type.caption, "text-muted-foreground")}>{secondary}</p>
       {tertiary ? (
-        <p className="text-[12px] text-muted-foreground">{tertiary}</p>
-      ) : null}
-      {href && hrefLabel ? (
-        <Link
-          href={href}
-          scroll={false}
-          className="mt-2 inline-block text-[12px] font-semibold underline-offset-2 hover:underline"
+        <p
+          className={cn(type.caption, "font-semibold tabular-nums")}
+          style={{ color: accent }}
         >
-          {hrefLabel}
-        </Link>
+          {tertiary}
+        </p>
       ) : null}
+    </>
+  );
+  const className =
+    "rounded-md bg-white/55 px-3 py-3 backdrop-blur-sm transition-colors hover:bg-white/75";
+  const style = {
+    boxShadow: `inset 3px 0 0 ${accent}`,
+  } as const;
+
+  if (href) {
+    return (
+      <Link href={href} scroll={false} className={className} style={style}>
+        {body}
+      </Link>
+    );
+  }
+  return (
+    <div className={className} style={style}>
+      {body}
     </div>
   );
 }

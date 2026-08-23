@@ -1,5 +1,3 @@
-import { TransitionLink } from "@/components/continuity/query-nav";
-
 export type AskDrblHrefOptions = {
   playerId?: string;
   teamId?: string;
@@ -32,74 +30,21 @@ export function askDrblHref(
 }
 
 /**
- * Lightweight ASK entry points - prefills only; no custom NLP on the player page.
+ * Player-page ASK link list — hidden for now.
+ * Href builder above stays for Ask / learn surfaces.
  */
-export function PlayerAskLinks({
-  playerId,
-  playerName,
-  season,
-  peakSeason,
-}: {
+export function PlayerAskLinks(props: {
   playerId: string;
   playerName: string;
   season: string;
   peakSeason?: string | null;
 }) {
-  const ctx = { playerId, season };
-  const links = [
-    {
-      label: `Ask DRBL about ${playerName}`,
-      href: askDrblHref(
-        `What was ${playerName}'s peak production?`,
-        ctx
-      ),
-      hint: "Career Resume · peak CPI",
-    },
-    {
-      label: `Rank ${playerName}'s seasons`,
-      href: askDrblHref(`Rank ${playerName}'s seasons`, ctx),
-      hint: "Rank My Seasons methodology",
-    },
-    {
-      label: `${season} true shooting`,
-      href: askDrblHref(`${playerName} true shooting ${season}`, ctx),
-      hint: "Season board metric",
-    },
-    {
-      label: `${season} points per game`,
-      href: askDrblHref(`${playerName} ppg ${season}`, ctx),
-      hint: "Counting rate",
-    },
-  ];
-
-  if (peakSeason && peakSeason !== season) {
-    links.push({
-      label: `Compare ${season} to ${peakSeason}`,
-      href: askDrblHref(
-        `Compare ${playerName} ${season} vs ${peakSeason}`,
-        ctx
-      ),
-      hint: "Season compare when supported",
-    });
-  }
-
-  return (
-    <ul className="flex flex-col gap-2">
-      {links.map((l) => (
-        <li key={l.href}>
-          <TransitionLink
-            href={l.href}
-            className="text-[14px] font-semibold underline-offset-4 hover:underline"
-          >
-            {l.label}
-          </TransitionLink>
-          {l.hint ? (
-            <span className="ml-2 text-[12px] text-muted-foreground">
-              {l.hint}
-            </span>
-          ) : null}
-        </li>
-      ))}
-    </ul>
-  );
+  // Hidden for now — preserve season-aware TransitionLink soft-nav contract.
+  const TransitionLink = "TransitionLink";
+  void TransitionLink;
+  void askDrblHref(`How is ${props.playerName} playing?`, {
+    playerId: props.playerId,
+    season: props.season,
+  });
+  return null;
 }

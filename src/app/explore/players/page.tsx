@@ -1,12 +1,12 @@
 import { Suspense } from "react";
 
 import { DrblSeasonSupportNotice } from "@/components/explore/drbl-season-support-notice";
+import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-notice";
 import { ExplorePlayersClientShell } from "@/components/explore/explore-players-client-shell";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
-import { listDrblSeasons } from "@/data/drbl/season-registry";
 import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
 import {
   getExplorePlayersBoardView,
@@ -16,7 +16,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { filtersFromSearchParams } from "@/lib/search-params";
+import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params";
 import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
 
 export const metadata = {
@@ -47,11 +47,15 @@ async function ExplorePlayersBoard({
 }) {
   const filters = filtersFromSearchParams({
     ...searchParams,
-    season: searchParams.season ?? defaultSeason,
+    season: isAllSeasonsParam(searchParams.season)
+      ? "ALL"
+      : searchParams.season ?? defaultSeason,
     minimumMinutes:
       searchParams.minimumMinutes ?? String(DEFAULT_PLAYER_MINIMUM_MINUTES),
   });
-  const season = filters.season ?? defaultSeason;
+  const season = isAllSeasonsParam(filters.season)
+    ? "ALL"
+    : filters.season ?? defaultSeason;
   const initialSortKey = parsePlayerSeasonSortKey(searchParams.sort);
   const sortKey = initialSortKey;
   const sortDir = sortKey
@@ -87,6 +91,12 @@ async function ExplorePlayersBoard({
 
   return (
     <div className="query-updating-content flex flex-col gap-3">
+      {view.seasonAwaitingGames ? (
+        <SeasonNotStartedNotice
+          season={view.requestSeason || season}
+          statsSeason={view.usingPriorSeasonStats ? view.statsSeason : undefined}
+        />
+      ) : null}
       <DrblSeasonSupportNotice season={season} />
       <PlayerSeasonTable
         players={view.rows}
@@ -99,6 +109,7 @@ async function ExplorePlayersBoard({
         hasDarko={view.hasDarko}
         hasLebron={view.hasLebron}
         hasDrbl={view.hasDrbl}
+        seasonAwaitingGames={view.seasonAwaitingGames}
       />
     </div>
   );
@@ -108,12 +119,13 @@ export default async function ExplorePlayersPage({
   searchParams,
 }: ExplorePlayersPageProps) {
   const params = await searchParams;
-  const seasons = await getAvailableSeasons();
+  const [seasons, teamCatalog] = await Promise.all([
+    getAvailableSeasons(),
+    getTeamsCatalog(),
+  ]);
   const defaultSeason =
     seasons[0] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const drblSeasons = listDrblSeasons();
 
-  const teamCatalog = await getTeamsCatalog();
   const { teams, source, warnings } = teamCatalog;
 
   return (
@@ -122,11 +134,6 @@ export default async function ExplorePlayersPage({
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           Players
         </h1>
-        <p className="max-w-2xl text-[14px] text-muted-foreground">
-          Box-score exploration spans the archive. Canonical DRBL/100 and WAR1
-          appear only for DRBL registry seasons ({drblSeasons.join(", ")}
-          ).
-        </p>
         {parsePlayerSeasonSortKey(params.sort) ? (
           <p className="text-[14px] text-muted-foreground">
             Sorted by {parsePlayerSeasonSortKey(params.sort)} - change any

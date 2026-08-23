@@ -1,5 +1,5 @@
 import type { BasketballFilters, Position } from "@/data/types";
-import { parseMinimumNumber } from "@/data/queries";
+import { parseMinimumNumber } from "@/data/queries/filter-utils";
 import { parseDraftClassParam } from "@/lib/draft-class";
 import { normalizeTeamParam } from "@/lib/team-identity";
 
@@ -10,6 +10,14 @@ function first(
 ): string | undefined {
   if (Array.isArray(value)) return value[0];
   return value;
+}
+
+/** Explore season dropdown "All seasons" — cross-season player search scope. */
+export function isAllSeasonsParam(
+  value: string | string[] | null | undefined
+): boolean {
+  const raw = Array.isArray(value) ? value[0] : value;
+  return String(raw ?? "").trim().toUpperCase() === "ALL";
 }
 
 export function parseConferenceParam(

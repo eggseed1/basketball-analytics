@@ -9,7 +9,8 @@ import { relatedLearnLinks } from "@/content/learn/resolve";
 
 export const metadata: Metadata = {
   title: "WAR1",
-  description: "DRBL's realized season-value statistic",
+  description:
+    "How much season value did the player accumulate? Wins-style total above DRBL’s R1 baseline — not classic WAR.",
 };
 
 export default function LearnWar1Page() {

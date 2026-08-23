@@ -90,11 +90,10 @@ function PrimaryLink({
       href={tab.href}
       className={cn(
         "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
-        tab.prominent && !active && "text-foreground",
         active
-          ? "bg-foreground text-background"
-          : "text-muted-foreground hover:bg-secondary hover:text-foreground",
-        tab.prominent && active && "ring-2 ring-foreground/20 ring-offset-1"
+          ? "glass-pill glass-pill-active text-foreground"
+          : "text-muted-foreground hover:text-foreground",
+        tab.prominent && !active && "text-foreground"
       )}
     >
       {tab.label}
@@ -211,7 +210,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                 className={cn(
                   "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
                   pathname.startsWith("/gm")
-                    ? "bg-foreground text-background"
+                    ? "glass-pill glass-pill-active text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
               >
@@ -240,10 +239,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   aria-controls="mobile-more-nav"
                   onClick={toggleMore}
                   className={cn(
-                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold",
+                    "inline-flex items-center gap-1 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
                     moreActive || isMoreOpen
-                      ? "bg-foreground text-background"
-                      : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+                      ? "glass-pill glass-pill-active text-foreground"
+                      : "text-muted-foreground hover:text-foreground"
                   )}
                 >
                   {isMoreOpen ? (
@@ -266,7 +265,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                         className={cn(
                           "block rounded-md px-3 py-2 text-[14px] font-semibold",
                           tab.match(pathname)
-                            ? "bg-foreground text-background"
+                            ? "bg-white/70 text-foreground"
                             : "text-foreground hover:bg-secondary"
                         )}
                       >

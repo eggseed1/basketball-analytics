@@ -11,10 +11,12 @@ export function HomeStandingsBoard({
   season,
   east,
   west,
+  subtitle,
 }: {
   season: string;
   east: StandingRow[];
   west: StandingRow[];
+  subtitle?: string;
 }) {
   const [conference, setConference] = useState<"east" | "west">("west");
   const rows = conference === "west" ? west : east;
@@ -24,6 +26,9 @@ export function HomeStandingsBoard({
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-3">
           <h2 className="type-heading">{season} Standings</h2>
+          {subtitle ? (
+            <p className="text-[13px] text-muted-foreground">{subtitle}</p>
+          ) : null}
           <div className="flex gap-1">
             {(
               [
@@ -36,10 +41,10 @@ export function HomeStandingsBoard({
                 type="button"
                 onClick={() => setConference(id)}
                 className={cn(
-                  "rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
+                  "glass-pill rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
                   conference === id
-                    ? "bg-foreground text-background"
-                    : "bg-secondary text-foreground hover:bg-foreground/10"
+                    ? "glass-pill-active"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
               >
                 {label}

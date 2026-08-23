@@ -17,18 +17,33 @@ import {
 } from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { type } from "@/lib/design-system";
+import { formatNumber } from "@/lib/format";
+import { percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
+
+/** Compact axis/tooltip labels — avoid raw float dumps like 8.012345678. */
+function formatCareerChartNumber(value: number): string {
+  if (!Number.isFinite(value)) return "-";
+  const abs = Math.abs(value);
+  if (abs >= 100 || Math.abs(value - Math.round(value)) < 1e-6) {
+    return formatNumber(Math.round(value), 0);
+  }
+  return formatNumber(value, 1);
+}
 
 export type CareerSeriesPoint = {
   /** Short label on the axis, e.g. "16-17". */
   season: string;
   /** Canonical season id, e.g. "2016-17". */
   fullSeason?: string;
+  /** Plotted Y when not using percentile mode; raw metric otherwise. */
   value: number;
+  /** Raw metric retained when the chart plots percentile on Y. */
+  rawValue?: number;
   teamId: string;
   teamAbbr: string;
   color: string;
-  /** League percentile for Savant stroke / dot coloring. */
+  /** League percentile for Savant stroke / Y when plotPercentile. */
   percentile?: number;
 };
 
@@ -43,6 +58,7 @@ type ChartRow = {
   season: string;
   fullSeason?: string;
   value: number;
+  rawValue?: number;
   teamId: string;
   teamAbbr: string;
   color: string;
@@ -93,6 +109,7 @@ export function buildTeamSegmentedChart(points: CareerSeriesPoint[]): {
       season: p.season,
       fullSeason: p.fullSeason,
       value: p.value,
+      rawValue: p.rawValue,
       teamId: p.teamId,
       teamAbbr: p.teamAbbr,
       color: p.color,
@@ -158,6 +175,7 @@ export function buildSavantSegmentedChart(points: CareerSeriesPoint[]): {
       season: p.season,
       fullSeason: p.fullSeason,
       value: p.value,
+      rawValue: p.rawValue,
       teamId: p.teamId,
       teamAbbr: p.teamAbbr,
       color: p.color,
@@ -182,42 +200,16 @@ function TeamDot(props: {
   cx?: number;
   cy?: number;
   payload?: ChartRow;
-}) {
-  const { cx, cy, payload } = props;
-  if (cx == null || cy == null || !payload) return null;
-  return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={4}
-      fill={payload.color}
-      stroke="#fff"
-      strokeWidth={1.5}
-    />
-  );
-}
-
-function SavantDot(props: {
-  cx?: number;
-  cy?: number;
-  payload?: ChartRow;
   selectedSeason?: string;
   onSelect?: (row: ChartRow) => void;
+  active?: boolean;
 }) {
-  const { cx, cy, payload, selectedSeason, onSelect } = props;
+  const { cx, cy, payload, selectedSeason, onSelect, active } = props;
   if (cx == null || cy == null || !payload) return null;
-  const selected =
-    selectedSeason != null &&
-    (payload.fullSeason === selectedSeason ||
-      payload.season === selectedSeason.slice(2));
+  const selected = isSeasonSelected(payload, selectedSeason);
+  const r = active || selected ? 6 : 4;
   return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={selected ? 6 : 4}
-      fill={payload.color}
-      stroke={selected ? "var(--foreground)" : "#fff"}
-      strokeWidth={selected ? 2 : 1.5}
+    <g
       className={onSelect ? "cursor-pointer" : undefined}
       onClick={
         onSelect
@@ -227,7 +219,70 @@ function SavantDot(props: {
             }
           : undefined
       }
-    />
+    >
+      {/* Larger invisible hit target for easier clicks. */}
+      {onSelect ? (
+        <circle cx={cx} cy={cy} r={14} fill="transparent" stroke="none" />
+      ) : null}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill={payload.color}
+        stroke={selected ? "var(--foreground)" : "#fff"}
+        strokeWidth={selected ? 2 : 1.5}
+      />
+    </g>
+  );
+}
+
+function isSeasonSelected(
+  payload: ChartRow,
+  selectedSeason?: string
+): boolean {
+  if (!selectedSeason) return false;
+  if (payload.fullSeason === selectedSeason) return true;
+  if (payload.season === selectedSeason) return true;
+  if (payload.season === selectedSeason.slice(2)) return true;
+  return false;
+}
+
+function SavantDot(props: {
+  cx?: number;
+  cy?: number;
+  payload?: ChartRow;
+  selectedSeason?: string;
+  onSelect?: (row: ChartRow) => void;
+  active?: boolean;
+}) {
+  const { cx, cy, payload, selectedSeason, onSelect, active } = props;
+  if (cx == null || cy == null || !payload) return null;
+  const selected = isSeasonSelected(payload, selectedSeason);
+  const r = active || selected ? 6 : 4;
+  return (
+    <g
+      className={onSelect ? "cursor-pointer" : undefined}
+      onClick={
+        onSelect
+          ? (event) => {
+              event.stopPropagation();
+              onSelect(payload);
+            }
+          : undefined
+      }
+    >
+      {onSelect ? (
+        <circle cx={cx} cy={cy} r={14} fill="transparent" stroke="none" />
+      ) : null}
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill={payload.color}
+        stroke={selected ? "var(--foreground)" : "#fff"}
+        strokeWidth={selected ? 2 : 1.5}
+      />
+    </g>
   );
 }
 
@@ -249,14 +304,19 @@ function CareerChartTooltip({
   const item =
     payload.find((p) => p.dataKey !== "value" && p.value != null) ??
     payload.find((p) => p.dataKey === "value");
-  const n =
+  const plotted =
     typeof item?.value === "number" ? item.value : Number(item?.value);
-  const value = Number.isFinite(n) ? n : "-";
   const abbr = row?.teamAbbr;
   const pct =
     row?.percentile != null && Number.isFinite(row.percentile)
-      ? `${Math.round(row.percentile)}th pct`
+      ? Math.round(row.percentile)
       : null;
+  const raw =
+    row?.rawValue != null && Number.isFinite(row.rawValue)
+      ? formatCareerChartNumber(row.rawValue)
+      : Number.isFinite(plotted) && pct == null
+        ? formatCareerChartNumber(plotted)
+        : null;
 
   return (
     <FrostRechartsTooltip active={active} className="w-max max-w-[12rem]">
@@ -269,8 +329,12 @@ function CareerChartTooltip({
           "mt-0.5 tabular-nums text-muted-foreground"
         )}
       >
-        {value}
-        {pct ? ` · ${pct}` : ""}
+        {pct != null ? `${pct}th pct` : null}
+        {pct != null && raw != null ? " · " : null}
+        {raw}
+        {pct == null && raw == null && Number.isFinite(plotted)
+          ? formatCareerChartNumber(plotted)
+          : null}
       </p>
     </FrostRechartsTooltip>
   );
@@ -289,16 +353,36 @@ export function CareerTeamTrendChart({
   className?: string;
   selectedSeason?: string;
   onSeasonSelect?: (season: string) => void;
-  /** When true, stroke + dots use Poor-Average-Great colors (not franchise). */
+  /**
+   * Percentile panel mode: Y = league percentile (0–100), Savant stroke
+   * colors. Raw metric stays in the tooltip.
+   */
   savantScale?: boolean;
 }) {
-  const useSavant =
-    savantScale || points.some((p) => p.percentile != null);
+  const plotPercentile =
+    savantScale && points.some((p) => p.percentile != null);
+
+  const plotPoints = useMemo((): CareerSeriesPoint[] => {
+    if (!plotPercentile) return points;
+    return points.map((p) => {
+      const pct =
+        p.percentile != null && Number.isFinite(p.percentile)
+          ? Math.max(0, Math.min(100, p.percentile))
+          : 50;
+      return {
+        ...p,
+        rawValue: p.value,
+        value: pct,
+        percentile: pct,
+        color: percentileSavantColor(pct),
+      };
+    });
+  }, [points, plotPercentile]);
 
   const { data, segments, legend, teamChangeSeasons } = useMemo(() => {
-    if (useSavant) {
-      const savant = buildSavantSegmentedChart(points);
-      const team = buildTeamSegmentedChart(points);
+    if (plotPercentile || savantScale) {
+      const savant = buildSavantSegmentedChart(plotPoints);
+      const team = buildTeamSegmentedChart(plotPoints);
       return {
         data: savant.data,
         segments: savant.segments,
@@ -306,8 +390,8 @@ export function CareerTeamTrendChart({
         teamChangeSeasons: savant.teamChangeSeasons,
       };
     }
-    return buildTeamSegmentedChart(points);
-  }, [points, useSavant]);
+    return buildTeamSegmentedChart(plotPoints);
+  }, [plotPoints, plotPercentile, savantScale]);
 
   const franchiseLegend = legend.filter(
     (t) => t.teamId !== "TOT" && t.teamId !== "2TM" && t.teamAbbr !== "-"
@@ -317,6 +401,43 @@ export function CareerTeamTrendChart({
     if (!onSeasonSelect) return;
     const season = row.fullSeason ?? row.season;
     onSeasonSelect(season);
+  };
+
+  const useSavantDots = plotPercentile || savantScale;
+
+  const renderDot = (props: {
+    cx?: number;
+    cy?: number;
+    payload?: ChartRow;
+  }) => {
+    const Dot = useSavantDots ? SavantDot : TeamDot;
+    return (
+      <Dot
+        cx={props.cx}
+        cy={props.cy}
+        payload={props.payload}
+        selectedSeason={selectedSeason}
+        onSelect={onSeasonSelect ? handleSelect : undefined}
+      />
+    );
+  };
+
+  const renderActiveDot = (props: {
+    cx?: number;
+    cy?: number;
+    payload?: ChartRow;
+  }) => {
+    const Dot = useSavantDots ? SavantDot : TeamDot;
+    return (
+      <Dot
+        cx={props.cx}
+        cy={props.cy}
+        payload={props.payload}
+        selectedSeason={selectedSeason}
+        onSelect={onSeasonSelect ? handleSelect : undefined}
+        active
+      />
+    );
   };
 
   if (data.length < 2) return null;
@@ -337,6 +458,13 @@ export function CareerTeamTrendChart({
               tickLine={false}
               axisLine={false}
               width={36}
+              domain={plotPercentile ? [0, 100] : ["auto", "auto"]}
+              ticks={plotPercentile ? [0, 25, 50, 75, 100] : undefined}
+              tickFormatter={
+                plotPercentile
+                  ? (v: number) => `${Math.round(v)}`
+                  : formatCareerChartNumber
+              }
             />
             <Tooltip
               cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
@@ -353,7 +481,7 @@ export function CareerTeamTrendChart({
                 ifOverflow="extendDomain"
               />
             ))}
-            {segments.map((seg, idx) => (
+            {segments.map((seg) => (
               <Line
                 key={seg.key}
                 type="monotone"
@@ -371,17 +499,8 @@ export function CareerTeamTrendChart({
               dataKey="value"
               stroke="transparent"
               strokeWidth={0}
-              dot={
-                useSavant ? (
-                  <SavantDot
-                    selectedSeason={selectedSeason}
-                    onSelect={onSeasonSelect ? handleSelect : undefined}
-                  />
-                ) : (
-                  <TeamDot />
-                )
-              }
-              activeDot={useSavant ? { r: 6 } : { r: 5 }}
+              dot={renderDot}
+              activeDot={onSeasonSelect ? renderActiveDot : renderDot}
               legendType="none"
               tooltipType="none"
               isAnimationActive={false}
@@ -389,7 +508,7 @@ export function CareerTeamTrendChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {!useSavant && franchiseLegend.length > 1 ? (
+      {!useSavantDots && franchiseLegend.length > 1 ? (
         <ul className="flex flex-wrap gap-x-3 gap-y-1">
           {franchiseLegend.map((t) => (
             <li

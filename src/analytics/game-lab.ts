@@ -31,7 +31,8 @@ import {
   type QuarterScoreSource,
 } from "@/lib/game-flow/resolve-score-timeline";
 import type { ScoreTimelinePoint } from "@/lib/history/score-flow";
-import { getPbpCapability } from "@/pbp";
+import { buildGamePbpCapability, mapPlayByPlaySource } from "@/pbp/capability";
+import type { GamePbpCapability } from "@/pbp/product-types";
 
 export const GAME_LAB_VERSION = 1.2;
 
@@ -215,6 +216,11 @@ export type GameLabDataCoverage = {
   hasPeriodScores: boolean;
   hasHomeSeasonContext: boolean;
   hasAwaySeasonContext: boolean;
+  /** Explicit PBP capability — raw vs derived layers are separate. */
+  pbp: GamePbpCapability;
+  /**
+   * @deprecated Use `coverage.pbp.rawPbpAvailable`. Kept for backward compatibility.
+   */
   pbpAvailable: boolean;
   notes: string[];
 };
@@ -992,12 +998,19 @@ export function analyzeGame(options: {
     boxContext: boxScoreContext,
   });
 
-  const pbp = getPbpCapability();
   const hasBoxScore = players.some((p) => p.minutes > 0 || p.points > 0);
   const hasTeamTotals = Boolean(home && away);
   const hasPeriodScores = flow.available;
   const hasHomeSeasonContext = teamContext.some((m) => m.side === "home");
   const hasAwaySeasonContext = teamContext.some((m) => m.side === "away");
+
+  const pbp = buildGamePbpCapability({
+    rawEventCount: playByPlay?.events?.length ?? 0,
+    source: mapPlayByPlaySource(playByPlay?.source),
+    scoreTimelineAvailable:
+      hasPeriodScores &&
+      (flow.scoreTimelineSource === "PBP_DERIVED" || flow.timeline.length > 0),
+  });
 
   let depth: GameLabDepth = "minimal";
   if (hasTeamTotals && (hasHomeSeasonContext || hasAwaySeasonContext)) {
@@ -1029,9 +1042,13 @@ export function analyzeGame(options: {
       "Team season averages unavailable or below the minimum games threshold."
     );
   }
-  if (!pbp.possessionsDerived) {
+  if (pbp.rawPbpAvailable && !pbp.possessionsDerived) {
     coverageNotes.push(
-      "Deeper possession analysis will appear when possession-level data is available."
+      "Raw play-by-play is available. Possession derivation runs through the validated possession pipeline when box score data is present."
+    );
+  } else if (!pbp.rawPbpAvailable) {
+    coverageNotes.push(
+      "Play-by-play unavailable for this game — game flow may rely on provider linescores only."
     );
   }
 
@@ -1140,7 +1157,8 @@ export function analyzeGame(options: {
       hasPeriodScores,
       hasHomeSeasonContext,
       hasAwaySeasonContext,
-      pbpAvailable: pbp.possessionsDerived,
+      pbp,
+      pbpAvailable: pbp.rawPbpAvailable,
       notes: coverageNotes,
     },
     methodology: GAME_LAB_METHODOLOGY,

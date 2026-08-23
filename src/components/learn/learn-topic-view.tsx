@@ -2,6 +2,18 @@ import type { LearnTopic } from "@/content/learn/topics";
 import { relatedLearnLinks } from "@/content/learn/resolve";
 import { AppLink } from "@/components/ui/app-link";
 
+const TOPIC_CATEGORY_LABEL: Record<string, string> = {
+  proprietary: "Proprietary stats",
+  systems: "DRBL systems",
+  status: "Labels & status",
+  transactions: "Transactions",
+  basics: "Basketball basics",
+  shooting: "Shooting",
+  usage: "Usage & role",
+  team: "Team efficiency",
+  impact: "Impact models",
+};
+
 export function LearnTopicView({ topic }: { topic: LearnTopic }) {
   const related = relatedLearnLinks(topic.relatedIds);
 
@@ -9,7 +21,7 @@ export function LearnTopicView({ topic }: { topic: LearnTopic }) {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-2">
         <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          {topic.category}
+          {TOPIC_CATEGORY_LABEL[topic.category] ?? topic.category}
         </p>
         <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
           {topic.name}

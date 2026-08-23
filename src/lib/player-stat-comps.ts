@@ -37,22 +37,55 @@ export type StatCompRow = {
   points: number;
   assists: number;
   rebounds: number;
+  offensiveRebounds?: number;
+  defensiveRebounds?: number;
   steals?: number;
   blocks?: number;
   turnovers?: number;
   minutes?: number;
+  personalFouls?: number;
+  plusMinus?: number;
+  gamesStarted?: number;
+  fieldGoalsAttempted?: number;
+  threePointersAttempted?: number;
+  freeThrowsAttempted?: number;
+  sdv100?: number;
+  shotMaking100?: number;
   fieldGoalPct?: number;
+  twoPointPct?: number;
   threePointPct?: number;
   freeThrowPct?: number;
   trueShootingPct?: number;
   effectiveFieldGoalPct?: number;
+  threePointAttemptRate?: number;
+  freeThrowRate?: number;
   usagePct?: number;
+  assistPct?: number;
+  turnoverPct?: number;
+  offensiveReboundPct?: number;
+  defensiveReboundPct?: number;
+  reboundPct?: number;
+  stealPct?: number;
+  blockPct?: number;
+  pie?: number;
+  per?: number;
+  ows?: number;
+  dws?: number;
+  winShares?: number;
+  winSharesPer48?: number;
+  obpm?: number;
+  dbpm?: number;
+  bpm?: number;
+  vorp?: number;
   offensiveRating?: number;
   defensiveRating?: number;
   netRating?: number;
   darkoDpm?: number;
   darkoOff?: number;
   darkoDef?: number;
+  dpm?: number;
+  oDpm?: number;
+  dDpm?: number;
   lebron?: number;
   oLebron?: number;
   dLebron?: number;
@@ -128,11 +161,15 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => formatNumber(v, 2),
   },
   darko: {
-    pick: (r) => (r.darkoDpm != null ? r.darkoDpm : null),
+    pick: (r) => {
+      if (r.darkoDpm != null && Number.isFinite(r.darkoDpm)) return r.darkoDpm;
+      if (r.dpm != null && Number.isFinite(r.dpm) && r.dpm !== 0) return r.dpm;
+      return null;
+    },
     format: (v) => formatNumber(v, 2),
   },
   lebron: {
-    pick: (r) => (r.lebron != null ? r.lebron : null),
+    pick: (r) => (r.lebron != null && Number.isFinite(r.lebron) ? r.lebron : null),
     format: (v) => formatNumber(v, 2),
   },
   wins: {
@@ -157,11 +194,16 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => `${formatNumber(v, 1)} RPG`,
   },
   "darko-off": {
-    pick: (r) => (r.darkoOff != null ? r.darkoOff : null),
+    pick: (r) => {
+      if (r.darkoOff != null && Number.isFinite(r.darkoOff)) return r.darkoOff;
+      if (r.oDpm != null && Number.isFinite(r.oDpm) && r.oDpm !== 0) return r.oDpm;
+      return null;
+    },
     format: (v) => formatNumber(v, 2),
   },
   olebron: {
-    pick: (r) => (r.oLebron != null ? r.oLebron : null),
+    pick: (r) =>
+      r.oLebron != null && Number.isFinite(r.oLebron) ? r.oLebron : null,
     format: (v) => formatNumber(v, 2),
   },
   ortg: {
@@ -211,11 +253,16 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     format: (v) => `${formatNumber(v, 1)} BPG`,
   },
   "darko-def": {
-    pick: (r) => (r.darkoDef != null ? r.darkoDef : null),
+    pick: (r) => {
+      if (r.darkoDef != null && Number.isFinite(r.darkoDef)) return r.darkoDef;
+      if (r.dDpm != null && Number.isFinite(r.dDpm) && r.dDpm !== 0) return r.dDpm;
+      return null;
+    },
     format: (v) => formatNumber(v, 2),
   },
   dlebron: {
-    pick: (r) => (r.dLebron != null ? r.dLebron : null),
+    pick: (r) =>
+      r.dLebron != null && Number.isFinite(r.dLebron) ? r.dLebron : null,
     format: (v) => formatNumber(v, 2),
   },
   drtg: {
@@ -255,6 +302,214 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
   gp: {
     pick: (r) => (r.gamesPlayed > 0 ? r.gamesPlayed : null),
     format: (v) => `${Math.round(v)} GP`,
+  },
+  orb: {
+    pick: (r) => perGame(r, "offensiveRebounds"),
+    format: (v) => `${formatNumber(v, 1)} ORPG`,
+  },
+  drb: {
+    pick: (r) => perGame(r, "defensiveRebounds"),
+    format: (v) => `${formatNumber(v, 1)} DRPG`,
+  },
+  astPct: {
+    pick: (r) => (r.assistPct != null && r.assistPct > 0 ? r.assistPct : null),
+    format: (v) => formatPct(v),
+  },
+  tovPct: {
+    pick: (r) =>
+      r.turnoverPct != null && r.turnoverPct > 0 ? r.turnoverPct : null,
+    format: (v) => formatPct(v),
+  },
+  orbPct: {
+    pick: (r) =>
+      r.offensiveReboundPct != null && r.offensiveReboundPct > 0
+        ? r.offensiveReboundPct
+        : null,
+    format: (v) => formatPct(v),
+  },
+  drbPct: {
+    pick: (r) =>
+      r.defensiveReboundPct != null && r.defensiveReboundPct > 0
+        ? r.defensiveReboundPct
+        : null,
+    format: (v) => formatPct(v),
+  },
+  trbPct: {
+    pick: (r) =>
+      r.reboundPct != null && r.reboundPct > 0 ? r.reboundPct : null,
+    format: (v) => formatPct(v),
+  },
+  stlPct: {
+    pick: (r) => (r.stealPct != null && r.stealPct > 0 ? r.stealPct : null),
+    format: (v) => formatPct(v),
+  },
+  blkPct: {
+    pick: (r) => (r.blockPct != null && r.blockPct > 0 ? r.blockPct : null),
+    format: (v) => formatPct(v),
+  },
+  fg2: {
+    pick: (r) =>
+      r.twoPointPct != null && r.twoPointPct > 0 ? r.twoPointPct : null,
+    format: (v) => formatPct(v),
+  },
+  fg3a: {
+    pick: (r) =>
+      r.threePointAttemptRate != null && r.threePointAttemptRate > 0
+        ? r.threePointAttemptRate
+        : null,
+    format: (v) => formatPct(v),
+  },
+  ftr: {
+    pick: (r) =>
+      r.freeThrowRate != null && r.freeThrowRate > 0 ? r.freeThrowRate : null,
+    format: (v) => formatNumber(v, 3),
+  },
+  ows: {
+    pick: (r) =>
+      r.ows != null && Number.isFinite(r.ows) && r.ows !== 0 ? r.ows : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  dws: {
+    pick: (r) =>
+      r.dws != null && Number.isFinite(r.dws) && r.dws !== 0 ? r.dws : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  obpm: {
+    pick: (r) => (r.obpm != null && Number.isFinite(r.obpm) ? r.obpm : null),
+    format: (v) => formatNumber(v, 1),
+  },
+  dbpm: {
+    pick: (r) => (r.dbpm != null && Number.isFinite(r.dbpm) ? r.dbpm : null),
+    format: (v) => formatNumber(v, 1),
+  },
+  per: {
+    pick: (r) =>
+      r.per != null && Number.isFinite(r.per) && r.per !== 0 ? r.per : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  ws: {
+    pick: (r) =>
+      r.winShares != null && Number.isFinite(r.winShares) && r.winShares !== 0
+        ? r.winShares
+        : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  ws48: {
+    pick: (r) =>
+      r.winSharesPer48 != null &&
+      Number.isFinite(r.winSharesPer48) &&
+      r.winSharesPer48 !== 0
+        ? r.winSharesPer48
+        : null,
+    format: (v) => formatNumber(v, 3),
+  },
+  bpm: {
+    pick: (r) => (r.bpm != null && Number.isFinite(r.bpm) ? r.bpm : null),
+    format: (v) => formatNumber(v, 1),
+  },
+  vorp: {
+    pick: (r) =>
+      r.vorp != null && Number.isFinite(r.vorp) && r.vorp !== 0 ? r.vorp : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  pie: {
+    pick: (r) => (r.pie != null && r.pie > 0 ? r.pie : null),
+    format: (v) => formatPct(v),
+  },
+  r1WinEquivalents: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) &&
+      r.r1WinEquivalents != null &&
+      Number.isFinite(r.r1WinEquivalents)
+        ? r.r1WinEquivalents
+        : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  drblP: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drblP)
+        ? (r.drblP as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  drblLn: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drblLn)
+        ? (r.drblLn as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  drblB: {
+    pick: (r) =>
+      hasValidDrblEstimate(r as PlayerSeason) && Number.isFinite(r.drblB)
+        ? (r.drblB as number)
+        : null,
+    format: (v) => formatNumber(v, 2),
+  },
+  fga: {
+    pick: (r) => {
+      const v = perGame(r, "fieldGoalsAttempted");
+      return v > 0 ? v : null;
+    },
+    format: (v) => `${formatNumber(v, 1)} FGA`,
+  },
+  fg3aVol: {
+    pick: (r) => {
+      const v = perGame(r, "threePointersAttempted");
+      return v > 0 ? v : null;
+    },
+    format: (v) => `${formatNumber(v, 1)} 3PA`,
+  },
+  fta: {
+    pick: (r) => {
+      const v = perGame(r, "freeThrowsAttempted");
+      return v > 0 ? v : null;
+    },
+    format: (v) => `${formatNumber(v, 1)} FTA`,
+  },
+  sdv100: {
+    pick: (r) =>
+      r.sdv100 != null && Number.isFinite(r.sdv100) && r.sdv100 !== 0
+        ? r.sdv100
+        : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  shotMaking100: {
+    pick: (r) =>
+      r.shotMaking100 != null &&
+      Number.isFinite(r.shotMaking100) &&
+      r.shotMaking100 !== 0
+        ? r.shotMaking100
+        : null,
+    format: (v) => formatNumber(v, 1),
+  },
+  gs: {
+    pick: (r) =>
+      r.gamesStarted != null && Number.isFinite(r.gamesStarted)
+        ? r.gamesStarted
+        : null,
+    format: (v) => `${Math.round(v)} GS`,
+  },
+  startRate: {
+    pick: (r) => {
+      if (!(r.gamesPlayed > 0) || r.gamesStarted == null) return null;
+      return r.gamesStarted / r.gamesPlayed;
+    },
+    format: (v) => formatPct(v),
+  },
+  pf: {
+    pick: (r) => {
+      const v = perGame(r, "personalFouls");
+      return v > 0 ? v : null;
+    },
+    format: (v) => `${formatNumber(v, 1)} PF`,
+  },
+  plusMinus: {
+    pick: (r) => {
+      const v = perGame(r, "plusMinus");
+      return Number.isFinite(v) ? v : null;
+    },
+    format: (v) => formatNumber(v, 1),
   },
 };
 

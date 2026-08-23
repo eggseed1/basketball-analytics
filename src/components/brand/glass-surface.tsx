@@ -10,14 +10,17 @@ import {
 import { LiquidGlass } from "react-liquid-glass-svg";
 
 import { useOwnerTheme } from "@/components/design-system/theme-provider";
+import { HOF_OUTLINE_CLASS } from "@/lib/hall-of-fame-style";
 import { cn } from "@/lib/utils";
 
 export type GlassSurfaceEffect = "liquid" | "css";
+export type GlassSurfaceHonor = "hof";
 
 /**
  * Shared glass surface.
- * `liquid` uses SVG displacement (chrome, heroes). `css` is backdrop-filter
- * only - use it for long repeating lists so scroll stays cheap.
+ * Default `css` matches `.sports-card` frost (cheap for chrome / boards / heroes).
+ * Prefer `liquid` only for rare marketing moments — SVG displacement is expensive
+ * on sticky or large surfaces.
  */
 export function GlassSurface({
   children,
@@ -26,8 +29,9 @@ export function GlassSurface({
   accentColor,
   accentColorB,
   overflowVisible = false,
-  backdropBlur = 16,
-  effect = "liquid",
+  backdropBlur = 24,
+  effect = "css",
+  honor,
   style,
   ...rest
 }: {
@@ -39,12 +43,14 @@ export function GlassSurface({
   overflowVisible?: boolean;
   backdropBlur?: number;
   effect?: GlassSurfaceEffect;
+  honor?: GlassSurfaceHonor;
   style?: CSSProperties;
 } & Omit<HTMLAttributes<HTMLElement>, "children" | "className" | "style">) {
   const { resolvedDark, surface } = useOwnerTheme();
+  // Match `.sports-card` glass fill so CSS panels read like site chrome frost.
   const veil = resolvedDark
-    ? "rgba(0, 0, 0, 0.28)"
-    : "rgba(255, 255, 255, 0.22)";
+    ? "rgba(28, 28, 30, 0.38)"
+    : "rgba(255, 255, 255, 0.42)";
   const a = accentColor?.trim() || null;
   const b = accentColorB?.trim() || null;
   const stop = (color: string, amount: number) =>
@@ -59,8 +65,8 @@ export function GlassSurface({
         ? `linear-gradient(135deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 38%, ${veil} 100%)`
         : veil;
   const insetShadow = resolvedDark
-    ? "inset 0 1px 0 rgba(255,255,255,0.1)"
-    : "inset 0 1px 0 rgba(255,255,255,0.45)";
+    ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 36%)"
+    : "inset 0 1px 0 rgba(255,255,255,0.70), 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 6%)";
 
   if (effect === "css") {
     const solid = surface === "solid";
@@ -68,7 +74,11 @@ export function GlassSurface({
       as,
       {
         ...rest,
-        className: cn("rounded-md", className),
+        className: cn(
+          "rounded-md",
+          honor === "hof" && HOF_OUTLINE_CLASS,
+          className
+        ),
         style: {
           overflow: overflowVisible ? "visible" : "hidden",
           background: solid ? "var(--card)" : tintColor,
@@ -78,16 +88,34 @@ export function GlassSurface({
           WebkitBackdropFilter: solid
             ? undefined
             : `saturate(190%) blur(${backdropBlur}px)`,
-          border: resolvedDark
-            ? "1px solid rgba(255,255,255,0.16)"
-            : "1px solid rgba(255,255,255,0.58)",
-          boxShadow: insetShadow,
+          border: solid
+            ? undefined
+            : resolvedDark
+              ? "1px solid rgba(255,255,255,0.16)"
+              : "1px solid rgba(255,255,255,0.58)",
+          boxShadow: solid ? undefined : insetShadow,
           ...style,
         },
       },
       children
     );
   }
+
+  // Liquid heroes keep a thinner veil so SVG displacement reads clearly.
+  const liquidVeil = resolvedDark
+    ? "rgba(0, 0, 0, 0.28)"
+    : "rgba(255, 255, 255, 0.22)";
+  const liquidStop = (color: string, amount: number) =>
+    `color-mix(in oklab, ${color} ${amount}%, ${liquidVeil})`;
+  const liquidTint =
+    a && b
+      ? `linear-gradient(90deg, ${liquidStop(a, edge)} 0%, ${liquidStop(a, inner)} 46%, ${liquidStop(b, inner)} 54%, ${liquidStop(b, edge)} 100%)`
+      : a
+        ? `linear-gradient(135deg, ${liquidStop(a, edge)} 0%, ${liquidStop(a, inner)} 38%, ${liquidVeil} 100%)`
+        : liquidVeil;
+  const liquidInset = resolvedDark
+    ? "inset 0 1px 0 rgba(255,255,255,0.1)"
+    : "inset 0 1px 0 rgba(255,255,255,0.45)";
 
   return (
     <LiquidGlass
@@ -97,11 +125,15 @@ export function GlassSurface({
       displacementScale={70}
       turbulenceBaseFrequency={0.008}
       turbulenceSeed={1}
-      tintColor={tintColor}
-      className={cn("rounded-md", className)}
+      tintColor={liquidTint}
+      className={cn(
+        "rounded-md",
+        honor === "hof" && HOF_OUTLINE_CLASS,
+        className
+      )}
       style={{
         overflow: overflowVisible ? "visible" : "hidden",
-        boxShadow: insetShadow,
+        boxShadow: liquidInset,
         ...style,
       }}
       {...rest}

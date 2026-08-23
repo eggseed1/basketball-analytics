@@ -19,6 +19,11 @@ import { classifyProviderFailure } from "@/data/diagnostics/provider-failure";
 import { describeProvider } from "@/data/diagnostics/provider-meta";
 import { applyPlayerSeasonFilters } from "./filter-utils";
 import { getFilteredPlayerSeasonsDetailed } from "./players";
+import {
+  priorSeasonForStats,
+  priorSeasonStatsNotice,
+  shouldUsePriorSeasonBoardStats,
+} from "@/lib/player-board-season";
 
 export type PlayerBoardSource =
   | "live-espn"
@@ -31,11 +36,16 @@ export type PlayerSeasonBoardSnapshot = {
   health: PlayerBoardHealth;
   source: PlayerBoardSource;
   warnings: string[];
+  requestSeason: string;
+  statsSeason: string;
+  usingPriorSeasonStats: boolean;
 };
 
 type CachedBoard = {
   unfiltered: PlayerSeason[];
   cachedAt: number;
+  /** True when the snapshot is serving last-good data after a live miss. */
+  servingFromFallback?: boolean;
 };
 
 /** Process-local last-good REAL boards keyed by season. Never stores sample. */
@@ -61,6 +71,7 @@ function seedLastGood(season: string, unfiltered: PlayerSeason[]) {
   lastGoodBySeason.set(season, {
     unfiltered,
     cachedAt: Date.now(),
+    servingFromFallback: false,
   });
 }
 
@@ -84,6 +95,9 @@ export async function getPlayerSeasonBoardSnapshot(
 ): Promise<PlayerSeasonBoardSnapshot> {
   const provider = getDataProvider();
   const season = filters.season ?? "";
+  const requestSeason = season;
+  let statsSeason = season;
+  let usingPriorSeasonStats = false;
   const load = boardLoaderOverride ?? getFilteredPlayerSeasonsDetailed;
 
   if (provider.name === "local" && !boardLoaderOverride) {
@@ -100,10 +114,16 @@ export async function getPlayerSeasonBoardSnapshot(
       health,
       source: "local-sample",
       warnings: [],
+      requestSeason,
+      statsSeason,
+      usingPriorSeasonStats,
     };
   }
 
-  const cached = season ? lastGoodBySeason.get(season) : undefined;
+  const cached =
+    season && season.toUpperCase() !== "ALL"
+      ? lastGoodBySeason.get(season)
+      : undefined;
   const narrowing = hasNarrowingFilters(filters);
 
   // Draft class / team / position / minutes only re-filter the season snapshot.
@@ -114,26 +134,68 @@ export async function getPlayerSeasonBoardSnapshot(
       season,
       rowCount: rows.length,
       error: null,
-      fromCachedRealBoard: false,
+      fromCachedRealBoard: Boolean(cached.servingFromFallback),
     });
     return {
       rows,
       health,
-      source: "live-espn",
-      warnings: [],
+      source: cached.servingFromFallback ? "cached-espn" : "live-espn",
+      warnings: cached.servingFromFallback ? [CACHED_WARNING] : [],
+      requestSeason,
+      statsSeason,
+      usingPriorSeasonStats,
     };
   }
 
-  const loaded = await load(narrowing && season ? { season } : filters);
+  // All-seasons mode needs the player name (and other filters) inside the loader
+  // so career matches can be merged. Single-season mode can load the season
+  // snapshot once, then re-filter.
+  const loaded = await load(
+    season.toUpperCase() === "ALL"
+      ? filters
+      : narrowing && season
+        ? { season }
+        : filters
+  );
+  let unfilteredRows = loaded.rows;
   let rows = loaded.rows;
   const error = loaded.error;
   let source: PlayerBoardSource = "live-espn";
   const warnings: string[] = [];
   let fromCachedRealBoard = false;
 
-  if (error == null && rows.length > 0 && season) {
-    seedLastGood(season, rows);
-    rows = applyPlayerSeasonFilters(rows, filters);
+  if (
+    error == null &&
+    unfilteredRows.length > 0 &&
+    season &&
+    season.toUpperCase() !== "ALL"
+  ) {
+    seedLastGood(season, unfilteredRows);
+    rows = applyPlayerSeasonFilters(unfilteredRows, filters);
+  } else if (error == null && unfilteredRows.length > 0 && season.toUpperCase() === "ALL") {
+    // Loader already applied filters for the all-seasons merge path.
+    rows = applyPlayerSeasonFilters(unfilteredRows, { ...filters, season: undefined });
+  }
+
+  // Pre-tip current season: show last completed season stats on the board.
+  if (
+    error == null &&
+    season &&
+    season.toUpperCase() !== "ALL" &&
+    shouldUsePriorSeasonBoardStats(season, unfilteredRows)
+  ) {
+    const priorSeason = priorSeasonForStats(season);
+    const priorLoaded = await load({ season: priorSeason });
+    if (priorLoaded.error == null && priorLoaded.rows.length > 0) {
+      statsSeason = priorSeason;
+      usingPriorSeasonStats = true;
+      unfilteredRows = priorLoaded.rows;
+      rows = applyPlayerSeasonFilters(priorLoaded.rows, {
+        ...filters,
+        season: priorSeason,
+      });
+      warnings.push(priorSeasonStatsNotice(season, priorSeason));
+    }
   }
 
   // Live miss → process-local last-good real board for this season.
@@ -144,6 +206,8 @@ export async function getPlayerSeasonBoardSnapshot(
       rows = applyPlayerSeasonFilters(cached.unfiltered, filters);
       source = "cached-espn";
       fromCachedRealBoard = true;
+      cached.servingFromFallback = true;
+      lastGoodBySeason.set(season, cached);
       warnings.push(CACHED_WARNING);
       console.warn(
         `[player-board] live board unavailable (${classifyProviderFailure(error).label}); using cached real board for ${season}`
@@ -159,13 +223,21 @@ export async function getPlayerSeasonBoardSnapshot(
 
   const health = await buildHealth({
     providerName: boardLoaderOverride ? "nba" : provider.name,
-    season,
+    season: usingPriorSeasonStats ? statsSeason : season,
     rowCount: rows.length,
-    error,
+    error: usingPriorSeasonStats ? null : error,
     fromCachedRealBoard,
   });
 
-  return { rows, health, source, warnings };
+  return {
+    rows,
+    health,
+    source,
+    warnings,
+    requestSeason,
+    statsSeason,
+    usingPriorSeasonStats,
+  };
 }
 
 async function buildHealth(input: {
@@ -226,5 +298,9 @@ export function __seedPlayerBoardCacheForTests(
   season: string,
   rows: PlayerSeason[]
 ) {
-  lastGoodBySeason.set(season, { unfiltered: rows, cachedAt: Date.now() });
+  lastGoodBySeason.set(season, {
+    unfiltered: rows,
+    cachedAt: Date.now(),
+    servingFromFallback: true,
+  });
 }

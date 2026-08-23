@@ -6,8 +6,8 @@
 export const HISTORICAL_START_YEAR = 1946;
 
 export function currentNbaStartYear(now = new Date()): number {
-  // Season labeled by start year; flips around October.
-  return now.getUTCMonth() >= 9
+  // League year begins July 1; rosters and cap flip then, not October tip-off.
+  return now.getUTCMonth() >= 6
     ? now.getUTCFullYear()
     : now.getUTCFullYear() - 1;
 }

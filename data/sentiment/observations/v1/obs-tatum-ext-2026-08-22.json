@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-tatum-ext-2026-08-22",
+  "collectedAt": "2026-08-22T18:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-tatum-fan-001",
+      "entityType": "player",
+      "entityId": "1628369",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.34,
+      "mentionVolume": 240,
+      "language": "en",
+      "topicTags": ["extension", "title_defense", "celtics_core"],
+      "sampledAt": "2026-08-22T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-tatum-fan-002",
+      "entityType": "player",
+      "entityId": "1628369",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.22,
+      "mentionVolume": 118,
+      "language": "en",
+      "topicTags": ["extension", "mvp_case"],
+      "sampledAt": "2026-08-22T17:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-tatum-media-001",
+      "entityType": "player",
+      "entityId": "1628369",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "positive",
+      "score": 0.46,
+      "mentionVolume": 58,
+      "language": "en",
+      "topicTags": ["extension", "title_contender", "franchise_face"],
+      "sampledAt": "2026-08-22T16:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

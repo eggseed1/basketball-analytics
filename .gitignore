@@ -48,6 +48,11 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# Possession calibration caches / checkpoints (summaries under artifacts/pbp-calibration may be committed)
+/artifacts/pbp-calibration/cache/
+/artifacts/pbp-calibration/checkpoint.json
+/artifacts/pbp-calibration/**/checkpoint.json
+
 # DRBL offline pipeline caches (immutable NBA raw + normalized outputs)
 /data/drbl/
 

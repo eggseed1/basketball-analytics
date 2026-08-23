@@ -5,8 +5,11 @@
 
 import { cache } from "react";
 
+import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
+  enrichPlayerCareerAdvanced as enrichPlayerCareerAdvancedUncached,
   getPlayer as getPlayerUncached,
+  getPlayerCareerSeasons as getPlayerCareerSeasonsUncached,
   getPlayerGameLog as getPlayerGameLogUncached,
   getPlayerSeason as getPlayerSeasonUncached,
   getTeamRoster as getTeamRosterUncached,
@@ -26,13 +29,33 @@ export const getPlayerCached = cache((playerId: string) =>
   getPlayerUncached(playerId)
 );
 
+export { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
+
+export const getPlayerAccoladesCached = cache((playerId: string) =>
+  getPlayerAccoladesUncached(playerId)
+);
+
 export const getPlayerSeasonCached = cache(
-  (playerId: string, season: string) => getPlayerSeasonUncached(playerId, season)
+  (playerId: string, season: string, statsSeason?: string) =>
+    getPlayerSeasonUncached(playerId, season, statsSeason ? { statsSeason } : undefined)
 );
 
 export const getPlayerGameLogCached = cache(
   (playerId: string, season: string) =>
     getPlayerGameLogUncached(playerId, season)
+);
+
+export const getPlayerCareerSeasonsCached = cache((playerId: string) =>
+  getPlayerCareerSeasonsUncached(playerId)
+);
+
+/**
+ * Shared DRBL + YoY Advanced enrich for Statistics / Career / percentile.
+ * Keyed by playerId + career reference so islands sharing page career hit once.
+ */
+export const enrichPlayerCareerAdvancedCached = cache(
+  (playerId: string, career: import("@/data/types").PlayerSeason[]) =>
+    enrichPlayerCareerAdvancedUncached(playerId, career)
 );
 
 export const getTeamSeasonStatsCached = cache((season: string) =>

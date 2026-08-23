@@ -47,7 +47,13 @@ export function applyPlayerSeasonFilters(
     : null;
 
   return seasons.filter((row) => {
-    if (filters.season && row.season !== filters.season) return false;
+    if (
+      filters.season &&
+      filters.season.toUpperCase() !== "ALL" &&
+      row.season !== filters.season
+    ) {
+      return false;
+    }
 
     if (teamIds && !teamIds.has(row.teamId)) return false;
 

@@ -399,6 +399,8 @@ function assertJsonSafe(value: unknown) {
   assert.ok(rightSeason.homeAdvantages.length >= 1);
   assert.equal(rightSeason.outcome.winner, "home");
   assert.ok(rightSeason.coverage.depth === "full");
+  assert.equal(rightSeason.coverage.pbp.rawPbpAvailable, false);
+  assert.equal(rightSeason.coverage.pbp.possessionsDerived, false);
   assert.equal(rightSeason.coverage.pbpAvailable, false);
   assertJsonSafe(rightSeason);
 }
@@ -423,7 +425,7 @@ function assertJsonSafe(value: unknown) {
   assert.equal(thin.coverage.depth, "minimal");
   assert.equal(thin.winningFactors.length, 0);
   assert.equal(thin.flow.available, false);
-  assert.ok(thin.coverage.notes.some((n) => /possession/i.test(n)));
+  assert.ok(thin.coverage.notes.some((n) => /play-by-play|possession/i.test(n)));
   assertJsonSafe(thin);
 }
 

@@ -73,7 +73,6 @@ function PercentileRow({ metric }: { metric: RankedMetric }) {
 }
 
 export function TeamOverviewBoard({
-  scorecard,
   offense,
   defense,
   factors,
@@ -82,7 +81,6 @@ export function TeamOverviewBoard({
   howTheyWin,
   traits,
 }: {
-  scorecard: RankedMetric[];
   offense: RankedMetric[];
   defense: RankedMetric[];
   factors: RankedMetric[];
@@ -93,21 +91,6 @@ export function TeamOverviewBoard({
 }) {
   return (
     <div className="flex flex-col gap-4">
-      <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
-        <div>
-          <h2 className={type.heading}>Season scorecard</h2>
-          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Board metrics with rank among NBA teams this season. Ratings that
-            are not on this feed stay blank - not zero.
-          </p>
-        </div>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {scorecard.map((metric) => (
-            <MetricCard key={metric.key} metric={metric} />
-          ))}
-        </div>
-      </GlassSurface>
-
       <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
         <div>
           <h2 className={type.heading}>Strengths and weaknesses</h2>

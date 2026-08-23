@@ -1,0 +1,439 @@
+{
+  "window": "7d",
+  "mood": {
+    "fan": {
+      "polarity": "mixed",
+      "score": 0.06,
+      "direction": "stable",
+      "mentionVolume": 284000,
+      "coverageConfidence": 0.58,
+      "platformBreakdown": {
+        "reddit": 0.71,
+        "news": 0.12,
+        "other": 0.17
+      },
+      "topicBreakdown": {
+        "overrated": 0.18,
+        "mvp_case": 0.14,
+        "trade_rumors": 0.12,
+        "extension": 0.1
+      }
+    },
+    "media": {
+      "polarity": "neutral",
+      "score": 0.14,
+      "direction": "stable",
+      "mentionVolume": 18400,
+      "coverageConfidence": 0.74,
+      "platformBreakdown": {
+        "news": 0.86,
+        "youtube": 0.08,
+        "other": 0.06
+      },
+      "topicBreakdown": {
+        "title_contender": 0.22,
+        "availability": 0.16,
+        "extension": 0.14
+      }
+    }
+  },
+  "moodSeries": {
+    "fan": [
+      {
+        "date": "2026-08-09",
+        "score": 0.02
+      },
+      {
+        "date": "2026-08-10",
+        "score": 0.02
+      },
+      {
+        "date": "2026-08-11",
+        "score": 0.03
+      },
+      {
+        "date": "2026-08-12",
+        "score": 0.03
+      },
+      {
+        "date": "2026-08-13",
+        "score": 0.03
+      },
+      {
+        "date": "2026-08-14",
+        "score": 0.04
+      },
+      {
+        "date": "2026-08-15",
+        "score": 0.04
+      },
+      {
+        "date": "2026-08-16",
+        "score": 0.04
+      },
+      {
+        "date": "2026-08-17",
+        "score": 0.04
+      },
+      {
+        "date": "2026-08-18",
+        "score": 0.05
+      },
+      {
+        "date": "2026-08-19",
+        "score": 0.05
+      },
+      {
+        "date": "2026-08-20",
+        "score": 0.05
+      },
+      {
+        "date": "2026-08-21",
+        "score": 0.06
+      },
+      {
+        "date": "2026-08-22",
+        "score": 0.06
+      }
+    ],
+    "media": [
+      {
+        "date": "2026-08-09",
+        "score": 0.11
+      },
+      {
+        "date": "2026-08-10",
+        "score": 0.11
+      },
+      {
+        "date": "2026-08-11",
+        "score": 0.11
+      },
+      {
+        "date": "2026-08-12",
+        "score": 0.12
+      },
+      {
+        "date": "2026-08-13",
+        "score": 0.12
+      },
+      {
+        "date": "2026-08-14",
+        "score": 0.12
+      },
+      {
+        "date": "2026-08-15",
+        "score": 0.12
+      },
+      {
+        "date": "2026-08-16",
+        "score": 0.13
+      },
+      {
+        "date": "2026-08-17",
+        "score": 0.13
+      },
+      {
+        "date": "2026-08-18",
+        "score": 0.13
+      },
+      {
+        "date": "2026-08-19",
+        "score": 0.13
+      },
+      {
+        "date": "2026-08-20",
+        "score": 0.14
+      },
+      {
+        "date": "2026-08-21",
+        "score": 0.14
+      },
+      {
+        "date": "2026-08-22",
+        "score": 0.14
+      }
+    ]
+  },
+  "narratives": [
+    {
+      "id": "narr-overrated",
+      "slug": "overrated",
+      "label": "Overrated player",
+      "description": "Fan threads labeling a star as over-ranked, over-paid, or inflated by team record relative to two-way impact.",
+      "direction": "rising",
+      "mentionVolume": 14200,
+      "coverageConfidence": 0.61,
+      "series": [
+        {
+          "date": "2026-08-09",
+          "score": 0.35
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.36
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.38
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.39
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.4
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.42
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.43
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.47
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.48
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.49
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.51
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.52
+        }
+      ],
+      "players": [
+        {
+          "playerId": "1629027",
+          "displayName": "Trae Young",
+          "teamKey": "1",
+          "narrativeShare": 0.22,
+          "fanScore": -0.35,
+          "mediaScore": 0.05,
+          "note": "Playoff exit threads revived empty-stats framing; All-NBA snub debate."
+        },
+        {
+          "playerId": "1626164",
+          "displayName": "Devin Booker",
+          "teamKey": "21",
+          "narrativeShare": 0.18,
+          "fanScore": -0.22,
+          "mediaScore": 0.18,
+          "note": "First-round loss amplified fair-weather criticism despite scoring volume."
+        },
+        {
+          "playerId": "1626157",
+          "displayName": "Karl-Anthony Towns",
+          "teamKey": "18",
+          "narrativeShare": 0.15,
+          "fanScore": -0.28,
+          "mediaScore": -0.04,
+          "note": "Defense-first narratives resurfaced after NYK playoff expectations."
+        },
+        {
+          "playerId": "3945274",
+          "displayName": "Luka Dončić",
+          "teamKey": "13",
+          "narrativeShare": 0.12,
+          "fanScore": -0.08,
+          "mediaScore": 0.12,
+          "note": "Availability monitoring kept him in overrated discourse despite Lakers hype."
+        }
+      ]
+    },
+    {
+      "id": "narr-mvp",
+      "slug": "mvp_case",
+      "label": "MVP case",
+      "description": "Positive fan volume arguing a player should lead MVP ballots.",
+      "direction": "rising",
+      "mentionVolume": 9800,
+      "coverageConfidence": 0.67,
+      "series": [
+        {
+          "date": "2026-08-09",
+          "score": 0.4
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.41
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.42
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.43
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.46
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.47
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.48
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.49
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.5
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.52
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.53
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.54
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.55
+        }
+      ],
+      "players": [
+        {
+          "playerId": "1628983",
+          "displayName": "Shai Gilgeous-Alexander",
+          "teamKey": "25",
+          "narrativeShare": 0.41,
+          "fanScore": 0.42,
+          "mediaScore": 0.55,
+          "note": "Extension news reinforced best-player-in-the-world framing."
+        },
+        {
+          "playerId": "203999",
+          "displayName": "Nikola Jokić",
+          "teamKey": "7",
+          "narrativeShare": 0.24,
+          "fanScore": 0.31,
+          "mediaScore": 0.38,
+          "note": "Steady media praise; fan volume split with SGA."
+        }
+      ]
+    },
+    {
+      "id": "narr-trade",
+      "slug": "trade_speculation",
+      "label": "Trade speculation",
+      "description": "Unresolved movement language in fan spaces — not official transactions.",
+      "direction": "stable",
+      "mentionVolume": 11200,
+      "coverageConfidence": 0.55,
+      "series": [
+        {
+          "date": "2026-08-09",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.45
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.44
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.44
+        }
+      ],
+      "players": [
+        {
+          "playerId": "1628983",
+          "displayName": "Shai Gilgeous-Alexander",
+          "teamKey": "25",
+          "narrativeShare": 0.41,
+          "fanScore": -0.12,
+          "mediaScore": 0.04,
+          "note": "Hypothetical trade-package threads spiked despite OKC extension reporting."
+        },
+        {
+          "playerId": "3945274",
+          "displayName": "Luka Dončić",
+          "teamKey": "13",
+          "narrativeShare": 0.28,
+          "fanScore": -0.08,
+          "mediaScore": 0.12,
+          "note": "Availability monitoring keeps Lakers star in unresolved movement language."
+        }
+      ]
+    }
+  ]
+}

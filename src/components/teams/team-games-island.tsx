@@ -123,10 +123,20 @@ export async function TeamGamesIsland({
       </div>
       <div className="sports-card p-4 sm:p-5">
         {teamGames.source === "unavailable" && teamGames.games.length === 0 ? (
-          <p className="text-[13px] text-muted-foreground">
-            {teamGames.warning ??
-              `Historical games unavailable for ${season}.`}
-          </p>
+          upcomingBundle.games.length > 0 ? (
+            <TeamGamesSection
+              recentPool={[]}
+              upcomingPool={upcomingBundle.games}
+              team={team}
+              brand={brand}
+              seasonAvgPpg={null}
+            />
+          ) : (
+            <p className="text-[13px] text-muted-foreground">
+              {teamGames.warning ??
+                `Historical games unavailable for ${season}.`}
+            </p>
+          )
         ) : (
           <TeamGamesSection
             recentPool={teamGames.games}

@@ -169,7 +169,7 @@ export function PlayerFilterToolbar({
     const normalized: Record<string, string | null> = { ...patch };
     for (const [key, value] of Object.entries(normalized)) {
       if (
-        value === "ALL" ||
+        (value === "ALL" && key !== "season") ||
         (key === "minimumMinutes" &&
           value === String(DEFAULT_PLAYER_MINIMUM_MINUTES)) ||
         (key === "view" && value === "all") ||
@@ -220,14 +220,23 @@ export function PlayerFilterToolbar({
   const conferenceTeams =
     conference === "East" ? east : conference === "West" ? west : null;
 
-  const seasonIndex = Math.max(0, seasons.indexOf(season));
-  const olderSeason = seasons[seasonIndex + 1];
-  const newerSeason = seasonIndex > 0 ? seasons[seasonIndex - 1] : undefined;
-  let seasonYear = season.slice(0, 4);
-  try {
-    seasonYear = String(espnYearFromCanonicalSeason(season));
-  } catch {
-    /* keep start year */
+  const seasonIsAll = season.toUpperCase() === "ALL";
+  const seasonIndex = seasonIsAll ? -1 : Math.max(0, seasons.indexOf(season));
+  const olderSeason = seasonIsAll
+    ? seasons[seasons.length - 1]
+    : seasons[seasonIndex + 1];
+  const newerSeason = seasonIsAll
+    ? seasons[0]
+    : seasonIndex > 0
+      ? seasons[seasonIndex - 1]
+      : undefined;
+  let seasonYear = seasonIsAll ? "All" : season.slice(0, 4);
+  if (!seasonIsAll) {
+    try {
+      seasonYear = String(espnYearFromCanonicalSeason(season));
+    } catch {
+      /* keep start year */
+    }
   }
 
   return (
@@ -269,6 +278,7 @@ export function PlayerFilterToolbar({
               <SelectValue>{seasonYear}</SelectValue>
             </SelectTrigger>
             <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
+              <SelectItem value="ALL">All seasons</SelectItem>
               {seasons.map((s) => (
                 <SelectItem key={s} value={s}>
                   {s}
@@ -482,10 +492,13 @@ export function PlayerFilterToolbar({
           >
             <SelectTrigger
               id="filter-minutes"
-              className={cn(selectTriggerClass, "min-w-[6.5rem]")}
+              className={cn(selectTriggerClass, "min-w-[7.25rem]")}
               aria-label="Minimum minutes"
             >
-              <SelectValue placeholder="Minutes" />
+              <SelectValue placeholder="Minutes">
+                {MIN_MINUTES_OPTIONS.find((o) => o.value === minimumMinutes)
+                  ?.label ?? "Any min"}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent align="start" side="bottom" alignItemWithTrigger={false}>
               {MIN_MINUTES_OPTIONS.map((opt) => (

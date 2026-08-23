@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-luka-avail-2026-08-22",
+  "collectedAt": "2026-08-22T18:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-luka-fan-001",
+      "entityType": "player",
+      "entityId": "3945274",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "negative",
+      "score": -0.18,
+      "mentionVolume": 312,
+      "language": "en",
+      "topicTags": ["load_management", "fit_with_lakers", "trade_rumors"],
+      "sampledAt": "2026-08-22T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-luka-fan-002",
+      "entityType": "player",
+      "entityId": "3945274",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.02,
+      "mentionVolume": 148,
+      "language": "en",
+      "topicTags": ["availability", "championship_window"],
+      "sampledAt": "2026-08-22T17:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-luka-media-001",
+      "entityType": "player",
+      "entityId": "3945274",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "neutral",
+      "score": 0.14,
+      "mentionVolume": 68,
+      "language": "en",
+      "topicTags": ["availability", "championship_window"],
+      "sampledAt": "2026-08-22T16:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

@@ -53,8 +53,8 @@ function assertJsonSafe(value: unknown) {
     new Date("2026-08-14T12:00:00Z")
   );
   assert.ok(seasons.includes("2012-13"));
-  // Aug 2026 → current season still 2025-26; "last season" → 2024-25
-  assert.ok(seasons.includes("2024-25"));
+  // Aug 2026 → league year flipped Jul 1; "last season" → 2025-26
+  assert.ok(seasons.includes("2025-26"));
   assert.ok(notes.some((n) => /last season/i.test(n)));
 }
 
@@ -217,7 +217,7 @@ function assertJsonSafe(value: unknown) {
   const darko = metricSeasonAvailability("darko", "2014-15");
   assert.equal(darko.ok, false);
   if (!darko.ok) assert.match(darko.message, /2014-15/);
-  const current = metricSeasonAvailability("darko", "2025-26");
+  const current = metricSeasonAvailability("darko", "2026-27");
   assert.equal(current.ok, true);
   const lebronOld = metricSeasonAvailability("lebron", "2012-13");
   assert.equal(lebronOld.ok, false);

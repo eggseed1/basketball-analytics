@@ -113,7 +113,7 @@ export function WatchlistPanel() {
   );
 
   return (
-    <section className="sports-card flex min-h-[220px] flex-col gap-3 p-4 sm:p-[21px]">
+    <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
       <div className="flex items-center justify-between gap-2">
         <h2 className="type-heading">Watchlist</h2>
         <button
@@ -127,14 +127,12 @@ export function WatchlistPanel() {
       </div>
 
       {!ready ? (
-        <div className="type-body-sm flex flex-1 items-center justify-center text-muted-foreground">
-          Loading…
-        </div>
+        <div className="type-body-sm py-2 text-muted-foreground">Loading…</div>
       ) : items.length === 0 ? (
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="flex flex-1 flex-col items-center justify-center gap-2 rounded-md border border-dashed border-black/10 px-4 py-10 text-center transition-colors hover:bg-secondary/40"
+          className="flex flex-col items-center justify-center gap-2 rounded-md border border-dashed border-black/10 px-4 py-6 text-center transition-colors hover:bg-secondary/40"
         >
           <span className="flex size-10 items-center justify-center rounded-md bg-secondary text-foreground">
             <Plus className="size-5" aria-hidden />

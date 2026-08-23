@@ -13,11 +13,13 @@ export function PlayerIdentityVitals({
   weightLabel,
   birthDate,
   season,
+  className,
 }: {
   heightLabel?: string | null;
   weightLabel?: string | null;
   birthDate?: string | null;
   season: string;
+  className?: string;
 }) {
   const viewSeason = usePlayerViewSeason(season);
   const birthLine = formatBirthLine(birthDate, viewSeason);
@@ -28,7 +30,8 @@ export function PlayerIdentityVitals({
     <p
       className={cn(
         type.caption,
-        "mt-1 flex flex-wrap items-center justify-center gap-x-2 text-muted-foreground"
+        "mt-1 flex flex-wrap items-center justify-center gap-x-2 text-muted-foreground",
+        className
       )}
     >
       {bits.map((bit, i) => (

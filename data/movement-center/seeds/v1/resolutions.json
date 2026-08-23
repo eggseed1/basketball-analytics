@@ -1,0 +1,34 @@
+[
+  {
+    "clusterId": "cl-giannis-interest",
+    "playerIds": [
+      "203507"
+    ],
+    "outcome": "materialized",
+    "resolvedAt": "2026-08-20T16:00:00Z",
+    "transactionRef": "giannis-mia-trade-26",
+    "suppressTradeSpeculation": true
+  },
+  {
+    "clusterId": "cl-lebron-phi-26",
+    "playerIds": [
+      "2544",
+      "1966"
+    ],
+    "outcome": "materialized",
+    "resolvedAt": "2026-08-18T12:00:00Z",
+    "transactionRef": "cl-lebron-phi-26",
+    "suppressTradeSpeculation": true
+  },
+  {
+    "clusterId": "cl-trae-wsh-26",
+    "playerIds": [
+      "1629027",
+      "4277905"
+    ],
+    "outcome": "materialized",
+    "resolvedAt": "2026-08-19T14:00:00Z",
+    "transactionRef": "trae-wsh-trade-26",
+    "suppressTradeSpeculation": true
+  }
+]

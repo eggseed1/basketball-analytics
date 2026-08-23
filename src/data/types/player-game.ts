@@ -47,4 +47,11 @@ export interface PlayerGame {
   reboundPct?: number;
   gameScore?: number;
   pie?: number;
+  /**
+   * True when the player was listed but did not play (inactive / DNP / injured).
+   * Keep the roster row so OUT status can be shown explicitly.
+   */
+  didNotPlay?: boolean;
+  /** Provider status reason when known (e.g. "Injured", "Coach's Decision"). */
+  statusReason?: string;
 }

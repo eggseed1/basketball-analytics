@@ -7,6 +7,10 @@
 
 import type { PlayerSeason } from "@/data/types";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import {
+  canonicalSeasonFromStartYear,
+  startYearFromCanonicalSeason,
+} from "@/data/providers/historical/season-range";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export type PlayerTeamContextKind =
@@ -122,6 +126,98 @@ export function lastCardStint(
   stints: PlayerCardStint[]
 ): PlayerCardStint | undefined {
   return stints.at(-1);
+}
+
+/**
+ * Distinct franchise stops across a career, in first-appearance order
+ * (earliest season first). Skips TOT / multi-team aggregate rows.
+ */
+export function cardStintsForCareer(
+  career: PlayerSeason[]
+): PlayerCardStint[] {
+  const chronological = [...career].sort((a, b) =>
+    a.season.localeCompare(b.season)
+  );
+  const seen = new Set<string>();
+  const out: PlayerCardStint[] = [];
+  for (const row of chronological) {
+    if (isMultiTeamSeasonRow(row)) continue;
+    const key = brandableTeamKeyFromRow(row);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      teamKey: key,
+      teamLabel:
+        resolveTeamBrand(key)?.abbr ??
+        row.teamAbbreviation ??
+        row.teamName,
+      position: null,
+    });
+  }
+  return out;
+}
+
+/** Map a precomputed team-id history list into card stints (deduped, order kept). */
+export function cardStintsFromTeamKeys(
+  teamKeys: readonly string[] | null | undefined
+): PlayerCardStint[] {
+  if (!teamKeys?.length) return [];
+  const seen = new Set<string>();
+  const out: PlayerCardStint[] = [];
+  for (const raw of teamKeys) {
+    const key = brandableTeamKey(raw);
+    if (!key || seen.has(key)) continue;
+    seen.add(key);
+    out.push({
+      teamKey: key,
+      teamLabel: resolveTeamBrand(key)?.abbr ?? key,
+      position: null,
+    });
+  }
+  return out;
+}
+
+/** Append any teams from `extra` that are not already in `primary`. */
+export function mergeCardStints(
+  primary: PlayerCardStint[],
+  extra: PlayerCardStint[]
+): PlayerCardStint[] {
+  if (!extra.length) return primary;
+  const seen = new Set(primary.map((s) => s.teamKey));
+  const out = [...primary];
+  for (const stint of extra) {
+    if (!stint.teamKey || seen.has(stint.teamKey)) continue;
+    seen.add(stint.teamKey);
+    out.push(stint);
+  }
+  return out;
+}
+
+/**
+ * Retired / inactive for identity UI: no games in the current season and
+ * last recorded season is before the current product season.
+ */
+export function isRetiredPlayerCareer(input: {
+  lastSeason?: string | null;
+  isActive?: boolean | null;
+  nowSeason: string;
+  hasCurrentSeasonGames?: boolean;
+  /** Roster row for current season (0 GP) still counts as active. */
+  hasCurrentSeasonRoster?: boolean;
+}): boolean {
+  if (input.hasCurrentSeasonGames || input.hasCurrentSeasonRoster) return false;
+  if (input.isActive === true) return false;
+  if (input.isActive === false) return true;
+  if (!input.lastSeason) return false;
+  if (input.lastSeason >= input.nowSeason) return false;
+  try {
+    const nowStart = startYearFromCanonicalSeason(input.nowSeason);
+    const priorSeason = canonicalSeasonFromStartYear(nowStart - 1);
+    if (input.lastSeason === priorSeason) return false;
+  } catch {
+    // fall through
+  }
+  return input.lastSeason < input.nowSeason;
 }
 
 export function seasonHasMultipleFranchises(

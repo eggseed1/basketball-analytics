@@ -298,7 +298,8 @@ function MatchupBoard({
 }: {
   game: GameSummary;
   brandPresentation: HistoricalBrandPresentation;
-  href?: string;
+  /** Game page link. Pass `false` to omit (e.g. identity shell already on the game). */
+  href?: string | false;
 }) {
   const awayBrand = resolveSideBrand(game, "away", brandPresentation);
   const homeBrand = resolveSideBrand(game, "home", brandPresentation);
@@ -307,7 +308,7 @@ function MatchupBoard({
   const awayAbbr = awayBrand.abbreviation;
   const homeAbbr = homeBrand.abbreviation;
   const watch = broadcastHint(game);
-  const gameHref = href ?? `/games/${game.id}`;
+  const gameHref = href === false ? null : (href ?? `/games/${game.id}`);
   const awayRecord = game.awayRecord?.trim() || null;
   const homeRecord = game.homeRecord?.trim() || null;
   const ariaAway = awayRecord ? `${awayAbbr} ${awayRecord}` : awayAbbr;
@@ -315,11 +316,13 @@ function MatchupBoard({
 
   return (
     <>
-      <TransitionLink
-        href={gameHref}
-        className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        aria-label={`${ariaAway} at ${ariaHome}`}
-      />
+      {gameHref ? (
+        <TransitionLink
+          href={gameHref}
+          className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          aria-label={`${ariaAway} at ${ariaHome}`}
+        />
+      ) : null}
       <div className="relative z-[1] grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 pointer-events-none">
         <MatchupSide
           brand={awayBrand}
@@ -338,6 +341,43 @@ function MatchupBoard({
         />
       </div>
     </>
+  );
+}
+
+/**
+ * Shared matchup board for list rows and the game identity shell.
+ * Pass `href={false}` when the page is already the destination.
+ */
+export function GameMatchupBoard({
+  game,
+  brandPresentation = "era",
+  href,
+  className,
+}: {
+  game: GameSummary;
+  brandPresentation?: HistoricalBrandPresentation;
+  href?: string | false;
+  className?: string;
+}) {
+  const matchup = buildGameMatchupTheme(
+    gameSideBrandKey(game, "away"),
+    gameSideBrandKey(game, "home")
+  );
+
+  return (
+    <GlassSurface
+      as="div"
+      effect="css"
+      accentColor={matchup.awayWash}
+      accentColorB={matchup.homeWash}
+      className={cn("score-row relative px-3 py-3", className)}
+    >
+      <MatchupBoard
+        game={game}
+        brandPresentation={brandPresentation}
+        href={href}
+      />
+    </GlassSurface>
   );
 }
 
@@ -389,21 +429,12 @@ export const GameMatchupRow = memo(function GameMatchupRow({
   className?: string;
   brandPresentation?: HistoricalBrandPresentation;
 }) {
-  const matchup = buildGameMatchupTheme(
-    gameSideBrandKey(game, "away"),
-    gameSideBrandKey(game, "home")
-  );
-
   return (
-    <GlassSurface
-      as="article"
-      effect="css"
-      accentColor={matchup.awayWash}
-      accentColorB={matchup.homeWash}
-      className={cn("score-row relative px-3 py-3", className)}
-    >
-      <MatchupBoard game={game} brandPresentation={brandPresentation} />
-    </GlassSurface>
+    <GameMatchupBoard
+      game={game}
+      brandPresentation={brandPresentation}
+      className={className}
+    />
   );
 });
 

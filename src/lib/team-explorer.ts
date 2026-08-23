@@ -9,6 +9,7 @@ import type { GameSummary, PlayerSeason, TeamSeasonStats } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { StandingRow } from "@/data/types/standings";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
+import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { formatNumber, formatPct } from "@/lib/format";
 import { isPreTipStatus } from "@/lib/game-status";
@@ -306,8 +307,38 @@ export function findStandingRow(
     rows.find(
       (r) =>
         ids.has(r.teamId) || abbrs.has(r.abbreviation.toLowerCase())
-    ) ?? null
+      ) ?? null
   );
+}
+
+/** Division place from conference standings + ESPN division map. */
+export function computeDivisionStanding(
+  standing: StandingRow,
+  allRows: StandingRow[],
+  brand?: TeamBrand | null
+): { division: string; rank: number; of: number } | null {
+  const espnId =
+    brand?.espnTeamId ??
+    standing.teamId;
+  const meta = ESPN_TEAM_META[espnId];
+  if (!meta?.division) return null;
+
+  const peers = allRows.filter((r) => {
+    const m = ESPN_TEAM_META[r.teamId];
+    return m?.division === meta.division;
+  });
+  if (peers.length < 2) return null;
+
+  const ordered = [...peers].sort(
+    (a, b) => b.winPct - a.winPct || b.wins - a.wins || a.losses - b.losses
+  );
+  const idx = ordered.findIndex(
+    (r) =>
+      r.teamId === standing.teamId ||
+      r.abbreviation.toLowerCase() === standing.abbreviation.toLowerCase()
+  );
+  if (idx < 0) return null;
+  return { division: meta.division, rank: idx + 1, of: ordered.length };
 }
 
 export function buildRosterBuckets(

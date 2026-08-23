@@ -32,7 +32,6 @@ import { finalizeBoxScorePlayers } from "./nba/enrich-box-score";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
 import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
 import {
-  enrichCareerRowKeepTeam,
   pickPlayerSeasonBoardRow,
 } from "@/lib/player-team-context";
 import {
@@ -430,52 +429,53 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   /**
-   * Wait for BRef at most `BREF_CRITICAL_PATH_BUDGET_MS`. On timeout, use any
-   * previously cached scrape (even stale) so PER/WS/BPM still populate when
-   * possible without blocking the page on a ~2MB HTML download.
+   * Prefer cached BRef immediately. Never block the season board on a ~2MB
+   * scrape — warm in the background and invalidate so the next hit merges PER.
    */
   private async loadBrefForSeason(season: string): Promise<BrefAdvancedRow[]> {
+    const peeked = peekBrefAdvancedSeason(season);
+    if (peeked && peeked.length > 0) return peeked;
+
     const fetchPromise = fetchBrefAdvancedSeason(season, {
       ttlMs: brefTtlMs(season),
       staleMs: brefStaleMs(season),
     }).catch(() => [] as BrefAdvancedRow[]);
 
+    // Tiny race: if scrape is already mid-flight and finishes instantly, use it.
     const budget = new Promise<BrefAdvancedRow[] | null>((resolve) => {
-      setTimeout(() => resolve(null), BREF_CRITICAL_PATH_BUDGET_MS);
+      setTimeout(() => resolve(null), Math.min(80, BREF_CRITICAL_PATH_BUDGET_MS));
     });
-
     const raced = await Promise.race([fetchPromise, budget]);
-    if (raced !== null) return raced;
+    if (raced !== null && raced.length > 0) return raced;
 
-    // Timed out — keep warming cache; drop season cache once BRef arrives
-    // so the next request (or SWR refresh) merges advanced metrics.
     void fetchPromise.then((rows) => {
       if (rows.length > 0) this.playerSeasonCache.delete(season);
     });
-    return peekBrefAdvancedSeason(season) ?? [];
+    return peeked ?? [];
   }
 
   /**
-   * Wait for DARKO at most `DARKO_CRITICAL_PATH_BUDGET_MS`. On timeout, use
-   * any previously cached scrape so DPM still populates when possible.
+   * Prefer cached DARKO immediately; warm scrape in the background.
    */
   private async loadDarkoForSeason(season: string): Promise<DarkoPlayerRow[]> {
+    const peeked = peekDarkoSeason(season);
+    if (peeked && peeked.length > 0) return peeked;
+
     const fetchPromise = fetchDarkoSeason(season, {
       ttlMs: darkoTtlMs(season),
       staleMs: darkoStaleMs(season),
     }).catch(() => [] as DarkoPlayerRow[]);
 
     const budget = new Promise<DarkoPlayerRow[] | null>((resolve) => {
-      setTimeout(() => resolve(null), DARKO_CRITICAL_PATH_BUDGET_MS);
+      setTimeout(() => resolve(null), Math.min(80, DARKO_CRITICAL_PATH_BUDGET_MS));
     });
-
     const raced = await Promise.race([fetchPromise, budget]);
-    if (raced !== null) return raced;
+    if (raced !== null && raced.length > 0) return raced;
 
     void fetchPromise.then((rows) => {
       if (rows.length > 0) this.playerSeasonCache.delete(season);
     });
-    return peekDarkoSeason(season) ?? [];
+    return peeked ?? [];
   }
 
   private async loadDrblForSeason(season: string): Promise<DrblPlayerRow[]> {
@@ -489,6 +489,12 @@ export class NBADataProvider implements BasketballDataProvider {
   private async fetchPlayerSeasons(season: string): Promise<PlayerSeason[]> {
     if (!isModernLeagueDashSeason(season)) {
       return this.fetchPlayerSeasonsHistorical(season);
+    }
+
+    const { isPreseasonRosterSeason, fetchEspnLeagueRosterPlayers } =
+      await import("@/data/providers/nba/espn-roster-client");
+    if (isPreseasonRosterSeason(season)) {
+      return fetchEspnLeagueRosterPlayers(season);
     }
 
     const statsTtl = seasonStatsTtlMs(season);
@@ -523,7 +529,7 @@ export class NBADataProvider implements BasketballDataProvider {
       drblRows.map((row) => [row.playerId, row] as const)
     );
 
-    return baseRows
+    const rows = baseRows
       .filter((row) => n(row, "GP") > 0 && row.PLAYER_ID != null)
       .map((base) => {
         const playerId = String(base.PLAYER_ID);
@@ -546,6 +552,8 @@ export class NBADataProvider implements BasketballDataProvider {
           position: seasonRow.position ?? undefined,
         };
       });
+
+    return rows;
   }
 
   /**
@@ -636,50 +644,45 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   private async fetchPlayerCareer(playerId: string): Promise<PlayerSeason[]> {
-    const response = await statsNbaFetch("playercareerstats", {
-      PlayerID: playerId,
-      PerMode: "Totals",
-      LeagueID: "00",
-    });
+    // Career totals only on the critical path. Advanced ratings come from the
+    // year-over-year overlay (percentile / career islands) — never N× boards.
+    const [response, info] = await Promise.all([
+      statsNbaFetch("playercareerstats", {
+        PlayerID: playerId,
+        PerMode: "Totals",
+        LeagueID: "00",
+      }),
+      this.loadCommonPlayerInfo(playerId),
+    ]);
     const set = getResultSet(response, "SeasonTotalsRegularSeason");
     if (!set) return [];
     const rows = resultSetToObjects(set);
-    const info = await this.loadCommonPlayerInfo(playerId);
     const fromRow = rows[0] ? String(rows[0].PLAYER_NAME ?? "").trim() : "";
     const playerName = info?.fullName || fromRow || `Player ${playerId}`;
 
-    const richSeasons = new Set(defaultCanonicalSeasons(2));
-    const seasons = await Promise.all(
-      rows.map(async (row) => {
-        const seasonId = String(row.SEASON_ID ?? "");
-        // SEASON_ID is usually "2024-25"; older dumps may use "22024".
-        const season = /^\d{4}-\d{2}$/.test(seasonId)
-          ? seasonId
-          : (() => {
-              const endYear = Number(seasonId.slice(-4));
-              return endYear > 1900
-                ? `${endYear - 1}-${String(endYear).slice(-2)}`
-                : seasonId;
-            })();
-        const displayName =
-          String(row.PLAYER_NAME ?? "").trim() || playerName;
-        const rich = richSeasons.has(season)
-          ? await this.getPlayerSeason(playerId, season).catch(() => null)
-          : null;
-        const basic = transformStatsNbaCareerTotalsRow(
-          row,
-          displayName,
-          season
-        );
-        const withName = {
-          ...basic,
-          teamName: nbaTeamName(basic.teamId, basic.teamAbbreviation),
-        };
-        // Enrich counting/advanced from league dash without overwriting
-        // this career row's season/stint team identity (P17.3).
-        return enrichCareerRowKeepTeam(withName, rich);
-      })
-    );
+    const seasons = rows.map((row) => {
+      const seasonId = String(row.SEASON_ID ?? "");
+      // SEASON_ID is usually "2024-25"; older dumps may use "22024".
+      const season = /^\d{4}-\d{2}$/.test(seasonId)
+        ? seasonId
+        : (() => {
+            const endYear = Number(seasonId.slice(-4));
+            return endYear > 1900
+              ? `${endYear - 1}-${String(endYear).slice(-2)}`
+              : seasonId;
+          })();
+      const displayName =
+        String(row.PLAYER_NAME ?? "").trim() || playerName;
+      const basic = transformStatsNbaCareerTotalsRow(
+        row,
+        displayName,
+        season
+      );
+      return {
+        ...basic,
+        teamName: nbaTeamName(basic.teamId, basic.teamAbbreviation),
+      };
+    });
 
     // Keep TOT / multi-team aggregate rows for season brand NEUTRAL policy.
     // Franchise stints remain for depth / stint disclosure.
@@ -1098,10 +1101,12 @@ export class NBADataProvider implements BasketballDataProvider {
   ): Promise<GamePlayByPlay | null> {
     const payload = await fetchRawPlayByPlay(gameId);
     if (!payload) return null;
+    const transformSource =
+      payload.source === "disk" ? "cdn" : payload.source;
     const playByPlay = transformNbaPlayByPlay(
       gameId,
       payload.raw,
-      payload.source
+      transformSource
     );
     return playByPlay.events.length > 0 ? playByPlay : null;
   }

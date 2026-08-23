@@ -24,7 +24,7 @@ import { transformNbaPlayerSeason } from "../src/data/transformers/nba";
 import {
   sortExplorePlayerRows,
   toExplorePlayerBoardRow,
-} from "../src/data/queries/explore-players-board";
+} from "../src/data/queries/explore-players-board-pure";
 import { getAskCoverageGaps } from "../src/query-engine/coverage";
 import { HISTORICAL_IMPACT_METHODOLOGY_VERSION } from "../src/data/types/historical-impact";
 import type { PlayerSeason } from "../src/data/types";
@@ -409,6 +409,22 @@ async function main() {
       docs,
       /offensiveRating.*defensiveRating.*netRating.*are lightweight proxies/
     );
+  }
+
+  // Regression: fixture release runner loads data-truth deps without server-only.
+  {
+    const { spawnSync } = await import("node:child_process");
+    const probe = spawnSync(
+      "npx",
+      [
+        "tsx",
+        "-e",
+        "import { toExplorePlayerBoardRow } from './src/data/queries/explore-players-board-pure'; console.log(typeof toExplorePlayerBoardRow);",
+      ],
+      { encoding: "utf8", shell: process.platform === "win32" }
+    );
+    assert.equal(probe.status, 0, probe.stderr || probe.stdout);
+    assert.match(probe.stdout, /function/);
   }
 
   console.log("test-data-truth: ok");

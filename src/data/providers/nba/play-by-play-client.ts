@@ -10,13 +10,20 @@ import path from "node:path";
 
 import { CACHE_TTL_MS } from "./cache-policy";
 
+export interface RawPlayByPlayPayload {
+  raw: unknown;
+  source: "cdn" | "stats" | "disk";
+}
+
 type CacheEntry = {
   freshUntil: number;
   value: unknown;
-  source: "cdn" | "stats";
+  source: "cdn" | "stats" | "disk";
 };
 
 const memoryCache = new Map<string, CacheEntry>();
+/** In-flight dedupe so Game Lab + Possession Explorer share one network pull. */
+const inflight = new Map<string, Promise<RawPlayByPlayPayload | null>>();
 
 const HEADERS: Record<string, string> = {
   Accept: "application/json, text/plain, */*",
@@ -94,23 +101,14 @@ async function readDiskCache(gameId: string): Promise<unknown | null> {
   }
 }
 
-export interface RawPlayByPlayPayload {
-  raw: unknown;
-  source: "cdn" | "stats";
-}
-
 /**
  * Fetch raw play-by-play JSON for a game (CDN first, stats fallback, disk last).
  * Returns null when no source has actions.
  */
-export async function fetchRawPlayByPlay(
+async function fetchRawPlayByPlayUncached(
   gameId: string
 ): Promise<RawPlayByPlayPayload | null> {
   const now = Date.now();
-  const cached = memoryCache.get(gameId);
-  if (cached && cached.freshUntil > now) {
-    return { raw: cached.value, source: cached.source };
-  }
 
   try {
     const raw = await fetchJson(cdnUrl(gameId), HEADERS);
@@ -145,15 +143,43 @@ export async function fetchRawPlayByPlay(
     // Treat disk as CDN-shaped public dump (usually from a prior CDN pull).
     memoryCache.set(gameId, {
       value: disk,
-      source: "cdn",
+      source: "disk",
       freshUntil: now + CACHE_TTL_MS.boxScore,
     });
-    return { raw: disk, source: "cdn" };
+    return { raw: disk, source: "disk" };
   }
 
   return null;
 }
 
+export async function fetchRawPlayByPlay(
+  gameId: string
+): Promise<RawPlayByPlayPayload | null> {
+  const now = Date.now();
+  const cached = memoryCache.get(gameId);
+  if (cached && cached.freshUntil > now) {
+    return { raw: cached.value, source: cached.source };
+  }
+
+  const pending = inflight.get(gameId);
+  if (pending) return pending;
+
+  const request = fetchRawPlayByPlayUncached(gameId).finally(() => {
+    inflight.delete(gameId);
+  });
+  inflight.set(gameId, request);
+  return request;
+}
+
+export function mapRawPbpSource(
+  source: "cdn" | "stats" | "disk"
+): import("@/pbp/product-types").PbpProductSource {
+  if (source === "cdn") return "nba_cdn";
+  if (source === "stats") return "stats_nba";
+  return "disk_cache";
+}
+
 export function clearPlayByPlayCache(): void {
   memoryCache.clear();
+  inflight.clear();
 }

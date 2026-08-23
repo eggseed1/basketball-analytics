@@ -282,6 +282,12 @@ export function transformStatsNbaCommonPlayerInfo(
     rawTeamId && rawTeamId !== "0"
       ? normalizeNbaPlayerSeasonTeam({ teamId: rawTeamId })
       : null;
+  const college = s(row, "SCHOOL").trim() || undefined;
+  const draftInfo = formatStatsNbaDraftInfo(row);
+  const fromYear = n(row, "FROM_YEAR");
+  const seasonExp = n(row, "SEASON_EXP");
+  const jerseyRaw = s(row, "JERSEY").trim();
+
   return {
     id,
     fullName,
@@ -292,7 +298,47 @@ export function transformStatsNbaCommonPlayerInfo(
     heightInches: height,
     weightLbs: weight,
     currentTeamId: team?.teamId,
+    jersey: jerseyRaw || undefined,
+    college,
+    draftInfo,
+    experience:
+      seasonExp > 0
+        ? `${seasonExp}${ordinalSuffix(seasonExp)} Season`
+        : undefined,
+    debutYear: fromYear >= 1946 ? fromYear : undefined,
   };
+}
+
+function ordinalSuffix(n: number): string {
+  const mod100 = n % 100;
+  if (mod100 >= 11 && mod100 <= 13) return "th";
+  switch (n % 10) {
+    case 1:
+      return "st";
+    case 2:
+      return "nd";
+    case 3:
+      return "rd";
+    default:
+      return "th";
+  }
+}
+
+/** Match ESPN-style draft strings so PlayerDraftLine can parse them. */
+function formatStatsNbaDraftInfo(
+  row: Record<string, string | number | null>
+): string | undefined {
+  const yearRaw = s(row, "DRAFT_YEAR").trim();
+  if (!yearRaw) return undefined;
+  if (/^undrafted$/i.test(yearRaw)) return "Undrafted";
+  const year = Number(yearRaw);
+  if (!Number.isFinite(year) || year < 1947) return undefined;
+  const round = Number(s(row, "DRAFT_ROUND"));
+  const pick = Number(s(row, "DRAFT_NUMBER"));
+  if (!Number.isFinite(round) || !Number.isFinite(pick) || round < 1 || pick < 1) {
+    return `Year: ${year}`;
+  }
+  return `${year}: Rd ${round}, Pk ${pick}`;
 }
 
 function parseHeightInches(raw: string): number | undefined {

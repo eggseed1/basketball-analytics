@@ -125,9 +125,12 @@ console.log("partition only links resolved…");
     reason: "test",
   }));
   const partsU = partitionTransactionDescription(description, unresolved);
-  assert.equal(partsU.length, 1);
-  assert.equal(partsU[0]!.kind, "text");
-
+  assert.ok(partsU.some((p) => p.kind === "player"));
+  assert.ok(
+    partsU.every(
+      (p) => p.kind !== "player" || p.resolution.status === "unresolved"
+    )
+  );
   const resolved: TransactionPlayerResolution[] = mentions.map((mention) => ({
     status: "resolved",
     mention,

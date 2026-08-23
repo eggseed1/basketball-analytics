@@ -1,9 +1,11 @@
 import Link from "next/link";
 import { Suspense } from "react";
 
+import { PlayoffBracket } from "@/components/explore/playoff-bracket";
 import { TeamSeasonTable } from "@/components/explore/team-season-table";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
 import { BrowseCircles } from "@/components/sports/browse-circles";
+import { getPlayoffBracketModel } from "@/data/queries/playoff-bracket";
 import {
   getAvailableSeasons,
   getTeamSeasonStats,
@@ -37,6 +39,7 @@ export default async function ExploreTeamsPage({
       : defaultSeason;
 
   const teams = await getTeamSeasonStats(season).catch(() => []);
+  const { model: bracket } = await getPlayoffBracketModel(season);
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
@@ -74,7 +77,8 @@ export default async function ExploreTeamsPage({
         <BrowseCircles mode="teams" />
       </section>
 
-      <div className="pb-8">
+      <div className="flex flex-col gap-6 pb-8">
+        <PlayoffBracket model={bracket} />
         <TeamSeasonTable teams={teams} />
       </div>
     </main>

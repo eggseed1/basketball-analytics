@@ -1,5 +1,7 @@
 import type { TeamSeasonStats } from "@/data/types/team-season";
+import { listCanonicalTeams } from "@/data/identity/team-map";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import {
@@ -28,6 +30,42 @@ function pctToFraction(value: number): number {
   return value;
 }
 
+function preseasonTeamBoard(season: string): TeamSeasonStats[] {
+  return listCanonicalTeams().map((team) => {
+    const meta = ESPN_TEAM_META[team.canonicalTeamId];
+    return {
+      season,
+      teamId: team.canonicalTeamId,
+      abbreviation: team.abbr,
+      fullName: team.displayName,
+      conference: meta?.conference ?? "East",
+      gamesPlayed: 0,
+      ppg: 0,
+      oppPpg: 0,
+      avgDiff: 0,
+      rpg: 0,
+      apg: 0,
+      spg: 0,
+      bpg: 0,
+      topg: 0,
+      fieldGoalPct: 0,
+      threePointPct: 0,
+      freeThrowPct: 0,
+      assistToTurnover: 0,
+      offensiveReboundPct: 0,
+      points: 0,
+      fieldGoalsMade: 0,
+      fieldGoalsAttempted: 0,
+      threePointersMade: 0,
+      threePointersAttempted: 0,
+      freeThrowsMade: 0,
+      freeThrowsAttempted: 0,
+      assists: 0,
+      turnovers: 0,
+    };
+  });
+}
+
 export async function fetchTeamSeasonStats(
   season: string
 ): Promise<TeamSeasonStats[]> {
@@ -35,15 +73,29 @@ export async function fetchTeamSeasonStats(
   const url =
     `${SITE_WEB}/apis/common/v3/sports/basketball/nba/statistics/byteam` +
     `?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
-  // Secondary board: hard timeout + single retry budget (no multi-minute hangs).
-  const payload = await espnFetchJson<ByTeamResponse>(url, {
-    ttlMs: 1000 * 60 * 30,
-    retries: 1,
-    signal: AbortSignal.timeout(4_500),
-  });
-  const schema = payload.categories ?? [];
 
-  return (payload.teams ?? []).map((row) => {
+  let payload: ByTeamResponse;
+  try {
+    payload = await espnFetchJson<ByTeamResponse>(url, {
+      ttlMs: 1000 * 60 * 30,
+      retries: 1,
+      signal: AbortSignal.timeout(4_500),
+    });
+  } catch {
+    if (isPreseasonRosterSeason(season)) {
+      return preseasonTeamBoard(season);
+    }
+    throw new Error(`ESPN by-team stats unavailable for ${season}`);
+  }
+
+  const schema = payload.categories ?? [];
+  const teams = payload.teams ?? [];
+
+  if (teams.length === 0 && isPreseasonRosterSeason(season)) {
+    return preseasonTeamBoard(season);
+  }
+
+  return teams.map((row) => {
     const stats = categoryMap(row.categories, schema);
     const teamId = String(row.team.id);
     const meta = ESPN_TEAM_META[teamId];

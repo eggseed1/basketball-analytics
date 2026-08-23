@@ -10,9 +10,11 @@ import { cn } from "@/lib/utils";
 export function PlayerDraftLine({
   draftInfo,
   college,
+  className,
 }: {
   draftInfo?: string | null;
   college?: string | null;
+  className?: string;
 }) {
   const parsed = parsePlayerDraftInfo(draftInfo);
   const collegeLabel = college?.trim() || null;
@@ -22,7 +24,8 @@ export function PlayerDraftLine({
     <p
       className={cn(
         type.caption,
-        "mt-1 flex flex-wrap items-center justify-center gap-x-1.5 text-muted-foreground"
+        "mt-1 flex flex-wrap items-center justify-center gap-x-1.5 text-muted-foreground",
+        className
       )}
     >
       {parsed?.undrafted ? (

@@ -1,0 +1,5 @@
+gameId,season,date,seasonType,periods,pbpSource,boxSource,advancedBoxSource,rawEventCount,normalizedEventCount,reconstructedHome,reconstructedAway,officialHome,officialAway,deltaHome,deltaAway,absDeltaHome,absDeltaAway,calibrationGrade,scoreConservationOk,lineupValid,unknownEventCount,droppedEventCount,unresolvedFreeThrowCount,duplicateActionWarnings,duplicateOrderWarnings,technicalFtCount,flagrantFtCount,editedEventCount,failureReason,elapsedMs,comparable
+0022400001,2024-25,,regular,4,nba_cdn,nba_cdn,stats_nba,538,538,99,99,99,100,0,-1,0,1,within_one,true,true,0,0,6,0,0,0,0,0,,4,true
+0021900001,2019-20,,regular,5,nba_cdn,nba_cdn,stats_nba,680,680,114,112,115,112,-1,0,1,0,within_one,true,true,16,0,3,0,0,2,0,0,,6,true
+0042400101,2024-25,,playoffs,4,nba_cdn,nba_cdn,stats_nba,496,496,88,86,88,87,0,-1,0,1,within_one,true,true,0,0,1,0,0,0,0,0,,5,true
+0021500001,2015-16,,regular,4,stats_nba,stats_nba,stats_nba,489,530,95,95,97,99,-2,-4,2,4,outside_tolerance,true,false,21,0,4,62,23,0,0,0,,2,true

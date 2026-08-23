@@ -39,11 +39,13 @@ export function mergePlayerBio(
   if (!base && !bio) return null;
   if (!base) return bio;
   if (!bio) return base;
+  // Prefer provider/NBA identity for name — ESPN athlete ids collide with
+  // NBA PERSON_IDs (e.g. NBA 1718 = Paul Pierce, ESPN 1718 = Fred Jones).
   return {
     id: base.id || bio.id,
-    fullName: bio.fullName || base.fullName,
-    firstName: bio.firstName || base.firstName,
-    lastName: bio.lastName || base.lastName,
+    fullName: base.fullName || bio.fullName,
+    firstName: base.firstName || bio.firstName,
+    lastName: base.lastName || bio.lastName,
     position: bio.position ?? base.position,
     birthDate: bio.birthDate ?? base.birthDate,
     birthPlace: bio.birthPlace ?? base.birthPlace,

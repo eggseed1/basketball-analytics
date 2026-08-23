@@ -10,6 +10,7 @@ export type LearnCategoryId =
   | "usage"
   | "team"
   | "impact"
+  | "proprietary"
   | "systems"
   | "status"
   | "transactions";
@@ -44,7 +45,13 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "impact",
     label: "Impact models",
-    description: "Plus-minus style estimates of player value.",
+    description: "Third-party plus-minus style estimates (DARKO, LEBRON).",
+  },
+  {
+    id: "proprietary",
+    label: "Proprietary stats",
+    description:
+      "Original DRBL numbers — how good (rate), how much value (season), and the diagnostics behind them.",
   },
   {
     id: "systems",
@@ -394,9 +401,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     ],
     label: "DRBL/100",
     shortName: "DRBL/100",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Estimated impact per 100 possessions — DRBL’s primary ability-rate ranking number.",
+      "How good was the player’s impact rate? DRBL’s main ranking number — like quality per 100 possessions, not season total.",
     showTooltip: true,
     learnSlug: "drbl-100",
     relatedIds: [
@@ -418,9 +425,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     aliases: ["r1points", "r1_pts"],
     label: "R1 Points",
     shortName: "R1 Pts",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Advanced accounting: point-equivalent attribution above R1. Public boards prefer WAR1 (same ordering).",
+      "The point-credit ledger behind WAR1. Same player order as WAR1 — different units. Usually hidden on main boards.",
     showTooltip: true,
     learnSlug: "r1-points",
     relatedIds: ["r1_win_eq", "drbl", "r1"],
@@ -436,9 +443,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     ],
     label: "WAR1",
     shortName: "WAR1",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Realized season value above DRBL's contextual R1 reference, in win-equivalent units. Not traditional replacement-level WAR.",
+      "How much season value did they pile up? Wins-style total above DRBL’s R1 baseline — not classic “replacement-level WAR.”",
     showTooltip: true,
     learnSlug: "war1",
     relatedIds: ["drbl", "r1_points", "r1"],
@@ -446,11 +453,11 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
   {
     id: "drbl_o",
     aliases: ["drblo", "drbl-o", "drbl_offense"],
-    label: "Offense",
-    shortName: "Offense",
-    category: "impact",
+    label: "DRBL-O",
+    shortName: "DRBL-O",
+    category: "proprietary",
     tooltip:
-      "DRBL’s offensive split (DRBL-O) — how much value came on offense vs the role-matched reference. Not a substitute for DRBL/100.",
+      "Offensive side of DRBL’s possession diagnostic — helpful context, not a replacement for DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-o",
     relatedIds: ["drbl_d", "drbl", "drbl_p"],
@@ -458,11 +465,11 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
   {
     id: "drbl_d",
     aliases: ["drbld", "drbl-d", "drbl_defense"],
-    label: "Defense",
-    shortName: "Defense",
-    category: "impact",
+    label: "DRBL-D",
+    shortName: "DRBL-D",
+    category: "proprietary",
     tooltip:
-      "DRBL’s defensive split (DRBL-D) — how much value came on defense vs the role-matched reference. Not a substitute for DRBL/100.",
+      "Defensive side of DRBL’s possession diagnostic — helpful context, not a replacement for DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-d",
     relatedIds: ["drbl_o", "drbl", "drbl_p"],
@@ -472,9 +479,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     aliases: ["drblp", "drbl-p"],
     label: "DRBL-P",
     shortName: "DRBL-P",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Diagnostic possession attribution. Does not sum with LN and B into DRBL/100.",
+      "Possession-level diagnostic (parent of DRBL-O / DRBL-D). Do not add with LN and B to “rebuild” DRBL/100.",
     showTooltip: true,
     learnSlug: "drbl-p",
     relatedIds: ["drbl", "drbl_ln", "drbl_b", "drbl_o", "drbl_d"],
@@ -484,9 +491,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     aliases: ["drblln", "drbl-ln"],
     label: "DRBL-LN",
     shortName: "DRBL-LN",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Diagnostic lineup-context signal. Not proven off-ball value; does not sum with P and B into DRBL/100.",
+      "Lineup-context diagnostic — who you played with. Not proven off-ball value; not part of a P+LN+B sum.",
     showTooltip: true,
     learnSlug: "drbl-ln",
     relatedIds: ["drbl", "drbl_p", "drbl_b"],
@@ -496,9 +503,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     aliases: ["drblb", "drbl-b"],
     label: "DRBL-B",
     shortName: "DRBL-B",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "Diagnostic box/behavior component — not optical tracking. Does not sum with P and LN into DRBL/100.",
+      "Box-score / behavior diagnostic (usage, creation, shot mix). Not camera tracking; not part of a P+LN+B sum.",
     showTooltip: true,
     learnSlug: "drbl-b",
     relatedIds: ["drbl", "drbl_p", "drbl_ln"],
@@ -508,9 +515,9 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     aliases: ["r1_reference", "above_r1", "role_matched_r1"],
     label: "R1",
     shortName: "R1",
-    category: "impact",
+    category: "proprietary",
     tooltip:
-      "DRBL’s contextual role-matched reference baseline — what “Above R1” compares against. Not conventional replacement.",
+      "The baseline DRBL compares players to — a role-aware expectation, not a classic “replacement player.”",
     showTooltip: true,
     learnSlug: "r1",
     relatedIds: ["r1_win_eq", "r1_points", "drbl"],
@@ -521,7 +528,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "How DRBL works",
     shortName: "How DRBL works",
     category: "systems",
-    tooltip: "Possession → expected value → attribution → shrinkage → season value.",
+    tooltip: "Possession → expected scoring → player credit → rate + season total.",
     showTooltip: true,
     learnSlug: "how-drbl-works",
     relatedIds: ["drbl", "drbl_validation", "drbl_limitations"],
@@ -533,7 +540,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Validation",
     category: "systems",
     tooltip:
-      "Reserved and out-of-time testing lineage for DRBL — not a claim of external metric superiority.",
+      "Held-out and out-of-time tests for DRBL — not a claim that it beats other public metrics.",
     showTooltip: true,
     learnSlug: "drbl-validation",
     relatedIds: ["drbl", "drbl_limitations"],
@@ -545,7 +552,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Historical data",
     category: "systems",
     tooltip:
-      "Why raw older seasons can exist without published DRBL support.",
+      "Why older seasons can have box scores without a published DRBL number.",
     showTooltip: true,
     learnSlug: "drbl-historical-data",
     relatedIds: ["drbl", "drbl_limitations"],
@@ -557,7 +564,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Limitations",
     category: "systems",
     tooltip:
-      "What DRBL is not: causal WAR, complete off-ball measurement, or shipped individual uncertainty.",
+      "What DRBL is not: causal WAR, full off-ball measurement, or a proven best-in-public model.",
     showTooltip: true,
     learnSlug: "drbl-limitations",
     relatedIds: ["drbl", "drbl_ln", "r1"],

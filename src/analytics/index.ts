@@ -132,6 +132,7 @@ export {
   CAREER_RESUME_MIN_MPG,
   computeCareerResume,
   careerProductionIndex,
+  peakCareerSeason,
   dedupeCareerSeasons,
   formatCpi,
   formatOfPeak,

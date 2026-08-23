@@ -70,10 +70,10 @@ export function PlayerPageNav({
                   setActive(section.id);
                 }}
                 className={cn(
-                  "inline-flex rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors",
+                  "glass-pill inline-flex rounded-md px-3 py-1.5 text-[12px] font-semibold transition-colors",
                   isActive
-                    ? "bg-foreground text-background"
-                    : "bg-secondary/70 text-muted-foreground hover:text-foreground"
+                    ? "glass-pill-active"
+                    : "text-muted-foreground hover:text-foreground"
                 )}
                 aria-current={isActive ? "location" : undefined}
               >

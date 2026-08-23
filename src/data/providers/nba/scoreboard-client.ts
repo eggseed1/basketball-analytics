@@ -18,14 +18,10 @@ type ScoreboardResponse = {
 };
 
 /**
- * Season that owns the next tip-offs.
- * Jul–Sep (offseason) → upcoming fall campaign; otherwise the active season.
+ * Season that owns the next tip-offs — same Jul 1 flip as roster/cap surfaces.
  */
 export function upcomingScheduleSeason(now = new Date()): string {
-  const y = now.getUTCFullYear();
-  const m = now.getUTCMonth(); // 0–11
-  const startYear = m >= 6 ? y : y - 1;
-  return canonicalSeasonFromStartYear(startYear);
+  return canonicalSeasonFromStartYear(currentNbaStartYear(now));
 }
 
 /** `2026-06` → `202606` for ESPN scoreboard. */

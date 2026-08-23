@@ -5,6 +5,14 @@ import { useState } from "react";
 import type { StatGuide } from "@/content/stats/guides";
 import { cn } from "@/lib/utils";
 
+const GUIDE_CATEGORY_LABEL: Record<StatGuide["category"], string> = {
+  proprietary: "Proprietary stats",
+  impact: "Impact models",
+  efficiency: "Efficiency",
+  possession: "Possessions",
+  team: "Team",
+};
+
 export function StatGuideView({ guide }: { guide: StatGuide }) {
   const [depth, setDepth] = useState<"plain" | "deep">("plain");
   const body = depth === "plain" ? guide.plain : guide.deep;
@@ -13,7 +21,7 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
     <div className="flex flex-col gap-6">
       <header className="flex flex-col gap-3">
         <p className="text-[12px] font-semibold uppercase tracking-[0.14em] text-muted-foreground">
-          {guide.category}
+          {GUIDE_CATEGORY_LABEL[guide.category] ?? guide.category}
         </p>
         <h1 className="text-[2rem] font-bold tracking-tight sm:text-[2.25rem]">
           {guide.name}

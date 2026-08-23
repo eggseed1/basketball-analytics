@@ -13,7 +13,6 @@ import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { askDrblHref } from "@/components/players/player-ask-links";
 import { PlayerCareerResume } from "@/components/players/player-career-resume";
 import { PlayerContextStrip } from "@/components/players/player-context-strip";
 import {
@@ -22,7 +21,6 @@ import {
 } from "@/components/players/player-destination-stats";
 import { PlayerEvolutionPanel } from "@/components/players/player-evolution-panel";
 import { PlayerSeasonExplorer } from "@/components/players/player-season-explorer";
-import { PlayerSeasonAnalysisControl } from "@/components/players/player-season-rank-view";
 import { PlayerPercentilePanel } from "@/components/players/player-percentile-panel";
 import { defaultRankSeasons } from "@/analytics/rank-player-seasons";
 import {
@@ -47,6 +45,7 @@ import { playerHref } from "@/lib/player-page-contract";
 import {
   brandableTeamKey,
   brandableTeamKeyFromRow,
+  cardStintsForSeason,
   isMultiTeamSeasonRow,
   multiTeamDisplayLabel,
 } from "@/lib/player-team-context";
@@ -120,11 +119,11 @@ export async function PlayerCoreIsland({
     ) ?? career.find((row) => row.season === season);
   const identity = await resolvePlayerIdentity(playerId);
   const nbaId = identity.nbaId;
+  const espnId = identity.espnId;
   const peerRow =
     peers.find((row) => row.playerId === playerId) ??
-    (nbaId
-      ? peers.find((row) => row.playerId === nbaId)
-      : undefined) ??
+    (espnId ? peers.find((row) => row.playerId === espnId) : undefined) ??
+    (nbaId ? peers.find((row) => row.playerId === nbaId) : undefined) ??
     null;
   const seasonStats = mergePlayerSeasonStats(
     seasonRaw,
@@ -133,12 +132,13 @@ export async function PlayerCoreIsland({
   );
 
   const historicalPeers = priorBoard;
-  // P17.3: selected-season identity brands Layer 2 - never let first-stint
-  // seasonStats.teamId overwrite the page context team.
+  const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
+  const statsTeamKey = brandableTeamKeyFromRow(seasonStats);
+  // Preseason current year: roster row beats stale page identity when teams moved.
   const teamKey =
-    brandableTeamKey(identityTeamKey) ??
-    brandableTeamKeyFromRow(seasonStats) ??
-    undefined;
+    season === nowSeason && statsTeamKey
+      ? statsTeamKey
+      : brandableTeamKey(identityTeamKey) ?? statsTeamKey ?? undefined;
   const recentSeasons = career.slice(0, 5);
 
   const careerChrono = Object.keys(seasonTeams).sort((a, b) =>
@@ -148,6 +148,13 @@ export async function PlayerCoreIsland({
   const careerStartTeamKey = careerChrono.length
     ? brandableTeamKey(seasonTeams[careerChrono[0]!])
     : teamKey;
+
+  const stintsBySeason = Object.fromEntries(
+    seasonOptions.map((option) => [
+      option,
+      cardStintsForSeason(career, option),
+    ])
+  );
 
   const metrics = buildPlayerPercentileMetrics(
     seasonStats,
@@ -602,22 +609,6 @@ export async function PlayerCoreIsland({
             ) : null}
 
             <div className="mt-5 border-t border-border pt-4">
-              <TransitionLink
-                href={askDrblHref(
-                  `What was ${displayName}'s peak production?`,
-                  playerId
-                )}
-                className="text-[13px] font-semibold underline-offset-2 hover:underline"
-              >
-                Ask DRBL about {displayName} →
-              </TransitionLink>
-              <p className="mt-3 text-[12px] text-muted-foreground">
-                Historical advanced-stat coverage varies by season. Missing
-                years are not zeroes.
-              </p>
-            </div>
-
-            <div className="mt-5 border-t border-border pt-4">
               <div className="mb-2 flex items-center justify-between gap-2">
                 <h2 className="text-[13px] font-bold tracking-tight">
                   Recent seasons
@@ -714,6 +705,7 @@ export async function PlayerCoreIsland({
               playerName={displayName}
               teamKey={teamKey}
               seasonTeams={seasonTeams}
+              stintsBySeason={stintsBySeason}
               metrics={metrics}
             />
           </div>
@@ -727,16 +719,11 @@ export async function PlayerCoreIsland({
       >
         <div>
           <h2 className="text-[17px] font-bold tracking-tight">Career</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Resume first - then what changed over time.
-          </p>
         </div>
         <PlayerCareerResume
           resume={careerResume}
           teamKey={teamKey}
           careerStartTeamKey={careerStartTeamKey}
-          seasonsAnchorId="seasons"
-          evolutionAnchorId="player-evolution"
         />
         {evolution ? (
           <div id="player-evolution" className="scroll-mt-16">
@@ -744,37 +731,14 @@ export async function PlayerCoreIsland({
               evolution={evolution}
               playerId={playerId}
               teamKey={teamKey}
-              compareHref={`/compare?a=${playerId}&season=${season}`}
+              compareHref={`/players/${playerId}/season-compare?a=${encodeURIComponent(season)}${
+                seasonOptions.find((s) => s !== season)
+                  ? `&b=${encodeURIComponent(
+                      seasonOptions.find((s) => s !== season)!
+                    )}`
+                  : ""
+              }`}
             />
-            <p className="mt-2 text-[12px] text-muted-foreground">
-              <TransitionLink
-                href={playerHref({
-                  playerId,
-                  season,
-                  view: "career",
-                  fromHistory,
-                  themeMode,
-                })}
-                scroll={false}
-                prefetch={false}
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                View season details →
-              </TransitionLink>
-              {" · "}
-              <TransitionLink
-                href={`/players/${playerId}/season-compare?a=${encodeURIComponent(season)}${
-                  seasonOptions.find((s) => s !== season)
-                    ? `&b=${encodeURIComponent(
-                        seasonOptions.find((s) => s !== season)!
-                      )}`
-                    : ""
-                }`}
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                Compare seasons →
-              </TransitionLink>
-            </p>
           </div>
         ) : (
           <div id="player-evolution" className="sr-only" aria-hidden />
@@ -808,17 +772,6 @@ export async function PlayerCoreIsland({
             rankDefaults={rankDefaultSeasons}
           />
         </TeamWashCard>
-        <PlayerSeasonAnalysisControl
-          playerId={playerId}
-          seasons={seasonOptions}
-          defaultA={season}
-          defaultB={
-            seasonOptions.find((s) => s !== season) ??
-            seasonOptions[1] ??
-            seasonOptions[0]
-          }
-          defaultRankSeasons={rankDefaultSeasons}
-        />
 
         <details className="group">
           <summary className="cursor-pointer list-none text-[13px] font-semibold text-muted-foreground underline-offset-2 hover:underline [&::-webkit-details-marker]:hidden">

@@ -2,12 +2,11 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
+import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { GlassSurface } from "@/components/brand/glass-surface";
-import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
-import { PlayerAskLinks } from "@/components/players/player-ask-links";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
@@ -22,14 +21,15 @@ import {
   getHistoryCareerForPlayer,
   getHistorySeasonsForPlayer,
 } from "@/data/history/player-career";
-import { resolvePlayerIdentity } from "@/data/identity/player-identity";
+import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import { getDataProvider } from "@/data/providers";
-import { getPlayerCareerSeasons } from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { getPlayerCached } from "@/data/queries/request-cache";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import {
   buildSeasonTeamsMap,
   parsePlayerSeasonKind,
@@ -44,16 +44,30 @@ import {
 } from "@/lib/player-page-contract";
 import {
   brandableTeamKey,
+  cardStintsForCareer,
   cardStintsForSeason,
+  cardStintsFromTeamKeys,
+  isRetiredPlayerCareer,
   lastCardStint,
+  mergeCardStints,
   multiTeamDisplayLabel,
   resolveSelectedSeasonTeamContext,
 } from "@/lib/player-team-context";
+import { firstUsablePlayerDisplayName } from "@/lib/player-display-name";
 import { resolveActiveEraTheme } from "@/themes/era-theme";
 import {
   historyHref,
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
+import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
+import { PlayerUpcomingGamesIsland } from "@/components/players/player-upcoming-games-island";
+import { PlayerSentimentTabIsland } from "@/components/players/player-sentiment-tab-island";
+import { PlayerCareerAnalysisIsland } from "@/components/players/player-career-analysis-island";
 
 interface PlayerPageProps {
   params: Promise<{ playerId: string }>;
@@ -103,10 +117,12 @@ export default async function PlayerPage({
   const { fromHistory, themeMode, applyEraTheme } =
     parseDestinationHistoryArrival(sp);
 
+  // Do not block first paint on league-wide ESPN roster crawl — career overlay
+  // already applies preseason franchise identity when needed.
   const [player, career, identity] = await Promise.all([
     getPlayerCached(playerId),
-    getPlayerCareerSeasons(playerId),
-    resolvePlayerIdentity(playerId),
+    getPlayerCareerSeasonsCached(playerId),
+    resolvePlayerIdentityCached(playerId),
   ]);
   const historyCareer = getHistoryCareerForPlayer(playerId);
   const historySeasons = getHistorySeasonsForPlayer(playerId);
@@ -114,10 +130,13 @@ export default async function PlayerPage({
     "@/data/history/player-universe"
   );
   const masterPlayer = getMasterPlayer(playerId);
+  // Skip full-universe scan when career or history already supplies seasons.
   const universeSeasons =
     historySeasons.length > 0
       ? historySeasons
-      : getUniverseSeasonsForPlayer(playerId);
+      : career.length > 0
+        ? []
+        : getUniverseSeasonsForPlayer(playerId);
 
   if (!player && career.length === 0 && !historyCareer && !masterPlayer) {
     notFound();
@@ -129,10 +148,15 @@ export default async function PlayerPage({
       ...universeSeasons.map((s) => s.season),
     ]),
   ];
-  const season = resolvePlayerSeason(career, seasonParam, historySeasonIds);
+  const season = resolvePlayerSeason(career, seasonParam, historySeasonIds, {
+    preferPeakWhenHistorical: true,
+    isActive: masterPlayer?.isActive,
+  });
+  const statsCtx = resolvePlayerStatsSeason(career, season);
   const seasonOptions = [
     ...new Set([...career.map((row) => row.season), ...historySeasonIds]),
   ].sort((a, b) => b.localeCompare(a));
+  const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const seasonTeams = buildSeasonTeamsMap(career);
   const seasonTeamCtx = resolveSelectedSeasonTeamContext(career, season);
   const primaryTeam = seasonTeamCtx.row;
@@ -148,11 +172,53 @@ export default async function PlayerPage({
         (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
           ? "Team unavailable"
           : null);
+  const lastCareerSeason =
+    masterPlayer?.lastSeason ??
+    historyCareer?.lastSeason ??
+    [...career].sort((a, b) => b.season.localeCompare(a.season))[0]?.season ??
+    null;
+  const hasCurrentSeasonRoster = career.some((row) => row.season === nowSeason);
+  const hasCurrentSeasonGames = career.some(
+    (row) => row.season === nowSeason && row.gamesPlayed > 0
+  );
+  const isRetired = isRetiredPlayerCareer({
+    lastSeason: lastCareerSeason,
+    isActive: masterPlayer?.isActive,
+    nowSeason,
+    hasCurrentSeasonGames,
+    hasCurrentSeasonRoster,
+  });
+  const priorSeason = canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
+  const showLiveIntelligence =
+    !isRetired ||
+    (lastCareerSeason != null &&
+      lastCareerSeason >= priorSeason &&
+      masterPlayer?.isActive !== false);
+  const careerTeamStints = mergeCardStints(
+    mergeCardStints(
+      cardStintsForCareer(career),
+      cardStintsFromTeamKeys(
+        masterPlayer?.teamHistory ?? historyCareer?.teams ?? []
+      )
+    ),
+    cardStintsFromTeamKeys(
+      (historySeasons.length > 0 ? historySeasons : universeSeasons).flatMap(
+        (s) => s.teamIds ?? []
+      )
+    )
+  );
   const useHistoricalBranding = applyEraTheme && themeMode !== "modern";
   const historicalBrand =
     useHistoricalBranding && teamKey
       ? resolveHistoricalTeamBrand(teamKey, season, "era")
       : null;
+
+  const scheduleTeamKey = isRetired
+    ? null
+    : (() => {
+        const nowRow = career.find((row) => row.season === nowSeason);
+        return nowRow ? brandableTeamKey(nowRow.teamId) ?? null : null;
+      })();
 
   const careerDataGuard = assessProductionProviderGuard({
     providerName: getDataProvider().name,
@@ -160,12 +226,17 @@ export default async function PlayerPage({
     careerRowCount: career.length,
   });
 
+  const latestCareerName = [...career]
+    .sort((a, b) => b.season.localeCompare(a.season))[0]?.playerName;
+  // Never prefer synthetic "Player 1628983" career labels over bio / identity.
   const displayName =
-    player?.fullName ??
-    career[0]?.playerName ??
-    historyCareer?.playerName ??
-    masterPlayer?.displayName ??
-    playerId;
+    firstUsablePlayerDisplayName(
+      identity.displayName,
+      player?.fullName,
+      latestCareerName,
+      historyCareer?.playerName,
+      masterPlayer?.displayName
+    ) ?? playerId;
   const bioPosition = primaryTeam?.position ?? player?.position ?? null;
   const seasonStintsWithPosition = seasonStints.map((stint) => ({
     ...stint,
@@ -192,6 +263,7 @@ export default async function PlayerPage({
       historyCareer?.firstSeason ??
       masterPlayer?.firstSeason ??
       seasonOptions.at(-1),
+    showSentiment: showLiveIntelligence,
   });
 
   const careerSeasonsForTable =
@@ -223,6 +295,8 @@ export default async function PlayerPage({
           teamName={historicalBrand?.displayName ?? teamLabel}
           position={bioPosition}
           seasonStints={seasonStintsWithPosition}
+          showCareerTeams={isRetired && careerTeamStints.length > 0}
+          careerTeamStints={careerTeamStints}
           heightLabel={heightLabel}
           weightLabel={weightLabel}
           birthDate={player?.birthDate ?? null}
@@ -238,6 +312,35 @@ export default async function PlayerPage({
           view={view}
           caps={caps}
           seasonType={seasonType}
+          accolades={
+            <Suspense fallback={null}>
+              <PlayerAccoladesIsland
+                playerId={playerId}
+                teamKey={teamKey}
+                historicalBrand={historicalBrand}
+              />
+            </Suspense>
+          }
+          upcomingSchedule={
+            scheduleTeamKey ? (
+              <Suspense fallback={null}>
+                <PlayerUpcomingGamesIsland
+                  playerId={playerId}
+                  scheduleTeamKey={scheduleTeamKey}
+                />
+              </Suspense>
+            ) : null
+          }
+          frontOffice={
+            <Suspense fallback={null}>
+              <PlayerContractTransactionsIsland
+                playerId={playerId}
+                playerName={displayName}
+                teamKey={teamKey}
+                historicalBrand={historicalBrand}
+              />
+            </Suspense>
+          }
           hero={
             <Suspense
               fallback={
@@ -254,12 +357,44 @@ export default async function PlayerPage({
                 seasonOptions={seasonOptions}
                 seasonTeams={seasonTeams}
                 identityTeamKey={teamKey}
+                nbaId={identity.nbaId}
               />
             </Suspense>
           }
         >
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
         </PlayerDestinationIdentity>
+
+        {view === "sentiment" ? (
+          <Suspense
+            fallback={
+              <DestinationSectionSkeleton label="Loading sentiment…" />
+            }
+          >
+            <PlayerSentimentTabIsland
+              playerId={playerId}
+              playerName={displayName}
+              teamKey={teamKey}
+              historicalBrand={historicalBrand}
+            />
+          </Suspense>
+        ) : null}
+
+        {view === "games" ? (
+          <Suspense
+            fallback={
+              <DestinationSectionSkeleton label="Loading game log…" />
+            }
+          >
+            <PlayerGamesIsland
+              playerId={playerId}
+              season={season}
+              seasons={seasonOptions}
+              seasonType={seasonType}
+              teamKey={teamKey}
+            />
+          </Suspense>
+        ) : null}
 
         {view === "overview" || view === "career" ? (
           <Suspense
@@ -279,19 +414,46 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
+        {view === "career" ? (
+          <Suspense
+            fallback={
+              <DestinationSectionSkeleton label="Loading career analysis…" />
+            }
+          >
+            <PlayerCareerAnalysisIsland
+              playerId={playerId}
+              displayName={displayName}
+              season={season}
+              career={career}
+              teamKey={teamKey}
+            />
+          </Suspense>
+        ) : null}
+
         {view === "overview" ? (
           <Suspense
             fallback={
               <DestinationSectionSkeleton label="Loading statistics…" />
             }
           >
-            <PlayerStatsIsland
-              playerId={playerId}
-              season={season}
-              seasonType={seasonType}
-              career={career}
-              teamKey={teamKey}
-            />
+            <div className="flex flex-col gap-3">
+              {statsCtx.usingPriorSeasonStats ? (
+                <PriorSeasonStatsNotice
+                  requestSeason={statsCtx.requestSeason}
+                  statsSeason={statsCtx.statsSeason}
+                />
+              ) : null}
+              <PlayerStatsIsland
+                playerId={playerId}
+                season={season}
+                statsSeason={statsCtx.statsSeason}
+                seasonType={seasonType}
+                career={career}
+                teamKey={teamKey}
+                fromHistory={fromHistory}
+                themeMode={themeMode === "modern" ? "modern" : "historical"}
+              />
+            </div>
           </Suspense>
         ) : null}
 
@@ -304,22 +466,6 @@ export default async function PlayerPage({
             playerId={playerId}
             viewingSeason={season}
           />
-        ) : null}
-
-        {view === "games" ? (
-          <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading game log…" />
-            }
-          >
-            <PlayerGamesIsland
-              playerId={playerId}
-              season={season}
-              seasons={seasonOptions}
-              seasonType={seasonType}
-              teamKey={teamKey}
-            />
-          </Suspense>
         ) : null}
 
         {view === "shooting" ? (
@@ -336,6 +482,9 @@ export default async function PlayerPage({
               seasonType={seasonType}
               teamKey={teamKey}
               teamLabel={historicalBrand?.displayName ?? teamLabel}
+              teamAbbr={
+                isMultiTeamRow ? "TOT" : (primaryTeam?.teamAbbreviation ?? "TOT")
+              }
             />
           </Suspense>
         ) : null}
@@ -369,13 +518,6 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        <TeamWashCard teamKey={teamKey} className="p-4 sm:p-5">
-          <PlayerAskLinks
-            playerId={playerId}
-            playerName={displayName}
-            season={season}
-          />
-        </TeamWashCard>
       </main>
     </DestinationClientShell>
   );

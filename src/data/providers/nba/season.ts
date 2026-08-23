@@ -34,11 +34,11 @@ export function espnYearFromCanonicalSeason(season: string): number {
   return start + 1;
 }
 
-/** Ending calendar year for the current NBA campaign (Oct flip). */
+import { currentNbaStartYear } from "@/data/providers/historical/season-range";
+
+/** Ending calendar year for the current NBA campaign (Jul flip). */
 export function currentEspnSeasonYear(now = new Date()): number {
-  return now.getUTCMonth() >= 9
-    ? now.getUTCFullYear() + 1
-    : now.getUTCFullYear();
+  return currentNbaStartYear(now) + 1;
 }
 
 /** Recent seasons to expose when none is requested. */

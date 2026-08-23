@@ -5,6 +5,21 @@ import { SAMPLE_LEBRON_RATINGS } from "./sample-lebron";
 
 const CSV_RELATIVE = path.join("data", "impact", "lebron.csv");
 
+let allRowsPromise: Promise<LebronRating[]> | null = null;
+
+async function getAllLebronRows(): Promise<LebronRating[]> {
+  allRowsPromise ??= (async () => {
+    const fromCsv = await tryLoadCsv();
+    return fromCsv ?? SAMPLE_LEBRON_RATINGS;
+  })();
+  return allRowsPromise;
+}
+
+/** Test / script helper — clears memoized CSV load. */
+export function clearLebronRatingsCache(): void {
+  allRowsPromise = null;
+}
+
 /**
  * Load LEBRON ratings from `data/impact/lebron.csv` when present; otherwise
  * fall back to the in-repo seed snapshot.
@@ -12,8 +27,7 @@ const CSV_RELATIVE = path.join("data", "impact", "lebron.csv");
 export async function loadLebronRatings(
   season?: string
 ): Promise<LebronRating[]> {
-  const fromCsv = await tryLoadCsv();
-  const rows = fromCsv ?? SAMPLE_LEBRON_RATINGS;
+  const rows = await getAllLebronRows();
   if (!season) return [...rows];
   return rows.filter((row) => row.season === season);
 }

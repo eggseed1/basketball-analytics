@@ -13,8 +13,6 @@ import { formatMinutes, formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
-import { askDrblHref } from "./player-ask-links";
-
 /**
  * Compact career season surface - high-value fields + Compare / Rank / Ask.
  * Not a replacement for Season depth or Rank My Seasons methodology.
@@ -203,15 +201,6 @@ function SeasonList({
                   Rank
                 </Link>
               ) : null}
-              <Link
-                href={askDrblHref(
-                  `${playerName} true shooting ${row.season}`,
-                  playerId
-                )}
-                className="underline-offset-2 hover:underline"
-              >
-                Ask DRBL
-              </Link>
             </div>
           </li>
         );

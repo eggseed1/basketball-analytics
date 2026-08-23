@@ -21,21 +21,23 @@ export function reconstructLineups(
 
   let home = new Set(homeStarters);
   let away = new Set(awayStarters);
-  const states: DrblLineupState[] = [
-    {
+  const states: DrblLineupState[] = [];
+  if (home.size === 5 && away.size === 5) {
+    states.push({
       afterActionNumber: 0,
       period: 1,
       clockSeconds: 720,
       homePlayerIds: sortedUnique(home),
       awayPlayerIds: sortedUnique(away),
-    },
-  ];
+    });
+  }
 
   // Pending outs before matching ins within the same whistle.
   const pendingOutHome: string[] = [];
   const pendingOutAway: string[] = [];
 
   function flushState(event: DrblEvent): void {
+    if (home.size !== 5 || away.size !== 5) return;
     states.push({
       afterActionNumber: event.actionNumber,
       period: event.period,

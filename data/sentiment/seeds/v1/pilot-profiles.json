@@ -1,0 +1,817 @@
+[
+  {
+    "playerIds": [
+      "1628983",
+      "4278073"
+    ],
+    "window": "7d",
+    "fan": {
+      "polarity": "positive",
+      "score": 0.42,
+      "direction": "rising",
+      "mentionVolume": 1840,
+      "coverageConfidence": 0.72,
+      "platformBreakdown": {
+        "reddit": 0.78,
+        "other": 0.22
+      },
+      "topicBreakdown": {
+        "mvp_case": 0.35,
+        "extension": 0.28,
+        "title_odds": 0.22
+      }
+    },
+    "media": {
+      "polarity": "positive",
+      "score": 0.55,
+      "direction": "stable",
+      "mentionVolume": 96,
+      "coverageConfidence": 0.81,
+      "platformBreakdown": {
+        "news": 0.92,
+        "other": 0.08
+      },
+      "topicBreakdown": {
+        "extension": 0.4,
+        "title_contender": 0.35,
+        "scoring": 0.15
+      }
+    },
+    "association": {
+      "explanation": "Positive fan discussion coincided with extension reporting in Movement Center.",
+      "eventKind": "movement_story",
+      "eventRef": "cl-sga-ext-26"
+    },
+    "series": {
+      "fan": [
+        {
+          "date": "2026-08-09",
+          "score": 0.22
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.26
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.28
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.27
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.26
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.27
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.3
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.35
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.37
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.37
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.36
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.36
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.39
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.43
+        }
+      ],
+      "media": [
+        {
+          "date": "2026-08-09",
+          "score": 0.52
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.51
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.5
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.49
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.5
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.52
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.54
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.54
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.53
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.52
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.52
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.54
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.56
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.57
+        }
+      ]
+    },
+    "displayName": "Shai Gilgeous-Alexander",
+    "teamKey": "25"
+  },
+  {
+    "playerIds": [
+      "3945274",
+      "203999"
+    ],
+    "window": "7d",
+    "fan": {
+      "polarity": "mixed",
+      "score": -0.08,
+      "direction": "falling",
+      "mentionVolume": 2210,
+      "coverageConfidence": 0.68,
+      "platformBreakdown": {
+        "reddit": 0.81,
+        "other": 0.19
+      },
+      "topicBreakdown": {
+        "load_management": 0.41,
+        "trade_rumors": 0.18,
+        "fit_with_lakers": 0.21
+      }
+    },
+    "media": {
+      "polarity": "neutral",
+      "score": 0.12,
+      "direction": "stable",
+      "mentionVolume": 74,
+      "coverageConfidence": 0.76,
+      "platformBreakdown": {
+        "news": 0.88,
+        "youtube": 0.12
+      },
+      "topicBreakdown": {
+        "availability": 0.45,
+        "championship_window": 0.3
+      }
+    },
+    "association": {
+      "explanation": "Fan volume rose around availability monitoring reports; media tone stayed measured.",
+      "eventKind": "movement_story",
+      "eventRef": "cl-doncic-avail"
+    },
+    "series": {
+      "fan": [
+        {
+          "date": "2026-08-09",
+          "score": 0.05
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.07
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.06
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.02
+        },
+        {
+          "date": "2026-08-13",
+          "score": -0.01
+        },
+        {
+          "date": "2026-08-14",
+          "score": -0.03
+        },
+        {
+          "date": "2026-08-15",
+          "score": -0.02
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0
+        },
+        {
+          "date": "2026-08-18",
+          "score": -0.03
+        },
+        {
+          "date": "2026-08-19",
+          "score": -0.07
+        },
+        {
+          "date": "2026-08-20",
+          "score": -0.09
+        },
+        {
+          "date": "2026-08-21",
+          "score": -0.09
+        },
+        {
+          "date": "2026-08-22",
+          "score": -0.07
+        }
+      ],
+      "media": [
+        {
+          "date": "2026-08-09",
+          "score": 0.12
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.11
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.09
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.09
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.11
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.13
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.13
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.11
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.1
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.1
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.12
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.14
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.14
+        }
+      ]
+    },
+    "displayName": "Luka Dončić",
+    "teamKey": "13"
+  },
+  {
+    "playerIds": [
+      "4065648",
+      "1628369"
+    ],
+    "window": "7d",
+    "fan": {
+      "polarity": "positive",
+      "score": 0.28,
+      "direction": "stable",
+      "mentionVolume": 920,
+      "coverageConfidence": 0.65,
+      "platformBreakdown": {
+        "reddit": 0.75,
+        "other": 0.25
+      },
+      "topicBreakdown": {
+        "extension": 0.38,
+        "title_defense": 0.32
+      }
+    },
+    "media": {
+      "polarity": "positive",
+      "score": 0.38,
+      "direction": "rising",
+      "mentionVolume": 52,
+      "coverageConfidence": 0.79,
+      "platformBreakdown": {
+        "news": 0.94
+      },
+      "topicBreakdown": {
+        "extension": 0.5,
+        "franchise_face": 0.3
+      }
+    },
+    "series": {
+      "fan": [
+        {
+          "date": "2026-08-09",
+          "score": 0.24
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.27
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.27
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.25
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.23
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.23
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.25
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.28
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.29
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.28
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.25
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.24
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.26
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.29
+        }
+      ],
+      "media": [
+        {
+          "date": "2026-08-09",
+          "score": 0.32
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.32
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.3
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.3
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.31
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.34
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.36
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.36
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.35
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.34
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.34
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.37
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.39
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.4
+        }
+      ]
+    },
+    "association": {
+      "explanation": "Extension chatter in Movement Center tracks with steady positive fan tone around Boston's core.",
+      "eventKind": "movement_story",
+      "eventRef": "cl-tatum-ext"
+    },
+    "displayName": "Jayson Tatum",
+    "teamKey": "2"
+  },
+  {
+    "playerIds": [
+      "203507"
+    ],
+    "window": "7d",
+    "fan": {
+      "polarity": "negative",
+      "score": -0.31,
+      "direction": "falling",
+      "mentionVolume": 1560,
+      "coverageConfidence": 0.7,
+      "platformBreakdown": {
+        "reddit": 0.84,
+        "other": 0.16
+      },
+      "topicBreakdown": {
+        "mia_fit": 0.38,
+        "title_window": 0.32,
+        "blockbuster_reaction": 0.22
+      }
+    },
+    "media": {
+      "polarity": "mixed",
+      "score": 0.08,
+      "direction": "stable",
+      "mentionVolume": 88,
+      "coverageConfidence": 0.74,
+      "platformBreakdown": {
+        "news": 0.9,
+        "other": 0.1
+      },
+      "topicBreakdown": {
+        "mia_fit": 0.48,
+        "title_window": 0.28,
+        "heat_depth": 0.14
+      }
+    },
+    "association": {
+      "explanation": "Post-trade discourse centers on Miami fit with Bam and whether the Heat closed their title window.",
+      "eventKind": "movement_story",
+      "eventRef": "cl-giannis-interest"
+    },
+    "series": {
+      "fan": [
+        {
+          "date": "2026-08-09",
+          "score": -0.1
+        },
+        {
+          "date": "2026-08-10",
+          "score": -0.09
+        },
+        {
+          "date": "2026-08-11",
+          "score": -0.11
+        },
+        {
+          "date": "2026-08-12",
+          "score": -0.14
+        },
+        {
+          "date": "2026-08-13",
+          "score": -0.19
+        },
+        {
+          "date": "2026-08-14",
+          "score": -0.21
+        },
+        {
+          "date": "2026-08-15",
+          "score": -0.21
+        },
+        {
+          "date": "2026-08-16",
+          "score": -0.19
+        },
+        {
+          "date": "2026-08-17",
+          "score": -0.2
+        },
+        {
+          "date": "2026-08-18",
+          "score": -0.23
+        },
+        {
+          "date": "2026-08-19",
+          "score": -0.28
+        },
+        {
+          "date": "2026-08-20",
+          "score": -0.31
+        },
+        {
+          "date": "2026-08-21",
+          "score": -0.31
+        },
+        {
+          "date": "2026-08-22",
+          "score": -0.3
+        }
+      ],
+      "media": [
+        {
+          "date": "2026-08-09",
+          "score": 0.04
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.03
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0
+        },
+        {
+          "date": "2026-08-12",
+          "score": -0.02
+        },
+        {
+          "date": "2026-08-13",
+          "score": -0.01
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.01
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0
+        },
+        {
+          "date": "2026-08-17",
+          "score": -0.03
+        },
+        {
+          "date": "2026-08-18",
+          "score": -0.05
+        },
+        {
+          "date": "2026-08-19",
+          "score": -0.05
+        },
+        {
+          "date": "2026-08-20",
+          "score": -0.04
+        },
+        {
+          "date": "2026-08-21",
+          "score": -0.03
+        },
+        {
+          "date": "2026-08-22",
+          "score": -0.03
+        }
+      ]
+    },
+    "displayName": "Giannis Antetokounmpo",
+    "teamKey": "14"
+  },
+  {
+    "playerIds": [
+      "2544",
+      "1966"
+    ],
+    "window": "7d",
+    "fan": {
+      "polarity": "mixed",
+      "score": 0.18,
+      "direction": "rising",
+      "mentionVolume": 4120,
+      "coverageConfidence": 0.84,
+      "platformBreakdown": {
+        "reddit": 0.76,
+        "other": 0.24
+      },
+      "topicBreakdown": {
+        "phi_signing": 0.34,
+        "fit_with_embiid": 0.28,
+        "legacy_chase": 0.22
+      }
+    },
+    "media": {
+      "polarity": "mixed",
+      "score": 0.08,
+      "direction": "stable",
+      "mentionVolume": 142,
+      "coverageConfidence": 0.79,
+      "platformBreakdown": {
+        "news": 0.91,
+        "youtube": 0.09
+      },
+      "topicBreakdown": {
+        "phi_signing": 0.42,
+        "title_window": 0.31,
+        "load_management": 0.14
+      }
+    },
+    "association": {
+      "explanation": "Fan chatter spiked after the Philadelphia signing; media debate centers on fit with Embiid and the closing title window.",
+      "eventKind": "movement_story",
+      "eventRef": "cl-lebron-phi-26"
+    },
+    "series": {
+      "fan": [
+        {
+          "date": "2026-08-09",
+          "score": 0.02
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.04
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.05
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.06
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.09
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.1
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.11
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.12
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.14
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.15
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.16
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.17
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.18
+        }
+      ],
+      "media": [
+        {
+          "date": "2026-08-09",
+          "score": 0.04
+        },
+        {
+          "date": "2026-08-10",
+          "score": 0.05
+        },
+        {
+          "date": "2026-08-11",
+          "score": 0.06
+        },
+        {
+          "date": "2026-08-12",
+          "score": 0.07
+        },
+        {
+          "date": "2026-08-13",
+          "score": 0.07
+        },
+        {
+          "date": "2026-08-14",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-15",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-16",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-17",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-18",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-19",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-20",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-21",
+          "score": 0.08
+        },
+        {
+          "date": "2026-08-22",
+          "score": 0.08
+        }
+      ]
+    },
+    "displayName": "LeBron James",
+    "teamKey": "20"
+  }
+]

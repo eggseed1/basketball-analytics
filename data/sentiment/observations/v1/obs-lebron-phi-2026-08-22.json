@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-lebron-phi-2026-08-22",
+  "collectedAt": "2026-08-22T18:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-lebron-fan-001",
+      "entityType": "player",
+      "entityId": "2544",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.22,
+      "mentionVolume": 1840,
+      "language": "en",
+      "topicTags": ["phi_signing", "fit_with_embiid", "legacy_chase"],
+      "sampledAt": "2026-08-22T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-lebron-fan-002",
+      "entityType": "player",
+      "entityId": "2544",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.14,
+      "mentionVolume": 920,
+      "language": "en",
+      "topicTags": ["phi_signing", "title_window", "load_management"],
+      "sampledAt": "2026-08-22T17:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-lebron-media-001",
+      "entityType": "player",
+      "entityId": "2544",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "mixed",
+      "score": 0.08,
+      "mentionVolume": 118,
+      "language": "en",
+      "topicTags": ["phi_signing", "title_window", "fit_with_embiid"],
+      "sampledAt": "2026-08-22T16:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

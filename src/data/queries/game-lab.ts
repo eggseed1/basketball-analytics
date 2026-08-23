@@ -8,12 +8,12 @@ import { analyzeGame, type GameAnalysisSummary } from "@/analytics/game-lab";
 import {
   type GameSeasonContext,
 } from "@/analytics/game-season-context";
-import { getGameShellCached } from "@/data/queries/request-cache";
-import { getFilteredPlayerSeasons } from "@/data/queries/players";
+import { getGameShellCached, getFilteredPlayerSeasonsCached } from "@/data/queries/request-cache";
 import { getTeam } from "@/data/queries/teams";
 import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { getGamePlayByPlay } from "@/data/queries/games";
 import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
+import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { teamEraDisplay } from "@/data/identity/team-era";
 import {
@@ -32,6 +32,8 @@ export type GameAnalysisPayload = {
   analysis: GameAnalysisSummary;
   game: Game;
   players: PlayerGame[];
+  events: PlayByPlayEvent[];
+  pbpSource?: string;
   /** Shell availability - mirrors coverage.availability. */
   availability: "full" | "partial" | "scoreboard";
 };
@@ -209,10 +211,9 @@ export async function getGameAnalysis(
     resolveSideLabels(orientedGame, "home"),
     resolveSideLabels(orientedGame, "away"),
     needPlayerBoard
-      ? getFilteredPlayerSeasons({
-          season: orientedGame.season,
-          minimumGames: 5,
-        }).catch(() => [] as PlayerSeason[])
+      ? getFilteredPlayerSeasonsCached(orientedGame.season, 5).catch(
+          () => [] as PlayerSeason[]
+        )
       : Promise.resolve([] as PlayerSeason[]),
     getTeamSeasonStats(orientedGame.season).catch(() => [] as TeamSeasonStats[]),
   ]);
@@ -274,6 +275,8 @@ export async function getGameAnalysis(
       awayTeamName: awayLabels.name,
     },
     players: alignedPlayers,
+    events: playByPlay?.events ?? [],
+    pbpSource: playByPlay?.source,
     availability,
   };
 }

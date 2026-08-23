@@ -488,6 +488,26 @@ DARKO / LEBRON are third-party impact metrics (pts/100). DARKO is mirrored from
 the public leaderboard; LEBRON has no public API — drop BBall Index exports into
 `data/impact/lebron.csv` (see that folder’s README).
 
+## 9. Live NBA Intelligence (future entities)
+
+Planned modules — **no production ingest yet**. Full specs:
+
+- `docs/product/live-nba-intelligence.md`
+- `docs/architecture/movement-center.md`
+- `docs/architecture/sentiment.md`
+
+| Module | Types | Grain | Must not mix with |
+| --- | --- | --- | --- |
+| `src/movement-center/` | `MovementClaim`, `MovementStoryCluster`, `MovementEvidenceScore` | Unresolved movement reporting | `TransactionEvent` (REAL), player percentiles |
+| `src/sentiment/` | `SentimentObservation`, `SentimentAggregate` | Fan/media perception windows | DRBL, movement evidence score |
+
+**Movement Center** (permanent name) may present as **Rumor Mill** seasonally.  
+**Offseason** (`/offseason`) remains what was **recorded**; Movement Center is what **may** happen.
+
+Social platforms (including X/Twitter) require explicit licensing/API policy in S0/M0 — **no scraper in repo**.
+
+---
+
 ## Data Truth Rules
 
 1. **Missing data is not zero.** Unavailable metrics render as `—`, never `0` /
@@ -512,3 +532,6 @@ the public leaderboard; LEBRON has no public API — drop BBall Index exports in
    blocked until structured edges exist.
 10. **Unsupported ASK queries remain unsupported.** Do not answer with a related
     metric or estimate when the requested metric is unavailable.
+11. **Movement evidence ≠ transaction fact ≠ sentiment.** Evidence strength is
+    not trade probability; reported is not confirmed; sentiment requires volume
+    and coverage context.

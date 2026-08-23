@@ -17,6 +17,32 @@ export type {
   Possession,
 } from "./types";
 
+export type {
+  GamePbpCapability,
+  GamePbpCapabilityStatus,
+  GamePossessionAvailable,
+  GamePossessionData,
+  GamePossessionResult,
+  GamePossessionUnavailable,
+  LineupValidationReport,
+  OfficialPossessionComparison,
+  OfficialPossessionResult,
+  OfficialPossessionSource,
+  OfficialPossessionUnavailableReason,
+  PossessionCalibrationGrade,
+  PossessionPipelineDiagnostics,
+  PbpProductSource,
+  PbpProvenance,
+  ReconstructedPossessionResult,
+  PossessionValidationReport,
+} from "./product-types";
+
+export {
+  buildGamePbpCapability,
+  mapPlayByPlaySource,
+  unavailableCapability,
+} from "./capability";
+
 import type { PbpCapability } from "./types";
 
 /** Honest capability report — corpus attach does not flip these. */

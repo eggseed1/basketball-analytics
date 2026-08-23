@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     const defaultSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
     const filters = filtersFromSearchParams({
       ...params,
-      season: params.season ?? defaultSeason,
+      season: params.season?.toUpperCase() === "ALL" ? "ALL" : params.season ?? defaultSeason,
       minimumMinutes:
         params.minimumMinutes ?? String(DEFAULT_PLAYER_MINIMUM_MINUTES),
     });

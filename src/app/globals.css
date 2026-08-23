@@ -294,6 +294,42 @@ html.dark:not([data-surface="glass"]) .sports-card {
   border-color: rgb(255 255 255 / 8%);
 }
 
+/* Hall of Fame — golden outline for identity + stat surfaces */
+.hof-outline {
+  border: 1.5px solid color-mix(in oklab, #d4af37 78%, #fff8dc) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #f5e6a8 50%, transparent),
+    0 0 0 1px color-mix(in oklab, #b8860b 18%, transparent),
+    0 8px 28px color-mix(in oklab, #d4af37 20%, transparent) !important;
+}
+
+.dark .hof-outline {
+  border-color: color-mix(in oklab, #e8c547 72%, #5c4a12) !important;
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #f5e6a8 28%, transparent),
+    0 0 0 1px color-mix(in oklab, #d4af37 24%, transparent),
+    0 10px 32px color-mix(in oklab, #d4af37 16%, transparent) !important;
+}
+
+.hof-page-frame {
+  border-radius: var(--radius-md);
+  padding: 2px;
+  background: linear-gradient(
+    135deg,
+    color-mix(in oklab, #d4af37 88%, #fff8dc) 0%,
+    color-mix(in oklab, #f5d76e 70%, #fff8dc) 38%,
+    color-mix(in oklab, #c9a227 82%, #8b6914) 100%
+  );
+  box-shadow:
+    0 0 0 1px color-mix(in oklab, #d4af37 22%, transparent),
+    0 12px 36px color-mix(in oklab, #d4af37 18%, transparent);
+}
+
+.hof-page-frame__inner {
+  border-radius: calc(var(--radius-md) - 2px);
+  background: color-mix(in oklab, var(--background) 94%, transparent);
+}
+
 html[data-surface="glass"] .bg-card {
   background-color: rgb(255 255 255 / 42%);
   backdrop-filter: saturate(190%) blur(24px);
@@ -395,9 +431,8 @@ html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
   box-shadow: 0 12px 32px rgb(0 0 0 / 36%);
 }
 
-/* Sticky player column - frost must sample scrolling stats. An ancestor
-   with backdrop-filter (e.g. .sports-card) flattens that backdrop, so
-   board tables opt out via .board-scroll-host. No isolation/transform. */
+/* Sticky player column - liquid frost over scrolling stats.
+   Board host drops ancestor backdrop-filter so these cells can sample the page. */
 .sports-card.board-scroll-host {
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -412,55 +447,179 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
   background: var(--card);
 }
 
-.board-sticky-frost {
-  background: rgb(255 255 255 / 32%);
-  border-right: 1px solid rgb(255 255 255 / 45%);
-  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 22%);
+.board-sticky-frost,
+.board-sticky-frost-surface {
+  background: rgb(255 255 255 / 36%);
+  border-right: 1px solid rgb(255 255 255 / 58%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    14px 0 28px -12px rgb(0 0 0 / 22%);
+  /* filter/transform on this node cancel backdrop-filter sampling. */
   filter: none;
   transform: none;
-  backdrop-filter: saturate(190%) blur(20px);
-  -webkit-backdrop-filter: saturate(190%) blur(20px);
+  backdrop-filter: saturate(180%) blur(48px);
+  -webkit-backdrop-filter: saturate(180%) blur(48px);
 }
 
-.dark .board-sticky-frost {
-  background: rgb(28 28 30 / 36%);
-  border-right-color: rgb(255 255 255 / 12%);
-  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 55%);
+.dark .board-sticky-frost,
+.dark .board-sticky-frost-surface {
+  background: rgb(28 28 30 / 42%);
+  border-right-color: rgb(255 255 255 / 16%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    14px 0 28px -12px rgb(0 0 0 / 55%);
 }
 
-html:not([data-surface="glass"]) .board-sticky-frost {
-  background: var(--card);
+html:not([data-surface="glass"]) .board-sticky-frost,
+html:not([data-surface="glass"]) .board-sticky-frost-surface {
+  background: color-mix(in oklab, var(--card) 82%, transparent);
   border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
+  backdrop-filter: saturate(150%) blur(24px);
+  -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
-tr:hover > .board-sticky-frost {
-  background: rgb(255 255 255 / 48%);
+/* Body sticky column — frost + backdrop-filter live on the sticky td itself. */
+.board-scroll-host tbody td.board-sticky-frost {
+  vertical-align: middle;
 }
 
-.dark tr:hover > .board-sticky-frost {
+.board-scroll-host tbody tr:hover {
+  background: transparent;
+}
+
+.board-scroll-host tbody tr:hover > td:not(.board-sticky-frost) {
+  background: rgb(0 0 0 / 3.5%);
+}
+
+.dark .board-scroll-host tbody tr:hover > td:not(.board-sticky-frost) {
+  background: rgb(255 255 255 / 5%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-host tbody tr:hover > td:not(.board-sticky-frost) {
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+}
+
+tr:hover > .board-sticky-frost,
+tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
+  background: rgb(255 255 255 / 50%);
+}
+
+.dark tr:hover > .board-sticky-frost,
+.dark tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
   background: rgb(44 44 46 / 52%);
 }
 
-html:not([data-surface="glass"]) tr:hover > .board-sticky-frost {
+html:not([data-surface="glass"]) tr:hover > .board-sticky-frost,
+html:not([data-surface="glass"])
+  tr:hover
+  > td.board-sticky-frost
+  .board-sticky-frost-surface {
+  background: color-mix(in oklab, var(--muted) 45%, var(--card));
+}
+
+.board-scroll-host tbody tr.board-row-active {
+  background: rgb(0 0 0 / 3.5%);
+}
+
+.dark .board-scroll-host tbody tr.board-row-active {
+  background: rgb(255 255 255 / 5%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-host tbody tr.board-row-active {
+  background: color-mix(in oklab, var(--muted) 30%, transparent);
+}
+
+.board-scroll-host tbody tr.board-row-active > .board-sticky-frost,
+.board-scroll-host
+  tbody
+  tr.board-row-active
+  > td.board-sticky-frost
+  .board-sticky-frost-surface {
+  background: rgb(255 255 255 / 50%);
+}
+
+.dark .board-scroll-host tbody tr.board-row-active > .board-sticky-frost,
+.dark
+  .board-scroll-host
+  tbody
+  tr.board-row-active
+  > td.board-sticky-frost
+  .board-sticky-frost-surface {
+  background: rgb(44 44 46 / 52%);
+}
+
+html:not([data-surface="glass"])
+  .board-scroll-host
+  tbody
+  tr.board-row-active
+  > .board-sticky-frost,
+html:not([data-surface="glass"])
+  .board-scroll-host
+  tbody
+  tr.board-row-active
+  > td.board-sticky-frost
+  .board-sticky-frost-surface {
   background: color-mix(in oklab, var(--muted) 45%, var(--card));
 }
 
 .board-scroll-host thead th {
-  background: rgb(255 255 255 / 40%);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
+  background: rgb(255 255 255 / 36%);
+  border-bottom: 1px solid rgb(255 255 255 / 45%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 70%);
+  backdrop-filter: saturate(180%) blur(48px);
+  -webkit-backdrop-filter: saturate(180%) blur(48px);
 }
 
 .dark .board-scroll-host thead th {
   background: rgb(28 28 30 / 42%);
+  border-bottom-color: rgb(255 255 255 / 12%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
 }
 
 html:not([data-surface="glass"]) .board-scroll-host thead th {
-  background: var(--card);
-  backdrop-filter: none;
-  -webkit-backdrop-filter: none;
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: none;
+  backdrop-filter: saturate(150%) blur(24px);
+  -webkit-backdrop-filter: saturate(150%) blur(24px);
+}
+
+/* Sticky PLAYER head matches body column frost. */
+.board-scroll-host thead th.board-sticky-frost,
+.board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
+  background: rgb(255 255 255 / 36%);
+  border-right: 1px solid rgb(255 255 255 / 58%);
+  border-bottom: 1px solid rgb(255 255 255 / 45%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    14px 0 28px -12px rgb(0 0 0 / 22%);
+  backdrop-filter: saturate(180%) blur(48px);
+  -webkit-backdrop-filter: saturate(180%) blur(48px);
+}
+
+.dark .board-scroll-host thead th.board-sticky-frost,
+.dark .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
+  background: rgb(28 28 30 / 42%);
+  border-right-color: rgb(255 255 255 / 16%);
+  border-bottom-color: rgb(255 255 255 / 12%);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    14px 0 28px -12px rgb(0 0 0 / 55%);
+}
+
+html:not([data-surface="glass"]) .board-scroll-host thead th.board-sticky-frost,
+html:not([data-surface="glass"])
+  .board-scroll-host
+  thead
+  th.board-sticky-frost
+  .board-sticky-frost-surface {
+  background: color-mix(in oklab, var(--card) 82%, transparent);
+  border-right-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  border-bottom-color: color-mix(in oklab, var(--foreground) 8%, transparent);
+  box-shadow: 10px 0 18px -12px rgb(0 0 0 / 12%);
+  backdrop-filter: saturate(150%) blur(24px);
+  -webkit-backdrop-filter: saturate(150%) blur(24px);
 }
 
 .site-search-field,

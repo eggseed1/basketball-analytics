@@ -1,0 +1,30 @@
+{
+  "source": "nba-cdn-recorded",
+  "version": "fixture-v1",
+  "games": [
+  {
+    "gameId": "0022400001",
+    "label": "regular-season-four-period",
+    "files": ["playbyplay.json", "boxscore.json"]
+  },
+  {
+    "gameId": "0021900001",
+    "label": "overtime-technical-reviews",
+    "files": ["playbyplay.json", "boxscore.json"]
+  },
+  {
+    "gameId": "0042400101",
+    "label": "playoff-rich-shot-metadata",
+    "files": ["playbyplay.json", "boxscore.json"]
+  },
+  {
+    "gameId": "0021500001",
+    "label": "stats-nba-pbp-envelope",
+    "files": ["playbyplay.json"]
+  }
+  ],
+  "notes": [
+    "Recorded from NBA public endpoints for deterministic CI.",
+    "Regenerate with: npx tsx scripts/fetch-pbp-fixtures.ts"
+  ]
+}

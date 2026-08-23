@@ -6,6 +6,7 @@ import {
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
 import { getAvailableSeasons } from "@/data/queries/players";
+import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 
 /**
  * ESPN by-team season boards are reliable from this floor onward
@@ -18,6 +19,7 @@ export const TEAM_SEASON_BOARD_BUDGET_MS = 5_000;
 
 export type TeamSeasonBoardStatus =
   | "ok"
+  | "preseason"
   | "unsupported"
   | "timeout"
   | "error";
@@ -92,6 +94,13 @@ export async function getTeamSeasonBoard(
       ),
       budgetMs
     );
+    if (isSeasonAwaitingFirstGame(season, rows)) {
+      return {
+        rows,
+        status: "preseason",
+        warning: `Season hasn't started — ${season} rosters are live; team stats appear after tip-off.`,
+      };
+    }
     return { rows, status: "ok" };
   } catch (error) {
     const detail = classifyBoardError(error);

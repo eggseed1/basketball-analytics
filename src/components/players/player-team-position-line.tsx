@@ -18,6 +18,7 @@ export function PlayerTeamPositionLine({
   density = "card",
   interactive = true,
   className,
+  "aria-label": ariaLabel,
 }: {
   stints: PlayerCardStint[];
   season?: string | null;
@@ -27,6 +28,7 @@ export function PlayerTeamPositionLine({
   /** False inside another link (hover cards). */
   interactive?: boolean;
   className?: string;
+  "aria-label"?: string;
 }) {
   if (stints.length === 0) return null;
   const preview = density === "preview";
@@ -41,6 +43,7 @@ export function PlayerTeamPositionLine({
         "inline-flex min-w-0 flex-wrap items-center justify-center gap-y-1 text-muted-foreground",
         className
       )}
+      aria-label={ariaLabel}
     >
       {stints.map((stint, index) => {
         const era =

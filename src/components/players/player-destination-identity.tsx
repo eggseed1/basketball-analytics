@@ -1,6 +1,9 @@
 import type { ReactNode } from "react";
 
-import { GlassSurface } from "@/components/brand/glass-surface";
+import {
+  GlassSurface,
+  type GlassSurfaceHonor,
+} from "@/components/brand/glass-surface";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TextLink } from "@/components/ui/text-link";
@@ -46,6 +49,13 @@ export type PlayerDestinationIdentityProps = {
   position?: string | null;
   /** Franchise stops this season; last item brands the card. */
   seasonStints?: PlayerCardStint[];
+  /**
+   * When true, show every career franchise under the name instead of the
+   * selected-season team line (retired / inactive players).
+   */
+  showCareerTeams?: boolean;
+  /** Career franchise stops for retired identity line. */
+  careerTeamStints?: PlayerCardStint[];
   heightLabel?: string | null;
   weightLabel?: string | null;
   birthDate?: string | null;
@@ -64,6 +74,14 @@ export type PlayerDestinationIdentityProps = {
   view?: PlayerPageView;
   caps: PlayerPageCapabilities;
   seasonType?: PlayerSeasonKind;
+  /** Career accolades trophy row (often a streamed island). */
+  accolades?: ReactNode;
+  /** Current-season upcoming games (nested under per-game averages). */
+  upcomingSchedule?: ReactNode;
+  /** Salary snapshot (streamed island). */
+  frontOffice?: ReactNode;
+  /** Visual honor treatment (internal / HOF example). */
+  honor?: GlassSurfaceHonor;
   children?: ReactNode;
   /** Percentile ranking + compare graph - sits beside identity, not inside it. */
   hero?: ReactNode;
@@ -83,6 +101,8 @@ export function PlayerDestinationIdentity({
   teamName,
   position,
   seasonStints = [],
+  showCareerTeams = false,
+  careerTeamStints = [],
   heightLabel,
   weightLabel,
   birthDate,
@@ -98,6 +118,10 @@ export function PlayerDestinationIdentity({
   view = "overview",
   caps,
   seasonType = "regular",
+  accolades = null,
+  upcomingSchedule = null,
+  frontOffice = null,
+  honor,
   children,
   hero,
 }: PlayerDestinationIdentityProps) {
@@ -112,6 +136,8 @@ export function PlayerDestinationIdentity({
     teamName ??
     modernBrand?.abbr;
 
+  const useTwoColumnLayout = Boolean(hero);
+
   return (
     <PlayerViewSeasonProvider
       initialSeason={season}
@@ -124,160 +150,229 @@ export function PlayerDestinationIdentity({
         className="scroll-mt-16 flex flex-col gap-4"
         aria-label="Overview"
       >
-        <div className="grid items-start gap-4 lg:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]">
-          <GlassSurface
-            as="header"
-            accentColor={wash?.colorA}
-            accentColorB={wash?.colorB}
-            className="relative flex min-w-0 flex-col self-start p-0"
-            effect="css"
-          >
-            <div className="relative z-[1] flex flex-col items-center px-4 pt-5 pb-4 text-center">
-              <PlayerHeadshot
-                playerId={playerId}
-                espnId={espnId}
-                nbaId={nbaId}
-                name={displayName}
-                teamKey={teamKey}
-                portraitUrl={portraitUrl}
-                registryOnly
-                size="lg"
-                priority
-              />
-              <h1 className={cn(type.display, "mt-5")}>{displayName}</h1>
-              {seasonStints.length > 1 ? (
-                <PlayerTeamPositionLine
-                  stints={seasonStints}
-                  season={season}
-                  fallbackPosition={position}
-                  useHistoricalBranding={useHistoricalBranding}
-                  className="mt-1"
+        <div
+          className={cn(
+            "grid items-start gap-4",
+            useTwoColumnLayout &&
+              "min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]"
+          )}
+        >
+          <div className="flex min-w-0 flex-col gap-3 self-start">
+            <GlassSurface
+              as="header"
+              accentColor={wash?.colorA}
+              accentColorB={wash?.colorB}
+              className="relative flex min-w-0 flex-col self-start p-0"
+              effect="css"
+              backdropBlur={16}
+              honor={honor}
+            >
+              <div className="relative z-[1] flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:gap-3 sm:text-left">
+                <PlayerHeadshot
+                  playerId={playerId}
+                  espnId={espnId}
+                  nbaId={nbaId}
+                  name={displayName}
+                  teamKey={teamKey}
+                  portraitUrl={portraitUrl}
+                  registryOnly
+                  size="md"
+                  priority
+                  className="mx-auto shrink-0 sm:mx-0"
                 />
-              ) : (
-                <p
-                  className={cn(
-                    type.bodySm,
-                    "mt-1 flex flex-wrap items-center justify-center gap-2 text-muted-foreground"
-                  )}
-                >
-                  {teamKey ? (
-                    <TeamIdentity
-                      teamKey={teamKey}
-                      label={clubName ?? teamName ?? modernBrand?.abbr ?? "Team"}
-                      className="inline-flex min-w-0"
-                      nameClassName={cn(type.bodySm, "gap-2")}
-                    >
-                      {historicalBrand ? (
-                        <HistoricalTeamMark brand={historicalBrand} size="sm" />
-                      ) : (
-                        <TeamLogo teamKey={teamKey} size="sm" />
+                <div className="min-w-0 flex-1 text-center sm:text-left">
+                  <h1 className={type.heading}>{displayName}</h1>
+                  {showCareerTeams && careerTeamStints.length > 0 ? (
+                    <PlayerTeamPositionLine
+                      stints={careerTeamStints}
+                      season={null}
+                      useHistoricalBranding={false}
+                      className="mt-0.5 justify-center sm:justify-start"
+                      aria-label="Career teams"
+                    />
+                  ) : seasonStints.length > 1 ? (
+                    <PlayerTeamPositionLine
+                      stints={seasonStints}
+                      season={season}
+                      fallbackPosition={position}
+                      useHistoricalBranding={useHistoricalBranding}
+                      className="mt-0.5 justify-center sm:justify-start"
+                    />
+                  ) : (
+                    <p
+                      className={cn(
+                        type.bodySm,
+                        "mt-0.5 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start"
                       )}
-                      {clubName ? (
-                        <span className={textLinkClassName}>{clubName}</span>
+                    >
+                      {teamKey ? (
+                        <TeamIdentity
+                          teamKey={teamKey}
+                          label={
+                            clubName ?? teamName ?? modernBrand?.abbr ?? "Team"
+                          }
+                          className="inline-flex min-w-0"
+                          nameClassName={cn(type.bodySm, "gap-2")}
+                        >
+                          {historicalBrand ? (
+                            <HistoricalTeamMark
+                              brand={historicalBrand}
+                              size="sm"
+                            />
+                          ) : (
+                            <TeamLogo teamKey={teamKey} size="sm" />
+                          )}
+                          {clubName ? (
+                            <span className={textLinkClassName}>{clubName}</span>
+                          ) : null}
+                        </TeamIdentity>
+                      ) : historicalBrand ? (
+                        <HistoricalTeamMark brand={historicalBrand} size="sm" />
                       ) : null}
-                    </TeamIdentity>
-                  ) : historicalBrand ? (
-                    <HistoricalTeamMark brand={historicalBrand} size="sm" />
-                  ) : null}
-                  {position ? <span>· {position}</span> : null}
-                </p>
-              )}
-              <PlayerIdentityVitals
-                heightLabel={heightLabel}
-                weightLabel={weightLabel}
-                birthDate={birthDate}
-                season={season}
-              />
-              <PlayerDraftLine draftInfo={draftInfo} college={college} />
-            </div>
+                      {position ? <span>· {position}</span> : null}
+                    </p>
+                  )}
+                  <PlayerIdentityVitals
+                    heightLabel={heightLabel}
+                    weightLabel={weightLabel}
+                    birthDate={birthDate}
+                    season={season}
+                    className="mt-0.5 justify-center sm:justify-start"
+                  />
+                  <PlayerDraftLine
+                    draftInfo={draftInfo}
+                    college={college}
+                    className="mt-0.5 justify-center sm:justify-start"
+                  />
+                </div>
+              </div>
+            </GlassSurface>
+
+            {accolades}
 
             {recentSeasons.length > 0 ? (
-              <div className="relative z-[1] mt-auto w-full border-t border-white/45 bg-white/25 px-3 py-3 backdrop-blur-md">
-                <p
-                  className={cn(
-                    type.caption,
-                    "mb-2 font-semibold uppercase tracking-wide text-muted-foreground"
-                  )}
-                >
-                  Per game average
-                </p>
-                <table className="w-full text-left">
-                  <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
-                    <tr>
-                      <th className="pb-1 pr-2 font-semibold">Season</th>
-                      <th className="px-1.5 pb-1 text-right font-semibold">
-                        PPG
-                      </th>
-                      <th className="px-1.5 pb-1 text-right font-semibold">
-                        APG
-                      </th>
-                      <th className="px-1.5 pb-1 text-right font-semibold">
-                        RPG
-                      </th>
-                      <th className="pb-1 pl-1.5 text-right font-semibold">
-                        TS%
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {recentSeasons.map((row) => (
-                      <tr key={`${row.season}-${row.teamId}`}>
-                        <td className="py-1 pr-2">
-                          <TextLink
-                            href={playerSeasonChipHref(playerId, row.season, {
-                              fromHistory,
-                              themeMode,
-                              view,
-                              seasonType,
-                            })}
-                            scroll={false}
-                            className={type.caption}
-                          >
-                            {row.season}
-                          </TextLink>
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "px-1.5 py-1 text-right tabular-nums"
-                          )}
-                        >
-                          {formatPerGame(row.points, row.gamesPlayed)}
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "px-1.5 py-1 text-right tabular-nums"
-                          )}
-                        >
-                          {formatPerGame(row.assists, row.gamesPlayed)}
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "px-1.5 py-1 text-right tabular-nums"
-                          )}
-                        >
-                          {formatPerGame(row.rebounds, row.gamesPlayed)}
-                        </td>
-                        <td
-                          className={cn(
-                            type.caption,
-                            "py-1 pl-1.5 text-right tabular-nums"
-                          )}
-                        >
-                          {row.trueShootingPct != null &&
-                          row.trueShootingPct > 0
-                            ? formatPct(row.trueShootingPct)
-                            : "-"}
-                        </td>
+              <GlassSurface
+                accentColor={wash?.colorA}
+                accentColorB={wash?.colorB}
+                className="relative min-w-0 p-0"
+                effect="css"
+                honor={honor}
+              >
+                <div className="relative z-[1] w-full px-3 py-2.5">
+                  <p
+                    className={cn(
+                      type.caption,
+                      "mb-2 font-semibold uppercase tracking-wide text-muted-foreground"
+                    )}
+                  >
+                    Per game average
+                  </p>
+                  <table className="w-full text-left">
+                    <thead
+                      className={cn(
+                        type.caption,
+                        "uppercase tracking-wide text-muted-foreground"
+                      )}
+                    >
+                      <tr>
+                        <th className="pb-1 pr-2 font-semibold">Season</th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">
+                          PPG
+                        </th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">
+                          APG
+                        </th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">
+                          RPG
+                        </th>
+                        <th className="pb-1 pl-1.5 text-right font-semibold">
+                          TS%
+                        </th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {recentSeasons.map((row) => (
+                        <tr key={`${row.season}-${row.teamId}`}>
+                          <td className="py-1 pr-2">
+                            <TextLink
+                              href={playerSeasonChipHref(playerId, row.season, {
+                                fromHistory,
+                                themeMode,
+                                view,
+                                seasonType,
+                              })}
+                              scroll={false}
+                              className={type.caption}
+                            >
+                              {row.season}
+                            </TextLink>
+                          </td>
+                          <td
+                            className={cn(
+                              type.caption,
+                              "px-1.5 py-1 text-right tabular-nums"
+                            )}
+                          >
+                            {formatPerGame(row.points, row.gamesPlayed)}
+                          </td>
+                          <td
+                            className={cn(
+                              type.caption,
+                              "px-1.5 py-1 text-right tabular-nums"
+                            )}
+                          >
+                            {formatPerGame(row.assists, row.gamesPlayed)}
+                          </td>
+                          <td
+                            className={cn(
+                              type.caption,
+                              "px-1.5 py-1 text-right tabular-nums"
+                            )}
+                          >
+                            {formatPerGame(row.rebounds, row.gamesPlayed)}
+                          </td>
+                          <td
+                            className={cn(
+                              type.caption,
+                              "py-1 pl-1.5 text-right tabular-nums"
+                            )}
+                          >
+                            {row.trueShootingPct != null &&
+                            row.trueShootingPct > 0
+                              ? formatPct(row.trueShootingPct)
+                              : "-"}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {upcomingSchedule ? (
+                    <>
+                      <div
+                        className="my-3 h-px bg-border/70"
+                        aria-hidden
+                      />
+                      {upcomingSchedule}
+                    </>
+                  ) : null}
+                </div>
+              </GlassSurface>
+            ) : upcomingSchedule ? (
+              <GlassSurface
+                accentColor={wash?.colorA}
+                accentColorB={wash?.colorB}
+                className="relative min-w-0 p-0"
+                effect="css"
+                honor={honor}
+              >
+                <div className="relative z-[1] w-full px-3 py-2.5">
+                  {upcomingSchedule}
+                </div>
+              </GlassSurface>
             ) : null}
-          </GlassSurface>
+
+            {frontOffice}
+          </div>
 
           {hero ? <div className="min-h-0 min-w-0">{hero}</div> : null}
         </div>

@@ -332,6 +332,7 @@ export interface EspnScheduleEvent {
   id: string;
   date?: string;
   name?: string;
+  season?: { year?: number; type?: number };
   status?: {
     type?: {
       state?: string;
@@ -443,6 +444,16 @@ export function transformEspnScheduleEvent(
       : undefined;
   const displayClock = competition.status?.displayClock?.trim() || undefined;
 
+  // ESPN season.type: 1 preseason · 2 regular · 3 postseason.
+  // Play-in often still typed as postseason; notes can refine later.
+  const espnSeasonType = event.season?.type;
+  const gameType: Game["gameType"] =
+    espnSeasonType === 1
+      ? "preseason"
+      : espnSeasonType === 3
+        ? "playoff"
+        : "regular";
+
   const homeSide = normalizeGameTeamSide({
     provider: "espn",
     providerTeamId: String(home.team?.id ?? home.id ?? ""),
@@ -476,7 +487,7 @@ export function transformEspnScheduleEvent(
     ...(homePeriodScores && awayPeriodScores
       ? { homePeriodScores, awayPeriodScores }
       : {}),
-    gameType: "regular",
+    gameType,
     status,
     ...(period != null ? { period } : {}),
     ...(displayClock ? { displayClock } : {}),
@@ -492,6 +503,8 @@ export interface EspnBoxScoreAthlete {
   };
   starter?: boolean;
   didNotPlay?: boolean;
+  reason?: string;
+  status?: { id?: string; name?: string; type?: string; abbreviation?: string };
   stats?: string[];
 }
 
@@ -550,6 +563,7 @@ export function transformEspnBoxScore(
   const synthetic: EspnScheduleEvent = {
     id: String(summary.header?.id ?? ""),
     date: undefined,
+    season: summary.header?.season,
     competitions: summary.header?.competitions,
   };
 
@@ -573,34 +587,49 @@ export function transformEspnBoxScore(
     const isHome = teamId === game.homeTeamId;
 
     for (const row of statsBlock?.athletes ?? []) {
-      if (!row.athlete?.id || row.didNotPlay) continue;
+      if (!row.athlete?.id) continue;
+      const dnp = Boolean(row.didNotPlay);
+      const statusReason =
+        row.reason?.trim() ||
+        row.status?.name?.trim() ||
+        row.status?.abbreviation?.trim() ||
+        undefined;
       const map = new Map<string, string>();
       names.forEach((name, index) => {
         map.set(name, row.stats?.[index] ?? "0");
       });
 
-      const [fgm, fga] = boxPair(map, "FG", "fieldGoalsMade-fieldGoalsAttempted");
-      const [tpm, tpa] = boxPair(
-        map,
-        "3PT",
-        "threePointFieldGoalsMade-threePointFieldGoalsAttempted"
-      );
-      const [ftm, fta] = boxPair(map, "FT", "freeThrowsMade-freeThrowsAttempted");
-      const oreb = boxStat(map, "OREB", "offensiveRebounds");
-      const dreb = boxStat(map, "DREB", "defensiveRebounds");
-      const reb =
-        boxStat(map, "REB", "totalRebounds") || oreb + dreb;
-      const pf = boxStat(map, "PF", "fouls", "personalFouls");
-      const points = boxStat(map, "PTS", "points");
-      const assists = boxStat(map, "AST", "assists");
-      const steals = boxStat(map, "STL", "steals");
-      const blocks = boxStat(map, "BLK", "blocks");
-      const turnovers = boxStat(map, "TO", "turnovers");
-      const minutes = boxStat(map, "MIN", "minutes");
-      const ts = trueShootingPct(points, fga, fta);
-      const efg = effectiveFieldGoalPct(fgm, tpm, fga);
-      const ortg = approxOffensiveRating(points, fga, fta, turnovers);
-      const tovPct = turnoverPct(turnovers, fga, fta);
+      const [fgm, fga] = dnp
+        ? ([0, 0] as const)
+        : boxPair(map, "FG", "fieldGoalsMade-fieldGoalsAttempted");
+      const [tpm, tpa] = dnp
+        ? ([0, 0] as const)
+        : boxPair(
+            map,
+            "3PT",
+            "threePointFieldGoalsMade-threePointFieldGoalsAttempted"
+          );
+      const [ftm, fta] = dnp
+        ? ([0, 0] as const)
+        : boxPair(map, "FT", "freeThrowsMade-freeThrowsAttempted");
+      const oreb = dnp ? 0 : boxStat(map, "OREB", "offensiveRebounds");
+      const dreb = dnp ? 0 : boxStat(map, "DREB", "defensiveRebounds");
+      const reb = dnp
+        ? 0
+        : boxStat(map, "REB", "totalRebounds") || oreb + dreb;
+      const pf = dnp ? 0 : boxStat(map, "PF", "fouls", "personalFouls");
+      const points = dnp ? 0 : boxStat(map, "PTS", "points");
+      const assists = dnp ? 0 : boxStat(map, "AST", "assists");
+      const steals = dnp ? 0 : boxStat(map, "STL", "steals");
+      const blocks = dnp ? 0 : boxStat(map, "BLK", "blocks");
+      const turnovers = dnp ? 0 : boxStat(map, "TO", "turnovers");
+      const minutes = dnp ? 0 : boxStat(map, "MIN", "minutes");
+      const ts = dnp ? null : trueShootingPct(points, fga, fta);
+      const efg = dnp ? null : effectiveFieldGoalPct(fgm, tpm, fga);
+      const ortg = dnp
+        ? null
+        : approxOffensiveRating(points, fga, fta, turnovers);
+      const tovPct = dnp ? null : turnoverPct(turnovers, fga, fta);
 
       players.push({
         id: `${row.athlete.id}-${game.id}`,
@@ -612,6 +641,7 @@ export function transformEspnBoxScore(
         gameDate: game.gameDate,
         opponentTeamId: opponent,
         isHome,
+        ...(row.starter && !dnp ? { startPosition: "S" } : {}),
         minutes,
         points,
         assists,
@@ -628,25 +658,29 @@ export function transformEspnBoxScore(
         threePointersAttempted: tpa,
         freeThrowsMade: ftm,
         freeThrowsAttempted: fta,
-        plusMinus: boxStat(map, "+/-", "plusMinus"),
+        plusMinus: dnp ? 0 : boxStat(map, "+/-", "plusMinus"),
         ...(ts != null ? { trueShootingPct: ts } : {}),
         ...(efg != null ? { effectiveFieldGoalPct: efg } : {}),
         ...(ortg != null ? { offensiveRating: ortg } : {}),
         ...(tovPct != null ? { turnoverPct: tovPct } : {}),
-        gameScore: gameScore({
-          points,
-          fieldGoalsMade: fgm,
-          fieldGoalsAttempted: fga,
-          freeThrowsMade: ftm,
-          freeThrowsAttempted: fta,
-          offensiveRebounds: oreb,
-          defensiveRebounds: dreb,
-          steals,
-          assists,
-          blocks,
-          personalFouls: pf,
-          turnovers,
-        }),
+        ...(dnp
+          ? { didNotPlay: true, ...(statusReason ? { statusReason } : {}) }
+          : {
+              gameScore: gameScore({
+                points,
+                fieldGoalsMade: fgm,
+                fieldGoalsAttempted: fga,
+                freeThrowsMade: ftm,
+                freeThrowsAttempted: fta,
+                offensiveRebounds: oreb,
+                defensiveRebounds: dreb,
+                steals,
+                assists,
+                blocks,
+                personalFouls: pf,
+                turnovers,
+              }),
+            }),
       });
     }
   }

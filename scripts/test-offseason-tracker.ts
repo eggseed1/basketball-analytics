@@ -26,7 +26,9 @@ import {
   type CanonicalTransaction,
 } from "../src/data/types/transaction-lineage";
 import { isTransactionGenealogyUiReady } from "../src/data/queries/transaction-lineage";
-import type { NbaTransactionEvent } from "../src/data/types/transaction-event";
+import { loadTransactionArchive } from "../src/data/providers/transactions/transaction-archive-store";
+import { parseTradeSides } from "../src/lib/trade-tree-parse";
+import Module from "node:module";
 
 function tx(
   partial: Partial<CanonicalTransaction> &
@@ -638,6 +640,119 @@ async function main() {
     assert.equal(feedCluster.hasSourceCluster, true);
 
     assert.equal(await isTransactionGenealogyUiReady(), false);
+  }
+
+  console.log("trade tree gap-fill…");
+  const princeSides = parseTradeSides(
+    "Acquired the draft rights to F Taurean Prince from Utah, sent G Jeff Teague to Indiana, which sent G George Hill to Utah."
+  );
+  assert.equal(
+    princeSides.counterpartyHint,
+    "UTA",
+    "counterparty should come from the from-clause, not later team mentions"
+  );
+  const youngKg = parseTradeSides(
+    "Traded F Thaddeus Young to Brooklyn for F-C Kevin Garnett."
+  );
+  assert.equal(
+    youngKg.got.filter((g) => g.kind === "player").length,
+    1,
+    "position-prefixed duplicate player names collapse"
+  );
+  assert.equal(youngKg.got[0]!.label, "Kevin Garnett");
+
+  const frazierSides = parseTradeSides(
+    "Acquired the right to own and operate an NBA G League franchise in Washington to begin play with the 2018-19 season. Acquired G Tim Frazier from the New Orleans Pelicans for their 2017 second-round pick."
+  );
+  assert.deepEqual(
+    frazierSides.got.filter((g) => g.kind === "player").map((g) => g.label),
+    ["Tim Frazier"],
+    "multi-sentence acquired blurbs should not surface verb-prefixed labels"
+  );
+
+  const blairSides = parseTradeSides(
+    "Acquired C DeJuan Blair in a sign-and-trade deal with the Dallas Mavericks for the rights to F Emir Preldzic."
+  );
+  assert.deepEqual(
+    blairSides.got.filter((g) => g.kind === "player").map((g) => g.label),
+    ["DeJuan Blair"]
+  );
+
+  const archive = await loadTransactionArchive();
+  assert.ok(
+    archive.transactions.some((t) => t.id === "curated-tx-bkn-bos-2013"),
+    "curated Pierce/Garnett package is merged into archive"
+  );
+  clearTransactionEventIndexCache();
+
+  const origLoad = (Module as unknown as { _load: Function })._load;
+  (Module as unknown as { _load: Function })._load = function (
+    req: string,
+    parent: unknown,
+    isMain: boolean
+  ) {
+    if (req === "server-only") return {};
+    // eslint-disable-next-line prefer-rest-params
+    return origLoad.apply(this, arguments);
+  };
+  const { buildTeamTradeTree } = await import(
+    "../src/data/queries/team-trade-tree"
+  );
+  const bosKg = await buildTeamTradeTree({
+    teamId: "2",
+    focusPlayer: "Kevin Garnett",
+  });
+  const kgChild = bosKg?.root.children.find(
+    (c) => c.fromAssetLabel === "Kevin Garnett"
+  );
+  assert.ok(kgChild, "Boston KG forward branch exists");
+  assert.equal(kgChild.disposition.kind, "traded");
+  if (kgChild.disposition.kind === "traded") {
+    assert.equal(
+      kgChild.disposition.toTeamAbbr,
+      "BKN",
+      "Boston KG exits to Brooklyn — not Minnesota"
+    );
+  }
+  const bknKg = await buildTeamTradeTree({
+    teamId: "17",
+    focusPlayer: "Kevin Garnett",
+  });
+  assert.equal(bknKg?.rootDate, "2013-07-12");
+  assert.equal(bknKg?.title, "How BKN got Kevin Garnett");
+
+  const bosHorford = await buildTeamTradeTree({
+    teamId: "2",
+    focusPlayer: "Al Horford",
+  });
+  assert.equal(bosHorford?.rootDate, "2021-06-18");
+  assert.equal(bosHorford?.title, "How BOS got Al Horford");
+  assert.deepEqual(
+    bosHorford?.root.assets.map((a) => a.label),
+    ["Al Horford", "Moses Brown", "a 2023 second-round draft pick"]
+  );
+  assert.deepEqual(bosHorford?.rootSent.map((a) => a.label), ["Kemba Walker"]);
+  const horfordChild = bosHorford?.root.children.find(
+    (c) => c.fromAssetLabel === "Al Horford"
+  );
+  assert.ok(horfordChild, "Boston Horford forward branch exists");
+  assert.notEqual(horfordChild?.disposition.kind, "traded");
+  const kembaAncestry = bosHorford?.ancestry.find((a) =>
+    a.assets.some((x) => x.label === "Kemba Walker")
+  );
+  assert.ok(kembaAncestry, "Kemba Walker ancestry branch exists");
+  assert.equal(kembaAncestry?.via?.kind, "signed");
+
+  const okcHorford = await buildTeamTradeTree({
+    teamId: "25",
+    focusPlayer: "Al Horford",
+  });
+  const okcHorfordExit = okcHorford?.root.children.find(
+    (c) => c.fromAssetLabel === "Al Horford"
+  );
+  assert.equal(okcHorfordExit?.disposition.kind, "traded");
+  if (okcHorfordExit?.disposition.kind === "traded") {
+    assert.equal(okcHorfordExit.disposition.toTeamAbbr, "BOS");
   }
 
   console.log("offseason-tracker checks passed");

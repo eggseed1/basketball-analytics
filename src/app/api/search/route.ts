@@ -1,6 +1,8 @@
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
-import { searchLocalTeamIdentities } from "@/data/identity/team-search";
+import { searchLocalTeamIdentities, teamIdentityQueryMatches } from "@/data/identity/team-search";
+import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
+import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -78,6 +80,11 @@ export async function GET(request: Request) {
 
     const hits: WatchlistSearchHit[] = [];
     const seen = new Set<string>();
+    const seenPlayerNames = new Set<string>();
+    const aliasIndex =
+      kind === "all" || kind === "player"
+        ? await getPlayerIdAliasIndex()
+        : null;
 
     if (kind === "all" || kind === "team") {
       for (const local of searchLocalTeamIdentities(q, 10)) {
@@ -127,12 +134,25 @@ export async function GET(request: Request) {
         if (!itemKind) continue;
         if (kind !== "all" && itemKind !== kind) continue;
 
-        const key = `${itemKind}:${item.id}`;
-        if (seen.has(key)) continue;
-        seen.add(key);
-
         if (itemKind === "team") {
           const abbr = item.abbreviation?.toLowerCase();
+          if (
+            !teamIdentityQueryMatches(
+              [
+                item.displayName,
+                item.shortName,
+                item.abbreviation,
+                item.location,
+                item.name,
+              ],
+              q
+            )
+          ) {
+            continue;
+          }
+          const key = `${itemKind}:${item.id}`;
+          if (seen.has(key)) continue;
+          seen.add(key);
           hits.push({
             id: String(item.id),
             name: item.displayName,
@@ -141,16 +161,30 @@ export async function GET(request: Request) {
             subtitle: item.abbreviation ?? undefined,
             href: `/teams/${encodeURIComponent(String(item.id))}`,
           });
-        } else {
-          const { teamKey, teamName } = playerTeamFromItem(item);
-          hits.push({
-            id: String(item.id),
-            name: item.displayName,
-            kind: "player",
-            teamKey,
-            subtitle: teamName ?? item.shortName ?? "Player",
-          });
+          continue;
         }
+
+        const espnId = String(item.id);
+        const alias = aliasIndex?.byEspn.get(espnId);
+        const canonicalId =
+          alias && isProductionApprovedPlayerAlias(alias)
+            ? alias.nbaPlayerId
+            : espnId;
+        const nameKey = item.displayName.trim().toLowerCase().replace(/\s+/g, " ");
+        const key = `${itemKind}:${canonicalId}`;
+        if (seen.has(key)) continue;
+        if (nameKey && seenPlayerNames.has(nameKey)) continue;
+        seen.add(key);
+        if (nameKey) seenPlayerNames.add(nameKey);
+
+        const { teamKey, teamName } = playerTeamFromItem(item);
+        hits.push({
+          id: canonicalId,
+          name: item.displayName,
+          kind: "player",
+          teamKey,
+          subtitle: teamName ?? item.shortName ?? "Player",
+        });
       }
     }
 
