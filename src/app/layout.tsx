@@ -38,7 +38,7 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable}`}
     >
-      <body className="min-h-full bg-background font-sans text-base text-foreground">
+      <body className="min-h-full min-w-0 overflow-x-clip bg-background font-sans text-base text-foreground">
         <Script
           id="owner-theme-boot"
           strategy="beforeInteractive"
@@ -52,7 +52,7 @@ export default function RootLayout({
           >
             Skip to content
           </a>
-          <div id="main-content" className="flex min-h-screen flex-col">
+          <div id="main-content" className="flex min-h-screen min-w-0 flex-col overflow-x-clip">
             <SportsShell>{children}</SportsShell>
           </div>
         </OwnerThemeProvider>

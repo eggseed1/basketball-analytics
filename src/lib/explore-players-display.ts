@@ -1,8 +1,11 @@
 import type { PlayerSeasonSortKey } from "@/lib/player-season-sort";
 
+/**
+ * Board view chips. Profile leads (box-score / counting). Overview was removed —
+ * those leftovers (TOV / OREB / DREB / created points) live under Profile now.
+ */
 export const PLAYER_BOARD_VIEWS = [
   { id: "all", label: "Show all stats" },
-  { id: "overview", label: "Overview" },
   { id: "profile", label: "Profile" },
   { id: "shooting", label: "Shooting" },
   { id: "impact", label: "Impact" },
@@ -30,12 +33,17 @@ const VIEW_IDS = PLAYER_BOARD_VIEWS.map((view) => view.id);
 const VIEWS = new Set<string>(VIEW_IDS);
 const RATES = new Set<string>(PLAYER_BOARD_RATES.map((r) => r.id));
 
+/** Legacy `overview` chip → Profile. */
+function normalizeViewId(part: string): string {
+  return part === "overview" ? "profile" : part;
+}
+
 export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
   if (!value) return ["all"];
   const selected = new Set(
     value
       .split(",")
-      .map((part) => part.trim())
+      .map((part) => normalizeViewId(part.trim()))
       .filter((part): part is PlayerBoardView => VIEWS.has(part))
   );
   const ordered = VIEW_IDS.filter((id) => selected.has(id));
@@ -83,34 +91,17 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   PlayerBoardView,
   PlayerSeasonSortKey[]
 > = {
-  overview: [
-    "gamesPlayed",
-    "mpg",
-    "ppg",
-    "rpg",
-    "apg",
-    "spg",
-    "bpg",
-    "tov",
-    "offensiveRebounds",
-    "defensiveRebounds",
-    "drbl100",
-    "r1WinEquivalents",
-  ],
+  /** Box score / counting — GP through stocks + creation extras. */
   profile: [
     "gamesPlayed",
     "mpg",
     "age",
-    "usagePct",
-    "darkoDpm",
-    "darkoOff",
-    "darkoDef",
     "ppg",
-    "apg",
     "rpg",
-    "trueShootingPct",
-    "relativeTrueShootingPct",
-    "threePointPct",
+    "offensiveRebounds",
+    "defensiveRebounds",
+    "apg",
+    "tov",
     "spg",
     "bpg",
   ],
@@ -126,6 +117,8 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   ],
   impact: [
     "darkoDpm",
+    "darkoOff",
+    "darkoDef",
     "lebron",
     "drbl100",
     "r1WinEquivalents",
@@ -167,7 +160,6 @@ PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
   }
   return out;
 })();
-
 
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,

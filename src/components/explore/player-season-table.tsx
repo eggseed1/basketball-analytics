@@ -247,7 +247,7 @@ export function PlayerSeasonTable({
   return (
     <section
       aria-label="Player table"
-      className="query-updating-content flex flex-col gap-3"
+      className="query-updating-content flex w-full min-w-0 max-w-full flex-col gap-3"
       data-pending={pending ? "true" : "false"}
     >
       <BoardScrollFrame
@@ -541,22 +541,22 @@ type BoardGroup = {
   keys: TableCol[];
 };
 
-/** Columns that only appear in the curated "all" set — map into a band. */
+/** Extra / multi-band columns → preferred all-stats band. */
 const ALL_COLUMN_CATEGORY_HINT: Partial<Record<TableCol, PlayerBoardView>> = {
   relativeTrueShootingPct: "ts",
   turnoverPct: "advanced",
   twoPointPct: "shooting",
   threePointersAttempted: "shooting",
   freeThrowsAttempted: "shooting",
-  offensiveRebounds: "overview",
-  defensiveRebounds: "overview",
-  pointsCreated: "overview",
-  rimAssists: "overview",
+  offensiveRebounds: "profile",
+  defensiveRebounds: "profile",
+  pointsCreated: "profile",
+  rimAssists: "profile",
 };
 
 /**
  * When a column sits in multiple presets, prefer the more specific band so
- * Advanced/Impact/TS aren’t emptied by Overview/Profile/Shooting claiming first.
+ * Advanced/Impact/TS aren’t emptied by Profile/Shooting claiming first.
  */
 const CATEGORY_OWNERSHIP_PRIORITY: readonly PlayerBoardView[] = [
   "advanced",
@@ -565,7 +565,6 @@ const CATEGORY_OWNERSHIP_PRIORITY: readonly PlayerBoardView[] = [
   "shooting",
   "defense",
   "profile",
-  "overview",
 ];
 
 function columnsForView(
@@ -573,7 +572,7 @@ function columnsForView(
   flags: BoardColumnFlags
 ): TableCol[] {
   const keys: TableCol[] = [...filterPlayerBoardViewColumns(view, flags)];
-  if (view !== "overview" && view !== "all") return keys;
+  if (view !== "profile" && view !== "all") return keys;
   const withExtras: TableCol[] = [];
   for (const key of keys) {
     withExtras.push(key);
@@ -586,7 +585,7 @@ function columnsForView(
 function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
   const hint = ALL_COLUMN_CATEGORY_HINT[col];
   if (hint) return hint;
-  if (col === "pointsCreated" || col === "rimAssists") return "overview";
+  if (col === "pointsCreated" || col === "rimAssists") return "profile";
   for (const cat of CATEGORY_OWNERSHIP_PRIORITY) {
     if (
       (filterPlayerBoardViewColumns(cat, {
@@ -601,7 +600,7 @@ function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
   return null;
 }
 
-/** Full union of category presets, bucketed under Overview / Impact / … bands. */
+/** Full union of category presets, bucketed under Profile / Shooting / … bands. */
 function partitionAllColumnsIntoCategories(
   flags: BoardColumnFlags
 ): BoardGroup[] {

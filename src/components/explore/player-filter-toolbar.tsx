@@ -44,16 +44,29 @@ const MIN_MINUTES_OPTIONS = [
 function ChipGroup({
   children,
   className,
+  scrollable = false,
   ...rest
 }: {
   children: ReactNode;
   className?: string;
+  /** Horizontal chip scroller — keeps the page from overflowing. */
+  scrollable?: boolean;
 } & Omit<HTMLAttributes<HTMLDivElement>, "children" | "className">) {
   return (
     <GlassSurface
       effect="css"
-      overflowVisible
-      className={cn("flex items-center gap-0.5 p-1", className)}
+      overflowVisible={!scrollable}
+      className={cn(
+        "flex min-w-0 items-center gap-0.5 p-1",
+        scrollable &&
+          "w-full max-w-full flex-nowrap overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+        className
+      )}
+      style={
+        scrollable
+          ? { overflowX: "auto", overflowY: "hidden" }
+          : undefined
+      }
       {...rest}
     >
       {children}
@@ -241,18 +254,18 @@ export function PlayerFilterToolbar({
 
   return (
     <GlassSurface
-      overflowVisible
-      className="relative z-40 p-2 sm:p-3"
+      effect="css"
+      className="relative z-40 w-full min-w-0 max-w-full p-2 sm:p-3"
     >
     <form
-      className="flex flex-col gap-2"
+      className="flex w-full min-w-0 max-w-full flex-col gap-2"
       aria-label="Player filters"
       onSubmit={(event) => {
         event.preventDefault();
       }}
       data-pending={pending ? "true" : "false"}
     >
-      <div className="flex flex-wrap items-center gap-2 max-sm:gap-1.5">
+      <div className="flex w-full min-w-0 max-w-full flex-wrap items-center gap-2 max-sm:gap-1.5">
         <ChipGroup>
           <button
             type="button"
@@ -271,7 +284,10 @@ export function PlayerFilterToolbar({
           >
             <SelectTrigger
               id="filter-season"
-              className={cn(selectTriggerClass, "min-w-[6.5rem] gap-1.5")}
+              className={cn(
+                selectTriggerClass,
+                "min-w-[5.5rem] gap-1.5 sm:min-w-[6.5rem]"
+              )}
               aria-label="Season"
             >
               <Calendar className="size-3.5 text-muted-foreground" aria-hidden />
@@ -411,7 +427,7 @@ export function PlayerFilterToolbar({
           >
             <SelectTrigger
               id="filter-team"
-              className={cn(selectTriggerClass, "min-w-[8.5rem]")}
+              className={cn(selectTriggerClass, "min-w-0 max-w-[9rem] sm:min-w-[8.5rem]")}
               aria-label="Team"
             >
               <SelectValue placeholder="Select team">
@@ -510,7 +526,7 @@ export function PlayerFilterToolbar({
           </Select>
         </ChipGroup>
 
-        <ChipGroup className="relative min-w-[10rem] flex-1">
+        <ChipGroup className="relative min-w-0 w-full flex-1 basis-full sm:basis-auto sm:min-w-[10rem]">
           <PlayerFilterSearch
             season={season}
             value={playerQuery}
@@ -519,11 +535,8 @@ export function PlayerFilterToolbar({
         </ChipGroup>
       </div>
 
-      <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-        <ChipGroup
-          className="max-sm:w-full max-sm:overflow-x-auto max-sm:flex-nowrap [-ms-overflow-style:none] [scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden"
-          aria-label="Stat categories"
-        >
+      <div className="flex w-full min-w-0 max-w-full flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
+        <ChipGroup scrollable aria-label="Stat categories">
           {PLAYER_BOARD_VIEWS.map((item) => (
             <Chip
               key={item.id}
@@ -544,7 +557,7 @@ export function PlayerFilterToolbar({
             </Chip>
           ))}
         </ChipGroup>
-        <ChipGroup className="max-sm:w-full max-sm:overflow-x-auto max-sm:flex-nowrap [-ms-overflow-style:none] [scrollbar-width:none] max-sm:[&::-webkit-scrollbar]:hidden">
+        <ChipGroup scrollable>
           {PLAYER_BOARD_RATES.map((item) => (
             <Chip
               key={item.id}

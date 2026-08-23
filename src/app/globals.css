@@ -434,15 +434,16 @@ html.dark:not([data-surface="glass"]) .select-popup:not(.hover-frost) {
 /* -------------------------------------------------------------------------
    Board scroll frame — SiteChrome-model frost for freeze columns.
 
-   Glass sits as an absolute overlay (GlassSurface) over the left strip of a
-   full-width scroller. Stats slide under that overlay on horizontal scroll so
-   backdrop-filter has real content to sample — same interaction model as the
-   sticky header. A transparent sticky spacer column in the table reserves the
-   rail width at rest.
+   Frame is width-constrained (never grows the page). Only `.board-scroll-host`
+   scrolls horizontally. Absolute glass rail overlays the left strip.
    ------------------------------------------------------------------------- */
 .board-scroll-frame {
   @apply rounded-md border;
   position: relative;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow: hidden;
   background: transparent;
   border-color: rgb(255 255 255 / 58%);
   box-shadow:
@@ -463,15 +464,25 @@ html:not([data-surface="glass"]) .board-scroll-frame {
   @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
 }
 
-/* Glass tokens come from <GlassSurface>; this only pins layout. */
 .board-scroll-frame > .board-frozen-col {
-  max-width: min(50vw, 22rem);
+  max-width: min(42vw, 10rem);
+}
+
+@media (min-width: 640px) {
+  .board-scroll-frame > .board-frozen-col {
+    max-width: min(50vw, 22rem);
+  }
 }
 
 .board-scroll-frame > .board-scroll-host {
+  width: 100%;
+  max-width: 100%;
   min-width: 0;
+  overflow-x: auto;
+  overflow-y: visible;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior-x: contain;
   border-radius: 0;
-  /* Keep host thin so overlay glass can read atmosphere + scrolling stats. */
   background: rgb(255 255 255 / 12%);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
@@ -820,7 +831,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
 
 /* Site chrome - desktop-first web width, not phone-app column */
 .site-shell {
-  @apply mx-auto w-full max-w-7xl px-4 sm:px-6 lg:px-8;
+  @apply mx-auto w-full min-w-0 max-w-7xl px-4 sm:px-6 lg:px-8;
 }
 
 .site-prose {

@@ -164,7 +164,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RouteTransitionProvider>
-      <div className="flex min-h-full flex-1 flex-col">
+      <div className="flex min-h-full min-w-0 flex-1 flex-col">
         {destinationWash ? null : (
           <PageAtmosphere
             colorA={NBA_ATMOSPHERE.colorA}
@@ -172,7 +172,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           />
         )}
         <SiteChrome>
-          <div className="site-shell flex flex-col gap-2 py-3">
+          <div className="site-shell flex min-w-0 flex-col gap-2 py-3">
             <div className="flex items-center gap-4">
               <TransitionLink href="/" className="flex shrink-0 items-center gap-2">
                 <span
@@ -292,7 +292,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           </div>
         </SiteChrome>
 
-        <div className="relative z-[1] flex min-h-0 flex-1 flex-col">
+        <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col">
           {children}
         </div>
       </div>

@@ -121,7 +121,7 @@ export default async function ExplorePlayersPage({
   const { teams, source, warnings } = teamCatalog;
 
   return (
-    <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+    <main className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
       <header className="flex flex-col gap-1">
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           Players

@@ -19,12 +19,14 @@ export function ExplorePlayersClientShell({
 }) {
   return (
     <QueryNavProvider>
-      <PlayerFilterToolbar
-        seasons={seasons}
-        teams={teams}
-        defaultSeason={defaultSeason}
-      />
-      {children}
+      <div className="relative flex w-full min-w-0 max-w-full flex-col gap-5">
+        <PlayerFilterToolbar
+          seasons={seasons}
+          teams={teams}
+          defaultSeason={defaultSeason}
+        />
+        <div className="min-w-0 max-w-full">{children}</div>
+      </div>
     </QueryNavProvider>
   );
 }
