@@ -2,8 +2,6 @@ import { resolvePlayerIdentity } from "@/data/identity/player-identity";
 import type { Player, PlayerGame, PlayerSeason } from "@/data/types";
 import {
   transformEspnPlayerGame,
-  transformEspnPlayerSeason,
-  transformEspnTeamTotals,
   type EspnAthleteStatsRow,
   type EspnGameLogEvent,
   type EspnStatCategorySchema,
@@ -11,13 +9,18 @@ import {
   type TeamSeasonTotals,
 } from "@/data/transformers/espn";
 import {
-  transformEspnAthleteCareerStats,
   transformEspnAthleteProfile,
   type EspnAthleteCareerStatsResponse,
   type EspnAthleteProfileResponse,
 } from "@/data/transformers/espn-career";
 import { NBADataProvider as StatsNbaDataProvider } from "../nba-data-provider";
 import { espnFetchJson } from "./espn-client";
+import {
+  mergePlayerSeasonRows,
+  transformCompleteEspnAthleteCareerStats,
+  transformCompleteEspnPlayerSeason,
+  transformCompleteEspnTeamTotals,
+} from "./espn-stat-integrity";
 import {
   defaultCanonicalSeasons,
   espnYearFromCanonicalSeason,
@@ -84,35 +87,79 @@ function playerFromSeason(row: PlayerSeason): Player {
   };
 }
 
-function mergeSeasonRows(
-  career: PlayerSeason | null,
-  board: PlayerSeason | null
-): PlayerSeason | null {
-  if (!career) return board;
-  if (!board) return career;
-  return {
-    ...career,
-    ...board,
-    playerId: career.playerId,
-    playerName: career.playerName || board.playerName,
-    season: career.season,
-    teamId: career.teamId || board.teamId,
-    teamName:
-      career.teamName && career.teamName !== "Unknown"
-        ? career.teamName
-        : board.teamName,
-    teamAbbreviation: career.teamAbbreviation ?? board.teamAbbreviation,
-    position: career.position ?? board.position,
-    gamesPlayed: Math.max(career.gamesPlayed, board.gamesPlayed),
-    minutes: career.minutes > 0 ? career.minutes : board.minutes,
-    points: career.points > 0 ? career.points : board.points,
-    rebounds: career.rebounds > 0 ? career.rebounds : board.rebounds,
-    assists: career.assists > 0 ? career.assists : board.assists,
-    usagePct:
-      board.usagePct != null && board.usagePct > 0
-        ? board.usagePct
-        : career.usagePct,
-  };
+function teamGrainKey(row: PlayerSeason): string {
+  return (
+    row.teamAbbreviation?.trim().toUpperCase() ||
+    row.teamId.trim().toUpperCase() ||
+    "UNKNOWN"
+  );
+}
+
+function selectCareerMatch(
+  target: PlayerSeason,
+  candidates: PlayerSeason[],
+  used: Set<number>
+): { row: PlayerSeason | null; index: number } {
+  const available = candidates
+    .map((row, index) => ({ row, index }))
+    .filter(({ row, index }) => row.season === target.season && !used.has(index));
+  if (!available.length) return { row: null, index: -1 };
+
+  const targetTeam = teamGrainKey(target);
+  const exact = available.find(({ row }) => teamGrainKey(row) === targetTeam);
+  if (exact) return exact;
+
+  const targetCombined = targetTeam === "TOT" || /\dTM/.test(targetTeam);
+  if (targetCombined) {
+    const combined = available.find(({ row }) => {
+      const key = teamGrainKey(row);
+      return key === "TOT" || /\dTM/.test(key);
+    });
+    if (combined) return combined;
+  }
+
+  return available.length === 1 ? available[0]! : { row: null, index: -1 };
+}
+
+function mergeCareerSources(
+  espnRows: PlayerSeason[],
+  nbaRows: PlayerSeason[],
+  espnId: string,
+  displayName?: string
+): PlayerSeason[] {
+  if (!espnRows.length) {
+    return nbaRows
+      .map((row) => ({
+        ...row,
+        playerId: espnId || row.playerId,
+        playerName: displayName || row.playerName,
+      }))
+      .sort((a, b) => b.season.localeCompare(a.season));
+  }
+  if (!nbaRows.length) return espnRows;
+
+  const used = new Set<number>();
+  const merged = espnRows.map((espn) => {
+    const match = selectCareerMatch(espn, nbaRows, used);
+    if (match.index >= 0) used.add(match.index);
+    return mergePlayerSeasonRows(espn, match.row);
+  });
+
+  for (let index = 0; index < nbaRows.length; index++) {
+    if (used.has(index)) continue;
+    const nba = nbaRows[index]!;
+    merged.push({
+      ...nba,
+      playerId: espnId,
+      playerName: displayName || espnRows[0]?.playerName || nba.playerName,
+    });
+  }
+
+  return merged.sort((a, b) =>
+    a.season === b.season
+      ? teamGrainKey(a).localeCompare(teamGrainKey(b))
+      : b.season.localeCompare(a.season)
+  );
 }
 
 /**
@@ -187,16 +234,29 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
   ): Promise<PlayerSeason | null> {
     const ids = await this.providerIds(playerId);
     if (ids.espnId) {
-      const [career, board] = await Promise.all([
+      const [career, board, nbaRow] = await Promise.all([
         this.loadEspnCareer(ids.espnId).catch(() => []),
         this.loadEspnBoard(season).catch(() => []),
+        ids.nbaId
+          ? super.getPlayerSeason(ids.nbaId, season).catch(() => null)
+          : Promise.resolve(null),
       ]);
       const fromCareer =
         career.find((row) => row.season === season) ?? null;
       const fromBoard =
         board.find((row) => row.playerId === ids.espnId) ?? null;
-      const merged = mergeSeasonRows(fromCareer, fromBoard);
+      let merged =
+        fromCareer && fromBoard
+          ? mergePlayerSeasonRows(fromCareer, fromBoard)
+          : fromCareer ?? fromBoard;
+      if (merged && nbaRow) merged = mergePlayerSeasonRows(merged, nbaRow);
       if (merged) return merged;
+      if (nbaRow) {
+        return {
+          ...nbaRow,
+          playerId: ids.espnId,
+        };
+      }
     }
 
     if (!ids.nbaId) return null;
@@ -205,13 +265,27 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
 
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
     const ids = await this.providerIds(playerId);
-    if (ids.espnId) {
-      const career = await this.loadEspnCareer(ids.espnId).catch(() => []);
-      if (career.length > 0) return career;
-    }
+    const [espnCareer, nbaCareer, profile] = await Promise.all([
+      ids.espnId
+        ? this.loadEspnCareer(ids.espnId).catch(() => [])
+        : Promise.resolve([] as PlayerSeason[]),
+      ids.nbaId
+        ? super.getPlayerCareerSeasons(ids.nbaId).catch(() => [])
+        : Promise.resolve([] as PlayerSeason[]),
+      ids.espnId
+        ? this.loadEspnProfile(ids.espnId).catch(() => null)
+        : Promise.resolve(null),
+    ]);
 
-    if (!ids.nbaId) return [];
-    return super.getPlayerCareerSeasons(ids.nbaId).catch(() => []);
+    if (ids.espnId && (espnCareer.length || nbaCareer.length)) {
+      return mergeCareerSources(
+        espnCareer,
+        nbaCareer,
+        ids.espnId,
+        profile?.fullName
+      );
+    }
+    return nbaCareer;
   }
 
   async getPlayerGameLog(
@@ -288,7 +362,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
       ]);
       const playerName =
         profile.athlete?.displayName ?? `Player ${playerId}`;
-      const rows = transformEspnAthleteCareerStats(
+      const rows = transformCompleteEspnAthleteCareerStats(
         playerId,
         playerName,
         stats
@@ -337,9 +411,9 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
       const rows = athletes
         .filter((row) => row.athlete?.id && row.athlete.teamId)
         .map((row) =>
-          transformEspnPlayerSeason(row, season, teamTotals, schema)
+          transformCompleteEspnPlayerSeason(row, season, teamTotals, schema)
         )
-        .filter((row) => row.gamesPlayed > 0);
+        .filter((row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0);
 
       if (rows.length < MIN_COMPLETE_BOARD_ROWS) {
         throw new Error(
@@ -365,7 +439,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
       const schema = payload.categories ?? [];
       const result = new Map<string, TeamSeasonTotals>();
       for (const row of payload.teams ?? []) {
-        const totals = transformEspnTeamTotals(row, schema);
+        const totals = transformCompleteEspnTeamTotals(row, schema);
         result.set(totals.teamId, totals);
       }
       if (result.size < 20) {
@@ -461,7 +535,7 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
         plusMinus: Number.isFinite(parsedPlusMinus)
           ? parsedPlusMinus
           : Number.NaN,
-        ...(denominator > 0
+        ...(Number.isFinite(denominator) && denominator > 0
           ? { trueShootingPct: game.points / denominator }
           : {}),
         ...(effectiveFieldGoalPct != null
