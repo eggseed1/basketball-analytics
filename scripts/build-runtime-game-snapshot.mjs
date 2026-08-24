@@ -48,14 +48,18 @@ function gameType(event) {
 function side(comp, homeAway) {
   const row = (comp?.competitors ?? []).find((c) => c?.homeAway === homeAway);
   if (!row?.team?.id) return null;
-  const record = Array.isArray(row.records) ? row.records.find((r) => r?.type === "total") ?? row.records[0] : null;
+  const record = Array.isArray(row.records)
+    ? row.records.find((r) => r?.type === "total") ?? row.records[0]
+    : null;
   return {
     teamId: String(row.team.id),
     abbr: row.team.abbreviation ?? undefined,
     name: row.team.displayName ?? row.team.shortDisplayName ?? undefined,
     score: num(row.score),
     record: record?.summary ?? undefined,
-    periods: Array.isArray(row.linescores) ? row.linescores.map((p) => num(p?.value ?? p?.displayValue)) : undefined,
+    periods: Array.isArray(row.linescores)
+      ? row.linescores.map((p) => num(p?.value ?? p?.displayValue))
+      : undefined,
   };
 }
 
@@ -67,7 +71,10 @@ function transform(event, season) {
   const date = String(event?.date ?? comp?.date ?? "");
   if (!id || !home || !away || !/^\d{4}-\d{2}-\d{2}/.test(date)) return null;
   const status = statusKind(event?.status ?? comp?.status);
-  const detail = event?.status?.type?.shortDetail ?? event?.status?.type?.detail ?? comp?.status?.type?.shortDetail;
+  const detail =
+    event?.status?.type?.shortDetail ??
+    event?.status?.type?.detail ??
+    comp?.status?.type?.shortDetail;
   return {
     id,
     season,
@@ -87,11 +94,14 @@ function transform(event, season) {
     awayProviderTeamId: away.teamId,
     homeScore: home.score,
     awayScore: away.score,
-    ...(home.periods?.length && away.periods?.length ? { homePeriodScores: home.periods, awayPeriodScores: away.periods } : {}),
+    ...(home.periods?.length && away.periods?.length
+      ? { homePeriodScores: home.periods, awayPeriodScores: away.periods }
+      : {}),
     gameType: gameType(event),
     status,
     period: num(event?.status?.period ?? comp?.status?.period) || undefined,
-    displayClock: event?.status?.displayClock ?? comp?.status?.displayClock ?? undefined,
+    displayClock:
+      event?.status?.displayClock ?? comp?.status?.displayClock ?? undefined,
     retrievedAt: new Date().toISOString(),
   };
 }
@@ -104,13 +114,16 @@ async function fetchJson(url) {
     },
     signal: AbortSignal.timeout(12000),
   });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  }
   return response.json();
 }
 
 async function main() {
   const byId = new Map();
   const failures = [];
+
   for (const startYear of seasons) {
     const season = canonicalSeason(startYear);
     for (const month of monthsForSeason(startYear)) {
@@ -122,29 +135,48 @@ async function main() {
           if (game) byId.set(game.id, game);
         }
       } catch (error) {
-        failures.push(`${month}: ${error instanceof Error ? error.message : String(error)}`);
+        failures.push(
+          `${month}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
 
   const games = [...byId.values()].sort((a, b) =>
-    a.gameDate === b.gameDate ? a.id.localeCompare(b.id) : a.gameDate.localeCompare(b.gameDate)
+    a.gameDate === b.gameDate
+      ? a.id.localeCompare(b.id)
+      : a.gameDate.localeCompare(b.gameDate)
   );
   const previousSeason = canonicalSeason(currentStartYear - 1);
+  const upcomingSeason = canonicalSeason(currentStartYear);
   const previousCount = games.filter((g) => g.season === previousSeason).length;
+  const upcomingCount = games.filter((g) => g.season === upcomingSeason).length;
   const requiredExample = games.some((g) => g.id === "401811018");
 
-  if (previousCount < 1000 || !requiredExample) {
+  if (previousCount < 1000 || upcomingCount < 1000 || !requiredExample) {
     let previous = null;
     try {
       previous = JSON.parse(await fs.readFile(OUT, "utf8"));
     } catch {}
-    if (Array.isArray(previous?.games) && previous.games.length >= 1000 && previous.games.some((g) => g.id === "401811018")) {
-      console.warn(`[runtime-snapshot] refresh incomplete (${games.length} games); retaining prior snapshot`);
+    const previousGames = Array.isArray(previous?.games) ? previous.games : [];
+    const priorPreviousCount = previousGames.filter(
+      (g) => g.season === previousSeason
+    ).length;
+    const priorUpcomingCount = previousGames.filter(
+      (g) => g.season === upcomingSeason
+    ).length;
+    if (
+      priorPreviousCount >= 1000 &&
+      priorUpcomingCount >= 1000 &&
+      previousGames.some((g) => g.id === "401811018")
+    ) {
+      console.warn(
+        `[runtime-snapshot] refresh incomplete (${games.length} games); retaining prior snapshot`
+      );
       return;
     }
     throw new Error(
-      `Runtime game snapshot incomplete: ${games.length} games, ${previousSeason}=${previousCount}, example=${requiredExample}. ` +
+      `Runtime game snapshot incomplete: total=${games.length}, ${previousSeason}=${previousCount}, ${upcomingSeason}=${upcomingCount}, example=${requiredExample}. ` +
         `Failures: ${failures.slice(0, 6).join(" | ")}`
     );
   }
@@ -164,7 +196,9 @@ async function main() {
     ) + "\n",
     "utf8"
   );
-  console.log(`[runtime-snapshot] wrote ${games.length} games (${previousSeason}: ${previousCount}) to ${OUT}`);
+  console.log(
+    `[runtime-snapshot] wrote ${games.length} games (${previousSeason}: ${previousCount}, ${upcomingSeason}: ${upcomingCount}) to ${OUT}`
+  );
 }
 
 await main();
