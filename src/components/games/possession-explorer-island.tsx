@@ -2,6 +2,8 @@ import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { PossessionExplorer } from "@/components/games/possession-explorer";
 import { getGamePossessions } from "@/data/queries/game-possessions";
 import { getGameShellCached } from "@/data/queries/request-cache";
+import { withBudget } from "@/data/queries/budget";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { buildPossessionExplorerModel } from "@/lib/possession-explorer";
 
 /**
@@ -17,10 +19,15 @@ export async function PossessionExplorerIsland({
   awayTeamKey?: string;
   homeTeamKey?: string;
 }) {
-  const [shell, possessionResult] = await Promise.all([
+  const [shell, possessionBudget] = await Promise.all([
     getGameShellCached(gameId),
-    getGamePossessions(gameId).catch(() => null),
+    withBudget(
+      getGamePossessions(gameId).catch(() => null),
+      runtimeTimeoutMs(8_000, 4_000),
+      null
+    ),
   ]);
+  const possessionResult = possessionBudget.value;
 
   const game = shell?.game;
   const teamInput = {
@@ -38,8 +45,10 @@ export async function PossessionExplorerIsland({
         {
           status: "unavailable",
           gameId,
-          reason: "pbp_fetch_failed",
-          message: "Play-by-play fetch failed for this game.",
+          reason: possessionBudget.timedOut ? "pbp_timeout" : "pbp_fetch_failed",
+          message: possessionBudget.timedOut
+            ? "Play-by-play took too long to load for this game."
+            : "Play-by-play fetch failed for this game.",
           capability: {
             rawPbpAvailable: false,
             rawEventCount: 0,
