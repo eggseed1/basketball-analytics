@@ -60,7 +60,6 @@ import {
 import { firstUsablePlayerDisplayName } from "@/lib/player-display-name";
 import { resolveActiveEraTheme } from "@/themes/era-theme";
 import {
-  historyHref,
   parseDestinationHistoryArrival,
 } from "@/themes/history-url";
 import {
@@ -86,12 +85,53 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
+function uniquePlayerIds(
+  ...ids: Array<string | null | undefined>
+): string[] {
+  return [
+    ...new Set(
+      ids
+        .map((id) => String(id ?? "").trim())
+        .filter(Boolean)
+    ),
+  ];
+}
+
+function firstByPlayerId<T>(
+  ids: string[],
+  load: (id: string) => T | null
+): T | null {
+  for (const id of ids) {
+    const value = load(id);
+    if (value) return value;
+  }
+  return null;
+}
+
+function firstRowsByPlayerId<T>(
+  ids: string[],
+  load: (id: string) => T[]
+): T[] {
+  for (const id of ids) {
+    const rows = load(id);
+    if (rows.length > 0) return rows;
+  }
+  return [];
+}
+
 export async function generateMetadata({ params }: PlayerPageProps) {
   const { playerId } = await params;
-  const player = await getPlayerCached(playerId);
+  const [player, identity] = await Promise.all([
+    getPlayerCached(playerId),
+    resolvePlayerIdentityCached(playerId).catch(() => null),
+  ]);
+  const displayName = firstUsablePlayerDisplayName(
+    identity?.displayName,
+    player?.fullName
+  );
   return {
-    title: player
-      ? `${player.fullName} | Basketball Analytics`
+    title: displayName
+      ? `${displayName} | Basketball Analytics`
       : "Player | Basketball Analytics",
   };
 }
@@ -121,28 +161,48 @@ export default async function PlayerPage({
   const { fromHistory, themeMode, applyEraTheme } =
     parseDestinationHistoryArrival(sp);
 
-  // Do not block first paint on league-wide ESPN roster crawl — career overlay
-  // already applies preseason franchise identity when needed.
   const [player, career, identity] = await Promise.all([
     getPlayerCached(playerId),
-    getPlayerCareerSeasonsCached(playerId),
-    resolvePlayerIdentityCached(playerId),
+    getPlayerCareerSeasonsCached(playerId).catch(() => []),
+    resolvePlayerIdentityCached(playerId).catch(() => null),
   ]);
-  const historyCareer = getHistoryCareerForPlayer(playerId);
-  const historySeasons = getHistorySeasonsForPlayer(playerId);
+
+  // Public player routes use ESPN athlete ids while history/master registries
+  // are generally keyed by NBA PERSON_ID. Search every verified namespace.
+  const playerLookupIds = uniquePlayerIds(
+    identity?.nbaId,
+    playerId,
+    identity?.espnId
+  );
+  const historyCareer = firstByPlayerId(
+    playerLookupIds,
+    getHistoryCareerForPlayer
+  );
+  const historySeasons = firstRowsByPlayerId(
+    playerLookupIds,
+    getHistorySeasonsForPlayer
+  );
   const { getMasterPlayer, getUniverseSeasonsForPlayer } = await import(
     "@/data/history/player-universe"
   );
-  const masterPlayer = getMasterPlayer(playerId);
-  // Skip full-universe scan when career or history already supplies seasons.
+  const masterPlayer = firstByPlayerId(playerLookupIds, getMasterPlayer);
+  // Skip full-universe scans when career or history already supplies seasons.
   const universeSeasons =
     historySeasons.length > 0
       ? historySeasons
       : career.length > 0
         ? []
-        : getUniverseSeasonsForPlayer(playerId);
+        : firstRowsByPlayerId(playerLookupIds, getUniverseSeasonsForPlayer);
 
-  if (!player && career.length === 0 && !historyCareer && !masterPlayer) {
+  // A verified alias is enough to establish the route even when every optional
+  // upstream is temporarily down. Unknown ids still receive the real 404.
+  if (
+    !player &&
+    career.length === 0 &&
+    !historyCareer &&
+    !masterPlayer &&
+    !identity?.displayName
+  ) {
     notFound();
   }
 
@@ -232,10 +292,9 @@ export default async function PlayerPage({
 
   const latestCareerName = [...career]
     .sort((a, b) => b.season.localeCompare(a.season))[0]?.playerName;
-  // Never prefer synthetic "Player 1628983" career labels over bio / identity.
   const displayName =
     firstUsablePlayerDisplayName(
-      identity.displayName,
+      identity?.displayName,
       player?.fullName,
       latestCareerName,
       historyCareer?.playerName,
@@ -291,8 +350,8 @@ export default async function PlayerPage({
       <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
         <PlayerDestinationIdentity
           playerId={playerId}
-          espnId={identity.espnId}
-          nbaId={identity.nbaId}
+          espnId={identity?.espnId}
+          nbaId={identity?.nbaId}
           displayName={displayName}
           season={season}
           teamKey={teamKey}
@@ -361,7 +420,7 @@ export default async function PlayerPage({
                 seasonOptions={seasonOptions}
                 seasonTeams={seasonTeams}
                 identityTeamKey={teamKey}
-                nbaId={identity.nbaId}
+                nbaId={identity?.nbaId}
               />
             </Suspense>
           }
@@ -470,7 +529,7 @@ export default async function PlayerPage({
           >
             <PlayerVisualizationsIsland
               playerId={playerId}
-              nbaId={identity.nbaId}
+              nbaId={identity?.nbaId}
               season={season}
               seasons={seasonOptions}
               seasonType={seasonType}
@@ -509,7 +568,6 @@ export default async function PlayerPage({
             </GlassSurface>
           </Suspense>
         ) : null}
-
       </main>
     </DestinationClientShell>
   );
