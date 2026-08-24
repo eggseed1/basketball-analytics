@@ -2,11 +2,16 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
-const ESPN_SCOREBOARD = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
-const NBA_SCHEDULE = "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json";
-const NBA_STATS = "https://stats.nba.com/stats/leaguegamelog";
+const ESPN_SCOREBOARD =
+  "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
+const NBA_SCHEDULE =
+  "https://cdn.nba.com/static/json/staticData/scheduleLeagueV2.json";
+const ARCHIVED_2025_26 =
+  "https://raw.githubusercontent.com/moizk/nba-schedule-2025-26/main/nba_2025_26_schedule.json";
+
 const now = new Date();
-const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
+const currentStartYear =
+  now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
 const previousStartYear = currentStartYear - 1;
 const previousSeason = canonicalSeason(previousStartYear);
 const upcomingSeason = canonicalSeason(currentStartYear);
@@ -16,9 +21,8 @@ const NBA_HEADERS = {
   "Accept-Language": "en-US,en;q=0.9",
   Origin: "https://www.nba.com",
   Referer: "https://www.nba.com/",
-  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
-  "x-nba-stats-origin": "stats",
-  "x-nba-stats-token": "true",
+  "User-Agent":
+    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
 };
 
 function canonicalSeason(startYear) {
@@ -28,19 +32,16 @@ function canonicalSeason(startYear) {
 function monthsForSeason(startYear) {
   return [10, 11, 12]
     .map((m) => `${startYear}${String(m).padStart(2, "0")}`)
-    .concat([1, 2, 3, 4, 5, 6].map((m) => `${startYear + 1}${String(m).padStart(2, "0")}`));
+    .concat(
+      [1, 2, 3, 4, 5, 6].map(
+        (m) => `${startYear + 1}${String(m).padStart(2, "0")}`
+      )
+    );
 }
 
 function num(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
-}
-
-function parseStatsDate(raw) {
-  const text = String(raw ?? "").trim();
-  const d = new Date(text);
-  if (!Number.isNaN(d.valueOf())) return d.toISOString().slice(0, 10);
-  return text.slice(0, 10);
 }
 
 function statusKind(status) {
@@ -121,13 +122,16 @@ function transformEspn(event, season) {
     gameType: espnGameType(event),
     status,
     period: num(event?.status?.period ?? comp?.status?.period) || undefined,
-    displayClock: event?.status?.displayClock ?? comp?.status?.displayClock ?? undefined,
+    displayClock:
+      event?.status?.displayClock ?? comp?.status?.displayClock ?? undefined,
     retrievedAt: new Date().toISOString(),
   };
 }
 
 function matchupKey(game) {
-  return `${game.season}|${game.gameDate}|${String(game.awayTeamAbbr ?? "").toUpperCase()}|${String(game.homeTeamAbbr ?? "").toUpperCase()}`;
+  return `${game.season}|${game.gameDate}|${String(
+    game.awayTeamAbbr ?? ""
+  ).toUpperCase()}|${String(game.homeTeamAbbr ?? "").toUpperCase()}`;
 }
 
 async function fetchJson(url, headers = {}) {
@@ -135,7 +139,9 @@ async function fetchJson(url, headers = {}) {
     headers: { Accept: "application/json, text/plain, */*", ...headers },
     signal: AbortSignal.timeout(15_000),
   });
-  if (!response.ok) throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  if (!response.ok) {
+    throw new Error(`${response.status} ${response.statusText}: ${url}`);
+  }
   return response.json();
 }
 
@@ -146,79 +152,68 @@ async function fetchEspnSeasons() {
     const season = canonicalSeason(startYear);
     for (const month of monthsForSeason(startYear)) {
       try {
-        const payload = await fetchJson(`${ESPN_SCOREBOARD}?dates=${month}&limit=400`, {
-          "User-Agent": "Mozilla/5.0 DRBL-build-snapshot/2.0",
-        });
+        const payload = await fetchJson(
+          `${ESPN_SCOREBOARD}?dates=${month}&limit=400`,
+          { "User-Agent": "Mozilla/5.0 DRBL-build-snapshot/3.0" }
+        );
         for (const event of payload?.events ?? []) {
           const game = transformEspn(event, season);
           if (game) games.push(game);
         }
       } catch (error) {
-        failures.push(`${month}: ${error instanceof Error ? error.message : String(error)}`);
+        failures.push(
+          `${month}: ${error instanceof Error ? error.message : String(error)}`
+        );
       }
     }
   }
   return { games, failures };
 }
 
-function resultSet(payload) {
-  if (Array.isArray(payload?.resultSets)) return payload.resultSets[0] ?? null;
-  return payload?.resultSet ?? null;
-}
-
-function rowsToObjects(set) {
-  if (!set?.headers || !Array.isArray(set.rowSet)) return [];
-  return set.rowSet.map((row) => Object.fromEntries(set.headers.map((h, i) => [h, row[i] ?? null])));
+function teamAbbrFromArchive(value) {
+  return String(value ?? "").trim().split(/\s+/)[0]?.toUpperCase() ?? "";
 }
 
 async function fetchPreviousNbaGames() {
-  const byId = new Map();
-  for (const seasonType of ["Regular Season", "Playoffs"]) {
-    const query = new URLSearchParams({
-      Counter: "0",
-      DateFrom: "",
-      DateTo: "",
-      Direction: "DESC",
-      LeagueID: "00",
-      PlayerOrTeam: "T",
-      Season: previousSeason,
-      SeasonType: seasonType,
-      Sorter: "DATE",
-    });
-    const payload = await fetchJson(`${NBA_STATS}?${query}`, NBA_HEADERS);
-    for (const row of rowsToObjects(resultSet(payload))) {
-      const id = String(row.GAME_ID ?? "").trim();
-      if (!/^00\d{8}$/.test(id)) continue;
-      const matchup = String(row.MATCHUP ?? "");
-      const isHome = matchup.includes(" vs.");
-      const abbr = String(row.TEAM_ABBREVIATION ?? "").toUpperCase();
-      const game = byId.get(id) ?? {
+  if (previousSeason !== "2025-26") {
+    throw new Error(
+      `No vendored/archive schedule source configured for ${previousSeason}. ` +
+        "Add a validated prior-season NBA GameID schedule before deploying."
+    );
+  }
+  const payload = await fetchJson(ARCHIVED_2025_26, {
+    "User-Agent": "DRBL-build-snapshot/3.0",
+  });
+  if (payload?.season !== previousSeason || !Array.isArray(payload?.games)) {
+    throw new Error("Archived 2025-26 schedule has an unexpected shape");
+  }
+  return payload.games
+    .map((raw) => {
+      const id = String(raw?.game_id ?? "").trim();
+      const tip = String(raw?.tip_utc ?? "").trim();
+      const awayTeamAbbr = teamAbbrFromArchive(raw?.away_team);
+      const homeTeamAbbr = teamAbbrFromArchive(raw?.home_team);
+      if (!/^00\d{8}$/.test(id) || !tip || !awayTeamAbbr || !homeTeamAbbr) {
+        return null;
+      }
+      return {
         id,
         season: previousSeason,
-        gameDate: parseStatsDate(row.GAME_DATE),
-        homeTeamAbbr: undefined,
-        awayTeamAbbr: undefined,
+        gameDate: tip.slice(0, 10),
+        tipOffAt: tip,
+        awayTeamAbbr,
+        homeTeamAbbr,
         homeScore: 0,
         awayScore: 0,
-        gameType: seasonType === "Playoffs" ? "playoff" : "regular",
+        gameType:
+          String(raw?.season_type ?? "").toLowerCase().includes("preseason")
+            ? "preseason"
+            : "regular",
         status: "final",
         teamIdProvider: "nba",
-        homeProviderTeamId: undefined,
-        awayProviderTeamId: undefined,
       };
-      if (isHome) {
-        game.homeTeamAbbr = abbr;
-        game.homeScore = num(row.PTS);
-        game.homeProviderTeamId = String(row.TEAM_ID ?? "") || undefined;
-      } else {
-        game.awayTeamAbbr = abbr;
-        game.awayScore = num(row.PTS);
-        game.awayProviderTeamId = String(row.TEAM_ID ?? "") || undefined;
-      }
-      byId.set(id, game);
-    }
-  }
-  return [...byId.values()].filter((g) => g.homeTeamAbbr && g.awayTeamAbbr);
+    })
+    .filter(Boolean);
 }
 
 function nbaStatus(code, text) {
@@ -237,29 +232,37 @@ async function fetchUpcomingNbaGames() {
   for (const block of payload?.leagueSchedule?.gameDates ?? []) {
     for (const raw of block?.games ?? []) {
       const id = String(raw?.gameId ?? "").trim();
-      const homeAbbr = String(raw?.homeTeam?.teamTricode ?? "").toUpperCase();
-      const awayAbbr = String(raw?.awayTeam?.teamTricode ?? "").toUpperCase();
-      if (!/^00\d{8}$/.test(id) || !homeAbbr || !awayAbbr) continue;
-      const dateRaw = String(raw?.gameDateTimeUTC ?? raw?.gameDateTimeEst ?? block?.gameDate ?? "");
+      const homeTeamAbbr = String(raw?.homeTeam?.teamTricode ?? "").toUpperCase();
+      const awayTeamAbbr = String(raw?.awayTeam?.teamTricode ?? "").toUpperCase();
+      if (!/^00\d{8}$/.test(id) || !homeTeamAbbr || !awayTeamAbbr) continue;
+      const dateRaw = String(
+        raw?.gameDateTimeUTC ?? raw?.gameDateTimeEst ?? block?.gameDate ?? ""
+      );
       out.push({
         id,
         season: upcomingSeason,
         gameDate: dateRaw.slice(0, 10),
-        tipOffAt: /^\d{4}-\d{2}-\d{2}T/.test(String(raw?.gameDateTimeUTC ?? ""))
+        tipOffAt: /^\d{4}-\d{2}-\d{2}T/.test(
+          String(raw?.gameDateTimeUTC ?? "")
+        )
           ? String(raw.gameDateTimeUTC)
           : undefined,
         statusDetail: String(raw?.gameStatusText ?? "") || undefined,
-        homeTeamAbbr: homeAbbr,
-        awayTeamAbbr: awayAbbr,
+        homeTeamAbbr,
+        awayTeamAbbr,
         homeScore: num(raw?.homeTeam?.score),
         awayScore: num(raw?.awayTeam?.score),
-        gameType: String(raw?.gameLabel ?? raw?.gameSubtype ?? "").toLowerCase().includes("preseason")
+        gameType: String(raw?.gameLabel ?? raw?.gameSubtype ?? "")
+          .toLowerCase()
+          .includes("preseason")
           ? "preseason"
           : "regular",
         status: nbaStatus(raw?.gameStatus, raw?.gameStatusText),
         teamIdProvider: "nba",
-        homeProviderTeamId: String(raw?.homeTeam?.teamId ?? "") || undefined,
-        awayProviderTeamId: String(raw?.awayTeam?.teamId ?? "") || undefined,
+        homeProviderTeamId:
+          String(raw?.homeTeam?.teamId ?? "").trim() || undefined,
+        awayProviderTeamId:
+          String(raw?.awayTeam?.teamId ?? "").trim() || undefined,
         retrievedAt: new Date().toISOString(),
       });
     }
@@ -284,10 +287,10 @@ function enrichNbaGame(nba, espn) {
     gameDate: nba.gameDate || espn.gameDate,
     tipOffAt: nba.tipOffAt ?? espn.tipOffAt,
     statusDetail: nba.statusDetail ?? espn.statusDetail,
-    homeScore: nba.status === "final" ? nba.homeScore : espn.homeScore,
-    awayScore: nba.status === "final" ? nba.awayScore : espn.awayScore,
+    homeScore: espn.homeScore,
+    awayScore: espn.awayScore,
     gameType: nba.gameType ?? espn.gameType,
-    status: nba.status ?? espn.status,
+    status: espn.status ?? nba.status,
     teamIdProvider: "nba",
     homeProviderTeamId: nba.homeProviderTeamId,
     awayProviderTeamId: nba.awayProviderTeamId,
@@ -296,11 +299,12 @@ function enrichNbaGame(nba, espn) {
 }
 
 async function main() {
-  const [{ games: espnGames, failures }, previousNba, upcomingNba] = await Promise.all([
-    fetchEspnSeasons(),
-    fetchPreviousNbaGames(),
-    fetchUpcomingNbaGames(),
-  ]);
+  const [{ games: espnGames, failures }, previousNba, upcomingNba] =
+    await Promise.all([
+      fetchEspnSeasons(),
+      fetchPreviousNbaGames(),
+      fetchUpcomingNbaGames(),
+    ]);
 
   const espnByKey = new Map(espnGames.map((g) => [matchupKey(g), g]));
   const aliases = {};
@@ -309,14 +313,14 @@ async function main() {
   for (const nba of [...previousNba, ...upcomingNba]) {
     const espn = espnByKey.get(matchupKey(nba));
     const game = enrichNbaGame(nba, espn);
+    // Canonical app team identity comes from ESPN. Do not ship rows with only
+    // NBA provider ids because team pages use the canonical ESPN namespace.
     if (!game.homeTeamId || !game.awayTeamId) continue;
     byId.set(game.id, game);
     aliases[game.id] = game.id;
     if (espn?.id) aliases[espn.id] = game.id;
   }
 
-  // Keep unmatched ESPN events (exhibitions / edge schedule changes) reachable,
-  // but NBA GameIDs are canonical whenever the league provides one.
   for (const espn of espnGames) {
     if (aliases[espn.id]) continue;
     byId.set(espn.id, espn);
@@ -324,7 +328,9 @@ async function main() {
   }
 
   const games = [...byId.values()].sort((a, b) =>
-    a.gameDate === b.gameDate ? a.id.localeCompare(b.id) : a.gameDate.localeCompare(b.gameDate)
+    a.gameDate === b.gameDate
+      ? a.id.localeCompare(b.id)
+      : a.gameDate.localeCompare(b.gameDate)
   );
   const previousGames = games.filter((g) => g.season === previousSeason);
   const upcomingGames = games.filter((g) => g.season === upcomingSeason);
@@ -343,7 +349,9 @@ async function main() {
       `Canonical game snapshot incomplete: total=${games.length}, ` +
         `${previousSeason}=${previousGames.length}/${previousNbaCount} NBA ids, ` +
         `${upcomingSeason}=${upcomingGames.length}/${upcomingNbaCount} NBA ids, ` +
-        `401811018=>${exampleTarget ?? "missing"}. ESPN failures: ${failures.slice(0, 4).join(" | ")}`
+        `401811018=>${exampleTarget ?? "missing"}. ESPN failures: ${failures
+          .slice(0, 4)
+          .join(" | ")}`
     );
   }
 
@@ -363,8 +371,12 @@ async function main() {
     ) + "\n",
     "utf8"
   );
+
   console.log(
-    `[runtime-snapshot] canonical NBA games=${games.length}; ${previousSeason}=${previousNbaCount}; ${upcomingSeason}=${upcomingNbaCount}; ESPN aliases=${Object.keys(aliases).length - games.length}`
+    `[runtime-snapshot] canonical games=${games.length}; ` +
+      `${previousSeason}=${previousNbaCount}; ` +
+      `${upcomingSeason}=${upcomingNbaCount}; ` +
+      `legacy aliases=${Object.entries(aliases).filter(([k, v]) => k !== v).length}`
   );
 }
 
