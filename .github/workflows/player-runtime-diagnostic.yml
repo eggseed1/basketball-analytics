@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - diagnose/player-runtime-crash-2
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 permissions:
