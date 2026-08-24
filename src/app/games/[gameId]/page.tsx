@@ -55,12 +55,10 @@ async function GameLabDeepBody({
   );
   const payload = result.value;
 
-  // Game Lab is enrichment, not route identity. A missing/slow PBP provider
-  // must never turn a valid scoreboard/box-score game into a route-level 404.
   if (!payload) {
     return (
       <p className="text-[13px] text-muted-foreground">
-        Deep Game Lab analysis is temporarily unavailable for this game.
+        Detailed Game Lab analysis is not available for this game yet.
       </p>
     );
   }
@@ -87,15 +85,12 @@ async function HistoricalDeepBody({
   homeLabel: string;
   awayLabel: string;
 }) {
-  // Artifact + shots load inside this Suspense boundary (not in the page
-  // parent) so GameIdentityShell can flush first.
   const historyArtifact = getHistoricalProductGame(gameId, seasonHint);
   const shots = loadRawArchiveShotEvents(gameId);
 
   if (historyArtifact) {
     const slim = {
       ...historyArtifact,
-      // Unused on the historical surface - drop before Flight serialization.
       teamGames: [] as Record<string, unknown>[],
     };
     return (
@@ -120,10 +115,6 @@ async function HistoricalDeepBody({
   return null;
 }
 
-/**
- * Stable identity/score header stays mounted; deep Game Lab streams below.
- * No identity → hero remount when analysis arrives.
- */
 export default async function GamePage({ params, searchParams }: GamePageProps) {
   const { gameId } = await params;
   const sp = await searchParams;
@@ -157,12 +148,17 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
     applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
   const seasonHint = seasonParam ?? shell.game.season;
-  // Lightweight season decode for back-link only (no artifact parse).
   const historySeasonForNav = seasonHint;
 
   const backHref = fromHistory
     ? `/history/${encodeURIComponent(historySeasonForNav)}`
     : "/explore/games";
+
+  // Presentation validity is not the same thing as data depth. Scheduled games
+  // and scoreboard-only finals are valid destinations, but they do not have a
+  // player box/PBP payload. Never launch Game Lab/Possessions for those shells.
+  const hasDeepGameData =
+    presentation.canRenderDeepFeatures && shell.hasBoxScore;
 
   const body = (
     <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
@@ -187,7 +183,7 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
         </Suspense>
       ) : null}
 
-      {presentation.canRenderDeepFeatures ? (
+      {hasDeepGameData ? (
         <Suspense
           fallback={
             <DestinationSectionSkeleton label="Loading Game Lab analysis…" />
@@ -195,11 +191,16 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
         >
           <GameLabDeepBody gameId={gameId} arrival={arrival} />
         </Suspense>
+      ) : presentation.canRenderScoreHeader ? (
+        <p className="text-[13px] text-muted-foreground">
+          Box score, Game Lab, and possession analysis will appear when detailed
+          game data is available.
+        </p>
       ) : (
         <GameUnavailablePanel gameId={gameId} backHref={backHref} />
       )}
 
-      {presentation.canRenderDeepFeatures ? (
+      {hasDeepGameData ? (
         <Suspense
           fallback={
             <DestinationSectionSkeleton label="Loading Possession Explorer…" />
