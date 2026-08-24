@@ -7,6 +7,8 @@ export function provenanceSourceLabel(source: PbpProductSource): string {
       return "NBA CDN";
     case "stats_nba":
       return "NBA Stats";
+    case "espn":
+      return "ESPN";
     case "disk_cache":
       return "Cached NBA data";
     case "sample":
