@@ -386,7 +386,7 @@ function WeekBoard({
   );
 }
 
-/** Gamefeed with weekly, monthly, and upcoming list views (ESPN scoreboard). */
+/** Gamefeed with weekly, monthly, and upcoming list views. */
 export function Gamefeed({
   view,
   season,
@@ -412,12 +412,11 @@ export function Gamefeed({
   const nextMonth = shiftMonthKey(monthKey, 1);
   const prevWeek = addDaysIso(weekStart, -7);
   const nextWeek = addDaysIso(weekStart, 7);
-  // Keep month tab aligned with the week being viewed.
   const weekMonthKey = weekStart.slice(0, 7);
 
   const subtitle =
     view === "list"
-      ? `Upcoming tip-offs from ESPN - ${season}`
+      ? `Upcoming NBA tip-offs - ${season}`
       : view === "week"
         ? `Weekly slate - ${season}`
         : `Monthly calendar - ${season}`;
@@ -475,7 +474,7 @@ export function Gamefeed({
               >
                 Prev
               </TransitionLink>
-              <p className="min-w-[9rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
+              <p className="min-w-[12rem] flex-1 text-center text-[16px] font-bold tracking-tight sm:flex-none">
                 {weekRangeLabel(weekStart, weekEnd)}
               </p>
               <TransitionLink
@@ -489,71 +488,19 @@ export function Gamefeed({
           ) : null}
         </GlassSurface>
 
-        <div className="query-updating-content flex flex-col gap-4">
-          {view === "month" ? (
-            <>
-              <MonthGrid monthKey={monthKey} games={monthGames} />
-              {monthGames.length === 0 ? (
-                <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-                  No games on the scoreboard for {monthLabel(monthKey)}. Try{" "}
-                  <TransitionLink
-                    href={scoresHref({ view: "list" })}
-                    scroll={false}
-                    className="underline"
-                  >
-                    List
-                  </TransitionLink>{" "}
-                  for upcoming tip-offs.
-                </p>
-              ) : (
-                <p className="text-[12px] text-muted-foreground">
-                  {monthGames.length} game
-                  {monthGames.length === 1 ? "" : "s"} this month
-                </p>
-              )}
-            </>
-          ) : null}
-
-          {view === "week" ? (
-            <LiveScoreboardScope games={weekGames} season={season}>
-              {(games) => (
-                <>
-                  <WeekBoard weekStart={weekStart} games={games} />
-                  {games.length === 0 ? (
-                    <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-                      No games this week.{" "}
-                      <TransitionLink
-                        href={scoresHref({ view: "list" })}
-                        scroll={false}
-                        className="underline"
-                      >
-                        See all upcoming
-                      </TransitionLink>
-                      .
-                    </p>
-                  ) : (
-                    <p className="text-[12px] text-muted-foreground">
-                      {games.length} game{games.length === 1 ? "" : "s"} this
-                      week · live scores refresh automatically
-                    </p>
-                  )}
-                </>
-              )}
-            </LiveScoreboardScope>
-          ) : null}
-
-          {view === "list" ? (
+        {view === "month" ? (
+          <MonthGrid monthKey={monthKey} games={monthGames} />
+        ) : view === "week" ? (
+          <WeekBoard weekStart={weekStart} games={weekGames} />
+        ) : (
+          <LiveScoreboardScope>
             <UpcomingGameList
-              initialGames={upcomingGames}
+              games={upcomingGames}
               hasMore={upcomingHasMore}
-              season={season}
             />
-          ) : null}
-        </div>
+          </LiveScoreboardScope>
+        )}
       </div>
     </QueryNavProvider>
   );
 }
-
-/** @deprecated Prefer Gamefeed */
-export { Gamefeed as GamefeedCalendar };

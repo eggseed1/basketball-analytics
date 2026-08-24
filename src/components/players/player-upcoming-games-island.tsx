@@ -8,10 +8,7 @@ import {
   transformEspnScheduleEvent,
   type EspnScheduleEvent,
 } from "@/data/transformers/espn";
-import {
-  getPlayerCareerSeasonsCached,
-  getUpcomingGameSummaries,
-} from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { withBudget } from "@/data/queries/budget";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import type { GameSummary } from "@/data/types";
@@ -19,19 +16,9 @@ import { teamSeasonStub } from "@/lib/team-season-stub";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
-async function fetchTeamScheduleFallback(
-  teamId: string,
-  season: string
-): Promise<GameSummary[]> {
-  const endYear = espnYearFromCanonicalSeason(season);
-  const payload = await espnFetchJson<{ events?: EspnScheduleEvent[] }>(
-    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${encodeURIComponent(teamId)}/schedule?season=${endYear}`,
-    { ttlMs: 1000 * 60 * 30, retries: 1 }
-  );
+function upcomingOnly(rows: GameSummary[]): GameSummary[] {
   const today = new Date().toISOString().slice(0, 10);
-  return (payload.events ?? [])
-    .map((event) => transformEspnScheduleEvent(event, season))
-    .filter((game): game is NonNullable<typeof game> => Boolean(game))
+  return rows
     .filter(
       (game) =>
         game.gameDate >= today &&
@@ -42,8 +29,24 @@ async function fetchTeamScheduleFallback(
     )
     .sort((a, b) =>
       (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
-    )
-    .map(toGameSummary);
+    );
+}
+
+async function fetchEspnTeamSchedule(
+  teamId: string,
+  season: string
+): Promise<GameSummary[]> {
+  const endYear = espnYearFromCanonicalSeason(season);
+  const payload = await espnFetchJson<{ events?: EspnScheduleEvent[] }>(
+    `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/teams/${encodeURIComponent(teamId)}/schedule?season=${endYear}`,
+    { ttlMs: 1000 * 60 * 30, retries: 1 }
+  );
+  return upcomingOnly(
+    (payload.events ?? [])
+      .map((event) => transformEspnScheduleEvent(event, season))
+      .filter((game): game is NonNullable<typeof game> => Boolean(game))
+      .map(toGameSummary)
+  );
 }
 
 /** Current-season upcoming tip-offs for the player's team. */
@@ -56,8 +59,6 @@ export async function PlayerUpcomingGamesIsland({
 }) {
   let scheduleTeamKey = brandableTeamKey(scheduleTeamKeyProp) ?? null;
 
-  // The critical career rows are request-cached and usually already loaded by
-  // the page. Prefer that deterministic team context over another roster call.
   if (!scheduleTeamKey) {
     const career = await getPlayerCareerSeasonsCached(playerId).catch(() => []);
     const latest = [...career]
@@ -80,56 +81,29 @@ export async function PlayerUpcomingGamesIsland({
   const season = getCurrentFrontOfficeSeason();
   const team = teamSeasonStub(scheduleTeamKey, season);
   if (!team) return null;
-
   const brand = resolveTeamBrand(scheduleTeamKey);
 
-  // Player cards need one team's next games, not a league-wide month crawl.
-  // ESPN is preferred when healthy. On Vercel, the official NBA CDN schedule
-  // is the durable provider fallback and avoids a blank card when site.api is
-  // blocked from the serverless egress range.
-  const targeted = await withBudget(
-    fetchTeamScheduleFallback(scheduleTeamKey, season).catch(() => []),
-    runtimeTimeoutMs(5_000, 3_000),
+  // Official NBA schedule is the primary source everywhere. This produces NBA
+  // GameIDs, which flow directly into the same NBA box/PBP provider graph used
+  // by local/Cursor instead of creating ESPN-id-only destinations.
+  const nba = await withBudget(
+    fetchNbaCdnSchedule(season)
+      .then((rows) => upcomingOnly(rows.map(toGameSummary)))
+      .catch(() => []),
+    runtimeTimeoutMs(6_000, 3_500),
     [] as GameSummary[]
   );
-  let games = targeted.value;
+  let games = nba.value;
 
+  // ESPN remains a true fallback for schedule availability, not the normal
+  // production path.
   if (games.length === 0) {
-    const fallback = await withBudget(
-      getUpcomingGameSummaries({
-        season,
-        limit: 12,
-        monthCount: 2,
-      })
-        .then((bundle) => bundle.games)
-        .catch(() => []),
-      runtimeTimeoutMs(5_000, 3_000),
+    const espn = await withBudget(
+      fetchEspnTeamSchedule(scheduleTeamKey, season).catch(() => []),
+      runtimeTimeoutMs(5_000, 2_500),
       [] as GameSummary[]
     );
-    games = fallback.value;
-  }
-
-  if (games.length === 0) {
-    const nbaFallback = await withBudget(
-      fetchNbaCdnSchedule(season)
-        .then((rows) => {
-          const today = new Date().toISOString().slice(0, 10);
-          return rows
-            .filter(
-              (game) =>
-                game.gameDate >= today &&
-                (game.status === "scheduled" ||
-                  game.status === "pregame" ||
-                  game.status === "delayed" ||
-                  game.status === "in_progress")
-            )
-            .map(toGameSummary);
-        })
-        .catch(() => []),
-      runtimeTimeoutMs(6_000, 3_500),
-      [] as GameSummary[]
-    );
-    games = nbaFallback.value;
+    games = espn.value;
   }
 
   return (

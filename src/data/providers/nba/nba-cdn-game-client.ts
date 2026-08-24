@@ -14,11 +14,17 @@ const SCHEDULE_URLS = [
 ] as const;
 const TODAY_URL = `${NBA_CDN}/liveData/scoreboard/todaysScoreboard_00.json`;
 
+// The static schedule feed became header-sensitive in May 2026. Match the
+// browser request shape used by nba.com rather than the stats.nba.com header
+// profile. In particular the working request uses nba.com without `www` for
+// Origin/Referer and keeps the connection alive.
 const NBA_HEADERS = {
   Accept: "application/json, text/plain, */*",
   "Accept-Language": "en-US,en;q=0.9",
-  Origin: "https://www.nba.com",
-  Referer: "https://www.nba.com/",
+  "Cache-Control": "max-age=0",
+  Connection: "keep-alive",
+  Origin: "https://nba.com",
+  Referer: "https://nba.com",
   "User-Agent":
     "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
 } as const;
@@ -120,8 +126,6 @@ function isoTipOff(game: NbaCdnGame): string | undefined {
   if (utc && /^\d{4}-\d{2}-\d{2}T/.test(utc)) return utc;
 
   const est = String(game.gameDateTimeEst ?? "").trim();
-  // Avoid inventing a timezone offset for NBA's ET wall clock. Only retain it
-  // when the source already supplied an ISO offset/Z suffix.
   if (/^\d{4}-\d{2}-\d{2}T.*(?:Z|[+-]\d{2}:?\d{2})$/.test(est)) return est;
   return undefined;
 }
