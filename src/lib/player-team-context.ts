@@ -197,6 +197,43 @@ export function mergeCardStints(
  * Retired / inactive for identity UI: no games in the current season and
  * last recorded season is before the current product season.
  */
+/** Best-effort franchise key for schedule cards when the current-season row is missing. */
+export function resolvePlayerScheduleTeamKey(input: {
+  isRetired: boolean;
+  career: PlayerSeason[];
+  nowSeason: string;
+  teamKey?: string | null;
+  masterTeamHistory?: string[] | null;
+  historyTeams?: string[] | null;
+}): string | null {
+  if (input.isRetired) return null;
+
+  const fromCurrentSeason = brandableTeamKeyFromRow(
+    input.career.find((row) => row.season === input.nowSeason) ?? null
+  );
+  if (fromCurrentSeason) return fromCurrentSeason;
+
+  const fromPageTeam = brandableTeamKey(input.teamKey);
+  if (fromPageTeam) return fromPageTeam;
+
+  const latestCareerTeam = [...input.career]
+    .sort((a, b) => b.season.localeCompare(a.season))
+    .map((row) => brandableTeamKeyFromRow(row))
+    .find(Boolean);
+  if (latestCareerTeam) return latestCareerTeam;
+
+  for (const teamId of input.masterTeamHistory ?? []) {
+    const key = brandableTeamKey(teamId);
+    if (key) return key;
+  }
+  for (const teamId of input.historyTeams ?? []) {
+    const key = brandableTeamKey(teamId);
+    if (key) return key;
+  }
+
+  return null;
+}
+
 export function isRetiredPlayerCareer(input: {
   lastSeason?: string | null;
   isActive?: boolean | null;

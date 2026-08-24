@@ -55,6 +55,7 @@ import {
   lastCardStint,
   mergeCardStints,
   multiTeamDisplayLabel,
+  resolvePlayerScheduleTeamKey,
   resolveSelectedSeasonTeamContext,
 } from "@/lib/player-team-context";
 import { firstUsablePlayerDisplayName } from "@/lib/player-display-name";
@@ -68,7 +69,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
 import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
-import { PlayerUpcomingGamesIsland } from "@/components/players/player-upcoming-games-island";
+import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
 import { PlayerSentimentTabIsland } from "@/components/players/player-sentiment-tab-island";
 import { PlayerCareerAnalysisIsland } from "@/components/players/player-career-analysis-island";
 
@@ -277,12 +278,14 @@ export default async function PlayerPage({
       ? resolveHistoricalTeamBrand(teamKey, season, "era")
       : null;
 
-  const scheduleTeamKey = isRetired
-    ? null
-    : (() => {
-        const nowRow = career.find((row) => row.season === nowSeason);
-        return nowRow ? brandableTeamKey(nowRow.teamId) ?? null : null;
-      })();
+  const scheduleTeamKey = resolvePlayerScheduleTeamKey({
+    isRetired,
+    career,
+    nowSeason,
+    teamKey,
+    masterTeamHistory: masterPlayer?.teamHistory ?? historyCareer?.teams ?? null,
+    historyTeams: historyCareer?.teams ?? null,
+  });
 
   const careerDataGuard = assessProductionProviderGuard({
     providerName: getDataProvider().name,
@@ -386,12 +389,9 @@ export default async function PlayerPage({
           }
           upcomingSchedule={
             scheduleTeamKey ? (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton className="h-16" />}>
-                <PlayerUpcomingGamesIsland
-                  playerId={playerId}
-                  scheduleTeamKey={scheduleTeamKey}
-                />
-              </Suspense>
+              <PlayerUpcomingGamesFromSnapshot
+                scheduleTeamKey={scheduleTeamKey}
+              />
             ) : null
           }
           frontOffice={

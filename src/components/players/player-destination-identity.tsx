@@ -12,7 +12,7 @@ import { PlayerDepthNav } from "@/components/players/player-depth-nav";
 import { PlayerDraftLine } from "@/components/players/player-draft-line";
 import { PlayerIdentityVitals } from "@/components/players/player-identity-vitals";
 import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
-import { PlayerUpcomingGamesIsland } from "@/components/players/player-upcoming-games-island";
+import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
 import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { PlayerSeason } from "@/data/types";
@@ -126,13 +126,8 @@ export function PlayerDestinationIdentity({
   // island anyway and let its own identity/team fallbacks resolve the schedule.
   const upcomingNode =
     upcomingSchedule ??
-    (!showCareerTeams ? (
-      <Suspense fallback={null}>
-        <PlayerUpcomingGamesIsland
-          playerId={playerId}
-          scheduleTeamKey={teamKey}
-        />
-      </Suspense>
+    (!showCareerTeams && teamKey ? (
+      <PlayerUpcomingGamesFromSnapshot scheduleTeamKey={teamKey} />
     ) : null);
 
   return (

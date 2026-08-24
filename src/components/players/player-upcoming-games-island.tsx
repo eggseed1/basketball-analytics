@@ -1,7 +1,5 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
-import {
-  getPlayerCareerSeasonsCached,
-} from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { toGameSummary } from "@/data/queries/filter-utils";
@@ -9,6 +7,51 @@ import type { GameSummary } from "@/data/types";
 import { teamSeasonStub } from "@/lib/team-season-stub";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+
+function upcomingGamesForTeam(
+  scheduleTeamKey: string,
+  season = upcomingScheduleSeason()
+): GameSummary[] {
+  const today = new Date().toISOString().slice(0, 10);
+  return getRuntimeSnapshotGames(season)
+    .filter(
+      (game) =>
+        game.gameDate >= today &&
+        (game.status === "scheduled" ||
+          game.status === "pregame" ||
+          game.status === "delayed" ||
+          game.status === "in_progress")
+    )
+    .sort((a, b) =>
+      (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
+    )
+    .map(toGameSummary);
+}
+
+/** Snapshot-only schedule card — no upstream fetch; safe for build smoke and Vercel cold start. */
+export function PlayerUpcomingGamesFromSnapshot({
+  scheduleTeamKey,
+  season = upcomingScheduleSeason(),
+  className,
+}: {
+  scheduleTeamKey: string;
+  season?: string;
+  className?: string;
+}) {
+  const team = teamSeasonStub(scheduleTeamKey, season);
+  if (!team) return null;
+
+  const brand = resolveTeamBrand(scheduleTeamKey);
+  return (
+    <PlayerUpcomingGames
+      season={season}
+      team={team}
+      brand={brand}
+      games={upcomingGamesForTeam(scheduleTeamKey, season)}
+      className={className}
+    />
+  );
+}
 
 /** Current-season upcoming tip-offs for the player's team. */
 export async function PlayerUpcomingGamesIsland({
@@ -39,36 +82,9 @@ export async function PlayerUpcomingGamesIsland({
 
   if (!scheduleTeamKey) return null;
 
-  const season = upcomingScheduleSeason();
-  const team = teamSeasonStub(scheduleTeamKey, season);
-  if (!team) return null;
-
-  const brand = resolveTeamBrand(scheduleTeamKey);
-  const today = new Date().toISOString().slice(0, 10);
-
-  // Production schedules are generated during the Vercel build while upstream
-  // access is healthy and bundled with the server output. Request-time Vercel
-  // egress is therefore not required to render this card.
-  const games: GameSummary[] = getRuntimeSnapshotGames(season)
-    .filter(
-      (game) =>
-        game.gameDate >= today &&
-        (game.status === "scheduled" ||
-          game.status === "pregame" ||
-          game.status === "delayed" ||
-          game.status === "in_progress")
-    )
-    .sort((a, b) =>
-      (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
-    )
-    .map(toGameSummary);
-
   return (
-    <PlayerUpcomingGames
-      season={season}
-      team={team}
-      brand={brand}
-      games={games}
+    <PlayerUpcomingGamesFromSnapshot
+      scheduleTeamKey={scheduleTeamKey}
       className="pt-1"
     />
   );
