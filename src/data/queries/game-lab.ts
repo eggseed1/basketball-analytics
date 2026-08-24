@@ -8,9 +8,12 @@ import { analyzeGame, type GameAnalysisSummary } from "@/analytics/game-lab";
 import {
   type GameSeasonContext,
 } from "@/analytics/game-season-context";
-import { getGameShellCached, getFilteredPlayerSeasonsCached } from "@/data/queries/request-cache";
+import {
+  getGameShellCached,
+  getFilteredPlayerSeasonsCached,
+  getTeamSeasonStatsCached,
+} from "@/data/queries/request-cache";
 import { getTeam } from "@/data/queries/teams";
-import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import { getGamePlayByPlay } from "@/data/queries/games";
 import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
@@ -146,7 +149,6 @@ async function resolveSideLabels(
   const brand = resolveTeamBrand(brandKey);
   const canonical = resolveCanonicalTeam(teamId);
   const fromBrandKey = resolveCanonicalTeam(brandKey);
-  // themeKey = franchise/canonical id for board joins - not historical abbr.
   const lookupId =
     (canonical.status === "resolved"
       ? canonical.team.canonicalTeamId
@@ -158,7 +160,6 @@ async function resolveSideLabels(
     brand?.id ??
     teamId;
   const team = await getTeam(lookupId).catch(() => null);
-  // Season-aware era wins over stored anachronistic provider labels.
   const era = game.season
     ? teamEraDisplay(lookupId, game.season, {
         abbr: abbr ?? undefined,
@@ -189,7 +190,8 @@ async function resolveSideLabels(
 
 /**
  * Build Game Lab analysis for one game.
- * Returns null only when no scoreboard/schedule/box game can be resolved.
+ * Core shell/PBP and optional season enrichments are started concurrently so a
+ * cold production process does not serialize several independent upstreams.
  */
 export async function getGameAnalysis(
   gameId: string
@@ -202,20 +204,26 @@ export async function getGameAnalysis(
     shell.game.teamIdProvider ?? inferGameTeamProvider(shell.game)
   );
   const { players, availability } = shell;
-
   const needPlayerBoard = players.length > 0;
-  const playByPlay = await getGamePlayByPlay(gameId).catch(() => null);
+
+  const playByPlayPromise = getGamePlayByPlay(gameId).catch(() => null);
+  const seasonBoardPromise = needPlayerBoard
+    ? getFilteredPlayerSeasonsCached(game.season, 5).catch(
+        () => [] as PlayerSeason[]
+      )
+    : Promise.resolve([] as PlayerSeason[]);
+  const teamBoardPromise = getTeamSeasonStatsCached(game.season).catch(
+    () => [] as TeamSeasonStats[]
+  );
+
+  const playByPlay = await playByPlayPromise;
   const orientedGame = alignGameWithPbpHomeAway(game, playByPlay);
 
   const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([
     resolveSideLabels(orientedGame, "home"),
     resolveSideLabels(orientedGame, "away"),
-    needPlayerBoard
-      ? getFilteredPlayerSeasonsCached(orientedGame.season, 5).catch(
-          () => [] as PlayerSeason[]
-        )
-      : Promise.resolve([] as PlayerSeason[]),
-    getTeamSeasonStats(orientedGame.season).catch(() => [] as TeamSeasonStats[]),
+    seasonBoardPromise,
+    teamBoardPromise,
   ]);
 
   const seasonByPlayerId = new Map<string, PlayerSeason>();
