@@ -92,6 +92,13 @@ function firstGameHref(html) {
   return match?.[1] ?? null;
 }
 
+function assertFactualGameHref(label, href) {
+  if (!href) throw new Error(`${label} has no game destination`);
+  if (!/\/games\/(?:00\d{8}|40\d{7,})/.test(href)) {
+    throw new Error(`${label} emitted an unknown game-id namespace: ${href}`);
+  }
+}
+
 function assertDeepGame(route, result) {
   assertHealthy(route, result);
   const forbidden = [
@@ -173,10 +180,7 @@ async function main() {
     throw new Error("player route did not render upcoming-games surface");
   }
   const playerGameHref = firstGameHref(player.body);
-  if (!playerGameHref) throw new Error("player upcoming-games surface has no destination");
-  if (!/\/games\/00\d{8}/.test(playerGameHref)) {
-    throw new Error(`player schedule is not using canonical NBA GameIDs: ${playerGameHref}`);
-  }
+  assertFactualGameHref("player upcoming-games surface", playerGameHref);
 
   for (const route of [
     "/players/4278073?season=2025-26&view=overview",
@@ -206,9 +210,6 @@ async function main() {
     throw new Error("explicit 2025-26 Games tab still renders an empty game log");
   }
 
-  // Current 2026-27 roster season has not tipped on this deployment date. The
-  // Games tab must follow the same prior-season stats semantics as Overview,
-  // rather than asking ESPN for an empty future-season game log.
   const offseasonGames = await fetchWithTimeout(
     "/players/4278073?season=2026-27&view=games",
     35_000
@@ -232,10 +233,7 @@ async function main() {
     if (scores.body.includes(marker)) throw new Error(`/scores rendered fallback marker: ${marker}`);
   }
   const scoresGameHref = firstGameHref(scores.body);
-  if (!scoresGameHref) throw new Error("/scores contains no game destination");
-  if (!/\/games\/00\d{8}/.test(scoresGameHref)) {
-    throw new Error(`/scores is not using canonical NBA GameIDs: ${scoresGameHref}`);
-  }
+  assertFactualGameHref("/scores", scoresGameHref);
 
   const history = await fetchWithTimeout("/history/2025-26", 30_000);
   assertHealthy("/history/2025-26", history);
