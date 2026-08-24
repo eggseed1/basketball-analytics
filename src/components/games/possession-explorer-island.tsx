@@ -45,7 +45,7 @@ export async function PossessionExplorerIsland({
         {
           status: "unavailable",
           gameId,
-          reason: possessionBudget.timedOut ? "pbp_timeout" : "pbp_fetch_failed",
+          reason: "pbp_fetch_failed",
           message: possessionBudget.timedOut
             ? "Play-by-play took too long to load for this game."
             : "Play-by-play fetch failed for this game.",
