@@ -1,8 +1,13 @@
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { PlayerGameLogBoard } from "@/components/players/player-game-log-board";
-import { getPlayerGameLogCached } from "@/data/queries/request-cache";
+import {
+  getPlayerCareerSeasonsCached,
+  getPlayerGameLogCached,
+} from "@/data/queries/request-cache";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import type { PlayerSeasonKind } from "@/lib/player-destination";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -20,8 +25,17 @@ export async function PlayerGamesIsland({
   seasonType?: PlayerSeasonKind;
   teamKey?: string | null;
 }) {
-  const log = await getPlayerGameLogCached(playerId, season);
-  const gameLog = log.filter((g) => (g.seasonType ?? "regular") === seasonType);
+  // Keep the Games tab on the same season semantics as Overview/Advanced.
+  // During the offseason/pre-tip window, the selected roster season may be the
+  // upcoming campaign while the latest factual game log is the prior season.
+  const career = await getPlayerCareerSeasonsCached(playerId).catch(() => []);
+  const statsCtx = resolvePlayerStatsSeason(career, season);
+  const effectiveSeason = statsCtx.statsSeason;
+
+  const log = await getPlayerGameLogCached(playerId, effectiveSeason);
+  const gameLog = log.filter(
+    (g) => (g.seasonType ?? "regular") === seasonType
+  );
   const wash = brandAtmosphereColors(
     resolveTeamBrand(teamKey)?.primary,
     resolveTeamBrand(teamKey)?.secondary
@@ -44,9 +58,15 @@ export async function PlayerGamesIsland({
             Game Lab.
           </p>
         </div>
+        {statsCtx.usingPriorSeasonStats ? (
+          <PriorSeasonStatsNotice
+            requestSeason={statsCtx.requestSeason}
+            statsSeason={effectiveSeason}
+          />
+        ) : null}
         <PlayerGameLogBoard
           games={gameLog}
-          season={season}
+          season={effectiveSeason}
           seasons={seasons}
           seasonType={seasonType}
           seasonTypeLabel={kindLabel}
