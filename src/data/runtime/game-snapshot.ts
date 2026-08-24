@@ -1,5 +1,4 @@
-import { readFileSync } from "node:fs";
-import path from "node:path";
+import snapshot from "./game-snapshot.json";
 
 import type { Game } from "@/data/types";
 
@@ -10,28 +9,16 @@ export type RuntimeGameSnapshot = {
   games: Game[];
 };
 
-function loadSnapshot(): RuntimeGameSnapshot {
-  // Keep this off the JS module graph so Cloudflare Workers script size stays
-  // under the free-plan limit. File is still shipped via output file tracing.
-  const filePath = path.join(
-    /* turbopackIgnore: true */ process.cwd(),
-    "src/data/runtime/game-snapshot.json"
-  );
-  try {
-    const raw = readFileSync(filePath, "utf8");
-    const parsed = JSON.parse(raw) as RuntimeGameSnapshot;
-    if (Array.isArray(parsed?.games)) return parsed;
-  } catch {
-    // Fall through to empty snapshot when the file is unavailable.
-  }
-  return {
-    generatedAt: null,
-    source: "missing-runtime-snapshot",
-    games: [],
-  };
-}
-
-const data = loadSnapshot();
+/**
+ * Build-time ESPN schedule snapshot.
+ *
+ * IMPORTANT (Cloudflare Workers / OpenNext): do NOT load this via `node:fs`.
+ * Workers' virtual FS is ephemeral and does not mount OpenNext traced files, so
+ * `readFileSync(process.cwd()/...)` silently returns empty and empties Scores /
+ * Upcoming / player schedule surfaces. Keep the JSON on the module graph so it
+ * is inlined into the Worker script (≈100 KiB gzip).
+ */
+const data = snapshot as RuntimeGameSnapshot;
 const games = Array.isArray(data.games) ? data.games : [];
 const byId = new Map(games.map((game) => [String(game.id), game] as const));
 

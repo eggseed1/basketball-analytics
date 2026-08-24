@@ -194,7 +194,7 @@ export type GameShell = {
   players: PlayerGame[];
   availability: GameShellAvailability;
   /** Where the Game row came from when box was absent. */
-  source: "box" | "historical" | "provider";
+  source: "box" | "historical" | "provider" | "runtime-snapshot";
   hasBoxScore: boolean;
   hasPeriodScores: boolean;
 };
@@ -232,7 +232,7 @@ function shellFromBox(box: GameBoxScore): GameShell {
 
 function shellFromGame(
   game: Game,
-  source: "historical" | "provider"
+  source: "historical" | "provider" | "runtime-snapshot"
 ): GameShell {
   const hasPeriodScores = Boolean(
     game.homePeriodScores?.length && game.awayPeriodScores?.length
@@ -270,6 +270,15 @@ function acceptShell(shell: GameShell | null): GameShell | null {
 export async function getGameShell(gameId: string): Promise<GameShell | null> {
   const id = String(gameId ?? "").trim();
   if (!id) return null;
+
+  // Build-time schedule snapshot (critical on Cloudflare Workers where live
+  // ESPN + node:fs-backed archives are unreliable / unavailable).
+  const { getRuntimeSnapshotGame } = await import("@/data/runtime/game-snapshot");
+  const fromSnapshot = getRuntimeSnapshotGame(id);
+  if (fromSnapshot) {
+    const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
+    if (shell) return shell;
+  }
 
   // Local raw archive first for NBA GameIDs — complete teams/scores without inventing shells.
   if (looksLikeNbaStatsGameId(id)) {
@@ -751,11 +760,50 @@ export async function getUpcomingGameSummaries(
 }> {
   const { getUpcomingScoreboardFeed } = await import("./scoreboard-feed");
   const feed = await getUpcomingScoreboardFeed(options);
+  if (feed.data.games.length > 0 || feed.source !== "unavailable") {
+    return {
+      ...feed.data,
+      source: feed.source,
+      warnings: feed.warnings,
+      isStale: feed.isStale,
+    };
+  }
+
+  // Cloudflare / cold hosts: live ESPN soft-fails with empty process cache.
+  // Fall back to the build-time snapshot so team/player upcoming never blanks.
+  const { getRuntimeSnapshotGames } = await import("@/data/runtime/game-snapshot");
+  const { upcomingScheduleSeason } = await import(
+    "@/data/providers/nba/scoreboard-client"
+  );
+  const { isPreTipStatus } = await import("@/lib/game-status");
+  const season = options.season ?? upcomingScheduleSeason();
+  const today = options.fromDate ?? new Date().toISOString().slice(0, 10);
+  const limit = options.limit ?? 40;
+  let pool = getRuntimeSnapshotGames(season)
+    .filter(
+      (game) =>
+        game.gameDate >= today &&
+        (isPreTipStatus(game.status) || game.status === "in_progress")
+    )
+    .sort((a, b) =>
+      (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
+    );
+  if (options.afterTipOffAt) {
+    pool = pool.filter((game) => {
+      const tip = game.tipOffAt ?? `${game.gameDate}T00:00:00Z`;
+      if (tip > options.afterTipOffAt!) return true;
+      if (tip < options.afterTipOffAt!) return false;
+      return options.afterId ? game.id > options.afterId : false;
+    });
+  }
+  const slice = pool.slice(0, limit);
   return {
-    ...feed.data,
-    source: feed.source,
-    warnings: feed.warnings,
-    isStale: feed.isStale,
+    season,
+    games: slice.map(toGameSummary),
+    hasMore: pool.length > limit,
+    source: "cached-espn",
+    warnings: ["Showing build-time schedule snapshot — live ESPN unavailable."],
+    isStale: true,
   };
 }
 
