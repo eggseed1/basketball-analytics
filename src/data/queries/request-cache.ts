@@ -16,6 +16,12 @@ import {
   getTeamRoster as getTeamRosterUncached,
 } from "@/data/queries/players";
 import { getPlayerCriticalCareerSeasons } from "@/data/queries/player-critical";
+import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import type { Player, PlayerGame, PlayerSeason } from "@/data/types";
 import {
   getTeamSeasonBoard as getTeamSeasonBoardUncached,
@@ -74,6 +80,32 @@ export const getPlayerGameLogCached = cache(
   }
 );
 
+async function currentTeamFallbackRow(playerId: string): Promise<PlayerSeason[]> {
+  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (!isPreseasonRosterSeason(season)) return [];
+
+  const player = await getPlayerCached(playerId).catch(() => null);
+  const teamId = String(player?.currentTeamId ?? "").trim();
+  if (!player || !teamId) return [];
+
+  return [
+    withPlayerSeasonDefaults({
+      playerId,
+      playerName: player.fullName,
+      teamId,
+      teamName: teamId,
+      teamIdProvider: "espn",
+      providerTeamId: teamId,
+      season,
+      position: player.position,
+      age: player.age,
+      gamesPlayed: 0,
+      gamesStarted: 0,
+      minutes: 0,
+    }),
+  ];
+}
+
 /**
  * Critical player-page career rows only: factual ESPN/history counting data.
  * Optional impact and roster overlays stream inside their own Suspense islands.
@@ -84,7 +116,13 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
     runtimeTimeoutMs(7_000, 3_400),
     [] as PlayerSeason[]
   );
-  return result.value;
+  if (result.value.length > 0) return result.value;
+
+  // During the July-September league-year gap, a slow career endpoint used to
+  // erase the current-team row entirely. That made the player schedule card
+  // disappear even though the faster ESPN profile had a verified current team.
+  // Keep only the explicit zero-GP identity shell; never invent season stats.
+  return currentTeamFallbackRow(playerId);
 });
 
 /**
