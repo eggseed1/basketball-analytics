@@ -2,7 +2,7 @@ import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
-import { SentimentTrendChart } from "@/components/players/sentiment-trend-chart";
+import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import { LeagueMoodCharts } from "@/components/sentiment/league-mood-charts";
 import { TrackedPlayersBoard } from "@/components/sentiment/tracked-players-board";
 import type {

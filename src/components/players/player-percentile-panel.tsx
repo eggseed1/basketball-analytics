@@ -34,10 +34,8 @@ import { useSetPlayerViewSeason } from "@/components/players/player-view-season"
 import { StatTooltip } from "@/components/ui/stat-tooltip";
 import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
-import {
-  CareerTeamTrendChart,
-  type CareerSeriesPoint,
-} from "@/components/players/career-team-trend-chart";
+import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
+import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
 import { resolveTeamBrand, teamChartColor } from "@/lib/nba-brand";
 import type { StatComp } from "@/lib/player-stat-comps";
 import type { PlayerCardStint } from "@/lib/player-team-context";

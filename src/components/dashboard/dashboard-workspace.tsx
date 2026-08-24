@@ -3,9 +3,11 @@
 import Link from "next/link";
 import { useMemo, useState } from "react";
 
-import { CategoryBarBoard } from "@/components/dashboard/category-bar-board";
-import { HistogramBoard } from "@/components/dashboard/histogram-board";
-import { ScatterBoard } from "@/components/dashboard/scatter-board";
+import {
+  CategoryBarBoardLazy as CategoryBarBoard,
+  HistogramBoardLazy as HistogramBoard,
+  ScatterBoardLazy as ScatterBoard,
+} from "@/components/charts/recharts-lazy";
 import { AnalysisBoard } from "@/components/dashboard/analysis-board";
 import {
   Table,

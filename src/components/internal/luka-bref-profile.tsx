@@ -13,7 +13,7 @@ import {
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
-import { CareerTeamTrendChart } from "@/components/players/career-team-trend-chart";
+import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
 import { TextLink } from "@/components/ui/text-link";
 import { LukaShotMapView } from "@/components/internal/luka-shot-map";

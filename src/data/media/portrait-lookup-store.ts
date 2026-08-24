@@ -26,9 +26,15 @@ export function loadPortraitLookup(): PortraitLookupFile | null {
   if (cache !== undefined) return cache;
   const root = process.cwd();
   const candidates = [
-    path.join(root, "src", "data", "media", "portrait-lookup.json"),
     path.join(
-      root,
+      /* turbopackIgnore: true */ root,
+      "src",
+      "data",
+      "media",
+      "portrait-lookup.json"
+    ),
+    path.join(
+      /* turbopackIgnore: true */ root,
       "data",
       "drbl",
       "player-media",
@@ -36,7 +42,7 @@ export function loadPortraitLookup(): PortraitLookupFile | null {
       "portrait-lookup.json"
     ),
     path.join(
-      root,
+      /* turbopackIgnore: true */ root,
       "data",
       "drbl",
       "player-media",

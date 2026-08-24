@@ -4,6 +4,10 @@ import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
+  // Keep icon / chart trees out of shared server chunks where possible.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "recharts"],
+  },
   async redirects() {
     return [
       {

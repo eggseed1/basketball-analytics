@@ -6,7 +6,7 @@ import {
 } from "@/components/brand/glass-surface";
 import { MovementRumorPanel } from "@/components/players/movement-rumor-panel";
 import { PlayerSentimentGraph } from "@/components/players/player-sentiment-graph";
-import { SentimentTrendChart } from "@/components/players/sentiment-trend-chart";
+import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import type { PlayerMovementBundle } from "@/movement-center/types";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";

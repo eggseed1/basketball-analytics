@@ -4,7 +4,7 @@ import {
 } from "@/analytics";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
-import { PlayerCareerResume } from "@/components/players/player-career-resume";
+import { PlayerCareerResumeLazy as PlayerCareerResume } from "@/components/charts/recharts-lazy";
 import { PlayerSeasonSideCompare } from "@/components/players/player-season-side-compare";
 import type { PlayerSeason } from "@/data/types";
 import {

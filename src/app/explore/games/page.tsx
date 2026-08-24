@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 
-import { GameScoringScatter } from "@/components/charts/game-scoring-scatter";
+import { GameScoringScatterLazy as GameScoringScatter } from "@/components/charts/recharts-lazy";
 import { ExploreGamesClientShell } from "@/components/explore/explore-games-client-shell";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";

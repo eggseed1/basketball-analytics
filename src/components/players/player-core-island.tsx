@@ -13,7 +13,7 @@ import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { PlayerCareerResume } from "@/components/players/player-career-resume";
+import { PlayerCareerResumeLazy as PlayerCareerResume } from "@/components/charts/recharts-lazy";
 import { PlayerContextStrip } from "@/components/players/player-context-strip";
 import {
   MiniStat,

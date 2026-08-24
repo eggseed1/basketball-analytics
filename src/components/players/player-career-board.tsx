@@ -3,10 +3,8 @@
 import { useMemo, useState, type ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
-import {
-  CareerTeamTrendChart,
-  type CareerSeriesPoint,
-} from "@/components/players/career-team-trend-chart";
+import { CareerTeamTrendChartLazy as CareerTeamTrendChart } from "@/components/charts/recharts-lazy";
+import type { CareerSeriesPoint } from "@/components/players/career-team-trend-chart";
 import {
   Select,
   SelectContent,
