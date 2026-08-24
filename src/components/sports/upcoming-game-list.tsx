@@ -66,7 +66,7 @@ function ListBoard({ games }: { games: GameSummary[] }) {
   if (!games.length) {
     return (
       <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-        No upcoming games on the ESPN scoreboard yet.
+        No upcoming NBA games are available yet.
       </p>
     );
   }
@@ -110,18 +110,24 @@ function ListBoard({ games }: { games: GameSummary[] }) {
 /**
  * Upcoming scoreboard list - prefetches the next page and appends as you
  * approach the bottom, instead of a full document navigation.
+ *
+ * `games` is a compatibility alias for the NBA-schedule-first Gamefeed. The
+ * canonical prop remains `initialGames` so existing callers are unchanged.
  */
 export function UpcomingGameList({
   initialGames,
+  games: gamesProp,
   hasMore: initialHasMore,
-  season,
+  season = "",
 }: {
-  initialGames: GameSummary[];
+  initialGames?: GameSummary[];
+  games?: GameSummary[];
   hasMore: boolean;
-  season: string;
+  season?: string;
 }) {
-  const initialKey = initialGames.map((g) => g.id).join(",");
-  const [games, setGames] = useState(initialGames);
+  const seedGames = initialGames ?? gamesProp ?? [];
+  const initialKey = seedGames.map((g) => g.id).join(",");
+  const [games, setGames] = useState(seedGames);
   const [hasMore, setHasMore] = useState(initialHasMore);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -134,7 +140,7 @@ export function UpcomingGameList({
   const cursor = upcomingCursorFromGames(games);
 
   useEffect(() => {
-    setGames(initialGames);
+    setGames(seedGames);
     setHasMore(initialHasMore);
     setError(null);
     prefetchRef.current = null;
@@ -192,36 +198,36 @@ export function UpcomingGameList({
   return (
     <div className="flex flex-col gap-4">
       <LiveScoreboardScope games={games} season={season}>
-      {(liveGames) => (
-        <>
-          <ListBoard games={liveGames} />
-          {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
-          {loading ? (
-            <p className="text-center text-[12px] text-muted-foreground">
-              Loading more games…
-            </p>
-          ) : null}
-          {error ? (
-            <button
-              type="button"
-              onClick={() => void loadMore()}
-              className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
-            >
-              Couldn’t load more - try again
-            </button>
-          ) : null}
-          {liveGames.length ? (
-            <p className="text-[12px] text-muted-foreground">
-              Showing {liveGames.length} upcoming game
-              {liveGames.length === 1 ? "" : "s"}
-              {hasMore ? " · more appear as you scroll" : ""}
-              {" · "}
-              live games refresh without reloading
-            </p>
-          ) : null}
-        </>
-      )}
-    </LiveScoreboardScope>
+        {(liveGames) => (
+          <>
+            <ListBoard games={liveGames} />
+            {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
+            {loading ? (
+              <p className="text-center text-[12px] text-muted-foreground">
+                Loading more games…
+              </p>
+            ) : null}
+            {error ? (
+              <button
+                type="button"
+                onClick={() => void loadMore()}
+                className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
+              >
+                Couldn’t load more - try again
+              </button>
+            ) : null}
+            {liveGames.length ? (
+              <p className="text-[12px] text-muted-foreground">
+                Showing {liveGames.length} upcoming game
+                {liveGames.length === 1 ? "" : "s"}
+                {hasMore ? " · more appear as you scroll" : ""}
+                {" · "}
+                live games refresh without reloading
+              </p>
+            ) : null}
+          </>
+        )}
+      </LiveScoreboardScope>
     </div>
   );
 }
