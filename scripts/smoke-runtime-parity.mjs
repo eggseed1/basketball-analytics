@@ -55,8 +55,10 @@ async function main() {
   if (team.body.includes("Season board unavailable for 2025-26")) {
     throw new Error("team season board is still unavailable in Vercel runtime");
   }
-  if (!team.body.includes("How good are they?")) {
-    throw new Error("team analytical overview did not render");
+  for (const marker of ["Strengths and weaknesses", "Offense profile", "Defense profile", "Four factors"]) {
+    if (!team.body.includes(marker)) {
+      throw new Error(`team analytical overview is missing: ${marker}`);
+    }
   }
 
   const gameRoute = "/games/401811018?season=2025-26";
