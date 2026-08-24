@@ -21,24 +21,35 @@ export async function PlayerContractTransactionsIsland({
   historicalBrand?: HistoricalTeamBrand | null;
   honor?: GlassSurfaceHonor;
 }) {
-  const contract = await getPlayerContractSnapshot(playerId, teamKey);
-  if (!contract) return null;
+  try {
+    const contract = await getPlayerContractSnapshot(playerId, teamKey);
+    if (!contract) return null;
 
-  const modernBrand = resolveTeamBrand(teamKey);
-  const wash = brandAtmosphereColors(
-    historicalBrand?.palette?.primary ?? modernBrand?.primary,
-    historicalBrand?.palette?.secondary ?? modernBrand?.secondary
-  );
+    const modernBrand = resolveTeamBrand(teamKey);
+    const wash = brandAtmosphereColors(
+      historicalBrand?.palette?.primary ?? modernBrand?.primary,
+      historicalBrand?.palette?.secondary ?? modernBrand?.secondary
+    );
 
-  return (
-    <GlassSurface
-      accentColor={wash?.colorA}
-      accentColorB={wash?.colorB}
-      className="relative min-w-0 p-0"
-      effect="css"
-      honor={honor}
-    >
-      <PlayerContractTransactions contract={contract} />
-    </GlassSurface>
-  );
+    return (
+      <GlassSurface
+        accentColor={wash?.colorA}
+        accentColorB={wash?.colorB}
+        className="relative min-w-0 p-0"
+        effect="css"
+        honor={honor}
+      >
+        <PlayerContractTransactions contract={contract} />
+      </GlassSurface>
+    );
+  } catch (error) {
+    // This card is optional. A salary snapshot or roster outage must never
+    // reject the player page's streamed RSC response.
+    console.error("[player-contract] optional island failed", {
+      playerId,
+      teamKey,
+      error: error instanceof Error ? error.message : String(error),
+    });
+    return null;
+  }
 }
