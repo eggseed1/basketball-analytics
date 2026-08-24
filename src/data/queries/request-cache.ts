@@ -6,6 +6,8 @@
 import { cache } from "react";
 
 import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
+import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
 import { withBudget } from "@/data/queries/budget";
 import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
@@ -22,7 +24,13 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
-import type { Player, PlayerGame, PlayerSeason } from "@/data/types";
+import type {
+  Game,
+  GameBoxScore,
+  Player,
+  PlayerGame,
+  PlayerSeason,
+} from "@/data/types";
 import {
   getTeamSeasonBoard as getTeamSeasonBoardUncached,
   getTeamSeasonStats as getTeamSeasonStatsUncached,
@@ -31,6 +39,10 @@ import {
   getGameShell as getGameShellUncached,
   getSeasonGamesArchive as getSeasonGamesArchiveUncached,
   getTeamSeasonGames as getTeamSeasonGamesUncached,
+  looksLikeEspnEventId,
+  looksLikeNbaStatsGameId,
+  upcomingScheduleSeason,
+  type GameShell,
 } from "@/data/queries/games";
 import { getHomeAnalytics as getHomeAnalyticsUncached } from "@/data/queries/home";
 
@@ -166,18 +178,82 @@ export const getTeamSeasonGamesCached = cache(
     getTeamSeasonGamesUncached({ teamId, season, abbreviation })
 );
 
+function shellFromFallbackBox(box: GameBoxScore): GameShell {
+  const hasBoxScore = box.players.some(
+    (player) =>
+      player.minutes > 0 ||
+      player.points > 0 ||
+      player.fieldGoalsAttempted > 0
+  );
+  const hasPeriodScores = Boolean(
+    box.game.homePeriodScores?.length && box.game.awayPeriodScores?.length
+  );
+  return {
+    game: box.game,
+    players: box.players,
+    availability: hasBoxScore
+      ? hasPeriodScores
+        ? "full"
+        : "partial"
+      : hasPeriodScores
+        ? "partial"
+        : "scoreboard",
+    source: "box",
+    hasBoxScore,
+    hasPeriodScores,
+  };
+}
+
+function shellFromFallbackGame(game: Game): GameShell {
+  const hasPeriodScores = Boolean(
+    game.homePeriodScores?.length && game.awayPeriodScores?.length
+  );
+  return {
+    game,
+    players: [],
+    availability: hasPeriodScores ? "partial" : "scoreboard",
+    source: "provider",
+    hasBoxScore: false,
+    hasPeriodScores,
+  };
+}
+
+async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
+  if (looksLikeEspnEventId(gameId)) {
+    const box = await fetchEspnCdnGameBoxScore(gameId).catch(() => null);
+    return box?.game ? shellFromFallbackBox(box) : null;
+  }
+
+  if (looksLikeNbaStatsGameId(gameId)) {
+    const game = await findNbaCdnGame(gameId, upcomingScheduleSeason()).catch(
+      () => null
+    );
+    return game ? shellFromFallbackGame(game) : null;
+  }
+
+  return null;
+}
+
 /**
- * Game identity must also fail open. Deep play-by-play and analysis already
- * stream later; a blocked summary endpoint should become an unavailable shell,
- * not a serverless timeout.
+ * Game identity must fail open across provider hosts. `site.api.espn.com` and
+ * `stats.nba.com` are both known to be unreliable from Vercel egress. Keep the
+ * original matching-provider lookup first, then use independent CDN providers
+ * in the same id namespace before declaring a valid game unavailable.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  const result = await withBudget(
+  const primary = await withBudget(
     getGameShellUncached(gameId).catch(() => null),
-    runtimeTimeoutMs(9_000, 4_800),
-    null
+    runtimeTimeoutMs(9_000, 4_000),
+    null as GameShell | null
   );
-  return result.value;
+  if (primary.value) return primary.value;
+
+  const fallback = await withBudget(
+    fallbackGameShell(gameId),
+    runtimeTimeoutMs(7_000, 3_500),
+    null as GameShell | null
+  );
+  return fallback.value;
 });
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
