@@ -52,6 +52,54 @@ async function main() {
   assert.match(percentile, /Percentile ranking unavailable/);
   assert.match(percentile, /catch \(error\)/);
 
+  // Player routes use ESPN athlete ids, while validated payroll snapshots use
+  // NBA PERSON_IDs. The optional contract island must resolve the alias before
+  // lookup and must never fall back to a league-wide live roster crawl.
+  const contractQuery = source("src/data/queries/player-front-office.ts");
+  assert.match(contractQuery, /resolvePlayerIdentityCached/);
+  assert.match(contractQuery, /identity\?\.nbaId/);
+  assert.match(contractQuery, /loadTeamFrontOfficeSlice/);
+  assert.match(contractQuery, /if \(!franchiseId\) return null/);
+  assert.doesNotMatch(contractQuery, /listCanonicalTeams/);
+  assert.doesNotMatch(contractQuery, /for \(const team of/);
+
+  const contractIsland = source(
+    "src/components/players/player-contract-transactions-island.tsx"
+  );
+  assert.match(contractIsland, /try \{/);
+  assert.match(contractIsland, /catch \(error\)/);
+  assert.match(contractIsland, /return null/);
+
+  const frontOfficeLoader = source(
+    "src/data/front-office/load-team-front-office.ts"
+  );
+  assert.match(frontOfficeLoader, /if \(!liveFrontOfficeEnabled\(\)\) return cached/);
+  assert.match(frontOfficeLoader, /live roster refresh failed/);
+
+  const aliases = JSON.parse(
+    source("data/impact/player-id-aliases.json")
+  ) as {
+    aliases: Array<{
+      espnPlayerId: string;
+      nbaPlayerId: string;
+      productionApproved?: boolean;
+    }>;
+  };
+  const sgaAlias = aliases.aliases.find(
+    (row) => row.espnPlayerId === "4278073"
+  );
+  assert.equal(sgaAlias?.nbaPlayerId, "1628983");
+  assert.equal(sgaAlias?.productionApproved, true);
+
+  const okc = JSON.parse(source("data/front-office/v1/teams/25.json")) as {
+    team: { payroll: { contractRows: Array<{ playerId: string }> } };
+  };
+  const okcIds = new Set(
+    okc.team.payroll.contractRows.map((row) => row.playerId)
+  );
+  assert.equal(okcIds.has("1628983"), true);
+  assert.equal(okcIds.has("4278073"), false);
+
   for (const path of [
     "src/app/error.tsx",
     "src/app/global-error.tsx",
