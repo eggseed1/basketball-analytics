@@ -97,23 +97,20 @@ export async function statsNbaFetch(
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
 
-  // Vercel serverless egress is routinely blocked by stats.nba.com. Failing
-  // immediately lets ESPN/local/history fallbacks render instead of holding a
-  // player request open for multiple 4-second network timeouts.
-  // Still allow shared-cache hits via sharedGetOrSet memory/Data Cache L1/L2
-  // when a prior warm instance populated them — only skip the network factory.
-  if (!statsNbaNetworkEnabled()) {
-    const cached = sharedPeek<StatsNbaResponse>(`stats.nba:${url}`);
-    if (cached) return cached;
-    throw new Error(
-      `stats.nba.com disabled on Vercel critical path: ${endpoint}`
-    );
-  }
-
+  // Vercel serverless egress is routinely blocked by stats.nba.com. Still go
+  // through sharedGetOrSet so warm Data Cache hits can serve; the factory
+  // fails fast when a network miss would otherwise hang the critical path.
   return sharedGetOrSet(
     `stats.nba:${url}`,
     { ttlMs, staleMs, tags: ["stats-nba", endpoint] },
-    () => fetchStatsNba(url, options)
+    async () => {
+      if (!statsNbaNetworkEnabled()) {
+        throw new Error(
+          `stats.nba.com disabled on Vercel critical path: ${endpoint}`
+        );
+      }
+      return fetchStatsNba(url, options);
+    }
   );
 }
 
