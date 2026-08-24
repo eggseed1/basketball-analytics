@@ -126,8 +126,12 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.turnoverPct) row.turnoverPct = p.turnoverPct;
   row.threePointersAttempted = p.threePointersAttempted;
   row.freeThrowsAttempted = p.freeThrowsAttempted;
-  row.offensiveRebounds = p.offensiveRebounds;
-  row.defensiveRebounds = p.defensiveRebounds;
+  if (p.offensiveRebounds != null && Number.isFinite(p.offensiveRebounds)) {
+    row.offensiveRebounds = p.offensiveRebounds;
+  }
+  if (p.defensiveRebounds != null && Number.isFinite(p.defensiveRebounds)) {
+    row.defensiveRebounds = p.defensiveRebounds;
+  }
   if (hasValidDrblEstimate(p)) {
     row.drbl100 = p.drbl100;
     row.r1Points = p.r1Points ?? null;

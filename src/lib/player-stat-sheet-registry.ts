@@ -8,6 +8,7 @@ import { formatNumber, formatPct } from "@/lib/format";
 
 export type SheetStatCategory =
   | "counting"
+  | "hustle"
   | "shooting"
   | "rates"
   | "advanced"
@@ -77,7 +78,13 @@ export type SheetStatId =
   | "war1"
   | "drbl100"
   | "drblO"
-  | "drblD";
+  | "drblD"
+  | "hustleDefl"
+  | "hustleContest"
+  | "hustleScrAst"
+  | "hustleChrg"
+  | "hustleLoose"
+  | "hustleBoxOut";
 
 export type SheetStatDef = {
   id: SheetStatId;
@@ -94,6 +101,7 @@ export const SHEET_STAT_CATEGORY_CHIPS: Array<{
 }> = [
   { id: "all", label: "All" },
   { id: "counting", label: "Counting" },
+  { id: "hustle", label: "Hustle" },
   { id: "shooting", label: "Shooting" },
   { id: "rates", label: "Rates" },
   { id: "advanced", label: "Advanced" },
@@ -107,6 +115,7 @@ export const SHEET_STAT_CATEGORY_CHIPS: Array<{
 export const PERCENTILE_CATEGORY_ORDER: SheetStatCategory[] = [
   "impact",
   "counting",
+  "hustle",
   "shooting",
   "rates",
   "advanced",
@@ -142,6 +151,12 @@ export const PERCENTILE_LABEL_BY_SHEET_ID: Partial<Record<SheetStatId, string>> 
     drtg: "DRtg",
     net: "NET",
     plusMinus: "+/-",
+    hustleDefl: "Deflections",
+    hustleContest: "Contested shots",
+    hustleScrAst: "Screen assists",
+    hustleChrg: "Charges drawn",
+    hustleLoose: "Loose balls",
+    hustleBoxOut: "Box outs",
   };
 
 export type PercentileCategory = SheetStatCategory;
@@ -238,6 +253,12 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
   { id: "drbl100", label: "DRBL", category: "impact", kind: "rate" },
   { id: "drblO", label: "DRBL-O", category: "impact", kind: "rate" },
   { id: "drblD", label: "DRBL-D", category: "impact", kind: "rate" },
+  { id: "hustleDefl", label: "Defl", category: "hustle", kind: "count" },
+  { id: "hustleContest", label: "Contest", category: "hustle", kind: "count" },
+  { id: "hustleScrAst", label: "ScrAst", category: "hustle", kind: "count" },
+  { id: "hustleChrg", label: "Chrg", category: "hustle", kind: "count" },
+  { id: "hustleLoose", label: "Loose", category: "hustle", kind: "count" },
+  { id: "hustleBoxOut", label: "BoxOut", category: "hustle", kind: "count" },
 ];
 
 export const SHEET_STAT_BY_ID = Object.fromEntries(
@@ -493,6 +514,28 @@ export function getSheetStatValue(
       return row.drblO !== 0 ? finiteNum(row.drblO) : null;
     case "drblD":
       return row.drblD !== 0 ? finiteNum(row.drblD) : null;
+    case "hustleDefl":
+      return row.hustleDeflections != null
+        ? count(row.hustleDeflections)
+        : null;
+    case "hustleContest":
+      return row.hustleContestedShots != null
+        ? count(row.hustleContestedShots)
+        : null;
+    case "hustleScrAst":
+      return row.hustleScreenAssists != null
+        ? count(row.hustleScreenAssists)
+        : null;
+    case "hustleChrg":
+      return row.hustleChargesDrawn != null
+        ? count(row.hustleChargesDrawn)
+        : null;
+    case "hustleLoose":
+      return row.hustleLooseBallsRecovered != null
+        ? count(row.hustleLooseBallsRecovered)
+        : null;
+    case "hustleBoxOut":
+      return row.hustleBoxOuts != null ? count(row.hustleBoxOuts) : null;
     default:
       return null;
   }
@@ -530,7 +573,7 @@ export function visibleSheetStats(
   mode: SheetRateMode = "perGame"
 ): SheetStatDef[] {
   return sheetStatsForCategory(category).filter((def) => {
-    if (def.category !== "impact") return true;
+    if (def.category !== "impact" && def.category !== "hustle") return true;
     return sheetStatHasAnyValue(rows, def.id, mode);
   });
 }

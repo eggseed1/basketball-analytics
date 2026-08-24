@@ -40,6 +40,7 @@ export interface EspnAthleteCard {
   lastName?: string;
   displayName: string;
   position?: { abbreviation?: string };
+  age?: number;
   teamId?: string;
   teamName?: string;
   teamShortName?: string;
@@ -240,6 +241,9 @@ export function transformEspnPlayerSeason(
       "Unknown",
     season,
     position: mapEspnPosition(athlete.position?.abbreviation),
+    ...(typeof athlete.age === "number" && athlete.age > 0
+      ? { age: athlete.age }
+      : {}),
     gamesPlayed,
     minutes,
     points,

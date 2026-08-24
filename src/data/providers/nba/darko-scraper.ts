@@ -1,17 +1,14 @@
 import {
+  sharedClearPrefix,
+  sharedGetOrSet,
+  sharedPeek,
+} from "@/data/cache/shared-ttl-cache";
+import {
   CACHE_TTL_MS,
   isCurrentCanonicalSeason,
 } from "./cache-policy";
 import { brefSeasonYear } from "./bref-scraper";
 
-type CacheEntry<T> = {
-  freshUntil: number;
-  staleUntil: number;
-  value: T;
-  refreshing?: boolean;
-};
-
-const memoryCache = new Map<string, CacheEntry<unknown>>();
 const DEFAULT_TTL_MS = CACHE_TTL_MS.darkoCurrent;
 
 /** DARKO / darko.app season coverage starts with 1996-97. */
@@ -138,30 +135,17 @@ export async function fetchDarkoSeason(
 
   const url = darkoDataUrl(canonicalSeason);
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-  const staleMs = options.staleMs ?? 0;
-  const now = Date.now();
-  const cached = memoryCache.get(url) as CacheEntry<DarkoPlayerRow[]> | undefined;
+  const staleMs =
+    options.staleMs ??
+    (isCurrentCanonicalSeason(canonicalSeason)
+      ? CACHE_TTL_MS.darkoCurrentStale
+      : 0);
 
-  if (cached && cached.freshUntil > now) {
-    return cached.value;
-  }
-
-  if (cached && cached.staleUntil > now) {
-    if (!cached.refreshing) {
-      cached.refreshing = true;
-      void scrapeDarko(url, ttlMs, staleMs)
-        .catch(() => undefined)
-        .finally(() => {
-          const entry = memoryCache.get(url) as
-            | CacheEntry<DarkoPlayerRow[]>
-            | undefined;
-          if (entry) entry.refreshing = false;
-        });
-    }
-    return cached.value;
-  }
-
-  return scrapeDarko(url, ttlMs, staleMs);
+  return sharedGetOrSet(
+    `darko:${canonicalSeason}`,
+    { ttlMs, staleMs, tags: ["darko", `darko:${canonicalSeason}`] },
+    () => scrapeDarko(url)
+  );
 }
 
 /** Last known DARKO rows even if stale — used when the critical path times out. */
@@ -169,16 +153,10 @@ export function peekDarkoSeason(
   canonicalSeason: string
 ): DarkoPlayerRow[] | null {
   if (!isDarkoSeasonAvailable(canonicalSeason)) return null;
-  const url = darkoDataUrl(canonicalSeason);
-  const cached = memoryCache.get(url) as CacheEntry<DarkoPlayerRow[]> | undefined;
-  return cached?.value ?? null;
+  return sharedPeek(`darko:${canonicalSeason}`);
 }
 
-async function scrapeDarko(
-  url: string,
-  ttlMs: number,
-  staleMs: number
-): Promise<DarkoPlayerRow[]> {
+async function scrapeDarko(url: string): Promise<DarkoPlayerRow[]> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -188,7 +166,8 @@ async function scrapeDarko(
           "User-Agent":
             "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; educational)",
         },
-      });
+        next: { revalidate: 900 },
+      } as RequestInit);
       if (!response.ok) {
         throw new Error(`DARKO request failed (${response.status}): ${url}`);
       }
@@ -204,12 +183,6 @@ async function scrapeDarko(
       if (rows.length === 0) {
         throw new Error(`DARKO player table empty: ${url}`);
       }
-      const now = Date.now();
-      memoryCache.set(url, {
-        value: rows,
-        freshUntil: now + ttlMs,
-        staleUntil: now + ttlMs + staleMs,
-      });
       return rows;
     } catch (error) {
       lastError = error;
@@ -223,5 +196,5 @@ async function scrapeDarko(
 }
 
 export function clearDarkoCache(): void {
-  memoryCache.clear();
+  sharedClearPrefix("darko:");
 }

@@ -5,13 +5,17 @@ import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
-import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { PlayerGamesIsland } from "@/components/players/player-games-island";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
+import {
+  PlayerBoardSkeleton,
+  PlayerIdentitySlotSkeleton,
+  PlayerPercentileSkeleton,
+} from "@/components/players/player-page-skeletons";
 import { PlayerStatDepthIsland } from "@/components/players/player-stat-depth-island";
 import { PlayerStatsIsland } from "@/components/players/player-stats-island";
 import { PlayerVisualizationsIsland } from "@/components/players/player-visualizations";
@@ -313,7 +317,7 @@ export default async function PlayerPage({
           caps={caps}
           seasonType={seasonType}
           accolades={
-            <Suspense fallback={null}>
+            <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
               <PlayerAccoladesIsland
                 playerId={playerId}
                 teamKey={teamKey}
@@ -323,7 +327,7 @@ export default async function PlayerPage({
           }
           upcomingSchedule={
             scheduleTeamKey ? (
-              <Suspense fallback={null}>
+              <Suspense fallback={<PlayerIdentitySlotSkeleton className="h-16" />}>
                 <PlayerUpcomingGamesIsland
                   playerId={playerId}
                   scheduleTeamKey={scheduleTeamKey}
@@ -332,7 +336,7 @@ export default async function PlayerPage({
             ) : null
           }
           frontOffice={
-            <Suspense fallback={null}>
+            <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
               <PlayerContractTransactionsIsland
                 playerId={playerId}
                 playerName={displayName}
@@ -344,8 +348,8 @@ export default async function PlayerPage({
           hero={
             <Suspense
               fallback={
-                <div className="col-span-1">
-                  <DestinationSectionSkeleton label="Loading percentile ranking…" />
+                <div className="col-span-1 min-h-[28rem]">
+                  <PlayerPercentileSkeleton />
                 </div>
               }
             >
@@ -367,9 +371,7 @@ export default async function PlayerPage({
 
         {view === "sentiment" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading sentiment…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading sentiment…" />}
           >
             <PlayerSentimentTabIsland
               playerId={playerId}
@@ -382,9 +384,7 @@ export default async function PlayerPage({
 
         {view === "games" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading game log…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading game log…" />}
           >
             <PlayerGamesIsland
               playerId={playerId}
@@ -398,9 +398,7 @@ export default async function PlayerPage({
 
         {view === "overview" || view === "career" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading career…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading career…" />}
           >
             <PlayerCareerIsland
               playerId={playerId}
@@ -417,7 +415,7 @@ export default async function PlayerPage({
         {view === "career" ? (
           <Suspense
             fallback={
-              <DestinationSectionSkeleton label="Loading career analysis…" />
+              <PlayerBoardSkeleton label="Loading career analysis…" />
             }
           >
             <PlayerCareerAnalysisIsland
@@ -432,9 +430,7 @@ export default async function PlayerPage({
 
         {view === "overview" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading statistics…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading statistics…" />}
           >
             <div className="flex flex-col gap-3">
               {statsCtx.usingPriorSeasonStats ? (
@@ -470,9 +466,7 @@ export default async function PlayerPage({
 
         {view === "shooting" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading shot chart…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading shot chart…" />}
           >
             <PlayerVisualizationsIsland
               playerId={playerId}
@@ -491,9 +485,7 @@ export default async function PlayerPage({
 
         {view === "splits" || view === "advanced" || view === "highs" ? (
           <Suspense
-            fallback={
-              <DestinationSectionSkeleton label="Loading deep stats…" />
-            }
+            fallback={<PlayerBoardSkeleton label="Loading deep stats…" />}
           >
             <GlassSurface effect="css" className="p-1 sm:p-2">
               <PlayerStatDepthIsland

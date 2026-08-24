@@ -177,4 +177,15 @@ export interface PlayerSeason {
   drblUncertainty: number;
   drblIntervalLo: number;
   drblIntervalHi: number;
+
+  /**
+   * NBA hustle tracking (stats.nba.com leaguehustlestatsplayer, 2015-16+).
+   * Season totals; omit when unavailable — never invent 0.
+   */
+  hustleContestedShots?: number;
+  hustleDeflections?: number;
+  hustleChargesDrawn?: number;
+  hustleScreenAssists?: number;
+  hustleLooseBallsRecovered?: number;
+  hustleBoxOuts?: number;
 }

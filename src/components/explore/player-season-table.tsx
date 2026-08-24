@@ -414,7 +414,7 @@ export function PlayerSeasonTable({
                       sortKey={sortKey}
                       sortDir={sortDir}
                       onSort={toggleSort}
-                      groupedStart={ki === 0 && gi > 0}
+                      groupedStart={ki === 0}
                     />
                   ))
                 )}
@@ -487,9 +487,7 @@ export function PlayerSeasonTable({
                         </TeamIdentity>
                       )}
                     </TableCell>
-                    <TableCell
-                      className={cn("text-muted-foreground", boardType.cell)}
-                    >
+                    <TableCell className={boardType.cell}>
                       {player.position ?? "-"}
                     </TableCell>
                     {groups.flatMap((group, gi) =>
@@ -499,7 +497,7 @@ export function PlayerSeasonTable({
                           col={col}
                           player={player}
                           rate={rate}
-                          groupedStart={grouped && ki === 0 && gi > 0}
+                          groupedStart={grouped && ki === 0}
                           seasonAwaitingGames={seasonAwaitingGames}
                         />
                       ))
@@ -541,7 +539,7 @@ export function PlayerSeasonTable({
   );
 }
 
-type TableCol = PlayerSeasonSortKey | "pointsCreated" | "rimAssists";
+type TableCol = PlayerSeasonSortKey;
 
 type BoardColumnFlags = {
   hasDarko: boolean;
@@ -564,8 +562,6 @@ const ALL_COLUMN_CATEGORY_HINT: Partial<Record<TableCol, PlayerBoardView>> = {
   freeThrowsAttempted: "shooting",
   offensiveRebounds: "profile",
   defensiveRebounds: "profile",
-  pointsCreated: "profile",
-  rimAssists: "profile",
 };
 
 /**
@@ -585,21 +581,12 @@ function columnsForView(
   view: PlayerBoardView,
   flags: BoardColumnFlags
 ): TableCol[] {
-  const keys: TableCol[] = [...filterPlayerBoardViewColumns(view, flags)];
-  if (view !== "profile" && view !== "all") return keys;
-  const withExtras: TableCol[] = [];
-  for (const key of keys) {
-    withExtras.push(key);
-    if (key === "ppg") withExtras.push("pointsCreated");
-    if (key === "apg") withExtras.push("rimAssists");
-  }
-  return withExtras;
+  return [...filterPlayerBoardViewColumns(view, flags)];
 }
 
 function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
   const hint = ALL_COLUMN_CATEGORY_HINT[col];
   if (hint) return hint;
-  if (col === "pointsCreated" || col === "rimAssists") return "profile";
   for (const cat of CATEGORY_OWNERSHIP_PRIORITY) {
     if (
       (filterPlayerBoardViewColumns(cat, {
@@ -686,12 +673,8 @@ function columnLabel(col: TableCol, view: PlayerBoardView): string {
       return "DDPM";
     case "ppg":
       return "PTS";
-    case "pointsCreated":
-      return "PTS Created";
     case "apg":
       return "AST";
-    case "rimAssists":
-      return "Rim AST";
     case "rpg":
       return "REB";
     case "tov":
@@ -803,9 +786,6 @@ function formatStat(
       return formatOptionalImpact(player.darkoDef);
     case "ppg":
       return formatCounting(player.ppg, player.points, player.mpg, rate);
-    case "pointsCreated":
-    case "rimAssists":
-      return "-";
     case "apg":
       return formatCounting(player.apg, player.assists, player.mpg, rate);
     case "rpg":
@@ -893,22 +873,6 @@ function StatHead({
   groupedStart?: boolean;
 }) {
   const className = cn(groupedStart && "border-l border-border");
-  if (col === "pointsCreated" || col === "rimAssists") {
-    return (
-      <TableHead className={cn("h-auto p-0", className)}>
-        <div className="flex h-7 w-full min-w-max items-center justify-end px-1 sm:h-10 sm:px-2">
-          <span
-            className={cn(
-              "font-semibold uppercase text-muted-foreground",
-              boardType.head
-            )}
-          >
-            {columnLabel(col, view)}
-          </span>
-        </div>
-      </TableHead>
-    );
-  }
   return (
     <SortableTableHead
       className={className}

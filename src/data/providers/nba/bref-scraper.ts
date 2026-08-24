@@ -1,13 +1,10 @@
-import { CACHE_TTL_MS } from "./cache-policy";
+import {
+  sharedClearPrefix,
+  sharedGetOrSet,
+  sharedPeek,
+} from "@/data/cache/shared-ttl-cache";
+import { CACHE_TTL_MS, isCurrentCanonicalSeason } from "./cache-policy";
 
-type CacheEntry<T> = {
-  freshUntil: number;
-  staleUntil: number;
-  value: T;
-  refreshing?: boolean;
-};
-
-const memoryCache = new Map<string, CacheEntry<unknown>>();
 const DEFAULT_TTL_MS = CACHE_TTL_MS.brefCurrent;
 const BREF_HEADERS = {
   Accept: "text/html,application/xhtml+xml",
@@ -172,30 +169,17 @@ export async function fetchBrefAdvancedSeason(
   const year = brefSeasonYear(canonicalSeason);
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-  const staleMs = options.staleMs ?? 0;
-  const now = Date.now();
-  const cached = memoryCache.get(url) as CacheEntry<BrefAdvancedRow[]> | undefined;
+  const staleMs =
+    options.staleMs ??
+    (isCurrentCanonicalSeason(canonicalSeason)
+      ? CACHE_TTL_MS.brefCurrentStale
+      : 0);
 
-  if (cached && cached.freshUntil > now) {
-    return cached.value;
-  }
-
-  if (cached && cached.staleUntil > now) {
-    if (!cached.refreshing) {
-      cached.refreshing = true;
-      void scrapeBrefAdvanced(url, ttlMs, staleMs)
-        .catch(() => undefined)
-        .finally(() => {
-          const entry = memoryCache.get(url) as
-            | CacheEntry<BrefAdvancedRow[]>
-            | undefined;
-          if (entry) entry.refreshing = false;
-        });
-    }
-    return cached.value;
-  }
-
-  return scrapeBrefAdvanced(url, ttlMs, staleMs);
+  return sharedGetOrSet(
+    `bref:advanced:${canonicalSeason}`,
+    { ttlMs, staleMs, tags: ["bref", `bref:${canonicalSeason}`] },
+    () => scrapeBrefAdvanced(url)
+  );
 }
 
 /** One combined-or-only-team row per player for percentile cohorts. */
@@ -270,26 +254,23 @@ export async function fetchBrefAdvancedCohort(
 ): Promise<BrefAdvancedRow[]> {
   const year = brefSeasonYear(canonicalSeason);
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
-  const cacheKey = `${url}#cohort`;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-  const staleMs = options.staleMs ?? 0;
-  const now = Date.now();
-  const cached = memoryCache.get(cacheKey) as
-    | CacheEntry<BrefAdvancedRow[]>
-    | undefined;
-  if (cached && cached.freshUntil > now) return cached.value;
-  if (cached && cached.staleUntil > now) return cached.value;
+  const staleMs =
+    options.staleMs ??
+    (isCurrentCanonicalSeason(canonicalSeason)
+      ? CACHE_TTL_MS.brefCurrentStale
+      : 0);
 
-  const html = await fetchBrefHtml(url);
-  const rows = collapseBrefToSeasonGrain(
-    parseBrefStatTable(html, { includeCombined: true })
+  return sharedGetOrSet(
+    `bref:advanced-cohort:${canonicalSeason}`,
+    { ttlMs, staleMs, tags: ["bref", `bref:${canonicalSeason}`] },
+    async () => {
+      const html = await fetchBrefHtml(url);
+      return collapseBrefToSeasonGrain(
+        parseBrefStatTable(html, { includeCombined: true })
+      );
+    }
   );
-  memoryCache.set(cacheKey, {
-    value: rows,
-    freshUntil: now + ttlMs,
-    staleUntil: now + ttlMs + staleMs,
-  });
-  return rows;
 }
 
 /**
@@ -302,43 +283,40 @@ export async function fetchBrefPerGameCohort(
 ): Promise<BrefPerGameCohortRow[]> {
   const year = brefSeasonYear(canonicalSeason);
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_per_game.html`;
-  const cacheKey = `${url}#cohort`;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
-  const staleMs = options.staleMs ?? 0;
-  const now = Date.now();
-  const cached = memoryCache.get(cacheKey) as
-    | CacheEntry<BrefPerGameCohortRow[]>
-    | undefined;
-  if (cached && cached.freshUntil > now) return cached.value;
-  if (cached && cached.staleUntil > now) return cached.value;
+  const staleMs =
+    options.staleMs ??
+    (isCurrentCanonicalSeason(canonicalSeason)
+      ? CACHE_TTL_MS.brefCurrentStale
+      : 0);
 
-  const html = await fetchBrefHtml(url);
-  const rows = collapseBrefToSeasonGrain(
-    parseBrefPerGameTable(html, { includeCombined: true })
+  return sharedGetOrSet(
+    `bref:per-game:${canonicalSeason}`,
+    { ttlMs, staleMs, tags: ["bref", `bref:${canonicalSeason}`] },
+    async () => {
+      const html = await fetchBrefHtml(url);
+      return collapseBrefToSeasonGrain(
+        parseBrefPerGameTable(html, { includeCombined: true })
+      );
+    }
   );
-  memoryCache.set(cacheKey, {
-    value: rows,
-    freshUntil: now + ttlMs,
-    staleUntil: now + ttlMs + staleMs,
-  });
-  return rows;
 }
 
 /** Last known BRef rows even if stale - used when the critical path times out. */
 export function peekBrefAdvancedSeason(
   canonicalSeason: string
 ): BrefAdvancedRow[] | null {
-  const year = brefSeasonYear(canonicalSeason);
-  const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
-  const cached = memoryCache.get(url) as CacheEntry<BrefAdvancedRow[]> | undefined;
-  return cached?.value ?? null;
+  return sharedPeek(`bref:advanced:${canonicalSeason}`);
 }
 
 async function fetchBrefHtml(url: string): Promise<string> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
-      const response = await fetch(url, { headers: BREF_HEADERS });
+      const response = await fetch(url, {
+        headers: BREF_HEADERS,
+        next: { revalidate: 3600 },
+      } as RequestInit);
       if (!response.ok) {
         throw new Error(`BRef request failed (${response.status}): ${url}`);
       }
@@ -353,11 +331,7 @@ async function fetchBrefHtml(url: string): Promise<string> {
     : new Error(`BRef scrape failed: ${url}`);
 }
 
-async function scrapeBrefAdvanced(
-  url: string,
-  ttlMs: number,
-  staleMs: number
-): Promise<BrefAdvancedRow[]> {
+async function scrapeBrefAdvanced(url: string): Promise<BrefAdvancedRow[]> {
   let lastError: unknown;
   for (let attempt = 0; attempt < 3; attempt++) {
     try {
@@ -366,12 +340,6 @@ async function scrapeBrefAdvanced(
       if (rows.length === 0) {
         throw new Error(`BRef advanced table empty: ${url}`);
       }
-      const now = Date.now();
-      memoryCache.set(url, {
-        value: rows,
-        freshUntil: now + ttlMs,
-        staleUntil: now + ttlMs + staleMs,
-      });
       return rows;
     } catch (error) {
       lastError = error;
@@ -385,7 +353,7 @@ async function scrapeBrefAdvanced(
 }
 
 export function clearBrefCache(): void {
-  memoryCache.clear();
+  sharedClearPrefix("bref:");
 }
 
 export function normalizePlayerName(name: string): string {

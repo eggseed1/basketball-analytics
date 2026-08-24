@@ -7,6 +7,7 @@
 
 import { getDarkoRatings } from "@/data/queries/historical";
 import type { DarkoRating, PlayerSeason } from "@/data/types";
+import { sharedGetOrSet } from "@/data/cache/shared-ttl-cache";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -167,11 +168,6 @@ const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 const HOME_CACHE_VERSION = 11;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
-let homeCache: {
-  version: number;
-  expiresAt: number;
-  value: HomeAnalytics;
-} | null = null;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
 let homeInflight: Promise<HomeAnalytics> | null = null;
 
@@ -525,25 +521,17 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
 }
 
 export async function getHomeAnalytics(): Promise<HomeAnalytics> {
-  if (
-    homeCache &&
-    homeCache.version === HOME_CACHE_VERSION &&
-    homeCache.expiresAt > Date.now()
-  ) {
-    return homeCache.value;
-  }
   if (homeInflight) return homeInflight;
-  homeInflight = loadHomeAnalytics()
-    .then((value) => {
-      homeCache = {
-        version: HOME_CACHE_VERSION,
-        value,
-        expiresAt: Date.now() + HOME_CACHE_TTL_MS,
-      };
-      return value;
-    })
-    .finally(() => {
-      homeInflight = null;
-    });
+  homeInflight = sharedGetOrSet(
+    `home:analytics:v${HOME_CACHE_VERSION}`,
+    {
+      ttlMs: HOME_CACHE_TTL_MS,
+      staleMs: HOME_CACHE_TTL_MS * 2,
+      tags: ["home-analytics"],
+    },
+    () => loadHomeAnalytics()
+  ).finally(() => {
+    homeInflight = null;
+  });
   return homeInflight;
 }

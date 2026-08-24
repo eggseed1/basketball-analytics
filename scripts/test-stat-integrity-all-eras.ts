@@ -80,6 +80,7 @@ const athleteRow: EspnAthleteStatsRow = {
     teamId: "7",
     teamName: "Denver Nuggets",
     position: { abbreviation: "G" },
+    age: 27,
   },
   categories: [{ name: "general", totals }],
 };
@@ -146,6 +147,7 @@ function main() {
   assert.equal(row.freeThrowsAttempted, 410);
   assert.equal(row.offensiveRebounds, 120);
   assert.equal(row.defensiveRebounds, 530);
+  assert.equal(row.age, 27);
   assert.equal(row.steals, 0, "measured zero is not missing");
   assert.ok(Number.isFinite(row.trueShootingPct));
   assert.ok(Number.isFinite(row.effectiveFieldGoalPct));

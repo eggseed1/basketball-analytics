@@ -1,11 +1,19 @@
 import { mkdir, readFile, writeFile, readdir, stat } from "node:fs/promises";
 import path from "node:path";
 
+import {
+  sharedGetOrSet,
+  sharedPeek,
+  sharedWriteThrough,
+} from "@/data/cache/shared-ttl-cache";
 import type { Game } from "@/data/types";
 import { ensureGameTeamIdentity } from "@/lib/game-team-identity";
 import { startYearFromCanonicalSeason } from "@/data/providers/historical/season-range";
 
 const CACHE_DIR = path.join(process.cwd(), "data", "cache", "games");
+
+/** Historical season archives change rarely — share across Vercel instances. */
+const GAMES_SHARED_TTL_MS = 7 * 24 * 60 * 60 * 1000;
 
 export type GamesCacheMeta = {
   season: string;
@@ -22,14 +30,17 @@ export function gamesCachePath(season: string): string {
   return path.join(CACHE_DIR, `${season}.json`);
 }
 
-export async function readGamesCache(
+function sharedGamesKey(season: string): string {
+  return `games-archive:${season}`;
+}
+
+async function readGamesCacheDisk(
   season: string
 ): Promise<GamesCachePayload | null> {
   try {
     const raw = await readFile(gamesCachePath(season), "utf8");
     const parsed = JSON.parse(raw) as GamesCachePayload;
     if (!Array.isArray(parsed.games) || parsed.games.length === 0) return null;
-    // Legacy cache rows may still carry raw BDL team ids — normalize cheaply.
     return {
       ...parsed,
       games: parsed.games.map((g) => ensureGameTeamIdentity(g, "bdl")),
@@ -39,11 +50,40 @@ export async function readGamesCache(
   }
 }
 
+/**
+ * Prefer Next Data Cache (shared on Vercel), then local disk (dev machines
+ * that ran prefetch), then null.
+ */
+export async function readGamesCache(
+  season: string
+): Promise<GamesCachePayload | null> {
+  const mem = sharedPeek<GamesCachePayload>(sharedGamesKey(season));
+  if (mem && mem.games.length > 0) return mem;
+
+  try {
+    return await sharedGetOrSet(
+      sharedGamesKey(season),
+      {
+        ttlMs: GAMES_SHARED_TTL_MS,
+        tags: ["games-archive", `games:${season}`],
+      },
+      async () => {
+        const disk = await readGamesCacheDisk(season);
+        if (disk) return disk;
+        // Signal miss without caching empty forever — throw so unstable_cache
+        // does not store a null payload across instances.
+        throw new Error(`games-cache-miss:${season}`);
+      }
+    );
+  } catch {
+    return readGamesCacheDisk(season);
+  }
+}
+
 export async function writeGamesCache(
   season: string,
   games: Game[]
 ): Promise<GamesCachePayload> {
-  await mkdir(CACHE_DIR, { recursive: true });
   const payload: GamesCachePayload = {
     season,
     fetchedAt: new Date().toISOString(),
@@ -51,7 +91,25 @@ export async function writeGamesCache(
     source: "balldontlie",
     games,
   };
-  await writeFile(gamesCachePath(season), JSON.stringify(payload), "utf8");
+
+  // Warm shared + process cache so other Vercel instances can reuse this pull.
+  await sharedWriteThrough(
+    sharedGamesKey(season),
+    {
+      ttlMs: GAMES_SHARED_TTL_MS,
+      tags: ["games-archive", `games:${season}`],
+    },
+    payload
+  );
+
+  // Best-effort disk write — succeeds locally / CI; ignored on read-only FS.
+  try {
+    await mkdir(CACHE_DIR, { recursive: true });
+    await writeFile(gamesCachePath(season), JSON.stringify(payload), "utf8");
+  } catch {
+    // Ephemeral serverless filesystem.
+  }
+
   return payload;
 }
 

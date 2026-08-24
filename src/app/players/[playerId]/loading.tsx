@@ -1,10 +1,5 @@
-import { DestinationLoadingFrame } from "@/components/continuity/destination-loading-frame";
+import { PlayerPageLoadingFrame } from "@/components/players/player-page-skeletons";
 
 export default function Loading() {
-  return (
-    <DestinationLoadingFrame
-      title="Player"
-      subtitle="Identity and season context load first."
-    />
-  );
+  return <PlayerPageLoadingFrame />;
 }

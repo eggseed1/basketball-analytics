@@ -1,4 +1,5 @@
-import { resolvePlayerIdentity } from "@/data/identity/player-identity";
+import { sharedGetOrSet } from "@/data/cache/shared-ttl-cache";
+import { resolvePlayerIdentity, getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import type { Player, PlayerGame, PlayerSeason } from "@/data/types";
 import {
   transformEspnPlayerGame,
@@ -24,6 +25,7 @@ import {
 import {
   defaultCanonicalSeasons,
   espnYearFromCanonicalSeason,
+  isModernLeagueDashSeason,
 } from "./season";
 
 const SITE_WEB = "https://site.web.api.espn.com";
@@ -85,6 +87,60 @@ function playerFromSeason(row: PlayerSeason): Player {
     position: row.position,
     currentTeamId: row.teamId || undefined,
   };
+}
+
+function pickNbaSeasonRow(
+  target: PlayerSeason,
+  nbaRows: PlayerSeason[],
+  nbaPlayerId: string
+): PlayerSeason | undefined {
+  const candidates = nbaRows.filter(
+    (row) => row.playerId === nbaPlayerId && row.season === target.season
+  );
+  if (!candidates.length) return undefined;
+  const targetTeam = teamGrainKey(target);
+  const exact = candidates.find((row) => teamGrainKey(row) === targetTeam);
+  if (exact) return exact;
+  if (candidates.length === 1) return candidates[0];
+  const combined = candidates.find((row) => {
+    const key = teamGrainKey(row);
+    return key === "TOT" || /\dTM/.test(key);
+  });
+  return combined;
+}
+
+async function overlayNbaBoardSupplements(
+  provider: StatsNbaDataProvider,
+  espnRows: PlayerSeason[],
+  season: string
+): Promise<PlayerSeason[]> {
+  if (!espnRows.length || !isModernLeagueDashSeason(season)) return espnRows;
+
+  let nbaRows: PlayerSeason[] = [];
+  try {
+    nbaRows = await StatsNbaDataProvider.prototype.getPlayerSeasons.call(
+      provider,
+      season
+    );
+  } catch {
+    return espnRows;
+  }
+  if (!nbaRows.length) return espnRows;
+
+  const aliases = await getPlayerIdAliasIndex().catch(() => ({
+    byEspn: new Map(),
+    byNba: new Map(),
+  }));
+
+  return espnRows.map((espn) => {
+    const nbaId =
+      aliases.byEspn.get(espn.playerId)?.nbaPlayerId ??
+      (/^\d+$/.test(espn.playerId) ? espn.playerId : null);
+    if (!nbaId) return espn;
+    const nba = pickNbaSeasonRow(espn, nbaRows, nbaId);
+    if (!nba) return espn;
+    return mergePlayerSeasonRows(espn, nba);
+  });
 }
 
 function teamGrainKey(row: PlayerSeason): string {
@@ -215,7 +271,8 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
     const chunks = await Promise.all(
       seasons.map(async (target) => {
         try {
-          return await this.loadEspnBoard(target);
+          const espnRows = await this.loadEspnBoard(target);
+          return overlayNbaBoardSupplements(this, espnRows, target);
         } catch (espnError) {
           try {
             return await super.getPlayerSeasons(target);
@@ -375,53 +432,74 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
   }
 
   private loadEspnBoard(season: string): Promise<PlayerSeason[]> {
-    return remember(this.espnBoardCache, season, async () => {
-      const year = espnYearFromCanonicalSeason(season);
-      const [teamTotals, first] = await Promise.all([
-        this.loadEspnTeamTotals(season),
-        espnFetchJson<ByAthleteResponse>(this.boardUrl(year, 1), {
+    return remember(this.espnBoardCache, season, () =>
+      sharedGetOrSet(
+        `espn-board:${season}`,
+        {
           ttlMs: BOARD_TTL_MS,
-          retries: 1,
-        }),
-      ]);
+          staleMs: BOARD_TTL_MS * 2,
+          tags: ["espn-board", `espn-board:${season}`],
+        },
+        async () => {
+          const year = espnYearFromCanonicalSeason(season);
+          const [teamTotals, first] = await Promise.all([
+            this.loadEspnTeamTotals(season),
+            espnFetchJson<ByAthleteResponse>(this.boardUrl(year, 1), {
+              ttlMs: BOARD_TTL_MS,
+              retries: 1,
+            }),
+          ]);
 
-      const pages = Math.max(
-        1,
-        Math.min(12, first.pagination?.pages ?? 1)
-      );
-      const remaining =
-        pages > 1
-          ? await Promise.all(
-              Array.from({ length: pages - 1 }, (_, index) => index + 2).map(
-                (page) =>
-                  espnFetchJson<ByAthleteResponse>(this.boardUrl(year, page), {
-                    ttlMs: BOARD_TTL_MS,
-                    retries: 1,
-                  })
+          const pages = Math.max(
+            1,
+            Math.min(12, first.pagination?.pages ?? 1)
+          );
+          const remaining =
+            pages > 1
+              ? await Promise.all(
+                  Array.from({ length: pages - 1 }, (_, index) => index + 2).map(
+                    (page) =>
+                      espnFetchJson<ByAthleteResponse>(
+                        this.boardUrl(year, page),
+                        {
+                          ttlMs: BOARD_TTL_MS,
+                          retries: 1,
+                        }
+                      )
+                  )
+                )
+              : [];
+
+          const payloads = [first, ...remaining];
+          const schema =
+            payloads.find((payload) => payload.categories?.length)
+              ?.categories ?? [];
+          const athletes = payloads.flatMap(
+            (payload) => payload.athletes ?? []
+          );
+          const rows = athletes
+            .filter((row) => row.athlete?.id && row.athlete.teamId)
+            .map((row) =>
+              transformCompleteEspnPlayerSeason(
+                row,
+                season,
+                teamTotals,
+                schema
               )
             )
-          : [];
+            .filter(
+              (row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0
+            );
 
-      const payloads = [first, ...remaining];
-      const schema =
-        payloads.find((payload) => payload.categories?.length)?.categories ?? [];
-      const athletes = payloads.flatMap(
-        (payload) => payload.athletes ?? []
-      );
-      const rows = athletes
-        .filter((row) => row.athlete?.id && row.athlete.teamId)
-        .map((row) =>
-          transformCompleteEspnPlayerSeason(row, season, teamTotals, schema)
-        )
-        .filter((row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0);
-
-      if (rows.length < MIN_COMPLETE_BOARD_ROWS) {
-        throw new Error(
-          `ESPN player board incomplete for ${season}: ${rows.length} rows`
-        );
-      }
-      return rows;
-    });
+          if (rows.length < MIN_COMPLETE_BOARD_ROWS) {
+            throw new Error(
+              `ESPN player board incomplete for ${season}: ${rows.length} rows`
+            );
+          }
+          return rows;
+        }
+      )
+    );
   }
 
   private loadEspnTeamTotals(

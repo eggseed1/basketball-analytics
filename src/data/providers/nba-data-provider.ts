@@ -27,6 +27,11 @@ import {
   peekDrblSeason,
   type DrblPlayerRow,
 } from "./nba/drbl-loader";
+import {
+  fetchHustleSeason,
+  peekHustleSeason,
+  type HustlePlayerRow,
+} from "./nba/hustle-stats-loader";
 import { fetchRawPlayByPlay } from "./nba/play-by-play-client";
 import { finalizeBoxScorePlayers } from "./nba/enrich-box-score";
 import { parseBasketballMinutes } from "@/lib/parse-basketball-minutes";
@@ -486,6 +491,14 @@ export class NBADataProvider implements BasketballDataProvider {
     }
   }
 
+  private async loadHustleForSeason(season: string): Promise<HustlePlayerRow[]> {
+    try {
+      return await fetchHustleSeason(season);
+    } catch {
+      return peekHustleSeason(season) ?? [];
+    }
+  }
+
   private async fetchPlayerSeasons(season: string): Promise<PlayerSeason[]> {
     if (!isModernLeagueDashSeason(season)) {
       return this.fetchPlayerSeasonsHistorical(season);
@@ -498,7 +511,8 @@ export class NBADataProvider implements BasketballDataProvider {
     }
 
     const statsTtl = seasonStatsTtlMs(season);
-    const [baseRes, advRes, brefRows, darkoRows, drblRows] = await Promise.all([
+    const [baseRes, advRes, brefRows, darkoRows, drblRows, hustleRows] =
+      await Promise.all([
       statsNbaFetch(
         "leaguedashplayerstats",
         leagueDashParams(season, "Base", "Regular Season", "Totals"),
@@ -512,6 +526,7 @@ export class NBADataProvider implements BasketballDataProvider {
       this.loadBrefForSeason(season),
       this.loadDarkoForSeason(season),
       this.loadDrblForSeason(season),
+      this.loadHustleForSeason(season),
     ]);
 
     const baseSet = getResultSet(baseRes);
@@ -527,6 +542,9 @@ export class NBADataProvider implements BasketballDataProvider {
     );
     const drblById = new Map(
       drblRows.map((row) => [row.playerId, row] as const)
+    );
+    const hustleById = new Map(
+      hustleRows.map((row) => [row.playerId, row.patch] as const)
     );
 
     const rows = baseRows
@@ -546,8 +564,10 @@ export class NBADataProvider implements BasketballDataProvider {
           darkoById.get(playerId),
           drblById.get(playerId)
         );
+        const hustle = hustleById.get(playerId);
         return {
           ...seasonRow,
+          ...(hustle ?? {}),
           teamName: nbaTeamName(seasonRow.teamId, abbr),
           position: seasonRow.position ?? undefined,
         };

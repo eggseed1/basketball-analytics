@@ -100,6 +100,12 @@ export type StatCompRow = {
   drblP?: number;
   drblLn?: number;
   drblB?: number;
+  hustleDeflections?: number;
+  hustleContestedShots?: number;
+  hustleScreenAssists?: number;
+  hustleChargesDrawn?: number;
+  hustleLooseBallsRecovered?: number;
+  hustleBoxOuts?: number;
 };
 
 export function shiftCanonicalSeason(season: string, deltaYears: number): string {
@@ -111,6 +117,21 @@ export function shiftCanonicalSeason(season: string, deltaYears: number): string
 function perGame(row: StatCompRow, key: keyof StatCompRow): number {
   const raw = row[key];
   const total = typeof raw === "number" ? raw : 0;
+  return total / Math.max(1, row.gamesPlayed);
+}
+
+function hustleCompPerGame(
+  row: StatCompRow,
+  key:
+    | "hustleDeflections"
+    | "hustleContestedShots"
+    | "hustleScreenAssists"
+    | "hustleChargesDrawn"
+    | "hustleLooseBallsRecovered"
+    | "hustleBoxOuts"
+): number | null {
+  const total = row[key];
+  if (total == null || !Number.isFinite(total)) return null;
   return total / Math.max(1, row.gamesPlayed);
 }
 
@@ -251,6 +272,30 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
   blk: {
     pick: (r) => perGame(r, "blocks"),
     format: (v) => `${formatNumber(v, 1)} BPG`,
+  },
+  hustleDefl: {
+    pick: (r) => hustleCompPerGame(r, "hustleDeflections"),
+    format: (v) => `${formatNumber(v, 1)} defl`,
+  },
+  hustleContest: {
+    pick: (r) => hustleCompPerGame(r, "hustleContestedShots"),
+    format: (v) => `${formatNumber(v, 1)} contest`,
+  },
+  hustleScrAst: {
+    pick: (r) => hustleCompPerGame(r, "hustleScreenAssists"),
+    format: (v) => `${formatNumber(v, 1)} scr ast`,
+  },
+  hustleChrg: {
+    pick: (r) => hustleCompPerGame(r, "hustleChargesDrawn"),
+    format: (v) => `${formatNumber(v, 1)} chrg`,
+  },
+  hustleLoose: {
+    pick: (r) => hustleCompPerGame(r, "hustleLooseBallsRecovered"),
+    format: (v) => `${formatNumber(v, 1)} loose`,
+  },
+  hustleBoxOut: {
+    pick: (r) => hustleCompPerGame(r, "hustleBoxOuts"),
+    format: (v) => `${formatNumber(v, 1)} box`,
   },
   "darko-def": {
     pick: (r) => {

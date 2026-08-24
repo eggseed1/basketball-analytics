@@ -6,6 +6,8 @@ export {
   getPlayerPlayoffCareerSeasons,
   getPlayerCareerTimelineSeasons,
   attachDrblToPlayerSeasons,
+  attachHustleToPlayerSeasons,
+  attachBrefDarkoLebronToPlayerSeasons,
   enrichPlayerCareerAdvanced,
   getPlayerGameLog,
   getPlayersBySeason,

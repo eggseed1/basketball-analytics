@@ -31,6 +31,8 @@ import {
   SHEET_STAT_CATEGORY_CHIPS,
   formatSheetStatValue,
   getSheetStatValue,
+  sheetStatHasAnyValue,
+  sheetStatsForCategory,
   visibleSheetStats,
   type SheetRateMode,
   type SheetStatCategory,
@@ -45,7 +47,17 @@ const RATE_MODES: Array<{ id: RateMode; label: string }> = [
   { id: "per100", label: "Per 100" },
 ];
 
-const CATEGORIES = SHEET_STAT_CATEGORY_CHIPS;
+function visibleCategoryChips(
+  rows: PlayerSeason[],
+  mode: SheetRateMode
+): typeof SHEET_STAT_CATEGORY_CHIPS {
+  return SHEET_STAT_CATEGORY_CHIPS.filter((item) => {
+    if (item.id !== "hustle") return true;
+    return sheetStatsForCategory("hustle").some((def) =>
+      sheetStatHasAnyValue(rows, def.id, mode)
+    );
+  });
+}
 
 function GlassChip({
   active,
@@ -137,6 +149,11 @@ export function PlayerStatsBoard({
     [newestFirst, category, mode]
   );
 
+  const categories = useMemo(
+    () => visibleCategoryChips(newestFirst, mode),
+    [newestFirst, mode]
+  );
+
   function setSeasonType(next: PlayerSeasonKind) {
     queryNav?.replaceParams({
       seasonType: next === "playoffs" ? "playoffs" : null,
@@ -195,7 +212,7 @@ export function PlayerStatsBoard({
             ))}
           </FilterRow>
           <FilterRow label="Cols">
-            {CATEGORIES.map((item) => (
+            {categories.map((item) => (
               <GlassChip
                 key={item.id}
                 active={category === item.id}

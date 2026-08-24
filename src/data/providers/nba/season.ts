@@ -12,6 +12,9 @@ export const EARLIEST_LEAGUELEADERS_ESPN_YEAR = 1952;
 /** First season where leaguedashplayerstats / teamstats return data (1996-97). */
 export const MODERN_LEAGUE_DASH_ESPN_YEAR = 1997;
 
+/** First season with NBA hustle tracking (2015-16). */
+export const EARLIEST_HUSTLE_STATS_ESPN_YEAR = 2016;
+
 export function canonicalSeasonFromEspnYear(year: number): string {
   const start = year - 1;
   const end = String(year).slice(-2);
@@ -56,6 +59,15 @@ export function defaultCanonicalSeasons(count = 3): string[] {
 export function isModernLeagueDashSeason(season: string): boolean {
   try {
     return espnYearFromCanonicalSeason(season) >= MODERN_LEAGUE_DASH_ESPN_YEAR;
+  } catch {
+    return false;
+  }
+}
+
+/** Whether stats.nba.com publishes leaguehustlestatsplayer for this season. */
+export function isHustleStatsSeason(season: string): boolean {
+  try {
+    return espnYearFromCanonicalSeason(season) >= EARLIEST_HUSTLE_STATS_ESPN_YEAR;
   } catch {
     return false;
   }

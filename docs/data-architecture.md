@@ -392,8 +392,12 @@ Canonical `Shot` in TypeScript mirrors this table so the provider can map
   range). The `ShotFilters` type already models these knobs.
 - **Index** `(season, player_id)`, `(season, team_id)`, `game_id`,
   `game_date`.
-- **Cache** immutable season aggregates (ISR / CDN / Redis). Shot charts for
-  completed games are append-only.
+- **Cache** immutable season aggregates via the shared TTL layer
+  (`src/data/cache/shared-ttl-cache.ts`: process memory + Next.js Data Cache /
+  `unstable_cache`). Upstream clients (`stats.nba`, ESPN, DARKO, BRef) and
+  season game archives write through this so Vercel instances share warm
+  payloads instead of relying on gitignored `data/cache` disk. Optional Redis
+  remains a future L3 for very large archives.
 - **Columnar files** (Parquet) work well for offline ETL and warehouse
   scans; expose precomputed tiles to Next.js via the provider.
 - **D3** only for custom court interactions; keep Recharts for standard

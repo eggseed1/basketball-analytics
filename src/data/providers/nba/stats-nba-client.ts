@@ -1,14 +1,10 @@
+import {
+  sharedClearPrefix,
+  sharedGetOrSet,
+  sharedPeek,
+} from "@/data/cache/shared-ttl-cache";
 import { CACHE_TTL_MS } from "./cache-policy";
 import { statsNbaNetworkEnabled } from "./runtime-policy";
-
-type CacheEntry<T> = {
-  freshUntil: number;
-  staleUntil: number;
-  value: T;
-  refreshing?: boolean;
-};
-
-const memoryCache = new Map<string, CacheEntry<unknown>>();
 
 const DEFAULT_TTL_MS = CACHE_TTL_MS.currentSeasonStats;
 const DEFAULT_STALE_MS = CACHE_TTL_MS.currentSeasonStale;
@@ -100,66 +96,47 @@ export async function statsNbaFetch(
   const url = buildUrl(endpoint, params);
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
-  const now = Date.now();
-  const cached = memoryCache.get(url) as CacheEntry<StatsNbaResponse> | undefined;
-
-  if (cached && cached.freshUntil > now) {
-    return cached.value;
-  }
-
-  if (cached && cached.staleUntil > now) {
-    if (!cached.refreshing && statsNbaNetworkEnabled()) {
-      cached.refreshing = true;
-      void fetchStatsNba(url, ttlMs, staleMs, options)
-        .catch(() => undefined)
-        .finally(() => {
-          const entry = memoryCache.get(url) as
-            | CacheEntry<StatsNbaResponse>
-            | undefined;
-          if (entry) entry.refreshing = false;
-        });
-    }
-    return cached.value;
-  }
 
   // Vercel serverless egress is routinely blocked by stats.nba.com. Failing
   // immediately lets ESPN/local/history fallbacks render instead of holding a
   // player request open for multiple 4-second network timeouts.
+  // Still allow shared-cache hits via sharedGetOrSet memory/Data Cache L1/L2
+  // when a prior warm instance populated them — only skip the network factory.
   if (!statsNbaNetworkEnabled()) {
+    const cached = sharedPeek<StatsNbaResponse>(`stats.nba:${url}`);
+    if (cached) return cached;
     throw new Error(
       `stats.nba.com disabled on Vercel critical path: ${endpoint}`
     );
   }
 
-  return fetchStatsNba(url, ttlMs, staleMs, options);
+  return sharedGetOrSet(
+    `stats.nba:${url}`,
+    { ttlMs, staleMs, tags: ["stats-nba", endpoint] },
+    () => fetchStatsNba(url, options)
+  );
 }
 
 async function fetchStatsNba(
   url: string,
-  ttlMs: number,
-  staleMs: number,
   options: StatsNbaFetchOptions
 ): Promise<StatsNbaResponse> {
   const retries = options.retries ?? DEFAULT_RETRIES;
   let lastError: unknown;
+  const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
         signal: options.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
         headers: NBA_HEADERS,
-      });
+        // Shared across Vercel instances (Next Data Cache / CDN).
+        next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },
+      } as RequestInit);
       if (!response.ok) {
         throw new Error(`stats.nba.com failed (${response.status}): ${url}`);
       }
-      const value = (await response.json()) as StatsNbaResponse;
-      const now = Date.now();
-      memoryCache.set(url, {
-        value,
-        freshUntil: now + ttlMs,
-        staleUntil: now + ttlMs + staleMs,
-      });
-      return value;
+      return (await response.json()) as StatsNbaResponse;
     } catch (error) {
       lastError = error;
       // Do not add a backoff after the final failed attempt; that delay used to
@@ -180,7 +157,12 @@ function delay(ms: number): Promise<void> {
 }
 
 export function clearStatsNbaCache(): void {
-  memoryCache.clear();
+  sharedClearPrefix("stats.nba:");
+}
+
+/** Last known response in this process (stale ok) — critical-path fallback. */
+export function peekStatsNbaCache(url: string): StatsNbaResponse | null {
+  return sharedPeek(`stats.nba:${url}`);
 }
 
 /** Common league-dash params for a season. */

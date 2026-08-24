@@ -17,6 +17,7 @@ import {
   Target,
   Trophy,
   Users,
+  Zap,
   type LucideIcon,
 } from "lucide-react";
 
@@ -68,6 +69,7 @@ export { gradeFromPercentile, type GradeBand };
 const CATEGORY_ICONS: Record<PercentileCategory, LucideIcon> = {
   impact: Trophy,
   counting: Target,
+  hustle: Zap,
   shooting: Crosshair,
   rates: Users,
   advanced: Gauge,
@@ -996,7 +998,7 @@ export function PlayerPercentilePanel({
       effect="css"
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
-      className="flex min-h-0 flex-col p-4"
+      className="flex min-h-[28rem] flex-col p-4"
       honor={honor}
     >
       <h2 className={type.heading}>{viewSeason} percentile ranking</h2>

@@ -5,6 +5,7 @@
 
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
+import { hustlePerGame } from "@/data/transformers/hustle-stats";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
@@ -1099,6 +1100,67 @@ export function buildPlayerPercentileMetrics(
       series: careerSeries((r) =>
         r.defensiveReboundPct > 0 ? r.defensiveReboundPct * 100 : null
       ),
+      interpretation: "higher_is_better",
+    });
+  }
+
+  const hustleMetrics: Array<{
+    id: string;
+    label: string;
+    key: keyof Pick<
+      PlayerSeason,
+      | "hustleDeflections"
+      | "hustleContestedShots"
+      | "hustleScreenAssists"
+      | "hustleChargesDrawn"
+      | "hustleLooseBallsRecovered"
+      | "hustleBoxOuts"
+    >;
+    suffix: string;
+  }> = [
+    { id: "hustleDefl", label: "Deflections", key: "hustleDeflections", suffix: " defl" },
+    {
+      id: "hustleContest",
+      label: "Contested shots",
+      key: "hustleContestedShots",
+      suffix: " contest",
+    },
+    {
+      id: "hustleScrAst",
+      label: "Screen assists",
+      key: "hustleScreenAssists",
+      suffix: " scr ast",
+    },
+    {
+      id: "hustleChrg",
+      label: "Charges drawn",
+      key: "hustleChargesDrawn",
+      suffix: " chrg",
+    },
+    {
+      id: "hustleLoose",
+      label: "Loose balls",
+      key: "hustleLooseBallsRecovered",
+      suffix: " loose",
+    },
+    { id: "hustleBoxOut", label: "Box outs", key: "hustleBoxOuts", suffix: " box" },
+  ];
+
+  for (const metric of hustleMetrics) {
+    const value = hustlePerGame(seasonStats, metric.key);
+    if (value == null) continue;
+    const values = pool
+      .map((p) => hustlePerGame(p, metric.key))
+      .filter((n): n is number => n != null);
+    if (!values.length) continue;
+    push({
+      id: metric.id,
+      category: "hustle",
+      label: metric.label,
+      value,
+      values,
+      display: `${formatNumber(value, 1)}${metric.suffix}`,
+      series: careerSeries((r) => hustlePerGame(r, metric.key)),
       interpretation: "higher_is_better",
     });
   }
