@@ -1,7 +1,8 @@
 /**
- * Runtime policy for upstreams that can behave differently in serverless
- * environments. Keep this module pure so route-level regression tests can
- * verify policy without making network calls.
+ * Runtime policy for upstreams that are unreliable from Vercel serverless IPs.
+ *
+ * Keep this module pure so route-level regression tests can verify the policy
+ * without making network calls.
  */
 export type RuntimeEnv = Record<string, string | undefined>;
 
@@ -12,20 +13,17 @@ export function isVercelRuntime(
 }
 
 /**
- * Production and local must use the same provider graph. The old policy
- * disabled stats.nba.com solely because VERCEL was present, which guaranteed
- * every Vercel request would fall back to ESPN even when NBA Stats or a warm
- * Next Data Cache entry was available.
- *
- * Keep NBA Stats enabled by default everywhere. Operators can explicitly turn
- * the network path off during an incident with DISABLE_STATS_NBA_NETWORK=1;
- * the client itself applies short Vercel timeouts + a circuit breaker so a
- * blocked origin cannot hold page rendering open.
+ * stats.nba.com commonly times out or blocks Vercel egress. It remains
+ * available in local/server environments and can be explicitly re-enabled for
+ * a future proxy or fixed-egress deployment.
  */
 export function statsNbaNetworkEnabled(
   env: RuntimeEnv = process.env
 ): boolean {
-  return env.DISABLE_STATS_NBA_NETWORK !== "1";
+  return (
+    !isVercelRuntime(env) ||
+    env.ALLOW_STATS_NBA_ON_VERCEL === "1"
+  );
 }
 
 /** Bound optional provider work more aggressively in serverless renders. */
