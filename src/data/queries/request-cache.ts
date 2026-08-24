@@ -90,10 +90,18 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
 /**
  * Shared DRBL + YoY Advanced enrich for Statistics / Career / percentile.
  * Keyed by playerId + career reference so islands sharing page career hit once.
+ * This is optional presentation data: bound it so a slow BRef/DARKO/NBA overlay
+ * cannot keep the streamed player response open until Vercel terminates it.
  */
 export const enrichPlayerCareerAdvancedCached = cache(
-  (playerId: string, career: PlayerSeason[]) =>
-    enrichPlayerCareerAdvancedUncached(playerId, career)
+  async (playerId: string, career: PlayerSeason[]) => {
+    const result = await withBudget(
+      enrichPlayerCareerAdvancedUncached(playerId, career).catch(() => career),
+      runtimeTimeoutMs(12_000, 4_500),
+      career
+    );
+    return result.value;
+  }
 );
 
 export const getTeamSeasonStatsCached = cache((season: string) =>
