@@ -35,11 +35,28 @@ async function fetchWithTimeout(route, timeoutMs = 30_000) {
     signal: AbortSignal.timeout(timeoutMs),
     headers: {
       Accept: "text/html,application/xhtml+xml",
-      "User-Agent": "basketball-analytics-production-parity/2.0",
+      "User-Agent": "basketball-analytics-production-parity/3.0",
     },
   });
   const body = await response.text();
   return { status: response.status, body, elapsedMs: Date.now() - started };
+}
+
+async function fetchJsonWithTimeout(route, timeoutMs = 30_000) {
+  const started = Date.now();
+  const response = await fetch(`${origin}${route}`, {
+    signal: AbortSignal.timeout(timeoutMs),
+    headers: {
+      Accept: "application/json",
+      "User-Agent": "basketball-analytics-production-parity/3.0",
+    },
+  });
+  const body = await response.text();
+  let json = null;
+  try {
+    json = JSON.parse(body);
+  } catch {}
+  return { status: response.status, body, json, elapsedMs: Date.now() - started };
 }
 
 async function waitForServer() {
@@ -91,11 +108,42 @@ function assertDeepGame(route, result) {
   }
 }
 
+function assertPlayerGameLogPayload(route, result) {
+  if (result.status !== 200) throw new Error(`${route} returned HTTP ${result.status}`);
+  const payload = result.json;
+  if (!payload || !Array.isArray(payload.data)) {
+    throw new Error(`${route} did not return a game-log payload`);
+  }
+  if (payload.count < 40 || payload.data.length < 40) {
+    throw new Error(`${route} returned a suspiciously empty game log (${payload.count ?? "?"})`);
+  }
+  const regular = payload.data.filter((game) => (game.seasonType ?? "regular") === "regular");
+  if (regular.length < 40) {
+    throw new Error(`${route} returned too few regular-season games (${regular.length})`);
+  }
+  const invalid = regular.find(
+    (game) =>
+      !/^0025\d{6}$/.test(String(game.gameId ?? "")) ||
+      !/^2025-|^2026-/.test(String(game.gameDate ?? "")) ||
+      !String(game.opponentTeamId ?? "").trim() ||
+      !String(game.teamId ?? "").trim() ||
+      !Number.isFinite(Number(game.points)) ||
+      !Number.isFinite(Number(game.minutes))
+  );
+  if (invalid) {
+    throw new Error(`${route} contains a non-canonical or malformed game row: ${JSON.stringify(invalid)}`);
+  }
+  const homeCount = regular.filter((game) => game.isHome === true).length;
+  const awayCount = regular.filter((game) => game.isHome === false).length;
+  if (homeCount < 10 || awayCount < 10) {
+    throw new Error(`${route} home/away parsing is implausible (${homeCount} home, ${awayCount} away)`);
+  }
+  console.log(`[parity-smoke] ${route} -> ${payload.data.length} factual game rows`);
+}
+
 async function main() {
   await waitForServer();
 
-  // Broad route-family health: a provider regression must not take down sibling
-  // destinations just because Vercel is the host.
   for (const route of [
     "/",
     "/players",
@@ -133,7 +181,6 @@ async function main() {
   for (const route of [
     "/players/4278073?season=2025-26&view=overview",
     "/players/4278073?season=2025-26&view=career",
-    "/players/4278073?season=2025-26&view=games",
     "/players/4278073?season=2025-26&view=advanced",
   ]) {
     const result = await fetchWithTimeout(route, 35_000);
@@ -141,6 +188,37 @@ async function main() {
     if (!result.body.includes("Shai Gilgeous-Alexander")) {
       throw new Error(`${route} lost player identity`);
     }
+  }
+
+  const gameLogApiRoute = "/api/players/4278073/games?season=2025-26";
+  const gameLogApi = await fetchJsonWithTimeout(gameLogApiRoute, 35_000);
+  assertPlayerGameLogPayload(gameLogApiRoute, gameLogApi);
+
+  const explicitGames = await fetchWithTimeout(
+    "/players/4278073?season=2025-26&view=games",
+    35_000
+  );
+  assertHealthy("/players/4278073?season=2025-26&view=games", explicitGames);
+  if (!explicitGames.body.includes("Game logs")) {
+    throw new Error("explicit player Games tab did not render Game logs");
+  }
+  if (explicitGames.body.includes("No regular-season games match these filters for 2025-26")) {
+    throw new Error("explicit 2025-26 Games tab still renders an empty game log");
+  }
+
+  // Current 2026-27 roster season has not tipped on this deployment date. The
+  // Games tab must follow the same prior-season stats semantics as Overview,
+  // rather than asking ESPN for an empty future-season game log.
+  const offseasonGames = await fetchWithTimeout(
+    "/players/4278073?season=2026-27&view=games",
+    35_000
+  );
+  assertHealthy("/players/4278073?season=2026-27&view=games", offseasonGames);
+  if (!offseasonGames.body.includes("2026-27 hasn") || !offseasonGames.body.includes("2025-26")) {
+    throw new Error("offseason Games tab did not disclose prior-season game-log fallback");
+  }
+  if (offseasonGames.body.includes("No regular-season games match these filters for 2025-26")) {
+    throw new Error("offseason Games tab resolved to prior season but still rendered empty");
   }
 
   const scores = await fetchWithTimeout("/scores");
@@ -168,8 +246,6 @@ async function main() {
     throw new Error("2025-26 history did not render deployed season/game discovery");
   }
 
-  // Exact production regression plus its canonical NBA-ID destination. The
-  // legacy ESPN link must translate to the same deep box/PBP pipeline.
   assertDeepGame(
     "/games/401811018?season=2025-26",
     await fetchWithTimeout("/games/401811018?season=2025-26", 35_000)
@@ -179,8 +255,6 @@ async function main() {
     await fetchWithTimeout("/games/0022501163?season=2025-26", 35_000)
   );
 
-  // Future games have no box/PBP by definition, but the matchup itself must be
-  // a real server-rendered destination, not an unavailable/browser-fallback page.
   for (const route of [playerGameHref, scoresGameHref]) {
     const game = await fetchWithTimeout(route, 30_000);
     assertHealthy(route, game);
