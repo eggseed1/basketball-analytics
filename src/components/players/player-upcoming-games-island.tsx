@@ -1,6 +1,7 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
 import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import {
   transformEspnScheduleEvent,
@@ -10,6 +11,7 @@ import {
   getPlayerCareerSeasonsCached,
   getUpcomingGameSummaries,
 } from "@/data/queries";
+import { withBudget } from "@/data/queries/budget";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import type { GameSummary } from "@/data/types";
 import { teamSeasonStub } from "@/lib/team-season-stub";
@@ -53,6 +55,16 @@ export async function PlayerUpcomingGamesIsland({
 }) {
   let scheduleTeamKey = brandableTeamKey(scheduleTeamKeyProp) ?? null;
 
+  // The critical career rows are request-cached and usually already loaded by
+  // the page. Prefer that deterministic team context over another roster call.
+  if (!scheduleTeamKey) {
+    const career = await getPlayerCareerSeasonsCached(playerId).catch(() => []);
+    const latest = [...career]
+      .sort((a, b) => b.season.localeCompare(a.season))
+      .find((row) => brandableTeamKey(row.teamId));
+    scheduleTeamKey = brandableTeamKey(latest?.teamId) ?? null;
+  }
+
   if (!scheduleTeamKey) {
     const { resolvePlayerCurrentSeasonTeamKey } = await import(
       "@/data/queries/player-current-team"
@@ -62,14 +74,6 @@ export async function PlayerUpcomingGamesIsland({
     );
   }
 
-  if (!scheduleTeamKey) {
-    const career = await getPlayerCareerSeasonsCached(playerId).catch(() => []);
-    const latest = [...career]
-      .sort((a, b) => b.season.localeCompare(a.season))
-      .find((row) => brandableTeamKey(row.teamId));
-    scheduleTeamKey = brandableTeamKey(latest?.teamId) ?? null;
-  }
-
   if (!scheduleTeamKey) return null;
 
   const season = getCurrentFrontOfficeSeason();
@@ -77,16 +81,30 @@ export async function PlayerUpcomingGamesIsland({
   if (!team) return null;
 
   const brand = resolveTeamBrand(scheduleTeamKey);
-  const upcomingBundle = await getUpcomingGameSummaries({
-    season,
-    limit: 40,
-  }).catch(() => ({ games: [] as GameSummary[] }));
 
-  let games = [...upcomingBundle.games];
+  // Player cards need one team's next games, not a league-wide month crawl.
+  // One ESPN team-schedule request is the primary path; a two-month league
+  // scoreboard is only a bounded fallback.
+  const targeted = await withBudget(
+    fetchTeamScheduleFallback(scheduleTeamKey, season).catch(() => []),
+    runtimeTimeoutMs(5_000, 3_000),
+    [] as GameSummary[]
+  );
+  let games = targeted.value;
+
   if (games.length === 0) {
-    games = await fetchTeamScheduleFallback(scheduleTeamKey, season).catch(
-      () => []
+    const fallback = await withBudget(
+      getUpcomingGameSummaries({
+        season,
+        limit: 12,
+        monthCount: 2,
+      })
+        .then((bundle) => bundle.games)
+        .catch(() => []),
+      runtimeTimeoutMs(5_000, 3_000),
+      [] as GameSummary[]
     );
+    games = fallback.value;
   }
 
   return (
