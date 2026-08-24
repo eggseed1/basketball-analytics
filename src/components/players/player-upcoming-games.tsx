@@ -4,8 +4,8 @@ import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import { type } from "@/lib/design-system";
 import type { TeamBrand } from "@/lib/nba-brand";
 import {
-  filterTeamGames,
   formatTeamGameScoreLine,
+  gameInvolvesTeam,
 } from "@/lib/team-explorer";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +26,19 @@ export function PlayerUpcomingGames({
   games: GameSummary[];
   className?: string;
 }) {
-  const upcoming = filterTeamGames(games, team, brand, 5);
+  // This is a forward-looking surface. The generic team helper sorts newest
+  // first for recent-results views, which selected the end of the season here.
+  // Keep only this team and sort earliest tip first.
+  const upcoming = games
+    .filter((game) => gameInvolvesTeam(game, team, brand))
+    .slice()
+    .sort((a, b) => {
+      const ta = a.tipOffAt ?? a.gameDate;
+      const tb = b.tipOffAt ?? b.gameDate;
+      if (ta !== tb) return ta.localeCompare(tb);
+      return a.id.localeCompare(b.id);
+    })
+    .slice(0, 5);
 
   return (
     <div className={cn("flex flex-col gap-2", className)}>
