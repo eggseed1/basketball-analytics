@@ -1,7 +1,7 @@
 /**
  * Public NBA play-by-play fetch:
  * 1) CDN liveData  https://cdn.nba.com/static/json/liveData/playbyplay/playbyplay_{id}.json
- * 2) stats.nba.com playbyplayv3 fallback
+ * 2) stats.nba.com playbyplayv3 fallback where that origin is reachable
  * 3) Optional on-disk DRBL raw cache (previously downloaded public data)
  */
 
@@ -9,6 +9,7 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 
 import { CACHE_TTL_MS } from "./cache-policy";
+import { runtimeTimeoutMs, statsNbaNetworkEnabled } from "./runtime-policy";
 
 export interface RawPlayByPlayPayload {
   raw: unknown;
@@ -58,19 +59,23 @@ function statsUrl(gameId: string): string {
 async function fetchJson(
   url: string,
   headers: Record<string, string>,
-  retries = 3
+  retries = 2
 ): Promise<unknown> {
   let lastError: unknown;
+  const timeoutMs = runtimeTimeoutMs(5_000, 2_500);
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const response = await fetch(url, { headers });
+      const response = await fetch(url, {
+        headers,
+        signal: AbortSignal.timeout(timeoutMs),
+      });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} for ${url}`);
       }
       return await response.json();
     } catch (error) {
       lastError = error;
-      await delay(350 * (attempt + 1));
+      if (attempt < retries - 1) await delay(250 * (attempt + 1));
     }
   }
   throw lastError instanceof Error
@@ -124,23 +129,25 @@ async function fetchRawPlayByPlayUncached(
     // fall through
   }
 
-  try {
-    const raw = await fetchJson(statsUrl(gameId), STATS_HEADERS);
-    if (hasActions(raw)) {
-      memoryCache.set(gameId, {
-        value: raw,
-        source: "stats",
-        freshUntil: now + CACHE_TTL_MS.boxScore,
-      });
-      return { raw, source: "stats" };
+  // Do not bypass the shared Vercel runtime policy with a direct Stats request.
+  if (statsNbaNetworkEnabled()) {
+    try {
+      const raw = await fetchJson(statsUrl(gameId), STATS_HEADERS, 1);
+      if (hasActions(raw)) {
+        memoryCache.set(gameId, {
+          value: raw,
+          source: "stats",
+          freshUntil: now + CACHE_TTL_MS.boxScore,
+        });
+        return { raw, source: "stats" };
+      }
+    } catch {
+      // fall through
     }
-  } catch {
-    // fall through
   }
 
   const disk = await readDiskCache(gameId);
   if (disk && hasActions(disk)) {
-    // Treat disk as CDN-shaped public dump (usually from a prior CDN pull).
     memoryCache.set(gameId, {
       value: disk,
       source: "disk",
