@@ -1,0 +1,126 @@
+name: Player runtime diagnostic
+
+on:
+  push:
+    branches:
+      - diagnose/player-runtime-crash-2
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  production-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      DATA_PROVIDER: nba
+      VERCEL: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NODE_OPTIONS: "--trace-uncaught --unhandled-rejections=strict"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Build production app
+        run: npm run build
+
+      - name: Start production server
+        shell: bash
+        run: |
+          set -euo pipefail
+          npm run start > /tmp/next-server.log 2>&1 &
+          echo $! > /tmp/next-server.pid
+          for attempt in $(seq 1 90); do
+            if curl -fsS --max-time 2 http://127.0.0.1:3000/ >/tmp/home.html 2>/tmp/home-curl.err; then
+              echo "Server ready after ${attempt}s"
+              exit 0
+            fi
+            if ! kill -0 "$(cat /tmp/next-server.pid)" 2>/dev/null; then
+              echo "Next server exited before becoming ready"
+              cat /tmp/next-server.log
+              exit 1
+            fi
+            sleep 1
+          done
+          echo "Next server did not become ready"
+          cat /tmp/home-curl.err || true
+          cat /tmp/next-server.log
+          exit 1
+
+      - name: Smoke dynamic routes
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          request_route() {
+            local label="$1"
+            local path="$2"
+            local body="/tmp/${label}.body"
+            local headers="/tmp/${label}.headers"
+            local errors="/tmp/${label}.curl.err"
+            local metrics="/tmp/${label}.metrics"
+
+            echo "::group::${label} ${path}"
+            curl -sS --max-time 30 \
+              -D "$headers" \
+              -o "$body" \
+              -w 'http_code=%{http_code}\ntime_total=%{time_total}\nsize_download=%{size_download}\nurl_effective=%{url_effective}\n' \
+              "http://127.0.0.1:3000${path}" > "$metrics" 2> "$errors"
+            local curl_status=$?
+            cat "$metrics" || true
+            echo "curl_status=${curl_status}"
+            echo "--- headers ---"
+            sed -n '1,80p' "$headers" || true
+            echo "--- curl stderr ---"
+            cat "$errors" || true
+            echo "--- body markers ---"
+            grep -Eio 'internal server error|application error|player page interrupted|page interrupted|digest[^<]{0,120}|not found|Shai Gilgeous-Alexander' "$body" | head -80 || true
+            echo "--- body head ---"
+            head -c 3000 "$body" || true
+            echo
+            echo "::endgroup::"
+          }
+
+          request_route home "/"
+          request_route players_board "/explore/players"
+          request_route sga "/players/4278073"
+          request_route sga_overview "/players/4278073?season=2024-25&view=overview"
+          request_route sga_games "/players/4278073?season=2024-25&view=games"
+          request_route sga_rank "/players/4278073/season-rank"
+          request_route sga_compare "/players/4278073/season-compare?a=2023-24&b=2024-25"
+          request_route team "/teams/25?season=2024-25"
+          request_route history "/history/2024-25"
+
+          echo "::group::next server log"
+          cat /tmp/next-server.log
+          echo "::endgroup::"
+
+          code=$(awk -F= '/http_code=/{print $2}' /tmp/sga.metrics | tail -1)
+          if [[ -z "$code" || "$code" == "000" || "$code" -ge 500 ]]; then
+            echo "Player route failed with HTTP ${code:-missing}"
+            exit 1
+          fi
+
+      - name: Upload diagnostic output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: player-runtime-diagnostic
+          path: |
+            /tmp/next-server.log
+            /tmp/*.headers
+            /tmp/*.body
+            /tmp/*.metrics
+            /tmp/*.curl.err
+          if-no-files-found: ignore
+          retention-days: 3
