@@ -16,7 +16,7 @@ import {
   getTeamRoster as getTeamRosterUncached,
 } from "@/data/queries/players";
 import { getPlayerCriticalCareerSeasons } from "@/data/queries/player-critical";
-import type { Player, PlayerSeason } from "@/data/types";
+import type { Player, PlayerGame, PlayerSeason } from "@/data/types";
 import {
   getTeamSeasonBoard as getTeamSeasonBoardUncached,
   getTeamSeasonStats as getTeamSeasonStatsUncached,
@@ -49,13 +49,29 @@ export const getPlayerAccoladesCached = cache((playerId: string) =>
 );
 
 export const getPlayerSeasonCached = cache(
-  (playerId: string, season: string, statsSeason?: string) =>
-    getPlayerSeasonUncached(playerId, season, statsSeason ? { statsSeason } : undefined)
+  async (playerId: string, season: string, statsSeason?: string) => {
+    const result = await withBudget(
+      getPlayerSeasonUncached(
+        playerId,
+        season,
+        statsSeason ? { statsSeason } : undefined
+      ).catch(() => null),
+      runtimeTimeoutMs(6_000, 3_000),
+      null as PlayerSeason | null
+    );
+    return result.value;
+  }
 );
 
 export const getPlayerGameLogCached = cache(
-  (playerId: string, season: string) =>
-    getPlayerGameLogUncached(playerId, season)
+  async (playerId: string, season: string) => {
+    const result = await withBudget(
+      getPlayerGameLogUncached(playerId, season).catch(() => []),
+      runtimeTimeoutMs(7_000, 3_500),
+      [] as PlayerGame[]
+    );
+    return result.value;
+  }
 );
 
 /**
@@ -104,9 +120,19 @@ export const getTeamSeasonGamesCached = cache(
     getTeamSeasonGamesUncached({ teamId, season, abbreviation })
 );
 
-export const getGameShellCached = cache((gameId: string) =>
-  getGameShellUncached(gameId)
-);
+/**
+ * Game identity must also fail open. Deep play-by-play and analysis already
+ * stream later; a blocked summary endpoint should become an unavailable shell,
+ * not a serverless timeout.
+ */
+export const getGameShellCached = cache(async (gameId: string) => {
+  const result = await withBudget(
+    getGameShellUncached(gameId).catch(() => null),
+    runtimeTimeoutMs(9_000, 4_800),
+    null
+  );
+  return result.value;
+});
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
 
@@ -114,6 +140,11 @@ export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
 export const getFilteredPlayerSeasonsCached = cache(
   async (season: string, minimumGames: number) => {
     const { getFilteredPlayerSeasons } = await import("@/data/queries/players");
-    return getFilteredPlayerSeasons({ season, minimumGames });
+    const result = await withBudget(
+      getFilteredPlayerSeasons({ season, minimumGames }).catch(() => []),
+      runtimeTimeoutMs(10_000, 5_000),
+      [] as PlayerSeason[]
+    );
+    return result.value;
   }
 );
