@@ -103,6 +103,16 @@ function firstGameHref(html) {
   return match?.[1] ?? null;
 }
 
+function assertResolvedGame(path, result) {
+  assertHealthyHtml(path, result);
+  if (result.body.includes("Game unavailable")) {
+    throw new Error(`${path} rendered Game unavailable`);
+  }
+  console.log(
+    `[route-smoke] ${path} -> ${result.status} in ${result.elapsedMs}ms (${result.body.length} bytes)`
+  );
+}
+
 async function main() {
   await waitForServer();
 
@@ -120,27 +130,33 @@ async function main() {
 
   const scores = await fetchWithTimeout("/scores", 25_000);
   assertHealthyHtml("/scores", scores);
+  if (scores.body.includes("No upcoming games on the ESPN scoreboard yet.")) {
+    throw new Error("/scores returned 200 but the upcoming schedule is empty");
+  }
+  const scoresGameHref = firstGameHref(scores.body);
+  if (!scoresGameHref) {
+    throw new Error("/scores returned 200 but did not contain any game destination");
+  }
   console.log(
     `[route-smoke] /scores -> ${scores.status} in ${scores.elapsedMs}ms (${scores.body.length} bytes)`
   );
 
-  // Prefer the player's targeted upcoming schedule because it is the exact
-  // regression surface; fall back to the global scores feed. When ESPN is
-  // temporarily unavailable, /scores must still soft-fail with HTTP 200, so a
-  // missing link alone does not fail the deployment.
-  const gameHref =
-    firstGameHref(playerLanding?.body ?? "") ?? firstGameHref(scores.body);
-  if (gameHref) {
-    const game = await fetchWithTimeout(gameHref, 25_000);
-    assertHealthyHtml(gameHref, game);
-    if (game.body.includes("Game unavailable")) {
-      throw new Error(`${gameHref} came from a live game feed but rendered Game unavailable`);
-    }
-    console.log(
-      `[route-smoke] ${gameHref} -> ${game.status} in ${game.elapsedMs}ms (${game.body.length} bytes)`
-    );
-  } else {
-    console.warn("[route-smoke] no game link available from current ESPN feeds; route-list soft-fail verified only");
+  // Player schedule should also produce a real destination for an active player.
+  const playerGameHref = firstGameHref(playerLanding?.body ?? "");
+  if (!playerGameHref) {
+    throw new Error("/players/4278073 rendered Upcoming games without a game destination");
+  }
+
+  // Verify a current schedule destination and the exact historical ESPN-id
+  // regression reported from production. The latter proves the independent
+  // cdn.espn.com fallback works when site.api.espn.com is unavailable.
+  for (const path of [
+    playerGameHref,
+    scoresGameHref,
+    "/games/401811018?season=2025-26",
+  ]) {
+    const game = await fetchWithTimeout(path, 25_000);
+    assertResolvedGame(path, game);
   }
 }
 
