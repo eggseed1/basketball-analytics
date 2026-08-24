@@ -1,6 +1,7 @@
 /**
  * Server-side loaders for validated front-office snapshots.
- * Never fetches remote salary/draft sources at request time.
+ * Never fetches remote salary/draft sources at request time unless explicitly
+ * resolving the current live roster outside the Vercel critical path.
  */
 
 import { existsSync, readFileSync } from "node:fs";
@@ -18,6 +19,7 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { isVercelRuntime } from "@/data/providers/nba/runtime-policy";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { DraftAsset } from "@/data/types/front-office";
 
@@ -219,7 +221,17 @@ export function isCurrentFrontOfficeSeason(season: string | null | undefined) {
   return season === nowSeason;
 }
 
-/** Static snapshot when fresh; otherwise live ESPN roster for the current league year. */
+function liveFrontOfficeEnabled(): boolean {
+  return (
+    !isVercelRuntime() ||
+    process.env.ALLOW_LIVE_FRONT_OFFICE_ON_VERCEL === "1"
+  );
+}
+
+/**
+ * Prefer a validated disk snapshot on Vercel. Live ESPN roster synthesis is an
+ * optional refresh, never a hard dependency for player/team route rendering.
+ */
 export async function resolveTeamFrontOfficeSlice(
   franchiseId: string,
   season?: string | null
@@ -229,19 +241,30 @@ export async function resolveTeamFrontOfficeSlice(
 
   const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const targetSeason = season ?? nowSeason;
-
-  if (targetSeason === nowSeason) {
-    const { buildLiveTeamFrontOfficeSlice } = await import(
-      "@/data/front-office/build-live-front-office"
-    );
-    const live = await buildLiveTeamFrontOfficeSlice(id);
-    if (live) return live;
-  }
-
   const cached = loadTeamFrontOfficeSlice(id);
-  if (cached && cached.meta.season === targetSeason) return cached;
+
   if (targetSeason === nowSeason) {
-    return cached?.meta.season === nowSeason ? cached : null;
+    // In serverless production, the committed snapshot is the deterministic
+    // first choice. A blocked roster endpoint must not reject the whole route.
+    if (!liveFrontOfficeEnabled()) return cached;
+
+    try {
+      const { buildLiveTeamFrontOfficeSlice } = await import(
+        "@/data/front-office/build-live-front-office"
+      );
+      const live = await buildLiveTeamFrontOfficeSlice(id);
+      if (live) return live;
+    } catch (error) {
+      console.error("[front-office] live roster refresh failed", {
+        franchiseId: id,
+        error: error instanceof Error ? error.message : String(error),
+      });
+    }
+
+    // A last validated snapshot is preferable to a route exception. Its own
+    // metadata carries the actual snapshot season/date, so the UI stays honest.
+    return cached;
   }
+
   return cached?.meta.season === targetSeason ? cached : null;
 }
