@@ -1,5 +1,8 @@
-import type { PlayerSeason } from "@/data/types";
+import type { GameBoxScore, PlayerSeason } from "@/data/types";
 import { ResilientNBADataProvider } from "@/data/providers/nba/resilient-nba-data-provider";
+import { fetchRawBoxScore } from "@/data/providers/nba/raw-box-score-client";
+import { transformNbaCdnBoxScore } from "@/data/providers/nba/nba-cdn-box-transformer";
+import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
 
 const MISSING = Number.NaN;
 
@@ -61,6 +64,26 @@ export class CompleteNBADataProvider extends ResilientNBADataProvider {
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
     const rows = await super.getPlayerCareerSeasons(playerId);
     return rows.map(removeCareerEndpointPlaceholders);
+  }
+
+  /**
+   * Modern NBA GameIDs have a public cdn.nba.com liveData box score. Use that
+   * before stats.nba.com so Vercel receives the same factual player box that
+   * local/Cursor receives even when NBA Stats blocks serverless IP ranges.
+   * stats.nba.com remains a compatibility fallback for older/non-CDN games.
+   */
+  async getGameBoxScore(gameId: string): Promise<GameBoxScore | null> {
+    if (/^00\d{8}$/.test(gameId)) {
+      const raw = await fetchRawBoxScore(gameId).catch(() => null);
+      if (raw?.raw) {
+        const transformed = transformNbaCdnBoxScore(
+          raw.raw,
+          defaultCanonicalSeasons(1)[0]
+        );
+        if (transformed?.game) return transformed;
+      }
+    }
+    return super.getGameBoxScore(gameId);
   }
 }
 
