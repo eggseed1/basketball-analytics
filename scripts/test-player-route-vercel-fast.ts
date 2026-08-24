@@ -1,9 +1,9 @@
 /**
  * Regression guard for the Vercel player-route critical path.
  *
- * This test is network-free: production must use the same NBA Stats provider
- * graph as local/Cursor, while roster fan-out remains disabled and dynamic
- * player links do not auto-prefetch destinations.
+ * This test is network-free: it verifies that blocked NBA Stats egress fails
+ * before fetch, that 30-team roster discovery is disabled, and that dense
+ * player links do not auto-prefetch dynamic destinations.
  */
 import assert from "node:assert/strict";
 import { readFileSync } from "node:fs";
@@ -14,22 +14,18 @@ import {
   runtimeTimeoutMs,
   statsNbaNetworkEnabled,
 } from "../src/data/providers/nba/runtime-policy";
-import {
-  clearStatsNbaCache,
-  statsNbaFetch,
-} from "../src/data/providers/nba/stats-nba-client";
+import { statsNbaFetch } from "../src/data/providers/nba/stats-nba-client";
 
 async function main() {
-  // Vercel itself must never force a different provider graph.
-  assert.equal(statsNbaNetworkEnabled({ VERCEL: "1" }), true);
-  assert.equal(statsNbaNetworkEnabled({}), true);
+  assert.equal(statsNbaNetworkEnabled({ VERCEL: "1" }), false);
   assert.equal(
     statsNbaNetworkEnabled({
       VERCEL: "1",
-      DISABLE_STATS_NBA_NETWORK: "1",
+      ALLOW_STATS_NBA_ON_VERCEL: "1",
     }),
-    false
+    true
   );
+  assert.equal(statsNbaNetworkEnabled({}), true);
 
   assert.equal(leagueRosterDiscoveryEnabled({ VERCEL: "1" }), false);
   assert.equal(
@@ -42,34 +38,31 @@ async function main() {
   assert.equal(runtimeTimeoutMs(8_000, 1_000, { VERCEL: "1" }), 1_000);
   assert.equal(runtimeTimeoutMs(8_000, 1_000, {}), 8_000);
 
-  // Prove the Vercel path actually reaches the NBA Stats fetch rather than
-  // failing solely because VERCEL=1. The mocked network fails immediately so
-  // this remains deterministic and offline.
   const oldVercel = process.env.VERCEL;
-  const oldDisable = process.env.DISABLE_STATS_NBA_NETWORK;
+  const oldAllow = process.env.ALLOW_STATS_NBA_ON_VERCEL;
   const oldFetch = globalThis.fetch;
   let fetchCalled = false;
 
   process.env.VERCEL = "1";
-  delete process.env.DISABLE_STATS_NBA_NETWORK;
+  delete process.env.ALLOW_STATS_NBA_ON_VERCEL;
   globalThis.fetch = (async () => {
     fetchCalled = true;
-    throw new Error("mock upstream failure");
+    throw new Error("network should not be reached");
   }) as typeof fetch;
 
-  clearStatsNbaCache();
+  const started = Date.now();
   await assert.rejects(
     () => statsNbaFetch("commonplayerinfo", { PlayerID: "2544" }),
-    /mock upstream failure/
+    /disabled on Vercel critical path/
   );
-  assert.equal(fetchCalled, true, "Vercel must attempt the same NBA Stats path as local");
+  assert.equal(fetchCalled, false);
+  assert.ok(Date.now() - started < 250, "NBA Stats guard must fail immediately");
 
-  clearStatsNbaCache();
   globalThis.fetch = oldFetch;
   if (oldVercel == null) delete process.env.VERCEL;
   else process.env.VERCEL = oldVercel;
-  if (oldDisable == null) delete process.env.DISABLE_STATS_NBA_NETWORK;
-  else process.env.DISABLE_STATS_NBA_NETWORK = oldDisable;
+  if (oldAllow == null) delete process.env.ALLOW_STATS_NBA_ON_VERCEL;
+  else process.env.ALLOW_STATS_NBA_ON_VERCEL = oldAllow;
 
   const queryNav = readFileSync(
     join(process.cwd(), "src/components/continuity/query-nav.tsx"),
