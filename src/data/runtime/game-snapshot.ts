@@ -6,11 +6,13 @@ export type RuntimeGameSnapshot = {
   generatedAt: string | null;
   source: string;
   seasons?: string[];
+  aliases?: Record<string, string>;
   games: Game[];
 };
 
 const data = snapshot as RuntimeGameSnapshot;
 const games = Array.isArray(data.games) ? data.games : [];
+const aliases = data.aliases ?? {};
 const byId = new Map(games.map((game) => [String(game.id), game] as const));
 
 export function runtimeGameSnapshotMeta() {
@@ -18,11 +20,17 @@ export function runtimeGameSnapshotMeta() {
     generatedAt: data.generatedAt,
     source: data.source,
     gameCount: games.length,
+    aliasCount: Object.keys(aliases).length,
   };
 }
 
+export function resolveRuntimeSnapshotGameId(gameId: string): string {
+  const raw = String(gameId ?? "").trim();
+  return aliases[raw] ?? raw;
+}
+
 export function getRuntimeSnapshotGame(gameId: string): Game | null {
-  return byId.get(String(gameId ?? "").trim()) ?? null;
+  return byId.get(resolveRuntimeSnapshotGameId(gameId)) ?? null;
 }
 
 export function getRuntimeSnapshotGames(season?: string): Game[] {
