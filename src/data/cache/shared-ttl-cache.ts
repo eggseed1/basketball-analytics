@@ -18,6 +18,7 @@ type MemoryEntry<T> = {
 };
 
 const memory = new Map<string, MemoryEntry<unknown>>();
+const inflight = new Map<string, Promise<unknown>>();
 
 export type SharedCacheOptions = {
   /** Fresh TTL in ms (also drives Next revalidate seconds). */
@@ -38,17 +39,22 @@ async function nextDataCacheGetOrSet<T>(
   tags: string[],
   factory: () => Promise<T>
 ): Promise<T> {
+  let unstableCache: typeof import("next/cache").unstable_cache;
   try {
-    const { unstable_cache } = await import("next/cache");
-    const cached = unstable_cache(factory, [key], {
-      revalidate: revalidateSeconds(ttlMs),
-      tags: tags.length ? tags : [key],
-    });
-    return await cached();
+    ({ unstable_cache: unstableCache } = await import("next/cache"));
   } catch {
-    // Scripts / non-Next runtimes: no shared Data Cache.
+    // Scripts / non-Next runtimes: no shared Data Cache. Only the cache-adapter
+    // lookup is allowed to fall back. Never catch `cached()` below: doing so
+    // used to replay every failed upstream request a second time and also
+    // swallowed Next control-flow errors before retrying the same factory.
     return factory();
   }
+
+  const cached = unstableCache(factory, [key], {
+    revalidate: revalidateSeconds(ttlMs),
+    tags: tags.length ? tags : [key],
+  });
+  return cached();
 }
 
 function remember<T>(
@@ -64,6 +70,28 @@ function remember<T>(
     staleUntil: now + ttlMs + staleMs,
   });
   return value;
+}
+
+async function loadAndRemember<T>(
+  key: string,
+  options: SharedCacheOptions,
+  factory: () => Promise<T>
+): Promise<T> {
+  const existing = inflight.get(key);
+  if (existing) return existing as Promise<T>;
+
+  const ttlMs = options.ttlMs;
+  const staleMs = options.staleMs ?? 0;
+  const tags = options.tags ?? [];
+  const pending = nextDataCacheGetOrSet(key, ttlMs, tags, factory).then(
+    (value) => remember(key, value, ttlMs, staleMs)
+  );
+  inflight.set(key, pending);
+  try {
+    return await pending;
+  } finally {
+    if (inflight.get(key) === pending) inflight.delete(key);
+  }
 }
 
 /** Force-update process memory (e.g. after a successful upstream write). */
@@ -84,9 +112,6 @@ export async function sharedGetOrSet<T>(
   options: SharedCacheOptions,
   factory: () => Promise<T>
 ): Promise<T> {
-  const ttlMs = options.ttlMs;
-  const staleMs = options.staleMs ?? 0;
-  const tags = options.tags ?? [];
   const now = Date.now();
   const hit = memory.get(key) as MemoryEntry<T> | undefined;
 
@@ -97,8 +122,7 @@ export async function sharedGetOrSet<T>(
   if (hit && hit.staleUntil > now) {
     if (!hit.refreshing) {
       hit.refreshing = true;
-      void nextDataCacheGetOrSet(key, ttlMs, tags, factory)
-        .then((value) => remember(key, value, ttlMs, staleMs))
+      void loadAndRemember(key, options, factory)
         .catch(() => undefined)
         .finally(() => {
           const current = memory.get(key) as MemoryEntry<T> | undefined;
@@ -108,8 +132,7 @@ export async function sharedGetOrSet<T>(
     return hit.value;
   }
 
-  const value = await nextDataCacheGetOrSet(key, ttlMs, tags, factory);
-  return remember(key, value, ttlMs, staleMs);
+  return loadAndRemember(key, options, factory);
 }
 
 /**
@@ -150,16 +173,21 @@ export function sharedPeek<T>(key: string): T | null {
 
 export function sharedDelete(key: string): void {
   memory.delete(key);
+  inflight.delete(key);
 }
 
 export function sharedClearPrefix(prefix: string): void {
   for (const key of memory.keys()) {
     if (key.startsWith(prefix)) memory.delete(key);
   }
+  for (const key of inflight.keys()) {
+    if (key.startsWith(prefix)) inflight.delete(key);
+  }
 }
 
 export function sharedClear(): void {
   memory.clear();
+  inflight.clear();
 }
 
 /** Stable cache key helper. */
