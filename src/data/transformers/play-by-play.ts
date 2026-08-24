@@ -46,12 +46,13 @@ function pointsFromAction(
 }
 
 /**
- * Map CDN / playbyplayv3 `game.actions` into canonical PlayByPlayEvent[].
+ * Map normalized `game.actions` into canonical PlayByPlayEvent[]. NBA CDN,
+ * playbyplayv3, and the ESPN adapter all produce this same action shape.
  */
 export function transformNbaPlayByPlay(
   gameId: string,
   raw: unknown,
-  source: "cdn" | "stats" | "sample"
+  source: "cdn" | "stats" | "espn" | "sample"
 ): GamePlayByPlay {
   const root = raw as {
     game?: { actions?: Array<Record<string, unknown>> };
@@ -70,7 +71,7 @@ export function transformNbaPlayByPlay(
           ? shotResultRaw
           : null;
       const personId = asNumber(action.personId);
-      const teamIdNum = asNumber(action.teamId);
+      const teamIdRaw = asString(action.teamId).trim();
       const clockRaw = asString(action.clock);
       const clockSeconds = parsePlayClockToSeconds(clockRaw);
       const actionNumber = asNumber(action.actionNumber);
@@ -87,7 +88,7 @@ export function transformNbaPlayByPlay(
         actionType,
         subType: asString(action.subType),
         description: asString(action.description),
-        teamId: teamIdNum ? String(teamIdNum) : null,
+        teamId: teamIdRaw || null,
         teamTricode: asString(action.teamTricode) || null,
         playerId: personId ? String(personId) : null,
         playerName:
@@ -98,7 +99,8 @@ export function transformNbaPlayByPlay(
         scoreAway: asNumber(action.scoreAway),
         shotResult,
         isFieldGoal: asNumber(action.isFieldGoal) === 1,
-        points: pointsFromAction(actionType, shotResult),
+        points:
+          asNumber(action.points) || pointsFromAction(actionType, shotResult),
       } satisfies PlayByPlayEvent;
     })
     .filter((e) => e.description.trim().length > 0 || e.actionType === "period")
