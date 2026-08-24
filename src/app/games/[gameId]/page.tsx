@@ -13,7 +13,6 @@ import { getHistoricalProductGame } from "@/data/history/product";
 import { loadRawArchiveShotEvents } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { withBudget } from "@/data/queries/budget";
-import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 
@@ -22,9 +21,9 @@ export async function generateMetadata({ params }: GamePageProps) { const { game
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival> }) {
-  const result = await withBudget(getGameAnalysis(gameId).catch(() => null), runtimeTimeoutMs(10_000, 4_000), null);
+  const result = await withBudget(getGameAnalysis(gameId).catch(() => null), 10_000, null);
   const payload = result.value;
-  if (!payload) return <p className="text-[13px] text-muted-foreground">Detailed Game Lab analysis is not available for this game yet.</p>;
+  if (!payload) return <p className="text-[13px] text-muted-foreground">Deep Game Lab analysis is temporarily unavailable for this game.</p>;
   return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} omitHero />;
 }
 
@@ -54,12 +53,11 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const brandPresentation = applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
   const seasonHint = seasonParam ?? shell.game.season;
   const backHref = fromHistory ? `/history/${encodeURIComponent(seasonHint)}` : "/explore/games";
-  const hasDeepGameData = presentation.canRenderDeepFeatures && shell.hasBoxScore;
   const body = <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
     {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-    {hasDeepGameData ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} /></Suspense> : presentation.canRenderScoreHeader ? <p className="text-[13px] text-muted-foreground">Box score, Game Lab, and possession analysis will appear when detailed game data is available.</p> : <GameUnavailablePanel gameId={gameId} backHref={backHref} />}
-    {hasDeepGameData ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} /></Suspense> : <GameUnavailablePanel gameId={gameId} backHref={backHref} />}
+    {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense> : null}
   </main>;
   return eraTheme ? <EraThemeScope theme={eraTheme}>{body}</EraThemeScope> : body;
 }
