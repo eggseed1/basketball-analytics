@@ -5,10 +5,7 @@
 
 import { cache } from "react";
 
-import {
-  isVercelRuntime,
-  runtimeTimeoutMs,
-} from "@/data/providers/nba/runtime-policy";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
 import { getRuntimeSnapshotGame } from "@/data/runtime/game-snapshot";
@@ -201,6 +198,9 @@ function shellFromFallbackGame(game: Game): GameShell {
 }
 
 async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
+  const snapshot = getRuntimeSnapshotGame(gameId);
+  if (snapshot) return shellFromFallbackGame(snapshot);
+
   if (looksLikeEspnEventId(gameId)) {
     const box = await fetchEspnCdnGameBoxScore(gameId).catch(() => null);
     return box?.game ? shellFromFallbackBox(box) : null;
@@ -216,13 +216,10 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-async function boundedPrimaryGameShell(
-  gameId: string,
-  vercelBudgetMs = 4_000
-): Promise<GameShell | null> {
+async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
   const primary = await withBudget(
     getGameShellUncached(gameId).catch(() => null),
-    runtimeTimeoutMs(9_000, vercelBudgetMs),
+    runtimeTimeoutMs(9_000, 4_000),
     null as GameShell | null
   );
   return primary.value;
@@ -238,27 +235,10 @@ async function boundedFallbackGameShell(gameId: string): Promise<GameShell | nul
 }
 
 /**
- * Vercel gets a build-generated scoreboard shell before any request-time
- * network call. The upstream provider then gets a short opportunity to upgrade
- * a completed game to a full box score. Failure never erases a known game.
- * Local/Cursor keeps the unrestricted provider-first behavior.
+ * One game-loading contract everywhere: complete provider first, durable
+ * snapshot/CDN second. Hosting platform must not decide which features exist.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  if (isVercelRuntime()) {
-    const snapshotGame = getRuntimeSnapshotGame(gameId);
-    if (snapshotGame) {
-      if (snapshotGame.status === "final") {
-        const enriched = await boundedPrimaryGameShell(gameId, 1_500);
-        if (enriched?.hasBoxScore) return enriched;
-      }
-      return shellFromFallbackGame(snapshotGame);
-    }
-
-    const primary = await boundedPrimaryGameShell(gameId, 2_500);
-    if (primary) return primary;
-    return boundedFallbackGameShell(gameId);
-  }
-
   const primary = await boundedPrimaryGameShell(gameId);
   if (primary) return primary;
   return boundedFallbackGameShell(gameId);
