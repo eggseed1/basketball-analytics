@@ -10,7 +10,7 @@ import {
   parseSeasonListParam,
 } from "@/data/queries/player-season-rank";
 import { defaultRankSeasons } from "@/analytics/rank-player-seasons";
-import { getPlayerCareerSeasons } from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 import {
   canonicalSeasonFromStartYear,
@@ -45,27 +45,34 @@ export default async function PlayerSeasonRankPage({
   const seasonsParam = one(sp, "seasons");
   const parsed = parseSeasonListParam(seasonsParam);
 
+  // Use the bounded factual career loader. The former enriched loader could
+  // wait on DARKO/BRef/ESPN overlays before this utility page rendered.
   const career = dedupeCareerSeasons(
-    await getPlayerCareerSeasons(playerId).catch(() => [])
+    await getPlayerCareerSeasonsCached(playerId).catch(() => [])
   );
   const careerSeasons = career.map((r) => r.season);
   const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
 
   let selected: string[] = [];
-  let parseError: string | null = null;
+  let loadError: string | null = null;
   if (Array.isArray(parsed)) {
     selected =
       parsed.length > 0
         ? parsed
         : defaultRankSeasons(career, { nowSeason });
   } else {
-    parseError = parsed.error;
+    loadError = parsed.error;
     selected = defaultRankSeasons(career, { nowSeason });
   }
 
-  const loaded = !parseError
-    ? await getPlayerSeasonRanking({ playerId, seasons: selected })
-    : null;
+  let loaded: Awaited<ReturnType<typeof getPlayerSeasonRanking>> | null = null;
+  if (!loadError) {
+    try {
+      loaded = await getPlayerSeasonRanking({ playerId, seasons: selected });
+    } catch {
+      loadError = "Season ranking data is temporarily unavailable.";
+    }
+  }
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
@@ -88,9 +95,9 @@ export default async function PlayerSeasonRankPage({
         />
       </Suspense>
 
-      {parseError ? (
+      {loadError ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          {parseError}
+          {loadError}
         </p>
       ) : loaded?.error ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
