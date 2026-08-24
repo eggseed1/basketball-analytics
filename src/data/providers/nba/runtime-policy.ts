@@ -1,8 +1,9 @@
 /**
- * Runtime policy for upstreams that are unreliable from Vercel serverless IPs.
+ * Runtime policy for upstream access and optional work budgets.
  *
- * Keep this module pure so route-level regression tests can verify the policy
- * without making network calls.
+ * Production must not silently remove provider capabilities simply because the
+ * host is Vercel. Local/Cursor and deployed routes use the same provider graph;
+ * explicit opt-out flags are reserved for emergency operations only.
  */
 export type RuntimeEnv = Record<string, string | undefined>;
 
@@ -13,20 +14,20 @@ export function isVercelRuntime(
 }
 
 /**
- * stats.nba.com commonly times out or blocks Vercel egress. It remains
- * available in local/server environments and can be explicitly re-enabled for
- * a future proxy or fixed-egress deployment.
+ * Keep stats.nba.com enabled by default in every runtime so team boards, boxes,
+ * play-by-play and advanced surfaces have the same capabilities as Cursor.
+ * Emergency operators may explicitly disable the network without changing code.
  */
 export function statsNbaNetworkEnabled(
   env: RuntimeEnv = process.env
 ): boolean {
-  return (
-    !isVercelRuntime(env) ||
-    env.ALLOW_STATS_NBA_ON_VERCEL === "1"
-  );
+  return env.DISABLE_STATS_NBA_NETWORK !== "1";
 }
 
-/** Bound optional provider work more aggressively in serverless renders. */
+/**
+ * Preserve existing optional-work budgets. Callers that are part of the core
+ * product (Game Lab/team boards) should use their full normal budget directly.
+ */
 export function runtimeTimeoutMs(
   normalMs: number,
   vercelMs: number,
@@ -36,8 +37,8 @@ export function runtimeTimeoutMs(
 }
 
 /**
- * A 30-team roster crawl must never sit on a player page's critical path in
- * Vercel. It can be explicitly enabled when backed by a durable roster cache.
+ * League-wide roster discovery stays bounded because it is an expensive crawl;
+ * this does not disable direct team/player provider access.
  */
 export function leagueRosterDiscoveryEnabled(
   env: RuntimeEnv = process.env
