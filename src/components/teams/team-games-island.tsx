@@ -108,13 +108,46 @@ export async function TeamGamesIsland({
       : Promise.resolve({ games: [] }),
   ]);
 
+  // Cloudflare Workers often lack disk season archives; seed recent/upcoming from
+  // the build-time schedule snapshot so the Games tab is never an empty shell.
+  let recentPool = teamGames.games;
+  let upcomingPool = upcomingBundle.games;
+  if (recentPool.length === 0 || upcomingPool.length === 0) {
+    const { getRuntimeSnapshotGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const { toGameSummary } = await import("@/data/queries/filter-utils");
+    const today = new Date().toISOString().slice(0, 10);
+    const snapshot = getRuntimeSnapshotGames(season).map(toGameSummary);
+    if (upcomingPool.length === 0) {
+      upcomingPool = snapshot.filter(
+        (game) =>
+          game.gameDate >= today &&
+          (game.status === "scheduled" ||
+            game.status === "pregame" ||
+            game.status === "delayed" ||
+            game.status === "in_progress")
+      );
+    }
+    if (recentPool.length === 0) {
+      recentPool = snapshot
+        .filter(
+          (game) =>
+            game.gameDate < today ||
+            game.status === "final" ||
+            game.status === "halftime"
+        )
+        .reverse();
+    }
+  }
+
   const archiveNote =
-    teamGames.source === "unavailable"
-      ? teamGames.warning ??
-        `Historical games unavailable for ${season}.`
-      : teamGames.source === "disk_cache"
+    recentPool.length > 0 || upcomingPool.length > 0
+      ? teamGames.source === "disk_cache"
         ? "From local historical game archive · opens Game Lab"
-        : "Recent / upcoming from schedule · opens Game Lab";
+        : "Recent / upcoming from schedule · opens Game Lab"
+      : teamGames.warning ??
+        `Historical games unavailable for ${season}.`;
 
   return (
     <section
@@ -127,25 +160,15 @@ export async function TeamGamesIsland({
         <p className="text-[13px] text-muted-foreground">{archiveNote}</p>
       </div>
       <div className="sports-card p-4 sm:p-5">
-        {teamGames.source === "unavailable" && teamGames.games.length === 0 ? (
-          upcomingBundle.games.length > 0 ? (
-            <TeamGamesSection
-              recentPool={[]}
-              upcomingPool={upcomingBundle.games}
-              team={team}
-              brand={brand}
-              seasonAvgPpg={null}
-            />
-          ) : (
-            <p className="text-[13px] text-muted-foreground">
-              {teamGames.warning ??
-                `Historical games unavailable for ${season}.`}
-            </p>
-          )
+        {recentPool.length === 0 && upcomingPool.length === 0 ? (
+          <p className="text-[13px] text-muted-foreground">
+            {teamGames.warning ??
+              `Historical games unavailable for ${season}.`}
+          </p>
         ) : (
           <TeamGamesSection
-            recentPool={teamGames.games}
-            upcomingPool={upcomingBundle.games}
+            recentPool={recentPool}
+            upcomingPool={upcomingPool}
             team={team}
             brand={brand}
             seasonAvgPpg={
