@@ -45,6 +45,7 @@ async function main() {
   assert.match(requestCache, /runtimeTimeoutMs\(5_000, 2_800\)/);
   assert.match(requestCache, /runtimeTimeoutMs\(7_000, 3_400\)/);
   assert.match(requestCache, /runtimeTimeoutMs\(9_000, 4_800\)/);
+  assert.match(requestCache, /runtimeTimeoutMs\(12_000, 4_500\)/);
 
   const percentile = source(
     "src/components/players/player-percentile-island.tsx"
