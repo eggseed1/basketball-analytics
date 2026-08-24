@@ -1,0 +1,28 @@
+name: Player game log production check
+
+on:
+  push:
+    branches:
+      - fix/player-game-log-production
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  game-log:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      DATA_PROVIDER: nba
+      VERCEL: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npm run build
+      - run: node scripts/smoke-player-game-log.mjs

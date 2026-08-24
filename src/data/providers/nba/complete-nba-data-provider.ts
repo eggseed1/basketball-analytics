@@ -1,5 +1,6 @@
-import type { PlayerSeason } from "@/data/types";
+import type { PlayerGame, PlayerSeason } from "@/data/types";
 import { ResilientNBADataProvider } from "@/data/providers/nba/resilient-nba-data-provider";
+import { fetchCompleteEspnPlayerGameLog } from "@/data/providers/nba/espn-player-game-log";
 
 const MISSING = Number.NaN;
 
@@ -61,6 +62,17 @@ export class CompleteNBADataProvider extends ResilientNBADataProvider {
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
     const rows = await super.getPlayerCareerSeasons(playerId);
     return rows.map(removeCareerEndpointPlaceholders);
+  }
+
+  async getPlayerGameLog(
+    playerId: string,
+    season: string
+  ): Promise<PlayerGame[]> {
+    const complete = await fetchCompleteEspnPlayerGameLog(playerId, season).catch(
+      () => []
+    );
+    if (complete.length > 0) return complete;
+    return super.getPlayerGameLog(playerId, season);
   }
 }
 
