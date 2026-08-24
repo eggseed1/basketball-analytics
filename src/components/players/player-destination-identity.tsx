@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 
 import {
   GlassSurface,
@@ -12,6 +12,7 @@ import { PlayerDepthNav } from "@/components/players/player-depth-nav";
 import { PlayerDraftLine } from "@/components/players/player-draft-line";
 import { PlayerIdentityVitals } from "@/components/players/player-identity-vitals";
 import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
+import { PlayerUpcomingGamesIsland } from "@/components/players/player-upcoming-games-island";
 import { PlayerViewSeasonProvider } from "@/components/players/player-view-season";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import type { PlayerSeason } from "@/data/types";
@@ -47,25 +48,16 @@ export type PlayerDestinationIdentityProps = {
   teamKey?: string | null;
   teamName?: string | null;
   position?: string | null;
-  /** Franchise stops this season; last item brands the card. */
   seasonStints?: PlayerCardStint[];
-  /**
-   * When true, show every career franchise under the name instead of the
-   * selected-season team line (retired / inactive players).
-   */
   showCareerTeams?: boolean;
-  /** Career franchise stops for retired identity line. */
   careerTeamStints?: PlayerCardStint[];
   heightLabel?: string | null;
   weightLabel?: string | null;
   birthDate?: string | null;
   draftInfo?: string | null;
   college?: string | null;
-  /** Precomputed verified portrait from media registry. */
   portraitUrl?: string | null;
-  /** When set, prefer historical mark / logo over modern franchise branding. */
   historicalBrand?: HistoricalTeamBrand | null;
-  /** Resolve chip / row marks via era brands (no modern OKC for Seattle). */
   useHistoricalBranding?: boolean;
   seasonOptions: string[];
   recentSeasons?: PlayerSeason[];
@@ -74,23 +66,14 @@ export type PlayerDestinationIdentityProps = {
   view?: PlayerPageView;
   caps: PlayerPageCapabilities;
   seasonType?: PlayerSeasonKind;
-  /** Career accolades trophy row (often a streamed island). */
   accolades?: ReactNode;
-  /** Current-season upcoming games (nested under per-game averages). */
   upcomingSchedule?: ReactNode;
-  /** Salary snapshot (streamed island). */
   frontOffice?: ReactNode;
-  /** Visual honor treatment (internal / HOF example). */
   honor?: GlassSurfaceHonor;
   children?: ReactNode;
-  /** Percentile ranking + compare graph - sits beside identity, not inside it. */
   hero?: ReactNode;
 };
 
-/**
- * Layer 1 identity - headshot, name, team. Career / Game logs /
- * Visualizations sit below the identity + ranking row.
- */
 export function PlayerDestinationIdentity({
   playerId,
   espnId,
@@ -137,6 +120,20 @@ export function PlayerDestinationIdentity({
     modernBrand?.abbr;
 
   const useTwoColumnLayout = Boolean(hero);
+
+  // The parent used to omit this island entirely when a bounded career fetch
+  // had not yet produced the current-season row. For active players, mount the
+  // island anyway and let its own identity/team fallbacks resolve the schedule.
+  const upcomingNode =
+    upcomingSchedule ??
+    (!showCareerTeams ? (
+      <Suspense fallback={null}>
+        <PlayerUpcomingGamesIsland
+          playerId={playerId}
+          scheduleTeamKey={teamKey}
+        />
+      </Suspense>
+    ) : null);
 
   return (
     <PlayerViewSeasonProvider
@@ -208,17 +205,12 @@ export function PlayerDestinationIdentity({
                       {teamKey ? (
                         <TeamIdentity
                           teamKey={teamKey}
-                          label={
-                            clubName ?? teamName ?? modernBrand?.abbr ?? "Team"
-                          }
+                          label={clubName ?? teamName ?? modernBrand?.abbr ?? "Team"}
                           className="inline-flex min-w-0"
                           nameClassName={cn(type.bodySm, "gap-2")}
                         >
                           {historicalBrand ? (
-                            <HistoricalTeamMark
-                              brand={historicalBrand}
-                              size="sm"
-                            />
+                            <HistoricalTeamMark brand={historicalBrand} size="sm" />
                           ) : (
                             <TeamLogo teamKey={teamKey} size="sm" />
                           )}
@@ -268,26 +260,13 @@ export function PlayerDestinationIdentity({
                     Per game average
                   </p>
                   <table className="w-full text-left">
-                    <thead
-                      className={cn(
-                        type.caption,
-                        "uppercase tracking-wide text-muted-foreground"
-                      )}
-                    >
+                    <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
                       <tr>
                         <th className="pb-1 pr-2 font-semibold">Season</th>
-                        <th className="px-1.5 pb-1 text-right font-semibold">
-                          PPG
-                        </th>
-                        <th className="px-1.5 pb-1 text-right font-semibold">
-                          APG
-                        </th>
-                        <th className="px-1.5 pb-1 text-right font-semibold">
-                          RPG
-                        </th>
-                        <th className="pb-1 pl-1.5 text-right font-semibold">
-                          TS%
-                        </th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">PPG</th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">APG</th>
+                        <th className="px-1.5 pb-1 text-right font-semibold">RPG</th>
+                        <th className="pb-1 pl-1.5 text-right font-semibold">TS%</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -307,38 +286,17 @@ export function PlayerDestinationIdentity({
                               {row.season}
                             </TextLink>
                           </td>
-                          <td
-                            className={cn(
-                              type.caption,
-                              "px-1.5 py-1 text-right tabular-nums"
-                            )}
-                          >
+                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
                             {formatPerGame(row.points, row.gamesPlayed)}
                           </td>
-                          <td
-                            className={cn(
-                              type.caption,
-                              "px-1.5 py-1 text-right tabular-nums"
-                            )}
-                          >
+                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
                             {formatPerGame(row.assists, row.gamesPlayed)}
                           </td>
-                          <td
-                            className={cn(
-                              type.caption,
-                              "px-1.5 py-1 text-right tabular-nums"
-                            )}
-                          >
+                          <td className={cn(type.caption, "px-1.5 py-1 text-right tabular-nums")}>
                             {formatPerGame(row.rebounds, row.gamesPlayed)}
                           </td>
-                          <td
-                            className={cn(
-                              type.caption,
-                              "py-1 pl-1.5 text-right tabular-nums"
-                            )}
-                          >
-                            {row.trueShootingPct != null &&
-                            row.trueShootingPct > 0
+                          <td className={cn(type.caption, "py-1 pl-1.5 text-right tabular-nums")}>
+                            {row.trueShootingPct != null && row.trueShootingPct > 0
                               ? formatPct(row.trueShootingPct)
                               : "-"}
                           </td>
@@ -346,18 +304,15 @@ export function PlayerDestinationIdentity({
                       ))}
                     </tbody>
                   </table>
-                  {upcomingSchedule ? (
+                  {upcomingNode ? (
                     <>
-                      <div
-                        className="my-3 h-px bg-border/70"
-                        aria-hidden
-                      />
-                      {upcomingSchedule}
+                      <div className="my-3 h-px bg-border/70" aria-hidden />
+                      {upcomingNode}
                     </>
                   ) : null}
                 </div>
               </GlassSurface>
-            ) : upcomingSchedule ? (
+            ) : upcomingNode ? (
               <GlassSurface
                 accentColor={wash?.colorA}
                 accentColorB={wash?.colorB}
@@ -366,7 +321,7 @@ export function PlayerDestinationIdentity({
                 honor={honor}
               >
                 <div className="relative z-[1] w-full px-3 py-2.5">
-                  {upcomingSchedule}
+                  {upcomingNode}
                 </div>
               </GlassSurface>
             ) : null}
