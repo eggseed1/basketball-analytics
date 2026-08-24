@@ -5,13 +5,9 @@
 
 import { cache } from "react";
 
-import {
-  isVercelRuntime,
-  runtimeTimeoutMs,
-} from "@/data/providers/nba/runtime-policy";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
-import { getRuntimeSnapshotGame } from "@/data/runtime/game-snapshot";
 import { withBudget } from "@/data/queries/budget";
 import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
@@ -216,13 +212,10 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-async function boundedPrimaryGameShell(
-  gameId: string,
-  vercelBudgetMs = 4_000
-): Promise<GameShell | null> {
+async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
   const primary = await withBudget(
     getGameShellUncached(gameId).catch(() => null),
-    runtimeTimeoutMs(9_000, vercelBudgetMs),
+    9_000,
     null as GameShell | null
   );
   return primary.value;
@@ -231,34 +224,19 @@ async function boundedPrimaryGameShell(
 async function boundedFallbackGameShell(gameId: string): Promise<GameShell | null> {
   const fallback = await withBudget(
     fallbackGameShell(gameId),
-    runtimeTimeoutMs(7_000, 3_500),
+    7_000,
     null as GameShell | null
   );
   return fallback.value;
 }
 
 /**
- * Vercel gets a build-generated scoreboard shell before any request-time
- * network call. The upstream provider then gets a short opportunity to upgrade
- * a completed game to a full box score. Failure never erases a known game.
- * Local/Cursor keeps the unrestricted provider-first behavior.
+ * Host-independent game loading contract: always give the complete provider the
+ * first chance to resolve identity + box depth, then use CDN fallbacks. This is
+ * the same ordering Cursor/local uses, so Vercel cannot silently downgrade a
+ * completed game to a scoreboard-only shell before Game Lab mounts.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  if (isVercelRuntime()) {
-    const snapshotGame = getRuntimeSnapshotGame(gameId);
-    if (snapshotGame) {
-      if (snapshotGame.status === "final") {
-        const enriched = await boundedPrimaryGameShell(gameId, 1_500);
-        if (enriched?.hasBoxScore) return enriched;
-      }
-      return shellFromFallbackGame(snapshotGame);
-    }
-
-    const primary = await boundedPrimaryGameShell(gameId, 2_500);
-    if (primary) return primary;
-    return boundedFallbackGameShell(gameId);
-  }
-
   const primary = await boundedPrimaryGameShell(gameId);
   if (primary) return primary;
   return boundedFallbackGameShell(gameId);
