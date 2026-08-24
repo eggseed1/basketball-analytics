@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - fix/restore-cursor-runtime-parity
+  pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
