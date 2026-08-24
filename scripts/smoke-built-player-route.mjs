@@ -86,7 +86,9 @@ function assertHealthyHtml(path, result) {
 function assertPlayerResponse(path, result) {
   assertHealthyHtml(path, result);
   if (!result.body.includes("Shai Gilgeous-Alexander")) {
-    throw new Error(`${path} returned 200 but did not render the verified player identity`);
+    throw new Error(
+      `${path} returned 200 but did not render the verified player identity`
+    );
   }
   if (path === "/players/4278073" && !result.body.includes("Upcoming games")) {
     throw new Error(`${path} rendered without the upcoming-games surface`);
@@ -99,14 +101,23 @@ function assertPlayerResponse(path, result) {
 
 function firstGameHref(html) {
   const decoded = html.replaceAll("&amp;", "&");
-  const match = decoded.match(/href=["'](\/games\/[^"'#?\s]+(?:\?[^"'#\s]*)?)["']/i);
+  const match = decoded.match(
+    /href=["'](\/games\/[^"'#?\s]+(?:\?[^"'#\s]*)?)["']/i
+  );
   return match?.[1] ?? null;
 }
 
 function assertResolvedGame(path, result) {
   assertHealthyHtml(path, result);
-  if (result.body.includes("Game unavailable")) {
-    throw new Error(`${path} rendered Game unavailable`);
+  const forbidden = [
+    "Game unavailable",
+    "Loading game from ESPN",
+    "ESPN browser fallback",
+    "server and browser game feeds are both unavailable",
+  ];
+  const marker = forbidden.find((value) => result.body.includes(value));
+  if (marker) {
+    throw new Error(`${path} rendered runtime fallback marker: ${marker}`);
   }
   console.log(
     `[route-smoke] ${path} -> ${result.status} in ${result.elapsedMs}ms (${result.body.length} bytes)`
@@ -130,26 +141,35 @@ async function main() {
 
   const scores = await fetchWithTimeout("/scores", 25_000);
   assertHealthyHtml("/scores", scores);
-  if (scores.body.includes("No upcoming games on the ESPN scoreboard yet.")) {
-    throw new Error("/scores returned 200 but the upcoming schedule is empty");
+  const forbiddenScores = [
+    "No upcoming games on the ESPN scoreboard yet.",
+    "Loading NBA schedule",
+    "Live scores temporarily unavailable",
+    "Schedule data is temporarily unavailable from both the server and browser feeds",
+  ];
+  const scoresMarker = forbiddenScores.find((value) =>
+    scores.body.includes(value)
+  );
+  if (scoresMarker) {
+    throw new Error(`/scores rendered fallback marker: ${scoresMarker}`);
   }
   const scoresGameHref = firstGameHref(scores.body);
   if (!scoresGameHref) {
-    throw new Error("/scores returned 200 but did not contain any game destination");
+    throw new Error(
+      "/scores returned 200 but did not contain any game destination"
+    );
   }
   console.log(
     `[route-smoke] /scores -> ${scores.status} in ${scores.elapsedMs}ms (${scores.body.length} bytes)`
   );
 
-  // Player schedule should also produce a real destination for an active player.
   const playerGameHref = firstGameHref(playerLanding?.body ?? "");
   if (!playerGameHref) {
-    throw new Error("/players/4278073 rendered Upcoming games without a game destination");
+    throw new Error(
+      "/players/4278073 rendered Upcoming games without a game destination"
+    );
   }
 
-  // Verify a current schedule destination and the exact historical ESPN-id
-  // regression reported from production. The latter proves the independent
-  // cdn.espn.com fallback works when site.api.espn.com is unavailable.
   for (const path of [
     playerGameHref,
     scoresGameHref,
