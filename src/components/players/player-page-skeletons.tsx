@@ -90,3 +90,37 @@ export function PlayerIdentitySlotSkeleton({
 }) {
   return <Pulse className={cn("h-12 w-full rounded-md", className)} />;
 }
+
+/**
+ * Honest server-island failure state. Optional data must never take down the
+ * player identity shell or leave a permanent loading skeleton behind.
+ */
+export function PlayerPanelUnavailable({
+  label,
+  detail = "This section is temporarily unavailable. The rest of the player page is still usable.",
+  compact = false,
+  className,
+}: {
+  label: string;
+  detail?: string;
+  compact?: boolean;
+  className?: string;
+}) {
+  return (
+    <section
+      role="status"
+      className={cn(
+        "rounded-md border border-border/70 bg-background/45 px-4 py-4",
+        compact ? "min-h-12" : "min-h-32",
+        className
+      )}
+    >
+      <p className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
+        {label}
+      </p>
+      <p className="mt-1 text-[13px] leading-relaxed text-muted-foreground">
+        {detail}
+      </p>
+    </section>
+  );
+}
