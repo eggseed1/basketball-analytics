@@ -5,7 +5,10 @@
 
 import { cache } from "react";
 
-import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import {
+  isVercelRuntime,
+  runtimeTimeoutMs,
+} from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
 import { withBudget } from "@/data/queries/budget";
@@ -234,26 +237,41 @@ async function fallbackGameShell(gameId: string): Promise<GameShell | null> {
   return null;
 }
 
-/**
- * Game identity must fail open across provider hosts. `site.api.espn.com` and
- * `stats.nba.com` are both known to be unreliable from Vercel egress. Keep the
- * original matching-provider lookup first, then use independent CDN providers
- * in the same id namespace before declaring a valid game unavailable.
- */
-export const getGameShellCached = cache(async (gameId: string) => {
+async function boundedPrimaryGameShell(gameId: string): Promise<GameShell | null> {
   const primary = await withBudget(
     getGameShellUncached(gameId).catch(() => null),
     runtimeTimeoutMs(9_000, 4_000),
     null as GameShell | null
   );
-  if (primary.value) return primary.value;
+  return primary.value;
+}
 
+async function boundedFallbackGameShell(gameId: string): Promise<GameShell | null> {
   const fallback = await withBudget(
     fallbackGameShell(gameId),
     runtimeTimeoutMs(7_000, 3_500),
     null as GameShell | null
   );
   return fallback.value;
+}
+
+/**
+ * Game identity must fail open across provider hosts. `site.api.espn.com` and
+ * `stats.nba.com` are both known to be unreliable from Vercel egress. In
+ * serverless production, try the independent CDN path first so a known-bad host
+ * cannot add four seconds before every game render. Local development retains
+ * the richer primary provider first.
+ */
+export const getGameShellCached = cache(async (gameId: string) => {
+  if (isVercelRuntime()) {
+    const fallback = await boundedFallbackGameShell(gameId);
+    if (fallback) return fallback;
+    return boundedPrimaryGameShell(gameId);
+  }
+
+  const primary = await boundedPrimaryGameShell(gameId);
+  if (primary) return primary;
+  return boundedFallbackGameShell(gameId);
 });
 
 export const getHomeAnalyticsCached = cache(() => getHomeAnalyticsUncached());
