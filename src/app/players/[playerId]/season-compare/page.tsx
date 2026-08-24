@@ -6,7 +6,7 @@ import {
   SeasonComparePicker,
 } from "@/components/players/player-season-compare-view";
 import { getPlayerSeasonComparison } from "@/data/queries/player-season-compare";
-import { getPlayerCareerSeasons } from "@/data/queries";
+import { getPlayerCareerSeasonsCached } from "@/data/queries/request-cache";
 import { dedupeCareerSeasons } from "@/analytics/career-resume";
 
 export const metadata = {
@@ -37,19 +37,26 @@ export default async function PlayerSeasonComparePage({
   const seasonA = one(sp, "a");
   const seasonB = one(sp, "b");
 
+  // Selection only needs factual seasons. Optional impact enrichment belongs in
+  // the comparison query and must not hold the entire route above Suspense.
   const career = dedupeCareerSeasons(
-    await getPlayerCareerSeasons(playerId).catch(() => [])
+    await getPlayerCareerSeasonsCached(playerId).catch(() => [])
   );
   const seasons = career.map((r) => r.season);
 
-  const loaded =
-    seasonA && seasonB
-      ? await getPlayerSeasonComparison({
-          playerId,
-          seasonA,
-          seasonB,
-        })
-      : null;
+  let loaded: Awaited<ReturnType<typeof getPlayerSeasonComparison>> | null = null;
+  let loadError: string | null = null;
+  if (seasonA && seasonB) {
+    try {
+      loaded = await getPlayerSeasonComparison({
+        playerId,
+        seasonA,
+        seasonB,
+      });
+    } catch {
+      loadError = "Season comparison data is temporarily unavailable.";
+    }
+  }
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
@@ -76,6 +83,10 @@ export default async function PlayerSeasonComparePage({
       {!seasonA || !seasonB ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
           Pick two seasons to compare versions of this player.
+        </p>
+      ) : loadError ? (
+        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+          {loadError}
         </p>
       ) : loaded?.error ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
