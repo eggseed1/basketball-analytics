@@ -28,8 +28,34 @@ function historyNumber(value: number | null | undefined): number {
   return value == null ? Number.NaN : value;
 }
 
-function historyCareerFallback(playerId: string): PlayerSeason[] {
-  return getUniverseSeasonsForPlayer(playerId).map((row) => {
+function uniquePlayerIds(
+  ...ids: Array<string | null | undefined>
+): string[] {
+  return [
+    ...new Set(
+      ids
+        .map((id) => String(id ?? "").trim())
+        .filter(Boolean)
+    ),
+  ];
+}
+
+/**
+ * Disk history is keyed by NBA PERSON_ID while public player links commonly use
+ * ESPN athlete ids. Resolve the first factual history row across both namespaces
+ * and normalize it back to the requested route id for stable links/components.
+ */
+function historyCareerFallback(
+  routePlayerId: string,
+  lookupIds: string[]
+): PlayerSeason[] {
+  let historyRows: ReturnType<typeof getUniverseSeasonsForPlayer> = [];
+  for (const lookupId of lookupIds) {
+    historyRows = getUniverseSeasonsForPlayer(lookupId);
+    if (historyRows.length > 0) break;
+  }
+
+  return historyRows.map((row) => {
     const fgm = historyNumber(row.fgm);
     const fga = historyNumber(row.fga);
     const threePm = historyNumber(row.threePm);
@@ -43,7 +69,7 @@ function historyCareerFallback(playerId: string): PlayerSeason[] {
     const ts = trueShootingPct(points, fga, fta);
 
     return withPlayerSeasonDefaults({
-      playerId: row.playerId,
+      playerId: routePlayerId,
       playerName: row.playerName,
       teamId: multi ? "TOT" : row.primaryTeamId,
       teamName: multi ? "Multiple Teams" : row.primaryTeamId,
@@ -142,7 +168,7 @@ function overlayProfileTeamForPreseason(
         minutes: 0,
       }
     : withPlayerSeasonDefaults({
-        playerId: rows[0]?.playerId ?? player.id ?? routePlayerId,
+        playerId: routePlayerId,
         playerName,
         teamId,
         teamName,
@@ -178,6 +204,11 @@ export async function getPlayerCriticalCareerSeasons(
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
   const provider = getDataProvider();
   const statsId = identity?.nbaId ?? playerId;
+  const lookupIds = uniquePlayerIds(
+    identity?.nbaId,
+    playerId,
+    identity?.espnId
+  );
 
   const loadCareer = async (id: string): Promise<PlayerSeason[]> =>
     typeof provider.getPlayerCareerSeasons === "function"
@@ -199,7 +230,7 @@ export async function getPlayerCriticalCareerSeasons(
   }
 
   if (rows.length === 0) {
-    rows = historyCareerFallback(playerId);
+    rows = historyCareerFallback(playerId, lookupIds);
   }
 
   rows = overlayProfileTeamForPreseason(playerId, rows, player);
