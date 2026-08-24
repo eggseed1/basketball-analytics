@@ -1,8 +1,9 @@
-import type { GameBoxScore, PlayerSeason } from "@/data/types";
+import type { GameBoxScore, PlayerGame, PlayerSeason } from "@/data/types";
 import { ResilientNBADataProvider } from "@/data/providers/nba/resilient-nba-data-provider";
 import { fetchRawBoxScore } from "@/data/providers/nba/raw-box-score-client";
 import { transformNbaCdnBoxScore } from "@/data/providers/nba/nba-cdn-box-transformer";
 import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
+import { fetchCompleteEspnPlayerGameLog } from "@/data/providers/nba/espn-player-game-log";
 
 const MISSING = Number.NaN;
 
@@ -64,6 +65,27 @@ export class CompleteNBADataProvider extends ResilientNBADataProvider {
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
     const rows = await super.getPlayerCareerSeasons(playerId);
     return rows.map(removeCareerEndpointPlaceholders);
+  }
+
+  /**
+   * Player game logs are ESPN-first without the old post-fetch career lookup.
+   * This removes a serverless critical-path dependency, fixes home/away parsing,
+   * preserves traded-player team identity from the deployed game snapshot, and
+   * upgrades ESPN event ids to canonical NBA GameIDs for Game Lab links.
+   */
+  async getPlayerGameLog(
+    playerId: string,
+    season: string
+  ): Promise<PlayerGame[]> {
+    const seasonRow = await this.getPlayerSeason(playerId, season).catch(
+      () => null
+    );
+    const complete = await fetchCompleteEspnPlayerGameLog(playerId, season, {
+      fallbackTeamId: seasonRow?.teamId,
+      playerName: seasonRow?.playerName,
+    }).catch(() => []);
+    if (complete.length > 0) return complete;
+    return super.getPlayerGameLog(playerId, season);
   }
 
   /**
