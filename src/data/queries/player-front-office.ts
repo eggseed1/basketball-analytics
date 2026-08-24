@@ -3,7 +3,6 @@ import "server-only";
 import { cache } from "react";
 
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
-import { isVercelRuntime } from "@/data/providers/nba/runtime-policy";
 import {
   loadTeamFrontOfficeSlice,
   resolveFrontOfficeFranchiseId,
@@ -29,20 +28,11 @@ function uniqueIds(...values: Array<string | null | undefined>): string[] {
   ];
 }
 
-function livePlayerFrontOfficeEnabled(): boolean {
-  return (
-    !isVercelRuntime() ||
-    process.env.ALLOW_LIVE_FRONT_OFFICE_ON_VERCEL === "1"
-  );
-}
-
 /**
- * Player salary snapshot for the selected/current franchise.
- *
- * Contract artifacts are keyed by NBA PERSON_ID, while public player routes are
- * commonly ESPN athlete ids. Resolve both namespaces before looking up a row.
- * Never discover a missing team by requesting every NBA roster: without a
- * verified team context the salary card simply stays unavailable.
+ * Player salary snapshot for the selected/current franchise. Public routes use
+ * ESPN athlete ids while financial artifacts use NBA PERSON_ID, so both are
+ * resolved before lookup. The exact same lookup/refresh semantics run locally
+ * and in production.
  */
 export const getPlayerContractSnapshot = cache(
   async (
@@ -66,8 +56,6 @@ export const getPlayerContractSnapshot = cache(
       );
       if (!row) return null;
       return {
-        // Keep the validated financial row, but preserve the public route id in
-        // any player-page link emitted by the card.
         row: {
           ...row,
           href: `/players/${encodeURIComponent(routeId)}`,
@@ -84,15 +72,8 @@ export const getPlayerContractSnapshot = cache(
       : null;
     if (!franchiseId) return null;
 
-    // The committed, validated snapshot is deterministic and already contains
-    // the NBA-id row for ESPN-id routes such as 4278073 -> 1628983.
     const cached = fromSlice(loadTeamFrontOfficeSlice(franchiseId));
     if (cached) return cached;
-
-    // Live roster synthesis is useful locally, but an optional salary card must
-    // never put Vercel player renders behind an ESPN request. Operators may opt
-    // back in after providing durable upstream egress/cache coverage.
-    if (!livePlayerFrontOfficeEnabled()) return null;
 
     const live = await resolveTeamFrontOfficeSlice(franchiseId).catch(() => null);
     return fromSlice(live);
