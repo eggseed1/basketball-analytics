@@ -472,6 +472,8 @@ export async function getSeasonGamesArchive(
 
   if (start != null && start >= 2000) {
     try {
+      // Prefer ESPN monthly scoreboards. On Vercel, stats.nba leaguegamelog is
+      // disabled — getGames already falls through to the same ESPN path.
       const espnGames = await getDataProvider().getGames(season);
       if (espnGames.length > 0) {
         return { games: espnGames, source: "espn" };

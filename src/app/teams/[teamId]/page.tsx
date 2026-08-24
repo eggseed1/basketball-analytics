@@ -113,19 +113,28 @@ export default async function TeamProfilePage({
   const { fromHistory, themeMode, applyEraTheme } =
     parseDestinationHistoryArrival(sp);
 
-  const [seasonBoard, priorBoard, exploreSeasons] = await Promise.all([
-    getTeamSeasonBoardCached(season),
-    getTeamSeasonBoardCached(priorSeason),
+  const brandPresentation =
+    applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
+
+  // Season board first — skip prior-season ESPN pull during preseason/offseason
+  // so identity can paint without a second 2.5s budget race.
+  const seasonBoard = await getTeamSeasonBoardCached(season);
+  const league = seasonBoard.rows;
+  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
+
+  const [priorBoard, exploreSeasons] = await Promise.all([
+    seasonAwaitingGames
+      ? Promise.resolve({
+          rows: [] as typeof seasonBoard.rows,
+          status: "preseason" as const,
+        })
+      : getTeamSeasonBoardCached(priorSeason),
     getTeamExploreSeasons().catch(() => [currentSeason, priorSeason]),
   ]);
 
-  const league = seasonBoard.rows;
   const priorLeague = priorBoard.rows;
-  const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, league);
 
   const boardTeam = resolveTeamFromBoard(league, teamId);
-  const brandPresentation =
-    applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
 
   const identityFallback = !boardTeam
     ? resolveTeamIdentityFallback(teamId, season, brandPresentation)

@@ -8,6 +8,7 @@ import {
   hasHistoryTeamGameIndex,
 } from "@/data/history/team-matchup-index";
 import { getUpcomingGameSummaries } from "@/data/queries";
+import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
 import { getTeamSeasonGamesCached } from "@/data/queries/request-cache";
 import type { TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
@@ -97,7 +98,11 @@ export async function TeamGamesIsland({
       warning: `Historical games unavailable for ${season}.`,
     })),
     season === currentSeason
-      ? getUpcomingGameSummaries({ season, limit: 40 }).catch(() => ({
+      ? getUpcomingGameSummaries({
+          season: upcomingScheduleSeason(),
+          limit: 40,
+          monthCount: 3,
+        }).catch(() => ({
           games: [],
         }))
       : Promise.resolve({ games: [] }),

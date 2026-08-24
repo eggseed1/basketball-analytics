@@ -22,6 +22,7 @@ import {
   transformCompleteEspnPlayerSeason,
   transformCompleteEspnTeamTotals,
 } from "./espn-stat-integrity";
+import { statsNbaNetworkEnabled } from "./runtime-policy";
 import {
   defaultCanonicalSeasons,
   espnYearFromCanonicalSeason,
@@ -322,12 +323,14 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
 
   async getPlayerCareerSeasons(playerId: string): Promise<PlayerSeason[]> {
     const ids = await this.providerIds(playerId);
+    // stats.nba is fail-closed on Vercel — skip the race so ESPN alone bounds TTFB.
+    const allowNba = Boolean(ids.nbaId) && statsNbaNetworkEnabled();
     const [espnCareer, nbaCareer, profile] = await Promise.all([
       ids.espnId
         ? this.loadEspnCareer(ids.espnId).catch(() => [])
         : Promise.resolve([] as PlayerSeason[]),
-      ids.nbaId
-        ? super.getPlayerCareerSeasons(ids.nbaId).catch(() => [])
+      allowNba
+        ? super.getPlayerCareerSeasons(ids.nbaId!).catch(() => [])
         : Promise.resolve([] as PlayerSeason[]),
       ids.espnId
         ? this.loadEspnProfile(ids.espnId).catch(() => null)

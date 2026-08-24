@@ -397,6 +397,7 @@ export function Gamefeed({
   weekGames,
   upcomingGames,
   upcomingHasMore = false,
+  feedSource,
 }: {
   view: GamefeedView;
   season: string;
@@ -407,6 +408,7 @@ export function Gamefeed({
   weekGames: GameSummary[];
   upcomingGames: GameSummary[];
   upcomingHasMore?: boolean;
+  feedSource?: "live-espn" | "cached-espn" | "unavailable";
 }) {
   const prevMonth = shiftMonthKey(monthKey, -1);
   const nextMonth = shiftMonthKey(monthKey, 1);
@@ -547,6 +549,7 @@ export function Gamefeed({
               initialGames={upcomingGames}
               hasMore={upcomingHasMore}
               season={season}
+              source={feedSource}
             />
           ) : null}
         </div>

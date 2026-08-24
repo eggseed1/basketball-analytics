@@ -27,7 +27,9 @@ export function TeamGamesSection({
   seasonAvgPpg?: number | null;
 }) {
   const recent = filterTeamGames(recentPool, team, brand, 8);
-  const upcoming = filterTeamGames(upcomingPool, team, brand, 5);
+  const upcoming = filterTeamGames(upcomingPool, team, brand, 5, {
+    order: "asc",
+  });
   const notables = notableTeamGames(recent, team, brand, seasonAvgPpg);
   const season = team.season;
 

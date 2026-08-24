@@ -6,7 +6,8 @@ export type PbpProductSource =
   | "stats_nba"
   | "espn"
   | "disk_cache"
-  | "sample";
+  | "sample"
+  | "balldontlie";
 
 export type GamePbpCapabilityStatus =
   | "unavailable"
@@ -25,7 +26,8 @@ export type OfficialPossessionSource =
   | "nba_cdn"
   | "stats_nba"
   | "disk_cache"
-  | "fixture";
+  | "fixture"
+  | "balldontlie";
 
 export type OfficialPossessionUnavailableReason =
   | "endpoint_unavailable"

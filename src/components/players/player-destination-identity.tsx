@@ -154,17 +154,17 @@ export function PlayerDestinationIdentity({
               "min-[800px]:grid-cols-[minmax(16rem,20rem)_minmax(0,1fr)]"
           )}
         >
-          <div className="flex min-w-0 flex-col gap-3 self-start">
+          <div className="flex w-full min-w-0 flex-col gap-3">
             <GlassSurface
               as="header"
               accentColor={wash?.colorA}
               accentColorB={wash?.colorB}
-              className="relative flex min-w-0 flex-col self-start p-0"
+              className="relative flex w-full min-w-0 flex-col p-0"
               effect="css"
               backdropBlur={16}
               honor={honor}
             >
-              <div className="relative z-[1] flex flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:gap-3 sm:text-left">
+              <div className="relative z-[1] flex w-full flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:gap-3 sm:text-left">
                 <PlayerHeadshot
                   playerId={playerId}
                   espnId={espnId}
@@ -246,7 +246,7 @@ export function PlayerDestinationIdentity({
               <GlassSurface
                 accentColor={wash?.colorA}
                 accentColorB={wash?.colorB}
-                className="relative min-w-0 p-0"
+                className="relative w-full min-w-0 p-0"
                 effect="css"
                 honor={honor}
               >
@@ -316,7 +316,7 @@ export function PlayerDestinationIdentity({
               <GlassSurface
                 accentColor={wash?.colorA}
                 accentColorB={wash?.colorB}
-                className="relative min-w-0 p-0"
+                className="relative w-full min-w-0 p-0"
                 effect="css"
                 honor={honor}
               >

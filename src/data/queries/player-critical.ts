@@ -14,6 +14,10 @@ import {
 } from "@/data/providers/nba/compute-advanced";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import {
+  isVercelRuntime,
+  runtimeTimeoutMs,
+} from "@/data/providers/nba/runtime-policy";
+import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
@@ -194,9 +198,8 @@ function overlayProfileTeamForPreseason(
 /**
  * First-paint career loader for `/players/[playerId]`.
  *
- * It intentionally excludes live DARKO, league-wide roster discovery, and
- * other optional overlays. Those belong in Suspense islands; the identity
- * shell only needs factual career counting rows and team/season context.
+ * On Vercel: prefer in-repo history immediately when present, and only wait a
+ * short budget for live ESPN so cold TTFB stays bounded.
  */
 export async function getPlayerCriticalCareerSeasons(
   playerId: string
@@ -209,49 +212,80 @@ export async function getPlayerCriticalCareerSeasons(
     playerId,
     identity?.espnId
   );
+  const history = historyCareerFallback(playerId, lookupIds);
 
   const loadCareer = async (id: string): Promise<PlayerSeason[]> =>
     typeof provider.getPlayerCareerSeasons === "function"
       ? provider.getPlayerCareerSeasons(id).catch(() => [])
       : [];
 
-  let [rows, player] = await Promise.all([
-    loadCareer(statsId),
-    provider.getPlayer(statsId).catch(() => null),
-  ]);
-
-  if (rows.length === 0 && statsId !== playerId) {
-    const [fallbackRows, fallbackPlayer] = await Promise.all([
-      loadCareer(playerId),
-      player ? Promise.resolve(null) : provider.getPlayer(playerId).catch(() => null),
+  const loadLive = async (): Promise<{
+    rows: PlayerSeason[];
+    player: Player | null;
+  }> => {
+    let [rows, player] = await Promise.all([
+      loadCareer(statsId),
+      provider.getPlayer(statsId).catch(() => null),
     ]);
-    rows = fallbackRows;
-    player = player ?? fallbackPlayer;
-  }
 
-  if (rows.length === 0) {
-    rows = historyCareerFallback(playerId, lookupIds);
-  }
+    if (rows.length === 0 && statsId !== playerId) {
+      const [fallbackRows, fallbackPlayer] = await Promise.all([
+        loadCareer(playerId),
+        player
+          ? Promise.resolve(null)
+          : provider.getPlayer(playerId).catch(() => null),
+      ]);
+      rows = fallbackRows;
+      player = player ?? fallbackPlayer;
+    }
+    return { rows, player };
+  };
 
-  rows = overlayProfileTeamForPreseason(playerId, rows, player);
-
-  const resolvedName = firstUsablePlayerDisplayName(
-    identity?.displayName,
-    player?.fullName
-  );
-  if (resolvedName) {
-    rows = rows.map((row) =>
-      isSyntheticPlayerDisplayName(row.playerName)
-        ? { ...row, playerName: resolvedName }
-        : row
+  const finalize = (
+    rowsIn: PlayerSeason[],
+    player: Player | null
+  ): PlayerSeason[] => {
+    let rows = overlayProfileTeamForPreseason(playerId, rowsIn, player);
+    const resolvedName = firstUsablePlayerDisplayName(
+      identity?.displayName,
+      player?.fullName
     );
+    if (resolvedName) {
+      rows = rows.map((row) =>
+        isSyntheticPlayerDisplayName(row.playerName)
+          ? { ...row, playerName: resolvedName }
+          : row
+      );
+    }
+    return rows.sort((a, b) =>
+      a.season === b.season
+        ? (a.teamAbbreviation ?? a.teamId).localeCompare(
+            b.teamAbbreviation ?? b.teamId
+          )
+        : b.season.localeCompare(a.season)
+    );
+  };
+
+  if (isVercelRuntime() && history.length > 0) {
+    const budgetMs = runtimeTimeoutMs(6_000, 2_000);
+    try {
+      const live = await Promise.race([
+        loadLive(),
+        new Promise<null>((resolve) =>
+          setTimeout(() => resolve(null), budgetMs)
+        ),
+      ]);
+      if (live && live.rows.length > 0) {
+        return finalize(live.rows, live.player);
+      }
+    } catch {
+      // fall through to history
+    }
+    return finalize(history, null);
   }
 
-  return rows.sort((a, b) =>
-    a.season === b.season
-      ? (a.teamAbbreviation ?? a.teamId).localeCompare(
-          b.teamAbbreviation ?? b.teamId
-        )
-      : b.season.localeCompare(a.season)
-  );
+  const live = await loadLive();
+  const rows =
+    live.rows.length > 0 ? live.rows : history.length > 0 ? history : [];
+  return finalize(rows, live.player);
 }

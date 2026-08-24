@@ -6,6 +6,7 @@ import {
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
 import { getAvailableSeasons } from "@/data/queries/players";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 
 /**
@@ -15,7 +16,7 @@ import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 export const TEAM_SEASON_BOARD_EARLIEST_SEASON = "2001-02";
 
 /** Soft budget for live ESPN by-team pulls on destination pages. */
-export const TEAM_SEASON_BOARD_BUDGET_MS = 5_000;
+export const TEAM_SEASON_BOARD_BUDGET_MS = runtimeTimeoutMs(5_000, 2_500);
 
 export type TeamSeasonBoardStatus =
   | "ok"

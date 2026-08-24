@@ -284,15 +284,22 @@ export function filterTeamGames(
   games: GameSummary[],
   team: TeamSeasonStats,
   brand: TeamBrand | null | undefined,
-  limit: number
+  limit: number,
+  options: { order?: "asc" | "desc" } = {}
 ): GameSummary[] {
+  const order = options.order ?? "desc";
   return games
     .filter((g) => gameInvolvesTeam(g, team, brand))
-    .sort((a, b) =>
-      a.gameDate === b.gameDate
-        ? b.id.localeCompare(a.id)
-        : b.gameDate.localeCompare(a.gameDate)
-    )
+    .sort((a, b) => {
+      if (a.gameDate === b.gameDate) {
+        return order === "asc"
+          ? a.id.localeCompare(b.id)
+          : b.id.localeCompare(a.id);
+      }
+      return order === "asc"
+        ? a.gameDate.localeCompare(b.gameDate)
+        : b.gameDate.localeCompare(a.gameDate);
+    })
     .slice(0, limit);
 }
 

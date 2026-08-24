@@ -74,7 +74,8 @@ Human-readable inventory of this branch relative to `main`. Not a complete file 
 | Name | Role |
 | --- | --- |
 | `DATA_PROVIDER` | `local` \| `nba` (Vercel unset → `nba`; local unset → `local`) |
-| `BALLDONTLIE_API_KEY` | Historical games / BDL APIs |
+| `BALLDONTLIE_API_KEY` | Historical games / BDL APIs; GOAT unlocks official possessions fallback on Vercel |
+| `CRON_SECRET` | Bearer token for `/api/cron/warm-cache` (Vercel Cron) |
 | `PBP_DATA_PATH` | Optional external PBP corpus root |
 | `VERCEL` | Platform signal; influences provider default |
 | `DRBL_REQUIRE_LIVE_NBA` | Opt-in loud fail for diagnose when sample is active |

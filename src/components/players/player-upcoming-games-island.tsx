@@ -1,8 +1,8 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
-import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
 import {
   getPlayerCareerSeasonsCached,
 } from "@/data/queries";
+import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import type { GameSummary } from "@/data/types";
@@ -39,7 +39,7 @@ export async function PlayerUpcomingGamesIsland({
 
   if (!scheduleTeamKey) return null;
 
-  const season = getCurrentFrontOfficeSeason();
+  const season = upcomingScheduleSeason();
   const team = teamSeasonStub(scheduleTeamKey, season);
   if (!team) return null;
 
