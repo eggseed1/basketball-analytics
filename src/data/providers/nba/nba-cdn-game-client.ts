@@ -8,7 +8,10 @@ import {
 import type { GameStatusKind } from "@/lib/game-status";
 
 const NBA_CDN = "https://cdn.nba.com/static/json";
-const SCHEDULE_URL = `${NBA_CDN}/staticData/scheduleLeagueV2.json`;
+const SCHEDULE_URLS = [
+  `${NBA_CDN}/staticData/scheduleLeagueV2_1.json`,
+  `${NBA_CDN}/staticData/scheduleLeagueV2.json`,
+] as const;
 const TODAY_URL = `${NBA_CDN}/liveData/scoreboard/todaysScoreboard_00.json`;
 
 const NBA_HEADERS = {
@@ -168,12 +171,13 @@ export function transformNbaCdnGame(
   const awayPeriodScores = periodScores(raw.awayTeam);
   const period = Number(raw.period);
   const clock = String(raw.gameClock ?? "").trim();
+  const tipOffAt = isoTipOff(raw);
 
   return applyHistoricalTeamEraToGame({
     id,
     season,
     gameDate: isoDateFromGame(raw, fallbackDate),
-    ...(isoTipOff(raw) ? { tipOffAt: isoTipOff(raw) } : {}),
+    ...(tipOffAt ? { tipOffAt } : {}),
     ...(raw.gameStatusText?.trim()
       ? { statusDetail: raw.gameStatusText.trim() }
       : {}),
@@ -204,7 +208,7 @@ export function transformNbaCdnGame(
 async function fetchJson<T>(url: string, revalidateSeconds: number): Promise<T> {
   const response = await fetch(url, {
     headers: NBA_HEADERS,
-    signal: AbortSignal.timeout(4_000),
+    signal: AbortSignal.timeout(5_000),
     next: { revalidate: revalidateSeconds },
   } as RequestInit);
   if (!response.ok) {
@@ -213,28 +217,42 @@ async function fetchJson<T>(url: string, revalidateSeconds: number): Promise<T> 
   return (await response.json()) as T;
 }
 
+async function fetchSchedulePayload(): Promise<NbaScheduleResponse> {
+  let lastError: unknown;
+  for (const url of SCHEDULE_URLS) {
+    try {
+      const payload = await fetchJson<NbaScheduleResponse>(url, 60 * 30);
+      if ((payload.leagueSchedule?.gameDates?.length ?? 0) > 0) return payload;
+      lastError = new Error(`NBA CDN schedule returned no game dates: ${url}`);
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("NBA CDN schedule unavailable");
+}
+
 export async function fetchNbaCdnSchedule(season: string): Promise<Game[]> {
   const now = Date.now();
   if (schedulePromise && now - scheduleLoadedAt < SCHEDULE_TTL_MS) {
     return schedulePromise;
   }
 
-  const pending = fetchJson<NbaScheduleResponse>(SCHEDULE_URL, 60 * 30).then(
-    (payload) => {
-      const games: Game[] = [];
-      for (const dateBlock of payload.leagueSchedule?.gameDates ?? []) {
-        for (const raw of dateBlock.games ?? []) {
-          const game = transformNbaCdnGame(raw, season, dateBlock.gameDate);
-          if (game) games.push(game);
-        }
+  const pending = fetchSchedulePayload().then((payload) => {
+    const games: Game[] = [];
+    for (const dateBlock of payload.leagueSchedule?.gameDates ?? []) {
+      for (const raw of dateBlock.games ?? []) {
+        const game = transformNbaCdnGame(raw, season, dateBlock.gameDate);
+        if (game) games.push(game);
       }
-      return games.sort((a, b) =>
-        a.gameDate === b.gameDate
-          ? (a.tipOffAt ?? a.id).localeCompare(b.tipOffAt ?? b.id)
-          : a.gameDate.localeCompare(b.gameDate)
-      );
     }
-  );
+    return games.sort((a, b) =>
+      a.gameDate === b.gameDate
+        ? (a.tipOffAt ?? a.id).localeCompare(b.tipOffAt ?? b.id)
+        : a.gameDate.localeCompare(b.gameDate)
+    );
+  });
 
   schedulePromise = pending;
   scheduleLoadedAt = now;
