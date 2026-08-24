@@ -1,6 +1,6 @@
 /**
  * Canonical play-by-play types for game pages.
- * Source: NBA CDN liveData playbyplay (public) with stats.nba.com fallback.
+ * Sources may be NBA CDN, stats.nba.com, or ESPN summary PBP.
  */
 
 export interface PlayByPlayEvent {
@@ -31,6 +31,6 @@ export interface PlayByPlayEvent {
 
 export interface GamePlayByPlay {
   gameId: string;
-  source: "cdn" | "stats" | "sample";
+  source: "cdn" | "stats" | "espn" | "sample";
   events: PlayByPlayEvent[];
 }
