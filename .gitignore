@@ -67,3 +67,11 @@ next-env.d.ts
 # Local raw acquisition dumps (not product runtime)
 /data/raw/
 
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example

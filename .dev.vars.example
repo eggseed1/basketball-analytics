@@ -1,0 +1,5 @@
+# Copied to .dev.vars for local `wrangler` / OpenNext preview (gitignored).
+NEXTJS_ENV=development
+DATA_PROVIDER=nba
+BALLDONTLIE_API_KEY=
+CRON_SECRET=

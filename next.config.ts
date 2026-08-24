@@ -1,4 +1,7 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
   async redirects() {
@@ -45,10 +48,11 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     // Runtime data is intentionally loaded from disk instead of bundled into
     // client/server chunks. Next cannot statically trace dynamic path.join()
-    // calls, so make the production server output self-contained on Vercel.
+    // calls, so make the production server output self-contained on deploy.
     "/*": [
       "./src/data/drbl/precomputed/**/*",
       "./src/data/media/portrait-lookup.json",
+      "./src/data/runtime/game-snapshot.json",
       "./data/cba/**/*",
       "./data/front-office/v1/**/*",
       "./data/impact/**/*",

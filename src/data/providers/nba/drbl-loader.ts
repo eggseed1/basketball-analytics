@@ -43,10 +43,10 @@ async function readPrecomputed(
 
   const candidates = [
     BUNDLED_PATH[season]
-      ? path.join(process.cwd(), BUNDLED_PATH[season])
+      ? path.join(/* turbopackIgnore: true */ process.cwd(), BUNDLED_PATH[season])
       : null,
     path.join(
-      process.cwd(),
+      /* turbopackIgnore: true */ process.cwd(),
       "src",
       "data",
       "drbl",
@@ -54,7 +54,7 @@ async function readPrecomputed(
       `${season}.json`
     ),
     path.join(
-      process.cwd(),
+      /* turbopackIgnore: true */ process.cwd(),
       "data",
       "drbl",
       "normalized",
@@ -96,7 +96,10 @@ export async function fetchDrblBoardProvenance(
     BUNDLED_PATH[season] ?? `src/data/drbl/precomputed/${season}.json`;
   let hash = "unknown";
   try {
-    const raw = await readFile(path.join(process.cwd(), artifactPath), "utf8");
+    const raw = await readFile(
+      path.join(/* turbopackIgnore: true */ process.cwd(), artifactPath),
+      "utf8"
+    );
     hash = sha256Hex(raw);
   } catch {
     hash = sha256Hex(JSON.stringify(artifact));
