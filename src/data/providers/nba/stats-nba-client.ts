@@ -4,13 +4,29 @@ import {
   sharedPeek,
 } from "@/data/cache/shared-ttl-cache";
 import { CACHE_TTL_MS } from "./cache-policy";
-import { statsNbaNetworkEnabled } from "./runtime-policy";
+import {
+  isVercelRuntime,
+  runtimeTimeoutMs,
+  statsNbaNetworkEnabled,
+} from "./runtime-policy";
 
 const DEFAULT_TTL_MS = CACHE_TTL_MS.currentSeasonStats;
 const DEFAULT_STALE_MS = CACHE_TTL_MS.currentSeasonStale;
 const DEFAULT_RETRIES = 1;
 const DEFAULT_TIMEOUT_MS = 4_000;
+const VERCEL_TIMEOUT_MS = 1_800;
 const BASE_URL = "https://stats.nba.com/stats";
+
+/**
+ * Vercel instances should try the same NBA Stats path as local/Cursor, but a
+ * blocked origin must not tax every request. Two consecutive network failures
+ * open a short per-instance circuit; shared/Next Data Cache is still checked
+ * before this factory runs, so warm factual data continues to serve.
+ */
+const CIRCUIT_FAILURE_THRESHOLD = 2;
+const CIRCUIT_OPEN_MS = 2 * 60 * 1000;
+let consecutiveNetworkFailures = 0;
+let circuitOpenUntil = 0;
 
 const NBA_HEADERS: Record<string, string> = {
   Accept: "application/json, text/plain, */*",
@@ -88,6 +104,23 @@ export function getResultSet(
   return null;
 }
 
+function nbaStatsCircuitOpen(): boolean {
+  return isVercelRuntime() && Date.now() < circuitOpenUntil;
+}
+
+function recordNbaStatsSuccess(): void {
+  consecutiveNetworkFailures = 0;
+  circuitOpenUntil = 0;
+}
+
+function recordNbaStatsFailure(): void {
+  if (!isVercelRuntime()) return;
+  consecutiveNetworkFailures += 1;
+  if (consecutiveNetworkFailures >= CIRCUIT_FAILURE_THRESHOLD) {
+    circuitOpenUntil = Date.now() + CIRCUIT_OPEN_MS;
+  }
+}
+
 export async function statsNbaFetch(
   endpoint: string,
   params: Record<string, string | number | boolean | undefined> = {},
@@ -97,17 +130,18 @@ export async function statsNbaFetch(
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
   const staleMs = options.staleMs ?? DEFAULT_STALE_MS;
 
-  // Vercel serverless egress is routinely blocked by stats.nba.com. Still go
-  // through sharedGetOrSet so warm Data Cache hits can serve; the factory
-  // fails fast when a network miss would otherwise hang the critical path.
+  // sharedGetOrSet checks memory + Next Data Cache before invoking the factory.
+  // Therefore a Vercel circuit only suppresses a known-bad network miss; it
+  // never suppresses a warm cached NBA response.
   return sharedGetOrSet(
     `stats.nba:${url}`,
     { ttlMs, staleMs, tags: ["stats-nba", endpoint] },
     async () => {
       if (!statsNbaNetworkEnabled()) {
-        throw new Error(
-          `stats.nba.com disabled on Vercel critical path: ${endpoint}`
-        );
+        throw new Error(`stats.nba.com network disabled: ${endpoint}`);
+      }
+      if (nbaStatsCircuitOpen()) {
+        throw new Error(`stats.nba.com circuit open: ${endpoint}`);
       }
       return fetchStatsNba(url, options);
     }
@@ -121,11 +155,12 @@ async function fetchStatsNba(
   const retries = options.retries ?? DEFAULT_RETRIES;
   let lastError: unknown;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
+  const timeoutMs = runtimeTimeoutMs(DEFAULT_TIMEOUT_MS, VERCEL_TIMEOUT_MS);
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
-        signal: options.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+        signal: options.signal ?? AbortSignal.timeout(timeoutMs),
         headers: NBA_HEADERS,
         // Shared across Vercel instances (Next Data Cache / CDN).
         next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },
@@ -133,17 +168,19 @@ async function fetchStatsNba(
       if (!response.ok) {
         throw new Error(`stats.nba.com failed (${response.status}): ${url}`);
       }
-      return (await response.json()) as StatsNbaResponse;
+      const payload = (await response.json()) as StatsNbaResponse;
+      recordNbaStatsSuccess();
+      return payload;
     } catch (error) {
       lastError = error;
-      // Do not add a backoff after the final failed attempt; that delay used to
-      // extend a 2-attempt commonplayerinfo miss beyond nine seconds.
+      // Do not add a backoff after the final failed attempt.
       if (attempt < retries - 1) {
         await delay(350 * (attempt + 1));
       }
     }
   }
 
+  recordNbaStatsFailure();
   throw lastError instanceof Error
     ? lastError
     : new Error(`stats.nba.com failed: ${url}`);
@@ -155,6 +192,8 @@ function delay(ms: number): Promise<void> {
 
 export function clearStatsNbaCache(): void {
   sharedClearPrefix("stats.nba:");
+  consecutiveNetworkFailures = 0;
+  circuitOpenUntil = 0;
 }
 
 /** Last known response in this process (stale ok) — critical-path fallback. */
