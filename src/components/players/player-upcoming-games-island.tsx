@@ -1,5 +1,6 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
 import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
+import { fetchNbaCdnSchedule } from "@/data/providers/nba/nba-cdn-game-client";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
 import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
@@ -83,8 +84,9 @@ export async function PlayerUpcomingGamesIsland({
   const brand = resolveTeamBrand(scheduleTeamKey);
 
   // Player cards need one team's next games, not a league-wide month crawl.
-  // One ESPN team-schedule request is the primary path; a two-month league
-  // scoreboard is only a bounded fallback.
+  // ESPN is preferred when healthy. On Vercel, the official NBA CDN schedule
+  // is the durable provider fallback and avoids a blank card when site.api is
+  // blocked from the serverless egress range.
   const targeted = await withBudget(
     fetchTeamScheduleFallback(scheduleTeamKey, season).catch(() => []),
     runtimeTimeoutMs(5_000, 3_000),
@@ -105,6 +107,29 @@ export async function PlayerUpcomingGamesIsland({
       [] as GameSummary[]
     );
     games = fallback.value;
+  }
+
+  if (games.length === 0) {
+    const nbaFallback = await withBudget(
+      fetchNbaCdnSchedule(season)
+        .then((rows) => {
+          const today = new Date().toISOString().slice(0, 10);
+          return rows
+            .filter(
+              (game) =>
+                game.gameDate >= today &&
+                (game.status === "scheduled" ||
+                  game.status === "pregame" ||
+                  game.status === "delayed" ||
+                  game.status === "in_progress")
+            )
+            .map(toGameSummary);
+        })
+        .catch(() => []),
+      runtimeTimeoutMs(6_000, 3_500),
+      [] as GameSummary[]
+    );
+    games = nbaFallback.value;
   }
 
   return (
