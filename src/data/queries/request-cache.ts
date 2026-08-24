@@ -5,6 +5,8 @@
 
 import { cache } from "react";
 
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import { withBudget } from "@/data/queries/budget";
 import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
   enrichPlayerCareerAdvanced as enrichPlayerCareerAdvancedUncached,
@@ -14,6 +16,7 @@ import {
   getTeamRoster as getTeamRosterUncached,
 } from "@/data/queries/players";
 import { getPlayerCriticalCareerSeasons } from "@/data/queries/player-critical";
+import type { Player, PlayerSeason } from "@/data/types";
 import {
   getTeamSeasonBoard as getTeamSeasonBoardUncached,
   getTeamSeasonStats as getTeamSeasonStatsUncached,
@@ -25,10 +28,19 @@ import {
 } from "@/data/queries/games";
 import { getHomeAnalytics as getHomeAnalyticsUncached } from "@/data/queries/home";
 
-/** Player identity is allowed to fail open; career/history can still render. */
-export const getPlayerCached = cache((playerId: string) =>
-  getPlayerUncached(playerId).catch(() => null)
-);
+/**
+ * Player identity is allowed to fail open; career/alias data can still render.
+ * Bound this above-the-fold request so a cold ESPN miss cannot hold the whole
+ * route open until the serverless function is terminated.
+ */
+export const getPlayerCached = cache(async (playerId: string) => {
+  const result = await withBudget(
+    getPlayerUncached(playerId).catch(() => null),
+    runtimeTimeoutMs(5_000, 2_800),
+    null as Player | null
+  );
+  return result.value;
+});
 
 export { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 
@@ -50,16 +62,21 @@ export const getPlayerGameLogCached = cache(
  * Critical player-page career rows only: factual ESPN/history counting data.
  * Optional impact and roster overlays stream inside their own Suspense islands.
  */
-export const getPlayerCareerSeasonsCached = cache((playerId: string) =>
-  getPlayerCriticalCareerSeasons(playerId)
-);
+export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
+  const result = await withBudget(
+    getPlayerCriticalCareerSeasons(playerId),
+    runtimeTimeoutMs(7_000, 3_400),
+    [] as PlayerSeason[]
+  );
+  return result.value;
+});
 
 /**
  * Shared DRBL + YoY Advanced enrich for Statistics / Career / percentile.
  * Keyed by playerId + career reference so islands sharing page career hit once.
  */
 export const enrichPlayerCareerAdvancedCached = cache(
-  (playerId: string, career: import("@/data/types").PlayerSeason[]) =>
+  (playerId: string, career: PlayerSeason[]) =>
     enrichPlayerCareerAdvancedUncached(playerId, career)
 );
 
