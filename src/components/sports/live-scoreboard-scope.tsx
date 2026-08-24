@@ -6,22 +6,24 @@ import { useLiveScoreboardRefresh } from "@/components/sports/use-live-scoreboar
 import type { GameSummary } from "@/data/types";
 
 /**
- * Single scoreboard refresh controller - render-prop so list/week/home share one timer.
+ * Single scoreboard refresh controller. Existing callers use the render-prop
+ * form; static children are also supported so wrapper composition does not
+ * force a second refresh controller.
  */
 export function LiveScoreboardScope({
-  games: initialGames,
+  games: initialGames = [],
   season,
   enabled = true,
   children,
 }: {
-  games: GameSummary[];
+  games?: GameSummary[];
   season?: string;
   enabled?: boolean;
-  children: (games: GameSummary[]) => ReactNode;
+  children: ReactNode | ((games: GameSummary[]) => ReactNode);
 }) {
   const { games } = useLiveScoreboardRefresh(initialGames, {
     season,
-    enabled,
+    enabled: enabled && typeof children === "function",
   });
-  return <>{children(games)}</>;
+  return <>{typeof children === "function" ? children(games) : children}</>;
 }
