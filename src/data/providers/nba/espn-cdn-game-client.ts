@@ -112,9 +112,12 @@ export async function fetchEspnCdnGameBoxScore(
   const id = String(gameId ?? "").trim();
   if (!/^40\d{6,}$/.test(id)) return null;
 
+  // `game` contains the complete `gamepackageJSON` (header + boxscore). Trying
+  // `boxscore` first can return a slim wrapper without the header we need to
+  // normalize teams/status, wasting the entire serverless budget.
   const urls = [
-    `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
     `${CDN_BASE}/game?xhr=1&gameId=${encodeURIComponent(id)}`,
+    `${CDN_BASE}/boxscore?xhr=1&gameId=${encodeURIComponent(id)}`,
   ];
 
   let lastError: unknown;
