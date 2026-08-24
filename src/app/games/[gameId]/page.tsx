@@ -1,5 +1,4 @@
 import { Suspense } from "react";
-import { notFound } from "next/navigation";
 
 import { GameLabView } from "@/components/games/game-lab-view";
 import { GameIdentityShell } from "@/components/games/game-identity-shell";
@@ -13,6 +12,8 @@ import { getGameAnalysis } from "@/data/queries";
 import { getHistoricalProductGame } from "@/data/history/product";
 import { loadRawArchiveShotEvents } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
+import { withBudget } from "@/data/queries/budget";
+import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import {
   parseThemeMode,
@@ -47,8 +48,22 @@ async function GameLabDeepBody({
   gameId: string;
   arrival: ReturnType<typeof parseSeasonEvidenceArrival>;
 }) {
-  const payload = await getGameAnalysis(gameId);
-  if (!payload) notFound();
+  const result = await withBudget(
+    getGameAnalysis(gameId).catch(() => null),
+    runtimeTimeoutMs(10_000, 4_000),
+    null
+  );
+  const payload = result.value;
+
+  // Game Lab is enrichment, not route identity. A missing/slow PBP provider
+  // must never turn a valid scoreboard/box-score game into a route-level 404.
+  if (!payload) {
+    return (
+      <p className="text-[13px] text-muted-foreground">
+        Deep Game Lab analysis is temporarily unavailable for this game.
+      </p>
+    );
+  }
 
   return (
     <GameLabView
