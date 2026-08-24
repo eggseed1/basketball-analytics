@@ -8,7 +8,10 @@ import { cache } from "react";
 import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
-import { getRuntimeSnapshotGame } from "@/data/runtime/game-snapshot";
+import {
+  getRuntimeSnapshotGame,
+  resolveRuntimeSnapshotGameId,
+} from "@/data/runtime/game-snapshot";
 import { withBudget } from "@/data/queries/budget";
 import { getPlayerAccolades as getPlayerAccoladesUncached } from "@/data/queries/player-awards";
 import {
@@ -237,9 +240,12 @@ async function boundedFallbackGameShell(gameId: string): Promise<GameShell | nul
 /**
  * One game-loading contract everywhere: complete provider first, durable
  * snapshot/CDN second. Hosting platform must not decide which features exist.
+ * Legacy ESPN links are translated to the canonical NBA GameID before the
+ * complete provider runs, so old links receive the same CDN box/PBP depth.
  */
 export const getGameShellCached = cache(async (gameId: string) => {
-  const primary = await boundedPrimaryGameShell(gameId);
+  const canonicalId = resolveRuntimeSnapshotGameId(gameId);
+  const primary = await boundedPrimaryGameShell(canonicalId);
   if (primary) return primary;
   return boundedFallbackGameShell(gameId);
 });
