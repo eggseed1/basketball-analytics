@@ -77,13 +77,10 @@ export class CompleteNBADataProvider extends ResilientNBADataProvider {
     playerId: string,
     season: string
   ): Promise<PlayerGame[]> {
-    const seasonRow = await this.getPlayerSeason(playerId, season).catch(
-      () => null
-    );
-    const complete = await fetchCompleteEspnPlayerGameLog(playerId, season, {
-      fallbackTeamId: seasonRow?.teamId,
-      playerName: seasonRow?.playerName,
-    }).catch(() => []);
+    const complete = await fetchCompleteEspnPlayerGameLog(
+      playerId,
+      season
+    ).catch(() => []);
     if (complete.length > 0) return complete;
     return super.getPlayerGameLog(playerId, season);
   }
