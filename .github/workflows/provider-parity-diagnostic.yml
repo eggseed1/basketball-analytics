@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - fix/vercel-local-provider-parity
+  pull_request:
+    branches:
+      - main
+      - integration/design-main
 
 jobs:
   build:
