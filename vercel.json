@@ -1,4 +1,4 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "buildCommand": "npm run build && node scripts/smoke-built-player-route.mjs"
+  "buildCommand": "node scripts/build-runtime-game-snapshot.mjs && npm run build && node scripts/smoke-built-player-route.mjs"
 }
