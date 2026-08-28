@@ -3,7 +3,7 @@ import type {
   DarkoRating,
   Game,
   GameBoxScore,
-  LebronRating,
+  RaptorRating,
   PlayerGame,
   PlayerSeason,
   Team,
@@ -14,7 +14,7 @@ import {
   type BallDontLieClient,
 } from "@/data/providers/balldontlie/client";
 import { fetchDarkoRatings } from "@/data/providers/impact/darko-client";
-import { loadLebronRatings } from "@/data/providers/impact/lebron-store";
+import { loadRaptorRatings } from "@/data/providers/impact/raptor-store";
 import {
   HISTORICAL_START_YEAR,
   listCanonicalSeasons,
@@ -60,14 +60,14 @@ export interface HistoricalServiceStatus {
   playerSeasons: "espn" | "unavailable";
   advancedStats: "balldontlie" | "derived" | "unavailable";
   darko: "live" | "unavailable";
-  lebron: "csv-or-seed";
+  raptor: "csv-or-seed";
   seasonRange: { from: string; to: string };
   notes: string[];
 }
 
 /**
  * Facade for historical NBA stats APIs: BallDontLie (1946+) + ESPN season
- * stats + DARKO / LEBRON impact overlays.
+ * stats + DARKO / RAPTOR impact overlays.
  */
 export class HistoricalNbaService {
   private readonly espn = new NBADataProvider();
@@ -94,7 +94,7 @@ export class HistoricalNbaService {
       );
     }
     notes.push(
-      "DARKO is scraped from the public darko.app leaderboard. LEBRON uses data/impact/lebron.csv or the seed snapshot."
+      "DARKO is scraped from the public darko.app leaderboard. RAPTOR prefers the baked FiveThirtyEight overlay (see impact:sync); optional data/impact/raptor.csv overrides."
     );
 
     return {
@@ -104,7 +104,7 @@ export class HistoricalNbaService {
       playerSeasons: "espn",
       advancedStats: this.bdl ? "balldontlie" : "derived",
       darko: "live",
-      lebron: "csv-or-seed",
+      raptor: "csv-or-seed",
       seasonRange: {
         from: seasons[0],
         to: seasons[seasons.length - 1],
@@ -338,28 +338,28 @@ export class HistoricalNbaService {
   }
 
   async getPlayerSeasons(season: string): Promise<PlayerSeason[]> {
-    const [rows, darko, lebron] = await Promise.all([
+    const [rows, darko, raptor] = await Promise.all([
       this.espn.getPlayerSeasons(season),
       fetchDarkoRatings().catch(() => [] as DarkoRating[]),
-      loadLebronRatings(season).catch(() => [] as LebronRating[]),
+      loadRaptorRatings(season).catch(() => [] as RaptorRating[]),
     ]);
 
     const darkoByName = indexByName(darko);
-    const lebronByName = indexByName(lebron);
+    const raptorByName = indexByName(raptor);
 
     return rows.map((row) => {
       const d = darkoByName.get(normalizeName(row.playerName));
       // Live DARKO is a stamped-season snapshot — never overlay onto other years.
       const darkoApplies = d != null && d.season === season;
-      const l = lebronByName.get(normalizeName(row.playerName));
+      const l = raptorByName.get(normalizeName(row.playerName));
       return {
         ...row,
         darkoDpm: darkoApplies ? d.impact : undefined,
         darkoOff: darkoApplies ? d.offensive : undefined,
         darkoDef: darkoApplies ? d.defensive : undefined,
-        lebron: l?.impact,
-        oLebron: l?.offensive,
-        dLebron: l?.defensive,
+        raptor: l?.impact,
+        oRaptor: l?.offensive,
+        dRaptor: l?.defensive,
         winsAdded: l?.winsAdded,
       };
     });
@@ -465,8 +465,8 @@ export class HistoricalNbaService {
     return rows.filter((row) => row.season === season);
   }
 
-  async getLebron(season?: string): Promise<LebronRating[]> {
-    return loadLebronRatings(season);
+  async getRaptor(season?: string): Promise<RaptorRating[]> {
+    return loadRaptorRatings(season);
   }
 
   private async loadTeams(): Promise<Team[]> {

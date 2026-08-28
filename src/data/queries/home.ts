@@ -5,8 +5,8 @@
  * block the whole homepage.
  */
 
-import { getDarkoRatings } from "@/data/queries/historical";
-import type { DarkoRating, PlayerSeason } from "@/data/types";
+import { getDarkoRatings, getRaptorRatings } from "@/data/queries/historical";
+import type { DarkoRating, RaptorRating, PlayerSeason } from "@/data/types";
 import { sharedGetOrSet } from "@/data/cache/shared-ttl-cache";
 import {
   canonicalSeasonFromStartYear,
@@ -36,6 +36,15 @@ import {
   getCanonicalTeamFromProvider,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
+import {
+  computeImpactMovers,
+  formatImpactDelta,
+} from "@/analytics/impact-risers";
+import {
+  getBundledDarkoSeason,
+  isBundledDarkoSeason,
+} from "@/data/runtime/impact-overlay-snapshot";
+import { getBundledBrefAdvancedSeason } from "@/data/runtime/bref-advanced-snapshot";
 
 /** Resolve a product team key (ESPN id / abbr) for logos — never raw NBA Stats ids. */
 function productTeamKeyFromProviderTeamId(
@@ -89,11 +98,17 @@ export type {
   ScheduleLeader,
 } from "@/data/providers/nba/schedule-client";
 
-/** DARKO row with ESPN athlete id when name-matched for profile links. */
+/** DARKO / RAPTOR row with ESPN athlete id when name-matched for profile links. */
 export type HomeDarkoLeader = DarkoRating & {
   /** Prefer for `/players/[id]` and headshots. */
   profileId: string;
   /** Companion season rates for Top Performers overview. */
+  trueShootingPct?: number | null;
+  usagePct?: number | null;
+};
+
+export type HomeRaptorLeader = RaptorRating & {
+  profileId: string;
   trueShootingPct?: number | null;
   usagePct?: number | null;
 };
@@ -111,6 +126,8 @@ export type HomeDrblLeader = {
   teamAbbr?: string;
   drbl100: number;
   r1Points: number | null;
+  /** WAR1 (r1WinEquivalents) — preferred home Top Performers default. */
+  war1: number | null;
   /** Companion board stats (joined from season / DARKO for the overview table). */
   darko?: number | null;
   trueShootingPct?: number | null;
@@ -152,6 +169,7 @@ export type HomeAnalytics = {
   drblFallbackNote: string | null;
   drblLeaders: HomeDrblLeader[];
   darkoLeaders: HomeDarkoLeader[];
+  raptorLeaders: HomeRaptorLeader[];
   tsLeaders: PlayerSeason[];
   usageStars: PlayerSeason[];
   /**
@@ -165,7 +183,7 @@ export type HomeAnalytics = {
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 11;
+const HOME_CACHE_VERSION = 15;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
@@ -205,10 +223,10 @@ function espnIdByName(seasons: PlayerSeason[]): Map<string, string> {
   return map;
 }
 
-function withProfileId(
-  row: DarkoRating,
+function withProfileId<T extends { playerName: string; playerId: string; nbaPlayerId?: string }>(
+  row: T,
   byName: Map<string, string>
-): HomeDarkoLeader {
+): T & { profileId: string } {
   const espnId = byName.get(normalizePlayerName(row.playerName));
   return {
     ...row,
@@ -224,36 +242,108 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const initialSeason = preTip
     ? priorSeasonForStats(calendarSeason)
     : calendarSeason;
-  let seasons = await withTimeout(
-    espn.getPlayerSeasons(initialSeason).catch(() => [] as PlayerSeason[]),
-    ESPN_SEASONS_BUDGET_MS,
-    [] as PlayerSeason[]
+
+  const { slimEdgeProductEnabled } = await import(
+    "@/data/providers/nba/runtime-policy"
   );
+  let seasons: PlayerSeason[] = [];
   let season = initialSeason;
 
-  // Outside the known pre-tip window, only fall back when the live current
-  // board proves empty. During pre-tip we go straight to the completed season
-  // and avoid a 30-team roster crawl on every cold serverless instance.
-  if (
-    !preTip &&
-    shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
-  ) {
-    const prior = priorSeasonForStats(calendarSeason);
-    const priorRows = await withTimeout(
-      espn.getPlayerSeasons(prior).catch(() => [] as PlayerSeason[]),
+  if (slimEdgeProductEnabled()) {
+    // Slim edge only: never start ESPN season-board fetches (uncancellable → 1102).
+    // Paid FULL_EDGE_PRODUCT skips this branch and uses the live path below.
+    const { getBundledBrefPeerBoard } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    seasons = getBundledBrefPeerBoard(initialSeason);
+    if (
+      seasons.length === 0 ||
+      shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
+    ) {
+      const prior = priorSeasonForStats(calendarSeason);
+      const priorRows = getBundledBrefPeerBoard(prior);
+      if (priorRows.length > 0) {
+        season = prior;
+        seasons = priorRows;
+      }
+    }
+    if (seasons.length > 0 && isDrblSeason(season)) {
+      const drblRows = await fetchDrblSeason(season).catch(() => []);
+      if (drblRows.length) {
+        const { getPlayerIdAliasIndex } = await import(
+          "@/data/identity/player-identity"
+        );
+        const { isProductionApprovedPlayerAlias } = await import(
+          "@/data/providers/impact/player-id-aliases"
+        );
+        const aliases = await getPlayerIdAliasIndex();
+        const byId = new Map(drblRows.map((r) => [r.playerId, r]));
+        seasons = seasons.map((row) => {
+          const alias = aliases.byEspn.get(row.playerId);
+          const nba =
+            alias && isProductionApprovedPlayerAlias(alias)
+              ? alias.nbaPlayerId
+              : null;
+          const drbl =
+            byId.get(row.playerId) ??
+            (nba ? byId.get(nba) : undefined);
+          if (!drbl) return row;
+          return {
+            ...row,
+            drbl100: drbl.drbl100 ?? row.drbl100,
+            rawAbilityRate: drbl.rawAbilityRate ?? row.rawAbilityRate,
+            drblPossessions:
+              drbl.actualPossessions ?? drbl.possessions ?? row.drblPossessions,
+            drblO: drbl.drblO ?? row.drblO,
+            drblD: drbl.drblD ?? row.drblD,
+            drblP: drbl.drblP ?? row.drblP,
+            drblLn: drbl.drblLn ?? row.drblLn,
+            drblB: drbl.drblB ?? row.drblB,
+            r1Points:
+              drbl.r1Points != null && Number.isFinite(drbl.r1Points)
+                ? drbl.r1Points
+                : (row.r1Points ?? null),
+            r1WinEquivalents:
+              drbl.r1WinEquivalents != null &&
+              Number.isFinite(drbl.r1WinEquivalents)
+                ? drbl.r1WinEquivalents
+                : (row.r1WinEquivalents ?? null),
+          };
+        });
+      }
+    }
+  } else {
+    seasons = await withTimeout(
+      espn.getPlayerSeasons(initialSeason).catch(() => [] as PlayerSeason[]),
       ESPN_SEASONS_BUDGET_MS,
       [] as PlayerSeason[]
     );
-    if (priorRows.length > 0) {
-      season = prior;
-      seasons = priorRows;
+
+    // Outside the known pre-tip window, only fall back when the live current
+    // board proves empty. During pre-tip we go straight to the completed season
+    // and avoid a 30-team roster crawl on every cold serverless instance.
+    if (
+      !preTip &&
+      shouldUsePriorSeasonBoardStats(calendarSeason, seasons)
+    ) {
+      const prior = priorSeasonForStats(calendarSeason);
+      const priorRows = await withTimeout(
+        espn.getPlayerSeasons(prior).catch(() => [] as PlayerSeason[]),
+        ESPN_SEASONS_BUDGET_MS,
+        [] as PlayerSeason[]
+      );
+      if (priorRows.length > 0) {
+        season = prior;
+        seasons = priorRows;
+      }
     }
   }
 
   const drblSeasonOk = isDrblSeason(season);
 
-  const [darko, drblRows, aliasIndex] = await Promise.all([
+  const [darko, raptor, drblRows, aliasIndex] = await Promise.all([
     getDarkoRatings().catch(() => [] as DarkoRating[]),
+    getRaptorRatings(season).catch(() => [] as RaptorRating[]),
     drblSeasonOk
       ? withTimeout(
           fetchDrblSeason(season).catch(() => []),
@@ -304,6 +394,30 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
             : null,
       };
     });
+
+  const raptorLeaders = [...raptor]
+    .filter((row) => Number.isFinite(row.impact))
+    .sort((a, b) => b.impact - a.impact)
+    .slice(0, 20)
+    .map((row) => {
+      const base = withProfileId(row, byName);
+      const seasonRow = seasonByName.get(normalizePlayerName(row.playerName));
+      const team = productTeamKeyFromSeason(seasonRow);
+      return {
+        ...base,
+        teamAbbr: base.teamAbbr ?? team.teamAbbr ?? seasonRow?.teamAbbreviation,
+        teamName: base.teamName ?? seasonRow?.teamName,
+        trueShootingPct:
+          seasonRow?.trueShootingPct != null && seasonRow.trueShootingPct > 0
+            ? seasonRow.trueShootingPct
+            : null,
+        usagePct:
+          seasonRow?.usagePct != null && seasonRow.usagePct > 0
+            ? seasonRow.usagePct
+            : null,
+      };
+    });
+
   const tsLeaders = [...efficiencyPool]
     .sort(
       (a, b) =>
@@ -327,7 +441,20 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         validatedActualPossessions: row.actualPossessions ?? row.possessions ?? 0,
       })
     );
-    valid.sort((a, b) => b.drbl100 - a.drbl100);
+    valid.sort((a, b) => {
+      const aw = a.r1WinEquivalents;
+      const bw = b.r1WinEquivalents;
+      if (
+        aw != null &&
+        bw != null &&
+        Number.isFinite(aw) &&
+        Number.isFinite(bw) &&
+        aw !== bw
+      ) {
+        return bw - aw;
+      }
+      return b.drbl100 - a.drbl100;
+    });
     for (const row of valid.slice(0, 20)) {
       const nbaId = String(row.playerId);
       const alias = aliasIndex.byNba.get(nbaId);
@@ -335,7 +462,11 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         alias && isProductionApprovedPlayerAlias(alias)
           ? alias.espnPlayerId
           : null;
-      const nameKey = normalizePlayerName(row.playerName ?? "");
+      const displayName =
+        (row.playerName && row.playerName.trim()) ||
+        alias?.playerName?.trim() ||
+        nbaId;
+      const nameKey = normalizePlayerName(displayName);
       const espnFromName = byName.get(nameKey);
       // Prefer approved alias ESPN id; name match is secondary for headshots only.
       const profileId = espnFromAlias ?? espnFromName ?? nbaId;
@@ -352,7 +483,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
           : null;
       drblLeaders.push({
         playerId: nbaId,
-        playerName: row.playerName ?? nbaId,
+        playerName: displayName,
         profileId,
         nbaPlayerId: nbaId,
         teamKey: fromSeason.teamKey ?? fromDrbl.teamKey,
@@ -361,6 +492,10 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         r1Points:
           row.r1Points != null && Number.isFinite(row.r1Points)
             ? row.r1Points
+            : null,
+        war1:
+          row.r1WinEquivalents != null && Number.isFinite(row.r1WinEquivalents)
+            ? row.r1WinEquivalents
             : null,
         darko: darkoByName.get(nameKey) ?? null,
         trueShootingPct: ts,
@@ -372,6 +507,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const nameKeys = new Set<string>();
   for (const p of drblLeaders) nameKeys.add(normalizePlayerName(p.playerName));
   for (const p of darkoLeaders) nameKeys.add(normalizePlayerName(p.playerName));
+  for (const p of raptorLeaders) nameKeys.add(normalizePlayerName(p.playerName));
   for (const p of tsLeaders) nameKeys.add(normalizePlayerName(p.playerName));
   for (const p of usageStars) nameKeys.add(normalizePlayerName(p.playerName));
 
@@ -431,6 +567,108 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       boardHref: "/explore/players?sort=darkoDpm",
       learnHref: "/learn/darko",
     });
+  }
+
+  const priorSeason = priorSeasonForStats(season);
+  if (isBundledDarkoSeason(season) && isBundledDarkoSeason(priorSeason)) {
+    const movers = computeImpactMovers({
+      prior: getBundledDarkoSeason(priorSeason).map((r) => ({
+        playerId: r.playerId,
+        nbaPlayerId: r.nbaPlayerId,
+        playerName: r.playerName,
+        impact: r.impact,
+      })),
+      current: getBundledDarkoSeason(season).map((r) => ({
+        playerId: r.playerId,
+        nbaPlayerId: r.nbaPlayerId,
+        playerName: r.playerName,
+        impact: r.impact,
+      })),
+      fromSeason: priorSeason,
+      toSeason: season,
+      metricLabel: "DARKO DPM",
+      minAbsDelta: 1.0,
+      limit: 3,
+    });
+
+    const topRiser = movers.risers[0];
+    if (topRiser) {
+      const profileId =
+        byName.get(normalizePlayerName(topRiser.playerName)) ??
+        topRiser.playerId;
+      insights.push({
+        id: "darko-riser",
+        eyebrow: "YoY · DARKO",
+        title: `${formatImpactDelta(topRiser.delta)} DPM`,
+        body: `Biggest DARKO rise ${priorSeason} → ${season} among season-keyed overlay rows (${formatImpact(topRiser.fromValue)} → ${formatImpact(topRiser.toValue)}).`,
+        players: [{ id: profileId, name: topRiser.playerName }],
+        boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=darkoDpm&dir=desc`,
+        learnHref: "/learn/darko",
+      });
+    }
+
+    const topFaller = movers.fallers[0];
+    if (topFaller) {
+      const profileId =
+        byName.get(normalizePlayerName(topFaller.playerName)) ??
+        topFaller.playerId;
+      insights.push({
+        id: "darko-faller",
+        eyebrow: "YoY · DARKO",
+        title: `${formatImpactDelta(topFaller.delta)} DPM`,
+        body: `Biggest DARKO drop ${priorSeason} → ${season} among season-keyed overlay rows (${formatImpact(topFaller.fromValue)} → ${formatImpact(topFaller.toValue)}).`,
+        players: [{ id: profileId, name: topFaller.playerName }],
+        boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=darkoDpm&dir=desc`,
+        learnHref: "/learn/darko",
+      });
+    }
+  }
+
+  {
+    const priorBref = getBundledBrefAdvancedSeason(priorSeason);
+    const currentBref = getBundledBrefAdvancedSeason(season);
+    if (priorBref?.length && currentBref?.length) {
+      const toBoard = (
+        rows: NonNullable<ReturnType<typeof getBundledBrefAdvancedSeason>>
+      ) =>
+        rows
+          .filter(
+            (r) =>
+              r.gamesPlayed >= 40 &&
+              r.bpm != null &&
+              Number.isFinite(r.bpm) &&
+              r.minutes / Math.max(1, r.gamesPlayed) >= 20
+          )
+          .map((r) => ({
+            playerId: normalizePlayerName(r.playerName),
+            playerName: r.playerName,
+            impact: r.bpm as number,
+          }));
+      const bpmMovers = computeImpactMovers({
+        prior: toBoard(priorBref),
+        current: toBoard(currentBref),
+        fromSeason: priorSeason,
+        toSeason: season,
+        metricLabel: "BPM",
+        minAbsDelta: 2.0,
+        limit: 3,
+      });
+      const topBpmRiser = bpmMovers.risers[0];
+      if (topBpmRiser) {
+        const profileId =
+          byName.get(normalizePlayerName(topBpmRiser.playerName)) ??
+          topBpmRiser.playerId;
+        insights.push({
+          id: "bpm-riser",
+          eyebrow: "YoY · BPM",
+          title: `${formatImpactDelta(topBpmRiser.delta)} BPM`,
+          body: `Biggest BPM rise ${priorSeason} → ${season} among BRef advanced rows (≥40 GP). Same-metric only.`,
+          players: [{ id: profileId, name: topBpmRiser.playerName }],
+          boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=bpm&dir=desc`,
+          learnHref: "/learn",
+        });
+      }
+    }
   }
 
   const bestTs = tsLeaders[0];
@@ -513,10 +751,11 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     drblFallbackNote,
     drblLeaders,
     darkoLeaders,
+    raptorLeaders,
     tsLeaders,
     usageStars,
     performerSeasons,
-    insights: insights.slice(0, 4),
+    insights: insights.slice(0, 6),
   };
 }
 

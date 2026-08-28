@@ -55,7 +55,45 @@ export function isProductionApprovedPlayerAlias(
 
 const ALIAS_RELATIVE = path.join("data", "impact", "player-id-aliases.json");
 
+function indexFromAliases(aliases: PlayerIdAlias[]): PlayerIdAliasIndex {
+  const empty: PlayerIdAliasIndex = {
+    byEspn: new Map(),
+    byNba: new Map(),
+  };
+  for (const row of aliases) {
+    if (!row?.espnPlayerId || !row?.nbaPlayerId) continue;
+    const normalized: PlayerIdAlias = {
+      espnPlayerId: String(row.espnPlayerId).trim(),
+      nbaPlayerId: String(row.nbaPlayerId).trim(),
+      playerName: row.playerName?.trim() || undefined,
+      matchMethod: row.matchMethod?.trim() || undefined,
+      confidence: row.confidence?.trim() || undefined,
+      productionApproved:
+        typeof row.productionApproved === "boolean"
+          ? row.productionApproved
+          : undefined,
+    };
+    if (!normalized.espnPlayerId || !normalized.nbaPlayerId) continue;
+    empty.byEspn.set(normalized.espnPlayerId, normalized);
+    empty.byNba.set(normalized.nbaPlayerId, normalized);
+  }
+  return empty;
+}
+
 export async function loadPlayerIdAliases(): Promise<PlayerIdAliasIndex> {
+  // Cloudflare Workers: prefer bundled snapshot (node:fs is empty on CF).
+  try {
+    const { getBundledPlayerIdAliasIndex } = await import(
+      "@/data/runtime/player-id-aliases-snapshot"
+    );
+    const bundled = getBundledPlayerIdAliasIndex();
+    if (bundled.byEspn.size > 0 || bundled.byNba.size > 0) {
+      return bundled;
+    }
+  } catch {
+    // fall through to disk for local / Vercel file mounts
+  }
+
   const empty: PlayerIdAliasIndex = {
     byEspn: new Map(),
     byNba: new Map(),
@@ -71,25 +109,8 @@ export async function loadPlayerIdAliases(): Promise<PlayerIdAliasIndex> {
   try {
     const parsed = JSON.parse(text) as { aliases?: PlayerIdAlias[] };
     const aliases = Array.isArray(parsed.aliases) ? parsed.aliases : [];
-    for (const row of aliases) {
-      if (!row?.espnPlayerId || !row?.nbaPlayerId) continue;
-      const normalized: PlayerIdAlias = {
-        espnPlayerId: String(row.espnPlayerId).trim(),
-        nbaPlayerId: String(row.nbaPlayerId).trim(),
-        playerName: row.playerName?.trim() || undefined,
-        matchMethod: row.matchMethod?.trim() || undefined,
-        confidence: row.confidence?.trim() || undefined,
-        productionApproved:
-          typeof row.productionApproved === "boolean"
-            ? row.productionApproved
-            : undefined,
-      };
-      if (!normalized.espnPlayerId || !normalized.nbaPlayerId) continue;
-      empty.byEspn.set(normalized.espnPlayerId, normalized);
-      empty.byNba.set(normalized.nbaPlayerId, normalized);
-    }
+    return indexFromAliases(aliases);
   } catch {
     return empty;
   }
-  return empty;
 }

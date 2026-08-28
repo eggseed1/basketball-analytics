@@ -3,8 +3,9 @@ import { PlayerShotMapView } from "@/components/players/player-shot-map";
 import { type } from "@/lib/design-system";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
-import { loadPlayerSeasonShotIndex } from "@/data/history/player-season-shots";
+import { resolvePlayerSeasonShotIndex } from "@/data/runtime/player-shots-store";
 import { getPlayerSeasonShotMap } from "@/data/queries/player-shots";
+import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { playerSeasonShotIndexToMap } from "@/lib/player-season-shot-map-adapter";
 import type { PlayerShotMap } from "@/lib/player-shot-map";
 import type { PlayerSeasonKind } from "@/lib/player-destination";
@@ -108,52 +109,88 @@ export async function PlayerVisualizationsIsland({
   teamLabel?: string | null;
   teamAbbr?: string | null;
 }) {
-  const index = loadPlayerSeasonShotIndex(playerId, season);
-  const label = teamLabel || teamKey || "NBA";
-  const coverageLabel =
-    index && index.coordinateShots > 0
-      ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
-          index.coverage * 100
-        ).toFixed(1)}%)`
-      : null;
+  try {
+    // Slim edge only (SLIM_EDGE_PRODUCT=1). Paid Workers load shot charts.
+    if (slimEdgeProductEnabled()) {
+      return (
+        <section
+          id="shooting"
+          className="scroll-mt-16 flex flex-col gap-4"
+          aria-label="Shooting"
+        >
+          <GlassSurface effect="css" className="px-3 py-2">
+            <p className={cn(type.caption, "font-semibold text-foreground")}>
+              Season shot chart · {season}
+            </p>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              Shot chart detail is temporarily limited on this edge. Overview
+              and career stats remain available.
+            </p>
+          </GlassSurface>
+          <PlayerPlannedVisualizations teamKey={teamKey} />
+        </section>
+      );
+    }
 
-  let map: PlayerShotMap;
-  if (index && index.coordinateShots > 0) {
-    map = playerSeasonShotIndexToMap({
-      index,
-      season,
-      teamLabel: label,
-      seasonType,
-    });
-  } else {
-    map = await getPlayerSeasonShotMap({
+    const index = await resolvePlayerSeasonShotIndex({
       playerId,
       nbaId,
       season,
-      seasonType,
-      teamAbbr: teamAbbr ?? "TOT",
-      teamLabel: label,
     });
-  }
+    const label = teamLabel || teamKey || "NBA";
+    const coverageLabel =
+      index && index.coordinateShots > 0
+        ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
+            index.coverage * 100
+          ).toFixed(1)}%)`
+        : null;
 
-  return (
-    <section
-      id="shooting"
-      className="scroll-mt-16 flex flex-col gap-4"
-      aria-label="Shooting"
-    >
-      {coverageLabel ? (
-        <GlassSurface effect="css" className="px-3 py-2">
-          <p className={cn(type.caption, "font-semibold text-foreground")}>
-            Season shot chart · {season}
-          </p>
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            {coverageLabel}
-          </p>
-        </GlassSurface>
-      ) : null}
-      <PlayerShotMapView map={map} seasons={seasons} />
-      <PlayerPlannedVisualizations teamKey={teamKey} />
-    </section>
-  );
+    let map: PlayerShotMap;
+    if (index && index.coordinateShots > 0) {
+      map = playerSeasonShotIndexToMap({
+        index,
+        season,
+        teamLabel: label,
+        seasonType,
+      });
+    } else {
+      map = await getPlayerSeasonShotMap({
+        playerId,
+        nbaId,
+        season,
+        seasonType,
+        teamAbbr: teamAbbr ?? "TOT",
+        teamLabel: label,
+      });
+    }
+
+    return (
+      <section
+        id="shooting"
+        className="scroll-mt-16 flex flex-col gap-4"
+        aria-label="Shooting"
+      >
+        {coverageLabel ? (
+          <GlassSurface effect="css" className="px-3 py-2">
+            <p className={cn(type.caption, "font-semibold text-foreground")}>
+              Season shot chart · {season}
+            </p>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              {coverageLabel}
+            </p>
+          </GlassSurface>
+        ) : null}
+        <PlayerShotMapView map={map} seasons={seasons} />
+        <PlayerPlannedVisualizations teamKey={teamKey} />
+      </section>
+    );
+  } catch {
+    return (
+      <section id="shooting" className="scroll-mt-16">
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Shooting visuals temporarily unavailable.
+        </p>
+      </section>
+    );
+  }
 }

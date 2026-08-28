@@ -118,7 +118,7 @@ export interface GmPlayer {
   draftPick?: number;
   nbaPlayerId?: string;
   darko?: number;
-  lebron?: number;
+  raptor?: number;
 }
 
 export interface GmStaff {

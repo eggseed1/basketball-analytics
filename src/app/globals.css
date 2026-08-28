@@ -164,6 +164,27 @@
   }
 }
 
+@layer utilities {
+  .text-delta-up {
+    @apply text-emerald-700 dark:text-emerald-400;
+  }
+  .text-delta-down {
+    @apply text-rose-700 dark:text-rose-400;
+  }
+  .frost-surface {
+    @apply bg-white/40 dark:bg-white/10;
+  }
+  .frost-surface-hover {
+    @apply hover:bg-white/55 dark:hover:bg-white/15;
+  }
+  .frost-surface-soft {
+    @apply bg-white/35 dark:bg-white/10;
+  }
+  .frost-surface-muted {
+    @apply bg-white/30 dark:bg-white/10;
+  }
+}
+
 /* ==========================================================================
  * FROZEN - TEAM WASH GRADIENT SYSTEM
  * Do not weaken, hollow the mid, or revert to ~9-14% edge fades.
@@ -509,7 +530,8 @@ html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
     --board-font: 10.5px;
     --board-font-name: 11px;
     --board-head: 9.5px;
-    --board-row-h: 1.55rem;
+    /* Fit 24px headshots (h-6) beside names without clipping. */
+    --board-row-h: 1.75rem;
   }
 
   .board-scroll-frame,

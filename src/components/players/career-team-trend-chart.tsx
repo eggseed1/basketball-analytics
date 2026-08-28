@@ -1,7 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useId, useMemo } from "react";
 import {
+  Curve,
   Line,
   LineChart,
   ReferenceLine,
@@ -17,6 +18,7 @@ import {
 } from "@/components/brand/frost-recharts-tooltip";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { type } from "@/lib/design-system";
+import { useChartTheme } from "@/lib/chart-theme";
 import { formatNumber } from "@/lib/format";
 import { percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
@@ -47,13 +49,6 @@ export type CareerSeriesPoint = {
   percentile?: number;
 };
 
-type TeamSegment = {
-  key: string;
-  teamId: string;
-  teamAbbr: string;
-  color: string;
-};
-
 type ChartRow = {
   season: string;
   fullSeason?: string;
@@ -63,137 +58,159 @@ type ChartRow = {
   teamAbbr: string;
   color: string;
   percentile?: number;
-  [segmentKey: string]: string | number | null | undefined;
 };
 
+export type CareerStrokeStop = {
+  offset: string;
+  color: string;
+};
+
+function toChartRows(points: CareerSeriesPoint[]): ChartRow[] {
+  return points.map((p) => ({
+    season: p.season,
+    fullSeason: p.fullSeason,
+    value: p.value,
+    rawValue: p.rawValue,
+    teamId: p.teamId,
+    teamAbbr: p.teamAbbr,
+    color: p.color,
+    percentile: p.percentile,
+  }));
+}
+
+/** Evenly spaced X stops so one monotone stroke can blend team / Savant colors. */
+function buildStrokeStops(points: CareerSeriesPoint[]): CareerStrokeStop[] {
+  if (points.length === 0) return [];
+  if (points.length === 1) {
+    return [{ offset: "0%", color: points[0]!.color }];
+  }
+  const last = points.length - 1;
+  return points.map((p, i) => ({
+    offset: `${((i / last) * 100).toFixed(4)}%`,
+    color: p.color,
+  }));
+}
+
+function franchiseLegendFrom(
+  points: CareerSeriesPoint[]
+): Array<{ teamId: string; teamAbbr: string; color: string }> {
+  const legend: Array<{ teamId: string; teamAbbr: string; color: string }> = [];
+  const seen = new Set<string>();
+  for (const p of points) {
+    if (seen.has(p.teamId)) continue;
+    seen.add(p.teamId);
+    legend.push({
+      teamId: p.teamId,
+      teamAbbr: p.teamAbbr,
+      color: p.color,
+    });
+  }
+  return legend;
+}
+
+function teamChangeSeasonsFrom(points: CareerSeriesPoint[]): string[] {
+  const out: string[] = [];
+  for (let i = 1; i < points.length; i++) {
+    if (points[i]!.teamId !== points[i - 1]!.teamId) {
+      out.push(points[i]!.season);
+    }
+  }
+  return out;
+}
+
 /**
- * Contiguous team stretches → separate line series so the career arc
- * reads as Celtics green → Hawks red (etc.) instead of one flat brand stroke.
+ * One continuous series for a single monotone stroke.
+ * Color handoffs are gradient stops along that path (not separate Line pieces).
  */
 export function buildTeamSegmentedChart(points: CareerSeriesPoint[]): {
   data: ChartRow[];
-  segments: TeamSegment[];
+  strokeStops: CareerStrokeStop[];
   legend: Array<{ teamId: string; teamAbbr: string; color: string }>;
   teamChangeSeasons: string[];
 } {
-  if (!points.length) {
-    return { data: [], segments: [], legend: [], teamChangeSeasons: [] };
+  if (points.length < 2) {
+    return { data: [], strokeStops: [], legend: [], teamChangeSeasons: [] };
   }
-
-  const segments: TeamSegment[] = [];
-  let run = 0;
-  let prevTeam: string | null = null;
-  const segKeysForIndex: string[] = [];
-  const teamChangeSeasons: string[] = [];
-
-  for (let i = 0; i < points.length; i++) {
-    const p = points[i]!;
-    if (i > 0 && p.teamId !== points[i - 1]!.teamId) {
-      teamChangeSeasons.push(p.season);
-    }
-    if (p.teamId !== prevTeam) {
-      run += 1;
-      prevTeam = p.teamId;
-      segments.push({
-        key: `seg${run}`,
-        teamId: p.teamId,
-        teamAbbr: p.teamAbbr,
-        color: p.color,
-      });
-    }
-    segKeysForIndex.push(segments[segments.length - 1]!.key);
-  }
-
-  const data: ChartRow[] = points.map((p, i) => {
-    const row: ChartRow = {
-      season: p.season,
-      fullSeason: p.fullSeason,
-      value: p.value,
-      rawValue: p.rawValue,
-      teamId: p.teamId,
-      teamAbbr: p.teamAbbr,
-      color: p.color,
-      percentile: p.percentile,
-    };
-    for (const s of segments) {
-      row[s.key] = null;
-    }
-    row[segKeysForIndex[i]!] = p.value;
-    return row;
-  });
-
-  for (let i = 1; i < points.length; i++) {
-    const prevKey = segKeysForIndex[i - 1]!;
-    const curKey = segKeysForIndex[i]!;
-    if (prevKey === curKey) continue;
-    data[i - 1]![curKey] = points[i - 1]!.value;
-  }
-
-  const legend: Array<{ teamId: string; teamAbbr: string; color: string }> = [];
-  const seen = new Set<string>();
-  for (const s of segments) {
-    if (seen.has(s.teamId)) continue;
-    seen.add(s.teamId);
-    legend.push({
-      teamId: s.teamId,
-      teamAbbr: s.teamAbbr,
-      color: s.color,
-    });
-  }
-
-  return { data, segments, legend, teamChangeSeasons };
+  return {
+    data: toChartRows(points),
+    strokeStops: buildStrokeStops(points),
+    legend: franchiseLegendFrom(points),
+    teamChangeSeasons: teamChangeSeasonsFrom(points),
+  };
 }
 
-/** One stroke per season interval - Savant color matches the ranking bars. */
+/** Percentile strokes: same continuous path; colors from each point's Savant color. */
 export function buildSavantSegmentedChart(points: CareerSeriesPoint[]): {
   data: ChartRow[];
-  segments: TeamSegment[];
+  strokeStops: CareerStrokeStop[];
   teamChangeSeasons: string[];
 } {
   if (points.length < 2) {
-    return { data: [], segments: [], teamChangeSeasons: [] };
+    return { data: [], strokeStops: [], teamChangeSeasons: [] };
   }
+  return {
+    data: toChartRows(points),
+    strokeStops: buildStrokeStops(points),
+    teamChangeSeasons: teamChangeSeasonsFrom(points),
+  };
+}
 
-  const segments: TeamSegment[] = [];
-  const teamChangeSeasons: string[] = [];
+/**
+ * One monotone curve colored with a user-space X gradient.
+ * objectBoundingBox stroke gradients reverse on rising/falling segments;
+ * anchoring to the plotted point xs keeps colors aligned with the dots.
+ */
+export function CareerMonotoneStroke(props: {
+  points?: ReadonlyArray<{ x?: number | null; y?: number | null }>;
+  strokeWidth?: number | string;
+  gradientId: string;
+  strokeStops: CareerStrokeStop[];
+}) {
+  const points = (props.points ?? []).filter(
+    (p): p is { x: number; y: number } =>
+      typeof p.x === "number" &&
+      typeof p.y === "number" &&
+      Number.isFinite(p.x) &&
+      Number.isFinite(p.y)
+  );
+  if (points.length < 2 || props.strokeStops.length === 0) return null;
 
-  for (let i = 0; i < points.length - 1; i++) {
-    const next = points[i + 1]!;
-    if (next.teamId !== points[i]!.teamId) {
-      teamChangeSeasons.push(next.season);
-    }
-    segments.push({
-      key: `yr${i}`,
-      teamId: next.teamId,
-      teamAbbr: next.teamAbbr,
-      color: next.color,
-    });
-  }
+  const x1 = points[0]!.x;
+  const x2 = points[points.length - 1]!.x;
+  const strokeWidth =
+    typeof props.strokeWidth === "number"
+      ? props.strokeWidth
+      : Number(props.strokeWidth) || 2.5;
 
-  const data: ChartRow[] = points.map((p) => {
-    const row: ChartRow = {
-      season: p.season,
-      fullSeason: p.fullSeason,
-      value: p.value,
-      rawValue: p.rawValue,
-      teamId: p.teamId,
-      teamAbbr: p.teamAbbr,
-      color: p.color,
-      percentile: p.percentile,
-    };
-    for (const s of segments) {
-      row[s.key] = null;
-    }
-    return row;
-  });
-
-  for (let i = 0; i < points.length - 1; i++) {
-    const key = segments[i]!.key;
-    data[i]![key] = points[i]!.value;
-    data[i + 1]![key] = points[i + 1]!.value;
-  }
-
-  return { data, segments, teamChangeSeasons };
+  return (
+    <g className="recharts-career-monotone-stroke">
+      <defs>
+        <linearGradient
+          id={props.gradientId}
+          gradientUnits="userSpaceOnUse"
+          x1={x1}
+          y1={0}
+          x2={x2}
+          y2={0}
+        >
+          {props.strokeStops.map((stop) => (
+            <stop
+              key={`${stop.offset}-${stop.color}`}
+              offset={stop.offset}
+              stopColor={stop.color}
+            />
+          ))}
+        </linearGradient>
+      </defs>
+      <Curve
+        type="monotone"
+        points={points}
+        stroke={`url(#${props.gradientId})`}
+        strokeWidth={strokeWidth}
+        fill="none"
+      />
+    </g>
+  );
 }
 
 function TeamDot(props: {
@@ -229,7 +246,7 @@ function TeamDot(props: {
         cy={cy}
         r={r}
         fill={payload.color}
-        stroke={selected ? "var(--foreground)" : "#fff"}
+        stroke={selected ? "var(--foreground)" : "var(--background)"}
         strokeWidth={selected ? 2 : 1.5}
       />
     </g>
@@ -279,7 +296,7 @@ function SavantDot(props: {
         cy={cy}
         r={r}
         fill={payload.color}
-        stroke={selected ? "var(--foreground)" : "#fff"}
+        stroke={selected ? "var(--foreground)" : "var(--background)"}
         strokeWidth={selected ? 2 : 1.5}
       />
     </g>
@@ -314,7 +331,7 @@ function CareerChartTooltip({
   const raw =
     row?.rawValue != null && Number.isFinite(row.rawValue)
       ? formatCareerChartNumber(row.rawValue)
-      : Number.isFinite(plotted) && pct == null
+      : Number.isFinite(plotted)
         ? formatCareerChartNumber(plotted)
         : null;
 
@@ -329,10 +346,10 @@ function CareerChartTooltip({
           "mt-0.5 tabular-nums text-muted-foreground"
         )}
       >
-        {pct != null ? `${pct}th pct` : null}
-        {pct != null && raw != null ? " · " : null}
         {raw}
-        {pct == null && raw == null && Number.isFinite(plotted)
+        {raw != null && pct != null ? " · " : null}
+        {pct != null ? `${pct}th pct` : null}
+        {raw == null && pct == null && Number.isFinite(plotted)
           ? formatCareerChartNumber(plotted)
           : null}
       </p>
@@ -354,47 +371,68 @@ export function CareerTeamTrendChart({
   selectedSeason?: string;
   onSeasonSelect?: (season: string) => void;
   /**
-   * Percentile panel mode: Y = league percentile (0–100), Savant stroke
-   * colors. Raw metric stays in the tooltip.
+   * Percentile panel mode: Y = raw metric value; stroke + dots use Savant
+   * colors from league percentile. Percentile stays in the tooltip.
    */
   savantScale?: boolean;
 }) {
-  const plotPercentile =
+  const chartTheme = useChartTheme();
+  const hasPercentileColors =
     savantScale && points.some((p) => p.percentile != null);
 
   const plotPoints = useMemo((): CareerSeriesPoint[] => {
-    if (!plotPercentile) return points;
+    if (!hasPercentileColors) return points;
     return points.map((p) => {
       const pct =
         p.percentile != null && Number.isFinite(p.percentile)
           ? Math.max(0, Math.min(100, p.percentile))
-          : 50;
+          : null;
       return {
         ...p,
-        rawValue: p.value,
-        value: pct,
-        percentile: pct,
-        color: percentileSavantColor(pct),
+        // Keep Y as the raw metric; color encodes percentile.
+        rawValue: p.rawValue ?? p.value,
+        percentile: pct ?? p.percentile,
+        color:
+          pct != null ? percentileSavantColor(pct) : chartTheme.teamColor(p.teamId).color,
       };
     });
-  }, [points, plotPercentile]);
+  }, [points, hasPercentileColors, chartTheme]);
 
-  const { data, segments, legend, teamChangeSeasons } = useMemo(() => {
-    if (plotPercentile || savantScale) {
+  const themedPlotPoints = useMemo((): CareerSeriesPoint[] => {
+    if (hasPercentileColors) return plotPoints;
+    return plotPoints.map((point) => ({
+      ...point,
+      color: chartTheme.teamColor(point.teamId).color,
+    }));
+  }, [chartTheme, hasPercentileColors, plotPoints]);
+
+  const strokeGradId = `career-stroke-${useId().replace(/:/g, "")}`;
+
+  const { data, strokeStops, legend, teamChangeSeasons } = useMemo(() => {
+    if (hasPercentileColors) {
       const savant = buildSavantSegmentedChart(plotPoints);
-      const team = buildTeamSegmentedChart(plotPoints);
+      const team = buildTeamSegmentedChart(themedPlotPoints);
       return {
         data: savant.data,
-        segments: savant.segments,
+        strokeStops: savant.strokeStops,
         legend: team.legend,
-        teamChangeSeasons: savant.teamChangeSeasons,
+        teamChangeSeasons: team.teamChangeSeasons,
       };
     }
-    return buildTeamSegmentedChart(plotPoints);
-  }, [plotPoints, plotPercentile, savantScale]);
+    return buildTeamSegmentedChart(themedPlotPoints);
+  }, [plotPoints, themedPlotPoints, hasPercentileColors]);
 
   const franchiseLegend = legend.filter(
     (t) => t.teamId !== "TOT" && t.teamId !== "2TM" && t.teamAbbr !== "-"
+  );
+
+  const visibleLegend = useMemo(
+    () =>
+      franchiseLegend.map((entry) => ({
+        ...entry,
+        color: chartTheme.teamColor(entry.teamId).color,
+      })),
+    [chartTheme, franchiseLegend]
   );
 
   const handleSelect = (row: ChartRow) => {
@@ -403,7 +441,7 @@ export function CareerTeamTrendChart({
     onSeasonSelect(season);
   };
 
-  const useSavantDots = plotPercentile || savantScale;
+  const useSavantDots = hasPercentileColors;
 
   const renderDot = (props: {
     cx?: number;
@@ -458,13 +496,8 @@ export function CareerTeamTrendChart({
               tickLine={false}
               axisLine={false}
               width={36}
-              domain={plotPercentile ? [0, 100] : ["auto", "auto"]}
-              ticks={plotPercentile ? [0, 25, 50, 75, 100] : undefined}
-              tickFormatter={
-                plotPercentile
-                  ? (v: number) => `${Math.round(v)}`
-                  : formatCareerChartNumber
-              }
+              domain={["auto", "auto"]}
+              tickFormatter={formatCareerChartNumber}
             />
             <Tooltip
               cursor={{ stroke: "var(--border)", strokeWidth: 1 }}
@@ -481,36 +514,29 @@ export function CareerTeamTrendChart({
                 ifOverflow="extendDomain"
               />
             ))}
-            {segments.map((seg) => (
-              <Line
-                key={seg.key}
-                type="monotone"
-                dataKey={seg.key}
-                stroke={seg.color}
-                strokeWidth={2.5}
-                dot={false}
-                activeDot={false}
-                connectNulls={false}
-                isAnimationActive={false}
-              />
-            ))}
             <Line
               type="monotone"
               dataKey="value"
-              stroke="transparent"
-              strokeWidth={0}
+              stroke={`url(#${strokeGradId})`}
+              strokeWidth={2.5}
+              shape={(shapeProps) => (
+                <CareerMonotoneStroke
+                  points={shapeProps.points}
+                  strokeWidth={shapeProps.strokeWidth}
+                  gradientId={strokeGradId}
+                  strokeStops={strokeStops}
+                />
+              )}
               dot={renderDot}
               activeDot={onSeasonSelect ? renderActiveDot : renderDot}
-              legendType="none"
-              tooltipType="none"
               isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {!useSavantDots && franchiseLegend.length > 1 ? (
+      {!useSavantDots && visibleLegend.length > 1 ? (
         <ul className="flex flex-wrap gap-x-3 gap-y-1">
-          {franchiseLegend.map((t) => (
+          {visibleLegend.map((t) => (
             <li
               key={t.teamId}
               className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground"

@@ -122,9 +122,9 @@ export function StandingsConferenceTable({
                           tdBase,
                           "px-1 text-right font-medium",
                           row.differential > 0
-                            ? "text-emerald-700"
+                            ? "text-delta-up"
                             : row.differential < 0
-                              ? "text-rose-700"
+                              ? "text-delta-down"
                               : ""
                         )}
                       >
@@ -152,9 +152,9 @@ export function StandingsConferenceTable({
                         tdBase,
                         "pl-1 pr-3 text-right font-medium",
                         row.differential > 0
-                          ? "text-emerald-700"
+                          ? "text-delta-up"
                           : row.differential < 0
-                            ? "text-rose-700"
+                            ? "text-delta-down"
                             : ""
                       )}
                     >

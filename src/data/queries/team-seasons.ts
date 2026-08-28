@@ -16,7 +16,7 @@ import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 export const TEAM_SEASON_BOARD_EARLIEST_SEASON = "2001-02";
 
 /** Soft budget for live ESPN by-team pulls on destination pages. */
-export const TEAM_SEASON_BOARD_BUDGET_MS = runtimeTimeoutMs(5_000, 2_500);
+export const TEAM_SEASON_BOARD_BUDGET_MS = runtimeTimeoutMs(10_000, 2_500);
 
 export type TeamSeasonBoardStatus =
   | "ok"

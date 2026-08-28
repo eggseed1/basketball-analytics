@@ -18,7 +18,7 @@ This layer is **diagnostic only**. It does **not**:
 - hydrate `PlayerSeason`
 - change Career Resume / Season Compare / Copeland
 - add Explore / ASK columns
-- merge into `HistoricalPlayerImpact` (DARKO/LEBRON family)
+- merge into `HistoricalPlayerImpact` (DARKO/RAPTOR family)
 
 ## Data-truth rules
 

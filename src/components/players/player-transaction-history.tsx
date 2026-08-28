@@ -44,7 +44,7 @@ export function PlayerTransactionHistory({
         {events.map((event) => (
           <li
             key={event.id}
-            className="rounded-md border border-border/60 bg-white/40 px-2 py-1.5"
+            className="rounded-md border border-border/60 frost-surface px-2 py-1.5"
           >
             <p
               className={cn(

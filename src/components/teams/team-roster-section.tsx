@@ -184,7 +184,8 @@ export function TeamRosterSection({
           Full roster board →
         </Link>
         <span className="mx-2">·</span>
-        Lineup nets and possession evidence are not available yet.
+        Lineup plus-minus and possession evidence are not available yet — use
+        the Rotation tab for minutes-ranked playing time.
       </p>
     </div>
   );

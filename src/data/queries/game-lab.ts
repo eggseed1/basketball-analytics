@@ -14,8 +14,13 @@ import {
   getTeamSeasonStatsCached,
 } from "@/data/queries/request-cache";
 import { getTeam } from "@/data/queries/teams";
-import { getGamePlayByPlay } from "@/data/queries/games";
-import type { Game, PlayerGame, PlayerSeason } from "@/data/types";
+import { getGameBoxScore } from "@/data/queries/games";
+import { fetchRawPlayByPlay } from "@/data/providers/nba/play-by-play-client";
+import { fetchEspnCdnGameSummary } from "@/data/providers/nba/espn-cdn-summary";
+import { transformEspnBoxScore } from "@/data/transformers/espn";
+import { transformNbaPlayByPlay } from "@/data/transformers/play-by-play";
+import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
+import type { Game, GameBoxScore, GamePlayByPlay, PlayerGame, PlayerSeason } from "@/data/types";
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { teamEraDisplay } from "@/data/identity/team-era";
@@ -28,7 +33,8 @@ import { alignGameWithPbpHomeAway } from "@/lib/game-flow/resolve-score-timeline
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
-
+import { looksLikeEspnEventId } from "@/data/identity/game-id";
+import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 export type { GameAnalysisSummary };
 
 export type GameAnalysisPayload = {
@@ -190,23 +196,123 @@ async function resolveSideLabels(
 
 /**
  * Build Game Lab analysis for one game.
- * Core shell/PBP and optional season enrichments are started concurrently so a
- * cold production process does not serialize several independent upstreams.
+ * One ESPN CDN summary hydrates both box + PBP on Cloudflare (avoids stampede).
  */
+async function hydrateFromEspnCdn(
+  gameId: string,
+  seasonHint?: string
+): Promise<{
+  box: GameBoxScore | null;
+  playByPlay: GamePlayByPlay | null;
+}> {
+  if (!looksLikeEspnEventId(gameId)) {
+    return { box: null, playByPlay: null };
+  }
+
+  const summary = await fetchEspnCdnGameSummary(gameId, { preferPlays: true });
+  if (!summary) return { box: null, playByPlay: null };
+
+  const endYear = summary.header?.season?.year;
+  const season =
+    typeof endYear === "number" && Number.isFinite(endYear)
+      ? canonicalSeasonFromStartYear(endYear - 1)
+      : seasonHint ?? canonicalSeasonFromStartYear(new Date().getUTCFullYear() - 1);
+
+  const box = transformEspnBoxScore(summary, season);
+  const { normalizeEspnSummary } = await import(
+    "@/data/providers/nba/play-by-play-client"
+  );
+  const raw = normalizeEspnSummary(summary);
+  const playByPlay = transformNbaPlayByPlay(gameId, raw, "espn");
+
+  return {
+    box: box?.game?.id ? box : null,
+    playByPlay: playByPlay.events.length > 0 ? playByPlay : null,
+  };
+}
+
+async function loadPlayByPlayForGameLab(
+  gameId: string
+): Promise<GamePlayByPlay | null> {
+  const payload = await fetchRawPlayByPlay(gameId);
+  if (!payload) return null;
+  const source = payload.source === "disk" ? "cdn" : payload.source;
+  const playByPlay = transformNbaPlayByPlay(gameId, payload.raw, source);
+  return playByPlay.events.length > 0 ? playByPlay : null;
+}
+
 export async function getGameAnalysis(
   gameId: string
 ): Promise<GameAnalysisPayload | null> {
   const shell = await getGameShellCached(gameId);
   if (!shell) return null;
 
-  const game = ensureGameTeamIdentity(
+  let game = ensureGameTeamIdentity(
     shell.game,
     shell.game.teamIdProvider ?? inferGameTeamProvider(shell.game)
   );
-  const { players, availability } = shell;
+  let players = shell.players;
+  let availability = shell.availability;
+
+  const { withBudget } = await import("@/data/queries/budget");
+  const hydrateBudgetMs = longUpstreamBudgetsEnabled() ? 12_000 : 6_000;
+
+  // Single CDN hydrate for ESPN games — box + PBP share one response.
+  let playByPlay: GamePlayByPlay | null = null;
+  const hydrated = await withBudget(
+    hydrateFromEspnCdn(gameId, game.season).catch(() => ({
+      box: null,
+      playByPlay: null,
+    })),
+    hydrateBudgetMs,
+    { box: null, playByPlay: null }
+  );
+  playByPlay = hydrated.value.playByPlay;
+  if (hydrated.value.box?.players?.length) {
+    const box = hydrated.value.box;
+    players = box.players;
+    game = ensureGameTeamIdentity(
+      box.game,
+      box.game.teamIdProvider ?? inferGameTeamProvider(box.game)
+    );
+    const hasBox = box.players.some(
+      (p) => p.minutes > 0 || p.points > 0 || p.fieldGoalsAttempted > 0
+    );
+    const hasPeriods = Boolean(
+      box.game.homePeriodScores?.length && box.game.awayPeriodScores?.length
+    );
+    availability = hasBox
+      ? hasPeriods
+        ? "full"
+        : "partial"
+      : hasPeriods
+        ? "partial"
+        : "scoreboard";
+  }
+
+  // Fallback paths when the shared CDN hydrate missed one side.
+  if (!playByPlay) {
+    playByPlay = await loadPlayByPlayForGameLab(gameId).catch(() => null);
+  }
+  if (players.length === 0) {
+    const lateBox = await withBudget(
+      getGameBoxScore(gameId).catch(() => null),
+      hydrateBudgetMs,
+      null
+    );
+    if (lateBox.value?.players?.length) {
+      const box = lateBox.value;
+      players = box.players;
+      game = ensureGameTeamIdentity(
+        box.game,
+        box.game.teamIdProvider ?? inferGameTeamProvider(box.game)
+      );
+      availability = "full";
+    }
+  }
+
   const needPlayerBoard = players.length > 0;
 
-  const playByPlayPromise = getGamePlayByPlay(gameId).catch(() => null);
   const seasonBoardPromise = needPlayerBoard
     ? getFilteredPlayerSeasonsCached(game.season, 5).catch(
         () => [] as PlayerSeason[]
@@ -216,7 +322,6 @@ export async function getGameAnalysis(
     () => [] as TeamSeasonStats[]
   );
 
-  const playByPlay = await playByPlayPromise;
   const orientedGame = alignGameWithPbpHomeAway(game, playByPlay);
 
   const [homeLabels, awayLabels, seasonBoard, teamBoard] = await Promise.all([

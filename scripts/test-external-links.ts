@@ -29,7 +29,7 @@ const EXTERNAL_SAMPLES = [
 const INTERNAL_SAMPLES = [
   "/",
   "/scores",
-  "/ask?q=lebron",
+  "/ask?q=raptor",
   "/learn/true-shooting",
   "/offseason?event=abc",
   "/teams/2#evidence",

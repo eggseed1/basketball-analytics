@@ -30,12 +30,22 @@ export async function GET(
     const identityTeamKey = lastCardStint(
       cardStintsForSeason(career, season)
     )?.teamKey;
+    const { resolvePlayerIdentityCached } = await import(
+      "@/data/identity/player-identity-cache"
+    );
+    const identity = await resolvePlayerIdentityCached(playerId).catch(
+      () => null
+    );
     const { metrics, teamKey } = await loadPlayerPercentileMetrics(
       playerId,
       season,
       career,
       identityTeamKey,
-      { mode }
+      {
+        mode,
+        nbaId: identity?.nbaId ?? null,
+        espnId: identity?.espnId ?? null,
+      }
     );
     return jsonOk({
       playerId,

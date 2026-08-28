@@ -27,6 +27,12 @@
 		"binding": "IMAGES"
 	},
 	"vars": {
-		"DATA_PROVIDER": "nba"
+		"DATA_PROVIDER": "nba",
+		// Workers Paid: restore full product (no free-tier UI/data stripping).
+		"FULL_EDGE_PRODUCT": "1"
+	},
+	// Paid plan default is 30s; raise so player islands / live enrich finish.
+	"limits": {
+		"cpu_ms": 120000
 	}
 }

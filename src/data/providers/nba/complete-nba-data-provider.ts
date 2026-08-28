@@ -7,7 +7,7 @@ const MISSING = Number.NaN;
  * `playercareerstats` publishes counting totals but not these advanced/impact
  * families. The legacy adapter kept the interface dense by writing zeroes,
  * which made every historical season look like a measured zero. Real values
- * are attached later by BRef/DARKO/LEBRON/DRBL enrichment; until then they must
+ * are attached later by BRef/DARKO/RAPTOR/DRBL enrichment; until then they must
  * remain unavailable.
  */
 function removeCareerEndpointPlaceholders(row: PlayerSeason): PlayerSeason {

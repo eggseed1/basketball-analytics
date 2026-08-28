@@ -12,7 +12,7 @@ import {
 const cases: Array<[string, string]> = [
   ["/", "Home"],
   ["/ask", "ASK DRBL"],
-  ["/ask?q=lebron", "ASK DRBL"],
+  ["/ask?q=raptor", "ASK DRBL"],
   ["/scores", "Games"],
   ["/scores?view=week", "Games"],
   ["/explore/games", "Games"],

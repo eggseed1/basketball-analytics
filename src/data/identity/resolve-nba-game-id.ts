@@ -9,6 +9,7 @@
 import { sharedGetOrSet } from "@/data/cache/shared-ttl-cache";
 import { looksLikeEspnEventId, looksLikeNbaStatsGameId } from "@/data/identity/game-id";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
+import { fetchEspnCdnGameSummary } from "@/data/providers/nba/espn-cdn-summary";
 import { CACHE_TTL_MS } from "@/data/providers/nba/cache-policy";
 import type { EspnSummaryResponse } from "@/data/transformers/espn";
 
@@ -131,6 +132,40 @@ function matchScheduleGame(
 }
 
 async function loadEspnGameMeta(espnEventId: string): Promise<EspnGameMeta | null> {
+  const fromSummary = (summary: EspnSummaryResponse & {
+    gameInfo?: { date?: string };
+  }): EspnGameMeta | null => {
+    const competition = summary.header?.competitions?.[0];
+    if (!competition) return null;
+
+    const competitors = competition.competitors ?? [];
+    const home = competitors.find((c) => c.homeAway === "home");
+    const away = competitors.find((c) => c.homeAway === "away");
+    const homeAbbr = normalizeAbbr(home?.team?.abbreviation);
+    const awayAbbr = normalizeAbbr(away?.team?.abbreviation);
+    if (!homeAbbr || !awayAbbr) return null;
+
+    const tipOffAt =
+      summary.gameInfo?.date ??
+      (competition as { date?: string }).date ??
+      null;
+    const seasonEndYear =
+      typeof summary.header?.season?.year === "number"
+        ? summary.header.season.year
+        : null;
+
+    return { tipOffAt, homeAbbr, awayAbbr, seasonEndYear };
+  };
+
+  // CDN first — site.api is often blocked from Cloudflare Workers.
+  try {
+    const fromCdn = await fetchEspnCdnGameSummary(espnEventId);
+    const meta = fromCdn ? fromSummary(fromCdn) : null;
+    if (meta) return meta;
+  } catch {
+    // fall through
+  }
+
   const url =
     `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary` +
     `?event=${encodeURIComponent(espnEventId)}`;
@@ -141,26 +176,7 @@ async function loadEspnGameMeta(espnEventId: string): Promise<EspnGameMeta | nul
     retries: 1,
   });
 
-  const competition = summary.header?.competitions?.[0];
-  if (!competition) return null;
-
-  const competitors = competition.competitors ?? [];
-  const home = competitors.find((c) => c.homeAway === "home");
-  const away = competitors.find((c) => c.homeAway === "away");
-  const homeAbbr = normalizeAbbr(home?.team?.abbreviation);
-  const awayAbbr = normalizeAbbr(away?.team?.abbreviation);
-  if (!homeAbbr || !awayAbbr) return null;
-
-  const tipOffAt =
-    summary.gameInfo?.date ??
-    (competition as { date?: string }).date ??
-    null;
-  const seasonEndYear =
-    typeof summary.header?.season?.year === "number"
-      ? summary.header.season.year
-      : null;
-
-  return { tipOffAt, homeAbbr, awayAbbr, seasonEndYear };
+  return fromSummary(summary);
 }
 
 /**

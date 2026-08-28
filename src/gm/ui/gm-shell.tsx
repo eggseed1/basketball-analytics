@@ -70,13 +70,19 @@ export function GmShell({ children }: { children: ReactNode }) {
 
     return (
       <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
+        <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
+          Franchise Lab is an unfinished Milestone 2 scaffold — draft, medical,
+          staff, and cap tools are simulation shells, not a finished MyLeague
+          product.
+        </p>
         <div>
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
             My Teams
           </h1>
           <p className="mt-1 max-w-2xl text-[15px] text-muted-foreground">
-            Real NBA rosters (ESPN + DARKO/LEBRON) from{" "}
-            {ESPN_PLAYER_SEASON_HORIZON_START} onward, with era CBA caps.
+            Real NBA rosters (ESPN + DARKO/RAPTOR) from{" "}
+            {ESPN_PLAYER_SEASON_HORIZON_START} onward, with era CBA caps. RAPTOR
+            only exists through 2021-22.
           </p>
         </div>
 
@@ -167,6 +173,10 @@ export function GmShell({ children }: { children: ReactNode }) {
         } as CSSProperties
       }
     >
+      <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
+        Franchise Lab · unfinished Milestone 2 scaffold — not a finished
+        MyLeague product.
+      </p>
       <header
         className="sports-card score-card-wash overflow-hidden px-4 py-4"
         style={
@@ -180,7 +190,7 @@ export function GmShell({ children }: { children: ReactNode }) {
           <TeamLogo teamKey={team.id} size="xl" priority />
           <div className="min-w-0">
             <p className="text-[13px] font-semibold text-muted-foreground">
-              Franchise Lab · Real NBA
+              Franchise Lab · Real NBA · lab
             </p>
             <h1 className="truncate text-[22px] font-bold tracking-tight">
               {team.city} {team.name}

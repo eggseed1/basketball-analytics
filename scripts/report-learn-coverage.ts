@@ -24,7 +24,7 @@ const CORE_IDS = [
   "efg",
   "usg",
   "darko",
-  "lebron",
+  "raptor",
   "cpi",
   "ortg",
   "drtg",

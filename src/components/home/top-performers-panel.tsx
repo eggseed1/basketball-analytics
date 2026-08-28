@@ -10,6 +10,7 @@ import { TextLink } from "@/components/ui/text-link";
 import type {
   HomeDarkoLeader,
   HomeDrblLeader,
+  HomeRaptorLeader,
   HomePerformerSeason,
 } from "@/data/queries/home";
 import type { PlayerSeason } from "@/data/types";
@@ -21,7 +22,7 @@ import { formatImpact, formatPct } from "@/lib/stat-explainers";
 import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
-type SortKey = "drbl" | "darko" | "ts" | "usage";
+type SortKey = "war1" | "drbl" | "darko" | "raptor" | "ts" | "usage";
 
 type OverviewRow = {
   key: string;
@@ -32,8 +33,10 @@ type OverviewRow = {
   /** Canonical ESPN id or abbr - safe for TeamLogo. */
   teamKey?: string;
   teamLabel?: string;
+  war1: number | null;
   drbl: number | null;
   darko: number | null;
+  raptor: number | null;
   ts: number | null;
   usg: number | null;
 };
@@ -89,6 +92,7 @@ export function TopPerformersPanel({
   season,
   drblLeaders = [],
   darkoLeaders,
+  raptorLeaders = [],
   tsLeaders,
   usageStars,
   performerSeasons = [],
@@ -98,13 +102,14 @@ export function TopPerformersPanel({
   season?: string;
   drblLeaders?: HomeDrblLeader[];
   darkoLeaders: HomeDarkoLeader[];
+  raptorLeaders?: HomeRaptorLeader[];
   tsLeaders: PlayerSeason[];
   usageStars: PlayerSeason[];
   performerSeasons?: HomePerformerSeason[];
   drblOverlayOk?: boolean;
   drblFallbackNote?: string | null;
 }) {
-  const [sort, setSort] = useState<SortKey>(drblOverlayOk ? "drbl" : "darko");
+  const [sort, setSort] = useState<SortKey>(drblOverlayOk ? "war1" : "darko");
 
   const seasonByName = useMemo(() => {
     const map = new Map<
@@ -155,10 +160,50 @@ export function TopPerformersPanel({
     return map;
   }, [darkoLeaders]);
 
+  const raptorByName = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of raptorLeaders) {
+      map.set(normalizePlayerName(p.playerName), p.impact);
+    }
+    return map;
+  }, [raptorLeaders]);
+
   const drblByName = useMemo(() => {
     const map = new Map<string, number>();
     for (const p of drblLeaders) {
-      map.set(normalizePlayerName(p.playerName), p.drbl100);
+      const nameKey = normalizePlayerName(p.playerName);
+      if (nameKey) map.set(nameKey, p.drbl100);
+    }
+    return map;
+  }, [drblLeaders]);
+
+  const war1ByName = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of drblLeaders) {
+      const nameKey = normalizePlayerName(p.playerName);
+      if (nameKey && p.war1 != null && Number.isFinite(p.war1)) {
+        map.set(nameKey, p.war1);
+      }
+    }
+    return map;
+  }, [drblLeaders]);
+
+  const drblByNbaId = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of drblLeaders) {
+      const id = String(p.nbaPlayerId || p.playerId || "").trim();
+      if (id) map.set(id, p.drbl100);
+    }
+    return map;
+  }, [drblLeaders]);
+
+  const war1ByNbaId = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const p of drblLeaders) {
+      const id = String(p.nbaPlayerId || p.playerId || "").trim();
+      if (id && p.war1 != null && Number.isFinite(p.war1)) {
+        map.set(id, p.war1);
+      }
     }
     return map;
   }, [drblLeaders]);
@@ -178,16 +223,20 @@ export function TopPerformersPanel({
         nbaId: partial.nbaId ?? existing.nbaId,
         teamKey: partial.teamKey ?? existing.teamKey,
         teamLabel: partial.teamLabel ?? existing.teamLabel,
+        war1: partial.war1 ?? existing.war1,
         drbl: partial.drbl ?? existing.drbl,
         darko: partial.darko ?? existing.darko,
+        raptor: partial.raptor ?? existing.raptor,
         ts: partial.ts ?? existing.ts,
         usg: partial.usg ?? existing.usg,
       });
     };
 
     for (const p of drblLeaders) {
-      const key = normalizePlayerName(p.playerName);
-      const season = seasonByName.get(key);
+      const key =
+        normalizePlayerName(p.playerName) ||
+        `nba:${p.nbaPlayerId || p.playerId}`;
+      const season = seasonByName.get(normalizePlayerName(p.playerName));
       const fromLeader =
         p.teamKey || p.teamAbbr
           ? { teamKey: p.teamKey, teamLabel: p.teamAbbr }
@@ -199,8 +248,10 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: fromLeader.teamKey ?? season?.teamKey,
         teamLabel: fromLeader.teamLabel ?? season?.teamLabel,
+        war1: p.war1 ?? null,
         drbl: p.drbl100,
-        darko: p.darko ?? darkoByName.get(key) ?? null,
+        darko: p.darko ?? darkoByName.get(normalizePlayerName(p.playerName)) ?? null,
+        raptor: raptorByName.get(normalizePlayerName(p.playerName)) ?? null,
         ts: p.trueShootingPct ?? season?.ts ?? null,
         usg: p.usagePct ?? season?.usg ?? null,
       });
@@ -210,6 +261,7 @@ export function TopPerformersPanel({
       const key = normalizePlayerName(p.playerName);
       const season = seasonByName.get(key);
       const fromDarko = teamIdentityFromLoose(p.teamAbbr ?? p.teamName);
+      const nbaKey = String(p.nbaPlayerId ?? "").trim();
       upsert({
         key,
         id: p.profileId,
@@ -217,8 +269,39 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: season?.teamKey ?? fromDarko.teamKey,
         teamLabel: season?.teamLabel ?? fromDarko.teamLabel,
-        drbl: drblByName.get(key) ?? null,
+        war1:
+          war1ByName.get(key) ??
+          (nbaKey ? war1ByNbaId.get(nbaKey) ?? null : null),
+        drbl:
+          drblByName.get(key) ??
+          (nbaKey ? drblByNbaId.get(nbaKey) ?? null : null),
         darko: p.impact,
+        raptor: raptorByName.get(key) ?? null,
+        ts: p.trueShootingPct ?? season?.ts ?? null,
+        usg: p.usagePct ?? season?.usg ?? null,
+      });
+    }
+
+    for (const p of raptorLeaders) {
+      const key = normalizePlayerName(p.playerName);
+      const season = seasonByName.get(key);
+      const fromRaptorTeam = teamIdentityFromLoose(p.teamAbbr ?? p.teamName);
+      const nbaKey = String(p.nbaPlayerId ?? "").trim();
+      upsert({
+        key,
+        id: p.profileId,
+        nbaId: p.nbaPlayerId,
+        name: p.playerName,
+        teamKey: season?.teamKey ?? fromRaptorTeam.teamKey,
+        teamLabel: season?.teamLabel ?? fromRaptorTeam.teamLabel,
+        war1:
+          war1ByName.get(key) ??
+          (nbaKey ? war1ByNbaId.get(nbaKey) ?? null : null),
+        drbl:
+          drblByName.get(key) ??
+          (nbaKey ? drblByNbaId.get(nbaKey) ?? null : null),
+        darko: darkoByName.get(key) ?? null,
+        raptor: p.impact,
         ts: p.trueShootingPct ?? season?.ts ?? null,
         usg: p.usagePct ?? season?.usg ?? null,
       });
@@ -234,8 +317,10 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: team.teamKey ?? season?.teamKey,
         teamLabel: team.teamLabel ?? season?.teamLabel,
+        war1: war1ByName.get(key) ?? null,
         drbl: drblByName.get(key) ?? null,
         darko: darkoByName.get(key) ?? null,
+        raptor: raptorByName.get(key) ?? null,
         ts:
           p.trueShootingPct != null && p.trueShootingPct > 0
             ? p.trueShootingPct
@@ -257,8 +342,10 @@ export function TopPerformersPanel({
         name: p.playerName,
         teamKey: team.teamKey ?? season?.teamKey,
         teamLabel: team.teamLabel ?? season?.teamLabel,
+        war1: war1ByName.get(key) ?? null,
         drbl: drblByName.get(key) ?? null,
         darko: darkoByName.get(key) ?? null,
+        raptor: raptorByName.get(key) ?? null,
         ts:
           p.trueShootingPct != null && p.trueShootingPct > 0
             ? p.trueShootingPct
@@ -272,23 +359,15 @@ export function TopPerformersPanel({
 
     const list = [...byKey.values()];
     list.sort((a, b) => {
-      const av =
-        sort === "ts"
-          ? a.ts
-          : sort === "usage"
-            ? a.usg
-            : sort === "drbl"
-              ? a.drbl
-              : a.darko;
-      const bv =
-        sort === "ts"
-          ? b.ts
-          : sort === "usage"
-            ? b.usg
-            : sort === "drbl"
-              ? b.drbl
-              : b.darko;
-      return (bv ?? -Infinity) - (av ?? -Infinity);
+      const pick = (row: OverviewRow) => {
+        if (sort === "ts") return row.ts;
+        if (sort === "usage") return row.usg;
+        if (sort === "war1") return row.war1;
+        if (sort === "drbl") return row.drbl;
+        if (sort === "raptor") return row.raptor;
+        return row.darko;
+      };
+      return (pick(b) ?? -Infinity) - (pick(a) ?? -Infinity);
     });
 
     return list.slice(0, 10).map((row, i) => ({ ...row, rank: i + 1 }));
@@ -296,19 +375,28 @@ export function TopPerformersPanel({
     sort,
     drblLeaders,
     darkoLeaders,
+    raptorLeaders,
     tsLeaders,
     usageStars,
     seasonByName,
     darkoByName,
+    raptorByName,
     drblByName,
+    drblByNbaId,
+    war1ByName,
+    war1ByNbaId,
   ]);
 
   const sortChips = (
     [
       ...(drblOverlayOk || drblLeaders.length
-        ? ([["drbl", "DRBL"]] as const)
+        ? ([
+            ["war1", "WAR1"],
+            ["drbl", "DRBL"],
+          ] as const)
         : []),
       ["darko", "DARKO"],
+      ...(raptorLeaders.length ? ([["raptor", "RAPTOR"]] as const) : []),
       ["ts", "TS%"],
       ["usage", "USG"],
     ] as const
@@ -329,12 +417,26 @@ export function TopPerformersPanel({
       >
         USG
       </MetricHelp>
+    ) : sort === "war1" ? (
+      <MetricHelp
+        conceptId="r1_win_eq"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        WAR1
+      </MetricHelp>
     ) : sort === "drbl" ? (
       <MetricHelp
         conceptId="drbl"
         labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
       >
         DRBL
+      </MetricHelp>
+    ) : sort === "raptor" ? (
+      <MetricHelp
+        conceptId="raptor"
+        labelClassName={cn(type.caption, "font-semibold uppercase tracking-wide")}
+      >
+        RAPTOR
       </MetricHelp>
     ) : (
       <MetricHelp
@@ -350,9 +452,13 @@ export function TopPerformersPanel({
       ? "/explore/players?sort=trueShootingPct"
       : sort === "usage"
         ? "/explore/players?sort=usagePct"
-        : sort === "drbl"
-          ? "/explore/players?sort=drbl100&dir=desc"
-          : "/explore/players?sort=darkoDpm";
+        : sort === "war1"
+          ? "/explore/players?sort=r1WinEquivalents&dir=desc"
+          : sort === "drbl"
+            ? "/explore/players?sort=drbl100&dir=desc"
+            : sort === "raptor"
+              ? "/explore/players?season=2021-22&sort=raptor&dir=desc"
+              : "/explore/players?sort=darkoDpm";
 
   return (
     <section className="sports-card flex flex-col gap-4 p-4 sm:p-[21px]">
@@ -413,13 +519,21 @@ export function TopPerformersPanel({
                   ? row.usg != null
                     ? formatPct(row.usg)
                     : "-"
-                  : sort === "drbl"
-                    ? row.drbl != null
-                      ? formatNumber(row.drbl, 2)
+                  : sort === "war1"
+                    ? row.war1 != null
+                      ? formatNumber(row.war1, 1)
                       : "-"
-                    : row.darko != null
-                      ? formatImpact(row.darko)
-                      : "-";
+                    : sort === "drbl"
+                      ? row.drbl != null
+                        ? formatNumber(row.drbl, 2)
+                        : "-"
+                      : sort === "raptor"
+                        ? row.raptor != null
+                          ? formatImpact(row.raptor)
+                          : "-"
+                        : row.darko != null
+                          ? formatImpact(row.darko)
+                          : "-";
             return (
               <li key={row.key}>
                 <div className="flex items-center gap-2 px-3 py-2.5">

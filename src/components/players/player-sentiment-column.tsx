@@ -30,7 +30,7 @@ function LaneRow({
     (a, b) => b[1] - a[1]
   )[0];
   return (
-    <div className="flex flex-col gap-1 rounded-md border border-border/60 bg-white/35 px-2 py-1.5">
+    <div className="flex flex-col gap-1 rounded-md border border-border/60 frost-surface-soft px-2 py-1.5">
       <div className="flex items-baseline justify-between gap-2">
         <p className={cn(type.caption, "font-semibold")}>{label}</p>
         <p className={cn(type.caption, "capitalize text-muted-foreground")}>

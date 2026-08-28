@@ -70,7 +70,7 @@ export function PlayerUpcomingGames({
               <li key={game.id}>
                 <TransitionLink
                   href={gameLabHref(game.id, season)}
-                  className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 rounded-md border border-border/60 bg-white/40 px-2 py-1.5 hover:bg-white/60"
+                  className="flex flex-wrap items-baseline justify-between gap-x-2 gap-y-0.5 rounded-md border border-border/60 frost-surface px-2 py-1.5 frost-surface-hover"
                 >
                   <span className={cn(type.caption, "font-semibold")}>
                     <time className="tabular-nums">{game.gameDate}</time>

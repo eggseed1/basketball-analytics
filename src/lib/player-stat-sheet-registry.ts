@@ -71,9 +71,9 @@ export type SheetStatId =
   | "darko"
   | "darkoOff"
   | "darkoDef"
-  | "lebron"
-  | "oLebron"
-  | "dLebron"
+  | "raptor"
+  | "oRaptor"
+  | "dRaptor"
   | "winsAdded"
   | "war1"
   | "drbl100"
@@ -227,24 +227,24 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
     kind: "rate",
     digits: 2,
   },
-  { id: "lebron", label: "LEBRON", category: "impact", kind: "rate", digits: 2 },
+  { id: "raptor", label: "RAPTOR", category: "impact", kind: "rate", digits: 2 },
   {
-    id: "oLebron",
-    label: "O-LEBRON",
+    id: "oRaptor",
+    label: "O-RAPTOR",
     category: "impact",
     kind: "rate",
     digits: 2,
   },
   {
-    id: "dLebron",
-    label: "D-LEBRON",
+    id: "dRaptor",
+    label: "D-RAPTOR",
     category: "impact",
     kind: "rate",
     digits: 2,
   },
   {
     id: "winsAdded",
-    label: "Wins added",
+    label: "WAR",
     category: "impact",
     kind: "rate",
     digits: 2,
@@ -400,8 +400,11 @@ export function getSheetStatValue(
       return count(row.turnovers);
     case "pf":
       return count(row.personalFouls);
-    case "plusMinus":
-      return count(row.plusMinus);
+    case "plusMinus": {
+      const value = row.plusMinus;
+      if (value == null || !Number.isFinite(value)) return null;
+      return count(value);
+    }
     case "fg":
       return count(row.fieldGoalsMade);
     case "fga":
@@ -498,12 +501,12 @@ export function getSheetStatValue(
       return darkoOffense(row);
     case "darkoDef":
       return darkoDefense(row);
-    case "lebron":
-      return finiteNum(row.lebron);
-    case "oLebron":
-      return finiteNum(row.oLebron);
-    case "dLebron":
-      return finiteNum(row.dLebron);
+    case "raptor":
+      return finiteNum(row.raptor);
+    case "oRaptor":
+      return finiteNum(row.oRaptor);
+    case "dRaptor":
+      return finiteNum(row.dRaptor);
     case "winsAdded":
       return finiteNum(row.winsAdded);
     case "war1":
@@ -573,7 +576,16 @@ export function visibleSheetStats(
   mode: SheetRateMode = "perGame"
 ): SheetStatDef[] {
   return sheetStatsForCategory(category).filter((def) => {
-    if (def.category !== "impact" && def.category !== "hustle") return true;
-    return sheetStatHasAnyValue(rows, def.id, mode);
+    if (
+      def.category === "impact" ||
+      def.category === "hustle" ||
+      def.category === "advanced" ||
+      def.category === "rates" ||
+      def.id === "plusMinus" ||
+      def.id === "pie"
+    ) {
+      return sheetStatHasAnyValue(rows, def.id, mode);
+    }
+    return true;
   });
 }

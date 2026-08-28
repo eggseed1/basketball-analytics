@@ -256,11 +256,9 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   async getGamePlayByPlay(gameId: string): Promise<GamePlayByPlay | null> {
-    return this.playByPlayCache.getOrSet(
-      gameId,
-      CACHE_TTL_MS.boxScore,
-      () => this.fetchGamePlayByPlay(gameId)
-    );
+    // fetchRawPlayByPlay already memory-caches successful payloads. Do not wrap
+    // null misses in TtlPromiseCache — that pinned empty Game Lab for minutes.
+    return this.fetchGamePlayByPlay(gameId);
   }
 
   async getShots(filters: ShotFilters = {}): Promise<Shot[]> {

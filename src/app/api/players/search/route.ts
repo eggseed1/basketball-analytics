@@ -2,30 +2,21 @@
  * Lightweight player name search for the global header combobox.
  * GET /api/players/search?q=jokic&season=2024-25&scope=season|all
  *
- * Search universe: current season board + MASTER PLAYER REGISTRY (1996-97+),
- * with landmark historical season boards as a fallback when the registry is empty.
- * Current / active players are always ranked ahead of past careers.
+ * Cloudflare path uses a ~155KB baked name index only (no live ESPN / fat BRef).
+ * Vercel can enrich with live boards + master registry + draft class.
  */
 
 import { NextResponse } from "next/server";
 
-import {
-  getMasterPlayerRegistry,
-  getSeasonPlayerUniverse,
-  hasPlayerUniverseSeason,
-  searchMasterPlayers,
-} from "@/data/history/player-universe";
-import { getPlayersBySeason } from "@/data/queries";
-import {
-  draftYearsForSeasonSearch,
-  getDraftClassPlayers,
-} from "@/data/providers/nba/draft-history";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
+import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
 import {
-  availableCanonicalSeasons,
-  defaultCanonicalSeasons,
-  MODERN_LEAGUE_DASH_ESPN_YEAR,
-} from "@/data/providers/nba/season";
+  getPlayerSearchIndex,
+  getPlayerSearchIndexForSeason,
+} from "@/data/runtime/player-search-snapshot";
+import { getBundledCurrentRosterEntry } from "@/data/runtime/current-roster-snapshot";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export const dynamic = "force-dynamic";
 
@@ -36,9 +27,7 @@ type SearchResult = {
   position: string | null;
   season: string;
   careerSpan?: string;
-  /** True when the player appears on the requested season board. */
   current?: boolean;
-  /** Drafted into a recent class but not yet on the season board. */
   draftProspect?: boolean;
 };
 
@@ -62,103 +51,35 @@ type IndexEntry = {
 const searchIndex = new Map<string, IndexEntry>();
 const INDEX_TTL_MS = 10 * 60 * 1000;
 const RESULT_LIMIT = 10;
+const isVercel = () => process.env.VERCEL === "1";
 
-/** Landmark seasons for past-player fallback when master registry is empty. */
-function landmarkHistoricalSeasons(currentSeason: string): string[] {
-  const modern = availableCanonicalSeasons(MODERN_LEAGUE_DASH_ESPN_YEAR);
-  const picks = new Set<string>();
-  // Every other modern season — dense enough for multi-year stars, light enough
-  // for parallel board loads on cold search.
-  for (let i = 1; i < modern.length; i += 2) {
-    const s = modern[i];
-    if (s && s !== currentSeason) picks.add(s);
-  }
-  const floor = modern[modern.length - 1];
-  if (floor && floor !== currentSeason) picks.add(floor);
-  return [...picks];
-}
-
-async function getSearchIndex(season: string): Promise<SearchRow[]> {
-  const now = Date.now();
-  const cached = searchIndex.get(season);
-  if (cached && cached.freshUntil > now && cached.rows.length > 0) {
-    return cached.rows;
-  }
-
-  // Prefer factual historical universe when available.
-  let rows: SearchRow[] = [];
-  if (hasPlayerUniverseSeason(season)) {
-    rows = getSeasonPlayerUniverse(season).map((row) => ({
-      id: row.playerId,
-      name: row.playerName,
-      nameLower: row.playerName.toLowerCase(),
-      team: nbaTeamAbbr(row.primaryTeamId),
-      position: null as string | null,
-      season: row.season,
-      minutes: row.minutes ?? 0,
-    }));
-  } else {
-    const seasonRows = await getPlayersBySeason(season);
-    rows = seasonRows.map((row) => ({
-      id: row.playerId,
-      name: row.playerName,
-      nameLower: row.playerName.toLowerCase(),
-      team: nbaTeamAbbr(row.teamId, row.teamAbbreviation),
-      position: row.position ?? null,
-      season: row.season,
-      minutes: row.minutes ?? 0,
-    }));
-  }
-
-  // Rookies / recent draftees often have no board minutes yet — still searchable.
-  const seen = new Set(rows.map((r) => r.id));
-  try {
-    const draftees = await getDraftClassPlayers(
-      draftYearsForSeasonSearch(season)
-    );
-    for (const pick of draftees) {
-      if (seen.has(pick.playerId)) continue;
-      seen.add(pick.playerId);
-      rows.push({
-        id: pick.playerId,
-        name: pick.playerName,
-        nameLower: pick.playerName.toLowerCase(),
-        team: pick.teamId
-          ? nbaTeamAbbr(pick.teamId, pick.teamAbbr ?? undefined)
-          : (pick.teamAbbr ?? ""),
-        position: null,
-        season,
-        minutes: 0,
-        draftProspect: true,
-        careerSpan: pick.overallPick
-          ? `Draft ${pick.year} · #${pick.overallPick}`
-          : `Draft ${pick.year}`,
-      });
-    }
-  } catch {
-    /* draft overlay optional */
-  }
-
-  if (rows.length > 0) {
-    searchIndex.set(season, { rows, freshUntil: now + INDEX_TTL_MS });
-  }
-  return rows;
+function normalizeSearchText(value: string): string {
+  return String(value ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim();
 }
 
 function matchQuality(nameLower: string, id: string, q: string): number {
-  if (id === q) return 0;
-  if (nameLower === q) return 1;
-  const tokens = nameLower.split(/\s+/).filter(Boolean);
-  const first = tokens[0] ?? nameLower;
-  const last = tokens[tokens.length - 1] ?? nameLower;
-  // Exact surname beats first-name prefix ("jordan" → Michael Jordan over Jordan Hall).
-  if (last === q) return 2;
-  if (nameLower.startsWith(q)) return 3;
-  if (first === q || first.startsWith(q)) return 4;
-  if (last.startsWith(q)) return 5;
-  if (tokens.some((t) => t.startsWith(q))) return 6;
-  if (nameLower.includes(q)) return 7;
-  if (id.startsWith(q)) return 8;
+  const name = normalizeSearchText(nameLower);
+  const query = normalizeSearchText(q);
+  const idNorm = normalizeSearchText(id);
+  if (!query) return 9;
+  if (idNorm === query || id.toLowerCase() === q) return 0;
+  if (name === query) return 1;
+  const tokens = name.split(/\s+/).filter(Boolean);
+  const first = tokens[0] ?? name;
+  const last = tokens[tokens.length - 1] ?? name;
+  if (last === query) return 2;
+  if (name.startsWith(query)) return 3;
+  if (first === query || first.startsWith(query)) return 4;
+  if (last.startsWith(query)) return 5;
+  if (tokens.some((t) => t.startsWith(query))) return 6;
+  if (name.includes(query)) return 7;
+  if (idNorm.startsWith(query) || id.toLowerCase().startsWith(q)) return 8;
   return 9;
 }
 
@@ -173,73 +94,165 @@ function matchRows(rows: SearchRow[], q: string): SearchRow[] {
     });
 }
 
-function masterHits(q: string, limit: number): SearchResult[] {
-  getMasterPlayerRegistry();
-  return searchMasterPlayers(q, { limit }).map((row) => ({
-    id: row.playerId,
-    name: row.displayName,
-    team: "",
+function currentTeamAbbrForSearch(playerId: string, fallback: string): string {
+  const hit = getBundledCurrentRosterEntry(playerId);
+  if (!hit?.teamId) return fallback;
+  const brand = resolveTeamBrand(hit.teamId);
+  if (brand?.abbr) return brand.abbr;
+  if (hit.teamAbbr && !/^\d+$/.test(hit.teamAbbr)) return hit.teamAbbr;
+  return nbaTeamAbbr(hit.teamId, hit.teamAbbr || fallback);
+}
+
+function bundledSeasonRows(season: string): SearchRow[] {
+  let bundled = getPlayerSearchIndexForSeason(season);
+  let boardSeason = season;
+  if (!bundled.length) {
+    boardSeason = shiftCanonicalSeason(season, -1);
+    bundled = getPlayerSearchIndexForSeason(boardSeason);
+  }
+  return bundled.map((row) => ({
+    id: row.id,
+    name: row.name,
+    nameLower: row.nameLower,
+    team: currentTeamAbbrForSearch(row.id, nbaTeamAbbr(row.team, row.team)),
     position: null,
-    season: row.lastSeason,
-    careerSpan: `${row.firstSeason} → ${row.lastSeason}`,
-    current: false,
+    season: boardSeason,
+    minutes: row.minutes ?? 0,
   }));
 }
 
-async function historicalBoardHits(
-  q: string,
-  currentSeason: string,
-  excludeIds: Set<string>,
-  limit: number
-): Promise<SearchResult[]> {
-  if (limit <= 0) return [];
-  const seasons = landmarkHistoricalSeasons(currentSeason);
-  const boards = await Promise.all(
-    seasons.map(async (season) => {
-      try {
-        return await getSearchIndex(season);
-      } catch {
-        return [] as SearchRow[];
-      }
-    })
-  );
+async function getSearchIndex(season: string): Promise<SearchRow[]> {
+  const now = Date.now();
+  const cached = searchIndex.get(season);
+  if (cached && cached.freshUntil > now && cached.rows.length > 0) {
+    return cached.rows;
+  }
 
-  const byId = new Map<string, SearchRow>();
-  for (const rows of boards) {
-    for (const row of matchRows(rows, q)) {
-      if (excludeIds.has(row.id)) continue;
-      const existing = byId.get(row.id);
-      if (!existing || row.season > existing.season) {
-        byId.set(row.id, row);
+  let rows: SearchRow[] = [];
+
+  if (isVercel()) {
+    try {
+      const {
+        hasPlayerUniverseSeason,
+        getSeasonPlayerUniverse,
+      } = await import("@/data/history/player-universe");
+      if (hasPlayerUniverseSeason(season)) {
+        rows = getSeasonPlayerUniverse(season).map((row) => ({
+          id: row.playerId,
+          name: row.playerName,
+          nameLower: row.playerName.toLowerCase(),
+          team: currentTeamAbbrForSearch(
+            row.playerId,
+            nbaTeamAbbr(row.primaryTeamId)
+          ),
+          position: null,
+          season: row.season,
+          minutes: row.minutes ?? 0,
+        }));
+      } else {
+        const { getPlayersBySeason } = await import("@/data/queries/players");
+        const { withBudget } = await import("@/data/queries/budget");
+        const live = await withBudget(
+          getPlayersBySeason(season).catch(() => []),
+          8_000,
+          [] as Awaited<ReturnType<typeof getPlayersBySeason>>
+        );
+        rows = live.value.map((row) => ({
+          id: row.playerId,
+          name: row.playerName,
+          nameLower: row.playerName.toLowerCase(),
+          team: currentTeamAbbrForSearch(
+            row.playerId,
+            nbaTeamAbbr(row.teamId, row.teamAbbreviation)
+          ),
+          position: row.position ?? null,
+          season: row.season,
+          minutes: row.minutes ?? 0,
+        }));
+      }
+    } catch {
+      rows = [];
+    }
+
+    if (rows.length > 0) {
+      try {
+        const {
+          draftYearsForSeasonSearch,
+          getDraftClassPlayers,
+        } = await import("@/data/providers/nba/draft-history");
+        const seen = new Set(rows.map((r) => r.id));
+        const draftees = await getDraftClassPlayers(
+          draftYearsForSeasonSearch(season)
+        );
+        for (const pick of draftees) {
+          if (seen.has(pick.playerId)) continue;
+          seen.add(pick.playerId);
+          rows.push({
+            id: pick.playerId,
+            name: pick.playerName,
+            nameLower: pick.playerName.toLowerCase(),
+            team: pick.teamId
+              ? nbaTeamAbbr(pick.teamId, pick.teamAbbr ?? undefined)
+              : (pick.teamAbbr ?? ""),
+            position: null,
+            season,
+            minutes: 0,
+            draftProspect: true,
+            careerSpan: pick.overallPick
+              ? `Draft ${pick.year} · #${pick.overallPick}`
+              : `Draft ${pick.year}`,
+          });
+        }
+      } catch {
+        /* draft overlay optional */
       }
     }
   }
 
-  return [...byId.values()]
-    .sort((a, b) => {
-      const aq = matchQuality(a.nameLower, a.id.toLowerCase(), q);
-      const bq = matchQuality(b.nameLower, b.id.toLowerCase(), q);
-      if (aq !== bq) return aq - bq;
-      return b.season.localeCompare(a.season);
-    })
+  if (rows.length === 0) {
+    rows = bundledSeasonRows(season);
+  }
+
+  if (rows.length > 0) {
+    searchIndex.set(season, { rows, freshUntil: now + INDEX_TTL_MS });
+  }
+  return rows;
+}
+
+function pastFromBundledIndex(
+  q: string,
+  currentSeason: string,
+  excludeIds: Set<string>,
+  limit: number
+): SearchResult[] {
+  const rows: SearchRow[] = getPlayerSearchIndex()
+    .filter((row) => row.season !== currentSeason && !excludeIds.has(row.id))
+    .map((row) => ({
+      id: row.id,
+      name: row.name,
+      nameLower: row.nameLower,
+      team: currentTeamAbbrForSearch(row.id, nbaTeamAbbr(row.team, row.team)),
+      position: null,
+      season: row.season,
+      minutes: row.minutes,
+      careerSpan:
+        row.firstSeason && row.firstSeason !== row.season
+          ? `${row.firstSeason} → ${row.season}`
+          : undefined,
+    }));
+  return matchRows(rows, q)
     .slice(0, limit)
     .map((row) => ({
       id: row.id,
       name: row.name,
       team: row.team,
-      position: row.position,
+      position: null,
       season: row.season,
-      careerSpan: `Last ${row.season}`,
+      careerSpan: row.careerSpan ?? `Last ${row.season}`,
       current: false,
     }));
 }
 
-/**
- * Current-season matches first, then past careers (master registry, else
- * landmark historical boards). Dedupes by player id.
- * Reserves a few slots for past careers so legends are not crowded out
- * when many current names share the query (e.g. "jordan").
- */
 async function searchPrioritized(
   q: string,
   season: string,
@@ -257,7 +270,6 @@ async function searchPrioritized(
     careerSpan: row.careerSpan,
   }));
 
-  // Prefer players who already have board minutes, then recent draftees.
   current.sort((a, b) => {
     const ap = a.draftProspect ? 1 : 0;
     const bp = b.draftProspect ? 1 : 0;
@@ -267,19 +279,38 @@ async function searchPrioritized(
 
   const seen = new Set(current.map((r) => r.id));
   const pastReserve = Math.min(3, Math.max(0, limit - 1));
-
   let pastPool: SearchResult[] = [];
-  let universe = hasPlayerUniverseSeason(season)
-    ? "historical-player-season-registry+career"
-    : "provider-season-board+career";
+  let universe = "bundled-player-search";
 
-  const fromMaster = masterHits(q, limit * 2).filter((r) => !seen.has(r.id));
-  if (fromMaster.length > 0) {
-    pastPool = fromMaster;
-    universe = `${universe}+master`;
-  } else {
-    pastPool = await historicalBoardHits(q, season, seen, limit * 2);
-    if (pastPool.length > 0) universe = `${universe}+landmark-history`;
+  if (isVercel()) {
+    try {
+      const { searchMasterPlayers, getMasterPlayerRegistry } = await import(
+        "@/data/history/player-universe"
+      );
+      getMasterPlayerRegistry();
+      const fromMaster = searchMasterPlayers(q, { limit: limit * 2 })
+        .filter((r) => !seen.has(r.playerId))
+        .map((row) => ({
+          id: row.playerId,
+          name: row.displayName,
+          team: "",
+          position: null,
+          season: row.lastSeason,
+          careerSpan: `${row.firstSeason} → ${row.lastSeason}`,
+          current: false,
+        }));
+      if (fromMaster.length > 0) {
+        pastPool = fromMaster;
+        universe = "provider-season-board+master";
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  if (pastPool.length === 0) {
+    pastPool = pastFromBundledIndex(q, season, seen, limit * 2);
+    if (pastPool.length > 0) universe = `${universe}+career-index`;
   }
 
   if (current.some((r) => r.draftProspect)) {
@@ -315,9 +346,12 @@ export async function GET(request: Request) {
   }
 
   try {
-    // Global / career search — current players first, then past careers.
     if (scope === "all" || scope === "career" || scope === "master") {
-      const { results, universe } = await searchPrioritized(q, season, RESULT_LIMIT);
+      const { results, universe } = await searchPrioritized(
+        q,
+        season,
+        RESULT_LIMIT
+      );
       return NextResponse.json({
         results,
         season,
@@ -326,7 +360,6 @@ export async function GET(request: Request) {
       });
     }
 
-    // Season-scoped (explore filters): current board only, master fallback on miss.
     const rows = await getSearchIndex(season);
     const results = matchRows(rows, q)
       .slice(0, RESULT_LIMIT)
@@ -355,17 +388,12 @@ export async function GET(request: Request) {
       });
     }
 
-    const hasDraft = results.some((r) => r.draftProspect);
     return NextResponse.json({
       results,
       season,
-      universe: hasPlayerUniverseSeason(season)
-        ? hasDraft
-          ? "historical-player-season-registry+draft-class"
-          : "historical-player-season-registry"
-        : hasDraft
-          ? "provider-season-board+draft-class"
-          : "provider-season-board",
+      universe: results.some((r) => r.draftProspect)
+        ? "bundled-player-search+draft-class"
+        : "bundled-player-search",
     });
   } catch (error) {
     console.error("player search failed", error);

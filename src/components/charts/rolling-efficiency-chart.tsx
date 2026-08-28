@@ -1,6 +1,7 @@
 "use client";
 
 import { useId } from "react";
+import { useChartTheme } from "@/lib/chart-theme";
 import {
   CartesianGrid,
   Legend,
@@ -31,6 +32,7 @@ export function RollingEfficiencyChart({
   points,
   referenceTrueShootingPct = 0.56,
 }: RollingEfficiencyChartProps) {
+  const chartTheme = useChartTheme();
   const chartId = useId();
   const data = points.map((p) => ({
     ...p,
@@ -103,7 +105,7 @@ export function RollingEfficiencyChart({
                 y={referenceTrueShootingPct * 100}
                 stroke="currentColor"
                 strokeDasharray="4 4"
-                strokeOpacity={0.45}
+                strokeOpacity={chartTheme.referenceOpacity() + 0.1}
                 label={{ value: "Ref TS%", position: "insideTopRight" }}
               />
               <Line
@@ -111,7 +113,7 @@ export function RollingEfficiencyChart({
                 dataKey="gameTsDisplay"
                 name="Game TS%"
                 stroke="currentColor"
-                strokeOpacity={0.35}
+                strokeOpacity={chartTheme.gridOpacity()}
                 dot={false}
                 strokeWidth={1}
               />

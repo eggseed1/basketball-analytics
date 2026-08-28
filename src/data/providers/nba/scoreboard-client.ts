@@ -15,6 +15,7 @@ import {
   type EspnScheduleEvent,
 } from "@/data/transformers/espn";
 import { LIVE_SCOREBOARD_TTL_MS } from "@/lib/live-refresh-policy";
+import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 
 const SITE_API = "https://site.api.espn.com";
 /** Scoreboard months are large payloads — give Vercel more than identity TTLs. */
@@ -296,6 +297,9 @@ export async function fetchRecentScoreboardGames(options: {
 /**
  * Games in the current local week (Sun–Sat). When the week is empty
  * (offseason / break), returns upcoming scheduled tip-offs as a preview.
+ *
+ * Prefer the bundled runtime snapshot first — `site.api.espn.com` is often 403
+ * from Cloudflare Workers and burning month fetches emptied the home strip.
  */
 export async function fetchHomeWeekStrip(options: {
   season?: string;
@@ -307,6 +311,10 @@ export async function fetchHomeWeekStrip(options: {
 }> {
   const limit = options.limit ?? 10;
   const now = options.now ?? new Date();
+  const snapshot = homeStripFromRuntimeSnapshot({ limit, now });
+  if (snapshot.games.length) return snapshot;
+
+  // Snapshot miss (unexpected): last-ditch live ESPN months.
   const season =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
 
@@ -329,12 +337,6 @@ export async function fetchHomeWeekStrip(options: {
   const weekPool = weekSettled.flatMap((r) =>
     r.status === "fulfilled" ? r.value : []
   );
-  if (
-    weekPool.length === 0 &&
-    weekSettled.every((r) => r.status === "rejected")
-  ) {
-    // Fall through to upcoming path; if that also fails entirely, throw.
-  }
 
   const byId = new Map<string, Game>();
   for (const g of weekPool) byId.set(g.id, g);
@@ -351,19 +353,12 @@ export async function fetchHomeWeekStrip(options: {
     return { mode: "week", games: weekGames.slice(0, limit) };
   }
 
-  // Quiet week: preview the next tip-offs on the board.
   const upcomingSeason = upcomingScheduleSeason(now);
-  const upcomingMonths: string[] = [];
   const upcomingBounds = seasonMonthBounds(upcomingSeason);
   let cursor = monthKeyFromDate(now);
   if (cursor < upcomingBounds.firstMonth) cursor = upcomingBounds.firstMonth;
-
-  // Two months normally cover the requested strip; avoid empty offseason months.
-  for (
-    let i = 0;
-    i < 2 && cursor <= upcomingBounds.lastMonth;
-    i += 1
-  ) {
+  const upcomingMonths: string[] = [];
+  for (let i = 0; i < 2 && cursor <= upcomingBounds.lastMonth; i += 1) {
     upcomingMonths.push(cursor);
     cursor = shiftMonthKey(cursor, 1);
   }
@@ -376,25 +371,15 @@ export async function fetchHomeWeekStrip(options: {
   const upcomingPool = upcomingSettled.flatMap((r) =>
     r.status === "fulfilled" ? r.value : []
   );
-  if (
-    upcomingPool.length === 0 &&
-    weekPool.length === 0 &&
-    [...weekSettled, ...upcomingSettled].every((r) => r.status === "rejected")
-  ) {
-    const first = [...weekSettled, ...upcomingSettled].find(
-      (r) => r.status === "rejected"
-    );
-    throw first && first.status === "rejected"
-      ? first.reason
-      : new Error("Home week strip unavailable");
-  }
 
   const todayIso = toIsoDate(now);
   const upcoming = upcomingPool
     .filter(
       (g) =>
         g.gameDate >= todayIso &&
-        (g.status === "scheduled" || g.status === "in_progress")
+        (g.status === "scheduled" ||
+          g.status === "pregame" ||
+          g.status === "in_progress")
     )
     .sort((a, b) =>
       a.gameDate === b.gameDate
@@ -411,7 +396,50 @@ export async function fetchHomeWeekStrip(options: {
     if (unique.length >= limit) break;
   }
 
-  return { mode: "upcoming", games: unique };
+  return unique.length
+    ? { mode: "upcoming", games: unique }
+    : snapshot;
+}
+
+/** Bundled schedule snapshot — no upstream (Cloudflare-safe). */
+function homeStripFromRuntimeSnapshot(options: {
+  limit: number;
+  now: Date;
+}): { mode: "week" | "upcoming"; games: Game[] } {
+  const limit = options.limit;
+  const now = options.now;
+  const season = upcomingScheduleSeason(now);
+  const todayIso = toIsoDate(now);
+  const weekStart = startOfWeekSunday(now);
+  const weekStartIso = toIsoDate(weekStart);
+  const weekEndIso = toIsoDate(addDays(weekStart, 6));
+  const pool = getRuntimeSnapshotGames(season);
+
+  const weekGames = pool
+    .filter((g) => g.gameDate >= weekStartIso && g.gameDate <= weekEndIso)
+    .sort((a, b) =>
+      a.gameDate === b.gameDate
+        ? a.id.localeCompare(b.id)
+        : a.gameDate.localeCompare(b.gameDate)
+    );
+  if (weekGames.length) {
+    return { mode: "week", games: weekGames.slice(0, limit) };
+  }
+
+  const upcoming = pool
+    .filter(
+      (g) =>
+        g.gameDate >= todayIso &&
+        (g.status === "scheduled" ||
+          g.status === "pregame" ||
+          g.status === "in_progress")
+    )
+    .sort(
+      (a, b) =>
+        (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate) ||
+        a.id.localeCompare(b.id)
+    );
+  return { mode: "upcoming", games: upcoming.slice(0, limit) };
 }
 
 function startOfWeekSunday(d: Date): Date {

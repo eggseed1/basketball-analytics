@@ -220,9 +220,9 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                     const tone =
                       col.key === "avgDiff"
                         ? row.avgDiff > 0
-                          ? "text-emerald-700 font-medium"
+                          ? "text-delta-up font-medium"
                           : row.avgDiff < 0
-                            ? "text-rose-700 font-medium"
+                            ? "text-delta-down font-medium"
                             : ""
                         : col.key === "oppPpg" || col.key === "conference"
                           ? "text-muted-foreground"

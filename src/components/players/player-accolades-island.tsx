@@ -39,16 +39,13 @@ export async function PlayerAccoladesIsland({
       accentColor={wash?.colorA}
       accentColorB={wash?.colorB}
       className="relative min-w-0 p-0"
-      effect="css"
+      effect="liquid"
+      backdropBlur={28}
       honor={honor}
     >
-      <div className="relative z-[1] flex flex-col items-stretch gap-2 px-3 py-2.5">
+      <div className="relative z-[1] flex flex-col items-stretch gap-2.5 px-3 py-3">
         <PlayerRetiredJerseys jerseys={jerseys} className="mt-0 justify-start" />
-        <PlayerAccolades
-          badges={badges}
-          compact
-          className={jerseys.length ? "" : undefined}
-        />
+        <PlayerAccolades badges={badges} compact className="max-w-none" />
       </div>
     </GlassSurface>
   );

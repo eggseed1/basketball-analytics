@@ -50,6 +50,8 @@ export type CompactPlayerGameLogRow = {
   drb: number | null;
   pf: number | null;
   plusMinus: number | null;
+  /** Present on deploy-baked CF assets. */
+  seasonType?: "regular" | "playoffs" | string;
 };
 
 export type PlayerGameLogPage = {
@@ -195,7 +197,8 @@ export function listHistoryCompactGames(
 }
 
 /**
- * History first; if empty, load provider game log (current / live seasons).
+ * History first; then deploy-baked Static Assets (Cloudflare-safe);
+ * finally live ESPN / provider game log.
  */
 export async function loadCompactSeasonGames(
   playerId: string,
@@ -204,6 +207,30 @@ export async function loadCompactSeasonGames(
   const hist = listHistoryCompactGames(playerId, season);
   if (hist.length > 0) return hist;
   if (!seasonSupportsGameLogs(season)) return [];
+
+  try {
+    const { resolvePlayerSeasonGameLog } = await import(
+      "@/data/runtime/player-game-logs-store"
+    );
+    const { resolveNbaIdForDrbl } = await import(
+      "@/data/identity/player-identity"
+    );
+    const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
+    const baked = await resolvePlayerSeasonGameLog({
+      season,
+      playerId,
+      nbaId,
+    });
+    if (baked.length > 0) return baked;
+  } catch {
+    /* fall through to live */
+  }
+
+  // Slim edge only (SLIM_EDGE_PRODUCT=1): skip live ESPN game-log fan-out.
+  const { slimEdgeProductEnabled } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (slimEdgeProductEnabled()) return [];
   const { getPlayerGameLogCached } = await import(
     "@/data/queries/request-cache"
   );

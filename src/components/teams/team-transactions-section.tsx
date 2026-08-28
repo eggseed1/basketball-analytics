@@ -32,7 +32,7 @@ export function TeamTransactionsSection({
           {events.map((e) => (
             <li
               key={e.id}
-              className="rounded-xl border border-border bg-white/45 px-3 py-2.5"
+              className="rounded-xl border border-border frost-surface px-3 py-2.5"
             >
               <p className="type-caption font-semibold uppercase tracking-wide text-muted-foreground">
                 {e.date}

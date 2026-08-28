@@ -1,18 +1,26 @@
 import { PlayerUpcomingGames } from "@/components/players/player-upcoming-games";
 import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { upcomingScheduleSeason } from "@/data/providers/nba/scoreboard-client";
-import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import type { GameSummary } from "@/data/types";
 import { teamSeasonStub } from "@/lib/team-season-stub";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { gameInvolvesTeam } from "@/lib/team-explorer";
 
-function upcomingGamesForTeam(
+async function upcomingGamesForTeam(
   scheduleTeamKey: string,
   season = upcomingScheduleSeason()
-): GameSummary[] {
+): Promise<GameSummary[]> {
+  // Dynamic import keeps the ~6.7MB game-snapshot JSON off the player-page
+  // module graph until this Suspense island runs (CF 1102 mitigation).
+  const { getRuntimeSnapshotGames } = await import(
+    "@/data/runtime/game-snapshot"
+  );
   const today = new Date().toISOString().slice(0, 10);
+  const team = teamSeasonStub(scheduleTeamKey, season);
+  const brand = resolveTeamBrand(scheduleTeamKey);
+  if (!team) return [];
   return getRuntimeSnapshotGames(season)
     .filter(
       (game) =>
@@ -22,14 +30,15 @@ function upcomingGamesForTeam(
           game.status === "delayed" ||
           game.status === "in_progress")
     )
+    .map(toGameSummary)
+    .filter((game) => gameInvolvesTeam(game, team, brand))
     .sort((a, b) =>
       (a.tipOffAt ?? a.gameDate).localeCompare(b.tipOffAt ?? b.gameDate)
-    )
-    .map(toGameSummary);
+    );
 }
 
-/** Snapshot-only schedule card — no upstream fetch; safe for build smoke and Vercel cold start. */
-export function PlayerUpcomingGamesFromSnapshot({
+/** Snapshot-only schedule card — deferred import; safe behind Suspense on CF. */
+export async function PlayerUpcomingGamesFromSnapshot({
   scheduleTeamKey,
   season = upcomingScheduleSeason(),
   className,
@@ -42,12 +51,13 @@ export function PlayerUpcomingGamesFromSnapshot({
   if (!team) return null;
 
   const brand = resolveTeamBrand(scheduleTeamKey);
+  const games = await upcomingGamesForTeam(scheduleTeamKey, season);
   return (
     <PlayerUpcomingGames
       season={season}
       team={team}
       brand={brand}
-      games={upcomingGamesForTeam(scheduleTeamKey, season)}
+      games={games}
       className={className}
     />
   );

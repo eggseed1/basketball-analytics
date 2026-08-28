@@ -38,8 +38,12 @@ export default async function ExploreTeamsPage({
       ? seasonParam
       : defaultSeason;
 
-  const teams = await getTeamSeasonStats(season).catch(() => []);
-  const { model: bracket } = await getPlayoffBracketModel(season);
+  // Soft-fail each island so a blocked ESPN host cannot 503 the whole page.
+  const [teams, bracketResult] = await Promise.all([
+    getTeamSeasonStats(season).catch(() => []),
+    getPlayoffBracketModel(season).catch(() => null),
+  ]);
+  const bracket = bracketResult?.model ?? null;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
@@ -56,12 +60,20 @@ export default async function ExploreTeamsPage({
             default. Click a team to open its analytical profile.
           </p>
         </div>
-        <Link
-          href="/standings"
-          className="rounded-full bg-secondary px-4 py-2 text-[14px] font-semibold"
-        >
-          Standings
-        </Link>
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/standings"
+            className="rounded-full bg-secondary px-4 py-2 text-[14px] font-semibold"
+          >
+            Standings
+          </Link>
+          <Link
+            href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+            className="rounded-full bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
+          >
+            Standings tracker
+          </Link>
+        </div>
       </header>
 
       <Suspense
@@ -78,7 +90,7 @@ export default async function ExploreTeamsPage({
       </section>
 
       <div className="flex flex-col gap-6 pb-8">
-        <PlayoffBracket model={bracket} />
+        {bracket ? <PlayoffBracket model={bracket} /> : null}
         <TeamSeasonTable teams={teams} />
       </div>
     </main>

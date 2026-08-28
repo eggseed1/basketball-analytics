@@ -6,6 +6,8 @@ import type { Game } from "@/data/types/game";
 import type { LeagueStandings } from "@/data/types/standings";
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { buildPlayoffBracket, type PlayoffBracketModel } from "@/lib/playoff-bracket";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
+import { withBudget } from "@/data/queries/budget";
 
 async function loadPlayoffGames(season: string): Promise<Game[]> {
   const historical = await getHistoricalGames({ season }).catch(() => [] as Game[]);
@@ -29,11 +31,26 @@ export async function getPlayoffBracketModel(season: string): Promise<{
   standings: LeagueStandings | null;
   teams: TeamSeasonStats[];
 }> {
-  const [standings, teams, games] = await Promise.all([
-    getLeagueStandings(season).catch(() => null),
+  // Preseason: skip standings/schedule upstream (often blocked on CF) — teams board only.
+  if (isPreseasonRosterSeason(season)) {
+    const teams = await getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]);
+    const model = buildPlayoffBracket({
+      season,
+      standings: null,
+      teams,
+      games: [],
+    });
+    return { model, standings: null, teams };
+  }
+
+  const [standingsRes, teams, gamesRes] = await Promise.all([
+    withBudget(getLeagueStandings(season).catch(() => null), 3_000, null),
     getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
-    loadPlayoffGames(season),
+    withBudget(loadPlayoffGames(season), 3_000, [] as Game[]),
   ]);
+
+  const standings = standingsRes.value;
+  const games = gamesRes.value;
 
   const model = buildPlayoffBracket({
     season,

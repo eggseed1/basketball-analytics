@@ -9,6 +9,7 @@ import {
 import { Suspense } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
+import { FindingsSection } from "@/components/home/findings-section";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
@@ -50,6 +51,7 @@ async function HomeTopPerformers() {
       season={data.season}
       drblLeaders={data.drblLeaders}
       darkoLeaders={data.darkoLeaders}
+      raptorLeaders={data.raptorLeaders}
       tsLeaders={data.tsLeaders}
       usageStars={data.usageStars}
       performerSeasons={data.performerSeasons}
@@ -59,6 +61,11 @@ async function HomeTopPerformers() {
   );
 }
 
+async function HomeFindings() {
+  const data = await getHomeAnalyticsCached();
+  return <FindingsSection insights={data.insights} />;
+}
+
 export default function HomePage() {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
 
@@ -66,6 +73,10 @@ export default function HomePage() {
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
       <Suspense fallback={<BlockSkeleton className="h-52" />}>
         <HomeCalendar season={season} />
+      </Suspense>
+
+      <Suspense fallback={<BlockSkeleton className="h-40" />}>
+        <HomeFindings />
       </Suspense>
 
       <div className="grid items-start gap-5 lg:grid-cols-12">

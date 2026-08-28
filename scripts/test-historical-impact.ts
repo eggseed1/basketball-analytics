@@ -2,7 +2,7 @@
  * Deterministic season-true historical impact checks (fixture-only).
  * Run: npx tsx scripts/test-historical-impact.ts
  *
- * These fixtures are synthetic TEST data — not real LEBRON/DARKO archives.
+ * These fixtures are synthetic TEST data — not real RAPTOR/DARKO archives.
  */
 import assert from "node:assert/strict";
 
@@ -60,9 +60,9 @@ const FIXTURES: HistoricalPlayerImpact[] = [
     nbaPlayerId: "1001",
     playerName: "Alpha Player",
     season: "2023-24",
-    metric: "lebron",
+    metric: "raptor",
     value: 4.2,
-    source: "lebron",
+    source: "raptor",
     identityMatch: "alias",
   }),
   fixture({
@@ -70,9 +70,9 @@ const FIXTURES: HistoricalPlayerImpact[] = [
     nbaPlayerId: "1001",
     playerName: "Alpha Player",
     season: "2023-24",
-    metric: "olebron",
+    metric: "oraptor",
     value: 3.1,
-    source: "lebron",
+    source: "raptor",
     identityMatch: "alias",
   }),
   fixture({
@@ -80,9 +80,9 @@ const FIXTURES: HistoricalPlayerImpact[] = [
     nbaPlayerId: "1001",
     playerName: "Alpha Player",
     season: "2024-25",
-    metric: "lebron",
+    metric: "raptor",
     value: 5.0,
-    source: "lebron",
+    source: "raptor",
     identityMatch: "alias",
   }),
   fixture({
@@ -101,9 +101,9 @@ const FIXTURES: HistoricalPlayerImpact[] = [
     nbaPlayerId: "2002",
     playerName: "Beta Player",
     season: "2024-25",
-    metric: "lebron",
+    metric: "raptor",
     value: 1.1,
-    source: "lebron",
+    source: "raptor",
     identityMatch: "nba_id",
   }),
 ];
@@ -124,8 +124,8 @@ async function main() {
     });
     assert.equal(rows.length, 2);
     assert.ok(rows.every((r) => r.season === "2023-24"));
-    assert.ok(rows.some((r) => r.metric === "lebron"));
-    assert.ok(rows.some((r) => r.metric === "olebron"));
+    assert.ok(rows.some((r) => r.metric === "raptor"));
+    assert.ok(rows.some((r) => r.metric === "oraptor"));
   }
 
   // --- Missing season stays missing ---
@@ -149,13 +149,13 @@ async function main() {
     const rows = await getPlayerHistoricalImpact("espn-1", "2024-25", {
       fixtures: FIXTURES,
     });
-    const lebron = rows.find((r) => r.metric === "lebron");
+    const raptor = rows.find((r) => r.metric === "raptor");
     const darko = rows.find((r) => r.metric === "darko_dpm");
-    assert.ok(lebron);
+    assert.ok(raptor);
     assert.ok(darko);
-    assert.equal(lebron!.value, 5.0);
+    assert.equal(raptor!.value, 5.0);
     assert.equal(darko!.value, 2.5);
-    assert.notEqual(lebron!.source, darko!.source);
+    assert.notEqual(raptor!.source, darko!.source);
   }
 
   // --- Career series with gap ---
@@ -188,9 +188,9 @@ async function main() {
         nbaPlayerId: "1001",
         playerName: "Alpha Player",
         season: "2023-24",
-        metric: "lebron",
+        metric: "raptor",
         value: 99,
-        source: "lebron",
+        source: "raptor",
         identityMatch: "alias",
       }),
     ];
@@ -199,7 +199,7 @@ async function main() {
     const rows = queryHistoricalImpact(index, {
       playerId: "espn-1",
       season: "2023-24",
-      metric: "lebron",
+      metric: "raptor",
     });
     assert.equal(rows.length, 1);
     assert.equal(rows[0]!.value, 4.2);
@@ -209,7 +209,7 @@ async function main() {
   {
     const rows = await getPlayerHistoricalImpact("espn-1", "2023-24", {
       fixtures: FIXTURES,
-      metric: "lebron",
+      metric: "raptor",
     });
     assert.equal(rows[0]!.provenance.dataset, "test-fixture");
     assert.equal(
@@ -225,9 +225,9 @@ async function main() {
     const bad = fixture({
       playerName: "X",
       season: "not-a-season",
-      metric: "lebron",
+      metric: "raptor",
       value: 1,
-      source: "lebron",
+      source: "raptor",
     });
     const index = await buildHistoricalImpactIndex({ fixtures: [bad] });
     assert.equal(index.observations.length, 0);
@@ -239,9 +239,9 @@ async function main() {
       playerId: "espn-9",
       playerName: "Bad",
       season: "2024-25",
-      metric: "lebron",
+      metric: "raptor",
       value: Number.NaN,
-      source: "lebron",
+      source: "raptor",
     });
     const index = await buildHistoricalImpactIndex({ fixtures: [bad] });
     assert.equal(index.observations.length, 0);
@@ -255,16 +255,16 @@ async function main() {
       nbaPlayerId: "1001",
       playerName: "Alpha Player",
       season: "2023-24",
-      metric: "lebron",
-      source: "lebron",
+      metric: "raptor",
+      source: "raptor",
     });
     const b = impactObservationKey({
       playerId: "espn-1",
       nbaPlayerId: "1001",
       playerName: "Alpha Player",
       season: "2023-24",
-      metric: "lebron",
-      source: "lebron",
+      metric: "raptor",
+      source: "raptor",
     });
     assert.equal(a, b);
   }
@@ -278,7 +278,7 @@ async function main() {
       HISTORICAL_IMPACT_METHODOLOGY_VERSION
     );
     assert.ok(report.totalObservations >= 5);
-    assert.ok(report.byMetric.some((m) => m.metric === "lebron"));
+    assert.ok(report.byMetric.some((m) => m.metric === "raptor"));
     assert.ok(report.seasonsRepresented.includes("2023-24"));
   }
 

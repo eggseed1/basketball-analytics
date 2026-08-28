@@ -119,7 +119,11 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
     "darkoDpm",
     "darkoOff",
     "darkoDef",
-    "lebron",
+    "raptor",
+    "oRaptor",
+    "dRaptor",
+    "winsAdded",
+    "bpm",
     "drbl100",
     "r1WinEquivalents",
     "netRating",
@@ -163,15 +167,16 @@ PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
 
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,
-  flags: { hasDarko: boolean; hasLebron: boolean; hasDrbl: boolean }
+  flags: { hasDarko: boolean; hasRaptor: boolean; hasDrbl: boolean }
 ): PlayerSeasonSortKey[] {
   return PLAYER_BOARD_VIEW_COLUMNS[view].filter((key) => {
     if (key === "drbl100" || key === "r1WinEquivalents") return flags.hasDrbl;
-    if (view === "all") return true;
     if (key === "darkoDpm" || key === "darkoOff" || key === "darkoDef") {
       return flags.hasDarko;
     }
-    if (key === "lebron") return flags.hasLebron;
+    if (key === "raptor" || key === "oRaptor" || key === "dRaptor" || key === "winsAdded") {
+      return flags.hasRaptor;
+    }
     return true;
   });
 }

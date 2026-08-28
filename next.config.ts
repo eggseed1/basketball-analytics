@@ -8,6 +8,12 @@ const nextConfig: NextConfig = {
   experimental: {
     optimizePackageImports: ["lucide-react", "recharts"],
   },
+  // Ensure Workers Paid product flags survive Next’s build-time env inlining.
+  // Wrangler `vars` alone are not visible during `next build` / OpenNext compile.
+  env: {
+    FULL_EDGE_PRODUCT: process.env.FULL_EDGE_PRODUCT ?? "1",
+    DATA_PROVIDER: process.env.DATA_PROVIDER ?? "nba",
+  },
   async redirects() {
     return [
       {

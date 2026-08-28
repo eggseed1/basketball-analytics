@@ -1,9 +1,8 @@
 import "server-only";
 
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
 import { cache } from "react";
 
+import bundledSentiment from "@/data/runtime/sentiment-snapshot.json";
 import type {
   LeagueSentimentFeed,
   PlayerSentimentProfile,
@@ -11,6 +10,7 @@ import type {
   SentimentMoodSeries,
   SentimentSeriesPoint,
   SentimentWindowId,
+  TeamSentimentProfile,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
 
@@ -21,16 +21,11 @@ export type {
 } from "@/sentiment/curated-types";
 export { SENTIMENT_WINDOW_OPTIONS } from "@/sentiment/curated-types";
 
-const ROOT = () => path.join(process.cwd(), "data", "sentiment", "v1");
-
 export const loadSentimentSnapshot = cache((): SentimentCuratedSnapshot | null => {
-  const p = path.join(ROOT(), "snapshot.json");
-  if (!existsSync(p)) return null;
-  try {
-    return JSON.parse(readFileSync(p, "utf8")) as SentimentCuratedSnapshot;
-  } catch {
-    return null;
-  }
+  // Cloudflare Workers: static import only — node:fs is empty on CF.
+  const snapshot = bundledSentiment as unknown as SentimentCuratedSnapshot;
+  if (!snapshot?.meta || !Array.isArray(snapshot.players)) return null;
+  return snapshot;
 });
 
 export function getPlayerSentimentProfile(
@@ -146,6 +141,8 @@ export const getLeagueSentimentFeed = cache((): LeagueSentimentFeed | null => {
     status: snapshot.meta.status,
     league: snapshot.league,
     moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
+    divergences: snapshot.meta.divergences?.rows ?? [],
+    topicHeat: snapshot.meta.topicHeat ?? [],
   };
 });
 
@@ -164,7 +161,97 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
       fan: row.fan,
       media: row.media,
       hasProfile: true,
+      provenance: row.provenance,
     });
   }
   return rows;
+}
+
+/** Players in the curated snapshot linked to a franchise (ESPN team id). */
+export function listTeamSentimentPlayers(
+  teamId: string
+): TrackedPlayerSentimentRow[] {
+  const id = String(teamId ?? "").trim();
+  if (!id) return [];
+  return listTrackedPlayerSentiment().filter(
+    (row) => row.teamKey != null && String(row.teamKey) === id
+  );
+}
+
+export function getTeamSentimentProfile(
+  teamId: string
+): (TeamSentimentProfile & { disclaimer: string }) | null {
+  const snapshot = loadSentimentSnapshot();
+  if (!snapshot?.teams?.length) return null;
+  const id = String(teamId ?? "").trim();
+  if (!id) return null;
+  const hit = snapshot.teams.find(
+    (row) =>
+      row.teamKey === id ||
+      row.teamIds.some((candidate) => String(candidate) === id)
+  );
+  if (!hit) return null;
+  return { ...hit, disclaimer: snapshot.meta.disclaimer };
+}
+
+export function listTeamSentimentProfiles(): TeamSentimentProfile[] {
+  const snapshot = loadSentimentSnapshot();
+  return snapshot?.teams ?? [];
+}
+
+export function getSentimentSnapshotHealth(): {
+  available: boolean;
+  season: string | null;
+  status: string | null;
+  playerCount: number;
+  teamCount: number;
+  observationBatchCount: number;
+  movers: { risers: number; fallers: number };
+  divergences: number;
+  topics: number;
+  byProvenance: Record<string, number>;
+  teamSources: Record<string, number>;
+} {
+  const snapshot = loadSentimentSnapshot();
+  if (!snapshot) {
+    return {
+      available: false,
+      season: null,
+      status: null,
+      playerCount: 0,
+      teamCount: 0,
+      observationBatchCount: 0,
+      movers: { risers: 0, fallers: 0 },
+      divergences: 0,
+      topics: 0,
+      byProvenance: {},
+      teamSources: {},
+    };
+  }
+  const byProvenance: Record<string, number> = {};
+  for (const row of snapshot.players) {
+    const key = row.provenance ?? "unknown";
+    byProvenance[key] = (byProvenance[key] ?? 0) + 1;
+  }
+  const teamSources: Record<string, number> = {};
+  for (const row of snapshot.teams ?? []) {
+    const key = row.source ?? "unknown";
+    teamSources[key] = (teamSources[key] ?? 0) + 1;
+  }
+  return {
+    available: true,
+    season: snapshot.meta.season ?? null,
+    status: snapshot.meta.status ?? null,
+    playerCount: snapshot.players.length,
+    teamCount: snapshot.teams?.length ?? snapshot.meta.teamProfileCount ?? 0,
+    observationBatchCount: snapshot.meta.observationBatchCount ?? 0,
+    movers: {
+      risers: snapshot.meta.movers?.risers.length ?? 0,
+      fallers: snapshot.meta.movers?.fallers.length ?? 0,
+    },
+    divergences: snapshot.meta.divergences?.rows.length ?? 0,
+    topics: snapshot.meta.topicHeat?.length ?? 0,
+    byProvenance,
+    teamSources,
+  };
 }

@@ -101,7 +101,7 @@ async function ExplorePlayersBoard({
         sortKey={view.sortKey}
         sortDir={view.sortDir}
         hasDarko={view.hasDarko}
-        hasLebron={view.hasLebron}
+        hasRaptor={view.hasRaptor}
         hasDrbl={view.hasDrbl}
         seasonAwaitingGames={view.seasonAwaitingGames}
       />

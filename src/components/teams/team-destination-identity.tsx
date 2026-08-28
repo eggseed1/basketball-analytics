@@ -224,7 +224,14 @@ export function TeamDestinationIdentity({
                     href="/standings"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Standings →
+                    Standings
+                  </TransitionLink>
+                  {" · "}
+                  <TransitionLink
+                    href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+                    className="font-semibold underline-offset-2 hover:underline"
+                  >
+                    Tracker →
                   </TransitionLink>
                 </p>
               ) : standingsContext.seasonAwaitingGames ? (
@@ -238,7 +245,14 @@ export function TeamDestinationIdentity({
                     href="/standings"
                     className="font-semibold underline-offset-2 hover:underline"
                   >
-                    Standings →
+                    Standings
+                  </TransitionLink>
+                  {" · "}
+                  <TransitionLink
+                    href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+                    className="font-semibold underline-offset-2 hover:underline"
+                  >
+                    Tracker →
                   </TransitionLink>
                 </p>
               ) : (

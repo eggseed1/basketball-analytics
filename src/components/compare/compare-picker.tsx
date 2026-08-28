@@ -32,23 +32,41 @@ function PlayerSearchField({
   const [hits, setHits] = useState<Hit[]>([]);
   const [open, setOpen] = useState(false);
   const trimmed = q.trim();
-  const visibleHits = trimmed.length < 2 ? [] : hits;
+  const visibleHits = trimmed.length < 1 ? [] : hits;
 
   useEffect(() => {
-    if (trimmed.length < 2) return;
+    if (trimmed.length < 1) {
+      setHits([]);
+      return;
+    }
     const ctrl = new AbortController();
     const t = setTimeout(() => {
-      fetch(`/api/search?q=${encodeURIComponent(trimmed)}&kind=player`, {
-        signal: ctrl.signal,
-      })
+      // Bundled CF search — same index as the site header (not live ESPN).
+      fetch(
+        `/api/players/search?q=${encodeURIComponent(trimmed)}&scope=all`,
+        { signal: ctrl.signal }
+      )
         .then((r) => r.json())
         .then((body) => {
-          const data = (body?.data ?? []) as Hit[];
-          setHits(data.slice(0, 8));
+          const rows = (body?.results ?? []) as Array<{
+            id: string;
+            name: string;
+            team?: string;
+            careerSpan?: string;
+            season?: string;
+          }>;
+          setHits(
+            rows.slice(0, 8).map((row) => ({
+              id: row.id,
+              name: row.name,
+              teamKey: row.team || undefined,
+              subtitle: row.careerSpan || row.team || row.season,
+            }))
+          );
           setOpen(true);
         })
         .catch(() => {});
-    }, 200);
+    }, 80);
     return () => {
       clearTimeout(t);
       ctrl.abort();

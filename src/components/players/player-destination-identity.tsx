@@ -127,7 +127,9 @@ export function PlayerDestinationIdentity({
   const upcomingNode =
     upcomingSchedule ??
     (!showCareerTeams && teamKey ? (
-      <PlayerUpcomingGamesFromSnapshot scheduleTeamKey={teamKey} />
+      <Suspense fallback={null}>
+        <PlayerUpcomingGamesFromSnapshot scheduleTeamKey={teamKey} />
+      </Suspense>
     ) : null);
 
   return (
@@ -167,7 +169,9 @@ export function PlayerDestinationIdentity({
                   name={displayName}
                   teamKey={teamKey}
                   portraitUrl={portraitUrl}
-                  registryOnly
+                  // Only lock to registry when we actually have a verified URL.
+                  // On Cloudflare, a null portrait + registryOnly rendered initials.
+                  registryOnly={Boolean(portraitUrl)}
                   size="md"
                   priority
                   className="mx-auto shrink-0 sm:mx-0"

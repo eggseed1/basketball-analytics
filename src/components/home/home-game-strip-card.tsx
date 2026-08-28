@@ -37,8 +37,12 @@ function resolveSideBrand(
     game.season,
     presentation
   );
-  if (brand) return brand;
+  if (brand?.logoUrl) return brand;
+  // Modern CDN mark when era resolver only returned a text fallback.
   const key = gameSideBrandKey(game, side);
+  const modern = resolveHistoricalTeamBrand(key, game.season, "modern_surface");
+  if (modern?.logoUrl) return modern;
+  if (brand) return brand;
   return {
     displayName: key,
     abbreviation: key.slice(0, 3).toUpperCase(),

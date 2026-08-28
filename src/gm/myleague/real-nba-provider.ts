@@ -45,7 +45,7 @@ export function canonicalToSeasonEnd(canonical: string): SeasonYear {
 }
 
 export class SiteRealNBADataProvider implements RealNBADataProvider {
-  readonly id = "espn+darko+lebron";
+  readonly id = "espn+darko+raptor";
   private statsCache = new Map<SeasonYear, Promise<PlayerSeason[]>>();
 
   private provenance(season: SeasonYear, quality: "mixed" | "estimated" | "authoritative" = "mixed") {
@@ -122,7 +122,7 @@ export class SiteRealNBADataProvider implements RealNBADataProvider {
       const brand =
         resolveTeamBrand(row.teamId) ?? resolveTeamBrand(row.teamName);
       if (!brand) continue;
-      const impact = row.darkoDpm ?? row.lebron ?? 0;
+      const impact = row.darkoDpm ?? row.raptor ?? 0;
       const { contract, source } = resolvePlayerContract({
         playerName: row.playerName,
         seasonStartYear: season - 1,

@@ -153,6 +153,30 @@ export async function resolvePlayerIdentity(
     };
   }
 
+  // Name-shaped BRef search ids (`bref:michael jordan`) — surface a display
+  // name so the player page doesn't 404 before career rows attach.
+  if (routeId.toLowerCase().startsWith("bref:")) {
+    let displayName: string | undefined;
+    try {
+      const { displayNameFromBrefRouteId } = await import(
+        "@/data/providers/nba/bref-career-from-page"
+      );
+      displayName = displayNameFromBrefRouteId(routeId) ?? undefined;
+    } catch {
+      displayName = undefined;
+    }
+    return {
+      routeId,
+      espnId: null,
+      nbaId: routeId,
+      displayName,
+      matchMethod: "passthrough_nba",
+      confidence: "UNRESOLVED",
+      ambiguous: false,
+      resolved: Boolean(displayName),
+    };
+  }
+
   return {
     routeId,
     espnId: null,

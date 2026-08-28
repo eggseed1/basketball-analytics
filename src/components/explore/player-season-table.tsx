@@ -97,7 +97,7 @@ export interface PlayerSeasonTableProps {
   sortKey: PlayerSeasonSortKey;
   sortDir: "asc" | "desc";
   hasDarko: boolean;
-  hasLebron: boolean;
+  hasRaptor: boolean;
   hasDrbl: boolean;
   seasonAwaitingGames?: boolean;
 }
@@ -111,7 +111,7 @@ export function PlayerSeasonTable({
   sortKey,
   sortDir,
   hasDarko,
-  hasLebron,
+  hasRaptor,
   hasDrbl,
   seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
@@ -188,7 +188,7 @@ export function PlayerSeasonTable({
 
   const views = parsePlayerBoardViews(searchParams.get("view"));
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
-  const flags = { hasDarko, hasLebron, hasDrbl };
+  const flags = { hasDarko, hasRaptor, hasDrbl };
   const groups = buildPlayerBoardGroups(views, flags);
   // Always show category band headers — including a single category (e.g. True
   // Shooting) and the partitioned "all stats" layout.
@@ -324,7 +324,7 @@ export function PlayerSeasonTable({
                         name={player.playerName}
                         teamKey={isMultiTeam ? undefined : player.teamId}
                         size="sm"
-                        className="max-sm:hidden"
+                        className="h-6 w-6 sm:h-9 sm:w-9"
                       />
                       <span
                         className={cn(
@@ -543,7 +543,7 @@ type TableCol = PlayerSeasonSortKey;
 
 type BoardColumnFlags = {
   hasDarko: boolean;
-  hasLebron: boolean;
+  hasRaptor: boolean;
   hasDrbl: boolean;
 };
 
@@ -591,7 +591,7 @@ function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
     if (
       (filterPlayerBoardViewColumns(cat, {
         hasDarko: true,
-        hasLebron: true,
+        hasRaptor: true,
         hasDrbl: true,
       }) as string[]).includes(col)
     ) {
@@ -713,8 +713,16 @@ function columnLabel(col: TableCol, view: PlayerBoardView): string {
       return "DRtg";
     case "netRating":
       return "NET";
-    case "lebron":
-      return "LEBRON";
+    case "raptor":
+      return "RAPTOR";
+    case "oRaptor":
+      return "O-RAPTOR";
+    case "dRaptor":
+      return "D-RAPTOR";
+    case "winsAdded":
+      return "WAR";
+    case "bpm":
+      return "BPM";
     case "drbl100":
       return "DRBL/100";
     case "r1WinEquivalents":
@@ -752,8 +760,14 @@ function columnHelp(col: TableCol): string | null {
       return "drtg";
     case "netRating":
       return "net";
-    case "lebron":
-      return "lebron";
+    case "raptor":
+      return "raptor";
+    case "oRaptor":
+    case "dRaptor":
+    case "winsAdded":
+      return "raptor";
+    case "bpm":
+      return "bpm";
     default:
       return null;
   }
@@ -846,8 +860,18 @@ function formatStat(
       return formatOptionalRating(player.defensiveRating);
     case "netRating":
       return formatOptionalNet(player.netRating);
-    case "lebron":
-      return formatOptionalImpact(player.lebron);
+    case "raptor":
+      return formatOptionalImpact(player.raptor);
+    case "oRaptor":
+      return formatOptionalImpact(player.oRaptor);
+    case "dRaptor":
+      return formatOptionalImpact(player.dRaptor);
+    case "winsAdded":
+      return player.winsAdded != null
+        ? formatNumber(player.winsAdded, 1)
+        : "-";
+    case "bpm":
+      return formatOptionalImpact(player.bpm);
     case "drbl100":
       return formatOptionalDrbl(player.drbl100);
     case "r1WinEquivalents":

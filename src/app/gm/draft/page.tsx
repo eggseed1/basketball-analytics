@@ -31,10 +31,10 @@ export default function GmDraftPage() {
 
 function gradeTone(g: ScoutLetterGrade | null | undefined): string {
   if (!g) return "text-muted-foreground";
-  if (g.startsWith("A")) return "text-emerald-700";
-  if (g.startsWith("B")) return "text-sky-700";
-  if (g.startsWith("C")) return "text-amber-700";
-  return "text-rose-700";
+  if (g.startsWith("A")) return "text-delta-up";
+  if (g.startsWith("B")) return "text-sky-700 dark:text-sky-400";
+  if (g.startsWith("C")) return "text-amber-700 dark:text-amber-400";
+  return "text-delta-down";
 }
 
 function DraftBody() {
@@ -125,7 +125,7 @@ function DraftBody() {
               </Link>
             </p>
           ) : (
-            <p className="mt-1 text-[12px] text-amber-800">
+            <p className="mt-1 text-[12px] text-amber-800 dark:text-amber-300">
               No director of scouting hired - fog is heavy.{" "}
               <Link href="/gm/staff" className="underline underline-offset-2">
                 Hire a scout

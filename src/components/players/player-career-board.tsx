@@ -62,9 +62,9 @@ export type CareerBoardRow = {
   darko: number | null;
   darkoOff: number | null;
   darkoDef: number | null;
-  lebron: number | null;
-  oLebron: number | null;
-  dLebron: number | null;
+  raptor: number | null;
+  oRaptor: number | null;
+  dRaptor: number | null;
   winsAdded: number | null;
   war1: number | null;
   drbl100: number | null;
@@ -126,10 +126,10 @@ const METRICS: MetricDef[] = [
   { id: "darko", label: "DARKO", category: "impact", digits: 2 },
   { id: "darkoOff", label: "DARKO-O", category: "impact", digits: 2 },
   { id: "darkoDef", label: "DARKO-D", category: "impact", digits: 2 },
-  { id: "lebron", label: "LEBRON", category: "impact", digits: 2 },
-  { id: "oLebron", label: "O-LEBRON", category: "impact", digits: 2 },
-  { id: "dLebron", label: "D-LEBRON", category: "impact", digits: 2 },
-  { id: "winsAdded", label: "Wins added", category: "impact", digits: 2 },
+  { id: "raptor", label: "RAPTOR", category: "impact", digits: 2 },
+  { id: "oRaptor", label: "O-RAPTOR", category: "impact", digits: 2 },
+  { id: "dRaptor", label: "D-RAPTOR", category: "impact", digits: 2 },
+  { id: "winsAdded", label: "WAR", category: "impact", digits: 2 },
   { id: "war1", label: "WAR1", category: "impact", digits: 1 },
   { id: "drbl100", label: "DRBL", category: "impact", digits: 1 },
   { id: "drblO", label: "DRBL-O", category: "impact", digits: 1 },
@@ -250,13 +250,17 @@ export function PlayerCareerBoard({
     () => [...rows].sort((a, b) => b.season.localeCompare(a.season)),
     [rows]
   );
-  const tableCols = useMemo(
-    () =>
-      METRICS.filter(
-        (m) => tableCat === "all" || m.category === tableCat
-      ).slice(0, tableCat === "all" ? 14 : 12),
-    [tableCat]
-  );
+  const tableCols = useMemo(() => {
+    const catMetrics = METRICS.filter(
+      (m) => tableCat === "all" || m.category === tableCat
+    );
+    // Drop columns with no finite values (e.g. RAPTOR stub corpus → all "-").
+    const withData = catMetrics.filter((m) =>
+      rows.some((row) => metricValue(row, m.id) != null)
+    );
+    const pool = withData.length > 0 ? withData : catMetrics;
+    return pool.slice(0, tableCat === "all" ? 14 : 12);
+  }, [tableCat, rows]);
 
   const kindLabel =
     seasonType === "playoffs" ? "Playoffs" : "Regular season";

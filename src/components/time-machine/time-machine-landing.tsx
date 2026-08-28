@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FormEvent, useState, useTransition } from "react";
 
+import { HISTORY_LANDMARKS } from "@/content/history/landmarks";
 import { historyHref } from "@/themes/history-url";
 import { defaultTimeMachineSeason } from "@/themes/era-theme";
 
@@ -19,6 +20,10 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
       router.push(historyHref({ season, theme: "historical" }));
     });
   };
+
+  const landmarks = HISTORY_LANDMARKS.filter((l) =>
+    seasons.length === 0 ? true : seasons.includes(l.season)
+  );
 
   return (
     <main className="site-shell flex flex-1 flex-col justify-center gap-8 py-16 sm:py-24">
@@ -63,6 +68,46 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
           {pending ? "Entering…" : "Enter"}
         </button>
       </form>
+
+      {landmarks.length ? (
+        <section className="mx-auto w-full max-w-2xl">
+          <h2 className="text-center text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Landmark seasons
+          </h2>
+          <p className="mt-1 text-center text-[13px] text-muted-foreground">
+            Curated discovery jumps — not a full historical census.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {landmarks.map((l) => (
+              <li
+                key={l.id}
+                className="sports-card flex flex-col gap-2 p-4 text-left"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {l.season}
+                </p>
+                <Link
+                  href={l.historyHref}
+                  className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+                >
+                  {l.title}
+                </Link>
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                  {l.blurb}
+                </p>
+                {l.boardHref && l.boardLabel ? (
+                  <Link
+                    href={l.boardHref}
+                    className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                  >
+                    {l.boardLabel} →
+                  </Link>
+                ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
 
       <section className="sports-card mx-auto w-full max-w-md p-5 text-left">
         <h2 className="text-[15px] font-semibold tracking-tight">
@@ -111,6 +156,10 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
         Prefer franchise scrapbooks?{" "}
         <Link href="/franchises" className="underline underline-offset-4">
           Franchise History
+        </Link>
+        {" · "}
+        <Link href="/explore/teams" className="underline underline-offset-4">
+          Live teams
         </Link>
       </p>
     </main>

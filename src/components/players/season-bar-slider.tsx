@@ -6,9 +6,11 @@ import { createPortal } from "react-dom";
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TeamSeasonSwatch } from "@/components/brand/team-season-swatch";
+import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
 import {
   normalizeSeasonTeamKeys,
+  seasonTrackGradientStyle,
   teamSeasonFillStyle,
   teamSeasonLabel,
 } from "@/lib/team-season-colors";
@@ -36,20 +38,6 @@ function indexFromClientX(
 
 function ratioFromClientX(clientX: number, rect: DOMRect): number {
   return clamp((clientX - rect.left) / Math.max(1, rect.width), 0, 1);
-}
-
-/** Segment centered on each season tick so bar colors match franchise stints. */
-function seasonSegmentStyle(
-  index: number,
-  count: number
-): { left: number; width: number } {
-  if (count <= 1) return { left: 0, width: 100 };
-  const last = count - 1;
-  const tickPos = (i: number) => (i / last) * 100;
-  const left = index === 0 ? 0 : (tickPos(index - 1) + tickPos(index)) / 2;
-  const right =
-    index === count - 1 ? 100 : (tickPos(index) + tickPos(index + 1)) / 2;
-  return { left, width: right - left };
 }
 
 function resolveSeasonKeys(
@@ -144,6 +132,7 @@ export function SeasonBarSlider({
   accentColor?: string;
   onCommit: (season: string) => void;
 }) {
+  const { surface, isDark } = useChartTheme();
   const labelId = useId();
   const trackRef = useRef<HTMLDivElement>(null);
   const draggingRef = useRef(false);
@@ -250,33 +239,23 @@ export function SeasonBarSlider({
           className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full bg-foreground/10"
           aria-hidden
         />
-        {seasons.map((season, i) => {
-          const teamKeys = resolveSeasonKeys(
-            season,
-            seasonTeamKeys,
-            seasonTeams
-          );
-          const { left, width } = seasonSegmentStyle(i, seasons.length);
-          const active = i <= previewIndex;
-          return (
-            <div
-              key={`segment-${season}`}
-              className={cn(
-                "absolute top-1/2 h-1.5 -translate-y-1/2",
-                i === 0 && "rounded-l-full",
-                i === seasons.length - 1 && "rounded-r-full"
-              )}
-              style={{
-                left: `${left}%`,
-                width: `${width}%`,
-                ...teamSeasonFillStyle(teamKeys),
-                opacity: active ? 0.85 : 0.3,
-                transition: dragging ? undefined : "opacity 160ms ease-out",
-              }}
-              aria-hidden
-            />
-          );
-        })}
+        <div
+          className="absolute inset-x-0 top-1/2 h-1.5 -translate-y-1/2 rounded-full"
+          style={{
+            ...seasonTrackGradientStyle(
+              seasons,
+              (season) =>
+                resolveSeasonKeys(season, seasonTeamKeys, seasonTeams),
+              surface
+            ),
+            // Dim the trailing (future-of-thumb) portion via a soft mask overlay.
+            opacity: isDark ? 0.72 : 0.85,
+            transition: dragging ? undefined : "opacity 160ms ease-out",
+            WebkitMaskImage: `linear-gradient(90deg, #000 0%, #000 ${ratio * 100}%, rgba(0,0,0,${isDark ? 0.45 : 0.35}) ${ratio * 100}%, rgba(0,0,0,${isDark ? 0.45 : 0.35}) 100%)`,
+            maskImage: `linear-gradient(90deg, #000 0%, #000 ${ratio * 100}%, rgba(0,0,0,${isDark ? 0.45 : 0.35}) ${ratio * 100}%, rgba(0,0,0,${isDark ? 0.45 : 0.35}) 100%)`,
+          }}
+          aria-hidden
+        />
         {seasons.map((season, i) => {
           const left = last === 0 ? 0 : (i / last) * 100;
           const teamKeys = resolveSeasonKeys(

@@ -1,6 +1,6 @@
 /**
  * Map real PlayerSeason rows → Franchise Lab GmPlayer / league.
- * Impact prefers DARKO DPM, then LEBRON, then a stats heuristic.
+ * Impact prefers DARKO DPM, then RAPTOR, then a stats heuristic.
  */
 
 import type { PlayerSeason } from "@/data/types";
@@ -72,7 +72,7 @@ function franchiseIdFromTeamKey(teamId: string, teamName: string): string | null
 
 function estimateImpact(row: PlayerSeason): number {
   if (typeof row.darkoDpm === "number") return row.darkoDpm;
-  if (typeof row.lebron === "number") return row.lebron;
+  if (typeof row.raptor === "number") return row.raptor;
   const mpg = row.gamesPlayed > 0 ? row.minutes / row.gamesPlayed : 0;
   const net = (row.netRating || 0) - 100;
   const usg = (row.usagePct || 0.18) * 100;
@@ -84,11 +84,11 @@ function ratingsFromSeason(row: PlayerSeason): GmRatings {
   const impact = estimateImpact(row);
   const offense =
     row.darkoOff ??
-    row.oLebron ??
+    row.oRaptor ??
     impact * 0.65 + ((row.offensiveRating || 110) - 110) * 0.05;
   const defense =
     row.darkoDef ??
-    row.dLebron ??
+    row.dRaptor ??
     impact * 0.45 + (110 - (row.defensiveRating || 110)) * 0.05;
   const ts = row.trueShootingPct || 0.55;
   const usg = row.usagePct || 0.18;
@@ -166,7 +166,7 @@ export function playerSeasonToGmPlayer(
     ),
     nbaPlayerId: row.playerId,
     darko: row.darkoDpm,
-    lebron: row.lebron,
+    raptor: row.raptor,
   };
 }
 

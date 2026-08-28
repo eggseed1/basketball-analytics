@@ -6,6 +6,7 @@ import {
 } from "@/components/brand/glass-surface";
 import { MovementRumorPanel } from "@/components/players/movement-rumor-panel";
 import { PlayerSentimentGraph } from "@/components/players/player-sentiment-graph";
+import { SentimentFanMediaGap } from "@/components/sentiment/sentiment-fan-media-gap";
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import type { PlayerMovementBundle } from "@/movement-center/types";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
@@ -83,11 +84,17 @@ export function PlayerSentimentView({
           ) : null}
 
           {sentimentProfile ? (
-            <PlayerSentimentGraph
-              playerName={playerName}
-              profile={sentimentProfile}
-              detailed
-            />
+            <>
+              <SentimentFanMediaGap
+                fanScore={sentimentProfile.fan.score}
+                mediaScore={sentimentProfile.media.score}
+              />
+              <PlayerSentimentGraph
+                playerName={playerName}
+                profile={sentimentProfile}
+                detailed
+              />
+            </>
           ) : (
             <p className={cn(type.bodySm, "text-muted-foreground")}>
               No sentiment coverage for {playerName} in the current prototype

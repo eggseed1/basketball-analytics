@@ -375,7 +375,9 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           {coverage.earliestDate} → {coverage.latestDate}
         </p>
         <p className="mt-1">
-          Genealogy UI ready: {coverage.genealogyUiReady ? "yes" : "no"}.
+          {coverage.genealogyUiReady
+            ? "Pick and exception genealogy views are enabled for covered assets."
+            : "Pick and exception genealogy is incomplete — asset history may be partial."}
         </p>
         <ul className="mt-2 list-disc space-y-1 pl-4">
           {coverage.notes.map((n) => (

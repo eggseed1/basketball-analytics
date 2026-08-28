@@ -86,9 +86,9 @@ export type StatCompRow = {
   dpm?: number;
   oDpm?: number;
   dDpm?: number;
-  lebron?: number;
-  oLebron?: number;
-  dLebron?: number;
+  raptor?: number;
+  oRaptor?: number;
+  dRaptor?: number;
   winsAdded?: number;
   drbl100?: number;
   rawAbilityRate?: number;
@@ -189,8 +189,8 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  lebron: {
-    pick: (r) => (r.lebron != null && Number.isFinite(r.lebron) ? r.lebron : null),
+  raptor: {
+    pick: (r) => (r.raptor != null && Number.isFinite(r.raptor) ? r.raptor : null),
     format: (v) => formatNumber(v, 2),
   },
   wins: {
@@ -222,9 +222,9 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  olebron: {
+  oraptor: {
     pick: (r) =>
-      r.oLebron != null && Number.isFinite(r.oLebron) ? r.oLebron : null,
+      r.oRaptor != null && Number.isFinite(r.oRaptor) ? r.oRaptor : null,
     format: (v) => formatNumber(v, 2),
   },
   ortg: {
@@ -305,9 +305,9 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  dlebron: {
+  draptor: {
     pick: (r) =>
-      r.dLebron != null && Number.isFinite(r.dLebron) ? r.dLebron : null,
+      r.dRaptor != null && Number.isFinite(r.dRaptor) ? r.dRaptor : null,
     format: (v) => formatNumber(v, 2),
   },
   drtg: {

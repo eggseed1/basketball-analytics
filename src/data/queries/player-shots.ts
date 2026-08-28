@@ -56,7 +56,7 @@ function parseShotRow(
 
 /**
  * Live NBA shot chart for a player-season. One API call per season type.
- * Prefer the P18 offline index when available; use this as fallback.
+ * Prefer deploy-baked Static Assets / P18 offline index; use this as fallback.
  */
 export async function getPlayerSeasonShotMap(options: {
   playerId: string;
@@ -82,7 +82,36 @@ export async function getPlayerSeasonShotMap(options: {
     return empty("No NBA player id to load live shot chart.");
   }
 
+  // Bundled / asset index (Cloudflare-safe) before live stats.nba.com.
   try {
+    const { resolvePlayerSeasonShotIndex } = await import(
+      "@/data/runtime/player-shots-store"
+    );
+    const { playerSeasonShotIndexToMap } = await import(
+      "@/lib/player-season-shot-map-adapter"
+    );
+    const index = await resolvePlayerSeasonShotIndex({
+      season,
+      playerId,
+      nbaId,
+    });
+    if (index && index.coordinateShots > 0 && seasonType === "regular") {
+      return playerSeasonShotIndexToMap({
+        index,
+        season,
+        teamLabel,
+        seasonType,
+      });
+    }
+  } catch {
+    /* fall through to live */
+  }
+
+  try {
+    const { longUpstreamBudgetsEnabled } = await import(
+      "@/data/providers/nba/runtime-policy"
+    );
+    const long = longUpstreamBudgetsEnabled();
     const response = await statsNbaFetch(
       "shotchartdetail",
       {
@@ -117,7 +146,11 @@ export async function getPlayerSeasonShotMap(options: {
         VsConference: "",
         VsDivision: "",
       },
-      { ttlMs: CACHE_TTL_MS.shots }
+      {
+        ttlMs: CACHE_TTL_MS.shots,
+        timeoutMs: long ? 15_000 : 4_000,
+        retries: long ? 2 : 1,
+      }
     );
     const set = getResultSet(response, "Shot_Chart_Detail");
     if (!set) {

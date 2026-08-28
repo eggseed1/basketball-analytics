@@ -14,14 +14,19 @@ import { TeamDestinationIdentity } from "@/components/teams/team-destination-ide
 import { TeamEvidenceIsland } from "@/components/teams/team-evidence-island";
 import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-island";
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
+import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
+import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
+import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
+import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
+import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
 import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
 import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { TeamMovementIsland } from "@/components/teams/team-movement-island";
+import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
 import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overview";
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
-import { TeamTabScaffold } from "@/components/teams/team-tab-scaffold";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import {
@@ -106,6 +111,8 @@ export default async function TeamProfilePage({
   );
   const rate = parseTeamRateMode(Array.isArray(sp.rate) ? sp.rate[0] : sp.rate);
   const arcParam = Array.isArray(sp.arc) ? sp.arc[0] : sp.arc;
+  const gamesPageRaw = Array.isArray(sp.gamesPage) ? sp.gamesPage[0] : sp.gamesPage;
+  const gamesPage = Math.max(1, Number(gamesPageRaw) || 1);
   const showingFullArc = arcParam === "full";
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const season = seasonParam ?? currentSeason;
@@ -389,48 +396,50 @@ export default async function TeamProfilePage({
         ) : null}
 
         {tab === "offense" ? (
-          <TeamTabScaffold
-            id="offense"
-            title="Offense"
-            reason="Shot maps, play types, transition splits, and tracking land in P1. Overview already shows offense board percentiles."
-            planned={[
-              "Shot location map",
-              "Play-type profile",
-              "Transition vs half court",
-              "Ball movement / drives",
-              "Clutch offense",
-            ]}
-          />
+          boardAvailable && !seasonAwaitingGames ? (
+            <Suspense
+              fallback={<DestinationSectionSkeleton label="Loading offense…" />}
+            >
+              <TeamOffenseIsland
+                teamId={resolvedTeamId}
+                season={season}
+                teamKey={identityTeam.abbreviation}
+                team={boardTeam!}
+                offenseMetrics={offenseMetrics}
+              />
+            </Suspense>
+          ) : (
+            <section id="offense" className="scroll-mt-16" aria-label="Offense">
+              <p className="text-[14px] text-muted-foreground">
+                Offense board metrics appear after the season starts or when the
+                team board is available for {season}.
+              </p>
+            </section>
+          )
         ) : null}
 
         {tab === "defense" ? (
-          <TeamTabScaffold
-            id="defense"
-            title="Defense"
-            reason="Opponent shot maps, rim deterrence, and hustle need tracking feeds. Overview shows opponent PPG and steal/block board ranks."
-            planned={[
-              "Opponent shot map",
-              "Rim protection",
-              "Three-point prevention",
-              "Defensive play types",
-              "Hustle and contests",
-            ]}
-          />
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading hustle…" />}
+          >
+            <TeamHustleIsland
+              teamId={resolvedTeamId}
+              season={season}
+              teamKey={identityTeam.abbreviation}
+            />
+          </Suspense>
         ) : null}
 
         {tab === "lineups" ? (
-          <TeamTabScaffold
-            id="lineups"
-            title="Lineups"
-            reason="Five-man lineups, on/off, and WOWY require possession-level PBP. Every lineup result will show possessions when that feed ships."
-            planned={[
-              "Five-player lineup table",
-              "On/off explorer",
-              "Pair matrix",
-              "WOWY",
-              "Clutch lineups",
-            ]}
-          />
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading rotation…" />}
+          >
+            <TeamLineupsIsland
+              teamId={resolvedTeamId}
+              season={season}
+              teamKey={identityTeam.abbreviation}
+            />
+          </Suspense>
         ) : null}
 
         {tab === "games" ? (
@@ -441,37 +450,27 @@ export default async function TeamProfilePage({
               team={identityTeam}
               brand={modernBrand}
               season={season}
+              gamesPage={gamesPage}
+              fromHistory={fromHistory}
+              theme={themeMode === "modern" ? undefined : themeMode}
             />
           </Suspense>
         ) : null}
 
         {tab === "splits" ? (
-          <TeamTabScaffold
-            id="splits"
-            title="Splits"
-            reason="Home/road, rest, clutch, and opponent splits need game-level aggregation endpoints."
-            planned={[
-              "Home / away",
-              "Rest and back-to-backs",
-              "Clutch",
-              "Monthly splits",
-              "Side-by-side split compare",
-            ]}
-          />
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading splits…" />}
+          >
+            <TeamSplitsIsland teamId={resolvedTeamId} season={season} />
+          </Suspense>
         ) : null}
 
         {tab === "playoffs" ? (
-          <TeamTabScaffold
-            id="playoffs"
-            title="Playoffs"
-            reason="Series navigation and playoff-only tables stay separate from the regular-season board. Empty until a playoff ledger is wired."
-            planned={[
-              "Seed and series record",
-              "Regular season vs playoffs",
-              "Series game log",
-              "Playoff rotation",
-            ]}
-          />
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading playoffs…" />}
+          >
+            <TeamPlayoffsIsland teamId={resolvedTeamId} season={season} />
+          </Suspense>
         ) : null}
 
         {tab === "history" ? (
@@ -513,6 +512,9 @@ export default async function TeamProfilePage({
             </Suspense>
             <Suspense fallback={null}>
               <TeamMovementIsland teamId={resolvedTeamId} />
+            </Suspense>
+            <Suspense fallback={null}>
+              <TeamSentimentIsland teamId={resolvedTeamId} />
             </Suspense>
             <Suspense
               fallback={

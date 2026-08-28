@@ -34,12 +34,31 @@ const BUNDLED_PATH: Record<string, string> = {
  * Prefer process-cached disk JSON for known seasons (avoids bundling ~2.5MB
  * of DRBL artifacts into the webpack graph / every client shared chunk).
  * Disk is consulted once per season per process.
+ * Cloudflare: disk is empty — use the slim bundled overlay snapshot.
  */
 async function readPrecomputed(
   season: string
 ): Promise<DrblSeasonArtifact | null> {
   const cachedArtifact = artifactCache.get(season);
   if (cachedArtifact?.players?.length) return cachedArtifact;
+
+  // Bundled overlay first (Cloudflare Workers / any host without disk mounts).
+  try {
+    const { getBundledDrblSeason } = await import(
+      "@/data/runtime/drbl-overlay-snapshot"
+    );
+    const bundled = getBundledDrblSeason(season);
+    if (bundled.length > 0) {
+      const artifact = {
+        season,
+        players: bundled,
+      } as DrblSeasonArtifact;
+      artifactCache.set(season, artifact);
+      return artifact;
+    }
+  } catch {
+    // fall through to disk
+  }
 
   const candidates = [
     BUNDLED_PATH[season]

@@ -39,6 +39,12 @@ async function nextDataCacheGetOrSet<T>(
   tags: string[],
   factory: () => Promise<T>
 ): Promise<T> {
+  // OpenNext / Cloudflare Workers: `unstable_cache` is unreliable and has
+  // hung ESPN box fetches past getGameShellCached's budget. Memory L1 is enough.
+  if (!process.env.VERCEL) {
+    return factory();
+  }
+
   let unstableCache: typeof import("next/cache").unstable_cache;
   try {
     ({ unstable_cache: unstableCache } = await import("next/cache"));

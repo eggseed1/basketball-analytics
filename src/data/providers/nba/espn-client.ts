@@ -66,16 +66,23 @@ async function fetchEspnJsonUncached<T>(
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const response = await fetch(url, {
+      // Avoid Next.js Data Cache fetch options on Cloudflare Workers — they can
+      // hang or no-op poorly under OpenNext. Plain fetch + AbortSignal is enough.
+      const init: RequestInit = {
         signal: options.signal ?? AbortSignal.timeout(timeoutMs),
         headers: {
           Accept: "application/json",
           "User-Agent":
             "BasketballAnalytics/0.1 (+local; educational data exploration)",
         },
-        // Next.js Data Cache — shared across Vercel instances.
-        next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },
-      } as RequestInit);
+      };
+      if (isVercelRuntime()) {
+        (init as RequestInit & { next?: { revalidate: number } }).next = {
+          revalidate: Math.max(60, Math.floor(ttlMs / 1000)),
+        };
+      }
+
+      const response = await fetch(url, init);
 
       if (!response.ok) {
         const err = new Error(

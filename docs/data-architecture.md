@@ -458,7 +458,7 @@ URL searchParams (?season&team&sort&dir&page&player…)
 Full board remains available via filters/sort/pagination — not serialized into
 one HTML response. Interactive controls update the URL; the server re-queries.
 
-## 8. Historical API (1960–present) + DARKO / LEBRON
+## 8. Historical API (1960–present) + DARKO / RAPTOR
 
 HTTP route handlers under `src/app/api/` expose historical games, box scores,
 advanced stats, and impact metrics:
@@ -472,7 +472,7 @@ advanced stats, and impact metrics:
 | `GET /api/stats/games` | BallDontLie `/nba/v1/stats` (ALL-STAR+) |
 | `GET /api/stats/advanced` | BallDontLie `/nba/v2/stats/advanced` (GOAT) or derived rates |
 | `GET /api/impact/darko` | Live scrape of public [darko.app](https://www.darko.app/) DPM board |
-| `GET /api/impact/lebron` | `data/impact/lebron.csv` override, else seed snapshot |
+| `GET /api/impact/raptor` | `data/impact/raptor.csv` override, else seed snapshot |
 
 Service facade: `HistoricalNbaService`
 (`src/data/providers/historical/historical-nba-service.ts`).
@@ -488,9 +488,9 @@ Tier notes (BallDontLie):
 - **ALL-STAR** — per-game player stats (`/api/stats/games`).
 - **GOAT** — box scores + advanced (`/api/games/.../box-score`, `/api/stats/advanced`).
 
-DARKO / LEBRON are third-party impact metrics (pts/100). DARKO is mirrored from
-the public leaderboard; LEBRON has no public API — drop BBall Index exports into
-`data/impact/lebron.csv` (see that folder’s README).
+DARKO / RAPTOR are third-party impact metrics (pts/100). DARKO is mirrored from
+the public leaderboard; RAPTOR has no public API — drop BBall Index exports into
+`data/impact/raptor.csv` (see that folder’s README).
 
 ## 9. Live NBA Intelligence (future entities)
 
@@ -526,7 +526,7 @@ Social platforms (including X/Twitter) require explicit licensing/API policy in 
 5. **Historical statistics must remain season-true.** No modern overlay onto
    other seasons; no adjacent-season substitution for impact metrics.
 6. **Impact metrics require verified season provenance.** Live DARKO only for
-   its stamped season; LEBRON only season-keyed rows that exist.
+   its stamped season; RAPTOR only season-keyed rows that exist.
 7. **Provider IDs stay at provider boundaries.** Canonical team/player identity
    is resolved explicitly — never silently remapped to a modern brand/id.
 8. **Production never silently uses sample data.** `DATA_PROVIDER=nba` on

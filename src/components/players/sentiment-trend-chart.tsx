@@ -62,7 +62,12 @@ export function SentimentTrendChart({
             data={rows}
             margin={{ top: 8, right: 8, left: 0, bottom: 0 }}
           >
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(0,0,0,0.06)" />
+            <CartesianGrid
+              strokeDasharray="3 3"
+              stroke="var(--border)"
+              strokeOpacity={0.45}
+              className="dark:opacity-70"
+            />
             <XAxis
               dataKey="label"
               tick={{ fontSize: 10 }}
@@ -75,7 +80,7 @@ export function SentimentTrendChart({
               width={36}
               tick={{ fontSize: 10 }}
             />
-            <ReferenceLine y={0} stroke="rgba(0,0,0,0.15)" />
+            <ReferenceLine y={0} stroke="var(--border)" strokeOpacity={0.65} />
             <Tooltip
               content={({ active, payload }) => {
                 const row = payload?.[0]?.payload as

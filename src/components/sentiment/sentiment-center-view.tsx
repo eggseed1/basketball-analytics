@@ -4,6 +4,10 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import { LeagueMoodCharts } from "@/components/sentiment/league-mood-charts";
+import {
+  SentimentDivergenceBoard,
+  SentimentTopicHeat,
+} from "@/components/sentiment/sentiment-insights-panels";
 import { TrackedPlayersBoard } from "@/components/sentiment/tracked-players-board";
 import type {
   LeagueSentimentFeed,
@@ -59,7 +63,7 @@ function NarrativeCollectionCard({
         {narrative.players.map((player) => (
           <li
             key={player.playerId}
-            className="flex flex-col gap-2 rounded-md border border-border/60 bg-white/40 px-3 py-2"
+            className="flex flex-col gap-2 rounded-md border border-border/60 frost-surface px-3 py-2"
           >
             <div className="flex items-center gap-2">
               <PlayerHeadshot
@@ -70,7 +74,7 @@ function NarrativeCollectionCard({
               />
               <div className="min-w-0 flex-1">
                 <Link
-                  href={`/players/${encodeURIComponent(player.playerId)}?view=sentiment`}
+                  href={`/players/${encodeURIComponent(player.playerId)}`}
                   className={cn(type.bodySm, "font-semibold", textLinkClassName)}
                 >
                   {player.displayName}
@@ -105,10 +109,12 @@ export function SentimentCenterView({
   feed,
   players,
   highlightNarrative,
+  highlightTopic,
 }: {
   feed: LeagueSentimentFeed;
   players: TrackedPlayerSentimentRow[];
   highlightNarrative?: string;
+  highlightTopic?: string;
 }) {
   const { league } = feed;
   const overrated =
@@ -123,7 +129,7 @@ export function SentimentCenterView({
             "font-semibold uppercase tracking-wide text-muted-foreground"
           )}
         >
-          Sentiment · {feed.season}
+          Sentiment · curated prototype · {feed.season}
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           League sentiment board
@@ -141,7 +147,8 @@ export function SentimentCenterView({
             "rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-muted-foreground"
           )}
         >
-          {feed.disclaimer} Snapshot status: {feed.status}.
+          Curated prototype — not a live feed. {feed.disclaimer} Snapshot
+          status: {feed.status}.
         </p>
       </header>
 
@@ -153,6 +160,11 @@ export function SentimentCenterView({
             : "7d"
         }
       />
+
+      <div className="grid gap-8 lg:grid-cols-[minmax(0,1.1fr)_minmax(16rem,22rem)]">
+        <SentimentDivergenceBoard rows={feed.divergences} />
+        <SentimentTopicHeat rows={feed.topicHeat} highlightTopic={highlightTopic} />
+      </div>
 
       {overrated ? (
         <section className="flex flex-col gap-3">
@@ -184,7 +196,11 @@ export function SentimentCenterView({
         </div>
       </section>
 
-      <TrackedPlayersBoard rows={players} season={feed.season} />
+      <TrackedPlayersBoard
+        rows={players}
+        season={feed.season}
+        topicFilter={highlightTopic}
+      />
     </div>
   );
 }

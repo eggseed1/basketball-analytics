@@ -5,20 +5,18 @@ import { AppLink } from "@/components/ui/app-link";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
 
-/** Homepage insight cards - hidden until the Figma layout is ready for them. */
-const SHOW_HOME_FINDINGS = false;
+/** Homepage insight cards from season boards + YoY DARKO movers. */
+const SHOW_HOME_FINDINGS = true;
 
 export function FindingsSection({ insights }: { insights: ComputedInsight[] }) {
   if (!SHOW_HOME_FINDINGS || !insights.length) return null;
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className="type-heading">
-          What the board is saying right now
-        </h2>
+        <h2 className="type-heading">What the board is saying</h2>
         <p className="type-body-sm text-muted-foreground">
-          Live takeaways from this season&apos;s DRBL ability, impact, and
-          efficiency boards.
+          Data-first takeaways from this season&apos;s boards — leaders, gaps,
+          and same-metric YoY movers (DARKO / BPM) when both seasons are baked.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-2">
@@ -42,7 +40,10 @@ function InsightCard({ insight }: { insight: ComputedInsight }) {
             <span key={p.id}>
               {i > 0 ? (
                 <span className="font-semibold text-muted-foreground">
-                  {insight.id === "gap" ? " over " : " · "}
+                  {insight.id === "gap" ||
+                  insight.id === "drbl-gap"
+                    ? " over "
+                    : " · "}
                 </span>
               ) : null}
               <Link

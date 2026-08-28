@@ -99,7 +99,7 @@ See **Environment contract** in `docs/RELEASE_BASELINE.md` companion section bel
 | --- | --- | --- |
 | ESPN public JSON | Live boards, careers, scoreboard, team metadata | None (public endpoints; soft-fail on HTTP errors) |
 | BallDontLie | Historical games cache, some box/advanced (tiered) | `BALLDONTLIE_API_KEY` |
-| Impact overlays (DARKO / LEBRON family) | When stamped season data is present | Repo/fixture/cache dependent — not a secret env in baseline |
+| Impact overlays (DARKO / RAPTOR family) | When stamped season data is present | Repo/fixture/cache dependent — not a secret env in baseline |
 
 ### Ignored / generated data (not in Git)
 

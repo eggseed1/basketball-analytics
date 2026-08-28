@@ -23,6 +23,8 @@ function row(
     teamName: partial.teamName ?? "Nuggets",
     season: partial.season ?? "2024-25",
     gamesPlayed: partial.gamesPlayed ?? 70,
+    gamesStarted:
+      partial.gamesStarted ?? Math.min(partial.gamesPlayed ?? 70, 70),
     minutes: partial.minutes ?? 2400,
     points: partial.points ?? 1400,
     assists: partial.assists ?? 600,
@@ -42,10 +44,16 @@ function row(
     darkoDpm: partial.darkoDpm,
     darkoOff: partial.darkoOff,
     darkoDef: partial.darkoDef,
-    lebron: partial.lebron,
-    oLebron: partial.oLebron,
-    dLebron: partial.dLebron,
+    raptor: partial.raptor,
+    oRaptor: partial.oRaptor,
+    dRaptor: partial.dRaptor,
     winsAdded: partial.winsAdded,
+    hustleDeflections: partial.hustleDeflections,
+    hustleContestedShots: partial.hustleContestedShots,
+    hustleScreenAssists: partial.hustleScreenAssists,
+    hustleChargesDrawn: partial.hustleChargesDrawn,
+    hustleLooseBallsRecovered: partial.hustleLooseBallsRecovered,
+    hustleBoxOuts: partial.hustleBoxOuts,
   };
 }
 
@@ -122,28 +130,32 @@ function main() {
 
   const byId = Object.fromEntries(metrics.map((m) => [m.id, m]));
 
-  // Minutes → role / descriptive (no skill percentile / grade)
-  assert.equal(byId.min?.category, "role");
+  // Minutes / games / starts → counting with percentiles (availability context)
+  assert.equal(byId.min?.category, "counting");
   assert.equal(byId.min?.interpretation, "descriptive");
-  assert.equal(byId.min?.showPercentile, false);
+  assert.equal(byId.min?.showPercentile, true);
   assert.equal(byId.min?.showGrade, false);
 
-  // Usage → role (percentile OK, no skill grade)
-  assert.equal(byId.usg?.category, "role");
+  // Usage → rates (percentile OK, no skill grade)
+  assert.equal(byId.usg?.category, "rates");
   assert.equal(byId.usg?.interpretation, "role");
   assert.equal(byId.usg?.showPercentile, true);
   assert.equal(byId.usg?.showGrade, false);
 
-  // Games → role descriptive
-  assert.equal(byId.gp?.category, "role");
-  assert.equal(byId.gp?.showPercentile, false);
+  // Games / starts → counting with percentiles
+  assert.equal(byId.gp?.category, "counting");
+  assert.equal(byId.gp?.showPercentile, true);
   assert.equal(byId.gp?.showGrade, false);
+  assert.equal(byId.gs?.category, "counting");
+  assert.equal(byId.gs?.showPercentile, true);
+  assert.equal(byId.gs?.showGrade, false);
 
-  // Raw TOVPG is not shown as a skill metric on the offense chart.
-  assert.equal(byId.tov, undefined);
+  // Turnovers still have a counting row; AST/TO is the preferred rate read.
+  assert.equal(byId.tov?.category, "counting");
+  assert.equal(byId.tov?.interpretation, "lower_is_better");
 
-  // Assist / turnover → offense (replaces raw turnovers)
-  assert.equal(byId.atr?.category, "offense");
+  // Assist / turnover → rates
+  assert.equal(byId.atr?.category, "rates");
   assert.equal(byId.atr?.interpretation, "higher_is_better");
   assert.equal(byId.atr?.showPercentile, true);
   assert.equal(byId.atr?.showGrade, true);
@@ -256,6 +268,60 @@ function main() {
     "lower_is_better"
   );
   assert.equal(defMetrics.find((m) => m.id === "net")?.category, "advanced");
+
+  // Hustle metrics appear when season + peer pool have tracking
+  const hustleFocal = row({
+    playerId: "hustle",
+    playerName: "Hustle Star",
+    usagePct: 0.2,
+    trueShootingPct: 0.55,
+    hustleDeflections: 210,
+    hustleContestedShots: 280,
+    hustleScreenAssists: 90,
+    hustleChargesDrawn: 12,
+    hustleLooseBallsRecovered: 60,
+    hustleBoxOuts: 140,
+  });
+  const hustlePeers = [
+    hustleFocal,
+    row({
+      playerId: "h2",
+      playerName: "H2",
+      usagePct: 0.18,
+      trueShootingPct: 0.5,
+      hustleDeflections: 80,
+      hustleContestedShots: 120,
+      hustleScreenAssists: 30,
+      hustleChargesDrawn: 2,
+      hustleLooseBallsRecovered: 20,
+      hustleBoxOuts: 40,
+    }),
+    row({
+      playerId: "h3",
+      playerName: "H3",
+      usagePct: 0.16,
+      trueShootingPct: 0.52,
+      hustleDeflections: 40,
+      hustleContestedShots: 90,
+      hustleScreenAssists: 10,
+      hustleChargesDrawn: 1,
+      hustleLooseBallsRecovered: 10,
+      hustleBoxOuts: 20,
+    }),
+  ];
+  const hustleMetrics = buildPlayerPercentileMetrics(
+    hustleFocal,
+    [hustleFocal],
+    hustlePeers,
+    hustlePeers,
+    "hustle"
+  );
+  const hustleById = Object.fromEntries(hustleMetrics.map((m) => [m.id, m]));
+  assert.equal(hustleById.hustleDefl?.category, "hustle");
+  assert.equal(hustleById.hustleDefl?.showPercentile, true);
+  assert.ok((hustleById.hustleDefl?.percentile ?? 0) > 50);
+  assert.equal(hustleById.hustleContest?.category, "hustle");
+  assert.equal(hustleById.hustleBoxOut?.category, "hustle");
 
   console.log("test-player-percentile-metrics: ok");
 }

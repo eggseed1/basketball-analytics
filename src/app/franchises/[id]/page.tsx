@@ -16,6 +16,7 @@ import {
 } from "@/data/queries/franchises";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { teamProfileHref } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 
 interface PageProps {
@@ -171,16 +172,23 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
           </div>
           <div className="flex flex-wrap gap-2">
             <TransitionLink
+              href={teamProfileHref(f.abbr)}
+              className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+            >
+              Live team page
+            </TransitionLink>
+            <TransitionLink
               href="/explore/teams"
               className="rounded-md bg-secondary px-4 py-2 text-[13px] font-semibold"
             >
-              This season
+              Season board
             </TransitionLink>
             <TransitionLink
               href="/gm"
-              className="rounded-md bg-foreground px-4 py-2 text-[13px] font-semibold text-background"
+              className="rounded-md border border-border px-4 py-2 text-[13px] font-semibold text-muted-foreground"
+              title="Unfinished Franchise Lab scaffold"
             >
-              Franchise Lab
+              GM lab
             </TransitionLink>
           </div>
         </div>
@@ -314,7 +322,9 @@ export default async function FranchiseDetailPage({ params }: PageProps) {
 
       <p className="pb-8 text-[12px] text-muted-foreground">
         Continuous franchises keep relocated history. Counts are curated
-        snapshots through {asOf} - browse-friendly, not a live NBA feed.
+        snapshots through {asOf} — browse-friendly lore, not live season
+        intelligence. Use the live team page for current roster, standings, and
+        boards.
       </p>
     </main>
   );

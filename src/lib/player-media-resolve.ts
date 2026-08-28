@@ -1,8 +1,9 @@
 /**
  * Client-safe player portrait resolution (no fs).
- * Avoids bundling portrait-lookup.json into the Worker JS graph — server paths
- * use `@/data/media/portrait-lookup-store` (disk) instead. Client falls through
- * to typed CDN URL construction.
+ * Approved URLs are passed from the server (`getPlayerPortraitUrl` /
+ * bundled `portrait-lookup-store`). This module keeps an empty in-memory
+ * registry so the large lookup JSON is not duplicated into every client
+ * chunk; CDN typed fallthrough covers list surfaces without a server URL.
  */
 
 export type MediaRoleContext = "PLAYER" | "COACH" | "STAFF" | "UNKNOWN";

@@ -23,11 +23,14 @@ import {
   getTeamSeasonEvidence,
   getTeamSeasonRanking,
   parseSeasonListParam,
+  resolveExploreBoardSeason,
 } from "@/data/queries";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { hasRuntimeTeamBoard } from "@/data/runtime/team-board-snapshot";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import type { PlayerSeason } from "@/data/types";
 
@@ -49,17 +52,63 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
+function findPeerRow(
+  peers: PlayerSeason[],
+  playerId: string,
+  aliasIds: string[] = []
+): PlayerSeason | undefined {
+  const ids = new Set(
+    [playerId, ...aliasIds]
+      .map((id) => String(id ?? "").trim())
+      .filter(Boolean)
+  );
+  if (!ids.size) return undefined;
+  return peers.find((p) => ids.has(p.playerId));
+}
+
+/**
+ * Prefer peer-board row on CF. Live getPlayerSeason can fan out uncancellable
+ * ESPN roster work and blow the Worker budget.
+ */
 async function loadSeasonRow(
   playerId: string,
   season: string,
   peers: PlayerSeason[]
 ): Promise<PlayerSeason | null> {
-  const fromPeers = peers.find((p) => p.playerId === playerId);
+  const preferBundled = preferBundledProductDataOnEdge();
+  let aliasIds: string[] = [];
+  try {
+    const { resolvePlayerIdentityCached } = await import(
+      "@/data/identity/player-identity-cache"
+    );
+    const identity = await resolvePlayerIdentityCached(playerId).catch(
+      () => null
+    );
+    aliasIds = [identity?.espnId, identity?.nbaId].filter(
+      (id): id is string => Boolean(id && id !== playerId)
+    );
+  } catch {
+    /* identity optional */
+  }
+
+  const fromPeers = findPeerRow(peers, playerId, aliasIds);
+
+  if (fromPeers && fromPeers.gamesPlayed > 0) {
+    if (preferBundled) {
+      return { ...fromPeers, playerId }; // keep route id for links
+    }
+  }
+
+  if (preferBundled) {
+    return fromPeers ? { ...fromPeers, playerId } : null;
+  }
+
   const row = await getPlayerSeason(playerId, season).catch(() => null);
   if (!row && !fromPeers) return null;
-  if (!row) return fromPeers ?? null;
+  if (!row) return fromPeers ? { ...fromPeers, playerId } : null;
   return {
     ...row,
+    playerId,
     playerName: row.playerName || fromPeers?.playerName || playerId,
     usagePct:
       row.usagePct != null && row.usagePct > 0
@@ -68,7 +117,7 @@ async function loadSeasonRow(
     darkoDpm: row.darkoDpm ?? fromPeers?.darkoDpm,
     darkoOff: row.darkoOff ?? fromPeers?.darkoOff,
     darkoDef: row.darkoDef ?? fromPeers?.darkoDef,
-    lebron: row.lebron ?? fromPeers?.lebron,
+    raptor: row.raptor ?? fromPeers?.raptor,
     trueShootingPct:
       row.trueShootingPct != null && row.trueShootingPct > 0
         ? row.trueShootingPct
@@ -91,6 +140,19 @@ async function loadSeasonRow(
     r1WinEquivalentVersion:
       fromPeers?.r1WinEquivalentVersion ?? row.r1WinEquivalentVersion,
   };
+}
+
+function resolveTeamCompareSeason(preferred: string): string {
+  const key = String(preferred ?? "").trim();
+  if (key && hasRuntimeTeamBoard(key)) return key;
+  const prior = shiftCanonicalSeason(key || "2025-26", -1);
+  if (hasRuntimeTeamBoard(prior)) return prior;
+  // Latest baked team board (desc).
+  for (let y = currentNbaStartYear(); y >= 2020; y -= 1) {
+    const season = canonicalSeasonFromStartYear(y);
+    if (hasRuntimeTeamBoard(season)) return season;
+  }
+  return key || canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
 }
 
 function TeamsSubnav({
@@ -181,8 +243,13 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         ? teamComparePath({
             teamA: resolvedId,
             teamB: resolvedId,
-            seasonA: currentSeason,
-            seasonB: shiftCanonicalSeason(currentSeason, -1),
+            seasonA: resolveTeamCompareSeason(currentSeason),
+            seasonB: resolveTeamCompareSeason(
+              shiftCanonicalSeason(
+                resolveTeamCompareSeason(currentSeason),
+                -1
+              )
+            ),
           })
         : "/compare?mode=teams";
 
@@ -267,12 +334,15 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       );
     }
 
-    const seasonA = one(sp, "seasonA") ?? one(sp, "season") ?? currentSeason;
-    const seasonB =
+    const seasonA = resolveTeamCompareSeason(
+      one(sp, "seasonA") ?? one(sp, "season") ?? currentSeason
+    );
+    const seasonB = resolveTeamCompareSeason(
       one(sp, "seasonB") ??
-      (teamA && teamB && teamA === teamB
-        ? shiftCanonicalSeason(seasonA, -1)
-        : (one(sp, "season") ?? currentSeason));
+        (teamA && teamB && teamA === teamB
+          ? shiftCanonicalSeason(seasonA, -1)
+          : (one(sp, "season") ?? seasonA))
+    );
 
     const loaded =
       teamA && teamB
@@ -354,17 +424,26 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
 
   const aId = one(sp, "a");
   const bId = one(sp, "b");
-  const season = one(sp, "season") ?? currentSeason;
+  const preferredSeason = one(sp, "season") ?? currentSeason;
 
-  const peers = await getFilteredPlayerSeasons({
-    season,
-    minimumGames: 15,
-  }).catch(() => [] as PlayerSeason[]);
+  // Empty picker shell: do not resolve/import the BRef peer board (multi‑MB).
+  let season = preferredSeason;
+  let peers: PlayerSeason[] = [];
+  let aRow: PlayerSeason | null = null;
+  let bRow: PlayerSeason | null = null;
+  if (aId && bId) {
+    // CF: current calendar season is often empty in BRef bake — use latest board.
+    season = await resolveExploreBoardSeason(preferredSeason);
+    peers = await getFilteredPlayerSeasons({
+      season,
+      minimumGames: 15,
+    }).catch(() => [] as PlayerSeason[]);
 
-  const [aRow, bRow] = await Promise.all([
-    aId ? loadSeasonRow(aId, season, peers) : Promise.resolve(null),
-    bId ? loadSeasonRow(bId, season, peers) : Promise.resolve(null),
-  ]);
+    [aRow, bRow] = await Promise.all([
+      loadSeasonRow(aId, season, peers),
+      loadSeasonRow(bId, season, peers),
+    ]);
+  }
 
   const result =
     aRow && bRow

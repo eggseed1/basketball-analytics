@@ -41,7 +41,7 @@ function row(
 
 function main() {
   const base = {
-    playerId: "test-lebron",
+    playerId: "test-raptor",
     playerName: "Test Player",
   };
 
@@ -182,10 +182,10 @@ function main() {
         source: "darko",
       },
       impactB: {
-        metricId: "lebron",
-        label: "LEBRON",
+        metricId: "raptor",
+        label: "RAPTOR",
         value: 4.0,
-        source: "lebron",
+        source: "raptor",
       },
       nowSeason: "2025-26",
     });

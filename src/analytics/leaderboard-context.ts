@@ -47,11 +47,11 @@ function dimensionsForSort(sortKey: PlayerSeasonSortKey): Dim[] {
         { id: "shooting", label: "Shooting", metricId: "ts", explainId: "ts" },
         { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];
-    case "lebron":
+    case "raptor":
       return [
-        { id: "overall", label: "Overall", metricId: "lebron", explainId: "lebron" },
-        { id: "offense", label: "Offense", metricId: "olebron", explainId: "lebron" },
-        { id: "defense", label: "Defense", metricId: "dlebron", explainId: "lebron" },
+        { id: "overall", label: "Overall", metricId: "raptor", explainId: "raptor" },
+        { id: "offense", label: "Offense", metricId: "oraptor", explainId: "raptor_o" },
+        { id: "defense", label: "Defense", metricId: "draptor", explainId: "raptor_d" },
         { id: "shooting", label: "Shooting", metricId: "ts", explainId: "ts" },
         { id: "usage", label: "Usage", metricId: "usg", explainId: "usg" },
       ];

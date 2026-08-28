@@ -292,7 +292,7 @@ function buildConferenceBracket(
       2,
       w1,
       w2,
-      mode === "projected" ? "1/8" : "TBD",
+      mode === "projected" ? "4/5" : "TBD",
       series
     ),
     matchupFromTeams(
@@ -300,10 +300,16 @@ function buildConferenceBracket(
       2,
       w3,
       w4,
-      mode === "projected" ? "3/6" : "TBD",
+      mode === "projected" ? "2/7" : "TBD",
       series
     ),
   ];
+
+  // Projected: show path labels on both slots (not "TBD" vs "1/8").
+  if (mode === "projected") {
+    if (!semifinals[0].top.team) semifinals[0].top = slot(null, "1/8");
+    if (!semifinals[1].top.team) semifinals[1].top = slot(null, "3/6");
+  }
 
   const w5 = winnerTeam(semifinals[0]!, seedById);
   const w6 = winnerTeam(semifinals[1]!, seedById);
@@ -313,9 +319,15 @@ function buildConferenceBracket(
     3,
     w5,
     w6,
-    mode === "projected" ? "Semis" : "TBD",
+    "TBD",
     series
   );
+  if (mode === "projected") {
+    if (!conferenceFinals.top.team) conferenceFinals.top = slot(null, "TBD");
+    if (!conferenceFinals.bottom.team) {
+      conferenceFinals.bottom = slot(null, "TBD");
+    }
+  }
 
   return {
     conference,

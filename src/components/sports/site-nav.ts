@@ -80,7 +80,12 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       {
         href: "/standings",
         label: "Standings",
-        match: (p) => p.startsWith("/standings"),
+        match: (p) => p.startsWith("/standings") && !p.includes("view=tracker"),
+      },
+      {
+        href: "/standings?view=tracker",
+        label: "Tracker",
+        match: (p) => p.startsWith("/standings") && p.includes("view=tracker"),
       },
       {
         href: "/explore/teams",
@@ -100,9 +105,7 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     id: "sentiment",
     href: "/sentiment",
     label: "Sentiment",
-    match: (p) =>
-      p.startsWith("/sentiment") ||
-      (p.startsWith("/players/") && p.includes("view=sentiment")),
+    match: (p) => p.startsWith("/sentiment"),
     subnav: [
       {
         href: "/sentiment",

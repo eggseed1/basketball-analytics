@@ -4,7 +4,7 @@
  *   npx tsx scripts/smoke-historical.ts
  */
 import { clearDarkoCache, fetchDarkoRatings } from "../src/data/providers/impact/darko-client";
-import { loadLebronRatings } from "../src/data/providers/impact/lebron-store";
+import { loadRaptorRatings } from "../src/data/providers/impact/raptor-store";
 import { HistoricalNbaService } from "../src/data/providers/historical/historical-nba-service";
 import { listCanonicalSeasons } from "../src/data/providers/historical/season-range";
 
@@ -20,14 +20,14 @@ async function main() {
   const darko = await fetchDarkoRatings({ force: true });
   console.log(`DARKO players: ${darko.length}; top: ${darko[0]?.playerName} ${darko[0]?.impact}`);
 
-  const lebron = await loadLebronRatings("2024-25");
-  console.log(`LEBRON rows (2024-25): ${lebron.length}; top: ${lebron[0]?.playerName} ${lebron[0]?.impact}`);
+  const raptor = await loadRaptorRatings("2024-25");
+  console.log(`RAPTOR rows (2024-25): ${raptor.length}; top: ${raptor[0]?.playerName} ${raptor[0]?.impact}`);
 
   const season = "2024-25";
   const players = await service.getPlayerSeasons(season);
-  const withBoth = players.filter((p) => p.darkoDpm != null && p.lebron != null);
+  const withBoth = players.filter((p) => p.darkoDpm != null && p.raptor != null);
   console.log(
-    `Player seasons ${season}: ${players.length}; with DARKO+LEBRON join: ${withBoth.length}`
+    `Player seasons ${season}: ${players.length}; with DARKO+RAPTOR join: ${withBoth.length}`
   );
 
   if (status.ballDontLieConfigured) {

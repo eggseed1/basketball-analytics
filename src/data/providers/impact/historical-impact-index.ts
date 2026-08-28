@@ -6,13 +6,13 @@
  * - Observation must have finite numeric value.
  * - DARKO live scrape is admitted ONLY for the season stamped on the snapshot
  *   (not applied to other career years).
- * - LEBRON CSV/seed rows are admitted when season-keyed.
+ * - RAPTOR CSV/seed rows are admitted when season-keyed.
  * - Missing seasons stay missing (no interpolation).
  * - Duplicate keys: keep first, count as duplicate in coverage.
  */
 
 import { fetchDarkoRatings } from "@/data/providers/impact/darko-client";
-import { loadLebronRatings } from "@/data/providers/impact/lebron-store";
+import { loadRaptorRatings } from "@/data/providers/impact/raptor-store";
 import {
   impactObservationKey,
   isCanonicalImpactSeason,
@@ -24,7 +24,7 @@ import {
   type PlayerIdAliasIndex,
 } from "@/data/providers/impact/player-id-aliases";
 import { normalizePlayerName } from "@/lib/player-name";
-import type { DarkoRating, LebronRating } from "@/data/types";
+import type { DarkoRating, RaptorRating } from "@/data/types";
 import {
   HISTORICAL_IMPACT_METHODOLOGY_VERSION,
   type HistoricalImpactCoverageReport,
@@ -55,8 +55,8 @@ export type BuildHistoricalImpactIndexOptions = {
   force?: boolean;
   /** Include live DARKO snapshot for its stamped season (default true). */
   includeLiveDarko?: boolean;
-  /** Include LEBRON CSV/seed (default true). */
-  includeLebron?: boolean;
+  /** Include RAPTOR CSV/seed (default true). */
+  includeRaptor?: boolean;
   now?: string;
 };
 
@@ -96,12 +96,12 @@ function pushObservation(
   state.observations.push(obs);
 }
 
-function lebronSourceVersion(fromCsv: boolean): string {
-  return fromCsv ? "csv:data/impact/lebron.csv" : "seed:sample-lebron";
+function raptorSourceVersion(fromCsv: boolean): string {
+  return fromCsv ? "csv:data/impact/raptor.csv" : "seed:sample-raptor";
 }
 
-function fromLebronRating(
-  row: LebronRating,
+function fromRaptorRating(
+  row: RaptorRating,
   aliases: PlayerIdAliasIndex,
   importedAt: string,
   sourceVersion: string
@@ -129,12 +129,12 @@ function fromLebronRating(
     nbaPlayerId,
     playerName: row.playerName,
     season,
-    source: "lebron" as const,
+    source: "raptor" as const,
     methodologyVersion: HISTORICAL_IMPACT_METHODOLOGY_VERSION,
     sourceVersion,
     identityMatch,
     provenance: {
-      dataset: "lebron",
+      dataset: "raptor",
       importedAt,
       notes: fromCsvNote(sourceVersion),
     },
@@ -143,15 +143,15 @@ function fromLebronRating(
   const out: HistoricalPlayerImpact[] = [
     {
       ...base,
-      metric: "lebron",
+      metric: "raptor",
       value: row.impact,
     },
   ];
   if (row.offensive != null && isFiniteImpactValue(row.offensive)) {
-    out.push({ ...base, metric: "olebron", value: row.offensive });
+    out.push({ ...base, metric: "oraptor", value: row.offensive });
   }
   if (row.defensive != null && isFiniteImpactValue(row.defensive)) {
-    out.push({ ...base, metric: "dlebron", value: row.defensive });
+    out.push({ ...base, metric: "draptor", value: row.defensive });
   }
   if (row.winsAdded != null && isFiniteImpactValue(row.winsAdded)) {
     out.push({ ...base, metric: "wins_added", value: row.winsAdded });
@@ -161,7 +161,7 @@ function fromLebronRating(
 
 function fromCsvNote(sourceVersion: string): string | undefined {
   if (sourceVersion.startsWith("seed:")) {
-    return "In-repo seed fallback — not a full historical LEBRON archive.";
+    return "In-repo seed fallback — not a full historical RAPTOR archive.";
   }
   return "Season-keyed CSV row.";
 }
@@ -254,23 +254,23 @@ export async function buildHistoricalImpactIndex(
     return state;
   }
 
-  if (options.includeLebron !== false) {
+  if (options.includeRaptor !== false) {
     try {
-      // Detect csv vs seed by comparing to a forced path — loadLebronRatings
+      // Detect csv vs seed by comparing to a forced path — loadRaptorRatings
       // already prefers CSV. Annotate via file presence check in notes.
-      const rows = await loadLebronRatings();
+      const rows = await loadRaptorRatings();
       const { access } = await import("node:fs/promises");
       const path = await import("node:path");
       let fromCsv = false;
       try {
-        await access(path.join(process.cwd(), "data", "impact", "lebron.csv"));
+        await access(path.join(process.cwd(), "data", "impact", "raptor.csv"));
         fromCsv = true;
       } catch {
         fromCsv = false;
       }
-      const sourceVersion = lebronSourceVersion(fromCsv);
+      const sourceVersion = raptorSourceVersion(fromCsv);
       for (const row of rows) {
-        for (const obs of fromLebronRating(
+        for (const obs of fromRaptorRating(
           row,
           aliases,
           now,
@@ -281,12 +281,12 @@ export async function buildHistoricalImpactIndex(
       }
       state.notes.push(
         fromCsv
-          ? "LEBRON loaded from data/impact/lebron.csv (season-keyed)."
-          : "LEBRON loaded from in-repo seed (season-keyed, illustrative coverage)."
+          ? "RAPTOR loaded from data/impact/raptor.csv (season-keyed)."
+          : "RAPTOR loaded from in-repo seed (season-keyed, illustrative coverage)."
       );
     } catch (err) {
       state.notes.push(
-        `LEBRON load failed: ${err instanceof Error ? err.message : String(err)}`
+        `RAPTOR load failed: ${err instanceof Error ? err.message : String(err)}`
       );
     }
   }
@@ -388,10 +388,10 @@ export function buildCoverageReport(
     { metric: "darko_dpm", source: "darko" },
     { metric: "darko_off", source: "darko" },
     { metric: "darko_def", source: "darko" },
-    { metric: "lebron", source: "lebron" },
-    { metric: "olebron", source: "lebron" },
-    { metric: "dlebron", source: "lebron" },
-    { metric: "wins_added", source: "lebron" },
+    { metric: "raptor", source: "raptor" },
+    { metric: "oraptor", source: "raptor" },
+    { metric: "draptor", source: "raptor" },
+    { metric: "wins_added", source: "raptor" },
   ];
 
   const byMetric = metricSources.map(({ metric, source }) => {

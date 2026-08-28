@@ -5,7 +5,7 @@
 
 import { cache } from "react";
 
-import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import { runtimeTimeoutMs, slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
 import { withBudget } from "@/data/queries/budget";
@@ -47,9 +47,20 @@ import {
 import { getHomeAnalytics as getHomeAnalyticsUncached } from "@/data/queries/home";
 
 export const getPlayerCached = cache(async (playerId: string) => {
+  // Slim edge only (SLIM_EDGE_PRODUCT=1): skip ESPN athlete-profile hang.
+  if (slimEdgeProductEnabled()) return null;
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  // Cloudflare: do not start ESPN / draft-history / commonplayerinfo on the
+  // player shell. withBudget cannot cancel those fetches; they keep the isolate
+  // busy while Suspense islands stream and trip Error 1102. Bio falls back to
+  // identity + career rows (height/draft may be thin until a dedicated bake).
+  if (preferBundledProductDataOnEdge()) return null;
+  const budgetMs = runtimeTimeoutMs(5_000, 800);
   const result = await withBudget(
     getPlayerUncached(playerId).catch(() => null),
-    runtimeTimeoutMs(5_000, 2_800),
+    budgetMs,
     null as Player | null
   );
   return result.value;
@@ -78,9 +89,62 @@ export const getPlayerSeasonCached = cache(
 
 export const getPlayerGameLogCached = cache(
   async (playerId: string, season: string) => {
+    // Prefer deploy-baked logs on Cloudflare (ESPN gamelog is flaky from Workers).
+    try {
+      const { resolvePlayerSeasonGameLog } = await import(
+        "@/data/runtime/player-game-logs-store"
+      );
+      const baked = await resolvePlayerSeasonGameLog({
+        season,
+        playerId,
+      });
+      if (baked.length > 0) {
+        return baked.map(
+          (row): PlayerGame => ({
+            id: `${row.gameId}:${playerId}`,
+            gameId: row.gameId,
+            playerId,
+            teamId: row.teamNbaId,
+            opponentTeamId: row.opponentNbaId,
+            season: row.season,
+            seasonType:
+              row.seasonType === "playoffs" ? "playoffs" : "regular",
+            gameDate: row.date,
+            isHome: row.homeAway === "home",
+            minutes: row.minutesNum,
+            points: row.points,
+            rebounds: row.rebounds,
+            assists: row.assists,
+            steals: row.steals,
+            blocks: row.blocks,
+            turnovers: row.turnovers,
+            fieldGoalsMade: row.fgm,
+            fieldGoalsAttempted: row.fga,
+            threePointersMade: row.threePm,
+            threePointersAttempted: row.threePa,
+            freeThrowsMade: row.ftm,
+            freeThrowsAttempted: row.fta,
+            offensiveRebounds: row.orb ?? 0,
+            defensiveRebounds: row.drb ?? 0,
+            personalFouls: row.pf ?? 0,
+            plusMinus: row.plusMinus ?? 0,
+            startPosition: row.starter ? "Y" : "",
+          })
+        );
+      }
+    } catch {
+      /* live path */
+    }
+
+    const { longUpstreamBudgetsEnabled } = await import(
+      "@/data/providers/nba/runtime-policy"
+    );
+    const budgetMs = longUpstreamBudgetsEnabled()
+      ? 12_000
+      : runtimeTimeoutMs(7_000, 3_500);
     const result = await withBudget(
       getPlayerGameLogUncached(playerId, season).catch(() => []),
-      runtimeTimeoutMs(7_000, 3_500),
+      budgetMs,
       [] as PlayerGame[]
     );
     return result.value;
@@ -114,9 +178,16 @@ async function currentTeamFallbackRow(playerId: string): Promise<PlayerSeason[]>
 }
 
 export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  // Bundled BRef career on CF is sync; keep a thin outer budget for identity only.
+  const budgetMs = preferBundledProductDataOnEdge()
+    ? 1_200
+    : runtimeTimeoutMs(7_000, 3_400);
   const result = await withBudget(
     getPlayerCriticalCareerSeasons(playerId),
-    runtimeTimeoutMs(7_000, 3_400),
+    budgetMs,
     [] as PlayerSeason[]
   );
   if (result.value.length > 0) return result.value;
@@ -125,9 +196,15 @@ export const getPlayerCareerSeasonsCached = cache(async (playerId: string) => {
 
 export const enrichPlayerCareerAdvancedCached = cache(
   async (playerId: string, career: PlayerSeason[]) => {
+    const { preferBundledProductDataOnEdge } = await import(
+      "@/data/providers/nba/runtime-policy"
+    );
+    const budgetMs = preferBundledProductDataOnEdge()
+      ? 4_000
+      : runtimeTimeoutMs(12_000, 2_000);
     const result = await withBudget(
       enrichPlayerCareerAdvancedUncached(playerId, career).catch(() => career),
-      runtimeTimeoutMs(12_000, 4_500),
+      budgetMs,
       career
     );
     return result.value;

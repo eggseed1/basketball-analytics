@@ -23,9 +23,9 @@ import {
   shootingFromGames,
 } from "@/data/history/player-game-log";
 import {
-  loadPlayerSeasonShotIndex,
-  zoneTableFromIndex,
-} from "@/data/history/player-season-shots";
+  resolvePlayerSeasonShotIndex,
+} from "@/data/runtime/player-shots-store";
+import { zoneTableFromIndex } from "@/data/history/player-season-shots";
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
 import { SHOT_ZONE_LABELS, type ShotZoneId } from "@/lib/shots/court-geometry";
 import type { PlayerSeason } from "@/data/types";
@@ -60,6 +60,7 @@ import {
 } from "@/lib/player-page-contract";
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
 import { getPlayerSeasonCached } from "@/data/queries/request-cache";
+import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 
 function pct(n: number | null): string {
   if (n == null) return "—";
@@ -85,6 +86,59 @@ function ageForSeason(
  * Deep player statistics island — loads only the selected view's data.
  */
 export async function PlayerStatDepthIsland({
+  playerId,
+  season,
+  view,
+  page,
+  statMode,
+  gameLogMode = "basic",
+  filter,
+  historySeasons,
+  career,
+  careerFirstSeason,
+  fromHistory,
+  themeMode,
+}: {
+  playerId: string;
+  season: string;
+  view: PlayerPageView;
+  page: number;
+  statMode: PlayerStatMode;
+  gameLogMode?: PlayerGameLogTableMode;
+  filter: string;
+  historySeasons: HistoryPlayerSeason[];
+  career: PlayerSeason[];
+  careerFirstSeason?: string | null;
+  fromHistory?: boolean;
+  themeMode?: "historical" | "modern";
+}) {
+  try {
+    return await PlayerStatDepthIslandInner({
+      playerId,
+      season,
+      view,
+      page,
+      statMode,
+      gameLogMode,
+      filter,
+      historySeasons,
+      career,
+      careerFirstSeason,
+      fromHistory,
+      themeMode,
+    });
+  } catch {
+    return (
+      <EraUnavailable
+        title="Deep stats"
+        season={season}
+        detail="This panel could not finish loading. Career and overview stats remain available."
+      />
+    );
+  }
+}
+
+async function PlayerStatDepthIslandInner({
   playerId,
   season,
   view,
@@ -710,7 +764,10 @@ async function ShootingView({
         }
       : boardShoot;
 
-  const shotIndex = loadPlayerSeasonShotIndex(playerId, season);
+  const shotIndex = await resolvePlayerSeasonShotIndex({
+    playerId,
+    season,
+  });
   const zoneRows = shotIndex ? zoneTableFromIndex(shotIndex) : [];
   const courtShots =
     shotIndex?.shots.map((s) => ({ ...s, season })) ?? [];
@@ -911,8 +968,12 @@ async function AdvancedView({
   career: PlayerSeason[];
   caps: ReturnType<typeof playerPageCapabilities>;
 }) {
+  const constrained = slimEdgeProductEnabled();
   const [seasonRaw, league] = await Promise.all([
-    getPlayerSeasonCached(playerId, season).catch(() => null),
+    constrained
+      ? Promise.resolve(null)
+      : getPlayerSeasonCached(playerId, season).catch(() => null),
+    // Bundled BRef peer board (memoized) — safe on CF once ESPN ids are baked.
     getFilteredPlayerSeasonsCached(season, 15).catch(() => [] as PlayerSeason[]),
   ]);
   const careerSeason = career.find((r) => r.season === season);

@@ -14,9 +14,18 @@ import {
 } from "@/data/providers/nba/compute-advanced";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import {
+  isConstrainedServerRuntime,
   isVercelRuntime,
+  preferBundledProductDataOnEdge,
   runtimeTimeoutMs,
+  slimEdgeProductEnabled,
 } from "@/data/providers/nba/runtime-policy";
+import { getBundledBrefCareerForPlayer } from "@/data/runtime/bref-advanced-snapshot";
+import { resolveBundledCurrentTeamId } from "@/data/runtime/current-roster-snapshot";
+import {
+  displayNameFromBrefRouteId,
+  parseBrefPlayerSlug,
+} from "@/data/providers/nba/bref-career-from-page";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -118,6 +127,134 @@ function historyCareerFallback(
       r1WinEquivalents: null,
     });
   });
+}
+
+/**
+ * Keep preferred season rows; for overlapping seasons, fill missing / zeroed
+ * advanced fields from fallback (BRef bundle). Append seasons only in fallback.
+ */
+function unionCareerBySeason(
+  preferred: PlayerSeason[],
+  fallback: PlayerSeason[]
+): PlayerSeason[] {
+  if (!fallback.length) return preferred;
+  if (!preferred.length) return fallback;
+
+  const fallbackBySeason = new Map<string, PlayerSeason[]>();
+  for (const row of fallback) {
+    const list = fallbackBySeason.get(row.season) ?? [];
+    list.push(row);
+    fallbackBySeason.set(row.season, list);
+  }
+
+  const covered = new Set<string>();
+  const out: PlayerSeason[] = preferred.map((row) => {
+    covered.add(row.season);
+    const donors = fallbackBySeason.get(row.season) ?? [];
+    if (!donors.length) return row;
+    // Prefer same-team donor when possible, else highest-GP donor.
+    const donor =
+      donors.find(
+        (d) =>
+          d.teamAbbreviation &&
+          row.teamAbbreviation &&
+          d.teamAbbreviation === row.teamAbbreviation
+      ) ??
+      donors.slice().sort((a, b) => b.gamesPlayed - a.gamesPlayed)[0];
+    return mergeCareerSeasonFields(row, donor);
+  });
+
+  for (const row of fallback) {
+    if (!covered.has(row.season)) out.push(row);
+  }
+  return out;
+}
+
+/** Prefer primary finite values; treat 0 as missing for unpublished advanced/rates. */
+function mergeCareerSeasonFields(
+  primary: PlayerSeason,
+  secondary: PlayerSeason
+): PlayerSeason {
+  const ZERO_MISSING = new Set([
+    "per",
+    "vorp",
+    "winShares",
+    "winSharesPer48",
+    "ows",
+    "dws",
+    "bpm",
+    "obpm",
+    "dbpm",
+    "offensiveRating",
+    "defensiveRating",
+    "netRating",
+    "usagePct",
+    "trueShootingPct",
+    "effectiveFieldGoalPct",
+    "assistPct",
+    "turnoverPct",
+    "offensiveReboundPct",
+    "defensiveReboundPct",
+    "reboundPct",
+    "stealPct",
+    "blockPct",
+    "threePointAttemptRate",
+    "freeThrowRate",
+    "pie",
+    "darkoDpm",
+    "darkoOff",
+    "darkoDef",
+    "dpm",
+    "oDpm",
+    "dDpm",
+    "raptor",
+    "oRaptor",
+    "dRaptor",
+    "winsAdded",
+    "drbl100",
+    "war1",
+  ]);
+
+  const merged: Record<string, unknown> = { ...secondary, ...primary };
+  const keys = new Set([...Object.keys(secondary), ...Object.keys(primary)]);
+  for (const key of keys) {
+    const a = (primary as unknown as Record<string, unknown>)[key];
+    const b = (secondary as unknown as Record<string, unknown>)[key];
+    if (typeof a === "number" || typeof b === "number") {
+      const aOk = typeof a === "number" && Number.isFinite(a);
+      const bOk = typeof b === "number" && Number.isFinite(b);
+      if (aOk && ZERO_MISSING.has(key) && a === 0 && bOk && b !== 0) {
+        merged[key] = b;
+      } else if (aOk) {
+        merged[key] = a;
+      } else if (bOk) {
+        merged[key] = b;
+      } else {
+        merged[key] = a ?? b;
+      }
+    }
+  }
+  merged.playerId = primary.playerId;
+  merged.playerName = primary.playerName || secondary.playerName;
+  merged.season = primary.season;
+  merged.teamId = primary.teamId || secondary.teamId;
+  merged.teamAbbreviation =
+    primary.teamAbbreviation ?? secondary.teamAbbreviation;
+  merged.position = primary.position ?? secondary.position;
+  return merged as unknown as PlayerSeason;
+}
+
+function bundledCareerRows(
+  routePlayerId: string,
+  identity: { espnId?: string | null; displayName?: string | null } | null
+): PlayerSeason[] {
+  // Name-shaped search ids (`bref:michael jordan`) must look up by name —
+  // the BRef bundle is keyed by ESPN id or normalized player name, not bref:…
+  const brefNameHint = displayNameFromBrefRouteId(routePlayerId);
+  return getBundledBrefCareerForPlayer({
+    playerId: identity?.espnId ?? routePlayerId,
+    playerName: identity?.displayName ?? brefNameHint,
+  }).map((row) => ({ ...row, playerId: routePlayerId }));
 }
 
 /**
@@ -245,7 +382,29 @@ export async function getPlayerCriticalCareerSeasons(
     rowsIn: PlayerSeason[],
     player: Player | null
   ): PlayerSeason[] => {
-    let rows = overlayProfileTeamForPreseason(playerId, rowsIn, player);
+    // Bundled careers skip live ESPN profile — still apply current franchise
+    // from the roster snapshot so offseason trades (e.g. Giannis → MIA) brand.
+    const bundledTeamId = resolveBundledCurrentTeamId(
+      identity?.espnId,
+      playerId,
+      identity?.nbaId
+    );
+    const profile: Player | null =
+      player?.currentTeamId
+        ? player
+        : bundledTeamId
+          ? ({
+              id: playerId,
+              fullName:
+                firstUsablePlayerDisplayName(
+                  identity?.displayName,
+                  player?.fullName,
+                  rowsIn[0]?.playerName
+                ) ?? playerId,
+              currentTeamId: bundledTeamId,
+            } as Player)
+          : player;
+    let rows = overlayProfileTeamForPreseason(playerId, rowsIn, profile);
     const resolvedName = firstUsablePlayerDisplayName(
       identity?.displayName,
       player?.fullName
@@ -266,26 +425,137 @@ export async function getPlayerCriticalCareerSeasons(
     );
   };
 
-  if (isVercelRuntime() && history.length > 0) {
-    const budgetMs = runtimeTimeoutMs(6_000, 2_000);
+  const preferBundled = preferBundledProductDataOnEdge();
+  const raceLiveCareer =
+    isConstrainedServerRuntime() ||
+    preferBundled ||
+    (isVercelRuntime() && history.length > 0);
+
+  const loadBrefSlugCareer = async (): Promise<PlayerSeason[]> => {
+    let slug = parseBrefPlayerSlug(playerId);
+    // Name-shaped search ids: upgrade to a BRef slug via the search snapshot when present.
+    if (!slug) {
+      const nameHint =
+        displayNameFromBrefRouteId(playerId) ||
+        identity?.displayName ||
+        null;
+      if (nameHint) {
+        try {
+          const { getPlayerSearchIndex } = await import(
+            "@/data/runtime/player-search-snapshot"
+          );
+          const want = nameHint
+            .normalize("NFD")
+            .replace(/[\u0300-\u036f]/g, "")
+            .toLowerCase()
+            .replace(/[^a-z0-9 ]/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+          for (const row of getPlayerSearchIndex()) {
+            if (row.nameLower !== want) continue;
+            slug = parseBrefPlayerSlug(row.id);
+            if (slug) break;
+          }
+        } catch {
+          // keep name-only path
+        }
+      }
+    }
+    if (!slug) return [];
     try {
-      const live = await Promise.race([
+      const { loadCareerFromBrefSlug } = await import(
+        "@/data/providers/nba/bref-career-from-page"
+      );
+      return await loadCareerFromBrefSlug(slug, playerId);
+    } catch {
+      return [];
+    }
+  };
+
+  if (raceLiveCareer) {
+    // Slim edge: prefer bundled BRef career immediately — don't burn CPU on ESPN.
+    if (slimEdgeProductEnabled()) {
+      if (history.length > 0) {
+        return finalize(history, null);
+      }
+      const fromBundle = bundledCareerRows(playerId, identity);
+      if (fromBundle.length > 0) {
+        let rows = fromBundle;
+        try {
+          const { attachDrblToPlayerSeasons } = await import(
+            "@/data/queries/players"
+          );
+          rows = await attachDrblToPlayerSeasons(playerId, rows);
+        } catch {
+          // keep BRef-only career
+        }
+        return finalize(rows, null);
+      }
+      const fromBrefPage = await loadBrefSlugCareer();
+      if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
+      // No bundle hit: soft-empty on slim edge (avoid uncancellable ESPN).
+      return finalize([], null);
+    }
+
+    // Paid Cloudflare / constrained: race live ESPN, then union with history +
+    // BRef so career sparklines are never truncated to the live window alone.
+    //
+    // On Workers, disk history is usually empty but the BRef bundle already has
+    // full careers. Racing ESPN anyway (even with a short budget) leaves the
+    // uncancellable fetch burning isolate CPU and made season switches feel
+    // multi-second — skip live when the bundle already covers the career.
+    const fromBundle = bundledCareerRows(playerId, identity);
+    const base = unionCareerBySeason(history, fromBundle);
+    if (preferBundled && base.length > 0) {
+      // Bundle window truncates pre-1997 legends — try full BRef page when
+      // the route is a bref: id (name- or slug-shaped search hit).
+      if (String(playerId).toLowerCase().startsWith("bref:")) {
+        const fromBrefPage = await loadBrefSlugCareer();
+        if (fromBrefPage.length > 0) {
+          return finalize(unionCareerBySeason(base, fromBrefPage), null);
+        }
+      }
+      return finalize(base, null);
+    }
+
+    if (preferBundled && base.length === 0) {
+      const fromBrefPage = await loadBrefSlugCareer();
+      if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
+    }
+
+    const budgetMs = preferBundled
+      ? 2_500
+      : runtimeTimeoutMs(6_000, 2_000);
+    let live: { rows: PlayerSeason[]; player: Player | null } | null = null;
+    try {
+      live = await Promise.race([
         loadLive(),
         new Promise<null>((resolve) =>
           setTimeout(() => resolve(null), budgetMs)
         ),
       ]);
-      if (live && live.rows.length > 0) {
-        return finalize(live.rows, live.player);
-      }
     } catch {
-      // fall through to history
+      live = null;
     }
-    return finalize(history, null);
+
+    const merged = unionCareerBySeason(live?.rows ?? [], base);
+    if (merged.length > 0) {
+      return finalize(merged, live?.player ?? null);
+    }
+
+    const fromBrefPage = await loadBrefSlugCareer();
+    if (fromBrefPage.length > 0) return finalize(fromBrefPage, null);
   }
 
   const live = await loadLive();
-  const rows =
-    live.rows.length > 0 ? live.rows : history.length > 0 ? history : [];
-  return finalize(rows, live.player);
+  const fromBundle = bundledCareerRows(playerId, identity);
+  const merged = unionCareerBySeason(
+    live.rows,
+    unionCareerBySeason(history, fromBundle)
+  );
+  if (merged.length > 0) {
+    return finalize(merged, live.player);
+  }
+  const fromBrefPage = await loadBrefSlugCareer();
+  return finalize(fromBrefPage, live.player);
 }

@@ -327,25 +327,150 @@ export function resolveTeamBrand(
   return TEAM_BRANDS[abbr] ?? TEAM_BRANDS[key.slice(0, 3)];
 }
 
+export type ChartSurface = "light" | "dark";
+
+const CHART_INK_LIGHT = "#1d1d1f";
+const CHART_INK_DARK = "#f5f5f7";
+
+function expandHex(hex: string): string | null {
+  const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex.trim());
+  if (!match) return null;
+  const body = match[1]!;
+  if (body.length === 3) {
+    return body
+      .split("")
+      .map((c) => c + c)
+      .join("");
+  }
+  return body;
+}
+
+function hexRelativeLuminance(hex: string): number {
+  const full = expandHex(hex);
+  if (!full) return 0;
+  const channels = [0, 2, 4].map((start) => {
+    const value = parseInt(full.slice(start, start + 2), 16) / 255;
+    return value <= 0.03928
+      ? value / 12.92
+      : ((value + 0.055) / 1.055) ** 2.4;
+  });
+  return (
+    0.2126 * channels[0]! + 0.7152 * channels[1]! + 0.0722 * channels[2]!
+  );
+}
+
+function mixHex(a: string, b: string, ratio: number): string {
+  const left = expandHex(a);
+  const right = expandHex(b);
+  if (!left || !right) return a;
+  const t = Math.min(1, Math.max(0, ratio));
+  const parts = [0, 2, 4].map((start) =>
+    Math.round(
+      parseInt(left.slice(start, start + 2), 16) * (1 - t) +
+        parseInt(right.slice(start, start + 2), 16) * t
+    )
+  );
+  return `#${parts.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+}
+
+/** Ensure franchise primaries stay readable on chart surfaces. */
+export function ensureChartColorOnSurface(
+  primary: string,
+  secondary: string,
+  surface: ChartSurface
+): string {
+  const primaryLower = primary.trim().toLowerCase();
+  if (surface === "light") {
+    if (primaryLower === "#ffffff" || primaryLower === "#fff") {
+      return CHART_INK_LIGHT;
+    }
+    return primary;
+  }
+
+  const primaryLum = hexRelativeLuminance(primary);
+  const secondaryLum = hexRelativeLuminance(secondary);
+
+  if (primaryLum < 0.12 && secondaryLum >= 0.25) {
+    return secondary;
+  }
+  if (primaryLum >= 0.42) return primary;
+  if (primaryLum >= 0.26) {
+    return mixHex(primary, CHART_INK_DARK, 0.32);
+  }
+  if (secondaryLum >= 0.35) return secondary;
+  return mixHex(primary, CHART_INK_DARK, primaryLum < 0.06 ? 0.62 : 0.48);
+}
+
+/**
+ * Chart/timeline stroke per franchise.
+ * Official primaries collide hard across the league (navy/red/royal blue).
+ * These stay on-brand by preferring the more distinctive primary *or* secondary
+ * so neighboring series stay separable on career charts and standings trackers.
+ */
+const TEAM_CHART_HEX: Record<string, string> = {
+  atl: "#C1D32F", // volt — separates from POR/CHI reds
+  bos: "#007A33",
+  bkn: "#C6C6C6", // silver — black collapses with HOU
+  cha: "#00788C", // teal — purple collides with PHX
+  chi: "#CE1141",
+  cle: "#860038", // wine — unique vs bright reds
+  dal: "#00538C",
+  den: "#0E2240", // nuggets navy — gold collides with GSW chart gold
+  det: "#1D42BA", // pistons blue — red collides with CHI/LAC
+  gsw: "#FFC72C", // warriors gold — blue collides with DET/DAL
+  hou: "#000000", // black — primary red collides with CHI
+  ind: "#002D62", // pacers navy
+  lac: "#C8102E",
+  lal: "#552583",
+  mem: "#5D76A9", // light steel — unique among blues
+  mia: "#98002E", // heat wine — orange collides with NYK/PHX
+  mil: "#00471B",
+  min: "#236192", // secondary blue — navy collides with NOP
+  nop: "#C8A45C", // pelicans gold — navy collides with DEN/MIN
+  nyk: "#F58426", // knicks orange — royal blue collides with OKC
+  okc: "#007AC1",
+  orl: "#C4CED4", // silver — blue nearly identical to OKC
+  phi: "#ED174C", // sixers red — blue collides with NYK
+  phx: "#E56020", // suns orange — purple collides with CHA/LAL
+  por: "#E03A3E",
+  sac: "#63727A", // slate — purple collides with LAL
+  sas: "#8A8D8F", // darker silver — separates from BKN
+  tor: "#B4975A", // raptors gold — red collides with CHI/HOU
+  uta: "#F9A01B", // jazz gold — navy collides with IND
+  was: "#E31837", // wizards red — navy collides with IND
+};
+
 /** Chart/timeline stroke color for a team - safe for server + client. */
-export function teamChartColor(teamId?: string | null): {
+export function teamChartColor(
+  teamId?: string | null,
+  options?: { surface?: ChartSurface }
+): {
   color: string;
   abbr: string;
 } {
+  const surface = options?.surface ?? "light";
   const brand = resolveTeamBrand(teamId);
-  if (!brand) return { color: "#8e8e93", abbr: "-" };
-  const primary = brand.primary.toLowerCase();
-  const color =
-    primary === "#ffffff" || primary === "#fff" ? "#1d1d1f" : brand.primary;
+  if (!brand) {
+    return { color: surface === "dark" ? "#98989d" : "#8e8e93", abbr: "-" };
+  }
+  const chartHex = TEAM_CHART_HEX[brand.id] ?? brand.primary;
+  // Pair with the other brand stop so dark-surface lift can fall back sanely.
+  const fallback =
+    chartHex.toLowerCase() === brand.primary.toLowerCase()
+      ? brand.secondary
+      : brand.primary;
+  const color = ensureChartColorOnSurface(chartHex, fallback, surface);
   return { color, abbr: brand.abbr };
 }
 
 /**
- * Solid accent for bars / chips - always derived from TEAM_BRANDS primary.
- * Never invents a generic green/blue independent of the franchise.
+ * Solid accent for bars / chips — uses the chart-distinct franchise color.
  */
-export function teamBrandBarColor(teamKey?: string | null): string {
-  return teamChartColor(teamKey).color;
+export function teamBrandBarColor(
+  teamKey?: string | null,
+  options?: { surface?: ChartSurface }
+): string {
+  return teamChartColor(teamKey, options).color;
 }
 
 function chartSafeHex(hex: string, fallback: string): string {
@@ -371,11 +496,15 @@ export function teamBrandBarGradient(teamKey?: string | null): string {
  */
 export function teamBrandTint(
   teamKey?: string | null,
-  opacity = 0.18
+  opacity = 0.18,
+  options?: { surface?: ChartSurface }
 ): string {
-  const color = teamBrandBarColor(teamKey);
+  const surface = options?.surface ?? "light";
+  const effectiveOpacity =
+    surface === "dark" ? Math.min(1, opacity * 1.45) : opacity;
+  const color = teamBrandBarColor(teamKey, { surface });
   if (!/^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test(color)) {
-    return `rgba(142,142,147,${opacity})`;
+    return `rgba(142,142,147,${effectiveOpacity})`;
   }
   const hex = color.slice(1);
   const full =
@@ -388,7 +517,7 @@ export function teamBrandTint(
   const r = parseInt(full.slice(0, 2), 16);
   const g = parseInt(full.slice(2, 4), 16);
   const b = parseInt(full.slice(4, 6), 16);
-  return `rgba(${r},${g},${b},${opacity})`;
+  return `rgba(${r},${g},${b},${effectiveOpacity})`;
 }
 
 export function teamLogoUrl(

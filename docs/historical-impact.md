@@ -27,21 +27,22 @@ This is **not**:
 | `darko_dpm` | darko | Overall DARKO DPM |
 | `darko_off` | darko | Offensive DPM |
 | `darko_def` | darko | Defensive DPM |
-| `lebron` | lebron | Overall LEBRON |
-| `olebron` | lebron | Offensive LEBRON |
-| `dlebron` | lebron | Defensive LEBRON |
-| `wins_added` | lebron | Wins added |
+| `raptor` | raptor | Overall RAPTOR |
+| `oraptor` | raptor | Offensive RAPTOR |
+| `draptor` | raptor | Defensive RAPTOR |
+| `wins_added` | raptor | RAPTOR WAR |
 
-Metrics are stored **separately**. The index never averages DARKO + LEBRON.
+Metrics are stored **separately**. The index never averages DARKO + RAPTOR.
 
 ## Sources in this repository
 
-### LEBRON — season-keyed CSV / seed
+### RAPTOR — FiveThirtyEight open data
 
-- Path: `data/impact/lebron.csv` (preferred) or in-repo seed
-- Season-true: **yes** for each CSV row
-- Coverage today: essentially **2024-25** and a **handful of players**
-- Identity: NBA `player_id` when present; ESPN id only via optional aliases
+- Bake: `npm run impact:sync` → `src/data/runtime/impact-overlay-snapshot.json`
+- Source: [fivethirtyeight/data/nba-raptor](https://github.com/fivethirtyeight/data/tree/master/nba-raptor) (CC BY 4.0)
+- Season-true: **yes** for each published RAPTOR season (~1976–2021-22 modern/historical files)
+- Optional override CSV: `data/impact/raptor.csv`
+- Recent seasons after 538 stopped: RAPTOR blank — use BRef BPM / VORP / DARKO
 
 ### DARKO — live snapshot
 
@@ -52,8 +53,8 @@ Metrics are stored **separately**. The index never averages DARKO + LEBRON.
 
 ### Not present
 
-- Multi-season historical DARKO archive
-- Multi-season historical LEBRON archive
+- Basketball Index LEBRON (proprietary; not published here)
+- Multi-season historical DARKO archive beyond what darko.app exposes
 - DRBL / RAPM / EPM / PIPM datasets
 - Automatic ESPN ↔ NBA id graph (optional alias file only)
 
@@ -102,7 +103,7 @@ If a player lacks an observation for a season:
 Each observation includes:
 
 - `source`
-- `sourceVersion` (e.g. `csv:data/impact/lebron.csv`, `live-snapshot:2025-26`)
+- `sourceVersion` (e.g. `csv:data/impact/raptor.csv`, `live-snapshot:2025-26`)
 - `methodologyVersion` (`1.0`)
 - `provenance.dataset` / `importedAt` / optional `notes`
 
@@ -133,7 +134,7 @@ npm run report:historical-impact
 | Surface | Safe? |
 | --- | --- |
 | “Impact available for season X?” diagnostic | Yes |
-| LEBRON value for CSV players in 2024-25 (when identity resolves) | Cautiously |
+| RAPTOR value for CSV players in 2024-25 (when identity resolves) | Cautiously |
 | Multi-year Peak Impact / Prime Impact | **No** — coverage insufficient |
 | Replacing CPI Career Resume | **No** |
 

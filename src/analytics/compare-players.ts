@@ -43,6 +43,7 @@ const DIMENSIONS: DimSpec[] = [
     group: "realized_value",
   },
   { id: "darko", label: "DARKO DPM", metricId: "darko", group: "external" },
+  { id: "raptor", label: "RAPTOR", metricId: "raptor", group: "external" },
   { id: "offense", label: "Offense", metricId: "ortg", group: "box" },
   { id: "defense", label: "Defense", metricId: "drtg", invert: true, group: "box" },
   { id: "shooting", label: "Shooting", metricId: "ts", group: "box" },
@@ -85,7 +86,7 @@ function resolvePicker(spec: DimSpec): {
 function fallbackOverall(row: PlayerSeason): number | null {
   if (hasValidDrblEstimate(row)) return row.drbl100;
   if (row.darkoDpm != null) return row.darkoDpm;
-  if (row.lebron != null) return row.lebron;
+  if (row.raptor != null) return row.raptor;
   if (row.netRating != null && Number.isFinite(row.netRating)) return row.netRating;
   if (row.trueShootingPct != null && row.trueShootingPct > 0) {
     return row.trueShootingPct;
@@ -164,9 +165,11 @@ export function buildPlayerComparison(options: {
     const bRaw = picker.pick(b);
     if (aRaw == null && bRaw == null) continue;
 
-    // Same-metric both-sides for rate/value groups - show Unavailable not 0.
+    // Same-metric both-sides for rate/value/external impact - show Unavailable not 0.
     if (
-      (spec.group === "rate_ability" || spec.group === "realized_value") &&
+      (spec.group === "rate_ability" ||
+        spec.group === "realized_value" ||
+        spec.group === "external") &&
       (aRaw == null || bRaw == null)
     ) {
       dimensions.push({
@@ -179,7 +182,9 @@ export function buildPlayerComparison(options: {
         group: spec.group,
         note:
           note ??
-          "Metric unavailable for at least one side this season (not shown as 0).",
+          (spec.id === "raptor"
+            ? "RAPTOR is season-keyed through 2021-22 only — missing seasons stay unavailable."
+            : "Metric unavailable for at least one side this season (not shown as 0)."),
       });
       continue;
     }

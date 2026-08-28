@@ -80,16 +80,32 @@ Fan and media lanes are **never blended** into one unexplained number.
 ## Build pipeline
 
 ```bash
+# Rebuild curated snapshot from seeds + observations (writes data/ AND runtime bundle)
 npm run sentiment:build
+
+# Deploy-time copy only (if data/snapshot already fresh)
+npm run sentiment:sync
 ```
 
 Inputs:
 
 - `data/sentiment/seeds/v1/` — manifest, pilot roster, hand-crafted profiles, league mood
-- `data/sentiment/observations/v1/*.json` — raw observation batches
+- `data/sentiment/observations/v1/*.json` — raw observation batches (see `_template.example.json`)
 - `data/movement-center/v1/snapshot.json` — trade-resolution hygiene
 
-Output: `data/sentiment/v1/snapshot.json`
+Outputs:
+
+- `data/sentiment/v1/snapshot.json` — provenance / local source of truth
+- `src/data/runtime/sentiment-snapshot.json` — Cloudflare Worker import (no `node:fs`)
+
+### Iteration loop
+
+1. Add or edit an observation batch under `observations/v1/`
+2. `npm run sentiment:build`
+3. Check `/internal/sentiment` for coverage / provenance counts
+4. Spot-check `/sentiment`, home movers, player `?view=sentiment`, team `?tab=organization`
+
+Deploy scripts run `build-runtime-sentiment-snapshot.mjs` so the Worker always ships the latest `data/` snapshot.
 
 ---
 

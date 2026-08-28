@@ -47,12 +47,20 @@ export function HomeStandingsBoard({
             ))}
           </div>
         </div>
-        <TextLink
-          href="/standings"
-          className="type-body-sm shrink-0 pt-0.5 text-muted-foreground"
-        >
-          See all teams →
-        </TextLink>
+        <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
+          <TextLink
+            href="/standings"
+            className="type-body-sm text-muted-foreground"
+          >
+            Standings →
+          </TextLink>
+          <TextLink
+            href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+            className="type-body-sm text-muted-foreground"
+          >
+            Tracker →
+          </TextLink>
+        </div>
       </div>
       <StandingsConferenceTable
         title={conference === "west" ? "West" : "East"}

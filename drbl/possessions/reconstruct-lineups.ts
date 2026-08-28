@@ -92,6 +92,15 @@ export function lineupAtAction(
   states: DrblLineupState[],
   actionNumber: number
 ): DrblLineupState {
+  if (!states.length) {
+    return {
+      afterActionNumber: 0,
+      period: 1,
+      clockSeconds: 720,
+      homePlayerIds: [],
+      awayPlayerIds: [],
+    };
+  }
   let current = states[0]!;
   for (const state of states) {
     if (state.afterActionNumber <= actionNumber) current = state;

@@ -1,0 +1,67 @@
+{
+  "batchId": "obs-ant-overrated-2026-08-25",
+  "collectedAt": "2026-08-25T21:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-ant-fan-001",
+      "entityType": "player",
+      "entityId": "1630162",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.46,
+      "mentionVolume": 390,
+      "language": "en",
+      "topicTags": ["star_tier", "highlight_reel", "overrated"],
+      "sampledAt": "2026-08-25T19:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-ant-fan-002",
+      "entityType": "player",
+      "entityId": "1630162",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.14,
+      "mentionVolume": 180,
+      "language": "en",
+      "topicTags": ["overrated", "playoffs"],
+      "sampledAt": "2026-08-25T20:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-ant-media-001",
+      "entityType": "player",
+      "entityId": "1630162",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "positive",
+      "score": 0.32,
+      "mentionVolume": 95,
+      "language": "en",
+      "topicTags": ["star_tier", "mvp_case"],
+      "sampledAt": "2026-08-25T18:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    },
+    {
+      "id": "obs-ant-media-002",
+      "entityType": "player",
+      "entityId": "1630162",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "mixed",
+      "score": 0.06,
+      "mentionVolume": 72,
+      "language": "en",
+      "topicTags": ["overrated", "efficiency"],
+      "sampledAt": "2026-08-25T20:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    }
+  ]
+}

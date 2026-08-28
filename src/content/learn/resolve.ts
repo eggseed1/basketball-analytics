@@ -57,13 +57,18 @@ export function relatedLearnLinks(ids: string[]): Array<{
   for (const id of ids) {
     const concept = getLearnConcept(id);
     if (!concept?.learnSlug) continue;
-    const href =
-      concept.id === "r1_win_eq" || concept.learnSlug === "war1"
-        ? "/learn/drbl/war1"
-        : `/learn/${concept.learnSlug}`;
+    const href = learnHrefFor(concept.id, concept.learnSlug);
     if (seen.has(href)) continue;
     seen.add(href);
     out.push({ label: concept.shortName, href });
   }
   return out;
+}
+
+/** Canonical in-app Learn URL for a concept slug (handles nested WAR1 route). */
+export function learnHrefFor(conceptId: string, learnSlug: string): string {
+  if (conceptId === "r1_win_eq" || learnSlug === "war1") {
+    return "/learn/drbl/war1";
+  }
+  return `/learn/${learnSlug}`;
 }

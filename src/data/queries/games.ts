@@ -23,7 +23,6 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/providers/nba/scoreboard-client";
-import { attachStartersToGames } from "@/data/providers/nba/starters-client";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -49,6 +48,7 @@ import {
   type EspnSummaryResponse,
 } from "@/data/transformers/espn";
 import { CACHE_TTL_MS } from "@/data/providers/nba/cache-policy";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 
 /** ESPN event ids are typically 9 digits starting with 40… */
 export function looksLikeEspnEventId(gameId: string): boolean {
@@ -62,14 +62,17 @@ export { looksLikeNbaStatsGameId };
  * Distinguishes hard 404 (invalid event) from network/5xx (rethrows).
  */
 async function fetchEspnEventBoxScore(
-  gameId: string
+  gameId: string,
+  fetchOptions?: { timeoutMs?: number; retries?: number }
 ): Promise<GameBoxScore | null> {
   const url = `https://site.api.espn.com/apis/site/v2/sports/basketball/nba/summary?event=${encodeURIComponent(gameId)}`;
   let summary: EspnSummaryResponse;
   try {
     summary = await espnFetchJson<EspnSummaryResponse>(url, {
       ttlMs: CACHE_TTL_MS.boxScore ?? 1000 * 60 * 5,
-      retries: 2,
+      retries: fetchOptions?.retries ?? 1,
+      // Cloudflare Workers: keep under getGameShellCached's ~9s budget.
+      timeoutMs: fetchOptions?.timeoutMs ?? 2_500,
     });
   } catch (error) {
     const msg = error instanceof Error ? error.message : String(error);
@@ -143,8 +146,17 @@ export type GameLookupFailureClass =
 export async function getGameBoxScore(
   gameId: string
 ): Promise<GameBoxScore | null> {
-  // ESPN event ids → ESPN summary (never NBA Stats GameID / BDL).
+  // ESPN event ids → prefer cdn.espn.com (site.api is often 403 from CF Workers).
   if (looksLikeEspnEventId(gameId)) {
+    try {
+      const { fetchEspnCdnGameBoxScore } = await import(
+        "@/data/providers/nba/espn-cdn-game-client"
+      );
+      const fromCdn = await fetchEspnCdnGameBoxScore(gameId);
+      if (fromCdn?.game) return fromCdn;
+    } catch {
+      // fall through to site.api
+    }
     try {
       return await fetchEspnEventBoxScore(gameId);
     } catch {
@@ -271,14 +283,8 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
   const id = String(gameId ?? "").trim();
   if (!id) return null;
 
-  // Build-time schedule snapshot (critical on Cloudflare Workers where live
-  // ESPN + node:fs-backed archives are unreliable / unavailable).
   const { getRuntimeSnapshotGame } = await import("@/data/runtime/game-snapshot");
   const fromSnapshot = getRuntimeSnapshotGame(id);
-  if (fromSnapshot) {
-    const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
-    if (shell) return shell;
-  }
 
   // Local raw archive first for NBA GameIDs — complete teams/scores without inventing shells.
   if (looksLikeNbaStatsGameId(id)) {
@@ -289,26 +295,53 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
     }
   }
 
-  // ESPN event ids: ESPN summary is the matching lookup contract for Scores/Home.
+  // ESPN event ids: prefer cdn.espn.com box (site.api is 403 from CF Workers),
+  // then schedule snapshot so scores still render when box is unavailable.
   if (looksLikeEspnEventId(id)) {
     try {
-      const box = await fetchEspnEventBoxScore(id);
+      const { fetchEspnCdnGameBoxScore } = await import(
+        "@/data/providers/nba/espn-cdn-game-client"
+      );
+      const box = await fetchEspnCdnGameBoxScore(id);
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      if (shell?.hasBoxScore) return shell;
+      if (shell && !fromSnapshot) return shell;
+    } catch {
+      // soft-fail
+    }
+
+    try {
+      const box = await fetchEspnEventBoxScore(id, {
+        timeoutMs: 2_000,
+        retries: 1,
+      });
+      const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
+      if (shell?.hasBoxScore) return shell;
+      if (shell && !fromSnapshot) return shell;
+    } catch {
+      // soft-fail to snapshot / provider
+    }
+
+    if (fromSnapshot) {
+      const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
+      if (shell) return shell;
+    }
+
+    try {
+      const fromProvider = await getDataProvider().getGame(id);
+      const shell = fromProvider
+        ? acceptShell(shellFromGame(fromProvider, "provider"))
+        : null;
       if (shell) return shell;
     } catch {
-      // NETWORK_FAILURE: do not pretend the game is invalid — try scoreboard row.
-      try {
-        const fromProvider = await getDataProvider().getGame(id);
-        const shell = fromProvider
-          ? acceptShell(shellFromGame(fromProvider, "provider"))
-          : null;
-        if (shell) return shell;
-      } catch {
-        // still network
-      }
-      return null;
+      // network
     }
     return null;
+  }
+
+  if (fromSnapshot) {
+    const shell = acceptShell(shellFromGame(fromSnapshot, "runtime-snapshot"));
+    if (shell) return shell;
   }
 
   // NBA Stats GameID: never query BDL with this id space.
@@ -411,6 +444,22 @@ export async function getFilteredGames(
     }
   }
 
+  // Date-scoped Time Machine: try bundled ESPN schedule before remote crawls.
+  if (season && hasDateWindow) {
+    try {
+      const { getRuntimeSnapshotGames } = await import(
+        "@/data/runtime/game-snapshot"
+      );
+      const snap = getRuntimeSnapshotGames(season);
+      if (snap.length > 0) {
+        const filtered = applyGameFilters(snap, filters);
+        if (filtered.length > 0) return filtered;
+      }
+    } catch {
+      /* fall through to remote */
+    }
+  }
+
   // Map canonical ESPN ids → BDL schedule ids before any remote team crawl.
   let bdlTeamId: string | undefined;
   if (filters.team && /^\d+$/.test(String(filters.team))) {
@@ -471,6 +520,34 @@ export async function getSeasonGamesArchive(
     return { games: cached.games, source: "disk_cache" };
   }
 
+  // Workers production: bundled schedule is authoritative — skip live crawls.
+  if (preferBundledProductDataOnEdge()) {
+    try {
+      const { getRuntimeSnapshotGames } = await import(
+        "@/data/runtime/game-snapshot"
+      );
+      const snap = getRuntimeSnapshotGames(season);
+      if (snap.length > 0) {
+        return { games: snap, source: "espn" };
+      }
+    } catch {
+      /* fall through */
+    }
+  }
+
+  // Bundled ESPN schedule (Cloudflare-safe) before live month crawls.
+  try {
+    const { getRuntimeSnapshotGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const snap = getRuntimeSnapshotGames(season);
+    if (snap.length > 0 && isAdequateSeasonGamesCache(season, snap.length)) {
+      return { games: snap, source: "espn" };
+    }
+  } catch {
+    /* fall through */
+  }
+
   const start = (() => {
     try {
       return startYearFromCanonicalSeason(season);
@@ -489,6 +566,18 @@ export async function getSeasonGamesArchive(
       }
     } catch {
       // fall through
+    }
+    // Partial snapshot still better than empty for team/history surfaces.
+    try {
+      const { getRuntimeSnapshotGames } = await import(
+        "@/data/runtime/game-snapshot"
+      );
+      const snap = getRuntimeSnapshotGames(season);
+      if (snap.length > 0) {
+        return { games: snap, source: "espn" };
+      }
+    } catch {
+      /* fall through */
     }
     return {
       games: [],
@@ -647,32 +736,19 @@ export async function getHomeWeekStripSummaries(
   const { getHomeWeekStripFeed } = await import("./scoreboard-feed");
   const feed = await getHomeWeekStripFeed(options);
   const strip = feed.data;
-  try {
-    const withStarters = await attachStartersToGames(strip.games);
-    return {
-      mode: strip.mode,
-      games: withStarters.map((g) => ({
-        ...toGameSummary(g),
-        awayStarters: g.awayStarters,
-        homeStarters: g.homeStarters,
-      })),
-      source: feed.source,
-      warnings: feed.warnings,
-      isStale: feed.isStale,
-    };
-  } catch {
-    return {
-      mode: strip.mode,
-      games: strip.games.map((g) => ({
-        ...toGameSummary(g),
-        awayStarters: [],
-        homeStarters: [],
-      })),
-      source: feed.source,
-      warnings: feed.warnings,
-      isStale: feed.isStale,
-    };
-  }
+  // Skip ESPN depth-chart starter fan-out on the homepage — site.api is 403
+  // from Cloudflare and was timing out the whole home route.
+  return {
+    mode: strip.mode,
+    games: strip.games.map((g) => ({
+      ...toGameSummary(g),
+      awayStarters: [],
+      homeStarters: [],
+    })),
+    source: feed.source,
+    warnings: feed.warnings,
+    isStale: feed.isStale,
+  };
 }
 
 /** Default calendar month for a season (current month if in-season, else next opener). */

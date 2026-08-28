@@ -49,7 +49,7 @@ export function TeamGamesSection({
               <li key={`${n.kind}-${n.game.id}`}>
                 <TransitionLink
                   href={gameLabHref(n.game.id, season)}
-                  className="flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 hover:bg-white/70"
+                  className="flex flex-col rounded-xl border border-border frost-surface px-3 py-2.5 frost-surface-hover"
                 >
                   <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
                     {n.label}

@@ -4,14 +4,18 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import {
-  hasHistoryTeamGameIndex,
-} from "@/data/history/team-matchup-index";
+import { hasHistoryTeamGameIndex } from "@/data/history/team-matchup-index";
 import { toGameSummary } from "@/data/queries/filter-utils";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { getTeamSeasonGamesCached } from "@/data/queries/request-cache";
 import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
+import {
+  gameSummariesToCompactRows,
+  hasTeamSnapshotGames,
+  paginateSnapshotTeamGames,
+  teamSnapshotGames,
+} from "@/lib/team-snapshot-games";
 import { withBudget } from "@/data/queries/budget";
 
 function snapshotPoolsForSeason(season: string): {
@@ -40,6 +44,51 @@ function snapshotPoolsForSeason(season: string): {
   };
 }
 
+function SnapshotTeamGamesBody({
+  team,
+  brand,
+  season,
+  gamesPage,
+  fromHistory,
+  theme,
+}: {
+  team: TeamSeasonStats;
+  brand?: TeamBrand | null;
+  season: string;
+  gamesPage?: number;
+  fromHistory?: boolean;
+  theme?: string;
+}) {
+  const allTeamGames = teamSnapshotGames(team.teamId, season);
+  const { recentPool, upcomingPool } = snapshotPoolsForSeason(season);
+  const compact = gameSummariesToCompactRows(team.teamId, allTeamGames);
+  const page = paginateSnapshotTeamGames(compact, gamesPage ?? 1);
+
+  return (
+    <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
+      <TeamGamesSection
+        recentPool={recentPool}
+        upcomingPool={upcomingPool}
+        team={team}
+        brand={brand}
+        seasonAvgPpg={Number.isFinite(team.ppg) ? team.ppg : null}
+      />
+      {compact.length > 0 ? (
+        <TeamGamesLog
+          teamId={team.teamId}
+          season={season}
+          rows={page.rows}
+          total={page.total}
+          page={page.page}
+          pageCount={page.pageCount}
+          fromHistory={fromHistory}
+          theme={theme}
+        />
+      ) : null}
+    </div>
+  );
+}
+
 export async function TeamGamesIsland({
   team,
   brand,
@@ -57,6 +106,32 @@ export async function TeamGamesIsland({
 }) {
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const useProductIndex = hasHistoryTeamGameIndex(season);
+
+  if (hasTeamSnapshotGames(team.teamId, season)) {
+    return (
+      <section
+        id="games"
+        className="scroll-mt-16 flex flex-col gap-3"
+        aria-label="Games"
+      >
+        <div>
+          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Schedule snapshot · recent / upcoming · season game log · opens Game
+            Lab
+          </p>
+        </div>
+        <SnapshotTeamGamesBody
+          team={team}
+          brand={brand}
+          season={season}
+          gamesPage={gamesPage}
+          fromHistory={fromHistory}
+          theme={theme}
+        />
+      </section>
+    );
+  }
 
   if (useProductIndex) {
     const {
@@ -127,8 +202,6 @@ export async function TeamGamesIsland({
     );
   }
 
-  // Prefer snapshot for the live/current season so Cloudflare Workers never
-  // block the Games tab on slow ESPN season crawls (CPU time / soft-fail).
   if (season >= currentSeason) {
     const snapshot = snapshotPoolsForSeason(season);
     return (
@@ -161,7 +234,7 @@ export async function TeamGamesIsland({
   const teamGames = (
     await withBudget(
       getTeamSeasonGamesCached(team.teamId, season, team.abbreviation),
-      2_500,
+      6_000,
       {
         games: [] as GameSummary[],
         source: "unavailable" as const,

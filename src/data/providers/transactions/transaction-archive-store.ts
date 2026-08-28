@@ -203,20 +203,34 @@ export async function loadTransactionArchive(
     } catch {
       validationIssueCounts = {};
     }
-    return {
-      manifest,
-      transactions: mergedTransactions,
-      ownershipEdges,
-      validationIssueCounts,
-    };
+    if (mergedTransactions.length > 0) {
+      return {
+        manifest,
+        transactions: mergedTransactions,
+        ownershipEdges,
+        validationIssueCounts,
+      };
+    }
   } catch {
-    return {
-      manifest: null,
-      transactions: [],
-      ownershipEdges: [],
-      validationIssueCounts: {},
-    };
+    // fall through to bundled snapshot (Cloudflare Workers have no disk archive)
   }
+
+  try {
+    const { getBundledTransactionArchive } = await import(
+      "@/data/runtime/transactions-snapshot"
+    );
+    const bundled = getBundledTransactionArchive();
+    if (bundled?.transactions?.length) return bundled;
+  } catch {
+    // no bundled snapshot
+  }
+
+  return {
+    manifest: null,
+    transactions: [],
+    ownershipEdges: [],
+    validationIssueCounts: {},
+  };
 }
 
 export async function listRawEspnYearFiles(

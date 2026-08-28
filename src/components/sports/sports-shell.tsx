@@ -202,8 +202,9 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     ? "glass-pill glass-pill-active text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
+                title="Franchise Lab — unfinished simulation scaffold"
               >
-                GM mode
+                GM lab
               </TransitionLink>
             </div>
 
@@ -266,7 +267,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                 )}
               >
-                GM mode
+                GM lab
+                <span className="mt-0.5 block text-[13px] font-normal text-muted-foreground">
+                  Unfinished Franchise Lab scaffold
+                </span>
               </TransitionLink>
             </nav>
 

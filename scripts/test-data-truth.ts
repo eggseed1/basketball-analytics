@@ -218,7 +218,7 @@ async function main() {
     assert.equal(noTeam.usagePct, undefined);
   }
 
-  // 7–8. DARKO / LEBRON season-truth — reuse existing index contracts via source + fixture API
+  // 7–8. DARKO / RAPTOR season-truth — reuse existing index contracts via source + fixture API
   {
     const impactIndexSrc = readFileSync(
       join(
@@ -264,9 +264,9 @@ async function main() {
           nbaPlayerId: "2002",
           playerName: "Beta Player",
           season: "2022-23",
-          metric: "lebron",
+          metric: "raptor",
           value: 2.1,
-          source: "lebron",
+          source: "raptor",
           methodologyVersion: HISTORICAL_IMPACT_METHODOLOGY_VERSION,
           sourceVersion: "test",
           identityMatch: "nba_id",
@@ -302,7 +302,7 @@ async function main() {
       queryHistoricalImpact(index, {
         playerId: "espn-2",
         season: "2024-25",
-        metric: "lebron",
+        metric: "raptor",
       }).length,
       0
     );

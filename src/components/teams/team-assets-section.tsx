@@ -164,7 +164,10 @@ export function TeamAssetsSection({
       ) : null}
 
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Genealogy UI ready: {ledger.genealogyUiReady ? "yes" : "no"} ·{" "}
+        {ledger.genealogyUiReady
+          ? "Pick and exception genealogy is available for covered assets."
+          : "Pick and exception genealogy is incomplete for this franchise — treat asset history as partial."}{" "}
+        ·{" "}
         <AppLink
           href="/offseason"
           className="font-semibold underline-offset-2 hover:underline"

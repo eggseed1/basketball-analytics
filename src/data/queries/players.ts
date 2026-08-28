@@ -12,7 +12,7 @@ import { applyPlayerSeasonFilters } from "./filter-utils";
 import {
   getDarkoRatings,
   getHistoricalPlayerSeasons,
-  getLebronRatings,
+  getRaptorRatings,
 } from "./historical";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
@@ -36,6 +36,7 @@ import {
   priorSeasonForStats,
   seasonHasPlayedGames,
 } from "@/lib/player-board-season";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import {
   fetchBrefAdvancedSeason,
   brefLookupKey,
@@ -51,13 +52,14 @@ import { fetchDarkoSeason, isDarkoSeasonAvailable } from "@/data/providers/nba/d
 import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
 import { fetchHustleSeason } from "@/data/providers/nba/hustle-stats-loader";
 import { isHustleStatsSeason } from "@/data/providers/nba/season";
+import { hasHustleStats } from "@/data/transformers/hustle-stats";
 import { getPlayerYearOverYearAdvanced } from "@/data/providers/nba/player-year-over-year";
 import { ESPN_PLAYER_BOARD_RELIABLE_START_YEAR } from "@/data/diagnostics/provider-meta";
 import { withBudgetOrThrow } from "@/data/queries/budget";
 import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 
 /** Max seasons to scrape BRef/DARKO on career enrich (newest first). */
-const CAREER_SCRAPE_SEASON_CAP = 16;
+const CAREER_SCRAPE_SEASON_CAP = 30;
 
 /**
  * ESPN athlete season boards are expected from this start year onward
@@ -123,14 +125,24 @@ function espnPlayerSeasonProvider(): NBADataProvider {
 function overlayDarko(
   seasons: PlayerSeason[],
   boardSeason: string,
-  darko: Awaited<ReturnType<typeof getDarkoRatings>>
+  darko: Awaited<ReturnType<typeof getDarkoRatings>>,
+  aliasByEspn: Map<string, { nbaPlayerId: string }>
 ): PlayerSeason[] {
   if (!darko.length) return seasons;
   const darkoByName = new Map(
     darko.map((row) => [normalizePlayerName(row.playerName), row])
   );
+  const darkoByNbaId = new Map(
+    darko
+      .filter((row) => row.nbaPlayerId && /^\d+$/.test(row.nbaPlayerId))
+      .map((row) => [row.nbaPlayerId!, row])
+  );
   return seasons.map((row) => {
-    const d = darkoByName.get(normalizePlayerName(row.playerName));
+    const aliasNba = aliasByEspn.get(row.playerId)?.nbaPlayerId;
+    const d =
+      darkoByName.get(normalizePlayerName(row.playerName)) ??
+      darkoByNbaId.get(row.playerId) ??
+      (aliasNba ? darkoByNbaId.get(aliasNba) : undefined);
     if (!d || d.season !== boardSeason) return row;
     return {
       ...row,
@@ -141,47 +153,157 @@ function overlayDarko(
   });
 }
 
-function overlayLebron(
+function overlayRaptor(
   seasons: PlayerSeason[],
   boardSeason: string,
-  lebron: Awaited<ReturnType<typeof getLebronRatings>>
+  raptor: Awaited<ReturnType<typeof getRaptorRatings>>,
+  aliasByEspn: Map<string, { nbaPlayerId: string }>
 ): PlayerSeason[] {
-  if (!lebron.length) return seasons;
+  if (!raptor.length) return seasons;
   const byKey = new Map(
-    lebron.map((row) => [
+    raptor.map((row) => [
       `${normalizePlayerName(row.playerName)}:${row.season}`,
       row,
     ])
   );
+  const byNbaId = new Map(
+    raptor
+      .filter((row) => row.nbaPlayerId && /^\d+$/.test(row.nbaPlayerId))
+      .map((row) => [row.nbaPlayerId!, row])
+  );
   return seasons.map((row) => {
-    const l = byKey.get(
-      `${normalizePlayerName(row.playerName)}:${boardSeason}`
-    );
+    const aliasNba = aliasByEspn.get(row.playerId)?.nbaPlayerId;
+    const l =
+      byKey.get(`${normalizePlayerName(row.playerName)}:${boardSeason}`) ??
+      byNbaId.get(row.playerId) ??
+      (aliasNba ? byNbaId.get(aliasNba) : undefined);
     if (!l) return row;
     return {
       ...row,
-      lebron: l.impact,
-      oLebron: l.offensive,
-      dLebron: l.defensive,
+      raptor: l.impact,
+      oRaptor: l.offensive,
+      dRaptor: l.defensive,
       winsAdded: l.winsAdded ?? row.winsAdded,
     };
   });
 }
 
-/** Attach public DARKO + LEBRON overlays for percentile / explore boards. */
+async function loadImpactOverlaysForSeason(
+  boardSeason: string
+): Promise<{
+  darko: Awaited<ReturnType<typeof getDarkoRatings>>;
+  raptor: Awaited<ReturnType<typeof getRaptorRatings>>;
+}> {
+  const {
+    getBundledDarkoSeason,
+    getBundledRaptorSeason,
+  } = await import("@/data/runtime/impact-overlay-snapshot");
+
+  let darko = getBundledDarkoSeason(boardSeason);
+  let raptor = getBundledRaptorSeason(boardSeason);
+
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (preferBundledProductDataOnEdge()) {
+    return { darko, raptor };
+  }
+
+  if (!darko.length) {
+    try {
+      const { fetchDarkoSeason } = await import(
+        "@/data/providers/nba/darko-scraper"
+      );
+      const scraped = await fetchDarkoSeason(boardSeason).catch(() => []);
+      if (scraped.length) {
+        darko = scraped.map((row) => ({
+          playerId: row.nbaId,
+          nbaPlayerId: row.nbaId,
+          playerName: row.playerName,
+          season: boardSeason,
+          source: "darko" as const,
+          impact: row.dpm,
+          offensive: row.oDpm,
+          defensive: row.dDpm,
+        }));
+      }
+    } catch {
+      /* bundled empty + live failed */
+    }
+  }
+
+  if (!raptor.length) {
+    raptor = await getRaptorRatings(boardSeason).catch(() => []);
+  }
+
+  return { darko, raptor };
+}
+
+/** Attach public DARKO + RAPTOR overlays for percentile / explore boards. */
+const peerImpactBoardCache = new Map<string, PlayerSeason[]>();
+
+export async function overlayImpactRatingsForPeers(
+  seasons: PlayerSeason[],
+  boardSeason: string
+): Promise<PlayerSeason[]> {
+  const key = String(boardSeason ?? "").trim();
+  // Process-wide cache: percentile islands rematerialize the same board often.
+  if (key && seasons.length >= 100) {
+    const cached = peerImpactBoardCache.get(key);
+    if (cached) return cached;
+  }
+  const overlaid = await overlayImpactRatings(seasons, boardSeason);
+  if (key && overlaid.length >= 100) {
+    peerImpactBoardCache.set(key, overlaid);
+  }
+  return overlaid;
+}
+
+/** Attach sealed DRBL / WAR1 onto a peer board (bundled on CF). */
+const peerDrblBoardCache = new Map<string, PlayerSeason[]>();
+
+export async function overlayDrblRatingsForPeers(
+  seasons: PlayerSeason[],
+  boardSeason: string
+): Promise<PlayerSeason[]> {
+  if (!seasons.length || !isDrblSeason(boardSeason)) return seasons;
+  const key = String(boardSeason ?? "").trim();
+  if (key && seasons.length >= 100) {
+    const cached = peerDrblBoardCache.get(key);
+    if (cached) return cached;
+  }
+  const drblRows = await fetchDrblSeason(boardSeason).catch(() => []);
+  const overlaid = await overlayDrblRows(seasons, drblRows);
+  if (key && overlaid.length >= 100) {
+    peerDrblBoardCache.set(key, overlaid);
+  }
+  return overlaid;
+}
+
 async function overlayImpactRatings(
   seasons: PlayerSeason[],
   boardSeason: string
 ): Promise<PlayerSeason[]> {
   if (!seasons.length) return seasons;
-  const [darko, lebron] = await Promise.all([
-    getDarkoRatings().catch(() => []),
-    getLebronRatings(boardSeason).catch(() => []),
-  ]);
-  return overlayLebron(
-    overlayDarko(seasons, boardSeason, darko),
+  // Slim edge only — paid Workers pull bundled overlays below.
+  const { slimEdgeProductEnabled } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (slimEdgeProductEnabled()) return seasons;
+
+  const { darko, raptor } = await loadImpactOverlaysForSeason(boardSeason);
+  const aliases = await getPlayerIdAliasIndex();
+  const aliasByEspn = new Map(
+    [...aliases.byEspn.entries()].map(([espnId, alias]) => [
+      espnId,
+      { nbaPlayerId: alias.nbaPlayerId },
+    ])
+  );
+  return overlayRaptor(
+    overlayDarko(seasons, boardSeason, darko, aliasByEspn),
     boardSeason,
-    lebron
+    raptor,
+    aliasByEspn
   );
 }
 
@@ -250,6 +372,57 @@ async function overlayDrblRows(
   });
 }
 
+/** Attach NBA hustle tracking onto a peer board (bundled on CF). */
+const peerHustleBoardCache = new Map<string, PlayerSeason[]>();
+
+export async function overlayHustleRatingsForPeers(
+  seasons: PlayerSeason[],
+  boardSeason: string
+): Promise<PlayerSeason[]> {
+  if (!seasons.length || !isHustleStatsSeason(boardSeason)) return seasons;
+  const key = String(boardSeason ?? "").trim();
+  if (key && seasons.length >= 100) {
+    const cached = peerHustleBoardCache.get(key);
+    if (cached) return cached;
+  }
+  const overlaid = await overlayHustleRows(seasons, boardSeason);
+  if (key && overlaid.length >= 100) {
+    peerHustleBoardCache.set(key, overlaid);
+  }
+  return overlaid;
+}
+
+/** Overlay NBA hustle season totals onto board/roster rows (bundled on CF). */
+async function overlayHustleRows(
+  seasons: PlayerSeason[],
+  boardSeason: string
+): Promise<PlayerSeason[]> {
+  if (!seasons.length || !isHustleStatsSeason(boardSeason)) return seasons;
+  const hustleRows = await fetchHustleSeason(boardSeason).catch(() => []);
+  if (!hustleRows.length) return seasons;
+
+  const hustleById = new Map(
+    hustleRows.map((row) => [row.playerId, row.patch] as const)
+  );
+  const aliases = await getPlayerIdAliasIndex();
+
+  return seasons.map((row) => {
+    if (hasHustleStats(row)) return row;
+    const alias = aliases.byEspn.get(row.playerId);
+    const aliasNba =
+      alias && isProductionApprovedPlayerAlias(alias)
+        ? alias.nbaPlayerId
+        : null;
+    const patch =
+      hustleById.get(row.playerId) ??
+      (aliasNba && aliasNba !== row.playerId
+        ? hustleById.get(aliasNba)
+        : undefined);
+    if (!patch || !Object.keys(patch).length) return row;
+    return { ...row, ...patch };
+  });
+}
+
 async function loadEspnTeamRoster(
   canonicalTeamId: string,
   season: string,
@@ -257,7 +430,10 @@ async function loadEspnTeamRoster(
 ): Promise<{ boardCount: number; players: PlayerSeason[] }> {
   let seasons = await espnPlayerSeasonProvider().getPlayerSeasons(season);
   seasons = await overlayImpactRatings(seasons, season);
-  const players = applyPlayerSeasonFilters(seasons, {
+  if (isHustleStatsSeason(season)) {
+    seasons = await overlayHustleRows(seasons, season);
+  }
+  let players = applyPlayerSeasonFilters(seasons, {
     ...filters,
     season,
     team: canonicalTeamId,
@@ -268,7 +444,11 @@ async function loadEspnTeamRoster(
       "@/data/providers/nba/espn-roster-client"
     );
     const roster = await fetchEspnTeamRosterPlayers(canonicalTeamId, season);
-    const filtered = applyPlayerSeasonFilters(roster, {
+    let enriched = await overlayImpactRatings(roster, season);
+    if (isHustleStatsSeason(season)) {
+      enriched = await overlayHustleRows(enriched, season);
+    }
+    const filtered = applyPlayerSeasonFilters(enriched, {
       ...filters,
       season,
       team: canonicalTeamId,
@@ -516,41 +696,12 @@ export async function getPlayerCareerSeasons(
 
   seasons = await repairSyntheticCareerPlayerNames(playerId, seasons);
 
+  // Per-season bundled/live attach — not getDarkoRatings(), which is a
+  // current-season snapshot and left every historical year blank.
   let enriched = seasons;
   try {
-    const [darko, allLebron] = await Promise.all([
-      getDarkoRatings().catch(() => []),
-      getLebronRatings().catch(() => []),
-    ]);
-
-    const darkoByName = new Map(
-      darko.map((row) => [normalizePlayerName(row.playerName), row])
-    );
-    const lebronByKey = new Map(
-      allLebron.map((row) => [
-        `${normalizePlayerName(row.playerName)}:${row.season}`,
-        row,
-      ])
-    );
-
-    enriched = seasons.map((row) => {
-      const d = darkoByName.get(normalizePlayerName(row.playerName));
-      // Live DARKO is a current-season snapshot — never stamp it onto other years.
-      const darkoApplies = d != null && d.season === row.season;
-      const l = lebronByKey.get(
-        `${normalizePlayerName(row.playerName)}:${row.season}`
-      );
-      return {
-        ...row,
-        darkoDpm: darkoApplies ? d.impact : undefined,
-        darkoOff: darkoApplies ? d.offensive : undefined,
-        darkoDef: darkoApplies ? d.defensive : undefined,
-        lebron: l?.impact,
-        oLebron: l?.offensive,
-        dLebron: l?.defensive,
-        winsAdded: l?.winsAdded,
-      };
-    });
+    enriched = await attachBrefDarkoRaptorToPlayerSeasons(playerId, seasons);
+    enriched = await attachDrblToPlayerSeasons(playerId, enriched);
   } catch {
     // keep base seasons
   }
@@ -753,15 +904,44 @@ export async function getFilteredPlayerSeasons(
 }
 
 /**
- * Explore "All seasons": current-season board, plus latest career rows for
- * name matches that are not on the current board (past players).
+ * Prefer a season that exists in the bundled BRef peer board (≥100 rows).
+ * On Cloudflare, current calendar season (e.g. 2026-27) is often empty —
+ * fall back to prior / latest baked board so explore + compare stay usable.
  */
+export async function resolveExploreBoardSeason(
+  preferred: string
+): Promise<string> {
+  const preferredKey = String(preferred ?? "").trim();
+  if (process.env.VERCEL === "1") return preferredKey;
+
+  try {
+    const { getBundledBrefPeerBoard, brefAdvancedSnapshotMeta } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    if (preferredKey && getBundledBrefPeerBoard(preferredKey).length >= 100) {
+      return preferredKey;
+    }
+    const prior = shiftCanonicalSeason(preferredKey, -1);
+    if (getBundledBrefPeerBoard(prior).length >= 100) return prior;
+    const seasons = [...brefAdvancedSnapshotMeta().seasons].sort((a, b) =>
+      b.localeCompare(a)
+    );
+    for (const season of seasons) {
+      if (getBundledBrefPeerBoard(season).length >= 100) return season;
+    }
+  } catch {
+    /* keep preferred */
+  }
+  return preferredKey;
+}
+
 async function loadExploreAllSeasonsBoard(
   filters: BasketballFilters
 ): Promise<{ rows: PlayerSeason[]; error: unknown | null }> {
-  const currentSeason =
+  const preferredSeason =
     defaultCanonicalSeasons(1)[0] ??
     canonicalSeasonFromStartYear(currentNbaStartYear());
+  const currentSeason = await resolveExploreBoardSeason(preferredSeason);
 
   const current = await getFilteredPlayerSeasonsDetailed({
     ...filters,
@@ -774,7 +954,63 @@ async function loadExploreAllSeasonsBoard(
   }
 
   const seen = new Set(current.rows.map((row) => row.playerId));
+  // Also treat same display name as already present (ESPN vs BRef id drift).
+  const seenNames = new Set(
+    current.rows.map((row) => row.playerName.toLowerCase())
+  );
   const extras: PlayerSeason[] = [];
+
+  const keepExtra = (row: PlayerSeason): boolean => {
+    const kept = applyPlayerSeasonFilters([row], {
+      ...filters,
+      season: undefined,
+      player: undefined,
+      // Named search should still surface the player even under default minutes.
+      minimumMinutes: undefined,
+    });
+    return Boolean(kept[0]);
+  };
+
+  // Cloudflare: slim search index + BRef career (never landmark ESPN fan-out).
+  if (process.env.VERCEL !== "1") {
+    try {
+      const { getPlayerSearchIndex } = await import(
+        "@/data/runtime/player-search-snapshot"
+      );
+      const { getBundledBrefCareerForPlayer } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const q = needle.toLowerCase();
+      const hits = getPlayerSearchIndex()
+        .filter(
+          (row) =>
+            row.id.toLowerCase() === q ||
+            row.nameLower.includes(q) ||
+            row.nameLower.split(/\s+/).some((t) => t.startsWith(q))
+        )
+        .slice(0, 40);
+
+      for (const hit of hits) {
+        if (seen.has(hit.id) || seenNames.has(hit.nameLower)) continue;
+        const career = getBundledBrefCareerForPlayer({
+          playerId: hit.id,
+          playerName: hit.name,
+        });
+        const latest = career[0];
+        if (!latest || !keepExtra(latest)) continue;
+        extras.push(latest);
+        seen.add(hit.id);
+        seenNames.add(hit.nameLower);
+      }
+    } catch {
+      /* fall through empty extras */
+    }
+
+    return {
+      rows: [...current.rows, ...extras],
+      error: current.error,
+    };
+  }
 
   const { getMasterPlayerRegistry, searchMasterPlayers } = await import(
     "@/data/history/player-universe"
@@ -788,16 +1024,9 @@ async function loadExploreAllSeasonsBoard(
     const latest = [...career].sort((a, b) =>
       b.season.localeCompare(a.season)
     )[0];
-    if (!latest) continue;
-    const kept = applyPlayerSeasonFilters([latest], {
-      ...filters,
-      season: undefined,
-      player: undefined,
-    });
-    if (kept[0]) {
-      extras.push(kept[0]);
-      seen.add(hit.playerId);
-    }
+    if (!latest || !keepExtra(latest)) continue;
+    extras.push(latest);
+    seen.add(hit.playerId);
   }
 
   // Master registry may be empty locally — sample landmark seasons for name hits.
@@ -815,10 +1044,7 @@ async function loadExploreAllSeasonsBoard(
       for (const row of rows) {
         if (seen.has(row.playerId) || byId.has(row.playerId)) continue;
         const name = row.playerName.toLowerCase();
-        if (
-          row.playerId.toLowerCase() !== q &&
-          !name.includes(q)
-        ) {
+        if (row.playerId.toLowerCase() !== q && !name.includes(q)) {
           continue;
         }
         const existing = byId.get(row.playerId);
@@ -828,15 +1054,9 @@ async function loadExploreAllSeasonsBoard(
       }
     }
     for (const row of byId.values()) {
-      const kept = applyPlayerSeasonFilters([row], {
-        ...filters,
-        season: undefined,
-        player: undefined,
-      });
-      if (kept[0]) {
-        extras.push(kept[0]);
-        seen.add(row.playerId);
-      }
+      if (!keepExtra(row)) continue;
+      extras.push(row);
+      seen.add(row.playerId);
     }
   }
 
@@ -872,6 +1092,34 @@ export async function getFilteredPlayerSeasonsDetailed(
         }
       })()
     : null;
+
+  // Prefer bundled BRef peers on slim edge — site.api hangs uncancellably.
+  // Paid full-edge still prefers the bundle when present (fast + reliable),
+  // then falls through to live ESPN when the season is missing from the snapshot.
+  if (filters.season && process.env.VERCEL !== "1") {
+    try {
+      const { getBundledBrefPeerBoard } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const bundled = getBundledBrefPeerBoard(filters.season);
+      if (bundled.length >= 100) {
+        let rows = await overlayImpactRatings(bundled, filters.season);
+        if (isDrblSeason(filters.season)) {
+          const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
+          rows = await overlayDrblRows(rows, drblRows);
+        }
+        if (isHustleStatsSeason(filters.season)) {
+          rows = await overlayHustleRows(rows, filters.season);
+        }
+        return {
+          rows: applyPlayerSeasonFilters(rows, filters),
+          error: null,
+        };
+      }
+    } catch {
+      // fall through to live / registry paths
+    }
+  }
 
   const {
     hasPlayerUniverseSeason,
@@ -912,6 +1160,9 @@ export async function getFilteredPlayerSeasonsDetailed(
       const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
       seasons = await overlayDrblRows(seasons, drblRows);
     }
+    if (isHustleStatsSeason(filters.season)) {
+      seasons = await overlayHustleRows(seasons, filters.season);
+    }
 
     return {
       rows: applyPlayerSeasonFilters(seasons, filters),
@@ -947,14 +1198,63 @@ export async function getFilteredPlayerSeasonsDetailed(
     };
   }
 
-  // Modern: ESPN is enough and much faster than historical enrichment path.
-  if (start != null && start >= TEAM_ROSTER_BOARD_EARLIEST_START_YEAR && filters.season) {
+  // Prefer bundled BRef when available (all non-Vercel hosts). Live ESPN is
+  // still attempted below when the snapshot misses the season.
+  if (
+    start != null &&
+    start >= TEAM_ROSTER_BOARD_EARLIEST_START_YEAR &&
+    filters.season &&
+    process.env.VERCEL !== "1"
+  ) {
     try {
-      seasons = await getDataProvider().getPlayerSeasons(filters.season);
-      seasons = await overlayImpactRatings(seasons, filters.season);
+      const { getBundledBrefPeerBoard } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const bundled = getBundledBrefPeerBoard(filters.season);
+      if (bundled.length) {
+        seasons = bundled;
+      }
+    } catch {
+      // fall through to live ESPN
+    }
+  }
+
+  if (
+    seasons.length === 0 &&
+    start != null &&
+    start >= TEAM_ROSTER_BOARD_EARLIEST_START_YEAR &&
+    filters.season
+  ) {
+    try {
+      const { withBudget } = await import("@/data/queries/budget");
+      const live = await withBudget(
+        getDataProvider().getPlayerSeasons(filters.season),
+        (await import("@/data/providers/nba/runtime-policy"))
+          .longUpstreamBudgetsEnabled()
+          ? 25_000
+          : 3_500,
+        [] as PlayerSeason[]
+      );
+      seasons = live.value;
     } catch (e) {
       error = e;
       seasons = [];
+    }
+  }
+
+  // Cloudflare: ESPN/NBA boards often empty — use bundled BRef peers.
+  if (seasons.length === 0 && filters.season) {
+    try {
+      const { getBundledBrefPeerBoard } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const bundled = getBundledBrefPeerBoard(filters.season);
+      if (bundled.length) {
+        seasons = bundled;
+        error = null;
+      }
+    } catch {
+      // keep prior error
     }
   }
 
@@ -988,11 +1288,16 @@ export async function getFilteredPlayerSeasonsDetailed(
     }
   }
 
-  // Canonical DRBL overlay for registry seasons only (Explore board rows).
-  // LEFT JOIN semantics via overlayDrblRows (unmatched players keep null R1).
-  if (seasons.length > 0 && filters.season && isDrblSeason(filters.season)) {
-    const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
-    seasons = await overlayDrblRows(seasons, drblRows);
+  // Canonical DRBL + impact overlays for explore board rows.
+  if (seasons.length > 0 && filters.season) {
+    seasons = await overlayImpactRatings(seasons, filters.season);
+    if (isDrblSeason(filters.season)) {
+      const drblRows = await fetchDrblSeason(filters.season).catch(() => []);
+      seasons = await overlayDrblRows(seasons, drblRows);
+    }
+    if (isHustleStatsSeason(filters.season)) {
+      seasons = await overlayHustleRows(seasons, filters.season);
+    }
   }
 
   return {
@@ -1216,10 +1521,18 @@ export async function attachDrblToPlayerSeasons(
   rows: PlayerSeason[]
 ): Promise<PlayerSeason[]> {
   if (!rows.length) return rows;
-  const seasons = [
+  let seasons = [
     ...new Set(rows.map((r) => r.season).filter((s) => isDrblSeason(s))),
   ];
   if (!seasons.length) return rows;
+
+  // CF: cap overlay fan-out (DRBL only exists for recent seasons anyway).
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (preferBundledProductDataOnEdge() && seasons.length > 8) {
+    seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 8);
+  }
 
   const nbaId = await resolveNbaIdForDrbl(playerId);
   const overlays = await Promise.all(
@@ -1281,10 +1594,18 @@ export async function attachHustleToPlayerSeasons(
   rows: PlayerSeason[]
 ): Promise<PlayerSeason[]> {
   if (!rows.length) return rows;
-  const seasons = [
+  let seasons = [
     ...new Set(rows.map((r) => r.season).filter((s) => isHustleStatsSeason(s))),
   ];
   if (!seasons.length) return rows;
+
+  // CF: long careers (LeBron) fan out ~10 hustle seasons → 1102 risk.
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (preferBundledProductDataOnEdge() && seasons.length > 6) {
+    seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 6);
+  }
 
   const nbaId = await resolveNbaIdForDrbl(playerId);
   const overlays = await Promise.all(
@@ -1311,14 +1632,106 @@ export async function attachHustleToPlayerSeasons(
 }
 
 /**
- * Attach BRef advanced (PER/BPM/VORP/WS) + per-season DARKO + LEBRON onto
+ * Attach BRef advanced (PER/BPM/VORP/WS) + per-season DARKO + RAPTOR onto
  * career rows. Shared by Statistics / Career / percentile enrich paths.
  */
-export async function attachBrefDarkoLebronToPlayerSeasons(
+export async function attachBrefDarkoRaptorToPlayerSeasons(
   playerId: string,
   rows: PlayerSeason[]
 ): Promise<PlayerSeason[]> {
   if (!rows.length) return rows;
+
+  const {
+    slimEdgeProductEnabled,
+    preferBundledProductDataOnEdge,
+  } = await import("@/data/providers/nba/runtime-policy");
+  const preferBundled =
+    slimEdgeProductEnabled() || preferBundledProductDataOnEdge();
+
+  if (preferBundled) {
+    const { findBundledBrefPlayer } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    const {
+      findBundledDarkoPlayer,
+      findBundledRaptorPlayer,
+    } = await import("@/data/runtime/impact-overlay-snapshot");
+    const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
+
+    return rows.map((row) => {
+      let next = row;
+      if (
+        !(
+          (row.per != null && row.per !== 0) ||
+          (row.winShares != null && row.winShares !== 0) ||
+          (row.vorp != null && row.vorp !== 0)
+        )
+      ) {
+        const bref = findBundledBrefPlayer(
+          row.season,
+          row.playerName,
+          row.teamAbbreviation
+        );
+        if (bref) {
+          next = {
+            ...next,
+            per: bref.per !== 0 ? bref.per : next.per,
+            ows: Number.isFinite(bref.ows) ? bref.ows : next.ows,
+            dws: Number.isFinite(bref.dws) ? bref.dws : next.dws,
+            winShares: bref.ws !== 0 ? bref.ws : next.winShares,
+            winSharesPer48: bref.ws48 !== 0 ? bref.ws48 : next.winSharesPer48,
+            obpm: Number.isFinite(bref.obpm) ? bref.obpm : next.obpm,
+            dbpm: Number.isFinite(bref.dbpm) ? bref.dbpm : next.dbpm,
+            bpm: Number.isFinite(bref.bpm) ? bref.bpm : next.bpm,
+            vorp: Number.isFinite(bref.vorp) ? bref.vorp : next.vorp,
+            usagePct:
+              next.usagePct ||
+              (bref.usg > 1 ? bref.usg / 100 : bref.usg) ||
+              undefined,
+            trueShootingPct:
+              next.trueShootingPct ||
+              (bref.ts > 1 ? bref.ts / 100 : bref.ts) ||
+              undefined,
+          };
+        }
+      }
+
+      const darko = findBundledDarkoPlayer(row.season, {
+        nbaId,
+        playerId,
+        playerName: row.playerName,
+      });
+      if (darko && Number.isFinite(darko.impact)) {
+        const oDpm = darko.offensive;
+        const dDpm = darko.defensive;
+        next = {
+          ...next,
+          dpm: darko.impact,
+          ...(typeof oDpm === "number" ? { oDpm } : {}),
+          ...(typeof dDpm === "number" ? { dDpm } : {}),
+          darkoDpm: darko.impact,
+          darkoOff: oDpm,
+          darkoDef: dDpm,
+        };
+      }
+
+      const raptor = findBundledRaptorPlayer(row.season, {
+        nbaId,
+        playerId,
+        playerName: row.playerName,
+      });
+      if (raptor && Number.isFinite(raptor.impact)) {
+        next = {
+          ...next,
+          raptor: raptor.impact,
+          oRaptor: raptor.offensive,
+          dRaptor: raptor.defensive,
+          winsAdded: raptor.winsAdded ?? next.winsAdded,
+        };
+      }
+      return next;
+    });
+  }
 
   const uniqueSeasons = [...new Set(rows.map((r) => r.season))];
   const scrapeSeasons = [...uniqueSeasons]
@@ -1326,12 +1739,13 @@ export async function attachBrefDarkoLebronToPlayerSeasons(
     .slice(0, CAREER_SCRAPE_SEASON_CAP);
 
   const nbaId = await resolveNbaIdForDrbl(playerId);
+  const allowLiveImpact = true;
 
-  const [seasonOverlays, lebronAll, darkoLive] = await Promise.all([
+  const [seasonOverlays, raptorAll, darkoLive] = await Promise.all([
     Promise.all(
       scrapeSeasons.map(async (season) => {
         const [darkoRows, brefRows] = await Promise.all([
-          isDarkoSeasonAvailable(season)
+          allowLiveImpact && isDarkoSeasonAvailable(season)
             ? fetchDarkoSeason(season, {
                 ttlMs: darkoTtlMs(season),
                 staleMs: darkoStaleMs(season),
@@ -1360,13 +1774,13 @@ export async function attachBrefDarkoLebronToPlayerSeasons(
         };
       })
     ),
-    getLebronRatings().catch(() => []),
+    getRaptorRatings().catch(() => []),
     getDarkoRatings().catch(() => []),
   ]);
 
   const bySeason = new Map(seasonOverlays.map((o) => [o.season, o]));
-  const lebronByKey = new Map(
-    lebronAll.map((row) => [
+  const raptorByKey = new Map(
+    raptorAll.map((row) => [
       `${normalizePlayerName(row.playerName)}:${row.season}`,
       row,
     ])
@@ -1384,7 +1798,7 @@ export async function attachBrefDarkoLebronToPlayerSeasons(
     const bref =
       overlay?.brefByKey.get(brefLookupKey(row.playerName, abbr)) ??
       overlay?.brefByName.get(normalizeBrefPlayerName(row.playerName));
-    const lebron = lebronByKey.get(
+    const raptor = raptorByKey.get(
       `${normalizePlayerName(row.playerName)}:${row.season}`
     );
     const live = darkoLiveByName.get(normalizePlayerName(row.playerName));
@@ -1433,12 +1847,12 @@ export async function attachBrefDarkoLebronToPlayerSeasons(
               darkoDef: live.defensive,
             }
           : {}),
-      ...(lebron
+      ...(raptor
         ? {
-            lebron: lebron.impact,
-            oLebron: lebron.offensive,
-            dLebron: lebron.defensive,
-            winsAdded: lebron.winsAdded ?? row.winsAdded,
+            raptor: raptor.impact,
+            oRaptor: raptor.offensive,
+            dRaptor: raptor.defensive,
+            winsAdded: raptor.winsAdded ?? row.winsAdded,
           }
         : {}),
     };
@@ -1446,8 +1860,97 @@ export async function attachBrefDarkoLebronToPlayerSeasons(
 }
 
 /**
+ * Merge overlay fields onto a career row without letting zero placeholders
+ * clobber real advanced / impact values from another source.
+ */
+export function mergeOverlaySeasonFields(
+  base: PlayerSeason,
+  overlay: PlayerSeason
+): PlayerSeason {
+  const ZERO_MISSING = new Set([
+    "per",
+    "vorp",
+    "winShares",
+    "winSharesPer48",
+    "ows",
+    "dws",
+    "bpm",
+    "obpm",
+    "dbpm",
+    "offensiveRating",
+    "defensiveRating",
+    "netRating",
+    "usagePct",
+    "trueShootingPct",
+    "effectiveFieldGoalPct",
+    "assistPct",
+    "turnoverPct",
+    "offensiveReboundPct",
+    "defensiveReboundPct",
+    "reboundPct",
+    "stealPct",
+    "blockPct",
+    "threePointAttemptRate",
+    "freeThrowRate",
+    "pie",
+    "darkoDpm",
+    "darkoOff",
+    "darkoDef",
+    "dpm",
+    "oDpm",
+    "dDpm",
+    "raptor",
+    "oRaptor",
+    "dRaptor",
+    "winsAdded",
+    "drbl100",
+    "war1",
+    "drblO",
+    "drblD",
+    "drblP",
+    "drblLn",
+    "drblB",
+  ]);
+  const merged: Record<string, unknown> = { ...base };
+  for (const [key, value] of Object.entries(overlay)) {
+    if (value == null) continue;
+    if (typeof value === "number") {
+      if (!Number.isFinite(value)) continue;
+      const prev = merged[key];
+      const prevOk = typeof prev === "number" && Number.isFinite(prev);
+      if (
+        ZERO_MISSING.has(key) &&
+        value === 0 &&
+        prevOk &&
+        (prev as number) !== 0
+      ) {
+        continue;
+      }
+      if (ZERO_MISSING.has(key) && prevOk && (prev as number) === 0 && value !== 0) {
+        merged[key] = value;
+        continue;
+      }
+      if (!prevOk || (ZERO_MISSING.has(key) && (prev as number) === 0)) {
+        merged[key] = value;
+        continue;
+      }
+      // Prefer overlay when both are non-zero advanced? Prefer base for counting.
+      if (!ZERO_MISSING.has(key)) {
+        // Counting / identity: keep base unless base missing.
+        if (!prevOk) merged[key] = value;
+      } else {
+        merged[key] = value;
+      }
+      continue;
+    }
+    if (merged[key] == null || merged[key] === "") merged[key] = value;
+  }
+  return merged as unknown as PlayerSeason;
+}
+
+/**
  * One shared enricher for Statistics / Career / percentile islands:
- * sealed DRBL overlay + BRef/DARKO/LEBRON + YoY Advanced (ORtg/DRtg/NET/USG).
+ * sealed DRBL overlay + BRef/DARKO/RAPTOR + YoY Advanced (ORtg/DRtg/NET/USG).
  * Prefer request-cache wrapper so Suspense islands share one load.
  */
 export async function enrichPlayerCareerAdvanced(
@@ -1456,22 +1959,84 @@ export async function enrichPlayerCareerAdvanced(
 ): Promise<PlayerSeason[]> {
   if (!career.length) return career;
 
-  const withDrbl = await attachDrblToPlayerSeasons(playerId, career).catch(
-    () => career
-  );
-  const withHustle = await attachHustleToPlayerSeasons(playerId, withDrbl).catch(
-    () => withDrbl
-  );
-  const withImpact = await attachBrefDarkoLebronToPlayerSeasons(
-    playerId,
-    withHustle
-  ).catch(() => withHustle);
+  const { withBudget } = await import("@/data/queries/budget");
+  const {
+    fullEdgeProductEnabled,
+    slimEdgeProductEnabled,
+    isVercelRuntime,
+    preferBundledProductDataOnEdge,
+  } = await import("@/data/providers/nba/runtime-policy");
+  const fullProduct = isVercelRuntime() || fullEdgeProductEnabled();
+  const slim = slimEdgeProductEnabled();
+  const preferBundled = preferBundledProductDataOnEdge();
+
+  // Bundled BRef attach is cheap and also fills DARKO/RAPTOR. Never skip it on
+  // CF just because PER is already present — that left impact columns blank.
+  const skipImpactAttach =
+    slim &&
+    !preferBundled &&
+    career.length > 0 &&
+    career.every(
+      (row) =>
+        ((row.per != null && row.per !== 0) ||
+          (row.vorp != null && row.vorp !== 0)) &&
+        row.gamesPlayed > 0
+    );
+
+  // Overlays touch largely disjoint fields — run in parallel to cut wall time.
+  const drblBudget = fullProduct ? 2_500 : 800;
+  const hustleBudget = fullProduct ? 2_000 : 800;
+  const impactBudget = preferBundled ? 1_500 : fullProduct ? 8_000 : 1_500;
+
+  const [withDrbl, withHustle, withImpactBase] = await Promise.all([
+    withBudget(
+      attachDrblToPlayerSeasons(playerId, career).catch(() => career),
+      drblBudget,
+      career
+    ).then((r) => r.value),
+    withBudget(
+      attachHustleToPlayerSeasons(playerId, career).catch(() => career),
+      hustleBudget,
+      career
+    ).then((r) => r.value),
+    skipImpactAttach
+      ? Promise.resolve(career)
+      : withBudget(
+          attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
+            () => career
+          ),
+          impactBudget,
+          career
+        ).then((r) => r.value),
+  ]);
+
+  // Field-merge overlays so a later source can't wipe earlier non-zero values
+  // with zero-filled ESPN placeholders.
+  const withImpact = career.map((row, index) => {
+    let next = row;
+    if (withDrbl[index]) next = mergeOverlaySeasonFields(next, withDrbl[index]!);
+    if (withHustle[index]) {
+      next = mergeOverlaySeasonFields(next, withHustle[index]!);
+    }
+    if (withImpactBase[index]) {
+      next = mergeOverlaySeasonFields(next, withImpactBase[index]!);
+    }
+    return next;
+  });
+
+  // Slim edge skips stats.nba YoY (hang risk). Paid + Vercel try it.
+  // Cloudflare prefer-bundled: never start YoY — withBudget cannot cancel the
+  // stats.nba fetch, and it stacks with Suspense islands into CF 1102.
+  if (!fullProduct || preferBundled) return withImpact;
 
   const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
   const yoyId = identity?.nbaId || playerId;
-  const yoy = await getPlayerYearOverYearAdvanced(yoyId).catch(
-    () => new Map()
-  );
+  const yoyBudget = preferBundled ? 1_200 : 2_000;
+  const yoy = await withBudget(
+    getPlayerYearOverYearAdvanced(yoyId).catch(() => new Map()),
+    yoyBudget,
+    new Map()
+  ).then((r) => r.value);
   if (!yoy.size) return withImpact;
 
   return withImpact.map((row) => {
