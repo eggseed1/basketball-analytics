@@ -1,4 +1,9 @@
-import type { ReactNode } from "react";
+"use client";
+
+import type { CSSProperties, ReactNode } from "react";
+
+import { FitWidth } from "@/components/explore/fit-width";
+import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import type {
   BracketMatchup,
@@ -6,10 +11,19 @@ import type {
   ConferenceBracket,
   PlayoffBracketModel,
 } from "@/lib/playoff-bracket";
+import { brandWashColor } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
-const CARD_W = "w-[8.25rem]";
+/** Card width — keep compact so FitWidth can scale the full West→Finals→East row. */
+const CARD_W = "w-[7.5rem]";
+
+/**
+ * Vertical rhythm: every first-round track is the same height so R1 / Semis / CF
+ * align. Sized to fit MatchCard including a reserved series-result row.
+ */
+const TRACK = "5.25rem"; // fits MatchCard + reserved series-result row
+const LABEL = "1rem";
 
 function modeCopy(model: PlayoffBracketModel): {
   eyebrow: string;
@@ -43,26 +57,32 @@ function modeCopy(model: PlayoffBracketModel): {
 function TeamLine({ slot }: { slot: BracketSlot }) {
   if (!slot.team) {
     return (
-      <div className="flex h-7 items-center truncate rounded-sm border border-dashed border-border/70 bg-muted/20 px-2 text-[11px] text-muted-foreground">
+      <div className="flex h-7 items-center truncate rounded-sm border border-dashed border-border/70 bg-white/25 px-2 text-[11px] text-muted-foreground dark:bg-secondary">
         {slot.label ?? "TBD"}
       </div>
     );
   }
 
   const brand = resolveTeamBrand(slot.team.teamId);
+  const wash = brandWashColor(brand);
+  const winnerStyle: CSSProperties | undefined = slot.winner
+    ? {
+        background: `color-mix(in oklab, ${wash} 22%, transparent)`,
+        boxShadow: `inset 3px 0 0 ${wash}`,
+      }
+    : brand
+      ? { boxShadow: `inset 2px 0 0 color-mix(in oklab, ${wash} 55%, transparent)` }
+      : undefined;
+
   return (
     <div
       className={cn(
-        "flex h-7 items-center gap-1.5 rounded-sm px-1.5 text-[12px] leading-none",
+        "flex h-7 items-center gap-1.5 rounded-sm px-1.5 text-[12px] leading-none backdrop-blur-[2px]",
         slot.winner
-          ? "bg-foreground/[0.08] font-semibold text-foreground"
+          ? "font-semibold text-foreground"
           : "text-foreground/90"
       )}
-      style={
-        brand && slot.winner
-          ? { boxShadow: `inset 3px 0 0 ${brand.primary}` }
-          : undefined
-      }
+      style={winnerStyle}
     >
       <span className="w-3.5 shrink-0 text-center text-[10px] tabular-nums text-muted-foreground">
         {slot.team.seed}
@@ -72,7 +92,12 @@ function TeamLine({ slot }: { slot: BracketSlot }) {
         {slot.team.abbreviation}
       </span>
       {typeof slot.wins === "number" ? (
-        <span className="tabular-nums text-[11px] text-muted-foreground">
+        <span
+          className={cn(
+            "tabular-nums text-[11px]",
+            slot.winner ? "font-bold text-foreground" : "text-muted-foreground"
+          )}
+        >
           {slot.wins}
         </span>
       ) : null}
@@ -87,22 +112,38 @@ function MatchCard({
   matchup: BracketMatchup;
   emphasize?: boolean;
 }) {
+  const topId = matchup.top.team?.teamId;
+  const bottomId = matchup.bottom.team?.teamId;
+
   return (
-    <div
+    <MatchupWashCard
+      awayTeamKey={topId}
+      homeTeamKey={bottomId}
+      intensity="subtle"
+      as="div"
       className={cn(
         CARD_W,
-        "flex shrink-0 flex-col gap-px overflow-hidden rounded-md border bg-card shadow-sm",
-        emphasize ? "border-foreground/30" : "border-border/70"
+        "flex shrink-0 flex-col overflow-hidden rounded-lg",
+        emphasize && "ring-1 ring-foreground/25"
       )}
     >
-      <TeamLine slot={matchup.top} />
-      <TeamLine slot={matchup.bottom} />
-      {matchup.result ? (
-        <div className="border-t border-border/50 px-2 py-0.5 text-right text-[10px] tabular-nums text-muted-foreground">
-          {matchup.result}
+      <div className="flex flex-col gap-0.5 p-1">
+        <TeamLine slot={matchup.top} />
+        <TeamLine slot={matchup.bottom} />
+        {/* Always reserve result height so Slot tracks stay aligned. */}
+        <div
+          className={cn(
+            "flex h-3.5 items-center justify-end px-1.5 text-[10px] tabular-nums",
+            matchup.result
+              ? "font-semibold text-foreground/70"
+              : "text-transparent"
+          )}
+          aria-hidden={!matchup.result}
+        >
+          {matchup.result ?? "0-0"}
         </div>
-      ) : null}
-    </div>
+      </div>
+    </MatchupWashCard>
   );
 }
 
@@ -132,13 +173,19 @@ function Slot({
   span = 1,
 }: {
   children?: ReactNode;
-  /** How many of 4 first-round tracks this slot spans. */
   span?: 1 | 2 | 4;
 }) {
   const h =
-    span === 4 ? "h-[17.5rem]" : span === 2 ? "h-[8.75rem]" : "h-[4.375rem]";
+    span === 4
+      ? `calc(4 * ${TRACK})`
+      : span === 2
+        ? `calc(2 * ${TRACK})`
+        : TRACK;
   return (
-    <div className={cn(h, "flex shrink-0 flex-col justify-center")}>
+    <div
+      className="flex shrink-0 flex-col justify-center"
+      style={{ height: h }}
+    >
       {children ?? null}
     </div>
   );
@@ -152,11 +199,12 @@ function Elbow({
   pairs: 1 | 2;
 }) {
   const mirror = toward === "left";
+  const line = "border-foreground/25 dark:border-white/30";
   return (
     <div
       aria-hidden
-      className="flex w-3 shrink-0 flex-col pt-6 sm:w-4"
-      style={{ height: "calc(1rem + 17.5rem)" }}
+      className="flex w-3 shrink-0 flex-col sm:w-4"
+      style={{ height: `calc(${LABEL} + 4 * ${TRACK})`, paddingTop: LABEL }}
     >
       {Array.from({ length: pairs }, (_, i) => (
         <div
@@ -166,25 +214,29 @@ function Elbow({
         >
           <span
             className={cn(
-              "absolute top-1/4 h-0 w-1/2 border-t border-border/70",
+              "absolute top-1/4 h-0 w-1/2 border-t",
+              line,
               mirror ? "right-0" : "left-0"
             )}
           />
           <span
             className={cn(
-              "absolute top-3/4 h-0 w-1/2 border-t border-border/70",
+              "absolute top-3/4 h-0 w-1/2 border-t",
+              line,
               mirror ? "right-0" : "left-0"
             )}
           />
           <span
             className={cn(
-              "absolute top-1/4 h-1/2 w-0 border-l border-border/70",
+              "absolute top-1/4 h-1/2 w-0 border-l",
+              line,
               mirror ? "right-1/2" : "left-1/2"
             )}
           />
           <span
             className={cn(
-              "absolute top-1/2 h-0 w-1/2 border-t border-border/70",
+              "absolute top-1/2 h-0 w-1/2 border-t",
+              line,
               mirror ? "left-0" : "right-0"
             )}
           />
@@ -200,11 +252,11 @@ function Stem({ toward }: { toward: "right" | "left" }) {
     <div
       aria-hidden
       className="relative w-3 shrink-0 sm:w-4"
-      style={{ height: "calc(1rem + 17.5rem)" }}
+      style={{ height: `calc(${LABEL} + 4 * ${TRACK})` }}
     >
       <span
         className={cn(
-          "absolute top-1/2 h-0 w-full border-t border-border/70",
+          "absolute top-1/2 h-0 w-full border-t border-foreground/25 dark:border-white/30",
           mirror ? "origin-right" : "origin-left"
         )}
       />
@@ -378,12 +430,14 @@ export function PlayoffBracket({ model }: { model: PlayoffBracketModel }) {
         </p>
       </div>
 
-      <div className="-mx-1 overflow-x-auto px-1 pb-1">
-        <div className="flex w-max items-start gap-0">
-          <ConferenceSide bracket={model.west} side="west" />
-          <FinalsBlock matchup={model.finals} />
-          <ConferenceSide bracket={model.east} side="east" />
-        </div>
+      <div className="w-full overflow-hidden">
+        <FitWidth>
+          <div className="flex w-max items-start gap-0">
+            <ConferenceSide bracket={model.west} side="west" />
+            <FinalsBlock matchup={model.finals} />
+            <ConferenceSide bracket={model.east} side="east" />
+          </div>
+        </FitWidth>
       </div>
     </section>
   );

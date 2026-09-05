@@ -18,19 +18,27 @@ const now = new Date();
 const currentStart =
   now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
 /**
- * Completed seasons only (skip empty upcoming league year).
- * Keep a long window so CF percentile / career sparklines cover full careers
- * when live ESPN times out (Workers cannot read on-disk history).
+ * Completed seasons only by default (skip empty upcoming league year).
+ * Daily in-season refresh sets BREF_INCLUDE_CURRENT=1 so the live year is baked.
  */
+const INCLUDE_CURRENT = process.env.BREF_INCLUDE_CURRENT === "1";
+/**
+ * When refreshing a short window, keep previously baked seasons on disk
+ * (daily job). Full rebuilds can set BREF_PRUNE=1 to drop outside the window.
+ */
+const PRESERVE_OUTSIDE_WINDOW =
+  process.env.BREF_PRESERVE_OUTSIDE_WINDOW === "1" ||
+  process.env.BREF_PRUNE !== "1";
 const BREF_SEASON_WINDOW = Number(process.env.BREF_SEASON_WINDOW || 30);
+const windowAnchor = INCLUDE_CURRENT ? currentStart : currentStart - 1;
 const ADV_START_YEARS = Array.from(
   { length: BREF_SEASON_WINDOW },
-  (_, i) => currentStart - 1 - i
+  (_, i) => windowAnchor - i
 );
 /** Per-game + per-poss in lockstep with advanced so career sheets aren't empty. */
 const PG_START_YEARS = Array.from(
   { length: BREF_SEASON_WINDOW },
-  (_, i) => currentStart - 1 - i
+  (_, i) => windowAnchor - i
 );
 
 function canonicalSeason(startYear) {
@@ -64,7 +72,7 @@ function round(n, d = 3) {
 }
 
 function isCombined(team) {
-  return team === "2TM" || team === "3TM" || team === "TOT";
+  return team === "2TM" || team === "3TM" || team === "4TM" || team === "TOT";
 }
 
 /** Prefer full regular-season rows when playoff duplicates share name+team. */
@@ -84,7 +92,66 @@ function dedupeByPlayerTeam(rows) {
   return [...best.values()];
 }
 
-function parseTable(html, mapRow) {
+/**
+ * One row per player for explore boards: prefer BRef combined season (TOT/2TM/…)
+ * over mid-season trade stints so Kyrie/etc. are not duplicated.
+ */
+function collapseToSeasonGrain(rows) {
+  const groups = new Map();
+  for (const row of rows) {
+    const key = String(row.n ?? "")
+      .toLowerCase()
+      .trim();
+    if (!key) continue;
+    const list = groups.get(key) ?? [];
+    list.push(row);
+    groups.set(key, list);
+  }
+  const out = [];
+  for (const list of groups.values()) {
+    const combined = list.find((r) => isCombined(String(r.t ?? "").toUpperCase()));
+    if (combined) {
+      out.push(combined);
+      continue;
+    }
+    // No TOT in source: keep the heaviest stint (last resort).
+    let best = list[0];
+    for (const row of list) {
+      if ((row.gp ?? 0) > (best.gp ?? 0)) best = row;
+      else if (
+        (row.gp ?? 0) === (best.gp ?? 0) &&
+        (row.mp ?? 0) > (best.mp ?? 0)
+      ) {
+        best = row;
+      }
+    }
+    if (best) out.push(best);
+  }
+  return out;
+}
+
+function hasMultiTeamDuplicates(rows) {
+  const byName = new Map();
+  for (const row of rows ?? []) {
+    const name = String(row.n ?? "")
+      .toLowerCase()
+      .trim();
+    if (!name) continue;
+    const team = String(row.t ?? "")
+      .toUpperCase()
+      .trim();
+    if (!team || isCombined(team)) continue;
+    const set = byName.get(name) ?? new Set();
+    set.add(team);
+    byName.set(name, set);
+  }
+  for (const teams of byName.values()) {
+    if (teams.size > 1) return true;
+  }
+  return false;
+}
+
+function parseTable(html, mapRow, { includeCombined = false } = {}) {
   const cleaned = html.replace(/<!--|-->/g, "");
   const cellRegex =
     /<(td|th)[^>]*data-stat="([^"]+)"[^>]*>([\s\S]*?)<\/\1>/gi;
@@ -104,7 +171,8 @@ function parseTable(html, mapRow) {
     )
       .toUpperCase()
       .trim();
-    if (!teamAbbr || isCombined(teamAbbr)) continue;
+    if (!teamAbbr) continue;
+    if (!includeCombined && isCombined(teamAbbr)) continue;
     const mapped = mapRow(cells, playerName, teamAbbr);
     if (mapped) rows.push(mapped);
   }
@@ -219,8 +287,18 @@ function mergeRatings(advanced, ratings) {
   const byKey = new Map(
     ratings.map((r) => [`${r.n.toLowerCase()}|${r.t}`, r])
   );
+  const byName = new Map();
+  for (const r of ratings) {
+    const name = String(r.n).toLowerCase();
+    const prev = byName.get(name);
+    if (!prev || isCombined(String(r.t ?? "").toUpperCase())) {
+      byName.set(name, r);
+    }
+  }
   return advanced.map((row) => {
-    const hit = byKey.get(`${row.n.toLowerCase()}|${row.t}`);
+    const hit =
+      byKey.get(`${row.n.toLowerCase()}|${row.t}`) ??
+      byName.get(row.n.toLowerCase());
     if (!hit) return row;
     return {
       ...row,
@@ -253,40 +331,41 @@ try {
 }
 
 const seasons = { ...(previous.seasons ?? {}) };
-
-// Repair cached seasons that still include playoff duplicates.
-for (const [canonical, block] of Object.entries(seasons)) {
-  if (block?.advanced?.length) {
-    block.advanced = dedupeByPlayerTeam(block.advanced);
-  }
-  if (block?.perGame?.length) {
-    block.perGame = dedupeByPlayerTeam(block.perGame);
-  }
-  seasons[canonical] = block;
-}
+/** Seasons re-fetched to pick up TOT/2TM — also refresh per-poss ratings. */
+const refreshedForTot = new Set();
 
 for (const start of ADV_START_YEARS) {
   const canonical = canonicalSeason(start);
   const existing = seasons[canonical]?.advanced;
-  if (existing?.length && !advancedNeedsRates(existing)) {
+  const staleSplits = hasMultiTeamDuplicates(existing);
+  if (existing?.length && !advancedNeedsRates(existing) && !staleSplits) {
     console.log(
       `[bref-snapshot] ${canonical} advanced cached (${existing.length})`
     );
     continue;
   }
   const year = brefYear(canonical);
-  process.stdout.write(`[bref-snapshot] ${canonical} advanced… `);
+  process.stdout.write(
+    `[bref-snapshot] ${canonical} advanced${staleSplits ? " (collapse TOT)" : ""}… `
+  );
   try {
     const html = await fetchHtml(
       `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`
     );
-    const advanced = dedupeByPlayerTeam(parseTable(html, mapAdvanced));
-    // Preserve ortg/drtg if we already merged them.
+    const advanced = collapseToSeasonGrain(
+      dedupeByPlayerTeam(parseTable(html, mapAdvanced, { includeCombined: true }))
+    );
+    // Preserve ortg/drtg / espn ids if we already merged them.
     const prevByKey = new Map(
       (existing ?? []).map((r) => [`${r.n.toLowerCase()}|${r.t}`, r])
     );
+    const prevByName = new Map(
+      (existing ?? []).map((r) => [String(r.n).toLowerCase(), r])
+    );
     const merged = advanced.map((row) => {
-      const prev = prevByKey.get(`${row.n.toLowerCase()}|${row.t}`);
+      const prev =
+        prevByKey.get(`${row.n.toLowerCase()}|${row.t}`) ??
+        prevByName.get(row.n.toLowerCase());
       if (!prev) return row;
       return {
         ...row,
@@ -296,6 +375,7 @@ for (const start of ADV_START_YEARS) {
       };
     });
     seasons[canonical] = { ...(seasons[canonical] ?? {}), advanced: merged };
+    if (staleSplits) refreshedForTot.add(canonical);
     console.log(merged.length);
   } catch (error) {
     console.log(`FAIL ${error instanceof Error ? error.message : error}`);
@@ -306,24 +386,34 @@ for (const start of ADV_START_YEARS) {
 for (const start of PG_START_YEARS) {
   const canonical = canonicalSeason(start);
   const existing = seasons[canonical]?.perGame;
-  if (existing?.length && !perGameNeedsCounting(existing)) {
+  const staleSplits = hasMultiTeamDuplicates(existing);
+  if (existing?.length && !perGameNeedsCounting(existing) && !staleSplits) {
     console.log(
       `[bref-snapshot] ${canonical} per-game cached (${existing.length})`
     );
     continue;
   }
   const year = brefYear(canonical);
-  process.stdout.write(`[bref-snapshot] ${canonical} per-game… `);
+  process.stdout.write(
+    `[bref-snapshot] ${canonical} per-game${staleSplits ? " (collapse TOT)" : ""}… `
+  );
   try {
     const html = await fetchHtml(
       `https://www.basketball-reference.com/leagues/NBA_${year}_per_game.html`
     );
-    const perGame = dedupeByPlayerTeam(parseTable(html, mapPerGame));
+    const perGame = collapseToSeasonGrain(
+      dedupeByPlayerTeam(parseTable(html, mapPerGame, { includeCombined: true }))
+    );
     const prevByKey = new Map(
       (existing ?? []).map((r) => [`${r.n.toLowerCase()}|${r.t}`, r])
     );
+    const prevByName = new Map(
+      (existing ?? []).map((r) => [String(r.n).toLowerCase(), r])
+    );
     const merged = perGame.map((row) => {
-      const prev = prevByKey.get(`${row.n.toLowerCase()}|${row.t}`);
+      const prev =
+        prevByKey.get(`${row.n.toLowerCase()}|${row.t}`) ??
+        prevByName.get(row.n.toLowerCase());
       return prev?.e ? { ...row, e: prev.e } : row;
     });
     seasons[canonical] = { ...(seasons[canonical] ?? {}), perGame: merged };
@@ -337,18 +427,27 @@ for (const start of PG_START_YEARS) {
 for (const start of PG_START_YEARS) {
   const canonical = canonicalSeason(start);
   const existing = seasons[canonical]?.advanced;
-  if (existing?.length && !advancedNeedsRatings(existing)) {
+  const forceTotRatings = refreshedForTot.has(canonical);
+  if (
+    existing?.length &&
+    !advancedNeedsRatings(existing) &&
+    !forceTotRatings
+  ) {
     console.log(`[bref-snapshot] ${canonical} ratings cached`);
     continue;
   }
   if (!existing?.length) continue;
   const year = brefYear(canonical);
-  process.stdout.write(`[bref-snapshot] ${canonical} per-poss… `);
+  process.stdout.write(
+    `[bref-snapshot] ${canonical} per-poss${forceTotRatings ? " (TOT)" : ""}… `
+  );
   try {
     const html = await fetchHtml(
       `https://www.basketball-reference.com/leagues/NBA_${year}_per_poss.html`
     );
-    const ratings = dedupeByPlayerTeam(parseTable(html, mapPerPoss));
+    const ratings = collapseToSeasonGrain(
+      dedupeByPlayerTeam(parseTable(html, mapPerPoss, { includeCombined: true }))
+    );
     seasons[canonical] = {
       ...(seasons[canonical] ?? {}),
       advanced: mergeRatings(existing, ratings),
@@ -364,11 +463,27 @@ const keepSeasons = new Set(
   [...ADV_START_YEARS, ...PG_START_YEARS].map((start) => canonicalSeason(start))
 );
 
+// Last-resort collapse if a fetch failed mid-run (e.g. BRef 429) and stints remain.
+for (const block of Object.values(seasons)) {
+  if (block?.advanced?.length) {
+    block.advanced = collapseToSeasonGrain(dedupeByPlayerTeam(block.advanced));
+  }
+  if (block?.perGame?.length) {
+    block.perGame = collapseToSeasonGrain(dedupeByPlayerTeam(block.perGame));
+  }
+}
+
 const payload = {
   version: SNAPSHOT_VERSION,
   generatedAt: new Date().toISOString(),
   seasons: Object.fromEntries(
-    Object.entries(seasons).filter(([canonical]) => keepSeasons.has(canonical))
+    Object.entries(seasons).filter(([canonical]) => {
+      if (keepSeasons.has(canonical)) return true;
+      // Daily / incremental runs: retain historical seasons already on disk.
+      return (
+        PRESERVE_OUTSIDE_WINDOW && previous.seasons?.[canonical] != null
+      );
+    })
   ),
 };
 

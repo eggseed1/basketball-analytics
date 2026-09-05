@@ -5,6 +5,7 @@ import type {
   TeamContractRow,
   TeamPayrollPresentation,
 } from "@/data/types/front-office";
+import { BoardPlayerName } from "@/lib/board-compact-name";
 import { type } from "@/lib/design-system";
 import { formatUsdDollars } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
@@ -180,12 +181,13 @@ export function TeamPayrollTable({
                 key={row.contractId}
                 className="border-b border-border/50 align-middle hover:bg-muted/20"
               >
-                <td className="sticky left-0 z-[1] bg-background px-2 py-1.5">
+                <td className="sticky left-0 z-[1] max-w-[7.5rem] bg-background px-2 py-1.5 sm:max-w-[12rem]">
                   <Link
                     href={row.href}
-                    className="font-semibold text-foreground underline-offset-2 hover:underline"
+                    className="block min-w-0 font-semibold text-foreground underline-offset-2 hover:underline"
+                    title={row.playerName}
                   >
-                    {row.playerName}
+                    <BoardPlayerName name={row.playerName} />
                   </Link>
                 </td>
                 <td className="px-2 py-1.5 text-right tabular-nums text-muted-foreground">

@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
+@import "../styles/drbl-tokens.css";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -156,32 +157,69 @@
   * {
     @apply border-border outline-ring/50;
   }
-  body {
-    @apply bg-background text-base text-foreground antialiased;
-  }
   html {
     @apply font-sans;
+    width: 100%;
+    max-width: 100%;
+    overflow-x: clip;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-background text-base text-foreground antialiased;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    overflow-x: clip;
+    /* Prefer dynamic viewport on mobile browsers (URL bar show/hide). */
+    min-height: 100dvh;
+  }
+  img,
+  video,
+  canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  /* Tables / boards opt into their own scroll hosts — don't let them widen the page. */
+  table {
+    max-width: 100%;
   }
 }
 
 @layer utilities {
   .text-delta-up {
-    @apply text-emerald-700 dark:text-emerald-400;
+    color: var(--accent-positive);
   }
   .text-delta-down {
-    @apply text-rose-700 dark:text-rose-400;
+    color: var(--accent-negative);
   }
+  /*
+   * Nested soft surfaces — light uses translucent white lift; dark mirrors
+   * that hierarchy with secondary fills (#2c2c2e on #1c1c1e), not washed white/10.
+   */
   .frost-surface {
-    @apply bg-white/40 dark:bg-white/10;
+    background-color: rgb(255 255 255 / 40%);
   }
-  .frost-surface-hover {
-    @apply hover:bg-white/55 dark:hover:bg-white/15;
+  .dark .frost-surface {
+    background-color: var(--secondary);
   }
   .frost-surface-soft {
-    @apply bg-white/35 dark:bg-white/10;
+    background-color: rgb(255 255 255 / 35%);
+  }
+  .dark .frost-surface-soft {
+    background-color: var(--secondary);
   }
   .frost-surface-muted {
-    @apply bg-white/30 dark:bg-white/10;
+    background-color: rgb(255 255 255 / 30%);
+  }
+  .dark .frost-surface-muted {
+    background-color: color-mix(in oklab, var(--secondary) 88%, var(--card));
+  }
+  .frost-surface-hover:hover {
+    background-color: rgb(255 255 255 / 55%);
+  }
+  .dark .frost-surface-hover:hover {
+    background-color: color-mix(in oklab, var(--secondary) 82%, var(--foreground));
   }
 }
 
@@ -283,30 +321,24 @@
 }
 
 .sports-card {
-  @apply rounded-md border;
-  background: rgb(255 255 255 / 42%);
-  border-color: rgb(255 255 255 / 58%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 70%),
-    0 1px 2px rgb(0 0 0 / 4%),
-    0 8px 24px rgb(0 0 0 / 6%);
-  backdrop-filter: saturate(190%) blur(24px);
-  -webkit-backdrop-filter: saturate(190%) blur(24px);
-}
-
-.dark .sports-card {
-  background: rgb(28 28 30 / 38%);
-  border-color: rgb(255 255 255 / 16%);
-  box-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
-    0 1px 2px rgb(0 0 0 / 40%),
-    0 12px 32px rgb(0 0 0 / 36%);
+  @apply rounded-md border min-w-0 max-w-full;
+  background: var(--material-standard-bg);
+  border-color: var(--material-standard-border);
+  box-shadow: var(--material-standard-shadow);
+  backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
+  -webkit-backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
 }
 
 html:not([data-surface="glass"]) .sports-card {
   @apply border-black/5 bg-card shadow-[0_1px_2px_rgb(0_0_0_/_4%),0_8px_24px_rgb(0_0_0_/_4%)];
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
+}
+
+html:not([data-surface="glass"]).dark .sports-card,
+html.dark:not([data-surface="glass"]) .sports-card {
+  background: var(--card);
+  border-color: rgb(255 255 255 / 8%);
 }
 
 html:not([data-surface="glass"]).dark .sports-card,
@@ -358,7 +390,7 @@ html[data-surface="glass"] .bg-card {
 }
 
 html.dark[data-surface="glass"] .bg-card {
-  background-color: rgb(28 28 30 / 38%);
+  background-color: rgb(28 28 30 / 72%);
 }
 
 .sports-pill {
@@ -367,34 +399,19 @@ html.dark[data-surface="glass"] .bg-card {
 
 /* Glass material - translucent fill + blur, light and dark. */
 .glass-card {
-  background: rgb(255 255 255 / 72%);
-  border: 1px solid rgb(255 255 255 / 55%);
+  background: var(--material-elevated-bg);
+  border: 1px solid var(--material-elevated-border);
   border-radius: var(--radius-md);
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 4%),
-    0 8px 24px rgb(0 0 0 / 6%);
-  backdrop-filter: saturate(180%) blur(20px);
-  -webkit-backdrop-filter: saturate(180%) blur(20px);
-}
-
-.dark .glass-card {
-  background: rgb(28 28 30 / 72%);
-  border-color: rgb(255 255 255 / 12%);
-  box-shadow:
-    0 1px 2px rgb(0 0 0 / 40%),
-    0 12px 32px rgb(0 0 0 / 36%);
+  box-shadow: var(--material-elevated-shadow);
+  backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
 }
 
 .glass-pill {
-  background: rgb(255 255 255 / 55%);
-  border: 1px solid rgb(255 255 255 / 40%);
-  backdrop-filter: saturate(180%) blur(16px);
-  -webkit-backdrop-filter: saturate(180%) blur(16px);
-}
-
-.dark .glass-pill {
-  background: rgb(44 44 46 / 55%);
-  border-color: rgb(255 255 255 / 10%);
+  background: var(--material-subtle-bg);
+  border: 1px solid var(--material-subtle-border);
+  backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
 }
 
 .glass-pill-active {
@@ -405,10 +422,47 @@ html.dark[data-surface="glass"] .bg-card {
 }
 
 .dark .glass-pill-active {
-  background: rgb(255 255 255 / 16%);
-  border-color: rgb(255 255 255 / 22%);
+  background: #3a3a3c;
+  border-color: rgb(255 255 255 / 18%);
   color: var(--foreground);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
+}
+
+/* Accolade chips — liquid glass wash with gold ↔ silver metal edge */
+.accolade-metal-pill {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, #fff8dc 42%, transparent) 0%,
+    color-mix(in oklab, #ffffff 34%, transparent) 38%,
+    color-mix(in oklab, #c0c7ce 28%, transparent) 72%,
+    color-mix(in oklab, #d4af37 18%, transparent) 100%
+  );
+  border: 1px solid color-mix(in oklab, #d4af37 42%, #c0c7ce);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #fffef5 78%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, #8a8d8f 18%, transparent),
+    0 0 0 1px color-mix(in oklab, #d4af37 12%, transparent),
+    0 4px 14px color-mix(in oklab, #b8860b 10%, transparent);
+  backdrop-filter: saturate(190%) blur(14px);
+  -webkit-backdrop-filter: saturate(190%) blur(14px);
+  color: color-mix(in oklab, var(--foreground) 92%, #5c4a12);
+}
+
+.dark .accolade-metal-pill {
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, #f5e6a8 16%, transparent) 0%,
+    color-mix(in oklab, #ffffff 10%, transparent) 40%,
+    color-mix(in oklab, #c0c7ce 14%, transparent) 70%,
+    color-mix(in oklab, #d4af37 12%, transparent) 100%
+  );
+  border-color: color-mix(in oklab, #e8c547 48%, #8a8d8f);
+  box-shadow:
+    inset 0 1px 0 color-mix(in oklab, #f5e6a8 28%, transparent),
+    inset 0 -1px 0 color-mix(in oklab, #000 22%, transparent),
+    0 0 0 1px color-mix(in oklab, #d4af37 18%, transparent),
+    0 6px 18px color-mix(in oklab, #d4af37 12%, transparent);
+  color: color-mix(in oklab, var(--foreground) 94%, #f5e6a8);
 }
 
 /* Frosted select menus. No transform/overflow on this node: both prevent
@@ -430,8 +484,8 @@ html.dark[data-surface="glass"] .bg-card {
 
 .dark .select-popup,
 .dark .hover-frost {
-  background: rgb(28 28 30 / 28%);
-  border-color: rgb(255 255 255 / 16%);
+  background: rgb(44 44 46 / 88%);
+  border-color: rgb(255 255 255 / 14%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
     0 1px 2px rgb(0 0 0 / 40%),
@@ -667,8 +721,8 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
 
 .dark .board-sticky-frost,
 .dark .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 38%);
-  border-right-color: rgb(255 255 255 / 16%);
+  background: rgb(44 44 46 / 82%);
+  border-right-color: rgb(255 255 255 / 14%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
     14px 0 28px -12px rgb(0 0 0 / 45%);
@@ -836,7 +890,7 @@ html:not([data-surface="glass"])
 
 html.dark .site-search-field,
 html.dark .color-scheme-switch {
-  background: rgb(44 44 46 / 50%);
+  background: rgb(44 44 46 / 82%);
   border-color: rgb(255 255 255 / 12%);
 }
 
@@ -945,13 +999,132 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   line-height: 1;
 }
 
-/* Site chrome - desktop-first web width, not phone-app column */
+/* Sticky header respects notch / Dynamic Island / home indicator. */
+.site-chrome {
+  padding-top: env(safe-area-inset-top, 0px);
+}
+
+/* DRBL lockup — frost tile + court-arc mark (NBA atmosphere accents). */
+.drbl-logo__mark {
+  --drbl-blue: var(--atmosphere-a, #1d428a);
+  --drbl-red: var(--atmosphere-b, #c8102e);
+  position: relative;
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  border: 1px solid rgb(255 255 255 / 55%);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--drbl-blue) 24%, white),
+    color-mix(in oklab, var(--drbl-red) 16%, white)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 55%),
+    0 1px 2px rgb(0 0 0 / 6%);
+}
+
+.drbl-logo--md .drbl-logo__mark {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: var(--radius-lg);
+}
+
+.dark .drbl-logo__mark {
+  border-color: rgb(255 255 255 / 15%);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklab, var(--drbl-blue) 48%, #1c1c1e),
+    color-mix(in oklab, var(--drbl-red) 32%, #1c1c1e)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 35%);
+}
+
+.drbl-logo__glyph {
+  width: 78%;
+  height: 78%;
+}
+
+.drbl-logo__arc-outer {
+  stroke: color-mix(in oklab, var(--drbl-blue) 82%, white);
+}
+
+.drbl-logo__arc-inner {
+  stroke: color-mix(in oklab, var(--drbl-blue) 52%, white);
+  opacity: 0.95;
+}
+
+.drbl-logo__spine {
+  stroke: color-mix(in oklab, var(--foreground) 70%, transparent);
+}
+
+.drbl-logo__ball {
+  fill: var(--drbl-red);
+}
+
+.drbl-logo__ball-ring {
+  stroke: rgb(255 255 255 / 40%);
+}
+
+.dark .drbl-logo__arc-outer {
+  stroke: color-mix(in oklab, var(--drbl-blue) 55%, white);
+}
+
+.dark .drbl-logo__arc-inner {
+  stroke: color-mix(in oklab, var(--drbl-blue) 40%, white);
+}
+
+.dark .drbl-logo__spine {
+  stroke: color-mix(in oklab, var(--foreground) 85%, transparent);
+}
+
+.site-subnav-band {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Site chrome - desktop-first web width, not phone-app column.
+   Gutters include safe-area so content never sits under the notch or curved edges. */
 .site-shell {
-  @apply mx-auto w-full min-w-0 max-w-7xl px-4 sm:px-6 lg:px-8;
+  @apply mx-auto w-full min-w-0;
+  max-width: var(--page-max-standard);
+  padding-inline: max(
+    var(--space-page-gutter),
+    env(safe-area-inset-left, 0px)
+  )
+    max(var(--space-page-gutter), env(safe-area-inset-right, 0px));
 }
 
 .site-prose {
-  @apply mx-auto w-full max-w-3xl;
+  @apply mx-auto w-full min-w-0;
+  max-width: var(--page-max-prose);
+}
+
+/* Full-screen overlays (mobile nav, modals) — pad all edges for home indicator. */
+.safe-area-inset {
+  padding-top: env(safe-area-inset-top, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+}
+
+.safe-area-pad-bottom {
+  padding-bottom: max(0.75rem, env(safe-area-inset-bottom, 0px));
+}
+
+/* Horizontal strips that intentionally scroll — contain overflow, don't grow the page. */
+.touch-scroll-x {
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
 }
 
 /* ─── NBA Time Machine - era theme layer (CSS variables only) ───

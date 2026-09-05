@@ -11,17 +11,21 @@ import {
 
 const cases: Array<[string, string]> = [
   ["/", "Home"],
-  ["/ask", "ASK DRBL"],
-  ["/ask?q=raptor", "ASK DRBL"],
+  ["/ask", "Ask DRBL"],
+  ["/ask?q=raptor", "Ask DRBL"],
   ["/scores", "Games"],
   ["/scores?view=week", "Games"],
   ["/explore/games", "Games"],
   ["/games/401585601", "Games"],
   ["/explore/players", "Players"],
+  ["/explore/players/race", "Players"],
+  ["/explore/players/visualizations", "Players"],
   ["/players/1966", "Players"],
   ["/players/1966/season-compare", "Players"],
   ["/players/1966/season-rank", "Players"],
   ["/standings", "Teams"],
+  ["/standings/tracker", "Teams"],
+  ["/explore/bracket", "Teams"],
   ["/explore/teams", "Teams"],
   ["/teams/2", "Teams"],
   ["/compare", "Compare"],
@@ -29,8 +33,8 @@ const cases: Array<[string, string]> = [
   ["/offseason?year=2025", "Transactions"],
   ["/learn", "Learn"],
   ["/learn/true-shooting", "Learn"],
-  ["/franchises", "History"],
-  ["/franchises/bos", "History"],
+  ["/franchises", "Teams"],
+  ["/franchises/bos", "Teams"],
   ["/history", "History"],
   ["/history?season=1978-79", "History"],
 ];
@@ -49,15 +53,36 @@ assert.deepEqual(
   PRIMARY_NAV.map((n) => n.label),
   [
     "Home",
-    "ASK DRBL",
     "Games",
     "Players",
     "Teams",
     "Compare",
+    "Sentiment",
     "Transactions",
     "Learn",
+    "Ask DRBL",
     "History",
   ]
+);
+
+const teams = PRIMARY_NAV.find((n) => n.id === "teams");
+assert.ok(teams?.subnav?.length);
+assert.deepEqual(
+  teams.subnav.map((s) => s.label),
+  ["Board", "Standings", "Bracket", "Tracker"]
+);
+
+assert.equal(
+  PRIMARY_NAV.find((n) => n.id === "standings"),
+  undefined,
+  "Standings is not a top-level primary"
+);
+
+const players = PRIMARY_NAV.find((n) => n.id === "players");
+assert.ok(players?.subnav?.length);
+assert.deepEqual(
+  players.subnav.map((s) => s.label),
+  ["Board", "Visualizations"]
 );
 
 // Deep features must not be top-level.
@@ -71,6 +96,7 @@ for (const banned of [
   "Offseason",
   "Stats",
   "Franchises",
+  "Standings",
 ]) {
   assert.ok(
     !PRIMARY_NAV.some((n) => n.label === banned),
@@ -78,8 +104,10 @@ for (const banned of [
   );
 }
 
-// ASK remains prominent and pinned second.
-assert.equal(PRIMARY_NAV[1]?.id, "ask");
-assert.equal(PRIMARY_NAV[1]?.prominent, true);
+// ASK stays prominent and sits beside Learn on desktop.
+const askIndex = PRIMARY_NAV.findIndex((n) => n.id === "ask");
+const learnIndex = PRIMARY_NAV.findIndex((n) => n.id === "learn");
+assert.equal(PRIMARY_NAV[askIndex]?.prominent, true);
+assert.equal(askIndex, learnIndex + 1);
 
 console.log("test-site-nav: all assertions passed");

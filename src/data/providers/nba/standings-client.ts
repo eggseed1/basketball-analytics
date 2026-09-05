@@ -171,10 +171,19 @@ function standingsFromRuntimeBundle(season: string): LeagueStandings | null {
 }
 
 function standingsFromGameArchive(season: string): LeagueStandings | null {
+  const cached = archiveStandingsCache.get(season);
+  if (cached !== undefined) return cached;
   const games = getRuntimeSnapshotGames(season);
-  if (!games.length) return null;
-  return computeStandingsFromGameArchive(season, games);
+  if (!games.length) {
+    archiveStandingsCache.set(season, null);
+    return null;
+  }
+  const computed = computeStandingsFromGameArchive(season, games);
+  archiveStandingsCache.set(season, computed);
+  return computed;
 }
+
+const archiveStandingsCache = new Map<string, LeagueStandings | null>();
 
 export async function fetchLeagueStandings(
   season: string

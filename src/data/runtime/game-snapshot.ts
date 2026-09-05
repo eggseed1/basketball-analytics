@@ -21,6 +21,21 @@ export type RuntimeGameSnapshot = {
 const data = snapshot as RuntimeGameSnapshot;
 const games = Array.isArray(data.games) ? data.games : [];
 const byId = new Map(games.map((game) => [String(game.id), game] as const));
+const bySeason = new Map<string, Game[]>();
+const playoffsBySeason = new Map<string, Game[]>();
+
+for (const game of games) {
+  const season = String(game.season ?? "");
+  if (!season) continue;
+  const list = bySeason.get(season);
+  if (list) list.push(game);
+  else bySeason.set(season, [game]);
+  if (game.gameType === "playoff" || game.gameType === "play-in") {
+    const po = playoffsBySeason.get(season);
+    if (po) po.push(game);
+    else playoffsBySeason.set(season, [game]);
+  }
+}
 
 export function runtimeGameSnapshotMeta() {
   return {
@@ -36,7 +51,12 @@ export function getRuntimeSnapshotGame(gameId: string): Game | null {
 
 export function getRuntimeSnapshotGames(season?: string): Game[] {
   if (!season) return games;
-  return games.filter((game) => game.season === season);
+  return bySeason.get(season) ?? [];
+}
+
+/** Playoff + play-in only — avoids scanning the full season schedule on CF. */
+export function getRuntimeSnapshotPlayoffGames(season: string): Game[] {
+  return playoffsBySeason.get(season) ?? [];
 }
 
 export function getRuntimeSnapshotWindow(options: {

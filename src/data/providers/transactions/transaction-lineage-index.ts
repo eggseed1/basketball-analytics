@@ -198,6 +198,22 @@ export async function buildTransactionLineageIndex(
     }
   );
   admitTransactions(state, archive.transactions);
+
+  // Merge verified structured ledger (trades with asset ids + ownership edges).
+  try {
+    const { loadAssetLedger } = await import("@/data/asset-ledger/load-asset-ledger");
+    const ledger = await loadAssetLedger({ cwd: options.cwd, preferBundled: true });
+    if (ledger && ledger.structuredTransactions.length > 0) {
+      admitTransactions(state, ledger.structuredTransactions);
+      indexEdges(state, ledger.ownershipEdges);
+      state.notes.push(
+        `Merged structured asset ledger v${ledger.manifest.datasetVersion} (${ledger.structuredTransactions.length} verified transactions, ${ledger.ownershipEdges.length} ownership edges).`
+      );
+    }
+  } catch {
+    /* optional until first sync */
+  }
+
   indexEdges(state, archive.ownershipEdges);
   memoryIndex = { value: state, expiresAt: Date.now() + INDEX_TTL_MS };
   return state;

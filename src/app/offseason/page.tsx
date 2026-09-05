@@ -39,6 +39,10 @@ export const metadata = {
     "NBA transaction events from the ESPN archive - factual date, team, and description.",
 };
 
+/** Refresh live ESPN overlay at least hourly. */
+export const revalidate = 3600;
+export const dynamic = "force-dynamic";
+
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }

@@ -25,7 +25,7 @@ export type StandingsTrackerTeam = {
   currentLosses: number;
 };
 
-export type StandingsTrackerWindow = 7 | 14 | 30 | 60 | "all";
+export type StandingsTrackerWindow = 7 | 30 | 180 | "all";
 
 export type StandingsTrackerChartRow = {
   date: string;

@@ -8,6 +8,7 @@ import {
   type BrefCountingRow,
   type BrefPlayerAdvancedRow,
 } from "@/data/providers/nba/bref-player-page";
+import { displayNameForBrefSlug } from "@/data/runtime/legend-nba-to-bref";
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
 import type { PlayerSeason } from "@/data/types";
 
@@ -29,12 +30,13 @@ export function parseBrefPlayerSlug(playerId: string): string | null {
 
 /**
  * `bref:michael jordan` → "Michael Jordan".
- * Slug-shaped bref ids return null (resolve the display name from the page).
+ * Slug-shaped bref ids prefer awards/legend display names, else null.
  */
 export function displayNameFromBrefRouteId(playerId: string): string | null {
   const raw = String(playerId ?? "").trim();
   if (!raw.toLowerCase().startsWith("bref:")) return null;
-  if (parseBrefPlayerSlug(raw)) return null;
+  const slug = parseBrefPlayerSlug(raw);
+  if (slug) return displayNameForBrefSlug(slug);
   let inner = raw.slice(raw.indexOf(":") + 1);
   try {
     inner = decodeURIComponent(inner);

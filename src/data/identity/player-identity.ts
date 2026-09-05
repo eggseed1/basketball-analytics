@@ -155,6 +155,8 @@ export async function resolvePlayerIdentity(
 
   // Name-shaped BRef search ids (`bref:michael jordan`) — surface a display
   // name so the player page doesn't 404 before career rows attach.
+  // When the route is a remapped legend (`bref:piercpa01`), keep the real NBA
+  // PERSON_ID on `nbaId` so awards / jersey retirement / HOF lookups work.
   if (routeId.toLowerCase().startsWith("bref:")) {
     let displayName: string | undefined;
     try {
@@ -165,15 +167,24 @@ export async function resolvePlayerIdentity(
     } catch {
       displayName = undefined;
     }
+    let nbaPersonId: string | null = null;
+    try {
+      const { nbaPersonIdFromPlayerRoute } = await import(
+        "@/data/runtime/legend-nba-to-bref"
+      );
+      nbaPersonId = nbaPersonIdFromPlayerRoute(routeId);
+    } catch {
+      nbaPersonId = null;
+    }
     return {
       routeId,
       espnId: null,
-      nbaId: routeId,
+      nbaId: nbaPersonId ?? routeId,
       displayName,
       matchMethod: "passthrough_nba",
       confidence: "UNRESOLVED",
       ambiguous: false,
-      resolved: Boolean(displayName),
+      resolved: Boolean(displayName || nbaPersonId),
     };
   }
 

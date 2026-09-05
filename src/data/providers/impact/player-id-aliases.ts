@@ -25,6 +25,8 @@ export type PlayerIdAlias = {
   espnPlayerId: string;
   nbaPlayerId: string;
   playerName?: string;
+  /** Basketball-Reference player code, e.g. piercpa01 */
+  brefSlug?: string;
   matchMethod?: string;
   confidence?: string;
   /** When true, safe for silent production ESPN↔NBA DRBL joins. */
@@ -34,6 +36,8 @@ export type PlayerIdAlias = {
 export type PlayerIdAliasIndex = {
   byEspn: Map<string, PlayerIdAlias>;
   byNba: Map<string, PlayerIdAlias>;
+  /** Optional: bref slug → alias (legend seeds). */
+  byBref?: Map<string, PlayerIdAlias>;
 };
 
 /** Confidence classes approved for silent production joins (P17.1). */
@@ -59,6 +63,7 @@ function indexFromAliases(aliases: PlayerIdAlias[]): PlayerIdAliasIndex {
   const empty: PlayerIdAliasIndex = {
     byEspn: new Map(),
     byNba: new Map(),
+    byBref: new Map(),
   };
   for (const row of aliases) {
     if (!row?.espnPlayerId || !row?.nbaPlayerId) continue;
@@ -66,6 +71,7 @@ function indexFromAliases(aliases: PlayerIdAlias[]): PlayerIdAliasIndex {
       espnPlayerId: String(row.espnPlayerId).trim(),
       nbaPlayerId: String(row.nbaPlayerId).trim(),
       playerName: row.playerName?.trim() || undefined,
+      brefSlug: row.brefSlug?.trim().toLowerCase() || undefined,
       matchMethod: row.matchMethod?.trim() || undefined,
       confidence: row.confidence?.trim() || undefined,
       productionApproved:
@@ -76,6 +82,10 @@ function indexFromAliases(aliases: PlayerIdAlias[]): PlayerIdAliasIndex {
     if (!normalized.espnPlayerId || !normalized.nbaPlayerId) continue;
     empty.byEspn.set(normalized.espnPlayerId, normalized);
     empty.byNba.set(normalized.nbaPlayerId, normalized);
+    if (normalized.brefSlug) {
+      empty.byBref ??= new Map();
+      empty.byBref.set(normalized.brefSlug, normalized);
+    }
   }
   return empty;
 }
@@ -97,6 +107,7 @@ export async function loadPlayerIdAliases(): Promise<PlayerIdAliasIndex> {
   const empty: PlayerIdAliasIndex = {
     byEspn: new Map(),
     byNba: new Map(),
+    byBref: new Map(),
   };
   const filePath = path.join(process.cwd(), ALIAS_RELATIVE);
   let text: string;

@@ -10,13 +10,11 @@ import { gzipSync } from "node:zlib";
 
 const ROOT = process.cwd();
 const OUT = path.join(ROOT, "src", "data", "runtime", "player-awards-snapshot.json");
-const ALIAS_PATH = path.join(
-  ROOT,
-  "src",
-  "data",
-  "runtime",
-  "player-id-aliases-snapshot.json"
-);
+const ALIAS_PATHS = [
+  path.join(ROOT, "data", "impact", "player-id-aliases.json"),
+  path.join(ROOT, "data", "impact", "legend-player-aliases.json"),
+  path.join(ROOT, "src", "data", "runtime", "player-id-aliases-snapshot.json"),
+];
 const HISTORY_PATH = path.join(ROOT, "src", "content", "awards", "history.ts");
 
 const UA = {
@@ -152,7 +150,7 @@ function decodeEntities(value) {
     .trim();
 }
 
-/** All-NBA / All-Defense: season on the row, multiple player links. */
+/** All-NBA / All-Defense: season + team tier (1st/2nd/3rd) + player links. */
 function parseSeasonTeamRows(html) {
   const body = unwrapBrefTables(html);
   const rows = [];
@@ -166,6 +164,19 @@ function parseSeasonTeamRows(html) {
     if (!seasonMatch) continue;
     const season = canonicalSeasonFromBref(seasonMatch[1]);
     if (!season) continue;
+    const teamMatch = chunk.match(
+      /data-stat="all_team"[^>]*>\s*(1st|2nd|3rd|First|Second|Third)\s*</i
+    );
+    let teamNote = null;
+    if (teamMatch) {
+      const raw = teamMatch[1].toLowerCase();
+      teamNote =
+        raw.startsWith("1") || raw === "first"
+          ? "1st Team"
+          : raw.startsWith("2") || raw === "second"
+            ? "2nd Team"
+            : "3rd Team";
+    }
     const playerRe =
       /href=["']\/players\/[a-z]\/([a-z0-9]+)\.html["'][^>]*>([^<]+)</gi;
     let pm;
@@ -174,6 +185,7 @@ function parseSeasonTeamRows(html) {
         brefSlug: pm[1],
         name: decodeEntities(pm[2]),
         season,
+        teamNote,
       });
     }
   }
@@ -208,17 +220,24 @@ function parseAllStarCounts(html) {
 async function loadNameToNbaId() {
   const map = new Map();
   const espnToNba = new Map();
-  try {
-    const raw = JSON.parse(await fs.readFile(ALIAS_PATH, "utf8"));
-    for (const row of raw.aliases ?? []) {
-      const nbaId = String(row.nbaPlayerId ?? "").trim();
-      const espnId = String(row.espnPlayerId ?? "").trim();
-      const name = normalizeName(row.playerName);
-      if (nbaId && espnId) espnToNba.set(espnId, nbaId);
-      if (!nbaId || !name) continue;
-      if (!map.has(name)) map.set(name, nbaId);
+  let aliasFiles = 0;
+  for (const aliasPath of ALIAS_PATHS) {
+    try {
+      const raw = JSON.parse(await fs.readFile(aliasPath, "utf8"));
+      aliasFiles += 1;
+      for (const row of raw.aliases ?? []) {
+        const nbaId = String(row.nbaPlayerId ?? "").trim();
+        const espnId = String(row.espnPlayerId ?? "").trim();
+        const name = normalizeName(row.playerName);
+        if (nbaId && espnId) espnToNba.set(espnId, nbaId);
+        if (!nbaId || !name) continue;
+        if (!map.has(name)) map.set(name, nbaId);
+      }
+    } catch {
+      /* optional path */
     }
-  } catch {
+  }
+  if (!aliasFiles) {
     console.warn("[player-awards] aliases missing — name match will be sparse");
   }
 
@@ -241,7 +260,8 @@ async function loadNameToNbaId() {
     /* optional */
   }
 
-  // history.ts hrefs are already NBA person ids
+  // history.ts hrefs are NBA person ids — fill gaps only.
+  // Never overwrite legend/alias joins (typos there used to map Billups→1712/Jamison).
   try {
     const hist = await fs.readFile(HISTORY_PATH, "utf8");
     const re =
@@ -250,12 +270,14 @@ async function loadNameToNbaId() {
     while ((m = re.exec(hist))) {
       const name = normalizeName(m[1]);
       const nbaId = m[2];
-      if (name && nbaId) map.set(name, nbaId);
+      if (name && nbaId && !map.has(name)) map.set(name, nbaId);
     }
     const re2 =
       /href:\s*"\/players\/(\d+)"[^\n]*winner:\s*"([^"]+)"/g;
     while ((m = re2.exec(hist))) {
-      map.set(normalizeName(m[2]), m[1]);
+      const name = normalizeName(m[2]);
+      const nbaId = m[1];
+      if (name && nbaId && !map.has(name)) map.set(name, nbaId);
     }
   } catch {
     /* optional */
@@ -273,7 +295,7 @@ function resolveNbaId(nameToNba, name, brefSlug, slugToNba) {
   return null;
 }
 
-function pushAward(byNbaId, nbaId, description, season) {
+function pushAward(byNbaId, nbaId, description, season, note = null) {
   if (!nbaId || !description || !season) return;
   const list = byNbaId.get(nbaId) ?? [];
   const key = `${description}|${season}`;
@@ -281,14 +303,29 @@ function pushAward(byNbaId, nbaId, description, season) {
     byNbaId.set(nbaId, list);
     return;
   }
-  list.push([description, season]);
+  const row = note ? [description, season, note] : [description, season];
+  list.push(row);
   byNbaId.set(nbaId, list);
+}
+
+function rememberIdentity(names, slugs, nbaId, name, brefSlug) {
+  if (!nbaId) return;
+  const display = String(name ?? "")
+    .replace(/\*/g, "")
+    .trim();
+  if (display && !names[nbaId]) names[nbaId] = display;
+  const slug = String(brefSlug ?? "")
+    .trim()
+    .toLowerCase();
+  if (slug && !slugs[nbaId]) slugs[nbaId] = slug;
 }
 
 async function main() {
   const nameToNba = await loadNameToNbaId();
   const slugToNba = new Map();
   const byNbaId = new Map();
+  const names = {};
+  const slugs = {};
   let matched = 0;
   let unmatched = 0;
 
@@ -305,6 +342,7 @@ async function main() {
           continue;
         }
         slugToNba.set(row.brefSlug, nbaId);
+        rememberIdentity(names, slugs, nbaId, row.name, row.brefSlug);
         matched += 1;
         pushAward(byNbaId, nbaId, page.description, row.season);
       }
@@ -318,8 +356,9 @@ async function main() {
           continue;
         }
         slugToNba.set(row.brefSlug, nbaId);
+        rememberIdentity(names, slugs, nbaId, row.name, row.brefSlug);
         matched += 1;
-        pushAward(byNbaId, nbaId, page.description, row.season);
+        pushAward(byNbaId, nbaId, page.description, row.season, row.teamNote);
       }
     } else if (page.kind === "all_star_counts") {
       const rows = parseAllStarCounts(html);
@@ -331,6 +370,7 @@ async function main() {
           continue;
         }
         slugToNba.set(row.brefSlug, nbaId);
+        rememberIdentity(names, slugs, nbaId, row.name, row.brefSlug);
         matched += 1;
         // Unique synthetic seasons so summarizePlayerAccolades count == selections.
         for (let i = 1; i <= row.count; i++) {
@@ -353,10 +393,12 @@ async function main() {
   }
 
   const payload = {
-    version: 1,
+    version: 2,
     generatedAt: new Date().toISOString(),
     source: "basketball-reference.com/awards",
     playerCount: Object.keys(players).length,
+    names,
+    slugs,
     players,
   };
 

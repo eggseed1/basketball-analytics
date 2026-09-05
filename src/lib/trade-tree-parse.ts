@@ -48,7 +48,10 @@ const POSITION_PREFIX_RE =
   /^(?:Gs|Fs|Cs|F-C|G-F|F-G|PG|SG|SF|PF|G|F|C)\s+/i;
 
 const TRANSACTION_VERB_PREFIX_RE =
-  /^(?:Acquired|Traded|Waived|Signed|Released|Claimed|Sent)\s+/i;
+  /^(?:Acquired|Acquire|Traded|Waived|Signed|Released|Claimed|Sent)\s+/i;
+
+/** ESPN blurbs use both "Acquire" and "Acquired". */
+const ACQUIRE_VERB = "(?:Acquired|Acquire)";
 
 function stripPositionPrefix(label: string): string {
   return label.replace(POSITION_PREFIX_RE, "").trim();
@@ -178,6 +181,7 @@ function picksFromText(text: string): ParsedTradeAsset[] {
       re: /\$[\d.]+(?:\s*million)?(?:\s+trade exception)?/gi,
       kind: "cash",
     },
+    { re: /\bcash considerations?\b/gi, kind: "cash" },
     { re: /\bTPE\b|\btrade exception\b/gi, kind: "cash" },
   ];
   for (const { re, kind } of patterns) {
@@ -276,7 +280,10 @@ export function parseTradeSides(description: string): ParsedTradeSides {
   {
     const m = lastMatch(
       d,
-      /Acquired\s+(.+?)\s+from\s+([^,.]+?)\s+in exchange for\s+(.+?)(?:\.|$)/i
+      new RegExp(
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+in exchange for\\s+(.+?)(?:\\.|$)`,
+        "i"
+      )
     );
     if (m) {
       return {
@@ -292,7 +299,10 @@ export function parseTradeSides(description: string): ParsedTradeSides {
   {
     const m = lastMatch(
       d,
-      /Acquired\s+(.+?)\s+from\s+([^,.]+?)\s+for\s+(.+?)(?:\.|$)/i
+      new RegExp(
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+for\\s+(.+?)(?:\\.|$)`,
+        "i"
+      )
     );
     if (m && !/in exchange for/i.test(d)) {
       return {
@@ -307,7 +317,10 @@ export function parseTradeSides(description: string): ParsedTradeSides {
 
   {
     const m = d.match(
-      /Acquired\s+(.+?)\s+in a sign-and-trade deal with\s+(.+?)\s+for\s+(.+?)(?:\.|$)/i
+      new RegExp(
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+in a sign-and-trade deal with\\s+(.+?)\\s+for\\s+(.+?)(?:\\.|$)`,
+        "i"
+      )
     );
     if (m) {
       return {
@@ -323,7 +336,10 @@ export function parseTradeSides(description: string): ParsedTradeSides {
   {
     const m = lastMatch(
       d,
-      /Acquired\s+(.+?)\s+from\s+([^,.]+?)(?:\s*[,.]|$)/i
+      new RegExp(
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)(?:\\s*[,.]|$)`,
+        "i"
+      )
     );
     if (m) {
       return {
@@ -336,7 +352,8 @@ export function parseTradeSides(description: string): ParsedTradeSides {
     }
   }
 
-  const looksInbound = /\bacquired\b|\bin exchange for\b|\breceived\b/i.test(d);
+  const looksInbound =
+    /\bacquire[ds]?\b|\bin exchange for\b|\breceived\b/i.test(d);
   const all = assetsFromText(d);
   return {
     got: looksInbound ? all : [],

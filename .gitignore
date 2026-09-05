@@ -52,6 +52,7 @@ next-env.d.ts
 /artifacts/pbp-calibration/cache/
 /artifacts/pbp-calibration/checkpoint.json
 /artifacts/pbp-calibration/**/checkpoint.json
+/artifacts/daily-runtime-sync.json
 
 # DRBL offline pipeline caches (immutable NBA raw + normalized outputs)
 /data/drbl/

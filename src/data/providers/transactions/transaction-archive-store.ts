@@ -166,6 +166,7 @@ export async function loadTransactionArchive(
   cwd = process.cwd()
 ): Promise<TransactionArchiveBundle> {
   const root = archiveRoot(cwd);
+  let base: TransactionArchiveBundle | null = null;
   try {
     const manifest = JSON.parse(
       await readFile(path.join(root, "manifest.json"), "utf8")
@@ -204,7 +205,7 @@ export async function loadTransactionArchive(
       validationIssueCounts = {};
     }
     if (mergedTransactions.length > 0) {
-      return {
+      base = {
         manifest,
         transactions: mergedTransactions,
         ownershipEdges,
@@ -215,22 +216,48 @@ export async function loadTransactionArchive(
     // fall through to bundled snapshot (Cloudflare Workers have no disk archive)
   }
 
-  try {
-    const { getBundledTransactionArchive } = await import(
-      "@/data/runtime/transactions-snapshot"
-    );
-    const bundled = getBundledTransactionArchive();
-    if (bundled?.transactions?.length) return bundled;
-  } catch {
-    // no bundled snapshot
+  if (!base) {
+    try {
+      const { getBundledTransactionArchive } = await import(
+        "@/data/runtime/transactions-snapshot"
+      );
+      const bundled = getBundledTransactionArchive();
+      if (bundled?.transactions?.length) base = bundled;
+    } catch {
+      // no bundled snapshot
+    }
   }
 
-  return {
-    manifest: null,
-    transactions: [],
-    ownershipEdges: [],
-    validationIssueCounts: {},
-  };
+  if (!base) {
+    return {
+      manifest: null,
+      transactions: [],
+      ownershipEdges: [],
+      validationIssueCounts: {},
+    };
+  }
+
+  // Overlay recent ESPN pages so Home / Offseason stay fresh on CF without
+  // a daily redeploy. Failures fall back to the static archive only.
+  try {
+    const {
+      fetchLiveEspnTransactionRows,
+      mergeLiveTransactions,
+    } = await import(
+      "@/data/providers/transactions/transaction-live-enrich"
+    );
+    const live = await fetchLiveEspnTransactionRows();
+    if (live.length) {
+      return {
+        ...base,
+        transactions: mergeLiveTransactions(base.transactions, live),
+      };
+    }
+  } catch {
+    // keep base
+  }
+
+  return base;
 }
 
 export async function listRawEspnYearFiles(

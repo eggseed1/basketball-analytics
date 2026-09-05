@@ -74,9 +74,7 @@ export default async function AwardHistoryPage({
           >
             {award.trophyName}
           </p>
-          <h1 className={cn(type.display, "text-[28px] sm:text-[32px]")}>
-            {award.title}
-          </h1>
+          <h1 className={type.title1}>{award.title}</h1>
           <p className={cn(type.body, "mt-1 max-w-2xl text-muted-foreground")}>
             {award.blurb}
             {award.slug === "all-star"

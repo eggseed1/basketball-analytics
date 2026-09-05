@@ -20,12 +20,6 @@ import {
 } from "@/data/identity/player-identity";
 import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
-import {
-  explainDarko,
-  formatImpact,
-  formatPct,
-} from "@/lib/stat-explainers";
-import { formatNumber } from "@/lib/format";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
   priorSeasonForStats,
@@ -36,15 +30,6 @@ import {
   getCanonicalTeamFromProvider,
   resolveCanonicalTeam,
 } from "@/data/identity/team-map";
-import {
-  computeImpactMovers,
-  formatImpactDelta,
-} from "@/analytics/impact-risers";
-import {
-  getBundledDarkoSeason,
-  isBundledDarkoSeason,
-} from "@/data/runtime/impact-overlay-snapshot";
-import { getBundledBrefAdvancedSeason } from "@/data/runtime/bref-advanced-snapshot";
 
 /** Resolve a product team key (ESPN id / abbr) for logos — never raw NBA Stats ids. */
 function productTeamKeyFromProviderTeamId(
@@ -149,14 +134,13 @@ export type InsightPlayer = {
   name: string;
 };
 
+/** @deprecated Season-board insights removed — use RecentInsight. */
 export type ComputedInsight = {
   id: string;
   eyebrow: string;
-  /** Metric / headline without relying on embedded names. */
   title: string;
   body: string;
   players?: InsightPlayer[];
-  /** Full board with sort already lined up. */
   boardHref?: string;
   learnHref?: string;
 };
@@ -178,12 +162,11 @@ export type HomeAnalytics = {
    * the narrow TS/USG top-15 slices.
    */
   performerSeasons: HomePerformerSeason[];
-  insights: ComputedInsight[];
 };
 
 const HOME_CACHE_TTL_MS = 1000 * 60 * 5;
 /** Bump when leader team identity / companion-stat contract changes. */
-const HOME_CACHE_VERSION = 15;
+const HOME_CACHE_VERSION = 16;
 const ESPN_SEASONS_BUDGET_MS = 2500;
 const DRBL_BUDGET_MS = 2000;
 /** In-flight dedupe so concurrent Suspense islands share one load. */
@@ -539,212 +522,6 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
       ? "DRBL/100 leaders unavailable for this load — showing DARKO as secondary impact context, not as first-party DRBL."
       : `DRBL is not published for ${season}; DARKO shown as external impact context.`;
 
-  const insights: ComputedInsight[] = [];
-
-  const topDrbl = drblLeaders[0];
-  if (topDrbl) {
-    insights.push({
-      id: "drbl-leader",
-      eyebrow: "DRBL",
-      title: `${formatNumber(topDrbl.drbl100, 2)} DRBL/100`,
-      body: "Leading validated ability rate among published DRBL estimates this season.",
-      players: [{ id: topDrbl.profileId, name: topDrbl.playerName }],
-      boardHref: "/explore/players?sort=drbl100&dir=desc",
-      learnHref: "/learn/drbl",
-    });
-  }
-
-  const top = darkoLeaders[0];
-  if (top) {
-    insights.push({
-      id: "darko-leader",
-      eyebrow: "DARKO",
-      title: `${formatImpact(top.impact)} DPM`,
-      body: drblOverlayOk
-        ? `External comparison context: ${explainDarko(top.impact)}`
-        : explainDarko(top.impact),
-      players: [{ id: top.profileId, name: top.playerName }],
-      boardHref: "/explore/players?sort=darkoDpm",
-      learnHref: "/learn/darko",
-    });
-  }
-
-  const priorSeason = priorSeasonForStats(season);
-  if (isBundledDarkoSeason(season) && isBundledDarkoSeason(priorSeason)) {
-    const movers = computeImpactMovers({
-      prior: getBundledDarkoSeason(priorSeason).map((r) => ({
-        playerId: r.playerId,
-        nbaPlayerId: r.nbaPlayerId,
-        playerName: r.playerName,
-        impact: r.impact,
-      })),
-      current: getBundledDarkoSeason(season).map((r) => ({
-        playerId: r.playerId,
-        nbaPlayerId: r.nbaPlayerId,
-        playerName: r.playerName,
-        impact: r.impact,
-      })),
-      fromSeason: priorSeason,
-      toSeason: season,
-      metricLabel: "DARKO DPM",
-      minAbsDelta: 1.0,
-      limit: 3,
-    });
-
-    const topRiser = movers.risers[0];
-    if (topRiser) {
-      const profileId =
-        byName.get(normalizePlayerName(topRiser.playerName)) ??
-        topRiser.playerId;
-      insights.push({
-        id: "darko-riser",
-        eyebrow: "YoY · DARKO",
-        title: `${formatImpactDelta(topRiser.delta)} DPM`,
-        body: `Biggest DARKO rise ${priorSeason} → ${season} among season-keyed overlay rows (${formatImpact(topRiser.fromValue)} → ${formatImpact(topRiser.toValue)}).`,
-        players: [{ id: profileId, name: topRiser.playerName }],
-        boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=darkoDpm&dir=desc`,
-        learnHref: "/learn/darko",
-      });
-    }
-
-    const topFaller = movers.fallers[0];
-    if (topFaller) {
-      const profileId =
-        byName.get(normalizePlayerName(topFaller.playerName)) ??
-        topFaller.playerId;
-      insights.push({
-        id: "darko-faller",
-        eyebrow: "YoY · DARKO",
-        title: `${formatImpactDelta(topFaller.delta)} DPM`,
-        body: `Biggest DARKO drop ${priorSeason} → ${season} among season-keyed overlay rows (${formatImpact(topFaller.fromValue)} → ${formatImpact(topFaller.toValue)}).`,
-        players: [{ id: profileId, name: topFaller.playerName }],
-        boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=darkoDpm&dir=desc`,
-        learnHref: "/learn/darko",
-      });
-    }
-  }
-
-  {
-    const priorBref = getBundledBrefAdvancedSeason(priorSeason);
-    const currentBref = getBundledBrefAdvancedSeason(season);
-    if (priorBref?.length && currentBref?.length) {
-      const toBoard = (
-        rows: NonNullable<ReturnType<typeof getBundledBrefAdvancedSeason>>
-      ) =>
-        rows
-          .filter(
-            (r) =>
-              r.gamesPlayed >= 40 &&
-              r.bpm != null &&
-              Number.isFinite(r.bpm) &&
-              r.minutes / Math.max(1, r.gamesPlayed) >= 20
-          )
-          .map((r) => ({
-            playerId: normalizePlayerName(r.playerName),
-            playerName: r.playerName,
-            impact: r.bpm as number,
-          }));
-      const bpmMovers = computeImpactMovers({
-        prior: toBoard(priorBref),
-        current: toBoard(currentBref),
-        fromSeason: priorSeason,
-        toSeason: season,
-        metricLabel: "BPM",
-        minAbsDelta: 2.0,
-        limit: 3,
-      });
-      const topBpmRiser = bpmMovers.risers[0];
-      if (topBpmRiser) {
-        const profileId =
-          byName.get(normalizePlayerName(topBpmRiser.playerName)) ??
-          topBpmRiser.playerId;
-        insights.push({
-          id: "bpm-riser",
-          eyebrow: "YoY · BPM",
-          title: `${formatImpactDelta(topBpmRiser.delta)} BPM`,
-          body: `Biggest BPM rise ${priorSeason} → ${season} among BRef advanced rows (≥40 GP). Same-metric only.`,
-          players: [{ id: profileId, name: topBpmRiser.playerName }],
-          boardHref: `/explore/players?season=${encodeURIComponent(season)}&sort=bpm&dir=desc`,
-          learnHref: "/learn",
-        });
-      }
-    }
-  }
-
-  const bestTs = tsLeaders[0];
-  if (bestTs) {
-    insights.push({
-      id: "ts-leader",
-      eyebrow: "TS%",
-      title:
-        bestTs.trueShootingPct != null && bestTs.trueShootingPct > 0
-          ? formatPct(bestTs.trueShootingPct)
-          : "—",
-      body: "Best true shooting among qualified minutes.",
-      players: [{ id: bestTs.playerId, name: bestTs.playerName }],
-      boardHref: "/explore/players?sort=trueShootingPct",
-      learnHref: "/learn/true-shooting",
-    });
-  }
-
-  const efficientVolume = usageStars[0];
-  if (efficientVolume) {
-    insights.push({
-      id: "usage-ts",
-      eyebrow: "USG × TS%",
-      title: `${
-        efficientVolume.usagePct != null && efficientVolume.usagePct > 0
-          ? formatPct(efficientVolume.usagePct)
-          : "—"
-      } usg · ${
-        efficientVolume.trueShootingPct != null &&
-        efficientVolume.trueShootingPct > 0
-          ? formatPct(efficientVolume.trueShootingPct)
-          : "—"
-      } TS`,
-      body: "High usage without giving back efficiency.",
-      players: [
-        { id: efficientVolume.playerId, name: efficientVolume.playerName },
-      ],
-      boardHref: "/explore/players?sort=usagePct",
-      learnHref: "/learn/usage",
-    });
-  }
-
-  if (drblLeaders[1] && drblLeaders[0]) {
-    const gap = drblLeaders[0].drbl100 - drblLeaders[1].drbl100;
-    if (gap >= 0.35) {
-      insights.push({
-        id: "drbl-gap",
-        eyebrow: "DRBL",
-        title: `${formatNumber(gap, 2)} between #1 and #2`,
-        body: "Largest gap at the top of the DRBL/100 board.",
-        players: [
-          { id: drblLeaders[0].profileId, name: drblLeaders[0].playerName },
-          { id: drblLeaders[1].profileId, name: drblLeaders[1].playerName },
-        ],
-        boardHref: "/explore/players?sort=drbl100&dir=desc",
-        learnHref: "/learn/drbl",
-      });
-    }
-  } else if (darkoLeaders[1] && darkoLeaders[0] && !drblOverlayOk) {
-    const gap = darkoLeaders[0].impact - darkoLeaders[1].impact;
-    if (gap >= 0.4) {
-      insights.push({
-        id: "gap",
-        eyebrow: "DARKO",
-        title: `${formatImpact(gap)} between #1 and #2`,
-        body: "Largest gap at the top of the impact board.",
-        players: [
-          { id: darkoLeaders[0].profileId, name: darkoLeaders[0].playerName },
-          { id: darkoLeaders[1].profileId, name: darkoLeaders[1].playerName },
-        ],
-        boardHref: "/explore/players?sort=darkoDpm",
-        learnHref: "/learn/darko",
-      });
-    }
-  }
-
   return {
     season,
     drblOverlayOk,
@@ -755,7 +532,6 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     tsLeaders,
     usageStars,
     performerSeasons,
-    insights: insights.slice(0, 6),
   };
 }
 

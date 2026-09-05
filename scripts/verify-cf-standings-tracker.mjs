@@ -100,7 +100,7 @@ const checks = [];
 
 {
   const { status, text, url } = await fetchText(
-    "/standings?view=tracker&season=2024-25"
+    "/standings/tracker?season=2024-25"
   );
   checks.push({ name: "tracker HTTP 200", ok: status === 200, url, status });
   checks.push({
@@ -109,10 +109,8 @@ const checks = [];
     url,
   });
   checks.push({
-    name: "tracker tab / quick pick present",
-    ok:
-      /Quick pick|aria-label="Standings views"|view=tracker/i.test(text) ||
-      /Tracker/i.test(text),
+    name: "tracker add team control present",
+    ok: /Add team|regular-season games/i.test(text) || /Tracker/i.test(text),
     url,
   });
   checks.push({
@@ -123,7 +121,7 @@ const checks = [];
   checks.push({
     name: "has team data or empty-season message",
     ok:
-      /Quick pick|No completed regular-season|regular-season games/i.test(text) ||
+      /Add team|No completed regular-season|regular-season games/i.test(text) ||
       /OKC|BOS|\+?\d{1,2}/.test(text),
     url,
   });
@@ -133,8 +131,10 @@ const checks = [];
   const { status, text, url } = await fetchText("/standings");
   checks.push({ name: "table HTTP 200", ok: status === 200, url, status });
   checks.push({
-    name: "Open tracker CTA on table view",
-    ok: /Open tracker|view=tracker/i.test(text),
+    name: "table view is standings-only",
+    ok:
+      /Standings/i.test(text) &&
+      !/Open tracker|Team boards|Add team/i.test(text),
     url,
   });
 }
@@ -225,6 +225,69 @@ for (const tab of playerTabChecks) {
 }
 
 {
+  const { status, text, url } = await fetchText(
+    "/players/203999?view=overview&season=2024-25"
+  );
+  checks.push({
+    name: "percentile expand control present",
+    ok:
+      status === 200 &&
+      /Expand full percentile rankings/i.test(text) &&
+      /percentile ranking/i.test(text),
+    url,
+    status,
+  });
+  checks.push({
+    name: "percentile full-screen dialog shell",
+    ok:
+      status === 200 &&
+      /Close full percentiles/i.test(text) &&
+      /Percentile overview/i.test(text) &&
+      /Career chart (&amp;|&) similar players/i.test(text),
+    url,
+    status,
+  });
+  checks.push({
+    name: "player identity vitals on overview",
+    ok:
+      status === 200 &&
+      /6(?:'|&#x27;|&#39;)\d+(?:\"|&quot;)/.test(text) &&
+      /\d+\s*lb/i.test(text) &&
+      (/Born \d{4}-\d{2}-\d{2}/.test(text) || /Age:\s*\d+/.test(text)) &&
+      (/Pk\s+\d+/i.test(text) || /Undrafted/i.test(text)),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, json, url } = await fetchJson(
+    "/api/players/203999/percentiles?season=2024-25&mode=full"
+  );
+  const metrics = Array.isArray(json?.metrics) ? json.metrics : [];
+  const withSeries = metrics.filter((m) => Array.isArray(m?.series) && m.series.length > 1);
+  const withComps = metrics.filter(
+    (m) => Array.isArray(m?.leagueComps) && m.leagueComps.length > 0
+  );
+  checks.push({
+    name: "percentile full API HTTP 200",
+    ok: status === 200,
+    url,
+    status,
+  });
+  checks.push({
+    name: "percentile full API career series",
+    ok: withSeries.length >= 10,
+    url,
+  });
+  checks.push({
+    name: "percentile full API league comps",
+    ok: withComps.length >= 10,
+    url,
+  });
+}
+
+{
   const { status, text, url } = await fetchText("/players/1966");
   const hasAccolades =
     /\/awards\/(mvp|all-nba|all-star|finals-mvp|roy)/i.test(text) ||
@@ -232,6 +295,29 @@ for (const tab of playerTabChecks) {
   checks.push({
     name: "raptor accolades chips present",
     ok: status === 200 && hasAccolades,
+    url,
+    status,
+  });
+}
+
+{
+  // Legend NBA ids remap to bref:{slug} on CF; awards + jerseys stay keyed by PERSON_ID.
+  const { status, text, url } = await fetchText("/players/1718");
+  const hasAccolades =
+    /\/awards\/(mvp|all-nba|all-star|finals-mvp)/i.test(text) ||
+    (/All-NBA|All-Star|Finals/i.test(text) && /Trophy|accolade/i.test(text));
+  const hasRetired =
+    /retir/i.test(text) &&
+    (/#?\s*34\b/.test(text) || /Jersey/i.test(text));
+  checks.push({
+    name: "pierce accolades chips present",
+    ok: status === 200 && hasAccolades,
+    url,
+    status,
+  });
+  checks.push({
+    name: "pierce retired jersey present",
+    ok: status === 200 && hasRetired,
     url,
     status,
   });
@@ -338,6 +424,298 @@ for (const [season, id] of [
   });
 }
 
+{
+  const { status, json, url } = await fetchJson(
+    "/api/explore/players/board?season=2024-25&draftClass=2018&minimumMinutes=500"
+  );
+  const total = Number(json?.totalCount ?? 0);
+  checks.push({
+    name: "draftClass=2018 returns rows",
+    ok: status === 200 && total > 0,
+    url,
+    status,
+    detail: `totalCount=${total}`,
+  });
+}
+
+{
+  const { status, json, url } = await fetchJson(
+    "/api/explore/players/board?season=2022-23&minimumMinutes=500&pageSize=250"
+  );
+  const rows = Array.isArray(json?.rows)
+    ? json.rows
+    : Array.isArray(json?.players)
+      ? json.players
+      : Array.isArray(json)
+        ? json
+        : [];
+  const names = rows
+    .map((r) => String(r?.playerName ?? r?.name ?? "").toLowerCase().trim())
+    .filter(Boolean);
+  const counts = new Map();
+  for (const n of names) counts.set(n, (counts.get(n) || 0) + 1);
+  const dups = [...counts.entries()].filter(([, c]) => c > 1);
+  const kyrie = rows.filter((r) =>
+    /kyrie irving/i.test(String(r?.playerName ?? r?.name ?? ""))
+  );
+  checks.push({
+    name: "2022-23 board has no duplicate player names",
+    ok: status === 200 && rows.length > 50 && dups.length === 0,
+    url,
+    status,
+    detail:
+      dups.length === 0
+        ? `rows=${rows.length}`
+        : `dups=${dups
+            .slice(0, 5)
+            .map(([n, c]) => `${n}×${c}`)
+            .join(", ")}`,
+  });
+  checks.push({
+    name: "2022-23 Kyrie appears once with combined GP",
+    ok:
+      status === 200 &&
+      kyrie.length === 1 &&
+      Number(kyrie[0]?.gamesPlayed ?? kyrie[0]?.gp ?? 0) >= 55,
+    url,
+    status,
+    detail: kyrie
+      .map(
+        (r) =>
+          `${r.teamAbbreviation ?? r.teamAbbr ?? r.team ?? "?"}:${r.gamesPlayed ?? r.gp ?? "?"}`
+      )
+      .join("|") || "missing",
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/explore/players/visualizations?season=2024-25&metric=points"
+  );
+  checks.push({
+    name: "player race tracker HTTP 200",
+    ok: status === 200,
+    url,
+    status,
+  });
+  checks.push({
+    name: "player race tracker has curves",
+    ok:
+      status === 200 &&
+      !/No baked game logs/i.test(text) &&
+      (/Visualizations|Race tracker|Points|PTS/i.test(text) &&
+        (/<svg|recharts|PlayerRace|currentValue/i.test(text) ||
+          /\d{4}-\d{2}/.test(text))),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/explore/players/visualizations?season=2024-25&metric=rebounds"
+  );
+  const hasCurve =
+    /currentValue\\\":[1-9]|\"currentValue\":[1-9]/i.test(text) ||
+    /Zubac|Sabonis|Towns|Joki/i.test(text);
+  checks.push({
+    name: "player race rebounds has non-zero curves",
+    ok:
+      status === 200 &&
+      !/No baked game logs for top rebounds/i.test(text) &&
+      hasCurve,
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/explore/players/visualizations?season=2024-25&metric=war1"
+  );
+  checks.push({
+    name: "player race WAR1 metric loads",
+    ok:
+      status === 200 &&
+      (/WAR1/i.test(text) || /war1/i.test(text)) &&
+      !/No bundled leaders for WAR1/i.test(text),
+    url,
+    status,
+  });
+  checks.push({
+    name: "player race metric dropdown is comprehensive",
+    ok:
+      status === 200 &&
+      /Impact|Advanced|Rebounding/i.test(text) &&
+      (/option value=\\\"war1\\\"|value=\"war1\"/i.test(text) ||
+        /WAR1 \(WAR1\)/i.test(text)),
+    url,
+    status,
+  });
+  checks.push({
+    name: "player race pin search control present",
+    ok: status === 200 && /Pin any player/i.test(text),
+    url,
+    status,
+  });
+  checks.push({
+    name: "player race field size control present",
+    ok:
+      status === 200 &&
+      (/Top 40|player-race-top|topN\\\":40|\"topN\":40/i.test(text) ||
+        (text.match(/displayName\\\":\\\"/g) || []).length >= 30),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/explore/players/visualizations?season=2024-25&metric=drbl100"
+  );
+  const hasDrbl =
+    status === 200 &&
+    (/DRBL\/100|DRBL/i.test(text) || /drbl100/i.test(text)) &&
+    !/No bundled leaders/i.test(text);
+  // Rate metrics must not advertise minute-paced cumulative curves.
+  const falselyCumulative =
+    /pace the season total across games by minutes/i.test(text);
+  checks.push({
+    name: "player race DRBL/100 is rate level not cumulative pace",
+    ok: hasDrbl && !falselyCumulative && /rate level|season rate/i.test(text),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/awards/all-nba");
+  checks.push({
+    name: "all-nba history has team tiers",
+    ok: status === 200 && /1st Team|2nd Team|3rd Team/i.test(text),
+    url,
+    status,
+  });
+  checks.push({
+    name: "all-nba history uses real names",
+    ok:
+      status === 200 &&
+      /Tim Duncan|Kobe Bryant|Michael Jordan|LeBron James/i.test(text) &&
+      !/Player 1495|Player 977|Player 23\b/i.test(text),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/api/players/search?q=Kobe&scope=all"
+  );
+  let kobeFirst = false;
+  try {
+    const body = JSON.parse(text);
+    const results = Array.isArray(body?.results) ? body.results : [];
+    kobeFirst =
+      results.length > 0 &&
+      /kobe bryant/i.test(String(results[0]?.name ?? ""));
+  } catch {
+    kobeFirst = false;
+  }
+  checks.push({
+    name: "player search ranks Kobe Bryant first",
+    ok: status === 200 && kobeFirst,
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText(
+    "/api/players/search?q=Kareem&scope=all"
+  );
+  let hasKareem = false;
+  try {
+    const body = JSON.parse(text);
+    const results = Array.isArray(body?.results) ? body.results : [];
+    hasKareem = results.some((r) =>
+      /kareem abdul/i.test(String(r?.name ?? ""))
+    );
+  } catch {
+    hasKareem = false;
+  }
+  checks.push({
+    name: "player search finds Kareem Abdul-Jabbar",
+    ok: status === 200 && hasKareem,
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/players/977");
+  checks.push({
+    name: "legend Kobe page resolves",
+    ok:
+      status === 200 &&
+      /Kobe|Bryant/i.test(text) &&
+      (/hof-page-frame|hof-outline|Career|Seasons/i.test(text) ||
+        /bryanko01/i.test(text)),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/players/76003");
+  checks.push({
+    name: "classic Kareem page resolves",
+    ok:
+      status === 200 &&
+      /Kareem|Abdul-Jabbar|Abdul Jabbar/i.test(text) &&
+      /cdn\.nba\.com\/headshots/i.test(text) &&
+      (/hof-page-frame|hof-outline/i.test(text) ||
+        /"honor":"hof"|honor:\\"hof\\"|honor\":\"hof\"/i.test(text)),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/players/77142");
+  checks.push({
+    name: "classic Magic page resolves",
+    ok:
+      status === 200 &&
+      /Magic Johnson/i.test(text) &&
+      /cdn\.nba\.com\/headshots/i.test(text),
+    url,
+    status,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/players/893");
+  checks.push({
+    name: "HOF player page golden frame",
+    ok:
+      status === 200 &&
+      (/hof-page-frame|hof-outline/i.test(text) ||
+        /"honor":"hof"|honor:\\"hof\\"|honor\":\"hof\"/i.test(text)),
+    url,
+    status,
+  });
+  checks.push({
+    name: "HOF player page has portrait",
+    ok:
+      status === 200 &&
+      (/cdn\.nba\.com\/headshots|espncdn\.com\/i\/headshots/i.test(text) ||
+        /893\.png/i.test(text) ||
+        /portraitUrl\":\"https:/i.test(text)),
+    url,
+    status,
+  });
+}
+
 const teamTabChecks = [
   {
     tab: "overview",
@@ -410,9 +788,42 @@ for (const check of teamTabChecks) {
 }
 
 {
+  const { status, text, url } = await fetchText(
+    "/teams/2?tab=players&season=2021-22"
+  );
+  const playerLinks = (text.match(/href="\/players\/[^"]+"/g) || []).length;
+  checks.push({
+    name: "past-season team roster has players (2021-22 BOS)",
+    ok: status === 200 && playerLinks >= 8 && /Who drives|Roster/i.test(text),
+    url,
+    status,
+    detail: `playerLinks=${playerLinks}`,
+  });
+}
+
+{
   const { status, text, url } = await fetchText("/explore/teams");
   checks.push({
     name: "explore teams HTTP 200",
+    ok: status === 200,
+    url,
+    status,
+  });
+  checks.push({
+    name: "explore teams is board-only (no bracket)",
+    ok:
+      (/Teams/i.test(text) || /point differential/i.test(text)) &&
+      /point differential/i.test(text) &&
+      !/First Round/i.test(text) &&
+      !/Conf\. Semis/i.test(text),
+    url,
+  });
+}
+
+{
+  const { status, text, url } = await fetchText("/explore/bracket");
+  checks.push({
+    name: "bracket HTTP 200",
     ok: status === 200,
     url,
     status,

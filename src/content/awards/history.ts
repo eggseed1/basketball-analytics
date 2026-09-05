@@ -9,6 +9,7 @@ import {
   allStarCareerHistoryFromSnapshot,
   awardHistoryFromSnapshotDescription,
 } from "@/content/awards/history-from-snapshot";
+import { teamHistoryHref } from "@/lib/team-identity";
 
 export type AwardHistoryRow = {
   /** Canonical season "YYYY-YY" when applicable; calendar year for titles. */
@@ -30,7 +31,7 @@ export function listChampionshipHistory(): AwardHistoryRow[] {
       rows.push({
         season,
         winner: `${f.city} ${f.name}`,
-        href: `/franchises/${f.id}`,
+        href: teamHistoryHref(f.abbr),
         note: String(year),
       });
     }
@@ -64,7 +65,7 @@ export const MVP_HISTORY: AwardHistoryRow[] = [
   { season: "2006-07", winner: "Dirk Nowitzki", href: "/players/1717" },
   { season: "2005-06", winner: "Steve Nash", href: "/players/959" },
   { season: "2004-05", winner: "Steve Nash", href: "/players/959" },
-  { season: "2003-04", winner: "Kevin Garnett", href: "/players/1563" },
+  { season: "2003-04", winner: "Kevin Garnett", href: "/players/708" },
   { season: "2002-03", winner: "Tim Duncan", href: "/players/1495" },
   { season: "2001-02", winner: "Tim Duncan", href: "/players/1495" },
   { season: "2000-01", winner: "Allen Iverson", href: "/players/947" },
@@ -137,7 +138,7 @@ export const FINALS_MVP_HISTORY: AwardHistoryRow[] = [
   { season: "2006-07", winner: "Tony Parker", href: "/players/2225" },
   { season: "2005-06", winner: "Dwyane Wade", href: "/players/2548" },
   { season: "2004-05", winner: "Tim Duncan", href: "/players/1495" },
-  { season: "2003-04", winner: "Chauncey Billups", href: "/players/1712" },
+  { season: "2003-04", winner: "Chauncey Billups", href: "/players/1497" },
   { season: "2002-03", winner: "Tim Duncan", href: "/players/1495" },
   { season: "2001-02", winner: "Shaquille O’Neal", href: "/players/406" },
   { season: "2000-01", winner: "Shaquille O’Neal", href: "/players/406" },
@@ -193,7 +194,7 @@ export const DPOY_HISTORY: AwardHistoryRow[] = [
   { season: "2010-11", winner: "Dwight Howard", href: "/players/2730" },
   { season: "2009-10", winner: "Dwight Howard", href: "/players/2730" },
   { season: "2008-09", winner: "Dwight Howard", href: "/players/2730" },
-  { season: "2007-08", winner: "Kevin Garnett", href: "/players/1563" },
+  { season: "2007-08", winner: "Kevin Garnett", href: "/players/708" },
   { season: "2006-07", winner: "Marcus Camby", href: "/players/948" },
   { season: "2005-06", winner: "Ben Wallace", href: "/players/1112" },
   { season: "2004-05", winner: "Ben Wallace", href: "/players/1112" },
@@ -271,7 +272,7 @@ export const HOF_HISTORY: AwardHistoryRow[] = [
   { season: "2025", winner: "Carmelo Anthony", href: "/players/2546" },
   { season: "2025", winner: "Dwight Howard", href: "/players/2730" },
   { season: "2024", winner: "Dick Barnett" },
-  { season: "2024", winner: "Chauncey Billups", href: "/players/1712" },
+  { season: "2024", winner: "Chauncey Billups", href: "/players/1497" },
   { season: "2024", winner: "Vince Carter", href: "/players/1713" },
   { season: "2024", winner: "Michael Cooper", href: "/players/76421" },
   { season: "2024", winner: "Walter Davis" },
@@ -290,7 +291,7 @@ export const HOF_HISTORY: AwardHistoryRow[] = [
   { season: "2021", winner: "Chris Webber", href: "/players/185" },
   { season: "2020", winner: "Kobe Bryant", href: "/players/977" },
   { season: "2020", winner: "Tim Duncan", href: "/players/1495" },
-  { season: "2020", winner: "Kevin Garnett", href: "/players/1563" },
+  { season: "2020", winner: "Kevin Garnett", href: "/players/708" },
   { season: "2019", winner: "Carl Braun" },
   { season: "2019", winner: "Charles “Chuck” Cooper" },
   { season: "2019", winner: "Vlade Divac" },

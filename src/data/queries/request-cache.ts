@@ -5,6 +5,7 @@
 
 import { cache } from "react";
 
+import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import { runtimeTimeoutMs, slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { fetchEspnCdnGameBoxScore } from "@/data/providers/nba/espn-cdn-game-client";
 import { findNbaCdnGame } from "@/data/providers/nba/nba-cdn-game-client";
@@ -52,11 +53,22 @@ export const getPlayerCached = cache(async (playerId: string) => {
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
   );
-  // Cloudflare: do not start ESPN / draft-history / commonplayerinfo on the
-  // player shell. withBudget cannot cancel those fetches; they keep the isolate
-  // busy while Suspense islands stream and trip Error 1102. Bio falls back to
-  // identity + career rows (height/draft may be thin until a dedicated bake).
-  if (preferBundledProductDataOnEdge()) return null;
+  // Cloudflare: serve deploy-baked vitals instead of live ESPN / stats.nba /
+  // draft-history on the player shell (those fetches trip Error 1102).
+  if (preferBundledProductDataOnEdge()) {
+    const { getBundledPlayerBio } = await import(
+      "@/data/runtime/player-bio-snapshot"
+    );
+    const identity = await resolvePlayerIdentityCached(playerId).catch(
+      () => null
+    );
+    return (
+      getBundledPlayerBio(playerId, [
+        identity?.nbaId,
+        identity?.espnId,
+      ]) ?? null
+    );
+  }
   const budgetMs = runtimeTimeoutMs(5_000, 800);
   const result = await withBudget(
     getPlayerUncached(playerId).catch(() => null),

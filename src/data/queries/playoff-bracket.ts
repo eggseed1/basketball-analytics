@@ -5,12 +5,50 @@ import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import type { Game } from "@/data/types/game";
 import type { LeagueStandings } from "@/data/types/standings";
 import type { TeamSeasonStats } from "@/data/types/team-season";
-import { buildPlayoffBracket, type PlayoffBracketModel } from "@/lib/playoff-bracket";
+import {
+  buildPlayoffBracket,
+  type PlayoffBracketModel,
+} from "@/lib/playoff-bracket";
+import { computeStandingsFromGameArchive } from "@/lib/standings-from-games";
 import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { withBudget } from "@/data/queries/budget";
+import { standingsHaveResults } from "@/data/providers/nba/standings-client";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 
+function withPlayoffSeeds(standings: LeagueStandings): LeagueStandings {
+  return {
+    ...standings,
+    conferences: standings.conferences.map((conference) => ({
+      ...conference,
+      rows: conference.rows.map((row, index) => ({
+        ...row,
+        playoffSeed:
+          row.playoffSeed && row.playoffSeed > 0
+            ? row.playoffSeed
+            : row.rank || index + 1,
+      })),
+    })),
+  };
+}
+
+/** Prefer bundled snapshot (CF-safe), then history disk, then live schedule. */
 async function loadPlayoffGames(season: string): Promise<Game[]> {
-  const historical = await getHistoricalGames({ season }).catch(() => [] as Game[]);
+  try {
+    const { getRuntimeSnapshotPlayoffGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const fromSnap = getRuntimeSnapshotPlayoffGames(season);
+    if (fromSnap.length) return fromSnap;
+  } catch {
+    /* optional on non-bundled runtimes */
+  }
+
+  // Cloudflare: never fall through to disk/history/live ESPN (multi-second hangs).
+  if (preferBundledProductDataOnEdge()) return [];
+
+  const historical = await getHistoricalGames({ season }).catch(
+    () => [] as Game[]
+  );
   const fromHistory = historical.filter(
     (g) => g.gameType === "playoff" || g.gameType === "play-in"
   );
@@ -26,14 +64,73 @@ async function loadPlayoffGames(season: string): Promise<Game[]> {
   }
 }
 
+async function loadBracketStandings(
+  season: string
+): Promise<LeagueStandings | null> {
+  // Prefer bake / archive first so Workers never stall on live ESPN.
+  try {
+    const { getRuntimeStandings } = await import(
+      "@/data/runtime/standings-snapshot"
+    );
+    const bundled = getRuntimeStandings(season);
+    if (bundled && standingsHaveResults(bundled)) {
+      return withPlayoffSeeds(bundled);
+    }
+  } catch {
+    /* optional */
+  }
+
+  try {
+    const { getRuntimeSnapshotGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const seasonGames = getRuntimeSnapshotGames(season);
+    const fromArchive = computeStandingsFromGameArchive(season, seasonGames);
+    if (fromArchive && standingsHaveResults(fromArchive)) {
+      return withPlayoffSeeds(fromArchive);
+    }
+  } catch {
+    /* optional */
+  }
+
+  if (preferBundledProductDataOnEdge()) return null;
+
+  const liveRes = await withBudget(
+    getLeagueStandings(season).catch(() => null),
+    3_000,
+    null as LeagueStandings | null
+  );
+  const live = liveRes.value;
+  return live ? withPlayoffSeeds(live) : null;
+}
+
 export async function getPlayoffBracketModel(season: string): Promise<{
   model: PlayoffBracketModel;
   standings: LeagueStandings | null;
   teams: TeamSeasonStats[];
 }> {
-  // Preseason: skip standings/schedule upstream (often blocked on CF) — teams board only.
+  const edge = preferBundledProductDataOnEdge();
+
+  // Preseason upcoming year: still show completed prior playoffs when baked.
   if (isPreseasonRosterSeason(season)) {
-    const teams = await getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]);
+    const games = await loadPlayoffGames(season);
+    if (games.length) {
+      const [standings, teams] = await Promise.all([
+        loadBracketStandings(season),
+        getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
+      ]);
+      const model = buildPlayoffBracket({
+        season,
+        standings,
+        teams,
+        games,
+      });
+      return { model, standings, teams };
+    }
+
+    const teams = await getTeamSeasonStats(season).catch(
+      () => [] as TeamSeasonStats[]
+    );
     const model = buildPlayoffBracket({
       season,
       standings: null,
@@ -43,14 +140,15 @@ export async function getPlayoffBracketModel(season: string): Promise<{
     return { model, standings: null, teams };
   }
 
-  const [standingsRes, teams, gamesRes] = await Promise.all([
-    withBudget(getLeagueStandings(season).catch(() => null), 3_000, null),
+  const [teams, games, standings] = await Promise.all([
     getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
-    withBudget(loadPlayoffGames(season), 3_000, [] as Game[]),
+    edge
+      ? loadPlayoffGames(season)
+      : withBudget(loadPlayoffGames(season), 4_000, [] as Game[]).then(
+          (r) => r.value
+        ),
+    loadBracketStandings(season),
   ]);
-
-  const standings = standingsRes.value;
-  const games = gamesRes.value;
 
   const model = buildPlayoffBracket({
     season,

@@ -228,7 +228,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+                    href={`/standings/tracker?season=${encodeURIComponent(season)}`}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker →
@@ -249,7 +249,7 @@ export function TeamDestinationIdentity({
                   </TransitionLink>
                   {" · "}
                   <TransitionLink
-                    href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+                    href={`/standings/tracker?season=${encodeURIComponent(season)}`}
                     className="font-semibold underline-offset-2 hover:underline"
                   >
                     Tracker →

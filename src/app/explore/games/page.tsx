@@ -4,6 +4,7 @@ import { GameScoringScatterLazy as GameScoringScatter } from "@/components/chart
 import { ExploreGamesClientShell } from "@/components/explore/explore-games-client-shell";
 import { GameSeasonTable } from "@/components/explore/game-season-table";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
+import { PageHeader } from "@/components/layout/page-header";
 import { DecadeChips } from "@/components/sports/decade-chips";
 import { GameScoreCard } from "@/components/sports/game-score-card";
 import {
@@ -16,6 +17,8 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { type } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -64,14 +67,7 @@ export default async function ExploreGamesPage({
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
-      <header className="flex flex-col gap-1">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Games
-        </p>
-        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          Explore
-        </h1>
-      </header>
+      <PageHeader eyebrow="Games" title="Explore" />
 
       <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 
@@ -91,7 +87,12 @@ export default async function ExploreGamesPage({
         >
           <section className="flex flex-col gap-1">
             {cards.length === 0 ? (
-              <div className="sports-card px-4 py-8 text-center text-sm text-muted-foreground">
+              <div
+                className={cn(
+                  type.bodySm,
+                  "sports-card px-4 py-8 text-center text-muted-foreground"
+                )}
+              >
                 No games for this season filter.
               </div>
             ) : (

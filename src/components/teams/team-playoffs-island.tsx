@@ -98,9 +98,7 @@ export async function TeamPlayoffsIsland({
         </dl>
       </div>
 
-      <div className="sports-card overflow-x-auto p-4 sm:p-5">
-        <PlayoffBracket model={model} />
-      </div>
+      <PlayoffBracket model={model} />
 
       <div className="sports-card p-4 sm:p-5">
         <div className="mb-3 flex flex-wrap items-baseline justify-between gap-2">
@@ -108,7 +106,7 @@ export async function TeamPlayoffsIsland({
             Postseason game log
           </h3>
           <Link
-            href={`/explore/teams?season=${encodeURIComponent(season)}`}
+            href={`/explore/bracket?season=${encodeURIComponent(season)}`}
             className={cn(type.caption, "font-semibold underline")}
           >
             League bracket →

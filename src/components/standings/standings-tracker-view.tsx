@@ -19,10 +19,9 @@ import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const WINDOW_OPTIONS: { id: StandingsTrackerWindow; label: string }[] = [
-  { id: 7, label: "7" },
-  { id: 14, label: "14" },
-  { id: 30, label: "30" },
-  { id: 60, label: "60" },
+  { id: 7, label: "1W" },
+  { id: 30, label: "1M" },
+  { id: 180, label: "6M" },
   { id: "all", label: "All" },
 ];
 
@@ -31,6 +30,10 @@ const CONFERENCE_OPTIONS = [
   { id: "West" as const, label: "West" },
   { id: "All" as const, label: "All" },
 ];
+
+/** Shared height for Clear / team chips / Add team control. */
+const TOOLBAR_CONTROL =
+  "inline-flex h-8 items-center gap-1.5 rounded-md border px-2.5 font-semibold";
 
 function Chip({
   active,
@@ -97,6 +100,11 @@ export function StandingsTrackerView({
     [conference, payload.teams]
   );
 
+  const addableTeams = useMemo(
+    () => visibleTeams.filter((team) => !selectedTeamIds.has(team.teamId)),
+    [selectedTeamIds, visibleTeams]
+  );
+
   const chartRows = useMemo(
     () => buildStandingsTrackerChartRows(visibleTeams, window),
     [visibleTeams, window]
@@ -120,15 +128,25 @@ export function StandingsTrackerView({
     });
   }, []);
 
+  const addTeam = useCallback((teamId: string) => {
+    if (!teamId) return;
+    setSelectedTeamIds((prev) => {
+      if (prev.has(teamId)) return prev;
+      const next = new Set(prev);
+      next.add(teamId);
+      return next;
+    });
+  }, []);
+
   const clearSelection = useCallback(() => {
     setSelectedTeamIds(new Set());
   }, []);
 
   const setSeason = (season: string) => {
     const params = new URLSearchParams(searchParams.toString());
-    params.set("view", "tracker");
+    params.delete("view");
     params.set("season", season);
-    router.push(`/standings?${params.toString()}`);
+    router.push(`/standings/tracker?${params.toString()}`);
   };
 
   if (payload.teams.every((team) => team.points.length === 0)) {
@@ -147,7 +165,7 @@ export function StandingsTrackerView({
               .map((season) => (
                 <Link
                   key={season}
-                  href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
+                  href={`/standings/tracker?season=${encodeURIComponent(season)}`}
                   className="font-semibold underline"
                 >
                   {season}
@@ -167,7 +185,7 @@ export function StandingsTrackerView({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <div className="flex flex-wrap items-center gap-2">
           <label className={cn(type.caption, "sr-only")} htmlFor="tracker-season">
             Season
@@ -178,7 +196,7 @@ export function StandingsTrackerView({
             onChange={(event) => setSeason(event.target.value)}
             className={cn(
               type.bodySm,
-              "rounded-md border border-border/70 frost-surface px-3 py-1.5 font-semibold dark:bg-white/10"
+              "rounded-md border border-border/70 frost-surface px-3 py-1.5 font-semibold"
             )}
           >
             {seasonOptions.map((season) => (
@@ -203,10 +221,6 @@ export function StandingsTrackerView({
             ))}
           </div>
         </div>
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          {payload.gameCount.toLocaleString()} regular-season games · higher =
-          more games above .500
-        </p>
       </div>
 
       {payload.season !== payload.requestedSeason ? (
@@ -219,46 +233,82 @@ export function StandingsTrackerView({
       <div className="sports-card overflow-hidden p-3 sm:p-4">
         <div className="mb-3 flex min-h-9 flex-wrap items-center gap-2">
           {selectedTeamIds.size ? (
-            <>
+            <button
+              type="button"
+              onClick={clearSelection}
+              className={cn(
+                type.caption,
+                TOOLBAR_CONTROL,
+                "border-primary/40 text-primary"
+              )}
+            >
+              Clear
+            </button>
+          ) : null}
+
+          {[...selectedTeamIds].map((teamId) => {
+            const team = payload.teams.find((row) => row.teamId === teamId);
+            if (!team) return null;
+            const { color } = chartTheme.teamColor(teamId);
+            return (
               <button
+                key={teamId}
                 type="button"
-                onClick={clearSelection}
+                onClick={() => toggleTeam(teamId)}
                 className={cn(
                   type.caption,
-                  "rounded-md border border-primary/40 px-2.5 py-1 font-semibold text-primary"
+                  TOOLBAR_CONTROL,
+                  "frost-surface"
                 )}
+                style={{ borderColor: color }}
               >
-                Clear
+                <TeamLogo teamKey={teamId} size="xs" />
+                {team.abbreviation} {diffLabel(team.currentDiff)}
+                <span aria-hidden className="text-muted-foreground">
+                  ×
+                </span>
               </button>
-              {[...selectedTeamIds].map((teamId) => {
-                const team = payload.teams.find((row) => row.teamId === teamId);
-                if (!team) return null;
-                const { color } = chartTheme.teamColor(teamId);
-                return (
-                  <button
-                    key={teamId}
-                    type="button"
-                    onClick={() => toggleTeam(teamId)}
-                    className={cn(
-                      type.caption,
-                      "inline-flex items-center gap-1.5 rounded-md border frost-surface px-2 py-1 font-semibold dark:bg-white/10"
-                    )}
-                    style={{ borderColor: color }}
-                  >
-                    <TeamLogo teamKey={teamId} size="xs" />
-                    {team.abbreviation} {diffLabel(team.currentDiff)}
-                    <span aria-hidden className="text-muted-foreground">
-                      ×
-                    </span>
-                  </button>
-                );
-              })}
+            );
+          })}
+
+          {addableTeams.length ? (
+            <>
+              <label
+                className={cn(type.caption, "sr-only")}
+                htmlFor="tracker-add-team"
+              >
+                Add team
+              </label>
+              <select
+                id="tracker-add-team"
+                value=""
+                onChange={(event) => {
+                  addTeam(event.target.value);
+                  event.currentTarget.value = "";
+                }}
+                className={cn(
+                  type.caption,
+                  TOOLBAR_CONTROL,
+                  "max-w-[11rem] border-border/70 frost-surface"
+                )}
+                aria-label="Add team to highlight"
+              >
+                <option value="">Add team…</option>
+                {addableTeams.map((team) => (
+                  <option key={team.teamId} value={team.teamId}>
+                    {team.abbreviation} {diffLabel(team.currentDiff)} —{" "}
+                    {team.displayName}
+                  </option>
+                ))}
+              </select>
             </>
-          ) : (
+          ) : null}
+
+          {!selectedTeamIds.size ? (
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Click a line or use the picker below to highlight teams.
+              Click a line or add a team to highlight.
             </p>
-          )}
+          ) : null}
         </div>
 
         <div className="rounded-lg bg-secondary/35 p-1 dark:bg-black/25">
@@ -286,37 +336,17 @@ export function StandingsTrackerView({
             </Chip>
           ))}
         </div>
-      </div>
 
-      <section className="flex flex-col gap-2">
-        <h2 className={cn(type.bodySm, "font-bold")}>Quick pick</h2>
-        <div className="flex flex-wrap gap-1.5">
-          {visibleTeams.slice(0, 30).map((team) => {
-            const selected = selectedTeamIds.has(team.teamId);
-            return (
-              <button
-                key={team.teamId}
-                type="button"
-                aria-pressed={selected}
-                onClick={() => toggleTeam(team.teamId)}
-                className={cn(
-                  type.caption,
-                  "inline-flex items-center gap-1 rounded-md border border-border/60 px-2 py-1 font-semibold transition-colors",
-                  selected
-                    ? "bg-primary/10 text-primary"
-                    : "frost-surface-soft text-foreground frost-surface-hover dark:bg-white/10"
-                )}
-              >
-                <TeamLogo teamKey={team.teamId} size="xs" />
-                {team.abbreviation}
-                <span className="tabular-nums text-muted-foreground">
-                  {diffLabel(team.currentDiff)}
-                </span>
-              </button>
-            );
-          })}
-        </div>
-      </section>
+        <p
+          className={cn(
+            type.caption,
+            "mt-2 text-center text-muted-foreground"
+          )}
+        >
+          {payload.gameCount.toLocaleString()} regular-season games · higher =
+          more games above .500
+        </p>
+      </div>
     </div>
   );
 }

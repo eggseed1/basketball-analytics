@@ -14,6 +14,10 @@ import {
   getPlayerSearchIndex,
   getPlayerSearchIndexForSeason,
 } from "@/data/runtime/player-search-snapshot";
+import {
+  awardWinnerIdForQuery,
+  awardWinnerSortRank,
+} from "@/data/runtime/awards-search-boost";
 import { getBundledCurrentRosterEntry } from "@/data/runtime/current-roster-snapshot";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -51,11 +55,13 @@ type IndexEntry = {
 const searchIndex = new Map<string, IndexEntry>();
 const INDEX_TTL_MS = 10 * 60 * 1000;
 const RESULT_LIMIT = 10;
+/** Compare / career search — room for legends among common last names. */
+const ALL_SCOPE_LIMIT = 24;
 const isVercel = () => process.env.VERCEL === "1";
 
 function normalizeSearchText(value: string): string {
   return String(value ?? "")
-    .normalize("NFD")
+    .normalize("NFKD")
     .replace(/[\u0300-\u036f]/g, "")
     .toLowerCase()
     .replace(/[^a-z0-9 ]/g, " ")
@@ -63,6 +69,19 @@ function normalizeSearchText(value: string): string {
     .trim();
 }
 
+/** Initials from name tokens, e.g. "shai gilgeous alexander" → "sga". */
+function nameInitials(name: string): string {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((t) => t[0]!)
+    .join("");
+}
+
+/**
+ * Lower is better. 0–8 match; 9 = no match.
+ * Supports last-name-first, multi-token ("shai gil"), and initials ("sga").
+ */
 function matchQuality(nameLower: string, id: string, q: string): number {
   const name = normalizeSearchText(nameLower);
   const query = normalizeSearchText(q);
@@ -70,26 +89,86 @@ function matchQuality(nameLower: string, id: string, q: string): number {
   if (!query) return 9;
   if (idNorm === query || id.toLowerCase() === q) return 0;
   if (name === query) return 1;
+
   const tokens = name.split(/\s+/).filter(Boolean);
   const first = tokens[0] ?? name;
   const last = tokens[tokens.length - 1] ?? name;
+  const qTokens = query.split(/\s+/).filter(Boolean);
+
   if (last === query) return 2;
   if (name.startsWith(query)) return 3;
   if (first === query || first.startsWith(query)) return 4;
   if (last.startsWith(query)) return 5;
+
+  // Multi-token: every query token prefixes some name token (order-flexible).
+  if (qTokens.length > 1) {
+    const unused = [...tokens];
+    let allHit = true;
+    for (const qt of qTokens) {
+      const idx = unused.findIndex((t) => t === qt || t.startsWith(qt));
+      if (idx < 0) {
+        allHit = false;
+        break;
+      }
+      unused.splice(idx, 1);
+    }
+    if (allHit) return 3;
+  }
+
+  // Initials: "sga", "lj", "kd" (2–4 letters, single token).
+  const compactQ = query.replace(/\s+/g, "");
+  if (
+    qTokens.length === 1 &&
+    compactQ.length >= 2 &&
+    compactQ.length <= 4 &&
+    /^[a-z]+$/.test(compactQ)
+  ) {
+    const initials = nameInitials(name);
+    if (initials === compactQ) return 2;
+    if (initials.startsWith(compactQ)) return 4;
+  }
+
   if (tokens.some((t) => t.startsWith(query))) return 6;
   if (name.includes(query)) return 7;
   if (idNorm.startsWith(query) || id.toLowerCase().startsWith(q)) return 8;
   return 9;
 }
 
+/** Exact award/legend full-name hit → preferred route id (when query is full name). */
+function awardExactIdForQuery(q: string): string | null {
+  return awardWinnerIdForQuery(q);
+}
+
+function lastNameOf(nameLower: string): string {
+  const tokens = normalizeSearchText(nameLower).split(/\s+/).filter(Boolean);
+  return tokens[tokens.length - 1] ?? nameLower;
+}
+
 function matchRows(rows: SearchRow[], q: string): SearchRow[] {
+  const awardExactId = awardExactIdForQuery(q);
   return rows
     .filter((row) => matchQuality(row.nameLower, row.id.toLowerCase(), q) < 9)
     .sort((a, b) => {
+      if (awardExactId) {
+        const aHit =
+          a.id === awardExactId ||
+          a.id.toLowerCase() === awardExactId.toLowerCase();
+        const bHit =
+          b.id === awardExactId ||
+          b.id.toLowerCase() === awardExactId.toLowerCase();
+        if (aHit !== bHit) return aHit ? -1 : 1;
+      }
       const aq = matchQuality(a.nameLower, a.id.toLowerCase(), q);
       const bq = matchQuality(b.nameLower, b.id.toLowerCase(), q);
       if (aq !== bq) return aq - bq;
+      // Exact last-name + award/legend beats first-name board noise.
+      const qNorm = normalizeSearchText(q);
+      const aLastExact = lastNameOf(a.nameLower) === qNorm ? 0 : 1;
+      const bLastExact = lastNameOf(b.nameLower) === qNorm ? 0 : 1;
+      if (aLastExact !== bLastExact) return aLastExact - bLastExact;
+      const aa = awardWinnerSortRank(a.name);
+      const ba = awardWinnerSortRank(b.name);
+      if (aa !== ba) return aa - ba;
       return b.minutes - a.minutes;
     });
 }
@@ -221,12 +300,16 @@ async function getSearchIndex(season: string): Promise<SearchRow[]> {
 
 function pastFromBundledIndex(
   q: string,
-  currentSeason: string,
+  _currentSeason: string,
   excludeIds: Set<string>,
   limit: number
 ): SearchResult[] {
+  void _currentSeason;
+  // Search the full career index; callers dedupe by id against the season board.
+  // Do not exclude `currentSeason` — that hid every active player when the board
+  // merge mistakenly dropped current hits (and when the clock season is empty).
   const rows: SearchRow[] = getPlayerSearchIndex()
-    .filter((row) => row.season !== currentSeason && !excludeIds.has(row.id))
+    .filter((row) => !excludeIds.has(row.id))
     .map((row) => ({
       id: row.id,
       name: row.name,
@@ -253,12 +336,34 @@ function pastFromBundledIndex(
     }));
 }
 
+/**
+ * Prefer a season that actually has a baked board. Calendar can flip to the next
+ * league year (e.g. 2026-27 in Aug) before the snapshot catches up.
+ */
+function resolveSearchSeason(requested?: string | null): string {
+  const preferred =
+    requested?.trim() || defaultCanonicalSeasons(1)[0] || "2025-26";
+  if (getPlayerSearchIndexForSeason(preferred).length > 0) return preferred;
+
+  for (const season of defaultCanonicalSeasons(6)) {
+    if (getPlayerSearchIndexForSeason(season).length > 0) return season;
+  }
+
+  // Last resort: newest season present in the career index.
+  let best = preferred;
+  for (const row of getPlayerSearchIndex()) {
+    if (row.season && row.season > best) best = row.season;
+  }
+  return best;
+}
+
 async function searchPrioritized(
   q: string,
   season: string,
   limit: number
 ): Promise<{ results: SearchResult[]; universe: string }> {
-  const currentRows = matchRows(await getSearchIndex(season), q);
+  const boardSeason = resolveSearchSeason(season);
+  const currentRows = matchRows(await getSearchIndex(boardSeason), q);
   const current: SearchResult[] = currentRows.map((row) => ({
     id: row.id,
     name: row.name,
@@ -277,8 +382,10 @@ async function searchPrioritized(
     return 0;
   });
 
-  const seen = new Set(current.map((r) => r.id));
-  const pastReserve = Math.min(3, Math.max(0, limit - 1));
+  // Ids already chosen for the response — start empty so current hits are kept.
+  const seen = new Set<string>();
+  const currentIds = new Set(current.map((r) => r.id));
+  const pastReserve = Math.min(4, Math.max(0, limit - 1));
   let pastPool: SearchResult[] = [];
   let universe = "bundled-player-search";
 
@@ -289,7 +396,7 @@ async function searchPrioritized(
       );
       getMasterPlayerRegistry();
       const fromMaster = searchMasterPlayers(q, { limit: limit * 2 })
-        .filter((r) => !seen.has(r.playerId))
+        .filter((r) => !currentIds.has(r.playerId))
         .map((row) => ({
           id: row.playerId,
           name: row.displayName,
@@ -309,7 +416,7 @@ async function searchPrioritized(
   }
 
   if (pastPool.length === 0) {
-    pastPool = pastFromBundledIndex(q, season, seen, limit * 2);
+    pastPool = pastFromBundledIndex(q, boardSeason, currentIds, limit * 2);
     if (pastPool.length > 0) universe = `${universe}+career-index`;
   }
 
@@ -317,19 +424,100 @@ async function searchPrioritized(
     universe = `${universe}+draft-class`;
   }
 
+  const awardExactId = awardExactIdForQuery(q);
+  // Pull award/legend matches to the front of the past pool so they claim
+  // reserved slots ahead of weak same-first-name modern board hits.
+  pastPool.sort((a, b) => {
+    if (awardExactId) {
+      const aHit =
+        a.id === awardExactId ||
+        a.id.toLowerCase() === awardExactId.toLowerCase() ||
+        normalizeSearchText(a.name) === normalizeSearchText(q);
+      const bHit =
+        b.id === awardExactId ||
+        b.id.toLowerCase() === awardExactId.toLowerCase() ||
+        normalizeSearchText(b.name) === normalizeSearchText(q);
+      if (aHit !== bHit) return aHit ? -1 : 1;
+    }
+    const aq = matchQuality(a.name.toLowerCase(), a.id.toLowerCase(), q);
+    const bq = matchQuality(b.name.toLowerCase(), b.id.toLowerCase(), q);
+    if (aq !== bq) return aq - bq;
+    const qNorm = normalizeSearchText(q);
+    const aLastExact = lastNameOf(a.name.toLowerCase()) === qNorm ? 0 : 1;
+    const bLastExact = lastNameOf(b.name.toLowerCase()) === qNorm ? 0 : 1;
+    if (aLastExact !== bLastExact) return aLastExact - bLastExact;
+    return awardWinnerSortRank(a.name) - awardWinnerSortRank(b.name);
+  });
+
+  const awardPast = pastPool.filter((r) => awardWinnerSortRank(r.name) === 0);
+  const awardFront = awardPast.slice(0, Math.min(6, limit));
+  for (const row of awardFront) seen.add(row.id);
+
+  // Ensure exact award full-name is always reserved (id may be bref: while index uses ESPN/NBA id).
+  if (awardExactId || normalizeSearchText(q).includes(" ")) {
+    const qNorm = normalizeSearchText(q);
+    const already = awardFront.some(
+      (row) =>
+        row.id === awardExactId ||
+        row.id.toLowerCase() === String(awardExactId ?? "").toLowerCase() ||
+        normalizeSearchText(row.name) === qNorm
+    );
+    if (!already) {
+      const fromIndex = getPlayerSearchIndex().find((row) => {
+        if (
+          awardExactId &&
+          (row.id === awardExactId ||
+            row.id.toLowerCase() === awardExactId.toLowerCase())
+        ) {
+          return true;
+        }
+        return normalizeSearchText(row.name) === qNorm;
+      });
+      if (fromIndex && !seen.has(fromIndex.id) && !currentIds.has(fromIndex.id)) {
+        awardFront.unshift({
+          id: fromIndex.id,
+          name: fromIndex.name,
+          team: fromIndex.team,
+          position: null,
+          season: fromIndex.season,
+          careerSpan: fromIndex.firstSeason
+            ? `${fromIndex.firstSeason} → ${fromIndex.season}`
+            : `Last ${fromIndex.season}`,
+          current: false,
+        });
+        seen.add(fromIndex.id);
+      }
+    }
+  }
+
   const currentCap =
-    pastPool.length > 0
-      ? Math.min(current.length, Math.max(1, limit - pastReserve))
+    pastPool.length > 0 || awardFront.length > 0
+      ? Math.min(
+          current.length,
+          Math.max(1, limit - Math.max(pastReserve, awardFront.length))
+        )
       : limit;
-  const currentTake = current.slice(0, currentCap);
+  // Current board hits — only skip ids already claimed by awardFront.
+  const currentTake = current
+    .filter((r) => !seen.has(r.id))
+    .slice(0, currentCap);
   for (const row of currentTake) seen.add(row.id);
 
   const pastTake = pastPool
     .filter((r) => !seen.has(r.id))
-    .slice(0, limit - currentTake.length);
+    .slice(0, limit - awardFront.length - currentTake.length);
+
+  const merged = [...awardFront, ...currentTake, ...pastTake].slice(0, limit);
+  // Final pass: keep award winners ahead when match quality ties.
+  merged.sort((a, b) => {
+    const aq = matchQuality(a.name.toLowerCase(), a.id.toLowerCase(), q);
+    const bq = matchQuality(b.name.toLowerCase(), b.id.toLowerCase(), q);
+    if (aq !== bq) return aq - bq;
+    return awardWinnerSortRank(a.name) - awardWinnerSortRank(b.name);
+  });
 
   return {
-    results: [...currentTake, ...pastTake].slice(0, limit),
+    results: merged.slice(0, limit),
     universe,
   };
 }
@@ -337,8 +525,7 @@ async function searchPrioritized(
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const q = (searchParams.get("q") ?? "").trim().toLowerCase();
-  const season =
-    searchParams.get("season")?.trim() || defaultCanonicalSeasons(1)[0];
+  const season = resolveSearchSeason(searchParams.get("season"));
   const scope = (searchParams.get("scope") ?? "season").toLowerCase();
 
   if (q.length < 1) {
@@ -350,7 +537,7 @@ export async function GET(request: Request) {
       const { results, universe } = await searchPrioritized(
         q,
         season,
-        RESULT_LIMIT
+        ALL_SCOPE_LIMIT
       );
       return NextResponse.json({
         results,

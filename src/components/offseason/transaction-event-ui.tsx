@@ -15,10 +15,15 @@ import {
 import { sourceTextCategoryLabel } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNav } from "@/components/continuity/query-nav";
+import { TradeAcquireBoxes } from "@/components/offseason/trade-acquire-boxes";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import { TextLink } from "@/components/ui/text-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import {
+  tradeAcquirePresentationFromEvent,
+  tradeAcquirePresentationFromEvents,
+} from "@/lib/trade-acquire-presentation";
 import { monthLabel } from "@/data/providers/transactions/offseason-window";
 import { cn } from "@/lib/utils";
 
@@ -35,15 +40,22 @@ export function TransactionEventRow({
   compact,
   hideClusterHint,
   playerResolutions,
+  sourceTextOnly,
 }: {
   event: NbaTransactionEvent;
   compact?: boolean;
   hideClusterHint?: boolean;
   playerResolutions?: TransactionPlayerResolution[];
+  /** Prefer raw ESPN note (e.g. inside a cluster evidence expander). */
+  sourceTextOnly?: boolean;
 }) {
   const abbr = teamAbbr(event);
   const presentation = presentationForSourceEvent(event);
   const isTradeRelated = presentation.kind === "trade_related_transaction";
+  const tradeAcquire =
+    !sourceTextOnly && isTradeRelated
+      ? tradeAcquirePresentationFromEvent(event)
+      : null;
 
   return (
     <article
@@ -52,25 +64,33 @@ export function TransactionEventRow({
         compact && "py-2"
       )}
     >
-      <TeamIdentity
-        teamKey={event.teamId}
-        label={abbr}
-        className="mt-0.5 shrink-0"
-        nameClassName="no-underline hover:no-underline"
-      >
-        <TeamLogo teamKey={abbr} size={compact ? "xs" : "sm"} />
-      </TeamIdentity>
+      {!tradeAcquire ? (
+        <TeamIdentity
+          teamKey={event.teamId}
+          label={abbr}
+          className="mt-0.5 shrink-0"
+          nameClassName="no-underline hover:no-underline"
+        >
+          <TeamLogo teamKey={abbr} size={compact ? "xs" : "sm"} />
+        </TeamIdentity>
+      ) : null}
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
           <time className="text-[12px] font-semibold tabular-nums text-muted-foreground">
             {event.date}
           </time>
-          <TeamIdentity
-            teamKey={event.teamId}
-            label={abbr}
-            className="inline-flex"
-            nameClassName="text-[14px] font-bold"
-          />
+          {!tradeAcquire ? (
+            <TeamIdentity
+              teamKey={event.teamId}
+              label={abbr}
+              className="inline-flex"
+              nameClassName="text-[14px] font-bold"
+            />
+          ) : (
+            <span className="text-[14px] font-bold tracking-tight">
+              {tradeAcquire.sides.map((s) => s.teamAbbr).join(" ↔ ")}
+            </span>
+          )}
           <span className="text-[12px] font-semibold uppercase tracking-wide text-muted-foreground">
             {presentation.title}
           </span>
@@ -86,11 +106,19 @@ export function TransactionEventRow({
             ? " · ESPN transaction archive"
             : " · ESPN transaction note"}
         </p>
-        <TransactionDescription
-          description={event.description}
-          resolutions={playerResolutions}
-          className="type-body mt-0.5 leading-relaxed text-foreground"
-        />
+        {tradeAcquire ? (
+          <TradeAcquireBoxes
+            presentation={tradeAcquire}
+            resolutions={playerResolutions}
+            compact={compact}
+          />
+        ) : (
+          <TransactionDescription
+            description={event.description}
+            resolutions={playerResolutions}
+            className="type-body mt-0.5 leading-relaxed text-foreground"
+          />
+        )}
         <p className="mt-1 text-[12px] text-muted-foreground">
           Season {event.season}
           {!isTradeRelated ? " · ESPN transaction archive" : ""}
@@ -130,15 +158,23 @@ export function RelatedEventClusterCard({
   );
   const presentation = presentationForRelatedCluster(events);
   const isTradeRelated = presentation.kind === "trade_related_transaction";
+  const tradeAcquire = isTradeRelated
+    ? tradeAcquirePresentationFromEvents(events)
+    : null;
+  const clusterResolutions = events.flatMap(
+    (e) => playerResolutionsByEventId?.[e.id] ?? []
+  );
 
   return (
     <article className="border-b border-border/70 py-3 last:border-0">
       <div className="flex flex-wrap items-start gap-3">
-        <div className="flex -space-x-2 pt-0.5">
-          {events.slice(0, 3).map((e) => (
-            <TeamLogo key={e.id} teamKey={teamAbbr(e)} size="sm" />
-          ))}
-        </div>
+        {!tradeAcquire ? (
+          <div className="flex -space-x-2 pt-0.5">
+            {events.slice(0, 3).map((e) => (
+              <TeamLogo key={e.id} teamKey={teamAbbr(e)} size="sm" />
+            ))}
+          </div>
+        ) : null}
         <div className="min-w-0 flex-1">
           <div className="flex flex-wrap items-baseline gap-x-2 gap-y-0.5">
             <time className="text-[12px] font-semibold tabular-nums text-muted-foreground">
@@ -157,6 +193,12 @@ export function RelatedEventClusterCard({
               ? " - source evidence from the ESPN transaction archive (not a verified structured trade ledger)."
               : " - assembled from source events, not a verified structured trade ledger."}
           </p>
+          {tradeAcquire ? (
+            <TradeAcquireBoxes
+              presentation={tradeAcquire}
+              resolutions={clusterResolutions}
+            />
+          ) : null}
           <button
             type="button"
             onClick={() => setOpen((v) => !v)}
@@ -179,6 +221,7 @@ export function RelatedEventClusterCard({
                   event={e}
                   compact
                   hideClusterHint
+                  sourceTextOnly
                   playerResolutions={playerResolutionsByEventId?.[e.id]}
                 />
               ))}
@@ -470,27 +513,44 @@ export function TransactionEventDetail({
   const presentation = cluster
     ? presentationForRelatedCluster(detailEvents)
     : presentationForSourceEvent(event);
+  const isTradeRelated = presentation.kind === "trade_related_transaction";
+  const tradeAcquire = isTradeRelated
+    ? tradeAcquirePresentationFromEvents(detailEvents)
+    : null;
+  const detailResolutions = detailEvents.flatMap(
+    (e) => playerResolutionsByEventId?.[e.id] ?? []
+  );
+  const headerAbbrs =
+    tradeAcquire?.sides.map((s) => s.teamAbbr) ??
+    clusterAbbrs ??
+    [abbr];
 
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
       <div className="flex items-center gap-3">
-        <TeamIdentity
-          teamKey={event.teamId}
-          label={abbr}
-          className="shrink-0"
-          nameClassName="no-underline hover:no-underline"
-        >
-          <TeamLogo teamKey={abbr} size="md" />
-        </TeamIdentity>
+        {!tradeAcquire ? (
+          <TeamIdentity
+            teamKey={event.teamId}
+            label={abbr}
+            className="shrink-0"
+            nameClassName="no-underline hover:no-underline"
+          >
+            <TeamLogo teamKey={abbr} size="md" />
+          </TeamIdentity>
+        ) : (
+          <div className="flex -space-x-2 shrink-0">
+            {tradeAcquire.sides.map((side) => (
+              <TeamLogo key={side.teamId} teamKey={side.teamAbbr} size="md" />
+            ))}
+          </div>
+        )}
         <div>
           <p className="text-[12px] font-semibold tabular-nums text-muted-foreground">
             {event.date} · Season {event.season}
           </p>
-          <TeamIdentity
-            teamKey={event.teamId}
-            label={abbr}
-            nameClassName="text-[16px] font-bold"
-          />
+          <p className="text-[16px] font-bold tracking-tight">
+            {headerAbbrs.join(" ↔ ")}
+          </p>
         </div>
       </div>
 
@@ -502,6 +562,14 @@ export function TransactionEventDetail({
           {presentation.sourceCountLabel}
         </p>
       </div>
+
+      {tradeAcquire ? (
+        <TradeAcquireBoxes
+          presentation={tradeAcquire}
+          resolutions={detailResolutions}
+          className="mt-0"
+        />
+      ) : null}
 
       <div>
         <p className="text-[12px] font-semibold text-muted-foreground">

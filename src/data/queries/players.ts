@@ -9,6 +9,7 @@ import type {
   PlayerSeason,
 } from "@/data/types";
 import { applyPlayerSeasonFilters } from "./filter-utils";
+import { overlayDraftYears } from "@/data/providers/nba/draft-history";
 import {
   getDarkoRatings,
   getHistoricalPlayerSeasons,
@@ -428,6 +429,44 @@ async function loadEspnTeamRoster(
   season: string,
   filters: Omit<BasketballFilters, "team" | "season">
 ): Promise<{ boardCount: number; players: PlayerSeason[] }> {
+  const { preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+
+  async function fromBundledBref(): Promise<{
+    boardCount: number;
+    players: PlayerSeason[];
+  } | null> {
+    try {
+      const { getBundledBrefPeerBoard } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      const bundled = getBundledBrefPeerBoard(season);
+      if (bundled.length < 50) return null;
+      let rows = await overlayImpactRatings(bundled, season);
+      if (isHustleStatsSeason(season)) {
+        rows = await overlayHustleRows(rows, season);
+      }
+      const players = applyPlayerSeasonFilters(rows, {
+        ...filters,
+        season,
+        team: canonicalTeamId,
+      });
+      if (!players.length) return null;
+      return { boardCount: bundled.length, players };
+    } catch {
+      return null;
+    }
+  }
+
+  // Cloudflare: ESPN by-athlete boards hang / empty for older seasons — use
+  // the baked BRef peer board (same source as explore players).
+  if (preferBundledProductDataOnEdge()) {
+    const bundled = await fromBundledBref();
+    if (bundled) return bundled;
+    return { boardCount: 0, players: [] };
+  }
+
   let seasons = await espnPlayerSeasonProvider().getPlayerSeasons(season);
   seasons = await overlayImpactRatings(seasons, season);
   if (isHustleStatsSeason(season)) {
@@ -437,7 +476,7 @@ async function loadEspnTeamRoster(
     ...filters,
     season,
     team: canonicalTeamId,
-  }).filter((row) => row.teamId === canonicalTeamId);
+  });
 
   if (players.length === 0) {
     const { fetchEspnTeamRosterPlayers } = await import(
@@ -452,10 +491,13 @@ async function loadEspnTeamRoster(
       ...filters,
       season,
       team: canonicalTeamId,
-    }).filter((row) => row.teamId === canonicalTeamId);
+    });
     if (filtered.length > 0) {
       return { boardCount: roster.length, players: filtered };
     }
+
+    const bundled = await fromBundledBref();
+    if (bundled) return bundled;
   }
 
   return { boardCount: seasons.length, players };
@@ -1073,6 +1115,43 @@ async function loadExploreAllSeasonsBoard(
  * Invariant: for seasons with a historical player-season registry, the board
  * universe is that registry (LEFT JOIN overlays). DRBL never defines membership.
  */
+async function attachDraftYears(rows: PlayerSeason[]): Promise<PlayerSeason[]> {
+  if (!rows.length) return rows;
+  try {
+    const { getBundledDraftYearMap } = await import(
+      "@/data/runtime/draft-year-snapshot"
+    );
+    const bundled = getBundledDraftYearMap();
+    if (bundled.size > 0) {
+      return overlayDraftYears(rows, bundled);
+    }
+  } catch {
+    /* fall through */
+  }
+  // Local / Vercel: live drafthistory is fine; Workers must not hit this path
+  // when the bake is empty (Error 1102 risk).
+  if (process.env.VERCEL === "1" || process.env.NODE_ENV !== "production") {
+    try {
+      const { getDraftYearByPlayerId } = await import(
+        "@/data/providers/nba/draft-history"
+      );
+      const live = await getDraftYearByPlayerId();
+      return overlayDraftYears(rows, live);
+    } catch {
+      return rows;
+    }
+  }
+  return rows;
+}
+
+async function filterPlayerSeasonsWithDraft(
+  rows: PlayerSeason[],
+  filters: BasketballFilters
+): Promise<PlayerSeason[]> {
+  const withDraft = await attachDraftYears(rows);
+  return applyPlayerSeasonFilters(withDraft, filters);
+}
+
 export async function getFilteredPlayerSeasonsDetailed(
   filters: BasketballFilters = {}
 ): Promise<{ rows: PlayerSeason[]; error: unknown | null }> {
@@ -1112,7 +1191,7 @@ export async function getFilteredPlayerSeasonsDetailed(
           rows = await overlayHustleRows(rows, filters.season);
         }
         return {
-          rows: applyPlayerSeasonFilters(rows, filters),
+          rows: await filterPlayerSeasonsWithDraft(rows, filters),
           error: null,
         };
       }
@@ -1165,7 +1244,7 @@ export async function getFilteredPlayerSeasonsDetailed(
     }
 
     return {
-      rows: applyPlayerSeasonFilters(seasons, filters),
+      rows: await filterPlayerSeasonsWithDraft(seasons, filters),
       error: seasons.length ? null : error,
     };
   }
@@ -1181,7 +1260,7 @@ export async function getFilteredPlayerSeasonsDetailed(
       seasons = await getDataProvider().getPlayerSeasons(filters.season);
       if (seasons.length > 0) {
         return {
-          rows: applyPlayerSeasonFilters(seasons, filters),
+          rows: await filterPlayerSeasonsWithDraft(seasons, filters),
           error: null,
         };
       }
@@ -1301,7 +1380,7 @@ export async function getFilteredPlayerSeasonsDetailed(
   }
 
   return {
-    rows: applyPlayerSeasonFilters(seasons, filters),
+    rows: await filterPlayerSeasonsWithDraft(seasons, filters),
     error,
   };
 }

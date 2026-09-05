@@ -28,8 +28,20 @@ const ALIASES = path.join(
 );
 
 const FORCE = process.env.FORCE === "1";
+/** Re-fetch files that have points but zero rebounds (broken older bakes). */
+const REPAIR_ZERO_REB = process.env.REPAIR_ZERO_REB === "1" || FORCE;
+/**
+ * Rewrite seasonType in place when playoffs-tagged games fall in the
+ * regular-season calendar window (ESPN seasontype=3 fallback bug).
+ */
+const REPAIR_SEASON_TYPE = process.env.REPAIR_SEASON_TYPE === "1";
 const MIN_GP = Number(process.env.GAMELOG_MIN_GP || 15);
 const CONCURRENCY = Number(process.env.GAMELOG_CONCURRENCY || 6);
+/** Limit to these seasons (comma-separated). Empty = BRef window. */
+const SEASON_FILTER = String(process.env.GAMELOG_SEASONS || "")
+  .split(",")
+  .map((s) => s.trim())
+  .filter((s) => /^\d{4}-\d{2}$/.test(s));
 /** 0 = all seasons present in the BRef snapshot (full CF career coverage). */
 const SEASON_LIMIT = Number(process.env.GAMELOG_SEASON_LIMIT || 0);
 const SITE =
@@ -40,11 +52,38 @@ function canonicalSeason(startYear) {
 }
 
 function seasonsFromBref(bref, limit) {
-  const seasons = Object.keys(bref.seasons || {})
+  let seasons = Object.keys(bref.seasons || {})
     .filter((season) => (bref.seasons[season]?.advanced || []).length > 0)
     .sort((a, b) => b.localeCompare(a));
+  if (SEASON_FILTER.length) {
+    const want = new Set(SEASON_FILTER);
+    seasons = seasons.filter((season) => want.has(season));
+  }
   if (Number.isFinite(limit) && limit > 0) return seasons.slice(0, limit);
   return seasons;
+}
+
+function needsReboundRepair(dest) {
+  if (!REPAIR_ZERO_REB || !existsSync(dest)) return false;
+  try {
+    const raw = JSON.parse(
+      // sync read is fine in repair gate
+      require("node:fs").readFileSync(dest, "utf8")
+    );
+    const games = Array.isArray(raw?.games) ? raw.games : [];
+    if (!games.length) return false;
+    let pts = 0;
+    let reb = 0;
+    let fga = 0;
+    for (const g of games) {
+      pts += Number(g.points || 0);
+      reb += Number(g.rebounds || 0);
+      fga += Number(g.fga || 0);
+    }
+    return pts > 0 && (reb === 0 || fga === 0);
+  } catch {
+    return true;
+  }
 }
 
 function normalizeName(name) {
@@ -137,7 +176,9 @@ function compactFromEspn(entry, meta, names, season, teamId) {
     rebounds:
       num(stats, names, "totalRebounds") ||
       num(stats, names, "rebounds") ||
-      num(stats, names, "REB"),
+      num(stats, names, "REB") ||
+      num(stats, names, "offensiveRebounds") +
+        num(stats, names, "defensiveRebounds"),
     assists: num(stats, names, "assists") || num(stats, names, "AST"),
     steals: num(stats, names, "steals") || num(stats, names, "STL"),
     blocks: num(stats, names, "blocks") || num(stats, names, "BLK"),
@@ -154,14 +195,31 @@ function compactFromEspn(entry, meta, names, season, teamId) {
       num(stats, names, "3PA"),
     ftm: ft.made || num(stats, names, "freeThrowsMade") || num(stats, names, "FTM"),
     fta: ft.att || num(stats, names, "freeThrowsAttempted") || num(stats, names, "FTA"),
-    orb: null,
-    drb: null,
+    orb: names.includes("offensiveRebounds") || names.includes("OREB")
+      ? num(stats, names, "offensiveRebounds") || num(stats, names, "OREB")
+      : null,
+    drb: names.includes("defensiveRebounds") || names.includes("DREB")
+      ? num(stats, names, "defensiveRebounds") || num(stats, names, "DREB")
+      : null,
     pf: num(stats, names, "fouls") || num(stats, names, "PF") || null,
     plusMinus: num(stats, names, "plusMinus"),
     seasonType: "regular",
   };
 }
 
+function seasonTypeFromBlockName(displayName, fallback) {
+  const label = String(displayName ?? "");
+  if (/postseason|playoffs?/i.test(label)) return "playoffs";
+  if (/regular season/i.test(label)) return "regular";
+  if (/preseason/i.test(label)) return "preseason";
+  return fallback;
+}
+
+/**
+ * ESPN seasontype=3 responses sometimes omit a Postseason block and dump the
+ * full seasonTypes list instead. Never fall back to unrelated blocks — that
+ * used to overwrite regular-season rows as playoffs in the merge step.
+ */
 async function fetchEspnLog(espnId, season, seasonType) {
   const year = espnYear(season);
   if (!year) return [];
@@ -182,12 +240,16 @@ async function fetchEspnLog(espnId, season, seasonType) {
   const metadata = payload.events ?? {};
   const wanted =
     seasonType === 2 ? /regular season/i : /postseason|playoffs?/i;
-  const preferred = (payload.seasonTypes ?? []).filter((block) =>
+  const fallbackType = seasonType === 3 ? "playoffs" : "regular";
+  const blocks = (payload.seasonTypes ?? []).filter((block) =>
     wanted.test(block.displayName ?? "")
   );
-  const blocks = preferred.length ? preferred : payload.seasonTypes ?? [];
   const rows = [];
   for (const block of blocks) {
+    const blockType = seasonTypeFromBlockName(
+      block.displayName,
+      fallbackType
+    );
     for (const category of block.categories ?? []) {
       const entries = Array.isArray(category.events) ? category.events : [];
       for (const entry of entries) {
@@ -195,12 +257,68 @@ async function fetchEspnLog(espnId, season, seasonType) {
         const meta = metadata[entry.eventId] ?? { id: entry.eventId };
         const row = compactFromEspn(entry, meta, names, season, "");
         if (!row.gameId || !row.date) continue;
-        row.seasonType = seasonType === 3 ? "playoffs" : "regular";
+        row.seasonType = blockType;
         rows.push(row);
       }
     }
   }
   return rows;
+}
+
+/** Calendar repair for the seasontype=3 fallback mis-tag (Oct–early Apr). */
+function inferredSeasonType(date, current) {
+  const stamp = String(date ?? "");
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(stamp);
+  if (!m) return current;
+  const month = Number(m[2]);
+  const day = Number(m[3]);
+  const inRegularWindow =
+    month >= 10 || month <= 3 || (month === 4 && day < 15);
+  if (current === "playoffs" && inRegularWindow) return "regular";
+  return current;
+}
+
+async function repairSeasonTypesOnDisk(seasons) {
+  let repairedFiles = 0;
+  let repairedGames = 0;
+  for (const season of seasons) {
+    const seasonDir = path.join(OUT_ROOT, season);
+    let names = [];
+    try {
+      names = await fs.readdir(seasonDir);
+    } catch {
+      continue;
+    }
+    for (const name of names) {
+      if (!name.endsWith(".json")) continue;
+      const dest = path.join(seasonDir, name);
+      let payload;
+      try {
+        payload = JSON.parse(await fs.readFile(dest, "utf8"));
+      } catch {
+        continue;
+      }
+      const games = Array.isArray(payload?.games) ? payload.games : [];
+      if (!games.length) continue;
+      let changed = 0;
+      for (const game of games) {
+        const next = inferredSeasonType(game.date, game.seasonType);
+        if (next !== game.seasonType) {
+          game.seasonType = next;
+          changed += 1;
+        }
+      }
+      if (!changed) continue;
+      payload.games = games;
+      payload.seasonTypeRepairedAt = new Date().toISOString();
+      await fs.writeFile(dest, JSON.stringify(payload));
+      repairedFiles += 1;
+      repairedGames += changed;
+    }
+  }
+  console.log(
+    `[player-game-logs] seasonType repair files=${repairedFiles} games=${repairedGames}`
+  );
 }
 
 async function mapPool(items, limit, fn) {
@@ -236,6 +354,11 @@ for (const a of aliasFile.aliases || []) {
 
 const seasons = seasonsFromBref(bref, SEASON_LIMIT);
 
+if (REPAIR_SEASON_TYPE) {
+  await repairSeasonTypesOnDisk(seasons);
+  process.exit(0);
+}
+
 let written = 0;
 let skipped = 0;
 let failed = 0;
@@ -269,7 +392,8 @@ for (const season of seasons) {
 
   await mapPool(targets, CONCURRENCY, async (target) => {
     const dest = path.join(seasonDir, `${target.nbaId}.json`);
-    if (!FORCE && existsSync(dest)) {
+    const repair = needsReboundRepair(dest);
+    if (!FORCE && existsSync(dest) && !repair) {
       skipped += 1;
       return;
     }
@@ -279,7 +403,9 @@ for (const season of seasons) {
         fetchEspnLog(target.espnId, season, 3).catch(() => []),
       ]);
       const byId = new Map();
-      for (const row of [...reg, ...po]) {
+      // Prefer regular-season rows when both fetches share a gameId — the
+      // playoffs request historically fell back to the full season dump.
+      for (const row of [...po, ...reg]) {
         if (row.gameId) byId.set(row.gameId, row);
       }
       const games = [...byId.values()].sort((a, b) =>
@@ -304,7 +430,11 @@ for (const season of seasons) {
         JSON.stringify(payload)
       );
       written += 1;
-      if (written % 25 === 0) console.log(`[player-game-logs] wrote ${written}…`);
+      if (written % 25 === 0) {
+        console.log(
+          `[player-game-logs] wrote ${written}…${repair ? " (repair)" : ""}`
+        );
+      }
     } catch (error) {
       failed += 1;
       if (failed <= 8) {
@@ -314,11 +444,32 @@ for (const season of seasons) {
           }`
         );
       }
+      // Soft backoff when ESPN rate-limits.
+      if (/429|HTTP 429/i.test(String(error))) {
+        await new Promise((r) => setTimeout(r, 2500));
+      }
     }
   });
 }
 
 await fs.mkdir(OUT_ROOT, { recursive: true });
+
+const seasonCounts = {};
+for (const season of seasons) {
+  try {
+    const dir = path.join(OUT_ROOT, season);
+    const names = await fs.readdir(dir);
+    // Count NBA-id files only (skip espn duplicate aliases when possible).
+    seasonCounts[season] = names.filter((name) => name.endsWith(".json")).length;
+  } catch {
+    seasonCounts[season] = 0;
+  }
+}
+const usableSeasons = Object.entries(seasonCounts)
+  .filter(([, count]) => Number(count) >= 25)
+  .map(([season]) => season)
+  .sort((a, b) => b.localeCompare(a));
+
 await fs.writeFile(
   path.join(OUT_ROOT, "manifest.json"),
   JSON.stringify(
@@ -326,6 +477,8 @@ await fs.writeFile(
       version: 1,
       generatedAt: new Date().toISOString(),
       seasons,
+      seasonCounts,
+      usableSeasons,
       written,
       skipped,
       failed,
@@ -335,6 +488,9 @@ await fs.writeFile(
     2
   )
 );
+
+// Always reclassify calendar-window games mis-tagged as playoffs.
+await repairSeasonTypesOnDisk(Object.keys(seasonCounts));
 
 console.log(
   `[player-game-logs] done written=${written} skipped=${skipped} failed=${failed} → ${OUT_ROOT}`

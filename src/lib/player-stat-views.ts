@@ -68,14 +68,13 @@ function sheetCols(
   }));
 }
 
-const BOX_CATEGORIES: SheetStatCategory[] = ["counting", "shooting"];
+const BOX_CATEGORIES: SheetStatCategory[] = ["profile", "shooting", "defense"];
 const ADV_CATEGORIES: SheetStatCategory[] = [
-  "rates",
   "advanced",
   "impact",
 ];
 
-/** Per-game box + shooting — catalog Counting → Shooting order. */
+/** Per-game box + shooting + defense — catalog Profile → Shooting → Defense. */
 export const BREF_PER_GAME_COLUMNS: BrefColumn[] = [
   ...identityCols,
   ...sheetCols(BOX_CATEGORIES, "perGame"),
@@ -92,7 +91,7 @@ export const BREF_PER_36_COLUMNS: BrefColumn[] = [
 ];
 
 /**
- * Rates + advanced + impact (catalog Advanced sheet pack).
+ * Advanced + impact (catalog Advanced sheet pack).
  * MP totals for context.
  */
 export const BREF_ADVANCED_COLUMNS: BrefColumn[] = [

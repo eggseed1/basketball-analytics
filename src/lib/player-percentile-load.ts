@@ -20,7 +20,9 @@ import {
 } from "@/data/providers/nba/runtime-policy";
 
 /** Cap career peer-board fan-out in full mode; always keep selected + prior. */
-const MAX_CAREER_PEER_SEASONS = 3;
+const MAX_CAREER_PEER_SEASONS = 6;
+/** Spread of league seasons (excl. view year) for "Other seasons" comps. */
+const MAX_HISTORICAL_COMP_SEASONS = 14;
 
 export type PercentileLoadMode = "fast" | "full";
 
@@ -112,6 +114,31 @@ function careerSeasonsForPeerBoards(
   return out;
 }
 
+/**
+ * Spread of archived league seasons for cross-era comps (not just prior year).
+ * Newest-first list → evenly spaced picks so 90s / 00s / 10s / 20s all appear.
+ */
+function pickSpreadSeasons(
+  seasons: string[],
+  max: number,
+  exclude: Set<string>
+): string[] {
+  const pool = seasons.filter((s) => s && !exclude.has(s));
+  if (pool.length <= max) return pool;
+  const out: string[] = [];
+  const step = (pool.length - 1) / Math.max(1, max - 1);
+  for (let i = 0; i < max; i++) {
+    const idx = Math.min(pool.length - 1, Math.round(i * step));
+    const s = pool[idx];
+    if (s && !out.includes(s)) out.push(s);
+  }
+  for (const s of pool) {
+    if (out.length >= max) break;
+    if (!out.includes(s)) out.push(s);
+  }
+  return out;
+}
+
 export async function loadPlayerPercentileMetrics(
   playerId: string,
   season: string,
@@ -120,7 +147,7 @@ export async function loadPlayerPercentileMetrics(
   options?: {
     /**
      * fast — selected-season board only (hero LCP).
-     * full — prior + capped career peer boards for sparkline accuracy.
+     * full — prior + career peer boards + spread archive for cross-era comps.
      */
     mode?: PercentileLoadMode;
     /** Load prior-season peers for YoY comps (full mode default). */
@@ -151,6 +178,23 @@ export async function loadPlayerPercentileMetrics(
     mode
   );
 
+  // Wide archive for "Other seasons" comps — not only the player's career / prior year.
+  let historicalCompSeasons: string[] = [];
+  if (mode === "full" && !constrained) {
+    try {
+      const { listBundledBrefSeasons } = await import(
+        "@/data/runtime/bref-advanced-snapshot"
+      );
+      historicalCompSeasons = pickSpreadSeasons(
+        listBundledBrefSeasons(),
+        MAX_HISTORICAL_COMP_SEASONS,
+        new Set([statsSeason, ...careerSeasons].filter(Boolean))
+      );
+    } catch {
+      historicalCompSeasons = [];
+    }
+  }
+
   const careerHasSeason = career.some(
     (row) => row.season === statsSeason && row.gamesPlayed > 0
   );
@@ -161,7 +205,11 @@ export async function loadPlayerPercentileMetrics(
       : enrichPlayerCareerAdvancedCached(playerId, career).catch(() => career);
 
   // Fast / CF: BRef peer board + DARKO + DRBL/WAR1 + hustle overlay.
-  const loadPeers = async (peerSeason: string): Promise<PlayerSeason[]> => {
+  // Historical archive boards skip hustle (coverage is recent-only) to save CPU.
+  const loadPeers = async (
+    peerSeason: string,
+    opts?: { archive?: boolean }
+  ): Promise<PlayerSeason[]> => {
     if (mode === "fast" || preferBundled) {
       try {
         const { getBundledBrefPeerBoard } = await import(
@@ -182,6 +230,9 @@ export async function loadPlayerPercentileMetrics(
             withImpact,
             peerSeason
           );
+          if (opts?.archive) {
+            return withDrbl.filter((row) => row.gamesPlayed >= 15);
+          }
           const withHustle = await overlayHustleRatingsForPeers(
             withDrbl,
             peerSeason
@@ -203,6 +254,7 @@ export async function loadPlayerPercentileMetrics(
     priorBoard,
     careerForMetrics,
     careerPeerEntries,
+    historicalPeerEntries,
     identity,
   ] = await Promise.all([
     careerHasSeason || constrained || (preferBundled && mode === "fast")
@@ -219,12 +271,21 @@ export async function loadPlayerPercentileMetrics(
         return [s, rows] as const;
       })
     ),
+    Promise.all(
+      historicalCompSeasons.map(async (s) => {
+        const rows = await loadPeers(s, { archive: true });
+        return [s, rows] as const;
+      })
+    ),
     options?.nbaId != null && options?.espnId != null
       ? Promise.resolve({ nbaId: options.nbaId, espnId: options.espnId })
       : resolvePlayerIdentityCached(playerId),
   ]);
 
-  const peersBySeason = new Map<string, PlayerSeason[]>(careerPeerEntries);
+  const peersBySeason = new Map<string, PlayerSeason[]>([
+    ...careerPeerEntries,
+    ...historicalPeerEntries,
+  ]);
   if (peers.length) peersBySeason.set(statsSeason, peers);
   if (priorBoard.length) peersBySeason.set(priorSeason, priorBoard);
 

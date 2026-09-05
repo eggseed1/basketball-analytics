@@ -20,6 +20,7 @@ import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
 import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
 import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
 import { FranchiseTimeline } from "@/components/teams/franchise-timeline";
+import { TeamFranchiseHistoryIsland } from "@/components/teams/team-franchise-history-island";
 import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { TeamMovementIsland } from "@/components/teams/team-movement-island";
 import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
@@ -391,6 +392,8 @@ export default async function TeamProfilePage({
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}
+              sortParam={Array.isArray(sp.sort) ? sp.sort[0] : sp.sort}
+              sortDirParam={Array.isArray(sp.dir) ? sp.dir[0] : sp.dir}
             />
           </Suspense>
         ) : null}
@@ -475,6 +478,10 @@ export default async function TeamProfilePage({
 
         {tab === "history" ? (
           <div className="flex flex-col gap-4">
+            <TeamFranchiseHistoryIsland
+              abbreviation={identityTeam.abbreviation}
+            />
+            <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
             <Suspense
               fallback={
                 <DestinationSectionSkeleton label="Loading Team Arc…" />
@@ -493,7 +500,6 @@ export default async function TeamProfilePage({
                 priorBoard={priorLeague}
               />
             </Suspense>
-            <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
             <TeamMatchupPreview canonicalTeamId={resolvedTeamId} />
           </div>
         ) : null}

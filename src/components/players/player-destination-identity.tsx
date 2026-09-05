@@ -161,7 +161,14 @@ export function PlayerDestinationIdentity({
               backdropBlur={16}
               honor={honor}
             >
-              <div className="relative z-[1] flex w-full flex-col gap-2 px-3 py-3 sm:flex-row sm:items-start sm:gap-3 sm:text-left">
+              <div
+                className={cn(
+                  "relative z-[1] flex w-full min-w-0 flex-col gap-2 px-3 py-3",
+                  // Sidebar identity stays stacked; only full-width heroes go row.
+                  !useTwoColumnLayout &&
+                    "sm:flex-row sm:items-start sm:gap-3 sm:text-left"
+                )}
+              >
                 <PlayerHeadshot
                   playerId={playerId}
                   espnId={espnId}
@@ -174,72 +181,107 @@ export function PlayerDestinationIdentity({
                   registryOnly={Boolean(portraitUrl)}
                   size="md"
                   priority
-                  className="mx-auto shrink-0 sm:mx-0"
-                />
-                <div className="min-w-0 flex-1 text-center sm:text-left">
-                  <h1 className={type.heading}>{displayName}</h1>
-                  {showCareerTeams && careerTeamStints.length > 0 ? (
-                    <PlayerTeamPositionLine
-                      stints={careerTeamStints}
-                      season={null}
-                      useHistoricalBranding={false}
-                      className="mt-0.5 justify-center sm:justify-start"
-                      aria-label="Career teams"
-                    />
-                  ) : seasonStints.length > 1 ? (
-                    <PlayerTeamPositionLine
-                      stints={seasonStints}
-                      season={season}
-                      fallbackPosition={position}
-                      useHistoricalBranding={useHistoricalBranding}
-                      className="mt-0.5 justify-center sm:justify-start"
-                    />
-                  ) : (
-                    <p
-                      className={cn(
-                        type.bodySm,
-                        "mt-0.5 flex flex-wrap items-center justify-center gap-2 text-muted-foreground sm:justify-start"
-                      )}
-                    >
-                      {teamKey ? (
-                        <TeamIdentity
-                          teamKey={teamKey}
-                          label={clubName ?? teamName ?? modernBrand?.abbr ?? "Team"}
-                          className="inline-flex min-w-0"
-                          nameClassName={cn(type.bodySm, "gap-2")}
-                        >
-                          {historicalBrand ? (
-                            <HistoricalTeamMark brand={historicalBrand} size="sm" />
-                          ) : (
-                            <TeamLogo teamKey={teamKey} size="sm" />
-                          )}
-                          {clubName ? (
-                            <span className={textLinkClassName}>{clubName}</span>
-                          ) : null}
-                        </TeamIdentity>
-                      ) : historicalBrand ? (
-                        <HistoricalTeamMark brand={historicalBrand} size="sm" />
-                      ) : null}
-                      {position ? <span>· {position}</span> : null}
-                    </p>
+                  className={cn(
+                    "mx-auto shrink-0",
+                    !useTwoColumnLayout && "sm:mx-0"
                   )}
-                  <PlayerIdentityVitals
-                    heightLabel={heightLabel}
-                    weightLabel={weightLabel}
-                    birthDate={birthDate}
-                    season={season}
-                    className="mt-0.5 justify-center sm:justify-start"
-                  />
-                  <PlayerDraftLine
-                    draftInfo={draftInfo}
-                    college={college}
-                    className="mt-0.5 justify-center sm:justify-start"
-                  />
+                />
+                <div className="flex min-w-0 flex-1 flex-col gap-2">
+                  <div
+                    className={cn(
+                      "min-w-0 text-center",
+                      !useTwoColumnLayout && "sm:text-left"
+                    )}
+                  >
+                    <h1 className={cn(type.heading, "wrap-break-word")}>
+                      {displayName}
+                    </h1>
+                    {showCareerTeams && careerTeamStints.length > 0 ? (
+                      <PlayerTeamPositionLine
+                        stints={careerTeamStints}
+                        season={null}
+                        useHistoricalBranding={false}
+                        className={cn(
+                          "mt-0.5 justify-center",
+                          !useTwoColumnLayout && "sm:justify-start"
+                        )}
+                        aria-label="Career teams"
+                      />
+                    ) : seasonStints.length > 1 ? (
+                      <PlayerTeamPositionLine
+                        stints={seasonStints}
+                        season={season}
+                        fallbackPosition={position}
+                        useHistoricalBranding={useHistoricalBranding}
+                        className={cn(
+                          "mt-0.5 justify-center",
+                          !useTwoColumnLayout && "sm:justify-start"
+                        )}
+                      />
+                    ) : (
+                      <p
+                        className={cn(
+                          type.bodySm,
+                          "mt-0.5 flex flex-wrap items-center justify-center gap-x-2 gap-y-1 text-muted-foreground",
+                          !useTwoColumnLayout && "sm:justify-start"
+                        )}
+                      >
+                        {teamKey ? (
+                          <TeamIdentity
+                            teamKey={teamKey}
+                            label={
+                              clubName ?? teamName ?? modernBrand?.abbr ?? "Team"
+                            }
+                            className="inline-flex min-w-0"
+                            nameClassName={cn(type.bodySm, "gap-2")}
+                          >
+                            {historicalBrand ? (
+                              <HistoricalTeamMark
+                                brand={historicalBrand}
+                                size="sm"
+                              />
+                            ) : (
+                              <TeamLogo teamKey={teamKey} size="sm" />
+                            )}
+                            {clubName ? (
+                              <span className={textLinkClassName}>
+                                {clubName}
+                              </span>
+                            ) : null}
+                          </TeamIdentity>
+                        ) : historicalBrand ? (
+                          <HistoricalTeamMark brand={historicalBrand} size="sm" />
+                        ) : null}
+                        {position ? <span>· {position}</span> : null}
+                      </p>
+                    )}
+                    <PlayerIdentityVitals
+                      heightLabel={heightLabel}
+                      weightLabel={weightLabel}
+                      birthDate={birthDate}
+                      season={season}
+                      college={college}
+                      className={cn(
+                        "items-center",
+                        !useTwoColumnLayout && "sm:items-start"
+                      )}
+                    />
+                    <PlayerDraftLine
+                      draftInfo={draftInfo}
+                      className={cn(
+                        "mt-0.5 justify-center",
+                        !useTwoColumnLayout && "sm:justify-start"
+                      )}
+                    />
+                  </div>
+                  {accolades ? (
+                    <div className="flex min-w-0 w-full justify-center">
+                      {accolades}
+                    </div>
+                  ) : null}
                 </div>
               </div>
             </GlassSurface>
-
-            {accolades}
 
             {recentSeasons.length > 0 ? (
               <GlassSurface

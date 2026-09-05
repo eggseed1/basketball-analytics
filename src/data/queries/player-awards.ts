@@ -12,6 +12,7 @@ import {
   summarizePlayerAccolades,
   type PlayerAccoladeBadge,
 } from "@/data/providers/nba/player-awards";
+import { nbaPersonIdFromPlayerRoute } from "@/data/runtime/legend-nba-to-bref";
 import {
   getBundledPlayerAwardsRaw,
   hasBundledPlayerAwards,
@@ -23,9 +24,11 @@ export const getPlayerAccolades = cache(async function getPlayerAccolades(
   playerId: string
 ): Promise<PlayerAccoladeBadge[]> {
   const identity = await resolvePlayerIdentityCached(playerId);
+  // Legend pages remap to bref:{slug}; awards stay keyed by NBA PERSON_ID.
   const nbaId =
-    identity.nbaId ??
-    (/^\d+$/.test(playerId.trim()) ? playerId.trim() : null);
+    nbaPersonIdFromPlayerRoute(identity.nbaId) ??
+    nbaPersonIdFromPlayerRoute(playerId) ??
+    nbaPersonIdFromPlayerRoute(identity.routeId);
   if (!nbaId) return [];
 
   if (preferBundledProductDataOnEdge() && hasBundledPlayerAwards(nbaId)) {

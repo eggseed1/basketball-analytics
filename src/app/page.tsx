@@ -26,7 +26,7 @@ export const revalidate = 60;
 function BlockSkeleton({ className }: { className?: string }) {
   return (
     <div
-      className={`animate-pulse rounded-md bg-secondary ${className ?? "h-56"}`}
+      className={`animate-pulse rounded-[var(--radius-md)] bg-[color-mix(in_oklab,var(--foreground)_8%,transparent)] ${className ?? "h-56"}`}
     />
   );
 }
@@ -62,8 +62,23 @@ async function HomeTopPerformers() {
 }
 
 async function HomeFindings() {
-  const data = await getHomeAnalyticsCached();
-  return <FindingsSection insights={data.insights} />;
+  const {
+    getBundledRecentInsights,
+    recentInsightsSnapshotMeta,
+  } = await import("@/data/runtime/recent-insights-snapshot");
+  const insights = getBundledRecentInsights();
+  const meta = recentInsightsSnapshotMeta();
+  const seasonLabel =
+    meta.season && meta.slateDates?.length
+      ? `${meta.season} (through ${meta.slateDates[0]})`
+      : meta.season;
+  return (
+    <FindingsSection
+      insights={insights}
+      seasonLabel={seasonLabel}
+      empty={insights.length === 0}
+    />
+  );
 }
 
 export default function HomePage() {
@@ -75,22 +90,20 @@ export default function HomePage() {
         <HomeCalendar season={season} />
       </Suspense>
 
-      <Suspense fallback={<BlockSkeleton className="h-40" />}>
-        <HomeFindings />
-      </Suspense>
-
-      <div className="grid items-start gap-5 lg:grid-cols-12">
-        <div className="flex flex-col gap-4 lg:col-span-7">
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-12">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">
           <WatchlistPanel />
-          <Suspense fallback={<BlockSkeleton className="h-48" />}>
-            <SentimentMoversPanel />
-          </Suspense>
+          <div className="hidden min-w-0 lg:block">
+            <Suspense fallback={<BlockSkeleton className="h-48" />}>
+              <SentimentMoversPanel />
+            </Suspense>
+          </div>
           <Suspense fallback={<BlockSkeleton className="h-36" />}>
             <OffseasonPulsePanel />
           </Suspense>
           <HomeNews />
         </div>
-        <div className="flex flex-col gap-4 lg:col-span-5">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
           <Suspense fallback={<BlockSkeleton className="h-72" />}>
             <HomeStandings season={season} />
           </Suspense>
@@ -99,6 +112,16 @@ export default function HomePage() {
           </Suspense>
         </div>
       </div>
+
+      <div className="min-w-0 lg:hidden">
+        <Suspense fallback={<BlockSkeleton className="h-48" />}>
+          <SentimentMoversPanel />
+        </Suspense>
+      </div>
+
+      <Suspense fallback={<BlockSkeleton className="h-40" />}>
+        <HomeFindings />
+      </Suspense>
     </main>
   );
 }

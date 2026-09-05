@@ -1,6 +1,9 @@
 /**
  * DRBL top-level information architecture.
  * Labels describe user mental models; hrefs keep existing routes stable.
+ *
+ * - Teams → franchise boards + league standings surfaces (table, bracket, tracker)
+ * - Players → player boards + visualizations (race, usage × efficiency)
  */
 
 export type NavLink = {
@@ -14,7 +17,7 @@ export type PrimaryNavItem = {
   id: string;
   href: string;
   label: string;
-  /** Emphasize in the bar (ASK DRBL). */
+  /** Emphasize in the bar (Ask DRBL). */
   prominent?: boolean;
   match: (pathname: string) => boolean;
   subnav?: NavLink[];
@@ -26,13 +29,6 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     href: "/",
     label: "Home",
     match: (p) => p === "/",
-  },
-  {
-    id: "ask",
-    href: "/ask",
-    label: "ASK DRBL",
-    prominent: true,
-    match: (p) => p === "/ask" || p.startsWith("/ask/"),
   },
   {
     id: "games",
@@ -67,31 +63,57 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: "Players",
     match: (p) =>
       p.startsWith("/explore/players") || p.startsWith("/players/"),
+    subnav: [
+      {
+        href: "/explore/players",
+        label: "Board",
+        match: (p) =>
+          p.startsWith("/explore/players") &&
+          !p.startsWith("/explore/players/race") &&
+          !p.startsWith("/explore/players/visualizations"),
+      },
+      {
+        href: "/explore/players/visualizations",
+        label: "Visualizations",
+        match: (p) =>
+          p.startsWith("/explore/players/visualizations") ||
+          p.startsWith("/explore/players/race"),
+      },
+    ],
   },
   {
     id: "teams",
     href: "/explore/teams",
     label: "Teams",
     match: (p) =>
-      p.startsWith("/standings") ||
       p.startsWith("/explore/teams") ||
-      p.startsWith("/teams/"),
+      p.startsWith("/teams/") ||
+      p.startsWith("/standings") ||
+      p.startsWith("/explore/bracket") ||
+      p.startsWith("/franchises"),
     subnav: [
+      {
+        href: "/explore/teams",
+        label: "Board",
+        match: (p) =>
+          p.startsWith("/explore/teams") ||
+          p.startsWith("/teams/") ||
+          p.startsWith("/franchises"),
+      },
       {
         href: "/standings",
         label: "Standings",
-        match: (p) => p.startsWith("/standings") && !p.includes("view=tracker"),
+        match: (p) => p === "/standings",
       },
       {
-        href: "/standings?view=tracker",
+        href: "/explore/bracket",
+        label: "Bracket",
+        match: (p) => p.startsWith("/explore/bracket"),
+      },
+      {
+        href: "/standings/tracker",
         label: "Tracker",
-        match: (p) => p.startsWith("/standings") && p.includes("view=tracker"),
-      },
-      {
-        href: "/explore/teams",
-        label: "Teams",
-        match: (p) =>
-          p.startsWith("/explore/teams") || p.startsWith("/teams/"),
+        match: (p) => p.startsWith("/standings/tracker"),
       },
     ],
   },
@@ -144,22 +166,17 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     match: (p) => p.startsWith("/learn"),
   },
   {
+    id: "ask",
+    href: "/ask",
+    label: "Ask DRBL",
+    prominent: true,
+    match: (p) => p === "/ask" || p.startsWith("/ask/"),
+  },
+  {
     id: "history",
     href: "/history",
     label: "History",
-    match: (p) => p.startsWith("/franchises") || p.startsWith("/history"),
-    subnav: [
-      {
-        href: "/history",
-        label: "Time Machine",
-        match: (p) => p.startsWith("/history"),
-      },
-      {
-        href: "/franchises",
-        label: "Franchise History",
-        match: (p) => p.startsWith("/franchises"),
-      },
-    ],
+    match: (p) => p.startsWith("/history"),
   },
 ];
 

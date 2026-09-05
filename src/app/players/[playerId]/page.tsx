@@ -31,12 +31,17 @@ import { getDataProvider } from "@/data/providers";
 import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { getPlayerCached } from "@/data/queries/request-cache";
 import { lookupEspnIdByPlayerName } from "@/data/runtime/espn-name-index";
+import { remapLegendNbaIdToBref, resolveLegacyNbaPersonId } from "@/data/runtime/legend-nba-to-bref";
 import {
   getBundledCurrentRosterEntry,
   resolveBundledCurrentTeamId,
 } from "@/data/runtime/current-roster-snapshot";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
+import {
+  HOF_PAGE_FRAME_CLASS,
+  isHallOfFamePlayerId,
+} from "@/lib/hall-of-fame-style";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import {
@@ -134,13 +139,12 @@ function resolvePublicPlayerId(raw: string): string {
   } catch {
     // keep raw
   }
-  // NBA Stats person ids that collide with unrelated ESPN athlete ids —
-  // route legends through BRef slugs instead.
-  const NBA_PERSON_TO_BREF: Record<string, string> = {
-    "893": "bref:jordami01", // Michael Jordan (ESPN 893 ≠ MJ)
-    "787": "bref:barklch01", // Charles Barkley
-  };
-  if (NBA_PERSON_TO_BREF[id]) return NBA_PERSON_TO_BREF[id]!;
+  // NBA Stats person ids for retired legends → BRef slugs (CF-safe career path).
+  if (/^\d+$/.test(id)) {
+    id = resolveLegacyNbaPersonId(id) ?? id;
+  }
+  const remapped = remapLegendNbaIdToBref(id);
+  if (remapped) return remapped;
 
   if (!id.toLowerCase().startsWith("bref:")) return id;
   const inner = id.slice(id.indexOf(":") + 1);
@@ -390,7 +394,18 @@ export default async function PlayerPage({
     .map((s) => primaryTeamForSeason(career, s))
     .filter((row): row is NonNullable<typeof row> => row != null);
 
-  const portraitUrl = getPlayerPortraitUrl(playerId);
+  const portraitUrl = getPlayerPortraitUrl(rawId) ??
+    getPlayerPortraitUrl(playerId) ??
+    (identity?.nbaId ? getPlayerPortraitUrl(identity.nbaId) : null) ??
+    (identity?.espnId ? getPlayerPortraitUrl(identity.espnId) : null);
+  const honor = isHallOfFamePlayerId(
+    rawId,
+    playerId,
+    identity?.nbaId,
+    identity?.espnId
+  )
+    ? ("hof" as const)
+    : undefined;
   const eraTheme = applyEraTheme
     ? resolveActiveEraTheme(season, themeMode)
     : null;
@@ -419,13 +434,8 @@ export default async function PlayerPage({
     palette?.secondary
   );
 
-  const body = (
-    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-      <PageAtmosphere
-        colorA={atmosphere?.colorA}
-        colorB={atmosphere?.colorB}
-      />
-      <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+  const mainContent = (
+    <>
         <PlayerDestinationIdentity
           playerId={playerId}
           espnId={identity?.espnId}
@@ -453,6 +463,7 @@ export default async function PlayerPage({
           view={view}
           caps={caps}
           seasonType={seasonType}
+          honor={honor}
           accolades={
             slimWorker ? null : (
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
@@ -460,6 +471,7 @@ export default async function PlayerPage({
                   playerId={playerId}
                   teamKey={teamKey}
                   historicalBrand={historicalBrand}
+                  honor={honor}
                 />
               </Suspense>
             )
@@ -481,6 +493,7 @@ export default async function PlayerPage({
                   playerName={displayName}
                   teamKey={teamKey}
                   historicalBrand={historicalBrand}
+                  honor={honor}
                 />
               </Suspense>
             )
@@ -503,6 +516,7 @@ export default async function PlayerPage({
                 identityTeamKey={teamKey}
                 nbaId={identity?.nbaId}
                 espnId={identity?.espnId}
+                honor={honor}
               />
             </Suspense>
           }
@@ -519,6 +533,7 @@ export default async function PlayerPage({
               playerName={displayName}
               teamKey={teamKey}
               historicalBrand={historicalBrand}
+              honor={honor}
             />
           </Suspense>
         ) : null}
@@ -597,6 +612,7 @@ export default async function PlayerPage({
                 teamKey={teamKey}
                 fromHistory={fromHistory}
                 themeMode={themeMode === "modern" ? "modern" : "historical"}
+                honor={honor}
               />
             </div>
           </Suspense>
@@ -648,7 +664,7 @@ export default async function PlayerPage({
                 statsSeason={statsCtx.statsSeason}
               />
             ) : null}
-            <GlassSurface effect="css" className="p-1 sm:p-2">
+            <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
               <PlayerStatDepthIsland
                 playerId={playerId}
                 season={statsCtx.statsSeason}
@@ -670,6 +686,25 @@ export default async function PlayerPage({
             </GlassSurface>
           </Suspense>
         ) : null}
+    </>
+  );
+
+  const body = (
+    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+      <PageAtmosphere
+        colorA={atmosphere?.colorA}
+        colorB={atmosphere?.colorB}
+      />
+      <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+        {honor === "hof" ? (
+          <div className={HOF_PAGE_FRAME_CLASS}>
+            <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
+              {mainContent}
+            </div>
+          </div>
+        ) : (
+          mainContent
+        )}
       </main>
     </DestinationClientShell>
   );

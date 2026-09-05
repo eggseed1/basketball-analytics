@@ -10,6 +10,10 @@ export const maxDuration = 60;
  *
  * Auth: Authorization: Bearer $CRON_SECRET (or ?secret=).
  * Configure CRON_SECRET in the Vercel project env.
+ *
+ * Note: Cloudflare production bakes player-viz snapshots at deploy time.
+ * In-season daily rebuild+deploy is `.github/workflows/daily-runtime-refresh.yml`
+ * (not this warmer).
  */
 export async function GET(request: Request) {
   const secret = process.env.CRON_SECRET?.trim();

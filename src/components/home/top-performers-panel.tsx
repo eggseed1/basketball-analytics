@@ -16,6 +16,7 @@ import type {
 import type { PlayerSeason } from "@/data/types";
 import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { formatNumber } from "@/lib/format";
+import { BoardPlayerName } from "@/lib/board-compact-name";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { normalizePlayerName } from "@/lib/player-name";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
@@ -462,40 +463,41 @@ export function TopPerformersPanel({
 
   return (
     <section className="sports-card flex flex-col gap-4 p-4 sm:p-[21px]">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-3">
-          <h2 className="type-heading">
+      <div className="flex flex-col gap-3">
+        <div className="flex min-w-0 items-start justify-between gap-3">
+          <h2 className="type-heading min-w-0 wrap-break-word">
             {season ? `${season} Top Performers` : "Top performers"}
           </h2>
-          <div className="flex flex-wrap gap-1">
-            {sortChips.map(([key, label]) => (
-              <button
-                key={key}
-                type="button"
-                onClick={() => setSort(key)}
-                className={cn(
-                  "rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
-                  sort === key
-                    ? "bg-foreground text-background"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
-          {drblFallbackNote ? (
-            <p className="text-[12px] text-muted-foreground">
-              {drblFallbackNote}
-            </p>
-          ) : null}
+          <TextLink
+            href={leaderboardHref}
+            className="type-body-sm shrink-0 pt-0.5 text-muted-foreground"
+          >
+            <span className="sm:hidden">Leaderboard →</span>
+            <span className="hidden sm:inline">See full leaderboard →</span>
+          </TextLink>
         </div>
-        <TextLink
-          href={leaderboardHref}
-          className="type-body-sm shrink-0 pt-0.5 text-muted-foreground"
-        >
-          See full leaderboard →
-        </TextLink>
+        <div className="-mx-1 flex flex-nowrap gap-1 touch-scroll-x px-1 pb-0.5 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+          {sortChips.map(([key, label]) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setSort(key)}
+              className={cn(
+                "glass-pill shrink-0 rounded-md px-2.5 py-1 type-caption font-semibold transition-colors",
+                sort === key
+                  ? "glass-pill-active"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+        {drblFallbackNote ? (
+          <p className="text-[12px] text-muted-foreground">
+            {drblFallbackNote}
+          </p>
+        ) : null}
       </div>
 
       <div className="overflow-hidden">
@@ -564,10 +566,10 @@ export function TopPerformersPanel({
                       className={cn(
                         type.body,
                         textLinkClassName,
-                        "min-w-0 flex-1 truncate"
+                        "min-w-0 flex-1"
                       )}
                     >
-                      {row.name}
+                      <BoardPlayerName name={row.name} />
                     </span>
                   </PlayerIdentity>
                   <span className="shrink-0 text-right text-[12px] font-medium tabular-nums text-[#535353]">

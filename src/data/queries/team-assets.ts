@@ -26,6 +26,10 @@ import {
 } from "@/data/queries/players";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import { isTransactionGenealogyUiReady } from "@/data/queries/transaction-lineage";
+import {
+  getTeamDraftPicksFromLedger,
+  loadAssetLedger,
+} from "@/data/asset-ledger/load-asset-ledger";
 import { playerPageHref } from "@/lib/player-season-resolve";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
@@ -105,13 +109,22 @@ function playerCategoryFromRosterStatus(
   );
 }
 
-function emptyStructuredCategories(): TeamAssetCategoryCoverage[] {
+function structuredCategoriesFromLedger(
+  draftCapital: import("@/data/types/team-assets").TeamDraftPickAsset[],
+  ledgerAvailable: boolean
+): TeamAssetCategoryCoverage[] {
+  const draftNote = ledgerAvailable
+    ? "Baseline own picks plus verified structured trade conveyance. Full league pick ledger pending licensed source."
+    : "No structured pick ownership ledger in production.";
   return [
-    blocked(
-      "draft_capital",
-      "Draft capital",
-      "No structured pick ownership ledger in production."
-    ),
+    draftCapital.length > 0
+      ? available(
+          "draft_capital",
+          "Draft capital",
+          draftCapital.length,
+          ledgerAvailable ? draftNote : null
+        )
+      : blocked("draft_capital", "Draft capital", draftNote),
     blocked(
       "trade_exceptions",
       "Trade exceptions",
@@ -128,6 +141,10 @@ function emptyStructuredCategories(): TeamAssetCategoryCoverage[] {
       "No additional structured asset classes admitted."
     ),
   ];
+}
+
+function emptyStructuredCategories(): TeamAssetCategoryCoverage[] {
+  return structuredCategoriesFromLedger([], false);
 }
 
 /**
@@ -153,7 +170,6 @@ export async function getTeamAssets(options: {
   const minimumGames = options.minimumGames ?? 1;
 
   const notes: string[] = [
-    "Draft capital, trade exceptions, and draft rights stay blocked until a structured asset ledger is ingested.",
     "ESPN free-text transaction blurbs never invent player, pick, or TPE assets.",
   ];
 
@@ -219,6 +235,23 @@ export async function getTeamAssets(options: {
     () => false
   );
 
+  const ledger = await loadAssetLedger().catch(() => null);
+  const structuredLedgerAvailable = Boolean(
+    ledger && ledger.structuredTransactions.length > 0
+  );
+  const draftCapital = ledger
+    ? getTeamDraftPicksFromLedger(ledger, teamKey)
+    : [];
+  if (structuredLedgerAvailable) {
+    notes.push(
+      "Structured asset ledger active for verified trades and baseline draft capital."
+    );
+  } else {
+    notes.push(
+      "Draft capital, trade exceptions, and draft rights stay blocked until a structured asset ledger is ingested."
+    );
+  }
+
   // Share the same bounded roster board path as the roster island.
   const roster =
     options.budgetMs != null
@@ -273,13 +306,16 @@ export async function getTeamAssets(options: {
     asOfDate: options.asOfDate ?? null,
     methodologyVersion: TEAM_ASSETS_METHODOLOGY_VERSION,
     lineageMethodologyVersion: TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
-    structuredLedgerAvailable: false,
+    structuredLedgerAvailable,
     genealogyUiReady,
     playerBoardStatus: roster.status,
     warning: roster.status === "ok" ? undefined : roster.warning,
-    categories: [playerCat, ...emptyStructuredCategories()],
+    categories: [
+      playerCat,
+      ...structuredCategoriesFromLedger(draftCapital, structuredLedgerAvailable),
+    ],
     players,
-    draftCapital: [],
+    draftCapital,
     tradeExceptions: [],
     draftRights: [],
     notes,

@@ -28,6 +28,32 @@ function nameKeys(name) {
   return stripped && stripped !== n ? [n, stripped] : [n];
 }
 
+/**
+ * Legend HOF seeds are authoritative for their ESPN + NBA ids.
+ * Replace stale seeds (including wrong espnPlayerId === nbaPlayerId rows).
+ */
+function mergeLegendAliases(baseAliases, legendRows) {
+  const rows = Array.isArray(legendRows) ? legendRows : [];
+  if (rows.length === 0) {
+    return { aliases: Array.isArray(baseAliases) ? [...baseAliases] : [], added: 0 };
+  }
+  const legendNba = new Set(
+    rows.map((row) => String(row.nbaPlayerId ?? "").trim()).filter(Boolean)
+  );
+  const legendEspn = new Set(
+    rows.map((row) => String(row.espnPlayerId ?? "").trim()).filter(Boolean)
+  );
+  const aliases = (Array.isArray(baseAliases) ? baseAliases : []).filter((row) => {
+    const nba = String(row.nbaPlayerId ?? "").trim();
+    const espn = String(row.espnPlayerId ?? "").trim();
+    return !(legendNba.has(nba) || legendEspn.has(espn));
+  });
+  for (const row of rows) {
+    aliases.push(row);
+  }
+  return { aliases, added: rows.length };
+}
+
 await fs.mkdir(RUNTIME, { recursive: true });
 
 const sentimentSrc = path.join(ROOT, "data", "sentiment", "v1", "snapshot.json");
@@ -44,10 +70,26 @@ try {
 }
 
 const aliasPath = path.join(ROOT, "data", "impact", "player-id-aliases.json");
+const legendAliasPath = path.join(
+  ROOT,
+  "data",
+  "impact",
+  "legend-player-aliases.json"
+);
 let nameIndexByName = {};
 try {
   const raw = JSON.parse(await fs.readFile(aliasPath, "utf8"));
-  const aliases = Array.isArray(raw.aliases) ? raw.aliases : [];
+  let aliases = Array.isArray(raw.aliases) ? raw.aliases : [];
+  try {
+    const legend = JSON.parse(await fs.readFile(legendAliasPath, "utf8"));
+    const merged = mergeLegendAliases(aliases, legend.aliases);
+    aliases = merged.aliases;
+    if (merged.added) {
+      console.log(`[cf-assets] merged ${merged.added} legend aliases into name index`);
+    }
+  } catch {
+    /* optional */
+  }
   const byName = {};
   for (const row of aliases) {
     if (!row?.espnPlayerId || !row?.playerName) continue;
@@ -247,11 +289,46 @@ try {
 try {
   const src = path.join(ROOT, "data", "impact", "player-id-aliases.json");
   const dest = path.join(RUNTIME, "player-id-aliases-snapshot.json");
-  await fs.copyFile(src, dest);
-  console.log(`[cf-assets] player-id-aliases → ${dest}`);
+  const raw = JSON.parse(await fs.readFile(src, "utf8"));
+  let aliases = Array.isArray(raw.aliases) ? [...raw.aliases] : [];
+  try {
+    const legend = JSON.parse(await fs.readFile(legendAliasPath, "utf8"));
+    const merged = mergeLegendAliases(aliases, legend.aliases);
+    aliases = merged.aliases;
+    if (merged.added) {
+      console.log(
+        `[cf-assets] merged ${merged.added} legend aliases into identity snapshot`
+      );
+    }
+  } catch {
+    /* optional */
+  }
+  await fs.writeFile(
+    dest,
+    JSON.stringify({
+      ...raw,
+      aliases,
+      legendMergedAt: new Date().toISOString(),
+    })
+  );
+  console.log(`[cf-assets] player-id-aliases → ${dest} (${aliases.length} rows)`);
 } catch (error) {
   console.warn(
     `[cf-assets] player-id-aliases skipped: ${
+      error instanceof Error ? error.message : error
+    }`
+  );
+}
+
+/** Keep runtime legend seed in sync for Workers imports. */
+try {
+  const src = path.join(ROOT, "data", "impact", "legend-player-aliases.json");
+  const dest = path.join(RUNTIME, "legend-player-aliases.json");
+  await fs.copyFile(src, dest);
+  console.log(`[cf-assets] legend-player-aliases → ${dest}`);
+} catch (error) {
+  console.warn(
+    `[cf-assets] legend-player-aliases skipped: ${
       error instanceof Error ? error.message : error
     }`
   );

@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/table";
 import { StatTooltip } from "@/components/ui/stat-tooltip";
 import type { DashboardPlayer } from "@/lib/dashboard-player";
+import { BoardPlayerName } from "@/lib/board-compact-name";
 import {
   DASHBOARD_METRICS,
   applyDashboardSelection,
@@ -219,17 +220,18 @@ export function DashboardWorkspace({
                 .slice(0, 40)
                 .map((row) => (
                   <TableRow key={`${row.playerId}-${row.teamId}`}>
-                    <TableCell>
+                    <TableCell className="max-w-[8rem] sm:max-w-none">
                       <Link
                         href={`/players/${row.playerId}?season=${season}`}
-                        className="inline-flex items-center gap-2 underline-offset-4 hover:underline"
+                        className="inline-flex min-w-0 max-w-full items-center gap-2 underline-offset-4 hover:underline"
                       >
                         <PlayerHeadshot
                           playerId={row.playerId}
                           name={row.playerName}
                           size="xs"
+                          className="shrink-0"
                         />
-                        {row.playerName}
+                        <BoardPlayerName name={row.playerName} />
                       </Link>
                     </TableCell>
                     <TableCell className="font-mono text-xs uppercase">

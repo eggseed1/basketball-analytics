@@ -4,7 +4,9 @@ import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameScoreCard } from "@/components/sports/game-score-card";
 import { askDrblHref } from "@/components/players/player-ask-links";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatPct } from "@/lib/format";
+import { textLinkClassName } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
 import type { GameSummary } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type {
@@ -204,7 +206,17 @@ export function TimeMachineSnapshot({
         </div>
       </Section>
 
-      <Section title="Teams">
+      <Section
+        title="Teams"
+        action={
+          <TransitionLink
+            href={`/explore/teams?season=${encodeURIComponent(season)}`}
+            className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
+          >
+            Full team board
+          </TransitionLink>
+        }
+      >
         {teamsWarning ? (
           <p className="text-sm text-muted-foreground">{teamsWarning}</p>
         ) : null}
@@ -213,36 +225,7 @@ export function TimeMachineSnapshot({
             No teams available for this season.
           </p>
         ) : (
-          <ul className="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-            {teams.map((t) => (
-              <li key={t.canonicalTeamId}>
-                <TransitionLink
-                  href={teamFromHistoryHref(t.canonicalTeamId, season, theme)}
-                  className="sports-card flex items-center gap-3 px-3 py-3 transition hover:bg-secondary/40"
-                >
-                  <HistoricalTeamMark
-                    brand={{
-                      abbreviation: t.abbr,
-                      displayName: t.displayName,
-                      logoUrl: t.logoUrl,
-                      source: t.logoSource,
-                      palette: t.palette,
-                    }}
-                    size="md"
-                  />
-                  <span className="min-w-0">
-                    <span className="block truncate text-[14px] font-semibold">
-                      {t.displayName}
-                    </span>
-                    <span className="text-[12px] text-muted-foreground">
-                      {t.abbr}
-                      {t.conference ? ` · ${t.conference}` : ""}
-                    </span>
-                  </span>
-                </TransitionLink>
-              </li>
-            ))}
-          </ul>
+          <HistoricalTeamsBoardTable teams={teams} season={season} theme={theme} />
         )}
       </Section>
 
@@ -339,18 +322,6 @@ export function TimeMachineSnapshot({
           </p>
         </div>
       </Section>
-
-      <div className="flex flex-wrap gap-3 border-t border-border pt-6">
-        <TransitionLink href="/" className="sports-pill text-[14px]">
-          Exit Time Machine
-        </TransitionLink>
-        <TransitionLink
-          href="/history"
-          className="text-[14px] text-muted-foreground underline-offset-4 hover:underline"
-        >
-          Choose another season
-        </TransitionLink>
-      </div>
     </div>
   );
 }
@@ -410,6 +381,176 @@ function StandingsColumn({
   );
 }
 
+function dashNum(value: number | undefined, digits = 1): string {
+  if (value == null || !Number.isFinite(value)) return "—";
+  return formatNumber(value, digits);
+}
+
+function dashPct(value: number | undefined): string {
+  if (value == null || !Number.isFinite(value)) return "—";
+  return formatPct(value);
+}
+
+function dashDiff(value: number | undefined): string {
+  if (value == null || !Number.isFinite(value)) return "—";
+  return `${value > 0 ? "+" : ""}${formatNumber(value, 1)}`;
+}
+
+const TEAM_BOARD_COLUMNS = [
+  { key: "team", label: "Team", align: "left" as const },
+  { key: "conference", label: "Conf", align: "left" as const },
+  { key: "gamesPlayed", label: "GP", align: "right" as const },
+  { key: "avgDiff", label: "DIFF", align: "right" as const },
+  { key: "ppg", label: "PPG", align: "right" as const },
+  { key: "oppPpg", label: "OPP", align: "right" as const },
+  { key: "trueShootingPct", label: "TS%", align: "right" as const },
+  { key: "effectiveFieldGoalPct", label: "eFG%", align: "right" as const },
+  { key: "fieldGoalPct", label: "FG%", align: "right" as const },
+  { key: "threePointPct", label: "3P%", align: "right" as const },
+  { key: "freeThrowPct", label: "FT%", align: "right" as const },
+  { key: "rpg", label: "RPG", align: "right" as const },
+  { key: "apg", label: "APG", align: "right" as const },
+  { key: "spg", label: "SPG", align: "right" as const },
+  { key: "bpg", label: "BPG", align: "right" as const },
+  { key: "topg", label: "TOV", align: "right" as const },
+] as const;
+
+function HistoricalTeamsBoardTable({
+  teams,
+  season,
+  theme,
+}: {
+  teams: HistoricalTeamDirectoryRow[];
+  season: string;
+  theme: ThemeMode;
+}) {
+  const hasBoardStats = teams.some(
+    (t) => t.gamesPlayed != null || t.ppg != null || t.avgDiff != null
+  );
+  const rows = [...teams].sort((a, b) => {
+    const ad = a.avgDiff;
+    const bd = b.avgDiff;
+    if (ad != null && bd != null && Number.isFinite(ad) && Number.isFinite(bd)) {
+      if (bd !== ad) return bd - ad;
+    } else if (ad != null && Number.isFinite(ad)) {
+      return -1;
+    } else if (bd != null && Number.isFinite(bd)) {
+      return 1;
+    }
+    return a.displayName.localeCompare(b.displayName);
+  });
+
+  return (
+    <div className="sports-card board-scroll-host overflow-hidden">
+      <div className="touch-scroll-x overflow-x-auto">
+        <table className="w-full min-w-[920px] caption-bottom text-[12px]">
+          <thead className="border-b border-border bg-card/80">
+            <tr>
+              {TEAM_BOARD_COLUMNS.map((col) => (
+                <th
+                  key={col.key}
+                  scope="col"
+                  className={
+                    col.align === "left"
+                      ? "sticky left-0 z-10 bg-card px-3 py-2 text-left text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+                      : "px-2 py-2 text-right text-[11px] font-bold uppercase tracking-wide text-muted-foreground"
+                  }
+                >
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-border">
+            {rows.map((t) => (
+              <tr key={t.canonicalTeamId} className="hover:bg-secondary/40">
+                <th
+                  scope="row"
+                  className="sticky left-0 z-10 bg-card px-3 py-2 text-left font-medium"
+                >
+                  <TransitionLink
+                    href={teamFromHistoryHref(t.canonicalTeamId, season, theme)}
+                    className="inline-flex min-w-0 max-w-[14rem] items-center gap-2 hover:underline"
+                  >
+                    <HistoricalTeamMark
+                      brand={{
+                        abbreviation: t.abbr,
+                        displayName: t.displayName,
+                        logoUrl: t.logoUrl,
+                        source: t.logoSource,
+                        palette: t.palette,
+                      }}
+                      size="xs"
+                    />
+                    <span className="min-w-0 truncate">
+                      <span className="block truncate text-[13px] font-semibold">
+                        {t.displayName}
+                      </span>
+                      <span className="text-[11px] font-normal text-muted-foreground">
+                        {t.abbr}
+                      </span>
+                    </span>
+                  </TransitionLink>
+                </th>
+                <td className="px-2 py-2 text-left tabular-nums text-muted-foreground">
+                  {t.conference ?? "—"}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.gamesPlayed, 0)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums font-semibold">
+                  {dashDiff(t.avgDiff)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.ppg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.oppPpg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashPct(t.trueShootingPct)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashPct(t.effectiveFieldGoalPct)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashPct(t.fieldGoalPct)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashPct(t.threePointPct)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashPct(t.freeThrowPct)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.rpg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.apg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.spg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.bpg)}
+                </td>
+                <td className="px-2 py-2 text-right tabular-nums">
+                  {dashNum(t.topg)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="border-t border-border px-3 py-2 text-[12px] text-muted-foreground">
+        {hasBoardStats
+          ? "Season team board · sorted by point differential."
+          : "Directory only — season board stats unavailable for this era."}
+      </p>
+    </div>
+  );
+}
+
 function LeaderColumn({
   title,
   rows,
@@ -439,7 +580,9 @@ function LeaderColumn({
                 {i + 1}
               </span>
               <span className="min-w-0 flex-1 truncate">
-                <span className="font-medium">{r.playerName}</span>
+                <span className={cn(textLinkClassName, "font-medium")}>
+                  {r.playerName}
+                </span>
                 <span className="text-muted-foreground"> · {r.teamAbbr}</span>
               </span>
               <span className="tabular-nums font-semibold">

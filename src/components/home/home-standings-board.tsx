@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
-import { TextLink } from "@/components/ui/text-link";
 import type { StandingRow } from "@/data/types";
 import { cn } from "@/lib/utils";
 
@@ -20,7 +19,7 @@ export function HomeStandingsBoard({
   const rows = conference === "west" ? west : east;
 
   return (
-    <section className="sports-card flex flex-col gap-4 p-4 sm:p-[21px]">
+    <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-3">
           <h2 className="type-heading">{season} Standings</h2>
@@ -36,7 +35,7 @@ export function HomeStandingsBoard({
                 type="button"
                 onClick={() => setConference(id)}
                 className={cn(
-                  "glass-pill rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
+                  "glass-pill rounded-md px-2.5 py-1 type-caption font-semibold transition-colors",
                   conference === id
                     ? "glass-pill-active"
                     : "text-muted-foreground hover:text-foreground"
@@ -46,20 +45,6 @@ export function HomeStandingsBoard({
               </button>
             ))}
           </div>
-        </div>
-        <div className="flex shrink-0 flex-col items-end gap-1 pt-0.5">
-          <TextLink
-            href="/standings"
-            className="type-body-sm text-muted-foreground"
-          >
-            Standings →
-          </TextLink>
-          <TextLink
-            href={`/standings?view=tracker&season=${encodeURIComponent(season)}`}
-            className="type-body-sm text-muted-foreground"
-          >
-            Tracker →
-          </TextLink>
         </div>
       </div>
       <StandingsConferenceTable

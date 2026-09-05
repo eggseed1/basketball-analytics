@@ -364,6 +364,7 @@ export function CareerTeamTrendChart({
   selectedSeason,
   onSeasonSelect,
   savantScale = false,
+  showLegend = true,
 }: {
   points: CareerSeriesPoint[];
   height?: number;
@@ -375,6 +376,8 @@ export function CareerTeamTrendChart({
    * colors from league percentile. Percentile stays in the tooltip.
    */
   savantScale?: boolean;
+  /** Franchise color key under the plot. Default on. */
+  showLegend?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const hasPercentileColors =
@@ -480,11 +483,25 @@ export function CareerTeamTrendChart({
 
   if (data.length < 2) return null;
 
+  const showFranchiseLegend =
+    showLegend && !useSavantDots && visibleLegend.length > 1;
+
   return (
-    <div className={cn("flex flex-col gap-2", className)}>
-      <div className="min-h-[220px] flex-1" style={{ minHeight: height }}>
+    <div className={cn("flex min-w-0 flex-col", className)}>
+      {/*
+        Explicit px height on ResponsiveContainer (not %). Percentage height
+        can resolve against a taller ancestor and paint the SVG over siblings
+        (legend / "Closest …" headings).
+      */}
+      <div
+        className="relative w-full min-w-0 shrink-0 overflow-hidden"
+        style={{ height }}
+      >
         <ResponsiveContainer width="100%" height={height}>
-          <LineChart data={data} margin={{ top: 8, right: 8, left: 0, bottom: 0 }}>
+          <LineChart
+            data={data}
+            margin={{ top: 8, right: 8, left: 0, bottom: 2 }}
+          >
             <XAxis
               dataKey="season"
               tick={{ fontSize: 12 }}
@@ -534,15 +551,18 @@ export function CareerTeamTrendChart({
           </LineChart>
         </ResponsiveContainer>
       </div>
-      {!useSavantDots && visibleLegend.length > 1 ? (
-        <ul className="flex flex-wrap gap-x-3 gap-y-1">
+      {showFranchiseLegend ? (
+        <ul
+          className="mt-2 flex shrink-0 flex-wrap gap-x-3 gap-y-1"
+          aria-label="Franchise colors"
+        >
           {visibleLegend.map((t) => (
             <li
               key={t.teamId}
               className="inline-flex items-center gap-1.5 text-[12px] font-semibold text-muted-foreground"
             >
               <span
-                className="inline-block size-2.5 rounded-full"
+                className="inline-block size-2.5 shrink-0 rounded-full"
                 style={{ backgroundColor: t.color }}
                 aria-hidden
               />

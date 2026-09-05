@@ -67,11 +67,30 @@ export type ComparisonDimension = {
   bDisplay: string;
   aValue?: number;
   bValue?: number;
+  /** 0–100 peer percentile when season mode has a pool. */
+  aPercentile?: number;
+  bPercentile?: number;
+  /** 0–100 bar fill (percentile or relative matchup scale). */
+  aBar?: number;
+  bBar?: number;
   /** Positive means A higher on the “better” scale after invert handling. */
   delta?: number;
   note?: string;
-  /** Product hierarchy group for DRBL-first compare UI. */
-  group?: "rate_ability" | "realized_value" | "external" | "box";
+  /** Sheet category — Profile · Shooting · Defense · Hustle · Advanced · Impact. */
+  group?:
+    | "profile"
+    | "shooting"
+    | "defense"
+    | "hustle"
+    | "advanced"
+    | "impact"
+    /** @deprecated legacy compare groups */
+    | "counting"
+    | "rates"
+    | "rate_ability"
+    | "realized_value"
+    | "external"
+    | "box";
 };
 
 export type PlayerComparisonResult = {
@@ -79,7 +98,17 @@ export type PlayerComparisonResult = {
   bId: string;
   aName: string;
   bName: string;
+  /** Team key/abbr for brand color (season row when available). */
+  aTeamKey?: string;
+  bTeamKey?: string;
+  /** Teams to show under the identity (season club, or career tenure order). */
+  aTeamKeys?: string[];
+  bTeamKeys?: string[];
+  /** Shared season when both sides use the same year; otherwise undefined. */
   season?: string;
+  seasonA?: string;
+  seasonB?: string;
+  mode?: "career" | "season";
   dimensions: ComparisonDimension[];
   /** Plain-language difference drivers (data-backed only). */
   differenceSummary: string[];

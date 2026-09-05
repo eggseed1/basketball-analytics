@@ -25,10 +25,50 @@ export const RollingEfficiencyChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const PlayerRollingFormLazy = dynamic(
+  () =>
+    import("@/components/charts/player-rolling-form").then((m) => ({
+      default: m.PlayerRollingFormChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const PlayerAvailabilityLazy = dynamic(
+  () =>
+    import("@/components/charts/player-availability").then((m) => ({
+      default: m.PlayerAvailabilityChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const PlayerCreationLazy = dynamic(
+  () =>
+    import("@/components/charts/player-creation").then((m) => ({
+      default: m.PlayerCreationPanel,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export const PlayerShotDietLazy = dynamic(
   () =>
     import("@/components/charts/player-shot-diet").then((m) => ({
       default: m.PlayerShotDiet,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const PlayerUsageEfficiencyLazy = dynamic(
+  () =>
+    import("@/components/charts/player-usage-efficiency").then((m) => ({
+      default: m.PlayerUsageEfficiencyChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const LeaguePlayerScatterLazy = dynamic(
+  () =>
+    import("@/components/charts/league-player-scatter").then((m) => ({
+      default: m.LeaguePlayerScatterChart,
     })),
   { ssr: false, loading: () => pulse }
 );

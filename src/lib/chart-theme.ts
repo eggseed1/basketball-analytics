@@ -54,6 +54,23 @@ export function chartPeriodLineOpacity(isDark: boolean): number {
   return isDark ? 0.22 : 0.12;
 }
 
+/** Semantic chart colors from DRBL tokens (prefer over ad-hoc hex). */
+export const chartSemantic = {
+  grid: "color-mix(in oklab, var(--foreground) 8%, transparent)",
+  axis: "var(--text-secondary)",
+  positive: "var(--accent-positive)",
+  negative: "var(--accent-negative)",
+  warning: "var(--accent-warning)",
+  info: "var(--accent-info)",
+  neutral: "var(--accent-neutral)",
+  selected: "var(--accent-selected)",
+  tooltipBg: "var(--material-elevated-bg)",
+  tooltipBorder: "var(--material-elevated-border)",
+  percentilePoor: "var(--percentile-poor)",
+  percentileAverage: "var(--percentile-average)",
+  percentileElite: "var(--percentile-elite)",
+} as const;
+
 export function useChartTheme() {
   const { resolvedDark } = useOwnerTheme();
   const surface: ChartSurface = resolvedDark ? "dark" : "light";
@@ -61,6 +78,7 @@ export function useChartTheme() {
   return {
     isDark: resolvedDark,
     surface,
+    semantic: chartSemantic,
     teamColor: (teamId?: string | null) => teamChartColor(teamId, { surface }),
     teamBarColor: (teamId?: string | null) =>
       teamBrandBarColor(teamId, { surface }),

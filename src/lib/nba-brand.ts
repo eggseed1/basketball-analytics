@@ -3,6 +3,7 @@
  * Used for UI chrome only - not a data-provider dependency.
  */
 
+import { HISTORICAL_ABBR_ALIASES } from "@/data/identity/historical-abbr-aliases";
 import { resolvePlayerPortraitCandidates } from "@/lib/player-media-resolve";
 
 export type TeamBrand = {
@@ -42,7 +43,25 @@ export const TEAM_BRANDS: Record<string, TeamBrand> = {
     primary: "#000000",
     secondary: "#FFFFFF",
   },
+  /** Basketball-Reference Brooklyn code. */
+  brk: {
+    id: "bkn",
+    abbr: "BKN",
+    logoSlug: "bkn",
+    espnTeamId: "17",
+    primary: "#000000",
+    secondary: "#FFFFFF",
+  },
   cha: {
+    id: "cha",
+    abbr: "CHA",
+    logoSlug: "cha",
+    espnTeamId: "30",
+    primary: "#1D1160",
+    secondary: "#00788C",
+  },
+  /** Basketball-Reference Charlotte code. */
+  cho: {
     id: "cha",
     abbr: "CHA",
     logoSlug: "cha",
@@ -234,6 +253,15 @@ export const TEAM_BRANDS: Record<string, TeamBrand> = {
     primary: "#1D1160",
     secondary: "#E56020",
   },
+  /** Basketball-Reference Phoenix code. */
+  pho: {
+    id: "phx",
+    abbr: "PHX",
+    logoSlug: "phx",
+    espnTeamId: "21",
+    primary: "#1D1160",
+    secondary: "#E56020",
+  },
   por: {
     id: "por",
     abbr: "POR",
@@ -322,6 +350,12 @@ export function resolveTeamBrand(
   if (BY_ESPN_ID[key]) return BY_ESPN_ID[key];
   // Never invent a brand from digit prefixes (e.g. NBA Stats 1610612760 → "161").
   if (/^\d+$/.test(key)) return undefined;
+  const upper = teamKey.trim().toUpperCase();
+  const historical = HISTORICAL_ABBR_ALIASES[upper];
+  if (historical) {
+    const viaAlias = TEAM_BRANDS[historical.toLowerCase()];
+    if (viaAlias) return viaAlias;
+  }
   // strip non-letters (e.g. "bos-celtics")
   const abbr = key.replace(/[^a-z]/g, "").slice(0, 3);
   return TEAM_BRANDS[abbr] ?? TEAM_BRANDS[key.slice(0, 3)];

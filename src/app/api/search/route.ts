@@ -3,6 +3,8 @@ import { jsonError, jsonOk } from "@/app/api/_lib/http";
 import { searchLocalTeamIdentities, teamIdentityQueryMatches } from "@/data/identity/team-search";
 import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
+import { awardWinnerSortRank } from "@/data/runtime/awards-search-boost";
+import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -188,7 +190,57 @@ export async function GET(request: Request) {
       }
     }
 
-    return jsonOk({ query: q, count: hits.length, data: hits });
+    // CF-safe baked index: cover legends ESPN common-search misses (Kareem, Cousy).
+    if (kind === "all" || kind === "player") {
+      const needle = q
+        .normalize("NFKD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9 ]/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+      for (const row of getPlayerSearchIndex()) {
+        const nameKey = row.name
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9 ]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (
+          !nameKey.includes(needle) &&
+          !nameKey.startsWith(needle) &&
+          !nameKey.split(" ").some((t) => t.startsWith(needle))
+        ) {
+          continue;
+        }
+        const key = `player:${row.id}`;
+        if (seen.has(key)) continue;
+        if (nameKey && seenPlayerNames.has(nameKey)) continue;
+        seen.add(key);
+        if (nameKey) seenPlayerNames.add(nameKey);
+        hits.push({
+          id: row.id,
+          name: row.name,
+          kind: "player",
+          teamKey: row.team || undefined,
+          subtitle: row.firstSeason
+            ? `${row.firstSeason} → ${row.season}`
+            : row.season || "Player",
+        });
+        if (hits.filter((h) => h.kind === "player").length >= 12) break;
+      }
+    }
+
+    hits.sort((a, b) => {
+      if (a.kind !== b.kind) return a.kind === "player" ? -1 : 1;
+      if (a.kind === "player" && b.kind === "player") {
+        return awardWinnerSortRank(a.name) - awardWinnerSortRank(b.name);
+      }
+      return 0;
+    });
+
+    return jsonOk({ query: q, count: hits.length, data: hits.slice(0, 16) });
   } catch (error) {
     return jsonError(error);
   }

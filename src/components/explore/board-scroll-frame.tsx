@@ -24,6 +24,9 @@ function frozenWidthCap(viewportW: number): number {
 /**
  * Width-bounded board: frame never grows the page; only the inner host scrolls.
  * Frost rail overlays the left strip (SiteChrome model).
+ *
+ * Frozen width is measured from intrinsic content (`w-max`) so names stay
+ * readable; CSS max-width caps the rail on small viewports.
  */
 export function BoardScrollFrame({
   frozen,
@@ -93,10 +96,7 @@ export function BoardScrollFrame({
               : "inset 0 1px 0 rgba(255,255,255,0.45)",
         }}
       >
-        <div
-          ref={frozenRef}
-          className="pointer-events-auto h-full w-max"
-        >
+        <div ref={frozenRef} className="pointer-events-auto h-full w-max">
           {frozen}
         </div>
       </div>

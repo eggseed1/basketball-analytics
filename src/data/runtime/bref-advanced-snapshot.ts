@@ -11,6 +11,7 @@ import {
   lookupPlayerNameByEspnId,
   normalizeEspnLookupName,
 } from "./espn-name-index";
+import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import type { PlayerSeason } from "@/data/types";
 
 type SlimAdvanced = {
@@ -249,16 +250,70 @@ export function getBundledBrefPeerBoard(canonicalSeason: string): PlayerSeason[]
   for (const r of perGame) {
     pgByKey.set(`${r.n.toLowerCase()}|${r.t}`, r);
   }
+  // Name-only fallback so TOT advanced can still attach per-game counting.
+  const pgByName = new Map<string, SlimPerGame>();
+  for (const r of perGame) {
+    const name = r.n.toLowerCase();
+    const prev = pgByName.get(name);
+    if (!prev || isCombinedTeamAbbr(r.t) || (r.gp ?? 0) > (prev.gp ?? 0)) {
+      pgByName.set(name, r);
+    }
+  }
 
+  const collapsedAdvanced = collapseSlimRowsToSeasonGrain(advanced);
   const out: PlayerSeason[] = [];
   const seen = new Set<string>();
-  for (const adv of advanced) {
+  for (const adv of collapsedAdvanced) {
     const key = `${adv.n.toLowerCase()}|${adv.t}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    out.push(toPeerSeasonRow(adv, pgByKey.get(key), canonicalSeason));
+    const pg =
+      pgByKey.get(key) ??
+      pgByName.get(adv.n.toLowerCase());
+    out.push(toPeerSeasonRow(adv, pg, canonicalSeason));
   }
   peerBoardCache.set(canonicalSeason, out);
+  return out;
+}
+
+const COMBINED_TEAM_ABBRS = new Set(["TOT", "2TM", "3TM", "4TM"]);
+
+function isCombinedTeamAbbr(team: string | null | undefined): boolean {
+  return COMBINED_TEAM_ABBRS.has(String(team ?? "").toUpperCase().trim());
+}
+
+function collapseSlimRowsToSeasonGrain<T extends { n: string; t: string; gp?: number; mp?: number }>(
+  rows: T[]
+): T[] {
+  const groups = new Map<string, T[]>();
+  for (const row of rows) {
+    const key = String(row.n ?? "")
+      .toLowerCase()
+      .trim();
+    if (!key) continue;
+    const list = groups.get(key) ?? [];
+    list.push(row);
+    groups.set(key, list);
+  }
+  const out: T[] = [];
+  for (const list of groups.values()) {
+    const combined = list.find((r) => isCombinedTeamAbbr(r.t));
+    if (combined) {
+      out.push(combined);
+      continue;
+    }
+    let best = list[0]!;
+    for (const row of list) {
+      if ((row.gp ?? 0) > (best.gp ?? 0)) best = row;
+      else if (
+        (row.gp ?? 0) === (best.gp ?? 0) &&
+        (row.mp ?? 0) > (best.mp ?? 0)
+      ) {
+        best = row;
+      }
+    }
+    out.push(best);
+  }
   return out;
 }
 
@@ -296,12 +351,19 @@ function toPeerSeasonRow(
         : 0;
   const ortg = adv.ortg != null && adv.ortg > 0 ? adv.ortg : undefined;
   const drtg = adv.drtg != null && adv.drtg > 0 ? adv.drtg : undefined;
+  const resolvedTeam = resolveCanonicalTeam(adv.t);
+  const teamId =
+    resolvedTeam.status === "resolved"
+      ? resolvedTeam.team.canonicalTeamId
+      : adv.t;
+  const teamAbbreviation =
+    resolvedTeam.status === "resolved" ? resolvedTeam.team.abbr : adv.t;
 
   return {
     playerId: espnId ?? `bref:${key}:${canonicalSeason}`,
     playerName: adv.n,
-    teamId: adv.t,
-    teamAbbreviation: adv.t,
+    teamId,
+    teamAbbreviation,
     season: canonicalSeason,
     age: pg?.age,
     position: pg?.pos,
@@ -473,6 +535,11 @@ export function brefAdvancedSnapshotMeta() {
     generatedAt: data.generatedAt ?? null,
     seasons: Object.keys(seasons),
   };
+}
+
+/** Canonical seasons present in the bundled BRef snapshot (newest first). */
+export function listBundledBrefSeasons(): string[] {
+  return Object.keys(seasons).sort((a, b) => b.localeCompare(a));
 }
 
 export type BundledBrefSearchRow = {

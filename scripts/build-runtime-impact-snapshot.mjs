@@ -130,7 +130,9 @@ function slimDarko(rows) {
 async function fetchDarkoSeason(season) {
   const url = darkoDataUrl(season);
   let lastError;
-  for (let attempt = 0; attempt < 3; attempt++) {
+  // darko.app flaps under burst traffic — prior bakes silently skipped
+  // mid-window seasons (notably 2013-14…2018-19), leaving career DARKO gaps.
+  for (let attempt = 0; attempt < 6; attempt++) {
     try {
       const response = await fetch(url, {
         headers: {
@@ -153,10 +155,20 @@ async function fetchDarkoSeason(season) {
       return rows;
     } catch (error) {
       lastError = error;
-      await new Promise((r) => setTimeout(r, 500 * (attempt + 1)));
+      const backoffMs = Math.min(8_000, 700 * 2 ** attempt) + Math.floor(Math.random() * 250);
+      await new Promise((r) => setTimeout(r, backoffMs));
     }
   }
   throw lastError;
+}
+
+async function loadPriorDarko() {
+  try {
+    const prior = JSON.parse(await fs.readFile(OUT, "utf8"));
+    return prior?.darko && typeof prior.darko === "object" ? prior.darko : {};
+  } catch {
+    return {};
+  }
 }
 
 function splitCsvLine(line) {
@@ -360,6 +372,7 @@ async function loadRaptorCsvOverrides() {
   return rows;
 }
 
+const priorDarko = await loadPriorDarko();
 const darko = {};
 
 for (const season of SEASONS) {
@@ -368,11 +381,39 @@ for (const season of SEASONS) {
     darko[season] = slimDarko(rows);
     console.log(`[impact-snapshot] DARKO ${season} → ${darko[season].length} players`);
   } catch (error) {
-    console.warn(
-      `[impact-snapshot] DARKO ${season} skipped: ${
-        error instanceof Error ? error.message : error
-      }`
+    const prior = Array.isArray(priorDarko[season]) ? priorDarko[season] : [];
+    if (prior.length > 0) {
+      darko[season] = prior;
+      console.warn(
+        `[impact-snapshot] DARKO ${season} fetch failed — kept prior bake (${prior.length} players): ${
+          error instanceof Error ? error.message : error
+        }`
+      );
+    } else {
+      console.warn(
+        `[impact-snapshot] DARKO ${season} skipped (no prior): ${
+          error instanceof Error ? error.message : error
+        }`
+      );
+    }
+  }
+  // Pace requests so a full 30-season window does not trip darko.app.
+  await new Promise((r) => setTimeout(r, 350));
+}
+
+const missingDarko = SEASONS.filter(
+  (season) => !Array.isArray(darko[season]) || darko[season].length === 0
+);
+if (missingDarko.length) {
+  const msg = `[impact-snapshot] DARKO gaps remain: ${missingDarko.join(", ")}`;
+  if (process.env.ALLOW_DARKO_GAPS === "1") {
+    console.warn(msg);
+  } else {
+    console.error(msg);
+    console.error(
+      "[impact-snapshot] Refuse to publish holes (career boards go blank on CF). Re-run or set ALLOW_DARKO_GAPS=1."
     );
+    process.exit(1);
   }
 }
 

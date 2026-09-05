@@ -11,6 +11,7 @@ import {
   adjacentSeason,
   clampDateToSeason,
   seasonDateBounds,
+  mapCalendarDayOntoSeason,
 } from "../src/themes/era-theme";
 import {
   historyHref,
@@ -110,6 +111,11 @@ function main() {
   assert.equal(bounds.end, "1979-06-30");
   assert.equal(clampDateToSeason("1978-09-01", "1978-79"), "1978-10-01");
   assert.equal(clampDateToSeason("1979-08-01", "1978-79"), "1979-06-30");
+  // Today → season year: Jan maps into end year; Aug is offseason.
+  assert.equal(mapCalendarDayOntoSeason("1978-79", 1, 15), "1979-01-15");
+  assert.equal(mapCalendarDayOntoSeason("1978-79", 11, 3), "1978-11-03");
+  assert.equal(mapCalendarDayOntoSeason("1978-79", 8, 29), null);
+  assert.equal(mapCalendarDayOntoSeason("1978-79", 6, 30), "1979-06-30");
 
   // --- Historical identity (manual eras) ---
   assert.equal(
@@ -169,10 +175,11 @@ function main() {
   // --- Nav ---
   assert.equal(primaryNavLabelForPath("/history"), "History");
   assert.equal(primaryNavLabelForPath("/history?season=1978-79"), "History");
-  assert.equal(primaryNavLabelForPath("/franchises"), "History");
+  assert.equal(primaryNavLabelForPath("/franchises"), "Teams");
   const historyNav = PRIMARY_NAV.find((n) => n.id === "history");
-  assert.ok(historyNav?.subnav?.some((s) => s.href === "/history"));
-  assert.ok(historyNav?.subnav?.some((s) => s.href === "/franchises"));
+  assert.ok(historyNav);
+  assert.equal(historyNav?.subnav, undefined);
+  assert.ok(!PRIMARY_NAV.some((n) => n.subnav?.some((s) => s.href === "/franchises")));
 
   // ASK context: season embedded in supported query strings (v1 contract)
   const askQ = `Who led the NBA in scoring in 1978-79?`;

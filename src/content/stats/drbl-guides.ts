@@ -46,13 +46,13 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       definition:
         "DRBL/100 is DRBL's validated ability rate: estimated player impact per 100 combined possession appearances versus a contextual, role-matched R1 reference. It is the EB1600 posterior of the raw ability rate shrunk toward zero, and the canonical DRBL ranking statistic for how good a player is.",
       formula:
-        "rawAbilityRate = attributedValue / combinedPossessionAppearances × 100;  validatedDRBL100 = EB₁₆₀₀(rawAbilityRate) toward 0  ≡  (N/(N+k))×rawAbilityRate + (k/(N+k))×0  with k = 1600, prior mean = 0",
+        "rawAbilityRate = 100 × (V / N);  ρ = N / (N + k);  DRBL/100 = ρ × rawAbilityRate + (1 − ρ) × μ₀  with k = 1600, μ₀ = 0  ≡  (N/(N+k)) × rawAbilityRate",
       calculation: [
-        "Reconstruct possessions from public play-by-play and attribute Approach-B residuals vs a cutoff-frozen R1 expected-points baseline.",
-        "Form rawAbilityRate as attributed value per combined possession appearances, scaled to per-100.",
-        "Apply exact empirical-Bayes shrinkage EB1600: pull rawAbilityRate toward prior mean 0 with k = 1600.",
-        "Publish the shrunk posterior as validated DRBL/100, the public ranking rate.",
-        "Keep P, LN, and B as non-additive diagnostics. They explain the story behind the rate.",
+        "Reconstruct possessions from public play-by-play and attribute Approach-B residuals (V) versus a cutoff-frozen, role-matched R1 expected-points baseline.",
+        "Let N be combined on-court possession appearances. Form rawAbilityRate = 100 × V / N (points per 100 possessions).",
+        "Compute reliability ρ = N / (N + k) with prior strength k = 1600.",
+        "Apply exact empirical-Bayes shrinkage toward prior mean μ₀ = 0: DRBL/100 = ρ × rawAbilityRate + (1 − ρ) × μ₀, which simplifies to (N/(N+k)) × rawAbilityRate.",
+        "Publish that posterior as validated DRBL/100 (identity calibration; no second shrink or fusion). Keep P, LN, and B as non-additive diagnostics.",
       ],
       teaches: [
         "Stabilized ability rate vs role-matched R1.",
@@ -99,6 +99,7 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
         "DRBL/100 answers how good. WAR1 answers how much they added this season.",
         "Two players can look similar on DRBL/100 but differ a lot on WAR1 if one played far more minutes.",
         "WAR1 is Wins Above R1 inside DRBL. It uses DRBL's own baseline, not generic replacement-level WAR.",
+        "A roster that sums to about 0 WAR1 projects like a mid-30s win team (~35–38), not a classic ~20-win replacement club — that is an empirical read of the R1 platform, not a promise that Σ WAR1 equals standings wins.",
       ],
       doesnt: [
         "A different ranking from R1 Points. Same order, friendlier units.",
@@ -126,18 +127,20 @@ export const DRBL_STAT_GUIDES: StatGuide[] = [
       definition:
         "WAR1 is DRBL's win-equivalent season-value statistic above its contextual R1 reference. Formally it is a fixed linear conversion of R1 Points by the frozen P1 points-per-win constant. The name is intended as Wins Above R1, but WAR1 is the public product label. It is not traditional WAR, R1 is a contextual role-matched reference, not a conventional fringe-player replacement baseline. Because the divisor is a fixed positive constant, rank(R1 Points) = rank(WAR1) exactly.",
       formula:
-        "WAR1 = R1 Points / 37.490662671779255  (frozen P1);  rank(R1 Points) = rank(WAR1)",
+        "R1 Points = V = (rawAbilityRate × N) / 100;  WAR1 = R1 Points / P1;  P1 = 37.490662671779255;  rank(R1 Points) = rank(WAR1)",
       calculation: [
-        "Accumulate Approach-B attribution above the role-matched R1 baseline into R1 Points (accounting total).",
-        "Divide by the frozen P1 constant 37.490662671779255 to express win-equivalent units.",
-        "Publish WAR1 as the preferred public cumulative metric; keep R1 Points for research/accounting.",
-        "Do not interpret the result as causal replacement wins or as traditional WAR.",
+        "Accumulate Approach-B attribution above the role-matched R1 baseline into R1 Points (V), equivalently (rawAbilityRate × N) / 100 at full precision.",
+        "Divide by the frozen P1 constant 37.490662671779255 to express win-equivalent units: WAR1 = R1 Points / P1.",
+        "Publish WAR1 as the preferred public cumulative metric; keep R1 Points for research and accounting.",
+        "Because P1 is a fixed positive constant, rank(WAR1) equals rank(R1 Points) exactly. Do not interpret WAR1 as classic replacement-level WAR.",
+        "Empirical team projection: when roster Σ WAR1 ≈ 0, recent seasons put that club around ~35–38 standings wins (regression intercept vs actual W–L) — the height of the R1 platform in win units, not a causal replacement-team identity.",
       ],
       teaches: [
         "Linear rescaling of R1 Points into win-equivalent language.",
         "Exact rank equivalence with the underlying accounting total.",
         "Separation from ability-rate ranking (DRBL/100).",
         "Why playing time matters for value even when rates look similar.",
+        "Zero collective WAR1 ≈ mid-30s projected wins, not classic fringe replacement.",
       ],
       doesnt: [
         "Independent information from R1 Points beyond unit choice.",

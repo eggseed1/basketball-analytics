@@ -189,11 +189,17 @@ export function mapEspnByTeamPayload(
 }
 
 function fromRuntimeSnapshot(season: string): TeamSeasonStats[] | null {
+  const cached = mappedBoardCache.get(season);
+  if (cached) return cached;
   const payload = getRuntimeTeamBoardPayload(season);
   if (!payload) return null;
   const rows = mapEspnByTeamPayload(season, payload as ByTeamResponse);
-  return rows.length ? rows : null;
+  if (!rows.length) return null;
+  mappedBoardCache.set(season, rows);
+  return rows;
 }
+
+const mappedBoardCache = new Map<string, TeamSeasonStats[]>();
 
 export async function fetchTeamSeasonStats(
   season: string
@@ -201,6 +207,8 @@ export async function fetchTeamSeasonStats(
   if (preferBundledProductDataOnEdge()) {
     const snap = fromRuntimeSnapshot(season);
     if (snap && boardHasMeasuredGames(snap)) return snap;
+    // CF: never live-fetch by-team boards (uncancellable ESPN hangs → blank explore).
+    return snap ?? [];
   }
 
   const year = espnYearFromCanonicalSeason(season);

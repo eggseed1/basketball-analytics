@@ -20,6 +20,7 @@ import {
 } from "@/data/queries/franchises";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { teamHistoryHref } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 
 type SortKey =
@@ -205,7 +206,7 @@ export function FranchiseHistoryTable({
                 >
                   <TableCell className="sticky left-0 z-10 bg-card">
                     <TransitionLink
-                      href={`/franchises/${f.id}`}
+                      href={teamHistoryHref(f.abbr)}
                       className="flex items-center gap-2 font-semibold hover:underline"
                     >
                       <TeamLogo teamKey={f.abbr} size="xs" />

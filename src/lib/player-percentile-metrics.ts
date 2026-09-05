@@ -9,7 +9,11 @@ import { hustlePerGame } from "@/data/transformers/hustle-stats";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
-import type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
+import {
+  SHEET_STAT_BY_ID,
+  type PercentileCategory,
+  type SheetStatId,
+} from "@/lib/player-stat-sheet-registry";
 
 export type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
 
@@ -45,6 +49,30 @@ export type PercentileMetric = {
   /** Present for left-rail snapshot; omit from Analytical Profile lists. */
   profileHidden?: boolean;
 };
+
+/** Map percentile metric ids → sheet ids for category resolution. */
+const PERCENTILE_TO_SHEET_ID: Record<string, SheetStatId> = {
+  min: "mp",
+  "darko-off": "darkoOff",
+  "darko-def": "darkoDef",
+  oraptor: "oRaptor",
+  draptor: "dRaptor",
+  r1WinEquivalents: "war1",
+};
+
+function resolvePercentileCategory(
+  id: string,
+  fallback: string
+): PercentileCategory {
+  const legacy =
+    fallback === "counting"
+      ? "profile"
+      : fallback === "rates"
+        ? "advanced"
+        : (fallback as PercentileCategory);
+  const sheetId = PERCENTILE_TO_SHEET_ID[id] ?? (id as SheetStatId);
+  return SHEET_STAT_BY_ID[sheetId]?.category ?? legacy;
+}
 
 /**
  * Prefer DARKO → WAR1 → DRBL/100 for the percentile board default.
@@ -268,7 +296,7 @@ export function buildPlayerPercentileMetrics(
 
   const push = (opts: {
     id: string;
-    category: PercentileCategory;
+    category: PercentileCategory | "counting" | "rates";
     label: string;
     value: number;
     values: number[];
@@ -283,6 +311,7 @@ export function buildPlayerPercentileMetrics(
   }) => {
     if (!Number.isFinite(opts.value) || opts.values.length === 0) return;
 
+    const category = resolvePercentileCategory(opts.id, opts.category);
     const interpretation = opts.interpretation;
     const showPercentile =
       opts.showPercentile ??
@@ -310,7 +339,7 @@ export function buildPlayerPercentileMetrics(
 
     metrics.push({
       id: opts.id,
-      category: opts.category,
+      category,
       label: opts.label,
       percentile,
       display: opts.display,
@@ -521,19 +550,25 @@ export function buildPlayerPercentileMetrics(
       });
     }
   }
-  if (seasonStats.winsAdded != null) {
-    const waPool = pool
+  if (seasonStats.winsAdded != null && Number.isFinite(seasonStats.winsAdded)) {
+    const warPool = pool
       .map((p) => p.winsAdded)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (waPool.length) {
+    if (warPool.length) {
       push({
-        id: "wins",
+        id: "winsAdded",
         category: "impact",
         label: "WAR",
         value: seasonStats.winsAdded,
-        values: waPool,
+        values: warPool,
         display: formatNumber(seasonStats.winsAdded, 2),
-        series: careerSeries((r) => r.winsAdded, { rejectFlatOverlay: true }),
+        series: careerSeries(
+          (r) =>
+            r.winsAdded != null && Number.isFinite(r.winsAdded)
+              ? r.winsAdded
+              : null,
+          { rejectFlatOverlay: true }
+        ),
         interpretation: "higher_is_better",
       });
     }
@@ -1152,32 +1187,32 @@ export function buildPlayerPercentileMetrics(
     >;
     suffix: string;
   }> = [
-    { id: "hustleDefl", label: "Deflections", key: "hustleDeflections", suffix: " defl" },
+    { id: "hustleDefl", label: "Defl", key: "hustleDeflections", suffix: " defl" },
     {
       id: "hustleContest",
-      label: "Contested shots",
+      label: "Contest",
       key: "hustleContestedShots",
       suffix: " contest",
     },
     {
       id: "hustleScrAst",
-      label: "Screen assists",
+      label: "ScrAst",
       key: "hustleScreenAssists",
       suffix: " scr ast",
     },
     {
       id: "hustleChrg",
-      label: "Charges drawn",
+      label: "Chrg",
       key: "hustleChargesDrawn",
       suffix: " chrg",
     },
     {
       id: "hustleLoose",
-      label: "Loose balls",
+      label: "Loose",
       key: "hustleLooseBallsRecovered",
       suffix: " loose",
     },
-    { id: "hustleBoxOut", label: "Box outs", key: "hustleBoxOuts", suffix: " box" },
+    { id: "hustleBoxOut", label: "BoxOut", key: "hustleBoxOuts", suffix: " box" },
   ];
 
   for (const metric of hustleMetrics) {

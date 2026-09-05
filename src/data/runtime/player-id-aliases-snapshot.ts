@@ -22,12 +22,14 @@ export function getBundledPlayerIdAliasIndex(): PlayerIdAliasIndex {
   if (cached) return cached;
   const byEspn = new Map<string, PlayerIdAlias>();
   const byNba = new Map<string, PlayerIdAlias>();
+  const byBref = new Map<string, PlayerIdAlias>();
   for (const row of rows) {
     if (!row?.espnPlayerId || !row?.nbaPlayerId) continue;
     const normalized: PlayerIdAlias = {
       espnPlayerId: String(row.espnPlayerId).trim(),
       nbaPlayerId: String(row.nbaPlayerId).trim(),
       playerName: row.playerName?.trim() || undefined,
+      brefSlug: row.brefSlug?.trim().toLowerCase() || undefined,
       matchMethod: row.matchMethod?.trim() || undefined,
       confidence: row.confidence?.trim() || undefined,
       productionApproved:
@@ -38,7 +40,8 @@ export function getBundledPlayerIdAliasIndex(): PlayerIdAliasIndex {
     if (!normalized.espnPlayerId || !normalized.nbaPlayerId) continue;
     byEspn.set(normalized.espnPlayerId, normalized);
     byNba.set(normalized.nbaPlayerId, normalized);
+    if (normalized.brefSlug) byBref.set(normalized.brefSlug, normalized);
   }
-  cached = { byEspn, byNba };
+  cached = { byEspn, byNba, byBref };
   return cached;
 }
