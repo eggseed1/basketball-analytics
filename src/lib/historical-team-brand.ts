@@ -204,6 +204,7 @@ export function resolveHistoricalTeamBrand(
     };
   }
 
+  // Prefer current CDN logo for modern-era teams (never leave logoUrl null when safe).
   if (mayUseCurrentLogo(era, team) && team) {
     const url = currentFranchiseLogoUrl(team);
     if (url) {
@@ -224,6 +225,19 @@ export function resolveHistoricalTeamBrand(
       source: "text_fallback",
       palette: null,
     };
+  }
+
+  // Last resort: still try today's franchise mark by abbr before text.
+  if (team) {
+    const url = currentFranchiseLogoUrl(team);
+    if (url) {
+      return {
+        ...fields,
+        logoUrl: url,
+        source: "current",
+        palette: null,
+      };
+    }
   }
 
   return {

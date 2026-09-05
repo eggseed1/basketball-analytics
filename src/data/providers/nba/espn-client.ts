@@ -2,10 +2,10 @@ import {
   sharedClearPrefix,
   sharedGetOrSet,
 } from "@/data/cache/shared-ttl-cache";
-import { runtimeTimeoutMs } from "./runtime-policy";
+import { isVercelRuntime, runtimeTimeoutMs } from "./runtime-policy";
 
 const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
-const DEFAULT_RETRIES = 2;
+const DEFAULT_RETRIES = isVercelRuntime() ? 1 : 2;
 // Player identity/career calls sit above the first Suspense boundary. Bound a
 // cold Vercel miss so local/history fallbacks can still render the route.
 const DEFAULT_TIMEOUT_MS = runtimeTimeoutMs(4_000, 2_500);
@@ -16,6 +16,8 @@ export interface EspnFetchOptions {
   ttlMs?: number;
   retries?: number;
   signal?: AbortSignal;
+  /** Override default AbortSignal timeout (ms). */
+  timeoutMs?: number;
   /** Skip memory cache read (still writes on success unless ttlMs is 0). */
   bypassCache?: boolean;
 }
@@ -59,20 +61,28 @@ async function fetchEspnJsonUncached<T>(
   ttlMs: number
 ): Promise<T> {
   const retries = options.retries ?? DEFAULT_RETRIES;
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
   let lastError: unknown;
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
-      const response = await fetch(url, {
-        signal: options.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+      // Avoid Next.js Data Cache fetch options on Cloudflare Workers — they can
+      // hang or no-op poorly under OpenNext. Plain fetch + AbortSignal is enough.
+      const init: RequestInit = {
+        signal: options.signal ?? AbortSignal.timeout(timeoutMs),
         headers: {
           Accept: "application/json",
           "User-Agent":
             "BasketballAnalytics/0.1 (+local; educational data exploration)",
         },
-        // Next.js Data Cache — shared across Vercel instances.
-        next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },
-      } as RequestInit);
+      };
+      if (isVercelRuntime()) {
+        (init as RequestInit & { next?: { revalidate: number } }).next = {
+          revalidate: Math.max(60, Math.floor(ttlMs / 1000)),
+        };
+      }
+
+      const response = await fetch(url, init);
 
       if (!response.ok) {
         const err = new Error(

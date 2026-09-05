@@ -4,13 +4,90 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import {
-  hasHistoryTeamGameIndex,
-} from "@/data/history/team-matchup-index";
-import { getUpcomingGameSummaries } from "@/data/queries";
+import { hasHistoryTeamGameIndex } from "@/data/history/team-matchup-index";
+import { toGameSummary } from "@/data/queries/filter-utils";
+import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { getTeamSeasonGamesCached } from "@/data/queries/request-cache";
-import type { TeamSeasonStats } from "@/data/types";
+import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
+import {
+  gameSummariesToCompactRows,
+  hasTeamSnapshotGames,
+  paginateSnapshotTeamGames,
+  teamSnapshotGames,
+} from "@/lib/team-snapshot-games";
+import { withBudget } from "@/data/queries/budget";
+
+function snapshotPoolsForSeason(season: string): {
+  recentPool: GameSummary[];
+  upcomingPool: GameSummary[];
+} {
+  const today = new Date().toISOString().slice(0, 10);
+  const snapshot = getRuntimeSnapshotGames(season).map(toGameSummary);
+  return {
+    upcomingPool: snapshot.filter(
+      (game) =>
+        game.gameDate >= today &&
+        (game.status === "scheduled" ||
+          game.status === "pregame" ||
+          game.status === "delayed" ||
+          game.status === "in_progress")
+    ),
+    recentPool: snapshot
+      .filter(
+        (game) =>
+          game.gameDate < today ||
+          game.status === "final" ||
+          game.status === "halftime"
+      )
+      .reverse(),
+  };
+}
+
+function SnapshotTeamGamesBody({
+  team,
+  brand,
+  season,
+  gamesPage,
+  fromHistory,
+  theme,
+}: {
+  team: TeamSeasonStats;
+  brand?: TeamBrand | null;
+  season: string;
+  gamesPage?: number;
+  fromHistory?: boolean;
+  theme?: string;
+}) {
+  const allTeamGames = teamSnapshotGames(team.teamId, season);
+  const { recentPool, upcomingPool } = snapshotPoolsForSeason(season);
+  const compact = gameSummariesToCompactRows(team.teamId, allTeamGames);
+  const page = paginateSnapshotTeamGames(compact, gamesPage ?? 1);
+
+  return (
+    <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
+      <TeamGamesSection
+        recentPool={recentPool}
+        upcomingPool={upcomingPool}
+        team={team}
+        brand={brand}
+        seasonAvgPpg={Number.isFinite(team.ppg) ? team.ppg : null}
+      />
+      {compact.length > 0 ? (
+        <TeamGamesLog
+          teamId={team.teamId}
+          season={season}
+          rows={page.rows}
+          total={page.total}
+          page={page.page}
+          pageCount={page.pageCount}
+          fromHistory={fromHistory}
+          theme={theme}
+        />
+      ) : null}
+    </div>
+  );
+}
 
 export async function TeamGamesIsland({
   team,
@@ -30,6 +107,32 @@ export async function TeamGamesIsland({
   const currentSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const useProductIndex = hasHistoryTeamGameIndex(season);
 
+  if (hasTeamSnapshotGames(team.teamId, season)) {
+    return (
+      <section
+        id="games"
+        className="scroll-mt-16 flex flex-col gap-3"
+        aria-label="Games"
+      >
+        <div>
+          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Schedule snapshot · recent / upcoming · season game log · opens Game
+            Lab
+          </p>
+        </div>
+        <SnapshotTeamGamesBody
+          team={team}
+          brand={brand}
+          season={season}
+          gamesPage={gamesPage}
+          fromHistory={fromHistory}
+          theme={theme}
+        />
+      </section>
+    );
+  }
+
   if (useProductIndex) {
     const {
       getCompactTeamSeasonGames,
@@ -39,6 +142,10 @@ export async function TeamGamesIsland({
     const all = getCompactTeamSeasonGames(team.teamId, season);
     const page = paginateCompactTeamGames(all, gamesPage);
     const recentPool = compactRowsToGameSummaries(all.slice(0, 8));
+    const snapshot =
+      all.length === 0 && season >= currentSeason
+        ? snapshotPoolsForSeason(season)
+        : null;
 
     return (
       <section
@@ -49,15 +156,24 @@ export async function TeamGamesIsland({
         <div>
           <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
           <p className="text-[13px] text-muted-foreground">
-            From local historical game index · opens Game Lab · bounded page (
-            {page.pageSize} max)
+            {snapshot
+              ? "Recent / upcoming from schedule · opens Game Lab"
+              : `From local historical game index · opens Game Lab · bounded page (${page.pageSize} max)`}
           </p>
         </div>
         <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
-          {page.total === 0 ? (
+          {page.total === 0 && !snapshot ? (
             <p className="text-[13px] text-muted-foreground">
               Historical games unavailable for {season}.
             </p>
+          ) : snapshot ? (
+            <TeamGamesSection
+              recentPool={snapshot.recentPool}
+              upcomingPool={snapshot.upcomingPool}
+              team={team}
+              brand={brand}
+              seasonAvgPpg={null}
+            />
           ) : (
             <>
               <TeamGamesSection
@@ -86,30 +202,46 @@ export async function TeamGamesIsland({
     );
   }
 
-  const [teamGames, upcomingBundle] = await Promise.all([
-    getTeamSeasonGamesCached(
-      team.teamId,
-      season,
-      team.abbreviation
-    ).catch(() => ({
-      games: [],
-      source: "unavailable" as const,
-      warning: `Historical games unavailable for ${season}.`,
-    })),
-    season === currentSeason
-      ? getUpcomingGameSummaries({ season, limit: 40 }).catch(() => ({
-          games: [],
-        }))
-      : Promise.resolve({ games: [] }),
-  ]);
+  if (season >= currentSeason) {
+    const snapshot = snapshotPoolsForSeason(season);
+    return (
+      <section
+        id="games"
+        className="scroll-mt-16 flex flex-col gap-3"
+        aria-label="Games"
+      >
+        <div>
+          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+          <p className="text-[13px] text-muted-foreground">
+            Recent / upcoming from schedule · opens Game Lab
+          </p>
+        </div>
+        <div className="sports-card p-4 sm:p-5">
+          <TeamGamesSection
+            recentPool={snapshot.recentPool}
+            upcomingPool={snapshot.upcomingPool}
+            team={team}
+            brand={brand}
+            seasonAvgPpg={
+              Number.isFinite(team.ppg) ? team.ppg : null
+            }
+          />
+        </div>
+      </section>
+    );
+  }
 
-  const archiveNote =
-    teamGames.source === "unavailable"
-      ? teamGames.warning ??
-        `Historical games unavailable for ${season}.`
-      : teamGames.source === "disk_cache"
-        ? "From local historical game archive · opens Game Lab"
-        : "Recent / upcoming from schedule · opens Game Lab";
+  const teamGames = (
+    await withBudget(
+      getTeamSeasonGamesCached(team.teamId, season, team.abbreviation),
+      6_000,
+      {
+        games: [] as GameSummary[],
+        source: "unavailable" as const,
+        warning: `Historical games unavailable for ${season}.`,
+      }
+    )
+  ).value;
 
   return (
     <section
@@ -119,28 +251,22 @@ export async function TeamGamesIsland({
     >
       <div>
         <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
-        <p className="text-[13px] text-muted-foreground">{archiveNote}</p>
+        <p className="text-[13px] text-muted-foreground">
+          {teamGames.source === "disk_cache"
+            ? "From local historical game archive · opens Game Lab"
+            : "Recent / upcoming from schedule · opens Game Lab"}
+        </p>
       </div>
       <div className="sports-card p-4 sm:p-5">
-        {teamGames.source === "unavailable" && teamGames.games.length === 0 ? (
-          upcomingBundle.games.length > 0 ? (
-            <TeamGamesSection
-              recentPool={[]}
-              upcomingPool={upcomingBundle.games}
-              team={team}
-              brand={brand}
-              seasonAvgPpg={null}
-            />
-          ) : (
-            <p className="text-[13px] text-muted-foreground">
-              {teamGames.warning ??
-                `Historical games unavailable for ${season}.`}
-            </p>
-          )
+        {teamGames.games.length === 0 ? (
+          <p className="text-[13px] text-muted-foreground">
+            {teamGames.warning ??
+              `Historical games unavailable for ${season}.`}
+          </p>
         ) : (
           <TeamGamesSection
             recentPool={teamGames.games}
-            upcomingPool={upcomingBundle.games}
+            upcomingPool={[]}
             team={team}
             brand={brand}
             seasonAvgPpg={

@@ -1,21 +1,13 @@
-import {
-  GlassSurface,
-  type GlassSurfaceHonor,
-} from "@/components/brand/glass-surface";
 import { PlayerAccolades } from "@/components/players/player-accolades";
 import { PlayerRetiredJerseys } from "@/components/players/player-retired-jerseys";
 import { getPlayerAccolades } from "@/data/queries/player-awards";
 import { getPlayerRetiredJerseys } from "@/data/queries/player-retired-jerseys";
-import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
+import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
-import { resolveTeamBrand } from "@/lib/nba-brand";
 
-/** Streams trophy row + retired jerseys off the player-page critical path. */
+/** Streams trophy tags + retired jerseys off the player-page critical path. */
 export async function PlayerAccoladesIsland({
   playerId,
-  teamKey,
-  historicalBrand,
-  honor,
 }: {
   playerId: string;
   teamKey?: string | null;
@@ -28,28 +20,10 @@ export async function PlayerAccoladesIsland({
   ]);
   if (!badges.length && !jerseys.length) return null;
 
-  const modernBrand = resolveTeamBrand(teamKey);
-  const wash = brandAtmosphereColors(
-    historicalBrand?.palette?.primary ?? modernBrand?.primary,
-    historicalBrand?.palette?.secondary ?? modernBrand?.secondary
-  );
-
   return (
-    <GlassSurface
-      accentColor={wash?.colorA}
-      accentColorB={wash?.colorB}
-      className="relative min-w-0 p-0"
-      effect="css"
-      honor={honor}
-    >
-      <div className="relative z-[1] flex flex-col items-stretch gap-2 px-3 py-2.5">
-        <PlayerRetiredJerseys jerseys={jerseys} className="mt-0 justify-start" />
-        <PlayerAccolades
-          badges={badges}
-          compact
-          className={jerseys.length ? "" : undefined}
-        />
-      </div>
-    </GlassSurface>
+    <div className="flex w-full min-w-0 flex-col items-center gap-2">
+      <PlayerAccolades badges={badges} compact />
+      <PlayerRetiredJerseys jerseys={jerseys} className="mt-0 justify-center" />
+    </div>
   );
 }

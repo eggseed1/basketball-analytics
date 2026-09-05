@@ -148,7 +148,7 @@ export const PLAYER_SEASON_COMPARE_METHODOLOGY: PlayerSeasonCompareMethodology =
     overallRule:
       "Overall = plurality of decisive category winners among available categories. Impact and team context participate only when covered for both seasons. No opaque universal season score.",
     impactRule:
-      "DRBL/100 participates when both seasons have valid estimates (registry seasons only). Otherwise historical impact participates only when the same season-true metric (DARKO or LEBRON) exists for BOTH seasons. Live DARKO stamped on one year is never compared to a year without it. CPI is never substituted for missing impact. Diagnostic P/LN/B are disclosed separately and are not additive into DRBL/100.",
+      "DRBL/100 participates when both seasons have valid estimates (registry seasons only). Otherwise historical impact participates only when the same season-true metric (DARKO or RAPTOR) exists for BOTH seasons. Live DARKO stamped on one year is never compared to a year without it. CPI is never substituted for missing impact. Diagnostic P/LN/B are disclosed separately and are not additive into DRBL/100.",
     cpiNote:
       "CPI (Career Production Index) is a documented box-score production composite - not impact, WAR, or true value.",
     incompleteNote:

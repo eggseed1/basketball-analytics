@@ -31,19 +31,19 @@ async function main() {
 
   const { rows, health } = await getPlayerSeasonBoardSnapshot({ season });
 
-  let lebron = "skipped";
+  let raptor = "skipped";
   let jokic = "skipped";
   if (provider.name === "nba" || rows.length > 0) {
     const [l, j] = await Promise.all([
       getPlayer("1966").catch(() => null),
       getPlayer("3112335").catch(() => null),
     ]);
-    lebron = l?.fullName ? `found (${l.fullName})` : "not found";
+    raptor = l?.fullName ? `found (${l.fullName})` : "not found";
     jokic = j?.fullName ? `found (${j.fullName})` : "not found";
   }
 
   console.log(
-    formatPlayerBoardHealthReport(health, { lebron, jokic })
+    formatPlayerBoardHealthReport(health, { raptor, jokic })
   );
   console.log(
     `Configured DATA_PROVIDER: ${process.env.DATA_PROVIDER ?? `(unset → ${process.env.VERCEL ? "nba on Vercel" : "local"})`}`

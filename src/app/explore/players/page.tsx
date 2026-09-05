@@ -4,6 +4,7 @@ import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-
 import { ExplorePlayersClientShell } from "@/components/explore/explore-players-client-shell";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
+import { PageHeader } from "@/components/layout/page-header";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
@@ -101,7 +102,7 @@ async function ExplorePlayersBoard({
         sortKey={view.sortKey}
         sortDir={view.sortDir}
         hasDarko={view.hasDarko}
-        hasLebron={view.hasLebron}
+        hasRaptor={view.hasRaptor}
         hasDrbl={view.hasDrbl}
         seasonAwaitingGames={view.seasonAwaitingGames}
       />
@@ -122,17 +123,14 @@ export default async function ExplorePlayersPage({
 
   return (
     <main className="site-shell flex min-w-0 max-w-full flex-1 flex-col gap-5 overflow-x-clip py-6 sm:py-8">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          Players
-        </h1>
-        {parsePlayerSeasonSortKey(params.sort) ? (
-          <p className="text-[14px] text-muted-foreground">
-            Sorted by {parsePlayerSeasonSortKey(params.sort)} - change any
-            column header to re-rank.
-          </p>
-        ) : null}
-      </header>
+      <PageHeader
+        title="Players"
+        subtitle={
+          parsePlayerSeasonSortKey(params.sort)
+            ? `Sorted by ${parsePlayerSeasonSortKey(params.sort)} - change any column header to re-rank.`
+            : undefined
+        }
+      />
 
       <TeamCatalogFallbackNotice source={source} warnings={warnings} />
 

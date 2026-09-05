@@ -40,9 +40,11 @@ export type ExplorePlayerBoardRow = {
   darkoDpm?: number;
   darkoOff?: number;
   darkoDef?: number;
-  lebron?: number;
-  oLebron?: number;
-  dLebron?: number;
+  raptor?: number;
+  oRaptor?: number;
+  dRaptor?: number;
+  winsAdded?: number;
+  bpm?: number;
   /** Unrounded validated DRBL/100 when overlay present; omit when missing. */
   drbl100?: number;
   /** null/omitted when DRBL overlay absent - never coerce missing to 0. */
@@ -116,9 +118,11 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
   if (p.darkoDef != null) row.darkoDef = p.darkoDef;
   else if (p.dDpm) row.darkoDef = p.dDpm;
   if (row.darkoDpm == null && p.dpm) row.darkoDpm = p.dpm;
-  if (p.lebron != null) row.lebron = p.lebron;
-  if (p.oLebron != null) row.oLebron = p.oLebron;
-  if (p.dLebron != null) row.dLebron = p.dLebron;
+  if (p.raptor != null) row.raptor = p.raptor;
+  if (p.oRaptor != null) row.oRaptor = p.oRaptor;
+  if (p.dRaptor != null) row.dRaptor = p.dRaptor;
+  if (p.winsAdded != null) row.winsAdded = p.winsAdded;
+  if (p.bpm != null && Number.isFinite(p.bpm)) row.bpm = p.bpm;
   if (p.age != null && p.age > 0) row.age = p.age;
   const media = getPlayerMedia([p.playerId]).get(p.playerId);
   row.portraitUrl = media?.sourceUrl ?? null;
@@ -145,7 +149,11 @@ function sortKeyIsImpact(key: PlayerSeasonSortKey): boolean {
     key === "darkoDpm" ||
     key === "darkoOff" ||
     key === "darkoDef" ||
-    key === "lebron"
+    key === "raptor" ||
+    key === "oRaptor" ||
+    key === "dRaptor" ||
+    key === "winsAdded" ||
+    key === "bpm"
   );
 }
 

@@ -10,6 +10,7 @@ import {
 import { Menu, X } from "lucide-react";
 
 import { NBA_ATMOSPHERE, PageAtmosphere } from "@/components/brand/page-atmosphere";
+import { DrblLogo } from "@/components/brand/drbl-logo";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { RouteTransitionProvider } from "@/components/continuity/route-transition";
 import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
@@ -54,25 +55,38 @@ function DomainSubnav({ item }: { item: PrimaryNavItem }) {
   return (
     <nav
       aria-label={`${item.label} sections`}
-      className="flex items-center gap-1 overflow-x-auto pb-0.5"
+      className="site-subnav"
     >
-      {item.subnav.map((link) => {
-        const active = subnavActive(link, pathname, search);
-        return (
-          <TransitionLink
-            key={link.href}
-            href={link.href}
-            className={cn(
-              "shrink-0 rounded-md px-2.5 py-1 text-[12px] font-semibold transition-colors",
-              active
-                ? "bg-secondary text-foreground"
-                : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
-            )}
-          >
-            {link.label}
-          </TransitionLink>
-        );
-      })}
+      <div
+        role="tablist"
+        className="flex max-w-full items-center gap-0.5 touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+      >
+        {item.subnav.map((link) => {
+          const active = subnavActive(link, pathname, search);
+          return (
+            <TransitionLink
+              key={link.href}
+              href={link.href}
+              role="tab"
+              aria-selected={active}
+              className={cn(
+                "relative shrink-0 px-3 py-1.5 text-[12px] font-semibold tracking-tight transition-colors duration-[var(--duration-fast)] ease-[var(--ease-standard)]",
+                active
+                  ? "text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              )}
+            >
+              {link.label}
+              {active ? (
+                <span
+                  aria-hidden
+                  className="absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-foreground"
+                />
+              ) : null}
+            </TransitionLink>
+          );
+        })}
+      </div>
     </nav>
   );
 }
@@ -91,8 +105,7 @@ function PrimaryLink({
         "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
         active
           ? "glass-pill glass-pill-active text-foreground"
-          : "text-muted-foreground hover:text-foreground",
-        tab.prominent && !active && "text-foreground"
+          : "text-muted-foreground hover:text-foreground"
       )}
     >
       {tab.label}
@@ -141,7 +154,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
   return (
     <RouteTransitionProvider>
-      <div className="flex min-h-full min-w-0 flex-1 flex-col">
+      <div className="flex min-h-full min-w-0 flex-1 flex-col overflow-x-clip">
         {destinationWash ? null : (
           <PageAtmosphere
             colorA={NBA_ATMOSPHERE.colorA}
@@ -149,18 +162,19 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           />
         )}
         <SiteChrome>
-          <div className="site-shell flex min-w-0 flex-col gap-2 py-3">
-            <div className="flex items-center gap-4">
-              <TransitionLink href="/" className="flex shrink-0 items-center gap-2">
-                <span
-                  className="flex size-8 items-center justify-center rounded-md bg-foreground text-[12px] font-bold tracking-wide text-background"
-                  aria-hidden
-                >
-                  DRBL
-                </span>
-                <span className="hidden text-[1.25rem] font-bold tracking-tight sm:inline">
-                  DRBL
-                </span>
+          <div
+            className={cn(
+              "site-shell flex min-w-0 flex-col gap-2 py-3",
+              active?.subnav?.length && "pb-2.5"
+            )}
+          >
+            <div className="flex min-w-0 items-center gap-2 sm:gap-4">
+              <TransitionLink
+                href="/"
+                className="flex shrink-0 items-center gap-2"
+                aria-label="DRBL home"
+              >
+                <DrblLogo withWordmark />
               </TransitionLink>
               <div className="ml-auto flex min-w-0 flex-1 items-center justify-end gap-2 sm:flex-initial">
                 <SiteSearch />
@@ -202,17 +216,22 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     ? "glass-pill glass-pill-active text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
+                title="Franchise Lab — unfinished simulation scaffold"
               >
-                GM mode
+                GM lab
               </TransitionLink>
             </div>
-
-            {active?.subnav?.length ? (
-              <Suspense fallback={null}>
-                <DomainSubnav item={active} />
-              </Suspense>
-            ) : null}
           </div>
+
+          {active?.subnav?.length ? (
+            <div className="site-subnav-band border-t border-border/55 bg-secondary/45 dark:bg-secondary/70">
+              <div className="site-shell py-2">
+                <Suspense fallback={null}>
+                  <DomainSubnav item={active} />
+                </Suspense>
+              </div>
+            </div>
+          ) : null}
         </SiteChrome>
 
         {isMenuOpen ? (
@@ -221,12 +240,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
-            className="fixed inset-0 z-[60] flex flex-col bg-background md:hidden"
+            className="fixed inset-0 z-[60] flex flex-col bg-background pt-[env(safe-area-inset-top,0px)] pb-[env(safe-area-inset-bottom,0px)] md:hidden"
           >
             <div className="site-shell flex shrink-0 items-center justify-between gap-4 border-b border-border py-3">
-              <span className="flex size-8 items-center justify-center rounded-md bg-foreground text-[12px] font-bold tracking-wide text-background">
-                DRBL
-              </span>
+              <DrblLogo />
               <button
                 type="button"
                 aria-label="Close menu"
@@ -239,7 +256,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
 
             <nav
               aria-label="Primary"
-              className="site-shell flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto py-4"
+              className="site-shell flex min-h-0 min-w-0 flex-1 flex-col gap-1 overflow-y-auto py-4"
             >
               {PRIMARY_NAV.map((tab) => (
                 <TransitionLink
@@ -248,9 +265,13 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   onClick={closeMenu}
                   className={cn(
                     "rounded-lg px-3 py-3.5 text-[20px] font-semibold tracking-tight transition-colors",
-                    tab.match(pathname)
-                      ? "bg-secondary text-foreground"
-                      : "text-foreground hover:bg-secondary/70"
+                    tab.prominent
+                      ? tab.match(pathname)
+                        ? "glass-pill glass-pill-active text-foreground"
+                        : "text-foreground hover:bg-secondary/70"
+                      : tab.match(pathname)
+                        ? "bg-secondary text-foreground"
+                        : "text-foreground hover:bg-secondary/70"
                   )}
                 >
                   {tab.label}
@@ -266,7 +287,10 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
                 )}
               >
-                GM mode
+                GM lab
+                <span className="mt-0.5 block text-[13px] font-normal text-muted-foreground">
+                  Unfinished Franchise Lab scaffold
+                </span>
               </TransitionLink>
             </nav>
 
@@ -279,7 +303,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           </div>
         ) : null}
 
-        <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col">
+        <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pb-[env(safe-area-inset-bottom,0px)]">
           {children}
         </div>
       </div>

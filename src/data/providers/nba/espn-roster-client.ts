@@ -57,9 +57,9 @@ export async function fetchEspnTeamRosterPlayers(
   const payload = await espnFetchJson<EspnRosterResponse>(url, {
     ttlMs: 10 * 60 * 1000,
     retries: 1,
-    // Roster identity is optional on the player route. Bound a cold miss so
-    // it cannot outlive the primary profile/career request on Vercel.
-    signal: AbortSignal.timeout(runtimeTimeoutMs(5_000, 1_250)),
+    // Full-edge / local: longer budget. Constrained runtimes stay short.
+    timeoutMs: runtimeTimeoutMs(8_000, 1_250),
+    signal: AbortSignal.timeout(runtimeTimeoutMs(8_000, 1_250)),
   });
   const teamId = String(payload.team?.id ?? espnTeamId);
   const teamName = payload.team?.displayName ?? "";

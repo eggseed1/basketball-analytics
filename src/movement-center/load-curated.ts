@@ -1,9 +1,8 @@
 import "server-only";
 
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
 import { cache } from "react";
 
+import { getRuntimeMovementSnapshot } from "@/data/runtime/movement-snapshot";
 import type {
   MovementCuratedSnapshot,
   MovementFeedItem,
@@ -17,16 +16,32 @@ import {
 } from "@/movement-center/scoring";
 import { isResolvedMovementState } from "@/movement-center/cluster-state";
 
-const ROOT = () => path.join(process.cwd(), "data", "movement-center", "v1");
-
-function readSnapshot(): MovementCuratedSnapshot | null {
-  const p = path.join(ROOT(), "snapshot.json");
-  if (!existsSync(p)) return null;
+function readLocalSnapshot(): MovementCuratedSnapshot | null {
+  // Local dev only — data/ is not mounted on Cloudflare Workers.
+  if (process.env.NODE_ENV === "production") return null;
   try {
-    return JSON.parse(readFileSync(p, "utf8")) as MovementCuratedSnapshot;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { existsSync, readFileSync } = require("node:fs") as typeof import("node:fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("node:path") as typeof import("node:path");
+    const filePath = path.join(
+      process.cwd(),
+      "data",
+      "movement-center",
+      "v1",
+      "snapshot.json"
+    );
+    if (!existsSync(filePath)) return null;
+    return JSON.parse(
+      readFileSync(filePath, "utf8")
+    ) as MovementCuratedSnapshot;
   } catch {
     return null;
   }
+}
+
+function readSnapshot(): MovementCuratedSnapshot | null {
+  return getRuntimeMovementSnapshot() ?? readLocalSnapshot();
 }
 
 export const loadMovementSnapshot = cache((): MovementCuratedSnapshot | null =>

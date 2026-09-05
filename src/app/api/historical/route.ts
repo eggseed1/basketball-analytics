@@ -16,7 +16,7 @@ export async function GET() {
       "GET /api/stats/games?season=2024-25",
       "GET /api/stats/advanced?season=2024-25",
       "GET /api/impact/darko",
-      "GET /api/impact/lebron?season=2024-25",
+      "GET /api/impact/raptor?season=2024-25",
       "GET /api/teams",
       "GET /api/players/[playerId]",
       "GET /api/players/[playerId]/seasons",

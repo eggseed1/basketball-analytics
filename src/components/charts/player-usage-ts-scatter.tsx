@@ -20,6 +20,7 @@ import {
 } from "recharts";
 
 import type { PlayerSeason, Position } from "@/data/types";
+import { fitNumericDomain } from "@/lib/chart-numeric-domain";
 import { formatMinutes, formatPct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 import {
@@ -231,6 +232,23 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
     [players]
   );
 
+  const domainX = useMemo(
+    () =>
+      fitNumericDomain(
+        data.map((d) => d.usagePctDisplay),
+        { padAbsolute: 1.5, padRatio: 0.14, minSpan: 4 }
+      ),
+    [data]
+  );
+  const domainY = useMemo(
+    () =>
+      fitNumericDomain(
+        data.map((d) => d.trueShootingPctDisplay),
+        { padAbsolute: 1.5, padRatio: 0.14, minSpan: 4 }
+      ),
+    [data]
+  );
+
   const navigateToPlayer = useCallback(
     (playerId: string) => {
       router.push(`/players/${playerId}`);
@@ -285,7 +303,7 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
         ) : (
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart
-              margin={{ top: 12, right: 16, bottom: 28, left: 8 }}
+              margin={{ top: 16, right: 24, bottom: 32, left: 12 }}
               role="img"
               aria-label="Scatter plot of usage percent versus true shooting percent"
             >
@@ -295,7 +313,9 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
                 dataKey="usagePctDisplay"
                 name="Usage %"
                 unit="%"
-                domain={["auto", "auto"]}
+                domain={domainX}
+                allowDataOverflow={false}
+                padding={{ left: 10, right: 10 }}
                 tickFormatter={(v) => `${v}`}
                 label={{
                   value: "Usage %",
@@ -308,7 +328,9 @@ export function PlayerUsageTsScatter({ players }: PlayerUsageTsScatterProps) {
                 dataKey="trueShootingPctDisplay"
                 name="True Shooting %"
                 unit="%"
-                domain={["auto", "auto"]}
+                domain={domainY}
+                allowDataOverflow={false}
+                padding={{ top: 10, bottom: 10 }}
                 tickFormatter={(v) => `${v}`}
                 label={{
                   value: "True Shooting %",

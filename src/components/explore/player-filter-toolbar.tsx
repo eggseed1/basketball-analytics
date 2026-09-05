@@ -59,7 +59,7 @@ function ChipGroup({
       className={cn(
         "flex min-w-0 items-center gap-0.5 p-1",
         scrollable &&
-          "w-full max-w-full flex-nowrap overflow-x-auto [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
+          "w-full max-w-full flex-nowrap touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden",
         className
       )}
       style={

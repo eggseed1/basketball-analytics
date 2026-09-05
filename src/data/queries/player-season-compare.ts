@@ -58,8 +58,8 @@ async function impactSnapshot(
   if (!rows.length) return null;
 
   const darko = rows.find((r) => r.metric === "darko_dpm");
-  const lebron = rows.find((r) => r.metric === "lebron");
-  const pick = darko ?? lebron ?? rows[0];
+  const raptor = rows.find((r) => r.metric === "raptor");
+  const pick = darko ?? raptor ?? rows[0];
   if (!pick || !Number.isFinite(pick.value)) return null;
   return {
     metricId: pick.metric,

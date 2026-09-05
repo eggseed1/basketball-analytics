@@ -116,7 +116,7 @@ const CLASS_TO_OPS: Record<string, string[]> = {
     assert.ok(n <= 1, `player ${p} appeared ${n} times`);
   }
   // LeBron / Boston should not dominate a typical strip
-  assert.ok((playerCounts.get("lebron") ?? 0) <= 1);
+  assert.ok((playerCounts.get("raptor") ?? 0) <= 1);
   const bosHits = picks.filter((e) => e.teams?.includes("bos")).length;
   assert.ok(bosHits <= 2, `Boston over-represented (${bosHits})`);
 }

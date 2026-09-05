@@ -172,15 +172,13 @@ export function SiteSearch() {
     const timer = window.setTimeout(async () => {
       setLoading(true);
       try {
-        const requests: Promise<SiteHit[]>[] = [
-          fetch(
-            `/api/players/search?q=${encodeURIComponent(trimmed)}&scope=all`,
-            {
-              signal: controller.signal,
-            }
-          )
-            .then((res) => (res.ok ? res.json() : { results: [] }))
-            .then((body: {
+        // Players first — never block the dropdown on ESPN common search.
+        const playerRes = await fetch(
+          `/api/players/search?q=${encodeURIComponent(trimmed)}&scope=all`,
+          { signal: controller.signal }
+        );
+        const playerBody = playerRes.ok
+          ? ((await playerRes.json()) as {
               results?: Array<{
                 id: string;
                 name: string;
@@ -190,49 +188,34 @@ export function SiteSearch() {
                 current?: boolean;
                 draftProspect?: boolean;
               }>;
-            }) =>
-              (body.results ?? []).map((row) => ({
-                id: row.id,
-                name: row.name,
-                kind: "player" as const,
-                teamKey: row.team || undefined,
-                subtitle: row.draftProspect
-                  ? [row.team, row.careerSpan].filter(Boolean).join(" · ") ||
-                    "Draft prospect"
-                  : row.current
-                    ? [row.team, row.position].filter(Boolean).join(" · ") ||
-                      "Player"
-                    : row.careerSpan
-                      ? row.careerSpan
-                      : [row.team, row.position].filter(Boolean).join(" · ") ||
-                        "Past player",
-              }))
-            )
-            .catch(() => [] as SiteHit[]),
-        ];
-
-        if (trimmed.length >= 2) {
-          requests.push(
-            fetch(`/api/search?q=${encodeURIComponent(trimmed)}&kind=all`, {
-              signal: controller.signal,
             })
-              .then((res) => (res.ok ? res.json() : { data: [] }))
-              .then((body: { data?: SiteHit[] }) => body.data ?? [])
-              .catch(() => [] as SiteHit[])
-          );
-        }
+          : { results: [] };
+        const playerHits: SiteHit[] = (playerBody.results ?? []).map((row) => ({
+          id: row.id,
+          name: row.name,
+          kind: "player" as const,
+          teamKey: row.team || undefined,
+          subtitle: row.draftProspect
+            ? [row.team, row.careerSpan].filter(Boolean).join(" · ") ||
+              "Draft prospect"
+            : row.current
+              ? [row.team, row.position].filter(Boolean).join(" · ") || "Player"
+              : row.careerSpan
+                ? row.careerSpan
+                : [row.team, row.position].filter(Boolean).join(" · ") ||
+                  "Past player",
+        }));
 
-        const groups = await Promise.all(requests);
-        setRemoteHits(mergeHits(...groups));
+        setRemoteHits(mergeHits(playerHits));
         setActiveIndex(0);
         setOpen(true);
+        setLoading(false);
       } catch (error) {
         if ((error as Error).name === "AbortError") return;
         setRemoteHits([]);
-      } finally {
         setLoading(false);
       }
-    }, 160);
+    }, 80);
 
     return () => {
       controller.abort();

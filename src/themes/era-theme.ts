@@ -163,6 +163,51 @@ export function clampDateToSeason(date: string, season: string): string {
   return date;
 }
 
+/** Month/day in America/New_York (NBA calendar day). */
+export function nbaCalendarMonthDay(now: Date = new Date()): {
+  month: number;
+  day: number;
+} {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    month: "numeric",
+    day: "numeric",
+  }).formatToParts(now);
+  const month = Number(parts.find((p) => p.type === "month")?.value);
+  const day = Number(parts.find((p) => p.type === "day")?.value);
+  return {
+    month: Number.isFinite(month) ? month : now.getUTCMonth() + 1,
+    day: Number.isFinite(day) ? day : now.getUTCDate(),
+  };
+}
+
+/**
+ * Map a calendar month/day onto the selected season’s year span (Oct–Jun).
+ * Returns null for Jul–Sep (offseason) or invalid dates.
+ */
+export function mapCalendarDayOntoSeason(
+  season: string,
+  month: number,
+  day: number
+): string | null {
+  if (!Number.isFinite(month) || !Number.isFinite(day)) return null;
+  if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+  // Jul–Sep sit between seasons.
+  if (month >= 7 && month <= 9) return null;
+
+  const y = startYearFromCanonicalSeason(season);
+  const year = month >= 10 ? y : y + 1;
+  const candidate = `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`;
+  // Reject impossible calendar strings (e.g. Feb 31).
+  const probe = new Date(`${candidate}T12:00:00Z`);
+  if (Number.isNaN(probe.getTime()) || probe.toISOString().slice(0, 10) !== candidate) {
+    return null;
+  }
+  const { start, end } = seasonDateBounds(season);
+  if (candidate < start || candidate > end) return null;
+  return candidate;
+}
+
 export function shiftIsoDate(iso: string, days: number): string {
   const [y, m, d] = iso.split("-").map(Number);
   const dt = new Date(Date.UTC(y!, m! - 1, d!));

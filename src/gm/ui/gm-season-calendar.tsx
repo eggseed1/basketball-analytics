@@ -253,8 +253,8 @@ export function GmSeasonCalendar({
                 <span
                   className={cn(
                     "text-[11px] font-semibold tabular-nums",
-                    won && "text-emerald-800",
-                    lost && "text-red-800",
+                    won && "text-emerald-800 dark:text-emerald-300",
+                    lost && "text-red-800 dark:text-red-300",
                     !won && !lost && (cell.isToday ? "text-foreground" : "text-muted-foreground")
                   )}
                 >

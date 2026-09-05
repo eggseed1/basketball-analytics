@@ -13,6 +13,12 @@ import {
   listCanonicalR1Seasons,
   listDrblSeasons,
 } from "@/data/drbl/season-registry";
+import {
+  isBundledDarkoSeason,
+  isBundledRaptorSeason,
+  listBundledDarkoSeasons,
+  listBundledRaptorSeasons,
+} from "@/data/runtime/impact-overlay-snapshot";
 
 export type MetricCoverage = {
   metricId: AskMetricId;
@@ -25,10 +31,6 @@ export type MetricCoverage = {
   sourceLabel: string;
   notes: string;
 };
-
-function currentSeason(): string {
-  return canonicalSeasonFromStartYear(currentNbaStartYear());
-}
 
 /** Static audit used by ASK DRBL + docs. */
 export function getAskMetricCoverageAudit(
@@ -130,24 +132,36 @@ export function getAskMetricCoverageAudit(
     {
       metricId: "darko",
       label: "DARKO DPM",
-      earliestSeason: current,
-      latestSeason: current,
-      playerCoverage: "Live snapshot names only for stamped season",
+      earliestSeason: listBundledDarkoSeasons()[0] ?? "1996-97",
+      latestSeason: listBundledDarkoSeasons().at(-1) ?? current,
+      playerCoverage: "Season-keyed DARKO overlay when baked for the asked season",
       reliable: true,
-      sourceLabel: `Verified historical impact (DARKO live · ${current})`,
+      sourceLabel: "Verified historical impact (DARKO season-keyed)",
       notes:
-        "Not a multi-year archive. Wrong-season asks must return unavailable — never stamp current DARKO onto other years.",
+        "Season-keyed overlay only. Wrong-season asks must return unavailable — never stamp another year's DARKO onto the asked season.",
     },
     {
-      metricId: "lebron",
-      label: "LEBRON",
-      earliestSeason: "2024-25",
-      latestSeason: "2024-25",
-      playerCoverage: "CSV when present; otherwise sparse seed",
-      reliable: false,
-      sourceLabel: "Verified historical impact (LEBRON season-keyed)",
+      metricId: "raptor",
+      label: "RAPTOR",
+      earliestSeason: listBundledRaptorSeasons()[0] ?? "1976-77",
+      latestSeason: listBundledRaptorSeasons().at(-1) ?? "2021-22",
+      playerCoverage:
+        "FiveThirtyEight open RAPTOR through 2021-22; blank afterward",
+      reliable: true,
+      sourceLabel: "Verified historical impact (RAPTOR season-keyed)",
       notes:
-        "Season-keyed only. Missing seasons stay missing — no substitute metric.",
+        "Season-keyed through 2021-22 only. Missing seasons stay missing — no BPM/LEBRON substitute.",
+    },
+    {
+      metricId: "bpm",
+      label: "BPM",
+      earliestSeason: "1996-97",
+      latestSeason: current,
+      playerCoverage: "BRef advanced overlay when baked for the asked season",
+      reliable: true,
+      sourceLabel: "Basketball-Reference advanced (BPM)",
+      notes:
+        "Season-true when the BRef advanced bake includes the season. Missing BPM stays unavailable — never invent 0.",
     },
     {
       metricId: "drbl100",
@@ -328,23 +342,30 @@ export function metricSeasonAvailability(
   metricId: AskMetricId,
   season: string
 ): { ok: true } | { ok: false; message: string } {
-  const current = currentSeason();
   if (metricId === "darko") {
-    if (season !== current) {
+    if (!isBundledDarkoSeason(season)) {
+      const span = listBundledDarkoSeasons();
+      const range =
+        span.length > 0
+          ? `${span[0]}–${span.at(-1)}`
+          : "no baked DARKO seasons";
       return {
         ok: false,
-        message: `Verified season-true DARKO data is not available for ${season}. ASK DRBL only admits the live DARKO snapshot for ${current}.`,
+        message: `Verified season-true DARKO data is not available for ${season}. ASK DRBL admits DARKO for baked overlay seasons (${range}).`,
       };
     }
     return { ok: true };
   }
-  if (metricId === "lebron") {
-    // Sparse — executor still checks the actual row; this blocks clearly ancient asks.
-    const y = Number(season.slice(0, 4));
-    if (!Number.isFinite(y) || y < 2024) {
+  if (metricId === "raptor") {
+    if (!isBundledRaptorSeason(season)) {
+      const span = listBundledRaptorSeasons();
+      const range =
+        span.length > 0
+          ? `${span[0]}–${span.at(-1)}`
+          : "no baked RAPTOR seasons";
       return {
         ok: false,
-        message: `Verified season-true LEBRON data is not available for ${season} in this repository.`,
+        message: `Verified season-true RAPTOR data is not available for ${season}. RAPTOR coverage ends after 2021-22 (baked range ${range}).`,
       };
     }
     return { ok: true };

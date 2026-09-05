@@ -86,9 +86,9 @@ export type StatCompRow = {
   dpm?: number;
   oDpm?: number;
   dDpm?: number;
-  lebron?: number;
-  oLebron?: number;
-  dLebron?: number;
+  raptor?: number;
+  oRaptor?: number;
+  dRaptor?: number;
   winsAdded?: number;
   drbl100?: number;
   rawAbilityRate?: number;
@@ -189,8 +189,8 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  lebron: {
-    pick: (r) => (r.lebron != null && Number.isFinite(r.lebron) ? r.lebron : null),
+  raptor: {
+    pick: (r) => (r.raptor != null && Number.isFinite(r.raptor) ? r.raptor : null),
     format: (v) => formatNumber(v, 2),
   },
   wins: {
@@ -222,9 +222,9 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  olebron: {
+  oraptor: {
     pick: (r) =>
-      r.oLebron != null && Number.isFinite(r.oLebron) ? r.oLebron : null,
+      r.oRaptor != null && Number.isFinite(r.oRaptor) ? r.oRaptor : null,
     format: (v) => formatNumber(v, 2),
   },
   ortg: {
@@ -305,9 +305,9 @@ export const METRIC_PICKERS: Record<string, MetricPicker> = {
     },
     format: (v) => formatNumber(v, 2),
   },
-  dlebron: {
+  draptor: {
     pick: (r) =>
-      r.dLebron != null && Number.isFinite(r.dLebron) ? r.dLebron : null,
+      r.dRaptor != null && Number.isFinite(r.dRaptor) ? r.dRaptor : null,
     format: (v) => formatNumber(v, 2),
   },
   drtg: {
@@ -606,7 +606,7 @@ export function findSimilarForMetric(options: {
   const limit = options.limit ?? 6;
   const invert = Boolean(options.invert);
 
-  const nearest = (rows: PlayerSeason[]): StatComp[] => {
+  const nearest = (rows: PlayerSeason[]) => {
     const stintsByPlayerSeason = new Map<string, PlayerCardStint[]>();
     const grouped = new Map<string, PlayerSeason[]>();
     for (const row of rows) {
@@ -627,7 +627,7 @@ export function findSimilarForMetric(options: {
       return invert ? 100 - raw : raw;
     };
 
-    return candidates
+    const ranked = candidates
       .filter((c) => c.playerId !== options.focalPlayerId)
       .map((c) => {
         const stints =
@@ -650,13 +650,46 @@ export function findSimilarForMetric(options: {
       .sort(
         (a, b) =>
           a.distance - b.distance || a.playerName.localeCompare(b.playerName)
-      )
-      .slice(0, limit)
-      .map(({ distance: _d, ...rest }) => rest);
+      );
+
+    return (maxPerSeason: number | null): StatComp[] => {
+      if (maxPerSeason == null) {
+        return ranked.slice(0, limit).map(({ distance: _d, ...rest }) => rest);
+      }
+      const out: StatComp[] = [];
+      const perSeason = new Map<string, number>();
+      const seen = new Set<string>();
+      const tryAdd = (
+        row: (typeof ranked)[number],
+        enforceCap: boolean
+      ) => {
+        const key = `${row.playerId}|${row.season}`;
+        if (seen.has(key)) return;
+        if (enforceCap) {
+          const n = perSeason.get(row.season) ?? 0;
+          if (n >= maxPerSeason) return;
+          perSeason.set(row.season, n + 1);
+        }
+        seen.add(key);
+        const { distance: _d, ...rest } = row;
+        out.push(rest);
+      };
+      for (const row of ranked) {
+        if (out.length >= limit) break;
+        tryAdd(row, true);
+      }
+      // Fill remaining slots if the archive is thin for this metric.
+      for (const row of ranked) {
+        if (out.length >= limit) break;
+        tryAdd(row, false);
+      }
+      return out;
+    };
   };
 
   return {
-    leagueComps: nearest(options.leagueRows),
-    historicalComps: nearest(options.historicalRows),
+    leagueComps: nearest(options.leagueRows)(null),
+    // Prefer one comp per season so "Other seasons" spans eras, not one year.
+    historicalComps: nearest(options.historicalRows)(1),
   };
 }

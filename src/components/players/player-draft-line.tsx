@@ -32,13 +32,13 @@ export function PlayerDraftLine({
         <span>Undrafted</span>
       ) : parsed ? (
         <>
-          {parsed.year != null ? <span>{parsed.year}</span> : null}
+          {parsed.year != null ? <span>{String(parsed.year)}</span> : null}
           {parsed.round != null ? (
             <>
               <span className="text-border" aria-hidden>
                 ·
               </span>
-              <span>Rd {parsed.round}</span>
+              <span>{`Rd ${parsed.round}`}</span>
             </>
           ) : null}
           {parsed.pick != null ? (
@@ -46,24 +46,31 @@ export function PlayerDraftLine({
               <span className="text-border" aria-hidden>
                 ·
               </span>
-              <span>Pk {parsed.pick}</span>
+              <span>{`Pk ${parsed.pick}`}</span>
             </>
           ) : null}
           {parsed.teamKey ? (
-            <TeamIdentity
-              teamKey={parsed.teamKey}
-              label={parsed.teamAbbr}
-              season={
-                parsed.year != null ? `${parsed.year}-${String((parsed.year + 1) % 100).padStart(2, "0")}` : null
-              }
-              className="inline-flex min-w-0"
-              nameClassName={cn(type.caption, "gap-1")}
-            >
-              <TeamLogo teamKey={parsed.teamKey} size="2xs" />
-              <span className={textLinkClassName}>
-                {parsed.teamAbbr ?? parsed.teamKey}
+            <>
+              <span className="text-border" aria-hidden>
+                ·
               </span>
-            </TeamIdentity>
+              <TeamIdentity
+                teamKey={parsed.teamKey}
+                label={parsed.teamAbbr}
+                season={
+                  parsed.year != null
+                    ? `${parsed.year}-${String((parsed.year + 1) % 100).padStart(2, "0")}`
+                    : null
+                }
+                className="inline-flex min-w-0"
+                nameClassName={cn(type.caption, "gap-1")}
+              >
+                <TeamLogo teamKey={parsed.teamKey} size="2xs" />
+                <span className={textLinkClassName}>
+                  {parsed.teamAbbr ?? parsed.teamKey}
+                </span>
+              </TeamIdentity>
+            </>
           ) : null}
         </>
       ) : draftInfo ? (

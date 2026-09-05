@@ -575,7 +575,7 @@ async function main() {
       {
         status: "NOT_RUN",
         reason:
-          "External bakeoff (DARKO/LEBRON/EPM/RAPM) requires licensed identical periods; M15 pass freezes diagnostics only",
+          "External bakeoff (DARKO/RAPTOR/EPM/RAPM) requires licensed identical periods; M15 pass freezes diagnostics only",
         available_internal_targets: "team_valueSum_vs_wins (see war csv)",
       },
     ])

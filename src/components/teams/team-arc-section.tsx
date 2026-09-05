@@ -85,7 +85,7 @@ export function TeamArcSection({
             {arc.transitions.map((t) => (
               <li
                 key={`${t.fromSeason}-${t.toSeason}`}
-                className="rounded-xl border border-border bg-white/45 px-3 py-2.5"
+                className="rounded-xl border border-border frost-surface px-3 py-2.5"
               >
                 <p className="text-[14px] font-semibold">
                   {t.fromSeason} → {t.toSeason}
@@ -119,9 +119,9 @@ export function TeamArcSection({
           No team-season rows available for this arc window.
         </p>
       ) : (
-        <div className="overflow-x-auto rounded-xl border border-border bg-white/40">
+        <div className="overflow-x-auto rounded-xl border border-border frost-surface">
           <table className="w-full min-w-[640px] text-left text-[14px]">
-            <thead className="border-b border-border bg-white/50 text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+            <thead className="border-b border-border frost-surface text-[12px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               <tr>
                 <th className="px-3 py-2">Season</th>
                 <th className="px-2 py-2 text-right">Diff</th>
@@ -139,7 +139,7 @@ export function TeamArcSection({
                   <tr
                     key={row.season}
                     className={cn(
-                      "hover:bg-white/55",
+                      "frost-surface-hover",
                       viewing && "bg-secondary/40"
                     )}
                   >

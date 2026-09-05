@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, type ReactNode } from "react";
+import { useId, useMemo, type ReactNode } from "react";
 import {
   ComposedChart,
   Line,
@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import type { CareerResume } from "@/analytics";
+import type { CareerResume, PeakImpactResult } from "@/analytics";
 import { formatCpi } from "@/analytics";
 import {
   FrostRechartsTooltip,
@@ -24,16 +24,15 @@ import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { MetricHelp } from "@/components/learn/metric-help";
 import {
   buildTeamSegmentedChart,
+  CareerMonotoneStroke,
   type CareerSeriesPoint,
 } from "@/components/players/career-team-trend-chart";
 import { type } from "@/lib/design-system";
 import { formatNumber } from "@/lib/format";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
+import { useChartTheme } from "@/lib/chart-theme";
 import {
   resolveTeamBrand,
-  teamBrandBarColor,
-  teamBrandTint,
-  teamChartColor,
 } from "@/lib/nba-brand";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { cn } from "@/lib/utils";
@@ -43,25 +42,29 @@ import { cn } from "@/lib/utils";
  */
 export function PlayerCareerResume({
   resume,
+  peakImpact = null,
   teamKey,
   careerStartTeamKey,
 }: {
   resume: CareerResume;
+  /** Season-true DARKO / RAPTOR / BPM peak — separate from CPI Peak. */
+  peakImpact?: PeakImpactResult | null;
   teamKey?: string | null;
   careerStartTeamKey?: string | null;
 }) {
+  const chartTheme = useChartTheme();
   const peak = resume.peak;
 
   const brandKey = brandableTeamKey(teamKey) ?? brandableTeamKey(careerStartTeamKey);
   const brand = resolveTeamBrand(brandKey);
-  const accent = teamBrandBarColor(brandKey);
+  const accent = chartTheme.teamBarColor(brandKey);
   const wash = brandAtmosphereColors(brand?.primary, brand?.secondary);
 
   const seriesPoints: CareerSeriesPoint[] = useMemo(() => {
     return [...resume.qualifyingSeasons]
       .sort((a, b) => a.season.localeCompare(b.season))
       .map((s) => {
-        const { color, abbr } = teamChartColor(s.teamId);
+        const { color, abbr } = chartTheme.teamColor(s.teamId);
         return {
           season: s.season.slice(2),
           fullSeason: s.season,
@@ -72,12 +75,13 @@ export function PlayerCareerResume({
           percentile: Math.round(s.ofPeak * 100),
         };
       });
-  }, [resume.qualifyingSeasons]);
+  }, [chartTheme, resume.qualifyingSeasons]);
 
-  const { data, segments, legend } = useMemo(
+  const { data, strokeStops, legend } = useMemo(
     () => buildTeamSegmentedChart(seriesPoints),
     [seriesPoints]
   );
+  const strokeGradId = `career-resume-stroke-${useId().replace(/:/g, "")}`;
 
   const peakCpi = peak?.cpi ?? 0;
   const primeFloor = peakCpi * 0.9;
@@ -121,12 +125,12 @@ export function PlayerCareerResume({
         <figure className="min-w-0">
           <div className="mb-2 flex flex-wrap items-center gap-x-3 gap-y-1.5">
             <LegendSwatch
-              color={teamBrandTint(brandKey, 0.14)}
+              color={chartTheme.teamTint(brandKey, 0.14)}
               border={accent}
               label="Longevity ≥70%"
             />
             <LegendSwatch
-              color={teamBrandTint(brandKey, 0.28)}
+              color={chartTheme.teamTint(brandKey, 0.28)}
               border={accent}
               label="Prime ≥90%"
             />
@@ -206,39 +210,50 @@ export function PlayerCareerResume({
                     />
                   </>
                 ) : null}
-                {segments.map((seg) => (
-                  <Line
-                    key={seg.key}
-                    type="monotone"
-                    dataKey={seg.key}
-                    stroke={seg.color}
-                    strokeWidth={2.5}
-                    connectNulls={false}
-                    dot={(props) => {
-                      const { cx, cy, payload } = props;
-                      if (cx == null || cy == null || !payload) return null;
-                      const value = payload[seg.key];
-                      if (value == null) return null;
-                      const isPeak = payload.fullSeason === peak.season;
-                      const ofPeak =
-                        typeof payload.percentile === "number"
-                          ? payload.percentile
-                          : 0;
-                      return (
-                        <circle
-                          cx={cx}
-                          cy={cy}
-                          r={isPeak ? 5.5 : ofPeak >= 90 ? 3.75 : 2.75}
-                          fill={seg.color}
-                          stroke={isPeak ? "var(--background)" : undefined}
-                          strokeWidth={isPeak ? 2 : 0}
-                        />
-                      );
-                    }}
-                    activeDot={{ r: 5, stroke: "var(--background)", strokeWidth: 2 }}
-                    isAnimationActive={false}
-                  />
-                ))}
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke={`url(#${strokeGradId})`}
+                  strokeWidth={2.5}
+                  isAnimationActive={false}
+                  shape={(shapeProps) => (
+                    <CareerMonotoneStroke
+                      points={shapeProps.points}
+                      strokeWidth={shapeProps.strokeWidth}
+                      gradientId={strokeGradId}
+                      strokeStops={strokeStops}
+                    />
+                  )}
+                  dot={(props) => {
+                    const { cx, cy, payload } = props as {
+                      cx?: number;
+                      cy?: number;
+                      payload?: {
+                        fullSeason?: string;
+                        color?: string;
+                        percentile?: number;
+                        value?: number;
+                      };
+                    };
+                    if (cx == null || cy == null || !payload) return null;
+                    const isPeak = payload.fullSeason === peak.season;
+                    const ofPeak =
+                      typeof payload.percentile === "number"
+                        ? payload.percentile
+                        : 0;
+                    return (
+                      <circle
+                        cx={cx}
+                        cy={cy}
+                        r={isPeak ? 5.5 : ofPeak >= 90 ? 3.75 : 2.75}
+                        fill={payload.color ?? accent}
+                        stroke={isPeak ? "var(--background)" : undefined}
+                        strokeWidth={isPeak ? 2 : 0}
+                      />
+                    );
+                  }}
+                  activeDot={{ r: 5, stroke: "var(--background)", strokeWidth: 2 }}
+                />
               </ComposedChart>
             </ResponsiveContainer>
           </div>
@@ -260,7 +275,7 @@ export function PlayerCareerResume({
             secondary={`${formatNumber(peak.breakdown.ppg, 1)} / ${formatNumber(peak.breakdown.rpg, 1)} / ${formatNumber(peak.breakdown.apg, 1)}`}
             tertiary={`CPI ${formatCpi(peak.cpi)}`}
             href={peak.seasonHref}
-            accent={teamBrandBarColor(peak.teamId) || accent}
+            accent={chartTheme.teamBarColor(peak.teamId) || accent}
             teamKey={peakTeamKey}
           />
           <ResumeStat
@@ -303,6 +318,55 @@ export function PlayerCareerResume({
             secondary="≥70% of peak CPI"
             accent={wash?.colorB ?? accent}
           />
+        </div>
+      ) : null}
+
+      {peakImpact?.primary ? (
+        <div className="rounded-md border border-border/60 frost-surface-muted px-3 py-3">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <p className={cn(type.caption, "font-bold uppercase tracking-wide")}>
+              Peak Impact
+            </p>
+            <Link
+              href={peakImpact.primary.seasonHref}
+              className={cn(
+                type.bodySm,
+                "font-semibold underline-offset-2 hover:underline"
+              )}
+            >
+              {peakImpact.primary.season} · {peakImpact.primary.metricLabel}{" "}
+              {peakImpact.primary.display}
+            </Link>
+          </div>
+          <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
+            {peakImpact.note}
+          </p>
+          {peakImpact.byMetric.raptor &&
+          peakImpact.primary.metricId !== "raptor" ? (
+            <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
+              RAPTOR peak (≤2021-22):{" "}
+              <Link
+                href={peakImpact.byMetric.raptor.seasonHref}
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                {peakImpact.byMetric.raptor.season} ·{" "}
+                {peakImpact.byMetric.raptor.display}
+              </Link>
+            </p>
+          ) : null}
+          {peakImpact.byMetric.bpm &&
+          peakImpact.primary.metricId !== "bpm" ? (
+            <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
+              BPM peak:{" "}
+              <Link
+                href={peakImpact.byMetric.bpm.seasonHref}
+                className="font-semibold underline-offset-2 hover:underline"
+              >
+                {peakImpact.byMetric.bpm.season} ·{" "}
+                {peakImpact.byMetric.bpm.display}
+              </Link>
+            </p>
+          ) : null}
         </div>
       ) : null}
 
@@ -424,7 +488,7 @@ function ResumeStat({
     </>
   );
   const className =
-    "rounded-md bg-white/55 px-3 py-3 backdrop-blur-sm transition-colors hover:bg-white/75";
+    "rounded-md frost-surface px-3 py-3 backdrop-blur-sm transition-colors frost-surface-hover";
   const style = {
     boxShadow: `inset 3px 0 0 ${accent}`,
   } as const;

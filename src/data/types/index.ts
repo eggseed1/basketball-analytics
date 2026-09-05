@@ -18,6 +18,6 @@ export type {
   ImpactSource,
   ImpactRating,
   DarkoRating,
-  LebronRating,
+  RaptorRating,
 } from "./impact";
 export type { AdvancedPlayerGameStats } from "./advanced-stats";

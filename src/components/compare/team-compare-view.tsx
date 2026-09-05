@@ -478,7 +478,7 @@ function CoverageCard({
   side: TeamSeasonComparison["coverage"]["a"];
 }) {
   return (
-    <div className="rounded-lg border border-border/70 bg-white/40 px-3 py-2">
+    <div className="rounded-lg border border-border/70 frost-surface px-3 py-2">
       <p className="text-[14px] font-semibold">
         {side.abbreviation} {side.season}
         {side.incomplete ? (

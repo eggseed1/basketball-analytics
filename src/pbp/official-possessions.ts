@@ -19,11 +19,12 @@ import type {
  */
 
 export function mapAdvancedBoxSourceToProduct(
-  source: "cdn" | "stats" | "disk" | "fixture"
+  source: "cdn" | "stats" | "disk" | "fixture" | "bdl"
 ): OfficialPossessionSource {
   if (source === "stats") return "stats_nba";
   if (source === "disk") return "disk_cache";
   if (source === "fixture") return "fixture";
+  if (source === "bdl") return "balldontlie";
   return "nba_cdn";
 }
 
@@ -34,6 +35,7 @@ export function mapProductSourceToOfficial(
   if (source === "stats_nba") return "stats_nba";
   if (source === "disk_cache") return "disk_cache";
   if (source === "nba_cdn") return "nba_cdn";
+  if (source === "balldontlie") return "balldontlie";
   return null;
 }
 
@@ -69,7 +71,7 @@ export function extractOfficialTeamPossessions(
  */
 export function resolveOfficialPossessionResult(input: {
   advancedRaw: unknown | null;
-  source: "cdn" | "stats" | "disk" | "fixture" | null;
+  source: "cdn" | "stats" | "disk" | "fixture" | "bdl" | null;
   attemptedSources: string[];
   fetchReason?: OfficialPossessionUnavailableReason;
 }): OfficialPossessionResult {

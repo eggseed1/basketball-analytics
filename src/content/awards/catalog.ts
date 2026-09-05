@@ -124,7 +124,8 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophyName: "All-Star",
     trophy: "all-star",
     descriptions: ["NBA All-Star"],
-    blurb: "All-Star selections for the midseason showcase game.",
+    blurb:
+      "All-Star selections for the midseason showcase. History page ranks players by career selection count from the awards bake.",
     sort: 80,
   },
   {

@@ -1,26 +1,35 @@
 /**
  * Public play-by-play fetch:
- * - ESPN event ids use the ESPN game summary PBP directly.
- * - NBA GameIDs use NBA CDN, then stats.nba.com, then optional disk cache.
- *
- * Provider namespaces are never crossed: an ESPN event id must not be retried
- * against NBA GameID endpoints.
+ * - ESPN event ids prefer ESPN summary PBP (normalized to NBA-action shape).
+ * - If ESPN misses, resolve ESPN→NBA GameID and try CDN (Vercel-safe).
+ * - NBA GameIDs use CDN, then stats.nba (when enabled), then disk cache.
  */
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
+import { looksLikeEspnEventId } from "@/data/identity/game-id";
+import { resolveNbaGameId } from "@/data/identity/resolve-nba-game-id";
 import { CACHE_TTL_MS } from "./cache-policy";
+import {
+  longUpstreamBudgetsEnabled,
+  statsNbaNetworkEnabled,
+} from "./runtime-policy";
+import { loadBakedPlayByPlay } from "@/data/runtime/pbp-store";
+import { fetchEspnCdnGameSummary } from "./espn-cdn-summary";
 
 export interface RawPlayByPlayPayload {
   raw: unknown;
   source: "cdn" | "stats" | "espn" | "disk";
+  /** NBA GameID when loaded via CDN/stats (may differ from route ESPN id). */
+  nbaGameId?: string;
 }
 
 type CacheEntry = {
   freshUntil: number;
   value: unknown;
   source: RawPlayByPlayPayload["source"];
+  nbaGameId?: string;
 };
 
 const memoryCache = new Map<string, CacheEntry>();
@@ -69,14 +78,15 @@ function espnUrl(gameId: string): string {
 async function fetchJson(
   url: string,
   headers: Record<string, string>,
-  retries = 2
+  retries = 2,
+  timeoutMs = 5_000
 ): Promise<unknown> {
   let lastError: unknown;
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
         headers,
-        signal: AbortSignal.timeout(5_000),
+        signal: AbortSignal.timeout(timeoutMs),
       });
       if (!response.ok) {
         throw new Error(`HTTP ${response.status} for ${url}`);
@@ -108,7 +118,8 @@ function inferEspnAction(textRaw: unknown, scoreValueRaw: unknown) {
   const text = String(textRaw ?? "").toLowerCase();
   const scoreValue = Number(scoreValueRaw ?? 0) || 0;
   if (text.includes("free throw")) return "freethrow";
-  if (text.includes("3-pt") || text.includes("three point") || scoreValue === 3) return "3pt";
+  if (text.includes("3-pt") || text.includes("three point") || scoreValue === 3)
+    return "3pt";
   if (
     text.includes("layup") ||
     text.includes("dunk") ||
@@ -116,7 +127,8 @@ function inferEspnAction(textRaw: unknown, scoreValueRaw: unknown) {
     text.includes("jump shot") ||
     text.includes("hook shot") ||
     scoreValue === 2
-  ) return "2pt";
+  )
+    return "2pt";
   if (text.includes("rebound")) return "rebound";
   if (text.includes("turnover")) return "turnover";
   if (text.includes("foul")) return "foul";
@@ -128,7 +140,7 @@ function inferEspnAction(textRaw: unknown, scoreValueRaw: unknown) {
 }
 
 /** Convert ESPN summary `plays` into the canonical NBA-action-shaped envelope. */
-function normalizeEspnSummary(raw: unknown): unknown {
+export function normalizeEspnSummary(raw: unknown): unknown {
   const root = raw as {
     plays?: Array<{
       id?: string | number;
@@ -142,7 +154,11 @@ function normalizeEspnSummary(raw: unknown): unknown {
       clock?: { displayValue?: string };
       team?: { id?: string | number; abbreviation?: string };
       participants?: Array<{
-        athlete?: { id?: string | number; displayName?: string; shortName?: string };
+        athlete?: {
+          id?: string | number;
+          displayName?: string;
+          shortName?: string;
+        };
       }>;
     }>;
   };
@@ -150,10 +166,14 @@ function normalizeEspnSummary(raw: unknown): unknown {
   const actions = plays.map((play, index) => {
     const text = String(play.text ?? "");
     const actionType = inferEspnAction(text, play.scoreValue);
-    const isShot = actionType === "2pt" || actionType === "3pt" || actionType === "freethrow";
-    const made = isShot && (Boolean(play.scoringPlay) || Number(play.scoreValue ?? 0) > 0);
+    const isShot =
+      actionType === "2pt" || actionType === "3pt" || actionType === "freethrow";
+    const made =
+      isShot &&
+      (Boolean(play.scoringPlay) || Number(play.scoreValue ?? 0) > 0);
     const participant = play.participants?.[0]?.athlete;
-    const actionNumber = Number(play.sequenceNumber ?? play.id ?? index + 1) || index + 1;
+    const actionNumber =
+      Number(play.sequenceNumber ?? play.id ?? index + 1) || index + 1;
     return {
       actionNumber,
       orderNumber: actionNumber,
@@ -194,70 +214,121 @@ async function readDiskCache(gameId: string): Promise<unknown | null> {
   }
 }
 
+async function fetchNbaIdPlayByPlay(
+  nbaGameId: string
+): Promise<RawPlayByPlayPayload | null> {
+  try {
+    const raw = await fetchJson(cdnUrl(nbaGameId), HEADERS, 2);
+    if (hasActions(raw)) {
+      return { raw, source: "cdn", nbaGameId };
+    }
+  } catch {
+    // fall through
+  }
+
+  if (statsNbaNetworkEnabled()) {
+    try {
+      const raw = await fetchJson(statsUrl(nbaGameId), STATS_HEADERS, 1);
+      if (hasActions(raw)) {
+        return { raw, source: "stats", nbaGameId };
+      }
+    } catch {
+      // fall through
+    }
+  }
+
+  const disk = await readDiskCache(nbaGameId);
+  if (disk && hasActions(disk)) {
+    return { raw: disk, source: "disk", nbaGameId };
+  }
+  return null;
+}
+
 async function fetchRawPlayByPlayUncached(
   gameId: string
 ): Promise<RawPlayByPlayPayload | null> {
+  const routeId = String(gameId ?? "").trim();
+  if (!routeId) return null;
   const now = Date.now();
 
-  // ESPN event ids (40...) are not NBA GameIDs. Use ESPN's own PBP and never
-  // burn retries against NBA endpoints with an incompatible id namespace.
-  if (/^40\d{7,}$/.test(gameId)) {
-    try {
-      const summary = await fetchJson(espnUrl(gameId), ESPN_HEADERS, 1);
-      const raw = normalizeEspnSummary(summary);
-      if (hasActions(raw)) {
-        memoryCache.set(gameId, {
-          value: raw,
-          source: "espn",
-          freshUntil: now + CACHE_TTL_MS.boxScore,
-        });
-        return { raw, source: "espn" };
-      }
-    } catch {
-      return null;
-    }
-    return null;
-  }
-
-  try {
-    const raw = await fetchJson(cdnUrl(gameId), HEADERS, 2);
-    if (hasActions(raw)) {
-      memoryCache.set(gameId, {
-        value: raw,
-        source: "cdn",
-        freshUntil: now + CACHE_TTL_MS.boxScore,
-      });
-      return { raw, source: "cdn" };
-    }
-  } catch {
-    // fall through
-  }
-
-  try {
-    const raw = await fetchJson(statsUrl(gameId), STATS_HEADERS, 1);
-    if (hasActions(raw)) {
-      memoryCache.set(gameId, {
-        value: raw,
-        source: "stats",
-        freshUntil: now + CACHE_TTL_MS.boxScore,
-      });
-      return { raw, source: "stats" };
-    }
-  } catch {
-    // fall through
-  }
-
-  const disk = await readDiskCache(gameId);
-  if (disk && hasActions(disk)) {
-    memoryCache.set(gameId, {
-      value: disk,
-      source: "disk",
+  const baked = await loadBakedPlayByPlay(routeId);
+  if (baked && hasActions(baked.raw)) {
+    memoryCache.set(routeId, {
+      value: baked.raw,
+      source: baked.source,
+      nbaGameId: baked.nbaGameId,
       freshUntil: now + CACHE_TTL_MS.boxScore,
     });
-    return { raw: disk, source: "disk" };
+    return baked;
   }
 
-  return null;
+  if (looksLikeEspnEventId(routeId)) {
+    // Cloudflare egress to cdn.espn.com is intermittent; race CDN + site.api
+    // and keep the first payload that normalizes to actions.
+    const fromSummary = async (
+      loader: () => Promise<unknown>
+    ): Promise<RawPlayByPlayPayload | null> => {
+      try {
+        const summary = await loader();
+        if (!summary) return null;
+        const raw = normalizeEspnSummary(summary);
+        if (!hasActions(raw)) return null;
+        return { raw, source: "espn" };
+      } catch {
+        return null;
+      }
+    };
+
+    const siteTimeoutMs = longUpstreamBudgetsEnabled() ? 12_000 : 5_000;
+
+    const results = await Promise.allSettled([
+      fromSummary(() =>
+        fetchJson(espnUrl(routeId), ESPN_HEADERS, 2, siteTimeoutMs)
+      ),
+      fromSummary(() =>
+        fetchEspnCdnGameSummary(routeId, { preferPlays: true })
+      ),
+    ]);
+    const raced =
+      results
+        .filter(
+          (result): result is PromiseFulfilledResult<RawPlayByPlayPayload | null> =>
+            result.status === "fulfilled"
+        )
+        .map((result) => result.value)
+        .find((value): value is RawPlayByPlayPayload => Boolean(value)) ?? null;
+
+    if (raced) {
+      memoryCache.set(routeId, {
+        value: raced.raw,
+        source: "espn",
+        freshUntil: now + CACHE_TTL_MS.boxScore,
+      });
+      return raced;
+    }
+
+    const resolved = await resolveNbaGameId(routeId).catch(() => null);
+    if (!resolved) return null;
+    const bridged = await fetchNbaIdPlayByPlay(resolved);
+    if (!bridged) return null;
+    memoryCache.set(routeId, {
+      value: bridged.raw,
+      source: bridged.source,
+      nbaGameId: bridged.nbaGameId,
+      freshUntil: now + CACHE_TTL_MS.boxScore,
+    });
+    return bridged;
+  }
+
+  const hit = await fetchNbaIdPlayByPlay(routeId);
+  if (!hit) return null;
+  memoryCache.set(routeId, {
+    value: hit.raw,
+    source: hit.source,
+    nbaGameId: hit.nbaGameId,
+    freshUntil: now + CACHE_TTL_MS.boxScore,
+  });
+  return hit;
 }
 
 export async function fetchRawPlayByPlay(
@@ -266,7 +337,11 @@ export async function fetchRawPlayByPlay(
   const now = Date.now();
   const cached = memoryCache.get(gameId);
   if (cached && cached.freshUntil > now) {
-    return { raw: cached.value, source: cached.source };
+    return {
+      raw: cached.value,
+      source: cached.source,
+      nbaGameId: cached.nbaGameId,
+    };
   }
 
   const pending = inflight.get(gameId);

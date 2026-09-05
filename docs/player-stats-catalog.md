@@ -51,7 +51,7 @@
 
 **Advanced:** ORtg · DRtg · NET · PIE · PER · OWS · DWS · WS · WS/48 · OBPM · DBPM · BPM · VORP  
 
-**Impact:** DARKO · DARKO-O · DARKO-D · LEBRON · O-LEBRON · D-LEBRON · Wins added · DRBL · DRBL-O · DRBL-D · WAR1  
+**Impact:** DARKO · DARKO-O · DARKO-D · RAPTOR · O-RAPTOR · D-RAPTOR · Wins added · DRBL · DRBL-O · DRBL-D · WAR1  
 
 **Gaps vs BRef classic:** no 2P/2PA made columns (only 2P%); no ORB/DRB in shooting pack; eFG/TS live under “Rates” not “Shooting.”
 
@@ -67,7 +67,7 @@ Shooting: TS% · FG% · 2P% · 3P% · FT% · eFG% · 3PAr · FTr
 Advanced: USG% · ORtg · DRtg · NET · PER · BPM · VORP · WS  
 Impact: CPI · WAR1 · DRBL/100 · DRBL-O · DRBL-D  
 
-**Missing vs Statistics:** DARKO/LEBRON family, OWS/DWS/WS/48, OBPM/DBPM, PIE, +/- , PF, most counting made/attempted, possession rates (AST%/TOV%/…), full ORB/DRB splits in table mode.
+**Missing vs Statistics:** DARKO/RAPTOR family, OWS/DWS/WS/48, OBPM/DBPM, PIE, +/- , PF, most counting made/attempted, possession rates (AST%/TOV%/…), full ORB/DRB splits in table mode.
 
 ### 2.3 Career season table (`PlayerCareerSeasonTable`)
 
@@ -78,7 +78,7 @@ Season · Age · Team · GP · GS · MIN · FG · FGA · FG% · 3P · 3PA · 3P%
 ### 2.4 BRef packs (`player-stat-views.ts`)
 
 - **Per game / Totals / Per 36:** classic BRef counting + shooting order (FG…PTS), identity Season · Team · Pos · G · GS  
-- **Advanced:** MP · PER · TS% · 3PAr · FTr · ORB%/DRB%/TRB% · AST%/STL%/BLK%/TOV% · USG% · OWS · DWS · WS · WS/48 · OBPM · DBPM · BPM · VORP · **DARKO** family · Box/OnOff DPM · **LEBRON** family · Wins added · R1 · DRBL stack  
+- **Advanced:** MP · PER · TS% · 3PAr · FTr · ORB%/DRB%/TRB% · AST%/STL%/BLK%/TOV% · USG% · OWS · DWS · WS · WS/48 · OBPM · DBPM · BPM · VORP · **DARKO** family · Box/OnOff DPM · **RAPTOR** family · Wins added · R1 · DRBL stack  
 
 Order differs from Statistics (BRef puts shooting before rebounds; Statistics puts counting box first).
 
@@ -96,7 +96,7 @@ Presets mix overview/profile/shooting/impact/advanced/defense/ts — labels and 
 
 ### 2.7 Percentile Overview (related)
 
-Value: DRBL/100 · WAR1 · DRBL O/D · DARKO · LEBRON · Wins added  
+Value: DRBL/100 · WAR1 · DRBL O/D · DARKO · RAPTOR · Wins added  
 Offense / Shooting / Defense / Role / Advanced: long-form labels (not sheet abbreviations).
 
 ---
@@ -124,7 +124,7 @@ Use these **category chips** everywhere a sheet filters columns:
 3. **Shooting** — makes, attempts, percentages  
 4. **Rates** — possession / share / efficiency rates (do not scale with per-game/totals the same way)  
 5. **Advanced** — ratings, win shares, BPM family, PIE  
-6. **Impact** — DRBL, DARKO, LEBRON, WAR1 / Wins added  
+6. **Impact** — DRBL, DARKO, RAPTOR, WAR1 / Wins added  
 
 **Rate modes (season sheets only):**
 
@@ -237,10 +237,10 @@ IDs are proposed stable keys for a shared registry. Labels are the **sheet abbre
 | darko | DARKO | Prefer live `darkoDpm`, else non-zero `dpm` |
 | darkoOff | DARKO-O | |
 | darkoDef | DARKO-D | |
-| lebron | LEBRON | |
-| oLebron | O-LEBRON | |
-| dLebron | D-LEBRON | |
-| winsAdded | Wins added | LEBRON wins |
+| raptor | RAPTOR | |
+| oRaptor | O-RAPTOR | |
+| dRaptor | D-RAPTOR | |
+| winsAdded | Wins added | RAPTOR wins |
 | war1 | WAR1 | DRBL R1 win equivalents |
 | drbl100 | DRBL | Sheet label **DRBL**; long form DRBL/100 in percentile |
 | drblO | DRBL-O | |
@@ -267,7 +267,7 @@ IDs are proposed stable keys for a shared registry. Labels are the **sheet abbre
 | Surface | Show identity | Counting | Shooting | Rates | Advanced | Impact | Notes |
 |---------|---------------|----------|----------|-------|----------|--------|-------|
 | **Statistics** | ✓ | Full | Full (add 2P/2PA) | Full | Full | Full core | Move eFG/TS → Shooting; keep category chips |
-| **Career board** | Season · Tm · G | As selected metrics (PTS/TRB/… per game) | Selected % | USG + ATR | Core advanced | DRBL + DARKO + LEBRON + WAR1 | Align labels to catalog; add missing impact |
+| **Career board** | Season · Tm · G | As selected metrics (PTS/TRB/… per game) | Selected % | USG + ATR | Core advanced | DRBL + DARKO + RAPTOR + WAR1 | Align labels to catalog; add missing impact |
 | **Career season table** | ✓ | Full counting | Full shooting | eFG/TS already; add rate pack optional | Optional later | Optional later | Rename MIN→MP, GP→G, REB→TRB; add ORB/DRB/PF/+/- |
 | **BRef packs** | ✓ | Match Counting+Shooting order | Same | Advanced mode includes Rates+Advanced+Impact | Same registry | Same | Single registry drives these arrays |
 | **Game log** | Date · Opp | Subset by chip | Subset | — | Subset + GmSc | — | Map chips to same names (Overview ≈ Counting+light shooting) |
@@ -308,7 +308,7 @@ Exact left→right for **All** on Statistics / Career season / BRef per-game:
 3. Shooting: FG · FGA · FG% · 3P · 3PA · 3P% · 2P · 2PA · 2P% · FT · FTA · FT% · eFG% · TS%  
 4. Rates: 3PAr · FTr · USG% · TOV% · AST% · ORB% · DRB% · TRB% · STL% · BLK%  
 5. Advanced: ORtg · DRtg · NET · PIE · PER · OWS · DWS · WS · WS/48 · OBPM · DBPM · BPM · VORP  
-6. Impact: DARKO · DARKO-O · DARKO-D · LEBRON · O-LEBRON · D-LEBRON · Wins added · WAR1 · DRBL · DRBL-O · DRBL-D  
+6. Impact: DARKO · DARKO-O · DARKO-D · RAPTOR · O-RAPTOR · D-RAPTOR · Wins added · WAR1 · DRBL · DRBL-O · DRBL-D  
 
 Omit columns when data is missing for the whole career (don’t show a blank DARKO column for pre-coverage eras if every cell is empty).
 
@@ -319,7 +319,7 @@ Omit columns when data is missing for the whole career (don’t show a blank DAR
 1. **Shared registry** — e.g. `src/lib/player-stat-sheet-registry.ts` with categories, IDs, labels, formatters, scale rules.  
 2. **Wire Statistics** to registry (source of truth for widest sheet).  
 3. **Align Career season table** labels/order + add ORB/DRB/PF/+/- / 2P pack.  
-4. **Align Career board** metric ids/labels + add DARKO/LEBRON.  
+4. **Align Career board** metric ids/labels + add DARKO/RAPTOR.  
 5. **Drive BRef packs** from registry.  
 6. **Game log + Explore** — label/order pass only (subset views).  
 7. **Percentile** — map ids to registry; no sheet rewrite required.

@@ -84,6 +84,7 @@ export function applyPlayerSeasonFilters(
 
     if (
       filters.minimumMinutes !== undefined &&
+      !filters.player &&
       row.minutes < filters.minimumMinutes
     ) {
       return false;
@@ -91,6 +92,7 @@ export function applyPlayerSeasonFilters(
 
     if (
       filters.minimumGames !== undefined &&
+      !filters.player &&
       row.gamesPlayed < filters.minimumGames
     ) {
       return false;

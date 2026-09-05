@@ -34,6 +34,7 @@ const BUNDLED_PATH: Record<string, string> = {
  * Prefer process-cached disk JSON for known seasons (avoids bundling ~2.5MB
  * of DRBL artifacts into the webpack graph / every client shared chunk).
  * Disk is consulted once per season per process.
+ * Cloudflare: disk is empty — use the slim bundled overlay snapshot.
  */
 async function readPrecomputed(
   season: string
@@ -41,12 +42,30 @@ async function readPrecomputed(
   const cachedArtifact = artifactCache.get(season);
   if (cachedArtifact?.players?.length) return cachedArtifact;
 
+  // Bundled overlay first (Cloudflare Workers / any host without disk mounts).
+  try {
+    const { getBundledDrblSeason } = await import(
+      "@/data/runtime/drbl-overlay-snapshot"
+    );
+    const bundled = getBundledDrblSeason(season);
+    if (bundled.length > 0) {
+      const artifact = {
+        season,
+        players: bundled,
+      } as DrblSeasonArtifact;
+      artifactCache.set(season, artifact);
+      return artifact;
+    }
+  } catch {
+    // fall through to disk
+  }
+
   const candidates = [
     BUNDLED_PATH[season]
-      ? path.join(process.cwd(), BUNDLED_PATH[season])
+      ? path.join(/* turbopackIgnore: true */ process.cwd(), BUNDLED_PATH[season])
       : null,
     path.join(
-      process.cwd(),
+      /* turbopackIgnore: true */ process.cwd(),
       "src",
       "data",
       "drbl",
@@ -54,7 +73,7 @@ async function readPrecomputed(
       `${season}.json`
     ),
     path.join(
-      process.cwd(),
+      /* turbopackIgnore: true */ process.cwd(),
       "data",
       "drbl",
       "normalized",
@@ -96,7 +115,10 @@ export async function fetchDrblBoardProvenance(
     BUNDLED_PATH[season] ?? `src/data/drbl/precomputed/${season}.json`;
   let hash = "unknown";
   try {
-    const raw = await readFile(path.join(process.cwd(), artifactPath), "utf8");
+    const raw = await readFile(
+      path.join(/* turbopackIgnore: true */ process.cwd(), artifactPath),
+      "utf8"
+    );
     hash = sha256Hex(raw);
   } catch {
     hash = sha256Hex(JSON.stringify(artifact));

@@ -1,7 +1,6 @@
 import type { TeamSeasonStats } from "@/data/types/team-season";
 import { listCanonicalTeams } from "@/data/identity/team-map";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
-import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
 import { espnYearFromCanonicalSeason } from "@/data/providers/nba/season";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import type {
@@ -13,6 +12,8 @@ import {
   effectiveFieldGoalPct,
   trueShootingPct,
 } from "@/data/providers/nba/compute-advanced";
+import { runtimeTimeoutMs, preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { getRuntimeTeamBoardPayload } from "@/data/runtime/team-board-snapshot";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -79,34 +80,19 @@ function preseasonTeamBoard(season: string): TeamSeasonStats[] {
   });
 }
 
-export async function fetchTeamSeasonStats(
-  season: string
-): Promise<TeamSeasonStats[]> {
-  const year = espnYearFromCanonicalSeason(season);
-  const url =
-    `${SITE_WEB}/apis/common/v3/sports/basketball/nba/statistics/byteam` +
-    `?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
+function boardHasMeasuredGames(rows: TeamSeasonStats[]): boolean {
+  return rows.some(
+    (row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0
+  );
+}
 
-  let payload: ByTeamResponse;
-  try {
-    payload = await espnFetchJson<ByTeamResponse>(url, {
-      ttlMs: 1000 * 60 * 30,
-      retries: 1,
-      signal: AbortSignal.timeout(4_500),
-    });
-  } catch {
-    if (isPreseasonRosterSeason(season)) {
-      return preseasonTeamBoard(season);
-    }
-    throw new Error(`ESPN by-team stats unavailable for ${season}`);
-  }
-
+export function mapEspnByTeamPayload(
+  season: string,
+  payload: ByTeamResponse
+): TeamSeasonStats[] {
   const schema = payload.categories ?? [];
   const teams = payload.teams ?? [];
-
-  if (teams.length === 0 && isPreseasonRosterSeason(season)) {
-    return preseasonTeamBoard(season);
-  }
+  if (teams.length === 0) return [];
 
   return teams.map((row) => {
     const stats = completeCategoryMap(row.categories, schema);
@@ -200,4 +186,65 @@ export async function fetchTeamSeasonStats(
       turnovers,
     };
   });
+}
+
+function fromRuntimeSnapshot(season: string): TeamSeasonStats[] | null {
+  const cached = mappedBoardCache.get(season);
+  if (cached) return cached;
+  const payload = getRuntimeTeamBoardPayload(season);
+  if (!payload) return null;
+  const rows = mapEspnByTeamPayload(season, payload as ByTeamResponse);
+  if (!rows.length) return null;
+  mappedBoardCache.set(season, rows);
+  return rows;
+}
+
+const mappedBoardCache = new Map<string, TeamSeasonStats[]>();
+
+export async function fetchTeamSeasonStats(
+  season: string
+): Promise<TeamSeasonStats[]> {
+  if (preferBundledProductDataOnEdge()) {
+    const snap = fromRuntimeSnapshot(season);
+    if (snap && boardHasMeasuredGames(snap)) return snap;
+    // CF: never live-fetch by-team boards (uncancellable ESPN hangs → blank explore).
+    return snap ?? [];
+  }
+
+  const year = espnYearFromCanonicalSeason(season);
+  const url =
+    `${SITE_WEB}/apis/common/v3/sports/basketball/nba/statistics/byteam` +
+    `?region=us&lang=en&contentorigin=espn&season=${year}&seasontype=2`;
+
+  const timeoutMs = runtimeTimeoutMs(8_000, 2_500);
+
+  let payload: ByTeamResponse | null = null;
+  try {
+    payload = await espnFetchJson<ByTeamResponse>(url, {
+      ttlMs: 1000 * 60 * 30,
+      retries: 1,
+      timeoutMs,
+      signal: AbortSignal.timeout(timeoutMs),
+    });
+  } catch {
+    payload = null;
+  }
+
+  if (payload) {
+    const live = mapEspnByTeamPayload(season, payload);
+    if (live.length > 0 && boardHasMeasuredGames(live)) {
+      return live;
+    }
+    // Live returned an empty/zero board (common CF timeout stub path) —
+    // prefer a measured build-time snapshot when available.
+    const snap = fromRuntimeSnapshot(season);
+    if (snap && boardHasMeasuredGames(snap)) return snap;
+    if (live.length > 0) return live;
+  }
+
+  const snap = fromRuntimeSnapshot(season);
+  if (snap) return snap;
+
+  // Last resort: paint the 30-team shell so destinations still resolve.
+  return preseasonTeamBoard(season);
 }

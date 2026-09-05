@@ -19,6 +19,26 @@ const COLUMN_CONCEPT: Record<string, string> = {
   ORtg: "ortg",
   DRtg: "drtg",
   NET: "net",
+  NRtg: "net",
+  PER: "per",
+  BPM: "bpm",
+  OBPM: "obpm",
+  DBPM: "dbpm",
+  VORP: "vorp",
+  WS: "ws",
+  "WS/48": "ws48",
+  PIE: "pie",
+  DPM: "darko",
+  "O-DPM": "darko_o",
+  "D-DPM": "darko_d",
+  PTS: "pts",
+  AST: "ast",
+  REB: "reb",
+  STL: "stl",
+  BLK: "blk",
+  "FT%": "ft",
+  Minutes: "min",
+  Games: "gp",
   "+/-": "plus_minus",
   "+/−": "plus_minus",
   TOV: "tov",
@@ -29,10 +49,13 @@ const COLUMN_CONCEPT: Record<string, string> = {
   DARKO: "darko",
   "DARKO-O": "darko",
   "DARKO-D": "darko",
-  LEBRON: "lebron",
-  "O-LEBRON": "lebron",
-  "D-LEBRON": "lebron",
-  "Wins added": "lebron",
+  RAPTOR: "raptor",
+  "O-RAPTOR": "raptor_o",
+  "D-RAPTOR": "raptor_d",
+  WAR: "wins_added",
+  "Wins added": "wins_added",
+  "Wins Added": "wins_added",
+  Wins: "wins_added",
   CPI: "cpi",
   DIFF: "diff",
   "DRBL/100": "drbl",
@@ -44,6 +67,11 @@ const COLUMN_CONCEPT: Record<string, string> = {
   "R1 Win Equivalents": "r1_win_eq",
   "DRBL-O": "drbl_o",
   "DRBL-D": "drbl_d",
+  "DRBL-P": "drbl_p",
+  "DRBL-LN": "drbl_ln",
+  "DRBL-B": "drbl_b",
+  "DRBL-L": "drbl_l",
+  "DRBL Δ": "drbl_disagreement",
   "DARKO DPM": "darko",
   "DARKO offense": "darko",
   "DARKO defense": "darko",
@@ -73,16 +101,16 @@ const FACTOR_CONCEPT: Record<string, string> = {
 export function conceptIdForColumnLabel(label: string): string | null {
   const trimmed = label.trim();
   const direct = COLUMN_CONCEPT[trimmed];
-  if (direct && getLearnConcept(direct)?.showTooltip) return direct;
+  if (direct && getLearnConcept(direct)) return direct;
   const concept = getLearnConcept(trimmed);
-  if (concept?.showTooltip) return concept.id;
+  if (concept) return concept.id;
   return null;
 }
 
 export function conceptIdForFactorId(id: string): string | null {
   const mapped = FACTOR_CONCEPT[id] ?? id;
   const concept = getLearnConcept(mapped);
-  if (concept?.showTooltip) return concept.id;
+  if (concept) return concept.id;
   return null;
 }
 

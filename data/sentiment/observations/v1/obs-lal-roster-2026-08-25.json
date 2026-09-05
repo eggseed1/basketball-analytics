@@ -1,0 +1,67 @@
+{
+  "batchId": "obs-lal-roster-2026-08-25",
+  "collectedAt": "2026-08-25T20:30:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-lal-team-fan-001",
+      "entityType": "team",
+      "entityId": "13",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.05,
+      "mentionVolume": 720,
+      "language": "en",
+      "topicTags": ["lebron", "health", "play_in"],
+      "sampledAt": "2026-08-25T18:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-lal-team-fan-002",
+      "entityType": "team",
+      "entityId": "13",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "negative",
+      "score": -0.18,
+      "mentionVolume": 380,
+      "language": "en",
+      "topicTags": ["depth", "roster_construction"],
+      "sampledAt": "2026-08-25T19:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-lal-team-media-001",
+      "entityType": "team",
+      "entityId": "13",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "mixed",
+      "score": -0.02,
+      "mentionVolume": 160,
+      "language": "en",
+      "topicTags": ["lebron", "timeline"],
+      "sampledAt": "2026-08-25T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    },
+    {
+      "id": "obs-lal-team-media-002",
+      "entityType": "team",
+      "entityId": "13",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "negative",
+      "score": -0.22,
+      "mentionVolume": 110,
+      "language": "en",
+      "topicTags": ["play_in", "west_race"],
+      "sampledAt": "2026-08-25T20:15:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    }
+  ]
+}

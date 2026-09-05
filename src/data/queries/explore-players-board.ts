@@ -40,7 +40,7 @@ export type ExplorePlayersBoardView = {
   sortKey: PlayerSeasonSortKey;
   sortDir: "asc" | "desc";
   hasDarko: boolean;
-  hasLebron: boolean;
+  hasRaptor: boolean;
   hasDrbl: boolean;
   /** Full filtered board size used for Level-2 percentile pools. */
   boardSampleSize: number;
@@ -106,12 +106,25 @@ export async function getExplorePlayersBoardView(options: {
 }): Promise<ExplorePlayersBoardView> {
   const board = await getPlayerSeasonBoardSnapshot(options.filters);
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
-  const hasLebron = board.rows.some((p) => p.lebron != null);
+  const hasRaptor = board.rows.some((p) => p.raptor != null);
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
+  const requested = options.sortKey;
+  const raptorSort =
+    requested === "raptor" ||
+    requested === "oRaptor" ||
+    requested === "dRaptor" ||
+    requested === "winsAdded";
   // Prefer WAR1 for registry seasons when present; else DARKO; else PPG.
+  // Never keep a RAPTOR sort when this season has no RAPTOR rows.
   const sortKey =
-    options.sortKey ??
-    (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg");
+    raptorSort && !hasRaptor
+      ? hasDrbl
+        ? "r1WinEquivalents"
+        : hasDarko
+          ? "darkoDpm"
+          : "ppg"
+      : (requested ??
+        (hasDrbl ? "r1WinEquivalents" : hasDarko ? "darkoDpm" : "ppg"));
   const sortDir =
     options.sortDir ?? defaultPlayerSeasonSortDir(sortKey);
   const pageSize = options.pageSize ?? EXPLORE_PLAYERS_PAGE_SIZE;
@@ -147,7 +160,7 @@ export async function getExplorePlayersBoardView(options: {
     sortKey,
     sortDir,
     hasDarko,
-    hasLebron,
+    hasRaptor,
     hasDrbl,
     boardSampleSize: contextIndex?.sampleSize ?? totalCount,
     contextPools: contextIndex ? serializeContextPools(contextIndex) : {},

@@ -7,6 +7,7 @@ import {
   listFranchiseRecords,
   type TeamSeasonIdentity,
 } from "@/data/identity/franchise-registry";
+import { teamHistoryHref } from "@/lib/team-identity";
 
 export type LocalTeamSearchHit = {
   id: string;
@@ -68,7 +69,7 @@ export function searchLocalTeamIdentities(
           kind: "franchise",
           teamKey: f.currentAbbr.toLowerCase(),
           subtitle: `Franchise · ${f.currentAbbr}`,
-          href: `/franchises/${encodeURIComponent(f.franchiseId)}`,
+          href: teamHistoryHref(f.canonicalTeamId),
         });
       }
       const teamKey = `team:${f.canonicalTeamId}`;

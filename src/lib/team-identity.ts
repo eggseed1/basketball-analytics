@@ -46,6 +46,8 @@ export function playerSeasonTeamMatchIds(team: CanonicalTeam): string[] {
   if (team.providerIds.espn) ids.add(team.providerIds.espn);
   ids.add(team.brandId);
   ids.add(team.abbr.toLowerCase());
+  // BRef peer-board rows use uppercase abbr as teamId (e.g. "BOS").
+  ids.add(team.abbr.toUpperCase());
   return [...ids];
 }
 
@@ -95,6 +97,16 @@ export function teamProfileHref(
   const base = `/teams/${encodeURIComponent(id)}`;
   if (!season?.trim()) return base;
   return `${base}?season=${encodeURIComponent(season.trim())}`;
+}
+
+/** `/teams/{canonicalTeamId}?tab=history` — franchise scrapbook + arc. */
+export function teamHistoryHref(
+  teamKey: string,
+  season?: string | null
+): string {
+  const base = teamProfileHref(teamKey, season);
+  const join = base.includes("?") ? "&" : "?";
+  return `${base}${join}tab=history#franchise-book`;
 }
 
 /** Leaderboard deep link - always writes canonical ESPN id into `?team=`. */

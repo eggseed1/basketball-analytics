@@ -226,6 +226,17 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   async getGame(gameId: string): Promise<Game | null> {
+    // On Vercel, stats.nba season scans are disabled — use ESPN months.
+    const { statsNbaNetworkEnabled } = await import(
+      "./nba/runtime-policy"
+    );
+    if (!statsNbaNetworkEnabled()) {
+      const { findEspnGameById } = await import("./nba/scoreboard-client");
+      const fromEspn = await findEspnGameById(gameId);
+      if (fromEspn) return fromEspn;
+      return null;
+    }
+
     const seasons = defaultCanonicalSeasons(3);
     for (const season of seasons) {
       const games = await this.loadGamesForSeason(season);
@@ -245,11 +256,9 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   async getGamePlayByPlay(gameId: string): Promise<GamePlayByPlay | null> {
-    return this.playByPlayCache.getOrSet(
-      gameId,
-      CACHE_TTL_MS.boxScore,
-      () => this.fetchGamePlayByPlay(gameId)
-    );
+    // fetchRawPlayByPlay already memory-caches successful payloads. Do not wrap
+    // null misses in TtlPromiseCache — that pinned empty Game Lab for minutes.
+    return this.fetchGamePlayByPlay(gameId);
   }
 
   async getShots(filters: ShotFilters = {}): Promise<Shot[]> {
@@ -826,6 +835,20 @@ export class NBADataProvider implements BasketballDataProvider {
   }
 
   private async fetchSeasonGames(season: string): Promise<Game[]> {
+    const { statsNbaNetworkEnabled } = await import("./nba/runtime-policy");
+    if (statsNbaNetworkEnabled()) {
+      try {
+        const fromNba = await this.fetchSeasonGamesFromNbaStats(season);
+        if (fromNba.length > 0) return fromNba;
+      } catch {
+        // Fall through to ESPN monthly scoreboards.
+      }
+    }
+    const { fetchEspnSeasonSchedule } = await import("./nba/scoreboard-client");
+    return fetchEspnSeasonSchedule(season);
+  }
+
+  private async fetchSeasonGamesFromNbaStats(season: string): Promise<Game[]> {
     const byId = new Map<string, Game>();
     for (const seasonType of ["Regular Season", "Playoffs"] as const) {
       const response = await statsNbaFetch(

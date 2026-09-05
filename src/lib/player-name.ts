@@ -1,4 +1,4 @@
-/** Shared name key for joining DARKO / LEBRON / ESPN rows. */
+/** Shared name key for joining DARKO / RAPTOR / ESPN rows. */
 export function normalizePlayerName(name: string): string {
   return name
     .normalize("NFD")

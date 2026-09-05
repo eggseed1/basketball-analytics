@@ -153,6 +153,41 @@ export async function resolvePlayerIdentity(
     };
   }
 
+  // Name-shaped BRef search ids (`bref:michael jordan`) — surface a display
+  // name so the player page doesn't 404 before career rows attach.
+  // When the route is a remapped legend (`bref:piercpa01`), keep the real NBA
+  // PERSON_ID on `nbaId` so awards / jersey retirement / HOF lookups work.
+  if (routeId.toLowerCase().startsWith("bref:")) {
+    let displayName: string | undefined;
+    try {
+      const { displayNameFromBrefRouteId } = await import(
+        "@/data/providers/nba/bref-career-from-page"
+      );
+      displayName = displayNameFromBrefRouteId(routeId) ?? undefined;
+    } catch {
+      displayName = undefined;
+    }
+    let nbaPersonId: string | null = null;
+    try {
+      const { nbaPersonIdFromPlayerRoute } = await import(
+        "@/data/runtime/legend-nba-to-bref"
+      );
+      nbaPersonId = nbaPersonIdFromPlayerRoute(routeId);
+    } catch {
+      nbaPersonId = null;
+    }
+    return {
+      routeId,
+      espnId: null,
+      nbaId: nbaPersonId ?? routeId,
+      displayName,
+      matchMethod: "passthrough_nba",
+      confidence: "UNRESOLVED",
+      ambiguous: false,
+      resolved: Boolean(displayName || nbaPersonId),
+    };
+  }
+
   return {
     routeId,
     espnId: null,

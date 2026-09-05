@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-wemby-hype-2026-08-25",
+  "collectedAt": "2026-08-25T19:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-wemby-fan-001",
+      "entityType": "player",
+      "entityId": "1641705",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.48,
+      "mentionVolume": 390,
+      "language": "en",
+      "topicTags": ["defense", "franchise_face", "mvp_case"],
+      "sampledAt": "2026-08-24T19:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-wemby-fan-002",
+      "entityType": "player",
+      "entityId": "1641705",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.08,
+      "mentionVolume": 210,
+      "language": "en",
+      "topicTags": ["availability", "load_management", "hype"],
+      "sampledAt": "2026-08-25T18:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-wemby-media-001",
+      "entityType": "player",
+      "entityId": "1641705",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "positive",
+      "score": 0.34,
+      "mentionVolume": 95,
+      "language": "en",
+      "topicTags": ["defense", "title_odds", "availability"],
+      "sampledAt": "2026-08-25T16:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

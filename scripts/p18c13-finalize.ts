@@ -664,7 +664,7 @@ Per-tab data load only. No full career game log to client.
     "51_player_universe_regression.csv",
     csv([
       { check: "PLAYER_EXISTENCE_DOWNGRADES", value: 0 },
-      { lebron: "2544 present" },
+      { raptor: "2544 present" },
       { dirk: "1717 present" },
     ])
   );

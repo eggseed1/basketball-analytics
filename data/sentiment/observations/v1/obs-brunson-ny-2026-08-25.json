@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-brunson-ny-2026-08-25",
+  "collectedAt": "2026-08-25T19:30:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-brunson-fan-001",
+      "entityType": "player",
+      "entityId": "1628973",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": -0.18,
+      "mentionVolume": 240,
+      "language": "en",
+      "topicTags": ["playoff_exit", "overrated", "usage"],
+      "sampledAt": "2026-08-24T20:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-brunson-fan-002",
+      "entityType": "player",
+      "entityId": "1628973",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "negative",
+      "score": -0.32,
+      "mentionVolume": 160,
+      "language": "en",
+      "topicTags": ["contract", "championship_window", "supporting_cast"],
+      "sampledAt": "2026-08-25T18:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-brunson-media-001",
+      "entityType": "player",
+      "entityId": "1628973",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "neutral",
+      "score": 0.04,
+      "mentionVolume": 78,
+      "language": "en",
+      "topicTags": ["franchise_face", "playoff_exit", "extension"],
+      "sampledAt": "2026-08-25T15:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

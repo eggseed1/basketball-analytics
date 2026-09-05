@@ -145,6 +145,19 @@ export {
   type CareerTransitionSummary,
 } from "./career-resume";
 export {
+  computePeakImpact,
+  type PeakImpactMetricId,
+  type PeakImpactResult,
+  type PeakImpactSeason,
+} from "./peak-impact";
+export {
+  computeImpactMovers,
+  formatImpactDelta,
+  type ImpactBoardRow,
+  type ImpactMover,
+  type ImpactMoversResult,
+} from "./impact-risers";
+export {
   GAME_SEASON_CONTEXT_METHODOLOGY,
   GAME_SEASON_CONTEXT_TOLERANCE,
   GAME_SEASON_CONTEXT_UNUSUAL_MULTIPLE,

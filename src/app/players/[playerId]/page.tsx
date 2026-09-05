@@ -30,8 +30,18 @@ import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import { getDataProvider } from "@/data/providers";
 import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { getPlayerCached } from "@/data/queries/request-cache";
+import { lookupEspnIdByPlayerName } from "@/data/runtime/espn-name-index";
+import { remapLegendNbaIdToBref, resolveLegacyNbaPersonId } from "@/data/runtime/legend-nba-to-bref";
+import {
+  getBundledCurrentRosterEntry,
+  resolveBundledCurrentTeamId,
+} from "@/data/runtime/current-roster-snapshot";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
+import {
+  HOF_PAGE_FRAME_CLASS,
+  isHallOfFamePlayerId,
+} from "@/lib/hall-of-fame-style";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import {
@@ -55,6 +65,7 @@ import {
   lastCardStint,
   mergeCardStints,
   multiTeamDisplayLabel,
+  resolvePlayerScheduleTeamKey,
   resolveSelectedSeasonTeamContext,
 } from "@/lib/player-team-context";
 import { firstUsablePlayerDisplayName } from "@/lib/player-display-name";
@@ -66,9 +77,10 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
 import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
-import { PlayerUpcomingGamesIsland } from "@/components/players/player-upcoming-games-island";
+import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
 import { PlayerSentimentTabIsland } from "@/components/players/player-sentiment-tab-island";
 import { PlayerCareerAnalysisIsland } from "@/components/players/player-career-analysis-island";
 
@@ -119,8 +131,30 @@ function firstRowsByPlayerId<T>(
   return [];
 }
 
+/** Legacy Cloudflare BRef peer-board ids → ESPN athlete id when known. */
+function resolvePublicPlayerId(raw: string): string {
+  let id = String(raw ?? "").trim();
+  try {
+    id = decodeURIComponent(id);
+  } catch {
+    // keep raw
+  }
+  // NBA Stats person ids for retired legends → BRef slugs (CF-safe career path).
+  if (/^\d+$/.test(id)) {
+    id = resolveLegacyNbaPersonId(id) ?? id;
+  }
+  const remapped = remapLegendNbaIdToBref(id);
+  if (remapped) return remapped;
+
+  if (!id.toLowerCase().startsWith("bref:")) return id;
+  const inner = id.slice(id.indexOf(":") + 1);
+  const namePart = inner.split("|")[0] ?? "";
+  return lookupEspnIdByPlayerName(namePart) ?? id;
+}
+
 export async function generateMetadata({ params }: PlayerPageProps) {
-  const { playerId } = await params;
+  const { playerId: rawId } = await params;
+  const playerId = resolvePublicPlayerId(rawId);
   const [player, identity] = await Promise.all([
     getPlayerCached(playerId),
     resolvePlayerIdentityCached(playerId).catch(() => null),
@@ -145,8 +179,10 @@ export default async function PlayerPage({
   params,
   searchParams,
 }: PlayerPageProps) {
-  const { playerId } = await params;
+  const { playerId: rawId } = await params;
   const sp = await searchParams;
+  // Resolve legacy bref: peer-board ids to ESPN athlete ids (no redirect required).
+  const playerId = resolvePublicPlayerId(rawId);
   const seasonParam = one(sp, "season");
   const view = parsePlayerPageView(one(sp, "view"));
   const seasonType = parsePlayerSeasonKind(one(sp, "seasonType"));
@@ -218,7 +254,22 @@ export default async function PlayerPage({
   });
   const statsCtx = resolvePlayerStatsSeason(career, season);
   const seasonOptions = [
-    ...new Set([...career.map((row) => row.season), ...historySeasonIds]),
+    ...new Set([
+      ...career
+        .filter(
+          (row) =>
+            row.gamesPlayed > 0 ||
+            Boolean(
+              row.per ||
+                row.vorp ||
+                row.winShares ||
+                row.points ||
+                row.offensiveRating
+            )
+        )
+        .map((row) => row.season),
+      ...historySeasonIds,
+    ]),
   ].sort((a, b) => b.localeCompare(a));
   const nowSeason = canonicalSeasonFromStartYear(currentNbaStartYear());
   const seasonTeams = buildSeasonTeamsMap(career);
@@ -227,15 +278,41 @@ export default async function PlayerPage({
   const isMultiTeamRow = seasonTeamCtx.kind === "MULTI_TEAM_AGGREGATE";
   const seasonStints = cardStintsForSeason(career, season);
   const lastStint = lastCardStint(seasonStints);
-  const teamKey = lastStint?.teamKey ?? seasonTeamCtx.brandTeamKey;
-  const teamLabel = lastStint
-    ? lastStint.teamLabel
-    : isMultiTeamRow
-      ? multiTeamDisplayLabel(primaryTeam)
-      : seasonTeamCtx.displayLabel ??
-        (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
-          ? "Team unavailable"
-          : null);
+  const seasonTeamKey = lastStint?.teamKey ?? seasonTeamCtx.brandTeamKey;
+  // Default / current-season chrome follows ESPN roster (offseason trades),
+  // not last completed season's BRef stint — keeps identity aligned with sentiment.
+  const viewingHistoricalSeason =
+    Boolean(seasonParam) && seasonParam !== nowSeason;
+  const rosterTeamId = resolveBundledCurrentTeamId(
+    identity?.espnId,
+    playerId,
+    identity?.nbaId
+  );
+  const currentFranchiseId =
+    brandableTeamKey(player?.currentTeamId) ??
+    brandableTeamKey(rosterTeamId) ??
+    null;
+  const teamKey =
+    !viewingHistoricalSeason && currentFranchiseId
+      ? currentFranchiseId
+      : seasonTeamKey;
+  const rosterEntry =
+    getBundledCurrentRosterEntry(identity?.espnId) ??
+    getBundledCurrentRosterEntry(playerId) ??
+    getBundledCurrentRosterEntry(identity?.nbaId);
+  const teamLabel =
+    !viewingHistoricalSeason && currentFranchiseId
+      ? rosterEntry?.teamName ||
+        lastStint?.teamLabel ||
+        seasonTeamCtx.displayLabel
+      : lastStint
+        ? lastStint.teamLabel
+        : isMultiTeamRow
+          ? multiTeamDisplayLabel(primaryTeam)
+          : seasonTeamCtx.displayLabel ??
+            (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
+              ? "Team unavailable"
+              : null);
   const lastCareerSeason =
     masterPlayer?.lastSeason ??
     historyCareer?.lastSeason ??
@@ -277,12 +354,14 @@ export default async function PlayerPage({
       ? resolveHistoricalTeamBrand(teamKey, season, "era")
       : null;
 
-  const scheduleTeamKey = isRetired
-    ? null
-    : (() => {
-        const nowRow = career.find((row) => row.season === nowSeason);
-        return nowRow ? brandableTeamKey(nowRow.teamId) ?? null : null;
-      })();
+  const scheduleTeamKey = resolvePlayerScheduleTeamKey({
+    isRetired,
+    career,
+    nowSeason,
+    teamKey,
+    masterTeamHistory: masterPlayer?.teamHistory ?? historyCareer?.teams ?? null,
+    historyTeams: historyCareer?.teams ?? null,
+  });
 
   const careerDataGuard = assessProductionProviderGuard({
     providerName: getDataProvider().name,
@@ -315,7 +394,18 @@ export default async function PlayerPage({
     .map((s) => primaryTeamForSeason(career, s))
     .filter((row): row is NonNullable<typeof row> => row != null);
 
-  const portraitUrl = getPlayerPortraitUrl(playerId);
+  const portraitUrl = getPlayerPortraitUrl(rawId) ??
+    getPlayerPortraitUrl(playerId) ??
+    (identity?.nbaId ? getPlayerPortraitUrl(identity.nbaId) : null) ??
+    (identity?.espnId ? getPlayerPortraitUrl(identity.espnId) : null);
+  const honor = isHallOfFamePlayerId(
+    rawId,
+    playerId,
+    identity?.nbaId,
+    identity?.espnId
+  )
+    ? ("hof" as const)
+    : undefined;
   const eraTheme = applyEraTheme
     ? resolveActiveEraTheme(season, themeMode)
     : null;
@@ -329,6 +419,9 @@ export default async function PlayerPage({
     showSentiment: showLiveIntelligence,
   });
 
+  // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
+  const slimWorker = slimEdgeProductEnabled();
+
   const careerSeasonsForTable =
     historySeasons.length > 0 ? historySeasons : universeSeasons;
 
@@ -341,13 +434,8 @@ export default async function PlayerPage({
     palette?.secondary
   );
 
-  const body = (
-    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
-      <PageAtmosphere
-        colorA={atmosphere?.colorA}
-        colorB={atmosphere?.colorB}
-      />
-      <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+  const mainContent = (
+    <>
         <PlayerDestinationIdentity
           playerId={playerId}
           espnId={identity?.espnId}
@@ -375,34 +463,40 @@ export default async function PlayerPage({
           view={view}
           caps={caps}
           seasonType={seasonType}
+          honor={honor}
           accolades={
-            <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-              <PlayerAccoladesIsland
-                playerId={playerId}
-                teamKey={teamKey}
-                historicalBrand={historicalBrand}
-              />
-            </Suspense>
+            slimWorker ? null : (
+              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
+                <PlayerAccoladesIsland
+                  playerId={playerId}
+                  teamKey={teamKey}
+                  historicalBrand={historicalBrand}
+                  honor={honor}
+                />
+              </Suspense>
+            )
           }
           upcomingSchedule={
-            scheduleTeamKey ? (
-              <Suspense fallback={<PlayerIdentitySlotSkeleton className="h-16" />}>
-                <PlayerUpcomingGamesIsland
-                  playerId={playerId}
+            !slimWorker && scheduleTeamKey ? (
+              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
+                <PlayerUpcomingGamesFromSnapshot
                   scheduleTeamKey={scheduleTeamKey}
                 />
               </Suspense>
             ) : null
           }
           frontOffice={
-            <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-              <PlayerContractTransactionsIsland
-                playerId={playerId}
-                playerName={displayName}
-                teamKey={teamKey}
-                historicalBrand={historicalBrand}
-              />
-            </Suspense>
+            slimWorker ? null : (
+              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
+                <PlayerContractTransactionsIsland
+                  playerId={playerId}
+                  playerName={displayName}
+                  teamKey={teamKey}
+                  historicalBrand={historicalBrand}
+                  honor={honor}
+                />
+              </Suspense>
+            )
           }
           hero={
             <Suspense
@@ -421,6 +515,8 @@ export default async function PlayerPage({
                 seasonTeams={seasonTeams}
                 identityTeamKey={teamKey}
                 nbaId={identity?.nbaId}
+                espnId={identity?.espnId}
+                honor={honor}
               />
             </Suspense>
           }
@@ -437,6 +533,7 @@ export default async function PlayerPage({
               playerName={displayName}
               teamKey={teamKey}
               historicalBrand={historicalBrand}
+              honor={honor}
             />
           </Suspense>
         ) : null}
@@ -445,9 +542,15 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading game log…" />}
           >
+            {statsCtx.usingPriorSeasonStats ? (
+              <PriorSeasonStatsNotice
+                requestSeason={statsCtx.requestSeason}
+                statsSeason={statsCtx.statsSeason}
+              />
+            ) : null}
             <PlayerGamesIsland
               playerId={playerId}
-              season={season}
+              season={statsCtx.statsSeason}
               seasons={seasonOptions}
               seasonType={seasonType}
               teamKey={teamKey}
@@ -456,22 +559,24 @@ export default async function PlayerPage({
         ) : null}
 
         {view === "overview" || view === "career" ? (
-          <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading career…" />}
-          >
-            <PlayerCareerIsland
-              playerId={playerId}
-              season={season}
-              seasonType={seasonType}
-              career={career}
-              teamKey={teamKey}
-              fromHistory={fromHistory}
-              themeMode={themeMode}
-            />
-          </Suspense>
+          slimWorker && view === "overview" ? null : (
+            <Suspense
+              fallback={<PlayerBoardSkeleton label="Loading career…" />}
+            >
+              <PlayerCareerIsland
+                playerId={playerId}
+                season={season}
+                seasonType={seasonType}
+                career={career}
+                teamKey={teamKey}
+                fromHistory={fromHistory}
+                themeMode={themeMode}
+              />
+            </Suspense>
+          )
         ) : null}
 
-        {view === "career" ? (
+        {view === "career" && !slimWorker ? (
           <Suspense
             fallback={
               <PlayerBoardSkeleton label="Loading career analysis…" />
@@ -507,6 +612,7 @@ export default async function PlayerPage({
                 teamKey={teamKey}
                 fromHistory={fromHistory}
                 themeMode={themeMode === "modern" ? "modern" : "historical"}
+                honor={honor}
               />
             </div>
           </Suspense>
@@ -527,10 +633,16 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading shot chart…" />}
           >
+            {statsCtx.usingPriorSeasonStats ? (
+              <PriorSeasonStatsNotice
+                requestSeason={statsCtx.requestSeason}
+                statsSeason={statsCtx.statsSeason}
+              />
+            ) : null}
             <PlayerVisualizationsIsland
               playerId={playerId}
               nbaId={identity?.nbaId}
-              season={season}
+              season={statsCtx.statsSeason}
               seasons={seasonOptions}
               seasonType={seasonType}
               teamKey={teamKey}
@@ -546,10 +658,16 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading deep stats…" />}
           >
-            <GlassSurface effect="css" className="p-1 sm:p-2">
+            {statsCtx.usingPriorSeasonStats ? (
+              <PriorSeasonStatsNotice
+                requestSeason={statsCtx.requestSeason}
+                statsSeason={statsCtx.statsSeason}
+              />
+            ) : null}
+            <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
               <PlayerStatDepthIsland
                 playerId={playerId}
-                season={season}
+                season={statsCtx.statsSeason}
                 view={view}
                 page={gamesPage}
                 statMode={statMode}
@@ -568,6 +686,25 @@ export default async function PlayerPage({
             </GlassSurface>
           </Suspense>
         ) : null}
+    </>
+  );
+
+  const body = (
+    <DestinationClientShell className="site-shell flex flex-1 flex-col gap-4 py-5 sm:gap-5 sm:py-7">
+      <PageAtmosphere
+        colorA={atmosphere?.colorA}
+        colorB={atmosphere?.colorB}
+      />
+      <main className="relative z-[1] flex flex-1 flex-col gap-4 sm:gap-5">
+        {honor === "hof" ? (
+          <div className={HOF_PAGE_FRAME_CLASS}>
+            <div className="hof-page-frame__inner flex flex-col gap-4 p-3 sm:gap-5 sm:p-4">
+              {mainContent}
+            </div>
+          </div>
+        ) : (
+          mainContent
+        )}
       </main>
     </DestinationClientShell>
   );

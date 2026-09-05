@@ -1,0 +1,89 @@
+name: Daily player-viz runtime refresh
+
+# Rebuilds Cloudflare-baked snapshots for race tracker + league scatters
+# once the NBA tip-off window opens (mid-Oct through Finals). Offseason runs
+# no-op unless manually forced.
+#
+# Required repo secrets:
+#   CLOUDFLARE_API_TOKEN   — Workers deploy token
+#   CLOUDFLARE_ACCOUNT_ID  — account id for wrangler / OpenNext
+
+on:
+  schedule:
+    # ~7:00 America/New_York during EST; after most overnight finals settle.
+    - cron: "0 12 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force sync + deploy even in offseason"
+        type: boolean
+        default: false
+      deploy:
+        description: "Deploy to Cloudflare after sync"
+        type: boolean
+        default: true
+
+concurrency:
+  group: daily-runtime-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    permissions:
+      contents: read
+    env:
+      DATA_PROVIDER: nba
+      FULL_EDGE_PRODUCT: "1"
+      NEXT_TELEMETRY_DISABLED: "1"
+      FORCE_DAILY: ${{ github.event_name == 'workflow_dispatch' && inputs.force == true && '1' || '' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Daily runtime sync
+        id: sync
+        run: node scripts/daily-runtime-sync.mjs
+
+      - name: Upload sync report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: daily-runtime-sync
+          path: artifacts/daily-runtime-sync.json
+          if-no-files-found: ignore
+
+      - name: Build OpenNext bundle
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.deploy)
+        run: npx opennextjs-cloudflare build
+
+      - name: Deploy to Cloudflare
+        if: >-
+          steps.sync.outputs.should_deploy == 'true' &&
+          (github.event_name != 'workflow_dispatch' || inputs.deploy)
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: npx opennextjs-cloudflare deploy
+
+      - name: Summary
+        if: always()
+        run: |
+          echo "### Daily player-viz refresh" >> "$GITHUB_STEP_SUMMARY"
+          echo "" >> "$GITHUB_STEP_SUMMARY"
+          echo "- phase: \`${{ steps.sync.outputs.phase }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- season: \`${{ steps.sync.outputs.season }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- skipped: \`${{ steps.sync.outputs.skipped }}\`" >> "$GITHUB_STEP_SUMMARY"
+          echo "- should_deploy: \`${{ steps.sync.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"

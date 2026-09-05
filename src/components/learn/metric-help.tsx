@@ -31,6 +31,7 @@ export function MetricHelp({
   children,
   className,
   labelClassName,
+  nestable = false,
 }: {
   /** Registry id or alias (ts, trueShooting, essentially_even, …). */
   conceptId: string;
@@ -38,6 +39,8 @@ export function MetricHelp({
   children?: ReactNode;
   className?: string;
   labelClassName?: string;
+  /** When true, skip focus ring behavior for use inside buttons (sort headers). */
+  nestable?: boolean;
 }) {
   const concept = getLearnConcept(conceptId);
   const explanation = explainMetric(conceptId);
@@ -141,8 +144,10 @@ export function MetricHelp({
     >
       <button
         type="button"
+        tabIndex={nestable ? -1 : undefined}
         className={cn(
           "inline-flex max-w-full items-baseline gap-0.5 rounded-sm text-left underline decoration-dotted decoration-muted-foreground/70 underline-offset-2 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+          nestable && "pointer-events-auto cursor-help",
           labelClassName
         )}
         aria-expanded={open}
@@ -150,7 +155,7 @@ export function MetricHelp({
         aria-label={`Explain ${concept.shortName}`}
         onClick={() => setOpen((v) => !v)}
         onKeyDown={onKeyDown}
-        onFocus={() => setOpen(true)}
+        onFocus={nestable ? undefined : () => setOpen(true)}
       >
         {label}
       </button>

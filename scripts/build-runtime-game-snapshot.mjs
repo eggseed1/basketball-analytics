@@ -5,7 +5,15 @@ const OUT = path.join(process.cwd(), "src/data/runtime/game-snapshot.json");
 const ESPN = "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/scoreboard";
 const now = new Date();
 const currentStartYear = now.getUTCMonth() >= 6 ? now.getUTCFullYear() : now.getUTCFullYear() - 1;
-const seasons = [currentStartYear - 1, currentStartYear];
+// Six league years of schedules for team Games/Splits/Playoffs tabs on CF.
+const seasons = [
+  currentStartYear - 5,
+  currentStartYear - 4,
+  currentStartYear - 3,
+  currentStartYear - 2,
+  currentStartYear - 1,
+  currentStartYear,
+];
 
 function canonicalSeason(startYear) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
@@ -147,28 +155,34 @@ async function main() {
       ? a.id.localeCompare(b.id)
       : a.gameDate.localeCompare(b.gameDate)
   );
+  const completedSeason = canonicalSeason(currentStartYear - 2);
   const previousSeason = canonicalSeason(currentStartYear - 1);
   const upcomingSeason = canonicalSeason(currentStartYear);
+  const completedCount = games.filter((g) => g.season === completedSeason).length;
   const previousCount = games.filter((g) => g.season === previousSeason).length;
   const upcomingCount = games.filter((g) => g.season === upcomingSeason).length;
   const requiredExample = games.some((g) => g.id === "401811018");
 
-  if (previousCount < 1000 || upcomingCount < 1000 || !requiredExample) {
+  const adequate =
+    completedCount >= 1000 && previousCount >= 1000 && requiredExample;
+
+  if (!adequate) {
     let previous = null;
     try {
       previous = JSON.parse(await fs.readFile(OUT, "utf8"));
     } catch {}
     const previousGames = Array.isArray(previous?.games) ? previous.games : [];
+    const priorCompletedCount = previousGames.filter(
+      (g) => g.season === completedSeason
+    ).length;
     const priorPreviousCount = previousGames.filter(
       (g) => g.season === previousSeason
     ).length;
-    const priorUpcomingCount = previousGames.filter(
-      (g) => g.season === upcomingSeason
-    ).length;
+    const priorHasExample = previousGames.some((g) => g.id === "401811018");
     if (
+      priorCompletedCount >= 1000 &&
       priorPreviousCount >= 1000 &&
-      priorUpcomingCount >= 1000 &&
-      previousGames.some((g) => g.id === "401811018")
+      priorHasExample
     ) {
       console.warn(
         `[runtime-snapshot] refresh incomplete (${games.length} games); retaining prior snapshot`
@@ -176,11 +190,12 @@ async function main() {
       return;
     }
     throw new Error(
-      `Runtime game snapshot incomplete: total=${games.length}, ${previousSeason}=${previousCount}, ${upcomingSeason}=${upcomingCount}, example=${requiredExample}. ` +
+      `Runtime game snapshot incomplete: total=${games.length}, ${completedSeason}=${completedCount}, ${previousSeason}=${previousCount}, ${upcomingSeason}=${upcomingCount}, example=${requiredExample}. ` +
         `Failures: ${failures.slice(0, 6).join(" | ")}`
     );
   }
 
+  // Three league years (Workers Paid size budget) for team/history + Game Lab PBP.
   await fs.mkdir(path.dirname(OUT), { recursive: true });
   await fs.writeFile(
     OUT,
@@ -197,7 +212,7 @@ async function main() {
     "utf8"
   );
   console.log(
-    `[runtime-snapshot] wrote ${games.length} games (${previousSeason}: ${previousCount}, ${upcomingSeason}: ${upcomingCount}) to ${OUT}`
+    `[runtime-snapshot] wrote ${games.length} games (${completedSeason}: ${completedCount}, ${previousSeason}: ${previousCount}, ${upcomingSeason}: ${upcomingCount}) to ${OUT}`
   );
 }
 

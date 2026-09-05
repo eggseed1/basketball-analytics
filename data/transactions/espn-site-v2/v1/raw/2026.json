@@ -2,9 +2,196 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-08-14T20:06:37.152Z",
-  "apiCount": 272,
+  "fetchedAt": "2026-08-29T23:28:41.903Z",
+  "apiCount": 289,
   "rows": [
+    {
+      "date": "2026-08-29T07:00Z",
+      "description": "Acquire Fs John Konchar and Cody Williams from Utah in exchange for SG Josh Green and cash considerations.",
+      "team": {
+        "id": "16",
+        "abbreviation": "MIN",
+        "displayName": "Minnesota Timberwolves",
+        "location": "Minnesota",
+        "name": "Timberwolves"
+      }
+    },
+    {
+      "date": "2026-08-28T07:00Z",
+      "description": "Waived F Julian Reese.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-08-28T07:00Z",
+      "description": "Waived F Cam Whitmore.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-08-27T07:00Z",
+      "description": "Signed C Nick Richards to a contract.",
+      "team": {
+        "id": "14",
+        "abbreviation": "MIA",
+        "displayName": "Miami Heat",
+        "location": "Miami",
+        "name": "Heat"
+      }
+    },
+    {
+      "date": "2026-08-26T07:00Z",
+      "description": "Signed C Rafael Castro to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-08-26T07:00Z",
+      "description": "Signed G Brandon Williams to a contract.",
+      "team": {
+        "id": "9",
+        "abbreviation": "GS",
+        "displayName": "Golden State Warriors",
+        "location": "Golden State",
+        "name": "Warriors"
+      }
+    },
+    {
+      "date": "2026-08-26T07:00Z",
+      "description": "Signed F Bryce Hopkins to a two-way contract.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-08-21T07:00Z",
+      "description": "Waived G Klay Thompson.",
+      "team": {
+        "id": "6",
+        "abbreviation": "DAL",
+        "displayName": "Dallas Mavericks",
+        "location": "Dallas",
+        "name": "Mavericks"
+      }
+    },
+    {
+      "date": "2026-08-20T07:00Z",
+      "description": "Acquired G Dennis Schroder from Cleveland.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-08-20T07:00Z",
+      "description": "Acquired G Tre Mann from Charlotte. Received draft considerations from LA Clippers.",
+      "team": {
+        "id": "27",
+        "abbreviation": "WSH",
+        "displayName": "Washington Wizards",
+        "location": "Washington",
+        "name": "Wizards"
+      }
+    },
+    {
+      "date": "2026-08-20T07:00Z",
+      "description": "Acquired G Max Strus from Cleveland.",
+      "team": {
+        "id": "12",
+        "abbreviation": "LAC",
+        "displayName": "LA Clippers",
+        "location": "LA",
+        "name": "Clippers"
+      }
+    },
+    {
+      "date": "2026-08-20T07:00Z",
+      "description": "Acquired draft considerations from Cleveland Guardians for G Peyton Watson.",
+      "team": {
+        "id": "7",
+        "abbreviation": "DEN",
+        "displayName": "Denver Nuggets",
+        "location": "Denver",
+        "name": "Nuggets"
+      }
+    },
+    {
+      "date": "2026-08-18T07:00Z",
+      "description": "Signed F Malik Dia to a two-way contract. Waived C Hunter Dickinson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-08-17T07:00Z",
+      "description": "Signed F Haywood Highsmith.",
+      "team": {
+        "id": "21",
+        "abbreviation": "PHX",
+        "displayName": "Phoenix Suns",
+        "location": "Phoenix",
+        "name": "Suns"
+      }
+    },
+    {
+      "date": "2026-08-17T07:00Z",
+      "description": "Signed G Braden Smith to a two-way contract.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-08-17T07:00Z",
+      "description": "Signed G Sean Pedulla to a two-way contract.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-08-17T07:00Z",
+      "description": "Signed G Trendon Watford to a contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
     {
       "date": "2026-08-13T07:00Z",
       "description": "Waived G Ethan Thompson.",

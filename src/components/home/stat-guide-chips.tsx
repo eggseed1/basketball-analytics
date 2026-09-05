@@ -4,9 +4,11 @@ import { listStatGuides } from "@/content/stats/guides";
 
 /** Compact links into learn pages - no pedagogy on the home surface. */
 export function StatGuideChips() {
-  const featured = listStatGuides().filter((g) =>
-    ["darko", "ts", "usg", "net", "lebron"].includes(g.id)
-  );
+  const preferred = ["drbl", "r1_win_eq", "darko", "ts", "usg", "raptor"];
+  const byId = new Map(listStatGuides().map((g) => [g.id, g]));
+  const featured = preferred
+    .map((id) => byId.get(id))
+    .filter((g): g is NonNullable<typeof g> => Boolean(g));
 
   return (
     <section className="flex flex-col gap-2">

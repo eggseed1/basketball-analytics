@@ -17,6 +17,7 @@ import {
   conceptIdForColumnLabel,
   conceptIdForFactorId,
 } from "../src/lib/learn-column-concepts";
+import { conceptIdForStatLabel } from "../src/lib/learn-glossary-bridge";
 
 function main() {
   // Alias resolution
@@ -43,6 +44,10 @@ function main() {
   assert.ok(cpi);
   assert.equal(cpi!.learnHref, "/learn/cpi");
 
+  assert.equal(explainMetric("war1")!.learnHref, "/learn/drbl/war1");
+  assert.equal(conceptIdForStatLabel("PER"), "per");
+  assert.equal(conceptIdForStatLabel("usagePct"), "usg");
+
   // Unknown / missing concept
   assert.equal(explainMetric("not_a_real_metric_xyz"), null);
   assert.equal(getLearnConcept("not_a_real_metric_xyz") ?? null, null);
@@ -51,7 +56,11 @@ function main() {
   for (const c of listExplainedMetrics()) {
     if (!c.learnHref) continue;
     const slug = c.learnHref.replace("/learn/", "");
-    assert.ok(resolveLearnPage(slug), `missing page for ${c.id} → ${slug}`);
+    const resolved =
+      slug === "drbl/war1"
+        ? resolveLearnPage("war1")
+        : resolveLearnPage(slug);
+    assert.ok(resolved, `missing page for ${c.id} → ${slug}`);
   }
 
   // Static params cover guides + topics

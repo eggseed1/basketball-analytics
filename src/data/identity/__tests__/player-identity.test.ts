@@ -164,3 +164,33 @@ test("ambiguous names are not accepted without alias file entry", async () => {
     assert.equal(await resolveNbaIdForDrbl("3112335"), null);
   });
 });
+
+test("bundled legend: Paul Pierce is ESPN 662 ↔ NBA 1718 (not Fred Jones)", async () => {
+  clearPlayerIdAliasCache();
+  // Route / search may use either id; ESPN athlete 1718 is Fred Jones and must
+  // not be aliased as Pierce.
+  const byNba = await resolvePlayerIdentity("1718");
+  assert.equal(byNba.espnId, "662");
+  assert.equal(byNba.nbaId, "1718");
+  assert.equal(byNba.displayName, "Paul Pierce");
+  assert.equal(byNba.matchMethod, "alias_nba_to_espn");
+
+  const byEspn = await resolvePlayerIdentity("662");
+  assert.equal(byEspn.espnId, "662");
+  assert.equal(byEspn.nbaId, "1718");
+  assert.equal(byEspn.displayName, "Paul Pierce");
+  assert.equal(byEspn.matchMethod, "alias_espn_to_nba");
+});
+
+test("bundled legend: Shaq / Vince do not share ESPN 136", async () => {
+  clearPlayerIdAliasCache();
+  const shaq = await resolvePlayerIdentity("406");
+  assert.equal(shaq.espnId, "614");
+  assert.equal(shaq.nbaId, "406");
+  assert.equal(shaq.displayName, "Shaquille O'Neal");
+
+  const vince = await resolvePlayerIdentity("1713");
+  assert.equal(vince.espnId, "136");
+  assert.equal(vince.nbaId, "1713");
+  assert.equal(vince.displayName, "Vince Carter");
+});

@@ -35,6 +35,7 @@ import {
   type PlayerBoardRate,
   type PlayerBoardView,
 } from "@/lib/explore-players-display";
+import { sheetStatOrderIndex } from "@/lib/player-stat-sheet-registry";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 import {
@@ -43,6 +44,36 @@ import {
 } from "@/lib/player-season-sort";
 
 type SortKey = PlayerSeasonSortKey;
+
+function boardTeamPresentation(player: ExplorePlayerBoardRow): {
+  isMultiTeam: boolean;
+  /** Canonical abbr for display / a11y (PHX not PHO). */
+  label: string;
+  teamKey: string;
+} {
+  const rawAbbr = (player.teamAbbreviation ?? "").trim().toUpperCase();
+  const isMultiTeam =
+    player.teamId === "TOT" ||
+    ["TOT", "2TM", "3TM", "4TM"].includes(rawAbbr);
+  if (isMultiTeam) {
+    const label =
+      rawAbbr === "2TM" || rawAbbr === "3TM" || rawAbbr === "4TM"
+        ? rawAbbr
+        : "TOT";
+    return { isMultiTeam: true, label, teamKey: player.teamId };
+  }
+  const brand =
+    resolveTeamBrand(player.teamId) ?? resolveTeamBrand(player.teamAbbreviation);
+  const label =
+    brand?.abbr ??
+    rawAbbr ??
+    (/^\d{6,}$/.test(player.teamId) ? "-" : player.teamId);
+  return {
+    isMultiTeam: false,
+    label,
+    teamKey: brand?.id ?? player.teamId,
+  };
+}
 
 type BoardPageResponse = {
   rows?: ExplorePlayerBoardRow[];
@@ -97,7 +128,7 @@ export interface PlayerSeasonTableProps {
   sortKey: PlayerSeasonSortKey;
   sortDir: "asc" | "desc";
   hasDarko: boolean;
-  hasLebron: boolean;
+  hasRaptor: boolean;
   hasDrbl: boolean;
   seasonAwaitingGames?: boolean;
 }
@@ -111,7 +142,7 @@ export function PlayerSeasonTable({
   sortKey,
   sortDir,
   hasDarko,
-  hasLebron,
+  hasRaptor,
   hasDrbl,
   seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
@@ -188,10 +219,10 @@ export function PlayerSeasonTable({
 
   const views = parsePlayerBoardViews(searchParams.get("view"));
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
-  const flags = { hasDarko, hasLebron, hasDrbl };
+  const flags = { hasDarko, hasRaptor, hasDrbl };
   const groups = buildPlayerBoardGroups(views, flags);
-  // Always show category band headers — including a single category (e.g. True
-  // Shooting) and the partitioned "all stats" layout.
+  // Always show category band headers — including a single category and the
+  // partitioned "all stats" layout.
   const grouped = groups.length > 0;
   const statCount = groups.reduce((sum, group) => sum + group.keys.length, 0);
   // Stats pane: spacer + Tm + Pos + stats (Player lives on the glass overlay).
@@ -268,7 +299,7 @@ export function PlayerSeasonTable({
                     : "none"
                 }
                 className={cn(
-                  "group flex h-7 w-full min-w-max items-center gap-1 font-semibold uppercase transition-colors sm:h-10",
+                  "group flex h-7 w-full min-w-0 items-center gap-1 font-semibold uppercase transition-colors sm:h-10",
                   boardType.head,
                   sortKey === "playerName"
                     ? "text-foreground"
@@ -285,23 +316,8 @@ export function PlayerSeasonTable({
             </div>
             <div className="flex min-h-0 flex-col">
               {rows.map((player) => {
-                const isMultiTeam =
-                  player.teamId === "TOT" ||
-                  ["TOT", "2TM", "3TM", "4TM"].includes(
-                    (player.teamAbbreviation ?? "").toUpperCase()
-                  );
-                const brand = isMultiTeam
-                  ? undefined
-                  : resolveTeamBrand(player.teamId);
-                const teamLabel = isMultiTeam
-                  ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
-                    player.teamAbbreviation?.toUpperCase() === "3TM" ||
-                    player.teamAbbreviation?.toUpperCase() === "4TM"
-                    ? "Multiple"
-                    : "TOT"
-                  : (brand?.abbr ??
-                    player.teamAbbreviation ??
-                    (/^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
+                const { isMultiTeam, label: teamLabel, teamKey } =
+                  boardTeamPresentation(player);
                 return (
                   <div
                     key={rowKey(player)}
@@ -311,7 +327,7 @@ export function PlayerSeasonTable({
                     <PlayerIdentity
                       playerId={player.playerId}
                       name={player.playerName}
-                      teamKey={isMultiTeam ? undefined : player.teamId}
+                      teamKey={isMultiTeam ? undefined : teamKey}
                       teamLabel={teamLabel}
                       position={player.position}
                       season={player.season}
@@ -322,9 +338,11 @@ export function PlayerSeasonTable({
                       <PlayerHeadshot
                         playerId={player.playerId}
                         name={player.playerName}
-                        teamKey={isMultiTeam ? undefined : player.teamId}
+                        teamKey={isMultiTeam ? undefined : teamKey}
                         size="sm"
-                        className="max-sm:hidden"
+                        className="h-6 w-6 sm:h-9 sm:w-9"
+                        portraitUrl={player.portraitUrl}
+                        registryOnly={Boolean(player.portraitUrl)}
                       />
                       <span
                         className={cn(
@@ -433,23 +451,8 @@ export function PlayerSeasonTable({
               </TableRow>
             ) : (
               rows.map((player) => {
-                const isMultiTeam =
-                  player.teamId === "TOT" ||
-                  ["TOT", "2TM", "3TM", "4TM"].includes(
-                    (player.teamAbbreviation ?? "").toUpperCase()
-                  );
-                const brand = isMultiTeam
-                  ? undefined
-                  : resolveTeamBrand(player.teamId);
-                const teamLabel = isMultiTeam
-                  ? player.teamAbbreviation?.toUpperCase() === "2TM" ||
-                    player.teamAbbreviation?.toUpperCase() === "3TM" ||
-                    player.teamAbbreviation?.toUpperCase() === "4TM"
-                    ? "Multiple"
-                    : "TOT"
-                  : (brand?.abbr ??
-                    player.teamAbbreviation ??
-                    (/^\d{6,}$/.test(player.teamId) ? "-" : player.teamId));
+                const { isMultiTeam, label: teamLabel, teamKey } =
+                  boardTeamPresentation(player);
                 return (
                   <TableRow
                     key={rowKey(player)}
@@ -465,25 +468,30 @@ export function PlayerSeasonTable({
                       {isMultiTeam ? (
                         <span
                           className={cn(
-                            "board-tm font-semibold uppercase tracking-wide",
+                            "board-tm font-semibold uppercase tracking-wide tabular-nums",
                             boardType.cell
                           )}
+                          title="Multiple teams this season"
                         >
                           {teamLabel}
                         </span>
                       ) : (
                         <TeamIdentity
-                          teamKey={player.teamId}
+                          teamKey={teamKey}
                           label={teamLabel}
                           season={player.season}
-                          className="inline-flex"
+                          className="inline-flex min-w-0"
                           nameClassName={cn(
-                            "board-tm inline-flex items-center gap-1 font-semibold uppercase tracking-wide sm:gap-1",
+                            "board-tm inline-flex items-center font-semibold uppercase tracking-wide",
                             boardType.cell
                           )}
                         >
-                          <TeamLogo teamKey={player.teamId} size="xs" />
-                          <span>{teamLabel}</span>
+                          <TeamLogo
+                            teamKey={teamKey}
+                            size="xs"
+                            textAbbr={teamLabel}
+                          />
+                          <span className="sr-only">{teamLabel}</span>
                         </TeamIdentity>
                       )}
                     </TableCell>
@@ -543,7 +551,7 @@ type TableCol = PlayerSeasonSortKey;
 
 type BoardColumnFlags = {
   hasDarko: boolean;
-  hasLebron: boolean;
+  hasRaptor: boolean;
   hasDrbl: boolean;
 };
 
@@ -553,89 +561,24 @@ type BoardGroup = {
   keys: TableCol[];
 };
 
-/** Extra / multi-band columns → preferred all-stats band. */
-const ALL_COLUMN_CATEGORY_HINT: Partial<Record<TableCol, PlayerBoardView>> = {
-  relativeTrueShootingPct: "ts",
-  turnoverPct: "advanced",
-  twoPointPct: "shooting",
-  threePointersAttempted: "shooting",
-  freeThrowsAttempted: "shooting",
-  offensiveRebounds: "profile",
-  defensiveRebounds: "profile",
-};
-
-/**
- * When a column sits in multiple presets, prefer the more specific band so
- * Advanced/Impact/TS aren’t emptied by Profile/Shooting claiming first.
- */
-const CATEGORY_OWNERSHIP_PRIORITY: readonly PlayerBoardView[] = [
-  "advanced",
-  "impact",
-  "ts",
-  "shooting",
-  "defense",
-  "profile",
-];
-
 function columnsForView(
   view: PlayerBoardView,
   flags: BoardColumnFlags
 ): TableCol[] {
-  return [...filterPlayerBoardViewColumns(view, flags)];
+  return [...filterPlayerBoardViewColumns(view, flags)].sort(
+    (a, b) => sheetStatOrderIndex(a) - sheetStatOrderIndex(b)
+  );
 }
 
-function resolveColumnCategory(col: TableCol): PlayerBoardView | null {
-  const hint = ALL_COLUMN_CATEGORY_HINT[col];
-  if (hint) return hint;
-  for (const cat of CATEGORY_OWNERSHIP_PRIORITY) {
-    if (
-      (filterPlayerBoardViewColumns(cat, {
-        hasDarko: true,
-        hasLebron: true,
-        hasDrbl: true,
-      }) as string[]).includes(col)
-    ) {
-      return cat;
-    }
-  }
-  return null;
-}
-
-/** Full union of category presets, bucketed under Profile / Shooting / … bands. */
+/** Full union of category presets, bucketed under Counting / Shooting / … bands. */
 function partitionAllColumnsIntoCategories(
   flags: BoardColumnFlags
 ): BoardGroup[] {
-  const buckets = new Map<PlayerBoardView, TableCol[]>();
-  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
-    buckets.set(cat.id, []);
-  }
-  const leftover: TableCol[] = [];
-  const seen = new Set<TableCol>();
-
-  // Prefer category order for the flat walk; ownership priority decides the band.
-  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
-    for (const col of columnsForView(cat.id, flags)) {
-      if (seen.has(col)) continue;
-      seen.add(col);
-      const category = resolveColumnCategory(col);
-      if (category && buckets.has(category)) {
-        buckets.get(category)!.push(col);
-      } else {
-        leftover.push(col);
-      }
-    }
-  }
-
-  const groups: BoardGroup[] = PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => ({
+  return PLAYER_BOARD_CATEGORY_VIEWS.map((cat) => ({
     id: cat.id,
     label: cat.label,
-    keys: buckets.get(cat.id) ?? [],
+    keys: columnsForView(cat.id, flags),
   })).filter((group) => group.keys.length > 0);
-
-  if (leftover.length) {
-    groups.push({ id: "all", label: "Other", keys: leftover });
-  }
-  return groups;
 }
 
 function buildPlayerBoardGroups(
@@ -654,29 +597,29 @@ function buildPlayerBoardGroups(
     .filter((group) => group.keys.length > 0);
 }
 
-function columnLabel(col: TableCol, view: PlayerBoardView): string {
-  const profileLike = view === "all" || view === "profile";
+/** Sheet abbreviations — same labels as Statistics / percentile. */
+function columnLabel(col: TableCol, _view: PlayerBoardView): string {
   switch (col) {
     case "gamesPlayed":
       return "GP";
     case "mpg":
-      return "MIN";
+      return "MP";
     case "age":
       return "Age";
     case "usagePct":
-      return profileLike ? "OnBall %" : "USG%";
+      return "USG%";
     case "darkoDpm":
-      return profileLike ? "DPM" : "DARKO";
+      return "DARKO";
     case "darkoOff":
-      return "ODPM";
+      return "DARKO-O";
     case "darkoDef":
-      return "DDPM";
+      return "DARKO-D";
     case "ppg":
       return "PTS";
     case "apg":
       return "AST";
     case "rpg":
-      return "REB";
+      return "TRB";
     case "tov":
       return "TOV";
     case "trueShootingPct":
@@ -684,7 +627,7 @@ function columnLabel(col: TableCol, view: PlayerBoardView): string {
     case "relativeTrueShootingPct":
       return "rTS%";
     case "turnoverPct":
-      return "cTOV%";
+      return "TOV%";
     case "twoPointPct":
       return "2P%";
     case "threePointPct":
@@ -696,9 +639,9 @@ function columnLabel(col: TableCol, view: PlayerBoardView): string {
     case "freeThrowsAttempted":
       return "FTA";
     case "offensiveRebounds":
-      return "OREB";
+      return "ORB";
     case "defensiveRebounds":
-      return "DREB";
+      return "DRB";
     case "spg":
       return "STL";
     case "bpg":
@@ -713,8 +656,16 @@ function columnLabel(col: TableCol, view: PlayerBoardView): string {
       return "DRtg";
     case "netRating":
       return "NET";
-    case "lebron":
-      return "LEBRON";
+    case "raptor":
+      return "RAPTOR";
+    case "oRaptor":
+      return "O-RAPTOR";
+    case "dRaptor":
+      return "D-RAPTOR";
+    case "winsAdded":
+      return "WAR";
+    case "bpm":
+      return "BPM";
     case "drbl100":
       return "DRBL/100";
     case "r1WinEquivalents":
@@ -752,8 +703,14 @@ function columnHelp(col: TableCol): string | null {
       return "drtg";
     case "netRating":
       return "net";
-    case "lebron":
-      return "lebron";
+    case "raptor":
+      return "raptor";
+    case "oRaptor":
+    case "dRaptor":
+    case "winsAdded":
+      return "raptor";
+    case "bpm":
+      return "bpm";
     default:
       return null;
   }
@@ -846,8 +803,18 @@ function formatStat(
       return formatOptionalRating(player.defensiveRating);
     case "netRating":
       return formatOptionalNet(player.netRating);
-    case "lebron":
-      return formatOptionalImpact(player.lebron);
+    case "raptor":
+      return formatOptionalImpact(player.raptor);
+    case "oRaptor":
+      return formatOptionalImpact(player.oRaptor);
+    case "dRaptor":
+      return formatOptionalImpact(player.dRaptor);
+    case "winsAdded":
+      return player.winsAdded != null
+        ? formatNumber(player.winsAdded, 1)
+        : "-";
+    case "bpm":
+      return formatOptionalImpact(player.bpm);
     case "drbl100":
       return formatOptionalDrbl(player.drbl100);
     case "r1WinEquivalents":
@@ -921,7 +888,7 @@ function formatCounting(
 ): string {
   if (rate === "totals") return formatNumber(total, 0);
   if (rate === "perGame" || mpg <= 0) return formatNumber(perGame, 1);
-  const scaled = rate === "per75" ? (perGame * 75) / mpg : (perGame * 100) / mpg;
+  const scaled = (perGame * 100) / mpg;
   return formatNumber(scaled, 1);
 }
 

@@ -39,6 +39,13 @@ export default async function AwardHistoryPage({
 
   const rows = getAwardHistory(slug);
   const hasYearList = rows.length > 0;
+  const seasonColumnLabel =
+    award.slug === "all-star"
+      ? "Selections"
+      : award.slug === "hall-of-fame"
+        ? "Year"
+        : "Season";
+  const emptyCopy = `Full season-by-season lists for ${award.shortLabel} are coming soon. Player pages still show each player’s personal count from official NBA Stats awards.`;
 
   return (
     <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
@@ -67,11 +74,14 @@ export default async function AwardHistoryPage({
           >
             {award.trophyName}
           </p>
-          <h1 className={cn(type.display, "text-[28px] sm:text-[32px]")}>
-            {award.title}
-          </h1>
+          <h1 className={type.title1}>{award.title}</h1>
           <p className={cn(type.body, "mt-1 max-w-2xl text-muted-foreground")}>
             {award.blurb}
+            {award.slug === "all-star"
+              ? " Ranked here by career All-Star selections from the awards bake."
+              : award.slug === "hall-of-fame"
+                ? " Player-category inductees by induction year (Naismith Memorial). Linked when we have a site player id."
+                : ""}
           </p>
         </div>
       </header>
@@ -86,14 +96,18 @@ export default async function AwardHistoryPage({
                   "border-b border-border uppercase tracking-wide text-muted-foreground"
                 )}
               >
-                <th className="px-4 py-2.5 font-semibold">Season</th>
-                <th className="px-4 py-2.5 font-semibold">Winner</th>
+                <th className="px-4 py-2.5 font-semibold">{seasonColumnLabel}</th>
+                <th className="px-4 py-2.5 font-semibold">
+                  {award.slug === "all-nba" || award.slug === "all-defense"
+                    ? "Selection"
+                    : "Winner"}
+                </th>
               </tr>
             </thead>
             <tbody>
               {rows.map((row) => (
                 <tr
-                  key={`${row.season}-${row.winner}`}
+                  key={`${row.season}-${row.winner}-${row.href ?? ""}`}
                   className="border-b border-border/70 last:border-0"
                 >
                   <td
@@ -129,11 +143,7 @@ export default async function AwardHistoryPage({
           </table>
         </div>
       ) : (
-        <p className={cn(type.body, "text-muted-foreground")}>
-          Full season-by-season lists for {award.shortLabel} are coming soon.
-          Player pages still show each player’s personal count from official NBA
-          Stats awards.
-        </p>
+        <p className={cn(type.body, "text-muted-foreground")}>{emptyCopy}</p>
       )}
     </main>
   );

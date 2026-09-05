@@ -42,6 +42,8 @@ export interface StatsNbaFetchOptions {
   staleMs?: number;
   retries?: number;
   signal?: AbortSignal;
+  /** Override default 4s upstream timeout (e.g. shot charts on paid Workers). */
+  timeoutMs?: number;
 }
 
 function buildUrl(
@@ -121,11 +123,12 @@ async function fetchStatsNba(
   const retries = options.retries ?? DEFAULT_RETRIES;
   let lastError: unknown;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;
+  const timeoutMs = options.timeoutMs ?? DEFAULT_TIMEOUT_MS;
 
   for (let attempt = 0; attempt < retries; attempt++) {
     try {
       const response = await fetch(url, {
-        signal: options.signal ?? AbortSignal.timeout(DEFAULT_TIMEOUT_MS),
+        signal: options.signal ?? AbortSignal.timeout(timeoutMs),
         headers: NBA_HEADERS,
         // Shared across Vercel instances (Next Data Cache / CDN).
         next: { revalidate: Math.max(60, Math.floor(ttlMs / 1000)) },

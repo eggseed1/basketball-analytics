@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 
+import { GuideFormulaEquations } from "@/components/learn/drbl-math-formulas";
 import type { StatGuide } from "@/content/stats/guides";
 import { cn } from "@/lib/utils";
 
@@ -16,6 +17,8 @@ const GUIDE_CATEGORY_LABEL: Record<StatGuide["category"], string> = {
 export function StatGuideView({ guide }: { guide: StatGuide }) {
   const [depth, setDepth] = useState<"plain" | "deep">("plain");
   const body = depth === "plain" ? guide.plain : guide.deep;
+  const showCustomEquations =
+    guide.slug === "drbl-100" || guide.slug === "war1";
 
   return (
     <div className="flex flex-col gap-6">
@@ -29,6 +32,14 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
         <p className="max-w-xl text-[16px] leading-relaxed text-muted-foreground">
           {guide.blurb}
         </p>
+        {guide.slug === "war1" ? (
+          <aside className="max-w-xl rounded-md border border-border/70 frost-surface-soft px-3 py-2.5 text-[14px] leading-relaxed text-muted-foreground">
+            <span className="font-semibold text-foreground">Platform height: </span>
+            a roster that sums to about 0 WAR1 projects like a mid-30s win team
+            (~35–38), not a classic ~20-win replacement club — an empirical read of
+            the R1 baseline, not Σ WAR1 = standings wins.
+          </aside>
+        ) : null}
         <div
           className="inline-flex w-fit rounded-full bg-secondary p-1"
           role="group"
@@ -50,14 +61,19 @@ export function StatGuideView({ guide }: { guide: StatGuide }) {
       </header>
 
       {depth === "deep" ? (
-        <section className="sports-card flex flex-col gap-3 p-4">
+        <section className="sports-card flex flex-col gap-4 p-4">
           <h2 className="text-[16px] font-bold">Definition</h2>
           <p className="text-[14px] leading-relaxed text-muted-foreground">
             {guide.deep.definition}
           </p>
-          <div className="rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[14px] leading-snug">
-            {guide.deep.formula}
-          </div>
+          <h2 className="text-[16px] font-bold">Formula</h2>
+          {showCustomEquations ? (
+            <GuideFormulaEquations slug={guide.slug} />
+          ) : (
+            <div className="rounded-xl bg-secondary/80 px-3 py-2 font-mono text-[14px] leading-snug">
+              {guide.deep.formula}
+            </div>
+          )}
           <h3 className="text-[14px] font-semibold">Calculation</h3>
           <ol className="list-decimal space-y-2 pl-5 text-[14px] leading-relaxed text-muted-foreground">
             {guide.deep.calculation.map((step) => (
@@ -96,7 +112,7 @@ function DepthButton({
 }: {
   active: boolean;
   onClick: () => void;
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   return (
     <button

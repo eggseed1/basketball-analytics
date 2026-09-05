@@ -23,9 +23,9 @@ import {
   shootingFromGames,
 } from "@/data/history/player-game-log";
 import {
-  loadPlayerSeasonShotIndex,
-  zoneTableFromIndex,
-} from "@/data/history/player-season-shots";
+  resolvePlayerSeasonShotIndex,
+} from "@/data/runtime/player-shots-store";
+import { zoneTableFromIndex } from "@/data/history/player-season-shots";
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
 import { SHOT_ZONE_LABELS, type ShotZoneId } from "@/lib/shots/court-geometry";
 import type { PlayerSeason } from "@/data/types";
@@ -33,7 +33,11 @@ import {
   computePlayerPercentiles,
   hasValidDrblEstimate,
 } from "@/data/queries/percentiles";
-import { getFilteredPlayerSeasonsCached } from "@/data/queries/request-cache";
+import {
+  getFilteredPlayerSeasonsCached,
+  getPlayerSeasonCached,
+  resolvePlayerIdentityCached,
+} from "@/data/queries/request-cache";
 import { formatNumber, formatPct } from "@/lib/format";
 import {
   buildGameDistribution,
@@ -59,7 +63,7 @@ import {
   playerPageCapabilities,
 } from "@/lib/player-page-contract";
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
-import { getPlayerSeasonCached } from "@/data/queries/request-cache";
+import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 
 function pct(n: number | null): string {
   if (n == null) return "—";
@@ -85,6 +89,59 @@ function ageForSeason(
  * Deep player statistics island — loads only the selected view's data.
  */
 export async function PlayerStatDepthIsland({
+  playerId,
+  season,
+  view,
+  page,
+  statMode,
+  gameLogMode = "basic",
+  filter,
+  historySeasons,
+  career,
+  careerFirstSeason,
+  fromHistory,
+  themeMode,
+}: {
+  playerId: string;
+  season: string;
+  view: PlayerPageView;
+  page: number;
+  statMode: PlayerStatMode;
+  gameLogMode?: PlayerGameLogTableMode;
+  filter: string;
+  historySeasons: HistoryPlayerSeason[];
+  career: PlayerSeason[];
+  careerFirstSeason?: string | null;
+  fromHistory?: boolean;
+  themeMode?: "historical" | "modern";
+}) {
+  try {
+    return await PlayerStatDepthIslandInner({
+      playerId,
+      season,
+      view,
+      page,
+      statMode,
+      gameLogMode,
+      filter,
+      historySeasons,
+      career,
+      careerFirstSeason,
+      fromHistory,
+      themeMode,
+    });
+  } catch {
+    return (
+      <EraUnavailable
+        title="Deep stats"
+        season={season}
+        detail="This panel could not finish loading. Career and overview stats remain available."
+      />
+    );
+  }
+}
+
+async function PlayerStatDepthIslandInner({
   playerId,
   season,
   view,
@@ -710,7 +767,10 @@ async function ShootingView({
         }
       : boardShoot;
 
-  const shotIndex = loadPlayerSeasonShotIndex(playerId, season);
+  const shotIndex = await resolvePlayerSeasonShotIndex({
+    playerId,
+    season,
+  });
   const zoneRows = shotIndex ? zoneTableFromIndex(shotIndex) : [];
   const courtShots =
     shotIndex?.shots.map((s) => ({ ...s, season })) ?? [];
@@ -911,12 +971,51 @@ async function AdvancedView({
   career: PlayerSeason[];
   caps: ReturnType<typeof playerPageCapabilities>;
 }) {
-  const [seasonRaw, league] = await Promise.all([
-    getPlayerSeasonCached(playerId, season).catch(() => null),
+  const constrained = slimEdgeProductEnabled();
+  const { attachDrblToPlayerSeasons } = await import("@/data/queries/players");
+  const [seasonRaw, league, identity] = await Promise.all([
+    constrained
+      ? Promise.resolve(null)
+      : getPlayerSeasonCached(playerId, season).catch(() => null),
+    // Bundled BRef peer board + DRBL overlay (getFiltered path) — CF-safe.
     getFilteredPlayerSeasonsCached(season, 15).catch(() => [] as PlayerSeason[]),
+    resolvePlayerIdentityCached(playerId).catch(() => null),
   ]);
-  const careerSeason = career.find((r) => r.season === season);
-  const merged = mergePlayerSeasonStats(seasonRaw, careerSeason, null);
+  const careerSeason = career.find((r) => r.season === season) ?? null;
+  const espnId = identity?.espnId ?? null;
+  const nbaId = identity?.nbaId ?? null;
+  const isFocalPlayer = (row: PlayerSeason) =>
+    row.playerId === playerId ||
+    (espnId != null && row.playerId === espnId) ||
+    (nbaId != null && row.playerId === nbaId);
+
+  // League board already carries sealed DRBL when the season is in-window.
+  const peerRow =
+    league.find(isFocalPlayer) ??
+    null;
+
+  // Career / live season rows often lack DRBL — attach sealed overlay so the
+  // marker works even when the player is missing from the GP≥15 peer board.
+  const careerWithDrbl = careerSeason
+    ? (
+        await attachDrblToPlayerSeasons(playerId, [careerSeason]).catch(
+          () => [careerSeason]
+        )
+      )[0] ?? careerSeason
+    : null;
+  const seasonWithDrbl = seasonRaw
+    ? (
+        await attachDrblToPlayerSeasons(playerId, [seasonRaw]).catch(
+          () => [seasonRaw]
+        )
+      )[0] ?? seasonRaw
+    : null;
+
+  const merged = mergePlayerSeasonStats(
+    seasonWithDrbl,
+    careerWithDrbl,
+    peerRow
+  );
   const drblOk = caps.advancedDrbl && merged && hasValidDrblEstimate(merged);
 
   const percentiles =
@@ -976,6 +1075,7 @@ async function AdvancedView({
     .sort((a, b) => a - b);
   const drblBins = binValues(drblValues, 12);
   const warValues = league
+    .filter((r) => hasValidDrblEstimate(r) && r.r1WinEquivalents != null)
     .map((r) => r.r1WinEquivalents)
     .filter((v): v is number => v != null && Number.isFinite(v))
     .sort((a, b) => a - b);
@@ -987,7 +1087,7 @@ async function AdvancedView({
   const scatter = scatterPool.map((r) => ({
     x: r.points / Math.max(1, r.gamesPlayed),
     y: r.trueShootingPct!,
-    highlight: r.playerId === playerId,
+    highlight: isFocalPlayer(r),
     label: r.playerName,
   }));
   if (merged && !scatter.some((p) => p.highlight) && merged.trueShootingPct != null) {

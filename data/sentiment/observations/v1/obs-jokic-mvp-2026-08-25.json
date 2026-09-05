@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-jokic-mvp-2026-08-25",
+  "collectedAt": "2026-08-25T18:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-jokic-fan-001",
+      "entityType": "player",
+      "entityId": "203999",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.52,
+      "mentionVolume": 310,
+      "language": "en",
+      "topicTags": ["mvp_case", "franchise_face", "passing"],
+      "sampledAt": "2026-08-24T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-jokic-fan-002",
+      "entityType": "player",
+      "entityId": "203999",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.41,
+      "mentionVolume": 180,
+      "language": "en",
+      "topicTags": ["title_odds", "championship_window"],
+      "sampledAt": "2026-08-25T16:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-jokic-media-001",
+      "entityType": "player",
+      "entityId": "203999",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "positive",
+      "score": 0.28,
+      "mentionVolume": 88,
+      "language": "en",
+      "topicTags": ["mvp_case", "title_contender"],
+      "sampledAt": "2026-08-25T15:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

@@ -106,15 +106,15 @@ export interface PlayerSeason {
   onOffDpm: number;
 
   /**
-   * Optional impact overlays joined from public DARKO / LEBRON feeds (web IA).
+   * Optional impact overlays joined from public DARKO / RAPTOR feeds (web IA).
    * Not canonical DRBL value; never substitute for drbl100 / R1 fields.
    */
   darkoDpm?: number;
   darkoOff?: number;
   darkoDef?: number;
-  lebron?: number;
-  oLebron?: number;
-  dLebron?: number;
+  raptor?: number;
+  oRaptor?: number;
+  dRaptor?: number;
   winsAdded?: number;
 
   /**

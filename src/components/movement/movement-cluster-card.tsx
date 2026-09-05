@@ -83,7 +83,7 @@ export function MovementClusterCard({
     <p
       className={cn(
         type.caption,
-        "rounded-md border border-sky-500/25 bg-white/45 px-2 py-1.5 text-sky-950 dark:text-sky-100"
+        "rounded-md border border-sky-500/25 frost-surface px-2 py-1.5 text-sky-950 dark:text-sky-100"
       )}
     >
       Transaction recorded — {completionClaim.summary}
@@ -95,7 +95,7 @@ export function MovementClusterCard({
   return (
     <article
       className={cn(
-        "flex flex-col gap-2 rounded-md border bg-white/35",
+        "flex flex-col gap-2 rounded-md border frost-surface-soft",
         compact ? "px-2.5 py-2" : "px-3 py-3",
         resolved
           ? "border-sky-500/35 bg-sky-500/[0.06]"

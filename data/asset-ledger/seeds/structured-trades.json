@@ -1,0 +1,94 @@
+{
+  "version": "1.0",
+  "note": "Verified multi-team trades with canonical player/pick ids. Sources: official team announcements + Basketball-Reference transaction logs. ESPN blurbs remain separate source events.",
+  "trades": [
+    {
+      "id": "struct-tx-bos-bkn-2013-07-12",
+      "date": "2013-07-12",
+      "season": "2013-14",
+      "teamIds": ["2", "17"],
+      "description": "Boston traded Paul Pierce, Kevin Garnett, and Jason Terry to Brooklyn for Gerald Wallace, Kris Humphries, MarShon Brooks, Kris Joseph, and 2014/2016/2018 first-round picks.",
+      "sourceUrl": "https://www.nba.com/news/celtics-nets-complete-blockbuster-trade",
+      "parties": [
+        {
+          "teamId": "2",
+          "outgoing": [
+            { "kind": "player", "playerId": "662", "playerName": "Paul Pierce" },
+            { "kind": "player", "playerId": "261", "playerName": "Kevin Garnett" },
+            { "kind": "player", "playerId": "bref:terryja01", "playerName": "Jason Terry" }
+          ],
+          "incoming": [
+            { "kind": "player", "playerId": "bref:wallage01", "playerName": "Gerald Wallace" },
+            { "kind": "player", "playerId": "bref:humphkr01", "playerName": "Kris Humphries" },
+            { "kind": "player", "playerId": "bref:brookma01", "playerName": "MarShon Brooks" },
+            { "kind": "player", "playerId": "bref:josepkr01", "playerName": "Kris Joseph" },
+            { "kind": "pick", "draftYear": 2014, "round": 1, "originalTeamId": "17" },
+            { "kind": "pick", "draftYear": 2016, "round": 1, "originalTeamId": "17" },
+            { "kind": "pick", "draftYear": 2018, "round": 1, "originalTeamId": "17" }
+          ]
+        },
+        {
+          "teamId": "17",
+          "outgoing": [
+            { "kind": "player", "playerId": "bref:wallage01", "playerName": "Gerald Wallace" },
+            { "kind": "player", "playerId": "bref:humphkr01", "playerName": "Kris Humphries" },
+            { "kind": "player", "playerId": "bref:brookma01", "playerName": "MarShon Brooks" },
+            { "kind": "player", "playerId": "bref:josepkr01", "playerName": "Kris Joseph" },
+            { "kind": "pick", "draftYear": 2014, "round": 1, "originalTeamId": "17" },
+            { "kind": "pick", "draftYear": 2016, "round": 1, "originalTeamId": "17" },
+            { "kind": "pick", "draftYear": 2018, "round": 1, "originalTeamId": "17" }
+          ],
+          "incoming": [
+            { "kind": "player", "playerId": "662", "playerName": "Paul Pierce" },
+            { "kind": "player", "playerId": "261", "playerName": "Kevin Garnett" },
+            { "kind": "player", "playerId": "bref:terryja01", "playerName": "Jason Terry" }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "struct-tx-bkn-min-2015-02-19",
+      "date": "2015-02-19",
+      "season": "2014-15",
+      "teamIds": ["17", "16"],
+      "description": "Brooklyn traded Kevin Garnett to Minnesota for Thaddeus Young.",
+      "parties": [
+        {
+          "teamId": "17",
+          "outgoing": [{ "kind": "player", "playerId": "261", "playerName": "Kevin Garnett" }],
+          "incoming": [{ "kind": "player", "playerId": "bref:youngth01", "playerName": "Thaddeus Young" }]
+        },
+        {
+          "teamId": "16",
+          "outgoing": [{ "kind": "player", "playerId": "bref:youngth01", "playerName": "Thaddeus Young" }],
+          "incoming": [{ "kind": "player", "playerId": "261", "playerName": "Kevin Garnett" }]
+        }
+      ]
+    },
+    {
+      "id": "struct-tx-bos-okc-2021-06-18",
+      "date": "2021-06-18",
+      "season": "2020-21",
+      "teamIds": ["2", "25"],
+      "description": "Boston traded Kemba Walker to Oklahoma City for Al Horford, Moses Brown, and a 2023 second-round pick.",
+      "parties": [
+        {
+          "teamId": "2",
+          "outgoing": [{ "kind": "player", "playerId": "bref:walkeke02", "playerName": "Kemba Walker" }],
+          "incoming": [
+            { "kind": "player", "playerId": "3213", "playerName": "Al Horford" },
+            { "kind": "pick", "draftYear": 2023, "round": 2, "originalTeamId": "25" }
+          ]
+        },
+        {
+          "teamId": "25",
+          "outgoing": [
+            { "kind": "player", "playerId": "3213", "playerName": "Al Horford" },
+            { "kind": "pick", "draftYear": 2023, "round": 2, "originalTeamId": "25" }
+          ],
+          "incoming": [{ "kind": "player", "playerId": "bref:walkeke02", "playerName": "Kemba Walker" }]
+        }
+      ]
+    }
+  ]
+}

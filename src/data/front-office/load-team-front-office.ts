@@ -4,9 +4,6 @@
  * resolving the current live roster outside the Vercel critical path.
  */
 
-import { existsSync, readFileSync } from "node:fs";
-import path from "node:path";
-
 import type {
   FrontOfficeLeagueSnapshot,
   TeamDraftAssetsPresentation,
@@ -20,11 +17,12 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { isVercelRuntime } from "@/data/providers/nba/runtime-policy";
+import {
+  getRuntimeFrontOfficeManifest,
+  getRuntimeFrontOfficeSlice,
+} from "@/data/runtime/front-office-snapshot";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { DraftAsset } from "@/data/types/front-office";
-
-const ROOT = () =>
-  path.join(process.cwd(), "data", "front-office", "v1");
 
 type TeamSlice = {
   meta: FrontOfficeLeagueSnapshot["meta"];
@@ -33,9 +31,15 @@ type TeamSlice = {
   team: TeamFrontOfficeArtifact;
 };
 
-function readJson<T>(filePath: string): T | null {
-  if (!existsSync(filePath)) return null;
+function readLocalJson<T>(parts: string[]): T | null {
+  if (process.env.NODE_ENV === "production") return null;
   try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const { existsSync, readFileSync } = require("node:fs") as typeof import("node:fs");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const path = require("node:path") as typeof import("node:path");
+    const filePath = path.join(process.cwd(), "data", "front-office", "v1", ...parts);
+    if (!existsSync(filePath)) return null;
     return JSON.parse(readFileSync(filePath, "utf8")) as T;
   } catch {
     return null;
@@ -57,17 +61,21 @@ export function resolveFrontOfficeFranchiseId(
   return raw;
 }
 
-export function loadFrontOfficeManifest() {
-  return readJson<{
-    snapshotDate: string;
-    retrievedAt: string;
-    sourceHash: string;
-    status: string;
-    season: string;
-    teamsWithPayroll: number;
-    playersWithSalary: number;
-    capabilities: FrontOfficeLeagueSnapshot["capabilities"];
-  }>(path.join(ROOT(), "manifest.json"));
+type FrontOfficeManifest = {
+  snapshotDate: string;
+  retrievedAt: string;
+  sourceHash: string;
+  status: string;
+  season: string;
+  teamsWithPayroll: number;
+  playersWithSalary: number;
+  capabilities: FrontOfficeLeagueSnapshot["capabilities"];
+};
+
+export function loadFrontOfficeManifest(): FrontOfficeManifest | null {
+  const bundled = getRuntimeFrontOfficeManifest();
+  if (bundled) return bundled as FrontOfficeManifest;
+  return readLocalJson<FrontOfficeManifest>(["manifest.json"]);
 }
 
 export function loadTeamFrontOfficeSlice(
@@ -75,7 +83,9 @@ export function loadTeamFrontOfficeSlice(
 ): TeamSlice | null {
   const id = resolveFrontOfficeFranchiseId(franchiseId);
   if (!id) return null;
-  return readJson<TeamSlice>(path.join(ROOT(), "teams", `${id}.json`));
+  const bundled = getRuntimeFrontOfficeSlice(id);
+  if (bundled) return bundled as TeamSlice;
+  return readLocalJson(["teams", `${id}.json`]);
 }
 
 export function buildTeamPayrollPresentation(

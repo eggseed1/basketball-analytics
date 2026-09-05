@@ -28,22 +28,30 @@ export default function FranchisesPage() {
           </h1>
           <p className="mt-1 text-[16px] leading-relaxed text-muted-foreground">
             Titles, Finals trips, playoff ledgers, career win percentages, and
-            the weird records fans argue about - through {asOf}. Click any club
-            for the full scrapbook.
+            the weird records fans argue about - through {asOf}. Open any club
+            to its team History tab for the full scrapbook — lore, not live
+            season intelligence.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
           <TransitionLink
             href="/explore/teams"
+            className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
+          >
+            Live teams
+          </TransitionLink>
+          <TransitionLink
+            href="/history"
             className="rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold"
           >
-            This season
+            Time Machine
           </TransitionLink>
           <TransitionLink
             href="/gm"
-            className="rounded-md bg-foreground px-4 py-2 text-[14px] font-semibold text-background"
+            className="rounded-md border border-border px-4 py-2 text-[14px] font-semibold text-muted-foreground"
+            title="Unfinished Franchise Lab scaffold"
           >
-            Franchise Lab
+            GM lab
           </TransitionLink>
         </div>
       </header>
@@ -53,7 +61,8 @@ export default function FranchisesPage() {
       <p className="pb-6 text-[12px] text-muted-foreground">
         Continuous franchises keep relocated history (OKC includes Seattle; MEM
         includes Vancouver). Counting stats are curated snapshots - great for
-        browsing, not a live box-score feed.
+        browsing, not a live box-score feed. Each row opens that team&apos;s
+        History tab (scrapbook + timeline + season arc).
       </p>
     </main>
   );

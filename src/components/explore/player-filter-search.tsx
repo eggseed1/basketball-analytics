@@ -121,7 +121,7 @@ export function PlayerFilterSearch({
       } finally {
         setLoading(false);
       }
-    }, 160);
+    }, 80);
 
     return () => {
       controller.abort();

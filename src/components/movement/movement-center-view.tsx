@@ -60,7 +60,7 @@ export function MovementCenterView({
             "font-semibold uppercase tracking-wide text-muted-foreground"
           )}
         >
-          {presentation.productName} · {season}
+          {presentation.productName} · curated prototype · {season}
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {presentation.seasonalLabel}
@@ -73,7 +73,8 @@ export function MovementCenterView({
           .
         </p>
         <p className={cn(type.caption, "rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-muted-foreground")}>
-          {disclaimer} Snapshot status: {status}.
+          Curated prototype — not a live rumor wire. {disclaimer} Snapshot
+          status: {status}.
         </p>
       </header>
 

@@ -69,6 +69,7 @@ export function TeamRosterSection({
   teamId,
   status = "ok",
   unavailableMessage,
+  showExploreLink = true,
 }: {
   buckets: TeamRosterBuckets;
   season: string;
@@ -77,6 +78,8 @@ export function TeamRosterSection({
   /** Diagnosed board capability - never treat unsupported as “0 players”. */
   status?: "ok" | "unsupported" | "timeout" | "error";
   unavailableMessage?: string;
+  /** Explore deep-link footer — hide when the board is already on this page. */
+  showExploreLink?: boolean;
 }) {
   if (status === "unsupported") {
     return (
@@ -176,16 +179,19 @@ export function TeamRosterSection({
         ))}
       </Bucket>
 
-      <p className="text-[14px] text-muted-foreground">
-        <Link
-          href={`/explore/players?team=${encodeURIComponent(teamId)}&season=${encodeURIComponent(season)}`}
-          className="font-semibold underline-offset-2 hover:underline"
-        >
-          Full roster board →
-        </Link>
-        <span className="mx-2">·</span>
-        Lineup nets and possession evidence are not available yet.
-      </p>
+      {showExploreLink ? (
+        <p className="text-[14px] text-muted-foreground">
+          <Link
+            href={`/explore/players?team=${encodeURIComponent(teamId)}&season=${encodeURIComponent(season)}`}
+            className="font-semibold underline-offset-2 hover:underline"
+          >
+            Full roster board →
+          </Link>
+          <span className="mx-2">·</span>
+          Lineup plus-minus and possession evidence are not available yet — use
+          the Rotation tab for minutes-ranked playing time.
+        </p>
+      ) : null}
     </div>
   );
 }

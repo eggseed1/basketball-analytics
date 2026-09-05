@@ -39,9 +39,18 @@ export function resolvePlayerSeason(
     options?.nowSeason ??
     canonicalSeasonFromStartYear(currentNbaStartYear());
 
+  // Prefer the latest season with real games — skip empty preseason stubs
+  // (e.g. 2026-27 roster row with 0 GP) so percentiles / stats default correctly.
+  const withGames = career
+    .filter((row) => row.gamesPlayed > 0)
+    .map((row) => row.season);
+  const latestWithGames = [...new Set(withGames)].sort((a, b) =>
+    b.localeCompare(a)
+  )[0];
+
   if (options?.preferPeakWhenHistorical !== false && career.length > 0) {
     const historical = isRetiredPlayerCareer({
-      lastSeason: latest,
+      lastSeason: latestWithGames ?? latest,
       nowSeason,
       isActive: options?.isActive,
       hasCurrentSeasonGames: career.some(
@@ -54,7 +63,7 @@ export function resolvePlayerSeason(
     }
   }
 
-  return latest ?? "2024-25";
+  return latestWithGames ?? latest ?? "2024-25";
 }
 
 /**
@@ -123,15 +132,39 @@ export function mergePlayerSeasonStats(
         seasonRaw.darkoOff ?? careerSeason?.darkoOff ?? peerRow?.darkoOff,
       darkoDef:
         seasonRaw.darkoDef ?? careerSeason?.darkoDef ?? peerRow?.darkoDef,
-      lebron: seasonRaw.lebron ?? careerSeason?.lebron ?? peerRow?.lebron,
-      oLebron:
-        seasonRaw.oLebron ?? careerSeason?.oLebron ?? peerRow?.oLebron,
-      dLebron:
-        seasonRaw.dLebron ?? careerSeason?.dLebron ?? peerRow?.dLebron,
+      raptor: seasonRaw.raptor ?? careerSeason?.raptor ?? peerRow?.raptor,
+      oRaptor:
+        seasonRaw.oRaptor ?? careerSeason?.oRaptor ?? peerRow?.oRaptor,
+      dRaptor:
+        seasonRaw.dRaptor ?? careerSeason?.dRaptor ?? peerRow?.dRaptor,
       winsAdded:
         seasonRaw.winsAdded ??
         careerSeason?.winsAdded ??
         peerRow?.winsAdded,
+      hustleDeflections:
+        seasonRaw.hustleDeflections ??
+        careerSeason?.hustleDeflections ??
+        peerRow?.hustleDeflections,
+      hustleContestedShots:
+        seasonRaw.hustleContestedShots ??
+        careerSeason?.hustleContestedShots ??
+        peerRow?.hustleContestedShots,
+      hustleScreenAssists:
+        seasonRaw.hustleScreenAssists ??
+        careerSeason?.hustleScreenAssists ??
+        peerRow?.hustleScreenAssists,
+      hustleChargesDrawn:
+        seasonRaw.hustleChargesDrawn ??
+        careerSeason?.hustleChargesDrawn ??
+        peerRow?.hustleChargesDrawn,
+      hustleLooseBallsRecovered:
+        seasonRaw.hustleLooseBallsRecovered ??
+        careerSeason?.hustleLooseBallsRecovered ??
+        peerRow?.hustleLooseBallsRecovered,
+      hustleBoxOuts:
+        seasonRaw.hustleBoxOuts ??
+        careerSeason?.hustleBoxOuts ??
+        peerRow?.hustleBoxOuts,
       // Ability / rate fields — peer overlay when seasonRaw lacks valid DRBL.
       drbl100: ability?.drbl100 ?? seasonRaw.drbl100,
       rawAbilityRate: ability?.rawAbilityRate ?? seasonRaw.rawAbilityRate,
@@ -171,7 +204,24 @@ export function mergePlayerSeasonStats(
       ),
     };
   }
-  // Prefer peer then career when seasonRaw missing.
+  // Prefer peer then career when seasonRaw missing; keep hustle from either.
+  if (peerRow && careerSeason) {
+    return {
+      ...peerRow,
+      hustleDeflections:
+        peerRow.hustleDeflections ?? careerSeason.hustleDeflections,
+      hustleContestedShots:
+        peerRow.hustleContestedShots ?? careerSeason.hustleContestedShots,
+      hustleScreenAssists:
+        peerRow.hustleScreenAssists ?? careerSeason.hustleScreenAssists,
+      hustleChargesDrawn:
+        peerRow.hustleChargesDrawn ?? careerSeason.hustleChargesDrawn,
+      hustleLooseBallsRecovered:
+        peerRow.hustleLooseBallsRecovered ??
+        careerSeason.hustleLooseBallsRecovered,
+      hustleBoxOuts: peerRow.hustleBoxOuts ?? careerSeason.hustleBoxOuts,
+    };
+  }
   return peerRow ?? careerSeason ?? null;
 }
 

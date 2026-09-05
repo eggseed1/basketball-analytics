@@ -10,7 +10,7 @@ import { parseAskContextFromSearchParams } from "@/query-engine/ask-context";
 import { daySeed } from "@/query-engine/ask-examples";
 
 export const metadata = {
-  title: "ASK DRBL",
+  title: "Ask DRBL",
   description:
     "Natural-language basketball analytics - structured queries over trusted DRBL data.",
 };

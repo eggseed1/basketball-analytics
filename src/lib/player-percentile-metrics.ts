@@ -9,7 +9,11 @@ import { hustlePerGame } from "@/data/transformers/hustle-stats";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
-import type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
+import {
+  SHEET_STAT_BY_ID,
+  type PercentileCategory,
+  type SheetStatId,
+} from "@/lib/player-stat-sheet-registry";
 
 export type { PercentileCategory } from "@/lib/player-stat-sheet-registry";
 
@@ -45,6 +49,46 @@ export type PercentileMetric = {
   /** Present for left-rail snapshot; omit from Analytical Profile lists. */
   profileHidden?: boolean;
 };
+
+/** Map percentile metric ids → sheet ids for category resolution. */
+const PERCENTILE_TO_SHEET_ID: Record<string, SheetStatId> = {
+  min: "mp",
+  "darko-off": "darkoOff",
+  "darko-def": "darkoDef",
+  oraptor: "oRaptor",
+  draptor: "dRaptor",
+  r1WinEquivalents: "war1",
+};
+
+function resolvePercentileCategory(
+  id: string,
+  fallback: string
+): PercentileCategory {
+  const legacy =
+    fallback === "counting"
+      ? "profile"
+      : fallback === "rates"
+        ? "advanced"
+        : (fallback as PercentileCategory);
+  const sheetId = PERCENTILE_TO_SHEET_ID[id] ?? (id as SheetStatId);
+  return SHEET_STAT_BY_ID[sheetId]?.category ?? legacy;
+}
+
+/**
+ * Prefer DARKO → WAR1 → DRBL/100 for the percentile board default.
+ * DARKO covers ~1996–present continuously; WAR1/DRBL only exist from
+ * 2020-21+, so defaulting to WAR1 made career sparklines look gapped
+ * (a point in the early teens, then nothing until ~2021).
+ */
+export function defaultPercentileMetricId(
+  metrics: Array<Pick<PercentileMetric, "id" | "profileHidden">>
+): string {
+  const visible = metrics.filter((m) => !m.profileHidden);
+  for (const id of ["darko", "r1WinEquivalents", "drbl100"] as const) {
+    if (visible.some((m) => m.id === id)) return id;
+  }
+  return visible[0]?.id ?? metrics[0]?.id ?? "";
+}
 
 function percentileOf(value: number, pool: number[]): number {
   if (!pool.length || !Number.isFinite(value)) return 50;
@@ -155,14 +199,23 @@ export function buildPlayerPercentileMetrics(
   peers: PlayerSeason[],
   historicalPeers: PlayerSeason[],
   focalPlayerId: string,
-  peersBySeason?: Map<string, PlayerSeason[]>
+  peersBySeason?: Map<string, PlayerSeason[]>,
+  options?: {
+    /**
+     * Skip nearest-comp scans + per-season sparkline peer ranks.
+     * Used for slider / LCP; full mode fills comps on idle upgrade.
+     */
+    light?: boolean;
+  }
 ): PercentileMetric[] {
   if (!seasonStats) return [];
+  const light = Boolean(options?.light);
 
   const qualified = peers.filter(isQualifiedPeer);
   const pool = qualified.length ? qualified : peers;
 
   const historicalPool = (() => {
+    if (light) return [] as PlayerSeason[];
     const byKey = new Map<string, PlayerSeason>();
     const add = (rows: PlayerSeason[]) => {
       for (const row of rows) {
@@ -183,6 +236,7 @@ export function buildPlayerPercentileMetrics(
     season: string,
     pick: (row: PlayerSeason) => number | null | undefined
   ): number[] => {
+    if (light) return [];
     const seasonPeers = peersBySeason?.get(season);
     const seasonBoard =
       seasonPeers && seasonPeers.length > 0 ? seasonPeers : peers;
@@ -210,8 +264,13 @@ export function buildPlayerPercentileMetrics(
         const v = pick(r);
         if (v == null || !Number.isFinite(v)) return null;
         const values = peerValuesForSeason(r.season, pick);
-        const rawPct = percentileOf(v, values);
-        const percentile = options?.invert ? 100 - rawPct : rawPct;
+        const rawPct = values.length ? percentileOf(v, values) : undefined;
+        const percentile =
+          rawPct == null
+            ? undefined
+            : options?.invert
+              ? 100 - rawPct
+              : rawPct;
         const { color, abbr } = teamChartColor(r.teamId);
         return {
           season: r.season.slice(2),
@@ -237,7 +296,7 @@ export function buildPlayerPercentileMetrics(
 
   const push = (opts: {
     id: string;
-    category: PercentileCategory;
+    category: PercentileCategory | "counting" | "rates";
     label: string;
     value: number;
     values: number[];
@@ -252,6 +311,7 @@ export function buildPlayerPercentileMetrics(
   }) => {
     if (!Number.isFinite(opts.value) || opts.values.length === 0) return;
 
+    const category = resolvePercentileCategory(opts.id, opts.category);
     const interpretation = opts.interpretation;
     const showPercentile =
       opts.showPercentile ??
@@ -265,19 +325,21 @@ export function buildPlayerPercentileMetrics(
 
     const raw = percentileOf(opts.value, opts.values);
     const percentile = opts.invert ? 100 - raw : raw;
-    const comps = findSimilarForMetric({
-      metricId: opts.id,
-      focalPlayerId,
-      focalValue: opts.value,
-      leagueRows: pool,
-      historicalRows: historicalPool,
-      limit: 6,
-      invert: opts.invert,
-    });
+    const comps = light
+      ? { leagueComps: [], historicalComps: [] }
+      : findSimilarForMetric({
+          metricId: opts.id,
+          focalPlayerId,
+          focalValue: opts.value,
+          leagueRows: pool,
+          historicalRows: historicalPool,
+          limit: 6,
+          invert: opts.invert,
+        });
 
     metrics.push({
       id: opts.id,
-      category: opts.category,
+      category,
       label: opts.label,
       percentile,
       display: opts.display,
@@ -292,27 +354,9 @@ export function buildPlayerPercentileMetrics(
     });
   };
 
-  // --- Value (impact) — DRBL/100 + WAR1 + O/D for peer exploration in Overview.
+  // --- Value (impact) — WAR1 / DRBL first in the list; default selection
+  // prefers DARKO when present (continuous history). See defaultPercentileMetricId.
   if (hasValidDrblEstimate(seasonStats)) {
-    const drblPool = pool
-      .filter(hasValidDrblEstimate)
-      .map((p) => p.drbl100)
-      .filter((n): n is number => Number.isFinite(n));
-    if (drblPool.length) {
-      push({
-        id: "drbl100",
-        category: "impact",
-        label: "DRBL/100",
-        value: seasonStats.drbl100,
-        values: drblPool,
-        display: formatNumber(seasonStats.drbl100, 1),
-        series: careerSeries(
-          (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
-          { rejectFlatOverlay: true }
-        ),
-        interpretation: "higher_is_better",
-      });
-    }
     if (
       seasonStats.r1WinEquivalents != null &&
       Number.isFinite(seasonStats.r1WinEquivalents)
@@ -341,6 +385,25 @@ export function buildPlayerPercentileMetrics(
           interpretation: "higher_is_better",
         });
       }
+    }
+    const drblPool = pool
+      .filter(hasValidDrblEstimate)
+      .map((p) => p.drbl100)
+      .filter((n): n is number => Number.isFinite(n));
+    if (drblPool.length) {
+      push({
+        id: "drbl100",
+        category: "impact",
+        label: "DRBL/100",
+        value: seasonStats.drbl100,
+        values: drblPool,
+        display: formatNumber(seasonStats.drbl100, 1),
+        series: careerSeries(
+          (r) => (hasValidDrblEstimate(r) ? r.drbl100 : null),
+          { rejectFlatOverlay: true }
+        ),
+        interpretation: "higher_is_better",
+      });
     }
     if (Number.isFinite(seasonStats.drblO)) {
       const oPool = pool
@@ -466,40 +529,46 @@ export function buildPlayerPercentileMetrics(
       }
     }
   }
-  if (seasonStats.lebron != null && Number.isFinite(seasonStats.lebron)) {
-    const lebronPool = pool
-      .map((p) => p.lebron)
+  if (seasonStats.raptor != null && Number.isFinite(seasonStats.raptor)) {
+    const raptorPool = pool
+      .map((p) => p.raptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (lebronPool.length) {
+    if (raptorPool.length) {
       push({
-        id: "lebron",
+        id: "raptor",
         category: "impact",
-        label: "LEBRON",
-        value: seasonStats.lebron,
-        values: lebronPool,
-        display: formatNumber(seasonStats.lebron, 2),
+        label: "RAPTOR",
+        value: seasonStats.raptor,
+        values: raptorPool,
+        display: formatNumber(seasonStats.raptor, 2),
         series: careerSeries(
           (r) =>
-            r.lebron != null && Number.isFinite(r.lebron) ? r.lebron : null,
+            r.raptor != null && Number.isFinite(r.raptor) ? r.raptor : null,
           { rejectFlatOverlay: true }
         ),
         interpretation: "higher_is_better",
       });
     }
   }
-  if (seasonStats.winsAdded != null) {
-    const waPool = pool
+  if (seasonStats.winsAdded != null && Number.isFinite(seasonStats.winsAdded)) {
+    const warPool = pool
       .map((p) => p.winsAdded)
       .filter((n): n is number => n != null && Number.isFinite(n));
-    if (waPool.length) {
+    if (warPool.length) {
       push({
-        id: "wins",
+        id: "winsAdded",
         category: "impact",
-        label: "Wins added",
+        label: "WAR",
         value: seasonStats.winsAdded,
-        values: waPool,
+        values: warPool,
         display: formatNumber(seasonStats.winsAdded, 2),
-        series: careerSeries((r) => r.winsAdded, { rejectFlatOverlay: true }),
+        series: careerSeries(
+          (r) =>
+            r.winsAdded != null && Number.isFinite(r.winsAdded)
+              ? r.winsAdded
+              : null,
+          { rejectFlatOverlay: true }
+        ),
         interpretation: "higher_is_better",
       });
     }
@@ -699,19 +768,19 @@ export function buildPlayerPercentileMetrics(
       }
     }
   }
-  if (seasonStats.oLebron != null) {
+  if (seasonStats.oRaptor != null) {
     const oPool = pool
-      .map((p) => p.oLebron)
+      .map((p) => p.oRaptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
     if (oPool.length) {
       push({
-        id: "olebron",
+        id: "oraptor",
         category: "impact",
-        label: "O-LEBRON",
-        value: seasonStats.oLebron,
+        label: "O-RAPTOR",
+        value: seasonStats.oRaptor,
         values: oPool,
-        display: formatNumber(seasonStats.oLebron, 2),
-        series: careerSeries((r) => r.oLebron, { rejectFlatOverlay: true }),
+        display: formatNumber(seasonStats.oRaptor, 2),
+        series: careerSeries((r) => r.oRaptor, { rejectFlatOverlay: true }),
         interpretation: "higher_is_better",
       });
     }
@@ -1118,32 +1187,32 @@ export function buildPlayerPercentileMetrics(
     >;
     suffix: string;
   }> = [
-    { id: "hustleDefl", label: "Deflections", key: "hustleDeflections", suffix: " defl" },
+    { id: "hustleDefl", label: "Defl", key: "hustleDeflections", suffix: " defl" },
     {
       id: "hustleContest",
-      label: "Contested shots",
+      label: "Contest",
       key: "hustleContestedShots",
       suffix: " contest",
     },
     {
       id: "hustleScrAst",
-      label: "Screen assists",
+      label: "ScrAst",
       key: "hustleScreenAssists",
       suffix: " scr ast",
     },
     {
       id: "hustleChrg",
-      label: "Charges drawn",
+      label: "Chrg",
       key: "hustleChargesDrawn",
       suffix: " chrg",
     },
     {
       id: "hustleLoose",
-      label: "Loose balls",
+      label: "Loose",
       key: "hustleLooseBallsRecovered",
       suffix: " loose",
     },
-    { id: "hustleBoxOut", label: "Box outs", key: "hustleBoxOuts", suffix: " box" },
+    { id: "hustleBoxOut", label: "BoxOut", key: "hustleBoxOuts", suffix: " box" },
   ];
 
   for (const metric of hustleMetrics) {
@@ -1222,19 +1291,19 @@ export function buildPlayerPercentileMetrics(
       }
     }
   }
-  if (seasonStats.dLebron != null) {
+  if (seasonStats.dRaptor != null) {
     const dPool = pool
-      .map((p) => p.dLebron)
+      .map((p) => p.dRaptor)
       .filter((n): n is number => n != null && Number.isFinite(n));
     if (dPool.length) {
       push({
-        id: "dlebron",
+        id: "draptor",
         category: "impact",
-        label: "D-LEBRON",
-        value: seasonStats.dLebron,
+        label: "D-RAPTOR",
+        value: seasonStats.dRaptor,
         values: dPool,
-        display: formatNumber(seasonStats.dLebron, 2),
-        series: careerSeries((r) => r.dLebron, { rejectFlatOverlay: true }),
+        display: formatNumber(seasonStats.dRaptor, 2),
+        series: careerSeries((r) => r.dRaptor, { rejectFlatOverlay: true }),
         interpretation: "higher_is_better",
       });
     }
@@ -1274,7 +1343,7 @@ export function buildPlayerPercentileMetrics(
         return m > 0 ? m : null;
       }),
       interpretation: "descriptive",
-      showPercentile: false,
+      showPercentile: true,
       showGrade: false,
     });
   }
@@ -1289,7 +1358,7 @@ export function buildPlayerPercentileMetrics(
       display: `${seasonStats.gamesPlayed} GP`,
       series: careerSeries((r) => (r.gamesPlayed > 0 ? r.gamesPlayed : null)),
       interpretation: "descriptive",
-      showPercentile: false,
+      showPercentile: true,
       showGrade: false,
     });
   }
@@ -1304,7 +1373,7 @@ export function buildPlayerPercentileMetrics(
       display: `${seasonStats.gamesStarted} GS`,
       series: careerSeries((r) => r.gamesStarted),
       interpretation: "descriptive",
-      showPercentile: false,
+      showPercentile: true,
       showGrade: false,
     });
     if (seasonStats.gamesPlayed > 0) {

@@ -3,9 +3,16 @@ import type {
   PlayerComparisonResult,
 } from "@/analytics/types";
 import type { PlayerSeason } from "@/data/types";
-import { formatNumber, formatPct } from "@/lib/format";
-import { hasValidDrblEstimate } from "@/data/queries/percentiles";
-import { METRIC_PICKERS } from "@/lib/player-stat-comps";
+import { isCareerCompareKey } from "@/lib/career-average-row";
+import {
+  formatSheetStatValue,
+  getSheetStatValue,
+  SHEET_STAT_BY_ID,
+  SHEET_STAT_CATEGORY_ORDER,
+  SHEET_STAT_DEFS,
+  type SheetStatCategory,
+  type SheetStatId,
+} from "@/lib/player-stat-sheet-registry";
 
 function percentileOf(value: number, pool: number[], invert = false): number {
   if (!pool.length || !Number.isFinite(value)) return 50;
@@ -14,299 +21,267 @@ function percentileOf(value: number, pool: number[], invert = false): number {
   return invert ? 100 - raw : raw;
 }
 
-function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {
-  const raw = row[key];
-  const total = typeof raw === "number" ? raw : 0;
-  return total / Math.max(1, row.gamesPlayed);
-}
+/** Lower is better on the sheet — flip delta / percentile. */
+const INVERT_SHEET_IDS = new Set<SheetStatId>([
+  "tov",
+  "pf",
+  "tovPct",
+  "drtg",
+]);
 
-type DimGroup = NonNullable<ComparisonDimension["group"]>;
-
-type DimSpec = {
-  id: string;
-  label: string;
-  metricId?: keyof typeof METRIC_PICKERS;
-  pick?: (row: PlayerSeason) => number | null;
-  format?: (v: number) => string;
+/**
+ * Compare dimensions — full player-board sheet vocabulary.
+ * Categories / order: Profile · Shooting · Defense · Hustle · Advanced · Impact.
+ */
+const COMPARE_DIMS: Array<{
+  id: SheetStatId;
+  label?: string;
   invert?: boolean;
-  group?: DimGroup;
-};
+}> = SHEET_STAT_DEFS.map((def) => ({
+  id: def.id,
+  invert: INVERT_SHEET_IDS.has(def.id),
+}));
 
-const DIMENSIONS: DimSpec[] = [
-  { id: "overall", label: "Overall (DRBL/100)", metricId: "drbl100", group: "rate_ability" },
-  { id: "drbl_o", label: "DRBL-O", metricId: "drblO", group: "rate_ability" },
-  { id: "drbl_d", label: "DRBL-D", metricId: "drblD", group: "rate_ability" },
-  {
-    id: "r1_win_eq",
-    label: "WAR1",
-    metricId: "r1WinEq",
-    group: "realized_value",
-  },
-  { id: "darko", label: "DARKO DPM", metricId: "darko", group: "external" },
-  { id: "offense", label: "Offense", metricId: "ortg", group: "box" },
-  { id: "defense", label: "Defense", metricId: "drtg", invert: true, group: "box" },
-  { id: "shooting", label: "Shooting", metricId: "ts", group: "box" },
-  { id: "playmaking", label: "Playmaking", metricId: "ast", group: "box" },
-  { id: "rebounding", label: "Rebounding", metricId: "reb", group: "box" },
-  { id: "usage", label: "Usage", metricId: "usg", group: "box" },
-  {
-    id: "scoring",
-    label: "Scoring volume",
-    pick: (r) => perGame(r, "points"),
-    format: (v) => `${formatNumber(v, 1)} PPG`,
-    group: "box",
-  },
+/** Default-on metrics in the compare UI (player can enable the rest). */
+export const COMPARE_DEFAULT_METRIC_IDS: SheetStatId[] = [
+  "pts",
+  "trb",
+  "ast",
+  "stl",
+  "blk",
+  "tov",
+  "fgPct",
+  "fg3Pct",
+  "ftPct",
+  "efg",
+  "ts",
+  "usg",
+  "tovPct",
+  "astPct",
+  "ortg",
+  "drtg",
+  "net",
+  "bpm",
+  "darko",
+  "raptor",
+  "winsAdded",
+  "war1",
+  "drbl100",
+  "drblO",
+  "drblD",
 ];
 
-function resolvePicker(spec: DimSpec): {
-  pick: (row: PlayerSeason) => number | null;
-  format: (v: number) => string;
-  invert: boolean;
-} | null {
-  if (spec.metricId) {
-    const picker = METRIC_PICKERS[spec.metricId];
-    if (!picker) return null;
-    return {
-      pick: picker.pick,
-      format: picker.format,
-      invert: Boolean(spec.invert),
-    };
-  }
-  if (spec.pick && spec.format) {
-    return {
-      pick: spec.pick,
-      format: spec.format,
-      invert: Boolean(spec.invert),
-    };
-  }
-  return null;
-}
+const CATEGORY_ORDER: SheetStatCategory[] = [...SHEET_STAT_CATEGORY_ORDER];
 
-function fallbackOverall(row: PlayerSeason): number | null {
-  if (hasValidDrblEstimate(row)) return row.drbl100;
-  if (row.darkoDpm != null) return row.darkoDpm;
-  if (row.lebron != null) return row.lebron;
-  if (row.netRating != null && Number.isFinite(row.netRating)) return row.netRating;
-  if (row.trueShootingPct != null && row.trueShootingPct > 0) {
-    return row.trueShootingPct;
+function relativeBar(
+  a: number | null,
+  b: number | null,
+  invert: boolean
+): { aBar?: number; bBar?: number } {
+  if (a == null && b == null) return {};
+  const aV = a ?? 0;
+  const bV = b ?? 0;
+  if (invert) {
+    const max = Math.max(aV, bV, 1e-9);
+    const min = Math.min(a == null ? max : aV, b == null ? max : bV);
+    const span = Math.max(max - min, 1e-9);
+    return {
+      aBar: a == null ? undefined : Math.max(8, ((max - aV) / span) * 100),
+      bBar: b == null ? undefined : Math.max(8, ((max - bV) / span) * 100),
+    };
   }
-  return null;
+  const peak = Math.max(Math.abs(aV), Math.abs(bV), 1e-9);
+  return {
+    aBar: a == null ? undefined : Math.max(8, (Math.abs(aV) / peak) * 100),
+    bBar: b == null ? undefined : Math.max(8, (Math.abs(bV) / peak) * 100),
+  };
 }
 
 /**
- * Side-by-side player comparison using season rows + peer percentiles.
+ * Side-by-side player comparison using season or career rows + peer percentiles.
+ * When seasons differ, pass peersA / peersB so each side is ranked in its
+ * own season pool (cross-era compare stays season-true).
+ * Career mode skips peer percentiles and uses relative bars.
  */
 export function buildPlayerComparison(options: {
   a: PlayerSeason;
   b: PlayerSeason;
-  peers: PlayerSeason[];
+  peers?: PlayerSeason[];
+  peersA?: PlayerSeason[];
+  peersB?: PlayerSeason[];
+  careerSpanA?: string;
+  careerSpanB?: string;
+  teamKeysA?: string[];
+  teamKeysB?: string[];
 }): PlayerComparisonResult {
-  const { a, b, peers } = options;
-  const qualified = peers.filter(
-    (p) =>
-      p.gamesPlayed >= 15 && p.minutes / Math.max(1, p.gamesPlayed) >= 12
-  );
-  const pool = qualified.length ? qualified : peers;
+  const { a, b } = options;
+  const careerMode =
+    isCareerCompareKey(a.season) || isCareerCompareKey(b.season);
+  const peersA = careerMode ? [] : (options.peersA ?? options.peers ?? []);
+  const peersB = careerMode
+    ? []
+    : (options.peersB ?? options.peers ?? peersA);
+
+  const qualify = (peers: PlayerSeason[]) => {
+    const qualified = peers.filter(
+      (p) =>
+        p.gamesPlayed >= 15 && p.minutes / Math.max(1, p.gamesPlayed) >= 12
+    );
+    return qualified.length ? qualified : peers;
+  };
+  const poolA = qualify(peersA);
+  const poolB = qualify(peersB);
 
   const dimensions: ComparisonDimension[] = [];
 
-  for (const spec of DIMENSIONS) {
-    let picker = resolvePicker(spec);
-    let label = spec.label;
-    let note: string | undefined;
+  for (const spec of COMPARE_DIMS) {
+    const def = SHEET_STAT_BY_ID[spec.id];
+    if (!def) continue;
+    const label = spec.label ?? def.label;
+    const invert = Boolean(spec.invert);
+    const mode = "perGame" as const;
 
-    if (spec.id === "overall" && picker) {
-      const aDrbl = METRIC_PICKERS.drbl100.pick(a);
-      const bDrbl = METRIC_PICKERS.drbl100.pick(b);
-      if (aDrbl != null && bDrbl != null) {
-        // Same-season comparable DRBL - keep picker.
-        label = "Overall (DRBL/100)";
-      } else if (aDrbl != null || bDrbl != null) {
-        // Asymmetric DRBL - unavailable for overall (never cross-metric).
-        dimensions.push({
-          id: "overall",
-          label: "Overall (DRBL/100)",
-          aDisplay: aDrbl != null ? formatNumber(aDrbl, 2) : "Unavailable",
-          bDisplay: bDrbl != null ? formatNumber(bDrbl, 2) : "Unavailable",
-          aValue: aDrbl ?? undefined,
-          bValue: bDrbl ?? undefined,
-          group: "rate_ability",
-          note: "Overall DRBL edge requires valid estimates on both sides - never cross-compared to DARKO.",
-        });
-        continue;
-      } else {
-        const aDarko = a.darkoDpm;
-        const bDarko = b.darkoDpm;
-        if (aDarko != null && bDarko != null) {
-          picker = {
-            pick: (r) => r.darkoDpm ?? null,
-            format: (v) => formatNumber(v, 2),
-            invert: false,
-          };
-          label = "Overall (DARKO)";
-          note = "DRBL unavailable for both - using season-true DARKO as external overall.";
-        } else if (aValMissingBoth(a, b)) {
-          picker = {
-            pick: fallbackOverall,
-            format: (v) => formatNumber(v, 2),
-            invert: false,
-          };
-          label = "Overall";
-          note = "Fallback overall among available season-true metrics.";
-        } else {
-          continue;
-        }
-      }
-    }
-    if (!picker) continue;
-
-    const aRaw = picker.pick(a);
-    const bRaw = picker.pick(b);
+    const aRaw = getSheetStatValue(a, spec.id, mode);
+    const bRaw = getSheetStatValue(b, spec.id, mode);
     if (aRaw == null && bRaw == null) continue;
 
-    // Same-metric both-sides for rate/value groups - show Unavailable not 0.
-    if (
-      (spec.group === "rate_ability" || spec.group === "realized_value") &&
-      (aRaw == null || bRaw == null)
-    ) {
-      dimensions.push({
-        id: spec.id,
-        label,
-        aDisplay: aRaw != null ? picker.format(aRaw) : "Unavailable",
-        bDisplay: bRaw != null ? picker.format(bRaw) : "Unavailable",
-        aValue: aRaw ?? undefined,
-        bValue: bRaw ?? undefined,
-        group: spec.group,
-        note:
-          note ??
-          "Metric unavailable for at least one side this season (not shown as 0).",
-      });
-      continue;
+    const aRawDisplay =
+      aRaw != null ? formatSheetStatValue(aRaw, def, mode) : "—";
+    const bRawDisplay =
+      bRaw != null ? formatSheetStatValue(bRaw, def, mode) : "—";
+
+    let aPct: number | undefined;
+    let bPct: number | undefined;
+
+    if (!careerMode && poolA.length && poolB.length) {
+      const valuesA = poolA
+        .map((row) => getSheetStatValue(row, spec.id, mode))
+        .filter((n): n is number => n != null && Number.isFinite(n));
+      const valuesB = poolB
+        .map((row) => getSheetStatValue(row, spec.id, mode))
+        .filter((n): n is number => n != null && Number.isFinite(n));
+      if (aRaw != null && valuesA.length) {
+        aPct = percentileOf(aRaw, valuesA, invert);
+      }
+      if (bRaw != null && valuesB.length) {
+        bPct = percentileOf(bRaw, valuesB, invert);
+      }
     }
 
-    const values = pool
-      .map((row) => picker!.pick(row))
-      .filter((n): n is number => n != null && Number.isFinite(n));
-
-    const aPct =
-      aRaw != null ? percentileOf(aRaw, values, picker.invert) : undefined;
-    const bPct =
-      bRaw != null ? percentileOf(bRaw, values, picker.invert) : undefined;
-
-    const aDisplay =
-      aPct != null
-        ? `${Math.round(aPct)}th %ile`
-        : aRaw != null
-          ? picker.format(aRaw)
-          : "-";
-    const bDisplay =
-      bPct != null
-        ? `${Math.round(bPct)}th %ile`
-        : bRaw != null
-          ? picker.format(bRaw)
-          : "-";
+    const rel = relativeBar(aRaw, bRaw, invert);
+    const aBar = aPct ?? rel.aBar;
+    const bBar = bPct ?? rel.bBar;
 
     let delta: number | undefined;
     if (aPct != null && bPct != null) delta = aPct - bPct;
     else if (aRaw != null && bRaw != null) {
-      delta = picker.invert ? bRaw - aRaw : aRaw - bRaw;
+      delta = invert ? bRaw - aRaw : aRaw - bRaw;
     }
 
     dimensions.push({
       id: spec.id,
       label,
-      aDisplay,
-      bDisplay,
-      aValue: aPct ?? aRaw ?? undefined,
-      bValue: bPct ?? bRaw ?? undefined,
+      aDisplay: aRawDisplay,
+      bDisplay: bRawDisplay,
+      aValue: aRaw ?? undefined,
+      bValue: bRaw ?? undefined,
+      aPercentile: aPct,
+      bPercentile: bPct,
+      aBar,
+      bBar,
       delta,
-      group: spec.group,
-      note,
+      group: def.category,
+      note: careerMode
+        ? "Career averages — bars scale within this matchup when league percentiles are unavailable."
+        : undefined,
     });
-  }
-
-  // Ensure shooting shows raw TS if percentiles missing
-  if (!dimensions.some((d) => d.id === "shooting")) {
-    const aTs =
-      a.trueShootingPct != null && a.trueShootingPct > 0
-        ? a.trueShootingPct
-        : null;
-    const bTs =
-      b.trueShootingPct != null && b.trueShootingPct > 0
-        ? b.trueShootingPct
-        : null;
-    if (aTs != null || bTs != null) {
-      dimensions.push({
-        id: "shooting",
-        label: "Shooting",
-        aDisplay: aTs != null ? formatPct(aTs) : "-",
-        bDisplay: bTs != null ? formatPct(bTs) : "-",
-        aValue: aTs ?? undefined,
-        bValue: bTs ?? undefined,
-        delta: aTs != null && bTs != null ? aTs - bTs : undefined,
-        group: "box",
-      });
-    }
   }
 
   const differenceSummary = buildDifferenceSummary(
     a.playerName,
     b.playerName,
-    dimensions
+    dimensions,
+    careerMode
   );
+
+  const seasonA = isCareerCompareKey(a.season)
+    ? (options.careerSpanA ?? "Career")
+    : a.season;
+  const seasonB = isCareerCompareKey(b.season)
+    ? (options.careerSpanB ?? "Career")
+    : b.season;
+
+  const aTeamKey = a.teamAbbreviation ?? a.teamId;
+  const bTeamKey = b.teamAbbreviation ?? b.teamId;
+  const aTeamKeys =
+    options.teamKeysA?.length
+      ? options.teamKeysA
+      : aTeamKey && aTeamKey !== "CAR" && aTeamKey !== "CAREER"
+        ? [aTeamKey]
+        : [];
+  const bTeamKeys =
+    options.teamKeysB?.length
+      ? options.teamKeysB
+      : bTeamKey && bTeamKey !== "CAR" && bTeamKey !== "CAREER"
+        ? [bTeamKey]
+        : [];
 
   return {
     aId: a.playerId,
     bId: b.playerId,
     aName: a.playerName,
     bName: b.playerName,
-    season: a.season,
+    aTeamKey: aTeamKeys[0] ?? aTeamKey,
+    bTeamKey: bTeamKeys[0] ?? bTeamKey,
+    aTeamKeys,
+    bTeamKeys,
+    season: seasonA === seasonB ? seasonA : undefined,
+    seasonA,
+    seasonB,
+    mode: careerMode ? "career" : "season",
     dimensions,
     differenceSummary,
   };
 }
 
-function aValMissingBoth(a: PlayerSeason, b: PlayerSeason): boolean {
-  return fallbackOverall(a) != null || fallbackOverall(b) != null;
-}
-
 function buildDifferenceSummary(
   aName: string,
   bName: string,
-  dimensions: ComparisonDimension[]
+  dimensions: ComparisonDimension[],
+  careerMode: boolean
 ): string[] {
   const scored = dimensions
     .filter((d) => d.delta != null && Number.isFinite(d.delta))
-    .map((d) => ({ ...d, abs: Math.abs(d.delta!) }))
-    .filter((d) => d.abs >= 5)
+    .map((d) => ({ d, abs: Math.abs(d.delta!) }))
     .sort((x, y) => y.abs - x.abs);
 
   if (!scored.length) {
     return [
-      "Available season metrics are close across the compared dimensions. Small gaps may reflect sample noise rather than a clear profile difference.",
+      careerMode
+        ? "Available career metrics are close across the compared dimensions."
+        : "Available season metrics are close across the compared dimensions. Small gaps may reflect sample noise rather than a clear profile difference.",
     ];
   }
 
   const lines: string[] = [];
-  const aEdges = scored.filter((d) => d.delta! > 0).slice(0, 2);
-  const bEdges = scored.filter((d) => d.delta! < 0).slice(0, 2);
-
-  if (aEdges.length) {
-    lines.push(
-      `${aName} leads on ${aEdges.map((d) => d.label.toLowerCase()).join(" and ")} (${aEdges
-        .map((d) => `${d.aDisplay} vs ${d.bDisplay}`)
-        .join("; ")}).`
-    );
+  for (const { d } of scored.slice(0, 3)) {
+    const leader = (d.delta ?? 0) > 0 ? aName : bName;
+    const trail = (d.delta ?? 0) > 0 ? bName : aName;
+    if (d.aPercentile != null && d.bPercentile != null) {
+      lines.push(
+        `${leader} holds the edge in ${d.label} (${Math.round(
+          Math.max(d.aPercentile, d.bPercentile)
+        )}th vs ${Math.round(Math.min(d.aPercentile, d.bPercentile))}th among peers).`
+      );
+    } else {
+      const leadDisp = (d.delta ?? 0) > 0 ? d.aDisplay : d.bDisplay;
+      const trailDisp = (d.delta ?? 0) > 0 ? d.bDisplay : d.aDisplay;
+      lines.push(
+        `${leader} leads ${trail} in ${d.label} (${leadDisp} vs ${trailDisp}).`
+      );
+    }
   }
-  if (bEdges.length) {
-    lines.push(
-      `${bName} leads on ${bEdges.map((d) => d.label.toLowerCase()).join(" and ")} (${bEdges
-        .map((d) => `${d.bDisplay} vs ${d.aDisplay}`)
-        .join("; ")}).`
-    );
-  }
-  lines.push(
-    "Edges are percentile gaps among qualified peers this season, not a declaration of who is better overall."
-  );
   return lines;
 }
+
+export { CATEGORY_ORDER };

@@ -10,7 +10,7 @@ export function VsStat({
   career: string;
 }) {
   return (
-    <div className="rounded-lg border border-border/70 bg-white/40 px-2 py-2">
+    <div className="rounded-lg border border-border/70 frost-surface px-2 py-2">
       <dt className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">
         {label}
       </dt>

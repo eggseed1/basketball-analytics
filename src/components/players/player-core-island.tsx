@@ -3,6 +3,7 @@ import type { CSSProperties } from "react";
 import {
   buildStatContext,
   computeCareerResume,
+  computePeakImpact,
   computePlayerEvolution,
   dedupeCareerSeasons,
   explainMetric,
@@ -13,7 +14,7 @@ import { TeamWashCard } from "@/components/brand/team-wash-card";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { PlayerCareerResume } from "@/components/players/player-career-resume";
+import { PlayerCareerResumeLazy as PlayerCareerResume } from "@/components/charts/recharts-lazy";
 import { PlayerContextStrip } from "@/components/players/player-context-strip";
 import {
   MiniStat,
@@ -165,11 +166,48 @@ export async function PlayerCoreIsland({
   );
 
   const headlineMetric =
+    metrics.find((m) => m.id === "r1WinEquivalents") ??
     metrics.find((m) => m.id === "drbl100") ??
     metrics.find((m) => m.id === "darko") ??
     metrics.find((m) => m.id === "ts") ??
     metrics.find((m) => m.id === "usg") ??
     metrics[0];
+
+  const SIMILAR_MODE_ORDER = [
+    "r1WinEquivalents",
+    "drbl100",
+    "darko",
+    "raptor",
+    "bpm",
+    "ts",
+    "usg",
+  ] as const;
+
+  const similarModes = SIMILAR_MODE_ORDER.map((id) => {
+    const m = metrics.find((row) => row.id === id);
+    if (!m) return null;
+    if (!m.leagueComps.length && !m.historicalComps.length) return null;
+    return {
+      id: m.id,
+      label: m.label,
+      leagueComps: m.leagueComps,
+      historicalComps: m.historicalComps,
+    };
+  }).filter((m): m is NonNullable<typeof m> => Boolean(m));
+
+  // Fall back to headline when preferred impact modes lack comps.
+  if (
+    headlineMetric &&
+    !similarModes.some((m) => m.id === headlineMetric.id) &&
+    (headlineMetric.leagueComps.length || headlineMetric.historicalComps.length)
+  ) {
+    similarModes.unshift({
+      id: headlineMetric.id,
+      label: headlineMetric.label,
+      leagueComps: headlineMetric.leagueComps,
+      historicalComps: headlineMetric.historicalComps,
+    });
+  }
 
   const drblSeasonApplicable = isDrblSeason(season);
   const hasDrbl = seasonStats != null && hasValidDrblEstimate(seasonStats);
@@ -229,6 +267,10 @@ export async function PlayerCoreIsland({
   });
 
   const careerDeduped = dedupeCareerSeasons(career);
+  const peakImpact = computePeakImpact({
+    playerId,
+    career: careerDeduped,
+  });
   const rankDefaultSeasons = defaultRankSeasons(career, {
     nowSeason: canonicalSeasonFromStartYear(currentNbaStartYear()),
     prefer: careerResume.peak ? [careerResume.peak.season] : [],
@@ -722,6 +764,7 @@ export async function PlayerCoreIsland({
         </div>
         <PlayerCareerResume
           resume={careerResume}
+          peakImpact={peakImpact}
           teamKey={teamKey}
           careerStartTeamKey={careerStartTeamKey}
         />
@@ -799,9 +842,9 @@ export async function PlayerCoreIsland({
                   : "No career season rows available."}
               </p>
             ) : (
-              <div className="overflow-x-auto rounded-xl border border-border bg-white/40">
+              <div className="overflow-x-auto rounded-xl border border-border frost-surface">
                 <table className="w-full min-w-[720px] text-left text-[13px]">
-                  <thead className="border-b border-border bg-white/50 text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                  <thead className="border-b border-border frost-surface text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
                     <tr>
                       <th className="px-3 py-2">Season</th>
                       <th className="px-2 py-2">Team</th>
@@ -819,7 +862,7 @@ export async function PlayerCoreIsland({
                     {career.map((row) => (
                       <tr
                         key={`${row.season}-${row.teamId}`}
-                        className={cn("team-stripe hover:bg-white/50")}
+                        className={cn("team-stripe frost-surface-hover")}
                         style={
                           {
                             "--team-primary": rowStripeColor(
@@ -898,15 +941,15 @@ export async function PlayerCoreIsland({
         <div>
           <h2 className="text-[17px] font-bold tracking-tight">Context</h2>
           <p className="text-[13px] text-muted-foreground">
-            Similar players from the existing comps · then full compare.
+            Similar players by metric · then full compare.
           </p>
         </div>
         <TeamWashCard teamKey={teamKey} className="flex flex-col gap-3 p-4 sm:p-5">
-          {headlineMetric ? (
+          {similarModes.length ? (
             <PlayerContextStrip
-              metricLabel={headlineMetric.label}
-              leagueComps={headlineMetric.leagueComps}
-              historicalComps={headlineMetric.historicalComps}
+              key={`${playerId}-${season}`}
+              modes={similarModes}
+              defaultModeId={headlineMetric?.id}
               compareHref={`/compare?a=${playerId}&season=${season}`}
             />
           ) : (
