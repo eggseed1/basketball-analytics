@@ -290,6 +290,12 @@ const SHEET_STAT_ID_ALIASES: Record<string, SheetStatId> = {
   offensiveRating: "ortg",
   defensiveRating: "drtg",
   netRating: "net",
+  hustleDeflections: "hustleDefl",
+  hustleContestedShots: "hustleContest",
+  hustleScreenAssists: "hustleScrAst",
+  hustleChargesDrawn: "hustleChrg",
+  hustleLooseBallsRecovered: "hustleLoose",
+  hustleBoxOuts: "hustleBoxOut",
 };
 
 const SHEET_STAT_ORDER_INDEX = new Map(

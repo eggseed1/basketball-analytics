@@ -79,6 +79,7 @@ export async function TeamRosterIsland({
             hasDarko={view.hasDarko}
             hasRaptor={view.hasRaptor}
             hasDrbl={view.hasDrbl}
+            hasHustle={view.hasHustle}
             seasonAwaitingGames={view.seasonAwaitingGames}
           />
         )}

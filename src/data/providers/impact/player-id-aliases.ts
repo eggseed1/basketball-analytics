@@ -91,17 +91,24 @@ function indexFromAliases(aliases: PlayerIdAlias[]): PlayerIdAliasIndex {
 }
 
 export async function loadPlayerIdAliases(): Promise<PlayerIdAliasIndex> {
+  const forceDisk =
+    process.env.PLAYER_ID_ALIASES_FORCE_DISK === "1" ||
+    process.env.PLAYER_ID_ALIASES_FORCE_DISK === "true";
+
   // Cloudflare Workers: prefer bundled snapshot (node:fs is empty on CF).
-  try {
-    const { getBundledPlayerIdAliasIndex } = await import(
-      "@/data/runtime/player-id-aliases-snapshot"
-    );
-    const bundled = getBundledPlayerIdAliasIndex();
-    if (bundled.byEspn.size > 0 || bundled.byNba.size > 0) {
-      return bundled;
+  // Tests that rewrite the on-disk alias file set PLAYER_ID_ALIASES_FORCE_DISK=1.
+  if (!forceDisk) {
+    try {
+      const { getBundledPlayerIdAliasIndex } = await import(
+        "@/data/runtime/player-id-aliases-snapshot"
+      );
+      const bundled = getBundledPlayerIdAliasIndex();
+      if (bundled.byEspn.size > 0 || bundled.byNba.size > 0) {
+        return bundled;
+      }
+    } catch {
+      // fall through to disk for local / Vercel file mounts
     }
-  } catch {
-    // fall through to disk for local / Vercel file mounts
   }
 
   const empty: PlayerIdAliasIndex = {

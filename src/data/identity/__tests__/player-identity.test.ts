@@ -44,11 +44,15 @@ async function withTempAliases(
     JSON.stringify({ aliases }, null, 2) + "\n",
     "utf8"
   );
+  const prevForce = process.env.PLAYER_ID_ALIASES_FORCE_DISK;
+  process.env.PLAYER_ID_ALIASES_FORCE_DISK = "1";
   clearPlayerIdAliasCache();
   try {
     await fn();
   } finally {
     clearPlayerIdAliasCache();
+    if (prevForce == null) delete process.env.PLAYER_ID_ALIASES_FORCE_DISK;
+    else process.env.PLAYER_ID_ALIASES_FORCE_DISK = prevForce;
     if (previous != null) {
       await writeFile(ALIAS_PATH, previous, "utf8");
     } else {

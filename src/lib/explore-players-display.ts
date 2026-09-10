@@ -7,13 +7,14 @@ import {
 
 /**
  * Explore board chips — same taxonomy as Statistics / percentile / compare.
- * Hustle omitted: board rows don't carry hustle fields.
+ * Hustle included when the hustle overlay attaches season totals.
  */
 export const PLAYER_BOARD_VIEWS = [
   { id: "all", label: "All" },
   { id: "profile", label: "Profile" },
   { id: "shooting", label: "Shooting" },
   { id: "defense", label: "Defense" },
+  { id: "hustle", label: "Hustle" },
   { id: "advanced", label: "Advanced" },
   { id: "impact", label: "Impact" },
 ] as const;
@@ -142,6 +143,14 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
     "trueShootingPct",
   ],
   defense: ["spg", "bpg", "defensiveRating"],
+  hustle: [
+    "hustleDeflections",
+    "hustleContestedShots",
+    "hustleScreenAssists",
+    "hustleChargesDrawn",
+    "hustleLooseBallsRecovered",
+    "hustleBoxOuts",
+  ],
   advanced: [
     "usagePct",
     "turnoverPct",
@@ -180,7 +189,12 @@ PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
 
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,
-  flags: { hasDarko: boolean; hasRaptor: boolean; hasDrbl: boolean }
+  flags: {
+    hasDarko: boolean;
+    hasRaptor: boolean;
+    hasDrbl: boolean;
+    hasHustle?: boolean;
+  }
 ): PlayerSeasonSortKey[] {
   return PLAYER_BOARD_VIEW_COLUMNS[view].filter((key) => {
     if (key === "drbl100" || key === "r1WinEquivalents") return flags.hasDrbl;
@@ -194,6 +208,16 @@ export function filterPlayerBoardViewColumns(
       key === "winsAdded"
     ) {
       return flags.hasRaptor;
+    }
+    if (
+      key === "hustleDeflections" ||
+      key === "hustleContestedShots" ||
+      key === "hustleScreenAssists" ||
+      key === "hustleChargesDrawn" ||
+      key === "hustleLooseBallsRecovered" ||
+      key === "hustleBoxOuts"
+    ) {
+      return flags.hasHustle !== false;
     }
     return true;
   });

@@ -42,6 +42,7 @@ export type ExplorePlayersBoardView = {
   hasDarko: boolean;
   hasRaptor: boolean;
   hasDrbl: boolean;
+  hasHustle: boolean;
   /** Full filtered board size used for Level-2 percentile pools. */
   boardSampleSize: number;
   /** Serializable percentile pools for the active sort (full board). */
@@ -108,6 +109,15 @@ export async function getExplorePlayersBoardView(options: {
   const hasDarko = board.rows.some((p) => p.darkoDpm != null);
   const hasRaptor = board.rows.some((p) => p.raptor != null);
   const hasDrbl = board.rows.some((p) => hasValidDrblEstimate(p));
+  const hasHustle = board.rows.some(
+    (p) =>
+      p.hustleDeflections != null ||
+      p.hustleContestedShots != null ||
+      p.hustleScreenAssists != null ||
+      p.hustleChargesDrawn != null ||
+      p.hustleLooseBallsRecovered != null ||
+      p.hustleBoxOuts != null
+  );
   const requested = options.sortKey;
   const raptorSort =
     requested === "raptor" ||
@@ -162,6 +172,7 @@ export async function getExplorePlayersBoardView(options: {
     hasDarko,
     hasRaptor,
     hasDrbl,
+    hasHustle,
     boardSampleSize: contextIndex?.sampleSize ?? totalCount,
     contextPools: contextIndex ? serializeContextPools(contextIndex) : {},
     health: board.health,
