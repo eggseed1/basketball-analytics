@@ -130,6 +130,7 @@ export interface PlayerSeasonTableProps {
   hasDarko: boolean;
   hasRaptor: boolean;
   hasDrbl: boolean;
+  hasHustle?: boolean;
   seasonAwaitingGames?: boolean;
 }
 
@@ -144,6 +145,7 @@ export function PlayerSeasonTable({
   hasDarko,
   hasRaptor,
   hasDrbl,
+  hasHustle = true,
   seasonAwaitingGames = false,
 }: PlayerSeasonTableProps) {
   const { pending, replaceParams, searchParams } = useQueryNav();
@@ -219,7 +221,7 @@ export function PlayerSeasonTable({
 
   const views = parsePlayerBoardViews(searchParams.get("view"));
   const rate = parsePlayerBoardRate(searchParams.get("rate"));
-  const flags = { hasDarko, hasRaptor, hasDrbl };
+  const flags = { hasDarko, hasRaptor, hasDrbl, hasHustle };
   const groups = buildPlayerBoardGroups(views, flags);
   // Always show category band headers — including a single category and the
   // partitioned "all stats" layout.
@@ -553,6 +555,7 @@ type BoardColumnFlags = {
   hasDarko: boolean;
   hasRaptor: boolean;
   hasDrbl: boolean;
+  hasHustle?: boolean;
 };
 
 type BoardGroup = {
@@ -670,6 +673,18 @@ function columnLabel(col: TableCol, _view: PlayerBoardView): string {
       return "DRBL/100";
     case "r1WinEquivalents":
       return "WAR1";
+    case "hustleDeflections":
+      return "Defl";
+    case "hustleContestedShots":
+      return "Contest";
+    case "hustleScreenAssists":
+      return "ScrAst";
+    case "hustleChargesDrawn":
+      return "Chrg";
+    case "hustleLooseBallsRecovered":
+      return "Loose";
+    case "hustleBoxOuts":
+      return "BoxOut";
     default:
       return col;
   }
@@ -819,6 +834,48 @@ function formatStat(
       return formatOptionalDrbl(player.drbl100);
     case "r1WinEquivalents":
       return formatOptionalDrbl(player.r1WinEquivalents);
+    case "hustleDeflections":
+      return formatOptionalCounting(
+        player.hustleDeflections,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "hustleContestedShots":
+      return formatOptionalCounting(
+        player.hustleContestedShots,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "hustleScreenAssists":
+      return formatOptionalCounting(
+        player.hustleScreenAssists,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "hustleChargesDrawn":
+      return formatOptionalCounting(
+        player.hustleChargesDrawn,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "hustleLooseBallsRecovered":
+      return formatOptionalCounting(
+        player.hustleLooseBallsRecovered,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
+    case "hustleBoxOuts":
+      return formatOptionalCounting(
+        player.hustleBoxOuts,
+        player.gamesPlayed,
+        player.mpg,
+        rate
+      );
     default:
       return "-";
   }

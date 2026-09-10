@@ -39,7 +39,13 @@ export type PlayerSeasonSortKey =
   | "bpm"
   | "drbl100"
   | "r1Points"
-  | "r1WinEquivalents";
+  | "r1WinEquivalents"
+  | "hustleDeflections"
+  | "hustleContestedShots"
+  | "hustleScreenAssists"
+  | "hustleChargesDrawn"
+  | "hustleLooseBallsRecovered"
+  | "hustleBoxOuts";
 
 const SORT_KEYS = new Set<string>([
   "playerName",
@@ -81,6 +87,12 @@ const SORT_KEYS = new Set<string>([
   "drbl100",
   "r1Points",
   "r1WinEquivalents",
+  "hustleDeflections",
+  "hustleContestedShots",
+  "hustleScreenAssists",
+  "hustleChargesDrawn",
+  "hustleLooseBallsRecovered",
+  "hustleBoxOuts",
 ]);
 
 export function parsePlayerSeasonSortKey(

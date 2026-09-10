@@ -67,6 +67,13 @@ export type ExplorePlayerBoardRow = {
   defensiveRebounds?: number;
   /** Player TS% minus board mean TS% (fraction). */
   relativeTrueShootingPct?: number;
+  /** NBA hustle season totals when overlay present. */
+  hustleDeflections?: number;
+  hustleContestedShots?: number;
+  hustleScreenAssists?: number;
+  hustleChargesDrawn?: number;
+  hustleLooseBallsRecovered?: number;
+  hustleBoxOuts?: number;
   portraitUrl?: string | null;
 };
 
@@ -141,6 +148,18 @@ export function toExplorePlayerBoardRow(p: PlayerSeason): ExplorePlayerBoardRow 
     row.r1Points = p.r1Points ?? null;
     row.r1WinEquivalents = p.r1WinEquivalents ?? null;
   }
+  if (p.hustleDeflections != null) row.hustleDeflections = p.hustleDeflections;
+  if (p.hustleContestedShots != null) {
+    row.hustleContestedShots = p.hustleContestedShots;
+  }
+  if (p.hustleScreenAssists != null) {
+    row.hustleScreenAssists = p.hustleScreenAssists;
+  }
+  if (p.hustleChargesDrawn != null) row.hustleChargesDrawn = p.hustleChargesDrawn;
+  if (p.hustleLooseBallsRecovered != null) {
+    row.hustleLooseBallsRecovered = p.hustleLooseBallsRecovered;
+  }
+  if (p.hustleBoxOuts != null) row.hustleBoxOuts = p.hustleBoxOuts;
   return row;
 }
 
@@ -163,6 +182,17 @@ function sortKeyIsDrbl(key: PlayerSeasonSortKey): boolean {
   );
 }
 
+function sortKeyIsHustle(key: PlayerSeasonSortKey): boolean {
+  return (
+    key === "hustleDeflections" ||
+    key === "hustleContestedShots" ||
+    key === "hustleScreenAssists" ||
+    key === "hustleChargesDrawn" ||
+    key === "hustleLooseBallsRecovered" ||
+    key === "hustleBoxOuts"
+  );
+}
+
 function sortKeyIsOptionalRating(key: PlayerSeasonSortKey): boolean {
   return (
     key === "offensiveRating" ||
@@ -176,7 +206,8 @@ function sortKeyIsOptionalRating(key: PlayerSeasonSortKey): boolean {
     key === "turnoverPct" ||
     key === "relativeTrueShootingPct" ||
     sortKeyIsImpact(key) ||
-    sortKeyIsDrbl(key)
+    sortKeyIsDrbl(key) ||
+    sortKeyIsHustle(key)
   );
 }
 

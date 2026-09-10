@@ -1,6 +1,6 @@
 # Player stats surface inconsistencies
 
-**Date:** 2026-09-05 (verified aligned)  
+**Date:** 2026-09-10 (verified aligned)  
 **Canonical source:** `src/lib/player-stat-sheet-registry.ts`  
 (`SHEET_STAT_CATEGORY_CHIPS` · `SHEET_STAT_CATEGORY_ORDER` · `SHEET_STAT_DEFS` · `sheetStatOrderIndex`)
 
@@ -8,15 +8,15 @@
 |---------|-------|-----------|
 | **Statistics sheet** | `/players/[id]` · `#statistics` | Source of truth |
 | **Percentile ranking** | `/players/[id]` · overview | Same categories / order (resolved via sheet ids) |
-| **Explore players board** | `/explore/players` | Same chips (minus Hustle — no board data) |
+| **Explore players board** | `/explore/players` | Same chips including Hustle (when overlay present) |
 | **Compare** | `/compare` | Same category order |
 | **Career board** | player career table | Same chips / membership |
 
 ## Shared taxonomy
 
-**Categories (order):** All → Impact → Profile → Shooting · Defense · Hustle · Advanced
+**Categories (order):** All → Profile → Shooting · Defense · Hustle · Advanced · Impact
 
-Percentile / Compare omit **All**; Explore omits **Hustle** until board rows carry hustle fields.
+Percentile / Compare omit **All**. Explore shows **Hustle** columns when board rows carry hustle overlay fields (`hasHustle`).
 
 **Membership sketch**
 - **Profile** — MP, PTS, TRB, ORB, DRB, AST, TOV, PF, +/-
@@ -43,5 +43,4 @@ Percentile / Compare omit **All**; Explore omits **Hustle** until board rows car
 
 ## Remaining follow-ups
 
-- Wire **Hustle** onto the Explore board when hustle overlay fields are present on season rows.
 - Keep percentile panel legend/layout regressions covered by visual smoke after chart height changes.
