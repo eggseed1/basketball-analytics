@@ -1,11 +1,16 @@
 /**
  * Soft-fail scoreboard / gamefeed catalogs with stale-aware last-good cache.
  *
- * Hierarchy: live ESPN → process-local last-good → unavailable.
+ * Hierarchy: live ESPN → shared/process last-good → unavailable.
  * Cached data is always labeled stale - never presented as live.
  */
 
 import { classifyProviderFailure } from "@/data/diagnostics/provider-failure";
+import {
+  sharedClearPrefix,
+  sharedGetOrSet,
+  sharedPeek,
+} from "@/data/cache/shared-ttl-cache";
 import type { Game, GameSummary } from "@/data/types";
 import {
   addDaysIso,
@@ -18,6 +23,11 @@ import {
   startOfWeekSundayIso,
   upcomingScheduleSeason,
 } from "@/data/providers/nba/scoreboard-client";
+import {
+  canonicalSeasonFromStartYear,
+  currentNbaStartYear,
+} from "@/data/providers/historical/season-range";
+import { toGameSummary } from "./filter-utils";
 
 type MonthLoader = typeof fetchScoreboardMonth;
 type DayLoader = typeof fetchScoreboardDay;
@@ -36,11 +46,6 @@ function loadDay(
 ): ReturnType<typeof fetchScoreboardDay> {
   return (dayLoaderOverride ?? fetchScoreboardDay)(...args);
 }
-import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
-import { toGameSummary } from "./filter-utils";
 
 export type ScoreboardFeedSource = "live-espn" | "cached-espn" | "unavailable";
 
@@ -56,13 +61,17 @@ const STALE_WARNING =
   "Showing recently cached scoreboard data - not a live update.";
 const UNAVAILABLE_WARNING = "Live scores temporarily unavailable.";
 
+/** Soft last-good across serverless instances (memory L1 + Next Data Cache). */
+const SOFT_TTL_MS = 1000 * 60 * 10;
+const SOFT_STALE_MS = 1000 * 60 * 60 * 24;
+
 type CacheEntry<T> = { value: T; retrievedAt: string };
 
 const monthCache = new Map<string, CacheEntry<Game[]>>();
 const weekCache = new Map<string, CacheEntry<Game[]>>();
 const upcomingCache = new Map<
   string,
-  CacheEntry<{ games: Game[]; hasMore: boolean }>
+  CacheEntry<{ season: string; games: Game[]; hasMore: boolean }>
 >();
 const dayCache = new Map<string, CacheEntry<Game[]>>();
 const homeStripCache = new Map<
@@ -78,8 +87,17 @@ async function softLoad<T>(options: {
   label: string;
   empty: T;
 }): Promise<ScoreboardFeedResult<T>> {
+  const sharedKey = `scoreboard-soft:${options.key}`;
   try {
-    const value = await options.load();
+    const value = await sharedGetOrSet(
+      sharedKey,
+      {
+        ttlMs: SOFT_TTL_MS,
+        staleMs: SOFT_STALE_MS,
+        tags: ["scoreboard-soft", sharedKey],
+      },
+      options.load
+    );
     const retrievedAt = new Date().toISOString();
     options.cache.set(options.key, { value, retrievedAt });
     return {
@@ -100,6 +118,16 @@ async function softLoad<T>(options: {
         source: "cached-espn",
         warnings: [STALE_WARNING],
         retrievedAt: cached.retrievedAt,
+        isStale: true,
+      };
+    }
+    const peeked = sharedPeek<T>(sharedKey);
+    if (peeked != null) {
+      return {
+        data: peeked,
+        source: "cached-espn",
+        warnings: [STALE_WARNING],
+        retrievedAt: null,
         isStale: true,
       };
     }
@@ -200,16 +228,20 @@ export async function getUpcomingScoreboardFeed(
     hasMore: boolean;
   }>
 > {
-  const season = options.season ?? upcomingScheduleSeason();
-  const key = `${season}:${options.fromDate ?? ""}:${options.afterTipOffAt ?? ""}:${options.afterId ?? ""}:${options.limit ?? 60}`;
+  const seasonHint = options.season ?? upcomingScheduleSeason();
+  const key = `${seasonHint}:${options.fromDate ?? ""}:${options.afterTipOffAt ?? ""}:${options.afterId ?? ""}:${options.limit ?? 60}`;
   const result = await softLoad({
     key,
     cache: upcomingCache,
     label: "upcoming",
-    empty: { games: [] as Game[], hasMore: false },
+    empty: {
+      season: seasonHint,
+      games: [] as Game[],
+      hasMore: false,
+    },
     load: () =>
       fetchUpcomingScoreboardGames({
-        season,
+        season: options.season,
         fromDate: options.fromDate,
         afterTipOffAt: options.afterTipOffAt,
         afterId: options.afterId,
@@ -220,7 +252,7 @@ export async function getUpcomingScoreboardFeed(
   return {
     ...result,
     data: {
-      season,
+      season: result.data.season,
       games: result.data.games.map(toGameSummary),
       hasMore: result.data.hasMore,
     },
@@ -325,6 +357,7 @@ export function __resetScoreboardFeedCachesForTests() {
   recentCache.clear();
   monthLoaderOverride = null;
   dayLoaderOverride = null;
+  sharedClearPrefix("scoreboard-soft:");
 }
 
 export function __setScoreboardMonthLoaderForTests(loader: MonthLoader | null) {

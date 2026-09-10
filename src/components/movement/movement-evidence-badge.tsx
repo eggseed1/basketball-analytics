@@ -62,7 +62,7 @@ export function MovementStateBadge({
         type.caption,
         "inline-flex rounded-md border px-1.5 py-0.5 font-semibold uppercase tracking-wide",
         STATE_STYLES[state] ??
-          "border-border/70 bg-white/40 text-muted-foreground",
+          "border-border/70 frost-surface text-muted-foreground",
         className
       )}
     >

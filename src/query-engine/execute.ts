@@ -118,8 +118,10 @@ function readPlayerMetric(
       return row.usagePct != null && row.usagePct > 0 ? row.usagePct : null;
     case "darko":
       return row.darkoDpm ?? null;
-    case "lebron":
-      return row.lebron ?? null;
+    case "raptor":
+      return row.raptor ?? null;
+    case "bpm":
+      return row.bpm != null && Number.isFinite(row.bpm) ? row.bpm : null;
     case "drbl100":
       return hasValidDrblEstimate(row) ? row.drbl100 : null;
     case "r1_points":
@@ -192,7 +194,7 @@ function emptyResult(
 
 function sourceForPlayerMetric(metricId: AskMetricId, season: string): string {
   const cov = coverageForMetric(metricId);
-  if (metricId === "darko" || metricId === "lebron") {
+  if (metricId === "darko" || metricId === "raptor" || metricId === "bpm") {
     return cov?.sourceLabel ?? "Verified historical impact data";
   }
   if (DRBL_ASK_METRICS.has(metricId)) {

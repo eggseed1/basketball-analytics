@@ -18,6 +18,15 @@ const PX: Record<Size, number> = {
   xl: 140,
 };
 
+/** Tailwind size classes — allow call sites to override (e.g. denser mobile boards). */
+const SIZE_CLASS: Record<Size, string> = {
+  xs: "h-7 w-7",
+  sm: "h-9 w-9",
+  md: "h-14 w-14",
+  lg: "h-24 w-24",
+  xl: "h-[8.75rem] w-[8.75rem]",
+};
+
 function initials(name?: string | null) {
   if (!name) return "?";
   const parts = name.trim().split(/\s+/);
@@ -78,11 +87,10 @@ export function PlayerHeadshot({
       <span
         className={cn(
           "inline-flex shrink-0 items-center justify-center rounded-full font-bold tracking-wide text-white ring-2 ring-white/80",
+          SIZE_CLASS[size],
           className
         )}
         style={{
-          width: px,
-          height: px,
           fontSize: Math.max(10, px * 0.32),
           background: `linear-gradient(145deg, ${brand?.primary ?? "#0b1f3a"}, ${brand?.secondary ?? "#e85d04"})`,
         }}
@@ -97,11 +105,10 @@ export function PlayerHeadshot({
     <span
       className={cn(
         "relative inline-flex shrink-0 overflow-hidden rounded-full bg-muted ring-2 ring-white/90",
+        SIZE_CLASS[size],
         className
       )}
       style={{
-        width: px,
-        height: px,
         boxShadow: brand ? `0 0 0 2px ${brand.primary}` : undefined,
       }}
     >
@@ -112,7 +119,10 @@ export function PlayerHeadshot({
         width={px}
         height={px}
         priority={priority}
-        className="object-cover object-top"
+        // Small avatars sit in overflow boards; native lazy often never fires on
+        // mobile Safari inside horizontal scrollers.
+        loading={priority ? undefined : "eager"}
+        className="h-full w-full object-cover object-top"
         onError={() => {
           setIndex((i) => {
             if (i + 1 < candidates.length) return i + 1;

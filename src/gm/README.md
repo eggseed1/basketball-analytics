@@ -22,7 +22,7 @@ Layer A only). Draft/awards/transaction feeds still stubbed on the provider.
 
 ## Features (current vertical slice)
 
-- **Real NBA seed** - ESPN season stats + DARKO/LEBRON impact → `/gm` rosters
+- **Real NBA seed** - ESPN season stats + DARKO/RAPTOR impact → `/gm` rosters
 - **Real salaries + year caps** - historical salary CSV + official cap/tax/apron table by season
 - **Real schedules** - official NBA tips (BallDontLie) with MyLeague-style calendar UI
 - 30-team league, standings, playoffs, lottery, draft

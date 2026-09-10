@@ -28,7 +28,7 @@ function SentimentProvenanceBadge({
     <span
       className={cn(
         type.caption,
-        "inline-flex w-fit rounded-full border border-border/60 bg-white/40 px-2 py-0.5 text-muted-foreground"
+        "inline-flex w-fit rounded-full border border-border/60 frost-surface px-2 py-0.5 text-muted-foreground"
       )}
     >
       {label}
@@ -78,7 +78,7 @@ function SentimentLaneChart({
     .slice(0, topicLimit);
 
   return (
-    <div className="flex flex-col gap-2 rounded-md border border-border/60 bg-white/35 px-2 py-2">
+    <div className="flex flex-col gap-2 rounded-md border border-border/60 frost-surface-soft px-2 py-2">
       <div className="flex items-baseline justify-between gap-2">
         <p className={cn(type.caption, "font-semibold")}>{label}</p>
         <p className={cn(type.caption, "capitalize text-muted-foreground")}>

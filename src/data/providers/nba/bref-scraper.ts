@@ -166,6 +166,25 @@ export async function fetchBrefAdvancedSeason(
   canonicalSeason: string,
   options: { ttlMs?: number; staleMs?: number } = {}
 ): Promise<BrefAdvancedRow[]> {
+  // Cloudflare Workers: bundled snapshot first (live BRef is often blocked).
+  try {
+    const { getBundledBrefAdvancedSeason } = await import(
+      "@/data/runtime/bref-advanced-snapshot"
+    );
+    const bundled = getBundledBrefAdvancedSeason(canonicalSeason);
+    if (bundled?.length) return bundled;
+  } catch {
+    // fall through to live scrape
+  }
+
+  // Slim edge only: never hang on live BRef for missing seasons.
+  const { slimEdgeProductEnabled } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  if (slimEdgeProductEnabled()) {
+    return [];
+  }
+
   const year = brefSeasonYear(canonicalSeason);
   const url = `https://www.basketball-reference.com/leagues/NBA_${year}_advanced.html`;
   const ttlMs = options.ttlMs ?? DEFAULT_TTL_MS;

@@ -57,6 +57,23 @@ export type PlayerSentimentProfile = {
   };
 };
 
+/** Franchise-level fan/media lanes (team discourse or roster rollup). */
+export type TeamSentimentProfile = {
+  teamIds: string[];
+  displayName?: string;
+  teamKey?: string;
+  window: string;
+  provenance?: SentimentProfileProvenance;
+  /** Roster rollup vs direct team-entity observations. */
+  source?: "roster_rollup" | "team_observation";
+  fan: CuratedSentimentLane;
+  media: CuratedSentimentLane;
+  series?: {
+    fan: SentimentSeriesPoint[];
+    media: SentimentSeriesPoint[];
+  };
+};
+
 export type SentimentMoverRow = {
   playerId: string;
   displayName: string;
@@ -83,11 +100,40 @@ export type SentimentSnapshotMeta = {
     risers: SentimentMoverRow[];
     fallers: SentimentMoverRow[];
   };
+  /** Largest |fan − media| gaps (perception disagreement). */
+  divergences?: {
+    window: string;
+    minAbsGap: number;
+    rows: SentimentDivergenceRow[];
+  };
+  /** Topic weights rolled up across tracked player lanes. */
+  topicHeat?: SentimentTopicHeatRow[];
+  teamProfileCount?: number;
+};
+
+export type SentimentDivergenceRow = {
+  playerId: string;
+  displayName: string;
+  teamKey?: string;
+  fanScore: number;
+  mediaScore: number;
+  /** fanScore − mediaScore (negative = fans colder than media). */
+  gap: number;
+  absGap: number;
+};
+
+export type SentimentTopicHeatRow = {
+  topic: string;
+  /** Mention-weighted share across fan+media lanes (0–1 after normalize). */
+  weight: number;
+  playerCount: number;
+  mentionVolume: number;
 };
 
 export type SentimentCuratedSnapshot = {
   meta: SentimentSnapshotMeta;
   players: PlayerSentimentProfile[];
+  teams?: TeamSentimentProfile[];
   league?: LeagueSentimentSnapshot;
 };
 
@@ -142,4 +188,6 @@ export type LeagueSentimentFeed = {
   status: string;
   league: LeagueSentimentSnapshot;
   moodSeriesByWindow: Record<SentimentWindowId, SentimentMoodSeries>;
+  divergences: SentimentDivergenceRow[];
+  topicHeat: SentimentTopicHeatRow[];
 };

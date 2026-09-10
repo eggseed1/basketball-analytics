@@ -37,7 +37,7 @@
 - Types / queries / filter-utils / search-params  
 - `player-stat-comps`, percentile panel, Learn guides, `stat-explainers`  
 - Home `ComputedInsight` shape + `FindingsSection`  
-- Historical BDL + game caches, DARKO / LEBRON, brand chrome  
+- Historical BDL + game caches, DARKO / RAPTOR, brand chrome  
 
 ### Dependencies that block later phases
 
@@ -93,13 +93,18 @@
 - [x] Team profile route `/teams/[teamId]`  
 - [x] Team trends (prior season vs current when sample allows)  
 - [ ] Expand similar-player modes / Peak Impact UI (blocked on impact coverage)
+  - [x] Peak Impact companion on Career Resume: DARKO → RAPTOR (≤2021-22) → BPM
+  - [x] Context strip metric mode chips (WAR1 / DRBL / DARKO / RAPTOR / BPM / TS / USG)
+  - [ ] Richer multi-metric profile similarity (beyond nearest-on-one-metric)
 
 ### Phase 3 — Game + Historical
 
 - Game flow when play-by-play or win-prob available  
 - “What decided the game?” from box + advanced when present  
 - Possession explorer **architecture** (no fake possessions)  
-- Time Machine browse: eras, landmark games, ranking boards from existing caches  
+- Time Machine browse: eras, landmark games, ranking boards from existing caches
+  - [x] Curated landmark seasons on Time Machine landing
+  - [ ] Landmark games set (box-level) when archive coverage allows
 
 ### Phase 4 — Offseason Intelligence
 
@@ -107,7 +112,7 @@
 - [x] ESPN free-text transaction archive ingest (2000–present) — structured assets/ownership still missing  
 - [x] Real Offseason Tracker v1 (`/offseason`) — transaction **events** only (`docs/offseason-tracker.md`)  
 - Structured trade/pick ledger ingest (required for genealogy)  
-- Timeline + “why it matters” using DARKO/LEBRON/salary where valid  
+- Timeline + “why it matters” using DARKO/RAPTOR/salary where valid  
 - REAL vs REPORTED vs MODEL labeling  
 - Watchlist → “Your offseason”
 
@@ -120,9 +125,9 @@
 
 ### Phase 6 — Automated Discovery
 
-- Risers / fallers from season boards  
-- Stat Detective for YoY / rolling deltas  
-- Home “What Matters Today” editorial layer (data-first)
+- [x] Risers / fallers from season boards (DARKO + BPM YoY on Home findings)
+- [ ] Stat Detective for rolling / multi-window deltas
+- [x] Home “What Matters Today” data-first findings rail (leaders + YoY)
 
 ### Phase 7 — Deep PBP / DRBL
 

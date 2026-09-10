@@ -107,7 +107,7 @@ async function main() {
   assert.ok(getLearnTopic("trade-exception"));
   assert.ok(getLearnTopic("salary-fit-vs-legality"));
 
-  // --- Production ledger: players may exist; structured categories blocked ---
+  // --- Production ledger: players + partial structured draft capital ---
   const ledger = await getTeamAssets({
     teamId: "2",
     abbreviation: "BOS",
@@ -116,13 +116,19 @@ async function main() {
   });
 
   assert.equal(ledger.methodologyVersion, TEAM_ASSETS_METHODOLOGY_VERSION);
-  assert.equal(ledger.structuredLedgerAvailable, false);
+  assert.equal(ledger.structuredLedgerAvailable, true);
   assert.equal(ledger.genealogyUiReady, false);
-  assert.equal(ledger.draftCapital.length, 0);
+  assert.ok(ledger.draftCapital.length > 0, "baseline draft picks from asset ledger");
   assert.equal(ledger.tradeExceptions.length, 0);
   assert.equal(ledger.draftRights.length, 0);
 
-  assertBlockedCategory(ledger, "draft_capital");
+  const draftCat = ledger.categories.find((c) => c.id === "draft_capital");
+  assert.ok(draftCat);
+  assert.notEqual(
+    draftCat!.availability,
+    "blocked_pending_structured_source",
+    "draft capital unlocked when asset ledger present"
+  );
   assertBlockedCategory(ledger, "trade_exceptions");
   assertBlockedCategory(ledger, "draft_rights");
   assertBlockedCategory(ledger, "other");
@@ -150,15 +156,13 @@ async function main() {
   assert.equal(fits.salaryFit.length, 0);
   assert.equal(fits.legalityValidated.length, 0);
 
-  // --- Trust: structured ledger still empty; genealogy blocked ---
+  // --- Trust: partial structured ledger; full genealogy still blocked ---
   const coverage = await getTransactionLineageCoverage();
-  assert.equal(coverage.ownershipEdgeCount, 0);
-  assert.equal(coverage.assetCount, 0);
-  assert.equal(coverage.draftPickAssetCount, 0);
+  assert.ok(coverage.ownershipEdgeCount > 0, "structured ownership edges merged");
+  assert.ok(coverage.assetCount > 0, "structured assets in lineage index");
   assert.equal(coverage.genealogyUiReady, false);
 
-  // Free-text ESPN events must not appear as fabricated asset rows.
-  assert.equal(ledger.draftCapital.length, 0);
+  // TPE / draft rights still empty — never fabricated from ESPN blurbs.
   assert.equal(ledger.tradeExceptions.length, 0);
   assert.equal(ledger.draftRights.length, 0);
   assert.equal(

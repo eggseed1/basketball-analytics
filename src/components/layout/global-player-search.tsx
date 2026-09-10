@@ -67,7 +67,7 @@ export function GlobalPlayerSearch({
       } finally {
         setLoading(false);
       }
-    }, 180);
+    }, 80);
 
     return () => {
       controller.abort();

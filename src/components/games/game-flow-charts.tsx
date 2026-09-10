@@ -11,6 +11,7 @@ import {
   buildWinProbabilitySeries,
   type WinProbPoint,
 } from "@/lib/game-win-probability";
+import { useChartTheme } from "@/lib/chart-theme";
 import { cn } from "@/lib/utils";
 
 function periodMarksFor(maxT: number, maxPeriod: number): number[] {
@@ -54,6 +55,7 @@ export function GameMarginFlowChart({
   awayColor: string;
   events?: PlayByPlayEvent[];
 }) {
+  const chartTheme = useChartTheme();
   const [hover, setHover] = useState<number | null>(null);
   const { maxAbs, maxT, periodMarks, maxPeriod } = useMemo(() => {
     if (!timeline.length) {
@@ -131,7 +133,7 @@ export function GameMarginFlowChart({
           x2={w}
           y2={mid}
           stroke="currentColor"
-          strokeOpacity={0.18}
+          strokeOpacity={chartTheme.referenceOpacity()}
         />
         {periodMarks.map((t, i) => {
           const x = (t / maxT) * w;
@@ -143,7 +145,7 @@ export function GameMarginFlowChart({
                 x2={x}
                 y2={h - 8}
                 stroke="currentColor"
-                strokeOpacity={0.1}
+                strokeOpacity={chartTheme.periodLineOpacity()}
               />
               <text
                 x={x + 4}
@@ -159,7 +161,7 @@ export function GameMarginFlowChart({
         <polyline
           fill="none"
           stroke="currentColor"
-          strokeOpacity={0.35}
+          strokeOpacity={chartTheme.gridOpacity()}
           strokeWidth={1.5}
           points={poly}
         />
@@ -230,6 +232,7 @@ export function GameWinProbabilityChart({
   finalAwayScore: number;
   events?: PlayByPlayEvent[];
 }) {
+  const chartTheme = useChartTheme();
   const [hover, setHover] = useState<number | null>(null);
   const series = useMemo(
     () =>
@@ -347,7 +350,7 @@ export function GameWinProbabilityChart({
             x2={w}
             y2={mid}
             stroke="currentColor"
-            strokeOpacity={0.2}
+            strokeOpacity={chartTheme.referenceOpacity()}
           />
           {periodMarks.map((t, i) => {
             const x = (t / maxT) * w;
@@ -359,7 +362,7 @@ export function GameWinProbabilityChart({
                   x2={x}
                   y2={h - 4}
                   stroke="currentColor"
-                  strokeOpacity={0.1}
+                  strokeOpacity={chartTheme.periodLineOpacity()}
                 />
                 <text
                   x={x + 3}

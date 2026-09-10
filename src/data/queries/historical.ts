@@ -8,7 +8,7 @@ import type {
   DarkoRating,
   Game,
   GameBoxScore,
-  LebronRating,
+  RaptorRating,
   PlayerGame,
   PlayerSeason,
   Team,
@@ -80,10 +80,10 @@ export async function getDarkoRatings(
   return getHistoricalService().getDarko(season);
 }
 
-export async function getLebronRatings(
+export async function getRaptorRatings(
   season?: string
-): Promise<LebronRating[]> {
-  return getHistoricalService().getLebron(season);
+): Promise<RaptorRating[]> {
+  return getHistoricalService().getRaptor(season);
 }
 
 export async function getHistoricalTeams(): Promise<Team[]> {

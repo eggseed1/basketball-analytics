@@ -13,8 +13,9 @@ Generated for ASK DRBL v1.1. Do not treat board fields as multi-decade feeds.
 | 3P% | counting-era | 2025-26 | Career / board (era-dependent volume) | yes | Player-season board |
 | FT% | counting-era | 2025-26 | Career / board | yes | Player-season board |
 | USG% | 2000-01 | 2025-26 | Modern ESPN season boards; career rows often lack USG | limited | Modern player-season board (when present) |
-| DARKO DPM | 2025-26 | 2025-26 | Live snapshot names only for stamped season | yes | Verified historical impact (DARKO live · 2025-26) |
-| LEBRON | 2024-25 | 2024-25 | CSV when present; otherwise sparse seed | limited | Verified historical impact (LEBRON season-keyed) |
+| DARKO DPM | 1996-97 | 2025-26 | Overlay when baked for the asked season | yes | Verified historical impact (DARKO season-keyed) |
+| RAPTOR | 1976-77 | 2021-22 | FiveThirtyEight open data; blank after 538 stopped | yes (through 2021-22 only) | Verified historical impact (RAPTOR season-keyed) |
+| BPM | 1996-97 | 2025-26 | BRef advanced bake when present | yes | Basketball-Reference advanced |
 | CPI | counting-era | 2025-26 | Derived for Career Resume qualifying seasons | yes | Career Resume (CPI) |
 | Team point differential | 2001-02 | 2025-26 | Team-season ESPN boards | yes | Team-season board |
 | Team TS% | 2001-02 | 2025-26 | Team-season boards | yes | Team-season board |
@@ -30,8 +31,8 @@ Generated for ASK DRBL v1.1. Do not treat board fields as multi-decade feeds.
 - **3P%:** Reliable when attempts exist; low-volume seasons still report the rate.
 - **FT%:** Direct free-throw percentage.
 - **USG%:** ESPN career transform currently stamps usagePct=0. Prefer season board rows; refuse when missing rather than inventing.
-- **DARKO DPM:** Not a multi-year archive. Wrong-season asks must return unavailable — never stamp current DARKO onto other years.
-- **LEBRON:** Season-keyed only. Missing seasons stay missing — no substitute metric.
+- **DARKO DPM:** Season-keyed overlay. Wrong-season asks must return unavailable — never stamp current DARKO onto other years.
+- **RAPTOR:** Season-keyed through 2021-22 only. Missing seasons stay missing — no BPM/LEBRON substitute.
 - **CPI:** Documented composite from counting rates — not an impact metric.
 - **Team point differential:** Team averages from ESPN by-team totals.
 - **Team TS%:** Derived team efficiency.

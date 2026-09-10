@@ -24,6 +24,7 @@ function one(
 export default async function SentimentPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const narrative = one(sp, "narrative");
+  const topic = one(sp, "topic");
   const { feed, players } = await getLeagueSentimentBoard();
 
   if (!feed) {
@@ -42,6 +43,7 @@ export default async function SentimentPage({ searchParams }: PageProps) {
         feed={feed}
         players={players}
         highlightNarrative={narrative}
+        highlightTopic={topic}
       />
     </main>
   );

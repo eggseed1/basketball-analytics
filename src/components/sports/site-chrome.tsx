@@ -17,7 +17,7 @@ export function SiteChrome({ children }: { children: ReactNode }) {
       backdropBlur={16}
       overflowVisible
       className="site-chrome rounded-none"
-      style={{ position: "sticky", top: 0, zIndex: 40 }}
+      style={{ position: "sticky", top: 0, zIndex: "var(--z-nav)" }}
     >
       {children}
     </GlassSurface>

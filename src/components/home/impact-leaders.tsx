@@ -11,6 +11,7 @@ import { MetricHelp } from "@/components/learn/metric-help";
 import type { HomeDarkoLeader } from "@/data/queries/home";
 import type { PlayerSeason } from "@/data/types";
 import { formatImpact, formatPct } from "@/lib/stat-explainers";
+import { BoardPlayerName } from "@/lib/board-compact-name";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -88,8 +89,8 @@ export function ImpactLeaders({ leaders }: { leaders: HomeDarkoLeader[] }) {
                 />
                 <div className="min-w-0 flex-1 pt-1">
                   <div className="flex items-center gap-2">
-                    <p className={cn(type.body, "truncate font-semibold")}>
-                      {p.playerName}
+                    <p className={cn(type.body, "min-w-0 font-semibold")}>
+                      <BoardPlayerName name={p.playerName} />
                     </p>
                     {p.teamAbbr || p.teamName ? (
                       <TeamLogo teamKey={p.teamAbbr ?? p.teamName} size="xs" />
@@ -166,8 +167,8 @@ function EfficiencyCard({
               className="min-w-0 flex-1"
               nameClassName="w-full gap-2 no-underline hover:underline"
             >
-              <span className={cn(type.body, "min-w-0 flex-1 truncate font-semibold")}>
-                {p.playerName}
+              <span className={cn(type.body, "min-w-0 flex-1 font-semibold")}>
+                <BoardPlayerName name={p.playerName} />
               </span>
             </PlayerIdentity>
             {renderMeta(p)}

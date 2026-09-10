@@ -1,6 +1,19 @@
 import type { NextConfig } from "next";
+import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
+
+initOpenNextCloudflareForDev();
 
 const nextConfig: NextConfig = {
+  // Keep icon / chart trees out of shared server chunks where possible.
+  experimental: {
+    optimizePackageImports: ["lucide-react", "recharts"],
+  },
+  // Ensure Workers Paid product flags survive Next’s build-time env inlining.
+  // Wrangler `vars` alone are not visible during `next build` / OpenNext compile.
+  env: {
+    FULL_EDGE_PRODUCT: process.env.FULL_EDGE_PRODUCT ?? "1",
+    DATA_PROVIDER: process.env.DATA_PROVIDER ?? "nba",
+  },
   async redirects() {
     return [
       {
@@ -37,6 +50,11 @@ const nextConfig: NextConfig = {
         hostname: "cdn.nba.com",
         pathname: "/**",
       },
+      {
+        protocol: "https",
+        hostname: "www.basketball-reference.com",
+        pathname: "/req/**",
+      },
     ],
   },
   // Historical BDL season JSON lives under data/cache (gitignored locally but
@@ -45,10 +63,12 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     // Runtime data is intentionally loaded from disk instead of bundled into
     // client/server chunks. Next cannot statically trace dynamic path.join()
-    // calls, so make the production server output self-contained on Vercel.
+    // calls, so make the production server output self-contained on deploy.
     "/*": [
       "./src/data/drbl/precomputed/**/*",
       "./src/data/media/portrait-lookup.json",
+      "./src/data/runtime/asset-ledger-snapshot.json",
+      "./src/data/runtime/game-snapshot.json",
       "./data/cba/**/*",
       "./data/front-office/v1/**/*",
       "./data/impact/**/*",

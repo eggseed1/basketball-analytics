@@ -44,7 +44,7 @@ export function PlayerEvolutionPanel({
       </div>
 
       {finding ? (
-        <div className="rounded-md bg-white/55 px-3 py-3">
+        <div className="rounded-md frost-surface px-3 py-3">
           <p className="text-[16px] font-semibold tracking-tight">
             {finding.title}
           </p>
@@ -67,8 +67,8 @@ export function PlayerEvolutionPanel({
               <p
                 className={cn(
                   "shrink-0 text-[14px] font-bold tabular-nums",
-                  change.direction === "up" && "text-emerald-700",
-                  change.direction === "down" && "text-red-600"
+                  change.direction === "up" && "text-delta-up",
+                  change.direction === "down" && "text-delta-down"
                 )}
               >
                 {change.deltaDisplay}
@@ -87,7 +87,7 @@ export function PlayerEvolutionPanel({
           <button
             type="button"
             onClick={() => setShowAll((v) => !v)}
-            className="rounded-md bg-white/60 px-3 py-1.5 text-[14px] font-semibold"
+            className="rounded-md frost-surface px-3 py-1.5 text-[14px] font-semibold"
           >
             {showAll ? "Show biggest changes" : "See all changes"}
           </button>

@@ -172,6 +172,30 @@ export default async function HistorySeasonPage({
     } catch {
       // ignore
     }
+  } else if (filtered.length > 0) {
+    const seen = new Set<string>();
+    for (const g of filtered) {
+      for (const tid of [g.homeTeamId, g.awayTeamId]) {
+        if (!tid || seen.has(tid)) continue;
+        const team =
+          getCanonicalTeamFromProvider("espn", tid) ??
+          getCanonicalTeamFromProvider("nba", tid);
+        if (!team) continue;
+        seen.add(tid);
+        seen.add(team.canonicalTeamId);
+        const brand = resolveHistoricalTeamBrand(
+          team.canonicalTeamId,
+          season,
+          "era"
+        );
+        seasonTeams.push({
+          canonicalId: team.canonicalTeamId,
+          abbr: brand?.abbreviation ?? team.abbr,
+          name: brand?.displayName ?? team.displayName,
+        });
+      }
+    }
+    seasonTeams.sort((a, b) => a.name.localeCompare(b.name));
   }
 
   const filters = {

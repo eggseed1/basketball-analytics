@@ -3,7 +3,7 @@ import { DestinationLoadingFrame } from "@/components/continuity/destination-loa
 export default function Loading() {
   return (
     <DestinationLoadingFrame
-      title="ASK DRBL"
+      title="Ask DRBL"
       subtitle="Query surface stays connected to the rest of DRBL."
     />
   );

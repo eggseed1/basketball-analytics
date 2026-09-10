@@ -12,8 +12,8 @@ import { GameRosterBoard } from "@/components/games/game-roster-board";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
-import { brandWashColor, buildGameMatchupTheme } from "@/lib/game-matchup-theme";
-import { resolveTeamBrand } from "@/lib/nba-brand";
+import { useChartTheme } from "@/lib/chart-theme";
+import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { cn } from "@/lib/utils";
 
 type FlowTab = "margin" | "winprob";
@@ -60,14 +60,13 @@ export function GameLabView({
   /** Parent renders GameIdentityShell — lab must not remount a second hero. */
   omitHero?: boolean;
 }) {
+  const chartTheme = useChartTheme();
   const { outcome, flow } = analysis;
   const awayKey = outcome.awayTeamId;
   const homeKey = outcome.homeTeamId;
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayColor =
-    brandWashColor(resolveTeamBrand(awayKey)) || matchup.awayWash;
-  const homeColor =
-    brandWashColor(resolveTeamBrand(homeKey)) || matchup.homeWash;
+  const awayColor = chartTheme.teamBarColor(awayKey) || matchup.awayWash;
+  const homeColor = chartTheme.teamBarColor(homeKey) || matchup.homeWash;
   const [flowTab, setFlowTab] = useState<FlowTab>("margin");
 
   const homePlayers = players

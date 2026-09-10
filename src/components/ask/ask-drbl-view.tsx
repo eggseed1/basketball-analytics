@@ -599,9 +599,6 @@ export function AskDrblView({
     >
       <QueryUpdatingChrome pending={pending} />
       <header className="flex flex-col gap-2">
-        <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-          DRBL · Analytical search
-        </p>
         <h1 className="text-[32px] font-bold tracking-tight sm:text-[40px]">
           <MetricHelp
             conceptId="ask_drbl"

@@ -1,7 +1,7 @@
 {
   "methodologyVersion": "sentiment-s1-0.1",
   "status": "BUILT_FROM_SEEDS",
-  "disclaimer": "Illustrative fan/media sentiment aggregates with coverage context. Not a census of all fans.",
+  "disclaimer": "Curated prototype: illustrative fan/media sentiment aggregates with coverage context. Not a census of all fans or a live feed.",
   "pilotWindow": "7d",
   "moverLimit": 4,
   "moverLookbackDays": 7,

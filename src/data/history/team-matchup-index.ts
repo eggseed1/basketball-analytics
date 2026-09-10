@@ -117,15 +117,24 @@ function makePairKey(a: string, b: string): string {
   return a < b ? `${a}__${b}` : `${b}__${a}`;
 }
 
+function canonicalFromAnyTeamId(teamId: string): string | null {
+  return (
+    canonicalFromNba(teamId) ??
+    getCanonicalTeamFromProvider("espn", teamId)?.canonicalTeamId ??
+    getCanonicalTeamFromProvider("bdl", teamId)?.canonicalTeamId ??
+    null
+  );
+}
+
 function compactFromSummary(
   g: HistoricalGameSummary,
-  teamNbaId: string
+  teamMatchIds: Set<string>
 ): CompactTeamGameRow {
-  const isHome = g.homeTeamId === teamNbaId;
+  const isHome = teamMatchIds.has(g.homeTeamId);
   const won =
     g.winnerTeamId == null
       ? null
-      : g.winnerTeamId === teamNbaId
+      : teamMatchIds.has(g.winnerTeamId)
         ? ("W" as const)
         : ("L" as const);
   return {
@@ -134,8 +143,8 @@ function compactFromSummary(
     date: g.date,
     homeTeamId: g.homeTeamId,
     awayTeamId: g.awayTeamId,
-    homeCanonicalId: canonicalFromNba(g.homeTeamId) ?? g.homeTeamId,
-    awayCanonicalId: canonicalFromNba(g.awayTeamId) ?? g.awayTeamId,
+    homeCanonicalId: canonicalFromAnyTeamId(g.homeTeamId) ?? g.homeTeamId,
+    awayCanonicalId: canonicalFromAnyTeamId(g.awayTeamId) ?? g.awayTeamId,
     homeTricode: g.homeTricode ?? "HOME",
     awayTricode: g.awayTricode ?? "AWAY",
     homeScore: g.homeScore,
@@ -147,13 +156,18 @@ function compactFromSummary(
   };
 }
 
-/** True when season has product game indexes (1996-97+ history product). */
+/** True when season has product indexes or a runtime schedule snapshot. */
 export function hasHistoryTeamGameIndex(season: string): boolean {
-  return existsSync(path.join(HISTORY_ROOT, season, "index-by-team.json"));
+  if (existsSync(path.join(HISTORY_ROOT, season, "index-by-team.json"))) {
+    return true;
+  }
+  // Cloudflare / no history tree: ESPN runtime schedule still powers Games tabs.
+  return getHistoricalGameSummaries(season).length > 0;
 }
 
 /**
  * Compact team game log for one season via index-by-team + game-summaries.
+ * Falls back to filtering schedule summaries by ESPN/NBA team ids.
  */
 export function getCompactTeamSeasonGames(
   teamToken: string,
@@ -161,19 +175,33 @@ export function getCompactTeamSeasonGames(
 ): CompactTeamGameRow[] {
   const canonical = resolveCanonical(teamToken);
   if (!canonical) return [];
-  const nbaId = nbaIdForCanonical(canonical);
-  if (!nbaId) return [];
+  const team = getCanonicalTeamById(canonical);
+  const nbaId = team?.providerIds.nba ?? null;
+  const espnId = team?.providerIds.espn ?? null;
+  const matchIds = new Set(
+    [nbaId, espnId, canonical].filter((id): id is string => Boolean(id))
+  );
+  if (!matchIds.size) return [];
 
   const idx = readJson<Record<string, string[]>>(
     path.join(HISTORY_ROOT, season, "index-by-team.json")
   );
-  const ids = new Set(idx?.[nbaId] ?? []);
-  if (!ids.size) return [];
+  const indexedIds =
+    nbaId && idx?.[nbaId]?.length
+      ? new Set(idx[nbaId])
+      : espnId && idx?.[espnId]?.length
+        ? new Set(idx[espnId])
+        : null;
 
   const summaries = getHistoricalGameSummaries(season);
-  return summaries
-    .filter((g) => ids.has(g.gameId))
-    .map((g) => compactFromSummary(g, nbaId))
+  const filtered = indexedIds
+    ? summaries.filter((g) => indexedIds.has(g.gameId))
+    : summaries.filter(
+        (g) => matchIds.has(g.homeTeamId) || matchIds.has(g.awayTeamId)
+      );
+
+  return filtered
+    .map((g) => compactFromSummary(g, matchIds))
     .sort((a, b) =>
       a.date === b.date
         ? b.gameId.localeCompare(a.gameId)
@@ -207,6 +235,7 @@ export function compactRowsToGameSummaries(
     const gameType = r.seasonType.toLowerCase().includes("playoff")
       ? ("playoff" as const)
       : ("regular" as const);
+    const espn = /^40\d{7,}$/.test(r.gameId);
     return {
       id: r.gameId,
       season: r.season,
@@ -217,7 +246,7 @@ export function compactRowsToGameSummaries(
       awayTeamAbbr: r.awayTricode,
       homeProviderTeamId: r.homeTeamId,
       awayProviderTeamId: r.awayTeamId,
-      teamIdProvider: "nba" as const,
+      teamIdProvider: espn ? ("espn" as const) : ("nba" as const),
       homeScore: r.homeScore,
       awayScore: r.awayScore,
       gameType,

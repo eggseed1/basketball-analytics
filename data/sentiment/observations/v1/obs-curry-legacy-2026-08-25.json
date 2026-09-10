@@ -1,0 +1,52 @@
+{
+  "batchId": "obs-curry-legacy-2026-08-25",
+  "collectedAt": "2026-08-25T18:30:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-curry-fan-001",
+      "entityType": "player",
+      "entityId": "201939",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.36,
+      "mentionVolume": 260,
+      "language": "en",
+      "topicTags": ["legacy", "shooting", "franchise_face"],
+      "sampledAt": "2026-08-24T18:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-curry-fan-002",
+      "entityType": "player",
+      "entityId": "201939",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.12,
+      "mentionVolume": 140,
+      "language": "en",
+      "topicTags": ["age", "championship_window", "availability"],
+      "sampledAt": "2026-08-25T17:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-curry-media-001",
+      "entityType": "player",
+      "entityId": "201939",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "positive",
+      "score": 0.22,
+      "mentionVolume": 70,
+      "language": "en",
+      "topicTags": ["legacy", "extension", "title_contender"],
+      "sampledAt": "2026-08-25T14:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

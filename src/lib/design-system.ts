@@ -1,16 +1,23 @@
 /**
- * Site type scale - even pixel sizes only.
+ * Site type scale + layout tokens.
  * Prefer these names over one-off text-[NNpx] classes.
- * Do NOT use these for dense stats boards — use `boardType` instead.
+ * Do NOT use `type` for dense stats boards — use `boardType` instead.
  */
 export const type = {
-  caption: "text-[12px] leading-4",
-  bodySm: "text-[14px] leading-5",
-  body: "text-[16px] leading-6",
-  title: "text-[18px] leading-6 font-semibold tracking-tight",
-  heading: "text-[20px] leading-7 font-bold tracking-tight",
-  page: "text-[24px] leading-8 font-bold tracking-tight",
-  display: "text-[32px] leading-10 font-bold tracking-tight",
+  micro: "type-micro",
+  caption: "type-caption",
+  bodySm: "type-body-sm",
+  body: "type-body",
+  bodyLg: "type-body font-medium",
+  title: "type-title",
+  title3: "type-title-3",
+  heading: "type-heading",
+  title2: "type-title-2",
+  /** @deprecated Prefer title2 — kept for existing call sites */
+  page: "type-page",
+  title1: "type-title-1",
+  display: "type-display",
+  displayLg: "type-display-lg",
 } as const;
 
 /**
@@ -34,3 +41,66 @@ export const textLinkClassName =
 /** Hover-only (not a link) - never-played player mentions. */
 export const textHintClassName =
   "cursor-help font-semibold underline decoration-dotted decoration-foreground/40 underline-offset-2";
+
+/** 4px-derived spacing class helpers */
+export const space = {
+  1: "gap-1",
+  1_5: "gap-1.5",
+  2: "gap-2",
+  3: "gap-3",
+  4: "gap-4",
+  5: "gap-5",
+  6: "gap-6",
+  8: "gap-8",
+  component: "gap-3",
+  section: "gap-8",
+} as const;
+
+export const radius = {
+  xs: "rounded-[var(--radius-xs)]",
+  sm: "rounded-[var(--radius-sm)]",
+  md: "rounded-[var(--radius-md)]",
+  lg: "rounded-[var(--radius-lg)]",
+  xl: "rounded-[var(--radius-xl)]",
+  "2xl": "rounded-[var(--radius-2xl)]",
+  pill: "rounded-[var(--radius-pill)]",
+} as const;
+
+export const material = {
+  canvas: "material-canvas",
+  subtle: "material-subtle",
+  standard: "material-standard",
+  elevated: "material-elevated",
+  /** Production default card — prefers existing sports-card for solid-mode fallbacks */
+  card: "sports-card",
+} as const;
+
+export const density = {
+  comfortable: "density-comfortable",
+  compact: "density-compact",
+  dense: "density-dense",
+} as const;
+
+export const shell = {
+  standard: "site-shell",
+  wide: "site-shell-wide",
+  full: "site-shell-full",
+  prose: "site-prose",
+} as const;
+
+export const duration = {
+  fast: "duration-[var(--duration-fast)]",
+  standard: "duration-[var(--duration-standard)]",
+  slow: "duration-[var(--duration-slow)]",
+} as const;
+
+export const zIndex = {
+  base: "z-[var(--z-base)]",
+  sticky: "z-[var(--z-sticky)]",
+  nav: "z-[var(--z-nav)]",
+  dropdown: "z-[var(--z-dropdown)]",
+  popover: "z-[var(--z-popover)]",
+  modal: "z-[var(--z-modal)]",
+  toast: "z-[var(--z-toast)]",
+  command: "z-[var(--z-command)]",
+} as const;

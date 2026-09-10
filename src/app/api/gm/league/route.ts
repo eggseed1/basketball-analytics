@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       league: result.league,
       snapshot: result.snapshot,
       seasonCanonical: result.seasonCanonical,
-      source: "espn+darko+lebron",
+      source: "espn+darko+raptor",
     });
   } catch (error) {
     return jsonError(error);

@@ -4,13 +4,13 @@ import {
   useEffect,
   useId,
   useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
 import { createPortal } from "react-dom";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
-import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import type { PlayerAccoladeBadge } from "@/data/queries/player-awards";
 import { type } from "@/lib/design-system";
@@ -23,13 +23,66 @@ function formatSeasonLabel(season: string): string {
   return season;
 }
 
-function AccoladeChip({
-  badge,
-  compact = false,
-}: {
-  badge: PlayerAccoladeBadge;
-  compact?: boolean;
-}) {
+function yearSeasonsOf(badge: PlayerAccoladeBadge): string[] {
+  return badge.seasons.filter(
+    (s) => s !== "inducted" && !/^AS-\d+$/i.test(s)
+  );
+}
+
+/** BRef-style chip copy: "11x All Star", "2000-01 MVP", "Hall of Fame". */
+function blingLabel(badge: PlayerAccoladeBadge): string {
+  const { award, count } = badge;
+  const years = yearSeasonsOf(badge);
+
+  if (award.id === "hof") return "Hall of Fame";
+
+  if (award.id === "all_star") {
+    return count > 1 ? `${count}x All Star` : "All Star";
+  }
+
+  if (award.id === "champion") {
+    return count > 1 ? `${count}x NBA Champ` : "NBA Champ";
+  }
+
+  if (award.id === "finals_mvp") {
+    return count > 1 ? `${count}x Finals MVP` : "Finals MVP";
+  }
+
+  if (award.id === "all_defense") {
+    return count > 1 ? `${count}x All-Defensive` : "All-Defensive";
+  }
+
+  if (award.id === "all_nba") {
+    return count > 1 ? `${count}x All-NBA` : "All-NBA";
+  }
+
+  if (
+    count === 1 &&
+    years.length === 1 &&
+    (award.id === "roy" || award.id === "mvp" || award.id === "dpoy")
+  ) {
+    return `${formatSeasonLabel(years[0]!)} ${award.shortLabel}`;
+  }
+
+  return count > 1 ? `${count}x ${award.shortLabel}` : award.shortLabel;
+}
+
+/** Showcase order: HOF, All-Star, then remaining by catalog sort. */
+function sortForBling(badges: PlayerAccoladeBadge[]): PlayerAccoladeBadge[] {
+  return [...badges].sort((a, b) => {
+    const rank = (badge: PlayerAccoladeBadge) => {
+      if (badge.award.id === "hof") return 0;
+      if (badge.award.id === "all_star") return 1;
+      return 10 + badge.award.sort;
+    };
+    const ra = rank(a);
+    const rb = rank(b);
+    if (ra !== rb) return ra - rb;
+    return a.award.sort - b.award.sort;
+  });
+}
+
+function AccoladeTag({ badge }: { badge: PlayerAccoladeBadge }) {
   const { award, count, seasons } = badge;
   const tipId = useId();
   const triggerRef = useRef<HTMLLIElement>(null);
@@ -40,10 +93,9 @@ function AccoladeChip({
   );
   const [mounted, setMounted] = useState(false);
 
-  const yearSeasons = seasons.filter((s) => s !== "inducted");
-  const seasonsLabel =
-    yearSeasons.map(formatSeasonLabel).join(" · ") ||
-    (seasons.includes("inducted") ? "Inducted" : undefined);
+  const years = yearSeasonsOf(badge);
+  const label = blingLabel(badge);
+  const isHof = award.id === "hof";
 
   useEffect(() => {
     setMounted(true);
@@ -82,7 +134,7 @@ function AccoladeChip({
   return (
     <li
       ref={triggerRef}
-      className="relative"
+      className="min-w-0"
       onMouseEnter={openNow}
       onMouseLeave={scheduleClose}
       onFocus={openNow}
@@ -91,48 +143,20 @@ function AccoladeChip({
       <TransitionLink
         href={`/awards/${award.slug}`}
         className={cn(
-          "group inline-flex max-w-[14rem] items-center gap-2 rounded-md text-muted-foreground transition-colors hover:text-foreground",
-          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-          compact ? "px-1 py-0.5" : "px-1.5 py-1"
+          "accolade-metal-pill inline-flex max-w-full items-center rounded-md px-2.5 py-1",
+          "text-[12px] font-semibold leading-tight tracking-tight",
+          "transition-[filter,transform] hover:brightness-110 active:scale-[0.99]",
+          "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
+          isHof && "tracking-[0.02em]"
         )}
         aria-label={`${count}× ${award.title}${
-          seasonsLabel ? `. Seasons: ${seasonsLabel}` : ""
+          years.length
+            ? `. Seasons: ${years.map(formatSeasonLabel).join(" · ")}`
+            : ""
         }. View history.`}
         aria-describedby={open ? tipId : undefined}
       >
-        <span
-          className={cn(
-            "inline-flex shrink-0 items-center justify-center",
-            compact ? "size-6" : "size-8"
-          )}
-        >
-          <AwardTrophyIcon
-            trophy={award.trophy}
-            title={award.trophyName}
-            className={cn(
-              "transition-transform group-hover:scale-105",
-              compact ? "size-6" : "size-8"
-            )}
-          />
-        </span>
-        <span className="min-w-0 text-left leading-tight">
-          <span
-            className={cn(
-              type.caption,
-              "block font-semibold tracking-tight text-foreground"
-            )}
-          >
-            {award.title}
-          </span>
-          <span
-            className={cn(
-              type.caption,
-              "mt-0.5 block tabular-nums text-muted-foreground"
-            )}
-          >
-            {count}×
-          </span>
-        </span>
+        <span className="truncate">{label}</span>
       </TransitionLink>
 
       {mounted && open && coords
@@ -157,9 +181,9 @@ function AccoladeChip({
                 <p className={cn(type.bodySm, "mt-0.5 font-semibold")}>
                   {count}× {award.title}
                 </p>
-                {yearSeasons.length > 0 ? (
+                {years.length > 0 ? (
                   <ul className="mt-2 flex flex-wrap gap-1">
-                    {yearSeasons.map((season) => (
+                    {years.map((season) => (
                       <li
                         key={season}
                         className={cn(
@@ -172,12 +196,7 @@ function AccoladeChip({
                     ))}
                   </ul>
                 ) : seasons.includes("inducted") ? (
-                  <p
-                    className={cn(
-                      type.caption,
-                      "mt-2 text-muted-foreground"
-                    )}
-                  >
+                  <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
                     Hall of Fame inductee
                   </p>
                 ) : null}
@@ -191,30 +210,31 @@ function AccoladeChip({
 }
 
 /**
- * Trophy row for the player identity card — icon + written award title.
+ * Compact accolade tags for the player identity header (under name / vitals).
  */
 export function PlayerAccolades({
   badges,
   className,
-  compact = false,
+  compact: _compact = false,
 }: {
   badges: PlayerAccoladeBadge[];
   className?: string;
+  /** Kept for call-site compat; layout is always compact tags. */
   compact?: boolean;
 }) {
-  if (!badges.length) return null;
+  const ordered = useMemo(() => sortForBling(badges), [badges]);
+  if (!ordered.length) return null;
 
   return (
     <ul
       className={cn(
-        "flex max-w-full flex-wrap items-start gap-x-1.5 gap-y-1.5",
-        compact ? "justify-start" : "mt-3 justify-center gap-x-2 gap-y-2",
+        "mx-auto flex max-w-full flex-wrap content-start justify-center gap-1.5",
         className
       )}
       aria-label="Career accolades"
     >
-      {badges.map((badge) => (
-        <AccoladeChip key={badge.award.id} badge={badge} compact={compact} />
+      {ordered.map((badge) => (
+        <AccoladeTag key={badge.award.id} badge={badge} />
       ))}
     </ul>
   );

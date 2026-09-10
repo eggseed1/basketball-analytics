@@ -73,11 +73,19 @@ export function FranchiseTimeline({
         ) : null}
         <p className="mt-3 text-[13px]">
           <Link
-            href={`/franchises/${encodeURIComponent(f.franchiseId)}`}
+            href="#franchise-book"
             prefetch={false}
             className="font-semibold underline-offset-2 hover:underline"
           >
-            Franchise lore page →
+            Franchise scrapbook ↑
+          </Link>
+          {" · "}
+          <Link
+            href="/franchises"
+            prefetch={false}
+            className="font-semibold underline-offset-2 hover:underline"
+          >
+            All franchises →
           </Link>
         </p>
       </div>

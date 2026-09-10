@@ -138,7 +138,7 @@ export const useGmStore = create<GmStore>()(
               startEra: "latest",
               startSeason: payload.league.season,
               historicalAccuracy: 0.85,
-              realDataProviderId: "espn+darko+lebron",
+              realDataProviderId: "espn+darko+raptor",
             },
             { snapshot: payload.snapshot }
           );

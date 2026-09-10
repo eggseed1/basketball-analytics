@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 
 function MetricCard({ metric }: { metric: RankedMetric }) {
   return (
-    <div className="rounded-md bg-white/40 px-3 py-3">
+    <div className="rounded-md frost-surface px-3 py-3">
       <p
         className={cn(
           type.caption,
@@ -111,7 +111,7 @@ export function TeamOverviewBoard({
             </p>
             <ul className="mt-2 flex flex-col gap-2">
               {strengths.slice(0, 3).map((t) => (
-                <li key={t.id} className="rounded-md bg-white/40 px-3 py-2">
+                <li key={t.id} className="rounded-md frost-surface px-3 py-2">
                   <p className={cn(type.bodySm, "font-semibold")}>{t.label}</p>
                   <p className={cn(type.caption, "text-muted-foreground")}>
                     {t.display} · {formatOrdinal(Math.round(t.percentile))} pct
@@ -131,7 +131,7 @@ export function TeamOverviewBoard({
             </p>
             <ul className="mt-2 flex flex-col gap-2">
               {weaknesses.slice(0, 3).map((t) => (
-                <li key={t.id} className="rounded-md bg-white/40 px-3 py-2">
+                <li key={t.id} className="rounded-md frost-surface px-3 py-2">
                   <p className={cn(type.bodySm, "font-semibold")}>{t.label}</p>
                   <p className={cn(type.caption, "text-muted-foreground")}>
                     {t.display} · {formatOrdinal(Math.round(t.percentile))} pct
@@ -206,7 +206,7 @@ export function TeamOverviewBoard({
           </div>
           <div className="grid gap-3 sm:grid-cols-2">
             {traits.slice(0, 6).map((trait) => (
-              <div key={trait.id} className="rounded-md bg-white/40 px-3 py-3">
+              <div key={trait.id} className="rounded-md frost-surface px-3 py-3">
                 <StatDisclosure
                   label={trait.label}
                   context={trait.context}

@@ -177,7 +177,10 @@ export function overlayDraftYears(
 ): PlayerSeason[] {
   if (!draftById.size) return rows;
   return rows.map((row) => {
-    const draftYear = draftById.get(row.playerId);
+    if (row.draftYear != null) return row;
+    const draftYear =
+      draftById.get(row.playerId) ??
+      draftById.get(`espn:${row.playerId}`);
     return draftYear != null ? { ...row, draftYear } : row;
   });
 }

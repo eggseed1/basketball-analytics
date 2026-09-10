@@ -98,3 +98,61 @@ export function hustlePerGame(
   if (total == null || !Number.isFinite(total)) return null;
   return total / Math.max(1, row.gamesPlayed);
 }
+
+export type TeamHustleAggregate = {
+  contestedShots: number;
+  deflections: number;
+  chargesDrawn: number;
+  screenAssists: number;
+  looseBalls: number;
+  boxOuts: number;
+  playersWithData: number;
+  rosterSize: number;
+  /** Max GP among roster rows with hustle (proxy for team games played). */
+  teamGames: number;
+};
+
+function sumOptional(rows: PlayerSeason[], key: keyof HustleSeasonPatch): number {
+  return rows.reduce((acc, row) => {
+    const v = row[key];
+    return acc + (v != null && Number.isFinite(v) ? v : 0);
+  }, 0);
+}
+
+/** Sum hustle season totals across an actual team roster (not league team table). */
+export function aggregateTeamHustleFromRoster(
+  roster: PlayerSeason[]
+): TeamHustleAggregate | null {
+  const withHustle = roster.filter(hasHustleStats);
+  if (!withHustle.length) return null;
+  const teamGames = Math.max(
+    ...withHustle.map((row) => row.gamesPlayed || 0),
+    1
+  );
+  return {
+    contestedShots: sumOptional(withHustle, "hustleContestedShots"),
+    deflections: sumOptional(withHustle, "hustleDeflections"),
+    chargesDrawn: sumOptional(withHustle, "hustleChargesDrawn"),
+    screenAssists: sumOptional(withHustle, "hustleScreenAssists"),
+    looseBalls: sumOptional(withHustle, "hustleLooseBallsRecovered"),
+    boxOuts: sumOptional(withHustle, "hustleBoxOuts"),
+    playersWithData: withHustle.length,
+    rosterSize: roster.length,
+    teamGames,
+  };
+}
+
+export function teamHustlePerGame(
+  totals: TeamHustleAggregate,
+  key: keyof Pick<
+    TeamHustleAggregate,
+    | "contestedShots"
+    | "deflections"
+    | "chargesDrawn"
+    | "screenAssists"
+    | "looseBalls"
+    | "boxOuts"
+  >
+): number {
+  return totals[key] / Math.max(1, totals.teamGames);
+}

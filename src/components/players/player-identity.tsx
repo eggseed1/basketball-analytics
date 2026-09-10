@@ -6,6 +6,7 @@ import {
   useCallback,
   useEffect,
   useId,
+  useMemo,
   useRef,
   useState,
   type ReactNode,
@@ -14,7 +15,6 @@ import {
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
-import { PlayerTeamPositionLine } from "@/components/players/player-team-position-line";
 import {
   claimPlayerIdentityPreview,
   releasePlayerIdentityPreview,
@@ -25,6 +25,11 @@ import {
   textLinkClassName,
   type,
 } from "@/lib/design-system";
+import {
+  careerSpanLabel,
+  lookupPlayerPreviewAccolades,
+  lookupPlayerSearchRow,
+} from "@/lib/player-identity-preview-data";
 import { stripFloatingTransform } from "@/lib/strip-floating-transform";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import type { PlayerCardStint } from "@/lib/player-team-context";
@@ -57,9 +62,9 @@ export type PlayerIdentityProps = {
   hasPlayedNba?: boolean;
   /**
    * Preview density.
-   * - `default` - rich card (spacious contexts)
-   * - `compact` - small card for dense tables (prefers side placement)
-   * - `chip` - name tooltip for avatar strips
+   * - `default` - rich card
+   * - `compact` - small card for dense tables
+   * - `chip` - compact tip for avatar strips
    */
   variant?: PlayerIdentityVariant;
   /**
@@ -79,6 +84,7 @@ type VariantConfig = {
   fallbackAxisSide: "start" | "end" | "none";
   popupWidth: string;
   triggerHeadshot: "xs" | "sm";
+  accoladeLimit: number;
 };
 
 const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
@@ -91,8 +97,8 @@ const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
     fallbackAxisSide: "end",
     popupWidth: "w-[min(16rem,calc(100vw-1rem))]",
     triggerHeadshot: "sm",
+    accoladeLimit: 3,
   },
-  // Prefer beside the name so the next table row stays scannable.
   compact: {
     openDelay: 120,
     closeDelay: 160,
@@ -100,8 +106,9 @@ const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
     align: "start",
     sideOffset: 8,
     fallbackAxisSide: "start",
-    popupWidth: "w-[min(13rem,calc(100vw-1rem))]",
+    popupWidth: "w-[min(14rem,calc(100vw-1rem))]",
     triggerHeadshot: "xs",
+    accoladeLimit: 2,
   },
   chip: {
     openDelay: 100,
@@ -112,6 +119,7 @@ const VARIANT_CONFIG: Record<PlayerIdentityVariant, VariantConfig> = {
     fallbackAxisSide: "end",
     popupWidth: "w-max max-w-[min(14rem,calc(100vw-1rem))]",
     triggerHeadshot: "xs",
+    accoladeLimit: 2,
   },
 };
 
@@ -127,9 +135,8 @@ function resolveVariant(
 }
 
 /**
- * Consistent player identity: name remains a real link when they have NBA
- * games; hover/focus reveals a portaled floating preview. Players with no
- * NBA games stay hoverable (never-played hint) but are not clickable.
+ * Consistent player identity: name links when they have NBA games; hover shows
+ * career span + accolades (facts not already on the trigger).
  */
 export function PlayerIdentity({
   playerId,
@@ -206,13 +213,19 @@ export function PlayerIdentity({
   const brandTeamKey =
     lastCardStint(resolvedStints)?.teamKey || teamKey || undefined;
   const brand = resolveTeamBrand(brandTeamKey);
-  const multiTeam = resolvedStints.length > 1;
-  const metaLine =
-    [teamLabel, position, season].filter(Boolean).join(" · ") || null;
-  const teamOnly = teamLabel || null;
-  const popupWidth = multiTeam
-    ? "w-[min(18rem,calc(100vw-1rem))]"
-    : cfg.popupWidth;
+  const searchRow = useMemo(() => lookupPlayerSearchRow(id), [id]);
+  const span = careerSpanLabel(searchRow);
+  const accolades = useMemo(
+    () => lookupPlayerPreviewAccolades(id || nbaId, cfg.accoladeLimit),
+    [id, nbaId, cfg.accoladeLimit]
+  );
+
+  const teamOnly =
+    teamLabel || searchRow?.team || brand?.abbr || null;
+  const posLine = position?.trim() || null;
+  const seasonLine = season?.trim() || searchRow?.season || null;
+  const metaBits = [teamOnly, posLine, seasonLine].filter(Boolean);
+  const metaLine = metaBits.length ? metaBits.join(" · ") : null;
 
   const nameIsText = children == null || typeof children === "string";
   const trigger = linkable ? (
@@ -230,7 +243,6 @@ export function PlayerIdentity({
           closeDelay={cfg.closeDelay}
           className={cn(
             "inline-flex min-w-0 max-w-full items-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-            // Default name-only triggers use body; custom children inherit caller size.
             resolved !== "chip" && children == null && type.body,
             resolved === "chip" && "gap-0 no-underline hover:no-underline",
             resolved !== "chip" && nameIsText && linkable && textLinkClassName,
@@ -303,10 +315,7 @@ export function PlayerIdentity({
           <PreviewCard.Popup
             id={panelId}
             role="tooltip"
-            className={cn(
-              popupWidth,
-              resolved === "chip" && "rounded-md"
-            )}
+            className={cn(cfg.popupWidth, resolved === "chip" && "rounded-md")}
             render={(popupProps) => (
               <FrostFloatingSurface
                 {...popupProps}
@@ -324,134 +333,49 @@ export function PlayerIdentity({
                   {NEVER_PLAYED_COPY}
                 </p>
               </div>
-            ) : resolved === "chip" ? (
-              <TransitionLink
-                href={target}
-                className="block px-2.5 py-1.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                onClick={() => onOpenChange(false)}
-              >
-                <span className="block max-w-[12rem] truncate text-[12px] font-semibold tracking-tight">
-                  {name}
-                </span>
-                {multiTeam ? (
-                  <PlayerTeamPositionLine
-                    stints={resolvedStints}
-                    season={season}
-                    fallbackPosition={position}
-                    density="preview"
-                    interactive={false}
-                    className="mt-0.5 justify-start"
-                  />
-                ) : teamOnly ? (
-                  <span className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
-                    {brandTeamKey ? (
-                      <TeamLogo teamKey={brandTeamKey} size="2xs" />
-                    ) : null}
-                    <span className="truncate">{teamOnly}</span>
-                  </span>
-                ) : null}
-              </TransitionLink>
-            ) : resolved === "compact" ? (
-              <TransitionLink
-                href={target}
-                className={cn(
-                  "flex items-center gap-2 px-2 py-1.5",
-                  "hover:bg-foreground/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                )}
-                onClick={() => onOpenChange(false)}
-              >
-                <PlayerHeadshot
-                  playerId={id}
-                  espnId={espnId}
-                  nbaId={nbaId}
-                  name={name}
-                  teamKey={brandTeamKey}
-                  size="xs"
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[12px] font-bold tracking-tight">
-                    {name}
-                  </span>
-                  {multiTeam ? (
-                    <>
-                      <PlayerTeamPositionLine
-                        stints={resolvedStints}
-                        season={season}
-                        fallbackPosition={position}
-                        density="preview"
-                        interactive={false}
-                        className="mt-0.5 justify-start"
-                      />
-                      {season ? (
-                        <span className="mt-0.5 block text-[12px] text-muted-foreground">
-                          {season}
-                        </span>
-                      ) : null}
-                    </>
-                  ) : (
-                    <span className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground">
-                      {brandTeamKey ? (
-                        <TeamLogo teamKey={brandTeamKey} size="2xs" />
-                      ) : null}
-                      <span className="truncate">
-                        {metaLine ?? "View player →"}
-                      </span>
-                    </span>
-                  )}
-                </span>
-              </TransitionLink>
             ) : (
-              <TransitionLink
-                href={target}
-                className={cn(
-                  "flex items-center gap-3 p-2.5",
-                  "hover:bg-foreground/6 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                )}
-                onClick={() => onOpenChange(false)}
-              >
-                <PlayerHeadshot
-                  playerId={id}
-                  espnId={espnId}
-                  nbaId={nbaId}
-                  name={name}
-                  teamKey={brandTeamKey}
-                  size="md"
-                />
-                <span className="min-w-0 flex-1">
-                  <span className="block truncate text-[14px] font-bold tracking-tight">
-                    {name}
-                  </span>
-                  {multiTeam ? (
-                    <>
-                      <PlayerTeamPositionLine
-                        stints={resolvedStints}
-                        season={season}
-                        fallbackPosition={position}
-                        density="preview"
-                        interactive={false}
-                        className="mt-0.5 justify-start"
-                      />
-                      {season ? (
-                        <span className="mt-0.5 block text-[12px] text-muted-foreground">
-                          {season}
-                        </span>
-                      ) : null}
-                    </>
-                  ) : (
-                    <span className="mt-0.5 flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                      {brandTeamKey ? (
-                        <TeamLogo teamKey={brandTeamKey} size="2xs" />
-                      ) : null}
-                      <span className="truncate">
-                        {metaLine ?? "View player"}
-                      </span>
-                    </span>
-                  )}
-                  <span className="mt-1 block text-[12px] font-semibold underline underline-offset-2">
-                    View player →
-                  </span>
-                </span>
-              </TransitionLink>
+              <div className="flex flex-col gap-1.5 px-2.5 py-2">
+                <div className="flex items-center gap-2">
+                  <PlayerHeadshot
+                    playerId={id}
+                    espnId={espnId}
+                    nbaId={nbaId}
+                    name={name}
+                    teamKey={brandTeamKey}
+                    size={resolved === "default" ? "sm" : "xs"}
+                  />
+                  <div className="min-w-0 flex-1">
+                    <p className="truncate text-[14px] font-bold tracking-tight">
+                      {name}
+                    </p>
+                    {metaLine ? (
+                      <p className="mt-0.5 flex min-w-0 items-center gap-1 text-[12px] text-muted-foreground">
+                        {brandTeamKey ? (
+                          <TeamLogo teamKey={brandTeamKey} size="2xs" />
+                        ) : null}
+                        <span className="truncate">{metaLine}</span>
+                      </p>
+                    ) : null}
+                  </div>
+                </div>
+                {span ? (
+                  <p className="text-[12px] font-semibold tabular-nums text-muted-foreground">
+                    {span}
+                  </p>
+                ) : null}
+                {accolades.length > 0 ? (
+                  <ul className="flex max-w-full flex-wrap gap-1">
+                    {accolades.map((chip) => (
+                      <li
+                        key={chip}
+                        className="rounded-md bg-foreground/8 px-1.5 py-0.5 text-[11px] font-semibold tracking-tight"
+                      >
+                        {chip}
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
+              </div>
             )}
           </PreviewCard.Popup>
         </PreviewCard.Positioner>

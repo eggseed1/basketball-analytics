@@ -29,6 +29,7 @@ import { cn } from "@/lib/utils";
 
 import {
   SHEET_STAT_CATEGORY_CHIPS,
+  SHEET_STAT_CATEGORY_ORDER,
   formatSheetStatValue,
   getSheetStatValue,
   sheetStatHasAnyValue,
@@ -36,6 +37,7 @@ import {
   visibleSheetStats,
   type SheetRateMode,
   type SheetStatCategory,
+  type SheetStatDef,
 } from "@/lib/player-stat-sheet-registry";
 
 type RateMode = Extract<SheetRateMode, "perGame" | "totals" | "per100">;
@@ -46,6 +48,31 @@ const RATE_MODES: Array<{ id: RateMode; label: string }> = [
   { id: "totals", label: "Totals" },
   { id: "per100", label: "Per 100" },
 ];
+
+/** Sticky season col — inner box locks width; table max-width is ignored on <td>. */
+const SEASON_COL_WIDTH = "4.75rem";
+const SEASON_COL_CLASS =
+  "board-sticky-frost sticky left-0 z-10 box-border p-0";
+const SEASON_COL_STYLE = {
+  width: SEASON_COL_WIDTH,
+  minWidth: SEASON_COL_WIDTH,
+  maxWidth: SEASON_COL_WIDTH,
+} as const;
+
+type StatGroup = {
+  id: SheetStatCategory;
+  label: string;
+  cols: SheetStatDef[];
+};
+
+function groupSheetCols(cols: SheetStatDef[]): StatGroup[] {
+  return SHEET_STAT_CATEGORY_ORDER.map((id) => ({
+    id,
+    label:
+      SHEET_STAT_CATEGORY_CHIPS.find((c) => c.id === id)?.label ?? id,
+    cols: cols.filter((col) => col.category === id),
+  })).filter((group) => group.cols.length > 0);
+}
 
 function visibleCategoryChips(
   rows: PlayerSeason[],
@@ -94,15 +121,11 @@ function FilterRow({
   children: ReactNode;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-1.5">
-      <span
-        className={cn(
-          type.caption,
-          "mr-0.5 font-semibold uppercase tracking-wide text-muted-foreground"
-        )}
-      >
-        {label}
-      </span>
+    <div
+      className="flex flex-wrap items-center gap-1.5"
+      role="group"
+      aria-label={label}
+    >
       {children}
     </div>
   );
@@ -149,6 +172,8 @@ export function PlayerStatsBoard({
     [newestFirst, category, mode]
   );
 
+  const groups = useMemo(() => groupSheetCols(cols), [cols]);
+
   const categories = useMemo(
     () => visibleCategoryChips(newestFirst, mode),
     [newestFirst, mode]
@@ -186,7 +211,7 @@ export function PlayerStatsBoard({
         </div>
 
         <div className="flex flex-col gap-2.5">
-          <FilterRow label="Type">
+          <FilterRow label="Season type">
             <GlassChip
               active={seasonType === "regular"}
               onClick={() => setSeasonType("regular")}
@@ -211,7 +236,7 @@ export function PlayerStatsBoard({
               </GlassChip>
             ))}
           </FilterRow>
-          <FilterRow label="Cols">
+          <FilterRow label="Columns">
             {categories.map((item) => (
               <GlassChip
                 key={item.id}
@@ -232,6 +257,9 @@ export function PlayerStatsBoard({
           <>
             <div className="sports-card board-scroll-host -mx-1 overflow-x-auto rounded-md px-1">
               <table className="w-max min-w-full border-collapse text-left">
+                <colgroup>
+                  <col style={SEASON_COL_STYLE} />
+                </colgroup>
                 <thead
                   className={cn(
                     type.caption,
@@ -239,22 +267,75 @@ export function PlayerStatsBoard({
                   )}
                 >
                   <tr className="border-b border-border/60">
-                    <th className="board-sticky-frost sticky left-0 z-20 py-2 pr-3 font-semibold">
-                      Season
-                    </th>
-                    <th className="px-2 py-2 text-right font-semibold">Age</th>
-                    <th className="px-2 py-2 text-right font-semibold">Tm</th>
-                    <th className="px-2 py-2 text-left font-semibold">Pos</th>
-                    <th className="px-2 py-2 text-right font-semibold">G</th>
-                    <th className="px-2 py-2 text-right font-semibold">GS</th>
-                    {cols.map((col) => (
-                      <th
-                        key={col.id}
-                        className="whitespace-nowrap px-2 py-2 text-right font-semibold"
+                    <th
+                      rowSpan={2}
+                      style={SEASON_COL_STYLE}
+                      className={cn(
+                        SEASON_COL_CLASS,
+                        "z-20 align-bottom font-semibold"
+                      )}
+                    >
+                      <div
+                        className="box-border overflow-hidden py-2 pr-3"
+                        style={SEASON_COL_STYLE}
                       >
-                        {col.label}
+                        Season
+                      </div>
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="px-2 py-2 align-bottom text-right font-semibold"
+                    >
+                      Age
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="px-2 py-2 align-bottom text-right font-semibold"
+                    >
+                      Tm
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="px-2 py-2 align-bottom text-left font-semibold"
+                    >
+                      Pos
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="px-2 py-2 align-bottom text-right font-semibold"
+                    >
+                      G
+                    </th>
+                    <th
+                      rowSpan={2}
+                      className="px-2 py-2 align-bottom text-right font-semibold"
+                    >
+                      GS
+                    </th>
+                    {groups.map((group) => (
+                      <th
+                        key={group.id}
+                        colSpan={group.cols.length}
+                        className="h-7 border-l border-border/70 px-2 py-1.5 text-center font-semibold"
+                      >
+                        {group.label}
                       </th>
                     ))}
+                  </tr>
+                  <tr className="border-b border-border/60">
+                    {groups.flatMap((group) =>
+                      group.cols.map((col, ki) => (
+                        <th
+                          key={col.id}
+                          className={cn(
+                            "whitespace-nowrap px-2 py-2 text-right font-semibold",
+                            ki === 0 && "border-l border-border/70"
+                          )}
+                        >
+                          {col.label}
+                        </th>
+                      ))
+                    )}
                   </tr>
                 </thead>
                 <tbody>
@@ -277,24 +358,32 @@ export function PlayerStatsBoard({
                           active && "board-row-active"
                         )}
                       >
-                        <td className="board-sticky-frost sticky left-0 z-10 py-1.5 pr-3">
-                          <TextLink
-                            href={playerDepthHref(playerId, {
-                              season: row.season,
-                              depth: "stats",
-                              seasonType,
-                              fromHistory,
-                              themeMode,
-                            })}
-                            scroll={false}
-                            className={cn(
-                              type.caption,
-                              "font-semibold tabular-nums",
-                              active && "underline decoration-foreground/40"
-                            )}
+                        <td
+                          style={SEASON_COL_STYLE}
+                          className={SEASON_COL_CLASS}
+                        >
+                          <div
+                            className="box-border overflow-hidden py-1.5 pr-3"
+                            style={SEASON_COL_STYLE}
                           >
-                            {row.season}
-                          </TextLink>
+                            <TextLink
+                              href={playerDepthHref(playerId, {
+                                season: row.season,
+                                depth: "stats",
+                                seasonType,
+                                fromHistory,
+                                themeMode,
+                              })}
+                              scroll={false}
+                              className={cn(
+                                type.caption,
+                                "block truncate font-semibold tabular-nums",
+                                active && "underline decoration-foreground/40"
+                              )}
+                            >
+                              {row.season}
+                            </TextLink>
+                          </div>
                         </td>
                         <td
                           className={cn(
@@ -341,21 +430,24 @@ export function PlayerStatsBoard({
                         >
                           {formatNumber(row.gamesStarted, 0)}
                         </td>
-                        {cols.map((col) => (
-                          <td
-                            key={col.id}
-                            className={cn(
-                              type.caption,
-                              "whitespace-nowrap px-2 py-1.5 text-right tabular-nums"
-                            )}
-                          >
-                            {formatSheetStatValue(
-                              getSheetStatValue(row, col.id, mode),
-                              col,
-                              mode
-                            )}
-                          </td>
-                        ))}
+                        {groups.flatMap((group) =>
+                          group.cols.map((col, ki) => (
+                            <td
+                              key={col.id}
+                              className={cn(
+                                type.caption,
+                                "whitespace-nowrap px-2 py-1.5 text-right tabular-nums",
+                                ki === 0 && "border-l border-border/70"
+                              )}
+                            >
+                              {formatSheetStatValue(
+                                getSheetStatValue(row, col.id, mode),
+                                col,
+                                mode
+                              )}
+                            </td>
+                          ))
+                        )}
                       </tr>
                     );
                   })}

@@ -27,7 +27,12 @@ export function StandingsConferenceTable({
         {title}
       </div>
       <div className="overflow-x-auto">
-        <table className="w-full table-fixed text-left">
+        <table
+          className={cn(
+            "w-full table-fixed text-left",
+            compact ? "min-w-[20rem]" : "min-w-[42rem]"
+          )}
+        >
           <colgroup>
             <col className="w-7" />
             <col />
@@ -49,7 +54,14 @@ export function StandingsConferenceTable({
           <thead className="border-b border-border bg-secondary/50">
             <tr>
               <th className={cn(thBase, "pl-3 pr-1")}>#</th>
-              <th className={cn(thBase, "pl-2 pr-2")}>Team</th>
+              <th
+                className={cn(
+                  thBase,
+                  "min-w-[4.5rem] pl-2 pr-2 sm:min-w-[11.5rem]"
+                )}
+              >
+                Team
+              </th>
               <th className={cn(thBase, "px-1 text-right")}>W</th>
               <th className={cn(thBase, "px-1 text-right")}>L</th>
               <th className={cn(thBase, "px-1 text-right")}>PCT</th>
@@ -81,23 +93,40 @@ export function StandingsConferenceTable({
                   >
                     {row.rank}
                   </td>
-                  <td className="py-2 pl-2 pr-2">
+                  <td className="min-w-[4.5rem] py-2 pl-2 pr-2 sm:min-w-[11.5rem]">
                     <TeamIdentity
                       teamKey={row.teamId}
                       label={compact ? row.abbreviation : row.displayName}
-                      className="min-w-0"
-                      nameClassName="flex min-w-0 items-center gap-2 no-underline hover:no-underline"
+                      className="max-w-none"
+                      nameClassName="flex min-w-max max-w-none items-center gap-2 whitespace-nowrap no-underline hover:no-underline"
                     >
                       <TeamLogo teamKey={row.abbreviation} size="xs" />
-                      <span
-                        className={cn(
-                          type.body,
-                          textLinkClassName,
-                          "truncate"
-                        )}
-                      >
-                        {compact ? row.abbreviation : row.displayName}
-                      </span>
+                      {compact ? (
+                        <span className={cn(type.body, textLinkClassName)}>
+                          {row.abbreviation}
+                        </span>
+                      ) : (
+                        <>
+                          <span
+                            className={cn(
+                              type.body,
+                              textLinkClassName,
+                              "sm:hidden"
+                            )}
+                          >
+                            {row.abbreviation}
+                          </span>
+                          <span
+                            className={cn(
+                              type.body,
+                              textLinkClassName,
+                              "hidden sm:inline"
+                            )}
+                          >
+                            {row.displayName}
+                          </span>
+                        </>
+                      )}
                     </TeamIdentity>
                   </td>
                   <td className={cn(tdBase, "px-1 text-right")}>{row.wins}</td>
@@ -122,9 +151,9 @@ export function StandingsConferenceTable({
                           tdBase,
                           "px-1 text-right font-medium",
                           row.differential > 0
-                            ? "text-emerald-700"
+                            ? "text-delta-up"
                             : row.differential < 0
-                              ? "text-rose-700"
+                              ? "text-delta-down"
                               : ""
                         )}
                       >
@@ -152,9 +181,9 @@ export function StandingsConferenceTable({
                         tdBase,
                         "pl-1 pr-3 text-right font-medium",
                         row.differential > 0
-                          ? "text-emerald-700"
+                          ? "text-delta-up"
                           : row.differential < 0
-                            ? "text-rose-700"
+                            ? "text-delta-down"
                             : ""
                       )}
                     >

@@ -126,7 +126,7 @@ export function GameWatchOptions({
         {rows.map((row) => (
           <li
             key={row.option.id}
-            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 bg-white/40 px-2.5 py-2"
+            className="flex flex-wrap items-center justify-between gap-2 rounded-md border border-border/70 frost-surface px-2.5 py-2"
           >
             <div className="min-w-0">
               <p className="text-[14px] font-semibold">{row.option.label}</p>

@@ -1,17 +1,25 @@
 /**
- * Raw NBA advanced box score fetch (stats.nba.com → disk cache).
+ * Raw advanced box score fetch for official team possessions.
  *
- * Official team possessions live on boxscoreadvancedv3
- * (`boxScoreAdvanced.*.statistics.possessions`). Traditional CDN / traditional
- * stats boxes do not carry this field.
+ * Priority:
+ * 1) stats.nba.com boxscoreadvancedv3 (when network policy allows)
+ * 2) BallDontLie GOAT advanced (Vercel-friendly when API key present)
+ * 3) On-disk DRBL raw cache
+ *
+ * Traditional CDN boxes do not carry possessions — never invent estimates.
  */
 
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import { CACHE_TTL_MS } from "./cache-policy";
+import { looksLikeEspnEventId } from "@/data/identity/game-id";
+import { resolveNbaGameId } from "@/data/identity/resolve-nba-game-id";
+import { fetchBdlOfficialPossessions } from "@/data/providers/nba/bdl-official-possessions";
 
-export type AdvancedBoxSource = "stats" | "disk";
+import { CACHE_TTL_MS } from "./cache-policy";
+import { statsNbaNetworkEnabled } from "./runtime-policy";
+
+export type AdvancedBoxSource = "stats" | "disk" | "bdl";
 
 export type RawAdvancedBoxPayload = {
   raw: unknown;
@@ -26,7 +34,8 @@ export type AdvancedBoxFetchAttempt = {
     | "network_error"
     | "empty"
     | "invalid_shape"
-    | "missing_file";
+    | "missing_file"
+    | "skipped";
   detail?: string;
 };
 
@@ -84,16 +93,12 @@ function diskPath(gameId: string): string {
     "raw",
     "games",
     gameId,
-    "boxscore-advanced-v3.json"
+    "boxscoreadvanced.json"
   );
 }
 
 function hasAdvancedEnvelope(raw: unknown): boolean {
-  const root = raw as {
-    boxScoreAdvanced?: unknown;
-    meta?: unknown;
-  };
-  return Boolean(root.boxScoreAdvanced);
+  return Boolean((raw as { boxScoreAdvanced?: unknown })?.boxScoreAdvanced);
 }
 
 async function fetchJson(
@@ -140,11 +145,20 @@ export async function fetchRawAdvancedBoxScoreDetailed(
   gameId: string,
   options?: { bypassCache?: boolean }
 ): Promise<AdvancedBoxFetchResult> {
+  const routeId = String(gameId ?? "").trim();
   const now = Date.now();
   const attempts: AdvancedBoxFetchAttempt[] = [];
 
+  if (!routeId) {
+    return {
+      status: "unavailable",
+      attempts: [{ source: "input", outcome: "empty", detail: "missing gameId" }],
+      reason: "game_not_supported",
+    };
+  }
+
   if (!options?.bypassCache) {
-    const cached = memoryCache.get(gameId);
+    const cached = memoryCache.get(routeId);
     if (cached && cached.freshUntil > now) {
       attempts.push({ source: "memory_cache", outcome: "ok" });
       return {
@@ -155,60 +169,106 @@ export async function fetchRawAdvancedBoxScoreDetailed(
     }
   }
 
-  const statsResult = await fetchJson(statsAdvancedUrl(gameId));
-  if (statsResult.ok) {
-    if (!hasAdvancedEnvelope(statsResult.raw)) {
+  const nbaGameId =
+    (await resolveNbaGameId(routeId).catch(() => null)) ??
+    (!looksLikeEspnEventId(routeId) ? routeId : null);
+
+  if (statsNbaNetworkEnabled() && nbaGameId) {
+    const statsResult = await fetchJson(statsAdvancedUrl(nbaGameId));
+    if (statsResult.ok) {
+      if (!hasAdvancedEnvelope(statsResult.raw)) {
+        attempts.push({
+          source: "stats_nba",
+          outcome: "invalid_shape",
+          detail: "missing boxScoreAdvanced",
+        });
+      } else {
+        attempts.push({ source: "stats_nba", outcome: "ok" });
+        memoryCache.set(routeId, {
+          value: statsResult.raw,
+          source: "stats",
+          freshUntil: now + CACHE_TTL_MS.boxScore,
+        });
+        return {
+          status: "available",
+          payload: { raw: statsResult.raw, source: "stats" },
+          attempts,
+        };
+      }
+    } else {
+      const httpish = statsResult.detail.startsWith("HTTP");
       attempts.push({
         source: "stats_nba",
-        outcome: "invalid_shape",
-        detail: "missing boxScoreAdvanced",
+        outcome: httpish ? "http_error" : "network_error",
+        detail: statsResult.detail,
       });
-    } else {
-      attempts.push({ source: "stats_nba", outcome: "ok" });
-      memoryCache.set(gameId, {
-        value: statsResult.raw,
-        source: "stats",
+    }
+  } else {
+    attempts.push({
+      source: "stats_nba",
+      outcome: "skipped",
+      detail: statsNbaNetworkEnabled()
+        ? "nba_game_id_unresolved"
+        : "disabled_on_vercel",
+    });
+  }
+
+  try {
+    const bdl = await fetchBdlOfficialPossessions(nbaGameId ?? routeId);
+    if (bdl) {
+      attempts.push({
+        source: "balldontlie",
+        outcome: "ok",
+        detail: `bdl_game=${bdl.bdlGameId}`,
+      });
+      memoryCache.set(routeId, {
+        value: bdl.raw,
+        source: "bdl",
         freshUntil: now + CACHE_TTL_MS.boxScore,
       });
       return {
         status: "available",
-        payload: { raw: statsResult.raw, source: "stats" },
+        payload: { raw: bdl.raw, source: "bdl" },
         attempts,
       };
     }
-  } else {
-    const httpish = statsResult.detail.startsWith("HTTP");
     attempts.push({
-      source: "stats_nba",
-      outcome: httpish ? "http_error" : "network_error",
-      detail: statsResult.detail,
+      source: "balldontlie",
+      outcome: "empty",
+      detail: "no_match_or_no_key",
+    });
+  } catch (error) {
+    attempts.push({
+      source: "balldontlie",
+      outcome: "network_error",
+      detail: error instanceof Error ? error.message.slice(0, 120) : "error",
     });
   }
 
-  const disk = await readDiskCache(gameId);
-  if (disk) {
+  for (const id of [nbaGameId, routeId].filter(Boolean) as string[]) {
+    const disk = await readDiskCache(id);
+    if (!disk) continue;
     if (!hasAdvancedEnvelope(disk)) {
       attempts.push({
         source: "disk_cache",
         outcome: "invalid_shape",
         detail: "missing boxScoreAdvanced",
       });
-    } else {
-      attempts.push({ source: "disk_cache", outcome: "ok" });
-      memoryCache.set(gameId, {
-        value: disk,
-        source: "disk",
-        freshUntil: now + CACHE_TTL_MS.boxScore,
-      });
-      return {
-        status: "available",
-        payload: { raw: disk, source: "disk" },
-        attempts,
-      };
+      continue;
     }
-  } else {
-    attempts.push({ source: "disk_cache", outcome: "missing_file" });
+    attempts.push({ source: "disk_cache", outcome: "ok" });
+    memoryCache.set(routeId, {
+      value: disk,
+      source: "disk",
+      freshUntil: now + CACHE_TTL_MS.boxScore,
+    });
+    return {
+      status: "available",
+      payload: { raw: disk, source: "disk" },
+      attempts,
+    };
   }
+  attempts.push({ source: "disk_cache", outcome: "missing_file" });
 
   const last = attempts[attempts.length - 1];
   const reason =

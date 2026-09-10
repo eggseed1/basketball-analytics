@@ -101,12 +101,12 @@ export function reconstructPossessions(
     const state = lineupAtAction(lineups, event.actionNumber);
     const offensePlayerIds =
       offenseTeamId === box.homeTeamId
-        ? state.homePlayerIds
-        : state.awayPlayerIds;
+        ? state.homePlayerIds ?? []
+        : state.awayPlayerIds ?? [];
     const defensePlayerIds =
       offenseTeamId === box.homeTeamId
-        ? state.awayPlayerIds
-        : state.homePlayerIds;
+        ? state.awayPlayerIds ?? []
+        : state.homePlayerIds ?? [];
     return { offensePlayerIds, defensePlayerIds };
   }
 

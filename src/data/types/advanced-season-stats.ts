@@ -2,7 +2,7 @@
  * Season-true advanced player stats — diagnostic / admission types only.
  *
  * Distinct from:
- * - HistoricalPlayerImpact (DARKO / LEBRON)
+ * - HistoricalPlayerImpact (DARKO / RAPTOR)
  * - PlayerSeason production fields (ESPN / current methodology)
  * - AdvancedPlayerGameStats (per-game grain)
  *

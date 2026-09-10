@@ -22,13 +22,14 @@ export function WeekGameCalendarClient({
 }) {
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
-      <div className="flex items-center justify-between gap-2">
-        <h2 className="type-heading">Upcoming Games</h2>
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <h2 className="type-heading min-w-0">Upcoming Games</h2>
         <TextLink
           href="/scores?view=week"
-          className="type-body-sm text-muted-foreground"
+          className="type-body-sm shrink-0 text-muted-foreground"
         >
-          See all schedule →
+          <span className="sm:hidden">Schedule →</span>
+          <span className="hidden sm:inline">See all schedule →</span>
         </TextLink>
       </div>
 
@@ -39,7 +40,7 @@ export function WeekGameCalendarClient({
       ) : (
         <LiveScoreboardScope games={initialGames} season={season}>
           {(games) => (
-            <div className="-mx-1 flex gap-4 overflow-x-auto px-1 pb-1">
+            <div className="-mx-1 flex gap-4 touch-scroll-x px-1 pb-1">
               {games.map((game) => (
                 <HomeGameStripCard key={game.id} game={game} />
               ))}

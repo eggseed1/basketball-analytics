@@ -78,9 +78,9 @@ function toBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
       darko: darkoTotal(row),
       darkoOff: darkoOffense(row),
       darkoDef: darkoDefense(row),
-      lebron: finiteNum(row.lebron),
-      oLebron: finiteNum(row.oLebron),
-      dLebron: finiteNum(row.dLebron),
+      raptor: finiteNum(row.raptor),
+      oRaptor: finiteNum(row.oRaptor),
+      dRaptor: finiteNum(row.dRaptor),
       winsAdded: finiteNum(row.winsAdded),
       war1: finiteNum(row.r1WinEquivalents),
       drbl100: drbl ? finiteNum(row.drbl100) : null,
@@ -116,26 +116,52 @@ export async function PlayerCareerIsland({
   fromHistory?: boolean;
   themeMode?: ThemeMode;
 }) {
-  const source =
-    seasonType === "playoffs"
-      ? await getPlayerPlayoffCareerSeasons(playerId)
-      : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
-          () => career
-        );
-  const rows = toBoardRows(source);
-  const seasons = rows.map((row) => row.season);
-  const compare = pickCompare(seasons, season, compareSeason);
+  try {
+    const source =
+      seasonType === "playoffs"
+        ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
+        : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
+            () => career
+          );
+    const filtered = source.filter((row) => {
+      if (row.gamesPlayed > 0) return true;
+      return Boolean(
+        row.per ||
+          row.vorp ||
+          row.winShares ||
+          row.points ||
+          row.offensiveRating
+      );
+    });
+    const rows = toBoardRows(filtered);
+    const seasons = rows.map((row) => row.season);
+    const compare = pickCompare(seasons, season, compareSeason);
 
-  return (
-    <PlayerCareerBoard
-      playerId={playerId}
-      season={season}
-      seasonType={seasonType}
-      rows={rows}
-      compareSeason={compare}
-      teamKey={teamKey}
-      fromHistory={fromHistory}
-      themeMode={themeMode}
-    />
-  );
+    return (
+      <PlayerCareerBoard
+        playerId={playerId}
+        season={season}
+        seasonType={seasonType}
+        rows={rows}
+        compareSeason={compare}
+        teamKey={teamKey}
+        fromHistory={fromHistory}
+        themeMode={themeMode}
+      />
+    );
+  } catch {
+    const rows = toBoardRows(career);
+    return (
+      <PlayerCareerBoard
+        playerId={playerId}
+        season={season}
+        seasonType={seasonType}
+        rows={rows}
+        compareSeason={season}
+        teamKey={teamKey}
+        fromHistory={fromHistory}
+        themeMode={themeMode}
+      />
+    );
+  }
 }

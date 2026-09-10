@@ -94,6 +94,54 @@ async function main() {
   assert.equal(finalsWinner, "BOS");
   assert.equal(completed.finals.result, "4-1");
 
+  // Snapshot-backed seasons should fully fill (15 best-of-7 series).
+  const { getRuntimeSnapshotGames } = await import(
+    "../src/data/runtime/game-snapshot"
+  );
+  const { computeStandingsFromGameArchive } = await import(
+    "../src/lib/standings-from-games"
+  );
+  for (const season of ["2021-22", "2022-23", "2023-24", "2024-25"] as const) {
+    const seasonGames = getRuntimeSnapshotGames(season);
+    const standingsArchive = computeStandingsFromGameArchive(
+      season,
+      seasonGames
+    );
+    assert.ok(standingsArchive, `standings archive ${season}`);
+    for (const conf of standingsArchive.conferences) {
+      for (const row of conf.rows) {
+        row.playoffSeed = row.rank;
+      }
+    }
+    const playoff = seasonGames.filter(
+      (g) => g.gameType === "playoff" || g.gameType === "play-in"
+    );
+    const model = buildPlayoffBracket({
+      season,
+      standings: standingsArchive,
+      games: playoff,
+      now: new Date("2025-08-01"),
+    });
+    assert.equal(model.mode, "complete", season);
+    const seriesSlots = [
+      ...model.east.firstRound,
+      ...model.west.firstRound,
+      ...model.east.semifinals,
+      ...model.west.semifinals,
+      model.east.conferenceFinals,
+      model.west.conferenceFinals,
+      model.finals,
+    ];
+    const filled = seriesSlots.filter(
+      (m) => m.top.team && m.bottom.team && m.result && (m.top.winner || m.bottom.winner)
+    );
+    assert.equal(filled.length, 15, `${season} expected full bracket`);
+    assert.ok(
+      model.finals.top.winner || model.finals.bottom.winner,
+      `${season} finals winner`
+    );
+  }
+
   console.log("playoff-bracket checks passed");
 }
 

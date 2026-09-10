@@ -32,7 +32,11 @@ export type PlayerSeasonSortKey =
   | "darkoDpm"
   | "darkoOff"
   | "darkoDef"
-  | "lebron"
+  | "raptor"
+  | "oRaptor"
+  | "dRaptor"
+  | "winsAdded"
+  | "bpm"
   | "drbl100"
   | "r1Points"
   | "r1WinEquivalents";
@@ -69,7 +73,11 @@ const SORT_KEYS = new Set<string>([
   "darkoDpm",
   "darkoOff",
   "darkoDef",
-  "lebron",
+  "raptor",
+  "oRaptor",
+  "dRaptor",
+  "winsAdded",
+  "bpm",
   "drbl100",
   "r1Points",
   "r1WinEquivalents",

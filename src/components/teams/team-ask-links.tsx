@@ -26,7 +26,7 @@ export function TeamAskLinks({
         <li key={link.href}>
           <Link
             href={link.href}
-            className="group flex flex-col rounded-xl border border-border bg-white/45 px-3 py-2.5 sm:px-4"
+            className="group flex flex-col rounded-xl border border-border frost-surface px-3 py-2.5 sm:px-4"
           >
             <span className="text-[14px] font-semibold underline-offset-2 group-hover:underline">
               {link.label} →

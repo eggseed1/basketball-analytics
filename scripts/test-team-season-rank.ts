@@ -524,8 +524,8 @@ function main() {
     assert.equal(okc.operation, "team_season_rank");
 
     // Player best season still routes to player rank
-    const lebron = interpretAskQuery("What was LeBron's best season?");
-    assert.equal(lebron.operation, "season_rank");
+    const raptor = interpretAskQuery("What was LeBron's best season?");
+    assert.equal(raptor.operation, "season_rank");
   }
 
   console.log("test-team-season-rank: all assertions passed");

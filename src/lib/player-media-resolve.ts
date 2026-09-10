@@ -1,10 +1,10 @@
 /**
  * Client-safe player portrait resolution (no fs).
- * Uses precomputed dual-key portrait map when available; never dual-namespace
- * fallthrough of a single numeric id across ESPN and NBA CDNs.
+ * Approved URLs are passed from the server (`getPlayerPortraitUrl` /
+ * bundled `portrait-lookup-store`). This module keeps an empty in-memory
+ * registry so the large lookup JSON is not duplicated into every client
+ * chunk; CDN typed fallthrough covers list surfaces without a server URL.
  */
-
-import portraitLookupJson from "@/data/media/portrait-lookup.json";
 
 export type MediaRoleContext = "PLAYER" | "COACH" | "STAFF" | "UNKNOWN";
 
@@ -23,10 +23,7 @@ export const BLOCKED_NBA_LATEST_PLAYER_IDS = new Set<string>([
 
 export const FORCE_PLACEHOLDER_PLAYER_IDS = new Set<string>([]);
 
-type LookupJson = { portraits?: Record<string, string> };
-
-const PORTRAITS: Record<string, string> =
-  (portraitLookupJson as LookupJson).portraits ?? {};
+const PORTRAITS: Record<string, string> = {};
 
 function approvedFromRegistry(
   ...ids: Array<string | null | undefined>

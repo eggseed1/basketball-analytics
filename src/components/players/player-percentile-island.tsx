@@ -17,6 +17,7 @@ export async function PlayerPercentileIsland({
   identityTeamKey,
   honor,
   nbaId,
+  espnId,
 }: {
   playerId: string;
   displayName: string;
@@ -27,6 +28,7 @@ export async function PlayerPercentileIsland({
   identityTeamKey?: string | null;
   honor?: GlassSurfaceHonor;
   nbaId?: string | null;
+  espnId?: string | null;
 }) {
   try {
     const { metrics, teamKey } = await loadPlayerPercentileMetrics(
@@ -34,7 +36,7 @@ export async function PlayerPercentileIsland({
       season,
       career,
       identityTeamKey,
-      { nbaId, mode: "fast" }
+      { nbaId, espnId, mode: "fast" }
     );
     const statsCtx = resolvePlayerStatsSeason(career, season);
     const stintsBySeason = Object.fromEntries(

@@ -16,8 +16,10 @@ import {
   TeamSeasonRankPicker,
   TeamSeasonRankView,
 } from "@/components/compare/team-season-rank-view";
+import { PageHeader } from "@/components/layout/page-header";
 import {
   getFilteredPlayerSeasons,
+  getPlayerCareerSeasons,
   getPlayerSeason,
   getTeamSeasonComparison,
   getTeamSeasonEvidence,
@@ -28,7 +30,18 @@ import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { hasRuntimeTeamBoard } from "@/data/runtime/team-board-snapshot";
+import {
+  CAREER_COMPARE_KEY,
+  buildCareerAverageRow,
+  careerSpanLabel,
+  careerTeamKeysByTenure,
+  isCareerCompareKey,
+} from "@/lib/career-average-row";
+import { type } from "@/lib/design-system";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { cn } from "@/lib/utils";
 import type { PlayerSeason } from "@/data/types";
 
 export const metadata = {
@@ -49,48 +62,138 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
+function findPeerRow(
+  peers: PlayerSeason[],
+  playerId: string,
+  aliasIds: string[] = []
+): PlayerSeason | undefined {
+  const ids = new Set(
+    [playerId, ...aliasIds]
+      .map((id) => String(id ?? "").trim())
+      .filter(Boolean)
+  );
+  if (!ids.size) return undefined;
+  return peers.find((p) => ids.has(p.playerId));
+}
+
+/** Single-season team chip(s) under the headshot. */
+function seasonTeamKeysForRow(
+  row: PlayerSeason | null,
+  seasonKey: string
+): string[] {
+  if (!row || isCareerCompareKey(seasonKey)) return [];
+  const tid = String(row.teamId ?? "").toUpperCase();
+  if (tid === "TOT" || tid === "CAREER") return [];
+  const key = (row.teamAbbreviation || row.teamId || "").trim();
+  if (!key || key.toUpperCase() === "TOT" || key.toUpperCase() === "CAR") {
+    return [];
+  }
+  return [key];
+}
+
+/**
+ * Prefer peer-board row on CF. Live getPlayerSeason can fan out uncancellable
+ * ESPN roster work and blow the Worker budget. Career row is last resort for
+ * historical seasons missing from the board snapshot.
+ */
 async function loadSeasonRow(
   playerId: string,
   season: string,
   peers: PlayerSeason[]
 ): Promise<PlayerSeason | null> {
-  const fromPeers = peers.find((p) => p.playerId === playerId);
-  const row = await getPlayerSeason(playerId, season).catch(() => null);
-  if (!row && !fromPeers) return null;
-  if (!row) return fromPeers ?? null;
-  return {
-    ...row,
-    playerName: row.playerName || fromPeers?.playerName || playerId,
-    usagePct:
-      row.usagePct != null && row.usagePct > 0
-        ? row.usagePct
-        : fromPeers?.usagePct ?? row.usagePct,
-    darkoDpm: row.darkoDpm ?? fromPeers?.darkoDpm,
-    darkoOff: row.darkoOff ?? fromPeers?.darkoOff,
-    darkoDef: row.darkoDef ?? fromPeers?.darkoDef,
-    lebron: row.lebron ?? fromPeers?.lebron,
-    trueShootingPct:
-      row.trueShootingPct != null && row.trueShootingPct > 0
-        ? row.trueShootingPct
-        : fromPeers?.trueShootingPct ?? row.trueShootingPct,
-    drbl100: fromPeers?.drbl100 ?? row.drbl100,
-    rawAbilityRate: fromPeers?.rawAbilityRate ?? row.rawAbilityRate,
-    drblPossessions: fromPeers?.drblPossessions ?? row.drblPossessions,
-    abilityModelVersion:
-      fromPeers?.abilityModelVersion ?? row.abilityModelVersion,
-    drblRank: fromPeers?.drblRank ?? row.drblRank,
-    drblO: fromPeers?.drblO ?? row.drblO,
-    drblD: fromPeers?.drblD ?? row.drblD,
-    drblP: fromPeers?.drblP ?? row.drblP,
-    drblLn: fromPeers?.drblLn ?? row.drblLn,
-    drblB: fromPeers?.drblB ?? row.drblB,
-    r1Points: fromPeers?.r1Points ?? row.r1Points,
-    r1WinEquivalents: fromPeers?.r1WinEquivalents ?? row.r1WinEquivalents,
-    r1PointValueVersion:
-      fromPeers?.r1PointValueVersion ?? row.r1PointValueVersion,
-    r1WinEquivalentVersion:
-      fromPeers?.r1WinEquivalentVersion ?? row.r1WinEquivalentVersion,
-  };
+  const preferBundled = preferBundledProductDataOnEdge();
+  let aliasIds: string[] = [];
+  try {
+    const { resolvePlayerIdentityCached } = await import(
+      "@/data/identity/player-identity-cache"
+    );
+    const identity = await resolvePlayerIdentityCached(playerId).catch(
+      () => null
+    );
+    aliasIds = [identity?.espnId, identity?.nbaId].filter(
+      (id): id is string => Boolean(id && id !== playerId)
+    );
+  } catch {
+    /* identity optional */
+  }
+
+  const fromPeers = findPeerRow(peers, playerId, aliasIds);
+
+  if (fromPeers && fromPeers.gamesPlayed > 0) {
+    if (preferBundled) {
+      return { ...fromPeers, playerId }; // keep route id for links
+    }
+  }
+
+  if (!preferBundled) {
+    const row = await getPlayerSeason(playerId, season).catch(() => null);
+    if (row) {
+      return {
+        ...row,
+        playerId,
+        playerName: row.playerName || fromPeers?.playerName || playerId,
+        usagePct:
+          row.usagePct != null && row.usagePct > 0
+            ? row.usagePct
+            : fromPeers?.usagePct ?? row.usagePct,
+        darkoDpm: row.darkoDpm ?? fromPeers?.darkoDpm,
+        darkoOff: row.darkoOff ?? fromPeers?.darkoOff,
+        darkoDef: row.darkoDef ?? fromPeers?.darkoDef,
+        raptor: row.raptor ?? fromPeers?.raptor,
+        trueShootingPct:
+          row.trueShootingPct != null && row.trueShootingPct > 0
+            ? row.trueShootingPct
+            : fromPeers?.trueShootingPct ?? row.trueShootingPct,
+        drbl100: fromPeers?.drbl100 ?? row.drbl100,
+        rawAbilityRate: fromPeers?.rawAbilityRate ?? row.rawAbilityRate,
+        drblPossessions: fromPeers?.drblPossessions ?? row.drblPossessions,
+        abilityModelVersion:
+          fromPeers?.abilityModelVersion ?? row.abilityModelVersion,
+        drblRank: fromPeers?.drblRank ?? row.drblRank,
+        drblO: fromPeers?.drblO ?? row.drblO,
+        drblD: fromPeers?.drblD ?? row.drblD,
+        drblP: fromPeers?.drblP ?? row.drblP,
+        drblLn: fromPeers?.drblLn ?? row.drblLn,
+        drblB: fromPeers?.drblB ?? row.drblB,
+        r1Points: fromPeers?.r1Points ?? row.r1Points,
+        r1WinEquivalents: fromPeers?.r1WinEquivalents ?? row.r1WinEquivalents,
+        r1PointValueVersion:
+          fromPeers?.r1PointValueVersion ?? row.r1PointValueVersion,
+        r1WinEquivalentVersion:
+          fromPeers?.r1WinEquivalentVersion ?? row.r1WinEquivalentVersion,
+      };
+    }
+  }
+
+  if (fromPeers) return { ...fromPeers, playerId };
+
+  const career = await getPlayerCareerSeasons(playerId).catch(
+    () => [] as PlayerSeason[]
+  );
+  const fromCareer = career.find(
+    (row) => row.season === season && row.gamesPlayed > 0
+  );
+  return fromCareer ? { ...fromCareer, playerId } : null;
+}
+
+async function loadPeersForSeason(season: string): Promise<PlayerSeason[]> {
+  return getFilteredPlayerSeasons({
+    season,
+    minimumGames: 15,
+  }).catch(() => [] as PlayerSeason[]);
+}
+
+function resolveTeamCompareSeason(preferred: string): string {
+  const key = String(preferred ?? "").trim();
+  if (key && hasRuntimeTeamBoard(key)) return key;
+  const prior = shiftCanonicalSeason(key || "2025-26", -1);
+  if (hasRuntimeTeamBoard(prior)) return prior;
+  // Latest baked team board (desc).
+  for (let y = currentNbaStartYear(); y >= 2020; y -= 1) {
+    const season = canonicalSeasonFromStartYear(y);
+    if (hasRuntimeTeamBoard(season)) return season;
+  }
+  return key || canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
 }
 
 function TeamsSubnav({
@@ -103,7 +206,7 @@ function TeamsSubnav({
   rankHref: string;
 }) {
   return (
-    <p className="flex flex-wrap gap-x-3 gap-y-1 text-[14px] font-semibold">
+    <p className={cn(type.bodySm, "flex flex-wrap gap-x-3 gap-y-1 font-semibold")}>
       <Link
         href={compareHref}
         className={
@@ -181,22 +284,23 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         ? teamComparePath({
             teamA: resolvedId,
             teamB: resolvedId,
-            seasonA: currentSeason,
-            seasonB: shiftCanonicalSeason(currentSeason, -1),
+            seasonA: resolveTeamCompareSeason(currentSeason),
+            seasonB: resolveTeamCompareSeason(
+              shiftCanonicalSeason(
+                resolveTeamCompareSeason(currentSeason),
+                -1
+              )
+            ),
           })
         : "/compare?mode=teams";
 
       return (
         <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
-          <header className="flex flex-col gap-1">
-            <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-              Compare
-            </h1>
-            <p className="max-w-2xl text-[16px] text-muted-foreground">
-              Rank a franchise’s seasons via pairwise Team Season Compare -
-              Copeland aggregation, no opaque team score.
-            </p>
-            <p className="text-[14px] font-semibold">
+          <PageHeader
+            title="Compare"
+            subtitle="Rank a franchise’s seasons via pairwise Team Season Compare - Copeland aggregation, no opaque team score."
+          >
+            <p className={cn(type.bodySm, "font-semibold")}>
               <Link
                 href="/compare"
                 className="text-muted-foreground underline-offset-2 hover:underline"
@@ -211,12 +315,17 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
               compareHref={compareHref}
               rankHref={rankHref}
             />
-          </header>
+          </PageHeader>
 
           {!rankTeamId ? (
-            <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
+            <p
+              className={cn(
+                type.bodySm,
+                "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
+              )}
+            >
               Open Rank seasons from a team page, or use{" "}
-              <code className="text-[12px]">
+              <code className="type-caption">
                 /compare?mode=teams&view=rank&teamId=…
               </code>
               .
@@ -267,12 +376,15 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       );
     }
 
-    const seasonA = one(sp, "seasonA") ?? one(sp, "season") ?? currentSeason;
-    const seasonB =
+    const seasonA = resolveTeamCompareSeason(
+      one(sp, "seasonA") ?? one(sp, "season") ?? currentSeason
+    );
+    const seasonB = resolveTeamCompareSeason(
       one(sp, "seasonB") ??
-      (teamA && teamB && teamA === teamB
-        ? shiftCanonicalSeason(seasonA, -1)
-        : (one(sp, "season") ?? currentSeason));
+        (teamA && teamB && teamA === teamB
+          ? shiftCanonicalSeason(seasonA, -1)
+          : (one(sp, "season") ?? seasonA))
+    );
 
     const loaded =
       teamA && teamB
@@ -292,15 +404,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
 
     return (
       <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
-        <header className="flex flex-col gap-1">
-          <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-            Compare
-          </h1>
-          <p className="max-w-2xl text-[16px] text-muted-foreground">
-            Team season compare and team vs team - transparent board metrics,
-            category plurality, no opaque team score.
-          </p>
-          <p className="text-[14px] font-semibold">
+        <PageHeader
+          title="Compare"
+          subtitle="Team season compare and team vs team - transparent board metrics, category plurality, no opaque team score."
+        >
+          <p className={cn(type.bodySm, "font-semibold")}>
             <Link
               href="/compare"
               className="text-muted-foreground underline-offset-2 hover:underline"
@@ -315,7 +423,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             compareHref="/compare?mode=teams"
             rankHref={rankHref}
           />
-        </header>
+        </PageHeader>
 
         <Suspense
           fallback={
@@ -354,34 +462,102 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
 
   const aId = one(sp, "a");
   const bId = one(sp, "b");
-  const season = one(sp, "season") ?? currentSeason;
+  const aNameParam = one(sp, "an");
+  const bNameParam = one(sp, "bn");
+  const sharedSeason = one(sp, "season");
 
-  const peers = await getFilteredPlayerSeasons({
-    season,
-    minimumGames: 15,
-  }).catch(() => [] as PlayerSeason[]);
+  // Default to career averages when a side is selected without an explicit season.
+  const rawSeasonA = one(sp, "seasonA") ?? sharedSeason;
+  const rawSeasonB = one(sp, "seasonB") ?? sharedSeason;
+  let seasonA =
+    !aId
+      ? CAREER_COMPARE_KEY
+      : rawSeasonA && (isCareerCompareKey(rawSeasonA) || /^\d{4}-\d{2}$/.test(rawSeasonA))
+        ? isCareerCompareKey(rawSeasonA)
+          ? CAREER_COMPARE_KEY
+          : rawSeasonA
+        : CAREER_COMPARE_KEY;
+  let seasonB =
+    !bId
+      ? CAREER_COMPARE_KEY
+      : rawSeasonB && (isCareerCompareKey(rawSeasonB) || /^\d{4}-\d{2}$/.test(rawSeasonB))
+        ? isCareerCompareKey(rawSeasonB)
+          ? CAREER_COMPARE_KEY
+          : rawSeasonB
+        : CAREER_COMPARE_KEY;
 
-  const [aRow, bRow] = await Promise.all([
-    aId ? loadSeasonRow(aId, season, peers) : Promise.resolve(null),
-    bId ? loadSeasonRow(bId, season, peers) : Promise.resolve(null),
-  ]);
+  let peersA: PlayerSeason[] = [];
+  let peersB: PlayerSeason[] = [];
+  let aRow: PlayerSeason | null = null;
+  let bRow: PlayerSeason | null = null;
+  let careerSpanA: string | undefined;
+  let careerSpanB: string | undefined;
+  let teamKeysA: string[] = [];
+  let teamKeysB: string[] = [];
+
+  if (aId && bId) {
+    const loadSide = async (
+      playerId: string,
+      seasonKey: string
+    ): Promise<{
+      row: PlayerSeason | null;
+      peers: PlayerSeason[];
+      span?: string;
+      teamKeys: string[];
+    }> => {
+      if (isCareerCompareKey(seasonKey)) {
+        const career = await getPlayerCareerSeasons(playerId).catch(
+          () => [] as PlayerSeason[]
+        );
+        const row = buildCareerAverageRow(career);
+        return {
+          row: row ? { ...row, playerId } : null,
+          peers: [],
+          span: careerSpanLabel(career),
+          teamKeys: careerTeamKeysByTenure(career),
+        };
+      }
+      const peers = await loadPeersForSeason(seasonKey);
+      const row = await loadSeasonRow(playerId, seasonKey, peers);
+      const teamKeys = seasonTeamKeysForRow(row, seasonKey);
+      return { row, peers, teamKeys };
+    };
+
+    const [sideA, sideB] = await Promise.all([
+      loadSide(aId, seasonA),
+      loadSide(bId, seasonB),
+    ]);
+    aRow = sideA.row;
+    bRow = sideB.row;
+    peersA = sideA.peers;
+    peersB = sideB.peers;
+    careerSpanA = sideA.span;
+    careerSpanB = sideB.span;
+    teamKeysA = sideA.teamKeys;
+    teamKeysB = sideB.teamKeys;
+  }
 
   const result =
     aRow && bRow
-      ? buildPlayerComparison({ a: aRow, b: bRow, peers })
+      ? buildPlayerComparison({
+          a: aRow,
+          b: bRow,
+          peersA,
+          peersB,
+          careerSpanA,
+          careerSpanB,
+          teamKeysA,
+          teamKeysB,
+        })
       : null;
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
-      <header className="flex flex-col gap-1">
-        <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
-          Compare
-        </h1>
-        <p className="max-w-2xl text-[16px] text-muted-foreground">
-          Pick two players. See the measurable edges first, then the dimensions
-          that drive the difference.
-        </p>
-        <p className="text-[14px] font-semibold">
+      <PageHeader
+        title="Compare"
+        subtitle="Search any player (active or retired). Default is career average — switch each side to a single season when you want year-true percentiles."
+      >
+        <p className={cn(type.bodySm, "font-semibold")}>
           <span>Players</span>
           <span className="mx-2 text-muted-foreground">·</span>
           <Link
@@ -391,26 +567,40 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
             Teams
           </Link>
         </p>
-      </header>
+      </PageHeader>
 
       <Suspense fallback={<div className="h-24 animate-pulse rounded-xl bg-secondary" />}>
         <ComparePicker
           aId={aRow?.playerId ?? aId}
           bId={bRow?.playerId ?? bId}
-          aName={aRow?.playerName}
-          bName={bRow?.playerName}
-          season={season}
+          aName={aRow?.playerName ?? aNameParam}
+          bName={bRow?.playerName ?? bNameParam}
+          seasonA={aId ? seasonA : undefined}
+          seasonB={bId ? seasonB : undefined}
         />
       </Suspense>
 
       {!aId || !bId ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          Search for Player A and Player B to run a comparison.
+        <p
+          className={cn(
+            type.bodySm,
+            "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
+          )}
+        >
+          Search for Player A and Player B. Career averages load by default;
+          pick a season on either side for a year-true matchup.
         </p>
       ) : !result ? (
-        <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          Could not load season rows for both players in {season}. Try another
-          season or different players.
+        <p
+          className={cn(
+            type.bodySm,
+            "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
+          )}
+        >
+          Could not load {aNameParam || "Player A"}
+          {isCareerCompareKey(seasonA) ? " (career)" : ` (${seasonA})`} and/or{" "}
+          {bNameParam || "Player B"}
+          {isCareerCompareKey(seasonB) ? " (career)" : ` (${seasonB})`}.
         </p>
       ) : (
         <PlayerCompareView result={result} />

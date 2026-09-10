@@ -22,6 +22,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import type { PlayerGame } from "@/data/types";
+import { BoardPlayerName } from "@/lib/board-compact-name";
 import { formatNumber, formatPct } from "@/lib/format";
 import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { cn } from "@/lib/utils";
@@ -277,7 +278,7 @@ function TraditionalRow({
   return (
     <TableRow className={cn(open && "bg-secondary/30")}>
       <TableCell className="overflow-visible">
-        <div className="flex min-w-[9rem] items-center gap-1">
+        <div className="flex min-w-0 max-w-[7.5rem] items-center gap-1 sm:max-w-none sm:min-w-[9rem]">
           <PlayerIdentity
             playerId={p.playerId}
             name={p.playerName ?? p.playerId}
@@ -285,9 +286,9 @@ function TraditionalRow({
             season={p.season}
             variant="compact"
             className="min-w-0 flex-1"
-            nameClassName="truncate text-[13px]"
+            nameClassName="min-w-0 truncate text-[13px]"
           >
-            <span className="truncate">{p.playerName ?? p.playerId}</span>
+            <BoardPlayerName name={p.playerName ?? p.playerId} />
           </PlayerIdentity>
           {context && context.lines.length > 0 ? (
             <BoxScoreStatContextPanel
@@ -341,9 +342,10 @@ function AdvancedRow({ player: p }: { player: PlayerGame }) {
           teamKey={p.teamId}
           season={p.season}
           variant="compact"
-          nameClassName="truncate text-[13px]"
+          className="min-w-0 max-w-[7.5rem] sm:max-w-none"
+          nameClassName="min-w-0 truncate text-[13px]"
         >
-          <span className="truncate">{p.playerName ?? p.playerId}</span>
+          <BoardPlayerName name={p.playerName ?? p.playerId} />
         </PlayerIdentity>
       </TableCell>
       <Num>{formatNumber(p.minutes, 0)}</Num>

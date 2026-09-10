@@ -1,0 +1,38 @@
+{
+  "_comment": "Copy to obs-<slug>-YYYY-MM-DD.json. entityId should be NBA or ESPN player id (both get aliased at build when roster sync runs).",
+  "batchId": "obs-example-YYYY-MM-DD",
+  "collectedAt": "2026-08-26T12:00:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-example-fan-001",
+      "entityType": "player",
+      "entityId": "1628983",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.35,
+      "mentionVolume": 120,
+      "language": "en",
+      "topicTags": ["performance", "role"],
+      "sampledAt": "2026-08-26T11:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "manual_curator_sample"
+    },
+    {
+      "id": "obs-example-media-001",
+      "entityType": "player",
+      "entityId": "1628983",
+      "sourceClass": "media",
+      "platform": "news",
+      "polarity": "neutral",
+      "score": 0.05,
+      "mentionVolume": 40,
+      "language": "en",
+      "topicTags": ["contract"],
+      "sampledAt": "2026-08-26T10:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "headline_tone_v0"
+    }
+  ]
+}

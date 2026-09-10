@@ -3,7 +3,10 @@ import { PossessionExplorer } from "@/components/games/possession-explorer";
 import { getGamePossessions } from "@/data/queries/game-possessions";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { withBudget } from "@/data/queries/budget";
-import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import {
+  longUpstreamBudgetsEnabled,
+  runtimeTimeoutMs,
+} from "@/data/providers/nba/runtime-policy";
 import { buildPossessionExplorerModel } from "@/lib/possession-explorer";
 
 /**
@@ -19,11 +22,14 @@ export async function PossessionExplorerIsland({
   awayTeamKey?: string;
   homeTeamKey?: string;
 }) {
+  const possessionBudgetMs = longUpstreamBudgetsEnabled()
+    ? 20_000
+    : runtimeTimeoutMs(8_000, 4_000);
   const [shell, possessionBudget] = await Promise.all([
     getGameShellCached(gameId),
     withBudget(
       getGamePossessions(gameId).catch(() => null),
-      runtimeTimeoutMs(8_000, 4_000),
+      possessionBudgetMs,
       null
     ),
   ]);

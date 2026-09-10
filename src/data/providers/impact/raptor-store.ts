@@ -1,38 +1,38 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
-import type { LebronRating } from "@/data/types";
-import { SAMPLE_LEBRON_RATINGS } from "./sample-lebron";
+import type { RaptorRating } from "@/data/types";
+import { SAMPLE_RAPTOR_RATINGS } from "./sample-raptor";
 
-const CSV_RELATIVE = path.join("data", "impact", "lebron.csv");
+const CSV_RELATIVE = path.join("data", "impact", "raptor.csv");
 
-let allRowsPromise: Promise<LebronRating[]> | null = null;
+let allRowsPromise: Promise<RaptorRating[]> | null = null;
 
-async function getAllLebronRows(): Promise<LebronRating[]> {
+async function getAllRaptorRows(): Promise<RaptorRating[]> {
   allRowsPromise ??= (async () => {
     const fromCsv = await tryLoadCsv();
-    return fromCsv ?? SAMPLE_LEBRON_RATINGS;
+    return fromCsv ?? SAMPLE_RAPTOR_RATINGS;
   })();
   return allRowsPromise;
 }
 
 /** Test / script helper — clears memoized CSV load. */
-export function clearLebronRatingsCache(): void {
+export function clearRaptorRatingsCache(): void {
   allRowsPromise = null;
 }
 
 /**
- * Load LEBRON ratings from `data/impact/lebron.csv` when present; otherwise
+ * Load RAPTOR ratings from `data/impact/raptor.csv` when present; otherwise
  * fall back to the in-repo seed snapshot.
  */
-export async function loadLebronRatings(
+export async function loadRaptorRatings(
   season?: string
-): Promise<LebronRating[]> {
-  const rows = await getAllLebronRows();
+): Promise<RaptorRating[]> {
+  const rows = await getAllRaptorRows();
   if (!season) return [...rows];
   return rows.filter((row) => row.season === season);
 }
 
-async function tryLoadCsv(): Promise<LebronRating[] | null> {
+async function tryLoadCsv(): Promise<RaptorRating[] | null> {
   const filePath = path.join(process.cwd(), CSV_RELATIVE);
   let text: string;
   try {
@@ -50,21 +50,21 @@ async function tryLoadCsv(): Promise<LebronRating[] | null> {
   const header = splitCsvLine(lines[0]).map((h) => h.toLowerCase());
   const idx = (name: string) => header.indexOf(name);
 
-  const required = ["player_name", "season", "lebron"] as const;
+  const required = ["player_name", "season", "raptor"] as const;
   for (const key of required) {
     if (idx(key) < 0) {
       throw new Error(
-        `LEBRON CSV missing column "${key}". Expected headers: player_name,season,lebron,o_lebron,d_lebron,wins_added,team,player_id`
+        `RAPTOR CSV missing column "${key}". Expected headers: player_name,season,raptor,o_raptor,d_raptor,war,team,player_id`
       );
     }
   }
 
-  const rows: LebronRating[] = [];
+  const rows: RaptorRating[] = [];
   for (const line of lines.slice(1)) {
     const cols = splitCsvLine(line);
     const playerName = cols[idx("player_name")] ?? "";
     const season = cols[idx("season")] ?? "";
-    const impact = Number(cols[idx("lebron")]);
+    const impact = Number(cols[idx("raptor")]);
     if (!playerName || !season || !Number.isFinite(impact)) continue;
 
     const playerIdCol = idx("player_id");
@@ -78,11 +78,13 @@ async function tryLoadCsv(): Promise<LebronRating[] | null> {
       nbaPlayerId: playerIdCol >= 0 ? cols[playerIdCol] : undefined,
       playerName,
       season,
-      source: "lebron",
+      source: "raptor",
       impact,
-      offensive: optionalNumber(cols, idx("o_lebron")),
-      defensive: optionalNumber(cols, idx("d_lebron")),
-      winsAdded: optionalNumber(cols, idx("wins_added")),
+      offensive: optionalNumber(cols, idx("o_raptor")),
+      defensive: optionalNumber(cols, idx("d_raptor")),
+      winsAdded:
+        optionalNumber(cols, idx("war")) ??
+        optionalNumber(cols, idx("wins_added")),
       teamName: optionalString(cols, idx("team")),
       teamAbbr: optionalString(cols, idx("team_abbr")),
     });

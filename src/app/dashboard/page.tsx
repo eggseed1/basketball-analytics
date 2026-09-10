@@ -43,12 +43,21 @@ export default async function DashboardPage({
       <header className="flex flex-col gap-3 border-b border-border pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div className="flex flex-col gap-1">
           <p className="text-sm text-muted-foreground">
-            Analytical results · Contour / Quiver-style boards
+            Secondary lab · Contour / Quiver-style boards · intentionally
+            without DRBL / DARKO impact hierarchy
           </p>
           <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
             Histograms, categorical bars, and scatters with chart-to-chart
             filtering - click bars to keep matching players across every board.
+            Prefer{" "}
+            <Link
+              href="/explore/players"
+              className="font-semibold underline-offset-4 hover:underline"
+            >
+              Explore players
+            </Link>{" "}
+            for DRBL / WAR1 / RAPTOR season boards.
           </p>
           <AutoRefresh />
         </div>

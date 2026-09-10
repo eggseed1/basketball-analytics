@@ -1,17 +1,40 @@
-import { fetchLeagueStandings } from "@/data/providers/nba/standings-client";
+import {
+  fetchLeagueStandings,
+  standingsHaveResults,
+} from "@/data/providers/nba/standings-client";
 import type { Game } from "@/data/types/game";
 import type { LeagueStandings } from "@/data/types/standings";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 
 export async function getLeagueStandings(
   season?: string
 ): Promise<LeagueStandings> {
   const resolved =
     season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  return fetchLeagueStandings(resolved);
+
+  // Offseason / preseason: ESPN often returns empty or remapped boards for the
+  // upcoming year — load the completed season first.
+  if (isPreseasonRosterSeason(resolved)) {
+    const prior = shiftCanonicalSeason(resolved, -1);
+    const priorBoard = await fetchLeagueStandings(prior).catch(() => null);
+    if (priorBoard && standingsHaveResults(priorBoard)) {
+      return priorBoard;
+    }
+  }
+
+  const board = await fetchLeagueStandings(resolved);
+  if (standingsHaveResults(board) || !isPreseasonRosterSeason(resolved)) {
+    return board;
+  }
+
+  const prior = shiftCanonicalSeason(resolved, -1);
+  const priorBoard = await fetchLeagueStandings(prior).catch(() => null);
+  return priorBoard && standingsHaveResults(priorBoard) ? priorBoard : board;
 }
 
 function standingRecord(wins: number, losses: number): string {

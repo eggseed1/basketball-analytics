@@ -140,7 +140,7 @@ const ANALYTICS_SIGNALS: Array<{ re: RegExp; weight: number }> = [
   { re: /\bdarko\s+(rating|model|projection|dpm)\b/i, weight: 5 },
   { re: /\bRAPTOR\b/, weight: 5 },
   { re: /\braptor\s+(rating|metric|score)\b/i, weight: 5 },
-  { re: /\bLEBRON\b/, weight: 5 },
+  { re: /\bRAPTOR\b/, weight: 5 },
   { re: /\blebron\s+(metric|rating|score|rapm)\b/i, weight: 5 },
   { re: /\brapm\b/i, weight: 5 },
   { re: /\bepm\b/i, weight: 5 },

@@ -18,7 +18,7 @@ const ROUTES = [
     key: "dirk_career",
     path: "/players/1717?season=2005-06&view=career&from=history",
   },
-  { key: "lebron", path: "/players/1966?season=2012-13" },
+  { key: "raptor", path: "/players/1966?season=2012-13" },
   { key: "nash", path: "/players/959?season=2005-06&from=history" },
 ];
 

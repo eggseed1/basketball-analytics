@@ -10,7 +10,9 @@ import { fetchEspnLeagueRosterPlayers } from "@/data/providers/nba/espn-roster-c
 import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
 import type { PlayerSeason } from "@/data/types";
 import {
-  aggregateObservationsToProfiles,
+  aggregateObservationBatches,
+  aggregateTeamObservationBatches,
+  mergeProfileSeries,
   type SentimentObservationBatch,
 } from "@/sentiment/aggregate-observations";
 import type {
@@ -24,9 +26,17 @@ import {
   profileKey,
   type PilotRosterSeed,
 } from "@/sentiment/generate-pilot-profile";
+import {
+  computeSentimentDivergences,
+  computeSentimentTopicHeat,
+} from "@/sentiment/insights";
 import { hydrateLeagueNarrativeHygiene } from "@/sentiment/narrative-hygiene";
 import { enrichProfilesWithMovementAssociations } from "@/sentiment/movement-associations";
 import { computeSentimentMovers } from "@/sentiment/movers";
+import {
+  computeRosterTeamProfiles,
+  mergeTeamProfiles,
+} from "@/sentiment/team-profiles";
 
 export type SentimentSeedManifest = {
   methodologyVersion: string;
@@ -55,6 +65,14 @@ const SNAPSHOT_PATH = path.join(
   "sentiment",
   "v1",
   "snapshot.json"
+);
+/** Cloudflare Workers import this path — keep in sync with data/ on every build. */
+const RUNTIME_SNAPSHOT_PATH = path.join(
+  process.cwd(),
+  "src",
+  "data",
+  "runtime",
+  "sentiment-snapshot.json"
 );
 
 function readJson<T>(filePath: string): T {
@@ -114,8 +132,14 @@ function syncProfileTeamFromRoster(
   profile: PlayerSentimentProfile,
   rosterRow: PlayerSeason
 ): PlayerSentimentProfile {
+  // Prefer ESPN roster id first so home/movers/team links hit /players/{espnId}.
+  const playerIds = [
+    rosterRow.playerId,
+    ...profile.playerIds.filter((id) => id !== rosterRow.playerId),
+  ];
   return {
     ...profile,
+    playerIds,
     displayName: rosterRow.playerName || profile.displayName,
     teamKey: rosterRow.teamId,
   };
@@ -136,7 +160,10 @@ function passesCoverageFloor(
 function loadObservationBatches(): SentimentObservationBatch[] {
   if (!existsSync(OBSERVATIONS_DIR)) return [];
   const files = readdirSync(OBSERVATIONS_DIR).filter(
-    (name) => name.endsWith(".json")
+    (name) =>
+      name.endsWith(".json") &&
+      !name.startsWith("_") &&
+      !name.includes(".example.")
   );
   const batches: SentimentObservationBatch[] = [];
   for (const file of files) {
@@ -182,7 +209,7 @@ function mergeObservationProfiles(
           ...existing,
           fan: fanFromObs ? profile.fan : existing.fan,
           media: mediaFromObs ? profile.media : existing.media,
-          series: profile.series ?? existing.series,
+          series: mergeProfileSeries(existing.series, profile.series),
         };
         if (fanFromObs || mediaFromObs) {
           observationKeys.add(profileDedupeKey(merged));
@@ -279,8 +306,9 @@ export async function buildSentimentSnapshot(
   }
 
   const observationBatches = loadObservationBatches();
-  const observationProfiles = observationBatches.flatMap((batch) =>
-    aggregateObservationsToProfiles(batch, manifest.pilotWindow)
+  const observationProfiles = aggregateObservationBatches(
+    observationBatches,
+    manifest.pilotWindow
   );
   const merged = mergeObservationProfiles(
     baseProfiles,
@@ -314,6 +342,21 @@ export async function buildSentimentSnapshot(
     limit: manifest.moverLimit,
     lookbackDays: manifest.moverLookbackDays,
   });
+  const divergences = computeSentimentDivergences(profiles, {
+    limit: 8,
+    minAbsGap: 0.12,
+  });
+  const topicHeat = computeSentimentTopicHeat(profiles, { limit: 12 });
+
+  const teamObservationProfiles = aggregateTeamObservationBatches(
+    observationBatches,
+    manifest.pilotWindow
+  );
+  const rosterTeamProfiles = computeRosterTeamProfiles(
+    profiles,
+    manifest.pilotWindow
+  );
+  const teams = mergeTeamProfiles(rosterTeamProfiles, teamObservationProfiles);
 
   const snapshot: SentimentCuratedSnapshot = {
     meta: {
@@ -327,25 +370,39 @@ export async function buildSentimentSnapshot(
       pilotProfileCount: profiles.length,
       observationBatchCount: observationBatches.length,
       observationBatchIds: observationBatches.map((batch) => batch.batchId),
+      teamProfileCount: teams.length,
       movers: {
         window: manifest.pilotWindow,
         lookbackDays: manifest.moverLookbackDays,
         risers: movers.risers,
         fallers: movers.fallers,
       },
+      divergences: {
+        window: manifest.pilotWindow,
+        minAbsGap: 0.12,
+        rows: divergences,
+      },
+      topicHeat,
     },
     players: profiles,
+    teams,
     league,
   };
 
   if (!options.dryRun) {
-    writeFileSync(SNAPSHOT_PATH, `${JSON.stringify(snapshot, null, 2)}\n`);
+    const body = `${JSON.stringify(snapshot, null, 2)}\n`;
+    writeFileSync(SNAPSHOT_PATH, body);
+    writeFileSync(RUNTIME_SNAPSHOT_PATH, body);
   }
 
   if (options.verbose) {
     console.log(
       `sentiment:build season=${season} profiles=${profiles.length} generated=${generatedProfileCount} roster=${roster.length} synced=${syncedTeamCount} dropped=${droppedBelowFloor} observations=${observationBatches.length}`
     );
+    if (!options.dryRun) {
+      console.log(`  → ${SNAPSHOT_PATH}`);
+      console.log(`  → ${RUNTIME_SNAPSHOT_PATH}`);
+    }
   }
 
   return {

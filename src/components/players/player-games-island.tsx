@@ -20,38 +20,64 @@ export async function PlayerGamesIsland({
   seasonType?: PlayerSeasonKind;
   teamKey?: string | null;
 }) {
-  const log = await getPlayerGameLogCached(playerId, season);
-  const gameLog = log.filter((g) => (g.seasonType ?? "regular") === seasonType);
-  const wash = brandAtmosphereColors(
-    resolveTeamBrand(teamKey)?.primary,
-    resolveTeamBrand(teamKey)?.secondary
-  );
-  const kindLabel =
-    seasonType === "playoffs" ? "playoff" : "regular-season";
-
-  return (
-    <section id="games" className="scroll-mt-16" aria-label="Game logs">
-      <GlassSurface
-        effect="css"
-        accentColor={wash?.colorA}
-        accentColorB={wash?.colorB}
-        className="flex flex-col gap-3 p-4 sm:p-5"
-      >
-        <div>
-          <h2 className={type.heading}>Game logs</h2>
-          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Filter by season, stat group, home/away, or starter. Date opens
-            Game Lab.
+  try {
+    const { slimEdgeProductEnabled } = await import(
+      "@/data/providers/nba/runtime-policy"
+    );
+    if (slimEdgeProductEnabled()) {
+      return (
+        <section id="games" className="scroll-mt-16">
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Game logs are temporarily limited on this edge. Overview and career
+            stats remain available.
           </p>
-        </div>
-        <PlayerGameLogBoard
-          games={gameLog}
-          season={season}
-          seasons={seasons}
-          seasonType={seasonType}
-          seasonTypeLabel={kindLabel}
-        />
-      </GlassSurface>
-    </section>
-  );
+        </section>
+      );
+    }
+
+    const log = await getPlayerGameLogCached(playerId, season).catch(() => []);
+    const gameLog = log.filter(
+      (g) => (g.seasonType ?? "regular") === seasonType
+    );
+    const wash = brandAtmosphereColors(
+      resolveTeamBrand(teamKey)?.primary,
+      resolveTeamBrand(teamKey)?.secondary
+    );
+    const kindLabel =
+      seasonType === "playoffs" ? "playoff" : "regular-season";
+
+    return (
+      <section id="games" className="scroll-mt-16" aria-label="Game logs">
+        <GlassSurface
+          effect="css"
+          accentColor={wash?.colorA}
+          accentColorB={wash?.colorB}
+          className="flex flex-col gap-3 p-4 sm:p-5"
+        >
+          <div>
+            <h2 className={type.heading}>Game logs</h2>
+            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+              Filter by season, stat group, home/away, or starter. Date opens
+              Game Lab.
+            </p>
+          </div>
+          <PlayerGameLogBoard
+            games={gameLog}
+            season={season}
+            seasons={seasons}
+            seasonType={seasonType}
+            seasonTypeLabel={kindLabel}
+          />
+        </GlassSurface>
+      </section>
+    );
+  } catch {
+    return (
+      <section id="games" className="scroll-mt-16">
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
+          Game logs temporarily unavailable.
+        </p>
+      </section>
+    );
+  }
 }

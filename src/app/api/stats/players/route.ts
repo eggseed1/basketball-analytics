@@ -4,7 +4,7 @@ import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
 import { jsonError, jsonOk } from "@/app/api/_lib/http";
 
 /**
- * Season player stats with derived advanced rates + DARKO/LEBRON overlays.
+ * Season player stats with derived advanced rates + DARKO/RAPTOR overlays.
  * ESPN-backed for seasons with published athlete stats (~2000-present reliably).
  */
 export async function GET(request: Request) {
@@ -22,7 +22,7 @@ export async function GET(request: Request) {
       includes: {
         counting: true,
         advancedDerived: ["trueShootingPct", "effectiveFieldGoalPct", "usagePct"],
-        impact: ["darkoDpm", "darkoOff", "darkoDef", "lebron", "oLebron", "dLebron"],
+        impact: ["darkoDpm", "darkoOff", "darkoDef", "raptor", "oRaptor", "dRaptor"],
       },
     });
   } catch (error) {

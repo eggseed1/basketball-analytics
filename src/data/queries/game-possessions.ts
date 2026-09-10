@@ -58,7 +58,7 @@ const possessionCache = new Map<string, PossessionCacheEntry>();
 
 export type AdvancedBoxLoaderResult = {
   raw: unknown;
-  source: "cdn" | "stats" | "disk" | "fixture";
+  source: "cdn" | "stats" | "disk" | "fixture" | "bdl";
 };
 
 export type GamePossessionLoaders = {
@@ -87,10 +87,11 @@ function seasonFromGameId(gameId: string): string {
 }
 
 function mapAdvancedSourceToProduct(
-  source: "cdn" | "stats" | "disk" | "fixture"
+  source: "cdn" | "stats" | "disk" | "fixture" | "bdl"
 ): PbpProductSource {
   if (source === "stats" || source === "fixture") return "stats_nba";
   if (source === "disk") return "disk_cache";
+  if (source === "bdl") return "balldontlie";
   return "nba_cdn";
 }
 
@@ -271,8 +272,12 @@ export async function getGamePossessions(
     return result;
   }
 
-  const boxPayload = await loaders.fetchBox(gameId);
-  const season = seasonFromGameId(gameId);
+  const boxId =
+    "nbaGameId" in pbpPayload && typeof pbpPayload.nbaGameId === "string"
+      ? pbpPayload.nbaGameId
+      : gameId;
+  const boxPayload = await loaders.fetchBox(boxId);
+  const season = seasonFromGameId(boxId);
   let box: DrblBoxScore | null = null;
   let boxProvenance: PbpProductSource | null = null;
 
@@ -393,7 +398,7 @@ export async function getGamePossessions(
     official: officialAggregates,
     advancedSource,
     attempts: advancedBoxAttempts,
-  } = await loadOfficialAggregates(gameId, loaders);
+  } = await loadOfficialAggregates(boxId, loaders);
 
   const provenance: PbpProvenance = {
     playByPlay: pbpSource,

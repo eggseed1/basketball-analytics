@@ -7,9 +7,11 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { fetchEspnLeagueRosterPlayers } from "@/data/providers/nba/espn-roster-client";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import {
   buildCuratedPlayerIndex,
   getLeagueSentimentFeed,
+  listTrackedPlayerSentiment,
   loadSentimentSnapshot,
 } from "@/sentiment/load-curated";
 import type { TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
@@ -28,7 +30,16 @@ async function listRosterSentimentRows(): Promise<TrackedPlayerSentimentRow[]> {
   const curatedById = buildCuratedPlayerIndex(snapshot);
   const defaultWindow = snapshot?.league?.window ?? "7d";
 
+  if (preferBundledProductDataOnEdge()) {
+    return listTrackedPlayerSentiment();
+  }
+
   const roster = await fetchEspnLeagueRosterPlayers(season).catch(() => []);
+
+  // Cloudflare: ESPN league roster often empty — fall back to curated pilots.
+  if (!roster.length) {
+    return listTrackedPlayerSentiment();
+  }
 
   return roster
     .map((row) => {

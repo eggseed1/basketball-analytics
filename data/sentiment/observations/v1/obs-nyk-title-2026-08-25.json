@@ -1,0 +1,67 @@
+{
+  "batchId": "obs-nyk-title-2026-08-25",
+  "collectedAt": "2026-08-25T20:15:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-nyk-team-fan-001",
+      "entityType": "team",
+      "entityId": "18",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.41,
+      "mentionVolume": 540,
+      "language": "en",
+      "topicTags": ["title_odds", "brunson", "depth"],
+      "sampledAt": "2026-08-25T18:15:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-nyk-team-fan-002",
+      "entityType": "team",
+      "entityId": "18",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.12,
+      "mentionVolume": 210,
+      "language": "en",
+      "topicTags": ["health", "rotation"],
+      "sampledAt": "2026-08-25T19:15:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-nyk-team-media-001",
+      "entityType": "team",
+      "entityId": "18",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "positive",
+      "score": 0.28,
+      "mentionVolume": 120,
+      "language": "en",
+      "topicTags": ["title_odds", "east_race"],
+      "sampledAt": "2026-08-25T17:45:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    },
+    {
+      "id": "obs-nyk-team-media-002",
+      "entityType": "team",
+      "entityId": "18",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "mixed",
+      "score": 0.08,
+      "mentionVolume": 88,
+      "language": "en",
+      "topicTags": ["overrated", "depth"],
+      "sampledAt": "2026-08-25T20:00:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    }
+  ]
+}

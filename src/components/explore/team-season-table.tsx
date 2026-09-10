@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useSearchParams } from "next/navigation";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { TeamIdentity } from "@/components/teams/team-identity";
@@ -13,6 +14,7 @@ import {
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { TeamSeasonStats } from "@/data/types";
+import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
@@ -84,7 +86,9 @@ function sortValue(row: TeamSeasonStats, key: SortKey): string | number {
   if (key === "fullName") return row.abbreviation;
   if (key === "conference") return row.conference;
   const v = row[key];
-  return typeof v === "number" && Number.isFinite(v) ? v : Number.NEGATIVE_INFINITY;
+  return typeof v === "number" && Number.isFinite(v)
+    ? v
+    : Number.NEGATIVE_INFINITY;
 }
 
 function formatCell(row: TeamSeasonStats, key: SortKey): string {
@@ -102,9 +106,13 @@ function formatCell(row: TeamSeasonStats, key: SortKey): string {
 }
 
 export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
+  const searchParams = useSearchParams();
+  const confParam = searchParams.get("conference")?.toLowerCase();
+  const conf: "all" | "East" | "West" =
+    confParam === "east" ? "East" : confParam === "west" ? "West" : "all";
+
   const [sortKey, setSortKey] = useState<SortKey>("avgDiff");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-  const [conf, setConf] = useState<"all" | "East" | "West">("all");
 
   const filtered = useMemo(() => {
     const base =
@@ -113,9 +121,7 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
       const av = sortValue(a, sortKey);
       const bv = sortValue(b, sortKey);
       if (typeof av === "string" && typeof bv === "string") {
-        return sortDir === "asc"
-          ? av.localeCompare(bv)
-          : bv.localeCompare(av);
+        return sortDir === "asc" ? av.localeCompare(bv) : bv.localeCompare(av);
       }
       const an = Number(av);
       const bn = Number(bv);
@@ -133,36 +139,16 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
     setSortDir(defaultDir(key));
   };
 
-  const activeLabel =
-    COLUMNS.find((c) => c.key === sortKey)?.label ?? sortKey;
+  const activeLabel = COLUMNS.find((c) => c.key === sortKey)?.label ?? sortKey;
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div className="flex flex-wrap gap-2">
-          {(["all", "East", "West"] as const).map((c) => (
-            <button
-              key={c}
-              type="button"
-              onClick={() => setConf(c)}
-              className={cn(
-                "rounded-full px-3 py-1.5 text-[14px] font-semibold transition-colors",
-                conf === c
-                  ? "bg-foreground text-background"
-                  : "bg-secondary text-foreground hover:bg-foreground/10"
-              )}
-            >
-              {c === "all" ? "All teams" : c}
-            </button>
-          ))}
-        </div>
-        <p className="text-[12px] text-muted-foreground">
-          {filtered.length} teams · sorted by{" "}
-          <span className="font-medium text-foreground">
-            {activeLabel} {sortDir === "asc" ? "↑" : "↓"}
-          </span>
-        </p>
-      </div>
+      <p className={cn(type.caption, "text-muted-foreground")}>
+        {filtered.length} teams · sorted by{" "}
+        <span className="font-medium text-foreground">
+          {activeLabel} {sortDir === "asc" ? "↑" : "↓"}
+        </span>
+      </p>
 
       <div className="overflow-x-auto rounded-md border border-border bg-card">
         <Table container={false} className="min-w-[980px] text-[12px]">
@@ -220,9 +206,9 @@ export function TeamSeasonTable({ teams }: { teams: TeamSeasonStats[] }) {
                     const tone =
                       col.key === "avgDiff"
                         ? row.avgDiff > 0
-                          ? "text-emerald-700 font-medium"
+                          ? "text-delta-up font-medium"
                           : row.avgDiff < 0
-                            ? "text-rose-700 font-medium"
+                            ? "text-delta-down font-medium"
                             : ""
                         : col.key === "oppPpg" || col.key === "conference"
                           ? "text-muted-foreground"

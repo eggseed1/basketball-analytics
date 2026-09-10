@@ -1,0 +1,331 @@
+{
+  "generatedAt": "2026-08-30T05:30:00.000Z",
+  "source": "legend-hof-seed",
+  "policy": "Manual ESPN↔NBA↔BRef seeds for retired/HOF stars missing from byathlete crosswalk. ESPN athlete ids must be verified against sports.core.api.espn.com — never assume espnPlayerId === nbaPlayerId (NBA PERSON_ID 1718 = Paul Pierce, ESPN athlete 1718 = Fred Jones).",
+  "aliases": [
+    {
+      "espnPlayerId": "110",
+      "nbaPlayerId": "977",
+      "brefSlug": "bryanko01",
+      "playerName": "Kobe Bryant",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "215",
+      "nbaPlayerId": "1495",
+      "brefSlug": "duncati01",
+      "playerName": "Tim Duncan",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "609",
+      "nbaPlayerId": "1717",
+      "brefSlug": "nowitdi01",
+      "playerName": "Dirk Nowitzki",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1975",
+      "nbaPlayerId": "2546",
+      "brefSlug": "anthoca01",
+      "playerName": "Carmelo Anthony",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "2384",
+      "nbaPlayerId": "2730",
+      "brefSlug": "howardw01",
+      "playerName": "Dwight Howard",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1035",
+      "nbaPlayerId": "893",
+      "brefSlug": "jordami01",
+      "playerName": "Michael Jordan",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1966",
+      "nbaPlayerId": "2544",
+      "brefSlug": "jamesle01",
+      "playerName": "LeBron James",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3975",
+      "nbaPlayerId": "201939",
+      "brefSlug": "curryst01",
+      "playerName": "Stephen Curry",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3032977",
+      "nbaPlayerId": "203507",
+      "brefSlug": "antetgi01",
+      "playerName": "Giannis Antetokounmpo",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3112335",
+      "nbaPlayerId": "203999",
+      "brefSlug": "jokicni01",
+      "playerName": "Nikola Jokic",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3992",
+      "nbaPlayerId": "201935",
+      "brefSlug": "hardeja01",
+      "playerName": "James Harden",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3468",
+      "nbaPlayerId": "201566",
+      "brefSlug": "westbru01",
+      "playerName": "Russell Westbrook",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "3202",
+      "nbaPlayerId": "201142",
+      "brefSlug": "duranke01",
+      "playerName": "Kevin Durant",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "614",
+      "nbaPlayerId": "406",
+      "brefSlug": "onealsh01",
+      "playerName": "Shaquille O'Neal",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "619",
+      "nbaPlayerId": "165",
+      "brefSlug": "olajuha01",
+      "playerName": "Hakeem Olajuwon",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "501",
+      "nbaPlayerId": "252",
+      "brefSlug": "malonka01",
+      "playerName": "Karl Malone",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "715",
+      "nbaPlayerId": "764",
+      "brefSlug": "robinda01",
+      "playerName": "David Robinson",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "37",
+      "nbaPlayerId": "787",
+      "brefSlug": "barklch01",
+      "playerName": "Charles Barkley",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "2335",
+      "nbaPlayerId": "1449",
+      "brefSlug": "birdla01",
+      "playerName": "Larry Bird",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "366",
+      "nbaPlayerId": "947",
+      "brefSlug": "iversal01",
+      "playerName": "Allen Iverson",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "261",
+      "nbaPlayerId": "708",
+      "brefSlug": "garneke01",
+      "playerName": "Kevin Garnett",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "592",
+      "nbaPlayerId": "959",
+      "brefSlug": "nashst01",
+      "playerName": "Steve Nash",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "662",
+      "nbaPlayerId": "1718",
+      "brefSlug": "piercpa01",
+      "playerName": "Paul Pierce",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1987",
+      "nbaPlayerId": "2548",
+      "brefSlug": "wadedw01",
+      "playerName": "Dwyane Wade",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "996",
+      "nbaPlayerId": "2200",
+      "brefSlug": "gasolpa01",
+      "playerName": "Pau Gasol",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1015",
+      "nbaPlayerId": "2225",
+      "brefSlug": "parketo01",
+      "playerName": "Tony Parker",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "272",
+      "nbaPlayerId": "1938",
+      "brefSlug": "ginobma01",
+      "playerName": "Manu Ginobili",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "63",
+      "nbaPlayerId": "1497",
+      "brefSlug": "billuch01",
+      "playerName": "Chauncey Billups",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "385",
+      "nbaPlayerId": "1712",
+      "brefSlug": "jamisan01",
+      "playerName": "Antawn Jamison",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "136",
+      "nbaPlayerId": "1713",
+      "brefSlug": "cartevi01",
+      "playerName": "Vince Carter",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1727",
+      "nbaPlayerId": "2405",
+      "brefSlug": "stoudam01",
+      "playerName": "Amar'e Stoudemire",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "1977",
+      "nbaPlayerId": "2547",
+      "brefSlug": "boshch01",
+      "playerName": "Chris Bosh",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "885",
+      "nbaPlayerId": "1112",
+      "brefSlug": "wallabe01",
+      "playerName": "Ben Wallace",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "9",
+      "nbaPlayerId": "951",
+      "brefSlug": "allenra02",
+      "playerName": "Ray Allen",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "336",
+      "nbaPlayerId": "255",
+      "brefSlug": "hillgr01",
+      "playerName": "Grant Hill",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    },
+    {
+      "espnPlayerId": "429",
+      "nbaPlayerId": "467",
+      "brefSlug": "kiddja01",
+      "playerName": "Jason Kidd",
+      "productionApproved": true,
+      "matchMethod": "legend_seed",
+      "confidence": "VERIFIED_MULTI_FIELD"
+    }
+  ]
+}

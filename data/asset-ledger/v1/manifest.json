@@ -1,0 +1,36 @@
+{
+  "methodologyVersion": "1.0",
+  "datasetVersion": "1.0",
+  "builtAt": "2026-08-31T02:47:53.705Z",
+  "season": "2025-26",
+  "sourceHash": "854f104f00c6bd734c886408eda459042e295eddccc7ca06adadc31b2368148e",
+  "structuredTransactionCount": 3,
+  "ownershipEdgeCount": 15,
+  "contractCount": 564,
+  "draftPickCount": 300,
+  "tradeExceptionCount": 0,
+  "capabilities": {
+    "PAYROLL": "PARTIAL",
+    "CONTRACTS": "PARTIAL",
+    "CAP_THRESHOLDS": "SUPPORTED",
+    "FULL_CAP_ACCOUNTING": "UNAVAILABLE",
+    "FIRST_ROUND_ASSETS": "PARTIAL",
+    "SECOND_ROUND_ASSETS": "PARTIAL",
+    "SWAPS": "UNAVAILABLE",
+    "PROTECTIONS": "UNAVAILABLE",
+    "TRANSACTION_PROVENANCE": "PARTIAL",
+    "CAP_HOLDS": "UNAVAILABLE",
+    "DEAD_MONEY": "UNAVAILABLE"
+  },
+  "limitations": [
+    "Structured trades are seeded verified deals — not a complete league ledger.",
+    "Draft pick baseline assumes each team owns its own picks 2026–2030 until a licensed pick ledger arrives.",
+    "Contracts are salary CSV rows by season — options/guarantees/TPEs/dead money not modeled.",
+    "ESPN free-text blurbs remain separate and are never parsed into this ledger."
+  ],
+  "provenance": [
+    "data/asset-ledger/seeds/structured-trades.json",
+    "data/salaries/player-salaries-2000-2025.csv",
+    "src/data/runtime/espn-name-index.json"
+  ]
+}

@@ -4,7 +4,7 @@
  * IMPORTANT DATA CONSTRAINT
  * -------------------------
  * Live DARKO overlays are joined by player name only onto career rows, so
- * `darkoDpm` is NOT season-true historically. LEBRON is season-keyed but sparse.
+ * `darkoDpm` is NOT season-true historically. RAPTOR is season-keyed but sparse.
  * This analyzer therefore ranks careers with a transparent counting-stat
  * composite (Career Production Index) computed only from season-true fields
  * on PlayerSeason. See docs/career-resume.md.
@@ -131,7 +131,7 @@ export const CAREER_RESUME_METHODOLOGY: CareerResumeMethodology = {
   populationNote:
     "Thresholds are relative to this player's own peak CPI (career_self), not a league-wide or filtered-leaderboard percentile. Do not compare these bands to leaderboard context chips.",
   impactCaveat:
-    "Live DARKO is not used for career ranking because career rows currently receive a name-only overlay (not season-true). LEBRON is season-keyed but too sparse for a career-wide primary metric. CPI uses season-true counting stats from career tables; TS% is shown as context only.",
+    "Live DARKO is not used for career ranking because career rows currently receive a name-only overlay (not season-true). RAPTOR is season-keyed but too sparse for a career-wide primary metric. CPI uses season-true counting stats from career tables; TS% is shown as context only.",
 };
 
 function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {

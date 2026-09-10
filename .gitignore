@@ -52,6 +52,7 @@ next-env.d.ts
 /artifacts/pbp-calibration/cache/
 /artifacts/pbp-calibration/checkpoint.json
 /artifacts/pbp-calibration/**/checkpoint.json
+/artifacts/daily-runtime-sync.json
 
 # DRBL offline pipeline caches (immutable NBA raw + normalized outputs)
 /data/drbl/
@@ -67,3 +68,17 @@ next-env.d.ts
 # Local raw acquisition dumps (not product runtime)
 /data/raw/
 
+# Deploy-baked shot charts for Cloudflare Static Assets (large; rebuilt on deploy)
+/public/runtime/player-shots/
+# Deploy-baked game logs for Cloudflare Static Assets
+/public/runtime/player-game-logs/
+# Deploy-baked play-by-play for Cloudflare Static Assets
+/public/runtime/play-by-play/
+
+# OpenNext
+.open-next
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example

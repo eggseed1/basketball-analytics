@@ -134,7 +134,7 @@ import {
     rowCount: 15,
   });
   const text = formatPlayerBoardHealthReport(h, {
-    lebron: "not found",
+    raptor: "not found",
     jokic: "found",
   });
   assert.match(text, /Provider: local/);

@@ -7,10 +7,10 @@ import type { PlayerSeason } from "@/data/types";
 import { formatNumber, formatPct } from "@/lib/format";
 
 export type SheetStatCategory =
-  | "counting"
-  | "hustle"
+  | "profile"
   | "shooting"
-  | "rates"
+  | "defense"
+  | "hustle"
   | "advanced"
   | "impact";
 
@@ -71,9 +71,9 @@ export type SheetStatId =
   | "darko"
   | "darkoOff"
   | "darkoDef"
-  | "lebron"
-  | "oLebron"
-  | "dLebron"
+  | "raptor"
+  | "oRaptor"
+  | "dRaptor"
   | "winsAdded"
   | "war1"
   | "drbl100"
@@ -94,86 +94,74 @@ export type SheetStatDef = {
   digits?: number;
 };
 
-/** Category chips shared by Statistics / Career boards. */
+/** Category chips shared by Statistics / Career / Explore / Percentile. */
 export const SHEET_STAT_CATEGORY_CHIPS: Array<{
   id: "all" | SheetStatCategory;
   label: string;
 }> = [
   { id: "all", label: "All" },
-  { id: "counting", label: "Counting" },
-  { id: "hustle", label: "Hustle" },
-  { id: "shooting", label: "Shooting" },
-  { id: "rates", label: "Rates" },
-  { id: "advanced", label: "Advanced" },
   { id: "impact", label: "Impact" },
+  { id: "profile", label: "Profile" },
+  { id: "shooting", label: "Shooting" },
+  { id: "defense", label: "Defense" },
+  { id: "hustle", label: "Hustle" },
+  { id: "advanced", label: "Advanced" },
 ];
 
 /**
- * Percentile panel uses the same five categories (no All).
- * Impact is first — replaces legacy Overview/Value tab.
+ * Shared category order without All — Explore / Percentile / Compare / sheets.
  */
-export const PERCENTILE_CATEGORY_ORDER: SheetStatCategory[] = [
+export const SHEET_STAT_CATEGORY_ORDER: SheetStatCategory[] = [
   "impact",
-  "counting",
-  "hustle",
+  "profile",
   "shooting",
-  "rates",
+  "defense",
+  "hustle",
   "advanced",
 ];
+
+/** @deprecated Prefer SHEET_STAT_CATEGORY_ORDER — same sequence. */
+export const PERCENTILE_CATEGORY_ORDER: SheetStatCategory[] =
+  SHEET_STAT_CATEGORY_ORDER;
 
 export const PERCENTILE_CATEGORY_CHIPS: Array<{
   id: SheetStatCategory;
   label: string;
-}> = PERCENTILE_CATEGORY_ORDER.map((id) => ({
+}> = SHEET_STAT_CATEGORY_ORDER.map((id) => ({
   id,
   label:
     SHEET_STAT_CATEGORY_CHIPS.find((c) => c.id === id)?.label ??
     id.charAt(0).toUpperCase() + id.slice(1),
 }));
 
-/** Longer percentile labels where sheets use abbreviations. */
+/**
+ * Optional display overrides for percentile (same vocabulary as the sheet).
+ * Prefer sheet labels; only override when the ranked context needs a cue
+ * (e.g. MP → MPG for per-game ranks).
+ */
 export const PERCENTILE_LABEL_BY_SHEET_ID: Partial<Record<SheetStatId, string>> =
   {
-    drbl100: "DRBL/100",
     mp: "MPG",
-    pts: "PTS",
-    trb: "TRB",
-    ast: "AST",
-    stl: "STL",
-    blk: "BLK",
-    tov: "TOV",
-    pf: "PF",
-    orb: "ORB",
-    drb: "DRB",
-    usg: "USG%",
-    atr: "AST/TO",
-    ortg: "ORtg",
-    drtg: "DRtg",
-    net: "NET",
-    plusMinus: "+/-",
-    hustleDefl: "Deflections",
-    hustleContest: "Contested shots",
-    hustleScrAst: "Screen assists",
-    hustleChrg: "Charges drawn",
-    hustleLoose: "Loose balls",
-    hustleBoxOut: "Box outs",
   };
 
 export type PercentileCategory = SheetStatCategory;
 
-/** Canonical All-order metric columns (identity excluded). */
+/**
+ * Canonical All-order metric columns (identity excluded).
+ * Order: Profile → Shooting → Defense → Hustle → Advanced → Impact.
+ */
 export const SHEET_STAT_DEFS: SheetStatDef[] = [
-  { id: "mp", label: "MP", category: "counting", kind: "count", digits: 1 },
-  { id: "pts", label: "PTS", category: "counting", kind: "count" },
-  { id: "trb", label: "TRB", category: "counting", kind: "count" },
-  { id: "orb", label: "ORB", category: "counting", kind: "count" },
-  { id: "drb", label: "DRB", category: "counting", kind: "count" },
-  { id: "ast", label: "AST", category: "counting", kind: "count" },
-  { id: "stl", label: "STL", category: "counting", kind: "count" },
-  { id: "blk", label: "BLK", category: "counting", kind: "count" },
-  { id: "tov", label: "TOV", category: "counting", kind: "count" },
-  { id: "pf", label: "PF", category: "counting", kind: "count" },
-  { id: "plusMinus", label: "+/-", category: "counting", kind: "count" },
+  // Profile
+  { id: "mp", label: "MP", category: "profile", kind: "count", digits: 1 },
+  { id: "pts", label: "PTS", category: "profile", kind: "count" },
+  { id: "trb", label: "TRB", category: "profile", kind: "count" },
+  { id: "orb", label: "ORB", category: "profile", kind: "count" },
+  { id: "drb", label: "DRB", category: "profile", kind: "count" },
+  { id: "ast", label: "AST", category: "profile", kind: "count" },
+  { id: "tov", label: "TOV", category: "profile", kind: "count" },
+  { id: "pf", label: "PF", category: "profile", kind: "count" },
+  { id: "plusMinus", label: "+/-", category: "profile", kind: "count" },
+  // Shooting
   { id: "fg", label: "FG", category: "shooting", kind: "count" },
   { id: "fga", label: "FGA", category: "shooting", kind: "count" },
   { id: "fgPct", label: "FG%", category: "shooting", kind: "pct" },
@@ -188,30 +176,42 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
   { id: "ftPct", label: "FT%", category: "shooting", kind: "pct" },
   { id: "efg", label: "eFG%", category: "shooting", kind: "pct" },
   { id: "ts", label: "TS%", category: "shooting", kind: "pct" },
-  { id: "threePar", label: "3PAr", category: "rates", kind: "pct" },
-  { id: "ftr", label: "FTr", category: "rates", kind: "rate", digits: 3 },
-  { id: "usg", label: "USG%", category: "rates", kind: "pct" },
-  { id: "tovPct", label: "TOV%", category: "rates", kind: "pct" },
-  { id: "astPct", label: "AST%", category: "rates", kind: "pct" },
-  { id: "orbPct", label: "ORB%", category: "rates", kind: "pct" },
-  { id: "drbPct", label: "DRB%", category: "rates", kind: "pct" },
-  { id: "trbPct", label: "TRB%", category: "rates", kind: "pct" },
-  { id: "stlPct", label: "STL%", category: "rates", kind: "pct" },
-  { id: "blkPct", label: "BLK%", category: "rates", kind: "pct" },
-  { id: "atr", label: "AST/TO", category: "rates", kind: "rate", digits: 2 },
+  // Defense
+  { id: "stl", label: "STL", category: "defense", kind: "count" },
+  { id: "blk", label: "BLK", category: "defense", kind: "count" },
+  { id: "stlPct", label: "STL%", category: "defense", kind: "pct" },
+  { id: "blkPct", label: "BLK%", category: "defense", kind: "pct" },
+  { id: "drbPct", label: "DRB%", category: "defense", kind: "pct" },
+  { id: "drtg", label: "DRtg", category: "defense", kind: "rate" },
+  { id: "dbpm", label: "DBPM", category: "defense", kind: "rate" },
+  { id: "dws", label: "DWS", category: "defense", kind: "rate" },
+  // Hustle
+  { id: "hustleDefl", label: "Defl", category: "hustle", kind: "count" },
+  { id: "hustleContest", label: "Contest", category: "hustle", kind: "count" },
+  { id: "hustleScrAst", label: "ScrAst", category: "hustle", kind: "count" },
+  { id: "hustleChrg", label: "Chrg", category: "hustle", kind: "count" },
+  { id: "hustleLoose", label: "Loose", category: "hustle", kind: "count" },
+  { id: "hustleBoxOut", label: "BoxOut", category: "hustle", kind: "count" },
+  // Advanced
+  { id: "threePar", label: "3PAr", category: "advanced", kind: "pct" },
+  { id: "ftr", label: "FTr", category: "advanced", kind: "rate", digits: 3 },
+  { id: "usg", label: "USG%", category: "advanced", kind: "pct" },
+  { id: "tovPct", label: "TOV%", category: "advanced", kind: "pct" },
+  { id: "astPct", label: "AST%", category: "advanced", kind: "pct" },
+  { id: "orbPct", label: "ORB%", category: "advanced", kind: "pct" },
+  { id: "trbPct", label: "TRB%", category: "advanced", kind: "pct" },
+  { id: "atr", label: "AST/TO", category: "advanced", kind: "rate", digits: 2 },
   { id: "ortg", label: "ORtg", category: "advanced", kind: "rate" },
-  { id: "drtg", label: "DRtg", category: "advanced", kind: "rate" },
   { id: "net", label: "NET", category: "advanced", kind: "rate" },
   { id: "pie", label: "PIE", category: "advanced", kind: "pct" },
   { id: "per", label: "PER", category: "advanced", kind: "rate" },
   { id: "ows", label: "OWS", category: "advanced", kind: "rate" },
-  { id: "dws", label: "DWS", category: "advanced", kind: "rate" },
   { id: "ws", label: "WS", category: "advanced", kind: "rate" },
   { id: "ws48", label: "WS/48", category: "advanced", kind: "rate", digits: 3 },
   { id: "obpm", label: "OBPM", category: "advanced", kind: "rate" },
-  { id: "dbpm", label: "DBPM", category: "advanced", kind: "rate" },
   { id: "bpm", label: "BPM", category: "advanced", kind: "rate" },
   { id: "vorp", label: "VORP", category: "advanced", kind: "rate" },
+  // Impact
   { id: "darko", label: "DARKO", category: "impact", kind: "rate", digits: 2 },
   {
     id: "darkoOff",
@@ -227,43 +227,80 @@ export const SHEET_STAT_DEFS: SheetStatDef[] = [
     kind: "rate",
     digits: 2,
   },
-  { id: "lebron", label: "LEBRON", category: "impact", kind: "rate", digits: 2 },
+  { id: "raptor", label: "RAPTOR", category: "impact", kind: "rate", digits: 2 },
   {
-    id: "oLebron",
-    label: "O-LEBRON",
+    id: "oRaptor",
+    label: "O-RAPTOR",
     category: "impact",
     kind: "rate",
     digits: 2,
   },
   {
-    id: "dLebron",
-    label: "D-LEBRON",
+    id: "dRaptor",
+    label: "D-RAPTOR",
     category: "impact",
     kind: "rate",
     digits: 2,
   },
   {
     id: "winsAdded",
-    label: "Wins added",
+    label: "WAR",
     category: "impact",
     kind: "rate",
     digits: 2,
   },
   { id: "war1", label: "WAR1", category: "impact", kind: "rate" },
-  { id: "drbl100", label: "DRBL", category: "impact", kind: "rate" },
+  { id: "drbl100", label: "DRBL/100", category: "impact", kind: "rate" },
   { id: "drblO", label: "DRBL-O", category: "impact", kind: "rate" },
   { id: "drblD", label: "DRBL-D", category: "impact", kind: "rate" },
-  { id: "hustleDefl", label: "Defl", category: "hustle", kind: "count" },
-  { id: "hustleContest", label: "Contest", category: "hustle", kind: "count" },
-  { id: "hustleScrAst", label: "ScrAst", category: "hustle", kind: "count" },
-  { id: "hustleChrg", label: "Chrg", category: "hustle", kind: "count" },
-  { id: "hustleLoose", label: "Loose", category: "hustle", kind: "count" },
-  { id: "hustleBoxOut", label: "BoxOut", category: "hustle", kind: "count" },
 ];
 
 export const SHEET_STAT_BY_ID = Object.fromEntries(
   SHEET_STAT_DEFS.map((d) => [d.id, d])
 ) as Record<SheetStatId, SheetStatDef>;
+
+/** Map percentile / explore metric ids onto sheet column ids for sort order. */
+const SHEET_STAT_ID_ALIASES: Record<string, SheetStatId> = {
+  "darko-off": "darkoOff",
+  "darko-def": "darkoDef",
+  oraptor: "oRaptor",
+  draptor: "dRaptor",
+  r1WinEquivalents: "war1",
+  war1: "war1",
+  darkoDpm: "darko",
+  mpg: "mp",
+  min: "mp",
+  ppg: "pts",
+  rpg: "trb",
+  apg: "ast",
+  spg: "stl",
+  bpg: "blk",
+  fieldGoalPct: "fgPct",
+  threePointPct: "fg3Pct",
+  freeThrowPct: "ftPct",
+  twoPointPct: "fg2Pct",
+  effectiveFieldGoalPct: "efg",
+  trueShootingPct: "ts",
+  usagePct: "usg",
+  turnoverPct: "tovPct",
+  threePointersAttempted: "fg3a",
+  freeThrowsAttempted: "fta",
+  offensiveRebounds: "orb",
+  defensiveRebounds: "drb",
+  offensiveRating: "ortg",
+  defensiveRating: "drtg",
+  netRating: "net",
+};
+
+const SHEET_STAT_ORDER_INDEX = new Map(
+  SHEET_STAT_DEFS.map((def, index) => [def.id, index] as const)
+);
+
+/** Stable sort key so every surface lists stats in SHEET_STAT_DEFS order. */
+export function sheetStatOrderIndex(id: string): number {
+  const sheetId = SHEET_STAT_ID_ALIASES[id] ?? (id as SheetStatId);
+  return SHEET_STAT_ORDER_INDEX.get(sheetId) ?? 10_000;
+}
 
 export function sheetStatsForCategory(
   category: "all" | SheetStatCategory
@@ -400,8 +437,11 @@ export function getSheetStatValue(
       return count(row.turnovers);
     case "pf":
       return count(row.personalFouls);
-    case "plusMinus":
-      return count(row.plusMinus);
+    case "plusMinus": {
+      const value = row.plusMinus;
+      if (value == null || !Number.isFinite(value)) return null;
+      return count(value);
+    }
     case "fg":
       return count(row.fieldGoalsMade);
     case "fga":
@@ -498,12 +538,12 @@ export function getSheetStatValue(
       return darkoOffense(row);
     case "darkoDef":
       return darkoDefense(row);
-    case "lebron":
-      return finiteNum(row.lebron);
-    case "oLebron":
-      return finiteNum(row.oLebron);
-    case "dLebron":
-      return finiteNum(row.dLebron);
+    case "raptor":
+      return finiteNum(row.raptor);
+    case "oRaptor":
+      return finiteNum(row.oRaptor);
+    case "dRaptor":
+      return finiteNum(row.dRaptor);
     case "winsAdded":
       return finiteNum(row.winsAdded);
     case "war1":
@@ -573,7 +613,16 @@ export function visibleSheetStats(
   mode: SheetRateMode = "perGame"
 ): SheetStatDef[] {
   return sheetStatsForCategory(category).filter((def) => {
-    if (def.category !== "impact" && def.category !== "hustle") return true;
-    return sheetStatHasAnyValue(rows, def.id, mode);
+    if (
+      def.category === "impact" ||
+      def.category === "hustle" ||
+      def.category === "advanced" ||
+      def.category === "defense" ||
+      def.id === "plusMinus" ||
+      def.id === "pie"
+    ) {
+      return sheetStatHasAnyValue(rows, def.id, mode);
+    }
+    return true;
   });
 }

@@ -28,25 +28,51 @@ export async function PlayerStatsIsland({
   themeMode?: ThemeMode;
   honor?: GlassSurfaceHonor;
 }) {
-  const source =
-    seasonType === "playoffs"
-      ? await getPlayerPlayoffCareerSeasons(playerId)
-      : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
-          () => career
-        );
-  const rows = dedupeCareerSeasons(source);
+  try {
+    const source =
+      seasonType === "playoffs"
+        ? await getPlayerPlayoffCareerSeasons(playerId).catch(() => career)
+        : await enrichPlayerCareerAdvancedCached(playerId, career).catch(
+            () => career
+          );
+    const rows = dedupeCareerSeasons(source).filter((row) => {
+      // Hide empty preseason stubs (0 GP / blank advanced) from the season table.
+      if (row.gamesPlayed > 0) return true;
+      return Boolean(
+        row.per ||
+          row.vorp ||
+          row.winShares ||
+          row.points ||
+          row.offensiveRating
+      );
+    });
 
-  return (
-    <PlayerStatsBoard
-      playerId={playerId}
-      season={season}
-      statsSeason={statsSeason ?? season}
-      seasonType={seasonType}
-      rows={rows}
-      teamKey={teamKey}
-      fromHistory={fromHistory}
-      themeMode={themeMode}
-      honor={honor}
-    />
-  );
+    return (
+      <PlayerStatsBoard
+        playerId={playerId}
+        season={season}
+        statsSeason={statsSeason ?? season}
+        seasonType={seasonType}
+        rows={rows}
+        teamKey={teamKey}
+        fromHistory={fromHistory}
+        themeMode={themeMode}
+        honor={honor}
+      />
+    );
+  } catch {
+    return (
+      <PlayerStatsBoard
+        playerId={playerId}
+        season={season}
+        statsSeason={statsSeason ?? season}
+        seasonType={seasonType}
+        rows={dedupeCareerSeasons(career)}
+        teamKey={teamKey}
+        fromHistory={fromHistory}
+        themeMode={themeMode}
+        honor={honor}
+      />
+    );
+  }
 }

@@ -225,7 +225,7 @@ export function assessPlayerBoardHealth(
 
 export function formatPlayerBoardHealthReport(
   health: PlayerBoardHealth,
-  extras?: { lebron?: string; jokic?: string }
+  extras?: { raptor?: string; jokic?: string }
 ): string {
   const lines = [
     `Provider: ${health.provider}`,
@@ -235,7 +235,7 @@ export function formatPlayerBoardHealthReport(
     `Status: ${health.status}`,
     `Label: ${health.label}`,
   ];
-  if (extras?.lebron) lines.push(`LeBron: ${extras.lebron}`);
+  if (extras?.raptor) lines.push(`LeBron: ${extras.raptor}`);
   if (extras?.jokic) lines.push(`Jokic: ${extras.jokic}`);
   if (health.historicalGamesCachePresent != null) {
     lines.push(

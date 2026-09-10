@@ -1,0 +1,67 @@
+{
+  "batchId": "obs-bos-contender-2026-08-25",
+  "collectedAt": "2026-08-25T20:45:00Z",
+  "modelVersion": "sentiment-s1-heuristic-0.1",
+  "observations": [
+    {
+      "id": "obs-bos-team-fan-001",
+      "entityType": "team",
+      "entityId": "2",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "positive",
+      "score": 0.34,
+      "mentionVolume": 460,
+      "language": "en",
+      "topicTags": ["title_odds", "tatum", "defense"],
+      "sampledAt": "2026-08-25T18:45:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-bos-team-fan-002",
+      "entityType": "team",
+      "entityId": "2",
+      "sourceClass": "fan",
+      "platform": "reddit",
+      "polarity": "mixed",
+      "score": 0.08,
+      "mentionVolume": 240,
+      "language": "en",
+      "topicTags": ["depth", "payroll"],
+      "sampledAt": "2026-08-25T19:45:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "subreddit_top_week_sample"
+    },
+    {
+      "id": "obs-bos-team-media-001",
+      "entityType": "team",
+      "entityId": "2",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "positive",
+      "score": 0.22,
+      "mentionVolume": 130,
+      "language": "en",
+      "topicTags": ["contender_tier", "east_race"],
+      "sampledAt": "2026-08-25T17:15:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    },
+    {
+      "id": "obs-bos-team-media-002",
+      "entityType": "team",
+      "entityId": "2",
+      "sourceClass": "media",
+      "platform": "podcast",
+      "polarity": "mixed",
+      "score": 0.04,
+      "mentionVolume": 92,
+      "language": "en",
+      "topicTags": ["overrated", "tatum"],
+      "sampledAt": "2026-08-25T20:30:00Z",
+      "modelVersion": "sentiment-s1-heuristic-0.1",
+      "samplingMethod": "curated_media_digest"
+    }
+  ]
+}

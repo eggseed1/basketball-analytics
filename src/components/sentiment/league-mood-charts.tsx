@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { SentimentTrendChart } from "@/components/players/sentiment-trend-chart";
+import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import {
   SENTIMENT_WINDOW_OPTIONS,
   type SentimentMoodSeries,

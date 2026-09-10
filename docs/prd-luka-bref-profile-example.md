@@ -269,4 +269,4 @@ Four small multiples, combined regular-season rows only (one point per season; 2
 
 ## 13. Later (not this PR)
 
-Canonical ID merge (ESPN vs NBA), site-wide player card, remaining Savant tabs, tracking/on/off, export, sticky compare tray, role model, DARKO/LEBRON on this example, generalizing off `doncilu01`.
+Canonical ID merge (ESPN vs NBA), site-wide player card, remaining Savant tabs, tracking/on/off, export, sticky compare tray, role model, DARKO/RAPTOR on this example, generalizing off `doncilu01`.

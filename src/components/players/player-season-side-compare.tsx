@@ -13,7 +13,8 @@ import {
 import type { PlayerSeason } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
-import { teamBrandBarColor, teamChartColor } from "@/lib/nba-brand";
+import { useChartTheme } from "@/lib/chart-theme";
+import { teamChartColor } from "@/lib/nba-brand";
 import {
   isMultiTeamSeasonRow,
   multiTeamDisplayLabel,
@@ -299,6 +300,7 @@ export function PlayerSeasonSideCompare({
   accentA?: string;
   accentB?: string;
 }) {
+  const chartTheme = useChartTheme();
   const bySeason = useMemo(() => {
     const map = new Map<string, PlayerSeason>();
     for (const row of seasons) map.set(row.season, row);
@@ -324,11 +326,11 @@ export function PlayerSeasonSideCompare({
 
   const colorA =
     accentA ??
-    (rowA ? teamBrandBarColor(rowA.teamId) : null) ??
+    (rowA ? chartTheme.teamBarColor(rowA.teamId) : null) ??
     "var(--foreground)";
   const colorB =
     accentB ??
-    (rowB ? teamBrandBarColor(rowB.teamId) : null) ??
+    (rowB ? chartTheme.teamBarColor(rowB.teamId) : null) ??
     "var(--muted-foreground)";
 
   if (seasonIds.length < 2) {

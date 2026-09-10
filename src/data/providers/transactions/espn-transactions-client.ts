@@ -13,6 +13,10 @@ import type {
 export const ESPN_TRANSACTIONS_SOURCE = "espn-site-v2-transactions";
 export const ESPN_TRANSACTIONS_DATASET_VERSION = "1.0";
 export const ESPN_TRANSACTIONS_EARLIEST_YEAR = 2000;
+/** Shared TTL for live edge refresh of recent transaction pages. */
+export const LIVE_TRANSACTIONS_TTL_MS = 1000 * 60 * 60; // 1 hour
+/** Live enrich needs a longer budget than identity calls — multi-page pull. */
+export const LIVE_TRANSACTIONS_TIMEOUT_MS = 8_000;
 
 const BASE =
   "https://site.api.espn.com/apis/site/v2/sports/basketball/nba/transactions";
@@ -44,11 +48,14 @@ export function espnTransactionsLatestCalendarYear(now = new Date()): number {
 export async function fetchEspnTransactionsPage(
   calendarYear: number,
   page: number,
-  limit = 100
+  limit = 100,
+  options: { ttlMs?: number; timeoutMs?: number; bypassCache?: boolean } = {}
 ): Promise<EspnTransactionsResponse> {
   const url = `${BASE}?season=${calendarYear}&limit=${limit}&page=${page}`;
   return espnFetchJson<EspnTransactionsResponse>(url, {
-    ttlMs: 0,
+    ttlMs: options.ttlMs ?? 0,
+    timeoutMs: options.timeoutMs,
+    bypassCache: options.bypassCache,
     retries: 3,
   });
 }

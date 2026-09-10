@@ -127,7 +127,7 @@ function SeasonList({
           <li
             key={`${row.season}-${row.teamId}`}
             className={cn(
-              "rounded-xl border border-border bg-white/45 px-3 py-3 sm:px-4",
+              "rounded-xl border border-border frost-surface px-3 py-3 sm:px-4",
               isViewing && "ring-1 ring-foreground/20"
             )}
           >

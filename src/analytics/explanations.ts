@@ -4,6 +4,7 @@
  */
 
 import { getLearnConcept, listLearnConcepts } from "@/content/learn/registry";
+import { learnHrefFor } from "@/content/learn/resolve";
 import { getStatGuide } from "@/content/stats/guides";
 
 export type MetricExplanation = {
@@ -26,7 +27,9 @@ export function explainMetric(id: string): MetricExplanation | null {
     id: concept.id,
     label: concept.shortName,
     plain,
-    learnHref: concept.learnSlug ? `/learn/${concept.learnSlug}` : null,
+    learnHref: concept.learnSlug
+      ? learnHrefFor(concept.id, concept.learnSlug)
+      : null,
   };
 }
 

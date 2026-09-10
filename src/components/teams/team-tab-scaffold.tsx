@@ -1,4 +1,5 @@
-import { GlassSurface } from "@/components/brand/glass-surface";
+import { Surface } from "@/components/ui/surface";
+import { SectionHeader } from "@/components/layout/page-header";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -15,13 +16,8 @@ export function TeamTabScaffold({
 }) {
   return (
     <section id={id} className="scroll-mt-16" aria-label={title}>
-      <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
-        <div>
-          <h2 className={type.heading}>{title}</h2>
-          <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            {reason}
-          </p>
-        </div>
+      <Surface variant="glass" padding="md" className="flex flex-col gap-3">
+        <SectionHeader title={title} description={reason} />
         <ul className="flex flex-col gap-1.5">
           {planned.map((item) => (
             <li key={item} className={cn(type.bodySm, "text-muted-foreground")}>
@@ -29,7 +25,7 @@ export function TeamTabScaffold({
             </li>
           ))}
         </ul>
-      </GlassSurface>
+      </Surface>
     </section>
   );
 }

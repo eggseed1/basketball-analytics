@@ -1,7 +1,7 @@
 /**
  * Season-true historical player impact — canonical product types.
  *
- * Distinct from live provider DTOs (`DarkoRating` / `LebronRating`) and from
+ * Distinct from live provider DTOs (`DarkoRating` / `RaptorRating`) and from
  * Career Resume CPI (production). See docs/historical-impact.md.
  */
 
@@ -10,12 +10,12 @@ export type HistoricalImpactMetricId =
   | "darko_dpm"
   | "darko_off"
   | "darko_def"
-  | "lebron"
-  | "olebron"
-  | "dlebron"
+  | "raptor"
+  | "oraptor"
+  | "draptor"
   | "wins_added";
 
-export type HistoricalImpactSourceId = "darko" | "lebron";
+export type HistoricalImpactSourceId = "darko" | "raptor";
 
 /**
  * How the observation was linked to a site player identity.

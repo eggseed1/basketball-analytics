@@ -1,5 +1,5 @@
 /**
- * Canonical Learn concept registry — tooltip + Learn routing source of truth.
+ * Canonical Learn concept registry, tooltip + Learn routing source of truth.
  * Full pedagogy lives in STAT_GUIDES and LEARN_TOPICS; this file holds Level-1
  * metadata, aliases, and category IA. Do not duplicate long copy here.
  */
@@ -30,7 +30,7 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "shooting",
     label: "Shooting",
-    description: "How shots become points — and how efficiently.",
+    description: "How shots become points, and how efficiently.",
   },
   {
     id: "usage",
@@ -45,13 +45,13 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "impact",
     label: "Impact models",
-    description: "Third-party plus-minus style estimates (DARKO, LEBRON).",
+    description: "Third-party plus-minus style estimates (DARKO, RAPTOR).",
   },
   {
     id: "proprietary",
     label: "Proprietary stats",
     description:
-      "Original DRBL numbers — how good (rate), how much value (season), and the diagnostics behind them.",
+      "Original DRBL numbers built from play-by-play. The clearest read on who is playing at a high level and who delivered the most season value.",
   },
   {
     id: "systems",
@@ -66,7 +66,7 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
   {
     id: "transactions",
     label: "Transactions",
-    description: "Source events vs structured trades — and why genealogy waits.",
+    description: "Source events vs structured trades, and why genealogy waits.",
   },
 ];
 
@@ -77,7 +77,7 @@ export type LearnConcept = {
   label: string;
   shortName: string;
   category: LearnCategoryId;
-  /** Level-1 tooltip — keep short. */
+  /** Level-1 tooltip, keep short. */
   tooltip: string;
   /** Whether MetricHelp should render for this concept. */
   showTooltip: boolean;
@@ -99,7 +99,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "PTS",
     category: "basics",
     tooltip: "Points scored. PPG is points per game.",
-    showTooltip: false,
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -109,7 +109,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "REB",
     category: "basics",
     tooltip: "Missed shots recovered. RPG is rebounds per game.",
-    showTooltip: false,
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -119,7 +119,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "AST",
     category: "basics",
     tooltip: "Passes that directly lead to a made basket. APG is assists per game.",
-    showTooltip: false,
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -129,7 +129,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "STL",
     category: "basics",
     tooltip: "Defensive takeaways credited as steals.",
-    showTooltip: false,
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -139,7 +139,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "BLK",
     category: "basics",
     tooltip: "Shots rejected by a defender.",
-    showTooltip: false,
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -149,7 +149,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "TOV",
     category: "basics",
     tooltip:
-      "Possessions lost without a shot attempt. Raw turnovers per game are volume — they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
+      "Possessions lost without a shot attempt. Raw turnovers per game are volume, they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
     showTooltip: true,
     learnSlug: "turnovers",
     relatedIds: ["ast_to", "usg"],
@@ -235,8 +235,8 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Free throw percentage",
     shortName: "FT%",
     category: "shooting",
-    tooltip: "Made free throws ÷ free throw attempts.",
-    showTooltip: false,
+    tooltip: "Made free throws divided by free throw attempts.",
+    showTooltip: true,
     learnSlug: null,
   },
   {
@@ -287,7 +287,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "USG%",
     category: "usage",
     tooltip:
-      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor. Higher usage means more on-ball responsibility — not automatically better play.",
+      "Share of team possessions a player uses (shots, free throws, turnovers) while on the floor. Higher usage means more on-ball responsibility, not automatically better play.",
     showTooltip: true,
     learnSlug: "usage",
     relatedIds: ["ts", "tov"],
@@ -325,7 +325,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ORtg",
     category: "team",
     tooltip:
-      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate — missing ratings stay unavailable rather than fabricated.",
+      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate, missing ratings stay unavailable rather than fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],
@@ -347,7 +347,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     label: "Net rating",
     shortName: "NET",
     category: "team",
-    tooltip: "ORtg minus DRtg — scoring margin per 100 possessions.",
+    tooltip: "ORtg minus DRtg, scoring margin per 100 possessions.",
     showTooltip: true,
     learnSlug: "net-rating",
     relatedIds: ["ortg", "drtg", "diff"],
@@ -375,20 +375,240 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
       "Estimated points per 100 possessions above or below an average player (predictive impact).",
     showTooltip: true,
     learnSlug: "darko",
-    relatedIds: ["lebron", "percentiles"],
-    seeInAction: [{ label: "Impact leaders", href: "/" }],
+    relatedIds: ["raptor", "percentiles"],
+    seeInAction: [
+      {
+        label: "Explore players (DARKO)",
+        href: "/explore/players?sort=darkoDpm&dir=desc",
+      },
+      { label: "Top performers", href: "/" },
+    ],
   },
   {
-    id: "lebron",
-    aliases: ["olebron", "dlebron"],
-    label: "LEBRON",
-    shortName: "LEBRON",
+    id: "raptor",
+    aliases: ["raptor_total", "raptor-impact", "lebron", "lebron_total"],
+    label: "RAPTOR",
+    shortName: "RAPTOR",
     category: "impact",
     tooltip:
-      "Luck-adjusted impact estimate on a points-per-100 scale, with offense and defense splits.",
+      "FiveThirtyEight RAPTOR (pts/100). Open historical data — blank for seasons after 538 stopped publishing.",
     showTooltip: true,
-    learnSlug: "lebron",
-    relatedIds: ["darko"],
+    learnSlug: "raptor",
+    relatedIds: ["darko", "raptor_o", "raptor_d", "wins_added", "bpm"],
+    seeInAction: [
+      {
+        label: "Explore players (RAPTOR · 2021-22)",
+        href: "/explore/players?season=2021-22&sort=raptor&dir=desc",
+      },
+      { label: "Top performers", href: "/" },
+    ],
+  },
+  {
+    id: "raptor_o",
+    aliases: ["o_raptor", "oraptor", "o-raptor", "oRaptor", "lebron_o", "o_lebron"],
+    label: "O-RAPTOR",
+    shortName: "O-RAPTOR",
+    category: "impact",
+    tooltip: "Offensive RAPTOR (points per 100).",
+    showTooltip: true,
+    learnSlug: "raptor",
+    relatedIds: ["raptor", "raptor_d"],
+  },
+  {
+    id: "raptor_d",
+    aliases: ["d_raptor", "draptor", "d-raptor", "dRaptor", "lebron_d", "d_lebron"],
+    label: "D-RAPTOR",
+    shortName: "D-RAPTOR",
+    category: "impact",
+    tooltip: "Defensive RAPTOR (points per 100).",
+    showTooltip: true,
+    learnSlug: "raptor",
+    relatedIds: ["raptor", "raptor_o"],
+  },
+  {
+    id: "wins_added",
+    aliases: ["winsAdded", "wins-added", "war", "raptor_war", "lebron_wins"],
+    label: "WAR",
+    shortName: "WAR",
+    category: "impact",
+    tooltip:
+      "RAPTOR wins above replacement for the season (minutes-scaled).",
+    showTooltip: true,
+    learnSlug: "raptor",
+    relatedIds: ["raptor", "r1_win_eq", "vorp"],
+    seeInAction: [
+      {
+        label: "Explore players (RAPTOR WAR · 2021-22)",
+        href: "/explore/players?season=2021-22&sort=winsAdded&dir=desc",
+      },
+    ],
+  },
+  {
+    id: "per",
+    aliases: ["player_efficiency_rating"],
+    label: "Player efficiency rating",
+    shortName: "PER",
+    category: "impact",
+    tooltip:
+      "All-in-one box score rate. League average is about 15. Higher means more production per minute from counting stats.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["ts", "usg"],
+  },
+  {
+    id: "bpm",
+    aliases: ["box_plus_minus"],
+    label: "Box plus/minus",
+    shortName: "BPM",
+    category: "impact",
+    tooltip:
+      "Estimated point impact per 100 possessions from box score stats. Zero is average.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["per", "darko", "raptor"],
+    seeInAction: [
+      {
+        label: "Explore players (BPM)",
+        href: "/explore/players?sort=bpm&dir=desc",
+      },
+    ],
+  },
+  {
+    id: "obpm",
+    aliases: ["offensive_bpm"],
+    label: "Offensive box plus/minus",
+    shortName: "OBPM",
+    category: "impact",
+    tooltip: "Offensive half of box plus/minus.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["bpm", "dbpm"],
+  },
+  {
+    id: "dbpm",
+    aliases: ["defensive_bpm"],
+    label: "Defensive box plus/minus",
+    shortName: "DBPM",
+    category: "impact",
+    tooltip: "Defensive half of box plus/minus.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["bpm", "obpm"],
+  },
+  {
+    id: "vorp",
+    aliases: ["value_over_replacement"],
+    label: "Value over replacement player",
+    shortName: "VORP",
+    category: "impact",
+    tooltip:
+      "Wins added above a cheap replacement player, scaled to minutes played.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["bpm", "ws"],
+  },
+  {
+    id: "ws",
+    aliases: ["win_shares"],
+    label: "Win shares",
+    shortName: "WS",
+    category: "impact",
+    tooltip:
+      "Credit for team wins from box score production. Roughly one win share equals about one win contributed.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["vorp", "per"],
+  },
+  {
+    id: "ws48",
+    aliases: ["win_shares_per48"],
+    label: "Win shares per 48",
+    shortName: "WS/48",
+    category: "impact",
+    tooltip:
+      "Win shares rate per 48 minutes so different playing times compare more fairly.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["ws"],
+  },
+  {
+    id: "pie",
+    aliases: ["player_impact_estimate"],
+    label: "Player impact estimate",
+    shortName: "PIE",
+    category: "impact",
+    tooltip:
+      "NBA share of positive game events (scoring, boards, assists, steals, blocks).",
+    showTooltip: true,
+    learnSlug: null,
+  },
+  {
+    id: "darko_o",
+    aliases: ["o_dpm", "darko_offense"],
+    label: "DARKO offense",
+    shortName: "O-DPM",
+    category: "impact",
+    tooltip: "Offensive half of DARKO impact.",
+    showTooltip: true,
+    learnSlug: "darko",
+    relatedIds: ["darko", "darko_d"],
+  },
+  {
+    id: "darko_d",
+    aliases: ["d_dpm", "darko_defense"],
+    label: "DARKO defense",
+    shortName: "D-DPM",
+    category: "impact",
+    tooltip: "Defensive half of DARKO impact.",
+    showTooltip: true,
+    learnSlug: "darko",
+    relatedIds: ["darko", "darko_o"],
+  },
+  {
+    id: "gp",
+    aliases: ["games_played"],
+    label: "Games played",
+    shortName: "GP",
+    category: "basics",
+    tooltip: "Games played this season.",
+    showTooltip: true,
+    learnSlug: null,
+  },
+  {
+    id: "drbl_l",
+    aliases: ["drbl_leverage"],
+    label: "DRBL leverage",
+    shortName: "DRBL-L",
+    category: "proprietary",
+    tooltip:
+      "Leverage-weighted impact for clutch moments. A DRBL diagnostic for high-stakes possessions.",
+    showTooltip: true,
+    learnSlug: "drbl-limitations",
+    relatedIds: ["drbl", "r1_win_eq"],
+  },
+  {
+    id: "drbl_disagreement",
+    aliases: ["drbl_delta", "drbl_disagreement_index"],
+    label: "DRBL component disagreement",
+    shortName: "DRBL Δ",
+    category: "proprietary",
+    tooltip:
+      "Shows when DRBL diagnostics disagree with each other. Useful for spotting mixed signals.",
+    showTooltip: true,
+    learnSlug: "drbl-limitations",
+    relatedIds: ["drbl_p", "drbl_ln", "drbl_b"],
+  },
+  {
+    id: "drbl_uncertainty",
+    aliases: ["drbl_pm", "drbl_uncertainty_legacy"],
+    label: "DRBL uncertainty",
+    shortName: "DRBL ±",
+    category: "proprietary",
+    tooltip:
+      "Legacy uncertainty diagnostic. Validated DRBL/100 uses a published shrinkage step instead.",
+    showTooltip: true,
+    learnSlug: "drbl-limitations",
+    relatedIds: ["drbl"],
   },
   {
     id: "drbl",
@@ -403,7 +623,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL/100",
     category: "proprietary",
     tooltip:
-      "How good was the player’s impact rate? DRBL’s main ranking number — like quality per 100 possessions, not season total.",
+      "How good was the player's impact rate? DRBL's main ranking number for quality per 100 possessions.",
     showTooltip: true,
     learnSlug: "drbl-100",
     relatedIds: [
@@ -427,7 +647,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1 Pts",
     category: "proprietary",
     tooltip:
-      "The point-credit ledger behind WAR1. Same player order as WAR1 — different units. Usually hidden on main boards.",
+      "The point-credit ledger behind WAR1. Same player order as WAR1, different units. Usually hidden on main boards.",
     showTooltip: true,
     learnSlug: "r1-points",
     relatedIds: ["r1_win_eq", "drbl", "r1"],
@@ -445,7 +665,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "WAR1",
     category: "proprietary",
     tooltip:
-      "How much season value did they pile up? Wins-style total above DRBL’s R1 baseline — not classic “replacement-level WAR.”",
+      "How much season value did they pile up? DRBL's wins-style total above the role-matched R1 baseline.",
     showTooltip: true,
     learnSlug: "war1",
     relatedIds: ["drbl", "r1_points", "r1"],
@@ -457,7 +677,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL-O",
     category: "proprietary",
     tooltip:
-      "Offensive side of DRBL’s possession diagnostic — helpful context, not a replacement for DRBL/100.",
+      "Offensive half of DRBL's play-by-play impact split. Strong context for scoring and creation.",
     showTooltip: true,
     learnSlug: "drbl-o",
     relatedIds: ["drbl_d", "drbl", "drbl_p"],
@@ -469,7 +689,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL-D",
     category: "proprietary",
     tooltip:
-      "Defensive side of DRBL’s possession diagnostic — helpful context, not a replacement for DRBL/100.",
+      "Defensive half of DRBL's play-by-play impact split. Strong context for suppressing scoring.",
     showTooltip: true,
     learnSlug: "drbl-d",
     relatedIds: ["drbl_o", "drbl", "drbl_p"],
@@ -493,7 +713,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL-LN",
     category: "proprietary",
     tooltip:
-      "Lineup-context diagnostic — who you played with. Not proven off-ball value; not part of a P+LN+B sum.",
+      "Lineup-context diagnostic, who you played with. Not proven off-ball value; not part of a P+LN+B sum.",
     showTooltip: true,
     learnSlug: "drbl-ln",
     relatedIds: ["drbl", "drbl_p", "drbl_b"],
@@ -517,7 +737,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1",
     category: "proprietary",
     tooltip:
-      "The baseline DRBL compares players to — a role-aware expectation, not a classic “replacement player.”",
+      "The baseline DRBL compares players to, a role-aware expectation, not a classic “replacement player.”",
     showTooltip: true,
     learnSlug: "r1",
     relatedIds: ["r1_win_eq", "r1_points", "drbl"],
@@ -540,7 +760,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Validation",
     category: "systems",
     tooltip:
-      "Held-out and out-of-time tests for DRBL — not a claim that it beats other public metrics.",
+      "Held-out and out-of-time tests for DRBL, not a claim that it beats other public metrics.",
     showTooltip: true,
     learnSlug: "drbl-validation",
     relatedIds: ["drbl", "drbl_limitations"],
@@ -578,7 +798,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "CPI",
     category: "systems",
     tooltip:
-      "DRBL’s transparent counting composite for Career Resume peak/prime/longevity — not DARKO or LEBRON.",
+      "DRBL’s transparent counting composite for Career Resume peak/prime/longevity, not DARKO or RAPTOR.",
     showTooltip: true,
     learnSlug: "cpi",
     relatedIds: ["career_resume", "career_peak", "career_prime", "career_longevity"],
@@ -640,7 +860,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Longevity",
     category: "systems",
     tooltip:
-      "Qualifying seasons at or above 70% of the player’s own Career Resume peak CPI — not merely years in the league.",
+      "Qualifying seasons at or above 70% of the player’s own Career Resume peak CPI, not merely years in the league.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: [
@@ -658,7 +878,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Longevity-only",
     category: "systems",
     tooltip:
-      "A qualifying season at 70–89% of peak CPI — longevity-level production outside the prime band.",
+      "A qualifying season at 70, 89% of peak CPI, longevity-level production outside the prime band.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_longevity", "career_prime", "career_arc"],
@@ -670,7 +890,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Contiguous prime",
     category: "systems",
     tooltip:
-      "Career Resume prime is the longest unbroken run of ≥90% seasons — a gap below 90% splits prime windows.",
+      "Career Resume prime is the longest unbroken run of ≥90% seasons, a gap below 90% splits prime windows.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_prime", "career_peak"],
@@ -682,7 +902,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Development",
     category: "systems",
     tooltip:
-      "Descriptive rise toward peak on the career arc — not a formal Career Resume v1 scoring band.",
+      "Descriptive rise toward peak on the career arc, not a formal Career Resume v1 scoring band.",
     showTooltip: true,
     learnSlug: "career-arc",
     relatedIds: ["career_arc", "career_peak", "career_prime", "career_resume"],
@@ -694,7 +914,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Career Arc",
     category: "systems",
     tooltip:
-      "How Peak, Prime, Longevity, and trajectory phases fit together — overlapping performance bands, not exclusive buckets.",
+      "How Peak, Prime, Longevity, and trajectory phases fit together, overlapping performance bands, not exclusive buckets.",
     showTooltip: true,
     learnSlug: "career-arc",
     relatedIds: [
@@ -712,7 +932,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Career-self",
     category: "systems",
     tooltip:
-      "Peak/Prime/Longevity use % of this player’s own peak CPI — not a league or board percentile.",
+      "Peak/Prime/Longevity use % of this player’s own peak CPI, not a league or board percentile.",
     showTooltip: true,
     learnSlug: "career-self-comparison",
     relatedIds: ["career_peak", "career_prime", "career_longevity", "percentiles", "cpi"],
@@ -724,7 +944,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Rank My Seasons",
     category: "systems",
     tooltip:
-      "Ranks a player’s seasons with pairwise comparisons and Copeland points — no opaque season score.",
+      "Ranks a player’s seasons with pairwise comparisons and Copeland points, no opaque season score.",
     showTooltip: true,
     learnSlug: "rank-my-seasons",
     relatedIds: ["copeland", "contested", "close_top"],
@@ -751,7 +971,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Team Compare",
     category: "systems",
     tooltip:
-      "Head-to-head team seasons using board metrics, tolerances, and category plurality — no composite score.",
+      "Head-to-head team seasons using board metrics, tolerances, and category plurality, no composite score.",
     showTooltip: true,
     learnSlug: "team-season-compare",
     relatedIds: ["essentially_even", "team_rank_seasons"],
@@ -763,7 +983,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season Compare",
     category: "systems",
     tooltip:
-      "Head-to-head player seasons by category edges — the building block for Rank My Seasons.",
+      "Head-to-head player seasons by category edges, the building block for Rank My Seasons.",
     showTooltip: true,
     learnSlug: "player-season-compare",
     relatedIds: ["rank_my_seasons", "essentially_even"],
@@ -787,7 +1007,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Game Lab",
     category: "systems",
     tooltip:
-      "Box-score story of a game: what stood out, what changed, and team context — without PBP claims.",
+      "Box-score story of a game: what stood out, what changed, and team context, without PBP claims.",
     showTooltip: true,
     learnSlug: "game-lab",
     relatedIds: ["season_evidence", "season_baseline", "scoreboard_only"],
@@ -799,7 +1019,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season evidence",
     category: "systems",
     tooltip:
-      "Representative games (largest win, highest scoring, etc.) that illustrate a season — descriptive, not “most important.”",
+      "Representative games (largest win, highest scoring, etc.) that illustrate a season, descriptive, not “most important.”",
     showTooltip: true,
     learnSlug: "season-evidence",
     relatedIds: ["game_lab", "team_rank_seasons", "season_baseline"],
@@ -823,7 +1043,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season baseline",
     category: "systems",
     tooltip:
-      "The team's average performance across qualifying games from the same season — used to describe how unusual a single game was.",
+      "The team's average performance across qualifying games from the same season, used to describe how unusual a single game was.",
     showTooltip: true,
     learnSlug: "season-baseline",
     relatedIds: ["game_lab", "season_evidence", "essentially_even"],
@@ -839,7 +1059,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ASK DRBL",
     category: "systems",
     tooltip:
-      "Natural-language questions routed to existing DRBL analyzers — not a free-form AI fantasy.",
+      "Natural-language questions routed to existing DRBL analyzers, not a free-form AI fantasy.",
     showTooltip: true,
     learnSlug: "ask-drbl",
     seeInAction: [{ label: "Open ASK DRBL", href: "/ask" }],
@@ -866,7 +1086,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
       "DRBL only treats season-true impact archives as historical. Live overlays are not backfilled history.",
     showTooltip: true,
     learnSlug: "historical-impact",
-    relatedIds: ["darko", "lebron"],
+    relatedIds: ["darko", "raptor"],
   },
 
   // --- Status labels ---
@@ -961,7 +1181,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Source event",
     category: "transactions",
     tooltip:
-      "A verbatim ESPN transaction blurb. Reporting context — not a structured asset ledger.",
+      "A verbatim ESPN transaction blurb. Reporting context, not a structured asset ledger.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["related_event_cluster", "structured_transaction"],
@@ -974,7 +1194,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Related cluster",
     category: "transactions",
     tooltip:
-      "Multiple source events safely linked as related reporting — still not a verified trade package.",
+      "Multiple source events safely linked as related reporting, still not a verified trade package.",
     showTooltip: true,
     learnSlug: "transaction-layers",
   },
@@ -985,7 +1205,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Structured tx",
     category: "transactions",
     tooltip:
-      "Verified asset-level transaction. Currently 0 in production — trade genealogy stays blocked.",
+      "Verified asset-level transaction. Currently 0 in production, trade genealogy stays blocked.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: [
@@ -1002,7 +1222,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "TPE",
     category: "transactions",
     tooltip:
-      "A CBA mechanism that may let a team absorb qualifying salary without matching outgoing salary — only when a structured TPE ledger exists.",
+      "A CBA mechanism that may let a team absorb qualifying salary without matching outgoing salary, only when a structured TPE ledger exists.",
     showTooltip: true,
     learnSlug: "trade-exception",
     relatedIds: ["salary_fit", "trade_legality", "structured_transaction"],
@@ -1027,7 +1247,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Legality",
     category: "transactions",
     tooltip:
-      "Whether a full proposed transaction satisfies applicable CBA and roster rules. Requires a deterministic validator — never inferred from fit lists.",
+      "Whether a full proposed transaction satisfies applicable CBA and roster rules. Requires a deterministic validator, never inferred from fit lists.",
     showTooltip: true,
     learnSlug: "salary-fit-vs-legality",
     relatedIds: ["salary_fit", "trade_exception"],
@@ -1039,7 +1259,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Draft capital",
     category: "transactions",
     tooltip:
-      "Owned draft picks and related rights from a structured pick ledger — not inferred from ESPN free text.",
+      "Owned draft picks and related rights from a structured pick ledger, not inferred from ESPN free text.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["structured_transaction", "source_event"],

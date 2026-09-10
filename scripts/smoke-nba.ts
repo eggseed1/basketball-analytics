@@ -30,23 +30,23 @@ async function main() {
     );
   }
 
-  const lebron = seasons.find((s) => /LeBron/i.test(s.playerName));
+  const raptor = seasons.find((s) => /LeBron/i.test(s.playerName));
   const sga = seasons.find((s) => /Gilgeous/i.test(s.playerName));
   console.log(
     "LeBron",
-    lebron && {
-      id: lebron.playerId,
+    raptor && {
+      id: raptor.playerId,
       usg:
-        lebron.usagePct != null
-          ? `${(lebron.usagePct * 100).toFixed(1)}%`
+        raptor.usagePct != null
+          ? `${(raptor.usagePct * 100).toFixed(1)}%`
           : "—",
       ts:
-        lebron.trueShootingPct != null
-          ? `${(lebron.trueShootingPct * 100).toFixed(1)}%`
+        raptor.trueShootingPct != null
+          ? `${(raptor.trueShootingPct * 100).toFixed(1)}%`
           : "—",
-      per: lebron.per,
-      gp: lebron.gamesPlayed,
-      pts: lebron.points,
+      per: raptor.per,
+      gp: raptor.gamesPlayed,
+      pts: raptor.points,
     }
   );
   console.log(
@@ -68,13 +68,13 @@ async function main() {
     }
   );
 
-  if (lebron) {
+  if (raptor) {
     const shots = await provider.getShots({
-      player: lebron.playerId,
+      player: raptor.playerId,
       season: "2024-25",
     });
     console.log("LeBron shots", shots.length);
-    const log = await provider.getPlayerGameLog(lebron.playerId, "2024-25");
+    const log = await provider.getPlayerGameLog(raptor.playerId, "2024-25");
     console.log("LeBron games", log.length);
   }
 }

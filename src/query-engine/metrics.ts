@@ -145,11 +145,18 @@ export const ASK_METRICS: AskMetricDef[] = [
     format: "impact",
   },
   {
-    id: "lebron",
-    label: "LEBRON",
-    synonyms: ["lebron metric", "lebron rating", "lebron impact"],
+    id: "raptor",
+    label: "RAPTOR",
+    synonyms: ["raptor metric", "raptor rating", "raptor impact"],
     scope: "player_season",
-    learnHref: href("lebron"),
+    learnHref: href("raptor"),
+    format: "impact",
+  },
+  {
+    id: "bpm",
+    label: "Box Plus/Minus",
+    synonyms: ["bpm", "box plus minus", "box plus/minus", "box +/-"],
+    scope: "player_season",
     format: "impact",
   },
   // DRBL vocabulary first among impact synonyms that overlap “ability” / “drbl”.

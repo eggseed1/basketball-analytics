@@ -81,7 +81,7 @@ export function createMyLeagueBundle(
       ...overrides?.automation,
     },
     realDataProviderId: opts?.snapshot
-      ? "espn+darko+lebron"
+      ? "espn+darko+raptor"
       : overrides?.realDataProviderId ??
         DEFAULT_MYLEAGUE_SETTINGS.realDataProviderId,
   };

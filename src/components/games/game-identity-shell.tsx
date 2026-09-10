@@ -50,13 +50,18 @@ export function GameIdentityShell({
   if (!validation.canRenderScoreHeader) {
     return (
       <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        <p
+          className={cn(
+            type.caption,
+            "font-bold uppercase tracking-[0.12em] text-muted-foreground"
+          )}
+        >
           {game.season || "Game"}
         </p>
-        <p className="text-[15px] font-semibold tracking-tight">
+        <p className={cn(type.title, "font-semibold")}>
           Game details incomplete
         </p>
-        <p className="text-[13px] text-muted-foreground">
+        <p className={cn(type.bodySm, "text-muted-foreground")}>
           Team identity or final score could not be verified for this link.
           Deep features are hidden until the game resolves.
         </p>

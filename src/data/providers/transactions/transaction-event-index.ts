@@ -43,7 +43,8 @@ export type TransactionEventIndex = {
 };
 
 let memory: { expiresAt: number; value: TransactionEventIndex } | null = null;
-const TTL_MS = 1000 * 60 * 30;
+/** Keep in sync with live ESPN overlay (~hourly). */
+const TTL_MS = 1000 * 60 * 60;
 let indexInflight: Promise<TransactionEventIndex> | null = null;
 
 function toEvent(tx: CanonicalTransaction): NbaTransactionEvent | null {

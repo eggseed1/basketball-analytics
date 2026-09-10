@@ -47,9 +47,9 @@ export function isSupportedImpactMetric(
     metric === "darko_dpm" ||
     metric === "darko_off" ||
     metric === "darko_def" ||
-    metric === "lebron" ||
-    metric === "olebron" ||
-    metric === "dlebron" ||
+    metric === "raptor" ||
+    metric === "oraptor" ||
+    metric === "draptor" ||
     metric === "wins_added"
   );
 }
@@ -57,7 +57,7 @@ export function isSupportedImpactMetric(
 export function isSupportedImpactSource(
   source: string
 ): source is HistoricalImpactSourceId {
-  return source === "darko" || source === "lebron";
+  return source === "darko" || source === "raptor";
 }
 
 /** Stable dedupe key for one player-season-metric-source observation. */

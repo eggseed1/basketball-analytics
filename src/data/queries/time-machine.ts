@@ -25,6 +25,8 @@ import {
 } from "@/lib/historical-team-brand";
 import {
   clampDateToSeason,
+  mapCalendarDayOntoSeason,
+  nbaCalendarMonthDay,
   seasonDateBounds,
 } from "@/themes/era-theme";
 
@@ -40,6 +42,20 @@ export type HistoricalTeamDirectoryRow = {
   logoSource: HistoricalLogoSource;
   /** Era palette for historical_text monograms. */
   palette: HistoricalTeamBrandPalette | null;
+  /** Season-board counting / rates when the team board is available. */
+  gamesPlayed?: number;
+  ppg?: number;
+  oppPpg?: number;
+  rpg?: number;
+  apg?: number;
+  spg?: number;
+  bpg?: number;
+  topg?: number;
+  fieldGoalPct?: number;
+  threePointPct?: number;
+  freeThrowPct?: number;
+  effectiveFieldGoalPct?: number;
+  trueShootingPct?: number;
 };
 
 export type LeaderMetric = "ppg" | "rpg" | "apg" | "drbl100";
@@ -140,6 +156,19 @@ function directoryFromBoardRow(
     logoUrl: brand?.logoUrl ?? null,
     logoSource: brand?.source ?? "text_fallback",
     palette: brand?.palette ?? null,
+    gamesPlayed: row.gamesPlayed,
+    ppg: row.ppg,
+    oppPpg: row.oppPpg,
+    rpg: row.rpg,
+    apg: row.apg,
+    spg: row.spg,
+    bpg: row.bpg,
+    topg: row.topg,
+    fieldGoalPct: row.fieldGoalPct,
+    threePointPct: row.threePointPct,
+    freeThrowPct: row.freeThrowPct,
+    effectiveFieldGoalPct: row.effectiveFieldGoalPct,
+    trueShootingPct: row.trueShootingPct,
   };
 }
 
@@ -400,16 +429,59 @@ export async function getHistoricalGamesForDate(
 }
 
 /**
- * Pick a useful default date: mid-season calendar point (cheap; no fan-out).
+ * Default Time Machine date: today’s month/day on the selected season’s
+ * calendar. Offseason (Jul–Sep, or outside season bounds) → last game date
+ * when available, else season-end bound.
  */
 export async function resolveTimeMachineDate(
   season: string,
-  dateParam?: string
+  dateParam?: string,
+  now: Date = new Date()
 ): Promise<string> {
   if (dateParam) return clampDateToSeason(dateParam, season);
-  const { start } = seasonDateBounds(season);
-  const y = Number(start.slice(0, 4));
-  return clampDateToSeason(`${y + 1}-01-15`, season);
+
+  const { month, day } = nbaCalendarMonthDay(now);
+  const mapped = mapCalendarDayOntoSeason(season, month, day);
+  if (mapped) return mapped;
+
+  const lastGame = await lastGameDateForSeason(season);
+  if (lastGame) return lastGame;
+  return seasonDateBounds(season).end;
+}
+
+async function lastGameDateForSeason(season: string): Promise<string | null> {
+  const maxDate = (dates: Iterable<string>): string | null => {
+    let max: string | null = null;
+    for (const raw of dates) {
+      const d = String(raw ?? "").slice(0, 10);
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(d)) continue;
+      if (!max || d > max) max = d;
+    }
+    return max;
+  };
+
+  try {
+    const { getRuntimeSnapshotGames } = await import(
+      "@/data/runtime/game-snapshot"
+    );
+    const fromSnap = maxDate(
+      getRuntimeSnapshotGames(season).map((g) => g.gameDate)
+    );
+    if (fromSnap) return fromSnap;
+  } catch {
+    /* fall through */
+  }
+
+  try {
+    // Prefer local/bundled archive — avoid remote season crawls on default date.
+    const games = await getFilteredGames(
+      { season },
+      { allowRemoteHistoricalCrawl: false }
+    );
+    return maxDate(games.map((g) => g.gameDate));
+  } catch {
+    return null;
+  }
 }
 
 export async function getHistoricalTransactionsForDate(

@@ -136,8 +136,11 @@ export interface BdlBoxScore {
 
 export interface BdlAdvancedStat {
   id?: number;
+  period?: number;
   pie?: number;
   pace?: number;
+  /** Full-game / on-court possessions when present (GOAT). */
+  possessions?: number;
   assist_percentage?: number;
   assist_ratio?: number;
   assist_to_turnover?: number;

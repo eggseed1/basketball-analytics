@@ -44,7 +44,7 @@ function MoverList({
   }
 
   const toneClass =
-    tone === "up" ? "text-emerald-600" : "text-rose-600";
+    tone === "up" ? "text-delta-up" : "text-delta-down";
 
   return (
     <div className="flex min-w-0 flex-col gap-2">
@@ -55,9 +55,9 @@ function MoverList({
         {rows.map((row) => (
           <li key={row.playerId}>
             <Link
-              href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
+              href={`/players/${encodeURIComponent(row.playerId)}`}
               className={cn(
-                "flex items-center gap-2 rounded-md border border-border/60 bg-white/35 px-2 py-1.5 hover:bg-white/55",
+                "flex items-center gap-2 rounded-md border border-border/60 frost-surface-soft px-2 py-1.5 frost-surface-hover",
                 textLinkClassName
               )}
             >

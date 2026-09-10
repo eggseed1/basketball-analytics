@@ -8,6 +8,7 @@ import type {
   SentimentProfileProvenance,
   TrackedPlayerSentimentRow,
 } from "@/sentiment/curated-types";
+import { playerMatchesSentimentTopic } from "@/sentiment/topic-filter";
 import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -61,9 +62,11 @@ function provenanceBadge(provenance?: SentimentProfileProvenance): string | null
 export function TrackedPlayersBoard({
   rows,
   season,
+  topicFilter,
 }: {
   rows: TrackedPlayerSentimentRow[];
   season: string;
+  topicFilter?: string;
 }) {
   const [query, setQuery] = useState("");
   const [filter, setFilter] = useState<RosterFilter>("all");
@@ -71,6 +74,9 @@ export function TrackedPlayersBoard({
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
     return rows.filter((row) => {
+      if (topicFilter && !playerMatchesSentimentTopic(row, topicFilter)) {
+        return false;
+      }
       if (filter === "coverage" && !row.hasProfile) return false;
       if (filter === "observation" && row.provenance !== "observation") {
         return false;
@@ -78,7 +84,7 @@ export function TrackedPlayersBoard({
       if (!q) return true;
       return row.displayName.toLowerCase().includes(q);
     });
-  }, [filter, query, rows]);
+  }, [filter, query, rows, topicFilter]);
 
   const coveredCount = rows.filter((row) => row.hasProfile).length;
   const observationCount = rows.filter(
@@ -93,6 +99,16 @@ export function TrackedPlayersBoard({
           {season} roster ({rows.length.toLocaleString()} players) —{" "}
           {coveredCount.toLocaleString()} with prototype coverage ·{" "}
           {observationCount.toLocaleString()} observation-backed.
+          {topicFilter ? (
+            <>
+              {" "}
+              Filtering topic{" "}
+              <span className="font-semibold text-foreground">
+                {topicFilter.replace(/_/g, " ")}
+              </span>
+              .
+            </>
+          ) : null}
         </p>
       </div>
 
@@ -105,7 +121,7 @@ export function TrackedPlayersBoard({
           aria-label="Search tracked players"
           className={cn(
             type.bodySm,
-            "min-w-[12rem] flex-1 rounded-md border border-border/70 bg-white/40 px-3 py-1.5"
+            "min-w-[12rem] flex-1 rounded-md border border-border/70 frost-surface px-3 py-1.5"
           )}
         />
         <div className="flex flex-wrap gap-1.5" role="group" aria-label="Roster filter">
@@ -153,7 +169,7 @@ export function TrackedPlayersBoard({
                 >
                   <td className="px-3 py-2">
                     <Link
-                      href={`/players/${encodeURIComponent(row.playerId)}?view=sentiment`}
+                      href={`/players/${encodeURIComponent(row.playerId)}`}
                       className={cn("inline-flex items-center gap-2", textLinkClassName)}
                     >
                       {row.teamKey ? (
@@ -167,7 +183,7 @@ export function TrackedPlayersBoard({
                       <span
                         className={cn(
                           type.caption,
-                          "inline-flex rounded-full border border-border/60 bg-white/40 px-1.5 py-0.5 font-semibold text-muted-foreground"
+                          "inline-flex rounded-full border border-border/60 frost-surface px-1.5 py-0.5 font-semibold text-muted-foreground"
                         )}
                       >
                         {provenanceBadge(row.provenance)}

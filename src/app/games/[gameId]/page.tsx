@@ -14,6 +14,7 @@ import { loadRawArchiveShotEvents } from "@/data/history/raw-archive-shots";
 import { getGameShellCached } from "@/data/queries/request-cache";
 import { withBudget } from "@/data/queries/budget";
 import { validateGamePresentation } from "@/lib/game-presentation";
+import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
@@ -21,7 +22,12 @@ export async function generateMetadata({ params }: GamePageProps) { const { game
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival> }) {
-  const result = await withBudget(getGameAnalysis(gameId).catch(() => null), 10_000, null);
+  const labBudgetMs = longUpstreamBudgetsEnabled() ? 25_000 : 10_000;
+  const result = await withBudget(
+    getGameAnalysis(gameId).catch(() => null),
+    labBudgetMs,
+    null
+  );
   const payload = result.value;
   if (!payload) return <p className="text-[13px] text-muted-foreground">Deep Game Lab analysis is temporarily unavailable for this game.</p>;
   return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} omitHero />;

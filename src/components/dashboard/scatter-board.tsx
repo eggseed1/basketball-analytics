@@ -15,6 +15,7 @@ import {
 
 import { AnalysisBoard } from "@/components/dashboard/analysis-board";
 import type { DashboardPlayer } from "@/lib/dashboard-player";
+import { fitNumericDomain } from "@/lib/chart-numeric-domain";
 import { formatPct } from "@/lib/format";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 import {
@@ -48,6 +49,23 @@ export function ScatterBoard({
     [players]
   );
 
+  const domainX = useMemo(
+    () =>
+      fitNumericDomain(
+        data.map((p) => p.usageDisplay),
+        { padAbsolute: 1.5, padRatio: 0.14, minSpan: 4 }
+      ),
+    [data]
+  );
+  const domainY = useMemo(
+    () =>
+      fitNumericDomain(
+        data.map((p) => p.tsDisplay),
+        { padAbsolute: 1.5, padRatio: 0.14, minSpan: 4 }
+      ),
+    [data]
+  );
+
   return (
     <AnalysisBoard
       title={title}
@@ -66,13 +84,15 @@ export function ScatterBoard({
           </p>
         ) : (
           <ResponsiveContainer width="100%" height="100%">
-            <ScatterChart margin={{ top: 8, right: 12, bottom: 8, left: 0 }}>
+            <ScatterChart margin={{ top: 12, right: 20, bottom: 20, left: 8 }}>
               <CartesianGrid strokeDasharray="2 2" className="stroke-border" />
               <XAxis
                 type="number"
                 dataKey="usageDisplay"
                 name="Usage %"
-                domain={[10, 45]}
+                domain={domainX}
+                allowDataOverflow={false}
+                padding={{ left: 8, right: 8 }}
                 tick={{ fontSize: 10 }}
                 label={{
                   value: "Usage %",
@@ -85,7 +105,9 @@ export function ScatterBoard({
                 type="number"
                 dataKey="tsDisplay"
                 name="TS %"
-                domain={[40, 75]}
+                domain={domainY}
+                allowDataOverflow={false}
+                padding={{ top: 8, bottom: 8 }}
                 tick={{ fontSize: 10 }}
                 label={{
                   value: "TS %",

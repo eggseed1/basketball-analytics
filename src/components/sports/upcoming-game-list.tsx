@@ -57,16 +57,26 @@ async function fetchUpcomingPage(
   };
 }
 
-function ListBoard({ games }: { games: GameSummary[] }) {
+function ListBoard({
+  games,
+  source,
+}: {
+  games: GameSummary[];
+  source?: "live-espn" | "cached-espn" | "unavailable";
+}) {
   const live = games.filter((g) => isLiveLikeStatus(g.status));
   const upcoming = games.filter((g) => !isLiveLikeStatus(g.status));
   const byDate = groupByDate(upcoming);
   const dates = [...byDate.keys()].sort();
 
   if (!games.length) {
+    const message =
+      source === "unavailable"
+        ? "Live ESPN scoreboard is temporarily unavailable. Try again in a moment."
+        : "No upcoming tip-offs on the board yet — the next slate usually posts for October.";
     return (
       <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
-        No upcoming games on the ESPN scoreboard yet.
+        {message}
       </p>
     );
   }
@@ -115,10 +125,12 @@ export function UpcomingGameList({
   initialGames,
   hasMore: initialHasMore,
   season,
+  source,
 }: {
   initialGames: GameSummary[];
   hasMore: boolean;
   season: string;
+  source?: "live-espn" | "cached-espn" | "unavailable";
 }) {
   const initialKey = initialGames.map((g) => g.id).join(",");
   const [games, setGames] = useState(initialGames);
@@ -194,7 +206,7 @@ export function UpcomingGameList({
       <LiveScoreboardScope games={games} season={season}>
       {(liveGames) => (
         <>
-          <ListBoard games={liveGames} />
+          <ListBoard games={liveGames} source={source} />
           {hasMore ? <div ref={sentinelRef} aria-hidden className="h-1" /> : null}
           {loading ? (
             <p className="text-center text-[12px] text-muted-foreground">

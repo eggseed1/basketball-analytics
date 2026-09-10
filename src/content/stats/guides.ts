@@ -110,77 +110,80 @@ export const STAT_GUIDES: StatGuide[] = [
     },
   },
   {
-    id: "lebron",
-    slug: "lebron",
-    name: "LEBRON",
-    shortName: "LEBRON",
+    id: "raptor",
+    slug: "raptor",
+    name: "RAPTOR",
+    shortName: "RAPTOR",
     category: "impact",
-    blurb: "Luck-adjusted player impact from Box Score + Player Tracking.",
+    blurb:
+      "FiveThirtyEight’s open impact metric in points per 100, with offense, defense, and WAR.",
     plain: {
       teaches: [
-        "How valuable a player has been in a season on a points-per-100 scale.",
-        "Offense and defense contributions separately (O-LEBRON / D-LEBRON).",
-        "A luck-aware read so noisy shooting variance doesn’t dominate forever.",
+        "How valuable a player was on a points-per-100 scale for that season.",
+        "Where the value lived: O-RAPTOR (offense) vs D-RAPTOR (defense).",
+        "WAR — RAPTOR impact scaled by minutes into wins above replacement.",
       ],
       doesnt: [
-        "Future projection as cleanly as a dedicated predictive model.",
-        "Whether a contract is smart.",
-        "Every off-ball detail the cameras miss.",
+        "Seasons after FiveThirtyEight stopped publishing RAPTOR (roughly post-2021-22).",
+        "A clean forecast of next season the way DARKO aims to.",
+        "Basketball Index LEBRON — that metric is proprietary and not on this site.",
       ],
       upsides: [
-        "Grounded in public NBA tracking + box data.",
-        "Luck adjustment helps mid-season evaluations.",
-        "Wins Added turns impact into a season tally.",
+        "Open, documented, and free (538 GitHub, CC BY 4.0).",
+        "Blends box and on/off signals into one total with O/D splits.",
+        "Sits next to DARKO and BRef BPM for cross-checking eras.",
       ],
       downsides: [
-        "Still a model - different than RAPTOR, DARKO, or BPM.",
-        "Needs enough minutes to stabilize.",
-        "Defense remains harder to pin down than offense.",
+        "No new seasons after 538 ended the project — use BPM / VORP / DARKO for recent years.",
+        "Defense remains noisier than offense.",
+        "Will not match proprietary boards like LEBRON.",
       ],
       apply: [
-        "Compare midseason value across similar roles.",
-        "Use Wins Added when debating “season body of work.”",
-        "Cross-check with DARKO when asking “who will be good next month?”",
+        "Use RAPTOR for historical “what were they?” boards through the late 2010s / early 2020s.",
+        "For current seasons, prefer DARKO and BRef BPM columns already on the site.",
+        "Pair with DARKO when the question flips to “who should we expect next?”",
       ],
     },
     deep: {
       definition:
-        "LEBRON (Luck-adjusted player Estimate using Box score + Player Tracking, Regularized, On-off, & Neighborhoods) estimates a player’s contribution in points per 100 possessions, with offensive and defensive components and a Wins Added translation.",
+        "RAPTOR (Robust Algorithm using Player Tracking and On/Off Ratings) is FiveThirtyEight’s public plus-minus-style impact metric in points per 100 possessions, with offensive and defensive components and WAR (wins above replacement).",
       formula:
-        "LEBRON ≈ O-LEBRON + D-LEBRON;  Wins Added scales impact × possessions toward wins",
+        "RAPTOR ≈ O-RAPTOR + D-RAPTOR;  WAR scales impact × playing time toward wins above replacement",
       calculation: [
-        "Box features (scoring, playmaking, rebounding, fouls, turnovers) enter a regularized model.",
-        "Tracking features (speed, contests, screens, etc., where available) enrich the estimate.",
-        "On/off and “neighborhood” teammate/opponent contexts reduce credit assignment noise.",
-        "Luck adjustment regresses unstable shooting outcomes toward expectation.",
-        "Wins Added multiplies stabilized impact by playing time to approximate wins created.",
+        "Box-score features enter a regularized model of player contribution.",
+        "On/off lineup contexts adjust credit for teammates and opponents.",
+        "Tracking inputs (where available in the 538 era) enrich the estimate.",
+        "Offense and defense are estimated separately, then summed into total RAPTOR.",
+        "WAR converts stabilized impact and minutes into an approximate wins total.",
       ],
       teaches: [
-        "Season-to-date impact with partial noise control.",
-        "Which side of the ball drives the total.",
-        "Cumulative value via Wins Added.",
+        "Season impact on a familiar pts/100 scale.",
+        "Which side of the ball drove the total.",
+        "Body-of-work value via WAR.",
       ],
       doesnt: [
         "A pure forecast of next season.",
-        "Scheme-proof isolation of one skill.",
-        "Identical rankings to other public models - disagreement is normal.",
+        "Coverage of the latest NBA seasons after 538 stopped updates.",
+        "Identical rankings to DARKO, BPM, or proprietary models.",
       ],
       upsides: [
-        "Transparent enough to reason about inputs at a high level.",
-        "Luck adjustment is analyst-friendly midyear.",
-        "Good companion metric next to predictive boards.",
+        "Transparent open data anyone can rebuild from.",
+        "Strong historical companion next to predictive boards like DARKO.",
+        "O/D splits help role and fit conversations.",
       ],
       downsides: [
-        "Tracking availability and definitions change over eras.",
-        "Regularization can mute true breakout leaps briefly.",
+        "Frozen history — no live continuation from 538.",
         "Defensive signal remains noisier than offensive.",
+        "Cross-era comparisons still need care.",
       ],
       apply: [
-        "Use LEBRON for “what have they been?”; DARKO for “what should we expect?”",
-        "When debating MVP/All-NBA cases, pair Wins Added with team record and role.",
+        "Use RAPTOR for “what have they been?” in covered seasons; DARKO for “what should we expect?”",
+        "When RAPTOR is blank for a recent year, read BPM / VORP on the same board.",
         "Investigate large O vs D imbalances before labeling someone “two-way.”",
       ],
-      sources: ["NBA tracking / box public data ecosystems", "LEBRON documentation from Basketball Index lineage"],
+      sources: [
+        "FiveThirtyEight RAPTOR (GitHub: fivethirtyeight/data/nba-raptor, CC BY 4.0)",
+      ],
     },
   },
   {
@@ -565,6 +568,10 @@ export const STAT_GUIDES: StatGuide[] = [
 export function getStatGuide(slug: string): StatGuide | undefined {
   if (slug === "wins-above-r1") {
     return STAT_GUIDES.find((g) => g.slug === "war1" || g.id === "r1_win_eq");
+  }
+  // Legacy Learn URL for the retired LEBRON guide → RAPTOR.
+  if (slug === "lebron") {
+    return STAT_GUIDES.find((g) => g.slug === "raptor" || g.id === "raptor");
   }
   return STAT_GUIDES.find((g) => g.slug === slug || g.id === slug);
 }

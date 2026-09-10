@@ -21,16 +21,21 @@ CPI = PPG + 1.5×APG + 1.2×RPG + 2.0×SPG + 2.0×BPG − TOV
 
 All terms are **per game** from season-true career counting stats.
 
-CPI is a transparent counting composite. It is **not** BPM, DARKO, or LEBRON.
+CPI is a transparent counting composite. It is **not** BPM, DARKO, or RAPTOR.
 
 True shooting % is shown beside Peak for efficiency context; it does **not** enter CPI.
 
-## Why not DARKO / LEBRON for career ranking?
+## Why not DARKO / RAPTOR for career ranking?
 
-- **DARKO** on career rows is currently a **live name-only overlay**, not a historical season series. Using it would fake a flat “peak” across every season.
-- **LEBRON** is season-keyed but coverage is too sparse for a career-wide primary axis.
+CPI remains the Career Resume primary axis so Peak / Prime / Longevity stay
+comparable across eras on counting rates.
 
-When season-true historical impact archives exist, revise this methodology (bump `version`) rather than silently mixing overlays.
+**Peak Impact** (companion on the player Career card) uses season-true overlays
+with preference **DARKO → RAPTOR (≤2021-22) → BPM**. Metrics are never mixed into
+one ranking scale. See `src/analytics/peak-impact.ts`.
+
+When overlay coverage expands, bump Peak Impact notes — do not silently swap
+CPI for impact.
 
 ## Population
 

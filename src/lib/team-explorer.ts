@@ -177,7 +177,10 @@ export function assessTeamCoverage(options: {
       label: "Transaction events",
       status: transactionCount > 0 ? "ok" : "unavailable",
     },
-    { label: "PBP / lineups", status: "unavailable" },
+    {
+      label: "PBP / five-man lineup nets",
+      status: "unavailable",
+    },
   ];
 
   let level: TeamCoverageLevel = "minimal";
@@ -260,15 +263,18 @@ export function gameInvolvesTeam(
 ): boolean {
   const ids = teamIdsForMatch(team, brand);
   if (ids.has(game.homeTeamId) || ids.has(game.awayTeamId)) return true;
-  // BDL ids only against retained provider ids - never against canonical ESPN ids.
-  const scheduleIds = teamScheduleProviderIdsForMatch(team, brand);
-  const homeProvider = game.homeProviderTeamId;
-  const awayProvider = game.awayProviderTeamId;
-  if (
-    (homeProvider && scheduleIds.has(homeProvider)) ||
-    (awayProvider && scheduleIds.has(awayProvider))
-  ) {
-    return true;
+  // BDL provider ids only — never match against ESPN ids stored in provider
+  // fields (snapshot rows often mirror ESPN ids; BDL OKC=21 is ESPN PHX).
+  if (game.teamIdProvider === "bdl") {
+    const scheduleIds = teamScheduleProviderIdsForMatch(team, brand);
+    const homeProvider = game.homeProviderTeamId;
+    const awayProvider = game.awayProviderTeamId;
+    if (
+      (homeProvider && scheduleIds.has(homeProvider)) ||
+      (awayProvider && scheduleIds.has(awayProvider))
+    ) {
+      return true;
+    }
   }
   const abbrs = teamAbbrsForMatch(team, brand);
   if (game.homeTeamAbbr && abbrs.has(game.homeTeamAbbr.toLowerCase())) {
@@ -284,15 +290,22 @@ export function filterTeamGames(
   games: GameSummary[],
   team: TeamSeasonStats,
   brand: TeamBrand | null | undefined,
-  limit: number
+  limit: number,
+  options: { order?: "asc" | "desc" } = {}
 ): GameSummary[] {
+  const order = options.order ?? "desc";
   return games
     .filter((g) => gameInvolvesTeam(g, team, brand))
-    .sort((a, b) =>
-      a.gameDate === b.gameDate
-        ? b.id.localeCompare(a.id)
-        : b.gameDate.localeCompare(a.gameDate)
-    )
+    .sort((a, b) => {
+      if (a.gameDate === b.gameDate) {
+        return order === "asc"
+          ? a.id.localeCompare(b.id)
+          : b.id.localeCompare(a.id);
+      }
+      return order === "asc"
+        ? a.gameDate.localeCompare(b.gameDate)
+        : b.gameDate.localeCompare(a.gameDate);
+    })
     .slice(0, limit);
 }
 

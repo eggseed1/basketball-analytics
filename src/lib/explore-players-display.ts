@@ -1,17 +1,21 @@
 import type { PlayerSeasonSortKey } from "@/lib/player-season-sort";
+import {
+  SHEET_STAT_CATEGORY_CHIPS,
+  sheetStatOrderIndex,
+  type SheetStatCategory,
+} from "@/lib/player-stat-sheet-registry";
 
 /**
- * Board view chips. Profile leads (box-score / counting). Overview was removed —
- * those leftovers (TOV / OREB / DREB / created points) live under Profile now.
+ * Explore board chips — same taxonomy as Statistics / percentile / compare.
+ * Hustle omitted: board rows don't carry hustle fields.
  */
 export const PLAYER_BOARD_VIEWS = [
-  { id: "all", label: "Show all stats" },
+  { id: "all", label: "All" },
   { id: "profile", label: "Profile" },
   { id: "shooting", label: "Shooting" },
-  { id: "impact", label: "Impact" },
-  { id: "advanced", label: "Advanced" },
   { id: "defense", label: "Defense" },
-  { id: "ts", label: "True Shooting" },
+  { id: "advanced", label: "Advanced" },
+  { id: "impact", label: "Impact" },
 ] as const;
 
 export type PlayerBoardView = (typeof PLAYER_BOARD_VIEWS)[number]["id"];
@@ -20,11 +24,11 @@ export const PLAYER_BOARD_CATEGORY_VIEWS = PLAYER_BOARD_VIEWS.filter(
   (view) => view.id !== "all"
 );
 
+/** Same rate modes as Statistics (player-stats-board). */
 export const PLAYER_BOARD_RATES = [
-  { id: "perGame", label: "Per Game" },
-  { id: "per75", label: "Per 75" },
-  { id: "per100", label: "Per 100" },
+  { id: "perGame", label: "Per game" },
   { id: "totals", label: "Totals" },
+  { id: "per100", label: "Per 100" },
 ] as const;
 
 export type PlayerBoardRate = (typeof PLAYER_BOARD_RATES)[number]["id"];
@@ -33,9 +37,26 @@ const VIEW_IDS = PLAYER_BOARD_VIEWS.map((view) => view.id);
 const VIEWS = new Set<string>(VIEW_IDS);
 const RATES = new Set<string>(PLAYER_BOARD_RATES.map((r) => r.id));
 
-/** Legacy `overview` chip → Profile. */
+/**
+ * Legacy Explore / sheet chips → current taxonomy.
+ * counting/overview → profile; rates → advanced; ts → shooting.
+ */
 function normalizeViewId(part: string): string {
-  return part === "overview" ? "profile" : part;
+  switch (part) {
+    case "overview":
+    case "counting":
+      return "profile";
+    case "rates":
+      return "advanced";
+    case "ts":
+      return "shooting";
+    case "hustle":
+      return "hustle";
+    case "per75":
+      return "per100";
+    default:
+      return part;
+  }
 }
 
 export function parsePlayerBoardViews(value: string | null): PlayerBoardView[] {
@@ -79,31 +100,36 @@ export function togglePlayerBoardView(
 }
 
 export function playerBoardViewLabel(id: PlayerBoardView): string {
-  return PLAYER_BOARD_VIEWS.find((view) => view.id === id)?.label ?? id;
+  return (
+    PLAYER_BOARD_VIEWS.find((view) => view.id === id)?.label ??
+    SHEET_STAT_CATEGORY_CHIPS.find((c) => c.id === id)?.label ??
+    id
+  );
 }
 
 export function parsePlayerBoardRate(value: string | null): PlayerBoardRate {
-  if (value && RATES.has(value)) return value as PlayerBoardRate;
+  const normalized = value === "per75" ? "per100" : value;
+  if (normalized && RATES.has(normalized)) return normalized as PlayerBoardRate;
   return "perGame";
 }
 
+/**
+ * Columns available on the Explore board, bucketed like the sheet.
+ * Subset of SHEET_STAT_DEFS — only keys the board can render/sort today.
+ */
 export const PLAYER_BOARD_VIEW_COLUMNS: Record<
   PlayerBoardView,
   PlayerSeasonSortKey[]
 > = {
-  /** Box score / counting — GP through stocks + creation extras. */
   profile: [
     "gamesPlayed",
     "mpg",
-    "age",
     "ppg",
     "rpg",
     "offensiveRebounds",
     "defensiveRebounds",
     "apg",
     "tov",
-    "spg",
-    "bpg",
   ],
   shooting: [
     "fieldGoalPct",
@@ -115,36 +141,26 @@ export const PLAYER_BOARD_VIEW_COLUMNS: Record<
     "effectiveFieldGoalPct",
     "trueShootingPct",
   ],
+  defense: ["spg", "bpg", "defensiveRating"],
+  advanced: [
+    "usagePct",
+    "turnoverPct",
+    "offensiveRating",
+    "netRating",
+    "bpm",
+  ],
   impact: [
     "darkoDpm",
     "darkoOff",
     "darkoDef",
-    "lebron",
-    "drbl100",
+    "raptor",
+    "oRaptor",
+    "dRaptor",
+    "winsAdded",
     "r1WinEquivalents",
-    "netRating",
-    "offensiveRating",
-    "defensiveRating",
+    "drbl100",
   ],
-  advanced: [
-    "usagePct",
-    "turnoverPct",
-    "effectiveFieldGoalPct",
-    "trueShootingPct",
-    "offensiveRating",
-    "defensiveRating",
-    "netRating",
-  ],
-  defense: ["spg", "bpg", "defensiveRating", "darkoDpm"],
-  ts: [
-    "trueShootingPct",
-    "relativeTrueShootingPct",
-    "effectiveFieldGoalPct",
-    "fieldGoalPct",
-    "threePointPct",
-    "freeThrowPct",
-  ],
-  /** Filled below as the deduped union of every category preset. */
+  /** Filled below as the deduped union in sheet category order. */
   all: [],
 };
 
@@ -158,20 +174,39 @@ PLAYER_BOARD_VIEW_COLUMNS.all = (() => {
       out.push(key);
     }
   }
+  out.sort((a, b) => sheetStatOrderIndex(a) - sheetStatOrderIndex(b));
   return out;
 })();
 
 export function filterPlayerBoardViewColumns(
   view: PlayerBoardView,
-  flags: { hasDarko: boolean; hasLebron: boolean; hasDrbl: boolean }
+  flags: { hasDarko: boolean; hasRaptor: boolean; hasDrbl: boolean }
 ): PlayerSeasonSortKey[] {
   return PLAYER_BOARD_VIEW_COLUMNS[view].filter((key) => {
     if (key === "drbl100" || key === "r1WinEquivalents") return flags.hasDrbl;
-    if (view === "all") return true;
     if (key === "darkoDpm" || key === "darkoOff" || key === "darkoDef") {
       return flags.hasDarko;
     }
-    if (key === "lebron") return flags.hasLebron;
+    if (
+      key === "raptor" ||
+      key === "oRaptor" ||
+      key === "dRaptor" ||
+      key === "winsAdded"
+    ) {
+      return flags.hasRaptor;
+    }
     return true;
   });
+}
+
+/** Category for an Explore column — sheet taxonomy only. */
+export function playerBoardColumnCategory(
+  key: PlayerSeasonSortKey
+): SheetStatCategory | null {
+  for (const cat of PLAYER_BOARD_CATEGORY_VIEWS) {
+    if ((PLAYER_BOARD_VIEW_COLUMNS[cat.id] as string[]).includes(key)) {
+      return cat.id as SheetStatCategory;
+    }
+  }
+  return null;
 }

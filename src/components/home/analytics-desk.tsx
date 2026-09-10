@@ -222,7 +222,7 @@ export function AnalyticsDesk({
 
   if (embedded) {
     return (
-      <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
+      <section className="sports-card flex flex-col gap-3 p-4 sm:p-5">
         {body}
       </section>
     );

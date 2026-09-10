@@ -11,7 +11,7 @@ const BROWSE = [
   { href: "/standings", label: "Standings", key: "nyk" },
   { href: "/compare", label: "Compare", key: "lal" },
   { href: "/offseason", label: "Transactions", key: "mia" },
-  { href: "/ask", label: "ASK DRBL", key: "phx" },
+  { href: "/ask", label: "Ask DRBL", key: "phx" },
   { href: "/learn", label: "Learn", key: "mil" },
   { href: "/history", label: "History", key: "chi" },
 ];

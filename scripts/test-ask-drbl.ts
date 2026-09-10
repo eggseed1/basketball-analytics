@@ -71,7 +71,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.lebron!.id,
+        id: PLAYER_ALIASES.raptor!.id,
         name: "LeBron James",
       },
     ],
@@ -100,7 +100,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.lebron!.id,
+        id: PLAYER_ALIASES.raptor!.id,
         name: "LeBron James",
       },
     ],
@@ -212,15 +212,19 @@ function assertJsonSafe(value: unknown) {
   assert.equal(v.ok, false);
 }
 
-// --- Coverage: DARKO wrong season ---
+// --- Coverage: DARKO / RAPTOR season gates (baked overlay) ---
 {
-  const darko = metricSeasonAvailability("darko", "2014-15");
-  assert.equal(darko.ok, false);
-  if (!darko.ok) assert.match(darko.message, /2014-15/);
-  const current = metricSeasonAvailability("darko", "2026-27");
-  assert.equal(current.ok, true);
-  const lebronOld = metricSeasonAvailability("lebron", "2012-13");
-  assert.equal(lebronOld.ok, false);
+  const darkoOld = metricSeasonAvailability("darko", "1978-79");
+  assert.equal(darkoOld.ok, false);
+  if (!darkoOld.ok) assert.match(darkoOld.message, /1978-79/);
+  const darkoModern = metricSeasonAvailability("darko", "2014-15");
+  assert.equal(darkoModern.ok, true);
+  const darkoCurrent = metricSeasonAvailability("darko", "2025-26");
+  assert.equal(darkoCurrent.ok, true);
+  const raptorOk = metricSeasonAvailability("raptor", "2012-13");
+  assert.equal(raptorOk.ok, true);
+  const raptorGone = metricSeasonAvailability("raptor", "2024-25");
+  assert.equal(raptorGone.ok, false);
 }
 
 // --- Safety: PBP fields on AST cannot validate ---
@@ -265,7 +269,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.lebron!.id,
+        id: PLAYER_ALIASES.raptor!.id,
         name: "LeBron James",
       },
     ],

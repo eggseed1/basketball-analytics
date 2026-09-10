@@ -1,19 +1,19 @@
-import Link from "next/link";
 import { Suspense } from "react";
 
-import { PlayoffBracket } from "@/components/explore/playoff-bracket";
 import { TeamSeasonTable } from "@/components/explore/team-season-table";
 import { TeamSeasonToolbar } from "@/components/explore/team-season-toolbar";
-import { BrowseCircles } from "@/components/sports/browse-circles";
-import { getPlayoffBracketModel } from "@/data/queries/playoff-bracket";
-import {
-  getAvailableSeasons,
-  getTeamSeasonStats,
-} from "@/data/queries";
+import { PageHeader } from "@/components/layout/page-header";
+import { getAvailableSeasons } from "@/data/queries";
+import { getTeamSeasonStats } from "@/data/queries/team-seasons";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
+import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client";
+import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { withBudget } from "@/data/queries/budget";
+import type { TeamSeasonStats } from "@/data/types/team-season";
 
 export const metadata = {
   title: "Teams",
@@ -25,62 +25,72 @@ interface ExploreTeamsPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }
 
+function resolveExploreTeamsSeason(
+  seasons: string[],
+  seasonParam: string | string[] | undefined
+): string {
+  const current = canonicalSeasonFromStartYear(currentNbaStartYear());
+  if (typeof seasonParam === "string" && seasonParam.length) {
+    return seasonParam;
+  }
+  // Prefer a completed board season during preseason so metrics are populated.
+  if (isPreseasonRosterSeason(current)) {
+    const prior = shiftCanonicalSeason(current, -1);
+    if (seasons.includes(prior)) return prior;
+  }
+  return seasons[0] ?? current;
+}
+
+function BoardFallback() {
+  return (
+    <div className="flex flex-col gap-6 pb-8" aria-busy="true">
+      <div className="h-72 animate-pulse rounded-xl bg-secondary" />
+    </div>
+  );
+}
+
+async function TeamsBoard({ season }: { season: string }) {
+  const budgetMs = preferBundledProductDataOnEdge() ? 1_500 : 6_000;
+  const result = await withBudget(
+    getTeamSeasonStats(season).catch(() => [] as TeamSeasonStats[]),
+    budgetMs,
+    [] as TeamSeasonStats[]
+  );
+  const teams = result.value;
+
+  return (
+    <div className="flex flex-col gap-6 pb-8">
+      <TeamSeasonTable teams={teams} />
+    </div>
+  );
+}
+
 export default async function ExploreTeamsPage({
   searchParams,
 }: ExploreTeamsPageProps) {
   const params = await searchParams;
   const seasons = await getAvailableSeasons();
-  const defaultSeason =
-    seasons[0] ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const seasonParam = params.season;
-  const season =
-    typeof seasonParam === "string" && seasonParam.length
-      ? seasonParam
-      : defaultSeason;
-
-  const teams = await getTeamSeasonStats(season).catch(() => []);
-  const { model: bracket } = await getPlayoffBracketModel(season);
+  const defaultSeason = resolveExploreTeamsSeason(seasons, undefined);
+  const season = resolveExploreTeamsSeason(seasons, params.season);
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
-      <header className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-        <div>
-          <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-            Teams
-          </p>
-          <h1 className="mt-1 text-[28px] font-bold tracking-tight sm:text-[32px]">
-            Team boards
-          </h1>
-          <p className="mt-1 max-w-xl text-[16px] text-muted-foreground">
-            Team efficiency board for {season} - sorted by point differential by
-            default. Click a team to open its analytical profile.
-          </p>
-        </div>
-        <Link
-          href="/standings"
-          className="rounded-full bg-secondary px-4 py-2 text-[14px] font-semibold"
-        >
-          Standings
-        </Link>
-      </header>
+      <PageHeader
+        title="Teams"
+        subtitle={`Efficiency board for ${season} — sorted by point differential by default. Click a team to open its profile.`}
+      />
 
       <Suspense
         fallback={
-          <div className="h-12 w-40 animate-pulse rounded-xl bg-secondary" />
+          <div className="h-24 animate-pulse rounded-md bg-secondary" />
         }
       >
         <TeamSeasonToolbar seasons={seasons} defaultSeason={defaultSeason} />
       </Suspense>
 
-      <section className="sports-card px-4 py-4">
-        <h2 className="mb-3 text-[16px] font-bold">Jump to team profile</h2>
-        <BrowseCircles mode="teams" />
-      </section>
-
-      <div className="flex flex-col gap-6 pb-8">
-        <PlayoffBracket model={bracket} />
-        <TeamSeasonTable teams={teams} />
-      </div>
+      <Suspense fallback={<BoardFallback />}>
+        <TeamsBoard season={season} />
+      </Suspense>
     </main>
   );
 }

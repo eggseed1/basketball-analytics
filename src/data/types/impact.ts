@@ -4,11 +4,12 @@
  * DARKO (Daily Adjusted and Regressed Kalman Optimized) - predictive DPM from
  * darko.app (Kostya Medvedovsky). Units: points per 100 possessions vs average.
  *
- * LEBRON (Luck-adjusted Estimate using a Box prior Regularized ON-off)  - 
- * descriptive impact from BBall Index. Same units; O-/D- components optional.
+ * RAPTOR (Robust Algorithm using Player Tracking and On/Off Ratings) -
+ * descriptive impact from FiveThirtyEight’s open data. Same units; O-/D-
+ * components and WAR optional.
  */
 
-export type ImpactSource = "darko" | "lebron";
+export type ImpactSource = "darko" | "raptor";
 
 export interface ImpactRating {
   playerId: string;
@@ -23,7 +24,7 @@ export interface ImpactRating {
   /** Canonical season YYYY-YY, or "current" for live projection snapshot. */
   season: string;
   source: ImpactSource;
-  /** Overall impact (DARKO DPM or LEBRON). */
+  /** Overall impact (DARKO DPM or RAPTOR). */
   impact: number;
   offensive?: number;
   defensive?: number;
@@ -31,7 +32,7 @@ export interface ImpactRating {
   boxImpact?: number;
   onOffImpact?: number;
   projectedMinutes?: number;
-  /** LEBRON-only: estimated wins added over the season. */
+  /** RAPTOR WAR (wins above replacement) for the season. */
   winsAdded?: number;
   updatedAt?: string;
 }
@@ -40,6 +41,6 @@ export interface DarkoRating extends ImpactRating {
   source: "darko";
 }
 
-export interface LebronRating extends ImpactRating {
-  source: "lebron";
+export interface RaptorRating extends ImpactRating {
+  source: "raptor";
 }

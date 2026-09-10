@@ -13,14 +13,19 @@ let cachedProvider: BasketballDataProvider | null = null;
  * Resolves the active data provider.
  * Set DATA_PROVIDER=local|nba.
  *
- * Default: `nba` on Vercel (complete ESPN/NBA player data with honest nulls).
+ * Default: `nba` on Vercel / Cloudflare Workers (complete ESPN/NBA player data).
  * Default: `local` elsewhere (sample dataset for offline/dev without .env).
  * Always set DATA_PROVIDER explicitly in production to avoid empty careers.
  */
 export function getDataProvider(): BasketballDataProvider {
   if (cachedProvider) return cachedProvider;
 
-  const fallback = process.env.VERCEL ? "nba" : "local";
+  const onCloudHost =
+    Boolean(process.env.VERCEL) ||
+    Boolean(process.env.CF_PAGES) ||
+    process.env.NEXTJS_ENV === "production" ||
+    Boolean(process.env.WORKERS_CI);
+  const fallback = onCloudHost ? "nba" : "local";
   const key = (process.env.DATA_PROVIDER ?? fallback).toLowerCase();
 
   switch (key) {

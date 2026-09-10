@@ -1,0 +1,358 @@
+/**
+ * DRBL semantic design tokens.
+ * Prefer these over one-off hex / arbitrary Tailwind values.
+ * Material hierarchy: canvas (0) → subtle (1) → standard (2) → elevated (3).
+ */
+
+:root {
+  /* ── Spacing (4px rhythm) ── */
+  --space-0: 0px;
+  --space-0_5: 2px;
+  --space-1: 4px;
+  --space-1_5: 6px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+
+  --space-component-gap: var(--space-3);
+  --space-card-padding: var(--space-4);
+  --space-section: var(--space-8);
+  --space-page-y: var(--space-5);
+  --space-page-gutter: var(--space-4);
+
+  /* ── Radii ── */
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-2xl: 20px;
+  --radius-pill: 999px;
+
+  /* ── Blur ── */
+  --blur-glass-sm: 12px;
+  --blur-glass-md: 16px;
+  --blur-glass-lg: 24px;
+
+  /* ── Motion ── */
+  --duration-fast: 120ms;
+  --duration-standard: 180ms;
+  --duration-slow: 280ms;
+  --ease-standard: cubic-bezier(0.25, 0.1, 0.25, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+  /* ── Z-index ── */
+  --z-base: 0;
+  --z-sticky: 20;
+  --z-nav: 40;
+  --z-dropdown: 50;
+  --z-popover: 60;
+  --z-modal: 70;
+  --z-toast: 80;
+  --z-command: 90;
+
+  /* ── Layout width ── */
+  --page-max-prose: 48rem;
+  --page-max-standard: 80rem; /* ~1280 */
+  --page-max-wide: 100rem; /* ~1600 */
+  --page-gutter-mobile: 16px;
+  --page-gutter-tablet: 24px;
+  --page-gutter-desktop: 32px;
+
+  /* ── Semantic text (aliases over theme) ── */
+  --text-primary: var(--foreground);
+  --text-secondary: var(--muted-foreground);
+  --text-tertiary: color-mix(in oklab, var(--muted-foreground) 78%, transparent);
+  --text-muted: var(--muted-foreground);
+  --text-disabled: color-mix(in oklab, var(--muted-foreground) 55%, transparent);
+  --text-inverse: var(--primary-foreground);
+
+  /* ── Semantic borders ── */
+  --border-subtle: color-mix(in oklab, var(--foreground) 6%, transparent);
+  --border-default: var(--border);
+  --border-emphasized: color-mix(in oklab, var(--foreground) 18%, transparent);
+  --border-focus: var(--ring);
+
+  /* ── Surfaces (opaque structural) ── */
+  --surface-app: var(--background);
+  --surface-nav: color-mix(in oklab, var(--card) 88%, transparent);
+  --surface-panel: var(--card);
+  --surface-raised: var(--card);
+  --surface-hover: color-mix(in oklab, var(--foreground) 4%, transparent);
+  --surface-active: color-mix(in oklab, var(--foreground) 7%, transparent);
+  --surface-scrim: rgb(0 0 0 / 40%);
+
+  /* ── Material 1 — subtle glass ── */
+  --material-subtle-bg: rgb(255 255 255 / 30%);
+  --material-subtle-border: rgb(255 255 255 / 40%);
+  --material-subtle-blur: var(--blur-glass-sm);
+  --material-subtle-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 45%),
+    0 1px 2px rgb(0 0 0 / 3%);
+
+  /* ── Material 2 — standard glass (sports-card) ── */
+  --material-standard-bg: rgb(255 255 255 / 42%);
+  --material-standard-border: rgb(255 255 255 / 58%);
+  --material-standard-blur: var(--blur-glass-lg);
+  --material-standard-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 70%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 8px 24px rgb(0 0 0 / 6%);
+
+  /* ── Material 3 — elevated glass (menus / popovers) ── */
+  --material-elevated-bg: rgb(255 255 255 / 72%);
+  --material-elevated-border: rgb(255 255 255 / 55%);
+  --material-elevated-blur: var(--blur-glass-md);
+  --material-elevated-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 80%),
+    0 1px 2px rgb(0 0 0 / 4%),
+    0 12px 32px rgb(0 0 0 / 10%);
+
+  /* ── Elevation shadows (non-glass) ── */
+  --shadow-xs: 0 1px 1px rgb(0 0 0 / 4%);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 5%), 0 2px 8px rgb(0 0 0 / 4%);
+  --shadow-md: 0 2px 4px rgb(0 0 0 / 6%), 0 8px 24px rgb(0 0 0 / 6%);
+  --shadow-lg: 0 4px 8px rgb(0 0 0 / 8%), 0 16px 40px rgb(0 0 0 / 10%);
+  --shadow-overlay: 0 8px 16px rgb(0 0 0 / 12%), 0 24px 48px rgb(0 0 0 / 16%);
+
+  /* ── Data / analytics semantics ── */
+  --accent-positive: #1b7f4a;
+  --accent-negative: #c0392b;
+  --accent-warning: #c47a12;
+  --accent-info: #0071e3;
+  --accent-neutral: var(--muted-foreground);
+  --accent-selected: var(--ring);
+  --accent-elite: #b71c1c;
+
+  --offense-positive: #1b7f4a;
+  --offense-negative: #c0392b;
+  --defense-positive: #1b7f4a;
+  --defense-negative: #c0392b;
+
+  --percentile-poor: rgb(21, 101, 192);
+  --percentile-weak: rgb(66, 165, 245);
+  --percentile-average: rgb(148, 163, 184);
+  --percentile-strong: rgb(239, 154, 154);
+  --percentile-elite: rgb(183, 28, 28);
+
+  /* ── Team context (set per page) ── */
+  --team-primary: transparent;
+  --team-secondary: transparent;
+  --team-accent-soft: color-mix(in oklab, var(--team-primary) 14%, transparent);
+
+  /* ── Density ── */
+  --density-comfortable-row: 40px;
+  --density-compact-row: 32px;
+  --density-dense-row: 26px;
+}
+
+.dark {
+  --surface-scrim: rgb(0 0 0 / 55%);
+  --surface-hover: color-mix(in oklab, var(--foreground) 8%, var(--card));
+  --surface-active: color-mix(in oklab, var(--foreground) 12%, var(--card));
+
+  /* Nested glass: opaque-enough secondary fills (mirror light white frosts). */
+  --material-subtle-bg: rgb(44 44 46 / 78%);
+  --material-subtle-border: rgb(255 255 255 / 12%);
+  --material-subtle-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 10%),
+    0 1px 2px rgb(0 0 0 / 30%);
+
+  --material-standard-bg: rgb(28 28 30 / 72%);
+  --material-standard-border: rgb(255 255 255 / 14%);
+  --material-standard-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 40%),
+    0 12px 32px rgb(0 0 0 / 36%);
+
+  --material-elevated-bg: rgb(44 44 46 / 88%);
+  --material-elevated-border: rgb(255 255 255 / 14%);
+  --material-elevated-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 12%),
+    0 1px 2px rgb(0 0 0 / 45%),
+    0 16px 40px rgb(0 0 0 / 42%);
+
+  --shadow-xs: 0 1px 1px rgb(0 0 0 / 40%);
+  --shadow-sm: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 12px rgb(0 0 0 / 30%);
+  --shadow-md: 0 2px 4px rgb(0 0 0 / 45%), 0 10px 28px rgb(0 0 0 / 36%);
+  --shadow-lg: 0 4px 10px rgb(0 0 0 / 50%), 0 18px 44px rgb(0 0 0 / 42%);
+  --shadow-overlay: 0 12px 28px rgb(0 0 0 / 55%), 0 28px 56px rgb(0 0 0 / 48%);
+
+  --accent-positive: #30d158;
+  --accent-negative: #ff453a;
+  --accent-warning: #ff9f0a;
+  --accent-info: #0a84ff;
+  --accent-elite: #ff453a;
+
+  --offense-positive: #30d158;
+  --offense-negative: #ff453a;
+  --defense-positive: #30d158;
+  --defense-negative: #ff453a;
+}
+
+@media (min-width: 640px) {
+  :root {
+    --space-page-gutter: var(--page-gutter-tablet);
+    --space-page-y: var(--space-6);
+  }
+}
+
+@media (min-width: 1024px) {
+  :root {
+    --space-page-gutter: var(--page-gutter-desktop);
+    --space-card-padding: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast: 0ms;
+    --duration-standard: 0ms;
+    --duration-slow: 0ms;
+  }
+}
+
+/* Material utility classes — one glass layer at a time */
+.material-canvas {
+  background: var(--surface-app);
+}
+
+.material-subtle {
+  background: var(--material-subtle-bg);
+  border: 1px solid var(--material-subtle-border);
+  box-shadow: var(--material-subtle-shadow);
+  backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--material-subtle-blur));
+}
+
+.material-standard {
+  background: var(--material-standard-bg);
+  border: 1px solid var(--material-standard-border);
+  box-shadow: var(--material-standard-shadow);
+  backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
+  -webkit-backdrop-filter: saturate(190%) blur(var(--material-standard-blur));
+}
+
+.material-elevated {
+  background: var(--material-elevated-bg);
+  border: 1px solid var(--material-elevated-border);
+  box-shadow: var(--material-elevated-shadow);
+  backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
+  -webkit-backdrop-filter: saturate(180%) blur(var(--material-elevated-blur));
+}
+
+html:not([data-surface="glass"]) .material-subtle,
+html:not([data-surface="glass"]) .material-standard,
+html:not([data-surface="glass"]) .material-elevated {
+  background: var(--card);
+  border-color: var(--border-subtle);
+  box-shadow: var(--shadow-sm);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+/* Semantic text / data helpers */
+.text-positive {
+  color: var(--accent-positive);
+}
+.text-negative {
+  color: var(--accent-negative);
+}
+.text-warning {
+  color: var(--accent-warning);
+}
+.text-info {
+  color: var(--accent-info);
+}
+
+.tabular-stat {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Extended type roles */
+.type-micro {
+  font-size: 10px;
+  line-height: 14px;
+  letter-spacing: 0.02em;
+}
+.type-title-3 {
+  font-size: 20px;
+  line-height: 28px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.type-title-2 {
+  font-size: 24px;
+  line-height: 32px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+.type-title-1 {
+  font-size: 32px;
+  line-height: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.type-display-lg {
+  font-size: 40px;
+  line-height: 48px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+@media (min-width: 640px) {
+  .type-display-lg {
+    font-size: 48px;
+    line-height: 52px;
+  }
+}
+
+/* Page width shells — gutters include safe-area insets. */
+.site-shell-wide {
+  @apply mx-auto w-full min-w-0;
+  max-width: var(--page-max-wide);
+  padding-inline: max(1rem, env(safe-area-inset-left, 0px))
+    max(1rem, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 640px) {
+  .site-shell-wide {
+    padding-inline: max(1.5rem, env(safe-area-inset-left, 0px))
+      max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-shell-wide {
+    padding-inline: max(2rem, env(safe-area-inset-left, 0px))
+      max(2rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+.site-shell-full {
+  @apply mx-auto w-full min-w-0;
+  max-width: none;
+  padding-inline: max(0.75rem, env(safe-area-inset-left, 0px))
+    max(0.75rem, env(safe-area-inset-right, 0px));
+}
+
+@media (min-width: 640px) {
+  .site-shell-full {
+    padding-inline: max(1rem, env(safe-area-inset-left, 0px))
+      max(1rem, env(safe-area-inset-right, 0px));
+  }
+}
+
+@media (min-width: 1024px) {
+  .site-shell-full {
+    padding-inline: max(1.5rem, env(safe-area-inset-left, 0px))
+      max(1.5rem, env(safe-area-inset-right, 0px));
+  }
+}

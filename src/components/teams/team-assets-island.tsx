@@ -78,7 +78,10 @@ export async function TeamAssetsIsland({
         </h2>
         <p className="text-[14px] text-muted-foreground">
           {frontOfficeSeason} payroll, cap space, and draft picks from the
-          current roster snapshot.
+          current roster snapshot
+          {assetLedger.structuredLedgerAvailable
+            ? " plus the structured asset ledger (picks, exceptions, rights)."
+            : "."}
           {viewingHistoricalStats ? (
             <>
               {" "}

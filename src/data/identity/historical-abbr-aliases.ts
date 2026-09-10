@@ -37,4 +37,8 @@ export const HISTORICAL_ABBR_ALIASES: Record<string, string> = {
   STL: "ATL",
   CAT: "CHA",
   NOJ: "UTA",
+  // Basketball-Reference current-era codes that differ from ESPN/NBA abbrs.
+  PHO: "PHX",
+  BRK: "BKN",
+  CHO: "CHA",
 };

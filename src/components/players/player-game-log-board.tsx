@@ -19,7 +19,9 @@ type LogCategory = SheetStatCategory;
 type PlaceFilter = "all" | "home" | "away";
 type RoleFilter = "all" | "starter" | "bench";
 
-const CATEGORIES = PERCENTILE_CATEGORY_CHIPS;
+const CATEGORIES = PERCENTILE_CATEGORY_CHIPS.filter(
+  (chip) => chip.id !== "hustle"
+);
 
 function shortSeason(season: string) {
   const m = /^(\d{4})-(\d{2})$/.exec(season);
@@ -265,27 +267,33 @@ export function PlayerGameLogBoard({
                 <th className="px-3 py-2">Date</th>
                 <th className="px-2 py-2">Opp</th>
                 {category === "impact" ||
-                category === "counting" ||
-                category === "rates" ||
+                category === "profile" ||
+                category === "defense" ||
                 category === "advanced" ? (
                   <th className="px-2 py-2 text-right">MP</th>
                 ) : null}
-                {category === "impact" || category === "counting" ? (
+                {category === "impact" || category === "profile" ? (
                   <>
                     <th className="px-2 py-2 text-right">PTS</th>
                     <th className="px-2 py-2 text-right">AST</th>
                     <th className="px-2 py-2 text-right">TRB</th>
                   </>
                 ) : null}
-                {category === "counting" ? (
+                {category === "profile" ? (
                   <>
                     <th className="px-2 py-2 text-right">ORB</th>
                     <th className="px-2 py-2 text-right">DRB</th>
-                    <th className="px-2 py-2 text-right">STL</th>
-                    <th className="px-2 py-2 text-right">BLK</th>
                     <th className="px-2 py-2 text-right">TOV</th>
                     <th className="px-2 py-2 text-right">PF</th>
                     <th className="px-2 py-2 text-right">+/-</th>
+                  </>
+                ) : null}
+                {category === "defense" ? (
+                  <>
+                    <th className="px-2 py-2 text-right">STL</th>
+                    <th className="px-2 py-2 text-right">BLK</th>
+                    <th className="px-2 py-2 text-right">DRB</th>
+                    <th className="px-2 py-2 text-right">DRtg</th>
                   </>
                 ) : null}
                 {category === "impact" ? (
@@ -307,16 +315,12 @@ export function PlayerGameLogBoard({
                     <th className="px-3 py-2 text-right">TS%</th>
                   </>
                 ) : null}
-                {category === "rates" ? (
+                {category === "advanced" ? (
                   <>
                     <th className="px-2 py-2 text-right">USG%</th>
                     <th className="px-2 py-2 text-right">AST%</th>
                     <th className="px-2 py-2 text-right">TOV%</th>
-                    <th className="px-3 py-2 text-right">TRB%</th>
-                  </>
-                ) : null}
-                {category === "advanced" ? (
-                  <>
+                    <th className="px-2 py-2 text-right">TRB%</th>
                     <th className="px-2 py-2 text-right">ORtg</th>
                     <th className="px-2 py-2 text-right">DRtg</th>
                     <th className="px-2 py-2 text-right">NET</th>
@@ -344,14 +348,14 @@ export function PlayerGameLogBoard({
                       <OppCell game={g} season={season} />
                     </td>
                     {category === "impact" ||
-                    category === "counting" ||
-                    category === "rates" ||
+                    category === "profile" ||
+                    category === "defense" ||
                     category === "advanced" ? (
                       <td className="px-2 py-2 text-right tabular-nums">
                         {formatNumber(g.minutes, 1)}
                       </td>
                     ) : null}
-                    {category === "impact" || category === "counting" ? (
+                    {category === "impact" || category === "profile" ? (
                       <>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.points}
@@ -364,19 +368,13 @@ export function PlayerGameLogBoard({
                         </td>
                       </>
                     ) : null}
-                    {category === "counting" ? (
+                    {category === "profile" ? (
                       <>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.offensiveRebounds ?? "-"}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.defensiveRebounds ?? "-"}
-                        </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {g.steals}
-                        </td>
-                        <td className="px-2 py-2 text-right tabular-nums">
-                          {g.blocks}
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.turnovers}
@@ -386,6 +384,24 @@ export function PlayerGameLogBoard({
                         </td>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.plusMinus}
+                        </td>
+                      </>
+                    ) : null}
+                    {category === "defense" ? (
+                      <>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {g.steals}
+                        </td>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {g.blocks}
+                        </td>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {g.defensiveRebounds ?? "-"}
+                        </td>
+                        <td className="px-2 py-2 text-right tabular-nums">
+                          {g.defensiveRating != null
+                            ? formatNumber(g.defensiveRating, 1)
+                            : "-"}
                         </td>
                       </>
                     ) : null}
@@ -430,7 +446,7 @@ export function PlayerGameLogBoard({
                         </td>
                       </>
                     ) : null}
-                    {category === "rates" ? (
+                    {category === "advanced" ? (
                       <>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.usagePct != null ? formatPct(g.usagePct) : "-"}
@@ -443,13 +459,9 @@ export function PlayerGameLogBoard({
                             ? formatPct(g.turnoverPct)
                             : "-"}
                         </td>
-                        <td className="px-3 py-2 text-right tabular-nums">
+                        <td className="px-2 py-2 text-right tabular-nums">
                           {g.reboundPct != null ? formatPct(g.reboundPct) : "-"}
                         </td>
-                      </>
-                    ) : null}
-                    {category === "advanced" ? (
-                      <>
                         <td className="px-2 py-2 text-right tabular-nums">
                           {g.offensiveRating != null
                             ? formatNumber(g.offensiveRating, 1)

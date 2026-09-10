@@ -13,6 +13,8 @@ export function provenanceSourceLabel(source: PbpProductSource): string {
       return "Cached NBA data";
     case "sample":
       return "Sample data";
+    case "balldontlie":
+      return "BallDontLie";
     default: {
       const _exhaustive: never = source;
       return String(_exhaustive);
