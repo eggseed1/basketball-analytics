@@ -31,7 +31,7 @@ export async function PlayerPercentileIsland({
   espnId?: string | null;
 }) {
   try {
-    const { metrics, teamKey } = await loadPlayerPercentileMetrics(
+    const { metrics, teamKey, profileComps } = await loadPlayerPercentileMetrics(
       playerId,
       season,
       career,
@@ -60,6 +60,7 @@ export async function PlayerPercentileIsland({
           seasonTeams={seasonTeams}
           stintsBySeason={stintsBySeason}
           metrics={metrics}
+          profileComps={profileComps}
           honor={honor}
         />
       </div>
