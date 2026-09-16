@@ -10,12 +10,12 @@ import {
 } from "@/data/transformers/hustle-stats";
 import type { PlayerSeason } from "@/data/types";
 import { type } from "@/lib/design-system";
-import { formatNumber } from "@/lib/format";
+import { formatCountingRate, formatNumber } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
 function fmtPerGame(value: number | null | undefined): string {
   if (value == null || !Number.isFinite(value)) return "—";
-  return formatNumber(value, 1);
+  return formatCountingRate(value);
 }
 
 const TEAM_METRICS = [

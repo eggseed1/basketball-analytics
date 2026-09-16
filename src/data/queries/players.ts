@@ -53,13 +53,13 @@ import { fetchDarkoSeason, isDarkoSeasonAvailable } from "@/data/providers/nba/d
 import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
 import { fetchHustleSeason } from "@/data/providers/nba/hustle-stats-loader";
 import { isHustleStatsSeason } from "@/data/providers/nba/season";
+import { nbaIdForKnownArtifact } from "@/data/identity/artifact-join";
 import { resolveHustlePatch } from "@/data/transformers/hustle-overlay-join";
 import { lookupEspnIdByPlayerName } from "@/data/runtime/espn-name-index";
 import { hasHustleStats } from "@/data/transformers/hustle-stats";
 import { getPlayerYearOverYearAdvanced } from "@/data/providers/nba/player-year-over-year";
 import { ESPN_PLAYER_BOARD_RELIABLE_START_YEAR } from "@/data/diagnostics/provider-meta";
 import { withBudgetOrThrow } from "@/data/queries/budget";
-import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 
 /** Max seasons to scrape BRef/DARKO on career enrich (newest first). */
 const CAREER_SCRAPE_SEASON_CAP = 30;
@@ -317,20 +317,16 @@ async function overlayDrblRows(
 ): Promise<PlayerSeason[]> {
   if (!drblRows.length) return seasons;
   const drblById = new Map(drblRows.map((row) => [row.playerId, row]));
-  // Production path: only productionApproved / approved-confidence aliases
-  // (UNIQUE_NAME_ONLY excluded). Direct NBA-id board rows still join by id.
+  // Join any ESPN alias whose NBA id is already in this season's DRBL file.
+  // Conflicting names stay unjoined. This does not change resolveNbaIdForDrbl.
   const aliases = await getPlayerIdAliasIndex();
   return seasons.map((row) => {
-    const alias = aliases.byEspn.get(row.playerId);
-    const aliasNba =
-      alias && isProductionApprovedPlayerAlias(alias)
-        ? alias.nbaPlayerId
-        : null;
-    const drbl =
-      drblById.get(row.playerId) ??
-      (aliasNba && aliasNba !== row.playerId
-        ? drblById.get(aliasNba)
-        : undefined);
+    const nbaId = nbaIdForKnownArtifact(
+      row,
+      (id) => drblById.has(id),
+      aliases
+    );
+    const drbl = nbaId ? drblById.get(nbaId) : undefined;
     if (!drbl) return row;
     return {
       ...row,
@@ -442,6 +438,10 @@ async function loadEspnTeamRoster(
       const bundled = getBundledBrefPeerBoard(season);
       if (bundled.length < 50) return null;
       let rows = await overlayImpactRatings(bundled, season);
+      if (isDrblSeason(season)) {
+        const drblRows = await fetchDrblSeason(season).catch(() => []);
+        rows = await overlayDrblRows(rows, drblRows);
+      }
       if (isHustleStatsSeason(season)) {
         rows = await overlayHustleRows(rows, season);
       }
@@ -1590,8 +1590,9 @@ export async function getPlayerCareerTimelineSeasons(
 }
 
 /**
- * Attach sealed DRBL overlay fields onto existing career/board rows for the
- * given player via production-approved identity. Does not recompute models.
+ * Attach sealed DRBL overlay fields onto existing career/board rows when the
+ * NBA id is already in that season's DRBL file. Does not recompute models and
+ * does not change resolveNbaIdForDrbl.
  */
 export async function attachDrblToPlayerSeasons(
   playerId: string,
@@ -1611,7 +1612,7 @@ export async function attachDrblToPlayerSeasons(
     seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 8);
   }
 
-  const nbaId = await resolveNbaIdForDrbl(playerId);
+  const aliases = await getPlayerIdAliasIndex();
   const overlays = await Promise.all(
     seasons.map(async (season) => {
       const drblRows = await fetchDrblSeason(season).catch(() => []);
@@ -1623,10 +1624,12 @@ export async function attachDrblToPlayerSeasons(
   return rows.map((row) => {
     const map = bySeason.get(row.season);
     if (!map) return row;
-    const drbl =
-      map.get(playerId) ??
-      (nbaId && nbaId !== playerId ? map.get(nbaId) : undefined) ??
-      map.get(row.playerId);
+    const nbaId = nbaIdForKnownArtifact(
+      { playerId: row.playerId || playerId, playerName: row.playerName },
+      (id) => map.has(id),
+      aliases
+    );
+    const drbl = nbaId ? map.get(nbaId) : undefined;
     if (!drbl) return row;
     return {
       ...row,
@@ -1684,7 +1687,7 @@ export async function attachHustleToPlayerSeasons(
     seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 6);
   }
 
-  const nbaId = await resolveNbaIdForDrbl(playerId);
+  const aliases = await getPlayerIdAliasIndex();
   const overlays = await Promise.all(
     seasons.map(async (season) => {
       const hustleRows = await fetchHustleSeason(season).catch(() => []);
@@ -1699,10 +1702,12 @@ export async function attachHustleToPlayerSeasons(
   return rows.map((row) => {
     const map = bySeason.get(row.season);
     if (!map) return row;
-    const patch =
-      map.get(playerId) ??
-      (nbaId && nbaId !== playerId ? map.get(nbaId) : undefined) ??
-      map.get(row.playerId);
+    const patch = resolveHustlePatch(
+      { playerId: row.playerId || playerId, playerName: row.playerName },
+      map,
+      aliases,
+      lookupEspnIdByPlayerName
+    );
     if (!patch || !Object.keys(patch).length) return row;
     return { ...row, ...patch };
   });

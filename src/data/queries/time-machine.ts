@@ -14,7 +14,6 @@ import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
 import {
   getPlayerIdAliasIndex,
 } from "@/data/identity/player-identity";
-import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import type { GameSummary } from "@/data/types";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import type { TeamSeasonStats } from "@/data/types/team-season";
@@ -302,10 +301,7 @@ export async function getHistoricalLeadersBundle(
     const drbl: HistoricalLeaderRow[] = valid.slice(0, limit).map((row) => {
       const nbaId = String(row.playerId);
       const alias = aliases.byNba.get(nbaId);
-      const profileId =
-        alias && isProductionApprovedPlayerAlias(alias)
-          ? alias.espnPlayerId
-          : nbaId;
+      const profileId = alias?.espnPlayerId ?? nbaId;
       return {
         playerId: profileId,
         playerName: row.playerName,

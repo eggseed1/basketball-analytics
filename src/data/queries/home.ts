@@ -18,7 +18,6 @@ import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   getPlayerIdAliasIndex,
 } from "@/data/identity/player-identity";
-import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import { hasValidatedDrblEstimate } from "@/data/queries/percentiles";
 import { normalizePlayerName } from "@/lib/player-name";
 import {
@@ -256,20 +255,18 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
         const { getPlayerIdAliasIndex } = await import(
           "@/data/identity/player-identity"
         );
-        const { isProductionApprovedPlayerAlias } = await import(
-          "@/data/providers/impact/player-id-aliases"
+        const { nbaIdForKnownArtifact } = await import(
+          "@/data/identity/artifact-join"
         );
         const aliases = await getPlayerIdAliasIndex();
         const byId = new Map(drblRows.map((r) => [r.playerId, r]));
         seasons = seasons.map((row) => {
-          const alias = aliases.byEspn.get(row.playerId);
-          const nba =
-            alias && isProductionApprovedPlayerAlias(alias)
-              ? alias.nbaPlayerId
-              : null;
-          const drbl =
-            byId.get(row.playerId) ??
-            (nba ? byId.get(nba) : undefined);
+          const nbaId = nbaIdForKnownArtifact(
+            row,
+            (id) => byId.has(id),
+            aliases
+          );
+          const drbl = nbaId ? byId.get(nbaId) : undefined;
           if (!drbl) return row;
           return {
             ...row,
@@ -441,18 +438,14 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
     for (const row of valid.slice(0, 20)) {
       const nbaId = String(row.playerId);
       const alias = aliasIndex.byNba.get(nbaId);
-      const espnFromAlias =
-        alias && isProductionApprovedPlayerAlias(alias)
-          ? alias.espnPlayerId
-          : null;
       const displayName =
         (row.playerName && row.playerName.trim()) ||
         alias?.playerName?.trim() ||
         nbaId;
       const nameKey = normalizePlayerName(displayName);
       const espnFromName = byName.get(nameKey);
-      // Prefer approved alias ESPN id; name match is secondary for headshots only.
-      const profileId = espnFromAlias ?? espnFromName ?? nbaId;
+      // Alias ESPN id is a navigation crosswalk, not a model join.
+      const profileId = alias?.espnPlayerId ?? espnFromName ?? nbaId;
       const season = seasonByName.get(nameKey);
       const fromSeason = productTeamKeyFromSeason(season);
       const fromDrbl = productTeamKeyFromProviderTeamId(row.teamId);
