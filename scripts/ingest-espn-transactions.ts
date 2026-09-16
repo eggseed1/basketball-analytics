@@ -70,8 +70,15 @@ async function main() {
     console.log(`Rebuilding from raw years: ${selected.join(", ")}`);
   }
 
+  // A current-year refresh must not truncate history. Rebuild canonical rows
+  // from every raw dump on disk unless the caller asked for --from-raw.
+  const rebuildYears = fromRaw ? years : await listRawEspnYearFiles();
+  if (!rebuildYears.length) {
+    throw new Error("No raw transaction dumps to rebuild from.");
+  }
+
   const transactions: CanonicalTransaction[] = [];
-  for (const year of years) {
+  for (const year of rebuildYears) {
     const dump = await readEspnYearRawDump(year);
     if (!dump) {
       console.warn(`Missing raw dump for ${year}, skipping`);
@@ -97,7 +104,7 @@ async function main() {
   const manifest = await writeTransactionArchive({
     transactions: validated.acceptedTransactions,
     ownershipEdges: validated.acceptedOwnershipEdges,
-    espnCalendarYears: years,
+    espnCalendarYears: rebuildYears,
     validationIssueCounts: normalizeIssues,
     builtAt: ingestedAt,
   });

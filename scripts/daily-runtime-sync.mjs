@@ -77,24 +77,37 @@ async function main() {
   );
 
   if (!info.shouldRefreshPlayerViz && !FORCE) {
+    // Waivers and signings continue in the offseason. Refresh the ESPN
+    // transaction archive even when player-viz bakes wait for tip-off.
+    // Cloudflare serves the baked snapshot; live ESPN overlay times out there.
+    const year = String(now.getUTCFullYear());
+    await run("npx", [
+      "tsx",
+      "scripts/ingest-espn-transactions.ts",
+      "--from",
+      year,
+      "--to",
+      year,
+    ]);
+    await run("node", ["scripts/build-runtime-transactions-snapshot.mjs"]);
     const report = {
       ok: true,
-      skipped: true,
-      reason: "offseason — daily player-viz refresh waits until tip-off window",
+      skipped: false,
+      reason: "offseason — refreshed transactions only",
       phase: info.phase,
       season: info.season,
-      shouldDeploy: false,
+      shouldDeploy: true,
       generatedAt: now.toISOString(),
       durationMs: Date.now() - started,
     };
     const dest = await writeReport(report);
     await writeGithubOutput({
-      should_deploy: "false",
+      should_deploy: "true",
       phase: info.phase,
       season: info.season,
-      skipped: "true",
+      skipped: "false",
     });
-    log(`skipped (offseason) → ${dest}`);
+    log(`offseason transactions refresh → ${dest}`);
     return;
   }
 
@@ -162,6 +175,23 @@ async function main() {
       label: "cf-assets",
       cmd: "node",
       args: ["scripts/build-runtime-cf-assets.mjs"],
+    },
+    {
+      label: "transactions",
+      cmd: "npx",
+      args: [
+        "tsx",
+        "scripts/ingest-espn-transactions.ts",
+        "--from",
+        String(now.getUTCFullYear()),
+        "--to",
+        String(now.getUTCFullYear()),
+      ],
+    },
+    {
+      label: "transactions-snapshot",
+      cmd: "node",
+      args: ["scripts/build-runtime-transactions-snapshot.mjs"],
     },
   ];
 
