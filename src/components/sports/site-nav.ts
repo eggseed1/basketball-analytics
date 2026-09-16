@@ -96,15 +96,22 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       p.startsWith("/teams/") ||
       p.startsWith("/standings") ||
       p.startsWith("/explore/bracket") ||
-      p.startsWith("/franchises"),
+      p.startsWith("/franchises") ||
+      p.startsWith("/explore/teams/trade"),
     subnav: [
       {
         href: "/explore/teams",
         label: "Board",
         match: (p) =>
-          p.startsWith("/explore/teams") ||
+          (p.startsWith("/explore/teams") &&
+            !p.startsWith("/explore/teams/trade")) ||
           p.startsWith("/teams/") ||
           p.startsWith("/franchises"),
+      },
+      {
+        href: "/explore/teams/trade",
+        label: "Trade",
+        match: (p) => p.startsWith("/explore/teams/trade"),
       },
       {
         href: "/standings",

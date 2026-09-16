@@ -69,7 +69,7 @@ const teams = PRIMARY_NAV.find((n) => n.id === "teams");
 assert.ok(teams?.subnav?.length);
 assert.deepEqual(
   teams.subnav.map((s) => s.label),
-  ["Board", "Standings", "Bracket", "Tracker"]
+  ["Board", "Trade", "Standings", "Bracket", "Tracker"]
 );
 
 assert.equal(

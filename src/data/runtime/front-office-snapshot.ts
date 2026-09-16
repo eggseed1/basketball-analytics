@@ -45,3 +45,7 @@ export function getRuntimeFrontOfficeManifest() {
 export function hasRuntimeFrontOffice(): boolean {
   return Object.keys(teams).length > 0;
 }
+
+export function listRuntimeFrontOfficeFranchiseIds(): string[] {
+  return Object.keys(teams);
+}
