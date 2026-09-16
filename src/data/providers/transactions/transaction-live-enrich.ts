@@ -8,8 +8,8 @@ import {
 import { normalizeEspnTransactionRow } from "@/data/transformers/espn-transactions";
 import type { CanonicalTransaction } from "@/data/types/transaction-lineage";
 
-/** First N pages per calendar year — page 1 is newest. */
-const LIVE_PAGES_PER_YEAR = 4;
+/** Page 1 is newest. One page is enough to stay current between bakes. */
+const LIVE_PAGES_PER_YEAR = 1;
 
 function calendarYearsToRefresh(now = new Date()): number[] {
   const year = espnTransactionsLatestCalendarYear(now);
@@ -26,6 +26,7 @@ async function fetchRecentCanonicalForYear(
   const fetchOpts = {
     ttlMs: LIVE_TRANSACTIONS_TTL_MS,
     timeoutMs: LIVE_TRANSACTIONS_TIMEOUT_MS,
+    retries: 1,
   } as const;
 
   let first;
