@@ -13,6 +13,7 @@ import {
 } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import type { LandmarkGameCard } from "@/content/history/landmark-games";
 import { HISTORY_LANDMARKS } from "@/content/history/landmarks";
 import {
   canonicalSeasonFromStartYear,
@@ -92,7 +93,13 @@ function filterSeasons(query: string, seasons: string[]): string[] {
   });
 }
 
-export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
+export function TimeMachineLanding({
+  seasons,
+  landmarkGames = [],
+}: {
+  seasons: string[];
+  landmarkGames?: LandmarkGameCard[];
+}) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
   const listId = useId();
@@ -342,6 +349,48 @@ export function TimeMachineLanding({ seasons }: { seasons: string[] }) {
                     {l.boardLabel} →
                   </Link>
                 ) : null}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
+      {landmarkGames.length ? (
+        <section className="mx-auto w-full max-w-md sm:max-w-2xl">
+          <h2 className="text-center text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            Landmark games
+          </h2>
+          <p className="mt-1 text-center text-[13px] text-muted-foreground">
+            Box scores that are in the schedule archive. Older seasons stay
+            season views.
+          </p>
+          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+            {landmarkGames.map((game) => (
+              <li
+                key={game.id}
+                className="sports-card flex flex-col gap-2 p-4 text-left"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  {game.date}
+                </p>
+                <Link
+                  href={game.gameHref}
+                  className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+                >
+                  {game.title}
+                </Link>
+                <p className="text-[13px] font-semibold tabular-nums">
+                  {game.scoreLine}
+                </p>
+                <p className="text-[13px] leading-relaxed text-muted-foreground">
+                  {game.blurb}
+                </p>
+                <Link
+                  href={game.historyHref}
+                  className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                >
+                  Open that date →
+                </Link>
               </li>
             ))}
           </ul>
