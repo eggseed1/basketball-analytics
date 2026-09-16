@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/table";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { ExplorePlayerBoardRow } from "@/data/queries/explore-players-board";
-import { formatNumber, formatPct } from "@/lib/format";
+import { formatCountingRate, formatNumber, formatPct } from "@/lib/format";
 import { textLinkClassName, boardType } from "@/lib/design-system";
 import {
   filterPlayerBoardViewColumns,
@@ -944,9 +944,9 @@ function formatCounting(
   rate: PlayerBoardRate
 ): string {
   if (rate === "totals") return formatNumber(total, 0);
-  if (rate === "perGame" || mpg <= 0) return formatNumber(perGame, 1);
+  if (rate === "perGame" || mpg <= 0) return formatCountingRate(perGame);
   const scaled = (perGame * 100) / mpg;
-  return formatNumber(scaled, 1);
+  return formatCountingRate(scaled);
 }
 
 function formatOptionalCounting(
