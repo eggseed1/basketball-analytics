@@ -188,7 +188,8 @@ export async function loadPlayerPercentileMetrics(
 ) {
   const constrained = isConstrainedServerRuntime();
   const preferBundled = preferBundledProductDataOnEdge();
-  // Slim edge always fast. On CF, default to fast for LCP but honor explicit full.
+  // Slim edge always fast. On CF, full is a capped upgrade (current + prior
+  // + two archive boards) so the idle comps request does not 1102.
   const mode = constrained
     ? "fast"
     : (options?.mode ?? (preferBundled ? "fast" : "full"));
