@@ -188,13 +188,14 @@ export async function loadPlayerPercentileMetrics(
 ) {
   const constrained = isConstrainedServerRuntime();
   const preferBundled = preferBundledProductDataOnEdge();
-  // Slim edge always fast. On CF, full is a capped upgrade (current + prior
-  // + two archive boards) so the idle comps request does not 1102.
+  // Slim edge always fast. On CF, even an explicit full request stays on one
+  // peer board — extra boards in parallel return 1102. Comps use that board.
   const mode = constrained
     ? "fast"
     : (options?.mode ?? (preferBundled ? "fast" : "full"));
   const includePrior =
     !constrained &&
+    !preferBundled &&
     mode === "full" &&
     options?.includePriorBoard !== false;
   const statsCtx = resolvePlayerStatsSeason(career, season);
@@ -211,7 +212,7 @@ export async function loadPlayerPercentileMetrics(
 
   // Wide archive for "Other seasons" comps — not only the player's career / prior year.
   let historicalCompSeasons: string[] = [];
-  if (mode === "full" && !constrained) {
+  if (mode === "full" && !constrained && !preferBundled) {
     try {
       const { listBundledBrefSeasons } = await import(
         "@/data/runtime/bref-advanced-snapshot"
