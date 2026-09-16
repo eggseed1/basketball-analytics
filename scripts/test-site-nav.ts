@@ -82,7 +82,7 @@ const players = PRIMARY_NAV.find((n) => n.id === "players");
 assert.ok(players?.subnav?.length);
 assert.deepEqual(
   players.subnav.map((s) => s.label),
-  ["Board", "Visualizations"]
+  ["Board", "Stat Detective", "Visualizations"]
 );
 
 // Deep features must not be top-level.

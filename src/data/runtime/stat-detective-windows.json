@@ -1,0 +1,553 @@
+{
+  "generatedAt": "2026-09-16T18:00:26.112Z",
+  "season": "2025-26",
+  "source": "regular-season game logs",
+  "windows": {
+    "last5": {
+      "risers": [
+        {
+          "playerId": "5144091",
+          "playerName": "Jeremiah Fears",
+          "teamAbbr": "NO",
+          "windowPpg": 31.8,
+          "baselinePpg": 14.2,
+          "deltaPpg": 17.6,
+          "windowMpg": 39.4,
+          "baselineMpg": 25.6,
+          "deltaTs": 0.052
+        },
+        {
+          "playerId": "4702384",
+          "playerName": "Nique Clifford",
+          "teamAbbr": "SAC",
+          "windowPpg": 19.4,
+          "baselinePpg": 8.9,
+          "deltaPpg": 10.5,
+          "windowMpg": 38,
+          "baselineMpg": 25.1,
+          "deltaTs": 0.085
+        },
+        {
+          "playerId": "5104157",
+          "playerName": "Victor Wembanyama",
+          "teamAbbr": "SA",
+          "windowPpg": 34.6,
+          "baselinePpg": 24.6,
+          "deltaPpg": 10,
+          "windowMpg": 28.4,
+          "baselineMpg": 28.6,
+          "deltaTs": 0.096
+        },
+        {
+          "playerId": "4595400",
+          "playerName": "Olivier-Maxence Prosper",
+          "teamAbbr": "MEM",
+          "windowPpg": 19.4,
+          "baselinePpg": 9.9,
+          "deltaPpg": 9.5,
+          "windowMpg": 20.4,
+          "baselineMpg": 18.7,
+          "deltaTs": 0.138
+        },
+        {
+          "playerId": "4432816",
+          "playerName": "LaMelo Ball",
+          "teamAbbr": "CHA",
+          "windowPpg": 29.4,
+          "baselinePpg": 20.1,
+          "deltaPpg": 9.3,
+          "windowMpg": 34,
+          "baselineMpg": 27.9,
+          "deltaTs": 0.041
+        },
+        {
+          "playerId": "4397475",
+          "playerName": "AJ Green",
+          "teamAbbr": "MIL",
+          "windowPpg": 18.6,
+          "baselinePpg": 10.4,
+          "deltaPpg": 8.2,
+          "windowMpg": 34.6,
+          "baselineMpg": 28.7,
+          "deltaTs": 0.081
+        },
+        {
+          "playerId": "4395626",
+          "playerName": "Tre Jones",
+          "teamAbbr": "CHI",
+          "windowPpg": 21.8,
+          "baselinePpg": 13.8,
+          "deltaPpg": 8,
+          "windowMpg": 26.6,
+          "baselineMpg": 26.7,
+          "deltaTs": 0.016
+        },
+        {
+          "playerId": "4593841",
+          "playerName": "Baylor Scheierman",
+          "teamAbbr": "BOS",
+          "windowPpg": 13.4,
+          "baselinePpg": 5.5,
+          "deltaPpg": 7.9,
+          "windowMpg": 24,
+          "baselineMpg": 18.6,
+          "deltaTs": 0.083
+        }
+      ],
+      "fallers": [
+        {
+          "playerId": "4914336",
+          "playerName": "Shaedon Sharpe",
+          "teamAbbr": "POR",
+          "windowPpg": 10,
+          "baselinePpg": 20.7,
+          "deltaPpg": -10.7,
+          "windowMpg": 19.6,
+          "baselineMpg": 29.3,
+          "deltaTs": -0.051
+        },
+        {
+          "playerId": "4683634",
+          "playerName": "Bennedict Mathurin",
+          "teamAbbr": "LAC",
+          "windowPpg": 8.8,
+          "baselinePpg": 17.5,
+          "deltaPpg": -8.7,
+          "windowMpg": 23,
+          "baselineMpg": 29.1,
+          "deltaTs": -0.118
+        },
+        {
+          "playerId": "4432166",
+          "playerName": "Cade Cunningham",
+          "teamAbbr": "DET",
+          "windowPpg": 14.6,
+          "baselinePpg": 23.1,
+          "deltaPpg": -8.5,
+          "windowMpg": 23.6,
+          "baselineMpg": 32.8,
+          "deltaTs": -0.026
+        },
+        {
+          "playerId": "3135045",
+          "playerName": "Grayson Allen",
+          "teamAbbr": "PHX",
+          "windowPpg": 9,
+          "baselinePpg": 16.5,
+          "deltaPpg": -7.5,
+          "windowMpg": 22.4,
+          "baselineMpg": 28.8,
+          "deltaTs": -0.067
+        },
+        {
+          "playerId": "4395724",
+          "playerName": "Immanuel Quickley",
+          "teamAbbr": "TOR",
+          "windowPpg": 8.8,
+          "baselinePpg": 16.2,
+          "deltaPpg": -7.4,
+          "windowMpg": 23.6,
+          "baselineMpg": 31.6,
+          "deltaTs": -0.019
+        },
+        {
+          "playerId": "4278585",
+          "playerName": "Collin Gillespie",
+          "teamAbbr": "PHX",
+          "windowPpg": 5,
+          "baselinePpg": 12.4,
+          "deltaPpg": -7.4,
+          "windowMpg": 20.8,
+          "baselineMpg": 28.2,
+          "deltaTs": -0.124
+        },
+        {
+          "playerId": "5160992",
+          "playerName": "Alex Sarr",
+          "teamAbbr": "WSH",
+          "windowPpg": 8.8,
+          "baselinePpg": 16.1,
+          "deltaPpg": -7.3,
+          "windowMpg": 22.2,
+          "baselineMpg": 26.9,
+          "deltaTs": -0.175
+        },
+        {
+          "playerId": "5061575",
+          "playerName": "Kon Knueppel",
+          "teamAbbr": "CHA",
+          "windowPpg": 10.8,
+          "baselinePpg": 18,
+          "deltaPpg": -7.2,
+          "windowMpg": 32,
+          "baselineMpg": 31,
+          "deltaTs": -0.242
+        }
+      ]
+    },
+    "last10": {
+      "risers": [
+        {
+          "playerId": "5144091",
+          "playerName": "Jeremiah Fears",
+          "teamAbbr": "NO",
+          "windowPpg": 23.6,
+          "baselinePpg": 14.2,
+          "deltaPpg": 9.4,
+          "windowMpg": 32,
+          "baselineMpg": 25.6,
+          "deltaTs": 0.054
+        },
+        {
+          "playerId": "5105839",
+          "playerName": "Brice Sensabaugh",
+          "teamAbbr": "UTAH",
+          "windowPpg": 23.7,
+          "baselinePpg": 15.3,
+          "deltaPpg": 8.4,
+          "windowMpg": 30,
+          "baselineMpg": 23.8,
+          "deltaTs": 0.029
+        },
+        {
+          "playerId": "5144126",
+          "playerName": "Will Riley",
+          "teamAbbr": "WSH",
+          "windowPpg": 18.2,
+          "baselinePpg": 10.2,
+          "deltaPpg": 8,
+          "windowMpg": 32.6,
+          "baselineMpg": 22,
+          "deltaTs": 0.004
+        },
+        {
+          "playerId": "4895758",
+          "playerName": "Cody Williams",
+          "teamAbbr": "UTAH",
+          "windowPpg": 16.5,
+          "baselinePpg": 8.8,
+          "deltaPpg": 7.7,
+          "windowMpg": 35.2,
+          "baselineMpg": 24.2,
+          "deltaTs": -0.029
+        },
+        {
+          "playerId": "4709138",
+          "playerName": "Brandin Podziemski",
+          "teamAbbr": "GS",
+          "windowPpg": 20.1,
+          "baselinePpg": 13.5,
+          "deltaPpg": 6.6,
+          "windowMpg": 29.6,
+          "baselineMpg": 28.1,
+          "deltaTs": 0.112
+        },
+        {
+          "playerId": "4595400",
+          "playerName": "Olivier-Maxence Prosper",
+          "teamAbbr": "MEM",
+          "windowPpg": 16.5,
+          "baselinePpg": 9.9,
+          "deltaPpg": 6.6,
+          "windowMpg": 23.3,
+          "baselineMpg": 18.7,
+          "deltaTs": 0.056
+        },
+        {
+          "playerId": "4997526",
+          "playerName": "Ousmane Dieng",
+          "teamAbbr": "MIL",
+          "windowPpg": 14.2,
+          "baselinePpg": 7.9,
+          "deltaPpg": 6.3,
+          "windowMpg": 32.4,
+          "baselineMpg": 20,
+          "deltaTs": -0.045
+        },
+        {
+          "playerId": "4684793",
+          "playerName": "Kyle Filipowski",
+          "teamAbbr": "UTAH",
+          "windowPpg": 17.6,
+          "baselinePpg": 11.3,
+          "deltaPpg": 6.3,
+          "windowMpg": 26.8,
+          "baselineMpg": 23.3,
+          "deltaTs": -0.014
+        }
+      ],
+      "fallers": [
+        {
+          "playerId": "6478",
+          "playerName": "Nikola Vucevic",
+          "teamAbbr": "BOS",
+          "windowPpg": 8.8,
+          "baselinePpg": 15.1,
+          "deltaPpg": -6.3,
+          "windowMpg": 19.3,
+          "baselineMpg": 28.4,
+          "deltaTs": -0.056
+        },
+        {
+          "playerId": "4278585",
+          "playerName": "Collin Gillespie",
+          "teamAbbr": "PHX",
+          "windowPpg": 6.2,
+          "baselinePpg": 12.4,
+          "deltaPpg": -6.2,
+          "windowMpg": 23.8,
+          "baselineMpg": 28.2,
+          "deltaTs": -0.178
+        },
+        {
+          "playerId": "4712849",
+          "playerName": "Anthony Black",
+          "teamAbbr": "ORL",
+          "windowPpg": 8.6,
+          "baselinePpg": 14.8,
+          "deltaPpg": -6.2,
+          "windowMpg": 19.7,
+          "baselineMpg": 29.7,
+          "deltaTs": -0.142
+        },
+        {
+          "playerId": "4432166",
+          "playerName": "Cade Cunningham",
+          "teamAbbr": "DET",
+          "windowPpg": 17.1,
+          "baselinePpg": 23.1,
+          "deltaPpg": -6,
+          "windowMpg": 27.6,
+          "baselineMpg": 32.8,
+          "deltaTs": 0.029
+        },
+        {
+          "playerId": "3078576",
+          "playerName": "Derrick White",
+          "teamAbbr": "BOS",
+          "windowPpg": 10.6,
+          "baselinePpg": 16.5,
+          "deltaPpg": -5.9,
+          "windowMpg": 33,
+          "baselineMpg": 34.1,
+          "deltaTs": -0.017
+        },
+        {
+          "playerId": "5061575",
+          "playerName": "Kon Knueppel",
+          "teamAbbr": "CHA",
+          "windowPpg": 12.6,
+          "baselinePpg": 18,
+          "deltaPpg": -5.4,
+          "windowMpg": 31.6,
+          "baselineMpg": 31,
+          "deltaTs": -0.174
+        },
+        {
+          "playerId": "3155526",
+          "playerName": "Dillon Brooks",
+          "teamAbbr": "PHX",
+          "windowPpg": 14.8,
+          "baselinePpg": 20.1,
+          "deltaPpg": -5.3,
+          "windowMpg": 26.9,
+          "baselineMpg": 30.5,
+          "deltaTs": -0.047
+        },
+        {
+          "playerId": "4566434",
+          "playerName": "Franz Wagner",
+          "teamAbbr": "ORL",
+          "windowPpg": 15.2,
+          "baselinePpg": 20.3,
+          "deltaPpg": -5.1,
+          "windowMpg": 22,
+          "baselineMpg": 29.8,
+          "deltaTs": -0.019
+        }
+      ]
+    },
+    "split5": {
+      "risers": [
+        {
+          "playerId": "5144091",
+          "playerName": "Jeremiah Fears",
+          "teamAbbr": "NO",
+          "windowPpg": 31.8,
+          "baselinePpg": 15.4,
+          "deltaPpg": 16.4,
+          "windowMpg": 39.4,
+          "baselineMpg": 24.6,
+          "deltaTs": -0.006
+        },
+        {
+          "playerId": "4432816",
+          "playerName": "LaMelo Ball",
+          "teamAbbr": "CHA",
+          "windowPpg": 29.4,
+          "baselinePpg": 17.2,
+          "deltaPpg": 12.2,
+          "windowMpg": 34,
+          "baselineMpg": 29.2,
+          "deltaTs": 0.11
+        },
+        {
+          "playerId": "4279888",
+          "playerName": "Ja Morant",
+          "teamAbbr": "MEM",
+          "windowPpg": 24.8,
+          "baselinePpg": 14.6,
+          "deltaPpg": 10.2,
+          "windowMpg": 30,
+          "baselineMpg": 22.2,
+          "deltaTs": 0.114
+        },
+        {
+          "playerId": "5104157",
+          "playerName": "Victor Wembanyama",
+          "teamAbbr": "SA",
+          "windowPpg": 34.6,
+          "baselinePpg": 24.4,
+          "deltaPpg": 10.2,
+          "windowMpg": 28.4,
+          "baselineMpg": 29,
+          "deltaTs": 0.168
+        },
+        {
+          "playerId": "4898237",
+          "playerName": "Bez Mbeng",
+          "teamAbbr": "",
+          "windowPpg": 14.8,
+          "baselinePpg": 4.8,
+          "deltaPpg": 10,
+          "windowMpg": 37.2,
+          "baselineMpg": 28,
+          "deltaTs": null
+        },
+        {
+          "playerId": "4702384",
+          "playerName": "Nique Clifford",
+          "teamAbbr": "SAC",
+          "windowPpg": 19.4,
+          "baselinePpg": 10.2,
+          "deltaPpg": 9.2,
+          "windowMpg": 38,
+          "baselineMpg": 31.2,
+          "deltaTs": 0.105
+        },
+        {
+          "playerId": "4684275",
+          "playerName": "Rob Dillingham",
+          "teamAbbr": "CHI",
+          "windowPpg": 15.8,
+          "baselinePpg": 6.8,
+          "deltaPpg": 9,
+          "windowMpg": 26.2,
+          "baselineMpg": 19.4,
+          "deltaTs": 0.147
+        },
+        {
+          "playerId": "4683021",
+          "playerName": "Deni Avdija",
+          "teamAbbr": "POR",
+          "windowPpg": 31.2,
+          "baselinePpg": 22.4,
+          "deltaPpg": 8.8,
+          "windowMpg": 36.8,
+          "baselineMpg": 32.4,
+          "deltaTs": 0.088
+        }
+      ],
+      "fallers": [
+        {
+          "playerId": "4914336",
+          "playerName": "Shaedon Sharpe",
+          "teamAbbr": "POR",
+          "windowPpg": 10,
+          "baselinePpg": 21.4,
+          "deltaPpg": -11.4,
+          "windowMpg": 19.6,
+          "baselineMpg": 32.2,
+          "deltaTs": -0.059
+        },
+        {
+          "playerId": "4251",
+          "playerName": "Paul George",
+          "teamAbbr": "PHI",
+          "windowPpg": 14.2,
+          "baselinePpg": 25.4,
+          "deltaPpg": -11.2,
+          "windowMpg": 30.4,
+          "baselineMpg": 33.4,
+          "deltaTs": -0.148
+        },
+        {
+          "playerId": "6583",
+          "playerName": "Anthony Davis",
+          "teamAbbr": "DAL",
+          "windowPpg": 16.4,
+          "baselinePpg": 25.8,
+          "deltaPpg": -9.4,
+          "windowMpg": 31.6,
+          "baselineMpg": 35,
+          "deltaTs": -0.089
+        },
+        {
+          "playerId": "4683634",
+          "playerName": "Bennedict Mathurin",
+          "teamAbbr": "LAC",
+          "windowPpg": 8.8,
+          "baselinePpg": 18,
+          "deltaPpg": -9.2,
+          "windowMpg": 23,
+          "baselineMpg": 26.4,
+          "deltaTs": -0.173
+        },
+        {
+          "playerId": "4277847",
+          "playerName": "Wendell Carter Jr.",
+          "teamAbbr": "ORL",
+          "windowPpg": 7.8,
+          "baselinePpg": 16.4,
+          "deltaPpg": -8.6,
+          "windowMpg": 27,
+          "baselineMpg": 27.8,
+          "deltaTs": -0.223
+        },
+        {
+          "playerId": "5107199",
+          "playerName": "Daniss Jenkins",
+          "teamAbbr": "DET",
+          "windowPpg": 10.2,
+          "baselinePpg": 18.8,
+          "deltaPpg": -8.6,
+          "windowMpg": 24.6,
+          "baselineMpg": 34.2,
+          "deltaTs": -0.098
+        },
+        {
+          "playerId": "4397140",
+          "playerName": "Kevin Porter Jr.",
+          "teamAbbr": "MIL",
+          "windowPpg": 13.4,
+          "baselinePpg": 21.8,
+          "deltaPpg": -8.4,
+          "windowMpg": 30.8,
+          "baselineMpg": 33,
+          "deltaTs": -0.136
+        },
+        {
+          "playerId": "3936299",
+          "playerName": "Jamal Murray",
+          "teamAbbr": "DEN",
+          "windowPpg": 23.6,
+          "baselinePpg": 31.6,
+          "deltaPpg": -8,
+          "windowMpg": 38,
+          "baselineMpg": 37.8,
+          "deltaTs": -0.048
+        }
+      ]
+    }
+  }
+}

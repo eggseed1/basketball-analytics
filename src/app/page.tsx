@@ -9,6 +9,8 @@ import {
 import { Suspense } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
+import { AppLink } from "@/components/ui/app-link";
+import { StatDetectiveLists } from "@/components/explore/stat-detective-panel";
 import { FindingsSection } from "@/components/home/findings-section";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
@@ -58,6 +60,40 @@ async function HomeTopPerformers() {
       drblOverlayOk={data.drblOverlayOk}
       drblFallbackNote={data.drblFallbackNote}
     />
+  );
+}
+
+async function HomeStatDetective() {
+  const { statDetectiveSeason, statDetectiveWindow } = await import(
+    "@/data/runtime/stat-detective-windows"
+  );
+  const season = statDetectiveSeason();
+  const window = statDetectiveWindow("last5");
+  if (!season || !window.risers.length) return null;
+  return (
+    <section className="sports-card flex flex-col gap-3 p-4">
+      <div className="flex flex-wrap items-end justify-between gap-2">
+        <div>
+          <h2 className="type-heading">Stat Detective</h2>
+          <p className="type-body-sm text-muted-foreground">
+            {season} last five regular-season games versus that player&apos;s
+            season average. Minutes are shown so a role jump is not a scoring
+            claim.
+          </p>
+        </div>
+        <AppLink
+          href="/explore/players/windows"
+          className="text-[13px] font-semibold underline-offset-4 hover:underline"
+        >
+          All windows
+        </AppLink>
+      </div>
+      <StatDetectiveLists
+        risers={window.risers}
+        fallers={window.fallers}
+        limit={4}
+      />
+    </section>
   );
 }
 
@@ -119,6 +155,9 @@ export default function HomePage() {
         </Suspense>
       </div>
 
+      <Suspense fallback={<BlockSkeleton className="h-40" />}>
+        <HomeStatDetective />
+      </Suspense>
       <Suspense fallback={<BlockSkeleton className="h-40" />}>
         <HomeFindings />
       </Suspense>

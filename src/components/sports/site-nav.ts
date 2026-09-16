@@ -70,7 +70,13 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
         match: (p) =>
           p.startsWith("/explore/players") &&
           !p.startsWith("/explore/players/race") &&
-          !p.startsWith("/explore/players/visualizations"),
+          !p.startsWith("/explore/players/visualizations") &&
+          !p.startsWith("/explore/players/windows"),
+      },
+      {
+        href: "/explore/players/windows",
+        label: "Stat Detective",
+        match: (p) => p.startsWith("/explore/players/windows"),
       },
       {
         href: "/explore/players/visualizations",
