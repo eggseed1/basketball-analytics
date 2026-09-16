@@ -53,6 +53,8 @@ import { fetchDarkoSeason, isDarkoSeasonAvailable } from "@/data/providers/nba/d
 import { fetchDrblSeason } from "@/data/providers/nba/drbl-loader";
 import { fetchHustleSeason } from "@/data/providers/nba/hustle-stats-loader";
 import { isHustleStatsSeason } from "@/data/providers/nba/season";
+import { resolveHustlePatch } from "@/data/transformers/hustle-overlay-join";
+import { lookupEspnIdByPlayerName } from "@/data/runtime/espn-name-index";
 import { hasHustleStats } from "@/data/transformers/hustle-stats";
 import { getPlayerYearOverYearAdvanced } from "@/data/providers/nba/player-year-over-year";
 import { ESPN_PLAYER_BOARD_RELIABLE_START_YEAR } from "@/data/diagnostics/provider-meta";
@@ -409,17 +411,13 @@ async function overlayHustleRows(
 
   return seasons.map((row) => {
     if (hasHustleStats(row)) return row;
-    const alias = aliases.byEspn.get(row.playerId);
-    const aliasNba =
-      alias && isProductionApprovedPlayerAlias(alias)
-        ? alias.nbaPlayerId
-        : null;
-    const patch =
-      hustleById.get(row.playerId) ??
-      (aliasNba && aliasNba !== row.playerId
-        ? hustleById.get(aliasNba)
-        : undefined);
-    if (!patch || !Object.keys(patch).length) return row;
+    const patch = resolveHustlePatch(
+      row,
+      hustleById,
+      aliases,
+      lookupEspnIdByPlayerName
+    );
+    if (!patch) return row;
     return { ...row, ...patch };
   });
 }

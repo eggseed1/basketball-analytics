@@ -18,6 +18,17 @@ export function formatNumber(value: number, digits = 0): string {
   });
 }
 
+/**
+ * Counting rates (per game / per 100). A positive total must not display as
+ * 0.0 — charges drawn of 1 in 79 games is a real event, not missing data.
+ */
+export function formatCountingRate(value: number, digits = 1): string {
+  if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
+  const shown = formatNumber(value, digits);
+  if (value > 0 && Number(shown) === 0) return formatNumber(value, digits + 1);
+  return shown;
+}
+
 export function formatMinutes(value: number): string {
   if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
   return formatNumber(Math.round(value));
