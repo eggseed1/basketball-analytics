@@ -4,6 +4,13 @@ import {
 } from "@/data/cache/shared-ttl-cache";
 import { isVercelRuntime, runtimeTimeoutMs } from "./runtime-policy";
 
+/**
+ * ESPN's edge (Akamai) returns 403 in ~50ms for browser and custom app
+ * User-Agents from Cloudflare. A curl-compatible UA returns JSON in ~150ms.
+ * Do not "fix" this by switching back to a browser UA.
+ */
+export const ESPN_FETCH_USER_AGENT = "curl/8.7.1";
+
 const DEFAULT_TTL_MS = 1000 * 60 * 60; // 1 hour - season snapshots change slowly
 const DEFAULT_RETRIES = isVercelRuntime() ? 1 : 2;
 // Player identity/career calls sit above the first Suspense boundary. Bound a
@@ -72,8 +79,7 @@ async function fetchEspnJsonUncached<T>(
         signal: options.signal ?? AbortSignal.timeout(timeoutMs),
         headers: {
           Accept: "application/json",
-          "User-Agent":
-            "BasketballAnalytics/0.1 (+local; educational data exploration)",
+          "User-Agent": ESPN_FETCH_USER_AGENT,
         },
       };
       if (isVercelRuntime()) {
