@@ -22,6 +22,8 @@ import {
   shiftIsoDate,
   type ThemeMode,
 } from "@/themes/era-theme";
+import { resolveLandmarkGames } from "@/content/history/landmark-games";
+import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
 import { parseHistorySearchParams } from "@/themes/history-url";
 
 export const dynamic = "force-dynamic";
@@ -53,10 +55,12 @@ async function HistorySnapshotLoader({
   season,
   date,
   themeMode,
+  landmarkGames,
 }: {
   season: string;
   date: string;
   themeMode: ThemeMode;
+  landmarkGames: ReturnType<typeof resolveLandmarkGames>;
 }) {
   const [gamesResult, teamSnap, leaders, tx] = await Promise.all([
     getHistoricalGamesForDate(season, date),
@@ -89,6 +93,7 @@ async function HistorySnapshotLoader({
         teamsWarning={teamSnap.directoryWarning}
         events={tx.events}
         eventsWarning={tx.warning}
+        landmarkGames={landmarkGames}
       />
     </div>
   );
@@ -99,8 +104,12 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
   const parsed = parseHistorySearchParams(params);
   const seasons = await getAvailableSeasons();
 
+  const landmarkGames = resolveLandmarkGames(getRuntimeSnapshotGames());
+
   if (!parsed.season) {
-    return <TimeMachineLanding seasons={seasons} />;
+    return (
+      <TimeMachineLanding seasons={seasons} landmarkGames={landmarkGames} />
+    );
   }
 
   const season = seasons.includes(parsed.season)
@@ -163,6 +172,7 @@ export default async function HistoryPage({ searchParams }: HistoryPageProps) {
             season={season}
             date={date}
             themeMode={themeMode}
+            landmarkGames={landmarkGames.filter((game) => game.season === season)}
           />
         </Suspense>
       </HistoryClientShell>

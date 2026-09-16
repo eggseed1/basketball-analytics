@@ -4,6 +4,7 @@ import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { GameScoreCard } from "@/components/sports/game-score-card";
 import { askDrblHref } from "@/components/players/player-ask-links";
+import type { LandmarkGameCard } from "@/content/history/landmark-games";
 import { formatNumber, formatPct } from "@/lib/format";
 import { textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ export function TimeMachineSnapshot({
   teamsWarning,
   events,
   eventsWarning,
+  landmarkGames = [],
 }: {
   season: string;
   date: string;
@@ -80,6 +82,7 @@ export function TimeMachineSnapshot({
   teamsWarning?: string;
   events: NbaTransactionEvent[];
   eventsWarning?: string;
+  landmarkGames?: LandmarkGameCard[];
 }) {
   const tmState = { season, theme, date };
 
@@ -96,6 +99,30 @@ export function TimeMachineSnapshot({
           </TransitionLink>
         }
       >
+        {landmarkGames.length ? (
+          <ul className="flex flex-col gap-2">
+            {landmarkGames.map((game) => (
+              <li
+                key={game.id}
+                className="sports-card flex flex-col gap-1 px-4 py-3"
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                  Landmark game · {game.date}
+                </p>
+                <TransitionLink
+                  href={game.gameHref}
+                  className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+                >
+                  {game.title}
+                </TransitionLink>
+                <p className="text-[13px] font-semibold tabular-nums">
+                  {game.scoreLine}
+                </p>
+                <p className="text-[13px] text-muted-foreground">{game.blurb}</p>
+              </li>
+            ))}
+          </ul>
+        ) : null}
         {gamesWarning ? (
           <p className="text-sm text-muted-foreground">{gamesWarning}</p>
         ) : null}
