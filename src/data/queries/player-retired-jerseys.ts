@@ -4,6 +4,8 @@
 
 import { cache } from "react";
 
+import { displayAliasNbaId } from "@/data/identity/artifact-join";
+import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import { getRetiredJerseysByNbaId } from "@/content/awards/retired-jerseys";
 import { nbaPersonIdFromPlayerRoute } from "@/data/runtime/legend-nba-to-bref";
@@ -20,9 +22,14 @@ export const getPlayerRetiredJerseys = cache(
     playerId: string
   ): Promise<RetiredJerseyBadge[]> {
     const identity = await resolvePlayerIdentityCached(playerId);
+    const aliases = await getPlayerIdAliasIndex().catch(() => null);
+    const aliasNba = aliases
+      ? displayAliasNbaId(playerId, aliases, identity.displayName)
+      : null;
     // Legend pages remap to bref:{slug}; retirements stay keyed by NBA PERSON_ID.
     const nbaId =
       nbaPersonIdFromPlayerRoute(identity.nbaId) ??
+      nbaPersonIdFromPlayerRoute(aliasNba) ??
       nbaPersonIdFromPlayerRoute(playerId) ??
       nbaPersonIdFromPlayerRoute(identity.routeId);
     if (!nbaId) return [];

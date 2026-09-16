@@ -1,4 +1,5 @@
-import { resolveNbaIdForDrbl } from "@/data/identity/player-identity";
+import { displayAliasNbaId } from "@/data/identity/artifact-join";
+import { getPlayerIdAliasIndex, resolveNbaIdForDrbl } from "@/data/identity/player-identity";
 import { CACHE_TTL_MS } from "@/data/providers/nba/cache-policy";
 import { nbaTeamIdFromAbbr } from "@/data/providers/nba/nba-team-meta";
 import {
@@ -77,7 +78,11 @@ export async function getPlayerSeasonShotMap(options: {
       emptyReason: reason,
     });
 
-  const nbaId = options.nbaId ?? (await resolveNbaIdForDrbl(playerId));
+  const aliases = await getPlayerIdAliasIndex().catch(() => null);
+  const nbaId =
+    options.nbaId ??
+    (await resolveNbaIdForDrbl(playerId)) ??
+    (aliases ? displayAliasNbaId(playerId, aliases) : null);
   if (!nbaId) {
     return empty("No NBA player id to load live shot chart.");
   }

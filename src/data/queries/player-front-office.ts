@@ -2,7 +2,9 @@ import "server-only";
 
 import { cache } from "react";
 
+import { artifactNamesConflict } from "@/data/identity/artifact-join";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
+import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { isVercelRuntime } from "@/data/providers/nba/runtime-policy";
 import {
   loadTeamFrontOfficeSlice,
@@ -53,8 +55,17 @@ export const getPlayerContractSnapshot = cache(
     if (!routeId) return null;
 
     const identity = await resolvePlayerIdentityCached(routeId).catch(() => null);
+    const aliases = await getPlayerIdAliasIndex().catch(() => null);
+    const alias =
+      aliases?.byEspn.get(routeId) ??
+      (identity?.espnId ? aliases?.byEspn.get(identity.espnId) : undefined);
+    const aliasNba =
+      alias?.nbaPlayerId &&
+      !artifactNamesConflict(identity?.displayName, alias.playerName)
+        ? alias.nbaPlayerId
+        : null;
     const candidateIds = new Set(
-      uniqueIds(routeId, identity?.nbaId, identity?.espnId)
+      uniqueIds(routeId, identity?.nbaId, identity?.espnId, aliasNba)
     );
 
     const fromSlice = (

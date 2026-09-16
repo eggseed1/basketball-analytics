@@ -5,6 +5,8 @@
 
 import { cache } from "react";
 
+import { artifactNamesConflict } from "@/data/identity/artifact-join";
+import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import {
@@ -24,9 +26,19 @@ export const getPlayerAccolades = cache(async function getPlayerAccolades(
   playerId: string
 ): Promise<PlayerAccoladeBadge[]> {
   const identity = await resolvePlayerIdentityCached(playerId);
+  const aliases = await getPlayerIdAliasIndex().catch(() => null);
+  const alias =
+    aliases?.byEspn.get(playerId) ??
+    (identity.espnId ? aliases?.byEspn.get(identity.espnId) : undefined);
+  const aliasNba =
+    alias?.nbaPlayerId &&
+    !artifactNamesConflict(identity.displayName, alias.playerName)
+      ? alias.nbaPlayerId
+      : null;
   // Legend pages remap to bref:{slug}; awards stay keyed by NBA PERSON_ID.
   const nbaId =
     nbaPersonIdFromPlayerRoute(identity.nbaId) ??
+    nbaPersonIdFromPlayerRoute(aliasNba) ??
     nbaPersonIdFromPlayerRoute(playerId) ??
     nbaPersonIdFromPlayerRoute(identity.routeId);
   if (!nbaId) return [];
