@@ -238,6 +238,9 @@ export function buildPlayerPercentileMetrics(
   ): number[] => {
     if (light) return [];
     const seasonPeers = peersBySeason?.get(season);
+    if (!seasonPeers?.length) {
+      if (season !== seasonStats.season) return [];
+    }
     const seasonBoard =
       seasonPeers && seasonPeers.length > 0 ? seasonPeers : peers;
     const q = seasonBoard.filter(isQualifiedPeer);
