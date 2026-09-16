@@ -695,6 +695,7 @@ function CompComparePanel({
 type SeasonMetricsCache = {
   metrics: PercentileMetric[];
   teamKey?: string;
+  profileComps?: StatComp[];
 };
 
 const percentileCache = new Map<string, SeasonMetricsCache>();
@@ -1004,7 +1005,11 @@ async function fetchPercentiles(
   if (!res.ok) return null;
   const json = (await res.json()) as SeasonMetricsCache & { season?: string };
   if (!json.metrics) return null;
-  const payload = { metrics: json.metrics, teamKey: json.teamKey };
+  const payload = {
+    metrics: json.metrics,
+    teamKey: json.teamKey,
+    profileComps: json.profileComps,
+  };
   // Never cache empty payloads — historical peer boards can fail transiently.
   if (payload.metrics.length > 0) {
     writeCache(playerId, json.season ?? season, payload);
@@ -1038,6 +1043,7 @@ export function PlayerPercentilePanel({
   playerName,
   teamKey,
   metrics,
+  profileComps = [],
   seasonTeams,
   stintsBySeason,
   honor,
@@ -1048,6 +1054,7 @@ export function PlayerPercentilePanel({
   playerName: string;
   teamKey?: string;
   metrics: PercentileMetric[];
+  profileComps?: StatComp[];
   seasonTeams?: Record<string, string>;
   stintsBySeason?: Record<string, PlayerCardStint[]>;
   honor?: GlassSurfaceHonor;
@@ -1061,6 +1068,7 @@ export function PlayerPercentilePanel({
   const [viewSeason, setViewSeason] = useState(season);
   const [viewMetrics, setViewMetrics] = useState(metrics);
   const [viewTeamKey, setViewTeamKey] = useState(teamKey);
+  const [viewProfileComps, setViewProfileComps] = useState(profileComps);
   const [busy, setBusy] = useState(false);
 
   const applyCached = useCallback(
@@ -1069,22 +1077,24 @@ export function PlayerPercentilePanel({
       setViewSeason(nextSeason);
       setViewMetrics(next.metrics);
       setViewTeamKey(next.teamKey);
+      setViewProfileComps(next.profileComps ?? []);
     },
     [playerId]
   );
 
   useEffect(() => {
     if (metrics.length > 0) {
-      writeCache(playerId, season, { metrics, teamKey });
+      writeCache(playerId, season, { metrics, teamKey, profileComps });
     }
     if (season !== desiredSeason.current) return;
     setViewSeason(season);
+    setViewProfileComps(profileComps);
     if (metrics.length > 0) {
       setViewMetrics(metrics);
       setViewTeamKey(teamKey);
     }
     setBusy(false);
-  }, [metrics, playerId, season, teamKey]);
+  }, [metrics, playerId, profileComps, season, teamKey]);
 
   // SSR ships fast metrics; upgrade sparklines + YoY peers when idle.
   const hydratedFull = useRef(false);
@@ -1124,6 +1134,7 @@ export function PlayerPercentilePanel({
     if (cached && cached.metrics.length > 0) {
       setViewMetrics(cached.metrics);
       setViewTeamKey(cached.teamKey);
+      setViewProfileComps(cached.profileComps ?? []);
       setBusy(false);
       return;
     }
@@ -1198,6 +1209,7 @@ export function PlayerPercentilePanel({
       if (cached && cached.metrics.length > 0) {
         setViewMetrics(cached.metrics);
         setViewTeamKey(cached.teamKey);
+        setViewProfileComps(cached.profileComps ?? []);
         setBusy(false);
         return;
       }
@@ -1387,6 +1399,38 @@ export function PlayerPercentilePanel({
           <span className="hidden sm:inline">Expand</span>
         </button>
       </div>
+      {viewProfileComps.length ? (
+        <div className="mt-3 flex flex-col gap-1.5">
+          <p className={cn(type.caption, "font-semibold text-muted-foreground")}>
+            Closest profiles
+          </p>
+          <ul className="flex flex-col gap-1">
+            {viewProfileComps.map((comp) => (
+              <li
+                key={`${comp.playerId}-${comp.season}`}
+                className="flex items-center justify-between gap-2 text-[13px]"
+              >
+                <PlayerIdentity
+                  playerId={comp.playerId}
+                  name={comp.playerName}
+                  teamKey={comp.teamKey}
+                  season={comp.season}
+                  variant="compact"
+                  className="min-w-0"
+                  nameClassName="truncate font-semibold"
+                />
+                <span className="shrink-0 tabular-nums text-muted-foreground">
+                  {comp.display}
+                </span>
+              </li>
+            ))}
+          </ul>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Average percentile gap across impact, true shooting, usage, and
+            role. Lower is closer. Not a single-stat leaderboard.
+          </p>
+        </div>
+      ) : null}
 
       {timeline.length > 0 ? (
         <div className={cn(busy && "opacity-80")}>

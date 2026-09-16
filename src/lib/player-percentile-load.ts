@@ -8,6 +8,7 @@ import type { PlayerSeason } from "@/data/types";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import { buildPlayerPercentileMetrics } from "@/lib/player-percentile-metrics";
+import { findSimilarProfile } from "@/lib/player-stat-comps";
 import { mergePlayerSeasonStats } from "@/lib/player-destination";
 import {
   brandableTeamKey,
@@ -367,5 +368,14 @@ export async function loadPlayerPercentileMetrics(
     { light: mode === "fast" }
   );
 
-  return { metrics, teamKey, mode, ...statsCtx };
+  const profileComps = seasonStats
+    ? findSimilarProfile({
+        focal: seasonStats,
+        rows: peers,
+        focalIds: [playerId, espnId, nbaId],
+        limit: 4,
+      })
+    : [];
+
+  return { metrics, teamKey, mode, profileComps, ...statsCtx };
 }
