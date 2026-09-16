@@ -2,7 +2,7 @@ name: Daily player-viz runtime refresh
 
 # Rebuilds Cloudflare-baked snapshots for race tracker + league scatters
 # once the NBA tip-off window opens (mid-Oct through Finals). Offseason runs
-# no-op unless manually forced.
+# still refresh ESPN transactions, which continue through waivers and signings.
 #
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token

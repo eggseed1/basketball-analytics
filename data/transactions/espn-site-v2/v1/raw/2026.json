@@ -2,12 +2,221 @@
   "source": "espn-site-v2-transactions",
   "datasetVersion": "1.0",
   "espnCalendarYear": 2026,
-  "fetchedAt": "2026-08-29T23:28:41.903Z",
-  "apiCount": 289,
+  "fetchedAt": "2026-09-16T15:49:01.092Z",
+  "apiCount": 308,
   "rows": [
     {
+      "date": "2026-09-15T07:00Z",
+      "description": "Waived G Dwight Murray Jr. and G Isaiah Wong.",
+      "team": {
+        "id": "17",
+        "abbreviation": "BKN",
+        "displayName": "Brooklyn Nets",
+        "location": "Brooklyn",
+        "name": "Nets"
+      }
+    },
+    {
+      "date": "2026-09-15T07:00Z",
+      "description": "Waived F Keion Brooks Jr., G Cameron Hildreth, F M.J. Iraldi and G Wade Taylor IV.",
+      "team": {
+        "id": "11",
+        "abbreviation": "IND",
+        "displayName": "Indiana Pacers",
+        "location": "Indiana",
+        "name": "Pacers"
+      }
+    },
+    {
+      "date": "2026-09-15T07:00Z",
+      "description": "Waived F Dawson Garcia and F Basheer Jihad.",
+      "team": {
+        "id": "8",
+        "abbreviation": "DET",
+        "displayName": "Detroit Pistons",
+        "location": "Detroit",
+        "name": "Pistons"
+      }
+    },
+    {
+      "date": "2026-09-15T07:00Z",
+      "description": "Waived F Johnny O'Neil.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-09-11T07:00Z",
+      "description": "Waived F Hank Morgan.",
+      "team": {
+        "id": "2",
+        "abbreviation": "BOS",
+        "displayName": "Boston Celtics",
+        "location": "Boston",
+        "name": "Celtics"
+      }
+    },
+    {
+      "date": "2026-09-11T07:00Z",
+      "description": "Waived Gs Devin Carter and Lamont Butler.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-09-10T07:00Z",
+      "description": "Signed G Bennedict Mathurin to a contract.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-09-10T07:00Z",
+      "description": "Waived F Keyshawn Bryant.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-09-09T07:00Z",
+      "description": "Waived F Taj Gibson.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-09-09T07:00Z",
+      "description": "Waived G Devon Higgs.",
+      "team": {
+        "id": "1",
+        "abbreviation": "ATL",
+        "displayName": "Atlanta Hawks",
+        "location": "Atlanta",
+        "name": "Hawks"
+      }
+    },
+    {
+      "date": "2026-09-08T07:00Z",
+      "description": "Acquired G Micah Peavy, G Jordan Hawkins and draft considerations from New Orleans Pelicans for G AJ Johnson and F Taj Gibson.",
+      "team": {
+        "id": "29",
+        "abbreviation": "MEM",
+        "displayName": "Memphis Grizzlies",
+        "location": "Memphis",
+        "name": "Grizzlies"
+      }
+    },
+    {
+      "date": "2026-09-08T07:00Z",
+      "description": "Re-signed G James Harden.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
+      "date": "2026-09-08T07:00Z",
+      "description": "Acquired G AJ Johnson and F Taj Gibson from Memphis in exchange for G Micah Peavy, G Jordan Hawkins and draft considerations.",
+      "team": {
+        "id": "3",
+        "abbreviation": "NO",
+        "displayName": "New Orleans Pelicans",
+        "location": "New Orleans",
+        "name": "Pelicans"
+      }
+    },
+    {
+      "date": "2026-09-03T07:00Z",
+      "description": "Waived G Kyle Mangas.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-09-03T07:00Z",
+      "description": "Re-signed G Amen Thompson to a rookie scale extension.",
+      "team": {
+        "id": "10",
+        "abbreviation": "HOU",
+        "displayName": "Houston Rockets",
+        "location": "Houston",
+        "name": "Rockets"
+      }
+    },
+    {
+      "date": "2026-09-02T07:00Z",
+      "description": "Waived F Trey Townsend.",
+      "team": {
+        "id": "30",
+        "abbreviation": "CHA",
+        "displayName": "Charlotte Hornets",
+        "location": "Charlotte",
+        "name": "Hornets"
+      }
+    },
+    {
+      "date": "2026-09-02T07:00Z",
+      "description": "Waived G Matthew Murrell.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-09-02T07:00Z",
+      "description": "Signed C Khalifa Diop to a contract.",
+      "team": {
+        "id": "5",
+        "abbreviation": "CLE",
+        "displayName": "Cleveland Cavaliers",
+        "location": "Cleveland",
+        "name": "Cavaliers"
+      }
+    },
+    {
       "date": "2026-08-29T07:00Z",
-      "description": "Acquire Fs John Konchar and Cody Williams from Utah in exchange for SG Josh Green and cash considerations.",
+      "description": "Acquired SG Josh Green and cash considerations from Minnesota Timberwolves for Fs John Konchar and Cody Williams.",
+      "team": {
+        "id": "26",
+        "abbreviation": "UTAH",
+        "displayName": "Utah Jazz",
+        "location": "Utah",
+        "name": "Jazz"
+      }
+    },
+    {
+      "date": "2026-08-29T07:00Z",
+      "description": "Acquired Fs John Konchar and Cody Williams from Utah in exchange for SG Josh Green and cash considerations. Waived F John Konchar.",
       "team": {
         "id": "16",
         "abbreviation": "MIN",
