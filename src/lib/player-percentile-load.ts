@@ -23,6 +23,13 @@ import {
 const MAX_CAREER_PEER_SEASONS = 6;
 /** Spread of league seasons (excl. view year) for "Other seasons" comps. */
 const MAX_HISTORICAL_COMP_SEASONS = 14;
+/**
+ * Cloudflare full mode used to load ~20 boards in parallel and die with 1102.
+ * Current + prior cover YoY; two archive seasons keep a thin historical comp.
+ */
+const EDGE_CAREER_PEER_SEASONS = 2;
+const EDGE_HISTORICAL_COMP_SEASONS = 2;
+const EDGE_PEER_LOAD_CONCURRENCY = 2;
 
 export type PercentileLoadMode = "fast" | "full";
 
@@ -87,7 +94,8 @@ function careerSeasonsForPeerBoards(
   career: PlayerSeason[],
   season: string,
   priorSeason: string,
-  mode: PercentileLoadMode
+  mode: PercentileLoadMode,
+  maxSeasons = MAX_CAREER_PEER_SEASONS
 ): string[] {
   if (mode === "fast") return [];
   // Cloudflare: never fan out multi-season peer boards on slim edge (CPU 1102).
@@ -104,13 +112,34 @@ function careerSeasonsForPeerBoards(
   const must = new Set([season, priorSeason].filter(Boolean));
   const out: string[] = [];
   for (const s of all) {
-    if (must.has(s) || out.length < MAX_CAREER_PEER_SEASONS) {
+    if (must.has(s) || out.length < maxSeasons) {
       if (!out.includes(s)) out.push(s);
     }
   }
   for (const s of must) {
     if (s && !out.includes(s)) out.push(s);
   }
+  return out;
+}
+
+async function mapWithConcurrency<T, R>(
+  items: T[],
+  limit: number,
+  fn: (item: T) => Promise<R>
+): Promise<R[]> {
+  const out: R[] = new Array(items.length);
+  let next = 0;
+  const workers = Array.from(
+    { length: Math.min(limit, items.length) },
+    async () => {
+      while (next < items.length) {
+        const index = next;
+        next += 1;
+        out[index] = await fn(items[index]!);
+      }
+    }
+  );
+  await Promise.all(workers);
   return out;
 }
 
@@ -175,7 +204,8 @@ export async function loadPlayerPercentileMetrics(
     career,
     statsSeason,
     includePrior ? priorSeason : statsSeason,
-    mode
+    mode,
+    preferBundled ? EDGE_CAREER_PEER_SEASONS : MAX_CAREER_PEER_SEASONS
   );
 
   // Wide archive for "Other seasons" comps — not only the player's career / prior year.
@@ -187,7 +217,9 @@ export async function loadPlayerPercentileMetrics(
       );
       historicalCompSeasons = pickSpreadSeasons(
         listBundledBrefSeasons(),
-        MAX_HISTORICAL_COMP_SEASONS,
+        preferBundled
+          ? EDGE_HISTORICAL_COMP_SEASONS
+          : MAX_HISTORICAL_COMP_SEASONS,
         new Set([statsSeason, ...careerSeasons].filter(Boolean))
       );
     } catch {
@@ -195,12 +227,15 @@ export async function loadPlayerPercentileMetrics(
     }
   }
 
+  const extraCareerSeasons = careerSeasons.filter(
+    (seasonKey) => seasonKey !== statsSeason && seasonKey !== priorSeason
+  );
   const careerHasSeason = career.some(
     (row) => row.season === statsSeason && row.gamesPlayed > 0
   );
 
   const enrichCareer =
-    mode === "fast"
+    mode === "fast" || preferBundled
       ? enrichCareerForFastHero(playerId, career).catch(() => career)
       : enrichPlayerCareerAdvancedCached(playerId, career).catch(() => career);
 
@@ -265,17 +300,23 @@ export async function loadPlayerPercentileMetrics(
       ? loadPeers(priorSeason)
       : Promise.resolve([] as PlayerSeason[]),
     enrichCareer,
-    Promise.all(
-      careerSeasons.map(async (s) => {
+    mapWithConcurrency(
+      extraCareerSeasons,
+      preferBundled ? EDGE_PEER_LOAD_CONCURRENCY : extraCareerSeasons.length || 1,
+      async (s) => {
         const rows = await loadPeers(s);
         return [s, rows] as const;
-      })
+      }
     ),
-    Promise.all(
-      historicalCompSeasons.map(async (s) => {
+    mapWithConcurrency(
+      historicalCompSeasons,
+      preferBundled
+        ? EDGE_PEER_LOAD_CONCURRENCY
+        : historicalCompSeasons.length || 1,
+      async (s) => {
         const rows = await loadPeers(s, { archive: true });
         return [s, rows] as const;
-      })
+      }
     ),
     options?.nbaId != null && options?.espnId != null
       ? Promise.resolve({ nbaId: options.nbaId, espnId: options.espnId })
