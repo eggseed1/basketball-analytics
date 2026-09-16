@@ -1,7 +1,11 @@
+"use client";
+
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { LiveScoreboardScope } from "@/components/sports/live-scoreboard-scope";
 
 import type { GameSummary, TeamSeasonStats } from "@/data/types";
 import type { TeamBrand } from "@/lib/nba-brand";
+import { isLiveLikeStatus } from "@/lib/game-status";
 import {
   filterTeamGames,
   formatTeamGameScoreLine,
@@ -121,8 +125,10 @@ function GameList({
       {games.length === 0 ? (
         <p className="mt-1 text-[14px] text-muted-foreground">{empty}</p>
       ) : (
+        <LiveScoreboardScope games={games} season={season}>
+          {(liveGames) => (
         <ul className="mt-1 divide-y divide-border">
-          {games.map((g) => {
+          {liveGames.map((g) => {
             const line = formatTeamGameScoreLine(g, team, brand);
             return (
               <li key={g.id}>
@@ -137,15 +143,17 @@ function GameList({
                     </span>
                   </span>
                   <span className="tabular-nums text-muted-foreground">
-                    {upcoming
+                    {upcoming && !isLiveLikeStatus(g.status)
                       ? g.statusDetail ?? "Scheduled"
-                      : `${line.teamScore}-${line.oppScore} · Game Lab →`}
+                      : `${line.teamScore}-${line.oppScore}${upcoming ? "" : " · Game Lab →"}`}
                   </span>
                 </TransitionLink>
               </li>
             );
           })}
         </ul>
+          )}
+        </LiveScoreboardScope>
       )}
     </div>
   );

@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 
 import type { PlayByPlayEvent } from "@/data/types";
+import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
+import { resolveRefreshIntervalMs } from "@/lib/live-refresh-policy";
 import { cn } from "@/lib/utils";
 
 function periodLabel(period: number): string {
@@ -49,17 +51,91 @@ function PlayDescription({ event }: { event: PlayByPlayEvent }) {
   );
 }
 
+function useLivePlays(
+  gameId: string | undefined,
+  initial: PlayByPlayEvent[],
+  live: boolean
+): { events: PlayByPlayEvent[]; source: string | null } {
+  const [events, setEvents] = useState(initial);
+  const [source, setSource] = useState<string | null>(null);
+  const eventsRef = useRef(events);
+  eventsRef.current = events;
+
+  useEffect(() => {
+    setEvents(initial);
+  }, [initial]);
+
+  useEffect(() => {
+    if (!live || !gameId) return;
+    let cancelled = false;
+    let timer: ReturnType<typeof setTimeout> | null = null;
+
+    const poll = async () => {
+      const res = await fetch(
+        `/api/games/${encodeURIComponent(gameId)}/play-by-play`,
+        { cache: "no-store" }
+      );
+      if (!res.ok) return;
+      const body = (await res.json()) as {
+        data?: { events?: PlayByPlayEvent[] };
+        source?: string;
+      };
+      const next = body.data?.events;
+      if (!next?.length || cancelled) return;
+      if (next.length >= eventsRef.current.length) {
+        setEvents(next);
+        if (body.source) setSource(body.source);
+      }
+    };
+
+    const schedule = () => {
+      if (cancelled) return;
+      const hidden =
+        typeof document !== "undefined" &&
+        document.visibilityState === "hidden";
+      const interval =
+        resolveRefreshIntervalMs(["in_progress"], {
+          documentHidden: hidden,
+        }) ?? 20_000;
+      timer = setTimeout(async () => {
+        await poll();
+        schedule();
+      }, interval);
+    };
+
+    const boot = setTimeout(() => {
+      void poll().then(schedule);
+    }, 2_000);
+
+    return () => {
+      cancelled = true;
+      clearTimeout(boot);
+      if (timer) clearTimeout(timer);
+    };
+  }, [gameId, live]);
+
+  return { events, source };
+}
+
 export function GamePlayByPlayPanel({
-  events,
+  events: initialEvents,
   awayTricode,
   homeTricode,
   source,
+  gameId,
+  status,
 }: {
   events: PlayByPlayEvent[];
   awayTricode: string;
   homeTricode: string;
   source?: string;
+  gameId?: string;
+  status?: GameStatusKind | string;
 }) {
+  const live = isLiveLikeStatus(status as GameStatusKind | undefined);
+  const polled = useLivePlays(gameId, initialEvents, live);
+  const events = polled.events;
+  const liveSource = polled.source ?? source;
   const periods = useMemo(() => {
     const set = new Set(events.map((e) => e.period));
     return [...set].sort((a, b) => a - b);
@@ -95,7 +171,8 @@ export function GamePlayByPlayPanel({
           </h2>
           <p className="text-sm text-muted-foreground">
             {events.length.toLocaleString()} events
-            {source ? ` · ${source}` : null}
+            {live ? " · live" : null}
+            {liveSource ? ` · ${liveSource}` : null}
           </p>
         </div>
         <div

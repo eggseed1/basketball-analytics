@@ -1,7 +1,11 @@
+"use client";
+
 import { GameMatchupBoard } from "@/components/sports/game-score-card";
+import { useLiveGameRefresh } from "@/components/sports/use-live-scoreboard-refresh";
 import type { Game, GameSummary } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { statusHeadline } from "@/lib/game-status";
+import { needsLivePolling } from "@/lib/live-refresh-policy";
 import { validateGamePresentation } from "@/lib/game-presentation";
 import {
   resolveHistoricalTeamBrand,
@@ -47,6 +51,12 @@ export function GameIdentityShell({
   pendingAnalysis?: boolean;
 }) {
   const validation = validateGamePresentation(game);
+  const summary = toSummary(game);
+  const { game: live } = useLiveGameRefresh(summary, {
+    season: game.season,
+    enabled: needsLivePolling(game.status),
+  });
+  const shown = live ?? summary;
   if (!validation.canRenderScoreHeader) {
     return (
       <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
@@ -107,14 +117,14 @@ export function GameIdentityShell({
               "glass-pill glass-pill-active rounded-md px-2.5 py-1 font-semibold uppercase tracking-wide"
             )}
           >
-            {statusHeadline(game.status)}
+            {statusHeadline(shown.status)}
             {pendingAnalysis ? " · …" : null}
           </span>
         </div>
       </div>
 
       <GameMatchupBoard
-        game={toSummary(game)}
+        game={shown}
         brandPresentation={brandPresentation}
         href={false}
         className="px-4 py-4 sm:px-5 sm:py-5"

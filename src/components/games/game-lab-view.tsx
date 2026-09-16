@@ -240,6 +240,8 @@ export function GameLabView({
           awayTricode={outcome.awayLabel}
           homeTricode={outcome.homeLabel}
           source={pbpSource}
+          gameId={analysis.gameId}
+          status={analysis.status}
         />
       </MatchupWashCard>
     </div>
