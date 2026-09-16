@@ -90,7 +90,11 @@ export function PlayerContextStrip({
 
       {league.length ? (
         <CompList
-          title={`Similar this season · ${active.label}`}
+          title={
+            active.id === "profile"
+              ? "Closest profiles this season"
+              : `Similar this season · ${active.label}`
+          }
           comps={league}
         />
       ) : null}
@@ -106,8 +110,18 @@ export function PlayerContextStrip({
         </p>
       ) : null}
       <p className="text-[14px] text-muted-foreground">
-        Similarity is nearest on the selected metric only — not a multi-metric
-        profile match.{" "}
+        {active.id === "profile" ? (
+          <>
+            Profile distance is the average percentile gap across impact,
+            true shooting, usage, assist rate, and rebound rate. Lower gap is
+            closer. Other chips are still nearest on that one stat.{" "}
+          </>
+        ) : (
+          <>
+            Similarity is nearest on the selected metric only — not a
+            multi-metric profile match.{" "}
+          </>
+        )}
         <Link
           href={compareHref}
           className="font-semibold underline-offset-2 hover:underline"

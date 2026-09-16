@@ -693,3 +693,131 @@ export function findSimilarForMetric(options: {
     historicalComps: nearest(options.historicalRows)(1),
   };
 }
+
+/** One impact scale, then shape. Do not mix WAR1 distance with BPM distance. */
+const PROFILE_IMPACT_AXES = [
+  "r1WinEquivalents",
+  "r1WinEq",
+  "drbl100",
+  "darko",
+  "bpm",
+] as const;
+const PROFILE_SHAPE_AXES = ["ts", "usg", "astPct", "trbPct"] as const;
+const PROFILE_MIN_AXES = 3;
+
+function profileQualified(row: StatCompRow): boolean {
+  if (row.gamesPlayed < 15) return false;
+  const minutes = row.minutes;
+  if (minutes == null || !Number.isFinite(minutes)) return true;
+  return minutes / Math.max(1, row.gamesPlayed) >= 12;
+}
+
+function axisValue(row: StatCompRow, axis: string): number | null {
+  const value = METRIC_PICKERS[axis]?.pick(row);
+  return value != null && Number.isFinite(value) ? value : null;
+}
+
+function impactAxis(row: StatCompRow): (typeof PROFILE_IMPACT_AXES)[number] | null {
+  return PROFILE_IMPACT_AXES.find((axis) => axisValue(row, axis) != null) ?? null;
+}
+
+/**
+ * Closest same-season profiles. Distance is the average percentile gap across
+ * shared axes (one impact scale + shooting, usage, and role). Not a new rating.
+ */
+export function findSimilarProfile(options: {
+  focal: StatCompRow;
+  rows: StatCompRow[];
+  focalIds?: Array<string | null | undefined>;
+  limit?: number;
+}): StatComp[] {
+  const limit = options.limit ?? 4;
+  const focalIds = new Set(
+    [options.focal.playerId, ...(options.focalIds ?? [])]
+      .map((id) => String(id ?? "").trim())
+      .filter(Boolean)
+  );
+  const impact = impactAxis(options.focal);
+  const axes = [
+    ...(impact ? [impact] : []),
+    ...PROFILE_SHAPE_AXES,
+  ].filter((axis) => axisValue(options.focal, axis) != null);
+  if (axes.length < PROFILE_MIN_AXES) return [];
+
+  const seasonRows = new Map<string, StatCompRow[]>();
+  for (const row of options.rows) {
+    const key = `${row.playerId}|${row.season}`;
+    const list = seasonRows.get(key);
+    if (list) list.push(row);
+    else seasonRows.set(key, [row]);
+  }
+
+  const byPlayer = new Map<string, StatCompRow & { teamId?: string }>();
+  for (const row of options.rows) {
+    if (!profileQualified(row) || focalIds.has(row.playerId)) continue;
+    const prev = byPlayer.get(row.playerId);
+    if (!prev || row.gamesPlayed > prev.gamesPlayed) {
+      byPlayer.set(row.playerId, row);
+    }
+  }
+  const pool = [...byPlayer.values()];
+  if (pool.length < 8) return [];
+
+  const percentiles = new Map<string, Map<string, number>>();
+  for (const axis of axes) {
+    const valued = [options.focal, ...pool].filter(
+      (row) => axisValue(row, axis) != null
+    );
+    const values = valued.map((row) => axisValue(row, axis)!);
+    const byId = new Map<string, number>();
+    for (const row of valued) {
+      byId.set(
+        focalIds.has(row.playerId) ? "__focal__" : row.playerId,
+        percentileAmong(axisValue(row, axis)!, values)
+      );
+    }
+    percentiles.set(axis, byId);
+  }
+
+  const ranked = pool
+    .map((row) => {
+      const gaps: number[] = [];
+      for (const axis of axes) {
+        const peerPct = percentiles.get(axis)?.get(row.playerId);
+        const focalPct = percentiles.get(axis)?.get("__focal__");
+        if (peerPct == null || focalPct == null) continue;
+        gaps.push(Math.abs(peerPct - focalPct));
+      }
+      if (gaps.length < PROFILE_MIN_AXES) return null;
+      const gap = gaps.reduce((sum, n) => sum + n, 0) / gaps.length;
+      return { row, gap };
+    })
+    .filter((hit): hit is { row: StatCompRow; gap: number } => hit != null)
+    .sort(
+      (a, b) =>
+        a.gap - b.gap || a.row.playerName.localeCompare(b.row.playerName)
+    )
+    .slice(0, limit);
+
+  return ranked.map(({ row, gap }) => {
+    const stints = cardStintsForSeason(
+      (seasonRows.get(`${row.playerId}|${row.season}`) ??
+        []) as PlayerSeason[],
+      row.season
+    );
+    const last = stints.at(-1);
+    const teamId = (row as { teamId?: string }).teamId;
+    return {
+      playerId: row.playerId,
+      playerName: row.playerName,
+      season: row.season,
+      teamName: last?.teamLabel ?? teamId,
+      teamKey: last?.teamKey ?? teamId,
+      stints: stints.length > 0 ? stints : undefined,
+      value: gap,
+      display: `${formatNumber(gap, 0)} gap`,
+      delta: gap,
+      percentile: 100 - gap,
+    };
+  });
+}

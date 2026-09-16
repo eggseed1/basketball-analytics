@@ -50,7 +50,7 @@ import {
   isMultiTeamSeasonRow,
   multiTeamDisplayLabel,
 } from "@/lib/player-team-context";
-import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import { shiftCanonicalSeason, findSimilarProfile } from "@/lib/player-stat-comps";
 import { cn } from "@/lib/utils";
 import type { ThemeMode } from "@/themes/era-theme";
 import { isDrblSeason } from "@/data/drbl/season-registry";
@@ -194,6 +194,23 @@ export async function PlayerCoreIsland({
       historicalComps: m.historicalComps,
     };
   }).filter((m): m is NonNullable<typeof m> => Boolean(m));
+
+  const profileComps = seasonStats
+    ? findSimilarProfile({
+        focal: seasonStats,
+        rows: peers,
+        focalIds: [playerId, espnId, nbaId],
+        limit: 4,
+      })
+    : [];
+  if (profileComps.length) {
+    similarModes.unshift({
+      id: "profile",
+      label: "Profile",
+      leagueComps: profileComps,
+      historicalComps: [],
+    });
+  }
 
   // Fall back to headline when preferred impact modes lack comps.
   if (
@@ -941,7 +958,7 @@ export async function PlayerCoreIsland({
         <div>
           <h2 className="text-[17px] font-bold tracking-tight">Context</h2>
           <p className="text-[13px] text-muted-foreground">
-            Similar players by metric · then full compare.
+            Similar players by profile, then by one metric.
           </p>
         </div>
         <TeamWashCard teamKey={teamKey} className="flex flex-col gap-3 p-4 sm:p-5">
@@ -949,7 +966,9 @@ export async function PlayerCoreIsland({
             <PlayerContextStrip
               key={`${playerId}-${season}`}
               modes={similarModes}
-              defaultModeId={headlineMetric?.id}
+              defaultModeId={
+                profileComps.length ? "profile" : headlineMetric?.id
+              }
               compareHref={`/compare?a=${playerId}&season=${season}`}
             />
           ) : (
