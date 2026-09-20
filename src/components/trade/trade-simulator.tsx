@@ -1,11 +1,23 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+  type CSSProperties,
+} from "react";
 import Link from "next/link";
+import { ArrowLeftRight, Check, Copy, RotateCcw, X } from "lucide-react";
 
+import { MatchupWashCard } from "@/components/brand/team-wash-card";
+import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { formatNumber, formatPct } from "@/lib/format";
 import { formatUsdCompact } from "@/lib/format-money";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   summarizePlayerTrade,
   type TradeSimPlayer,
@@ -26,6 +38,13 @@ function roomLabel(value: number | null): string {
   if (value > 0) return `${abs} under`;
   if (value < 0) return `${abs} over`;
   return "at line";
+}
+
+function deltaClass(value: number | null | undefined): string {
+  if (value == null || !Number.isFinite(value) || value === 0) {
+    return "text-muted-foreground";
+  }
+  return value > 0 ? "text-delta-up" : "text-delta-down";
 }
 
 function packageBits(shape: TradeSketchSide["sentPackage"]): string {
@@ -57,34 +76,117 @@ function PlayerLink({
   );
 }
 
-function SideSummary({
-  abbr,
+function ChipPlayer({
+  player,
+  teamKey,
+  onRemove,
+}: {
+  player: TradeSimPlayer;
+  teamKey: string;
+  onRemove: () => void;
+}) {
+  return (
+    <div className="flex min-w-0 items-center gap-2 rounded-lg border border-border/70 bg-background/70 px-2 py-1.5">
+      <PlayerHeadshot
+        nbaId={player.id}
+        name={player.name}
+        teamKey={teamKey}
+        size="xs"
+      />
+      <div className="min-w-0 flex-1">
+        <p className="truncate text-[12px] font-semibold leading-tight">
+          {player.name}
+        </p>
+        <p className="truncate text-[10px] tabular-nums text-muted-foreground">
+          {formatUsdCompact(player.salary)}
+          {player.drbl100 != null ? ` · ${signed(player.drbl100)}` : ""}
+        </p>
+      </div>
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={`Remove ${player.name}`}
+        className="shrink-0 rounded p-0.5 text-muted-foreground transition-colors duration-[var(--duration-fast)] hover:bg-foreground/10 hover:text-foreground"
+      >
+        <X className="size-3.5" />
+      </button>
+    </div>
+  );
+}
+
+function ImpactStat({
+  label,
+  value,
+  digits = 2,
+}: {
+  label: string;
+  value: number | null;
+  digits?: number;
+}) {
+  return (
+    <div className="min-w-0 rounded-md bg-background/55 px-2.5 py-2 text-center">
+      <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        {label}
+      </p>
+      <p
+        className={cn(
+          "mt-0.5 text-[18px] font-bold tabular-nums leading-none",
+          deltaClass(value)
+        )}
+      >
+        {value == null ? "—" : signed(value, digits)}
+      </p>
+    </div>
+  );
+}
+
+function SideImpact({
+  team,
   side,
 }: {
-  abbr: string;
+  team: TradeSimTeam;
   side: TradeSketchSide;
 }) {
   const room = side.roomAfter ?? side.roomBefore;
+  const brand = resolveTeamBrand(team.abbr);
   return (
-    <div className="min-w-0 rounded-md border border-border/70 p-3">
-      <div className="flex items-baseline justify-between gap-2">
-        <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          {abbr}
-        </p>
-        <p className="truncate text-[12px] tabular-nums text-muted-foreground">
-          roster {side.rosterCountBefore}→{side.rosterCountAfter}
-        </p>
+    <div
+      className="min-w-0 rounded-lg border border-border/60 bg-background/40 p-3"
+      style={
+        brand
+          ? ({
+              borderColor: `color-mix(in oklab, ${brand.primary} 35%, transparent)`,
+            } as CSSProperties)
+          : undefined
+      }
+    >
+      <div className="flex min-w-0 items-center gap-2">
+        <TeamLogo teamKey={team.abbr} size="sm" />
+        <div className="min-w-0 flex-1">
+          <p className="truncate text-[14px] font-bold">{team.abbr}</p>
+          <p className="truncate text-[11px] text-muted-foreground">
+            {formatUsdCompact(side.sentSalary)} out ·{" "}
+            {formatUsdCompact(side.receivedSalary)} in
+          </p>
+        </div>
+        <Badge
+          variant={
+            side.drblNet != null && side.drblNet > 0.05
+              ? "positive"
+              : side.drblNet != null && side.drblNet < -0.05
+                ? "negative"
+                : "neutral"
+          }
+          size="sm"
+        >
+          {side.drblNet == null ? "DRBL —" : `DRBL ${signed(side.drblNet)}`}
+        </Badge>
       </div>
-      <p className="mt-1 text-[14px] font-semibold tabular-nums">
-        {formatUsdCompact(side.sentSalary)} out ·{" "}
-        {formatUsdCompact(side.receivedSalary)} in
-      </p>
-      <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
-        After {formatUsdCompact(side.knownCommitmentsAfter)}
-        {side.knownLineAfter ? ` · ${side.knownLineAfter}` : ""}
-        {" · was "}
-        {side.knownLineBefore}
-      </p>
+      <div className="mt-3 grid grid-cols-3 gap-1.5">
+        <ImpactStat label="DRBL" value={side.drblNet} />
+        <ImpactStat label="WAR1" value={side.war1Net} />
+        <ImpactStat label="BPM" value={side.bpmNet} />
+      </div>
       <dl className="mt-2 grid grid-cols-2 gap-1.5 text-[11px]">
         {(
           [
@@ -103,16 +205,15 @@ function SideSummary({
           </div>
         ))}
       </dl>
-      <p className="mt-2 text-[12px] tabular-nums text-muted-foreground">
-        DRBL {side.drblNet == null ? "—" : signed(side.drblNet)} · WAR1{" "}
-        {side.war1Net == null ? "—" : signed(side.war1Net)} · BPM{" "}
-        {side.bpmNet == null ? "—" : signed(side.bpmNet)}
+      <p className="mt-2 text-[11px] leading-snug text-muted-foreground">
+        After {formatUsdCompact(side.knownCommitmentsAfter)}
+        {side.knownLineAfter ? ` · ${side.knownLineAfter}` : ""}
+        {" · roster "}
+        {side.rosterCountBefore}→{side.rosterCountAfter}
       </p>
       <p className="mt-1 text-[11px] leading-snug text-muted-foreground">
-        Out {packageBits(side.sentPackage)}
-      </p>
-      <p className="text-[11px] leading-snug text-muted-foreground">
-        In {packageBits(side.receivedPackage)}
+        Out {packageBits(side.sentPackage)} · In{" "}
+        {packageBits(side.receivedPackage)}
       </p>
     </div>
   );
@@ -120,9 +221,11 @@ function SideSummary({
 
 function PackageList({
   title,
+  teamKey,
   players,
 }: {
   title: string;
+  teamKey: string;
   players: TradeSimPlayer[];
 }) {
   if (!players.length) return null;
@@ -135,8 +238,14 @@ function PackageList({
         {players.map((player) => (
           <li
             key={player.id}
-            className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 gap-y-1 rounded-md border border-border/60 px-3 py-2"
+            className="grid grid-cols-[auto_minmax(0,1fr)_auto] gap-x-2.5 gap-y-1 rounded-md border border-border/60 px-2.5 py-2"
           >
+            <PlayerHeadshot
+              nbaId={player.id}
+              name={player.name}
+              teamKey={teamKey}
+              size="sm"
+            />
             <div className="min-w-0">
               <PlayerLink player={player} className="text-[13px]" />
               <p className="mt-0.5 truncate text-[11px] text-muted-foreground">
@@ -157,7 +266,7 @@ function PackageList({
             <p className="text-right text-[13px] font-semibold tabular-nums">
               {formatUsdCompact(player.salary)}
             </p>
-            <p className="col-span-2 text-[11px] leading-snug text-muted-foreground">
+            <p className="col-span-3 text-[11px] leading-snug text-muted-foreground">
               {[
                 player.drbl100 == null
                   ? null
@@ -169,12 +278,6 @@ function PackageList({
                 player.bpm == null ? null : `BPM ${signed(player.bpm)}`,
                 player.ts == null ? null : `TS ${formatPct(player.ts)}`,
                 player.usg == null ? null : `USG ${formatPct(player.usg)}`,
-                player.assists == null
-                  ? null
-                  : `${formatNumber(player.assists, 1)} apg`,
-                player.rebounds == null
-                  ? null
-                  : `${formatNumber(player.rebounds, 1)} rpg`,
               ]
                 .filter(Boolean)
                 .join(" · ")}
@@ -197,6 +300,7 @@ function PlayerColumn({
 }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"salary" | "drbl" | "name">("salary");
+  const brand = resolveTeamBrand(team.abbr);
   const needle = query.trim().toLowerCase();
   const players = useMemo(() => {
     const filtered = needle
@@ -216,25 +320,40 @@ function PlayerColumn({
   }, [needle, sort, team.players]);
 
   return (
-    <div className="sports-card flex min-w-0 flex-col gap-3 p-3 sm:p-4">
-      <div className="flex min-w-0 items-center gap-2">
-        <TeamLogo teamKey={team.abbr} size="sm" />
-        <div className="min-w-0">
+    <div
+      className="sports-card flex min-w-0 flex-col gap-3 overflow-hidden p-0"
+      style={
+        brand
+          ? ({
+              boxShadow: `inset 3px 0 0 0 ${brand.primary}`,
+            } as CSSProperties)
+          : undefined
+      }
+    >
+      <div className="flex min-w-0 items-center gap-2.5 px-3 pt-3 sm:px-4 sm:pt-4">
+        <TeamLogo teamKey={team.abbr} size="md" />
+        <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold">{team.name}</p>
           <p className="truncate text-[11px] text-muted-foreground">
-            {formatUsdCompact(team.knownCommitments)} known · {team.players.length}{" "}
-            on book
+            {formatUsdCompact(team.knownCommitments)} known ·{" "}
+            {selected.length ? (
+              <span className="font-semibold text-foreground">
+                {selected.length} in deal
+              </span>
+            ) : (
+              `${team.players.length} on book`
+            )}
             {team.playersWithoutSalary
               ? ` · ${team.playersWithoutSalary} unmatched`
               : ""}
           </p>
         </div>
       </div>
-      <div className="flex gap-2">
+      <div className="flex gap-2 px-3 sm:px-4">
         <input
           value={query}
           onChange={(event) => setQuery(event.target.value)}
-          placeholder="Filter"
+          placeholder="Find a player"
           className="h-9 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-[14px] outline-none"
         />
         <select
@@ -250,24 +369,38 @@ function PlayerColumn({
           <option value="name">Name</option>
         </select>
       </div>
-      <ul className="flex max-h-[22rem] flex-col gap-0.5 overflow-y-auto overscroll-contain">
+      <ul className="flex max-h-[26rem] flex-col gap-0.5 overflow-y-auto overscroll-contain px-2 pb-3 sm:px-3 sm:pb-4">
         {players.map((player) => {
           const on = selected.includes(player.id);
           return (
             <li key={player.id}>
-              <label
+              <button
+                type="button"
+                onClick={() => onToggle(player.id)}
+                aria-pressed={on}
+                aria-label={
+                  on ? `Remove ${player.name} from deal` : `Add ${player.name}`
+                }
                 className={cn(
-                  "grid cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-2 rounded-md px-2 py-1.5",
-                  on ? "bg-foreground/10" : "hover:bg-foreground/5"
+                  "grid w-full cursor-pointer grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-2.5 rounded-lg px-2 py-2 text-left transition-colors duration-[var(--duration-fast)]",
+                  on
+                    ? "bg-foreground/10 ring-1 ring-foreground/20"
+                    : "hover:bg-foreground/5"
                 )}
               >
-                <input
-                  type="checkbox"
-                  checked={on}
-                  onChange={() => onToggle(player.id)}
-                  aria-label={`Send ${player.name}`}
-                  className="mt-1"
-                />
+                <div className="relative">
+                  <PlayerHeadshot
+                    nbaId={player.id}
+                    name={player.name}
+                    teamKey={team.abbr}
+                    size="sm"
+                  />
+                  {on ? (
+                    <span className="absolute -right-1 -top-1 flex size-4 items-center justify-center rounded-full bg-foreground text-background">
+                      <Check className="size-2.5" strokeWidth={3} />
+                    </span>
+                  ) : null}
+                </div>
                 <span className="min-w-0">
                   <span className="block truncate text-[13px] font-semibold">
                     {player.name}
@@ -289,15 +422,46 @@ function PlayerColumn({
                       .join(" · ")}
                   </span>
                 </span>
-                <span className="shrink-0 pt-0.5 text-[12px] tabular-nums text-muted-foreground">
-                  {formatUsdCompact(player.salary)}
+                <span className="shrink-0 text-right">
+                  <span className="block text-[12px] font-semibold tabular-nums">
+                    {formatUsdCompact(player.salary)}
+                  </span>
+                  {on ? (
+                    <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-wide text-muted-foreground">
+                      Sending
+                    </span>
+                  ) : null}
                 </span>
-              </label>
+              </button>
             </li>
           );
         })}
       </ul>
     </div>
+  );
+}
+
+function CopyLinkButton() {
+  const [copied, setCopied] = useState(false);
+  const copy = useCallback(async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1600);
+    } catch {
+      setCopied(false);
+    }
+  }, []);
+
+  return (
+    <Button type="button" variant="outline" size="sm" onClick={copy}>
+      {copied ? (
+        <Check data-icon="inline-start" />
+      ) : (
+        <Copy data-icon="inline-start" />
+      )}
+      {copied ? "Copied" : "Copy link"}
+    </Button>
   );
 }
 
@@ -362,50 +526,207 @@ export function TradeSimulator({
     );
   };
 
+  const swapTeams = () => {
+    setTeamAId(teamB.id);
+    setTeamBId(teamA.id);
+    setSendA(sendB);
+    setSendB(sendA);
+  };
+
+  const clearDeal = () => {
+    setSendA([]);
+    setSendB([]);
+  };
+
+  const playersA = teamA.players.filter((player) => sendA.includes(player.id));
+  const playersB = teamB.players.filter((player) => sendB.includes(player.id));
   const hasPackage = Boolean(sketch.sentCountA || sketch.sentCountB);
+
+  const aWins =
+    sketch.sideA.drblNet != null &&
+    sketch.sideB.drblNet != null &&
+    sketch.sideA.drblNet > sketch.sideB.drblNet + 0.05;
+  const bWins =
+    sketch.sideA.drblNet != null &&
+    sketch.sideB.drblNet != null &&
+    sketch.sideB.drblNet > sketch.sideA.drblNet + 0.05;
 
   return (
     <div className="flex min-w-0 flex-col gap-4">
-      <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-        <label className="flex min-w-0 flex-col gap-1 text-[13px] font-semibold">
-          Team A
-          <select
-            className="h-10 w-full min-w-0 rounded-md border border-border bg-transparent px-3 text-[15px]"
-            value={teamA.id}
-            onChange={(event) => {
-              setTeamAId(event.target.value);
-              setSendA([]);
-            }}
-          >
-            {teams
-              .filter((team) => team.id !== teamB.id)
-              .map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.abbr} · {team.name}
-                </option>
-              ))}
-          </select>
-        </label>
-        <label className="flex min-w-0 flex-col gap-1 text-[13px] font-semibold">
-          Team B
-          <select
-            className="h-10 w-full min-w-0 rounded-md border border-border bg-transparent px-3 text-[15px]"
-            value={teamB.id}
-            onChange={(event) => {
-              setTeamBId(event.target.value);
-              setSendB([]);
-            }}
-          >
-            {teams
-              .filter((team) => team.id !== teamA.id)
-              .map((team) => (
-                <option key={team.id} value={team.id}>
-                  {team.abbr} · {team.name}
-                </option>
-              ))}
-          </select>
-        </label>
-      </div>
+      <MatchupWashCard
+        awayTeamKey={teamA.abbr}
+        homeTeamKey={teamB.abbr}
+        intensity="subtle"
+        className="min-w-0 p-3 sm:p-4"
+      >
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+            <div className="flex min-w-0 items-center gap-2">
+              <TeamLogo teamKey={teamA.abbr} size="md" />
+              <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                vs
+              </span>
+              <TeamLogo teamKey={teamB.abbr} size="md" />
+              <p className="hidden min-w-0 truncate text-[13px] font-semibold sm:block">
+                {teamA.abbr} ↔ {teamB.abbr}
+              </p>
+            </div>
+            <div className="flex flex-wrap items-center gap-1.5">
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                onClick={swapTeams}
+                aria-label="Swap sides"
+              >
+                <ArrowLeftRight data-icon="inline-start" />
+                Flip
+              </Button>
+              {hasPackage ? (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearDeal}
+                >
+                  <RotateCcw data-icon="inline-start" />
+                  Clear
+                </Button>
+              ) : null}
+              <CopyLinkButton />
+            </div>
+          </div>
+
+          <div className="grid min-w-0 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
+            <label className="flex min-w-0 flex-col gap-1 text-[12px] font-semibold">
+              Team A
+              <select
+                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-3 text-[15px]"
+                value={teamA.id}
+                onChange={(event) => {
+                  setTeamAId(event.target.value);
+                  setSendA([]);
+                }}
+              >
+                {teams
+                  .filter((team) => team.id !== teamB.id)
+                  .map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.abbr} · {team.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+            <div className="hidden h-10 items-center justify-center sm:flex">
+              <ArrowLeftRight className="size-4 text-muted-foreground" />
+            </div>
+            <label className="flex min-w-0 flex-col gap-1 text-[12px] font-semibold">
+              Team B
+              <select
+                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-3 text-[15px]"
+                value={teamB.id}
+                onChange={(event) => {
+                  setTeamBId(event.target.value);
+                  setSendB([]);
+                }}
+              >
+                {teams
+                  .filter((team) => team.id !== teamA.id)
+                  .map((team) => (
+                    <option key={team.id} value={team.id}>
+                      {team.abbr} · {team.name}
+                    </option>
+                  ))}
+              </select>
+            </label>
+          </div>
+        </div>
+      </MatchupWashCard>
+
+      <section className="sports-card min-w-0 p-3 sm:p-4">
+        {!hasPackage ? (
+          <div className="flex flex-col items-center gap-2 py-6 text-center">
+            <p className="text-[15px] font-bold tracking-tight">
+              Tap players to build the deal
+            </p>
+            <p className="max-w-md text-[13px] leading-snug text-muted-foreground">
+              Click a name to send them. The live tray and DRBL impact board
+              update as you go — same idea as ESPN&apos;s machine, scored with
+              our model.
+            </p>
+          </div>
+        ) : (
+          <div className="flex min-w-0 flex-col gap-3">
+            <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
+              <div>
+                <h2 className="text-[15px] font-bold tracking-tight">
+                  The deal
+                </h2>
+                <p className="text-[11px] text-muted-foreground">
+                  {playersA.length + playersB.length} player
+                  {playersA.length + playersB.length === 1 ? "" : "s"} moving
+                </p>
+              </div>
+              {aWins || bWins ? (
+                <Badge variant={aWins || bWins ? "elite" : "neutral"} size="sm">
+                  {aWins
+                    ? `${teamA.abbr} edges DRBL`
+                    : `${teamB.abbr} edges DRBL`}
+                </Badge>
+              ) : sketch.completeImpact ? (
+                <Badge variant="neutral" size="sm">
+                  Even on DRBL
+                </Badge>
+              ) : null}
+            </div>
+            <div className="grid min-w-0 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  {teamA.abbr} sends
+                </p>
+                {playersA.length ? (
+                  playersA.map((player) => (
+                    <ChipPlayer
+                      key={player.id}
+                      player={player}
+                      teamKey={teamA.abbr}
+                      onRemove={() => toggle(player.id, sendA, setSendA)}
+                    />
+                  ))
+                ) : (
+                  <p className="rounded-lg border border-dashed border-border/70 px-3 py-4 text-center text-[12px] text-muted-foreground">
+                    Nobody yet
+                  </p>
+                )}
+              </div>
+              <div className="flex items-center justify-center py-1 sm:pt-7">
+                <div className="flex size-9 items-center justify-center rounded-full border border-border bg-background">
+                  <ArrowLeftRight className="size-4" />
+                </div>
+              </div>
+              <div className="flex min-w-0 flex-col gap-1.5">
+                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  {teamB.abbr} sends
+                </p>
+                {playersB.length ? (
+                  playersB.map((player) => (
+                    <ChipPlayer
+                      key={player.id}
+                      player={player}
+                      teamKey={teamB.abbr}
+                      onRemove={() => toggle(player.id, sendB, setSendB)}
+                    />
+                  ))
+                ) : (
+                  <p className="rounded-lg border border-dashed border-border/70 px-3 py-4 text-center text-[12px] text-muted-foreground">
+                    Nobody yet
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
+      </section>
 
       <div className="grid min-w-0 gap-3 lg:grid-cols-2">
         <PlayerColumn
@@ -420,41 +741,34 @@ export function TradeSimulator({
         />
       </div>
 
-      <section className="sports-card flex min-w-0 flex-col gap-3 p-3 sm:p-4">
-        <div>
-          <h2 className="text-[16px] font-bold tracking-tight">Swap sketch</h2>
-          <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
-            {board.season} known salaries and model rates only. Not a legality
-            check. Picks, exceptions, holds, and dead money are omitted.
-          </p>
-        </div>
-        {!hasPackage ? (
-          <p className="text-[13px] text-muted-foreground">
-            Check players to send. The URL keeps the package.
-          </p>
-        ) : (
-          <div className="flex min-w-0 flex-col gap-3">
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <SideSummary abbr={teamA.abbr} side={sketch.sideA} />
-              <SideSummary abbr={teamB.abbr} side={sketch.sideB} />
-            </div>
-            <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-              <PackageList
-                title={`${teamA.abbr} sends`}
-                players={teamA.players.filter((player) =>
-                  sendA.includes(player.id)
-                )}
-              />
-              <PackageList
-                title={`${teamB.abbr} sends`}
-                players={teamB.players.filter((player) =>
-                  sendB.includes(player.id)
-                )}
-              />
-            </div>
+      {hasPackage ? (
+        <section className="sports-card flex min-w-0 flex-col gap-3 p-3 sm:p-4">
+          <div>
+            <h2 className="text-[16px] font-bold tracking-tight">
+              Impact board
+            </h2>
+            <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
+              Model nets and room to published {board.season} lines — not a
+              legality check. Picks, exceptions, holds, and dead money are
+              omitted.
+            </p>
           </div>
-        )}
-        {hasPackage ? (
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+            <SideImpact team={teamA} side={sketch.sideA} />
+            <SideImpact team={teamB} side={sketch.sideB} />
+          </div>
+          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+            <PackageList
+              title={`${teamA.abbr} package`}
+              teamKey={teamA.abbr}
+              players={playersA}
+            />
+            <PackageList
+              title={`${teamB.abbr} package`}
+              teamKey={teamB.abbr}
+              players={playersB}
+            />
+          </div>
           <ul className="flex flex-col gap-1 text-[12px] leading-snug text-muted-foreground">
             {!sketch.completeSalary ? (
               <li>
@@ -489,8 +803,8 @@ export function TradeSimulator({
               ). Source: {board.cap.source}.
             </li>
           </ul>
-        ) : null}
-      </section>
+        </section>
+      ) : null}
     </div>
   );
 }
