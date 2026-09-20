@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Tap a player for salary-matching package ideas (Expanded / Standard / Room / apron bands), then score the deal on DRBL. Known salaries only — not a legality ruling."
+        subtitle="Current rosters and payroll, scored with the last completed season’s DRBL / rates. Salary-match sketch only — not a legality ruling."
       />
       {board ? (
         <TradeSimulator

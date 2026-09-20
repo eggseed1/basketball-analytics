@@ -1001,9 +1001,14 @@ export function TradeSimulator({
               Impact board
             </h2>
             <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
-              Model nets and salary-match sketch vs published {board.season}{" "}
-              lines — not a legality check. Picks, exceptions, holds, and dead
-              money are omitted.
+              Roster and payroll are {board.season}; DRBL / WAR1 / BPM and box
+              rates use {board.statsSeason}
+              {board.statsSeason !== board.season
+                ? " (last completed season with model rows)"
+                : ""}
+              . Salary-match sketch vs published {board.season} lines — not a
+              legality check. Picks, exceptions, holds, and dead money are
+              omitted.
             </p>
           </div>
           {salaryFit ? (

@@ -7,14 +7,21 @@ import {
 } from "@/data/runtime/current-roster-snapshot";
 import { listRuntimeFrontOfficeFranchiseIds } from "@/data/runtime/front-office-snapshot";
 import { loadTeamFrontOfficeSlice } from "@/data/front-office/load-team-front-office";
-import { getCanonicalTeamById, resolveCanonicalTeam } from "@/data/identity/team-map";
+import {
+  getCanonicalTeamById,
+  resolveCanonicalTeam,
+} from "@/data/identity/team-map";
 import type { LeagueCapSeason } from "@/data/types/front-office";
 import type { PlayerSeason } from "@/data/types";
+import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { normalizePlayerName } from "@/lib/player-name";
 import type { TradeSimPlayer, TradeSimTeam } from "@/lib/trade-simulator";
 
 export type TradeSimulatorBoard = {
+  /** Roster / payroll / cap season (may be preseason with no box score yet). */
   season: string;
+  /** Last season with DRBL / peer board rows used for impact + rates. */
+  statsSeason: string;
   cap: Pick<
     LeagueCapSeason,
     | "salaryCap"
@@ -38,9 +45,32 @@ function brefTeam(abbr: string): string {
   return BREF_TEAM[key] ?? key;
 }
 
+/**
+ * Prefer the roster season when it has impact data; otherwise walk back.
+ * Keeps current-team membership while scoring deals on completed seasons.
+ */
+export function resolveTradeStatsSeason(rosterSeason: string): string {
+  const candidates = [
+    rosterSeason,
+    shiftCanonicalSeason(rosterSeason, -1),
+    shiftCanonicalSeason(rosterSeason, -2),
+  ];
+  for (const season of candidates) {
+    const drbl = getBundledDrblSeason(season);
+    if (drbl.some((row) => row.drbl100 != null && Number.isFinite(row.drbl100))) {
+      return season;
+    }
+    if (getBundledBrefPeerBoard(season).length >= 100) {
+      return season;
+    }
+  }
+  return shiftCanonicalSeason(rosterSeason, -1);
+}
+
 function profileFromBoard(
   board: PlayerSeason[],
   byEspn: Map<string, PlayerSeason>,
+  byName: Map<string, PlayerSeason>,
   espnId: string | null,
   name: string,
   teamAbbr: string
@@ -51,13 +81,14 @@ function profileFromBoard(
   }
   const want = normalizePlayerName(name);
   const team = brefTeam(teamAbbr);
-  return (
-    board.find(
-      (row) =>
-        normalizePlayerName(row.playerName) === want &&
-        (row.teamAbbreviation === team || row.teamAbbreviation === teamAbbr)
-    ) ?? null
+  const sameTeam = board.find(
+    (row) =>
+      normalizePlayerName(row.playerName) === want &&
+      (row.teamAbbreviation === team || row.teamAbbreviation === teamAbbr)
   );
+  if (sameTeam) return sameTeam;
+  // Offseason movers: prior-season board still has the old team abbr.
+  return byName.get(want) ?? null;
 }
 
 function rate(total: number | undefined, games: number | undefined): number | null {
@@ -71,7 +102,6 @@ function salaryForSeason(
 ): number | null {
   const year = years.find((row) => row.season === season);
   if (year?.salary != null) return year.salary;
-  // Prefer any available year (carry-forward rows may still be prior-season labeled).
   for (let i = years.length - 1; i >= 0; i--) {
     if (years[i]?.salary != null) return years[i]!.salary;
   }
@@ -87,7 +117,6 @@ function currentFranchiseIdForPlayer(
     getBundledCurrentRosterEntry(espnId) ??
     getBundledCurrentRosterEntry(playerId);
   if (!entry) return null;
-  // Prefer abbr when present and non-numeric; fall back to teamId (ESPN/canonical).
   const abbr = entry.teamAbbr?.trim() ?? "";
   if (abbr && !/^\d+$/.test(abbr)) {
     const byAbbr = resolveCanonicalTeam(abbr);
@@ -108,21 +137,25 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
   const foSeason = slices[0].team.payroll.season || slices[0].meta.season;
   const rosterMeta = bundledCurrentRosterMeta();
   const season = rosterMeta.season || foSeason;
+  const statsSeason = resolveTradeStatsSeason(season);
+
   const drblByNba = new Map(
-    getBundledDrblSeason(foSeason).map((row) => [row.playerId, row] as const)
+    getBundledDrblSeason(statsSeason).map((row) => [row.playerId, row] as const)
   );
-  // Also try current season DRBL if distinct (often empty preseason).
-  if (season !== foSeason) {
-    for (const row of getBundledDrblSeason(season)) {
-      if (!drblByNba.has(row.playerId)) drblByNba.set(row.playerId, row);
-    }
-  }
-  const board = getBundledBrefPeerBoard(foSeason);
+  const board = getBundledBrefPeerBoard(statsSeason);
   const boardByEspn = new Map(
     board
       .filter((row) => /^\d+$/.test(row.playerId))
       .map((row) => [row.playerId, row] as const)
   );
+  const boardByName = new Map<string, PlayerSeason>();
+  for (const row of board) {
+    const key = normalizePlayerName(row.playerName);
+    const prev = boardByName.get(key);
+    if (!prev || (row.gamesPlayed ?? 0) > (prev.gamesPlayed ?? 0)) {
+      boardByName.set(key, row);
+    }
+  }
   const aliases = getBundledPlayerIdAliasIndex();
   const hasCurrentRoster = (rosterMeta.playerCount ?? 0) > 0;
 
@@ -146,7 +179,6 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
     }
   }
 
-  // Bucket by current roster team when available; else keep FO assignment.
   const byFranchise = new Map<
     string,
     { abbr: string; name: string; players: RawPlayer[] }
@@ -169,7 +201,6 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
     const franchiseId = currentFranchise ?? raw.franchiseId;
     const bucket = byFranchise.get(franchiseId);
     if (!bucket) {
-      // New franchise id from roster — attach under known team meta if possible.
       const team = getCanonicalTeamById(franchiseId);
       if (!team) continue;
       byFranchise.set(franchiseId, {
@@ -195,6 +226,7 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
           const profile = profileFromBoard(
             board,
             boardByEspn,
+            boardByName,
             espn,
             row.playerName,
             bucket.abbr
@@ -258,6 +290,7 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
   const cap = slices[0].cap;
   return {
     season,
+    statsSeason,
     cap: {
       salaryCap: cap.salaryCap,
       luxuryTax: cap.luxuryTax,
