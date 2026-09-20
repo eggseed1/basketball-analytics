@@ -83,13 +83,14 @@ async function main() {
     }
   }
 
-  // Sentiment profiles already track post-trade teamKey — fill gaps / confirm.
+  // Sentiment profiles already track post-trade teamKey — fill gaps only with
+  // letter abbrs. Never write numeric junk as teamAbbr (breaks FO overlays).
   try {
     const sentiment = JSON.parse(await fs.readFile(SENTIMENT, "utf8"));
     const profiles = sentiment?.profiles ?? sentiment?.players ?? [];
     for (const profile of profiles) {
-      const teamKey = String(profile.teamKey ?? "").trim();
-      if (!teamKey) continue;
+      const teamKey = String(profile.teamKey ?? "").trim().toUpperCase();
+      if (!/^[A-Z]{2,3}$/.test(teamKey)) continue;
       const ids = [
         ...(Array.isArray(profile.playerIds) ? profile.playerIds : []),
         profile.playerId,

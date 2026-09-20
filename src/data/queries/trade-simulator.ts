@@ -1,8 +1,13 @@
 import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
 import { getBundledDrblSeason } from "@/data/runtime/drbl-overlay-snapshot";
 import { getBundledBrefPeerBoard } from "@/data/runtime/bref-advanced-snapshot";
+import {
+  getBundledCurrentRosterEntry,
+  bundledCurrentRosterMeta,
+} from "@/data/runtime/current-roster-snapshot";
 import { listRuntimeFrontOfficeFranchiseIds } from "@/data/runtime/front-office-snapshot";
 import { loadTeamFrontOfficeSlice } from "@/data/front-office/load-team-front-office";
+import { getCanonicalTeamById, resolveCanonicalTeam } from "@/data/identity/team-map";
 import type { LeagueCapSeason } from "@/data/types/front-office";
 import type { PlayerSeason } from "@/data/types";
 import { normalizePlayerName } from "@/lib/player-name";
@@ -65,7 +70,33 @@ function salaryForSeason(
   season: string
 ): number | null {
   const year = years.find((row) => row.season === season);
-  return year?.salary ?? null;
+  if (year?.salary != null) return year.salary;
+  // Prefer any available year (carry-forward rows may still be prior-season labeled).
+  for (let i = years.length - 1; i >= 0; i--) {
+    if (years[i]?.salary != null) return years[i]!.salary;
+  }
+  return null;
+}
+
+/** Resolve current franchise id from ESPN current-roster snapshot. */
+function currentFranchiseIdForPlayer(
+  playerId: string,
+  espnId: string | null
+): string | null {
+  const entry =
+    getBundledCurrentRosterEntry(espnId) ??
+    getBundledCurrentRosterEntry(playerId);
+  if (!entry) return null;
+  // Prefer abbr when present and non-numeric; fall back to teamId (ESPN/canonical).
+  const abbr = entry.teamAbbr?.trim() ?? "";
+  if (abbr && !/^\d+$/.test(abbr)) {
+    const byAbbr = resolveCanonicalTeam(abbr);
+    if (byAbbr.status === "resolved") return byAbbr.team.canonicalTeamId;
+  }
+  const byId = resolveCanonicalTeam(entry.teamId);
+  if (byId.status === "resolved") return byId.team.canonicalTeamId;
+  const direct = getCanonicalTeamById(entry.teamId);
+  return direct?.canonicalTeamId ?? null;
 }
 
 export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
@@ -74,78 +105,154 @@ export function loadTradeSimulatorBoard(): TradeSimulatorBoard | null {
     .filter((slice) => slice != null);
   if (!slices.length) return null;
 
-  const season = slices[0].team.payroll.season || slices[0].meta.season;
+  const foSeason = slices[0].team.payroll.season || slices[0].meta.season;
+  const rosterMeta = bundledCurrentRosterMeta();
+  const season = rosterMeta.season || foSeason;
   const drblByNba = new Map(
-    getBundledDrblSeason(season).map((row) => [row.playerId, row] as const)
+    getBundledDrblSeason(foSeason).map((row) => [row.playerId, row] as const)
   );
-  const board = getBundledBrefPeerBoard(season);
+  // Also try current season DRBL if distinct (often empty preseason).
+  if (season !== foSeason) {
+    for (const row of getBundledDrblSeason(season)) {
+      if (!drblByNba.has(row.playerId)) drblByNba.set(row.playerId, row);
+    }
+  }
+  const board = getBundledBrefPeerBoard(foSeason);
   const boardByEspn = new Map(
     board
       .filter((row) => /^\d+$/.test(row.playerId))
       .map((row) => [row.playerId, row] as const)
   );
   const aliases = getBundledPlayerIdAliasIndex();
+  const hasCurrentRoster = (rosterMeta.playerCount ?? 0) > 0;
 
-  const teams: TradeSimTeam[] = slices.map((slice) => {
+  type RawPlayer = {
+    franchiseId: string;
+    foAbbr: string;
+    row: (typeof slices)[number]["team"]["payroll"]["contractRows"][number];
+    salary: number | null;
+  };
+
+  const rawPlayers: RawPlayer[] = [];
+  for (const slice of slices) {
     const payroll = slice.team.payroll;
-    const players: TradeSimPlayer[] = payroll.contractRows
-      .map((row) => {
-        const salary = salaryForSeason(row.years, payroll.season);
-        const drbl = drblByNba.get(row.playerId);
-        const espn =
-          aliases.byNba.get(row.playerId)?.espnPlayerId?.trim() || null;
-        const profile = profileFromBoard(
-          board,
-          boardByEspn,
-          espn,
-          row.playerName,
-          payroll.abbr
-        );
-        const games = profile?.gamesPlayed ?? null;
-        return {
-          id: row.playerId,
-          name: row.playerName,
-          href: espn
-            ? `/players/${espn}`
-            : row.href?.trim() || `/players/${row.playerId}`,
-          salary,
-          drbl100:
-            drbl?.drbl100 != null && Number.isFinite(drbl.drbl100)
-              ? drbl.drbl100
-              : null,
-          drblO:
-            drbl && Number.isFinite(drbl.drblO) ? drbl.drblO : null,
-          drblD:
-            drbl && Number.isFinite(drbl.drblD) ? drbl.drblD : null,
-          war1:
-            drbl?.r1WinEquivalents != null &&
-            Number.isFinite(drbl.r1WinEquivalents)
-              ? drbl.r1WinEquivalents
-              : null,
-          position: profile?.position ? String(profile.position) : null,
-          age: profile?.age ?? null,
-          games,
-          mpg: rate(profile?.minutes, games ?? undefined),
-          points: rate(profile?.points, games ?? undefined),
-          assists: rate(profile?.assists, games ?? undefined),
-          rebounds: rate(profile?.rebounds, games ?? undefined),
-          steals: rate(profile?.steals, games ?? undefined),
-          blocks: rate(profile?.blocks, games ?? undefined),
-          ts: profile?.trueShootingPct ?? null,
-          usg: profile?.usagePct ?? null,
-          bpm: profile?.bpm ?? null,
-        };
-      })
-      .sort((a, b) => (b.salary ?? -1) - (a.salary ?? -1) || a.name.localeCompare(b.name));
-    return {
-      id: slice.team.franchiseId,
+    for (const row of payroll.contractRows) {
+      rawPlayers.push({
+        franchiseId: slice.team.franchiseId,
+        foAbbr: slice.team.abbr,
+        row,
+        salary: salaryForSeason(row.years, payroll.season),
+      });
+    }
+  }
+
+  // Bucket by current roster team when available; else keep FO assignment.
+  const byFranchise = new Map<
+    string,
+    { abbr: string; name: string; players: RawPlayer[] }
+  >();
+  for (const slice of slices) {
+    byFranchise.set(slice.team.franchiseId, {
       abbr: slice.team.abbr,
       name: slice.team.displayName,
-      knownCommitments: payroll.playerSalaryCommitments,
-      playersWithoutSalary: payroll.playersWithoutSalary,
-      players,
-    };
-  });
+      players: [],
+    });
+  }
+
+  for (const raw of rawPlayers) {
+    const espn =
+      aliases.byNba.get(raw.row.playerId)?.espnPlayerId?.trim() ||
+      (/^\d{1,6}$/.test(raw.row.playerId) ? raw.row.playerId : null);
+    const currentFranchise = hasCurrentRoster
+      ? currentFranchiseIdForPlayer(raw.row.playerId, espn)
+      : null;
+    const franchiseId = currentFranchise ?? raw.franchiseId;
+    const bucket = byFranchise.get(franchiseId);
+    if (!bucket) {
+      // New franchise id from roster — attach under known team meta if possible.
+      const team = getCanonicalTeamById(franchiseId);
+      if (!team) continue;
+      byFranchise.set(franchiseId, {
+        abbr: team.abbr,
+        name: team.displayName,
+        players: [raw],
+      });
+      continue;
+    }
+    bucket.players.push(raw);
+  }
+
+  const teams: TradeSimTeam[] = [...byFranchise.entries()].map(
+    ([franchiseId, bucket]) => {
+      const players: TradeSimPlayer[] = bucket.players
+        .map((raw) => {
+          const row = raw.row;
+          const salary = raw.salary;
+          const drbl = drblByNba.get(row.playerId);
+          const espn =
+            aliases.byNba.get(row.playerId)?.espnPlayerId?.trim() ||
+            (/^\d{1,6}$/.test(row.playerId) ? row.playerId : null);
+          const profile = profileFromBoard(
+            board,
+            boardByEspn,
+            espn,
+            row.playerName,
+            bucket.abbr
+          );
+          const games = profile?.gamesPlayed ?? null;
+          return {
+            id: row.playerId,
+            name: row.playerName,
+            href: espn
+              ? `/players/${espn}`
+              : row.href?.trim() || `/players/${row.playerId}`,
+            salary,
+            drbl100:
+              drbl?.drbl100 != null && Number.isFinite(drbl.drbl100)
+                ? drbl.drbl100
+                : null,
+            drblO:
+              drbl && Number.isFinite(drbl.drblO) ? drbl.drblO : null,
+            drblD:
+              drbl && Number.isFinite(drbl.drblD) ? drbl.drblD : null,
+            war1:
+              drbl?.r1WinEquivalents != null &&
+              Number.isFinite(drbl.r1WinEquivalents)
+                ? drbl.r1WinEquivalents
+                : null,
+            position: profile?.position ? String(profile.position) : null,
+            age: profile?.age ?? null,
+            games,
+            mpg: rate(profile?.minutes, games ?? undefined),
+            points: rate(profile?.points, games ?? undefined),
+            assists: rate(profile?.assists, games ?? undefined),
+            rebounds: rate(profile?.rebounds, games ?? undefined),
+            steals: rate(profile?.steals, games ?? undefined),
+            blocks: rate(profile?.blocks, games ?? undefined),
+            ts: profile?.trueShootingPct ?? null,
+            usg: profile?.usagePct ?? null,
+            bpm: profile?.bpm ?? null,
+          };
+        })
+        .sort(
+          (a, b) =>
+            (b.salary ?? -1) - (a.salary ?? -1) || a.name.localeCompare(b.name)
+        );
+      const knownCommitments = players.reduce(
+        (sum, player) => sum + (player.salary ?? 0),
+        0
+      );
+      return {
+        id: franchiseId,
+        abbr: bucket.abbr,
+        name: bucket.name,
+        knownCommitments,
+        playersWithoutSalary: players.filter((player) => player.salary == null)
+          .length,
+        players,
+      };
+    }
+  );
 
   teams.sort((a, b) => a.abbr.localeCompare(b.abbr));
   const cap = slices[0].cap;
