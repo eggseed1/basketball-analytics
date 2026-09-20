@@ -1,13 +1,14 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
-import { formatNumber } from "@/lib/format";
+import { formatNumber, formatPct } from "@/lib/format";
 import { formatUsdCompact, formatUsdDollars } from "@/lib/format-money";
 import {
   summarizePlayerTrade,
+  type TradeSimPlayer,
   type TradeSimTeam,
   type TradeSketchSide,
 } from "@/lib/trade-simulator";
@@ -36,10 +37,117 @@ function SideSummary({
       </p>
       <p className="text-[13px] text-muted-foreground">
         Known commitments after: {formatUsdCompact(side.knownCommitmentsAfter)}
+        {side.knownLineAfter ? ` · ${side.knownLineAfter}` : ""}
+      </p>
+      <p className="text-[13px] text-muted-foreground">
+        Before this swap, known commitments sit {side.knownLineBefore}.
       </p>
       <p className="text-[13px] text-muted-foreground">
         DRBL/100 net: {side.drblNet == null ? "—" : signedDrbl(side.drblNet)}
+        {" · "}
+        WAR1 net: {side.war1Net == null ? "—" : signedDrbl(side.war1Net)}
       </p>
+    </div>
+  );
+}
+
+function PlayerLink({ player }: { player: TradeSimPlayer }) {
+  if (!player.href) {
+    return <span className="text-[14px] font-semibold">{player.name}</span>;
+  }
+  return (
+    <Link
+      href={player.href}
+      className="text-[14px] font-semibold underline-offset-2 hover:underline"
+    >
+      {player.name}
+    </Link>
+  );
+}
+
+function profileLine(player: TradeSimPlayer): string {
+  const bits = [
+    player.position,
+    player.age != null ? `age ${player.age}` : null,
+    player.mpg != null ? `${formatNumber(player.mpg, 1)} mpg` : null,
+    player.points != null ? `${formatNumber(player.points, 1)} ppg` : null,
+  ].filter(Boolean);
+  const impact = [
+    player.drbl100 == null ? "No DRBL/100" : `${signedDrbl(player.drbl100)} DRBL`,
+    player.war1 == null ? null : `${signedDrbl(player.war1)} WAR1`,
+    player.ts == null ? null : `${formatPct(player.ts)} TS`,
+    player.usg == null ? null : `${formatPct(player.usg)} USG`,
+  ].filter(Boolean);
+  return [bits.join(" · "), impact.join(" · ")].filter(Boolean).join(" — ");
+}
+
+function PackageTable({
+  title,
+  players,
+}: {
+  title: string;
+  players: TradeSimPlayer[];
+}) {
+  if (!players.length) return null;
+  return (
+    <div className="overflow-x-auto">
+      <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        {title}
+      </p>
+      <table className="w-full min-w-[36rem] text-left text-[13px]">
+        <thead>
+          <tr className="border-b border-border text-muted-foreground">
+            <th className="py-1.5 pr-3 font-semibold">Player</th>
+            <th className="py-1.5 pr-3 font-semibold">Salary</th>
+            <th className="py-1.5 pr-3 font-semibold">DRBL</th>
+            <th className="py-1.5 pr-3 font-semibold">O/D</th>
+            <th className="py-1.5 pr-3 font-semibold">WAR1</th>
+            <th className="py-1.5 pr-3 font-semibold">TS</th>
+            <th className="py-1.5 font-semibold">USG</th>
+          </tr>
+        </thead>
+        <tbody>
+          {players.map((player) => (
+            <tr key={player.id} className="border-b border-border/60 last:border-0">
+              <td className="py-1.5 pr-3">
+                <PlayerLink player={player} />
+                <span className="mt-0.5 block text-[12px] text-muted-foreground">
+                  {[
+                    player.position,
+                    player.age != null ? `age ${player.age}` : null,
+                    player.mpg != null ? `${formatNumber(player.mpg, 1)} mpg` : null,
+                    player.points != null
+                      ? `${formatNumber(player.points, 1)} ppg`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ")}
+                </span>
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums">
+                {formatUsdCompact(player.salary)}
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums">
+                {player.drbl100 == null ? "—" : signedDrbl(player.drbl100)}
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums text-muted-foreground">
+                {player.drblO == null || player.drblD == null
+                  ? "—"
+                  : `${signedDrbl(player.drblO)} / ${signedDrbl(player.drblD)}`}
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums">
+                {player.war1 == null ? "—" : signedDrbl(player.war1)}
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums">
+                {player.ts == null ? "—" : formatPct(player.ts)}
+              </td>
+              <td className="py-1.5 tabular-nums">
+                {player.usg == null ? "—" : formatPct(player.usg)}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -99,20 +207,9 @@ function PlayerColumn({
                     className="mt-1"
                   />
                   <span className="min-w-0">
-                    {player.href ? (
-                      <Link
-                        href={player.href}
-                        className="text-[14px] font-semibold underline-offset-2 hover:underline"
-                      >
-                        {player.name}
-                      </Link>
-                    ) : (
-                      <span className="text-[14px] font-semibold">{player.name}</span>
-                    )}
-                    <span className="mt-0.5 block text-[12px] text-muted-foreground">
-                      {player.drbl100 == null
-                        ? "No DRBL/100"
-                        : `${signedDrbl(player.drbl100)} DRBL/100`}
+                    <PlayerLink player={player} />
+                    <span className="mt-0.5 block text-[12px] leading-snug text-muted-foreground">
+                      {profileLine(player)}
                     </span>
                   </span>
                 </span>
@@ -160,7 +257,19 @@ export function TradeSimulator({
 
   const sketch = useMemo(() => {
     if (!teamA || !teamB) return null;
-    return summarizePlayerTrade(teamA, sendA, teamB, sendB);
+    return summarizePlayerTrade(teamA, sendA, teamB, sendB, board.cap);
+  }, [board.cap, teamA, teamB, sendA, sendB]);
+
+  useEffect(() => {
+    if (!teamA || !teamB) return;
+    const url = new URL(window.location.href);
+    url.searchParams.set("a", teamA.id);
+    url.searchParams.set("b", teamB.id);
+    if (sendA.length) url.searchParams.set("give", sendA.join(","));
+    else url.searchParams.delete("give");
+    if (sendB.length) url.searchParams.set("get", sendB.join(","));
+    else url.searchParams.delete("get");
+    window.history.replaceState(window.history.state, "", url.toString());
   }, [teamA, teamB, sendA, sendB]);
 
   if (!teamA || !teamB || !sketch) return null;
@@ -240,12 +349,22 @@ export function TradeSimulator({
         </div>
         {!sketch.sentCountA && !sketch.sentCountB ? (
           <p className="text-[14px] text-muted-foreground">
-            Check players to send. Each checked player leaves that team.
+            Check players to send. Each checked player leaves that team. The address bar keeps the package so it can be shared.
           </p>
         ) : (
-          <div className="grid gap-4 sm:grid-cols-2">
-            <SideSummary abbr={teamA.abbr} side={sketch.sideA} />
-            <SideSummary abbr={teamB.abbr} side={sketch.sideB} />
+          <div className="flex flex-col gap-4">
+            <div className="grid gap-4 sm:grid-cols-2">
+              <SideSummary abbr={teamA.abbr} side={sketch.sideA} />
+              <SideSummary abbr={teamB.abbr} side={sketch.sideB} />
+            </div>
+            <PackageTable
+              title={`${teamA.abbr} sends`}
+              players={teamA.players.filter((player) => sendA.includes(player.id))}
+            />
+            <PackageTable
+              title={`${teamB.abbr} sends`}
+              players={teamB.players.filter((player) => sendB.includes(player.id))}
+            />
           </div>
         )}
         {sketch.sentCountA || sketch.sentCountB ? (
@@ -254,7 +373,10 @@ export function TradeSimulator({
               <li>A moved player has no matched salary, so the dollar totals are blank.</li>
             ) : null}
             {!sketch.completeImpact ? (
-              <li>A moved player has no DRBL/100 row, so impact is not summed.</li>
+              <li>A moved player has no DRBL/100 row, so that impact is not summed.</li>
+            ) : null}
+            {sketch.sideA.war1Net == null || sketch.sideB.war1Net == null ? (
+              <li>A moved player has no WAR1 row, so win equivalents are not summed.</li>
             ) : null}
             <li>
               Published {board.cap.status.toLowerCase()} lines: cap{" "}
