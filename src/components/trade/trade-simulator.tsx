@@ -143,24 +143,38 @@ function ImpactStat({
 function SideImpact({
   team,
   side,
+  align = "left",
 }: {
   team: TradeSimTeam;
   side: TradeSketchSide;
+  align?: "left" | "right";
 }) {
   const room = side.roomAfter ?? side.roomBefore;
   const brand = resolveTeamBrand(team.abbr);
+  const right = align === "right";
   return (
     <div
-      className="min-w-0 rounded-lg border border-border/60 bg-background/40 p-3"
+      className={cn(
+        "min-w-0 rounded-lg border border-border/60 bg-background/40 p-3",
+        right && "text-right"
+      )}
       style={
         brand
           ? ({
               borderColor: `color-mix(in oklab, ${brand.primary} 35%, transparent)`,
+              boxShadow: right
+                ? `inset -3px 0 0 0 ${brand.primary}`
+                : `inset 3px 0 0 0 ${brand.primary}`,
             } as CSSProperties)
           : undefined
       }
     >
-      <div className="flex min-w-0 items-center gap-2">
+      <div
+        className={cn(
+          "flex min-w-0 items-center gap-2",
+          right && "flex-row-reverse"
+        )}
+      >
         <TeamLogo teamKey={team.abbr} size="sm" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[14px] font-bold">{team.abbr}</p>
@@ -223,15 +237,22 @@ function PackageList({
   title,
   teamKey,
   players,
+  align = "left",
 }: {
   title: string;
   teamKey: string;
   players: TradeSimPlayer[];
+  align?: "left" | "right";
 }) {
   if (!players.length) return null;
   return (
     <div className="min-w-0">
-      <p className="mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+      <p
+        className={cn(
+          "mb-2 text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground",
+          align === "right" && "text-right"
+        )}
+      >
         {title}
       </p>
       <ul className="flex flex-col gap-2">
@@ -293,14 +314,17 @@ function PlayerColumn({
   team,
   selected,
   onToggle,
+  align = "left",
 }: {
   team: TradeSimTeam;
   selected: string[];
   onToggle: (id: string) => void;
+  align?: "left" | "right";
 }) {
   const [query, setQuery] = useState("");
   const [sort, setSort] = useState<"salary" | "drbl" | "name">("salary");
   const brand = resolveTeamBrand(team.abbr);
+  const right = align === "right";
   const needle = query.trim().toLowerCase();
   const players = useMemo(() => {
     const filtered = needle
@@ -325,12 +349,19 @@ function PlayerColumn({
       style={
         brand
           ? ({
-              boxShadow: `inset 3px 0 0 0 ${brand.primary}`,
+              boxShadow: right
+                ? `inset -3px 0 0 0 ${brand.primary}`
+                : `inset 3px 0 0 0 ${brand.primary}`,
             } as CSSProperties)
           : undefined
       }
     >
-      <div className="flex min-w-0 items-center gap-2.5 px-3 pt-3 sm:px-4 sm:pt-4">
+      <div
+        className={cn(
+          "flex min-w-0 items-center gap-2.5 px-3 pt-3 sm:px-4 sm:pt-4",
+          right && "flex-row-reverse text-right"
+        )}
+      >
         <TeamLogo teamKey={team.abbr} size="md" />
         <div className="min-w-0 flex-1">
           <p className="truncate text-[15px] font-bold">{team.name}</p>
@@ -560,48 +591,39 @@ export function TradeSimulator({
         className="min-w-0 p-3 sm:p-4"
       >
         <div className="flex min-w-0 flex-col gap-3">
-          <div className="flex min-w-0 flex-wrap items-center justify-between gap-2">
-            <div className="flex min-w-0 items-center gap-2">
-              <TeamLogo teamKey={teamA.abbr} size="md" />
-              <span className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-                vs
-              </span>
-              <TeamLogo teamKey={teamB.abbr} size="md" />
-              <p className="hidden min-w-0 truncate text-[13px] font-semibold sm:block">
-                {teamA.abbr} ↔ {teamB.abbr}
-              </p>
-            </div>
-            <div className="flex flex-wrap items-center gap-1.5">
+          <div className="flex flex-wrap items-center justify-end gap-1.5">
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={swapTeams}
+              aria-label="Swap sides"
+            >
+              <ArrowLeftRight data-icon="inline-start" />
+              Flip
+            </Button>
+            {hasPackage ? (
               <Button
                 type="button"
-                variant="outline"
+                variant="ghost"
                 size="sm"
-                onClick={swapTeams}
-                aria-label="Swap sides"
+                onClick={clearDeal}
               >
-                <ArrowLeftRight data-icon="inline-start" />
-                Flip
+                <RotateCcw data-icon="inline-start" />
+                Clear
               </Button>
-              {hasPackage ? (
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={clearDeal}
-                >
-                  <RotateCcw data-icon="inline-start" />
-                  Clear
-                </Button>
-              ) : null}
-              <CopyLinkButton />
-            </div>
+            ) : null}
+            <CopyLinkButton />
           </div>
 
-          <div className="grid min-w-0 gap-2 sm:grid-cols-[1fr_auto_1fr] sm:items-end">
+          <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-end gap-2 sm:gap-3">
             <label className="flex min-w-0 flex-col gap-1 text-[12px] font-semibold">
-              Team A
+              <span className="flex min-w-0 items-center gap-2">
+                <TeamLogo teamKey={teamA.abbr} size="sm" />
+                <span className="truncate">Team A · {teamA.abbr}</span>
+              </span>
               <select
-                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-3 text-[15px]"
+                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-2 text-[14px] sm:px-3 sm:text-[15px]"
                 value={teamA.id}
                 onChange={(event) => {
                   setTeamAId(event.target.value);
@@ -617,13 +639,16 @@ export function TradeSimulator({
                   ))}
               </select>
             </label>
-            <div className="hidden h-10 items-center justify-center sm:flex">
-              <ArrowLeftRight className="size-4 text-muted-foreground" />
+            <div className="flex h-10 items-center justify-center px-0.5">
+              <ArrowLeftRight className="size-4 shrink-0 text-muted-foreground" />
             </div>
-            <label className="flex min-w-0 flex-col gap-1 text-[12px] font-semibold">
-              Team B
+            <label className="flex min-w-0 flex-col gap-1 text-right text-[12px] font-semibold">
+              <span className="flex min-w-0 items-center justify-end gap-2">
+                <span className="truncate">Team B · {teamB.abbr}</span>
+                <TeamLogo teamKey={teamB.abbr} size="sm" />
+              </span>
               <select
-                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-3 text-[15px]"
+                className="h-10 w-full min-w-0 rounded-md border border-border bg-background/80 px-2 text-right text-[14px] sm:px-3 sm:text-[15px]"
                 value={teamB.id}
                 onChange={(event) => {
                   setTeamBId(event.target.value);
@@ -650,9 +675,8 @@ export function TradeSimulator({
               Tap players to build the deal
             </p>
             <p className="max-w-md text-[13px] leading-snug text-muted-foreground">
-              Click a name to send them. The live tray and DRBL impact board
-              update as you go — same idea as ESPN&apos;s machine, scored with
-              our model.
+              {teamA.abbr} on the left, {teamB.abbr} on the right. Click a name
+              to send them — the tray and DRBL board update as you go.
             </p>
           </div>
         ) : (
@@ -668,7 +692,7 @@ export function TradeSimulator({
                 </p>
               </div>
               {aWins || bWins ? (
-                <Badge variant={aWins || bWins ? "elite" : "neutral"} size="sm">
+                <Badge variant="elite" size="sm">
                   {aWins
                     ? `${teamA.abbr} edges DRBL`
                     : `${teamB.abbr} edges DRBL`}
@@ -679,10 +703,10 @@ export function TradeSimulator({
                 </Badge>
               ) : null}
             </div>
-            <div className="grid min-w-0 gap-3 sm:grid-cols-[1fr_auto_1fr] sm:items-start">
+            <div className="grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-start gap-2 sm:gap-3">
               <div className="flex min-w-0 flex-col gap-1.5">
                 <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                  {teamA.abbr} sends
+                  {teamA.abbr} sends →
                 </p>
                 {playersA.length ? (
                   playersA.map((player) => (
@@ -705,8 +729,8 @@ export function TradeSimulator({
                 </div>
               </div>
               <div className="flex min-w-0 flex-col gap-1.5">
-                <p className="text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-                  {teamB.abbr} sends
+                <p className="text-right text-[11px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+                  ← {teamB.abbr} sends
                 </p>
                 {playersB.length ? (
                   playersB.map((player) => (
@@ -728,15 +752,17 @@ export function TradeSimulator({
         )}
       </section>
 
-      <div className="grid min-w-0 gap-3 lg:grid-cols-2">
+      <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
         <PlayerColumn
           team={teamA}
           selected={sendA}
+          align="left"
           onToggle={(id) => toggle(id, sendA, setSendA)}
         />
         <PlayerColumn
           team={teamB}
           selected={sendB}
+          align="right"
           onToggle={(id) => toggle(id, sendB, setSendB)}
         />
       </div>
@@ -753,20 +779,22 @@ export function TradeSimulator({
               omitted.
             </p>
           </div>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-            <SideImpact team={teamA} side={sketch.sideA} />
-            <SideImpact team={teamB} side={sketch.sideB} />
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
+            <SideImpact team={teamA} side={sketch.sideA} align="left" />
+            <SideImpact team={teamB} side={sketch.sideB} align="right" />
           </div>
-          <div className="grid min-w-0 gap-3 sm:grid-cols-2">
+          <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
             <PackageList
               title={`${teamA.abbr} package`}
               teamKey={teamA.abbr}
               players={playersA}
+              align="left"
             />
             <PackageList
               title={`${teamB.abbr} package`}
               teamKey={teamB.abbr}
               players={playersB}
+              align="right"
             />
           </div>
           <ul className="flex flex-col gap-1 text-[12px] leading-snug text-muted-foreground">
