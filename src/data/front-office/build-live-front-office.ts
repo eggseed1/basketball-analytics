@@ -80,9 +80,13 @@ function defaultCapabilities(): FrontOfficeCapabilities {
   };
 }
 
-function nbaToFranchise(nbaTeamId: string | null | undefined) {
-  if (!nbaTeamId || nbaTeamId === "0") return null;
-  return getCanonicalTeamFromProvider("nba", nbaTeamId);
+function resolveRosterFranchise(teamId: string | null | undefined) {
+  if (!teamId || teamId === "0") return null;
+  // ESPN roster payloads use ESPN team ids (same space as canonicalTeamId).
+  return (
+    getCanonicalTeamFromProvider("espn", teamId) ??
+    getCanonicalTeamFromProvider("nba", teamId)
+  );
 }
 
 function baselineOwnPicks(
@@ -162,7 +166,7 @@ export const buildLiveTeamFrontOfficeSlice = cache(
     let withoutSalary = 0;
 
     for (const row of board) {
-      const franchise = nbaToFranchise(row.primaryTeamId);
+      const franchise = resolveRosterFranchise(row.primaryTeamId);
       if (!franchise || franchise.canonicalTeamId !== franchiseId) continue;
 
       const key = normalizePlayerName(row.playerName);
