@@ -590,6 +590,15 @@ async function execLeaderboard(ast: BasketballQueryAst): Promise<AskDrblResult> 
     ],
     source: `${season} Player Season Board`,
     queryPlan: buildQueryPlan(ast),
+    payload: {
+      kind: "leaderboard",
+      metricLabel: def.label,
+      bars: top.map((t) => ({
+        name: t.r.playerName,
+        value: t.v as number,
+        display: formatMetric(metricId, t.v as number),
+      })),
+    },
     links: [
       {
         label: "Open leaderboard →",

@@ -39,6 +39,7 @@ import {
   subscribeAskRecent,
   type AskRecentEntry,
 } from "@/components/ask/ask-recent-store";
+import { AskLeaderboardChartLazy } from "@/components/charts/recharts-lazy";
 import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -392,6 +393,23 @@ function AskResultBlock({
             <p className="text-[36px] font-bold tabular-nums tracking-tight sm:text-[44px]">
               {result.valueDisplay}
             </p>
+          ) : null}
+          {result.payload?.kind === "leaderboard" &&
+          Array.isArray(result.payload.bars) ? (
+            <AskLeaderboardChartLazy
+              title={`${String(result.payload.metricLabel ?? "Leaders")} · visual`}
+              rows={(result.payload.bars as Array<{
+                name: string;
+                value: number;
+                display: string;
+              }>).filter(
+                (b) =>
+                  b &&
+                  typeof b.name === "string" &&
+                  typeof b.value === "number" &&
+                  typeof b.display === "string"
+              )}
+            />
           ) : null}
           {result.detailLines?.length ? (
             <ul className="flex flex-col gap-1.5 text-[14px] text-muted-foreground">
