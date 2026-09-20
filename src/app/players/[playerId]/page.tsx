@@ -540,22 +540,6 @@ export default async function PlayerPage({
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
         </PlayerDestinationIdentity>
 
-        {view === "overview" ? (
-          <Suspense
-            fallback={<PlayerBoardSkeleton label="Loading similar players…" />}
-          >
-            <PlayerSimilarIsland
-              playerId={playerId}
-              season={statsCtx.statsSeason}
-              career={career}
-              identityTeamKey={teamKey}
-              nbaId={identity?.nbaId}
-              espnId={identity?.espnId}
-              honor={honor}
-            />
-          </Suspense>
-        ) : null}
-
         {view === "sentiment" ? (
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading sentiment…" />}
@@ -659,6 +643,22 @@ export default async function PlayerPage({
             playerId={playerId}
             viewingSeason={season}
           />
+        ) : null}
+
+        {view === "overview" ? (
+          <Suspense
+            fallback={<PlayerBoardSkeleton label="Loading similar players…" />}
+          >
+            <PlayerSimilarIsland
+              playerId={playerId}
+              season={statsCtx.statsSeason}
+              career={career}
+              identityTeamKey={teamKey}
+              nbaId={identity?.nbaId}
+              espnId={identity?.espnId}
+              honor={honor}
+            />
+          </Suspense>
         ) : null}
 
         {view === "shooting" ? (
