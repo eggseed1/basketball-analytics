@@ -17,6 +17,10 @@ export type TradeSimPlayer = {
   games: number | null;
   mpg: number | null;
   points: number | null;
+  assists: number | null;
+  rebounds: number | null;
+  steals: number | null;
+  blocks: number | null;
   ts: number | null;
   usg: number | null;
   bpm: number | null;
@@ -49,6 +53,21 @@ export type KnownSalaryLine =
   | "over first apron"
   | "over second apron";
 
+/** Dollars under (−) or over (+) a published line for known commitments only. */
+export type KnownRoomStrip = {
+  toCap: number;
+  toTax: number;
+  toFirstApron: number | null;
+  toSecondApron: number | null;
+};
+
+export type PackageShape = {
+  count: number;
+  avgAge: number | null;
+  avgMpg: number | null;
+  positions: string[];
+};
+
 export type TradeSketchSide = {
   sentSalary: number | null;
   receivedSalary: number | null;
@@ -56,10 +75,17 @@ export type TradeSketchSide = {
   knownCommitmentsAfter: number | null;
   knownLineBefore: KnownSalaryLine;
   knownLineAfter: KnownSalaryLine | null;
+  roomBefore: KnownRoomStrip;
+  roomAfter: KnownRoomStrip | null;
+  rosterCountBefore: number;
+  rosterCountAfter: number;
+  sentPackage: PackageShape;
+  receivedPackage: PackageShape;
   sentDrbl: number | null;
   receivedDrbl: number | null;
   drblNet: number | null;
   war1Net: number | null;
+  bpmNet: number | null;
 };
 
 export type TradeSketch = {
@@ -91,6 +117,11 @@ function sumWar1(players: TradeSimPlayer[]): number | null {
   return players.reduce((sum, player) => sum + (player.war1 ?? 0), 0);
 }
 
+function sumBpm(players: TradeSimPlayer[]): number | null {
+  if (players.some((player) => player.bpm == null)) return null;
+  return players.reduce((sum, player) => sum + (player.bpm ?? 0), 0);
+}
+
 export function knownSalaryLine(
   amount: number,
   lines: PublishedCapLines
@@ -110,6 +141,47 @@ export function knownSalaryLine(
   }
   if (amount >= lines.salaryCap) return "over cap, under tax";
   return "under cap";
+}
+
+/** Positive = under the line. Negative = over the line. */
+export function knownRoomStrip(
+  amount: number,
+  lines: PublishedCapLines
+): KnownRoomStrip {
+  return {
+    toCap: lines.salaryCap - amount,
+    toTax: lines.luxuryTax - amount,
+    toFirstApron:
+      lines.firstApron == null ? null : lines.firstApron - amount,
+    toSecondApron:
+      lines.secondApron == null ? null : lines.secondApron - amount,
+  };
+}
+
+export function packageShape(players: TradeSimPlayer[]): PackageShape {
+  const ages = players
+    .map((player) => player.age)
+    .filter((value): value is number => value != null && Number.isFinite(value));
+  const mpgs = players
+    .map((player) => player.mpg)
+    .filter((value): value is number => value != null && Number.isFinite(value));
+  const positions = [
+    ...new Set(
+      players
+        .map((player) => player.position?.trim())
+        .filter((value): value is string => Boolean(value))
+    ),
+  ].sort();
+  return {
+    count: players.length,
+    avgAge: ages.length
+      ? ages.reduce((sum, value) => sum + value, 0) / ages.length
+      : null,
+    avgMpg: mpgs.length
+      ? mpgs.reduce((sum, value) => sum + value, 0) / mpgs.length
+      : null,
+    positions,
+  };
 }
 
 function netOf(
@@ -137,6 +209,7 @@ function sideSketch(
       : null;
   const knownCommitmentsAfter =
     salaryNet == null ? null : team.knownCommitments + salaryNet;
+  const rosterCountBefore = team.players.length;
   return {
     sentSalary,
     receivedSalary,
@@ -147,10 +220,20 @@ function sideSketch(
       knownCommitmentsAfter == null
         ? null
         : knownSalaryLine(knownCommitmentsAfter, lines),
+    roomBefore: knownRoomStrip(team.knownCommitments, lines),
+    roomAfter:
+      knownCommitmentsAfter == null
+        ? null
+        : knownRoomStrip(knownCommitmentsAfter, lines),
+    rosterCountBefore,
+    rosterCountAfter: rosterCountBefore - sent.length + received.length,
+    sentPackage: packageShape(sent),
+    receivedPackage: packageShape(received),
     sentDrbl: sent.length ? sumDrbl(sent) : 0,
     receivedDrbl: received.length ? sumDrbl(received) : 0,
     drblNet: netOf(sent, received, sumDrbl),
     war1Net: netOf(sent, received, sumWar1),
+    bpmNet: netOf(sent, received, sumBpm),
   };
 }
 

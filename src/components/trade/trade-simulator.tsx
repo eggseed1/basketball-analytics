@@ -20,6 +20,14 @@ function signedDrbl(value: number): string {
   return value > 0 ? `+${text}` : text;
 }
 
+function signedMoney(value: number | null): string {
+  if (value == null) return "—";
+  const abs = formatUsdCompact(Math.abs(value));
+  if (value > 0) return `${abs} under`;
+  if (value < 0) return `${abs} over`;
+  return "at line";
+}
+
 function SideSummary({
   abbr,
   side,
@@ -27,25 +35,74 @@ function SideSummary({
   abbr: string;
   side: TradeSketchSide;
 }) {
+  const room = side.roomAfter ?? side.roomBefore;
   return (
-    <div className="flex flex-col gap-1">
+    <div className="flex flex-col gap-2">
       <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
         {abbr}
       </p>
       <p className="text-[14px] font-semibold tabular-nums">
-        {formatUsdDollars(side.sentSalary)} out · {formatUsdDollars(side.receivedSalary)} in
+        {formatUsdDollars(side.sentSalary)} out ·{" "}
+        {formatUsdDollars(side.receivedSalary)} in
       </p>
       <p className="text-[13px] text-muted-foreground">
         Known commitments after: {formatUsdCompact(side.knownCommitmentsAfter)}
         {side.knownLineAfter ? ` · ${side.knownLineAfter}` : ""}
       </p>
       <p className="text-[13px] text-muted-foreground">
-        Before this swap, known commitments sit {side.knownLineBefore}.
+        Before this swap, known commitments sit {side.knownLineBefore}. Roster{" "}
+        {side.rosterCountBefore} → {side.rosterCountAfter}.
       </p>
+      <dl className="grid grid-cols-2 gap-x-3 gap-y-1 text-[12px] text-muted-foreground">
+        <div>
+          <dt className="font-semibold text-foreground/80">To cap</dt>
+          <dd className="tabular-nums">{signedMoney(room.toCap)}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-foreground/80">To tax</dt>
+          <dd className="tabular-nums">{signedMoney(room.toTax)}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-foreground/80">To 1st apron</dt>
+          <dd className="tabular-nums">{signedMoney(room.toFirstApron)}</dd>
+        </div>
+        <div>
+          <dt className="font-semibold text-foreground/80">To 2nd apron</dt>
+          <dd className="tabular-nums">{signedMoney(room.toSecondApron)}</dd>
+        </div>
+      </dl>
       <p className="text-[13px] text-muted-foreground">
         DRBL/100 net: {side.drblNet == null ? "—" : signedDrbl(side.drblNet)}
         {" · "}
         WAR1 net: {side.war1Net == null ? "—" : signedDrbl(side.war1Net)}
+        {" · "}
+        BPM net: {side.bpmNet == null ? "—" : signedDrbl(side.bpmNet)}
+      </p>
+      <p className="text-[12px] text-muted-foreground">
+        Outgoing package: {side.sentPackage.count} player
+        {side.sentPackage.count === 1 ? "" : "s"}
+        {side.sentPackage.avgAge != null
+          ? ` · avg age ${formatNumber(side.sentPackage.avgAge, 1)}`
+          : ""}
+        {side.sentPackage.avgMpg != null
+          ? ` · avg ${formatNumber(side.sentPackage.avgMpg, 1)} mpg`
+          : ""}
+        {side.sentPackage.positions.length
+          ? ` · ${side.sentPackage.positions.join("/")}`
+          : ""}
+      </p>
+      <p className="text-[12px] text-muted-foreground">
+        Incoming package: {side.receivedPackage.count} player
+        {side.receivedPackage.count === 1 ? "" : "s"}
+        {side.receivedPackage.avgAge != null
+          ? ` · avg age ${formatNumber(side.receivedPackage.avgAge, 1)}`
+          : ""}
+        {side.receivedPackage.avgMpg != null
+          ? ` · avg ${formatNumber(side.receivedPackage.avgMpg, 1)} mpg`
+          : ""}
+        {side.receivedPackage.positions.length
+          ? ` · ${side.receivedPackage.positions.join("/")}`
+          : ""}
       </p>
     </div>
   );
@@ -71,10 +128,13 @@ function profileLine(player: TradeSimPlayer): string {
     player.age != null ? `age ${player.age}` : null,
     player.mpg != null ? `${formatNumber(player.mpg, 1)} mpg` : null,
     player.points != null ? `${formatNumber(player.points, 1)} ppg` : null,
+    player.assists != null ? `${formatNumber(player.assists, 1)} apg` : null,
+    player.rebounds != null ? `${formatNumber(player.rebounds, 1)} rpg` : null,
   ].filter(Boolean);
   const impact = [
     player.drbl100 == null ? "No DRBL/100" : `${signedDrbl(player.drbl100)} DRBL`,
     player.war1 == null ? null : `${signedDrbl(player.war1)} WAR1`,
+    player.bpm == null ? null : `${signedDrbl(player.bpm)} BPM`,
     player.ts == null ? null : `${formatPct(player.ts)} TS`,
     player.usg == null ? null : `${formatPct(player.usg)} USG`,
   ].filter(Boolean);
@@ -94,7 +154,7 @@ function PackageTable({
       <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
         {title}
       </p>
-      <table className="w-full min-w-[36rem] text-left text-[13px]">
+      <table className="w-full min-w-[48rem] text-left text-[13px]">
         <thead>
           <tr className="border-b border-border text-muted-foreground">
             <th className="py-1.5 pr-3 font-semibold">Player</th>
@@ -102,8 +162,10 @@ function PackageTable({
             <th className="py-1.5 pr-3 font-semibold">DRBL</th>
             <th className="py-1.5 pr-3 font-semibold">O/D</th>
             <th className="py-1.5 pr-3 font-semibold">WAR1</th>
+            <th className="py-1.5 pr-3 font-semibold">BPM</th>
             <th className="py-1.5 pr-3 font-semibold">TS</th>
-            <th className="py-1.5 font-semibold">USG</th>
+            <th className="py-1.5 pr-3 font-semibold">USG</th>
+            <th className="py-1.5 font-semibold">AST/REB</th>
           </tr>
         </thead>
         <tbody>
@@ -115,7 +177,9 @@ function PackageTable({
                   {[
                     player.position,
                     player.age != null ? `age ${player.age}` : null,
-                    player.mpg != null ? `${formatNumber(player.mpg, 1)} mpg` : null,
+                    player.mpg != null
+                      ? `${formatNumber(player.mpg, 1)} mpg`
+                      : null,
                     player.points != null
                       ? `${formatNumber(player.points, 1)} ppg`
                       : null,
@@ -139,10 +203,22 @@ function PackageTable({
                 {player.war1 == null ? "—" : signedDrbl(player.war1)}
               </td>
               <td className="py-1.5 pr-3 tabular-nums">
+                {player.bpm == null ? "—" : signedDrbl(player.bpm)}
+              </td>
+              <td className="py-1.5 pr-3 tabular-nums">
                 {player.ts == null ? "—" : formatPct(player.ts)}
               </td>
-              <td className="py-1.5 tabular-nums">
+              <td className="py-1.5 pr-3 tabular-nums">
                 {player.usg == null ? "—" : formatPct(player.usg)}
+              </td>
+              <td className="py-1.5 tabular-nums text-muted-foreground">
+                {player.assists == null && player.rebounds == null
+                  ? "—"
+                  : `${player.assists == null ? "—" : formatNumber(player.assists, 1)} / ${
+                      player.rebounds == null
+                        ? "—"
+                        : formatNumber(player.rebounds, 1)
+                    }`}
               </td>
             </tr>
           ))}
@@ -162,10 +238,22 @@ function PlayerColumn({
   onToggle: (id: string) => void;
 }) {
   const [query, setQuery] = useState("");
+  const [sort, setSort] = useState<"salary" | "drbl" | "name">("salary");
   const needle = query.trim().toLowerCase();
-  const players = needle
-    ? team.players.filter((player) => player.name.toLowerCase().includes(needle))
-    : team.players;
+  const players = useMemo(() => {
+    const filtered = needle
+      ? team.players.filter((player) =>
+          player.name.toLowerCase().includes(needle)
+        )
+      : [...team.players];
+    return filtered.sort((a, b) => {
+      if (sort === "name") return a.name.localeCompare(b.name);
+      if (sort === "drbl") {
+        return (b.drbl100 ?? -999) - (a.drbl100 ?? -999);
+      }
+      return (b.salary ?? -1) - (a.salary ?? -1) || a.name.localeCompare(b.name);
+    });
+  }, [needle, sort, team.players]);
 
   return (
     <div className="sports-card flex min-w-0 flex-col gap-3 p-4">
@@ -174,19 +262,34 @@ function PlayerColumn({
         <div className="min-w-0">
           <p className="truncate text-[15px] font-bold">{team.name}</p>
           <p className="text-[12px] text-muted-foreground">
-            Known commitments {formatUsdCompact(team.knownCommitments)}
+            Known commitments {formatUsdCompact(team.knownCommitments)} · roster{" "}
+            {team.players.length}
             {team.playersWithoutSalary
               ? ` · ${team.playersWithoutSalary} salaries unmatched`
               : ""}
           </p>
         </div>
       </div>
-      <input
-        value={query}
-        onChange={(event) => setQuery(event.target.value)}
-        placeholder="Filter players"
-        className="h-9 rounded-md border border-border bg-transparent px-3 text-[14px] outline-none"
-      />
+      <div className="flex flex-wrap gap-2">
+        <input
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="Filter players"
+          className="h-9 min-w-0 flex-1 rounded-md border border-border bg-transparent px-3 text-[14px] outline-none"
+        />
+        <select
+          value={sort}
+          onChange={(event) =>
+            setSort(event.target.value as "salary" | "drbl" | "name")
+          }
+          className="h-9 rounded-md border border-border bg-transparent px-2 text-[13px]"
+          aria-label="Sort players"
+        >
+          <option value="salary">Salary</option>
+          <option value="drbl">DRBL</option>
+          <option value="name">Name</option>
+        </select>
+      </div>
       <ul className="flex max-h-96 flex-col gap-1 overflow-y-auto">
         {players.map((player) => {
           const on = selected.includes(player.id);
@@ -378,7 +481,12 @@ export function TradeSimulator({
             {sketch.sideA.war1Net == null || sketch.sideB.war1Net == null ? (
               <li>A moved player has no WAR1 row, so win equivalents are not summed.</li>
             ) : null}
+            {sketch.sideA.bpmNet == null || sketch.sideB.bpmNet == null ? (
+              <li>A moved player has no BPM row, so BPM is not summed.</li>
+            ) : null}
             <li>
+              Room-to-line figures are known salary commitments versus published
+              thresholds only. Holds, dead money, and exceptions are omitted.
               Published {board.cap.status.toLowerCase()} lines: cap{" "}
               {formatUsdCompact(board.cap.salaryCap)}, tax{" "}
               {formatUsdCompact(board.cap.luxuryTax)}
@@ -388,8 +496,7 @@ export function TradeSimulator({
               {board.cap.secondApron != null
                 ? `, second apron ${formatUsdCompact(board.cap.secondApron)}`
                 : ""}
-              . Source: {board.cap.source}. Commitments here still omit unmatched
-              salaries, holds, and dead money.
+              . Source: {board.cap.source}.
             </li>
           </ul>
         ) : null}
