@@ -5,7 +5,7 @@ import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
 export const metadata = {
   title: "Trade simulator",
   description:
-    "Swap real roster players and compare known salaries and DRBL/100. Not a cap-legality ruling.",
+    "Build two-team swaps, watch the live deal tray, and score DRBL / WAR1 impact. Not a cap-legality ruling.",
 };
 
 export default async function TradeSimulatorPage({
@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Known salaries, DRBL, WAR1, BPM, and room to published cap lines. Not a legality ruling."
+        subtitle="Pick two clubs, tap players into the deal, and see who wins on DRBL. Known salaries and room only — not a legality ruling."
       />
       {board ? (
         <TradeSimulator
