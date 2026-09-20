@@ -9,6 +9,17 @@ export type TradeSimPlayer = {
   href: string | null;
   salary: number | null;
   drbl100: number | null;
+  drblO: number | null;
+  drblD: number | null;
+  war1: number | null;
+  position: string | null;
+  age: number | null;
+  games: number | null;
+  mpg: number | null;
+  points: number | null;
+  ts: number | null;
+  usg: number | null;
+  bpm: number | null;
 };
 
 export type TradeSimTeam = {
@@ -21,14 +32,34 @@ export type TradeSimTeam = {
   players: TradeSimPlayer[];
 };
 
+export type PublishedCapLines = {
+  salaryCap: number;
+  luxuryTax: number;
+  firstApron: number | null;
+  secondApron: number | null;
+};
+
+/** Where known salary commitments sit. Not a cap-sheet or legality ruling. */
+export type KnownSalaryLine =
+  | "under cap"
+  | "over cap, under tax"
+  | "over tax"
+  | "over tax, under first apron"
+  | "over first apron, under second apron"
+  | "over first apron"
+  | "over second apron";
+
 export type TradeSketchSide = {
   sentSalary: number | null;
   receivedSalary: number | null;
   salaryNet: number | null;
   knownCommitmentsAfter: number | null;
+  knownLineBefore: KnownSalaryLine;
+  knownLineAfter: KnownSalaryLine | null;
   sentDrbl: number | null;
   receivedDrbl: number | null;
   drblNet: number | null;
+  war1Net: number | null;
 };
 
 export type TradeSketch = {
@@ -55,10 +86,48 @@ function sumDrbl(players: TradeSimPlayer[]): number | null {
   return players.reduce((sum, player) => sum + (player.drbl100 ?? 0), 0);
 }
 
+function sumWar1(players: TradeSimPlayer[]): number | null {
+  if (players.some((player) => player.war1 == null)) return null;
+  return players.reduce((sum, player) => sum + (player.war1 ?? 0), 0);
+}
+
+export function knownSalaryLine(
+  amount: number,
+  lines: PublishedCapLines
+): KnownSalaryLine {
+  if (lines.secondApron != null && amount >= lines.secondApron) {
+    return "over second apron";
+  }
+  if (lines.firstApron != null && amount >= lines.firstApron) {
+    return lines.secondApron != null
+      ? "over first apron, under second apron"
+      : "over first apron";
+  }
+  if (amount >= lines.luxuryTax) {
+    return lines.firstApron != null
+      ? "over tax, under first apron"
+      : "over tax";
+  }
+  if (amount >= lines.salaryCap) return "over cap, under tax";
+  return "under cap";
+}
+
+function netOf(
+  sent: TradeSimPlayer[],
+  received: TradeSimPlayer[],
+  sum: (players: TradeSimPlayer[]) => number | null
+): number | null {
+  const sentTotal = sent.length ? sum(sent) : 0;
+  const receivedTotal = received.length ? sum(received) : 0;
+  if (sentTotal == null || receivedTotal == null) return null;
+  return receivedTotal - sentTotal;
+}
+
 function sideSketch(
   team: TradeSimTeam,
   sent: TradeSimPlayer[],
-  received: TradeSimPlayer[]
+  received: TradeSimPlayer[],
+  lines: PublishedCapLines
 ): TradeSketchSide {
   const sentSalary = sumSalary(sent);
   const receivedSalary = sumSalary(received);
@@ -68,18 +137,20 @@ function sideSketch(
       : null;
   const knownCommitmentsAfter =
     salaryNet == null ? null : team.knownCommitments + salaryNet;
-  const sentDrbl = sent.length ? sumDrbl(sent) : 0;
-  const receivedDrbl = received.length ? sumDrbl(received) : 0;
-  const drblNet =
-    sentDrbl != null && receivedDrbl != null ? receivedDrbl - sentDrbl : null;
   return {
     sentSalary,
     receivedSalary,
     salaryNet,
     knownCommitmentsAfter,
-    sentDrbl,
-    receivedDrbl,
-    drblNet,
+    knownLineBefore: knownSalaryLine(team.knownCommitments, lines),
+    knownLineAfter:
+      knownCommitmentsAfter == null
+        ? null
+        : knownSalaryLine(knownCommitmentsAfter, lines),
+    sentDrbl: sent.length ? sumDrbl(sent) : 0,
+    receivedDrbl: received.length ? sumDrbl(received) : 0,
+    drblNet: netOf(sent, received, sumDrbl),
+    war1Net: netOf(sent, received, sumWar1),
   };
 }
 
@@ -87,12 +158,13 @@ export function summarizePlayerTrade(
   teamA: TradeSimTeam,
   sendA: string[],
   teamB: TradeSimTeam,
-  sendB: string[]
+  sendB: string[],
+  lines: PublishedCapLines
 ): TradeSketch {
   const sentA = playersById(teamA, sendA);
   const sentB = playersById(teamB, sendB);
-  const sideA = sideSketch(teamA, sentA, sentB);
-  const sideB = sideSketch(teamB, sentB, sentA);
+  const sideA = sideSketch(teamA, sentA, sentB, lines);
+  const sideB = sideSketch(teamB, sentB, sentA, lines);
   return {
     completeSalary: sideA.salaryNet != null && sideB.salaryNet != null,
     completeImpact: sideA.drblNet != null && sideB.drblNet != null,
