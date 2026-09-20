@@ -5,7 +5,7 @@ import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
 export const metadata = {
   title: "Trade simulator",
   description:
-    "Build two-team swaps, watch the live deal tray, and score DRBL / WAR1 impact. Not a cap-legality ruling.",
+    "Build two-team swaps with CBA salary-matching package suggestions and DRBL impact. Salary-fit sketch only — not a full legality ruling.",
 };
 
 export default async function TradeSimulatorPage({
@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Pick two clubs, tap players into the deal, and see who wins on DRBL. Known salaries and room only — not a legality ruling."
+        subtitle="Tap a player for salary-matching package ideas (Expanded / Standard / Room / apron bands), then score the deal on DRBL. Known salaries only — not a legality ruling."
       />
       {board ? (
         <TradeSimulator

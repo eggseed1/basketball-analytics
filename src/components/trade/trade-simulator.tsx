@@ -19,6 +19,16 @@ import { formatNumber, formatPct } from "@/lib/format";
 import { formatUsdCompact } from "@/lib/format-money";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
+  suggestMatchingPackages,
+  type SuggestedPackage,
+} from "@/lib/trade-package-suggest";
+import {
+  mechanismLabel,
+  salaryFitTrade,
+  type SideSalaryFit,
+  type TradeSalaryFit,
+} from "@/lib/trade-salary-matching";
+import {
   summarizePlayerTrade,
   type TradeSimPlayer,
   type TradeSimTeam,
@@ -496,6 +506,151 @@ function CopyLinkButton() {
   );
 }
 
+function MatchSideChip({
+  abbr,
+  fit,
+}: {
+  abbr: string;
+  fit: SideSalaryFit;
+}) {
+  return (
+    <div
+      className={cn(
+        "min-w-0 rounded-md border px-2.5 py-2",
+        fit.ok
+          ? "border-[color-mix(in_oklab,var(--accent-positive)_35%,transparent)] bg-[color-mix(in_oklab,var(--accent-positive)_8%,transparent)]"
+          : "border-[color-mix(in_oklab,var(--accent-negative)_35%,transparent)] bg-[color-mix(in_oklab,var(--accent-negative)_8%,transparent)]"
+      )}
+    >
+      <div className="flex min-w-0 items-center justify-between gap-2">
+        <p className="truncate text-[12px] font-bold">{abbr}</p>
+        <Badge variant={fit.ok ? "positive" : "negative"} size="sm">
+          {fit.ok ? "Salary fit" : "No fit"}
+        </Badge>
+      </div>
+      <p className="mt-1 truncate text-[11px] tabular-nums text-muted-foreground">
+        {mechanismLabel(fit.mechanism)}
+        {fit.maxIncoming != null
+          ? ` · max in ${formatUsdCompact(fit.maxIncoming)}`
+          : ""}
+        {fit.incoming != null ? ` · in ${formatUsdCompact(fit.incoming)}` : ""}
+      </p>
+      {fit.hardCapRisk ? (
+        <p className="mt-1 text-[10px] text-[var(--accent-warning)]">
+          Expanded match can hard-cap at the first apron
+        </p>
+      ) : null}
+      {!fit.ok && fit.reasons[0] ? (
+        <p className="mt-1 text-[10px] leading-snug text-muted-foreground">
+          {fit.reasons[0]}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function SuggestionCard({
+  suggestion,
+  teamA,
+  teamB,
+  onApply,
+}: {
+  suggestion: SuggestedPackage;
+  teamA: TradeSimTeam;
+  teamB: TradeSimTeam;
+  onApply: () => void;
+}) {
+  const sendA = teamA.players.filter((player) =>
+    suggestion.sendA.includes(player.id)
+  );
+  const sendB = teamB.players.filter((player) =>
+    suggestion.sendB.includes(player.id)
+  );
+  return (
+    <li className="flex min-w-0 flex-col gap-2 rounded-lg border border-border/70 p-3">
+      <div className="flex min-w-0 items-start justify-between gap-2">
+        <div className="min-w-0">
+          <p className="text-[12px] font-semibold leading-snug">
+            {suggestion.rationale}
+          </p>
+          <p className="mt-0.5 text-[11px] tabular-nums text-muted-foreground">
+            {formatUsdCompact(suggestion.fit.sideA.outgoing)} ↔{" "}
+            {formatUsdCompact(suggestion.fit.sideB.outgoing)}
+            {suggestion.sketch.sideA.drblNet != null
+              ? ` · ${teamA.abbr} DRBL ${signed(suggestion.sketch.sideA.drblNet)}`
+              : ""}
+          </p>
+        </div>
+        <Button type="button" size="sm" onClick={onApply}>
+          Apply
+        </Button>
+      </div>
+      <div className="grid min-w-0 grid-cols-2 gap-2">
+        <div className="min-w-0">
+          <p className="mb-1 text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            {teamA.abbr}
+          </p>
+          <ul className="flex flex-col gap-1">
+            {sendA.map((player) => (
+              <li
+                key={player.id}
+                className="flex min-w-0 items-center gap-1.5 text-[11px]"
+              >
+                <PlayerHeadshot
+                  nbaId={player.id}
+                  name={player.name}
+                  teamKey={teamA.abbr}
+                  size="xs"
+                />
+                <span className="min-w-0 truncate font-medium">
+                  {player.name}
+                </span>
+                <span className="shrink-0 tabular-nums text-muted-foreground">
+                  {formatUsdCompact(player.salary)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        <div className="min-w-0">
+          <p className="mb-1 text-right text-[10px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+            {teamB.abbr}
+          </p>
+          <ul className="flex flex-col gap-1">
+            {sendB.map((player) => (
+              <li
+                key={player.id}
+                className="flex min-w-0 flex-row-reverse items-center gap-1.5 text-[11px]"
+              >
+                <PlayerHeadshot
+                  nbaId={player.id}
+                  name={player.name}
+                  teamKey={teamB.abbr}
+                  size="xs"
+                />
+                <span className="min-w-0 truncate text-right font-medium">
+                  {player.name}
+                </span>
+                <span className="shrink-0 tabular-nums text-muted-foreground">
+                  {formatUsdCompact(player.salary)}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-1">
+        <Badge variant="neutral" size="sm">
+          {teamA.abbr} {mechanismLabel(suggestion.fit.sideA.mechanism)}
+        </Badge>
+        <Badge variant="neutral" size="sm">
+          {teamB.abbr} {mechanismLabel(suggestion.fit.sideB.mechanism)}
+        </Badge>
+      </div>
+    </li>
+  );
+}
+
 export function TradeSimulator({
   board,
   initialA,
@@ -524,6 +679,13 @@ export function TradeSimulator({
   );
   const [sendA, setSendA] = useState(initialGive ?? []);
   const [sendB, setSendB] = useState(initialGet ?? []);
+  const [seedSide, setSeedSide] = useState<"a" | "b">(
+    (initialGive?.length ?? 0) > 0
+      ? "a"
+      : (initialGet?.length ?? 0) > 0
+        ? "b"
+        : "a"
+  );
 
   const teamA = teams.find((team) => team.id === teamAId) ?? teams[0];
   const teamB = teams.find((team) => team.id === teamBId) ?? teams[1];
@@ -532,6 +694,26 @@ export function TradeSimulator({
     if (!teamA || !teamB) return null;
     return summarizePlayerTrade(teamA, sendA, teamB, sendB, board.cap);
   }, [board.cap, teamA, teamB, sendA, sendB]);
+
+  const salaryFit: TradeSalaryFit | null = useMemo(() => {
+    if (!teamA || !teamB) return null;
+    if (!sendA.length && !sendB.length) return null;
+    return salaryFitTrade(teamA, sendA, teamB, sendB, board.cap);
+  }, [board.cap, teamA, teamB, sendA, sendB]);
+
+  const suggestions = useMemo(() => {
+    if (!teamA || !teamB) return [];
+    if (!sendA.length && !sendB.length) return [];
+    return suggestMatchingPackages({
+      teamA,
+      teamB,
+      sendA,
+      sendB,
+      lines: board.cap,
+      seedSide,
+      limit: 6,
+    });
+  }, [board.cap, teamA, teamB, sendA, sendB, seedSide]);
 
   useEffect(() => {
     if (!teamA || !teamB) return;
@@ -547,12 +729,16 @@ export function TradeSimulator({
 
   if (!teamA || !teamB || !sketch) return null;
 
-  const toggle = (
-    id: string,
-    list: string[],
-    setList: (next: string[]) => void
-  ) => {
-    setList(
+  const toggleA = (id: string) => {
+    setSeedSide("a");
+    setSendA((list) =>
+      list.includes(id) ? list.filter((item) => item !== id) : [...list, id]
+    );
+  };
+
+  const toggleB = (id: string) => {
+    setSeedSide("b");
+    setSendB((list) =>
       list.includes(id) ? list.filter((item) => item !== id) : [...list, id]
     );
   };
@@ -562,6 +748,7 @@ export function TradeSimulator({
     setTeamBId(teamA.id);
     setSendA(sendB);
     setSendB(sendA);
+    setSeedSide((side) => (side === "a" ? "b" : "a"));
   };
 
   const clearDeal = () => {
@@ -569,9 +756,15 @@ export function TradeSimulator({
     setSendB([]);
   };
 
+  const applySuggestion = (row: SuggestedPackage) => {
+    setSendA(row.sendA);
+    setSendB(row.sendB);
+  };
+
   const playersA = teamA.players.filter((player) => sendA.includes(player.id));
   const playersB = teamB.players.filter((player) => sendB.includes(player.id));
   const hasPackage = Boolean(sketch.sentCountA || sketch.sentCountB);
+  const hasSeed = hasPackage;
 
   const aWins =
     sketch.sideA.drblNet != null &&
@@ -676,7 +869,7 @@ export function TradeSimulator({
             </p>
             <p className="max-w-md text-[13px] leading-snug text-muted-foreground">
               {teamA.abbr} on the left, {teamB.abbr} on the right. Click a name
-              to send them — the tray and DRBL board update as you go.
+              to seed the deal — salary-matching packages appear below.
             </p>
           </div>
         ) : (
@@ -714,7 +907,7 @@ export function TradeSimulator({
                       key={player.id}
                       player={player}
                       teamKey={teamA.abbr}
-                      onRemove={() => toggle(player.id, sendA, setSendA)}
+                      onRemove={() => toggleA(player.id)}
                     />
                   ))
                 ) : (
@@ -738,7 +931,7 @@ export function TradeSimulator({
                       key={player.id}
                       player={player}
                       teamKey={teamB.abbr}
-                      onRemove={() => toggle(player.id, sendB, setSendB)}
+                      onRemove={() => toggleB(player.id)}
                     />
                   ))
                 ) : (
@@ -752,18 +945,52 @@ export function TradeSimulator({
         )}
       </section>
 
+      {hasSeed ? (
+        <section className="sports-card flex min-w-0 flex-col gap-3 p-3 sm:p-4">
+          <div>
+            <h2 className="text-[15px] font-bold tracking-tight">
+              Suggested packages
+            </h2>
+            <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
+              Salary-match sketch from known commitments and published{" "}
+              {board.season} bands (Expanded / Standard / Room / 2nd apron). Not
+              a legality ruling — TPEs, holds, dead money, NTCs, picks, and BYC
+              are unchecked.
+            </p>
+          </div>
+          {suggestions.length ? (
+            <ul className="flex flex-col gap-2">
+              {suggestions.map((row) => (
+                <SuggestionCard
+                  key={`${row.sendA.join(",")}|${row.sendB.join(",")}`}
+                  suggestion={row}
+                  teamA={teamA}
+                  teamB={teamB}
+                  onApply={() => applySuggestion(row)}
+                />
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[13px] text-muted-foreground">
+              No salary-fitting packages found on the other roster for this seed.
+              Try another player or add salary fillers.
+            </p>
+          )}
+        </section>
+      ) : null}
+
       <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
         <PlayerColumn
           team={teamA}
           selected={sendA}
           align="left"
-          onToggle={(id) => toggle(id, sendA, setSendA)}
+          onToggle={toggleA}
         />
         <PlayerColumn
           team={teamB}
           selected={sendB}
           align="right"
-          onToggle={(id) => toggle(id, sendB, setSendB)}
+          onToggle={toggleB}
         />
       </div>
 
@@ -774,11 +1001,17 @@ export function TradeSimulator({
               Impact board
             </h2>
             <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
-              Model nets and room to published {board.season} lines — not a
-              legality check. Picks, exceptions, holds, and dead money are
-              omitted.
+              Model nets and salary-match sketch vs published {board.season}{" "}
+              lines — not a legality check. Picks, exceptions, holds, and dead
+              money are omitted.
             </p>
           </div>
+          {salaryFit ? (
+            <div className="grid min-w-0 grid-cols-2 gap-2">
+              <MatchSideChip abbr={teamA.abbr} fit={salaryFit.sideA} />
+              <MatchSideChip abbr={teamB.abbr} fit={salaryFit.sideB} />
+            </div>
+          ) : null}
           <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
             <SideImpact team={teamA} side={sketch.sideA} align="left" />
             <SideImpact team={teamB} side={sketch.sideB} align="right" />
@@ -798,6 +1031,18 @@ export function TradeSimulator({
             />
           </div>
           <ul className="flex flex-col gap-1 text-[12px] leading-snug text-muted-foreground">
+            {salaryFit && !salaryFit.ok ? (
+              <li>
+                Salary match fails under published bands
+                {salaryFit.sideA.reasons[0]
+                  ? ` — ${teamA.abbr}: ${salaryFit.sideA.reasons[0]}`
+                  : ""}
+                {salaryFit.sideB.reasons[0]
+                  ? ` — ${teamB.abbr}: ${salaryFit.sideB.reasons[0]}`
+                  : ""}
+                .
+              </li>
+            ) : null}
             {!sketch.completeSalary ? (
               <li>
                 A moved player has no matched salary, so dollar totals are blank.
@@ -817,6 +1062,11 @@ export function TradeSimulator({
             {sketch.sideA.bpmNet == null || sketch.sideB.bpmNet == null ? (
               <li>A moved player has no BPM row, so BPM is not summed.</li>
             ) : null}
+            <li>
+              Unchecked for full CBA: pre-existing TPEs, cap holds, dead money,
+              NTCs, base-year compensation, two-way timing, multi-team deals,
+              and draft picks.
+            </li>
             <li>
               Room figures use known commitments vs published{" "}
               {board.cap.status.toLowerCase()} lines (cap{" "}
