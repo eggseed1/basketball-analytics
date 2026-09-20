@@ -66,3 +66,47 @@ test("profile match prefers the closest shape, not the closest single impact", (
   if (big) assert.ok(big.value > (hits[0]?.value ?? 0));
   assert.match(hits[0]?.display ?? "", /gap/);
 });
+
+test("historical profile search spans seasons with maxPerSeason", () => {
+  const focal = row("focal", "Focal", {
+    darkoDpm: 2,
+    trueShootingPct: 0.62,
+    usagePct: 0.3,
+    assistPct: 0.35,
+    reboundPct: 0.08,
+    season: "2025-26",
+  });
+  const hist: StatCompRow[] = [];
+  for (let y = 2018; y <= 2024; y++) {
+    const season = `${y}-${String((y + 1) % 100).padStart(2, "0")}`;
+    hist.push(
+      row(`twin-${y}`, "Twin Era", {
+        season,
+        darkoDpm: 2.05,
+        trueShootingPct: 0.61,
+        usagePct: 0.29,
+        assistPct: 0.34,
+        reboundPct: 0.09,
+      }),
+      row(`noise-${y}`, `Noise ${y}`, {
+        season,
+        darkoDpm: -1,
+        trueShootingPct: 0.5,
+        usagePct: 0.15,
+        assistPct: 0.1,
+        reboundPct: 0.2,
+      })
+    );
+  }
+  const hits = findSimilarProfile({
+    focal,
+    rows: hist,
+    focalIds: ["focal"],
+    limit: 4,
+    maxPerSeason: 1,
+  });
+  assert.ok(hits.length >= 1);
+  const seasons = new Set(hits.map((h) => h.season));
+  assert.equal(seasons.size, hits.length);
+  assert.ok(hits.every((h) => h.season !== "2025-26"));
+});

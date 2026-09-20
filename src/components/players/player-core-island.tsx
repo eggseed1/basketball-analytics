@@ -203,12 +203,24 @@ export async function PlayerCoreIsland({
         limit: 4,
       })
     : [];
-  if (profileComps.length) {
+  const profileHistoricalComps =
+    seasonStats && historicalPeers.length >= 8
+      ? findSimilarProfile({
+          focal: seasonStats,
+          rows: historicalPeers.filter(
+            (row) => row.season !== seasonStats.season
+          ),
+          focalIds: [playerId, espnId, nbaId],
+          limit: 4,
+          maxPerSeason: 1,
+        })
+      : [];
+  if (profileComps.length || profileHistoricalComps.length) {
     similarModes.unshift({
       id: "profile",
       label: "Profile",
       leagueComps: profileComps,
-      historicalComps: [],
+      historicalComps: profileHistoricalComps,
     });
   }
 

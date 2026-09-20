@@ -1400,35 +1400,26 @@ export function PlayerPercentilePanel({
         </button>
       </div>
       {viewProfileComps.length ? (
-        <div className="mt-3 flex flex-col gap-1.5">
+        <div className="mt-3 flex flex-col gap-1">
           <p className={cn(type.caption, "font-semibold text-muted-foreground")}>
             Closest profiles
           </p>
-          <ul className="flex flex-col gap-1">
-            {viewProfileComps.map((comp) => (
-              <li
-                key={`${comp.playerId}-${comp.season}`}
-                className="flex items-center justify-between gap-2 text-[13px]"
-              >
-                <PlayerIdentity
-                  playerId={comp.playerId}
-                  name={comp.playerName}
-                  teamKey={comp.teamKey}
-                  season={comp.season}
-                  variant="compact"
-                  className="min-w-0"
-                  nameClassName="truncate font-semibold"
-                />
-                <span className="shrink-0 tabular-nums text-muted-foreground">
-                  {comp.display}
-                </span>
-              </li>
-            ))}
-          </ul>
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Average percentile gap across impact, true shooting, usage, and
-            role. Lower is closer. Not a single-stat leaderboard.
+            {viewProfileComps
+              .slice(0, 3)
+              .map((comp) => comp.playerName)
+              .join(" · ")}
+            {viewProfileComps.length > 3 ? "…" : ""}
           </p>
+          <a
+            href="#similar-players"
+            className={cn(
+              type.caption,
+              "font-semibold text-foreground underline-offset-2 hover:underline"
+            )}
+          >
+            See Similar players →
+          </a>
         </div>
       ) : null}
 

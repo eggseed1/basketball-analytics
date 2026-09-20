@@ -58,13 +58,14 @@ export async function PlayerSimilarIsland({
     statsSeason = loaded.statsSeason ?? statsCtx.statsSeason ?? season;
     const metrics = loaded.metrics;
     const profileComps = loaded.profileComps ?? [];
+    const profileHistoricalComps = loaded.profileHistoricalComps ?? [];
 
-    if (profileComps.length) {
+    if (profileComps.length || profileHistoricalComps.length) {
       modes.push({
         id: "profile",
         label: "Profile",
         leagueComps: profileComps,
-        historicalComps: [],
+        historicalComps: profileHistoricalComps,
       });
     }
     for (const id of SIMILAR_MODE_ORDER) {
@@ -105,13 +106,15 @@ export async function PlayerSimilarIsland({
     <GlassSurface
       as="section"
       honor={honor}
+      id="similar-players"
       className="flex flex-col gap-3 p-4 sm:p-5"
     >
       <div>
         <h2 className={cn(type.heading, "tracking-tight")}>Similar players</h2>
         <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
-          Closest {statsSeason} profiles and nearest comps by metric — not a new
-          rating. Switch chips to change the lens.
+          Closest {statsSeason} profiles, historical lookalikes across eras, and
+          nearest comps by metric — not a new rating. Switch chips to change the
+          lens.
         </p>
       </div>
       <PlayerContextStrip

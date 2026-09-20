@@ -36,7 +36,7 @@ export async function GET(
     const identity = await resolvePlayerIdentityCached(playerId).catch(
       () => null
     );
-    const { metrics, teamKey, profileComps } =
+    const { metrics, teamKey, profileComps, profileHistoricalComps } =
       await loadPlayerPercentileMetrics(
       playerId,
       season,
@@ -54,6 +54,7 @@ export async function GET(
       teamKey,
       metrics,
       profileComps,
+      profileHistoricalComps,
       mode,
     });
   } catch (error) {

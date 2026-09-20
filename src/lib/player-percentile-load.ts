@@ -377,5 +377,39 @@ export async function loadPlayerPercentileMetrics(
       })
     : [];
 
-  return { metrics, teamKey, mode, profileComps, ...statsCtx };
+  const historicalProfileRows: PlayerSeason[] = [];
+  if (mode !== "fast" && seasonStats) {
+    const seen = new Set<string>();
+    const add = (rows: PlayerSeason[]) => {
+      for (const row of rows) {
+        if (row.season === seasonStats.season) continue;
+        const key = `${row.playerId}|${row.season}`;
+        if (seen.has(key)) continue;
+        seen.add(key);
+        historicalProfileRows.push(row);
+      }
+    };
+    add(priorBoard);
+    for (const board of peersBySeason.values()) add(board);
+  }
+
+  const profileHistoricalComps =
+    seasonStats && historicalProfileRows.length >= 8
+      ? findSimilarProfile({
+          focal: seasonStats,
+          rows: historicalProfileRows,
+          focalIds: [playerId, espnId, nbaId],
+          limit: 4,
+          maxPerSeason: 1,
+        })
+      : [];
+
+  return {
+    metrics,
+    teamKey,
+    mode,
+    profileComps,
+    profileHistoricalComps,
+    ...statsCtx,
+  };
 }
