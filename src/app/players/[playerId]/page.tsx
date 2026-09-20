@@ -11,6 +11,7 @@ import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { PlayerGamesIsland } from "@/components/players/player-games-island";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
+import { PlayerRoleIsland } from "@/components/players/player-role-island";
 import { PlayerSimilarIsland } from "@/components/players/player-similar-island";
 import {
   PlayerBoardSkeleton,
@@ -465,6 +466,20 @@ export default async function PlayerPage({
           caps={caps}
           seasonType={seasonType}
           honor={honor}
+          role={
+            slimWorker ? null : (
+              <Suspense fallback={null}>
+                <PlayerRoleIsland
+                  career={career}
+                  requestSeason={season}
+                  position={bioPosition}
+                  playerId={playerId}
+                  nbaId={identity?.nbaId}
+                  espnId={identity?.espnId}
+                />
+              </Suspense>
+            )
+          }
           accolades={
             slimWorker ? null : (
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
