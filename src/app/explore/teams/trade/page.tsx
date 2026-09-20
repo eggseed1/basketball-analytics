@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Two-team player swaps with known salaries, DRBL, WAR1, BPM, season rates, package shape, and room to published cap lines. Picks and exceptions stay out. Cap placement is not a legality ruling."
+        subtitle="Known salaries, DRBL, WAR1, BPM, and room to published cap lines. Not a legality ruling."
       />
       {board ? (
         <TradeSimulator
