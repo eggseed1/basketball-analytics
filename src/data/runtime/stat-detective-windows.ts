@@ -20,7 +20,10 @@ export type StatDetectiveRow = {
 export type StatDetectiveWindow = {
   id: StatWindowId;
   label: string;
+  question: string;
   note: string;
+  baselineLabel: string;
+  windowLabel: string;
   risers: StatDetectiveRow[];
   fallers: StatDetectiveRow[];
 };
@@ -50,7 +53,10 @@ export function statDetectiveWindows(): StatDetectiveWindow[] {
   return WINDOW_IDS.map((id) => ({
     id,
     label: STAT_WINDOWS[id].label,
+    question: STAT_WINDOWS[id].question,
     note: STAT_WINDOWS[id].note,
+    baselineLabel: STAT_WINDOWS[id].baselineLabel,
+    windowLabel: STAT_WINDOWS[id].windowLabel,
     risers: rows(data.windows?.[id]?.risers),
     fallers: rows(data.windows?.[id]?.fallers),
   }));

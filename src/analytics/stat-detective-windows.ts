@@ -38,21 +38,37 @@ export type WindowDelta = {
 
 export const STAT_WINDOWS: Record<
   StatWindowId,
-  { label: string; note: string; minAbsPpg: number }
+  {
+    label: string;
+    question: string;
+    note: string;
+    baselineLabel: string;
+    windowLabel: string;
+    minAbsPpg: number;
+  }
 > = {
   last5: {
     label: "Last 5 vs season",
-    note: "Latest five regular-season games minus the regular-season average.",
+    question: "Who's heating up right now?",
+    note: "Last 5 regular-season games compared with that player's season average.",
+    baselineLabel: "Season avg",
+    windowLabel: "Last 5",
     minAbsPpg: 3,
   },
   last10: {
     label: "Last 10 vs season",
-    note: "Latest ten regular-season games minus the regular-season average.",
+    question: "Is the surge (or slump) sticking?",
+    note: "Last 10 regular-season games compared with that player's season average.",
+    baselineLabel: "Season avg",
+    windowLabel: "Last 10",
     minAbsPpg: 2,
   },
   split5: {
     label: "Last 5 vs prior 5",
-    note: "Latest five regular-season games minus the five before them. No overlap.",
+    question: "Who just flipped?",
+    note: "Last 5 regular-season games compared with the 5 before them — no overlap.",
+    baselineLabel: "Prior 5",
+    windowLabel: "Last 5",
     minAbsPpg: 3,
   },
 };

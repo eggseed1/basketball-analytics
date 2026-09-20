@@ -129,6 +129,30 @@ export const PlayerCareerResumeLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const StatDetectiveDivergenceLazy = dynamic(
+  () =>
+    import("@/components/charts/stat-detective-divergence-chart").then((m) => ({
+      default: m.StatDetectiveDivergenceChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const AskLeaderboardChartLazy = dynamic(
+  () =>
+    import("@/components/charts/ask-leaderboard-chart").then((m) => ({
+      default: m.AskLeaderboardChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const PlayerBoardShapeChartLazy = dynamic(
+  () =>
+    import("@/components/charts/player-board-shape-chart").then((m) => ({
+      default: m.PlayerBoardShapeChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export type GameScoringScatterLazyProps = ComponentProps<
   typeof GameScoringScatterLazy
 >;

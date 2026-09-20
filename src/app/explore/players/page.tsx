@@ -4,6 +4,7 @@ import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-
 import { ExplorePlayersClientShell } from "@/components/explore/explore-players-client-shell";
 import { PlayerBoardHealthBanner } from "@/components/explore/player-board-health-banner";
 import { TeamCatalogFallbackNotice } from "@/components/explore/team-catalog-fallback-notice";
+import { PlayerBoardShapeChartLazy } from "@/components/charts/recharts-lazy";
 import { PageHeader } from "@/components/layout/page-header";
 import { parsePlayerSeasonSortKey } from "@/lib/player-season-sort";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
@@ -11,10 +12,12 @@ import { getAvailableSeasons, getTeamsCatalog } from "@/data/queries";
 import {
   getExplorePlayersBoardView,
   parseExplorePlayersSortDir,
+  type ExplorePlayerBoardRow,
 } from "@/data/queries/explore-players-board";
 import { defaultExplorePlayersSeason } from "@/lib/player-board-season";
 import { filtersFromSearchParams, isAllSeasonsParam } from "@/lib/search-params";
 import { DEFAULT_PLAYER_MINIMUM_MINUTES } from "@/data/types";
+import { formatNumber, formatPct } from "@/lib/format";
 
 export const metadata = {
   title: "Players",
@@ -24,6 +27,36 @@ export const metadata = {
 
 interface ExplorePlayersPageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
+function PlayerBoardShapeFromRows({
+  season,
+  rows,
+}: {
+  season: string;
+  rows: ExplorePlayerBoardRow[];
+}) {
+  const points = rows
+    .filter(
+      (r) =>
+        r.usagePct != null &&
+        Number.isFinite(r.usagePct) &&
+        r.gamesPlayed > 0 &&
+        r.points > 0
+    )
+    .map((r) => {
+      const ppg = r.ppg > 0 ? r.ppg : r.points / Math.max(1, r.gamesPlayed);
+      return {
+        playerId: r.playerId,
+        playerName: r.playerName,
+        x: r.usagePct as number,
+        y: ppg,
+        labelX: `USG ${formatPct(r.usagePct as number)}`,
+        labelY: `${formatNumber(ppg, 1)} PPG`,
+      };
+    });
+  if (points.length < 8) return null;
+  return <PlayerBoardShapeChartLazy points={points} season={season} />;
 }
 
 function TableSkeleton() {
@@ -93,6 +126,7 @@ async function ExplorePlayersBoard({
           statsSeason={view.usingPriorSeasonStats ? view.statsSeason : undefined}
         />
       ) : null}
+      <PlayerBoardShapeFromRows season={season} rows={view.rows} />
       <PlayerSeasonTable
         players={view.rows}
         season={season}
