@@ -131,11 +131,15 @@ export function PlayerContextStrip({
       ) : null}
       {historical.length ? (
         <CompList
-          title={`Similar historically · ${active.label}`}
+          title={
+            active.id === "profile"
+              ? "Closest profiles historically"
+              : `Similar historically · ${active.label}`
+          }
           comps={historical}
           focalPlayerId={focalPlayerId}
           season={season}
-          showWhy={false}
+          showWhy={active.id === "profile"}
         />
       ) : null}
       {!league.length && !historical.length ? (

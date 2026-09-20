@@ -758,16 +758,24 @@ function profileAxesFor(focal: StatCompRow): string[] {
 }
 
 /**
- * Closest same-season profiles. Distance is the average percentile gap across
- * shared axes (one impact scale + shooting, usage, and role). Not a new rating.
+ * Closest profiles by average percentile gap across shared axes
+ * (one impact scale + shooting, usage, role, optional DRBL O/D).
+ * Not a new rating.
+ *
+ * `maxPerSeason`: when set (e.g. 1), search across seasons and keep at most
+ * that many comps per season so history spans eras. When omitted, collapse to
+ * one row per player (same-season league comps).
  */
 export function findSimilarProfile(options: {
   focal: StatCompRow;
   rows: StatCompRow[];
   focalIds?: Array<string | null | undefined>;
   limit?: number;
+  /** Cap comps per season for historical archive searches. */
+  maxPerSeason?: number | null;
 }): StatComp[] {
   const limit = options.limit ?? 4;
+  const maxPerSeason = options.maxPerSeason ?? null;
   const focalIds = new Set(
     [options.focal.playerId, ...(options.focalIds ?? [])]
       .map((id) => String(id ?? "").trim())
@@ -784,16 +792,35 @@ export function findSimilarProfile(options: {
     else seasonRows.set(key, [row]);
   }
 
-  const byPlayer = new Map<string, StatCompRow & { teamId?: string }>();
-  for (const row of options.rows) {
-    if (!profileQualified(row) || focalIds.has(row.playerId)) continue;
-    const prev = byPlayer.get(row.playerId);
-    if (!prev || row.gamesPlayed > prev.gamesPlayed) {
-      byPlayer.set(row.playerId, row);
+  let pool: Array<StatCompRow & { teamId?: string }> = [];
+  if (maxPerSeason == null) {
+    const byPlayer = new Map<string, StatCompRow & { teamId?: string }>();
+    for (const row of options.rows) {
+      if (!profileQualified(row) || focalIds.has(row.playerId)) continue;
+      // Same-season: skip other seasons of the focal player too.
+      if (row.season !== options.focal.season) continue;
+      const prev = byPlayer.get(row.playerId);
+      if (!prev || row.gamesPlayed > prev.gamesPlayed) {
+        byPlayer.set(row.playerId, row);
+      }
     }
+    pool = [...byPlayer.values()];
+  } else {
+    const byPlayerSeason = new Map<string, StatCompRow & { teamId?: string }>();
+    for (const row of options.rows) {
+      if (!profileQualified(row) || focalIds.has(row.playerId)) continue;
+      if (row.season === options.focal.season) continue;
+      const key = `${row.playerId}|${row.season}`;
+      const prev = byPlayerSeason.get(key);
+      if (!prev || row.gamesPlayed > prev.gamesPlayed) {
+        byPlayerSeason.set(key, row);
+      }
+    }
+    pool = [...byPlayerSeason.values()];
   }
-  const pool = [...byPlayer.values()];
   if (pool.length < 8) return [];
+
+  const poolKey = (row: StatCompRow) => `${row.playerId}|${row.season}`;
 
   const percentiles = new Map<string, Map<string, number>>();
   for (const axis of axes) {
@@ -803,9 +830,16 @@ export function findSimilarProfile(options: {
     const values = valued.map((row) => axisValue(row, axis)!);
     const byId = new Map<string, number>();
     for (const row of valued) {
+      const key = focalIds.has(row.playerId) ? "__focal__" : poolKey(row);
+      // Focal may appear once; peers use player|season.
+      if (key === "__focal__" && byId.has("__focal__")) continue;
+      byId.set(key, percentileAmong(axisValue(row, axis)!, values));
+    }
+    // Ensure focal percentile even when focal id matched a peer key above.
+    if (axisValue(options.focal, axis) != null) {
       byId.set(
-        focalIds.has(row.playerId) ? "__focal__" : row.playerId,
-        percentileAmong(axisValue(row, axis)!, values)
+        "__focal__",
+        percentileAmong(axisValue(options.focal, axis)!, values)
       );
     }
     percentiles.set(axis, byId);
@@ -815,7 +849,7 @@ export function findSimilarProfile(options: {
     .map((row) => {
       const axisGaps: StatCompAxisGap[] = [];
       for (const axis of axes) {
-        const peerPct = percentiles.get(axis)?.get(row.playerId);
+        const peerPct = percentiles.get(axis)?.get(poolKey(row));
         const focalPct = percentiles.get(axis)?.get("__focal__");
         if (peerPct == null || focalPct == null) continue;
         const signed = peerPct - focalPct;
@@ -842,11 +876,28 @@ export function findSimilarProfile(options: {
     )
     .sort(
       (a, b) =>
-        a.gap - b.gap || a.row.playerName.localeCompare(b.row.playerName)
-    )
-    .slice(0, limit);
+        a.gap - b.gap ||
+        a.row.season.localeCompare(b.row.season) ||
+        a.row.playerName.localeCompare(b.row.playerName)
+    );
 
-  return ranked.map(({ row, gap, axisGaps }) => {
+  const selected: typeof ranked = [];
+  const perSeason = new Map<string, number>();
+  const seenPlayer = new Set<string>();
+  for (const hit of ranked) {
+    if (selected.length >= limit) break;
+    if (maxPerSeason != null) {
+      const n = perSeason.get(hit.row.season) ?? 0;
+      if (n >= maxPerSeason) continue;
+      // Prefer one season per other player in history too.
+      if (seenPlayer.has(hit.row.playerId)) continue;
+      perSeason.set(hit.row.season, n + 1);
+      seenPlayer.add(hit.row.playerId);
+    }
+    selected.push(hit);
+  }
+
+  return selected.map(({ row, gap, axisGaps }) => {
     const stints = cardStintsForSeason(
       (seasonRows.get(`${row.playerId}|${row.season}`) ??
         []) as PlayerSeason[],
@@ -854,7 +905,6 @@ export function findSimilarProfile(options: {
     );
     const last = stints.at(-1);
     const teamId = (row as { teamId?: string }).teamId;
-    // Show the three largest axis gaps so "why" stays scannable.
     const why = [...axisGaps]
       .sort((a, b) => b.gap - a.gap || a.label.localeCompare(b.label))
       .slice(0, 3);
