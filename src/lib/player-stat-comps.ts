@@ -10,6 +10,15 @@ import {
   type PlayerCardStint,
 } from "@/lib/player-team-context";
 
+export type StatCompAxisGap = {
+  id: string;
+  label: string;
+  /** Absolute percentile points between focal and peer on this axis. */
+  gap: number;
+  /** Peer percentile minus focal percentile (signed). */
+  signed: number;
+};
+
 export type StatComp = {
   playerId: string;
   playerName: string;
@@ -23,6 +32,8 @@ export type StatComp = {
   delta: number;
   /** 0-100 vs the same peer pool as the ranking (inverted when lower is better). */
   percentile: number;
+  /** Profile comps only — per-axis percentile gaps for "why similar". */
+  axisGaps?: StatCompAxisGap[];
 };
 
 /**
@@ -703,7 +714,23 @@ const PROFILE_IMPACT_AXES = [
   "bpm",
 ] as const;
 const PROFILE_SHAPE_AXES = ["ts", "usg", "astPct", "trbPct"] as const;
+/** Optional splits folded into profile distance when the focal row has them. */
+const PROFILE_EXTRA_AXES = ["drblO", "drblD"] as const;
 const PROFILE_MIN_AXES = 3;
+
+const PROFILE_AXIS_LABELS: Record<string, string> = {
+  r1WinEquivalents: "WAR1",
+  r1WinEq: "WAR1",
+  drbl100: "DRBL",
+  darko: "DARKO",
+  bpm: "BPM",
+  ts: "TS",
+  usg: "USG",
+  astPct: "AST%",
+  trbPct: "TRB%",
+  drblO: "DRBL O",
+  drblD: "DRBL D",
+};
 
 function profileQualified(row: StatCompRow): boolean {
   if (row.gamesPlayed < 15) return false;
@@ -719,6 +746,15 @@ function axisValue(row: StatCompRow, axis: string): number | null {
 
 function impactAxis(row: StatCompRow): (typeof PROFILE_IMPACT_AXES)[number] | null {
   return PROFILE_IMPACT_AXES.find((axis) => axisValue(row, axis) != null) ?? null;
+}
+
+function profileAxesFor(focal: StatCompRow): string[] {
+  const impact = impactAxis(focal);
+  return [
+    ...(impact ? [impact] : []),
+    ...PROFILE_SHAPE_AXES,
+    ...PROFILE_EXTRA_AXES,
+  ].filter((axis) => axisValue(focal, axis) != null);
 }
 
 /**
@@ -737,11 +773,7 @@ export function findSimilarProfile(options: {
       .map((id) => String(id ?? "").trim())
       .filter(Boolean)
   );
-  const impact = impactAxis(options.focal);
-  const axes = [
-    ...(impact ? [impact] : []),
-    ...PROFILE_SHAPE_AXES,
-  ].filter((axis) => axisValue(options.focal, axis) != null);
+  const axes = profileAxesFor(options.focal);
   if (axes.length < PROFILE_MIN_AXES) return [];
 
   const seasonRows = new Map<string, StatCompRow[]>();
@@ -781,25 +813,40 @@ export function findSimilarProfile(options: {
 
   const ranked = pool
     .map((row) => {
-      const gaps: number[] = [];
+      const axisGaps: StatCompAxisGap[] = [];
       for (const axis of axes) {
         const peerPct = percentiles.get(axis)?.get(row.playerId);
         const focalPct = percentiles.get(axis)?.get("__focal__");
         if (peerPct == null || focalPct == null) continue;
-        gaps.push(Math.abs(peerPct - focalPct));
+        const signed = peerPct - focalPct;
+        axisGaps.push({
+          id: axis,
+          label: PROFILE_AXIS_LABELS[axis] ?? axis,
+          gap: Math.abs(signed),
+          signed,
+        });
       }
-      if (gaps.length < PROFILE_MIN_AXES) return null;
-      const gap = gaps.reduce((sum, n) => sum + n, 0) / gaps.length;
-      return { row, gap };
+      if (axisGaps.length < PROFILE_MIN_AXES) return null;
+      const gap =
+        axisGaps.reduce((sum, item) => sum + item.gap, 0) / axisGaps.length;
+      return { row, gap, axisGaps };
     })
-    .filter((hit): hit is { row: StatCompRow; gap: number } => hit != null)
+    .filter(
+      (
+        hit
+      ): hit is {
+        row: StatCompRow;
+        gap: number;
+        axisGaps: StatCompAxisGap[];
+      } => hit != null
+    )
     .sort(
       (a, b) =>
         a.gap - b.gap || a.row.playerName.localeCompare(b.row.playerName)
     )
     .slice(0, limit);
 
-  return ranked.map(({ row, gap }) => {
+  return ranked.map(({ row, gap, axisGaps }) => {
     const stints = cardStintsForSeason(
       (seasonRows.get(`${row.playerId}|${row.season}`) ??
         []) as PlayerSeason[],
@@ -807,6 +854,10 @@ export function findSimilarProfile(options: {
     );
     const last = stints.at(-1);
     const teamId = (row as { teamId?: string }).teamId;
+    // Show the three largest axis gaps so "why" stays scannable.
+    const why = [...axisGaps]
+      .sort((a, b) => b.gap - a.gap || a.label.localeCompare(b.label))
+      .slice(0, 3);
     return {
       playerId: row.playerId,
       playerName: row.playerName,
@@ -818,6 +869,7 @@ export function findSimilarProfile(options: {
       display: `${formatNumber(gap, 0)} gap`,
       delta: gap,
       percentile: 100 - gap,
+      axisGaps: why,
     };
   });
 }

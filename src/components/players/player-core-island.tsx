@@ -969,7 +969,9 @@ export async function PlayerCoreIsland({
               defaultModeId={
                 profileComps.length ? "profile" : headlineMetric?.id
               }
-              compareHref={`/compare?a=${playerId}&season=${season}`}
+              focalPlayerId={espnId || playerId}
+              season={season}
+              compareHref={`/compare?a=${espnId || playerId}&season=${season}`}
             />
           ) : (
             <p className="text-[13px] text-muted-foreground">

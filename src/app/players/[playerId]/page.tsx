@@ -11,6 +11,7 @@ import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { PlayerGamesIsland } from "@/components/players/player-games-island";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
+import { PlayerSimilarIsland } from "@/components/players/player-similar-island";
 import {
   PlayerBoardSkeleton,
   PlayerIdentitySlotSkeleton,
@@ -523,6 +524,22 @@ export default async function PlayerPage({
         >
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
         </PlayerDestinationIdentity>
+
+        {view === "overview" ? (
+          <Suspense
+            fallback={<PlayerBoardSkeleton label="Loading similar players…" />}
+          >
+            <PlayerSimilarIsland
+              playerId={playerId}
+              season={statsCtx.statsSeason}
+              career={career}
+              identityTeamKey={teamKey}
+              nbaId={identity?.nbaId}
+              espnId={identity?.espnId}
+              honor={honor}
+            />
+          </Suspense>
+        ) : null}
 
         {view === "sentiment" ? (
           <Suspense
