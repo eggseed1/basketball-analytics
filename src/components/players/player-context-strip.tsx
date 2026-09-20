@@ -15,18 +15,46 @@ export type SimilarPlayerMode = {
   historicalComps: StatComp[];
 };
 
+function compareHrefFor(
+  focalId: string,
+  comp: StatComp,
+  season: string
+): string {
+  const params = new URLSearchParams({
+    a: focalId,
+    b: comp.playerId,
+    season,
+  });
+  if (comp.season && comp.season !== season) {
+    params.set("seasonA", season);
+    params.set("seasonB", comp.season);
+  }
+  return `/compare?${params.toString()}`;
+}
+
+function signedGap(value: number): string {
+  const rounded = Math.round(value);
+  if (rounded > 0) return `+${rounded}`;
+  return String(rounded);
+}
+
 /**
- * Context section — similar players from existing percentile comps.
+ * Similar players — profile + per-metric nearest comps.
  * Mode chips switch which metric’s nearest comps are shown (no new algorithm).
  */
 export function PlayerContextStrip({
   modes,
   defaultModeId,
+  focalPlayerId,
+  season,
   compareHref,
 }: {
   modes: SimilarPlayerMode[];
-  /** Prefer this mode when present (usually the page headline metric). */
+  /** Prefer this mode when present (usually Profile). */
   defaultModeId?: string;
+  /** Focal player id for per-comp compare links. */
+  focalPlayerId: string;
+  season: string;
   compareHref: string;
 }) {
   const available = useMemo(
@@ -96,12 +124,18 @@ export function PlayerContextStrip({
               : `Similar this season · ${active.label}`
           }
           comps={league}
+          focalPlayerId={focalPlayerId}
+          season={season}
+          showWhy={active.id === "profile"}
         />
       ) : null}
       {historical.length ? (
         <CompList
           title={`Similar historically · ${active.label}`}
           comps={historical}
+          focalPlayerId={focalPlayerId}
+          season={season}
+          showWhy={false}
         />
       ) : null}
       {!league.length && !historical.length ? (
@@ -109,12 +143,13 @@ export function PlayerContextStrip({
           No nearest comps for {active.label} on this season row.
         </p>
       ) : null}
-      <p className="text-[14px] text-muted-foreground">
+      <p className="text-[13px] leading-snug text-muted-foreground">
         {active.id === "profile" ? (
           <>
-            Profile distance is the average percentile gap across impact,
-            true shooting, usage, assist rate, and rebound rate. Lower gap is
-            closer. Other chips are still nearest on that one stat.{" "}
+            Profile distance is the average percentile gap across impact, true
+            shooting, usage, assist rate, rebound rate, and DRBL O/D when
+            present. Lower gap is closer. Other chips are nearest on that one
+            stat.{" "}
           </>
         ) : (
           <>
@@ -133,39 +168,81 @@ export function PlayerContextStrip({
   );
 }
 
-function CompList({ title, comps }: { title: string; comps: StatComp[] }) {
+function CompList({
+  title,
+  comps,
+  focalPlayerId,
+  season,
+  showWhy,
+}: {
+  title: string;
+  comps: StatComp[];
+  focalPlayerId: string;
+  season: string;
+  showWhy: boolean;
+}) {
   return (
     <div>
       <p className="mb-2 text-[12px] font-bold uppercase tracking-wide text-muted-foreground">
         {title}
       </p>
-      <ul className="flex flex-col gap-1.5">
-        {comps.map((c) => (
-          <li
-            key={`${c.playerId}-${c.season}-${c.value}`}
-            className="flex items-center justify-between gap-2 rounded-lg border border-border/70 frost-surface px-3 py-2 text-[14px]"
-          >
-            <PlayerIdentity
-              playerId={c.playerId}
-              name={c.playerName}
-              teamKey={c.teamKey}
-              teamLabel={c.teamKey}
-              season={c.season}
-              variant="compact"
-              className="min-w-0 flex-1"
-              nameClassName="w-full gap-2 no-underline hover:underline"
+      <ul className="flex flex-col gap-2">
+        {comps.map((c) => {
+          const href = compareHrefFor(focalPlayerId, c, season);
+          return (
+            <li
+              key={`${c.playerId}-${c.season}-${c.value}`}
+              className="flex min-w-0 flex-col gap-1.5 rounded-lg border border-border/70 frost-surface px-3 py-2.5"
             >
-              <span className="inline-flex min-w-0 items-center gap-2">
-                {c.teamKey ? <TeamLogo teamKey={c.teamKey} size="2xs" /> : null}
-                <span className="truncate font-semibold">{c.playerName}</span>
-                <span className="shrink-0 text-muted-foreground">{c.season}</span>
-              </span>
-            </PlayerIdentity>
-            <span className="shrink-0 tabular-nums text-muted-foreground">
-              {c.display}
-            </span>
-          </li>
-        ))}
+              <div className="flex min-w-0 items-center justify-between gap-2">
+                <PlayerIdentity
+                  playerId={c.playerId}
+                  name={c.playerName}
+                  teamKey={c.teamKey}
+                  teamLabel={c.teamKey}
+                  season={c.season}
+                  variant="compact"
+                  className="min-w-0 flex-1"
+                  nameClassName="w-full gap-2 no-underline hover:underline"
+                >
+                  <span className="inline-flex min-w-0 items-center gap-2">
+                    {c.teamKey ? (
+                      <TeamLogo teamKey={c.teamKey} size="2xs" />
+                    ) : null}
+                    <span className="truncate font-semibold text-[14px]">
+                      {c.playerName}
+                    </span>
+                    <span className="shrink-0 text-[12px] text-muted-foreground">
+                      {c.season}
+                    </span>
+                  </span>
+                </PlayerIdentity>
+                <div className="flex shrink-0 items-center gap-2">
+                  <span className="tabular-nums text-[13px] text-muted-foreground">
+                    {c.display}
+                  </span>
+                  <Link
+                    href={href}
+                    className="text-[12px] font-semibold underline-offset-2 hover:underline"
+                  >
+                    Compare
+                  </Link>
+                </div>
+              </div>
+              {showWhy && c.axisGaps?.length ? (
+                <p className="text-[11px] leading-snug text-muted-foreground">
+                  Why{" "}
+                  {c.axisGaps
+                    .map(
+                      (axis) =>
+                        `${axis.label} ${signedGap(axis.signed)}`
+                    )
+                    .join(" · ")}
+                </p>
+              ) : null}
+            </li>
+          );
+        })}
       </ul>
     </div>
   );

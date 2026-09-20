@@ -61,6 +61,7 @@ test("profile match prefers the closest shape, not the closest single impact", (
     focalIds: ["focal"],
   });
   assert.equal(hits[0]?.playerId, "twin");
+  assert.ok((hits[0]?.axisGaps?.length ?? 0) > 0);
   const big = hits.find((hit) => hit.playerId === "big");
   if (big) assert.ok(big.value > (hits[0]?.value ?? 0));
   assert.match(hits[0]?.display ?? "", /gap/);
