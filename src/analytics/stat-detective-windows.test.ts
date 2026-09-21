@@ -24,6 +24,7 @@ function game(
     points,
     fga: 18,
     fta: 4,
+    rebounds: 8,
     seasonType: "regular",
     ...extra,
   };
@@ -60,4 +61,34 @@ test("omits a window when minutes are too low", () => {
     game(i, 30, { minutesNum: 10 })
   );
   assert.equal(playerWindowDeltas(games).last5, undefined);
+});
+
+test("computes RPG deltas and keeps thin TS null", () => {
+  const games = [
+    ...Array.from({ length: 15 }, (_, i) =>
+      game(i, 4, { rebounds: 4, fga: 1, fta: 0 })
+    ),
+    ...Array.from({ length: 5 }, (_, i) =>
+      game(20 + i, 4, { rebounds: 12, fga: 1, fta: 0 })
+    ),
+  ];
+  const windows = playerWindowDeltas(games);
+  assert.ok(windows.last5);
+  assert.equal(windows.last5.windowRpg, 12);
+  assert.ok(windows.last5.baselineRpg != null);
+  assert.ok((windows.last5.deltaRpg ?? 0) > 5);
+  // Thin shot sample → TS stays null (missing ≠ 0).
+  assert.equal(windows.last5.windowTs, null);
+  assert.equal(windows.last5.deltaTs, null);
+});
+
+test("qualifiesWindow is metric-specific", async () => {
+  const { qualifiesWindow } = await import("./stat-detective-windows");
+  const games = Array.from({ length: 20 }, (_, i) =>
+    game(i, i >= 15 ? 24 : 10, { rebounds: i >= 15 ? 14 : 6 })
+  );
+  const hit = playerWindowDeltas(games).last5;
+  assert.ok(hit);
+  assert.equal(qualifiesWindow(hit, "ppg"), true);
+  assert.equal(qualifiesWindow(hit, "rpg"), true);
 });

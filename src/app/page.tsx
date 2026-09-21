@@ -77,7 +77,8 @@ async function HomeStatDetective() {
           <h2 className="type-heading">Stat Detective</h2>
           <p className="type-body-sm text-muted-foreground">
             Who&apos;s scoring way more — or way less — than their own{" "}
-            {season} average over the last five games?
+            {season} average over the last five games? Also: TS% and rebounds on
+            Detective.
           </p>
         </div>
         <AppLink

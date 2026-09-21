@@ -535,7 +535,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 | A1 | **Unique visualizations pass** — Compare radar + bar fix, Awards dynasty, Standings DIFF, Trade impact bars | **Shipped** in A1 viz batch |
 | A2 | **Awards product polish** | **Shipped** — grouped trophy case, decade filters, sibling nav, dynasty links, chip↔trophy parity, browse/nav discoverability |
 | A3 | **Time Machine discovery polish** | **Shipped** — landing storytelling, era chips, landmark grouping, named Finals, destination-aware explore rail |
-| A4 | **Stat Detective v2 metrics** | Still PPG-only; add TS / rebound / impact windows carefully with same honesty |
+| A4 | **Stat Detective v2 metrics** | **Shipped** — PPG / TS% / RPG boards on the same windows; thin samples stay null |
 
 ### Tier B — Structural depth
 
@@ -567,7 +567,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 
 ### Suggested immediate sequence
 
-1. **Stat Detective multi-metric** (A4)  
+Tier A complete. Next leverage is Tier B (structured trade genealogy, Ask viz depth, Player Ask links).
 
 ---
 
