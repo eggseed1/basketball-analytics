@@ -674,7 +674,16 @@ async function execSeasonCompare(
       },
       { label: "View player →", href: `/players/${player.id}` },
     ],
-    payload: { overall: result.overall },
+    payload: {
+      kind: "compare",
+      labelA: a,
+      labelB: b,
+      categories: result.categories.map((c) => ({
+        label: c.label,
+        edge: c.edge,
+      })),
+      overall: result.overall,
+    },
   };
 }
 
@@ -770,7 +779,17 @@ async function execTeamSeasonCompare(
         href: `/teams/${encodeURIComponent(result.sideA.abbreviation.toLowerCase())}?season=${encodeURIComponent(result.sideA.season)}`,
       },
     ],
-    payload: { overall: result.overall, mode: result.mode },
+    payload: {
+      kind: "compare",
+      labelA,
+      labelB,
+      mode: result.mode,
+      categories: result.categories.map((c) => ({
+        label: c.label,
+        edge: c.edge,
+      })),
+      overall: result.overall,
+    },
   };
 }
 
@@ -909,6 +928,14 @@ async function execTeamSeasonRank(
         href: `/teams/${encodeURIComponent(ranking.abbreviation.toLowerCase())}`,
       },
     ],
+    payload: {
+      kind: "rank",
+      bars: top.map((e) => ({
+        name: e.season,
+        value: e.copelandPoints,
+        display: `#${e.rank} · ${e.copelandPoints} pts (${e.pairwiseWins}W-${e.pairwiseLosses}L)`,
+      })),
+    },
   };
 }
 
@@ -972,6 +999,14 @@ async function execSeasonRank(ast: BasketballQueryAst): Promise<AskDrblResult> {
       },
       { label: "View player →", href: `/players/${player.id}` },
     ],
+    payload: {
+      kind: "rank",
+      bars: top.map((e) => ({
+        name: e.season,
+        value: e.copelandPoints,
+        display: `#${e.rank} · ${e.copelandPoints} pts (${e.pairwiseWins}W-${e.pairwiseLosses}L)`,
+      })),
+    },
   };
 }
 

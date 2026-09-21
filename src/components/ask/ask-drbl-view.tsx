@@ -39,7 +39,7 @@ import {
   subscribeAskRecent,
   type AskRecentEntry,
 } from "@/components/ask/ask-recent-store";
-import { AskLeaderboardChartLazy } from "@/components/charts/recharts-lazy";
+import { AskLeaderboardChartLazy, AskCompareCategoriesChartLazy } from "@/components/charts/recharts-lazy";
 import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -408,6 +408,40 @@ function AskResultBlock({
                   typeof b.name === "string" &&
                   typeof b.value === "number" &&
                   typeof b.display === "string"
+              )}
+            />
+          ) : null}
+          {result.payload?.kind === "rank" &&
+          Array.isArray(result.payload.bars) ? (
+            <AskLeaderboardChartLazy
+              title="Season ranking · Copeland points"
+              rows={(result.payload.bars as Array<{
+                name: string;
+                value: number;
+                display: string;
+              }>).filter(
+                (b) =>
+                  b &&
+                  typeof b.name === "string" &&
+                  typeof b.value === "number" &&
+                  typeof b.display === "string"
+              )}
+            />
+          ) : null}
+          {result.payload?.kind === "compare" &&
+          Array.isArray(result.payload.categories) ? (
+            <AskCompareCategoriesChartLazy
+              title="Category edges"
+              labelA={String(result.payload.labelA ?? "A")}
+              labelB={String(result.payload.labelB ?? "B")}
+              categories={(result.payload.categories as Array<{
+                label: string;
+                edge: "a" | "b" | "even" | "unavailable";
+              }>).filter(
+                (c) =>
+                  c &&
+                  typeof c.label === "string" &&
+                  typeof c.edge === "string"
               )}
             />
           ) : null}

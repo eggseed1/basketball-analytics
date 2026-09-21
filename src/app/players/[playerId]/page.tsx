@@ -6,6 +6,7 @@ import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
+import { PlayerAskLinks } from "@/components/players/player-ask-links";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
@@ -255,6 +256,16 @@ export default async function PlayerPage({
     isActive: masterPlayer?.isActive,
   });
   const statsCtx = resolvePlayerStatsSeason(career, season);
+  const peakSeasonHint = (() => {
+    let best: { season: string; ppg: number } | null = null;
+    for (const row of career) {
+      if (!(row.gamesPlayed >= 20) || !(row.points > 0)) continue;
+      const ppg = row.points / row.gamesPlayed;
+      if (!Number.isFinite(ppg)) continue;
+      if (!best || ppg > best.ppg) best = { season: row.season, ppg };
+    }
+    return best?.season ?? null;
+  })();
   const seasonOptions = [
     ...new Set([
       ...career
@@ -659,6 +670,33 @@ export default async function PlayerPage({
               honor={honor}
             />
           </Suspense>
+        ) : null}
+
+        {view === "overview" && !slimWorker ? (
+          <section
+            id="ask"
+            className="scroll-mt-16 flex flex-col gap-3"
+            aria-label="Ask DRBL"
+          >
+            <div>
+              <h2 className="text-[20px] font-bold tracking-tight">
+                Ask DRBL about {displayName}
+              </h2>
+              <p className="text-[14px] text-muted-foreground">
+                Prefills supported peak, rank, season-board, and compare queries
+                only.
+              </p>
+            </div>
+            <div className="sports-card p-4 sm:p-5">
+              <PlayerAskLinks
+                playerId={playerId}
+                playerName={displayName}
+                season={statsCtx.statsSeason}
+                peakSeason={peakSeasonHint}
+                fromHistory={fromHistory}
+              />
+            </div>
+          </section>
         ) : null}
 
         {view === "shooting" ? (
