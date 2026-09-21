@@ -19,9 +19,15 @@ import {
   canonicalSeasonFromStartYear,
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
+import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 import { historyHref } from "@/themes/history-url";
-import { defaultTimeMachineSeason } from "@/themes/era-theme";
+import {
+  ERA_THEMES,
+  defaultTimeMachineSeason,
+  resolveEraThemeForSeason,
+  type EraTheme,
+} from "@/themes/era-theme";
 
 /** Map free text ("2024", "24-25", "2015-16") onto an available season. */
 function resolveSeasonInput(
@@ -74,6 +80,25 @@ function resolveSeasonInput(
   }
 
   return null;
+}
+
+/** Newest available season whose start year falls in the era. */
+function seasonForEra(era: EraTheme, seasons: string[]): string | null {
+  let best: string | null = null;
+  let bestYear = -Infinity;
+  for (const s of seasons) {
+    try {
+      const y = startYearFromCanonicalSeason(s);
+      if (y < era.startYear || y > era.endYear) continue;
+      if (y > bestYear) {
+        bestYear = y;
+        best = s;
+      }
+    } catch {
+      /* skip */
+    }
+  }
+  return best;
 }
 
 function filterSeasons(query: string, seasons: string[]): string[] {
@@ -167,21 +192,102 @@ export function TimeMachineLanding({
     seasons.length === 0 ? true : seasons.includes(l.season)
   );
 
+  const erasWithSeasons = useMemo(
+    () =>
+      ERA_THEMES.filter((era) => seasonForEra(era, seasons) != null).map(
+        (era) => ({
+          era,
+          season: seasonForEra(era, seasons)!,
+        })
+      ),
+    [seasons]
+  );
+
+  const landmarksByEra = useMemo(() => {
+    const groups: Array<{ era: EraTheme; items: typeof landmarks }> = [];
+    for (const era of ERA_THEMES) {
+      const items = landmarks.filter(
+        (l) => resolveEraThemeForSeason(l.season).id === era.id
+      );
+      if (items.length) groups.push({ era, items });
+    }
+    return groups;
+  }, [landmarks]);
+
+  const archiveSeason =
+    landmarks.find((l) => seasons.includes(l.season))?.season ??
+    seasons.find((s) => s.startsWith("2015")) ??
+    seasons[0] ??
+    initial;
+
   return (
-    <main className="site-shell flex flex-1 flex-col justify-center gap-8 py-16 sm:py-24">
-      <header className="mx-auto w-full max-w-md text-center">
-        <p className="text-[12px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
-          History
+    <main className="site-shell flex flex-1 flex-col gap-10 py-10 sm:py-14">
+      <header className="mx-auto w-full max-w-2xl text-center">
+        <p
+          className={cn(
+            type.caption,
+            "font-bold uppercase tracking-[0.14em] text-muted-foreground"
+          )}
+        >
+          Time Machine
         </p>
-        <h1 className="mt-3 text-[32px] font-bold leading-[1.25] tracking-tight sm:text-[40px] sm:leading-[1.3]">
+        <h1 className={cn(type.title1, "mt-3")}>
           Enter the NBA
           <br />
           Time Machine
         </h1>
-        <p className="mt-3 text-[15px] leading-relaxed text-muted-foreground">
-          Choose a year to view that season&apos;s data
+        <p
+          className={cn(
+            type.body,
+            "mx-auto mt-3 max-w-xl text-muted-foreground"
+          )}
+        >
+          Pick a season for a day-by-day snapshot, open landmark eras with
+          period atmosphere, or jump into the season games archive — then drill
+          into era-true teams and players.
         </p>
       </header>
+
+      <section className="mx-auto grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+        {(
+          [
+            {
+              title: "Season snapshot",
+              body: "Choose a year below — standings, leaders, and that day’s games.",
+            },
+            {
+              title: "Landmark eras",
+              body: "Curated seasons and Finals closes already in the archive.",
+            },
+            {
+              title: "Season games hub",
+              body: "Full schedule for a season — separate from the date snapshot.",
+              href: `/history/${encodeURIComponent(archiveSeason)}`,
+            },
+          ] as const
+        ).map((card) => (
+          <div
+            key={card.title}
+            className="sports-card flex flex-col gap-1.5 p-4 text-left"
+          >
+            <p className={cn(type.bodySm, "font-bold tracking-tight")}>
+              {"href" in card && card.href ? (
+                <Link
+                  href={card.href}
+                  className="underline-offset-2 hover:underline"
+                >
+                  {card.title}
+                </Link>
+              ) : (
+                card.title
+              )}
+            </p>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              {card.body}
+            </p>
+          </div>
+        ))}
+      </section>
 
       <form
         onSubmit={onSubmit}
@@ -193,6 +299,32 @@ export function TimeMachineLanding({
         >
           Select a season
         </label>
+        {erasWithSeasons.length ? (
+          <div
+            className="flex flex-wrap justify-center gap-1.5"
+            role="group"
+            aria-label="Jump to era"
+          >
+            {erasWithSeasons.map(({ era, season }) => (
+              <button
+                key={era.id}
+                type="button"
+                onClick={() => {
+                  setQuery(season);
+                  setError(null);
+                  enterSeason(season);
+                }}
+                className={cn(
+                  type.caption,
+                  "rounded-md border border-border bg-card px-2.5 py-1 font-semibold text-muted-foreground transition-colors hover:bg-secondary/60 hover:text-foreground"
+                )}
+                title={`${era.name}: ${era.description}`}
+              >
+                {era.shortLabel}
+              </button>
+            ))}
+          </div>
+        ) : null}
         <div ref={rootRef} className="relative flex w-full items-stretch gap-2">
           <GlassSurface
             effect="liquid"
@@ -310,59 +442,95 @@ export function TimeMachineLanding({
           </p>
         ) : (
           <p className="text-[12px] text-muted-foreground">
-            Type a start year or full season code, then Enter.
+            Type a start year or full season code, then Enter — or tap an era
+            chip.
           </p>
         )}
       </form>
 
-      {landmarks.length ? (
-        <section className="mx-auto w-full max-w-md sm:max-w-2xl">
-          <h2 className="text-center text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+      {landmarksByEra.length ? (
+        <section className="mx-auto w-full max-w-3xl">
+          <h2
+            className={cn(
+              type.caption,
+              "text-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
+            )}
+          >
             Landmark seasons
           </h2>
-          <p className="mt-1 text-center text-[13px] text-muted-foreground">
-            Pick a season to view in depth
+          <p
+            className={cn(
+              type.caption,
+              "mt-1 text-center text-muted-foreground"
+            )}
+          >
+            Curated eras with product coverage — open the snapshot or a related
+            board.
           </p>
-          <ul className="mt-4 grid gap-3 sm:grid-cols-2">
-            {landmarks.map((l) => (
-              <li
-                key={l.id}
-                className="sports-card flex flex-col gap-2 p-4 text-left"
-              >
-                <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-                  {l.season}
-                </p>
-                <Link
-                  href={l.historyHref}
-                  className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+          <div className="mt-5 flex flex-col gap-6">
+            {landmarksByEra.map(({ era, items }) => (
+              <div key={era.id}>
+                <p
+                  className={cn(
+                    type.micro,
+                    "mb-2 font-bold uppercase tracking-[0.12em] text-muted-foreground"
+                  )}
                 >
-                  {l.title}
-                </Link>
-                <p className="text-[13px] leading-relaxed text-muted-foreground">
-                  {l.blurb}
+                  {era.name}
                 </p>
-                {l.boardHref && l.boardLabel ? (
-                  <Link
-                    href={l.boardHref}
-                    className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
-                  >
-                    {l.boardLabel} →
-                  </Link>
-                ) : null}
-              </li>
+                <ul className="grid gap-3 sm:grid-cols-2">
+                  {items.map((l) => (
+                    <li
+                      key={l.id}
+                      className="sports-card flex flex-col gap-2 p-4 text-left"
+                    >
+                      <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
+                        {l.season}
+                      </p>
+                      <Link
+                        href={l.historyHref}
+                        className="text-[15px] font-bold tracking-tight underline-offset-2 hover:underline"
+                      >
+                        {l.title}
+                      </Link>
+                      <p className="text-[13px] leading-relaxed text-muted-foreground">
+                        {l.blurb}
+                      </p>
+                      {l.boardHref && l.boardLabel ? (
+                        <Link
+                          href={l.boardHref}
+                          className="text-[12px] font-semibold text-muted-foreground underline-offset-2 hover:underline"
+                        >
+                          {l.boardLabel} →
+                        </Link>
+                      ) : null}
+                    </li>
+                  ))}
+                </ul>
+              </div>
             ))}
-          </ul>
+          </div>
         </section>
       ) : null}
 
       {landmarkGames.length ? (
-        <section className="mx-auto w-full max-w-md sm:max-w-2xl">
-          <h2 className="text-center text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
+        <section className="mx-auto w-full max-w-3xl">
+          <h2
+            className={cn(
+              type.caption,
+              "text-center font-bold uppercase tracking-[0.12em] text-muted-foreground"
+            )}
+          >
             Landmark games
           </h2>
-          <p className="mt-1 text-center text-[13px] text-muted-foreground">
-            Box scores that are in the schedule archive. Older seasons stay
-            season views.
+          <p
+            className={cn(
+              type.caption,
+              "mt-1 text-center text-muted-foreground"
+            )}
+          >
+            Finals closes that match the schedule archive. Missing scores stay
+            off this list.
           </p>
           <ul className="mt-4 grid gap-3 sm:grid-cols-2">
             {landmarkGames.map((game) => (
@@ -399,34 +567,42 @@ export function TimeMachineLanding({
 
       <section className="sports-card mx-auto w-full max-w-md p-5 text-left">
         <h2 className="text-[15px] font-semibold tracking-tight">
-          Explore NBA History
+          Keep exploring
         </h2>
         <p className="mt-2 text-[13px] leading-relaxed text-muted-foreground">
-          Seasons, players, teams, and games - start small, then go deeper.
+          From {archiveSeason} into boards, franchises, and the trophy case.
         </p>
         <ul className="mt-3 flex flex-col gap-2 text-[14px] font-semibold">
           <li>
             <Link
-              href="/history/2005-06"
+              href={`/history/${encodeURIComponent(archiveSeason)}`}
               className="underline-offset-4 hover:underline"
             >
-              Seasons · 2005-06 games →
+              Season games · {archiveSeason} →
             </Link>
           </li>
           <li>
             <Link
-              href="/explore/players?season=2005-06"
+              href={`/explore/players?season=${encodeURIComponent(archiveSeason)}`}
               className="underline-offset-4 hover:underline"
             >
-              Players directory →
+              Players board · {archiveSeason} →
             </Link>
           </li>
           <li>
             <Link
-              href="/explore/teams?season=2005-06"
+              href={`/explore/teams?season=${encodeURIComponent(archiveSeason)}`}
               className="underline-offset-4 hover:underline"
             >
-              Teams · 2005-06 →
+              Teams · {archiveSeason} →
+            </Link>
+          </li>
+          <li>
+            <Link
+              href="/awards"
+              className="underline-offset-4 hover:underline"
+            >
+              Trophy case →
             </Link>
           </li>
           <li>
