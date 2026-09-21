@@ -513,7 +513,7 @@ function chartSafeHex(hex: string, fallback: string): string {
   return hex;
 }
 
-/** Primary → secondary wash for similar-player bars (kept quiet on frost). */
+/** Primary → secondary wash for soft fills (category chips, frost accents). */
 export function teamBrandBarGradient(teamKey?: string | null): string {
   const brand = resolveTeamBrand(teamKey);
   if (!brand) {
@@ -522,6 +522,14 @@ export function teamBrandBarGradient(teamKey?: string | null): string {
   const start = chartSafeHex(brand.primary, brand.secondary);
   const end = chartSafeHex(brand.secondary, start);
   return `linear-gradient(90deg, color-mix(in oklab, ${start} 36%, var(--background)) 0%, color-mix(in oklab, ${end} 20%, var(--background)) 100%)`;
+}
+
+/**
+ * High-contrast fill for compare matchup bars — solid franchise color so
+ * length reads clearly on white/frost cards (not the quiet frost wash).
+ */
+export function teamBrandCompareBarFill(teamKey?: string | null): string {
+  return teamBrandBarColor(teamKey, { surface: "light" });
 }
 
 /**

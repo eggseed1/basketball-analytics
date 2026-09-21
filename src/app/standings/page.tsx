@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import { redirect } from "next/navigation";
 
+import { StandingsDiffBarsLazy } from "@/components/charts/recharts-lazy";
 import { PageHeader } from "@/components/layout/page-header";
 import { StandingsConferenceTable } from "@/components/standings/standings-conference-table";
 import { EmptyState, Skeleton } from "@/components/ui/empty-state";
@@ -69,6 +70,7 @@ async function StandingsBody({ season }: { season: string }) {
           started.
         </p>
       ) : null}
+      <StandingsDiffBarsLazy season={data.season} east={east} west={west} />
       <div className="grid gap-4 lg:grid-cols-2">
         <StandingsConferenceTable title="Eastern Conference" rows={east} />
         <StandingsConferenceTable title="Western Conference" rows={west} />

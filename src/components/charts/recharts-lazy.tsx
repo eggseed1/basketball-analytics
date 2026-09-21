@@ -153,6 +153,38 @@ export const PlayerBoardShapeChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const PlayerCompareRadarLazy = dynamic(
+  () =>
+    import("@/components/charts/player-compare-radar").then((m) => ({
+      default: m.PlayerCompareRadar,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const AwardDynastyBarsLazy = dynamic(
+  () =>
+    import("@/components/charts/award-dynasty-bars").then((m) => ({
+      default: m.AwardDynastyBars,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const StandingsDiffBarsLazy = dynamic(
+  () =>
+    import("@/components/charts/standings-diff-bars").then((m) => ({
+      default: m.StandingsDiffBars,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
+export const TradeImpactBarsLazy = dynamic(
+  () =>
+    import("@/components/charts/trade-impact-bars").then((m) => ({
+      default: m.TradeImpactBars,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export type GameScoringScatterLazyProps = ComponentProps<
   typeof GameScoringScatterLazy
 >;

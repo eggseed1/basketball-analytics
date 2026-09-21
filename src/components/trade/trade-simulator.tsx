@@ -13,6 +13,7 @@ import { ArrowLeftRight, Check, Copy, RotateCcw, X } from "lucide-react";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { TradeImpactBarsLazy } from "@/components/charts/recharts-lazy";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { formatNumber, formatPct } from "@/lib/format";
@@ -1017,6 +1018,22 @@ export function TradeSimulator({
               <MatchSideChip abbr={teamB.abbr} fit={salaryFit.sideB} />
             </div>
           ) : null}
+          <TradeImpactBarsLazy
+            sideA={{
+              abbr: teamA.abbr,
+              teamKey: teamA.abbr,
+              drblNet: sketch.sideA.drblNet,
+              war1Net: sketch.sideA.war1Net,
+              bpmNet: sketch.sideA.bpmNet,
+            }}
+            sideB={{
+              abbr: teamB.abbr,
+              teamKey: teamB.abbr,
+              drblNet: sketch.sideB.drblNet,
+              war1Net: sketch.sideB.war1Net,
+              bpmNet: sketch.sideB.bpmNet,
+            }}
+          />
           <div className="grid min-w-0 grid-cols-2 gap-2 sm:gap-3">
             <SideImpact team={teamA} side={sketch.sideA} align="left" />
             <SideImpact team={teamB} side={sketch.sideB} align="right" />
