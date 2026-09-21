@@ -153,14 +153,6 @@ export const AskCompareCategoriesChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const PlayerBoardShapeChartLazy = dynamic(
-  () =>
-    import("@/components/charts/player-board-shape-chart").then((m) => ({
-      default: m.PlayerBoardShapeChart,
-    })),
-  { ssr: false, loading: () => pulse }
-);
-
 export const PlayerCompareRadarLazy = dynamic(
   () =>
     import("@/components/charts/player-compare-radar").then((m) => ({
