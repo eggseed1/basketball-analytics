@@ -522,7 +522,9 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 - Scout-phrase player roles on identity  
 - Similar players moved below career/stats on overview  
 - Stat Detective clarity + divergence chart  
-- Board shape scatter + Ask leaderboard bars  
+- Board shape scatter removed from Players board (viz hub owns scatters)
+- Compact player overview playing-style strip
+- Ask leaderboard / compare viz; loading-efficiency islands
 
 ---
 
@@ -560,15 +562,14 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 
 | # | Item |
 | --- | --- |
-| D1 | Refresh `docs/PRODUCT_ROADMAP.md` status table (many “Missing” rows are shipped) |
+| D1 | Refresh `docs/PRODUCT_ROADMAP.md` status table (many “Missing” rows are shipped) | **Shipped** — Phase 0 + phase checkboxes aligned to live product |
 | D2 | Wire Stat Detective bake into `npm` deploy scripts if not already | **Shipped** — bake runs before `build-runtime-cf-assets` |
-| D3 | Fix lingering CF verify flake (`player race pin search`) |
+| D3 | Fix lingering CF verify flake (`player race pin search`) | **Shipped** — verify matches “Pin a player” copy |
 | D4 | Keep this workbook updated when major surfaces ship |
 
 ### Suggested immediate sequence
 
-Tier A + B2/B3 complete. Next: B1 when ledger edges exist, or B5/D hygiene.
-
+Hygiene D1–D3 complete. Next product depth: **B1** when ledger edges densify, else licensed ingest for **B4/B5**. Avoid inventing assets or sentiment volume.
 ---
 
 ## 10. Quick path index

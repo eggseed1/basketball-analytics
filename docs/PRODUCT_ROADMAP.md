@@ -15,22 +15,22 @@
 
 | Vision area | Status | Existing foundation |
 | --- | --- | --- |
-| Player Intelligence | **Partial** | Bio, career, gamelog, percentiles, similar comps |
-| Player Comparison | **Partial** | Metric comps only; no dedicated compare route |
-| Career Resume | **Missing** | GM FO types only; no public thresholds |
+| Player Intelligence | **Shipped** | Bio, career, gamelog, percentiles, similar comps, scout roles, Ask entry |
+| Player Comparison | **Shipped** | `/compare` + season-compare / season-rank labs |
+| Career Resume | **Shipped** | Documented thresholds + Peak Impact companion (`docs/career-resume.md`) |
 | Team Intelligence | **V2** | `/teams/[teamId]` narrative: overview → performance → identity → arc → roster → games → evidence → transactions → Ask. See `docs/team-intelligence.md`. |
-| Lineup Lab | **Missing** | GM lineup only |
-| Game Lab | **Partial** | Box score + PBP flow timeline + raw PBP panel; validated possessions via `getGamePossessions` |
-| Historical Time Machine | **Partial** | Explore/games + BDL cache; no discovery product |
-| Stat Detective | **Missing** | — |
-| Automated Discovery / Home | **Partial** | `ComputedInsight` + `FindingsSection` existed but unused on Home |
-| Ask the NBA / NL → AST | **Missing** | — |
-| Offseason tracker | **Missing** | Salaries CSV + GM stubs only |
-| Context engine | **Partial** | Rich on player page; not systemic |
+| Lineup Lab | **Missing** | Blocked on lineup minutes source |
+| Game Lab | **Partial** | Box score + PBP flow + possession explorer via `getGamePossessions` |
+| Historical Time Machine | **Shipped** | `/history` discovery landing, era chips, landmarks, destination-aware explore |
+| Stat Detective | **Shipped** | `/explore/players/windows` — PPG / TS% / RPG boards + divergence chart |
+| Automated Discovery / Home | **Partial** | Home findings rail (leaders + YoY); more discovery modes optional |
+| Ask the NBA / NL → AST | **Shipped** | `/ask` constrained AST → executors; rank/compare viz; player entry points |
+| Offseason tracker | **Shipped** | `/offseason` ESPN events; structured genealogy UI still gated |
+| Context engine | **Partial** | Strong on player/team destinations; not every board surface |
 | Learn interactivity | **Partial** | Guides + explainers; little interactivity |
 | Shareable queries | **Partial** | URL filters; no query IDs |
-| PBP infrastructure | **Partial** | On-demand CDN/stats PBP + per-game possession pipeline; bulk `PBP_DATA_PATH` corpus optional for batch |
-| DRBL hooks | **Missing** | Design-compatible stubs only |
+| PBP infrastructure | **Partial** | On-demand CDN/stats PBP + per-game possession pipeline; bulk corpus optional |
+| DRBL hooks | **Partial** | Live DRBL/100 + WAR1 for registry seasons (`2020-21`→`2025-26`); broader seasons research-only |
 
 ### Reuse first
 
@@ -58,10 +58,11 @@
 
 ### What must be staged
 
-- Ask the NBA (needs AST + validators + limited metric vocabulary first)  
-- Game Lab possession explorer UI (pipeline ready via `getGamePossessions`)  
-- Offseason intelligence (need transaction ingest)  
+- Broader Ask coverage / stable `/query/[id]`  
+- Game Lab possession depth when win-prob / richer PBP allows  
+- Trade genealogy unlock (ledger density)  
 - Lineup Lab (need lineup minutes / ratings source)  
+- Movement / Sentiment beyond curated seeds (licensed ingest)  
 - Optional what-if sandbox (after real offseason system)
 
 ---
@@ -104,41 +105,43 @@
 - Possession explorer **architecture** (no fake possessions)  
 - Time Machine browse: eras, landmark games, ranking boards from existing caches
   - [x] Curated landmark seasons on Time Machine landing
+  - [x] Discovery polish (era chips, landmark grouping, named Finals, explore rail)
   - [ ] Landmark games set (box-level) when archive coverage allows
 
 ### Phase 4 — Offseason Intelligence
 
 - [x] Canonical transaction + asset lineage types / empty-safe queries (`docs/transaction-lineage.md`) — **genealogy UI blocked**  
-- [x] ESPN free-text transaction archive ingest (2000–present) — structured assets/ownership still missing  
+- [x] ESPN free-text transaction archive ingest (2000–present) — structured assets/ownership still thin  
 - [x] Real Offseason Tracker v1 (`/offseason`) — transaction **events** only (`docs/offseason-tracker.md`)  
-- Structured trade/pick ledger ingest (required for genealogy)  
+- [ ] Structured trade/pick ledger density (required for genealogy unlock)  
 - Timeline + “why it matters” using DARKO/RAPTOR/salary where valid  
 - REAL vs REPORTED vs MODEL labeling  
 - Watchlist → “Your offseason”
 
-### Phase 5 — Ask the NBA
+### Phase 5 — Ask the NBA ← **shipped (constrained)**
 
-- Constrained intent → AST → validator → compiler → queries  
-- Visible interpretation + editable assumptions  
-- Result page with sample size + baselines  
-- Stable `/query/[id]` later  
+- [x] Constrained intent → AST → validator → compiler → queries  
+- [x] Visible interpretation + editable assumptions  
+- [x] Result page with sample size + baselines; rank/compare viz  
+- [x] Player Ask entry points  
+- [ ] Stable `/query/[id]` later  
 
 ### Phase 6 — Automated Discovery
 
 - [x] Risers / fallers from season boards (DARKO + BPM YoY on Home findings)
-- [ ] Stat Detective for rolling / multi-window deltas
+- [x] Stat Detective for rolling / multi-window deltas (`/explore/players/windows`)
 - [x] Home “What Matters Today” data-first findings rail (leaders + YoY)
 
 ### Phase 7 — Deep PBP / DRBL
 
 - Plug PBP into stubs; never SSR-scan full history  
-- DRBL as deepest evidence layer when ready  
+- DRBL as deepest evidence layer when ready (registry seasons already live)
 
 ### Phase 8 — Optional what-if
 
 - Clone real roster state; separate from Franchise Lab  
 
-### Phase 9 — Live NBA Intelligence: Movement Center ← **architecture (M0)**
+### Phase 9 — Live NBA Intelligence: Movement Center ← **architecture (M0 + curated shell)**
 
 > **After** core UX, performance, merge-safety, and data-quality consolidation.  
 > **Before** play-by-play becomes the sole development focus.  
@@ -151,24 +154,24 @@
 - [x] Evidence scoring (`src/movement-center/scoring.ts`)
 - [x] Read-only `/movement` landing + player monitors
 - [ ] M1 curated internal prototype (manual sources, clustering)
-- [ ] M2 read-only monitors + landing
+- [ ] M2 read-only monitors + landing (licensed ingest)
 - [ ] M3 seasonal Rumor Mill modes (config-driven calendar)
 - [ ] M4 Rumor → Reality + resolution windows
 - [ ] M5 Ask DRBL citations + transaction linkage
 
 **Trust:** Evidence strength ≠ trade probability. Reported ≠ confirmed. Completed transactions ≠ unresolved reports.
 
-### Phase 10 — Live NBA Intelligence: Sentiment
+### Phase 10 — Live NBA Intelligence: Sentiment ← **pilot seeds only**
 
 > **After Movement Center M2** (read-only monitors).  
 > See `docs/architecture/sentiment.md`
 
+- [x] Seeded pilot snapshot + `/sentiment` surfaces (not production ingest)
 - [ ] S0 platform feasibility (Reddit/news; **no X scraping without permitted API**)
-- [ ] S1 internal prototype (fan/media separation)
-- [ ] S2 Player/team Sentiment tab
+- [ ] S1 internal prototype beyond seeds (fan/media separation)
+- [ ] S2 Player/team Sentiment tab (beyond pilot)
 - [ ] S3 event association (associative wording only)
 - [ ] S4 Time Machine + Ask DRBL
-
 ---
 
 ## 1b. Product layers (canonical)
