@@ -3,6 +3,9 @@
 > Paste this into ChatGPT (or attach it) when asking for help with this repo.
 > It describes **what the site does**, **how it is built**, and **where to change things**.
 >
+> **Full living site map (Sep 2026):** `reports/project_workbook_v3/01_SITE_MASTER_WORKBOOK.md`
+> (every route, proprietary systems, design philosophy, next steps).
+>
 > Repo: `basketball-analytics` · Stack: Next.js 16 App Router · React 19 · TypeScript · Tailwind 4  
 > Primary path alias: `@/` → `src/`
 

@@ -1,11 +1,16 @@
 import { notFound } from "next/navigation";
 
 import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
+import { AwardDynastyBarsLazy } from "@/components/charts/recharts-lazy";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import {
   AWARD_DEFINITIONS,
   getAwardBySlug,
 } from "@/content/awards/catalog";
+import {
+  awardDynastyUnitLabel,
+  buildAwardDynastyBars,
+} from "@/content/awards/dynasty";
 import { getAwardHistory } from "@/content/awards/history";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -39,6 +44,8 @@ export default async function AwardHistoryPage({
 
   const rows = getAwardHistory(slug);
   const hasYearList = rows.length > 0;
+  const dynastyBars = buildAwardDynastyBars(rows);
+  const dynastyUnit = awardDynastyUnitLabel(slug);
   const seasonColumnLabel =
     award.slug === "all-star"
       ? "Selections"
@@ -85,6 +92,14 @@ export default async function AwardHistoryPage({
           </p>
         </div>
       </header>
+
+      {hasYearList && dynastyBars.length >= 3 && dynastyBars[0]!.count >= 2 ? (
+        <AwardDynastyBarsLazy
+          title={`${award.shortLabel} dynasty`}
+          unitLabel={dynastyUnit}
+          bars={dynastyBars}
+        />
+      ) : null}
 
       {hasYearList ? (
         <div className="sports-card overflow-hidden">

@@ -10,13 +10,14 @@ import {
 } from "@/analytics/compare-players";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { PlayerCompareRadarLazy } from "@/components/charts/recharts-lazy";
 import { CompareShareControls } from "@/components/compare/compare-share-controls";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { type } from "@/lib/design-system";
-import { teamBrandBarGradient } from "@/lib/nba-brand";
+import { teamBrandBarGradient, teamBrandCompareBarFill } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 type ValueMode = "raw" | "percentile";
@@ -96,15 +97,15 @@ function MatchupBarRow({
   aName,
   bName,
   valueMode,
-  aGradient,
-  bGradient,
+  aFill,
+  bFill,
 }: {
   dimension: ComparisonDimension;
   aName: string;
   bName: string;
   valueMode: ValueMode;
-  aGradient: string;
-  bGradient: string;
+  aFill: string;
+  bFill: string;
 }) {
   const hasPct =
     dimension.aPercentile != null || dimension.bPercentile != null;
@@ -124,8 +125,9 @@ function MatchupBarRow({
     dimension.delta < -evenThreshold;
   const tied = !aWins && !bWins;
 
-  const aOpacity = tied || aWins ? 1 : 0.5;
-  const bOpacity = tied || bWins ? 1 : 0.5;
+  // Keep the trailing side readable — faint fills made losing bars disappear.
+  const aOpacity = tied || aWins ? 1 : 0.72;
+  const bOpacity = tied || bWins ? 1 : 0.72;
 
   const label = (() => {
     const conceptId = conceptIdForColumnLabel(dimension.label);
@@ -167,12 +169,12 @@ function MatchupBarRow({
             >
               {aValue}
             </span>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-foreground/[0.06]">
+            <div className="h-2.5 w-full overflow-hidden rounded-full border border-foreground/15 bg-foreground/[0.08]">
               <div
                 className="ml-auto h-full rounded-full"
                 style={{
                   width: `${aTrack ?? 0}%`,
-                  background: aGradient,
+                  backgroundColor: aFill,
                 }}
               />
             </div>
@@ -207,12 +209,12 @@ function MatchupBarRow({
             >
               {bValue}
             </span>
-            <div className="h-2 w-full overflow-hidden rounded-full bg-foreground/[0.06]">
+            <div className="h-2.5 w-full overflow-hidden rounded-full border border-foreground/15 bg-foreground/[0.08]">
               <div
                 className="h-full rounded-full"
                 style={{
                   width: `${bTrack ?? 0}%`,
-                  background: bGradient,
+                  backgroundColor: bFill,
                 }}
               />
             </div>
@@ -604,8 +606,8 @@ export function PlayerCompareView({
   const bShort = shortName(result.bName);
   const aTeamKey = result.aTeamKeys?.[0] ?? result.aTeamKey;
   const bTeamKey = result.bTeamKeys?.[0] ?? result.bTeamKey;
-  const aGradient = teamBrandBarGradient(aTeamKey);
-  const bGradient = teamBrandBarGradient(bTeamKey);
+  const aFill = teamBrandCompareBarFill(aTeamKey);
+  const bFill = teamBrandCompareBarFill(bTeamKey);
 
   return (
     <div className="flex flex-col gap-3">
@@ -729,6 +731,14 @@ export function PlayerCompareView({
           </PlayerIdentity>
         </header>
 
+        <PlayerCompareRadarLazy
+          dimensions={visibleDimensions}
+          aName={aShort}
+          bName={bShort}
+          aTeamKey={aTeamKey}
+          bTeamKey={bTeamKey}
+        />
+
         <CategoryScorecard
           dimensions={visibleDimensions}
           aName={aShort}
@@ -786,8 +796,8 @@ export function PlayerCompareView({
                     aName={aShort}
                     bName={bShort}
                     valueMode={valueMode}
-                    aGradient={aGradient}
-                    bGradient={bGradient}
+                    aFill={aFill}
+                    bFill={bFill}
                   />
                 ))}
               </div>
@@ -856,8 +866,8 @@ export function ComparisonDimensionRow({
       aName={aName}
       bName={bName}
       valueMode="raw"
-      aGradient={aColor ?? teamBrandBarGradient(undefined)}
-      bGradient={bColor ?? teamBrandBarGradient(undefined)}
+      aFill={aColor ?? teamBrandCompareBarFill(undefined)}
+      bFill={bColor ?? teamBrandCompareBarFill(undefined)}
     />
   );
 }
