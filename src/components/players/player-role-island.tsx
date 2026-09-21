@@ -1,13 +1,12 @@
 import { PlayerRoleLine } from "@/components/players/player-role-line";
-import { zoneTableFromIndex } from "@/data/history/player-season-shots";
-import { resolvePlayerSeasonShotIndex } from "@/data/runtime/player-shots-store";
 import type { PlayerSeason } from "@/data/types";
 import { resolvePlayerStatsSeason } from "@/lib/player-board-season";
 import { assignPlayerRole } from "@/lib/player-role";
 
 /**
  * Resolves scout-phrase role for the stats season (offseason fallback aware).
- * Shot zones enrich diet when a baked index exists — never blocks identity.
+ * Shot-zone diet enrichment is skipped on the critical path so overview paints
+ * without waiting on the shot index.
  */
 export async function PlayerRoleIsland({
   career,
@@ -34,8 +33,6 @@ export async function PlayerRoleIsland({
 
   if (!row) return null;
 
-  let zones: Array<{ zone: string; frequency: number; fga: number }> | null =
-    null;
   let rowForRole = row;
 
   // Career rows can lack USG/AST% until BRef overlay — pull from bundled board.
@@ -76,27 +73,9 @@ export async function PlayerRoleIsland({
     }
   }
 
-  try {
-    const index = await resolvePlayerSeasonShotIndex({
-      season: statsSeason,
-      playerId,
-      nbaId,
-      espnId,
-    });
-    if (index && index.coordinateShots >= 40) {
-      zones = zoneTableFromIndex(index).map((z) => ({
-        zone: z.zone,
-        frequency: z.frequency,
-        fga: z.fga,
-      }));
-    }
-  } catch {
-    zones = null;
-  }
-
   const role = assignPlayerRole({
     row: rowForRole,
-    zones,
+    zones: null,
     position: position ?? rowForRole.position,
   });
   if (!role || role.id === "unclear") return null;

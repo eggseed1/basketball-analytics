@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import {
   FormEvent,
@@ -30,7 +31,6 @@ import {
   historyReturnHref,
   type AskContext,
 } from "@/query-engine/ask-context";
-import { AskBuilderForm } from "@/components/ask/ask-builder-form";
 import {
   clearAskRecent,
   getAskRecentSnapshot,
@@ -39,7 +39,8 @@ import {
   subscribeAskRecent,
   type AskRecentEntry,
 } from "@/components/ask/ask-recent-store";
-import { AskLeaderboardChartLazy, AskCompareCategoriesChartLazy } from "@/components/charts/recharts-lazy";
+import { AskCompareCategoriesChart } from "@/components/charts/ask-compare-categories-chart";
+import { AskLeaderboardChartLazy } from "@/components/charts/recharts-lazy";
 import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -48,6 +49,19 @@ import {
   conceptIdForAskMetric,
   conceptIdForAskStatus,
 } from "@/lib/learn-column-concepts";
+
+const AskBuilderForm = dynamic(
+  () =>
+    import("@/components/ask/ask-builder-form").then((m) => ({
+      default: m.AskBuilderForm,
+    })),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-40 animate-pulse rounded-xl border border-border bg-muted/40" />
+    ),
+  }
+);
 import { assertInternalHref } from "@/lib/navigation";
 import { cn } from "@/lib/utils";
 
@@ -430,7 +444,7 @@ function AskResultBlock({
           ) : null}
           {result.payload?.kind === "compare" &&
           Array.isArray(result.payload.categories) ? (
-            <AskCompareCategoriesChartLazy
+            <AskCompareCategoriesChart
               title="Category edges"
               labelA={String(result.payload.labelA ?? "A")}
               labelB={String(result.payload.labelB ?? "B")}

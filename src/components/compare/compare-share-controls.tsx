@@ -18,7 +18,6 @@ import {
   Share2,
   X,
 } from "lucide-react";
-import { toPng } from "html-to-image";
 
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
@@ -125,7 +124,7 @@ async function captureNode(node: HTMLElement): Promise<string> {
             })
     )
   );
-  return toPng(node, {
+  return (await import("html-to-image")).toPng(node, {
     cacheBust: true,
     pixelRatio: Math.min(2.5, (window.devicePixelRatio || 2) * 1.25),
     backgroundColor: "#0c0c0e",
