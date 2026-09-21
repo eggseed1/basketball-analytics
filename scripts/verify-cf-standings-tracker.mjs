@@ -554,7 +554,7 @@ for (const [season, id] of [
   });
   checks.push({
     name: "player race pin search control present",
-    ok: status === 200 && /Pin any player/i.test(text),
+    ok: status === 200 && /Pin a player/i.test(text),
     url,
     status,
   });
