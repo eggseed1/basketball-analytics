@@ -533,7 +533,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 | # | Item | Why |
 | --- | --- | --- |
 | A1 | **Unique visualizations pass** — Compare radar + bar fix, Awards dynasty, Standings DIFF, Trade impact bars | **Shipped** in A1 viz batch |
-| A2 | **Awards product polish** | On original CF shipping list; still below player/trade bar |
+| A2 | **Awards product polish** | **Shipped** — grouped trophy case, decade filters, sibling nav, dynasty links, chip↔trophy parity, browse/nav discoverability |
 | A3 | **Time Machine discovery polish** | Era branding works; landing/storytelling still thin vs destinations |
 | A4 | **Stat Detective v2 metrics** | Still PPG-only; add TS / rebound / impact windows carefully with same honesty |
 
@@ -567,9 +567,8 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 
 ### Suggested immediate sequence
 
-1. **Awards content/IA polish** (A2)  
-2. **Time Machine landing** (A3)  
-3. **Stat Detective multi-metric** (A4)  
+1. **Time Machine landing** (A3)  
+2. **Stat Detective multi-metric** (A4)  
 
 ---
 

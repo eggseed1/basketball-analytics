@@ -66,8 +66,8 @@ export function AwardDynastyBars({
           id={`${chartId}-desc`}
           className={cn(type.caption, "text-muted-foreground")}
         >
-          Most {unitLabel} in this history list — the dynasty view of the table
-          below.
+          Most {unitLabel} in this history list — click a bar (or tooltip name)
+          when linked to open the player.
         </p>
       </div>
       <div
@@ -108,7 +108,16 @@ export function AwardDynastyBars({
                 if (!active || !row) return null;
                 return (
                   <FrostRechartsTooltip active={active}>
-                    <p className="text-[12px] font-semibold">{row.name}</p>
+                    {row.href ? (
+                      <a
+                        href={row.href}
+                        className="text-[12px] font-semibold underline-offset-2 hover:underline"
+                      >
+                        {row.name}
+                      </a>
+                    ) : (
+                      <p className="text-[12px] font-semibold">{row.name}</p>
+                    )}
                     <p className="mt-1 text-[12px] tabular-nums">
                       {row.count} {unitLabel}
                     </p>
@@ -123,6 +132,10 @@ export function AwardDynastyBars({
                   key={row.name}
                   fill={theme.semantic.info}
                   fillOpacity={1 - i * 0.06}
+                  cursor={row.href ? "pointer" : undefined}
+                  onClick={() => {
+                    if (row.href) window.location.assign(row.href);
+                  }}
                 />
               ))}
             </Bar>

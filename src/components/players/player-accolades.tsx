@@ -12,6 +12,7 @@ import { createPortal } from "react-dom";
 
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
+import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import type { PlayerAccoladeBadge } from "@/data/queries/player-awards";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -170,17 +171,26 @@ function AccoladeTag({ badge }: { badge: PlayerAccoladeBadge }) {
               onMouseLeave={scheduleClose}
             >
               <FrostFloatingSurface className="p-3">
-                <p
-                  className={cn(
-                    type.caption,
-                    "font-bold uppercase tracking-[0.08em] text-muted-foreground"
-                  )}
-                >
-                  {award.trophyName}
-                </p>
-                <p className={cn(type.bodySm, "mt-0.5 font-semibold")}>
-                  {count}× {award.title}
-                </p>
+                <div className="flex items-start gap-2.5">
+                  <AwardTrophyIcon
+                    trophy={award.trophy}
+                    title={award.trophyName}
+                    className="size-8 shrink-0"
+                  />
+                  <div className="min-w-0">
+                    <p
+                      className={cn(
+                        type.caption,
+                        "font-bold uppercase tracking-[0.08em] text-muted-foreground"
+                      )}
+                    >
+                      {award.trophyName}
+                    </p>
+                    <p className={cn(type.bodySm, "mt-0.5 font-semibold")}>
+                      {count}× {award.title}
+                    </p>
+                  </div>
+                </div>
                 {years.length > 0 ? (
                   <ul className="mt-2 flex flex-wrap gap-1">
                     {years.map((season) => (
@@ -200,6 +210,14 @@ function AccoladeTag({ badge }: { badge: PlayerAccoladeBadge }) {
                     Hall of Fame inductee
                   </p>
                 ) : null}
+                <p
+                  className={cn(
+                    type.micro,
+                    "mt-2 font-semibold uppercase tracking-[0.1em] text-muted-foreground"
+                  )}
+                >
+                  View full history →
+                </p>
               </FrostFloatingSurface>
             </div>,
             document.body
