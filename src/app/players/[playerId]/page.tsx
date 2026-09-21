@@ -10,18 +10,22 @@ import { PlayerAskLinks } from "@/components/players/player-ask-links";
 import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-data-guard-banner";
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
-import { PlayerGamesIsland } from "@/components/players/player-games-island";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
 import { PlayerRoleIsland } from "@/components/players/player-role-island";
 import { PlayerSimilarIsland } from "@/components/players/player-similar-island";
+import {
+  PlayerCareerAnalysisIslandDeferred,
+  PlayerGamesIslandDeferred,
+  PlayerSentimentTabIslandDeferred,
+  PlayerStatDepthIslandDeferred,
+  PlayerVisualizationsIslandDeferred,
+} from "@/components/players/player-page-deferred-islands";
 import {
   PlayerBoardSkeleton,
   PlayerIdentitySlotSkeleton,
   PlayerPercentileSkeleton,
 } from "@/components/players/player-page-skeletons";
-import { PlayerStatDepthIsland } from "@/components/players/player-stat-depth-island";
 import { PlayerStatsIsland } from "@/components/players/player-stats-island";
-import { PlayerVisualizationsIsland } from "@/components/players/player-visualizations";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { assessProductionProviderGuard } from "@/data/diagnostics/production-provider-guard";
 import {
@@ -84,8 +88,6 @@ import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
 import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
-import { PlayerSentimentTabIsland } from "@/components/players/player-sentiment-tab-island";
-import { PlayerCareerAnalysisIsland } from "@/components/players/player-career-analysis-island";
 
 interface PlayerPageProps {
   params: Promise<{ playerId: string }>;
@@ -479,7 +481,7 @@ export default async function PlayerPage({
           honor={honor}
           role={
             slimWorker ? null : (
-              <Suspense fallback={null}>
+              <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
                 <PlayerRoleIsland
                   career={career}
                   requestSeason={season}
@@ -555,7 +557,7 @@ export default async function PlayerPage({
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading sentiment…" />}
           >
-            <PlayerSentimentTabIsland
+            <PlayerSentimentTabIslandDeferred
               playerId={playerId}
               playerName={displayName}
               teamKey={teamKey}
@@ -575,7 +577,7 @@ export default async function PlayerPage({
                 statsSeason={statsCtx.statsSeason}
               />
             ) : null}
-            <PlayerGamesIsland
+            <PlayerGamesIslandDeferred
               playerId={playerId}
               season={statsCtx.statsSeason}
               seasons={seasonOptions}
@@ -609,7 +611,7 @@ export default async function PlayerPage({
               <PlayerBoardSkeleton label="Loading career analysis…" />
             }
           >
-            <PlayerCareerAnalysisIsland
+            <PlayerCareerAnalysisIslandDeferred
               playerId={playerId}
               displayName={displayName}
               season={season}
@@ -709,7 +711,7 @@ export default async function PlayerPage({
                 statsSeason={statsCtx.statsSeason}
               />
             ) : null}
-            <PlayerVisualizationsIsland
+            <PlayerVisualizationsIslandDeferred
               playerId={playerId}
               nbaId={identity?.nbaId}
               season={statsCtx.statsSeason}
@@ -735,7 +737,7 @@ export default async function PlayerPage({
               />
             ) : null}
             <GlassSurface effect="css" className="p-1 sm:p-2" honor={honor}>
-              <PlayerStatDepthIsland
+              <PlayerStatDepthIslandDeferred
                 playerId={playerId}
                 season={statsCtx.statsSeason}
                 view={view}

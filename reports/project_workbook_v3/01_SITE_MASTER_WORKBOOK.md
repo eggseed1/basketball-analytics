@@ -561,7 +561,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 | # | Item |
 | --- | --- |
 | D1 | Refresh `docs/PRODUCT_ROADMAP.md` status table (many “Missing” rows are shipped) |
-| D2 | Wire Stat Detective bake into `npm` deploy scripts if not already |
+| D2 | Wire Stat Detective bake into `npm` deploy scripts if not already | **Shipped** — bake runs before `build-runtime-cf-assets` |
 | D3 | Fix lingering CF verify flake (`player race pin search`) |
 | D4 | Keep this workbook updated when major surfaces ship |
 
