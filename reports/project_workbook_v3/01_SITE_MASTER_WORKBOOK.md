@@ -542,8 +542,8 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 | # | Item | Why |
 | --- | --- | --- |
 | B1 | Structured trade genealogy (ledger-proven edges only) | Unlocks Trade Tree without inventing assets |
-| B2 | Ask result viz for compare/rank payloads | Leaderboards done; other ops still text-first |
-| B3 | Player Ask entry points re-enabled | `PlayerAskLinks` currently stubbed null |
+| B2 | Ask result viz for compare/rank payloads | **Shipped** — Copeland rank bars + category-edge compare board |
+| B3 | Player Ask entry points re-enabled | **Shipped** — Ask section restored on player overview |
 | B4 | Movement Center real ingest (licensed) | M0 shell; no fake production scores |
 | B5 | Sentiment beyond pilot seeds | Keep separated from performance |
 
@@ -567,7 +567,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 
 ### Suggested immediate sequence
 
-Tier A complete. Next leverage is Tier B (structured trade genealogy, Ask viz depth, Player Ask links).
+Tier A + B2/B3 complete. Next: B1 when ledger edges exist, or B5/D hygiene.
 
 ---
 
