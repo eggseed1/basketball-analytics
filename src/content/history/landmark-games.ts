@@ -27,7 +27,7 @@ type LandmarkGameSpec = {
 export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
   {
     id: "finals-2022-close",
-    title: "2022 Finals close",
+    title: "Warriors close out Celtics",
     season: "2021-22",
     date: "2022-06-17",
     awayAbbr: "GS",
@@ -37,7 +37,7 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
   },
   {
     id: "finals-2023-close",
-    title: "2023 Finals close",
+    title: "Nuggets win the title",
     season: "2022-23",
     date: "2023-06-13",
     awayAbbr: "MIA",
@@ -47,7 +47,7 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
   },
   {
     id: "finals-2024-close",
-    title: "2024 Finals close",
+    title: "Celtics finish Dallas",
     season: "2023-24",
     date: "2024-06-18",
     awayAbbr: "DAL",
@@ -57,7 +57,7 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
   },
   {
     id: "finals-2025-g7",
-    title: "2025 Finals Game 7",
+    title: "Thunder take Game 7",
     season: "2024-25",
     date: "2025-06-23",
     awayAbbr: "IND",

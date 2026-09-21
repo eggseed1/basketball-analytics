@@ -31,7 +31,7 @@ export const dynamic = "force-dynamic";
 export const metadata = {
   title: "NBA Time Machine",
   description:
-    "Travel through NBA history - season data, team-era identity, and era atmosphere.",
+    "Travel through NBA history — season snapshots, landmark eras, Finals closes, and era-true team and player destinations.",
 };
 
 interface HistoryPageProps {
