@@ -189,7 +189,19 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     id: "history",
     href: "/history",
     label: "History",
-    match: (p) => p.startsWith("/history"),
+    match: (p) => p.startsWith("/history") || p.startsWith("/awards"),
+    subnav: [
+      {
+        href: "/history",
+        label: "Time Machine",
+        match: (p) => p.startsWith("/history"),
+      },
+      {
+        href: "/awards",
+        label: "Awards",
+        match: (p) => p.startsWith("/awards"),
+      },
+    ],
   },
 ];
 

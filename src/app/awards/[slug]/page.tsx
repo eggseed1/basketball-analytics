@@ -1,5 +1,7 @@
 import { notFound } from "next/navigation";
 
+import { AwardHistoryBoard } from "@/components/awards/award-history-board";
+import { AwardSiblingNav } from "@/components/awards/award-sibling-nav";
 import { AwardTrophyIcon } from "@/components/awards/award-trophy-icon";
 import { AwardDynastyBarsLazy } from "@/components/charts/recharts-lazy";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -52,7 +54,10 @@ export default async function AwardHistoryPage({
       : award.slug === "hall-of-fame"
         ? "Year"
         : "Season";
-  const emptyCopy = `Full season-by-season lists for ${award.shortLabel} are coming soon. Player pages still show each player’s personal count from official NBA Stats awards.`;
+  const winnerColumnLabel =
+    award.slug === "all-nba" || award.slug === "all-defense"
+      ? "Selection"
+      : "Winner";
 
   return (
     <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
@@ -84,11 +89,9 @@ export default async function AwardHistoryPage({
           <h1 className={type.title1}>{award.title}</h1>
           <p className={cn(type.body, "mt-1 max-w-2xl text-muted-foreground")}>
             {award.blurb}
-            {award.slug === "all-star"
-              ? " Ranked here by career All-Star selections from the awards bake."
-              : award.slug === "hall-of-fame"
-                ? " Player-category inductees by induction year (Naismith Memorial). Linked when we have a site player id."
-                : ""}
+            {award.slug === "hall-of-fame"
+              ? " Player-category inductees by induction year. Linked when we have a site player id."
+              : ""}
           </p>
         </div>
       </header>
@@ -102,64 +105,21 @@ export default async function AwardHistoryPage({
       ) : null}
 
       {hasYearList ? (
-        <div className="sports-card overflow-hidden">
-          <table className="w-full text-left">
-            <thead>
-              <tr
-                className={cn(
-                  type.caption,
-                  "border-b border-border uppercase tracking-wide text-muted-foreground"
-                )}
-              >
-                <th className="px-4 py-2.5 font-semibold">{seasonColumnLabel}</th>
-                <th className="px-4 py-2.5 font-semibold">
-                  {award.slug === "all-nba" || award.slug === "all-defense"
-                    ? "Selection"
-                    : "Winner"}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr
-                  key={`${row.season}-${row.winner}-${row.href ?? ""}`}
-                  className="border-b border-border/70 last:border-0"
-                >
-                  <td
-                    className={cn(
-                      type.bodySm,
-                      "px-4 py-2.5 tabular-nums text-muted-foreground"
-                    )}
-                  >
-                    {row.note && award.slug === "championships"
-                      ? row.note
-                      : row.season}
-                  </td>
-                  <td className={cn(type.bodySm, "px-4 py-2.5 font-semibold")}>
-                    {row.href ? (
-                      <TransitionLink
-                        href={row.href}
-                        className="underline-offset-2 hover:underline"
-                      >
-                        {row.winner}
-                      </TransitionLink>
-                    ) : (
-                      row.winner
-                    )}
-                    {row.note && award.slug !== "championships" ? (
-                      <span className="ml-2 font-normal text-muted-foreground">
-                        ({row.note})
-                      </span>
-                    ) : null}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <AwardHistoryBoard
+          slug={award.slug}
+          seasonColumnLabel={seasonColumnLabel}
+          winnerColumnLabel={winnerColumnLabel}
+          rows={rows}
+          seasonUsesNote={award.slug === "championships"}
+        />
       ) : (
-        <p className={cn(type.body, "text-muted-foreground")}>{emptyCopy}</p>
+        <p className={cn(type.body, "text-muted-foreground")}>
+          History for {award.shortLabel} is not baked yet. Player pages still
+          show personal counts from official NBA Stats awards.
+        </p>
       )}
+
+      <AwardSiblingNav currentSlug={award.slug} />
     </main>
   );
 }

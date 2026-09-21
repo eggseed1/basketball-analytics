@@ -13,6 +13,7 @@ const BROWSE = [
   { href: "/offseason", label: "Transactions", key: "mia" },
   { href: "/ask", label: "Ask DRBL", key: "phx" },
   { href: "/learn", label: "Learn", key: "mil" },
+  { href: "/awards", label: "Awards", key: "sas" },
   { href: "/history", label: "History", key: "chi" },
 ];
 
@@ -44,7 +45,7 @@ export function BrowseCircles({
   }
 
   return (
-    <div className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-9">
+    <div className="grid grid-cols-3 gap-x-3 gap-y-5 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-10">
       {BROWSE.map((item) => (
         <Link
           key={item.href}
