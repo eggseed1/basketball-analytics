@@ -1,9 +1,11 @@
 /**
  * Multi-window counting deltas from regular-season game logs.
  * Missing games are omitted. Playoffs are never mixed into a regular window.
+ * Thin TS samples stay null — missing ≠ 0.
  */
 
 export type StatWindowId = "last5" | "last10" | "split5";
+export type StatDetectiveMetricId = "ppg" | "ts" | "rpg";
 
 export type StatWindowGame = {
   date: string;
@@ -12,6 +14,8 @@ export type StatWindowGame = {
   points: number;
   fga: number;
   fta: number;
+  /** Total rebounds; omitted/NaN games are skipped for RPG, not coerced to 0. */
+  rebounds: number | null;
   seasonType?: string;
 };
 
@@ -20,6 +24,8 @@ export type WindowRate = {
   ppg: number;
   /** Null when the shot sample is too thin to quote true shooting. */
   ts: number | null;
+  /** Null when no rebound samples in the window. */
+  rpg: number | null;
 };
 
 export type WindowDelta = {
@@ -34,6 +40,9 @@ export type WindowDelta = {
   windowTs: number | null;
   baselineTs: number | null;
   deltaTs: number | null;
+  windowRpg: number | null;
+  baselineRpg: number | null;
+  deltaRpg: number | null;
 };
 
 export const STAT_WINDOWS: Record<
@@ -45,6 +54,8 @@ export const STAT_WINDOWS: Record<
     baselineLabel: string;
     windowLabel: string;
     minAbsPpg: number;
+    minAbsTs: number;
+    minAbsRpg: number;
   }
 > = {
   last5: {
@@ -54,6 +65,8 @@ export const STAT_WINDOWS: Record<
     baselineLabel: "Season avg",
     windowLabel: "Last 5",
     minAbsPpg: 3,
+    minAbsTs: 0.04,
+    minAbsRpg: 2,
   },
   last10: {
     label: "Last 10 vs season",
@@ -62,6 +75,8 @@ export const STAT_WINDOWS: Record<
     baselineLabel: "Season avg",
     windowLabel: "Last 10",
     minAbsPpg: 2,
+    minAbsTs: 0.03,
+    minAbsRpg: 1.5,
   },
   split5: {
     label: "Last 5 vs prior 5",
@@ -70,6 +85,43 @@ export const STAT_WINDOWS: Record<
     baselineLabel: "Prior 5",
     windowLabel: "Last 5",
     minAbsPpg: 3,
+    minAbsTs: 0.04,
+    minAbsRpg: 2,
+  },
+};
+
+export const STAT_DETECTIVE_METRICS: Record<
+  StatDetectiveMetricId,
+  {
+    id: StatDetectiveMetricId;
+    label: string;
+    shortLabel: string;
+    unit: string;
+    honesty: string;
+  }
+> = {
+  ppg: {
+    id: "ppg",
+    label: "Points",
+    shortLabel: "PPG",
+    unit: "PPG",
+    honesty: "Counting only games we have — gaps aren’t zeros.",
+  },
+  ts: {
+    id: "ts",
+    label: "True shooting",
+    shortLabel: "TS%",
+    unit: "TS%",
+    honesty:
+      "TS% is omitted when the shot sample is too thin — missing ≠ 0.",
+  },
+  rpg: {
+    id: "rpg",
+    label: "Rebounds",
+    shortLabel: "RPG",
+    unit: "RPG",
+    honesty:
+      "Only games with logged rebounds count toward RPG — missing ≠ 0.",
   },
 };
 
@@ -107,10 +159,18 @@ export function windowRate(games: StatWindowGame[]): WindowRate | null {
   const fga = games.reduce((sum, game) => sum + (Number(game.fga) || 0), 0);
   const fta = games.reduce((sum, game) => sum + (Number(game.fta) || 0), 0);
   const denom = 2 * (fga + 0.44 * fta);
+  const reboundGames = games.filter(
+    (game) => game.rebounds != null && Number.isFinite(game.rebounds)
+  );
+  const rebounds = reboundGames.reduce(
+    (sum, game) => sum + (game.rebounds as number),
+    0
+  );
   return {
     games: games.length,
     ppg: points / games.length,
     ts: denom >= TS_MIN_DENOM ? points / denom : null,
+    rpg: reboundGames.length ? rebounds / reboundGames.length : null,
   };
 }
 
@@ -125,6 +185,8 @@ function delta(
   if (!window || !base) return null;
   const deltaTs =
     window.ts != null && base.ts != null ? window.ts - base.ts : null;
+  const deltaRpg =
+    window.rpg != null && base.rpg != null ? window.rpg - base.rpg : null;
   return {
     windowId,
     windowGames: window.games,
@@ -137,6 +199,9 @@ function delta(
     windowTs: window.ts,
     baselineTs: base.ts,
     deltaTs,
+    windowRpg: window.rpg,
+    baselineRpg: base.rpg,
+    deltaRpg,
   };
 }
 
@@ -162,6 +227,32 @@ export function playerWindowDeltas(
   return out;
 }
 
-export function qualifiesWindow(delta: WindowDelta): boolean {
-  return Math.abs(delta.deltaPpg) >= STAT_WINDOWS[delta.windowId].minAbsPpg;
+export function qualifiesWindow(
+  delta: WindowDelta,
+  metric: StatDetectiveMetricId = "ppg"
+): boolean {
+  const cfg = STAT_WINDOWS[delta.windowId];
+  if (metric === "ppg") {
+    return Math.abs(delta.deltaPpg) >= cfg.minAbsPpg;
+  }
+  if (metric === "ts") {
+    return (
+      delta.deltaTs != null && Math.abs(delta.deltaTs) >= cfg.minAbsTs
+    );
+  }
+  return (
+    delta.deltaRpg != null && Math.abs(delta.deltaRpg) >= cfg.minAbsRpg
+  );
+}
+
+export function isStatDetectiveMetricId(
+  value: string | undefined
+): value is StatDetectiveMetricId {
+  return value === "ppg" || value === "ts" || value === "rpg";
+}
+
+export function metricDelta(delta: WindowDelta, metric: StatDetectiveMetricId): number | null {
+  if (metric === "ppg") return delta.deltaPpg;
+  if (metric === "ts") return delta.deltaTs;
+  return delta.deltaRpg;
 }
