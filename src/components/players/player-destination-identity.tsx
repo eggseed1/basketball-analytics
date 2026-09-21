@@ -67,7 +67,7 @@ export type PlayerDestinationIdentityProps = {
   caps: PlayerPageCapabilities;
   seasonType?: PlayerSeasonKind;
   accolades?: ReactNode;
-  /** Scout-phrase role under name / position (behavior + shot diet). */
+  /** Scout-phrase role — rendered below identity/percentiles in overview, not in the name box. */
   role?: ReactNode;
   upcomingSchedule?: ReactNode;
   frontOffice?: ReactNode;
@@ -258,17 +258,6 @@ export function PlayerDestinationIdentity({
                         {position ? <span>· {position}</span> : null}
                       </p>
                     )}
-                    {role ? (
-                      <div
-                        className={cn(
-                          "flex w-full justify-center",
-                          !useTwoColumnLayout &&
-                            "sm:justify-start sm:[&_.player-role-line]:items-start sm:[&_.player-role-line]:text-left sm:[&_.player-role-line_p]:justify-start sm:[&_.player-role-line_summary]:text-left sm:[&_.player-role-line_details]:text-left"
-                        )}
-                      >
-                        {role}
-                      </div>
-                    ) : null}
                     <PlayerIdentityVitals
                       heightLabel={heightLabel}
                       weightLabel={weightLabel}
@@ -386,6 +375,10 @@ export function PlayerDestinationIdentity({
 
           {hero ? <div className="min-h-0 min-w-0">{hero}</div> : null}
         </div>
+
+        {view === "overview" && role ? (
+          <div className="min-w-0">{role}</div>
+        ) : null}
 
         <PlayerDepthNav
           playerId={playerId}
