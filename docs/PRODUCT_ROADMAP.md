@@ -101,7 +101,7 @@
 ### Phase 3 — Game + Historical
 
 - Game flow when play-by-play or win-prob available  
-- “What decided the game?” from box + advanced when present  
+- [x] “What decided the game?” from box + advanced when present (Game Lab UI)
 - Possession explorer **architecture** (no fake possessions)  
 - Time Machine browse: eras, landmark games, ranking boards from existing caches
   - [x] Curated landmark seasons on Time Machine landing
