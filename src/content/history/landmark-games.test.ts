@@ -68,6 +68,25 @@ test("labels a four-win close from the series in the archive", () => {
   assert.match(hit.gameHref, /^\/games\/e\?/);
 });
 
+test("labels a Game 7 from the archive scoreboard", () => {
+  const cards = resolveLandmarkGames([
+    game({
+      id: "g7",
+      season: "2021-22",
+      gameDate: "2022-05-30",
+      awayTeamAbbr: "BOS",
+      homeTeamAbbr: "MIA",
+      awayTeamName: "Boston Celtics",
+      homeTeamName: "Miami Heat",
+      awayScore: 100,
+      homeScore: 96,
+    }),
+  ]);
+  const hit = cards.find((card) => card.id === "ecf-2022-g7");
+  assert.ok(hit);
+  assert.equal(hit.blurb, "Boston Celtics won Game 7, 100-96.");
+});
+
 test("current schedule snapshot resolves every landmark game spec", () => {
   const cards = resolveLandmarkGames(getRuntimeSnapshotGames());
   assert.deepEqual(
@@ -76,6 +95,6 @@ test("current schedule snapshot resolves every landmark game spec", () => {
   );
   for (const card of cards) {
     assert.match(card.gameId, /^\d+$/);
-    assert.match(card.blurb, /closed the Finals in/);
+    assert.match(card.blurb, /closed the Finals in|won Game 7/);
   }
 });

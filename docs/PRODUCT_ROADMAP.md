@@ -106,7 +106,8 @@
 - Time Machine browse: eras, landmark games, ranking boards from existing caches
   - [x] Curated landmark seasons on Time Machine landing
   - [x] Discovery polish (era chips, landmark grouping, named Finals, explore rail)
-  - [ ] Landmark games set (box-level) when archive coverage allows
+  - [x] Expanded landmark games set (Finals closes + archive Game 7s; no match → no card)
+  - [ ] Landmark games set (box-level) when archive coverage allows older eras
 
 ### Phase 4 — Offseason Intelligence
 

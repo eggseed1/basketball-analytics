@@ -9,6 +9,8 @@ import {
   historyHref,
 } from "@/themes/history-url";
 
+type LandmarkKind = "finals_close" | "game_7";
+
 type LandmarkGameSpec = {
   id: string;
   title: string;
@@ -18,10 +20,12 @@ type LandmarkGameSpec = {
   homeAbbr: string;
   awayScore: number;
   homeScore: number;
+  /** Defaults to Finals close blurbs when omitted. */
+  kind?: LandmarkKind;
 };
 
 /**
- * Finals games whose scores were read from the runtime schedule snapshot.
+ * Landmark games whose scores were read from the runtime schedule snapshot.
  * If a future bake drops or restates a game, the card is omitted.
  */
 export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
@@ -36,6 +40,17 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
     homeScore: 90,
   },
   {
+    id: "ecf-2022-g7",
+    title: "Celtics take ECF Game 7",
+    season: "2021-22",
+    date: "2022-05-30",
+    awayAbbr: "BOS",
+    homeAbbr: "MIA",
+    awayScore: 100,
+    homeScore: 96,
+    kind: "game_7",
+  },
+  {
     id: "finals-2023-close",
     title: "Nuggets win the title",
     season: "2022-23",
@@ -44,6 +59,17 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
     homeAbbr: "DEN",
     awayScore: 89,
     homeScore: 94,
+  },
+  {
+    id: "ecf-2023-g7",
+    title: "Heat eliminate Celtics in Game 7",
+    season: "2022-23",
+    date: "2023-05-30",
+    awayAbbr: "MIA",
+    homeAbbr: "BOS",
+    awayScore: 103,
+    homeScore: 84,
+    kind: "game_7",
   },
   {
     id: "finals-2024-close",
@@ -56,6 +82,17 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
     homeScore: 106,
   },
   {
+    id: "wcf-2024-g7",
+    title: "Wolves force Denver out in Game 7",
+    season: "2023-24",
+    date: "2024-05-20",
+    awayAbbr: "MIN",
+    homeAbbr: "DEN",
+    awayScore: 98,
+    homeScore: 90,
+    kind: "game_7",
+  },
+  {
     id: "finals-2025-g7",
     title: "Thunder take Game 7",
     season: "2024-25",
@@ -64,6 +101,16 @@ export const LANDMARK_GAME_SPECS: LandmarkGameSpec[] = [
     homeAbbr: "OKC",
     awayScore: 91,
     homeScore: 103,
+  },
+  {
+    id: "finals-2026-close",
+    title: "Knicks close out Spurs",
+    season: "2025-26",
+    date: "2026-06-14",
+    awayAbbr: "NY",
+    homeAbbr: "SA",
+    awayScore: 94,
+    homeScore: 90,
   },
 ];
 
@@ -135,6 +182,18 @@ function seriesCloseBlurb(games: Game[], hit: Game): string | null {
   return `${teamName(hit, winner)} closed the Finals in ${lengthWord}.`;
 }
 
+function game7Blurb(hit: Game): string {
+  const winner = winnerAbbr(hit);
+  if (!winner) {
+    return `${hit.awayTeamAbbr} ${hit.awayScore} at ${hit.homeTeamAbbr} ${hit.homeScore}.`;
+  }
+  const winnerScore =
+    winner === hit.homeTeamAbbr ? hit.homeScore : hit.awayScore;
+  const loserScore =
+    winner === hit.homeTeamAbbr ? hit.awayScore : hit.homeScore;
+  return `${teamName(hit, winner)} won Game 7, ${winnerScore}-${loserScore}.`;
+}
+
 export function resolveLandmarkGames(games: Game[]): LandmarkGameCard[] {
   const cards: LandmarkGameCard[] = [];
   for (const spec of LANDMARK_GAME_SPECS) {
@@ -150,9 +209,12 @@ export function resolveLandmarkGames(games: Game[]): LandmarkGameCard[] {
         game.gameType === "playoff"
     );
     if (!hit) continue;
+    const kind = spec.kind ?? "finals_close";
     const blurb =
-      seriesCloseBlurb(games, hit) ??
-      `${spec.awayAbbr} ${spec.awayScore} at ${spec.homeAbbr} ${spec.homeScore}.`;
+      kind === "game_7"
+        ? game7Blurb(hit)
+        : seriesCloseBlurb(games, hit) ??
+          `${spec.awayAbbr} ${spec.awayScore} at ${spec.homeAbbr} ${spec.homeScore}.`;
     cards.push({
       id: spec.id,
       gameId: hit.id,
