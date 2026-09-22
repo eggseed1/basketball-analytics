@@ -20,7 +20,7 @@
 | Career Resume | **Shipped** | Documented thresholds + Peak Impact companion (`docs/career-resume.md`) |
 | Team Intelligence | **V2** | `/teams/[teamId]` narrative: overview → performance → identity → arc → roster → games → evidence → transactions → Ask. See `docs/team-intelligence.md`. |
 | Lineup Lab | **Missing** | Blocked on lineup minutes source |
-| Game Lab | **Partial** | Box score + PBP flow + possession explorer via `getGamePossessions` |
+| Game Lab | **Partial** | Box “What decided” narrative + PBP flow + possession explorer via `getGamePossessions` |
 | Historical Time Machine | **Shipped** | `/history` discovery landing, era chips, landmarks, destination-aware explore |
 | Stat Detective | **Shipped** | `/explore/players/windows` — PPG / TS% / RPG boards + divergence chart |
 | Automated Discovery / Home | **Partial** | Home findings rail (leaders + YoY); more discovery modes optional |
