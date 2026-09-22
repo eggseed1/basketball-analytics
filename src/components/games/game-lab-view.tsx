@@ -9,6 +9,7 @@ import {
   GameWinProbabilityChart,
 } from "@/components/games/game-flow-charts";
 import { GameRosterBoard } from "@/components/games/game-roster-board";
+import { GameWhatDecided } from "@/components/games/game-what-decided";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
@@ -83,6 +84,7 @@ export function GameLabView({
   return (
     <div className="flex flex-col gap-5">
       {!omitHero ? null : null}
+      <GameWhatDecided analysis={analysis} />
       <MatchupWashCard
         awayTeamKey={awayKey}
         homeTeamKey={homeKey}

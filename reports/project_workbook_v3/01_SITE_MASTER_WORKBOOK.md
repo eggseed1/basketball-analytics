@@ -525,6 +525,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 - Board shape scatter removed from Players board (viz hub owns scatters)
 - Compact player overview playing-style strip
 - Ask leaderboard / compare viz; loading-efficiency islands
+- Game Lab “What decided” surfaces box advantages already computed for Ask
 
 ---
 
