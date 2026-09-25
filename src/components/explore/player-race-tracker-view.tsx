@@ -15,6 +15,7 @@ import {
   buildPlayerRaceChartRows,
   formatPlayerRaceValue,
   getPlayerRaceMetricDef,
+  playerRaceIsRateMetric,
   playerRaceModeLabel,
   playerRaceYAxisDomain,
   type PlayerRaceRankEnd,
@@ -125,8 +126,11 @@ export function PlayerRaceTrackerView({
   }, [selectedPlayerIds, teamPlayerIds]);
 
   const chartRows = useMemo(
-    () => buildPlayerRaceChartRows(deferredPlayers, chartWindow),
-    [deferredPlayers, chartWindow]
+    () =>
+      buildPlayerRaceChartRows(deferredPlayers, chartWindow, {
+        forwardFill: !playerRaceIsRateMetric(payload.metric),
+      }),
+    [deferredPlayers, chartWindow, payload.metric]
   );
 
   const yDomain = useMemo(

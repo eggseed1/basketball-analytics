@@ -34,6 +34,7 @@ import {
   formatPlayerRaceYTick,
   nearestPlayerRaceAtPointer,
   playerRaceAxisTitle,
+  playerRaceIsRateMetric,
   playerRaceMetricShort,
   playerRaceNeighborsAt,
   playerRaceYAxisTicks,
@@ -140,12 +141,15 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
   selectedPlayerIds,
   hoveredPlayerId,
   isDark,
+  connectNulls,
   onSelectPlayer,
 }: {
   players: PlayerRacePlayer[];
   selectedPlayerIds: Set<string>;
   hoveredPlayerId: string | null;
   isDark: boolean;
+  /** Counting totals may bridge gaps; season rates must not invent continuity. */
+  connectNulls: boolean;
   onSelectPlayer: (playerId: string) => void;
 }) {
   const hasSelection = selectedPlayerIds.size > 0;
@@ -196,7 +200,7 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
             strokeOpacity={strokeOpacity}
             dot={false}
             activeDot={false}
-            connectNulls
+            connectNulls={connectNulls}
             isAnimationActive={false}
             onClick={() => onSelectPlayer(player.playerId)}
             style={{ cursor: "pointer" }}
@@ -214,7 +218,7 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
           strokeOpacity={chartLineStrokeOpacity("focus", isDark)}
           dot={false}
           activeDot={false}
-          connectNulls
+          connectNulls={connectNulls}
           isAnimationActive={false}
           legendType="none"
           style={{ pointerEvents: "none" }}
@@ -596,6 +600,7 @@ export function PlayerRaceTrackerChart({
               selectedPlayerIds={selectedPlayerIds}
               hoveredPlayerId={hoveredPlayerId}
               isDark={chartTheme.isDark}
+              connectNulls={!playerRaceIsRateMetric(metric)}
               onSelectPlayer={onSelectPlayer}
             />
           </LineChart>
