@@ -454,6 +454,8 @@ export default async function TeamProfilePage({
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}
+              team={boardTeam ?? null}
+              defenseMetrics={defenseMetrics}
             />
           </Suspense>
         ) : null}
