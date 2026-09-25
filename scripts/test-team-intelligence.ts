@@ -9,6 +9,8 @@ import type { GameSummary, PlayerSeason, TeamSeasonStats } from "../src/data/typ
 import {
   assessTeamCoverage,
   buildRosterBuckets,
+  buildRotationLadder,
+  rotationMinutesPct,
   buildTeamAskLinks,
   buildTeamIdentityStatements,
   enrichTraitsWithPrior,
@@ -192,6 +194,48 @@ assert.equal(buckets.leadingScorers[0]?.playerId, "b");
 assert.equal(buckets.highestValue[0]?.playerId, "b");
 assert.equal(buckets.rotation[0]?.playerId, "c");
 assert.equal(buckets.highestValue.length, 2);
+
+const rotationRoster = [
+  {
+    playerId: "s1",
+    playerName: "Starter",
+    teamId: "2",
+    season: "2025-26",
+    gamesPlayed: 40,
+    gamesStarted: 38,
+    minutes: 1400,
+    points: 600,
+    usagePct: 0.28,
+  },
+  {
+    playerId: "b1",
+    playerName: "Bench",
+    teamId: "2",
+    season: "2025-26",
+    gamesPlayed: 40,
+    gamesStarted: 2,
+    minutes: 800,
+    points: 300,
+    usagePct: 0.18,
+  },
+  {
+    playerId: "x1",
+    playerName: "Spot",
+    teamId: "2",
+    season: "2025-26",
+    gamesPlayed: 10,
+    gamesStarted: 0,
+    minutes: 80,
+    points: 40,
+  },
+] as PlayerSeason[];
+const ladder = buildRotationLadder(rotationRoster);
+assert.equal(ladder.teamGames, 40);
+assert.equal(ladder.starters[0]?.playerId, "s1");
+assert.equal(ladder.bench[0]?.playerId, "b1");
+assert.ok(ladder.spot.some((p) => p.playerId === "x1") || ladder.bench.some((p) => p.playerId === "x1"));
+const minPct = rotationMinutesPct(rotationRoster[0]!, ladder.teamGames);
+assert.ok(minPct != null && Math.abs(minPct - 1400 / (40 * 48)) < 1e-9);
 
 // --- games ---
 const games: GameSummary[] = [

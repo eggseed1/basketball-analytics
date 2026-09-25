@@ -45,6 +45,61 @@ export type TeamRosterBuckets = {
   highestValue: PlayerSeason[];
 };
 
+export type RotationLadder = {
+  /** Max GP on the board — proxy for team games when schedule is absent. */
+  teamGames: number;
+  starters: PlayerSeason[];
+  bench: PlayerSeason[];
+  spot: PlayerSeason[];
+};
+
+/**
+ * Box-score rotation ladder — starters by start rate, then minutes bands.
+ * Not five-man lineup nets.
+ */
+export function buildRotationLadder(
+  roster: PlayerSeason[],
+  options?: { minGamesForStarter?: number }
+): RotationLadder {
+  const minGames = options?.minGamesForStarter ?? 5;
+  const withMinutes = roster
+    .filter((p) => p.minutes > 0 && p.gamesPlayed > 0)
+    .sort((a, b) => b.minutes - a.minutes);
+  const teamGames = withMinutes.reduce(
+    (max, p) => Math.max(max, p.gamesPlayed),
+    0
+  );
+
+  const starters: PlayerSeason[] = [];
+  const rest: PlayerSeason[] = [];
+  for (const p of withMinutes) {
+    const startRate = p.gamesStarted / Math.max(1, p.gamesPlayed);
+    if (p.gamesPlayed >= minGames && startRate >= 0.5) {
+      starters.push(p);
+    } else {
+      rest.push(p);
+    }
+  }
+  starters.sort((a, b) => b.minutes - a.minutes);
+
+  const bench = rest.slice(0, 8);
+  const spot = rest.slice(8, 14);
+
+  return { teamGames, starters, bench, spot };
+}
+
+/**
+ * Season minutes share vs available team minutes (teamGames × 48).
+ * Same shape as NBA Stats MIN% — not share of summed player minutes.
+ */
+export function rotationMinutesPct(
+  player: PlayerSeason,
+  teamGames: number
+): number | null {
+  if (!(teamGames > 0) || !(player.minutes > 0)) return null;
+  return player.minutes / (teamGames * 48);
+}
+
 const TRAIT_PICKERS: Record<
   string,
   (t: TeamSeasonStats) => number | undefined
