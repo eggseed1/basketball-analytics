@@ -15,8 +15,15 @@ import {
   hasTeamSnapshotGames,
   paginateSnapshotTeamGames,
   teamSnapshotGames,
+  computeTeamFormSummary,
+  computeTeamSplits,
 } from "@/lib/team-snapshot-games";
 import { withBudget } from "@/data/queries/budget";
+import { type } from "@/lib/design-system";
+import { formatNumber, formatPct } from "@/lib/format";
+import { teamPageHref } from "@/lib/team-destination";
+import { TransitionLink } from "@/components/continuity/query-nav";
+import { cn } from "@/lib/utils";
 
 function snapshotPoolsForSeason(season: string): {
   recentPool: GameSummary[];
@@ -63,9 +70,73 @@ function SnapshotTeamGamesBody({
   const { recentPool, upcomingPool } = snapshotPoolsForSeason(season);
   const compact = gameSummariesToCompactRows(team.teamId, allTeamGames);
   const page = paginateSnapshotTeamGames(compact, gamesPage ?? 1);
+  const overall = computeTeamSplits(team.teamId, season).find(
+    (s) => s.id === "overall"
+  );
+  const form = computeTeamFormSummary(team.teamId, season);
+  const splitsHref = teamPageHref(team.teamId, { season, tab: "splits" });
+  const winPct =
+    overall && overall.wins + overall.losses > 0
+      ? overall.wins / (overall.wins + overall.losses)
+      : null;
 
   return (
     <div className="sports-card flex flex-col gap-5 p-4 sm:p-5">
+      {overall && overall.games > 0 ? (
+        <div className="flex flex-col gap-2 border-b border-border/60 pb-4">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h3 className={cn(type.bodySm, "font-semibold")}>Season slate</h3>
+            <TransitionLink
+              href={splitsHref}
+              className={cn(type.caption, "font-semibold underline")}
+            >
+              Full splits →
+            </TransitionLink>
+          </div>
+          <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
+            <div>
+              <dt className={cn(type.caption, "text-muted-foreground")}>
+                Record
+              </dt>
+              <dd className="text-lg font-semibold tabular-nums">
+                {overall.wins}-{overall.losses}
+              </dd>
+            </div>
+            <div>
+              <dt className={cn(type.caption, "text-muted-foreground")}>
+                Win%
+              </dt>
+              <dd className="text-lg font-semibold tabular-nums">
+                {winPct != null ? formatPct(winPct, 0) : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className={cn(type.caption, "text-muted-foreground")}>
+                Diff
+              </dt>
+              <dd className="text-lg font-semibold tabular-nums">
+                {overall.diff != null
+                  ? `${overall.diff >= 0 ? "+" : ""}${formatNumber(overall.diff, 1)}`
+                  : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className={cn(type.caption, "text-muted-foreground")}>PPG</dt>
+              <dd className="text-lg font-semibold tabular-nums">
+                {overall.ppg != null ? formatNumber(overall.ppg, 1) : "—"}
+              </dd>
+            </div>
+            <div>
+              <dt className={cn(type.caption, "text-muted-foreground")}>
+                Streak
+              </dt>
+              <dd className="text-lg font-semibold tabular-nums">
+                {form.streakLabel}
+              </dd>
+            </div>
+          </dl>
+        </div>
+      ) : null}
       <TeamGamesSection
         recentPool={recentPool}
         upcomingPool={upcomingPool}
@@ -115,10 +186,10 @@ export async function TeamGamesIsland({
         aria-label="Games"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
-          <p className="text-[13px] text-muted-foreground">
-            Schedule snapshot · recent / upcoming · season game log · opens Game
-            Lab
+          <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Schedule snapshot · season slate · recent / upcoming · game log ·
+            opens Game Lab
           </p>
         </div>
         <SnapshotTeamGamesBody
@@ -154,7 +225,7 @@ export async function TeamGamesIsland({
         aria-label="Games"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+          <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
           <p className="text-[13px] text-muted-foreground">
             {snapshot
               ? "Recent / upcoming from schedule · opens Game Lab"
@@ -211,7 +282,7 @@ export async function TeamGamesIsland({
         aria-label="Games"
       >
         <div>
-          <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+          <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
           <p className="text-[13px] text-muted-foreground">
             Recent / upcoming from schedule · opens Game Lab
           </p>
@@ -250,7 +321,7 @@ export async function TeamGamesIsland({
       aria-label="Games"
     >
       <div>
-        <h2 className="text-[17px] font-bold tracking-tight">Games</h2>
+        <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
         <p className="text-[13px] text-muted-foreground">
           {teamGames.source === "disk_cache"
             ? "From local historical game archive · opens Game Lab"
