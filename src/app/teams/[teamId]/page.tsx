@@ -26,6 +26,8 @@ import { TeamMovementIsland } from "@/components/teams/team-movement-island";
 import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
 import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overview";
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
+import { TeamOverviewExploreRail } from "@/components/teams/team-overview-explore-rail";
+import { TeamOverviewIdentityBand } from "@/components/teams/team-overview-identity-band";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
@@ -52,6 +54,8 @@ import {
 } from "@/lib/team-destination";
 import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
 import {
+  assessTeamCoverage,
+  buildTeamIdentityStatements,
   enrichTraitsWithPrior,
   formatTraitPriorDelta,
   groupTraitsForPerformance,
@@ -351,28 +355,49 @@ export default async function TeamProfilePage({
 
         {tab === "overview" ? (
           seasonAwaitingGames && boardAvailable ? (
-            <TeamPreseasonOverview
-              season={season}
-              teamName={displayName}
-              teamId={teamId}
-              standings={standingsContext}
-            />
+            <div className="flex flex-col gap-4">
+              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
+              <TeamPreseasonOverview
+                season={season}
+                teamName={displayName}
+                teamId={teamId}
+                standings={standingsContext}
+              />
+            </div>
           ) : boardAvailable && analysis ? (
-            <TeamOverviewBoard
-              offense={offenseMetrics}
-              defense={defenseMetrics}
-              factors={factorMetrics}
-              strengths={strengths}
-              weaknesses={weaknesses}
-              howTheyWin={analysis.howTheyWin}
-              traits={traits}
-            />
+            <div className="flex flex-col gap-4">
+              <TeamOverviewIdentityBand
+                statements={buildTeamIdentityStatements(traits)}
+                coverageLines={assessTeamCoverage({
+                  hasTeamBoard: true,
+                  traitCount: traits.length,
+                  rosterCount: 0,
+                  gameCount: 0,
+                  transactionCount: 0,
+                }).lines.filter(
+                  (line) =>
+                    line.label === "Current season board" ||
+                    line.label === "League-context traits" ||
+                    line.label === "PBP / five-man lineup nets"
+                )}
+              />
+              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
+              <TeamOverviewBoard
+                offense={offenseMetrics}
+                defense={defenseMetrics}
+                factors={factorMetrics}
+                strengths={strengths}
+                weaknesses={weaknesses}
+                howTheyWin={analysis.howTheyWin}
+              />
+            </div>
           ) : (
             <section
               id="performance"
               className="scroll-mt-16 flex flex-col gap-3"
               aria-label="Overview"
             >
+              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
               <h2 className="text-[20px] font-bold tracking-tight">
                 How good are they?
               </h2>

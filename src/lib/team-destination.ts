@@ -136,6 +136,10 @@ export function teamContextBarVisibility(tab: TeamPageTab): {
   rate: boolean;
 } {
   switch (tab) {
+    case "games":
+      return { seasonType: true, rate: false };
+    // Rate modes are URL-ready but not consumed by tab ledgers yet —
+    // hide the chips so Overview (and peers) don't imply live switching.
     case "overview":
     case "players":
     case "offense":
@@ -143,11 +147,7 @@ export function teamContextBarVisibility(tab: TeamPageTab): {
     case "lineups":
     case "splits":
     case "stats":
-      return { seasonType: true, rate: true };
-    case "games":
-      return { seasonType: true, rate: false };
     case "playoffs":
-      return { seasonType: false, rate: true };
     case "history":
     case "organization":
     default:

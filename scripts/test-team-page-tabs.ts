@@ -60,8 +60,8 @@ function main() {
   assert.equal(parseTeamRateMode("per100"), "per100");
 
   assert.deepEqual(teamContextBarVisibility("overview"), {
-    seasonType: true,
-    rate: true,
+    seasonType: false,
+    rate: false,
   });
   assert.deepEqual(teamContextBarVisibility("games"), {
     seasonType: true,
@@ -77,7 +77,11 @@ function main() {
   });
   assert.deepEqual(teamContextBarVisibility("playoffs"), {
     seasonType: false,
-    rate: true,
+    rate: false,
+  });
+  assert.deepEqual(teamContextBarVisibility("stats"), {
+    seasonType: false,
+    rate: false,
   });
 
   const href = teamPageHref("atl", {
@@ -122,8 +126,9 @@ function main() {
   );
   assert.ok(page.includes("TeamPrimaryNav"));
   assert.ok(page.includes("TeamOverviewBoard"));
+  assert.ok(page.includes("TeamOverviewExploreRail"));
+  assert.ok(page.includes("TeamOverviewIdentityBand"));
   assert.ok(page.includes('tab === "stats"'));
-  assert.ok(page.includes("TeamTabScaffold"));
 
   console.log("test-team-page-tabs: ok");
 }
