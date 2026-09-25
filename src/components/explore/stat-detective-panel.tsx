@@ -1,5 +1,4 @@
-import Link from "next/link";
-
+import { PlayerIdentity } from "@/components/players/player-identity";
 import type {
   StatDetectiveMetricId,
   StatDetectiveRow,
@@ -156,22 +155,23 @@ function MoverList({
                 className="flex min-w-0 items-center justify-between gap-3 border-b border-border/50 pb-3 last:border-0 last:pb-0"
               >
                 <div className="min-w-0 flex-1">
-                  <Link
-                    href={`/players/${encodeURIComponent(row.playerId)}`}
+                  <PlayerIdentity
+                    playerId={row.playerId}
+                    name={row.playerName}
+                    teamKey={row.teamAbbr || undefined}
+                    teamLabel={row.teamAbbr || undefined}
+                    variant="compact"
+                    className="min-w-0"
+                    nameClassName="gap-2 font-semibold no-underline hover:underline"
+                  />
+                  <p
                     className={cn(
-                      type.bodySm,
-                      "font-semibold underline-offset-2 hover:underline"
+                      type.caption,
+                      "mt-0.5 pl-9 text-muted-foreground"
                     )}
                   >
-                    {row.playerName}
-                  </Link>
-                  <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
                     {row.teamAbbr ? `${row.teamAbbr} · ` : ""}
-                    {windowLabel}{" "}
-                    {metric === "ts"
-                      ? formatNumber(values.window, 1)
-                      : formatNumber(values.window, 1)}{" "}
-                    {unit}
+                    {windowLabel} {formatNumber(values.window, 1)} {unit}
                     {" · "}
                     {baselineLabel} {formatNumber(values.baseline, 1)}
                     {metric === "ppg" && row.deltaTs != null
