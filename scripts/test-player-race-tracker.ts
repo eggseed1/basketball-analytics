@@ -51,6 +51,33 @@ function main() {
     Math.abs(last.value - 8.5) < 0.6,
     `overlay should settle near season total (got ${last.value})`
   );
+  assert.ok(
+    overlay!.points[0]!.date > "2025-10-15",
+    `70-GP overlay must not start at opening night (got ${overlay!.points[0]!.date})`
+  );
+
+  // Late-return / limited GP: never invent an October→April path.
+  const lateReturn = buildPlayerRaceOverlayPlayer({
+    playerId: "1628369",
+    displayName: "Jayson Tatum",
+    teamId: "2",
+    teamAbbr: "BOS",
+    metric: "drbl100",
+    seasonTotal: -0.31,
+    startDate: "2025-10-15",
+    endDate: "2026-04-15",
+    gamesPlayed: 22,
+    minutesPlayed: 700,
+  });
+  assert.ok(lateReturn, "limited-GP rate overlay should build");
+  assert.ok(
+    lateReturn!.points[0]!.date >= "2026-02-01",
+    `22-GP DRBL overlay must start late (got ${lateReturn!.points[0]!.date})`
+  );
+  assert.ok(
+    lateReturn!.points.every((p) => p.date >= "2026-02-01"),
+    "no synthetic DRBL points during inactive months"
+  );
 
   const countingOverlay = buildPlayerRaceOverlayPlayer({
     playerId: "201939",

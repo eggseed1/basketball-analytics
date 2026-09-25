@@ -76,6 +76,8 @@ export type RaceCandidate = {
   total: number;
   /** Season minutes when known from the board (used to filter before log IO). */
   minutes?: number;
+  /** Regular-season games when known — sizes overlay calendars honestly. */
+  gamesPlayed?: number;
 };
 
 function teamFromLooseId(raw: string): { teamId: string; teamAbbr: string } {
@@ -226,18 +228,26 @@ function finalizeCandidates(
     Number.isFinite(limit) && limit < sorted.length
       ? sorted.slice(0, Math.max(1, limit))
       : sorted;
-  return capped.map(({ gamesPlayed: _gamesPlayed, ...rest }) => rest);
+  return capped;
 }
 
-/** BRef season minutes keyed by nba id, espn id, and normalized name. */
-function boardMinutesIndex(season: string): {
-  byNba: Map<string, number>;
-  byEspn: Map<string, number>;
-  byName: Map<string, number>;
+/** BRef season minutes + GP keyed by nba id, espn id, and normalized name. */
+function boardActivityIndex(season: string): {
+  byNba: Map<string, { minutes: number; gamesPlayed: number }>;
+  byEspn: Map<string, { minutes: number; gamesPlayed: number }>;
+  byName: Map<string, { minutes: number; gamesPlayed: number }>;
 } {
-  const byNba = new Map<string, number>();
-  const byEspn = new Map<string, number>();
-  const byName = new Map<string, number>();
+  const byNba = new Map<string, { minutes: number; gamesPlayed: number }>();
+  const byEspn = new Map<string, { minutes: number; gamesPlayed: number }>();
+  const byName = new Map<string, { minutes: number; gamesPlayed: number }>();
+  const prefer = (
+    map: Map<string, { minutes: number; gamesPlayed: number }>,
+    key: string,
+    next: { minutes: number; gamesPlayed: number }
+  ) => {
+    const prev = map.get(key);
+    if (!prev || next.minutes >= prev.minutes) map.set(key, next);
+  };
   const board = getBundledBrefPeerBoard(season);
   for (const row of board) {
     const teamAbbr = String(
@@ -246,26 +256,21 @@ function boardMinutesIndex(season: string): {
     if (isCombinedRaceTeam(teamAbbr)) continue;
     const minutes = Number(row.minutes ?? 0);
     if (!Number.isFinite(minutes) || minutes <= 0) continue;
+    const gamesPlayed = Math.max(0, Number(row.gamesPlayed ?? 0));
+    const activity = { minutes, gamesPlayed };
     const espnId =
       row.playerId && !row.playerId.startsWith("bref:")
         ? String(row.playerId)
         : null;
     const nameKey = normalizePlayerName(row.playerName);
-    if (espnId) {
-      const prev = byEspn.get(espnId) ?? 0;
-      if (minutes >= prev) byEspn.set(espnId, minutes);
-    }
-    if (nameKey) {
-      const prev = byName.get(nameKey) ?? 0;
-      if (minutes >= prev) byName.set(nameKey, minutes);
-    }
+    if (espnId) prefer(byEspn, espnId, activity);
+    if (nameKey) prefer(byName, nameKey, activity);
   }
   const aliases = getBundledPlayerIdAliasIndex();
-  for (const [espnId, minutes] of byEspn) {
+  for (const [espnId, activity] of byEspn) {
     const nbaId = aliases.byEspn.get(espnId)?.nbaPlayerId;
     if (!nbaId) continue;
-    const prev = byNba.get(nbaId) ?? 0;
-    if (minutes >= prev) byNba.set(nbaId, minutes);
+    prefer(byNba, nbaId, activity);
   }
   return { byNba, byEspn, byName };
 }
@@ -275,19 +280,33 @@ function attachBoardMinutes(
   candidates: RaceCandidate[]
 ): RaceCandidate[] {
   const needsLookup = candidates.some(
-    (row) => row.minutes == null || !Number.isFinite(row.minutes)
+    (row) =>
+      row.minutes == null ||
+      !Number.isFinite(row.minutes) ||
+      row.gamesPlayed == null ||
+      row.gamesPlayed <= 0
   );
   if (!needsLookup) return candidates;
-  const index = boardMinutesIndex(season);
+  const index = boardActivityIndex(season);
   return candidates.map((row) => {
-    if (row.minutes != null && Number.isFinite(row.minutes) && row.minutes > 0) {
-      return row;
-    }
     const fromNba = row.nbaId ? index.byNba.get(row.nbaId) : undefined;
     const fromEspn = row.espnId ? index.byEspn.get(row.espnId) : undefined;
     const fromName = index.byName.get(normalizePlayerName(row.displayName));
-    const minutes = fromNba ?? fromEspn ?? fromName;
-    return minutes != null ? { ...row, minutes } : row;
+    const hit = fromNba ?? fromEspn ?? fromName;
+    if (!hit) return row;
+    return {
+      ...row,
+      minutes:
+        row.minutes != null && Number.isFinite(row.minutes) && row.minutes > 0
+          ? row.minutes
+          : hit.minutes,
+      gamesPlayed:
+        row.gamesPlayed != null && row.gamesPlayed > 0
+          ? row.gamesPlayed
+          : hit.gamesPlayed > 0
+            ? hit.gamesPlayed
+            : row.gamesPlayed,
+    };
   });
 }
 
@@ -302,6 +321,27 @@ function candidateMeetsMinMinutes(
     Number.isFinite(candidate.minutes) &&
     candidate.minutes >= minMinutes
   );
+}
+
+/** Honest GP for synthetic calendars — never assume a full 82 without evidence. */
+function estimateOverlayGamesPlayed(candidate: RaceCandidate): number {
+  if (
+    candidate.gamesPlayed != null &&
+    Number.isFinite(candidate.gamesPlayed) &&
+    candidate.gamesPlayed > 0
+  ) {
+    return Math.min(82, Math.max(1, Math.round(candidate.gamesPlayed)));
+  }
+  if (
+    candidate.minutes != null &&
+    Number.isFinite(candidate.minutes) &&
+    candidate.minutes > 0
+  ) {
+    // High-MPG stars returning late still get a short calendar.
+    return Math.min(82, Math.max(1, Math.round(candidate.minutes / 32)));
+  }
+  // Unknown activity — short synthetic slate, not a fake full season.
+  return 24;
 }
 
 async function mapInBatches<T, R>(
@@ -354,7 +394,8 @@ export function rankPlayerRaceCandidates(
           teamAbbr: team.teamAbbr,
           teamId: team.teamId,
           total,
-          gamesPlayed: 82,
+          // Unknown until board minutes / logs attach — never invent 82.
+          gamesPlayed: 0,
         },
         false
       );
@@ -387,7 +428,7 @@ export function rankPlayerRaceCandidates(
           teamAbbr: team.teamAbbr,
           teamId: team.teamId,
           total,
-          gamesPlayed: 82,
+          gamesPlayed: 0,
         },
         false
       );
@@ -621,8 +662,8 @@ export const getPlayerRaceTrackerPayload = cache(
 
     const overlayWindow = approxPlayerRaceSeasonWindow(resolvedSeason);
 
-    // Full-league fields: synthesize calendars from season totals so every
-    // ranked player appears without hundreds of game-log asset fetches.
+    // Prefer baked game logs for everyone (including full-league fields).
+    // Overlay calendars are a last resort and must not invent full-season play.
     const overlayOnlyAllField = fieldSize === "all";
 
     const loaded = await mapInBatches(
@@ -634,59 +675,6 @@ export const getPlayerRaceTrackerPayload = cache(
 
         if (!Number.isFinite(candidate.total) && overlayOnlyAllField) {
           return null;
-        }
-
-        if (overlayOnlyAllField) {
-          // Pins still prefer baked logs when available for a truer path.
-          const pinnedHere = candidateIsPinned(candidate);
-          if (pinnedHere) {
-            const games = await resolvePlayerSeasonGameLog({
-              season: resolvedSeason,
-              playerId,
-              nbaId: candidate.nbaId,
-              espnId: candidate.espnId,
-            });
-            if (games.length) {
-              const player = buildPlayerRacePlayer({
-                playerId,
-                espnId: candidate.espnId,
-                nbaId: candidate.nbaId,
-                displayName: candidate.displayName,
-                teamId: candidate.teamId,
-                teamAbbr: candidate.teamAbbr,
-                games,
-                metric,
-                seasonTotal: playerRaceUsesSeasonOverlay(metric)
-                  ? candidate.total
-                  : null,
-              });
-              if (player.points.length) {
-                if (
-                  (player.minutesPlayed <= 0 ||
-                    !Number.isFinite(player.minutesPlayed)) &&
-                  candidate.minutes != null
-                ) {
-                  player.minutesPlayed = candidate.minutes;
-                }
-                return player;
-              }
-            }
-          }
-
-          return buildPlayerRaceOverlayPlayer({
-            playerId,
-            espnId: candidate.espnId,
-            nbaId: candidate.nbaId,
-            displayName: candidate.displayName,
-            teamId: candidate.teamId,
-            teamAbbr: candidate.teamAbbr,
-            metric,
-            seasonTotal: candidate.total,
-            startDate: overlayWindow.startDate,
-            endDate: overlayWindow.endDate,
-            gamesPlayed: 82,
-            minutesPlayed: candidate.minutes,
-          });
         }
 
         const games = await resolvePlayerSeasonGameLog({
@@ -721,7 +709,6 @@ export const getPlayerRaceTrackerPayload = cache(
           return player;
         }
 
-        // Finite fields: fall back to overlay when logs are missing.
         if (
           playerRaceUsesSeasonOverlay(metric) &&
           Number.isFinite(candidate.total)
@@ -737,7 +724,25 @@ export const getPlayerRaceTrackerPayload = cache(
             seasonTotal: candidate.total,
             startDate: overlayWindow.startDate,
             endDate: overlayWindow.endDate,
-            gamesPlayed: 82,
+            gamesPlayed: estimateOverlayGamesPlayed(candidate),
+            minutesPlayed: candidate.minutes,
+          });
+        }
+
+        // Counting metrics with no logs: overlay only for full-field continuity.
+        if (overlayOnlyAllField && Number.isFinite(candidate.total)) {
+          return buildPlayerRaceOverlayPlayer({
+            playerId,
+            espnId: candidate.espnId,
+            nbaId: candidate.nbaId,
+            displayName: candidate.displayName,
+            teamId: candidate.teamId,
+            teamAbbr: candidate.teamAbbr,
+            metric,
+            seasonTotal: candidate.total,
+            startDate: overlayWindow.startDate,
+            endDate: overlayWindow.endDate,
+            gamesPlayed: estimateOverlayGamesPlayed(candidate),
             minutesPlayed: candidate.minutes,
           });
         }
@@ -774,8 +779,8 @@ export const getPlayerRaceTrackerPayload = cache(
           : `${def.label} curves pace the season total across games by minutes.`
         : def.kind === "season_rate" && merged.length
           ? overlayOnlyAllField
-            ? `${def.label} paths are reconstructed from season rates onto a shared calendar for the full league field.`
-            : `${def.label} paths are reconstructed from game logs (or a synthetic schedule when logs are missing) and settle on the published season rate — not live PBP recompute.`
+            ? `${def.label} paths use baked game dates when available; missing logs fall back to a short trailing calendar sized by minutes/GP — never a fake full-season injury path.`
+            : `${def.label} paths follow games with minutes (or a short synthetic trailing calendar when logs are missing) and settle on the published season rate — not live PBP recompute.`
           : def.kind === "counting" && overlayOnlyAllField && merged.length
             ? `${def.label} curves pace each player's season total across a shared calendar (full league field).`
             : undefined;

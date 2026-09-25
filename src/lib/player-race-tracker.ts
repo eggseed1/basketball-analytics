@@ -281,7 +281,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "two",
     canBeNegative: true,
     description:
-      "Season DRBL ability per 100 — reconstructed path that settles on the published season rate.",
+      "Season DRBL ability per 100 — path follows games with minutes and settles on the published season rate (not live PBP).",
   },
   {
     id: "darkoDpm",
@@ -659,7 +659,8 @@ function orderedRegularGames(
         game.date &&
         game.gameId &&
         isRegularSeasonGame(game) &&
-        Number(game.minutesNum ?? 0) >= 0
+        // DNP / inactive rows must not invent a race path.
+        Number(game.minutesNum ?? 0) > 0
     )
     .slice()
     .sort(
@@ -1056,7 +1057,11 @@ function buildCumulativeTrueShootingSeries(
   return points;
 }
 
-/** Synthetic game shells when baked logs are missing — still get a lively rate path. */
+/**
+ * Synthetic game shells when baked logs are missing.
+ * Games are packed into a trailing window sized by gamesPlayed so limited-GP
+ * / late-return players do not appear active from opening night.
+ */
 export function synthesizePlayerRaceRateGames(options: {
   startDate: string;
   endDate: string;
@@ -1064,27 +1069,45 @@ export function synthesizePlayerRaceRateGames(options: {
   minutesPlayed?: number;
   playerId: string;
 }): CompactPlayerGameLogRow[] {
-  const startMs = Date.parse(`${options.startDate}T12:00:00`);
+  const seasonStartMs = Date.parse(`${options.startDate}T12:00:00`);
   const endMs = Date.parse(`${options.endDate}T12:00:00`);
-  if (!Number.isFinite(startMs) || !Number.isFinite(endMs) || endMs < startMs) {
+  if (
+    !Number.isFinite(seasonStartMs) ||
+    !Number.isFinite(endMs) ||
+    endMs < seasonStartMs
+  ) {
     return [];
   }
-  const n = Math.max(
-    16,
-    Math.min(72, Math.round(options.gamesPlayed ?? 60))
+
+  const seasonSpanDays = Math.max(
+    1,
+    Math.round((endMs - seasonStartMs) / 86_400_000)
   );
+  const n = Math.max(
+    1,
+    Math.min(82, Math.round(options.gamesPlayed ?? 60))
+  );
+
+  // ~2.1 calendar days per game on a full slate; never invent a full season
+  // for someone who only played a handful of games.
+  const activeSpanDays = Math.min(
+    seasonSpanDays,
+    Math.max(1, Math.round(n * 2.1))
+  );
+  const startMs = Math.max(
+    seasonStartMs,
+    endMs - activeSpanDays * 86_400_000
+  );
+
   const totalMin = Math.max(0, options.minutesPlayed ?? n * 28);
   const baseMpg = totalMin > 0 ? totalMin / n : 28;
   const rng = mulberry32(hashStringSeed(`${options.playerId}|synth-games`));
   const span = Math.max(1, endMs - startMs);
   const games: CompactPlayerGameLogRow[] = [];
   for (let i = 0; i < n; i++) {
-    const t = n === 1 ? 0 : i / (n - 1);
+    const t = n === 1 ? 1 : i / (n - 1);
     const date = new Date(startMs + span * t).toISOString().slice(0, 10);
-    const minutesNum = Math.max(
-      8,
-      baseMpg * (0.82 + rng() * 0.36)
-    );
+    const minutesNum = Math.max(8, baseMpg * (0.82 + rng() * 0.36));
     games.push({
       gameId: `synth-${options.playerId}-${i}`,
       season: "",
@@ -1253,12 +1276,19 @@ export function formatPlayerRaceAxisDate(iso: string): string {
   return d.toLocaleDateString(undefined, { month: "numeric", day: "numeric" });
 }
 
-/** Merge player curves onto a shared timeline with forward-filled totals. */
+/**
+ * Merge player curves onto a shared timeline.
+ * Counting / paced totals forward-fill (cumulative value holds between games).
+ * Season-rate metrics do not — missing dates stay null so inactive stretches
+ * are not drawn as a continuing ability path.
+ */
 export function buildPlayerRaceChartRows(
   players: PlayerRacePlayer[],
-  window: PlayerRaceWindow
+  window: PlayerRaceWindow,
+  options?: { forwardFill?: boolean }
 ): PlayerRaceChartRow[] {
   if (!players.length) return [];
+  const forwardFill = options?.forwardFill !== false;
 
   const dateSet = new Set<string>();
   for (const player of players) {
@@ -1285,6 +1315,23 @@ export function buildPlayerRaceChartRows(
     const last = dates[dates.length - 1]!;
     if (sampled[sampled.length - 1] !== last) sampled.push(last);
     dates = sampled;
+  }
+
+  if (!forwardFill) {
+    const byPlayer = players.map(
+      (player) => new Map(player.points.map((p) => [p.date, p.value]))
+    );
+    return dates.map((date) => {
+      const row: PlayerRaceChartRow = {
+        date,
+        label: formatPlayerRaceAxisDate(date),
+      };
+      for (let i = 0; i < players.length; i++) {
+        const hit = byPlayer[i]!.get(date);
+        row[players[i]!.playerId] = hit ?? null;
+      }
+      return row;
+    });
   }
 
   const cursors = players.map(() => 0);
