@@ -5,6 +5,10 @@ name: Daily player-viz runtime refresh
 # still refresh ESPN transactions, which continue through waivers and signings.
 # In-season: also recomputes current-season DRBL/WAR1 when the finals count moves.
 #
+# Precomputed DRBL JSON is not mid-season committed (CI is contents:read).
+# Cache + artifacts keep the live season across nights so a soft-fail does not
+# wipe yesterday's board and skip-if-unchanged can see prior gamesProcessed.
+#
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token
 #   CLOUDFLARE_ACCOUNT_ID  — account id for wrangler / OpenNext
@@ -53,13 +57,36 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Resolve season
+        id: season
+        run: |
+          node --input-type=module -e "
+            import { nbaSeasonPhaseInfo } from './scripts/lib/nba-season-phase.mjs';
+            const info = nbaSeasonPhaseInfo(new Date());
+            const fs = await import('node:fs');
+            fs.appendFileSync(process.env.GITHUB_OUTPUT, \`season=\${info.season}\nphase=\${info.phase}\n\`);
+            console.log(info);
+          "
+
       - name: Cache DRBL raw responses
         uses: actions/cache@v4
         with:
           path: data/drbl/raw
-          key: drbl-raw-${{ runner.os }}-${{ github.run_id }}
+          key: drbl-raw-${{ runner.os }}-${{ steps.season.outputs.season }}-${{ github.run_id }}
           restore-keys: |
+            drbl-raw-${{ runner.os }}-${{ steps.season.outputs.season }}-
             drbl-raw-${{ runner.os }}-
+
+      - name: Cache DRBL precomputed + publish sidecar
+        uses: actions/cache@v4
+        with:
+          path: |
+            src/data/drbl/precomputed
+            src/data/runtime/drbl-published-seasons.json
+          key: drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-${{ github.run_id }}
+          restore-keys: |
+            drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-
+            drbl-precomputed-${{ runner.os }}-
 
       - name: Daily runtime sync
         id: sync
@@ -71,6 +98,17 @@ jobs:
         with:
           name: daily-runtime-sync
           path: artifacts/daily-runtime-sync.json
+          if-no-files-found: ignore
+
+      - name: Upload DRBL season artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: drbl-precomputed-${{ steps.season.outputs.season }}
+          path: |
+            src/data/drbl/precomputed
+            src/data/runtime/drbl-published-seasons.json
+            src/data/runtime/drbl-overlay-snapshot.json
           if-no-files-found: ignore
 
       - name: Build OpenNext bundle

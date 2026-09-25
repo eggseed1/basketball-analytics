@@ -76,6 +76,8 @@ function main() {
   );
   assert.ok(workflow.includes("Cache DRBL raw responses"));
   assert.ok(workflow.includes("data/drbl/raw"));
+  assert.ok(workflow.includes("Cache DRBL precomputed"));
+  assert.ok(workflow.includes("drbl-precomputed"));
 
   const compute = fs.readFileSync(
     path.join(ROOT, "scripts/drbl-compute-season.ts"),
