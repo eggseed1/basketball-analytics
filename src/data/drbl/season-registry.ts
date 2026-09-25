@@ -7,6 +7,12 @@
  */
 import published from "@/data/runtime/drbl-published-seasons.json";
 import {
+  isSeasonInPublishedFile,
+  mergeDrblSeasonLists,
+  seasonsFromPublishedFile,
+  type DrblPublishedSeasonsFile,
+} from "@/data/drbl/published-seasons";
+import {
   SEASON_REGISTRY,
   getSeasonEntry,
   listDrblSeasons as listRegistryDrblSeasons,
@@ -35,40 +41,28 @@ export {
   HISTORICAL_SUPPORT_CONTRACT_VERSION,
 };
 
-type PublishedFile = {
-  minGames?: number;
-  seasons?: Record<string, { gamesProcessed?: number }>;
-};
-
-const publishedFile = published as PublishedFile;
-const minGames = Number(publishedFile.minGames) || 50;
+const publishedFile = published as DrblPublishedSeasonsFile;
 
 function runtimePublishedSeasons(): string[] {
-  const out: string[] = [];
-  for (const [season, meta] of Object.entries(publishedFile.seasons ?? {})) {
-    const games = Number(meta?.gamesProcessed) || 0;
-    if (games >= minGames) out.push(season);
-  }
-  return out;
+  return seasonsFromPublishedFile(publishedFile);
 }
 
 export function listDrblSeasons(): string[] {
-  return [
-    ...new Set([...listRegistryDrblSeasons(), ...runtimePublishedSeasons()]),
-  ].sort();
+  return mergeDrblSeasonLists(
+    listRegistryDrblSeasons(),
+    runtimePublishedSeasons()
+  );
 }
 
 export function listCanonicalR1Seasons(): string[] {
   // Runtime-published seasons use the same R1 / WAR1 fields in the overlay.
-  return [
-    ...new Set([
-      ...listRegistryCanonicalR1Seasons(),
-      ...runtimePublishedSeasons(),
-    ]),
-  ].sort();
+  return mergeDrblSeasonLists(
+    listRegistryCanonicalR1Seasons(),
+    runtimePublishedSeasons()
+  );
 }
 
 export function isDrblSeason(season: string): boolean {
   if (isRegistryDrblSeason(season)) return true;
-  return runtimePublishedSeasons().includes(season);
+  return isSeasonInPublishedFile(publishedFile, season);
 }
