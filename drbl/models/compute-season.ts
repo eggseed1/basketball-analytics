@@ -160,11 +160,16 @@ export async function computeSeasonDrbl(
   options: {
     limit?: number;
     delayMs?: number;
+    /** Re-download raw PBP/box even when cached. */
     force?: boolean;
+    /** Refresh leaguegamelog game list (needed nightly so new finals appear). */
+    refreshGameList?: boolean;
     minPossessions?: number;
   } = {}
 ): Promise<DrblSeasonArtifact> {
-  let games = await listSeasonGames(season);
+  let games = await listSeasonGames(season, {
+    force: Boolean(options.refreshGameList || options.force),
+  });
   if (options.limit && options.limit > 0) {
     games = games.slice(0, options.limit);
   }

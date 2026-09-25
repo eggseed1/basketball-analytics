@@ -98,6 +98,7 @@
     "prefetch:historical": "tsx --env-file=.env.local scripts/prefetch-historical-games.ts --from 1960 --to 2025",
     "drbl:phase-a": "tsx scripts/drbl-phase-a.ts",
     "drbl:compute": "tsx scripts/drbl-compute-season.ts",
+    "drbl:compute:current": "tsx scripts/drbl-daily-recompute.ts",
     "drbl:epv": "tsx scripts/drbl-epv-calibrate.ts",
     "drbl:m6": "tsx scripts/drbl-m6-validate.ts",
     "drbl:m7-cv": "tsx scripts/drbl-m7-cv-validate.ts",
@@ -179,7 +180,8 @@
     "upload": "node scripts/build-runtime-game-snapshot.mjs && node scripts/build-runtime-bref-advanced.mjs && node scripts/build-runtime-drbl-overlay.mjs && node scripts/build-runtime-impact-snapshot.mjs && node scripts/build-runtime-hustle-snapshot.mjs && node scripts/build-runtime-player-awards.mjs && node scripts/build-runtime-current-roster.mjs && npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-player-bio-snapshot.mjs && node scripts/build-runtime-draft-year-snapshot.mjs && node scripts/build-runtime-transactions-snapshot.mjs && node scripts/sync-asset-ledger.mjs && node scripts/build-runtime-asset-ledger.mjs && node scripts/build-runtime-front-office-snapshot.mjs && node scripts/build-runtime-movement-snapshot.mjs && node scripts/build-runtime-team-board-snapshot.mjs && node scripts/build-runtime-standings-snapshot.mjs && node scripts/build-runtime-sentiment-snapshot.mjs && node scripts/build-runtime-player-shots.mjs && node scripts/build-runtime-player-game-logs.mjs && npx tsx scripts/build-runtime-recent-insights.mjs && node scripts/build-runtime-pbp-snapshot.mjs && npx tsx scripts/build-stat-detective-windows.ts && node scripts/build-runtime-cf-assets.mjs && opennextjs-cloudflare build && opennextjs-cloudflare upload",
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "roster:sync": "node scripts/build-runtime-current-roster.mjs",
-    "front-office:sync": "npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-front-office-snapshot.mjs"
+    "front-office:sync": "npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-front-office-snapshot.mjs",
+    "drbl:season-readiness": "tsx scripts/drbl-season-readiness.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
