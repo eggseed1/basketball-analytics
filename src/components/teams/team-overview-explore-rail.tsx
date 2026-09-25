@@ -39,6 +39,11 @@ const RAIL: Array<{
     blurb: "Schedule and recent results",
   },
   {
+    tab: "splits",
+    title: "Splits",
+    blurb: "Home/road, form, and margins",
+  },
+  {
     tab: "stats",
     title: "All Stats",
     blurb: "Full trait ledger and evidence",
