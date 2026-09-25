@@ -28,10 +28,13 @@ import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overvie
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
 import { TeamOverviewExploreRail } from "@/components/teams/team-overview-explore-rail";
 import { TeamOverviewIdentityBand } from "@/components/teams/team-overview-identity-band";
+import { TeamAllStatsRankStrip } from "@/components/teams/team-all-stats-rank-strip";
+import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
+import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
@@ -533,6 +536,10 @@ export default async function TeamProfilePage({
 
         {tab === "organization" ? (
           <div className="flex flex-col gap-4">
+            <TeamOrganizationHub
+              season={season}
+              frontOfficeSeason={getCurrentFrontOfficeSeason()}
+            />
             <Suspense
               fallback={
                 <DestinationSectionSkeleton label="Loading front office…" />
@@ -611,6 +618,16 @@ export default async function TeamProfilePage({
                     per-game until a totals endpoint is selected.
                   </p>
                 </div>
+                <TeamAllStatsRankStrip
+                  teamId={resolvedTeamId}
+                  season={season}
+                  metrics={[
+                    ...scorecard,
+                    ...offenseMetrics,
+                    ...defenseMetrics,
+                    ...factorMetrics,
+                  ]}
+                />
                 <TraitGroup title="Overall" traits={grouped.overall} />
                 <TraitGroup
                   title="Efficiency & shooting"
