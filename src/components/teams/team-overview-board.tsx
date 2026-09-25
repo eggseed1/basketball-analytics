@@ -1,5 +1,4 @@
 import type { AnalyticalFinding, TeamTrait } from "@/analytics";
-import { StatDisclosure } from "@/components/analytics/stat-disclosure";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatOrdinal } from "@/lib/format";
@@ -79,7 +78,6 @@ export function TeamOverviewBoard({
   strengths,
   weaknesses,
   howTheyWin,
-  traits,
 }: {
   offense: RankedMetric[];
   defense: RankedMetric[];
@@ -87,7 +85,6 @@ export function TeamOverviewBoard({
   strengths: TeamTrait[];
   weaknesses: TeamTrait[];
   howTheyWin: AnalyticalFinding[];
-  traits: TeamTrait[];
 }) {
   return (
     <div className="flex flex-col gap-4">
@@ -194,37 +191,6 @@ export function TeamOverviewBoard({
           ))}
         </div>
       </GlassSurface>
-
-      {traits.length ? (
-        <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
-          <div>
-            <h2 className={type.heading}>Board context</h2>
-            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-              Level-2 disclosure on every trait. All Stats holds the full
-              ledger.
-            </p>
-          </div>
-          <div className="grid gap-3 sm:grid-cols-2">
-            {traits.slice(0, 6).map((trait) => (
-              <div key={trait.id} className="rounded-md frost-surface px-3 py-3">
-                <StatDisclosure
-                  label={trait.label}
-                  context={trait.context}
-                  conceptId={
-                    trait.id === "3par"
-                      ? "three_par"
-                      : trait.id === "asttov"
-                        ? "ast_to"
-                        : trait.id === "opp"
-                          ? "opp_ppg"
-                          : trait.id
-                  }
-                />
-              </div>
-            ))}
-          </div>
-        </GlassSurface>
-      ) : null}
     </div>
   );
 }

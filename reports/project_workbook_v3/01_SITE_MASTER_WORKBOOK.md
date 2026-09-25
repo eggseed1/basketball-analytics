@@ -526,6 +526,7 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 - Compact player overview playing-style strip
 - Ask leaderboard / compare viz; loading-efficiency islands
 - Game Lab “What decided” surfaces box advantages already computed for Ask
+- Team Overview hub: identity bands + explore rail; hide unused rate chips
 
 ---
 
