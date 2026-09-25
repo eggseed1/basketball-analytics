@@ -15,6 +15,10 @@ import { formatNumber, formatPct } from "@/lib/format";
 import { isPreTipStatus } from "@/lib/game-status";
 import type { TeamBrand } from "@/lib/nba-brand";
 import {
+  resolveRoleShell,
+  type PlayerRoleShell,
+} from "@/lib/player-role";
+import {
   playerSeasonTeamMatchIds,
   teamProfileHref,
 } from "@/lib/team-identity";
@@ -98,6 +102,79 @@ export function rotationMinutesPct(
 ): number | null {
   if (!(teamGames > 0) || !(player.minutes > 0)) return null;
   return player.minutes / (teamGames * 48);
+}
+
+/** Games started ÷ games played. Null when GP is missing. */
+export function rotationStartRate(player: PlayerSeason): number | null {
+  if (!(player.gamesPlayed > 0)) return null;
+  return player.gamesStarted / player.gamesPlayed;
+}
+
+export type RotationShellBand = {
+  shell: PlayerRoleShell;
+  label: string;
+  minutes: number;
+  share: number;
+  players: number;
+};
+
+export type RotationPositionShape = {
+  totalMinutes: number;
+  bands: RotationShellBand[];
+  /** Players with minutes but no usable position/shell. */
+  unknownMinutes: number;
+};
+
+const SHELL_LABEL: Record<PlayerRoleShell, string> = {
+  guard: "Guards",
+  wing: "Wings",
+  big: "Bigs",
+};
+
+/**
+ * Minutes by role shell (guard / wing / big) from listed positions.
+ * Listing positions only — not tracking-derived lineups.
+ */
+export function buildRotationPositionShape(
+  roster: PlayerSeason[]
+): RotationPositionShape {
+  const minutes: Record<PlayerRoleShell, number> = {
+    guard: 0,
+    wing: 0,
+    big: 0,
+  };
+  const counts: Record<PlayerRoleShell, number> = {
+    guard: 0,
+    wing: 0,
+    big: 0,
+  };
+  let unknownMinutes = 0;
+  let totalMinutes = 0;
+
+  for (const p of roster) {
+    if (!(p.minutes > 0)) continue;
+    totalMinutes += p.minutes;
+    if (!p.position) {
+      unknownMinutes += p.minutes;
+      continue;
+    }
+    const shell = resolveRoleShell(p.position, p.reboundPct);
+    minutes[shell] += p.minutes;
+    counts[shell] += 1;
+  }
+
+  const known = totalMinutes - unknownMinutes;
+  const bands: RotationShellBand[] = (
+    ["guard", "wing", "big"] as PlayerRoleShell[]
+  ).map((shell) => ({
+    shell,
+    label: SHELL_LABEL[shell],
+    minutes: minutes[shell],
+    share: known > 0 ? minutes[shell] / known : 0,
+    players: counts[shell],
+  }));
+
+  return { totalMinutes, bands, unknownMinutes };
 }
 
 const TRAIT_PICKERS: Record<
