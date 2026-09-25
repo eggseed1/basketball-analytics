@@ -44,6 +44,11 @@ const RAIL: Array<{
     blurb: "Home/road, form, and margins",
   },
   {
+    tab: "playoffs",
+    title: "Playoffs",
+    blurb: "Bracket seed and postseason log",
+  },
+  {
     tab: "stats",
     title: "All Stats",
     blurb: "Full trait ledger and evidence",
