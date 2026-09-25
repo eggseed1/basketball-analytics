@@ -10,9 +10,13 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import {
-  isDrblSeason,
+  getSeasonEntry,
   listDrblSeasons,
 } from "../drbl/historical/season-registry";
+import {
+  isDrblSeason,
+  listDrblSeasons as listProductDrblSeasons,
+} from "../src/data/drbl/season-registry";
 import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -28,8 +32,11 @@ function main() {
   const seasons = listDrblSeasons();
   assert.ok(seasons.includes("2025-26"));
   assert.equal(isDrblSeason("2025-26"), true);
-  // Next season stays off the product board until tip-off + bake + gate.
+  // Next season stays unpublished until nightly bake writes ≥50 finals.
   assert.equal(isDrblSeason("2026-27"), false);
+  assert.ok(getSeasonEntry("2026-27"), "2026-27 stub exists in registry");
+  assert.equal(getSeasonEntry("2026-27")?.drblAvailable, false);
+  assert.deepEqual(listProductDrblSeasons().sort(), seasons.sort());
 
   const sealed = readJson("src/data/drbl/precomputed/2025-26.json") as {
     season?: string;
@@ -61,6 +68,7 @@ function main() {
   );
   assert.ok(sync.includes("drbl-daily-recompute"));
   assert.ok(sync.includes("drbl-recompute"));
+  assert.ok(sync.includes("softFailed"));
 
   const workflow = fs.readFileSync(
     path.join(ROOT, ".github/workflows/daily-runtime-refresh.yml"),

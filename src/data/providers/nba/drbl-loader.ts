@@ -8,7 +8,7 @@ import {
   sha256Hex,
   type BoardProvenance,
 } from "../../../../drbl/models/board-provenance";
-import { isDrblSeason } from "../../../../drbl/historical/season-registry";
+import { isDrblSeason } from "@/data/drbl/season-registry";
 import {
   CACHE_TTL_MS,
   isCurrentCanonicalSeason,

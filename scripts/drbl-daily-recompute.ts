@@ -16,6 +16,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { listSeasonGames } from "../drbl/download/season-games";
+import type { DrblGameMeta } from "../drbl/types";
 import { nbaSeasonPhaseInfo } from "./lib/nba-season-phase.mjs";
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
@@ -24,6 +25,7 @@ const FORCE_RECOMPUTE =
   process.argv.includes("--force-recompute");
 /** Minimum finals in the game list before we publish a season artifact. */
 const MIN_GAMES_TO_PUBLISH = Number(process.env.DRBL_MIN_GAMES ?? "50");
+const LIST_ATTEMPTS = Math.max(1, Number(process.env.DRBL_LIST_ATTEMPTS ?? "3"));
 
 function log(message: string) {
   console.log(`[drbl-daily-recompute] ${message}`);
@@ -64,6 +66,39 @@ async function readGamesProcessed(season: string): Promise<number> {
   }
 }
 
+async function sleep(ms: number) {
+  await new Promise((r) => setTimeout(r, ms));
+}
+
+async function loadGameList(season: string): Promise<DrblGameMeta[]> {
+  let lastError: unknown;
+  for (let attempt = 1; attempt <= LIST_ATTEMPTS; attempt++) {
+    try {
+      const games = await listSeasonGames(season, { force: true });
+      log(`leaguegamelog refresh ok (attempt ${attempt}, n=${games.length})`);
+      return games;
+    } catch (error) {
+      lastError = error;
+      log(
+        `leaguegamelog refresh failed attempt ${attempt}/${LIST_ATTEMPTS}: ${
+          error instanceof Error ? error.message : String(error)
+        }`
+      );
+      if (attempt < LIST_ATTEMPTS) await sleep(1500 * attempt);
+    }
+  }
+
+  try {
+    const cached = await listSeasonGames(season, { force: false });
+    log(
+      `falling back to cached leaguegamelog (n=${cached.length}) after refresh failures`
+    );
+    return cached;
+  } catch (error) {
+    throw lastError ?? error;
+  }
+}
+
 async function main() {
   const info = nbaSeasonPhaseInfo(new Date());
   const season = process.env.DRBL_SEASON || info.season;
@@ -73,7 +108,17 @@ async function main() {
     `season=${season} phase=${info.phase} forceRecompute=${FORCE_RECOMPUTE ? "1" : "0"}`
   );
 
-  const games = await listSeasonGames(season, { force: true });
+  let games: DrblGameMeta[];
+  try {
+    games = await loadGameList(season);
+  } catch (error) {
+    const msg = error instanceof Error ? error.message : String(error);
+    log(`skip compute — could not load game list: ${msg}`);
+    // Soft skip so daily BRef/logs still deploy when Stats NBA is down.
+    if (process.env.DRBL_HARD_FAIL === "1") process.exit(1);
+    return;
+  }
+
   const availableGames = games.length;
   log(`leaguegamelog finals=${availableGames}`);
 

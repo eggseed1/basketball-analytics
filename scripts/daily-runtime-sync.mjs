@@ -210,9 +210,24 @@ async function main() {
   ];
 
   const completed = [];
+  const softFailed = [];
   for (const step of steps) {
-    await run(step.cmd, step.args, step.env);
-    completed.push(step.label);
+    try {
+      await run(step.cmd, step.args, step.env);
+      completed.push(step.label);
+    } catch (error) {
+      // Keep BRef / logs / standings moving if Stats NBA flakes on DRBL.
+      if (step.label === "drbl-recompute") {
+        log(
+          `soft-fail ${step.label}: ${
+            error instanceof Error ? error.message : String(error)
+          }`
+        );
+        softFailed.push(step.label);
+        continue;
+      }
+      throw error;
+    }
   }
 
   const report = {
@@ -223,6 +238,7 @@ async function main() {
     minGp,
     force: FORCE,
     steps: completed,
+    softFailed,
     shouldDeploy: true,
     generatedAt: new Date().toISOString(),
     durationMs: Date.now() - started,
