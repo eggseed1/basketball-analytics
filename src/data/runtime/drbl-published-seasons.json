@@ -1,0 +1,32 @@
+{
+  "version": 1,
+  "minGames": 50,
+  "generatedAt": "2026-09-25T12:34:15.054Z",
+  "note": "Runtime-published DRBL seasons from precomputed artifacts (nightly bake).",
+  "seasons": {
+    "2020-21": {
+      "gamesProcessed": 1080,
+      "players": 532
+    },
+    "2021-22": {
+      "gamesProcessed": 1230,
+      "players": 573
+    },
+    "2022-23": {
+      "gamesProcessed": 1230,
+      "players": 524
+    },
+    "2023-24": {
+      "gamesProcessed": 1230,
+      "players": 554
+    },
+    "2024-25": {
+      "gamesProcessed": 1225,
+      "players": 555
+    },
+    "2025-26": {
+      "gamesProcessed": 1225,
+      "players": 575
+    }
+  }
+}

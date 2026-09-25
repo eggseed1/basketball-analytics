@@ -174,6 +174,26 @@ export const SEASON_REGISTRY: readonly SeasonRegistryEntry[] = [
     normalizationVersion: HISTORICAL_NORMALIZATION_VERSION,
     qualityFlags: ["SOURCE_LINEUP_INCOMPLETE_RAW"],
   },
+  {
+    season: "2026-27",
+    label: "2026-27",
+    regularSeasonAvailable: false,
+    postseasonAvailable: false,
+    drblAvailable: false,
+    r1PointsAvailable: false,
+    r1WinEqAvailable: false,
+    stintsAvailable: false,
+    historicalSourceQualityTier: "NOT_IN_ARCHIVE",
+    modelProductStatus: "UNAVAILABLE",
+    supportTier: "NOT_IN_ARCHIVE",
+    dataQualityNote:
+      "Awaiting tip-off. Nightly bake publishes via runtime overlay once ≥50 finals exist; flip drblAvailable after the first successful in-season seal if desired.",
+    abilityModelVersion: null,
+    r1PointValueVersion: null,
+    r1WinEquivalentVersion: null,
+    normalizationVersion: null,
+    qualityFlags: ["AWAITING_TIP_OFF"],
+  },
 ] as const;
 
 export function getSeasonEntry(
