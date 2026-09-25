@@ -49,6 +49,11 @@ const RAIL: Array<{
     blurb: "Bracket seed and postseason log",
   },
   {
+    tab: "history",
+    title: "History",
+    blurb: "Franchise arc and eras",
+  },
+  {
     tab: "stats",
     title: "All Stats",
     blurb: "Full trait ledger and evidence",
