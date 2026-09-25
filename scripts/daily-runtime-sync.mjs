@@ -5,10 +5,14 @@
  * Rebuilds the deploy-baked snapshots Cloudflare Workers serve:
  *   - current-season player game logs (race curves)
  *   - BRef advanced / team board / standings (scatter peers + rankings)
- *   - DRBL + DARKO overlays (impact races / scatters)
+ *   - DRBL season recompute (Approach B full refit) + slim overlay
+ *   - DARKO overlays (impact races / scatters)
  *   - game + roster snapshots
  *
- * Offseason (before ~Oct 15 / after Finals): no-op unless FORCE_DAILY=1.
+ * DRBL numbers move when finals accumulate: nightly recompute refreshes the
+ * precomputed artifact, then the overlay bake ships it. Not live per tip-off.
+ *
+ * Offseason (before ~Oct 15 / after Finals): transactions only unless FORCE_DAILY=1.
  *
  *   node scripts/daily-runtime-sync.mjs
  *   FORCE_DAILY=1 node scripts/daily-runtime-sync.mjs
@@ -127,6 +131,16 @@ async function main() {
         BREF_SEASON_WINDOW: "3",
         BREF_INCLUDE_CURRENT: "1",
         BREF_PRESERVE_OUTSIDE_WINDOW: "1",
+      },
+    },
+    {
+      label: "drbl-recompute",
+      cmd: "npx",
+      args: ["tsx", "scripts/drbl-daily-recompute.ts"],
+      env: {
+        // Current season only; skips when game count unchanged or < min games.
+        DRBL_SEASON: info.season,
+        DRBL_DELAY_MS: process.env.DRBL_DELAY_MS || "100",
       },
     },
     {

@@ -572,6 +572,8 @@ Through mid/late Sep 2026 Cloudflare product pushes included:
 ### Suggested immediate sequence
 
 Hygiene D1–D3 complete. Next product depth: **B1** when ledger edges densify, else licensed ingest for **B4/B5**. Avoid inventing assets or sentiment volume.
+
+**DRBL in-season updates:** Nightly GHA (`daily-runtime-refresh`) runs Approach B full-season recompute when finals count moves (`scripts/drbl-daily-recompute.ts`), then slim overlay + CF deploy. Not per-tip live. Gate new registry seasons until ≥~50 finals.
 ---
 
 ## 10. Quick path index

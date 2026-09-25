@@ -3,6 +3,7 @@ name: Daily player-viz runtime refresh
 # Rebuilds Cloudflare-baked snapshots for race tracker + league scatters
 # once the NBA tip-off window opens (mid-Oct through Finals). Offseason runs
 # still refresh ESPN transactions, which continue through waivers and signings.
+# In-season: also recomputes current-season DRBL/WAR1 when the finals count moves.
 #
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token
@@ -30,7 +31,8 @@ concurrency:
 jobs:
   refresh:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    # Full DRBL season refit + overlay + OpenNext can exceed 3h on cold cache.
+    timeout-minutes: 300
     permissions:
       contents: read
     env:
@@ -50,6 +52,14 @@ jobs:
 
       - name: Install
         run: npm ci
+
+      - name: Cache DRBL raw responses
+        uses: actions/cache@v4
+        with:
+          path: data/drbl/raw
+          key: drbl-raw-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            drbl-raw-${{ runner.os }}-
 
       - name: Daily runtime sync
         id: sync

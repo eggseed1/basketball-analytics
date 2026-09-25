@@ -22,6 +22,11 @@ async function main() {
   const delay = arg("delay") ? Number(arg("delay")) : 100;
   const sitePath = arg("site-path");
   const offlinePath = arg("offline-path");
+  const refreshGameList =
+    process.argv.includes("--refresh-games") ||
+    process.env.DRBL_REFRESH_GAMES === "1";
+  const force =
+    process.argv.includes("--force") || process.env.DRBL_FORCE === "1";
 
   console.log(
     `Computing DRBL-Core for ${season}${limit != null ? ` (limit=${limit})` : " (full available)"}…`
@@ -30,6 +35,8 @@ async function main() {
     limit,
     delayMs: delay,
     minPossessions: 50,
+    refreshGameList,
+    force,
   });
   const paths = await writeSeasonDrblArtifact(artifact, {
     sitePath: sitePath || undefined,
