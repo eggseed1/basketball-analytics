@@ -77,16 +77,15 @@ jobs:
             drbl-raw-${{ runner.os }}-${{ steps.season.outputs.season }}-
             drbl-raw-${{ runner.os }}-
 
-      - name: Cache DRBL precomputed + publish sidecar
+      - name: Cache DRBL precomputed (live season only)
         uses: actions/cache@v4
         with:
-          path: |
-            src/data/drbl/precomputed
-            src/data/runtime/drbl-published-seasons.json
+          # Only the current season file — never restore the whole precomputed/
+          # tree or a stale cache can overwrite sealed historical JSON from git.
+          path: src/data/drbl/precomputed/${{ steps.season.outputs.season }}.json
           key: drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-${{ github.run_id }}
           restore-keys: |
             drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-
-            drbl-precomputed-${{ runner.os }}-
 
       - name: Daily runtime sync
         id: sync
@@ -106,7 +105,7 @@ jobs:
         with:
           name: drbl-precomputed-${{ steps.season.outputs.season }}
           path: |
-            src/data/drbl/precomputed
+            src/data/drbl/precomputed/${{ steps.season.outputs.season }}.json
             src/data/runtime/drbl-published-seasons.json
             src/data/runtime/drbl-overlay-snapshot.json
           if-no-files-found: ignore

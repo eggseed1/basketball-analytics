@@ -1,7 +1,7 @@
 {
   "version": 1,
   "minGames": 50,
-  "generatedAt": "2026-09-25T12:34:15.054Z",
+  "generatedAt": "2026-09-25T12:38:32.731Z",
   "note": "Runtime-published DRBL seasons from precomputed artifacts (nightly bake).",
   "seasons": {
     "2020-21": {
