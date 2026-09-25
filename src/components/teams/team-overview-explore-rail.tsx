@@ -19,6 +19,11 @@ const RAIL: Array<{
     blurb: "Roster board and season lines",
   },
   {
+    tab: "lineups",
+    title: "Rotation",
+    blurb: "Starter / bench minutes ladder",
+  },
+  {
     tab: "games",
     title: "Games",
     blurb: "Schedule and recent results",
@@ -44,7 +49,7 @@ export function TeamOverviewExploreRail({
   hrefOpts: TeamPageHrefOpts;
 }) {
   return (
-    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
       {RAIL.map((item) => (
         <GlassSurface
           key={item.tab}
