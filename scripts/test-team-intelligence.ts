@@ -11,6 +11,8 @@ import {
   buildRosterBuckets,
   buildRotationLadder,
   rotationMinutesPct,
+  buildRotationPositionShape,
+  rotationStartRate,
   buildTeamAskLinks,
   buildTeamIdentityStatements,
   enrichTraitsWithPrior,
@@ -236,6 +238,29 @@ assert.equal(ladder.bench[0]?.playerId, "b1");
 assert.ok(ladder.spot.some((p) => p.playerId === "x1") || ladder.bench.some((p) => p.playerId === "x1"));
 const minPct = rotationMinutesPct(rotationRoster[0]!, ladder.teamGames);
 assert.ok(minPct != null && Math.abs(minPct - 1400 / (40 * 48)) < 1e-9);
+assert.equal(rotationStartRate(rotationRoster[0]!), 38 / 40);
+assert.equal(rotationStartRate(rotationRoster[1]!), 2 / 40);
+
+const shaped = buildRotationPositionShape([
+  {
+    ...rotationRoster[0]!,
+    position: "PG",
+    reboundPct: 0.05,
+  },
+  {
+    ...rotationRoster[1]!,
+    position: "SF",
+    reboundPct: 0.08,
+  },
+  {
+    ...rotationRoster[2]!,
+    position: "C",
+    reboundPct: 0.2,
+  },
+] as PlayerSeason[]);
+assert.equal(shaped.bands.find((b) => b.shell === "guard")?.minutes, 1400);
+assert.equal(shaped.bands.find((b) => b.shell === "wing")?.minutes, 800);
+assert.equal(shaped.bands.find((b) => b.shell === "big")?.minutes, 80);
 
 // --- games ---
 const games: GameSummary[] = [

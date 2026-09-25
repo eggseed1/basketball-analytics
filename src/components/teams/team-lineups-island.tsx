@@ -6,7 +6,9 @@ import type { PlayerSeason } from "@/data/types";
 import {
   buildRosterBuckets,
   buildRotationLadder,
+  buildRotationPositionShape,
   rotationMinutesPct,
+  rotationStartRate,
 } from "@/lib/team-explorer";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
@@ -52,13 +54,14 @@ function RotationTable({
   }
 
   return (
-    <table className="w-full min-w-[640px] text-left text-[13px]">
+    <table className="w-full min-w-[720px] text-left text-[13px]">
       <thead>
         <tr className="border-b border-border text-muted-foreground">
           <th className="py-2 pr-3 font-medium">#</th>
           <th className="py-2 pr-3 font-medium">Player</th>
           <th className="py-2 pr-3 font-medium">Pos</th>
           <th className="py-2 pr-3 text-right font-medium">GS</th>
+          <th className="py-2 pr-3 text-right font-medium">Start%</th>
           <th className="py-2 pr-3 text-right font-medium">GP</th>
           <th className="py-2 pr-3 text-right font-medium">MPG</th>
           <th className="py-2 pr-3 text-right font-medium">MIN%</th>
@@ -69,6 +72,7 @@ function RotationTable({
       <tbody>
         {rows.map((p, i) => {
           const minPct = rotationMinutesPct(p, teamGames);
+          const startRate = rotationStartRate(p);
           const usg =
             p.usagePct != null && Number.isFinite(p.usagePct) && p.usagePct > 0
               ? formatPct(p.usagePct, 0)
@@ -96,6 +100,9 @@ function RotationTable({
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
                 {p.gamesStarted}
+              </td>
+              <td className="py-2 pr-3 text-right tabular-nums">
+                {startRate != null ? formatPct(startRate, 0) : "—"}
               </td>
               <td className="py-2 pr-3 text-right tabular-nums">
                 {p.gamesPlayed}
@@ -170,6 +177,72 @@ function SideList({
   );
 }
 
+function PositionShapeCard({
+  shape,
+}: {
+  shape: ReturnType<typeof buildRotationPositionShape>;
+}) {
+  if (!(shape.totalMinutes > 0)) return null;
+  const knownShare =
+    shape.totalMinutes > 0
+      ? (shape.totalMinutes - shape.unknownMinutes) / shape.totalMinutes
+      : 0;
+  if (!(knownShare > 0)) return null;
+
+  return (
+    <div className="sports-card flex flex-col gap-3 p-4 sm:p-5">
+      <div>
+        <h3 className={cn(type.bodySm, "font-semibold")}>Minutes by shell</h3>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Listed positions mapped to guard / wing / big — not tracking lineups.
+        </p>
+      </div>
+      <div
+        className="flex h-3 w-full overflow-hidden rounded-sm bg-muted"
+        role="img"
+        aria-label="Minutes share by position shell"
+      >
+        {shape.bands.map((band) =>
+          band.share > 0 ? (
+            <span
+              key={band.shell}
+              className={cn(
+                "h-full",
+                band.shell === "guard" && "bg-foreground/80",
+                band.shell === "wing" && "bg-foreground/50",
+                band.shell === "big" && "bg-foreground/25"
+              )}
+              style={{ width: `${band.share * 100}%` }}
+              title={`${band.label}: ${formatPct(band.share, 0)}`}
+            />
+          ) : null
+        )}
+      </div>
+      <ul className="grid gap-2 sm:grid-cols-3">
+        {shape.bands.map((band) => (
+          <li key={band.shell} className="flex flex-col gap-0.5">
+            <span className={cn(type.bodySm, "font-semibold")}>
+              {band.label}
+            </span>
+            <span
+              className={cn(type.caption, "tabular-nums text-muted-foreground")}
+            >
+              {formatPct(band.share, 0)} · {formatNumber(band.minutes, 0)} MIN ·{" "}
+              {band.players} players
+            </span>
+          </li>
+        ))}
+      </ul>
+      {shape.unknownMinutes > 0 ? (
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          {formatNumber(shape.unknownMinutes, 0)} MIN have no listed position —
+          omitted from the bar.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 /**
  * Rotation tab — box-score minutes ladder + usage/value context.
  * True five-man lineup nets need PBP; this stays honest about that.
@@ -209,6 +282,7 @@ export async function TeamLineupsIsland({
     listLimit: 5,
   });
   const ladder = buildRotationLadder(roster.players);
+  const shape = buildRotationPositionShape(roster.players);
   const empty =
     ladder.starters.length + ladder.bench.length + ladder.spot.length === 0;
   const playersHref = teamPageHref(teamId, { season, tab: "players" });
@@ -253,6 +327,8 @@ export async function TeamLineupsIsland({
         </div>
       ) : (
         <>
+          <PositionShapeCard shape={shape} />
+
           <div className="sports-card overflow-x-auto p-4 sm:p-5">
             <h3 className={cn(type.bodySm, "mb-1 font-semibold")}>
               Likely starters
