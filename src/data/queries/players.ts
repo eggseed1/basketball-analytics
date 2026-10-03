@@ -1644,7 +1644,10 @@ export async function attachDrblToPlayerSeasons(
     seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 8);
   }
 
-  const aliases = await getPlayerIdAliasIndex();
+  const [aliases, routeNbaId] = await Promise.all([
+    getPlayerIdAliasIndex(),
+    resolveNbaIdForDrbl(playerId).catch(() => null),
+  ]);
   const overlays = await Promise.all(
     seasons.map(async (season) => {
       const drblRows = await fetchDrblSeason(season).catch(() => []);
@@ -1656,11 +1659,23 @@ export async function attachDrblToPlayerSeasons(
   return rows.map((row) => {
     const map = bySeason.get(row.season);
     if (!map) return row;
-    const nbaId = nbaIdForKnownArtifact(
-      { playerId: row.playerId || playerId, playerName: row.playerName },
-      (id) => map.has(id),
-      aliases
-    );
+    const has = (id: string) => map.has(id);
+    const rowId = String(row.playerId ?? "").trim();
+    // Historical career rows carry `bref:slug` ids, so fall back to the route id.
+    const nbaId =
+      nbaIdForKnownArtifact(
+        { playerId: rowId || playerId, playerName: row.playerName },
+        has,
+        aliases
+      ) ??
+      (rowId && rowId !== playerId
+        ? nbaIdForKnownArtifact(
+            { playerId, playerName: row.playerName },
+            has,
+            aliases
+          )
+        : null) ??
+      (routeNbaId && has(routeNbaId) ? routeNbaId : null);
     const drbl = nbaId ? map.get(nbaId) : undefined;
     if (!drbl) return row;
     return {
@@ -1734,13 +1749,20 @@ export async function attachHustleToPlayerSeasons(
   return rows.map((row) => {
     const map = bySeason.get(row.season);
     if (!map) return row;
-    const patch = resolveHustlePatch(
-      { playerId: row.playerId || playerId, playerName: row.playerName },
-      map,
-      aliases,
-      lookupEspnIdByPlayerName
-    );
-    if (!patch || !Object.keys(patch).length) return row;
+    const resolve = (id: string) => {
+      const found = resolveHustlePatch(
+        { playerId: id, playerName: row.playerName },
+        map,
+        aliases,
+        lookupEspnIdByPlayerName
+      );
+      return found && Object.keys(found).length ? found : null;
+    };
+    const rowId = String(row.playerId ?? "").trim();
+    const patch =
+      resolve(rowId || playerId) ??
+      (rowId && rowId !== playerId ? resolve(playerId) : null);
+    if (!patch) return row;
     return { ...row, ...patch };
   });
 }
