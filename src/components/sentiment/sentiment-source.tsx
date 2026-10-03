@@ -3,6 +3,8 @@ import type {
   SentimentLaneOrigin,
   SentimentSourceSummary,
 } from "@/sentiment/curated-types";
+import Link from "next/link";
+
 import { MoreInfo } from "@/components/ui/more-info";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -33,7 +35,7 @@ const ORIGIN_HINT: Record<SentimentLaneOrigin, string> = {
   curated: "Hand-written prototype value, not measured.",
   headlines: "Average tone of publisher headlines that name this subject.",
   reddit: "Average tone of post titles from approved subreddits.",
-  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on team YouTube channels.",
+  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on team and NBA show YouTube channels.",
 };
 
 export function laneOriginLabel(origin?: SentimentLaneOrigin): string {
@@ -87,7 +89,7 @@ function fanPartsText(fans: NonNullable<SentimentSourceSummary["fans"]>): string
       ? `${n("fan_blog").toLocaleString()} headlines from ${fans.blogCount} team fan blogs`
       : null,
     n("bluesky") ? `${n("bluesky").toLocaleString()} Bluesky posts` : null,
-    n("youtube") ? `${n("youtube").toLocaleString()} comments on team YouTube channels` : null,
+    n("youtube") ? `${n("youtube").toLocaleString()} comments on team and NBA show YouTube channels` : null,
     n("reddit") ? `${n("reddit").toLocaleString()} Reddit post titles` : null,
   ].filter((part): part is string => Boolean(part));
   if (parts.length <= 1) return parts.join("");
@@ -193,7 +195,11 @@ export function SentimentSourcesStrip({
       </ul>
       <p>
         Fan and media tone are kept separate from performance metrics and Movement Center
-        evidence.
+        evidence. The{" "}
+        <Link href="/privacy" className="underline underline-offset-2">
+          privacy page
+        </Link>{" "}
+        lists what is kept from each source.
       </p>
       </MoreInfo>
     </div>

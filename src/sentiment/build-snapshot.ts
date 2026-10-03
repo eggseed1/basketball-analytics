@@ -48,7 +48,7 @@ import {
   readIngestItems,
   type FanPostIngestItem,
   type NewsIngestItem,
-  type RedditIngestItem,
+  type RedditDailyItem,
 } from "@/sentiment/ingest-store";
 import type { SentimentPlatform } from "@/sentiment/types";
 import {
@@ -330,8 +330,34 @@ function newsToScored(rows: NewsIngestItem[], platform?: SentimentPlatform): Sco
   }));
 }
 
+/**
+ * Reddit is stored as daily averages, so each row becomes `posts` items at
+ * its mean score. Counts, floors, means and daily series match what per-post
+ * rows would give; topic counts are spread across the items.
+ */
+function redditDailyToScored(rows: RedditDailyItem[]): ScoredIngestItem[] {
+  const out: ScoredIngestItem[] = [];
+  for (const row of rows) {
+    const topics = Object.entries(row.topicCounts).flatMap(([topic, n]) =>
+      Array.from({ length: n }, () => topic)
+    );
+    for (let i = 0; i < row.posts; i += 1) {
+      out.push({
+        id: `reddit:${row.id}:${i}`,
+        date: `${row.date}T12:00:00.000Z`,
+        score: row.meanScore,
+        topics: topics.filter((_, t) => t % row.posts === i),
+        playerIds: row.scope === "player" ? [row.entityId] : [],
+        teamIds: row.scope === "team" ? [row.entityId] : [],
+        platform: "reddit",
+      });
+    }
+  }
+  return out;
+}
+
 function fanPostsToScored(
-  rows: (RedditIngestItem | FanPostIngestItem)[],
+  rows: FanPostIngestItem[],
   platform: SentimentPlatform
 ): ScoredIngestItem[] {
   return rows.map((row) => ({
@@ -575,18 +601,26 @@ export async function buildSentimentSnapshot(
   const ingestConfig = { ...DEFAULT_INGEST, ...manifest.ingest };
   const fanFloor = ingestConfig.fanFloor ?? ingestConfig.redditFloor;
   const newsRows = readIngestItems<NewsIngestItem>("news").filter((row) => row.nba);
-  const redditRows = readIngestItems<RedditIngestItem>("reddit");
+  const redditRows = readIngestItems<RedditDailyItem>("reddit");
+  const redditLeagueRows = redditRows.filter((row) => row.scope === "league");
+  const redditPostCount = redditLeagueRows.reduce((sum, row) => sum + row.posts, 0);
   const fanBlogRows = readIngestItems<NewsIngestItem>("fanblogs").filter((row) => row.nba);
   const blueskyRows = readIngestItems<FanPostIngestItem>("bluesky");
   const youtubeRows = readIngestItems<FanPostIngestItem>("youtube");
   const newsById = new Map(newsRows.map((row) => [row.id, row]));
   const newsScored = newsToScored(newsRows);
-  const fanScored = [
-    ...fanPostsToScored(redditRows, "reddit"),
+  const fanPostScored = [
     ...newsToScored(fanBlogRows, "fan_blog"),
     ...fanPostsToScored(blueskyRows, "bluesky"),
     ...fanPostsToScored(youtubeRows, "youtube"),
   ];
+  // Player and team lanes read Reddit's per-entity rows; league mood and
+  // source counts read its league rows, so no post is counted twice.
+  const fanScored = [
+    ...redditDailyToScored(redditRows.filter((row) => row.scope !== "league")),
+    ...fanPostScored,
+  ];
+  const fanScoredLeague = [...redditDailyToScored(redditLeagueRows), ...fanPostScored];
   const laneOptions = (
     origin: "headlines" | "fans",
     floor: number
@@ -785,7 +819,7 @@ export async function buildSentimentSnapshot(
   }));
 
   const leagueHeadlineLane = buildIngestLane(newsScored, { ...headlineOpts, floor: 1 });
-  const leagueFanLane = buildIngestLane(fanScored, { ...fanOpts, floor: 1 });
+  const leagueFanLane = buildIngestLane(fanScoredLeague, { ...fanOpts, floor: 1 });
   league.headlineMood = leagueHeadlineLane ?? undefined;
   league.fanMood = leagueFanLane ?? undefined;
   delete league.redditMood;
@@ -816,10 +850,10 @@ export async function buildSentimentSnapshot(
   );
 
   const newsDates = newsRows.map((row) => row.publishedAt.slice(0, 10)).sort();
-  const redditDates = redditRows.map((row) => row.createdAt.slice(0, 10)).sort();
-  const fanDates = fanScored.map((item) => item.date.slice(0, 10)).sort();
+  const redditDates = redditLeagueRows.map((row) => row.date).sort();
+  const fanDates = fanScoredLeague.map((item) => item.date.slice(0, 10)).sort();
   const fanPlatformCounts: Partial<Record<SentimentPlatform, number>> = {};
-  for (const item of fanScored) {
+  for (const item of fanScoredLeague) {
     if (item.platform) fanPlatformCounts[item.platform] = (fanPlatformCounts[item.platform] ?? 0) + 1;
   }
   const curatedLaneCount = profiles.reduce(
@@ -839,17 +873,17 @@ export async function buildSentimentSnapshot(
       laneCount: headlineLaneCount,
     },
     reddit: {
-      configured: redditRows.length > 0,
+      configured: redditPostCount > 0,
       asOf: redditDates[redditDates.length - 1] ?? null,
-      itemCount: redditRows.length,
+      itemCount: redditPostCount,
       floor: ingestConfig.redditFloor,
-      laneCount: redditRows.length ? fanLaneCount : 0,
+      laneCount: redditPostCount ? fanLaneCount : 0,
     },
     fans: {
       asOf: fanDates[fanDates.length - 1] ?? null,
       firstDate: fanDates[0] ?? null,
-      itemCount: fanScored.length,
-      windowItemCount: fanScored.filter(
+      itemCount: fanScoredLeague.length,
+      windowItemCount: fanScoredLeague.filter(
         (item) => Date.parse(item.date) > now.getTime() - ingestConfig.windowDays * 86_400_000
       ).length,
       platforms: fanPlatformCounts,
@@ -901,7 +935,7 @@ export async function buildSentimentSnapshot(
 
   if (options.verbose) {
     console.log(
-      `sentiment:build season=${season} profiles=${profiles.length} generated=${generatedProfileCount} roster=${roster.length} synced=${syncedTeamCount} dropped=${droppedBelowFloor} observations=${observationBatches.length} headlines=${newsRows.length} (window ${headlineWindowCount}, lanes ${headlineLaneCount}) fans=${fanScored.length} (reddit ${redditRows.length}, blogs ${fanBlogRows.length}, bluesky ${blueskyRows.length}, youtube ${youtubeRows.length}; lanes ${fanLaneCount}) teams=${teams.length}`
+      `sentiment:build season=${season} profiles=${profiles.length} generated=${generatedProfileCount} roster=${roster.length} synced=${syncedTeamCount} dropped=${droppedBelowFloor} observations=${observationBatches.length} headlines=${newsRows.length} (window ${headlineWindowCount}, lanes ${headlineLaneCount}) fans=${fanScoredLeague.length} (reddit ${redditPostCount}, blogs ${fanBlogRows.length}, bluesky ${blueskyRows.length}, youtube ${youtubeRows.length}; lanes ${fanLaneCount}) teams=${teams.length}`
     );
     if (!options.dryRun) {
       console.log(`  → ${SNAPSHOT_PATH}`);

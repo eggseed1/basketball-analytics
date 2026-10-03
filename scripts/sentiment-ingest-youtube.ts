@@ -1,13 +1,14 @@
 /**
- * Score top comments on each team channel's newest uploads via the YouTube
- * Data API and append hashed ids + scores to data/sentiment/ingest/v1/youtube.
- * Comment text, authors and like counts are not stored.
+ * Score top comments on the newest uploads of each team channel and each
+ * NBA-only league/show channel via the YouTube Data API, and append hashed
+ * ids + scores to data/sentiment/ingest/v1/youtube. Comment text, authors
+ * and like counts are not stored.
  *
  *   YOUTUBE_API_KEY=... npm run sentiment:ingest:youtube
  *
- * About 6 quota units per team per run (one uploads list, five comment
- * pages), roughly 180 of the free 10,000 daily units.
- * Without a key the script prints a notice and exits 0.
+ * One quota unit per uploads list and per comment page: about 6 per team
+ * channel and 31 per league channel, roughly 400 of the free 10,000 daily
+ * units. Without a key the script prints a notice and exits 0.
  */
 
 import { createHash } from "node:crypto";
@@ -27,10 +28,24 @@ type YoutubeConfig = {
   videosPerChannel: number;
   maxVideoAgeDays: number;
   commentsPerVideo: number;
+  leagueVideosPerChannel: number;
+  leagueCommentPagesPerVideo: number;
   channels: { teamId: string; channelId: string; name: string }[];
+  leagueChannels: { channelId: string; name: string }[];
 };
 
-type PlaylistItem = { contentDetails: { videoId: string; videoPublishedAt?: string } };
+type ChannelPlan = {
+  channelId: string;
+  name: string;
+  teamId: string | null;
+  videos: number;
+  pages: number;
+};
+
+type PlaylistItem = {
+  snippet?: { title?: string };
+  contentDetails: { videoId: string; videoPublishedAt?: string };
+};
 type CommentThread = {
   id: string;
   snippet: {
@@ -87,36 +102,64 @@ async function main() {
   const rows = new Map<string, FanPostIngestItem>();
   const dryRun = process.argv.includes("--dry-run");
   let failures = 0;
+  const plans: ChannelPlan[] = [
+    ...config.channels.map((c) => ({
+      channelId: c.channelId,
+      name: c.name,
+      teamId: c.teamId,
+      videos: config.videosPerChannel,
+      pages: 1,
+    })),
+    ...(config.leagueChannels ?? []).map((c) => ({
+      channelId: c.channelId,
+      name: c.name,
+      teamId: null,
+      videos: config.leagueVideosPerChannel,
+      pages: config.leagueCommentPagesPerVideo,
+    })),
+  ];
 
-  for (const channel of config.channels) {
+  for (const channel of plans) {
     let kept = 0;
     try {
       const uploads = await api<{ items?: PlaylistItem[] }>(
         "playlistItems",
-        { part: "contentDetails", playlistId: `UU${channel.channelId.slice(2)}`, maxResults: "10" },
+        {
+          part: channel.teamId ? "contentDetails" : "snippet,contentDetails",
+          playlistId: `UU${channel.channelId.slice(2)}`,
+          maxResults: String(Math.min(50, Math.max(10, channel.videos * 2))),
+        },
         key
       );
       const videos = (uploads.items ?? [])
         .filter((item) => Date.parse(item.contentDetails.videoPublishedAt ?? "") >= oldestVideoMs)
-        .slice(0, config.videosPerChannel);
+        .slice(0, channel.videos);
       for (const video of videos) {
-        let threads: CommentThread[] = [];
+        // League channels have no home team, so a comment that names nobody
+        // borrows the video title's subject when the title names one player.
+        const titleEntities = channel.teamId ? null : resolve(video.snippet?.title ?? "");
+        const threads: CommentThread[] = [];
+        let pageToken: string | undefined;
         try {
-          const page = await api<{ items?: CommentThread[] }>(
-            "commentThreads",
-            {
-              part: "snippet",
-              videoId: video.contentDetails.videoId,
-              maxResults: String(config.commentsPerVideo),
-              order: "relevance",
-              textFormat: "plainText",
-            },
-            key
-          );
-          threads = page.items ?? [];
+          for (let pageIndex = 0; pageIndex < channel.pages; pageIndex += 1) {
+            const page = await api<{ items?: CommentThread[]; nextPageToken?: string }>(
+              "commentThreads",
+              {
+                part: "snippet",
+                videoId: video.contentDetails.videoId,
+                maxResults: String(config.commentsPerVideo),
+                order: "relevance",
+                textFormat: "plainText",
+                ...(pageToken ? { pageToken } : {}),
+              },
+              key
+            );
+            threads.push(...(page.items ?? []));
+            pageToken = page.nextPageToken;
+            if (!pageToken) break;
+          }
         } catch (error) {
-          if (error instanceof YoutubeError && error.reason === "commentsDisabled") continue;
-          throw error;
+          if (!(error instanceof YoutubeError && error.reason === "commentsDisabled")) throw error;
         }
         for (const thread of threads) {
           const comment = thread.snippet.topLevelComment.snippet;
@@ -124,6 +167,11 @@ async function main() {
           const text = (comment.textOriginal ?? "").slice(0, 300);
           if (text.trim().length < 12 || /https?:\/\/|www\./i.test(text)) continue;
           const entities = resolve(text);
+          if (titleEntities && !entities.playerIds.length && !entities.teamIds.length) {
+            if (titleEntities.playerIds.length === 1) entities.playerIds = titleEntities.playerIds;
+            if (titleEntities.teamIds.length <= 2) entities.teamIds = titleEntities.teamIds;
+          }
+          if (!channel.teamId && !entities.playerIds.length && !entities.teamIds.length) continue;
           const tone = scoreFanText(
             text,
             entities.playerIds.map((pid) => nameById.get(pid)!).filter(Boolean)
@@ -138,7 +186,7 @@ async function main() {
             score: tone.score,
             topics: tagHeadlineTopics(text),
             playerIds: entities.playerIds,
-            teamIds: [channel.teamId],
+            teamIds: channel.teamId ? [channel.teamId] : entities.teamIds,
             modelVersion: FAN_LEXICON_VERSION,
           });
           kept += 1;

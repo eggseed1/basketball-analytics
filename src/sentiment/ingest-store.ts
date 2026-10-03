@@ -3,8 +3,9 @@
  * Node-only (scripts + sentiment:build); the Worker reads the built snapshot.
  *
  * News rows keep the headline and link so the UI can cite exemplars.
- * Reddit, Bluesky and YouTube rows keep ids, counts and scores only (S0:
- * exemplar ids, not raw posts).
+ * Bluesky and YouTube rows keep hashed ids, counts and scores only (S0:
+ * exemplar ids, not raw posts). Reddit keeps no per-post rows at all, only
+ * daily averages per player, team and league.
  */
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
@@ -32,18 +33,21 @@ export type NewsIngestItem = {
   reporters?: { name: string; outlet?: string }[];
 };
 
-export type RedditIngestItem = {
+/**
+ * One day's Reddit tone for one player, team or the whole league, built from
+ * post titles seen in the 24 hours before a run. Post ids, links, titles,
+ * authors and vote counts are discarded after scoring.
+ */
+export type RedditDailyItem = {
+  /** `${date}|${scope}|${entityId}`; a second run on the same day is skipped. */
   id: string;
-  subreddit: string;
-  permalink: string;
-  createdAt: string;
-  fetchedAt: string;
-  upvotes: number;
-  comments: number;
-  score: number;
-  topics: string[];
-  playerIds: string[];
-  teamIds: string[];
+  date: string;
+  scope: "player" | "team" | "league";
+  /** ESPN player or team id; "nba" for the league row. */
+  entityId: string;
+  posts: number;
+  meanScore: number;
+  topicCounts: Record<string, number>;
   modelVersion: string;
 };
 
@@ -54,7 +58,7 @@ export type RedditIngestItem = {
 export type FanPostIngestItem = {
   id: string;
   platform: "bluesky" | "youtube";
-  /** Search query id (Bluesky) or team channel id (YouTube). */
+  /** Search query id (Bluesky) or channel id (YouTube). */
   source: string;
   createdAt: string;
   fetchedAt: string;

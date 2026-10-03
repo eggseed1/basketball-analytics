@@ -80,6 +80,7 @@
     "sentiment:build": "tsx scripts/sentiment-build-snapshot.ts",
     "sentiment:ingest:news": "tsx scripts/sentiment-ingest-news.ts",
     "sentiment:ingest:reddit": "tsx scripts/sentiment-ingest-reddit.ts",
+    "sentiment:purge:reddit": "tsx scripts/sentiment-purge-reddit.ts",
     "sentiment:ingest:fan-blogs": "tsx scripts/sentiment-ingest-news.ts --feeds fan-blogs --store fanblogs",
     "sentiment:ingest:bluesky": "tsx scripts/sentiment-ingest-bluesky.ts",
     "sentiment:ingest:youtube": "tsx scripts/sentiment-ingest-youtube.ts",

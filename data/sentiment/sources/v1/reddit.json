@@ -1,7 +1,7 @@
 {
-  "note": "Approved subreddit list (S0 Reddit policy). Official OAuth API only. Titles are scored at ingest and not stored.",
+  "note": "Approved subreddit list (S0 Reddit policy). Official OAuth API only. Only titles of posts from the last 24 hours are read; they are scored in memory and only daily averages per player, team and league are stored.",
   "listings": [
-    { "sort": "top", "t": "week", "limit": 100 },
+    { "sort": "top", "t": "day", "limit": 100 },
     { "sort": "hot", "limit": 50 }
   ],
   "skipTitlePatterns": [

@@ -1,8 +1,19 @@
 {
-  "note": "Official team YouTube channels (ids read from each channel page and NBA.com team sites, 2026-10-02). Top comments on the newest uploads are scored; comment text, authors and like counts are not stored.",
+  "note": "Official team YouTube channels (ids read from each channel page and NBA.com team sites, 2026-10-02) plus NBA-only league, show and podcast channels (ids read from each channel page and checked against its upload feed, 2026-10-03). Top comments on the newest uploads are scored; comment text, authors and like counts are not stored. Multi-sport channels are left out because their comments would match team nicknames like Kings or Heat from other sports.",
   "videosPerChannel": 5,
   "maxVideoAgeDays": 7,
   "commentsPerVideo": 100,
+  "leagueVideosPerChannel": 15,
+  "leagueCommentPagesPerVideo": 2,
+  "leagueChannels": [
+    { "channelId": "UCWJ2lWNubArHWmf3FIHbfcQ", "name": "NBA" },
+    { "channelId": "UCVSSpcmZD2PwPBqb8yKQKBA", "name": "NBA on ESPN" },
+    { "channelId": "UCFw3-5NBx1XJTaF0TPcK8iQ", "name": "NBA on NBC" },
+    { "channelId": "UCT83YP07yVuaH9J19YABhlw", "name": "Ringer NBA" },
+    { "channelId": "UCAvjYgmwadC682OoC4Cc6TQ", "name": "Gil's Arena" },
+    { "channelId": "UC6L_LBqoKZXFa4WxHox5iCw", "name": "Mind the Game" },
+    { "channelId": "UC3HPbvB6f58X_7SMIp6OPYw", "name": "Thinking Basketball" }
+  ],
   "channels": [
     { "teamId": "1", "channelId": "UCpfcwELvR1wtcRJ0UxNXHYw", "name": "Atlanta Hawks" },
     { "teamId": "2", "channelId": "UCMfT9dr6xC_RIWoA9hI0meQ", "name": "Boston Celtics" },

@@ -1,11 +1,17 @@
 /**
  * Score post titles from an approved subreddit list via Reddit's official
- * OAuth API (app-only client_credentials) and append ids + scores to
- * data/sentiment/ingest/v1/reddit. Titles are not stored.
+ * OAuth API (app-only client_credentials) and append one daily average per
+ * player, team and the league to data/sentiment/ingest/v1/reddit.
+ *
+ * Only titles are read. Each run covers posts created in the 24 hours before
+ * it. Post ids, links, titles, authors and vote counts stay in memory for
+ * the run and are never written anywhere.
  *
  *   REDDIT_CLIENT_ID=... REDDIT_CLIENT_SECRET=... npm run sentiment:ingest:reddit
  *
- * Without credentials the script prints a notice and exits 0.
+ * Without credentials the script prints a notice and exits 0. If Reddit
+ * access ends, `npm run sentiment:purge:reddit` deletes everything derived
+ * from it.
  */
 
 import { readFileSync } from "node:fs";
@@ -18,7 +24,7 @@ import {
   tagHeadlineTopics,
 } from "@/sentiment/headline-lexicon";
 import { loadIngestRoster } from "@/sentiment/ingest-roster";
-import { appendIngestItems, type RedditIngestItem } from "@/sentiment/ingest-store";
+import { appendIngestItems, type RedditDailyItem } from "@/sentiment/ingest-store";
 
 type RedditConfig = {
   listings: { sort: "top" | "hot" | "new"; t?: string; limit: number }[];
@@ -29,19 +35,16 @@ type RedditConfig = {
 type RedditPost = {
   id: string;
   title: string;
-  selftext?: string;
-  permalink: string;
   created_utc: number;
-  score: number;
-  num_comments: number;
   stickied?: boolean;
   over_18?: boolean;
   removed_by_category?: string | null;
 };
 
 const USER_AGENT =
-  process.env.REDDIT_USER_AGENT ||
-  "web:basketball-analytics-sentiment:1.0 (aggregate tone research)";
+  process.env.REDDIT_USER_AGENT || "web:drbl-analytics:1.0 (NBA fan sentiment feature)";
+
+const WINDOW_MS = 24 * 60 * 60 * 1000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
@@ -83,6 +86,16 @@ async function listing(
   return (body.data?.children ?? []).map((child) => child.data);
 }
 
+type Bucket = { posts: number; scoreSum: number; topicCounts: Record<string, number> };
+
+function addToBucket(buckets: Map<string, Bucket>, key: string, score: number, topics: string[]) {
+  const bucket = buckets.get(key) ?? { posts: 0, scoreSum: 0, topicCounts: {} };
+  bucket.posts += 1;
+  bucket.scoreSum += score;
+  for (const topic of topics) bucket.topicCounts[topic] = (bucket.topicCounts[topic] ?? 0) + 1;
+  buckets.set(key, bucket);
+}
+
 async function main() {
   const clientId = process.env.REDDIT_CLIENT_ID;
   const secret = process.env.REDDIT_CLIENT_SECRET;
@@ -104,39 +117,33 @@ async function main() {
   const nameById = new Map(roster.map((p) => [p.playerId, p.name]));
   const resolve = createHeadlineEntityResolver(roster);
   const token = await appToken(clientId, secret);
-  const fetchedAt = new Date().toISOString();
-  const rows = new Map<string, RedditIngestItem>();
+  const runMs = Date.now();
+  const date = new Date(runMs).toISOString().slice(0, 10);
+  const seen = new Set<string>();
+  const buckets = new Map<string, Bucket>();
 
   for (const sub of config.subreddits) {
     let count = 0;
     for (const spec of config.listings) {
       try {
         for (const post of await listing(token, sub.name, spec)) {
+          if (seen.has(post.id)) continue;
+          seen.add(post.id);
           if (post.stickied || post.over_18 || post.removed_by_category) continue;
+          if (runMs - post.created_utc * 1000 > WINDOW_MS) continue;
           if (skip.some((pattern) => pattern.test(post.title))) continue;
-          const body = (post.selftext ?? "").slice(0, 280);
-          const entities = resolve(`${post.title} ${body}`);
-          const teamIds = new Set(resolve(post.title).teamIds);
+          const entities = resolve(post.title);
+          const teamIds = new Set(entities.teamIds);
           if (sub.teamId) teamIds.add(sub.teamId);
           const tone = scoreHeadline(
             post.title,
-            body,
+            "",
             entities.playerIds.map((id) => nameById.get(id)!).filter(Boolean)
           );
-          rows.set(post.id, {
-            id: post.id,
-            subreddit: sub.name,
-            permalink: `https://www.reddit.com${post.permalink}`,
-            createdAt: new Date(post.created_utc * 1000).toISOString(),
-            fetchedAt,
-            upvotes: post.score,
-            comments: post.num_comments,
-            score: tone.score,
-            topics: tagHeadlineTopics(post.title, body),
-            playerIds: entities.playerIds,
-            teamIds: [...teamIds],
-            modelVersion: HEADLINE_LEXICON_VERSION,
-          });
+          const topics = tagHeadlineTopics(post.title, "");
+          addToBucket(buckets, "league|nba", tone.score, topics);
+          for (const id of entities.playerIds) addToBucket(buckets, `player|${id}`, tone.score, topics);
+          for (const id of teamIds) addToBucket(buckets, `team|${id}`, tone.score, topics);
           count += 1;
         }
       } catch (error) {
@@ -147,11 +154,25 @@ async function main() {
     }
     console.log(`  r/${sub.name}: ${count} posts`);
   }
+  seen.clear();
 
-  const all = [...rows.values()];
-  const added = appendIngestItems("reddit", all, (row) => row.createdAt);
+  const rows: RedditDailyItem[] = [...buckets].map(([key, bucket]) => {
+    const [scope, entityId] = key.split("|") as [RedditDailyItem["scope"], string];
+    return {
+      id: `${date}|${scope}|${entityId}`,
+      date,
+      scope,
+      entityId,
+      posts: bucket.posts,
+      meanScore: Math.round((bucket.scoreSum / bucket.posts) * 1000) / 1000,
+      topicCounts: bucket.topicCounts,
+      modelVersion: HEADLINE_LEXICON_VERSION,
+    };
+  });
+  const added = appendIngestItems("reddit", rows, (row) => row.date);
+  const league = buckets.get("league|nba");
   console.log(
-    `sentiment:ingest:reddit fetched=${all.length} new=${added} mentioningPlayers=${all.filter((r) => r.playerIds.length).length}`
+    `sentiment:ingest:reddit date=${date} posts=${league?.posts ?? 0} rows=${rows.length} new=${added} players=${rows.filter((r) => r.scope === "player").length}`
   );
 }
 
