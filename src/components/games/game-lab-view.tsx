@@ -214,7 +214,7 @@ export function GameLabView({
         <div>
           <h2 className={type.heading}>Rosters</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Spreadsheet box lines. Injured / inactive players are marked OUT.
+            Injured or inactive players are marked OUT.
           </p>
         </div>
         {players.length === 0 ? (

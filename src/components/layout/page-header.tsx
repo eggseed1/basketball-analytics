@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 
+import { MoreInfo } from "@/components/ui/more-info";
 import { cn } from "@/lib/utils";
 import { type } from "@/lib/design-system";
 
@@ -8,6 +9,8 @@ export function PageHeader({
   title,
   subtitle,
   meta,
+  about,
+  aboutLabel,
   actions,
   tabs,
   className,
@@ -17,6 +20,9 @@ export function PageHeader({
   title: ReactNode;
   subtitle?: ReactNode;
   meta?: ReactNode;
+  /** Method and source notes, collapsed until the reader asks for them. */
+  about?: ReactNode;
+  aboutLabel?: ReactNode;
   actions?: ReactNode;
   tabs?: ReactNode;
   className?: string;
@@ -45,6 +51,7 @@ export function PageHeader({
               {meta}
             </div>
           ) : null}
+          {about ? <MoreInfo summary={aboutLabel}>{about}</MoreInfo> : null}
         </div>
         {actions ? (
           <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>
@@ -59,11 +66,15 @@ export function PageHeader({
 export function SectionHeader({
   title,
   description,
+  about,
+  aboutLabel,
   actions,
   className,
 }: {
   title: ReactNode;
   description?: ReactNode;
+  about?: ReactNode;
+  aboutLabel?: ReactNode;
   actions?: ReactNode;
   className?: string;
 }) {
@@ -82,6 +93,7 @@ export function SectionHeader({
             {description}
           </p>
         ) : null}
+        {about ? <MoreInfo summary={aboutLabel}>{about}</MoreInfo> : null}
       </div>
       {actions ? (
         <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>

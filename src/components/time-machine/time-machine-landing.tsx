@@ -242,52 +242,9 @@ export function TimeMachineLanding({
             "mx-auto mt-3 max-w-xl text-muted-foreground"
           )}
         >
-          Pick a season for a day-by-day snapshot, open landmark eras with
-          period atmosphere, or jump into the season games archive. From there,
-          drill into era-true teams and players.
+          Pick a season to see its standings, leaders and games on any day.
         </p>
       </header>
-
-      <section className="mx-auto grid w-full max-w-3xl gap-3 sm:grid-cols-3">
-        {(
-          [
-            {
-              title: "Season snapshot",
-              body: "Choose a year below to see standings, leaders, and that day’s games.",
-            },
-            {
-              title: "Landmark eras",
-              body: "Curated seasons and Finals closes already in the archive.",
-            },
-            {
-              title: "Season games hub",
-              body: "Full schedule for a season, separate from the date snapshot.",
-              href: `/history/${encodeURIComponent(archiveSeason)}`,
-            },
-          ] as const
-        ).map((card) => (
-          <div
-            key={card.title}
-            className="sports-card flex flex-col gap-1.5 p-4 text-left"
-          >
-            <p className={cn(type.bodySm, "font-bold tracking-tight")}>
-              {"href" in card && card.href ? (
-                <Link
-                  href={card.href}
-                  className="underline-offset-2 hover:underline"
-                >
-                  {card.title}
-                </Link>
-              ) : (
-                card.title
-              )}
-            </p>
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {card.body}
-            </p>
-          </div>
-        ))}
-      </section>
 
       <form
         onSubmit={onSubmit}
@@ -440,12 +397,7 @@ export function TimeMachineLanding({
           <p className="text-[13px] font-medium text-destructive" role="alert">
             {error}
           </p>
-        ) : (
-          <p className="text-[12px] text-muted-foreground">
-            Type a start year or full season code and press Enter, or tap an
-            era chip.
-          </p>
-        )}
+        ) : null}
       </form>
 
       {landmarksByEra.length ? (
@@ -458,15 +410,6 @@ export function TimeMachineLanding({
           >
             Landmark seasons
           </h2>
-          <p
-            className={cn(
-              type.caption,
-              "mt-1 text-center text-muted-foreground"
-            )}
-          >
-            Curated eras with product coverage. Open the snapshot or a related
-            board.
-          </p>
           <div className="mt-5 flex flex-col gap-6">
             {landmarksByEra.map(({ era, items }) => (
               <div key={era.id}>

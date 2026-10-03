@@ -47,7 +47,7 @@ export default function AwardsIndexPage() {
       <PageHeader
         eyebrow="Awards"
         title="Trophy case"
-        subtitle="League award history. Player pages show each star’s hardware. Open a trophy to see its winners, dynasties, and eras."
+        subtitle="League award history. Open a trophy to see its winners, dynasties and eras."
       />
 
       {GROUPS.map((group) => (

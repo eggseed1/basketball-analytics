@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { LaneOriginTag, sentimentPct } from "@/components/sentiment/sentiment-source";
+import { MoreInfo } from "@/components/ui/more-info";
 import type {
   CuratedSentimentLane,
   SentimentSeriesPoint,
@@ -170,9 +171,7 @@ export function TrackedPlayersBoard({
         <h2 className={cn(type.bodySm, "font-bold")}>Players</h2>
         <p className={cn(type.caption, "text-muted-foreground")}>
           {rows.length.toLocaleString()} players for {season}.{" "}
-          {measuredCount.toLocaleString()} have at least one measured lane. Trend compares the
-          last 7 days of headline tone with the 7 days before. It stays blank until both weeks
-          have enough headlines. DRBL/100 is last season&apos;s.
+          {measuredCount.toLocaleString()} have at least one measured lane.
           {topicFilter ? (
             <>
               {" "}
@@ -181,6 +180,12 @@ export function TrackedPlayersBoard({
             </>
           ) : null}
         </p>
+        <MoreInfo>
+          <p>
+            Trend compares the last 7 days of headline tone with the 7 days before. It stays blank
+            until both weeks have enough headlines. DRBL/100 is last season&apos;s.
+          </p>
+        </MoreInfo>
       </div>
 
       <div className="flex flex-wrap items-center gap-2">

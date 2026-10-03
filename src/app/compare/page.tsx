@@ -300,7 +300,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
           <PageHeader
             title="Compare"
-            subtitle="Rank a franchise’s seasons with pairwise Team Season Compare and Copeland aggregation instead of an opaque team score."
+            subtitle="Rank a franchise’s seasons head to head, with no opaque team score."
           >
             <p className={cn(type.bodySm, "font-semibold")}>
               <Link
@@ -408,7 +408,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
         <PageHeader
           title="Compare"
-          subtitle="Team season compare and team vs team. Both use transparent board metrics and category plurality instead of an opaque team score."
+          subtitle="Compare team seasons or two teams on transparent board metrics."
         >
           <p className={cn(type.bodySm, "font-semibold")}>
             <Link

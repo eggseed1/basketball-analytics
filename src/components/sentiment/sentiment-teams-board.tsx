@@ -6,6 +6,7 @@ import {
   LaneOriginTag,
   sentimentPct,
 } from "@/components/sentiment/sentiment-source";
+import { MoreInfo } from "@/components/ui/more-info";
 import type { CuratedSentimentLane, TeamSentimentProfile } from "@/sentiment/curated-types";
 import { ALL_TEAM_ABBRS, resolveTeamBrand } from "@/lib/nba-brand";
 import { type, textLinkClassName } from "@/lib/design-system";
@@ -54,11 +55,15 @@ export function SentimentTeamsBoard({ teams }: { teams: TeamSentimentProfile[] }
       <div className="flex flex-col gap-1">
         <h2 className={cn(type.bodySm, "font-bold")}>Team sentiment board</h2>
         <p className={cn(type.caption, "max-w-3xl text-muted-foreground")}>
-          All 30 teams, sorted by media tone. {covered} have at least one lane. A team&apos;s media
-          lane comes from headlines that name the team, and it needs 3 in the last 7 days. Curated
-          fan lanes are rolled up from tracked players. Blank means no source has enough coverage
-          yet. It doesn&apos;t mean neutral.
+          All 30 teams, sorted by media tone. {covered} have at least one lane. Blank means not
+          enough coverage yet, not neutral.
         </p>
+        <MoreInfo>
+          <p>
+            A team&apos;s media lane comes from headlines that name the team, and it needs 3 in the
+            last 7 days. Curated fan lanes are rolled up from tracked players.
+          </p>
+        </MoreInfo>
       </div>
       <div className="sports-card overflow-auto">
         <table className="w-full text-left text-[12px]">

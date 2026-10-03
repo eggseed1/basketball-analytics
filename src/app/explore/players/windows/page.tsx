@@ -3,6 +3,7 @@ import Link from "next/link";
 import { StatDetectiveDivergenceLazy } from "@/components/charts/recharts-lazy";
 import { StatDetectiveLists } from "@/components/explore/stat-detective-panel";
 import { PageHeader } from "@/components/layout/page-header";
+import { MoreInfo } from "@/components/ui/more-info";
 import {
   STAT_DETECTIVE_METRICS,
   isStatDetectiveMetricId,
@@ -56,47 +57,6 @@ export default async function StatDetectivePage({
             : "No baked game logs for a window comparison yet."
         }
       />
-
-      <section
-        aria-label="How Stat Detective works"
-        className="grid gap-3 sm:grid-cols-3"
-      >
-        {[
-          {
-            step: "1",
-            title: "Pick a metric + window",
-            body: "Choose points, true shooting, or rebounds, then a short streak, sustained form, or a flip.",
-          },
-          {
-            step: "2",
-            title: "See the movers",
-            body: "Only big swings count, and only for players with enough minutes on both sides.",
-          },
-          {
-            step: "3",
-            title: "Open the player",
-            body: "Jump to their page for percentiles, shot diet, and the full game log.",
-          },
-        ].map((item) => (
-          <div
-            key={item.step}
-            className="rounded-lg border border-border/70 px-3 py-3"
-          >
-            <p
-              className={cn(
-                type.caption,
-                "font-bold uppercase tracking-wide text-muted-foreground"
-              )}
-            >
-              Step {item.step}
-            </p>
-            <p className={cn(type.bodySm, "mt-1 font-semibold")}>{item.title}</p>
-            <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-              {item.body}
-            </p>
-          </div>
-        ))}
-      </section>
 
       <div
         role="tablist"
@@ -167,14 +127,16 @@ export default async function StatDetectivePage({
         <div>
           <h2 className={type.heading}>{active.question}</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            {active.note}{" "}
-            {season
-              ? `Needs 20 games and 18 mpg on both sides of the comparison in ${season}. Playoffs are left out.`
-              : null}
+            {active.note} {metricMeta.honesty}
           </p>
-          <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
-            {metricMeta.honesty}
-          </p>
+          {season ? (
+            <MoreInfo className="mt-1.5">
+              <p>
+                Needs 20 games and 18 mpg on both sides of the comparison in {season}. Playoffs
+                are left out, and players with thin samples stay off the board.
+              </p>
+            </MoreInfo>
+          ) : null}
         </div>
 
         <StatDetectiveDivergenceLazy

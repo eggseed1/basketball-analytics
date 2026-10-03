@@ -312,7 +312,7 @@ export function TeamSeasonRankView({
               ? `See the evidence · ${topSeason}`
               : "See the evidence"
           }
-          subtitle="Representative games that illustrate the #1 season’s scoreboard profile. They are not picked as the “most important” games. Each card opens Game Lab."
+          subtitle="Games that show the #1 season’s scoreboard profile, not its “most important” games. Each opens Game Lab."
           highlightCategoryIds={evidenceHighlights}
         />
       ) : null}

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
+import { MoreInfo } from "@/components/ui/more-info";
 import { isResolvedMovementState } from "@/movement-center/cluster-state";
 import { resolveMovementPresentation } from "@/movement-center/prominence";
 import type { MovementCuratedSnapshot, MovementFeedItem } from "@/movement-center/types";
@@ -57,6 +58,7 @@ export function MovementCenterView({
               claims={item.claims}
               score={item.score}
               href={`/movement?cluster=${encodeURIComponent(item.cluster.id)}`}
+              evidenceNote={false}
             />
           </li>
         );
@@ -85,16 +87,20 @@ export function MovementCenterView({
           </Link>
           .
         </p>
-        <p className={cn(type.caption, "max-w-3xl rounded-md border border-border/60 frost-surface-muted px-3 py-2 text-muted-foreground")}>
-          {meta.headlinesScanned != null && meta.feeds?.length ? (
-            <>
-              Scanned {meta.headlinesScanned} headlines from {listOutlets(meta.feeds)}
-              {headlineDay ? `, newest ${headlineDay}` : ""}.{" "}
-            </>
-          ) : null}
-          {ledgerDay ? <>ESPN transaction log through {ledgerDay}. </> : null}
-          {meta.disclaimer}
-        </p>
+        <p className={cn(type.caption, "max-w-3xl text-muted-foreground")}>{meta.disclaimer}</p>
+        {(meta.headlinesScanned != null && meta.feeds?.length) || ledgerDay ? (
+          <MoreInfo summary="Sources">
+            <p>
+              {meta.headlinesScanned != null && meta.feeds?.length ? (
+                <>
+                  Scanned {meta.headlinesScanned} headlines from {listOutlets(meta.feeds)}
+                  {headlineDay ? `, newest ${headlineDay}` : ""}.{" "}
+                </>
+              ) : null}
+              {ledgerDay ? <>ESPN transaction log through {ledgerDay}.</> : null}
+            </p>
+          </MoreInfo>
+        ) : null}
         {filtered ? (
           <p className={type.caption}>
             <Link href="/movement" className="font-semibold underline">

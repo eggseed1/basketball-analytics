@@ -5,6 +5,7 @@ import {
   franchiseTitleCount,
   franchiseWinPct,
 } from "@/data/queries/franchises";
+import { MoreInfo } from "@/components/ui/more-info";
 import { formatNumber, formatPct } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
@@ -119,13 +120,21 @@ export function FranchiseHistoryBook({
         </h2>
         <p className="text-[13px] text-muted-foreground">
           All-time ledger and fan lore through {asOf}.
-          {f.recordsSource
-            ? ` Records, titles and leaders come from ${f.recordsSource} and include every league this franchise played in (NBA, ABA or BAA). Retired numbers follow Wikipedia's list of NBA retired numbers and include banners for coaches and owners. Streaks and lore are curated.`
-            : " These are curated snapshots, not live season data."}
+          {f.recordsSource ? null : " These are curated snapshots, not live season data."}
           {f.previousHomes?.length
             ? ` Also known as: ${f.previousHomes.join(" → ")}.`
             : null}
         </p>
+        {f.recordsSource ? (
+          <MoreInfo summary="Sources" className="mt-1">
+            <p>
+              Records, titles and leaders come from {f.recordsSource} and include every league
+              this franchise played in (NBA, ABA or BAA). Retired numbers follow Wikipedia&apos;s
+              list of NBA retired numbers and include banners for coaches and owners. Streaks and
+              lore are curated.
+            </p>
+          </MoreInfo>
+        ) : null}
       </div>
 
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">

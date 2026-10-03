@@ -211,6 +211,7 @@ export function MovementClusterCard({
   compact = false,
   href,
   showAllClaims = false,
+  evidenceNote = true,
 }: {
   cluster: MovementStoryCluster;
   claims: MovementClaim[];
@@ -218,6 +219,8 @@ export function MovementClusterCard({
   compact?: boolean;
   href?: string;
   showAllClaims?: boolean;
+  /** Off where the page header already says what evidence scores mean. */
+  evidenceNote?: boolean;
 }) {
   const primary =
     claims.find((c) => c.id === cluster.primaryClaimId) ?? claims[0];
@@ -321,6 +324,7 @@ export function MovementClusterCard({
           ))}
         </ul>
       ) : null}
+      {deal || resolved || evidenceNote ? (
       <p className={cn(type.caption, "text-muted-foreground")}>
         {deal ? (
           <>
@@ -344,6 +348,7 @@ export function MovementClusterCard({
           "Evidence rates the reporting, not the odds of a move."
         )}
       </p>
+      ) : null}
     </article>
   );
 }

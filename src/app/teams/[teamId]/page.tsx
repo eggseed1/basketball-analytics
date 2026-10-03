@@ -26,7 +26,6 @@ import { TeamMovementIsland } from "@/components/teams/team-movement-island";
 import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
 import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overview";
 import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
-import { TeamOverviewExploreRail } from "@/components/teams/team-overview-explore-rail";
 import { TeamOverviewIdentityBand } from "@/components/teams/team-overview-identity-band";
 import { TeamAllStatsRankStrip } from "@/components/teams/team-all-stats-rank-strip";
 import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
@@ -369,15 +368,7 @@ export default async function TeamProfilePage({
 
         {tab === "overview" ? (
           seasonAwaitingGames && boardAvailable ? (
-            <div className="flex flex-col gap-4">
-              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
-              <TeamPreseasonOverview
-                season={season}
-                teamName={displayName}
-                teamId={teamId}
-                standings={standingsContext}
-              />
-            </div>
+            <TeamPreseasonOverview season={season} teamName={displayName} teamId={teamId} />
           ) : boardAvailable && analysis ? (
             <div className="flex flex-col gap-4">
               <TeamOverviewIdentityBand
@@ -395,7 +386,6 @@ export default async function TeamProfilePage({
                     line.label === "PBP / five-man lineup nets"
                 )}
               />
-              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
               <TeamOverviewBoard
                 offense={offenseMetrics}
                 defense={defenseMetrics}
@@ -411,7 +401,6 @@ export default async function TeamProfilePage({
               className="scroll-mt-16 flex flex-col gap-3"
               aria-label="Overview"
             >
-              <TeamOverviewExploreRail teamId={teamId} hrefOpts={hrefOpts} />
               <h2 className="text-[20px] font-bold tracking-tight">
                 How good are they?
               </h2>

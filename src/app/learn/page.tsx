@@ -18,7 +18,7 @@ export default function LearnIndexPage() {
       <PageHeader
         eyebrow="Learn"
         title="Understand every number"
-        subtitle="Every stat, label, and method the site uses, grouped by topic. Other pages give the short explanation; the full one is here."
+        subtitle="Every stat, label and method the site uses, grouped by topic."
       />
 
       <LearnIndexClient concepts={concepts} />

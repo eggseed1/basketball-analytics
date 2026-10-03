@@ -27,10 +27,8 @@ export default function FranchisesPage() {
             Franchises
           </h1>
           <p className="mt-1 text-[16px] leading-relaxed text-muted-foreground">
-            Titles, Finals trips, playoff ledgers, career win percentages, and
-            the weird records fans argue about, through {asOf}. Open any
-            club&apos;s team History tab for the full scrapbook. It covers lore,
-            not live season intelligence.
+            Titles, Finals trips, playoff records and win percentages for every
+            franchise, through {asOf}.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -59,10 +57,8 @@ export default function FranchisesPage() {
       <FranchiseHistoryTable franchises={franchises} />
 
       <p className="pb-6 text-[12px] text-muted-foreground">
-        Continuous franchises keep relocated history (OKC includes Seattle; MEM
-        includes Vancouver). Counting stats are curated snapshots. They work for
-        browsing but are not a live box-score feed. Each row opens that team&apos;s
-        History tab (scrapbook + timeline + season arc).
+        Relocated franchises keep their history (OKC includes Seattle; MEM includes Vancouver).
+        Counting stats are curated snapshots, not a live box-score feed.
       </p>
     </main>
   );

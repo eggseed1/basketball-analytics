@@ -17,6 +17,7 @@ import {
   rechartsFrostWrapperStyle,
 } from "@/components/brand/frost-recharts-tooltip";
 import { laneOriginLabel, sentimentPct } from "@/components/sentiment/sentiment-source";
+import { MoreInfo } from "@/components/ui/more-info";
 import type { SentimentLaneOrigin, TrackedPlayerSentimentRow } from "@/sentiment/curated-types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -105,10 +106,14 @@ export function SentimentPerformanceScatter({ rows }: { rows: TrackedPlayerSenti
           <h2 className={cn(type.bodySm, "font-bold")}>Sentiment vs on-court value</h2>
           <p className={cn(type.caption, "max-w-2xl text-muted-foreground")}>
             Each dot is a player: current {lane} tone against DRBL/100
-            {season ? ` from ${season}` : ""}. Tone describes this week and DRBL describes last
-            season, so read it as an association. It does not show that one causes the other.
-            Colors mark the source, and sources are never pooled into one correlation.
+            {season ? ` from ${season}` : ""}. An association, not cause and effect.
           </p>
+          <MoreInfo>
+            <p>
+              Tone describes this week and DRBL describes last season. Colors mark the source,
+              and sources are never pooled into one correlation.
+            </p>
+          </MoreInfo>
         </div>
         <div className="flex gap-1.5" role="group" aria-label="Lane">
           {(["media", "fan"] as const).map((id) => (

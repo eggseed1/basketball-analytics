@@ -17,6 +17,7 @@ import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNav } from "@/components/continuity/query-nav";
 import { TradeAcquireBoxes } from "@/components/offseason/trade-acquire-boxes";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
+import { MoreInfo } from "@/components/ui/more-info";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import { TextLink } from "@/components/ui/text-link";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -405,12 +406,12 @@ export function OffseasonFilters({
           {pending ? "Updating…" : "Apply"}
         </button>
       </div>
-      <p className="text-[12px] text-muted-foreground">
-        Search matches the free text of ESPN descriptions, not player
-        identities. Same-day activity stays separate unless reciprocal evidence
-        shows one underlying transaction (then source-record count explains
-        the evidence).
-      </p>
+      <MoreInfo summary="How search works">
+        <p>
+          Search matches the free text of ESPN descriptions, not player identities. Same-day
+          activity stays separate unless reciprocal evidence shows one underlying transaction.
+        </p>
+      </MoreInfo>
     </div>
   );
 }

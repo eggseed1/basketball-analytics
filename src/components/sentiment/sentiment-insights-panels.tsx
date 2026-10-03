@@ -3,6 +3,7 @@ import Link from "next/link";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
+import { MoreInfo } from "@/components/ui/more-info";
 import type {
   SentimentDivergenceRow,
   SentimentLaneOrigin,
@@ -43,10 +44,15 @@ export function SentimentTopicHeat({
         </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
           {fromHeadlines
-            ? "Share of topic tags across NBA headlines from the last 7 days, tagged by keyword. It covers what outlets wrote about, not all discussion."
-            : "Mention-weighted topics across the curated fan and media lanes. This is not a census of all discussion."}{" "}
-          Click a topic to filter the players table.
+            ? "What outlets wrote about in the last 7 days, not all discussion."
+            : "Curated fan and media topics, not a census of all discussion."}{" "}
+          Click a topic to filter players.
         </p>
+        {fromHeadlines ? (
+          <MoreInfo>
+            <p>Share of keyword topic tags across NBA headlines from the last 7 days.</p>
+          </MoreInfo>
+        ) : null}
       </div>
       <ul className="flex flex-col gap-2">
         {rows.map((row) => {
@@ -113,11 +119,14 @@ export function SentimentDivergenceBoard({
           {allCurated ? <LaneOriginTag lane={{ origin: "curated", mentionVolume: 0 }} /> : null}
         </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Largest disagreements between fan and media lanes. The two lanes are
-          never blended into one score. A gap is only shown when both lanes come
-          from the same kind of source, so a curated fan value is never compared
-          with a measured headline score.
+          Largest disagreements between fan and media lanes.
         </p>
+        <MoreInfo>
+          <p>
+            The two lanes are never blended into one score. A gap is only shown when both lanes
+            are measured, so a curated fan value is never compared with a measured headline score.
+          </p>
+        </MoreInfo>
       </div>
       <ul className="grid gap-2 sm:grid-cols-2">
         {rows.map((row) => (

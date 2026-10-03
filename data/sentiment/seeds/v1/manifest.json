@@ -1,7 +1,7 @@
 {
   "methodologyVersion": "sentiment-s1-0.2",
   "status": "CURATED_PLUS_HEADLINES",
-  "disclaimer": "Fan lanes are hand-written prototype values until Reddit ingest is connected. Media lanes come from publisher headlines where a player has enough coverage. Neither is a census of all fans or media.",
+  "disclaimer": "Fan lanes come from team fan blogs, Bluesky and team YouTube comments, and media lanes from publisher headlines. Neither is a census of all fans or media.",
   "pilotWindow": "7d",
   "moverLimit": 4,
   "moverLookbackDays": 7,

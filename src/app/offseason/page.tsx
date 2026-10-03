@@ -250,30 +250,23 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         />
 
         {teamId ? (
-          <TransitionLink
-            href={`/teams/${encodeURIComponent(teamId)}`}
-            className="text-[13px] font-semibold text-primary hover:underline"
-          >
-            Open team page
-          </TransitionLink>
+          <div className="flex flex-wrap gap-x-4 gap-y-1">
+            <TransitionLink
+              href={`/teams/${encodeURIComponent(teamId)}`}
+              className="text-[13px] font-semibold text-primary hover:underline"
+            >
+              Open team page
+            </TransitionLink>
+            <TransitionLink
+              href={`/acquisitions?team=${encodeURIComponent(teamId)}`}
+              className="text-[13px] font-semibold text-primary hover:underline"
+            >
+              How they got each {resolveTeamBrand(teamId)?.abbr ?? "team"} player
+            </TransitionLink>
+          </div>
         ) : null}
 
         <div className="query-updating-content flex flex-col gap-5">
-          <section className="sports-card flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
-            <div className="flex flex-col gap-0.5">
-              <h2 className="text-[16px] font-bold tracking-tight">How they got him</h2>
-              <p className="text-[13px] text-muted-foreground">
-                Pick a player to see the trade, signing or draft that brought him in, and where the outgoing pieces went.
-              </p>
-            </div>
-            <TransitionLink
-              href={teamId ? `/acquisitions?team=${encodeURIComponent(teamId)}` : "/acquisitions"}
-              className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
-            >
-              {teamId ? `Open ${resolveTeamBrand(teamId)?.abbr ?? "team"} roster history` : "Open"}
-            </TransitionLink>
-          </section>
-
           {detailBundle ? (
             <section className="flex flex-col gap-2">
               <h2 className="text-[16px] font-bold tracking-tight">

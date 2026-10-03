@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Current rosters and payroll, scored with the last completed season’s DRBL / rates. This is a salary-match sketch, not a legality ruling."
+        subtitle="Current rosters and payroll, scored with last season’s DRBL. A salary-match sketch, not a legality ruling."
       />
       {board ? (
         <TradeSimulator

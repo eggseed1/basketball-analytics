@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import { formatSentimentDate, sentimentPct } from "@/components/sentiment/sentiment-source";
+import { MoreInfo } from "@/components/ui/more-info";
 import type { LeagueSentimentSnapshot, SentimentSourceSummary } from "@/sentiment/curated-types";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { type, textLinkClassName } from "@/lib/design-system";
@@ -26,14 +27,19 @@ export function SentimentHeadlinesList({
       <div className="flex flex-col gap-1">
         <h2 className={cn(type.bodySm, "font-bold")}>Latest headlines</h2>
         <p className={cn(type.caption, "max-w-3xl text-muted-foreground")}>
-          The newest NBA headlines behind the media lanes, with the tone score each one got. Tone
-          is scored from the headline and the first lines of the summary using a word list tuned
-          for basketball (so &quot;waived&quot; reads negative and &quot;extension&quot; positive).
-          It hasn&apos;t been checked against hand labels yet, so expect misreads.
-          {info?.itemCount
-            ? ` ${info.itemCount.toLocaleString()} headlines stored since ${formatSentimentDate(info.firstDate, true)}.`
-            : ""}
+          The newest headlines behind the media lanes, with each one&apos;s tone score. Expect
+          some misreads.
         </p>
+        <MoreInfo>
+          <p>
+            Tone is scored from the headline and the first lines of the summary using a word list
+            tuned for basketball (so &quot;waived&quot; reads negative and &quot;extension&quot;
+            positive). It hasn&apos;t been checked against hand labels yet.
+            {info?.itemCount
+              ? ` ${info.itemCount.toLocaleString()} headlines stored since ${formatSentimentDate(info.firstDate, true)}.`
+              : ""}
+          </p>
+        </MoreInfo>
       </div>
       {headlines.length ? (
         <ul className="sports-card divide-y divide-border/60">

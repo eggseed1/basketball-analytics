@@ -13,7 +13,6 @@ import {
   SentimentTopicHeat,
 } from "@/components/sentiment/sentiment-insights-panels";
 import {
-  formatSentimentDate,
   LaneOriginTag,
   sentimentPct,
   SentimentSourcesStrip,
@@ -153,8 +152,8 @@ function HeadlineToneLeaders({ players }: { players: TrackedPlayerSentimentRow[]
           <LaneOriginTag lane={{ origin: "headlines", asOf, mentionVolume: 0 }} />
         </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Players with at least 3 headlines in the last 7 days. With this few headlines one story
-          can swing a score, so open a player to see which headlines are behind it.
+          Players with 3+ headlines in the last 7 days. One story can swing a score, so open a
+          player to see the headlines behind it.
         </p>
       </div>
       <div className="sports-card grid gap-6 p-4 sm:grid-cols-2">
@@ -193,7 +192,7 @@ export function SentimentCenterView({
             "font-semibold uppercase tracking-wide text-muted-foreground"
           )}
         >
-          Sentiment · {feed.season} · as of {formatSentimentDate(feed.snapshotDate)}
+          Sentiment · {feed.season}
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {view === "players"
@@ -205,8 +204,7 @@ export function SentimentCenterView({
                 : "League sentiment board"}
         </h1>
         <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>
-          How fans and media talk about players and teams, kept separate from performance metrics
-          and Movement Center evidence. Fan and media tone are always shown side by side and never
+          How fans and media talk about players and teams. The two are shown side by side, never
           merged into one number.
         </p>
         <SentimentSourcesStrip sources={feed.sources} snapshotDate={feed.snapshotDate} />

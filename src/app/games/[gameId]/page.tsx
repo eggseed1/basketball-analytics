@@ -59,11 +59,13 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const brandPresentation = applyEraTheme && themeMode !== "modern" ? "era" : "modern_surface";
   const seasonHint = seasonParam ?? shell.game.season;
   const backHref = fromHistory ? `/history/${encodeURIComponent(seasonHint)}` : "/explore/games";
+  const status = shell.game.status;
+  const preTip = status === "scheduled" || status === "pregame" || status === "delayed";
   const body = <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
-    {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-    {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} /></Suspense> : <GameUnavailablePanel gameId={gameId} backHref={backHref} />}
-    {presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures && preTip ? <p className="text-[13px] text-muted-foreground">Box score, game flow and play-by-play show up here once the game tips off.</p> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
+    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} /></Suspense>}
+    {presentation.canRenderDeepFeatures && !preTip ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense> : null}
   </main>;
   return eraTheme ? <EraThemeScope theme={eraTheme}>{body}</EraThemeScope> : body;
 }

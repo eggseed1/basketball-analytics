@@ -3,6 +3,7 @@ import type {
   GameWinningFactor,
 } from "@/analytics/game-lab";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
+import { MoreInfo } from "@/components/ui/more-info";
 import { TextLink } from "@/components/ui/text-link";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -222,9 +223,9 @@ export function GameWhatDecided({
         </>
       )}
 
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        {methodology.winningFactorsRule}
-      </p>
+      <MoreInfo>
+        <p>{methodology.winningFactorsRule}</p>
+      </MoreInfo>
     </MatchupWashCard>
   );
 }
