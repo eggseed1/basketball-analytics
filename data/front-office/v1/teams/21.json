@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -257,6 +257,29 @@
           "href": "/players/1641871"
         },
         {
+          "playerId": "1631113",
+          "playerName": "Kennedy Chandler",
+          "age": null,
+          "contractId": "cy-1631113-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631113-2026",
+              "playerId": "1631113",
+              "franchiseId": "21",
+              "season": "2026-27",
+              "salary": 2019699,
+              "capHit": 2019699,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631113"
+        },
+        {
           "playerId": "1642345",
           "playerName": "Oso Ighodaro",
           "age": null,
@@ -324,6 +347,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630692"
+        },
+        {
+          "playerId": "1630762",
+          "playerName": "Phillip Wheeler",
+          "age": null,
+          "contractId": "cy-1630762-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630762-2026",
+              "playerId": "1630762",
+              "franchiseId": "21",
+              "season": "2026-27",
+              "salary": 66503,
+              "capHit": 66503,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630762"
         },
         {
           "playerId": "1631123",
@@ -441,29 +487,6 @@
           "href": "/players/1643047"
         },
         {
-          "playerId": "1630587",
-          "playerName": "Isaiah Livers",
-          "age": null,
-          "contractId": "cy-1630587-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1630587-2026",
-              "playerId": "1630587",
-              "franchiseId": "21",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1630587"
-        },
-        {
           "playerId": "1642863",
           "playerName": "Khaman Maluach",
           "age": null,
@@ -513,13 +536,13 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 136061795,
-          "playersUnderContract": 12
+          "totalSalaryDollars": 138147997,
+          "playersUnderContract": 14
         }
       ],
-      "playerSalaryCommitments": 136061795,
-      "playersWithSalary": 12,
-      "playersWithoutSalary": 8
+      "playerSalaryCommitments": 138147997,
+      "playersWithSalary": 14,
+      "playersWithoutSalary": 7
     },
     "draftAssets": {
       "franchiseId": "21",

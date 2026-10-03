@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -326,6 +326,29 @@
           "href": "/players/1628964"
         },
         {
+          "playerId": "4684682",
+          "playerName": "Jonas Aidoo",
+          "age": null,
+          "contractId": "cy-4684682-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4684682-2026",
+              "playerId": "4684682",
+              "franchiseId": "26",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4684682"
+        },
+        {
           "playerId": "1641725",
           "playerName": "Trey Alexander",
           "age": null,
@@ -418,6 +441,29 @@
           "href": "/players/1642396"
         },
         {
+          "playerId": "1631127",
+          "playerName": "Harrison Ingram",
+          "age": null,
+          "contractId": "cy-1631127-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631127-2026",
+              "playerId": "1631127",
+              "franchiseId": "26",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631127"
+        },
+        {
           "playerId": "5041955",
           "playerName": "Darryn Peterson",
           "age": null,
@@ -439,29 +485,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/5041955"
-        },
-        {
-          "playerId": "1631131",
-          "playerName": "Oscar Tshiebwe",
-          "age": null,
-          "contractId": "cy-1631131-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631131-2026",
-              "playerId": "1631131",
-              "franchiseId": "26",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631131"
         }
       ],
       "futureCommitments": [
@@ -473,7 +496,7 @@
       ],
       "playerSalaryCommitments": 126803316,
       "playersWithSalary": 12,
-      "playersWithoutSalary": 6
+      "playersWithoutSalary": 7
     },
     "draftAssets": {
       "franchiseId": "26",

@@ -12,7 +12,8 @@
  * DRBL numbers move when finals accumulate: nightly recompute refreshes the
  * precomputed artifact, then the overlay bake ships it. Not live per tip-off.
  *
- * Every run also refreshes transactions, news headlines and the Movement Center.
+ * Every run also refreshes transactions, news and Reddit sentiment, the
+ * Movement Center, BRef payrolls, front-office slices and the asset ledger.
  * Offseason (before ~Oct 15 / after Finals): only those unless FORCE_DAILY=1.
  *
  *   node scripts/daily-runtime-sync.mjs
@@ -102,6 +103,37 @@ async function runMovementSteps() {
   return { done, failed };
 }
 
+/**
+ * Sentiment, payroll and pick bakes. Each runs after movement (sentiment reads
+ * the movement snapshot) and fails on its own without blocking the others.
+ * Reddit ingest exits 0 without REDDIT_CLIENT_ID / REDDIT_CLIENT_SECRET.
+ */
+const ORG_STEPS = [
+  { label: "reddit-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-reddit.ts"] },
+  { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
+  { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
+  { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },
+  { label: "front-office", cmd: "npx", args: ["tsx", "scripts/sync-team-front-office.ts"] },
+  { label: "front-office-snapshot", cmd: "node", args: ["scripts/build-runtime-front-office-snapshot.mjs"] },
+  { label: "asset-ledger", cmd: "node", args: ["scripts/sync-asset-ledger.mjs"] },
+  { label: "asset-ledger-snapshot", cmd: "node", args: ["scripts/build-runtime-asset-ledger.mjs"] },
+];
+
+async function runOrgSteps() {
+  const done = [];
+  const failed = [];
+  for (const step of ORG_STEPS) {
+    try {
+      await run(step.cmd, step.args);
+      done.push(step.label);
+    } catch (error) {
+      log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      failed.push(step.label);
+    }
+  }
+  return { done, failed };
+}
+
 /** ESPN flakes too. Workers overlay the live feed, so a stale archive is survivable. */
 const TRANSACTION_STEPS = [
   {
@@ -147,12 +179,14 @@ async function main() {
     // transaction archive even when player-viz bakes wait for tip-off.
     const transactionsFailed = await runTransactionSteps();
     const movement = await runMovementSteps();
+    const org = await runOrgSteps();
     const report = {
       ok: true,
       skipped: false,
-      reason: "offseason: refreshed transactions and movement center",
+      reason: "offseason: refreshed transactions, movement center, sentiment, payroll and assets",
       movement,
-      softFailed: [transactionsFailed, movement.failed].filter(Boolean),
+      org,
+      softFailed: [transactionsFailed, movement.failed, ...org.failed].filter(Boolean),
       phase: info.phase,
       season: info.season,
       shouldDeploy: true,
@@ -271,6 +305,9 @@ async function main() {
   const movement = await runMovementSteps();
   completed.push(...movement.done);
   if (movement.failed) softFailed.push(movement.failed);
+  const org = await runOrgSteps();
+  completed.push(...org.done);
+  softFailed.push(...org.failed);
 
   const report = {
     ok: true,

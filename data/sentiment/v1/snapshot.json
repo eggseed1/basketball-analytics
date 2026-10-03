@@ -4,10 +4,10 @@
     "status": "CURATED_PLUS_HEADLINES",
     "season": "2026-27",
     "disclaimer": "Fan lanes are hand-written prototype values until Reddit ingest is connected. Media lanes come from publisher headlines where a player has enough coverage. Neither is a census of all fans or media.",
-    "snapshotDate": "2026-10-01",
-    "builtAt": "2026-10-01T00:35:27.136Z",
-    "rosterPlayerCount": 608,
-    "pilotProfileCount": 52,
+    "snapshotDate": "2026-10-03",
+    "builtAt": "2026-10-03T01:19:51.658Z",
+    "rosterPlayerCount": 603,
+    "pilotProfileCount": 54,
     "observationBatchCount": 15,
     "observationBatchIds": [
       "obs-ant-overrated-2026-08-25",
@@ -26,7 +26,7 @@
       "obs-trae-overrated-2026-08-22",
       "obs-wemby-hype-2026-08-25"
     ],
-    "teamProfileCount": 22,
+    "teamProfileCount": 23,
     "movers": {
       "window": "7d",
       "lookbackDays": 7,
@@ -130,26 +130,6 @@
           "origin": "curated"
         },
         {
-          "playerId": "3032977",
-          "displayName": "Giannis Antetokounmpo",
-          "teamKey": "14",
-          "fanScore": -0.31,
-          "mediaScore": 0.06,
-          "gap": -0.37,
-          "absGap": 0.37,
-          "origin": "curated"
-        },
-        {
-          "playerId": "3945274",
-          "displayName": "Luka Doncic",
-          "teamKey": "13",
-          "fanScore": -0.08,
-          "mediaScore": 0.14,
-          "gap": -0.22,
-          "absGap": 0.22,
-          "origin": "curated"
-        },
-        {
           "playerId": "6589",
           "displayName": "Draymond Green",
           "teamKey": "9",
@@ -198,94 +178,114 @@
           "gap": -0.15,
           "absGap": 0.15,
           "origin": "curated"
+        },
+        {
+          "playerId": "6442",
+          "displayName": "Kyrie Irving",
+          "teamKey": "6",
+          "fanScore": 0.12,
+          "mediaScore": -0.03,
+          "gap": 0.15,
+          "absGap": 0.15,
+          "origin": "curated"
+        },
+        {
+          "playerId": "4432573",
+          "displayName": "Paolo Banchero",
+          "teamKey": "19",
+          "fanScore": 0.39,
+          "mediaScore": 0.25,
+          "gap": 0.14,
+          "absGap": 0.14,
+          "origin": "curated"
         }
       ]
     },
     "topicHeat": [
       {
         "topic": "contract",
-        "weight": 0.264,
-        "playerCount": 30,
-        "mentionVolume": 55
+        "weight": 0.263,
+        "playerCount": 33,
+        "mentionVolume": 70
       },
       {
         "topic": "training_camp",
-        "weight": 0.231,
-        "playerCount": 28,
-        "mentionVolume": 48
+        "weight": 0.218,
+        "playerCount": 32,
+        "mentionVolume": 58
       },
       {
         "topic": "trade_rumors",
-        "weight": 0.082,
-        "playerCount": 16,
-        "mentionVolume": 17
-      },
-      {
-        "topic": "conduct",
-        "weight": 0.067,
-        "playerCount": 2,
-        "mentionVolume": 14
-      },
-      {
-        "topic": "title_odds",
-        "weight": 0.058,
-        "playerCount": 8,
-        "mentionVolume": 12
+        "weight": 0.079,
+        "playerCount": 18,
+        "mentionVolume": 21
       },
       {
         "topic": "extension",
-        "weight": 0.058,
-        "playerCount": 6,
-        "mentionVolume": 12
+        "weight": 0.068,
+        "playerCount": 8,
+        "mentionVolume": 18
+      },
+      {
+        "topic": "conduct",
+        "weight": 0.06,
+        "playerCount": 2,
+        "mentionVolume": 16
       },
       {
         "topic": "role_debate",
-        "weight": 0.053,
-        "playerCount": 9,
-        "mentionVolume": 11
+        "weight": 0.06,
+        "playerCount": 13,
+        "mentionVolume": 16
       },
       {
         "topic": "scoring",
-        "weight": 0.053,
-        "playerCount": 11,
-        "mentionVolume": 11
+        "weight": 0.056,
+        "playerCount": 17,
+        "mentionVolume": 15
       },
       {
         "topic": "availability",
-        "weight": 0.048,
-        "playerCount": 7,
-        "mentionVolume": 10
+        "weight": 0.049,
+        "playerCount": 8,
+        "mentionVolume": 13
+      },
+      {
+        "topic": "title_odds",
+        "weight": 0.049,
+        "playerCount": 8,
+        "mentionVolume": 13
       },
       {
         "topic": "injury_return",
-        "weight": 0.034,
-        "playerCount": 7,
-        "mentionVolume": 7
+        "weight": 0.038,
+        "playerCount": 9,
+        "mentionVolume": 10
       },
       {
         "topic": "defense",
-        "weight": 0.029,
-        "playerCount": 9,
-        "mentionVolume": 6
+        "weight": 0.034,
+        "playerCount": 13,
+        "mentionVolume": 9
       },
       {
         "topic": "mvp_case",
-        "weight": 0.024,
-        "playerCount": 4,
-        "mentionVolume": 5
+        "weight": 0.026,
+        "playerCount": 6,
+        "mentionVolume": 7
       }
     ],
     "topicHeatOrigin": "headlines",
     "sources": {
       "curated": {
         "asOf": "2026-08-22",
-        "laneCount": 68
+        "laneCount": 65
       },
       "headlines": {
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "firstDate": "2026-09-11",
-        "itemCount": 201,
-        "windowItemCount": 184,
+        "itemCount": 275,
+        "windowItemCount": 250,
         "outlets": [
           "CBS Sports",
           "ESPN",
@@ -294,7 +294,7 @@
         ],
         "modelVersion": "headline-lexicon-v1",
         "floor": 3,
-        "laneCount": 24
+        "laneCount": 29
       },
       "reddit": {
         "configured": false,
@@ -499,20 +499,23 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "mixed",
-        "score": 0.14,
+        "polarity": "neutral",
+        "score": -0.01,
         "direction": "stable",
-        "mentionVolume": 68,
-        "coverageConfidence": 0.5706618908884706,
+        "mentionVolume": 4,
+        "coverageConfidence": 0.43,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "availability": 0.5,
-          "championship_window": 0.5
+          "training_camp": 0.667,
+          "injury_return": 0.333
         },
-        "origin": "curated",
-        "asOf": "2026-08-22"
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-29",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
       },
       "series": {
         "fan": [
@@ -575,66 +578,50 @@
         ],
         "media": [
           {
-            "date": "2026-08-09",
-            "score": 0.12
+            "date": "2026-09-29",
+            "score": 0.23,
+            "count": 2
           },
           {
-            "date": "2026-08-10",
-            "score": 0.11
-          },
-          {
-            "date": "2026-08-11",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-12",
-            "score": 0.08
-          },
-          {
-            "date": "2026-08-13",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-14",
-            "score": 0.11
-          },
-          {
-            "date": "2026-08-15",
-            "score": 0.13
-          },
-          {
-            "date": "2026-08-16",
-            "score": 0.13
-          },
-          {
-            "date": "2026-08-17",
-            "score": 0.11
-          },
-          {
-            "date": "2026-08-18",
-            "score": 0.1
-          },
-          {
-            "date": "2026-08-19",
-            "score": 0.1
-          },
-          {
-            "date": "2026-08-20",
-            "score": 0.12
-          },
-          {
-            "date": "2026-08-21",
-            "score": 0.14
-          },
-          {
-            "date": "2026-08-22",
-            "score": 0.14
+            "date": "2026-10-02",
+            "score": -0.26,
+            "count": 2
           }
         ]
       },
       "displayName": "Luka Doncic",
       "teamKey": "13",
       "provenance": "observation",
+      "headlines": [
+        {
+          "title": "Luka Doncic Files Petition Seeking Daughters' Move From Slovenia Amid Custody Dispute",
+          "url": "https://basketball.realgm.com/wiretap/287498/Luka-Doncic-Files-Petition-Seeking-Daughters-Move-From-Slovenia-Amid-Custody-Dispute",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-02T20:03:42.000Z",
+          "score": -0.64
+        },
+        {
+          "title": "Heat vibes, Alpha Sixers, Doncic domination? Top storylines for NBA preseason",
+          "url": "https://sports.yahoo.com/articles/heat-vibes-alpha-sixers-doncic-100833335.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T10:08:33.000Z",
+          "score": 0.12
+        },
+        {
+          "title": "Austin Reaves, Luka Dončić are leading the Lakers into a new era",
+          "url": "https://sports.yahoo.com/articles/austin-reaves-luka-don-leading-234321807.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-09-29T23:43:21.000Z",
+          "score": 0.46
+        },
+        {
+          "title": "Lakers try to move forward but specter of LeBron James remains topic at media day",
+          "url": "https://sports.yahoo.com/articles/lakers-try-move-forward-specter-162508078.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-09-29T16:25:08.000Z",
+          "score": 0
+        }
+      ],
       "performance": {
         "season": "2025-26",
         "drbl100": 1.09,
@@ -815,21 +802,22 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "neutral",
-        "score": 0.06,
+        "polarity": "mixed",
+        "score": 0.12,
         "direction": "stable",
-        "mentionVolume": 92,
-        "coverageConfidence": 0.5862179538264722,
+        "mentionVolume": 3,
+        "coverageConfidence": 0.42,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "mia_fit": 0.3333333333333333,
-          "title_window": 0.3333333333333333,
-          "heat_depth": 0.3333333333333333
+          "training_camp": 1
         },
-        "origin": "curated",
-        "asOf": "2026-08-22"
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-10-02",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
       },
       "series": {
         "fan": [
@@ -892,66 +880,38 @@
         ],
         "media": [
           {
-            "date": "2026-08-09",
-            "score": 0.04
-          },
-          {
-            "date": "2026-08-10",
-            "score": 0.03
-          },
-          {
-            "date": "2026-08-11",
-            "score": 0
-          },
-          {
-            "date": "2026-08-12",
-            "score": -0.02
-          },
-          {
-            "date": "2026-08-13",
-            "score": -0.01
-          },
-          {
-            "date": "2026-08-14",
-            "score": 0
-          },
-          {
-            "date": "2026-08-15",
-            "score": 0.01
-          },
-          {
-            "date": "2026-08-16",
-            "score": 0
-          },
-          {
-            "date": "2026-08-17",
-            "score": -0.03
-          },
-          {
-            "date": "2026-08-18",
-            "score": -0.05
-          },
-          {
-            "date": "2026-08-19",
-            "score": -0.05
-          },
-          {
-            "date": "2026-08-20",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-21",
-            "score": -0.03
-          },
-          {
-            "date": "2026-08-22",
-            "score": 0.02
+            "date": "2026-10-02",
+            "score": 0.12,
+            "count": 3
           }
         ]
       },
       "displayName": "Giannis Antetokounmpo",
       "teamKey": "14",
       "provenance": "observation",
+      "headlines": [
+        {
+          "title": "Heat to host Vice City night to promote 'GTA 6' and Giannis game vs Bucks",
+          "url": "https://sports.yahoo.com/articles/heat-host-vice-city-night-231207914.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T23:12:07.000Z",
+          "score": 0.36
+        },
+        {
+          "title": "Miami Heat to play as Vice City from Grand Theft Auto VI for single game, with new court and uniforms",
+          "url": "https://sports.yahoo.com/nba/article/miami-heat-to-play-as-vice-city-from-grand-theft-auto-vi-for-single-game-with-new-court-and-uniforms-212134941.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T21:21:34.000Z",
+          "score": 0
+        },
+        {
+          "title": "NBA preseason: 8 intriguing teams to watch, including Giannis Antetokounmpo's Heat",
+          "url": "https://sports.yahoo.com/nba/article/nba-preseason-8-intriguing-teams-to-watch-including-giannis-antetokounmpos-heat-160000463.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T16:00:00.000Z",
+          "score": 0
+        }
+      ],
       "performance": {
         "season": "2025-26",
         "drbl100": 1.86,
@@ -990,26 +950,26 @@
       },
       "media": {
         "polarity": "mixed",
-        "score": 0.15,
-        "direction": "stable",
-        "mentionVolume": 19,
-        "coverageConfidence": 0.51,
+        "score": 0.09,
+        "direction": "falling",
+        "mentionVolume": 17,
+        "coverageConfidence": 0.5,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "availability": 0.059,
-          "injury_return": 0.059,
-          "contract": 0.294,
-          "training_camp": 0.294,
-          "title_odds": 0.235,
-          "role_debate": 0.059
+          "availability": 0.067,
+          "injury_return": 0.067,
+          "contract": 0.267,
+          "training_camp": 0.333,
+          "title_odds": 0.2,
+          "role_debate": 0.067
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
-        "windowStart": "2026-09-24",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
-        "priorScore": null
+        "priorScore": 0.22
       },
       "series": {
         "fan": [
@@ -1100,6 +1060,11 @@
             "date": "2026-09-30",
             "score": 0.2,
             "count": 5
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.22,
+            "count": 2
           }
         ]
       },
@@ -1107,6 +1072,20 @@
       "teamKey": "20",
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Nurse envisions LeBron setting the table for Sixers' offense",
+          "url": "https://www.espn.com/nba/story/_/id/50079853/76ers-envision-lebron-james-role-being-offense-creator",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": -0.55
+        },
+        {
+          "title": "Victor Wembanyama said no to gambling money. In today’s NBA, that feels radical",
+          "url": "https://sports.yahoo.com/articles/victor-wembanyama-said-no-gambling-121506587.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T12:15:06.000Z",
+          "score": 0.12
+        },
         {
           "title": "There’s finally a silver lining to the Knicks’ championship for the Sixers",
           "url": "https://sports.yahoo.com/articles/finally-silver-lining-knicks-championship-141056535.html",
@@ -1120,20 +1099,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T02:20:00.000Z",
           "score": 0
-        },
-        {
-          "title": "Bronny on LeBron's Lakers exit: 'He's got his own path'",
-          "url": "https://www.espn.com/nba/story/_/id/50055730/bronny-lebron-james-lakers-exit-got-own-path",
-          "outlet": "ESPN",
-          "publishedAt": "2026-09-30T01:05:00.000Z",
-          "score": 0.24
-        },
-        {
-          "title": "LeBron envisioned joining Knicks but nixed idea after historic title",
-          "url": "https://www.espn.com/nba/story/_/id/50053106/lebron-james-says-envisioned-joining-knicks-free-agent",
-          "outlet": "ESPN",
-          "publishedAt": "2026-09-30T01:04:59.000Z",
-          "score": 0.36
         }
       ],
       "performance": {
@@ -1510,21 +1475,22 @@
         "asOf": "2026-08-25"
       },
       "media": {
-        "polarity": "mixed",
-        "score": 0.09,
+        "polarity": "positive",
+        "score": 0.26,
         "direction": "stable",
-        "mentionVolume": 4,
-        "coverageConfidence": 0.43,
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "extension": 0.4,
-          "contract": 0.4,
-          "title_odds": 0.2
+          "extension": 0.429,
+          "contract": 0.286,
+          "title_odds": 0.143,
+          "defense": 0.143
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-26",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -1621,11 +1587,30 @@
             "date": "2026-09-30",
             "score": -0.14,
             "count": 2
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.61,
+            "count": 2
           }
         ]
       },
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Warriors star Steph Curry reveals toughest defender he’s ever faced",
+          "url": "https://sports.yahoo.com/articles/warriors-star-steph-curry-reveals-191021762.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T19:10:21.000Z",
+          "score": 0.76
+        },
+        {
+          "title": "Stephen Curry reveals wife Ayesha’s reaction to leaving $20M on table with Warriors extension",
+          "url": "https://sports.yahoo.com/articles/stephen-curry-reveals-wife-ayesha-154620830.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T15:46:20.000Z",
+          "score": 0.46
+        },
         {
           "title": "Steph Curry, Al Horford share how Yaxel Lendeborg can make early Warriors impact",
           "url": "https://sports.yahoo.com/articles/steph-curry-al-horford-share-135042208.html",
@@ -1639,20 +1624,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T10:06:51.000Z",
           "score": -0.64
-        },
-        {
-          "title": "Grades for every NBA offseason signing: Why Warriors get a B for extending Steph Curry",
-          "url": "https://www.espn.com/nba/story/_/id/48957095/2026-nba-free-agency-grades-offseason-signings-deals-contracts-extensions-depth-charts",
-          "outlet": "ESPN",
-          "publishedAt": "2026-09-29T06:21:17.000Z",
-          "score": 0
-        },
-        {
-          "title": "Stephen Curry, Warriors reportedly agree to $116M extension: What it means for Golden State's future",
-          "url": "https://www.cbssports.com/nba/news/stephen-curry-golden-state-warriors-contract-extension/",
-          "outlet": "CBS Sports",
-          "publishedAt": "2026-09-26T03:40:59.000Z",
-          "score": 0.64
         }
       ],
       "performance": {
@@ -1661,7 +1632,7 @@
         "possessions": 5745
       },
       "association": {
-        "explanation": "Fan and media volume is associated with ongoing movement reporting: “Stephen Curry: reported extension with the Warriors”.",
+        "explanation": "Fan and media volume is associated with ongoing movement reporting: “Stephen Curry: extension talks with the Warriors”.",
         "eventKind": "movement_story",
         "eventRef": "mv-contract-3975-20260923"
       }
@@ -2043,20 +2014,19 @@
       },
       "media": {
         "polarity": "positive",
-        "score": 0.34,
+        "score": 0.32,
         "direction": "stable",
-        "mentionVolume": 95,
-        "coverageConfidence": 0.5878725479647482,
+        "mentionVolume": 3,
+        "coverageConfidence": 0.42,
         "platformBreakdown": {
           "news": 1
         },
-        "topicBreakdown": {
-          "defense": 0.3333333333333333,
-          "title_odds": 0.3333333333333333,
-          "availability": 0.3333333333333333
-        },
-        "origin": "curated",
-        "asOf": "2026-08-25"
+        "topicBreakdown": {},
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-29",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
       },
       "series": {
         "fan": [
@@ -2127,68 +2097,41 @@
         ],
         "media": [
           {
-            "date": "2026-08-09",
-            "score": 0.14
+            "date": "2026-09-29",
+            "score": 0,
+            "count": 1
           },
           {
-            "date": "2026-08-10",
-            "score": 0.14
-          },
-          {
-            "date": "2026-08-11",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-12",
-            "score": 0.13
-          },
-          {
-            "date": "2026-08-13",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-14",
-            "score": 0.12
-          },
-          {
-            "date": "2026-08-15",
-            "score": 0.08
-          },
-          {
-            "date": "2026-08-16",
-            "score": 0.13
-          },
-          {
-            "date": "2026-08-17",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-18",
-            "score": 0.07
-          },
-          {
-            "date": "2026-08-19",
-            "score": 0.11
-          },
-          {
-            "date": "2026-08-20",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-21",
-            "score": 0.08
-          },
-          {
-            "date": "2026-08-22",
-            "score": 0.09
-          },
-          {
-            "date": "2026-08-25",
-            "score": 0.34
+            "date": "2026-10-02",
+            "score": 0.49,
+            "count": 2
           }
         ]
       },
       "provenance": "observation",
+      "headlines": [
+        {
+          "title": "Wemby won't promote betting sites: 'I want to inspire in a good way'",
+          "url": "https://www.espn.com/nba/story/_/id/50078401/spurs-victor-wembanyama-not-interested-promoting-betting-sites",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": 0.85
+        },
+        {
+          "title": "Victor Wembanyama said no to gambling money. In today’s NBA, that feels radical",
+          "url": "https://sports.yahoo.com/articles/victor-wembanyama-said-no-gambling-121506587.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T12:15:06.000Z",
+          "score": 0.12
+        },
+        {
+          "title": "10-team roto/category league mock draft: Who went No. 1?",
+          "url": "https://www.espn.com/fantasy/basketball/story/_/id/50049291/fantasy-basketball-mock-draft-10-team-roto-category-league-nba-2026-27",
+          "outlet": "ESPN",
+          "publishedAt": "2026-09-29T12:32:24.000Z",
+          "score": 0
+        }
+      ],
       "performance": {
         "season": "2025-26",
         "drbl100": 1.74,
@@ -3865,23 +3808,24 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "positive",
-        "score": 0.2,
+        "polarity": "mixed",
+        "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "extension": 0.25,
-          "contract": 0.333,
-          "title_odds": 0.25,
-          "defense": 0.083,
-          "training_camp": 0.083
+          "extension": 0.231,
+          "contract": 0.308,
+          "title_odds": 0.231,
+          "defense": 0.077,
+          "training_camp": 0.077,
+          "trade_rumors": 0.077
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -3965,11 +3909,23 @@
             "date": "2026-09-30",
             "score": 0.3,
             "count": 3
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.24,
+            "count": 1
           }
         ]
       },
       "provenance": "generated",
       "headlines": [
+        {
+          "title": "A Tale of Two Trades: LaMelo, KAT, and Aggression in the Star Market",
+          "url": "https://sports.yahoo.com/articles/tale-two-trades-lamelo-kat-170000039.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T17:00:00.000Z",
+          "score": -0.24
+        },
         {
           "title": "Knicks Hoping For Karl-Anthony Towns Extension Closer To $200M Over Four Years",
           "url": "https://basketball.realgm.com/wiretap/287473/Knicks-Hoping-For-Karl-Anthony-Towns-Extension-Closer-To-$200M-Over-Four-Years",
@@ -3990,13 +3946,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T17:07:36.000Z",
           "score": 0.24
-        },
-        {
-          "title": "KAT itching for Knicks extension: 'I want to play here'",
-          "url": "https://www.espn.com/nba/story/_/id/50053583/karl-anthony-towns-wants-extension-stay-knicks",
-          "outlet": "ESPN",
-          "publishedAt": "2026-09-29T16:09:19.000Z",
-          "score": 0.76
         }
       ],
       "performance": {
@@ -4203,22 +4152,23 @@
       },
       "media": {
         "polarity": "mixed",
-        "score": 0.08,
+        "score": 0.1,
         "direction": "stable",
-        "mentionVolume": 3,
-        "coverageConfidence": 0.42,
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "availability": 0.1,
-          "injury_return": 0.1,
-          "contract": 0.3,
-          "training_camp": 0.3,
-          "conduct": 0.2
+          "availability": 0.091,
+          "injury_return": 0.091,
+          "contract": 0.273,
+          "training_camp": 0.273,
+          "conduct": 0.182,
+          "title_odds": 0.091
         },
         "origin": "headlines",
-        "asOf": "2026-09-29",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": 0.14
@@ -4317,11 +4267,30 @@
             "date": "2026-09-29",
             "score": 0,
             "count": 2
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.12,
+            "count": 2
           }
         ]
       },
       "provenance": "generated",
       "headlines": [
+        {
+          "title": "Kawhi Leonard solves one Raptors problem. Who solves the others?",
+          "url": "https://sports.yahoo.com/nba/article/kawhi-leonard-solves-one-raptors-problem-who-solves-the-others-153000091.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T15:30:00.000Z",
+          "score": 0.24
+        },
+        {
+          "title": "ESPN says that Raptors have two top-20 players: they’re absolutely right",
+          "url": "https://sports.yahoo.com/articles/espn-says-raptors-two-top-120000975.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T12:00:00.000Z",
+          "score": 0
+        },
         {
           "title": "Newcomers, injury returns and contract disputes: What we're watching at NBA training camps",
           "url": "https://www.espn.com/nba/story/_/id/50008454/nba-2026-2027-preseason-biggest-question-all-30-teams",
@@ -4335,20 +4304,6 @@
           "outlet": "RealGM",
           "publishedAt": "2026-09-29T11:25:56.000Z",
           "score": 0.46
-        },
-        {
-          "title": "Clippers Vow To Rebuild Trust After Kawhi Leonard Investigation",
-          "url": "https://basketball.realgm.com/wiretap/287449/Clippers-Vow-To-Rebuild-Trust-After-Kawhi-Leonard-Investigation",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-28T20:36:05.000Z",
-          "score": 0.24
-        },
-        {
-          "title": "Three big concerns about Kawhi Leonard's return to Raptors, including fit with Scottie Barnes",
-          "url": "https://www.cbssports.com/nba/news/kawhi-leonard-raptors-concerns-scottie-barnes-rj-barrett/",
-          "outlet": "CBS Sports",
-          "publishedAt": "2026-09-23T18:27:20.000Z",
-          "score": 0.76
         }
       ],
       "performance": {
@@ -7206,12 +7161,17 @@
             "date": "2026-09-30",
             "score": 0,
             "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.46,
+            "count": 1
           }
         ]
       },
       "media": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.23,
         "direction": "stable",
         "mentionVolume": 3,
         "coverageConfidence": 0.42,
@@ -7220,12 +7180,19 @@
         },
         "topicBreakdown": {},
         "origin": "headlines",
-        "asOf": "2026-09-30",
-        "windowStart": "2026-09-25",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Cooper Flagg has the chance to be special",
+          "url": "https://sports.yahoo.com/articles/cooper-flagg-chance-special-120000530.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T12:00:00.000Z",
+          "score": 0.46
+        },
         {
           "title": "💰 Flagg's 1-of-1 rookie debut patch card sells for record $8.04M",
           "url": "https://www.espn.com/nba/story/_/id/50027879/cooper-flagg-nba-rookie-debut-patch-card-sale-fanatics-collects-sale-dallas-mavericks",
@@ -7252,6 +7219,82 @@
         "season": "2025-26",
         "drbl100": 0.26,
         "possessions": 9629
+      }
+    },
+    {
+      "playerIds": [
+        "3064514"
+      ],
+      "displayName": "Julius Randle",
+      "teamKey": "17",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [],
+        "media": [
+          {
+            "date": "2026-09-29",
+            "score": 0.22,
+            "count": 2
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.24,
+            "count": 1
+          }
+        ]
+      },
+      "media": {
+        "polarity": "positive",
+        "score": 0.22,
+        "direction": "stable",
+        "mentionVolume": 3,
+        "coverageConfidence": 0.42,
+        "platformBreakdown": {
+          "news": 1
+        },
+        "topicBreakdown": {
+          "title_odds": 0.5,
+          "scoring": 0.5
+        },
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-29",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
+      },
+      "headlines": [
+        {
+          "title": "2026-27 Fantasy Basketball Points League Draft Strategy, Targets and Fades",
+          "url": "https://sports.yahoo.com/articles/fantasy-basketball-points-league-draft-100700080.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T10:07:00.000Z",
+          "score": 0.24
+        },
+        {
+          "title": "Atlantic Division watch: The Nets are still looking for a way out",
+          "url": "https://sports.yahoo.com/articles/atlantic-division-watch-nets-still-232228496.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-09-29T23:22:28.000Z",
+          "score": 0.55
+        },
+        {
+          "title": "Eric Karabell's 'Do draft' list includes Randle, Castle, Reaves",
+          "url": "https://www.espn.com/fantasy/basketball/story/_/id/50052052/fantasy-basketball-eric-karabell-do-draft-list-nba-2026-27",
+          "outlet": "ESPN",
+          "publishedAt": "2026-09-29T12:32:24.000Z",
+          "score": -0.12
+        }
+      ],
+      "performance": {
+        "season": "2025-26",
+        "drbl100": -0.03,
+        "possessions": 11066
+      },
+      "association": {
+        "explanation": "Sentiment shifts are associated with the completed movement story: “Nets–Timberwolves trade: Julius Randle”.",
+        "eventKind": "movement_story",
+        "eventRef": "mv-tx-espn-tx-92903302a1074da9"
       }
     },
     {
@@ -7516,59 +7559,65 @@
             "date": "2026-09-30",
             "score": -0.04,
             "count": 3
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.1,
+            "count": 6
           }
         ]
       },
       "media": {
-        "polarity": "mixed",
-        "score": -0.13,
+        "polarity": "neutral",
+        "score": 0,
         "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "mentionVolume": 11,
+        "coverageConfidence": 0.48,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "contract": 0.333,
-          "mvp_case": 0.111,
-          "training_camp": 0.222,
-          "extension": 0.111,
-          "trade_rumors": 0.222
+          "contract": 0.421,
+          "mvp_case": 0.158,
+          "training_camp": 0.105,
+          "extension": 0.105,
+          "trade_rumors": 0.158,
+          "injury_return": 0.053
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
         {
-          "title": "Pistons Remove Weight Clause From Five-Year, $200M Offer To Jalen Duren",
-          "url": "https://basketball.realgm.com/wiretap/287476/Pistons-Remove-Weight-Clause-From-Five-Year-$200M-Offer-To-Jalen-Duren",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-30T22:22:41.000Z",
-          "score": -0.12
+          "title": "Duren accepts 5-year, $200M deal as lengthy standoff with Pistons ends",
+          "url": "https://www.espn.com/nba/story/_/id/50081576/jalen-duren-accepts-5-year-200m-deal-pistons-agent-says",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": 0.55
         },
         {
-          "title": "Where things stand with Pistons, Jalen Duren: Weight clause removed from offer",
-          "url": "https://sports.yahoo.com/articles/where-things-stand-pistons-jalen-203145391.html",
+          "title": "Jalen Duren is back + Southwest Division Preview! Aces advance, Liberty-Dream preview + Valkyries-Wings look-ahead",
+          "url": "https://sports.yahoo.com/nba/article/jalen-duren-is-back--southwest-division-preview-aces-advance-liberty-dream-preview--valkyries-wings-look-ahead-185426684.html",
           "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T20:31:45.000Z",
+          "publishedAt": "2026-10-02T18:54:26.000Z",
           "score": 0
         },
         {
-          "title": "Jalen Duren contract standoff: Pistons reportedly remove weight clause from $200 million offer",
-          "url": "https://www.cbssports.com/nba/news/jalen-duren-contract-standoff-pistons-weight-clause/",
+          "title": "Grading Jalen Duren's $200 million contract: Pistons pay up to keep All-NBA center",
+          "url": "https://www.cbssports.com/nba/news/grading-jalen-duren-contract-pistons-pay-up/",
           "outlet": "CBS Sports",
-          "publishedAt": "2026-09-30T19:38:02.000Z",
-          "score": 0
+          "publishedAt": "2026-10-02T12:30:06.000Z",
+          "score": -0.24
         },
         {
-          "title": "Jalen Duren contract standoff: Pistons center feels disrespected in negotiations, skips media day",
-          "url": "https://www.cbssports.com/nba/news/jalen-duren-contract-standoff-pistons-disrespected-media-day/",
-          "outlet": "CBS Sports",
-          "publishedAt": "2026-09-28T14:50:32.000Z",
-          "score": -0.76
+          "title": "Jalen Duren agrees to re-sign with Detroit for five years, $200 million",
+          "url": "https://sports.yahoo.com/articles/jalen-duren-agrees-sign-detroit-050846327.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T05:08:46.000Z",
+          "score": 0.55
         }
       ],
       "performance": {
@@ -7577,7 +7626,7 @@
         "possessions": 8146
       },
       "association": {
-        "explanation": "Fan and media volume is associated with ongoing movement reporting: “Jalen Duren: contract talks with the Pistons”.",
+        "explanation": "Sentiment shifts are associated with the completed movement story: “Jalen Duren: reported extension”.",
         "eventKind": "movement_story",
         "eventRef": "mv-contract-4433621-20260921"
       }
@@ -7727,6 +7776,82 @@
     },
     {
       "playerIds": [
+        "4431678"
+      ],
+      "displayName": "Tyrese Maxey",
+      "teamKey": "20",
+      "window": "7d",
+      "provenance": "ingest",
+      "series": {
+        "fan": [],
+        "media": [
+          {
+            "date": "2026-09-30",
+            "score": 0.36,
+            "count": 1
+          },
+          {
+            "date": "2026-10-01",
+            "score": 0.88,
+            "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.24,
+            "count": 1
+          }
+        ]
+      },
+      "media": {
+        "polarity": "positive",
+        "score": 0.49,
+        "direction": "stable",
+        "mentionVolume": 3,
+        "coverageConfidence": 0.42,
+        "platformBreakdown": {
+          "news": 1
+        },
+        "topicBreakdown": {
+          "scoring": 0.5,
+          "training_camp": 0.5
+        },
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-30",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
+      },
+      "headlines": [
+        {
+          "title": "Why Tyrese Maxey is telling new teammate Dean Wade to shoot more",
+          "url": "https://sports.yahoo.com/articles/why-tyrese-maxey-telling-teammate-070000500.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T07:00:00.000Z",
+          "score": 0.24
+        },
+        {
+          "title": "Tyrese Maxey Says He Wants To Be 'Judged By Winning'",
+          "url": "https://basketball.realgm.com/wiretap/287480/Tyrese-Maxey-Says-He-Wants-To-Be-Judged-By-Winning",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-01T05:19:02.000Z",
+          "score": 0.88
+        },
+        {
+          "title": "Off career year, Maxey wants to be judged by 76ers' success",
+          "url": "https://www.espn.com/nba/story/_/id/50070779/76ers-guard-tyrese-maxey-want-judged-winning",
+          "outlet": "ESPN",
+          "publishedAt": "2026-09-30T21:19:25.000Z",
+          "score": 0.36
+        }
+      ],
+      "performance": {
+        "season": "2025-26",
+        "drbl100": 1.33,
+        "possessions": 10951
+      }
+    },
+    {
+      "playerIds": [
         "3155526"
       ],
       "displayName": "Dillon Brooks",
@@ -7740,15 +7865,20 @@
             "date": "2026-09-30",
             "score": -0.9,
             "count": 4
+          },
+          {
+            "date": "2026-10-01",
+            "score": -0.95,
+            "count": 1
           }
         ]
       },
       "media": {
         "polarity": "negative",
-        "score": -0.9,
+        "score": -0.91,
         "direction": "stable",
-        "mentionVolume": 4,
-        "coverageConfidence": 0.43,
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
         "platformBreakdown": {
           "news": 1
         },
@@ -7756,12 +7886,19 @@
           "conduct": 1
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-01",
         "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Dillon Brooks Charged With DUI Stemming From March Arrest",
+          "url": "https://basketball.realgm.com/wiretap/287479/Dillon-Brooks-Charged-With-DUI-Stemming-From-March-Arrest",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-01T05:05:08.000Z",
+          "score": -0.95
+        },
         {
           "title": "Suns' Brooks charged with DUI from March arrest",
           "url": "https://www.espn.com/nba/story/_/id/50068731/suns-dillon-brooks-charged-dui-march-arrest",
@@ -7782,13 +7919,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T19:23:12.000Z",
           "score": -0.96
-        },
-        {
-          "title": "NBA star Dillon Brooks charged with DUI months after arrest",
-          "url": "https://sports.yahoo.com/articles/nba-star-dillon-brooks-charged-162958753.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T16:29:58.000Z",
-          "score": -0.76
         }
       ],
       "performance": {
@@ -7935,7 +8065,7 @@
         "possessions": 1995
       },
       "association": {
-        "explanation": "Sentiment shifts are associated with the completed movement story: “Grizzlies–Mavericks–Pistons–Wizards trade: D'Angelo Russell, Isaiah Stewart and 1 more”.",
+        "explanation": "Sentiment shifts are associated with the completed movement story: “Grizzlies–Mavericks–Pistons–Wizards–Clippers–Bucks trade: D'Angelo Russell, Isaiah Stewart and 6 more”.",
         "eventKind": "movement_story",
         "eventRef": "mv-tx-espn-tx-69b6aae7bc346076"
       }
@@ -7963,30 +8093,44 @@
             "date": "2026-09-30",
             "score": -0.46,
             "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.46,
+            "count": 1
           }
         ]
       },
       "media": {
-        "polarity": "mixed",
-        "score": 0.11,
+        "polarity": "neutral",
+        "score": -0.03,
         "direction": "stable",
-        "mentionVolume": 3,
-        "coverageConfidence": 0.42,
+        "mentionVolume": 4,
+        "coverageConfidence": 0.43,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "title_odds": 0.333,
-          "trade_rumors": 0.333,
-          "defense": 0.333
+          "title_odds": 0.2,
+          "trade_rumors": 0.2,
+          "defense": 0.2,
+          "availability": 0.2,
+          "training_camp": 0.2
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Brooklyn Nets are taking it slow with Mikel Brown Jr. ankle injury",
+          "url": "https://sports.yahoo.com/articles/brooklyn-nets-taking-slow-mikel-145433543.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T14:54:33.000Z",
+          "score": -0.46
+        },
         {
           "title": "Moritz Wagner looking to be disrupting defensive force for Nets",
           "url": "https://sports.yahoo.com/articles/moritz-wagner-looking-disrupting-defensive-014931024.html",
@@ -8038,10 +8182,10 @@
         "asOf": "2026-08-25"
       },
       "media": {
-        "polarity": "positive",
-        "score": 0.2,
+        "polarity": "mixed",
+        "score": 0.18,
         "direction": "stable",
-        "mentionVolume": 9,
+        "mentionVolume": 10,
         "coverageConfidence": 0.47,
         "platformBreakdown": {
           "news": 1
@@ -8053,7 +8197,7 @@
           "training_camp": 0.5
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -8075,11 +8219,23 @@
             "date": "2026-09-30",
             "score": 0.33,
             "count": 5
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0,
+            "count": 1
           }
         ]
       },
       "provenance": "observation",
       "headlines": [
+        {
+          "title": "Boston Celtics Daily Links 10/2/26",
+          "url": "https://sports.yahoo.com/articles/boston-celtics-daily-links-10-193618737.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T19:36:18.000Z",
+          "score": 0
+        },
         {
           "title": "Celtics notice Jayson Tatum leadership leap to begin camp",
           "url": "https://sports.yahoo.com/articles/celtics-notice-jayson-tatum-leadership-202830097.html",
@@ -8100,13 +8256,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T15:38:48.000Z",
           "score": 0
-        },
-        {
-          "title": "Mike Conley Jr. raves about Jayson Tatum's leadership for Celtics",
-          "url": "https://sports.yahoo.com/articles/mike-conley-jr-raves-jayson-124128547.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T12:41:28.000Z",
-          "score": 0.46
         }
       ]
     },
@@ -8180,6 +8329,91 @@
     },
     {
       "teamIds": [
+        "4"
+      ],
+      "teamKey": "4",
+      "displayName": "CHI",
+      "window": "7d",
+      "source": "headlines",
+      "provenance": "ingest",
+      "series": {
+        "fan": [],
+        "media": [
+          {
+            "date": "2026-09-26",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-09-29",
+            "score": 0,
+            "count": 1
+          },
+          {
+            "date": "2026-10-01",
+            "score": -0.46,
+            "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.22,
+            "count": 2
+          }
+        ]
+      },
+      "media": {
+        "polarity": "mixed",
+        "score": -0.18,
+        "direction": "stable",
+        "mentionVolume": 5,
+        "coverageConfidence": 0.44,
+        "platformBreakdown": {
+          "news": 1
+        },
+        "topicBreakdown": {
+          "trade_rumors": 0.2,
+          "scoring": 0.4,
+          "contract": 0.4
+        },
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-26",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
+      },
+      "headlines": [
+        {
+          "title": "Bulls Sign Isaiah Stevens To Exhibit 10 Contract; Waive Peter Suder",
+          "url": "https://basketball.realgm.com/wiretap/287491/Bulls-Sign-Isaiah-Stevens-To-Exhibit-10-Contract;-Waive-Peter-Suder",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-02T12:40:01.000Z",
+          "score": -0.55
+        },
+        {
+          "title": "MMBets: The Chicago Bulls start fresh in the Caleb Wilson era",
+          "url": "https://sports.yahoo.com/articles/mmbets-chicago-bulls-start-fresh-100000427.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T10:00:00.000Z",
+          "score": 0.12
+        },
+        {
+          "title": "Bulls Sign Jalen Bridges, Waive Marquel Sutton",
+          "url": "https://basketball.realgm.com/wiretap/287481/Bulls-Sign-Jalen-Bridges-Waive-Marquel-Sutton",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-01T05:21:48.000Z",
+          "score": -0.46
+        },
+        {
+          "title": "2026-27 NBA Season Preview: Bulls, Cavaliers, Pistons, Pacers and Bucks (Central Division)",
+          "url": "https://sports.yahoo.com/nba/article/2026-27-nba-season-preview-bulls-cavaliers-pistons-pacers-and-bucks-central-division-215546418.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-09-29T21:55:46.000Z",
+          "score": 0
+        }
+      ]
+    },
+    {
+      "teamIds": [
         "5"
       ],
       "teamKey": "5",
@@ -8208,21 +8442,24 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "mixed",
-        "score": -0.15,
+        "polarity": "neutral",
+        "score": 0.01,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "mentionVolume": 8,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "conduct": 0.5,
-          "training_camp": 0.25,
-          "role_debate": 0.25
+          "conduct": 0.286,
+          "training_camp": 0.143,
+          "role_debate": 0.143,
+          "extension": 0.143,
+          "contract": 0.143,
+          "injury_return": 0.143
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -8296,10 +8533,29 @@
             "date": "2026-09-30",
             "score": 0.12,
             "count": 2
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.47,
+            "count": 2
           }
         ]
       },
       "headlines": [
+        {
+          "title": "Cavs' Mitchell signs new multiyear deal with Adidas",
+          "url": "https://www.espn.com/nba/story/_/id/50076885/cavs-donovan-mitchell-signs-new-multi-year-deal-adidas",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": 0.81
+        },
+        {
+          "title": "Cavs season preview: Mario Hezonja – Unknown commodity",
+          "url": "https://sports.yahoo.com/articles/cavs-season-preview-mario-hezonja-140000088.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T14:00:00.000Z",
+          "score": 0.12
+        },
         {
           "title": "Recapping Cavs Media Day with one quote from each player",
           "url": "https://sports.yahoo.com/articles/recapping-cavs-media-day-one-170000885.html",
@@ -8313,20 +8569,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T15:22:43.000Z",
           "score": 0
-        },
-        {
-          "title": "2026-27 NBA Season Preview: Bulls, Cavaliers, Pistons, Pacers and Bucks (Central Division)",
-          "url": "https://sports.yahoo.com/nba/article/2026-27-nba-season-preview-bulls-cavaliers-pistons-pacers-and-bucks-central-division-215546418.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T21:55:46.000Z",
-          "score": 0
-        },
-        {
-          "title": "Cavs champion J.R. Smith arrested for assault",
-          "url": "https://sports.yahoo.com/articles/cavs-champion-j-r-smith-164505903.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T16:45:05.000Z",
-          "score": -0.91
         }
       ]
     },
@@ -8538,60 +8780,66 @@
             "date": "2026-09-30",
             "score": -0.04,
             "count": 3
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.02,
+            "count": 4
           }
         ]
       },
       "media": {
         "polarity": "mixed",
-        "score": -0.17,
+        "score": -0.11,
         "direction": "stable",
-        "mentionVolume": 9,
-        "coverageConfidence": 0.47,
+        "mentionVolume": 13,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "contract": 0.353,
-          "mvp_case": 0.059,
-          "training_camp": 0.235,
-          "scoring": 0.059,
-          "trade_rumors": 0.235,
-          "extension": 0.059
+          "contract": 0.4,
+          "mvp_case": 0.12,
+          "training_camp": 0.16,
+          "scoring": 0.04,
+          "trade_rumors": 0.2,
+          "extension": 0.04,
+          "injury_return": 0.04
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-27",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
         {
-          "title": "Pistons Remove Weight Clause From Five-Year, $200M Offer To Jalen Duren",
-          "url": "https://basketball.realgm.com/wiretap/287476/Pistons-Remove-Weight-Clause-From-Five-Year-$200M-Offer-To-Jalen-Duren",
+          "title": "Duren accepts 5-year, $200M deal as lengthy standoff with Pistons ends",
+          "url": "https://www.espn.com/nba/story/_/id/50081576/jalen-duren-accepts-5-year-200m-deal-pistons-agent-says",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": 0.55
+        },
+        {
+          "title": "Grading Jalen Duren's $200 million contract: Pistons pay up to keep All-NBA center",
+          "url": "https://www.cbssports.com/nba/news/grading-jalen-duren-contract-pistons-pay-up/",
+          "outlet": "CBS Sports",
+          "publishedAt": "2026-10-02T12:30:06.000Z",
+          "score": -0.24
+        },
+        {
+          "title": "Jalen Duren, Pistons Sign Five-Year, $200M Deal",
+          "url": "https://basketball.realgm.com/wiretap/287485/Jalen-Duren-Pistons-Sign-Five-Year-$200M-Deal",
           "outlet": "RealGM",
-          "publishedAt": "2026-09-30T22:22:41.000Z",
+          "publishedAt": "2026-10-02T02:48:13.000Z",
           "score": -0.12
         },
         {
-          "title": "Where things stand with Pistons, Jalen Duren: Weight clause removed from offer",
-          "url": "https://sports.yahoo.com/articles/where-things-stand-pistons-jalen-203145391.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T20:31:45.000Z",
-          "score": 0
-        },
-        {
-          "title": "Jalen Duren contract standoff: Pistons reportedly remove weight clause from $200 million offer",
-          "url": "https://www.cbssports.com/nba/news/jalen-duren-contract-standoff-pistons-weight-clause/",
+          "title": "Jalen Duren, Pistons reportedly agree to five-year, $200 million contract, ending monthslong stalemate",
+          "url": "https://www.cbssports.com/nba/news/jalen-duren-detroit-pistons-contract-extension/",
           "outlet": "CBS Sports",
-          "publishedAt": "2026-09-30T19:38:02.000Z",
-          "score": 0
-        },
-        {
-          "title": "2026-27 NBA Season Preview: Bulls, Cavaliers, Pistons, Pacers and Bucks (Central Division)",
-          "url": "https://sports.yahoo.com/nba/article/2026-27-nba-season-preview-bulls-cavaliers-pistons-pacers-and-bucks-central-division-215546418.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T21:55:46.000Z",
-          "score": 0
+          "publishedAt": "2026-10-02T02:37:34.000Z",
+          "score": -0.12
         }
       ]
     },
@@ -8635,24 +8883,25 @@
       },
       "media": {
         "polarity": "neutral",
-        "score": -0.04,
+        "score": 0.06,
         "direction": "stable",
-        "mentionVolume": 10,
-        "coverageConfidence": 0.47,
+        "mentionVolume": 14,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "extension": 0.167,
-          "contract": 0.333,
-          "trade_rumors": 0.083,
-          "title_odds": 0.083,
-          "training_camp": 0.167,
-          "injury_return": 0.083,
-          "role_debate": 0.083
+          "extension": 0.2,
+          "contract": 0.267,
+          "trade_rumors": 0.067,
+          "title_odds": 0.067,
+          "training_camp": 0.133,
+          "injury_return": 0.067,
+          "role_debate": 0.133,
+          "defense": 0.067
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-26",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -8754,37 +9003,42 @@
             "date": "2026-09-30",
             "score": -0.06,
             "count": 5
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.34,
+            "count": 4
           }
         ]
       },
       "headlines": [
         {
-          "title": "Steph Curry, Al Horford share how Yaxel Lendeborg can make early Warriors impact",
-          "url": "https://sports.yahoo.com/articles/steph-curry-al-horford-share-135042208.html",
+          "title": "CSR Weekend Warriors",
+          "url": "https://sports.yahoo.com/articles/csr-weekend-warriors-220000775.html",
           "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T13:50:42.000Z",
-          "score": 0.36
+          "publishedAt": "2026-10-02T22:00:00.000Z",
+          "score": 0.12
         },
         {
-          "title": "How Steve Kerr and the coaching staff are ‘reimagining' the Warriors' system",
-          "url": "https://sports.yahoo.com/articles/steve-kerr-coaching-staff-reimagining-113646532.html",
+          "title": "Warriors star Steph Curry reveals toughest defender he’s ever faced",
+          "url": "https://sports.yahoo.com/articles/warriors-star-steph-curry-reveals-191021762.html",
           "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T11:36:46.000Z",
+          "publishedAt": "2026-10-02T19:10:21.000Z",
+          "score": 0.76
+        },
+        {
+          "title": "Stephen Curry reveals wife Ayesha’s reaction to leaving $20M on table with Warriors extension",
+          "url": "https://sports.yahoo.com/articles/stephen-curry-reveals-wife-ayesha-154620830.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T15:46:20.000Z",
+          "score": 0.46
+        },
+        {
+          "title": "Warriors’ Melton thumbing his way back to a starting role",
+          "url": "https://sports.yahoo.com/articles/warriors-melton-thumbing-way-back-083211329.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T08:32:11.000Z",
           "score": 0
-        },
-        {
-          "title": "Warriors' Steve Kerr was ‘shocked' by Steph Curry's eye condition revelation",
-          "url": "https://sports.yahoo.com/articles/warriors-steve-kerr-shocked-steph-100651425.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T10:06:51.000Z",
-          "score": -0.64
-        },
-        {
-          "title": "Warriors training camp takeaways: Steve Kerr unveils team's new 5-Out offense",
-          "url": "https://sports.yahoo.com/articles/warriors-training-camp-takeaways-steve-092212838.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T09:22:12.000Z",
-          "score": -0.64
         }
       ]
     },
@@ -9233,9 +9487,9 @@
       },
       "media": {
         "polarity": "positive",
-        "score": 0.41,
+        "score": 0.45,
         "direction": "stable",
-        "mentionVolume": 12,
+        "mentionVolume": 11,
         "coverageConfidence": 0.48,
         "platformBreakdown": {
           "news": 1
@@ -9251,7 +9505,7 @@
         },
         "origin": "headlines",
         "asOf": "2026-09-30",
-        "windowStart": "2026-09-24",
+        "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
@@ -9350,25 +9604,24 @@
       },
       "media": {
         "polarity": "neutral",
-        "score": -0.02,
+        "score": 0.07,
         "direction": "stable",
-        "mentionVolume": 209,
-        "coverageConfidence": 0.59,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
-          "news": 0.886,
-          "youtube": 0.057,
-          "other": 0.057
+          "news": 1
         },
         "topicBreakdown": {
-          "mia_fit": 0.147,
-          "title_window": 0.147,
-          "heat_depth": 0.147,
-          "title_contender": 0.263,
-          "availability": 0.207,
-          "contract": 0.09
+          "contract": 0.286,
+          "scoring": 0.143,
+          "training_camp": 0.429,
+          "injury_return": 0.143
         },
-        "origin": "curated",
-        "asOf": "2026-08-22"
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-29",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
       },
       "series": {
         "fan": [
@@ -9431,63 +9684,47 @@
         ],
         "media": [
           {
-            "date": "2026-08-09",
-            "score": 0
+            "date": "2026-09-29",
+            "score": 0.12,
+            "count": 1
           },
           {
-            "date": "2026-08-10",
-            "score": -0.01
-          },
-          {
-            "date": "2026-08-11",
-            "score": -0.03
-          },
-          {
-            "date": "2026-08-12",
-            "score": -0.03
-          },
-          {
-            "date": "2026-08-13",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-14",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-15",
-            "score": -0.02
-          },
-          {
-            "date": "2026-08-16",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-17",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-18",
-            "score": -0.08
-          },
-          {
-            "date": "2026-08-19",
-            "score": -0.07
-          },
-          {
-            "date": "2026-08-20",
-            "score": -0.06
-          },
-          {
-            "date": "2026-08-21",
-            "score": -0.06
-          },
-          {
-            "date": "2026-08-22",
-            "score": -0.03
+            "date": "2026-10-02",
+            "score": 0.06,
+            "count": 6
           }
         ]
-      }
+      },
+      "headlines": [
+        {
+          "title": "Heat to host Vice City night to promote 'GTA 6' and Giannis game vs Bucks",
+          "url": "https://sports.yahoo.com/articles/heat-host-vice-city-night-231207914.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T23:12:07.000Z",
+          "score": 0.36
+        },
+        {
+          "title": "Miami Heat to play as Vice City from Grand Theft Auto VI for single game, with new court and uniforms",
+          "url": "https://sports.yahoo.com/nba/article/miami-heat-to-play-as-vice-city-from-grand-theft-auto-vi-for-single-game-with-new-court-and-uniforms-212134941.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T21:21:34.000Z",
+          "score": 0
+        },
+        {
+          "title": "🥵 Heat, Rockstar Games partner for Grand Theft Auto VI promo",
+          "url": "https://www.espn.com/nba/story/_/id/50085674/miami-heat-night-vice-city-game",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": -0.12
+        },
+        {
+          "title": "NBA preseason: 8 intriguing teams to watch, including Giannis Antetokounmpo's Heat",
+          "url": "https://sports.yahoo.com/nba/article/nba-preseason-8-intriguing-teams-to-watch-including-giannis-antetokounmpos-heat-160000463.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T16:00:00.000Z",
+          "score": 0
+        }
+      ]
     },
     {
       "teamIds": [
@@ -9510,15 +9747,20 @@
             "date": "2026-09-30",
             "score": 0,
             "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.18,
+            "count": 2
           }
         ]
       },
       "media": {
         "polarity": "mixed",
-        "score": 0.12,
+        "score": 0.14,
         "direction": "stable",
-        "mentionVolume": 4,
-        "coverageConfidence": 0.43,
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "news": 1
         },
@@ -9526,12 +9768,26 @@
           "training_camp": 1
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "Heat to host Vice City night to promote 'GTA 6' and Giannis game vs Bucks",
+          "url": "https://sports.yahoo.com/articles/heat-host-vice-city-night-231207914.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T23:12:07.000Z",
+          "score": 0.36
+        },
+        {
+          "title": "Milwaukee Bucks preseason primer",
+          "url": "https://sports.yahoo.com/articles/milwaukee-bucks-preseason-primer-140000912.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T14:00:00.000Z",
+          "score": 0
+        },
         {
           "title": "Heard ‘em Say: Milwaukee Bucks media predictions and (other) palaver",
           "url": "https://sports.yahoo.com/articles/heard-em-milwaukee-bucks-media-140000439.html",
@@ -9545,20 +9801,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-29T21:55:46.000Z",
           "score": 0
-        },
-        {
-          "title": "Bucks Media Day 2026: Highlights from Tyler Herro, Myles Turner, and the rest of the team",
-          "url": "https://sports.yahoo.com/articles/bucks-media-day-2026-highlights-135331220.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T13:53:31.000Z",
-          "score": 0.36
-        },
-        {
-          "title": "Bucks Media Day 2026: Highlights from Jon Horst, Taylor Jenkins, and Wes Edens",
-          "url": "https://sports.yahoo.com/articles/bucks-media-day-2026-highlights-135026074.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T13:50:26.000Z",
-          "score": 0.12
         }
       ]
     },
@@ -9775,22 +10017,23 @@
         "polarity": "neutral",
         "score": 0.07,
         "direction": "stable",
-        "mentionVolume": 26,
-        "coverageConfidence": 0.52,
+        "mentionVolume": 30,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "contract": 0.387,
-          "title_odds": 0.194,
-          "extension": 0.097,
-          "conduct": 0.065,
-          "training_camp": 0.194,
-          "defense": 0.032,
-          "trade_rumors": 0.032
+          "contract": 0.351,
+          "title_odds": 0.189,
+          "extension": 0.108,
+          "conduct": 0.054,
+          "training_camp": 0.189,
+          "defense": 0.054,
+          "trade_rumors": 0.027,
+          "availability": 0.027
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -9827,38 +10070,43 @@
             "date": "2026-09-30",
             "score": 0.17,
             "count": 11
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.06,
+            "count": 4
           }
         ]
       },
       "provenance": "observation",
       "headlines": [
         {
-          "title": "Knicks, Rangers To Split Into Separate Publicly Traded Companies",
-          "url": "https://basketball.realgm.com/wiretap/287475/Knicks-Rangers-To-Split-Into-Separate-Publicly-Traded-Companies",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-30T22:18:42.000Z",
+          "title": "Anne Hathaway reveals what she’d give up for a second Knicks championship",
+          "url": "https://www.yahoo.com/entertainment/celebrity/articles/anne-hathaway-reveals-she-d-193003148.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T19:30:03.000Z",
+          "score": 0.12
+        },
+        {
+          "title": "Knicks Bulletin: ‘Either joint replacement, let it go, or, I guess, amputation’",
+          "url": "https://sports.yahoo.com/articles/knicks-bulletin-either-joint-replacement-155416257.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T15:54:16.000Z",
+          "score": 0.12
+        },
+        {
+          "title": "Knicks Training Camp Notes: Latest contract extension talks; backup center battle",
+          "url": "https://sports.yahoo.com/articles/knicks-training-camp-notes-latest-145508652.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T14:55:08.000Z",
           "score": 0.24
         },
         {
-          "title": "Knicks Hoping For Karl-Anthony Towns Extension Closer To $200M Over Four Years",
-          "url": "https://basketball.realgm.com/wiretap/287473/Knicks-Hoping-For-Karl-Anthony-Towns-Extension-Closer-To-$200M-Over-Four-Years",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-30T18:49:26.000Z",
-          "score": 0.91
-        },
-        {
-          "title": "Karl Anthony Towns’ wife Jordyn stopped going to Knicks games over fan vitriol: ‘It was turning dark’",
-          "url": "https://sports.yahoo.com/articles/karl-anthony-towns-wife-jordyn-180212503.html",
+          "title": "On This Date in Knicks History: October 2",
+          "url": "https://sports.yahoo.com/articles/date-knicks-history-october-2-132506193.html",
           "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T18:02:12.000Z",
+          "publishedAt": "2026-10-02T13:25:06.000Z",
           "score": -0.24
-        },
-        {
-          "title": "Knicks sign Tony Bradley and Jaden Akins in training camp roster shakeup",
-          "url": "https://sports.yahoo.com/articles/knicks-sign-tony-bradley-jaden-165432611.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T16:54:32.000Z",
-          "score": 0.12
         }
       ]
     },
@@ -9957,24 +10205,26 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "positive",
-        "score": 0.27,
+        "polarity": "mixed",
+        "score": 0.16,
         "direction": "stable",
-        "mentionVolume": 11,
-        "coverageConfidence": 0.48,
+        "mentionVolume": 13,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "training_camp": 0.333,
-          "contract": 0.222,
-          "title_odds": 0.222,
-          "trade_rumors": 0.111,
-          "mvp_case": 0.111
+          "training_camp": 0.4,
+          "contract": 0.1,
+          "trade_rumors": 0.1,
+          "mvp_case": 0.1,
+          "title_odds": 0.1,
+          "role_debate": 0.1,
+          "injury_return": 0.1
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
-        "windowStart": "2026-09-25",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
@@ -10057,37 +10307,42 @@
             "date": "2026-09-30",
             "score": 0.19,
             "count": 4
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.02,
+            "count": 3
           }
         ]
       },
       "headlines": [
+        {
+          "title": "Nurse envisions LeBron setting the table for Sixers' offense",
+          "url": "https://www.espn.com/nba/story/_/id/50079853/76ers-envision-lebron-james-role-being-offense-creator",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": -0.55
+        },
+        {
+          "title": "Do the Sixers have enough depth?",
+          "url": "https://sports.yahoo.com/articles/sixers-enough-depth-145355613.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T14:53:55.000Z",
+          "score": 0.36
+        },
+        {
+          "title": "Heat vibes, Alpha Sixers, Doncic domination? Top storylines for NBA preseason",
+          "url": "https://sports.yahoo.com/articles/heat-vibes-alpha-sixers-doncic-100833335.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T10:08:33.000Z",
+          "score": 0.12
+        },
         {
           "title": "Off career year, Maxey wants to be judged by 76ers' success",
           "url": "https://www.espn.com/nba/story/_/id/50070779/76ers-guard-tyrese-maxey-want-judged-winning",
           "outlet": "ESPN",
           "publishedAt": "2026-09-30T21:19:25.000Z",
           "score": 0.36
-        },
-        {
-          "title": "There’s finally a silver lining to the Knicks’ championship for the Sixers",
-          "url": "https://sports.yahoo.com/articles/finally-silver-lining-knicks-championship-141056535.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T14:10:56.000Z",
-          "score": -0.36
-        },
-        {
-          "title": "Atlantic Division watch: New look 76ers may be LeBron’s last dance",
-          "url": "https://sports.yahoo.com/articles/atlantic-division-watch-look-76ers-022000432.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T02:20:00.000Z",
-          "score": 0
-        },
-        {
-          "title": "76ers say 'sacrifice' key to success after offseason additions",
-          "url": "https://www.espn.com/nba/story/_/id/50054727/76ers-say-sacrifice-key-success-offseason-additions",
-          "outlet": "ESPN",
-          "publishedAt": "2026-09-30T01:04:59.000Z",
-          "score": 0.76
         }
       ]
     },
@@ -10107,29 +10362,49 @@
             "date": "2026-09-30",
             "score": -0.71,
             "count": 4
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0,
+            "count": 2
           }
         ]
       },
       "media": {
         "polarity": "negative",
-        "score": -0.71,
+        "score": -0.47,
         "direction": "stable",
-        "mentionVolume": 4,
-        "coverageConfidence": 0.43,
+        "mentionVolume": 6,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "conduct": 0.75,
-          "training_camp": 0.25
+          "conduct": 0.6,
+          "training_camp": 0.2,
+          "role_debate": 0.2
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-30",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
       "headlines": [
+        {
+          "title": "The case for Khaman Maluach to be the Suns’ starting center",
+          "url": "https://sports.yahoo.com/articles/case-khaman-maluach-suns-starting-190000104.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T19:00:00.000Z",
+          "score": 0
+        },
+        {
+          "title": "Suns Exercise 27-28 Rookie Scale Team Options For Ryan Dunn, Khaman Maluach",
+          "url": "https://basketball.realgm.com/wiretap/287492/Suns-Exercise-27-28-Rookie-Scale-Team-Options-For-Ryan-Dunn-Khaman-Maluach",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-02T12:46:07.000Z",
+          "score": 0
+        },
         {
           "title": "Suns' Brooks charged with DUI from March arrest",
           "url": "https://www.espn.com/nba/story/_/id/50068731/suns-dillon-brooks-charged-dui-march-arrest",
@@ -10143,20 +10418,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-30T19:37:52.000Z",
           "score": -0.93
-        },
-        {
-          "title": "Suns guard Dillon Brooks officially charged with DUI from March arrest",
-          "url": "https://sports.yahoo.com/articles/suns-guard-dillon-brooks-officially-192312980.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T19:23:12.000Z",
-          "score": -0.96
-        },
-        {
-          "title": "5 takeaways from Suns Media Day",
-          "url": "https://sports.yahoo.com/articles/5-takeaways-suns-media-day-190000081.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T19:00:00.000Z",
-          "score": 0
         }
       ]
     },
@@ -10191,25 +10452,24 @@
         "asOf": "2026-08-22"
       },
       "media": {
-        "polarity": "neutral",
-        "score": -0.04,
+        "polarity": "negative",
+        "score": -0.35,
         "direction": "stable",
-        "mentionVolume": 372,
-        "coverageConfidence": 0.8,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
-          "news": 0.883,
-          "youtube": 0.036,
-          "other": 0.081
+          "news": 1
         },
         "topicBreakdown": {
-          "title_contender": 0.28,
-          "scoring": 0.156,
-          "franchise_face": 0.231,
-          "defense": 0.139,
-          "contract": 0.194
+          "contract": 0.333,
+          "training_camp": 0.333,
+          "role_debate": 0.333
         },
-        "origin": "curated",
-        "asOf": "2026-08-22"
+        "origin": "headlines",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-30",
+        "modelVersion": "headline-lexicon-v1",
+        "priorScore": null
       },
       "series": {
         "fan": [
@@ -10272,63 +10532,57 @@
         ],
         "media": [
           {
-            "date": "2026-08-09",
-            "score": -0.06
+            "date": "2026-09-15",
+            "score": -0.55,
+            "count": 1
           },
           {
-            "date": "2026-08-10",
-            "score": -0.06
+            "date": "2026-09-30",
+            "score": 0.24,
+            "count": 1
           },
           {
-            "date": "2026-08-11",
-            "score": -0.08
+            "date": "2026-10-01",
+            "score": -0.55,
+            "count": 1
           },
           {
-            "date": "2026-08-12",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-13",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-14",
-            "score": -0.06
-          },
-          {
-            "date": "2026-08-15",
-            "score": -0.05
-          },
-          {
-            "date": "2026-08-16",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-17",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-18",
-            "score": -0.02
-          },
-          {
-            "date": "2026-08-19",
-            "score": -0.05
-          },
-          {
-            "date": "2026-08-20",
-            "score": -0.05
-          },
-          {
-            "date": "2026-08-21",
-            "score": -0.04
-          },
-          {
-            "date": "2026-08-22",
-            "score": -0.04
+            "date": "2026-10-02",
+            "score": -0.42,
+            "count": 5
           }
         ]
-      }
+      },
+      "headlines": [
+        {
+          "title": "The Blazers have a starting lineup dilemma with a clear solution: Bring Ja Morant off the bench",
+          "url": "https://www.cbssports.com/nba/news/blazers-ja-morant-starting-lineup-dilemma-damian-lillard-deni-avdija/",
+          "outlet": "CBS Sports",
+          "publishedAt": "2026-10-02T20:46:01.000Z",
+          "score": 0.24
+        },
+        {
+          "title": "Trail Blazers quickly fire new announcer over social media posts from 2012-13",
+          "url": "https://www.espn.com/nba/story/_/id/50084279/trail-blazers-fire-new-announcer-inappropriate-posts",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
+          "score": -0.46
+        },
+        {
+          "title": "Trail Blazers fire new play-by-play announcer hours after hiring due to racist social media posts",
+          "url": "https://sports.yahoo.com/articles/trail-blazers-fire-play-play-180212455.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T18:02:12.000Z",
+          "score": -0.64
+        },
+        {
+          "title": "Blazers Fire New Play-By-Play Announcers Braiden Bell",
+          "url": "https://basketball.realgm.com/wiretap/287487/Blazers-Fire-New-Play-By-Play-Announcers-Braiden-Bell",
+          "outlet": "RealGM",
+          "publishedAt": "2026-10-02T05:10:49.000Z",
+          "score": -0.7
+        }
+      ]
     },
     {
       "teamIds": [
@@ -10364,21 +10618,23 @@
         "asOf": "2026-08-25"
       },
       "media": {
-        "polarity": "positive",
-        "score": 0.29,
+        "polarity": "mixed",
+        "score": 0.17,
         "direction": "stable",
-        "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "mentionVolume": 7,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "role_debate": 0.667,
-          "scoring": 0.333
+          "role_debate": 0.4,
+          "scoring": 0.2,
+          "trade_rumors": 0.2,
+          "contract": 0.2
         },
         "origin": "headlines",
-        "asOf": "2026-09-29",
-        "windowStart": "2026-09-24",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-28",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
       },
@@ -10464,10 +10720,29 @@
             "date": "2026-09-29",
             "score": 0.21,
             "count": 3
+          },
+          {
+            "date": "2026-10-02",
+            "score": -0.12,
+            "count": 2
           }
         ]
       },
       "headlines": [
+        {
+          "title": "Rebuild-era Trades: How they impact the Spurs today and going forward",
+          "url": "https://sports.yahoo.com/articles/rebuild-era-trades-impact-spurs-180508743.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T18:05:08.000Z",
+          "score": 0
+        },
+        {
+          "title": "Open Thread: Spurs release promotional schedule",
+          "url": "https://sports.yahoo.com/articles/open-thread-spurs-release-promotional-110000868.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T11:00:00.000Z",
+          "score": -0.24
+        },
         {
           "title": "OKC taking same approach to season, not focused on Spurs",
           "url": "https://www.espn.com/nba/story/_/id/50054571/oklahoma-city-says-focus-improving-not-spurs",
@@ -10481,20 +10756,6 @@
           "outlet": "Yahoo Sports",
           "publishedAt": "2026-09-29T15:49:39.000Z",
           "score": 0.64
-        },
-        {
-          "title": "Spurs star has surprising Knicks fan take after Finals",
-          "url": "https://sports.yahoo.com/articles/spurs-star-surprising-knicks-fan-150845315.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T15:08:45.000Z",
-          "score": 0.36
-        },
-        {
-          "title": "Spurs star Dylan Harper, heading into Year 2, already knows he's too good to come off the bench",
-          "url": "https://www.cbssports.com/nba/news/spurs-star-dylan-harper-too-good-come-off-bench/",
-          "outlet": "CBS Sports",
-          "publishedAt": "2026-09-28T20:50:56.000Z",
-          "score": 0.88
         }
       ]
     },
@@ -10529,21 +10790,23 @@
       },
       "media": {
         "polarity": "positive",
-        "score": 0.58,
+        "score": 0.44,
         "direction": "stable",
-        "mentionVolume": 3,
-        "coverageConfidence": 0.42,
+        "mentionVolume": 8,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
           "contract": 0.286,
-          "training_camp": 0.286,
-          "conduct": 0.143,
-          "extension": 0.286
+          "training_camp": 0.214,
+          "conduct": 0.071,
+          "extension": 0.286,
+          "title_odds": 0.071,
+          "scoring": 0.071
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-29",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -10632,37 +10895,47 @@
             "date": "2026-09-30",
             "score": 0.64,
             "count": 2
+          },
+          {
+            "date": "2026-10-01",
+            "score": 0.7,
+            "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.26,
+            "count": 4
           }
         ]
       },
       "headlines": [
         {
-          "title": "Raptors, RJ Barrett reportedly have not had substantive extension talks (yet)",
-          "url": "https://sports.yahoo.com/articles/raptors-rj-barrett-reportedly-not-190252226.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-30T19:02:52.000Z",
-          "score": 0.46
-        },
-        {
-          "title": "RJ Barrett, Raptors Haven't Engaged In Serious Extension Talks",
-          "url": "https://basketball.realgm.com/wiretap/287468/RJ-Barrett-Raptors-Havent-Engaged-In-Serious-Extension-Talks",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-30T13:45:35.000Z",
+          "title": "Raptors reach 3-year, $24M extension with Shead",
+          "url": "https://www.espn.com/nba/story/_/id/50076974/jamal-shead-raptors-reach-3-year-24m-extension-2029-30",
+          "outlet": "ESPN",
+          "publishedAt": "2026-10-02T20:41:00.000Z",
           "score": 0.81
         },
         {
-          "title": "Kawhi Leonard Declines To Discuss NBA Investigation, Ready To 'Move Forward' With Raptors",
-          "url": "https://basketball.realgm.com/wiretap/287455/Kawhi-Leonard-Declines-To-Discuss-NBA-Investigation-Ready-To-Move-Forward-With-Raptors",
-          "outlet": "RealGM",
-          "publishedAt": "2026-09-29T11:25:56.000Z",
-          "score": 0.46
+          "title": "Kawhi Leonard solves one Raptors problem. Who solves the others?",
+          "url": "https://sports.yahoo.com/nba/article/kawhi-leonard-solves-one-raptors-problem-who-solves-the-others-153000091.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T15:30:00.000Z",
+          "score": 0.24
         },
         {
-          "title": "Three big concerns about Kawhi Leonard's return to Raptors, including fit with Scottie Barnes",
-          "url": "https://www.cbssports.com/nba/news/kawhi-leonard-raptors-concerns-scottie-barnes-rj-barrett/",
-          "outlet": "CBS Sports",
-          "publishedAt": "2026-09-23T18:27:20.000Z",
-          "score": 0.76
+          "title": "ESPN says that Raptors have two top-20 players: they’re absolutely right",
+          "url": "https://sports.yahoo.com/articles/espn-says-raptors-two-top-120000975.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T12:00:00.000Z",
+          "score": 0
+        },
+        {
+          "title": "NBA preseason tips off with Heat vs Raptors: 2026-27 key dates, schedule",
+          "url": "https://sports.yahoo.com/articles/nba-preseason-tips-off-heat-100613594.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T10:06:13.000Z",
+          "score": 0
         }
       ]
     },
@@ -10699,10 +10972,10 @@
       },
       "media": {
         "polarity": "positive",
-        "score": 0.32,
+        "score": 0.29,
         "direction": "stable",
-        "mentionVolume": 7,
-        "coverageConfidence": 0.46,
+        "mentionVolume": 9,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
           "news": 1
         },
@@ -10716,7 +10989,7 @@
           "role_debate": 0.091
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
+        "asOf": "2026-10-02",
         "windowStart": "2026-09-27",
         "modelVersion": "headline-lexicon-v1",
         "priorScore": null
@@ -10800,10 +11073,29 @@
             "date": "2026-09-30",
             "score": 0,
             "count": 1
+          },
+          {
+            "date": "2026-10-02",
+            "score": 0.18,
+            "count": 2
           }
         ]
       },
       "headlines": [
+        {
+          "title": "NBA reportedly won't discipline Wizards, Bub Carrington after guard admitted team held back to get AJ Dybantsa",
+          "url": "https://sports.yahoo.com/nba/article/nba-reportedly-wont-discipline-wizards-bub-carrington-after-guard-admitted-team-held-back-to-get-aj-dybantsa-172801586.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T17:28:01.000Z",
+          "score": 0.36
+        },
+        {
+          "title": "Bub Carrington claimed that the Wizards were “held back” last season",
+          "url": "https://sports.yahoo.com/articles/bub-carrington-claimed-wizards-were-163125243.html",
+          "outlet": "Yahoo Sports",
+          "publishedAt": "2026-10-02T16:31:25.000Z",
+          "score": 0
+        },
         {
           "title": "Buy low, play now: Why NBA teams should be begging the Wizards for Justin Champagnie",
           "url": "https://sports.yahoo.com/articles/buy-low-play-now-why-110000646.html",
@@ -10817,20 +11109,6 @@
           "outlet": "ESPN",
           "publishedAt": "2026-09-29T16:09:19.000Z",
           "score": 0.64
-        },
-        {
-          "title": "Anthony Davis plans to take wait-and-see approach to extension talks with Wizards: 'When the season is over'",
-          "url": "https://sports.yahoo.com/nba/article/anthony-davis-plans-to-take-wait-and-see-approach-to-extension-talks-with-wizards-when-the-season-is-over-160917433.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T16:09:17.000Z",
-          "score": 0.81
-        },
-        {
-          "title": "Greg Finberg launches Substack for full-time Wizards coverage",
-          "url": "https://sports.yahoo.com/articles/greg-finberg-launches-substack-full-140000118.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-09-29T14:00:00.000Z",
-          "score": 0.24
         }
       ]
     }
@@ -11279,33 +11557,33 @@
     ],
     "headlineMood": {
       "lane": {
-        "polarity": "mixed",
-        "score": 0.09,
-        "direction": "stable",
-        "mentionVolume": 184,
-        "coverageConfidence": 0.62,
+        "polarity": "neutral",
+        "score": 0.06,
+        "direction": "falling",
+        "mentionVolume": 250,
+        "coverageConfidence": 0.64,
         "platformBreakdown": {
           "news": 1
         },
         "topicBreakdown": {
-          "availability": 0.048,
-          "injury_return": 0.034,
-          "contract": 0.264,
-          "training_camp": 0.231,
-          "title_odds": 0.058,
-          "defense": 0.029,
-          "conduct": 0.067,
-          "trade_rumors": 0.082,
-          "extension": 0.058,
-          "role_debate": 0.053,
-          "mvp_case": 0.024,
-          "scoring": 0.053
+          "availability": 0.049,
+          "injury_return": 0.038,
+          "contract": 0.263,
+          "training_camp": 0.218,
+          "title_odds": 0.049,
+          "defense": 0.034,
+          "conduct": 0.06,
+          "trade_rumors": 0.079,
+          "extension": 0.068,
+          "role_debate": 0.06,
+          "mvp_case": 0.026,
+          "scoring": 0.056
         },
         "origin": "headlines",
-        "asOf": "2026-09-30",
-        "windowStart": "2026-09-24",
+        "asOf": "2026-10-02",
+        "windowStart": "2026-09-26",
         "modelVersion": "headline-lexicon-v1",
-        "priorScore": 0.05
+        "priorScore": 0.17
       },
       "series": [
         {
@@ -11382,48 +11660,123 @@
           "date": "2026-09-30",
           "score": 0.12,
           "count": 74
+        },
+        {
+          "date": "2026-10-01",
+          "score": -0.08,
+          "count": 5
+        },
+        {
+          "date": "2026-10-02",
+          "score": -0.01,
+          "count": 69
         }
       ]
     },
     "latestHeadlines": [
       {
-        "title": "Lakers' early defensive prowess impresses Austin Reaves, JJ Redick",
-        "url": "https://sports.yahoo.com/articles/lakers-early-defensive-prowess-impresses-230028904.html",
+        "title": "Heat to host Vice City night to promote 'GTA 6' and Giannis game vs Bucks",
+        "url": "https://sports.yahoo.com/articles/heat-host-vice-city-night-231207914.html",
         "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T23:00:28.000Z",
-        "score": 0.64,
+        "publishedAt": "2026-10-02T23:12:07.000Z",
+        "score": 0.36,
         "players": [
           {
-            "id": "4066457",
-            "name": "Austin Reaves"
-          },
-          {
-            "id": "3907498",
-            "name": "Matisse Thybulle"
-          },
-          {
-            "id": "4433137",
-            "name": "Ziaire Williams"
-          },
-          {
-            "id": "5060631",
-            "name": "Adou Thiero"
+            "id": "3032977",
+            "name": "Giannis Antetokounmpo"
           }
         ],
         "teamIds": [
-          "13"
+          "14",
+          "15"
         ],
         "topics": [
-          "scoring",
-          "defense"
+          "general"
         ]
       },
       {
-        "title": "Pistons Remove Weight Clause From Five-Year, $200M Offer To Jalen Duren",
-        "url": "https://basketball.realgm.com/wiretap/287476/Pistons-Remove-Weight-Clause-From-Five-Year-$200M-Offer-To-Jalen-Duren",
+        "title": "CSR Weekend Warriors",
+        "url": "https://sports.yahoo.com/articles/csr-weekend-warriors-220000775.html",
+        "outlet": "Yahoo Sports",
+        "publishedAt": "2026-10-02T22:00:00.000Z",
+        "score": 0.12,
+        "players": [],
+        "teamIds": [
+          "9"
+        ],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Miami Heat to play as Vice City from Grand Theft Auto VI for single game, with new court and uniforms",
+        "url": "https://sports.yahoo.com/nba/article/miami-heat-to-play-as-vice-city-from-grand-theft-auto-vi-for-single-game-with-new-court-and-uniforms-212134941.html",
+        "outlet": "Yahoo Sports",
+        "publishedAt": "2026-10-02T21:21:34.000Z",
+        "score": 0,
+        "players": [
+          {
+            "id": "3032977",
+            "name": "Giannis Antetokounmpo"
+          }
+        ],
+        "teamIds": [
+          "14"
+        ],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Josh Hart To Play Through Finger Injury Rather Than Undergo Career-Ending Surgery",
+        "url": "https://basketball.realgm.com/wiretap/287500/Josh-Hart-To-Play-Through-Finger-Injury-Rather-Than-Undergo-Career-Ending-Surgery",
         "outlet": "RealGM",
-        "publishedAt": "2026-09-30T22:22:41.000Z",
-        "score": -0.12,
+        "publishedAt": "2026-10-02T20:52:03.000Z",
+        "score": -0.96,
+        "players": [
+          {
+            "id": "3062679",
+            "name": "Josh Hart"
+          }
+        ],
+        "teamIds": [],
+        "topics": [
+          "availability"
+        ]
+      },
+      {
+        "title": "The Blazers have a starting lineup dilemma with a clear solution: Bring Ja Morant off the bench",
+        "url": "https://www.cbssports.com/nba/news/blazers-ja-morant-starting-lineup-dilemma-damian-lillard-deni-avdija/",
+        "outlet": "CBS Sports",
+        "publishedAt": "2026-10-02T20:46:01.000Z",
+        "score": 0.24,
+        "players": [
+          {
+            "id": "4279888",
+            "name": "Ja Morant"
+          },
+          {
+            "id": "6606",
+            "name": "Damian Lillard"
+          },
+          {
+            "id": "4683021",
+            "name": "Deni Avdija"
+          }
+        ],
+        "teamIds": [
+          "22"
+        ],
+        "topics": [
+          "role_debate"
+        ]
+      },
+      {
+        "title": "Duren accepts 5-year, $200M deal as lengthy standoff with Pistons ends",
+        "url": "https://www.espn.com/nba/story/_/id/50081576/jalen-duren-accepts-5-year-200m-deal-pistons-agent-says",
+        "outlet": "ESPN",
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": 0.55,
         "players": [
           {
             "id": "4433621",
@@ -11434,33 +11787,73 @@
           "8"
         ],
         "topics": [
-          "trade_rumors"
+          "injury_return",
+          "contract",
+          "trade_rumors",
+          "mvp_case"
         ]
       },
       {
-        "title": "Knicks, Rangers To Split Into Separate Publicly Traded Companies",
-        "url": "https://basketball.realgm.com/wiretap/287475/Knicks-Rangers-To-Split-Into-Separate-Publicly-Traded-Companies",
-        "outlet": "RealGM",
-        "publishedAt": "2026-09-30T22:18:42.000Z",
-        "score": 0.24,
-        "players": [],
-        "teamIds": [
-          "18"
-        ],
-        "topics": [
-          "trade_rumors"
-        ]
-      },
-      {
-        "title": "Off career year, Maxey wants to be judged by 76ers' success",
-        "url": "https://www.espn.com/nba/story/_/id/50070779/76ers-guard-tyrese-maxey-want-judged-winning",
+        "title": "Wemby won't promote betting sites: 'I want to inspire in a good way'",
+        "url": "https://www.espn.com/nba/story/_/id/50078401/spurs-victor-wembanyama-not-interested-promoting-betting-sites",
         "outlet": "ESPN",
-        "publishedAt": "2026-09-30T21:19:25.000Z",
-        "score": 0.36,
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": 0.85,
         "players": [
           {
-            "id": "4431678",
-            "name": "Tyrese Maxey"
+            "id": "5104157",
+            "name": "Victor Wembanyama"
+          }
+        ],
+        "teamIds": [],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Trail Blazers quickly fire new announcer over social media posts from 2012-13",
+        "url": "https://www.espn.com/nba/story/_/id/50084279/trail-blazers-fire-new-announcer-inappropriate-posts",
+        "outlet": "ESPN",
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": -0.46,
+        "players": [],
+        "teamIds": [
+          "22"
+        ],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Raptors reach 3-year, $24M extension with Shead",
+        "url": "https://www.espn.com/nba/story/_/id/50076974/jamal-shead-raptors-reach-3-year-24m-extension-2029-30",
+        "outlet": "ESPN",
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": 0.81,
+        "players": [
+          {
+            "id": "4432241",
+            "name": "Jamal Shead"
+          }
+        ],
+        "teamIds": [
+          "28"
+        ],
+        "topics": [
+          "extension",
+          "contract"
+        ]
+      },
+      {
+        "title": "Nurse envisions LeBron setting the table for Sixers' offense",
+        "url": "https://www.espn.com/nba/story/_/id/50079853/76ers-envision-lebron-james-role-being-offense-creator",
+        "outlet": "ESPN",
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": -0.55,
+        "players": [
+          {
+            "id": "1966",
+            "name": "LeBron James"
           }
         ],
         "teamIds": [
@@ -11471,185 +11864,45 @@
         ]
       },
       {
-        "title": "Suns' Brooks charged with DUI from March arrest",
-        "url": "https://www.espn.com/nba/story/_/id/50068731/suns-dillon-brooks-charged-dui-march-arrest",
+        "title": "Cavs' Mitchell signs new multiyear deal with Adidas",
+        "url": "https://www.espn.com/nba/story/_/id/50076885/cavs-donovan-mitchell-signs-new-multi-year-deal-adidas",
         "outlet": "ESPN",
-        "publishedAt": "2026-09-30T21:19:25.000Z",
-        "score": -0.95,
+        "publishedAt": "2026-10-02T20:41:00.000Z",
+        "score": 0.81,
         "players": [
           {
-            "id": "3155526",
-            "name": "Dillon Brooks"
+            "id": "3908809",
+            "name": "Donovan Mitchell"
           }
         ],
         "teamIds": [
-          "21"
+          "5"
         ],
         "topics": [
-          "conduct"
+          "extension",
+          "contract"
         ]
       },
       {
-        "title": "Clippers' Ingram (heel) gets in light court work before team practice at Hawaii",
-        "url": "https://www.espn.com/nba/story/_/id/50070155/clippers-brandom-ingram-gets-light-work-practice",
+        "title": "🥵 Heat, Rockstar Games partner for Grand Theft Auto VI promo",
+        "url": "https://www.espn.com/nba/story/_/id/50085674/miami-heat-night-vice-city-game",
         "outlet": "ESPN",
-        "publishedAt": "2026-09-30T21:19:25.000Z",
-        "score": -0.24,
-        "players": [
-          {
-            "id": "3913176",
-            "name": "Brandon Ingram"
-          }
-        ],
-        "teamIds": [
-          "12"
-        ],
-        "topics": [
-          "availability",
-          "scoring"
-        ]
-      },
-      {
-        "title": "Ryan Nembard, Nuggets Agree To Two-Way Deal",
-        "url": "https://basketball.realgm.com/wiretap/287474/Ryan-Nembard-Nuggets-Agree-To-Two-Way-Deal",
-        "outlet": "RealGM",
-        "publishedAt": "2026-09-30T20:51:04.000Z",
+        "publishedAt": "2026-10-02T20:41:00.000Z",
         "score": -0.12,
-        "players": [
-          {
-            "id": "4433629",
-            "name": "Ryan Nembhard"
-          },
-          {
-            "id": "4683834",
-            "name": "KJ Simpson"
-          }
-        ],
-        "teamIds": [
-          "7"
-        ],
-        "topics": [
-          "contract",
-          "trade_rumors"
-        ]
-      },
-      {
-        "title": "Where things stand with Pistons, Jalen Duren: Weight clause removed from offer",
-        "url": "https://sports.yahoo.com/articles/where-things-stand-pistons-jalen-203145391.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T20:31:45.000Z",
-        "score": 0,
-        "players": [
-          {
-            "id": "4433621",
-            "name": "Jalen Duren"
-          }
-        ],
-        "teamIds": [
-          "8"
-        ],
-        "topics": [
-          "trade_rumors"
-        ]
-      },
-      {
-        "title": "Celtics notice Jayson Tatum leadership leap to begin camp",
-        "url": "https://sports.yahoo.com/articles/celtics-notice-jayson-tatum-leadership-202830097.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T20:28:30.000Z",
-        "score": 0.24,
-        "players": [
-          {
-            "id": "4065648",
-            "name": "Jayson Tatum"
-          }
-        ],
-        "teamIds": [
-          "2"
-        ],
-        "topics": [
-          "training_camp"
-        ]
-      },
-      {
-        "title": "Boston Celtics Daily Links 9/30/26",
-        "url": "https://sports.yahoo.com/articles/boston-celtics-daily-links-9-202305221.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T20:23:05.000Z",
-        "score": 0,
         "players": [],
         "teamIds": [
-          "2"
-        ],
-        "topics": [
-          "general"
-        ]
-      },
-      {
-        "title": "Ajay Mitchell, Ayo Dosunmu and other top sleepers to target",
-        "url": "https://www.espn.com/fantasy/basketball/story/_/id/50069755/fantasy-basketball-top-sleepers-target-nba-2026-27",
-        "outlet": "ESPN",
-        "publishedAt": "2026-09-30T20:22:42.000Z",
-        "score": 0.24,
-        "players": [
-          {
-            "id": "4397002",
-            "name": "Ayo Dosunmu"
-          },
-          {
-            "id": "4900671",
-            "name": "Ajay Mitchell"
-          }
-        ],
-        "teamIds": [],
-        "topics": [
-          "general"
-        ]
-      },
-      {
-        "title": "Jalen Duren contract standoff: Pistons reportedly remove weight clause from $200 million offer",
-        "url": "https://www.cbssports.com/nba/news/jalen-duren-contract-standoff-pistons-weight-clause/",
-        "outlet": "CBS Sports",
-        "publishedAt": "2026-09-30T19:38:02.000Z",
-        "score": 0,
-        "players": [
-          {
-            "id": "4433621",
-            "name": "Jalen Duren"
-          }
-        ],
-        "teamIds": [
-          "8"
+          "14"
         ],
         "topics": [
           "contract"
         ]
       },
       {
-        "title": "Suns forward Dillon Brooks charged with misdemeanor DUI after March arrest",
-        "url": "https://sports.yahoo.com/nba/article/suns-forward-dillon-brooks-charged-with-misdemeanor-dui-after-march-arrest-193752011.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T19:37:52.000Z",
-        "score": -0.93,
-        "players": [
-          {
-            "id": "3155526",
-            "name": "Dillon Brooks"
-          }
-        ],
-        "teamIds": [
-          "21"
-        ],
-        "topics": [
-          "conduct"
-        ]
-      },
-      {
-        "title": "NBC Sports Unveils Comic Book Campaign Celebrating American Express NBA Tip-Off",
-        "url": "https://sports.yahoo.com/articles/nbc-sports-unveils-comic-book-193049400.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T19:30:49.000Z",
-        "score": 0.81,
+        "title": "ESPN Expands 'Inside The NBA' Schedule For 2026-27 Season",
+        "url": "https://basketball.realgm.com/wiretap/287499/ESPN-Expands-Inside-The-NBA-Schedule-For-2026-27-Season",
+        "outlet": "RealGM",
+        "publishedAt": "2026-10-02T20:08:05.000Z",
+        "score": 0.24,
         "players": [],
         "teamIds": [],
         "topics": [
@@ -11657,41 +11910,46 @@
         ]
       },
       {
-        "title": "Suns guard Dillon Brooks officially charged with DUI from March arrest",
-        "url": "https://sports.yahoo.com/articles/suns-guard-dillon-brooks-officially-192312980.html",
-        "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T19:23:12.000Z",
-        "score": -0.96,
+        "title": "Luka Doncic Files Petition Seeking Daughters' Move From Slovenia Amid Custody Dispute",
+        "url": "https://basketball.realgm.com/wiretap/287498/Luka-Doncic-Files-Petition-Seeking-Daughters-Move-From-Slovenia-Amid-Custody-Dispute",
+        "outlet": "RealGM",
+        "publishedAt": "2026-10-02T20:03:42.000Z",
+        "score": -0.64,
         "players": [
           {
-            "id": "3155526",
-            "name": "Dillon Brooks"
+            "id": "3945274",
+            "name": "Luka Doncic"
           }
         ],
-        "teamIds": [
-          "21"
-        ],
+        "teamIds": [],
         "topics": [
-          "conduct"
+          "general"
         ]
       },
       {
-        "title": "Raptors, RJ Barrett reportedly have not had substantive extension talks (yet)",
-        "url": "https://sports.yahoo.com/articles/raptors-rj-barrett-reportedly-not-190252226.html",
+        "title": "NBA Expansion Could Be Delayed Until 2029-30 Season",
+        "url": "https://basketball.realgm.com/wiretap/287495/NBA-Expansion-Could-Be-Delayed-Until-2029-30-Season",
+        "outlet": "RealGM",
+        "publishedAt": "2026-10-02T19:41:33.000Z",
+        "score": -0.36,
+        "players": [],
+        "teamIds": [],
+        "topics": [
+          "general"
+        ]
+      },
+      {
+        "title": "Boston Celtics Daily Links 10/2/26",
+        "url": "https://sports.yahoo.com/articles/boston-celtics-daily-links-10-193618737.html",
         "outlet": "Yahoo Sports",
-        "publishedAt": "2026-09-30T19:02:52.000Z",
-        "score": 0.46,
-        "players": [
-          {
-            "id": "4395625",
-            "name": "RJ Barrett"
-          }
-        ],
+        "publishedAt": "2026-10-02T19:36:18.000Z",
+        "score": 0,
+        "players": [],
         "teamIds": [
-          "28"
+          "2"
         ],
         "topics": [
-          "extension"
+          "general"
         ]
       }
     ]

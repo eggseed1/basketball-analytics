@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -280,6 +280,29 @@
           "href": "/players/1641764"
         },
         {
+          "playerId": "1631207",
+          "playerName": "Dalen Terry",
+          "age": null,
+          "contractId": "cy-1631207-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631207-2026",
+              "playerId": "1631207",
+              "franchiseId": "9",
+              "season": "2026-27",
+              "salary": 3510480,
+              "capHit": 3510480,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631207"
+        },
+        {
           "playerId": "1629646",
           "playerName": "Charles Bassey",
           "age": null,
@@ -349,15 +372,15 @@
           "href": "/players/1642502"
         },
         {
-          "playerId": "52131",
+          "playerId": "1630314",
           "playerName": "Brandon Williams",
           "age": null,
-          "contractId": "cy-52131-2026",
+          "contractId": "cy-1630314-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-52131-2026",
-              "playerId": "52131",
+              "contractId": "cy-1630314-2026",
+              "playerId": "1630314",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": 47989,
@@ -369,7 +392,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/52131"
+          "href": "/players/1630314"
         },
         {
           "playerId": "1643018",
@@ -395,15 +418,15 @@
           "href": "/players/1643018"
         },
         {
-          "playerId": "5108969",
-          "playerName": "Lajae Jones",
+          "playerId": "4703396",
+          "playerName": "Graham Ike",
           "age": null,
-          "contractId": "cy-5108969-2026",
+          "contractId": "cy-4703396-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-5108969-2026",
-              "playerId": "5108969",
+              "contractId": "cy-4703396-2026",
+              "playerId": "4703396",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": null,
@@ -415,7 +438,30 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/5108969"
+          "href": "/players/4703396"
+        },
+        {
+          "playerId": "1642939",
+          "playerName": "Miles Kelly",
+          "age": null,
+          "contractId": "cy-1642939-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1642939-2026",
+              "playerId": "1642939",
+              "franchiseId": "9",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1642939"
         },
         {
           "playerId": "5175737",
@@ -464,15 +510,15 @@
           "href": "/players/1642954"
         },
         {
-          "playerId": "1631466",
-          "playerName": "Nate Williams",
+          "playerId": "5170949",
+          "playerName": "Alex Toohey",
           "age": null,
-          "contractId": "cy-1631466-2026",
+          "contractId": "cy-5170949-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1631466-2026",
-              "playerId": "1631466",
+              "contractId": "cy-5170949-2026",
+              "playerId": "5170949",
               "franchiseId": "9",
               "season": "2026-27",
               "salary": null,
@@ -484,19 +530,19 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1631466"
+          "href": "/players/5170949"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 211364279,
-          "playersUnderContract": 14
+          "totalSalaryDollars": 214874759,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 211364279,
-      "playersWithSalary": 14,
-      "playersWithoutSalary": 5
+      "playerSalaryCommitments": 214874759,
+      "playersWithSalary": 15,
+      "playersWithoutSalary": 6
     },
     "draftAssets": {
       "franchiseId": "9",

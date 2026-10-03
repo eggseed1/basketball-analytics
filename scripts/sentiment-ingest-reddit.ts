@@ -40,7 +40,7 @@ type RedditPost = {
 };
 
 const USER_AGENT =
-  process.env.REDDIT_USER_AGENT ??
+  process.env.REDDIT_USER_AGENT ||
   "web:basketball-analytics-sentiment:1.0 (aggregate tone research)";
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));

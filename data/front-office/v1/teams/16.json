@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -188,6 +188,29 @@
           "href": "/players/1626168"
         },
         {
+          "playerId": "1630231",
+          "playerName": "KJ Martin",
+          "age": null,
+          "contractId": "cy-1630231-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1630231-2026",
+              "playerId": "1630231",
+              "franchiseId": "16",
+              "season": "2026-27",
+              "salary": 7975000,
+              "capHit": 7975000,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1630231"
+        },
+        {
           "playerId": "1630228",
           "playerName": "Jonathan Kuminga",
           "age": null,
@@ -232,29 +255,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630245"
-        },
-        {
-          "playerId": "1629723",
-          "playerName": "John Konchar",
-          "age": null,
-          "contractId": "cy-1629723-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1629723-2026",
-              "playerId": "1629723",
-              "franchiseId": "16",
-              "season": "2026-27",
-              "salary": 6165000,
-              "capHit": 6165000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1629723"
         },
         {
           "playerId": "1642262",
@@ -326,19 +326,19 @@
           "href": "/players/1630545"
         },
         {
-          "playerId": "1641763",
-          "playerName": "Julian Phillips",
+          "playerId": "1641810",
+          "playerName": "Antonio Reeves",
           "age": null,
-          "contractId": "cy-1641763-2026",
+          "contractId": "cy-1641810-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-1641763-2026",
-              "playerId": "1641763",
+              "contractId": "cy-1641810-2026",
+              "playerId": "1641810",
               "franchiseId": "16",
               "season": "2026-27",
-              "salary": 1891857,
-              "capHit": 1891857,
+              "salary": 1157153,
+              "capHit": 1157153,
               "guaranteedAmount": null,
               "guaranteeStatus": "UNKNOWN",
               "optionType": "UNKNOWN",
@@ -346,7 +346,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/1641763"
+          "href": "/players/1641810"
         },
         {
           "playerId": "1641740",
@@ -370,6 +370,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1641740"
+        },
+        {
+          "playerId": "1631166",
+          "playerName": "Drew Timme",
+          "age": null,
+          "contractId": "cy-1631166-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-1631166-2026",
+              "playerId": "1631166",
+              "franchiseId": "16",
+              "season": "2026-27",
+              "salary": 113055,
+              "capHit": 113055,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "salary-csv-carry-forward"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/1631166"
         },
         {
           "playerId": "1642866",
@@ -441,15 +464,15 @@
           "href": "/players/1642402"
         },
         {
-          "playerId": "4897438",
-          "playerName": "Trey Kaufman-Renn",
+          "playerId": "1641807",
+          "playerName": "Norchad Omier",
           "age": null,
-          "contractId": "cy-4897438-2026",
+          "contractId": "cy-1641807-2026",
           "contractType": "UNKNOWN",
           "years": [
             {
-              "contractId": "cy-4897438-2026",
-              "playerId": "4897438",
+              "contractId": "cy-1641807-2026",
+              "playerId": "1641807",
               "franchiseId": "16",
               "season": "2026-27",
               "salary": null,
@@ -461,7 +484,7 @@
             }
           ],
           "guaranteedTotal": null,
-          "href": "/players/4897438"
+          "href": "/players/1641807"
         },
         {
           "playerId": "1642389",
@@ -513,12 +536,12 @@
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 198972914,
-          "playersUnderContract": 14
+          "totalSalaryDollars": 200161265,
+          "playersUnderContract": 15
         }
       ],
-      "playerSalaryCommitments": 198972914,
-      "playersWithSalary": 14,
+      "playerSalaryCommitments": 200161265,
+      "playersWithSalary": 15,
       "playersWithoutSalary": 6
     },
     "draftAssets": {

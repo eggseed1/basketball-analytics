@@ -9,7 +9,8 @@ name: Daily player-viz runtime refresh
 # Cache + artifacts keep the live season across nights so a soft-fail does not
 # wipe yesterday's board and skip-if-unchanged can see prior gamesProcessed.
 #
-# Transactions, news headlines and the Movement Center are committed back to
+# Transactions, headlines, Reddit scores, the Movement Center, sentiment,
+# payrolls, front-office slices and the asset ledger are committed back to
 # main after each sync. RSS feeds only carry the last day or two, so the
 # headline store has to persist between runs, and committing keeps a manual
 # deploy from an up-to-date checkout from rolling the data back.
@@ -17,6 +18,9 @@ name: Daily player-viz runtime refresh
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token
 #   CLOUDFLARE_ACCOUNT_ID  — account id for wrangler / OpenNext
+# Optional (fan sentiment lane; skipped when unset):
+#   REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET  — Reddit "script" app credentials
+#   vars.REDDIT_USER_AGENT                  — repo variable, not a secret
 
 on:
   schedule:
@@ -94,6 +98,10 @@ jobs:
 
       - name: Daily runtime sync
         id: sync
+        env:
+          REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
+          REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
+          REDDIT_USER_AGENT: ${{ vars.REDDIT_USER_AGENT }}
         run: node scripts/daily-runtime-sync.mjs
 
       - name: Commit refreshed data
@@ -102,16 +110,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -- \
-            data/sentiment/ingest/v1/news \
+            data/sentiment/ingest/v1 \
+            data/sentiment/v1/snapshot.json \
+            src/data/runtime/sentiment-snapshot.json \
             data/movement-center/v1/snapshot.json \
             src/data/runtime/movement-snapshot.json \
             data/transactions/espn-site-v2/v1 \
-            src/data/runtime/transactions-snapshot.json
+            src/data/runtime/transactions-snapshot.json \
+            src/data/runtime/bref-team-contracts-snapshot.json \
+            data/front-office/v1 \
+            src/data/runtime/front-office-snapshot.json \
+            data/asset-ledger/v1 \
+            src/data/runtime/asset-ledger-snapshot.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
             exit 0
           fi
-          git commit -m "Nightly data refresh: transactions, headlines, Movement Center [skip ci]"
+          git commit -m "Nightly data refresh [skip ci]"
           for attempt in 1 2 3; do
             git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
             sleep $((attempt * 10))

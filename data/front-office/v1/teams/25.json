@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -349,6 +349,29 @@
           "href": "/players/5105800"
         },
         {
+          "playerId": "5116468",
+          "playerName": "Andrew Holifield",
+          "age": null,
+          "contractId": "cy-5116468-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-5116468-2026",
+              "playerId": "5116468",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/5116468"
+        },
+        {
           "playerId": "5174983",
           "playerName": "Aday Mara",
           "age": null,
@@ -372,6 +395,29 @@
           "href": "/players/5174983"
         },
         {
+          "playerId": "4685802",
+          "playerName": "Robert McCray V",
+          "age": null,
+          "contractId": "cy-4685802-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4685802-2026",
+              "playerId": "4685802",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4685802"
+        },
+        {
           "playerId": "5106270",
           "playerName": "Otega Oweh",
           "age": null,
@@ -393,6 +439,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/5106270"
+        },
+        {
+          "playerId": "4277923",
+          "playerName": "Zhaire Smith",
+          "age": null,
+          "contractId": "cy-4277923-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4277923-2026",
+              "playerId": "4277923",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4277923"
         },
         {
           "playerId": "5061603",
@@ -439,6 +508,29 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/5241364"
+        },
+        {
+          "playerId": "5109790",
+          "playerName": "Christoph Tilly",
+          "age": null,
+          "contractId": "cy-5109790-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-5109790-2026",
+              "playerId": "5109790",
+              "franchiseId": "25",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/5109790"
         }
       ],
       "futureCommitments": [
@@ -450,7 +542,7 @@
       ],
       "playerSalaryCommitments": 117607249,
       "playersWithSalary": 11,
-      "playersWithoutSalary": 6
+      "playersWithoutSalary": 10
     },
     "draftAssets": {
       "franchiseId": "25",

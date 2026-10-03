@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-25",
-    "retrievedAt": "2026-09-25T18:41:18.909Z",
+    "snapshotDate": "2026-10-03",
+    "retrievedAt": "2026-10-03T01:23:04.396Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
+    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -188,29 +188,6 @@
           "href": "/players/1641709"
         },
         {
-          "playerId": "203914",
-          "playerName": "Gary Harris",
-          "age": null,
-          "contractId": "cy-203914-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-203914-2026",
-              "playerId": "203914",
-              "franchiseId": "8",
-              "season": "2026-27",
-              "salary": 7500000,
-              "capHit": 7500000,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/203914"
-        },
-        {
           "playerId": "1631105",
           "playerName": "Jalen Duren",
           "age": null,
@@ -255,29 +232,6 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1630194"
-        },
-        {
-          "playerId": "1631111",
-          "playerName": "Wendell Moore Jr.",
-          "age": null,
-          "contractId": "cy-1631111-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1631111-2026",
-              "playerId": "1631111",
-              "franchiseId": "8",
-              "season": "2026-27",
-              "salary": 2537040,
-              "capHit": 2537040,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "salary-csv-carry-forward"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1631111"
         },
         {
           "playerId": "1629750",
@@ -508,18 +462,41 @@
           ],
           "guaranteedTotal": null,
           "href": "/players/1642449"
+        },
+        {
+          "playerId": "4592843",
+          "playerName": "Brice Williams",
+          "age": null,
+          "contractId": "cy-4592843-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4592843-2026",
+              "playerId": "4592843",
+              "franchiseId": "8",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4592843"
         }
       ],
       "futureCommitments": [
         {
           "season": "2026-27",
-          "totalSalaryDollars": 121180756,
-          "playersUnderContract": 13
+          "totalSalaryDollars": 111143716,
+          "playersUnderContract": 11
         }
       ],
-      "playerSalaryCommitments": 121180756,
-      "playersWithSalary": 13,
-      "playersWithoutSalary": 7
+      "playerSalaryCommitments": 111143716,
+      "playersWithSalary": 11,
+      "playersWithoutSalary": 8
     },
     "draftAssets": {
       "franchiseId": "8",
