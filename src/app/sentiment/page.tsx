@@ -1,12 +1,16 @@
-import { SentimentCenterView } from "@/components/sentiment/sentiment-center-view";
+import {
+  SentimentCenterView,
+  type SentimentView,
+} from "@/components/sentiment/sentiment-center-view";
 import { getLeagueSentimentBoard } from "@/data/queries/league-sentiment";
+import { listTeamSentimentProfiles } from "@/sentiment/load-curated";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Sentiment",
   description:
-    "League-wide fan and media sentiment — narrative collections including overrated player discourse.",
+    "Fan and media tone for NBA players and teams, from publisher headlines and curated prototype lanes, with the headlines behind each score.",
 };
 
 interface PageProps {
@@ -21,10 +25,15 @@ function one(
   return Array.isArray(v) ? v[0] : v;
 }
 
+function parseView(value: string | undefined): SentimentView {
+  return value === "players" || value === "teams" || value === "headlines" ? value : "league";
+}
+
 export default async function SentimentPage({ searchParams }: PageProps) {
   const sp = await searchParams;
   const narrative = one(sp, "narrative");
   const topic = one(sp, "topic");
+  const view = topic ? "players" : parseView(one(sp, "view"));
   const { feed, players } = await getLeagueSentimentBoard();
 
   if (!feed) {
@@ -42,6 +51,8 @@ export default async function SentimentPage({ searchParams }: PageProps) {
       <SentimentCenterView
         feed={feed}
         players={players}
+        teams={listTeamSentimentProfiles()}
+        view={view}
         highlightNarrative={narrative}
         highlightTopic={topic}
       />

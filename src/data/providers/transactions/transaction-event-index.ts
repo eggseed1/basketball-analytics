@@ -363,10 +363,10 @@ export async function buildTransactionEventCoverage(
     genealogyUiReady: false,
     notes: [
       "ESPN's historical transaction archive provides event-level free-text records. Some records describe only one side of a transaction.",
-      "DRBL does not infer player/pick consideration from free text.",
+      "Trade packages come from reading ESPN's text. When one team's entry lists an item the other team's entry leaves out, we mark it unconfirmed.",
       "When related source events can be safely connected (same date + reciprocal team mentions), DRBL may display them together as a source-event cluster.",
-      "Source-text categories are keyword classifications, not official ESPN enums — and do not imply a complete trade package.",
-      "Structured transactions / ownership edges: 0. Asset genealogy UI remains blocked (genealogyUiReady = false).",
+      "Source-text categories are keyword classifications, not official ESPN enums, and do not imply a complete trade package.",
+      "How They Got Him follows players and picks through these rows. There is no structured pick-ownership ledger yet, so pick histories can have gaps.",
       `Event index methodology v${TRANSACTION_EVENT_ARCHIVE_VERSION}.`,
     ],
   };

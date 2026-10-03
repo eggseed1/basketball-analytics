@@ -21,6 +21,8 @@ import {
   parsePlayerRaceRankEnd,
   parseVizScatterMinMinutes,
   playerRaceMetricLabel,
+  PLAYER_RACE_DEFAULT_FIELD_SIZE,
+  VIZ_SCATTER_DEFAULT_FIELD_SIZE,
   type PlayerRaceFieldSize,
 } from "@/lib/player-race-tracker";
 import { parseVizRankEnd } from "@/lib/viz-field-filter";
@@ -28,7 +30,7 @@ import { parseVizRankEnd } from "@/lib/viz-field-filter";
 export const metadata = {
   title: "Player visualizations",
   description:
-    "NBA player race charts and league scatters — usage, impact, shot diet, creation, FT pressure, glass, and scoring volume.",
+    "NBA player race charts and league scatters for usage, impact, shot diet, creation, FT pressure, glass, and scoring volume.",
 };
 
 interface PageProps {
@@ -60,9 +62,14 @@ function parseView(raw: string | undefined): VizView {
   return "race";
 }
 
-function parseVizFieldSize(raw: string | undefined): PlayerRaceFieldSize {
+function parseVizFieldSize(
+  raw: string | undefined,
+  view: VizView
+): PlayerRaceFieldSize {
   if (raw == null || raw === "") {
-    return "all";
+    return view === "race"
+      ? PLAYER_RACE_DEFAULT_FIELD_SIZE
+      : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
   }
   return parsePlayerRaceFieldSize(raw);
 }
@@ -83,7 +90,7 @@ export default async function PlayerVisualizationsPage({
         : currentSeason;
   const metric = parsePlayerRaceMetric(one(sp, "metric"));
   const metricLabel = playerRaceMetricLabel(metric).toLowerCase();
-  const fieldSize = parseVizFieldSize(one(sp, "top"));
+  const fieldSize = parseVizFieldSize(one(sp, "top"), view);
   const raceRankEnd = parsePlayerRaceRankEnd(one(sp, "end"), metric);
   const scatterKind =
     view === "diet" ||
@@ -130,10 +137,10 @@ export default async function PlayerVisualizationsPage({
 
   const subtitle =
     view === "usage"
-      ? `${season} · ${fieldBlurb}${minutesBlurb} — usage rate × true shooting. Pick a team or pin a player to highlight, or click a point to open their page.`
+      ? `${season} · ${fieldBlurb}${minutesBlurb} · usage rate × true shooting. Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
       : scatterMeta
-        ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Pick a team or pin a player to highlight, or click a point to open their page.`
-        : `${season} player race — ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster, or search to pin anyone.`;
+        ? `${season} · ${fieldBlurb}${minutesBlurb} · ${scatterMeta.blurb} Use the side leaders list, team highlight, or pin search, and click a point to open their page.`
+        : `${season} player race · ${fieldBlurb} by ${metricLabel}${minutesBlurb}. Rate stats show season levels; counting and season totals accumulate over time. Pick a team to highlight the roster, or search to pin anyone.`;
 
   return (
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">

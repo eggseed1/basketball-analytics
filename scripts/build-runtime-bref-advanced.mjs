@@ -41,6 +41,9 @@ const PG_START_YEARS = Array.from(
   (_, i) => windowAnchor - i
 );
 
+/** BRef blocks clients above ~20 requests/minute. */
+const BREF_DELAY_MS = Number(process.env.BREF_DELAY_MS || 3200);
+
 function canonicalSeason(startYear) {
   return `${startYear}-${String((startYear + 1) % 100).padStart(2, "0")}`;
 }
@@ -240,7 +243,7 @@ function mapPerGame(cells, playerName, teamAbbr) {
     n: playerName,
     t: teamAbbr,
     gp,
-    gs: Math.round(num(cells.get("gs"))),
+    gs: Math.round(num(cells.get("games_started") ?? cells.get("gs"))),
     age: round(num(cells.get("age")), 0) || undefined,
     pos: cells.get("pos") || undefined,
     mp: round(num(cells.get("mp_per_g") ?? cells.get("mp")), 1),
@@ -320,7 +323,9 @@ function advancedNeedsRatings(rows) {
 
 function perGameNeedsCounting(rows) {
   if (!rows?.length) return true;
-  return rows.every((r) => r.fgm == null && r.fga == null);
+  if (rows.every((r) => r.fgm == null && r.fga == null)) return true;
+  // BRef renamed `gs` → `games_started`; boards baked before that read 0 for everyone.
+  return rows.length >= 100 && rows.every((r) => !(r.gs > 0));
 }
 
 let previous = { version: SNAPSHOT_VERSION, seasons: {} };
@@ -380,7 +385,7 @@ for (const start of ADV_START_YEARS) {
   } catch (error) {
     console.log(`FAIL ${error instanceof Error ? error.message : error}`);
   }
-  await new Promise((r) => setTimeout(r, 1500));
+  await new Promise((r) => setTimeout(r, BREF_DELAY_MS));
 }
 
 for (const start of PG_START_YEARS) {
@@ -421,7 +426,7 @@ for (const start of PG_START_YEARS) {
   } catch (error) {
     console.log(`FAIL ${error instanceof Error ? error.message : error}`);
   }
-  await new Promise((r) => setTimeout(r, 1500));
+  await new Promise((r) => setTimeout(r, BREF_DELAY_MS));
 }
 
 for (const start of PG_START_YEARS) {
@@ -456,7 +461,7 @@ for (const start of PG_START_YEARS) {
   } catch (error) {
     console.log(`FAIL ${error instanceof Error ? error.message : error}`);
   }
-  await new Promise((r) => setTimeout(r, 1500));
+  await new Promise((r) => setTimeout(r, BREF_DELAY_MS));
 }
 
 const keepSeasons = new Set(

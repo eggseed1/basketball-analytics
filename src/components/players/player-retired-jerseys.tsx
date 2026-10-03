@@ -25,7 +25,9 @@ export function PlayerRetiredJerseys({
       aria-label="Retired jersey numbers"
     >
       {jerseys.map((jersey) => {
-        const title = `${jersey.teamAbbr} retired No. ${jersey.number} — ${jersey.playerName}`;
+        const title = jersey.honorary
+          ? `${jersey.teamAbbr} retired No. ${jersey.number} in honor of ${jersey.playerName}, who never played for the team`
+          : `${jersey.teamAbbr} retired No. ${jersey.number} · ${jersey.playerName}`;
         const href = `/teams/${encodeURIComponent(jersey.teamHrefId ?? jersey.teamKey)}`;
         return (
           <li key={`${jersey.teamKey}-${jersey.number}`}>
@@ -69,6 +71,11 @@ export function PlayerRetiredJerseys({
               <span className={cn(type.caption, "leading-none opacity-80")}>
                 {jersey.teamAbbr}
               </span>
+              {jersey.honorary ? (
+                <span className={cn(type.caption, "leading-none opacity-60")}>
+                  Honorary
+                </span>
+              ) : null}
             </TransitionLink>
           </li>
         );

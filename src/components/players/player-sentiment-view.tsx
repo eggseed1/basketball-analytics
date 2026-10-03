@@ -7,6 +7,12 @@ import {
 import { MovementRumorPanel } from "@/components/players/movement-rumor-panel";
 import { PlayerSentimentGraph } from "@/components/players/player-sentiment-graph";
 import { SentimentFanMediaGap } from "@/components/sentiment/sentiment-fan-media-gap";
+import {
+  formatSentimentDate,
+  LaneOriginTag,
+  laneOriginLabel,
+  sentimentPct,
+} from "@/components/sentiment/sentiment-source";
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import type { PlayerMovementBundle } from "@/movement-center/types";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
@@ -22,7 +28,6 @@ export function PlayerSentimentView({
   teamKey,
   sentimentProfile,
   movementBundle,
-  snapshotStatus,
   disclaimer,
   historicalBrand,
   honor,
@@ -55,8 +60,8 @@ export function PlayerSentimentView({
       <header className="flex flex-col gap-1">
         <h2 className={type.heading}>Sentiment & trade track</h2>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          Fan and media perception with movement context playing alongside —
-          separate from performance percentiles.
+          Fan and media perception alongside movement context, tracked
+          separately from performance percentiles.
         </p>
       </header>
 
@@ -70,47 +75,100 @@ export function PlayerSentimentView({
         >
           {sentimentProfile && hasSeries ? (
             <div className="grid gap-4 sm:grid-cols-2">
-              <SentimentTrendChart
-                label="Fan sentiment"
-                color="rgb(59 130 246)"
-                points={sentimentProfile.series?.fan ?? []}
-              />
-              <SentimentTrendChart
-                label="Media sentiment"
-                color="rgb(168 85 247)"
-                points={sentimentProfile.series?.media ?? []}
-              />
+              {sentimentProfile.fan ? (
+                <div className="flex flex-col gap-1.5">
+                  <LaneOriginTag lane={sentimentProfile.fan} className="self-start" />
+                  <SentimentTrendChart
+                    label="Fan sentiment"
+                    color="rgb(59 130 246)"
+                    points={sentimentProfile.series?.fan ?? []}
+                    countLabel="posts"
+                  />
+                </div>
+              ) : null}
+              {sentimentProfile.media ? (
+                <div className="flex flex-col gap-1.5">
+                  <LaneOriginTag lane={sentimentProfile.media} className="self-start" />
+                  <SentimentTrendChart
+                    label="Media sentiment"
+                    color="rgb(168 85 247)"
+                    points={sentimentProfile.series?.media ?? []}
+                    countLabel="headlines"
+                  />
+                </div>
+              ) : null}
             </div>
           ) : null}
 
           {sentimentProfile ? (
             <>
-              <SentimentFanMediaGap
-                fanScore={sentimentProfile.fan.score}
-                mediaScore={sentimentProfile.media.score}
-              />
+              {sentimentProfile.fan &&
+              sentimentProfile.media &&
+              (sentimentProfile.fan.origin === "curated") ===
+                (sentimentProfile.media.origin === "curated") ? (
+                <SentimentFanMediaGap
+                  fanScore={sentimentProfile.fan.score}
+                  mediaScore={sentimentProfile.media.score}
+                />
+              ) : sentimentProfile.fan && sentimentProfile.media ? (
+                <p className={cn(type.caption, "text-muted-foreground")}>
+                  No fan vs media gap here. The fan lane is{" "}
+                  {laneOriginLabel(sentimentProfile.fan.origin).toLowerCase()} and the media lane
+                  comes from {laneOriginLabel(sentimentProfile.media.origin).toLowerCase()}. They
+                  cover different periods and methods, so subtracting them would mislead.
+                </p>
+              ) : null}
               <PlayerSentimentGraph
                 playerName={playerName}
                 profile={sentimentProfile}
                 detailed
               />
+              {sentimentProfile.headlines?.length ? (
+                <div className="flex flex-col gap-2">
+                  <h3 className={cn(type.bodySm, "font-bold")}>Headlines behind the media score</h3>
+                  <ul className="flex flex-col gap-1.5">
+                    {sentimentProfile.headlines.map((headline) => (
+                      <li key={headline.url} className="flex items-start gap-2">
+                        <span
+                          className={cn(
+                            type.caption,
+                            "w-10 shrink-0 text-right font-semibold tabular-nums",
+                            headline.score >= 0.2
+                              ? "text-delta-up"
+                              : headline.score <= -0.2
+                                ? "text-delta-down"
+                                : "text-muted-foreground"
+                          )}
+                        >
+                          {sentimentPct(headline.score)}
+                        </span>
+                        <a
+                          href={headline.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className={cn(type.caption, "hover:underline")}
+                        >
+                          {headline.title}
+                          <span className="text-muted-foreground">
+                            {" "}
+                            · {headline.outlet}, {formatSentimentDate(headline.publishedAt)}
+                          </span>
+                        </a>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ) : null}
             </>
           ) : (
             <p className={cn(type.bodySm, "text-muted-foreground")}>
-              No sentiment coverage for {playerName} in the current prototype
-              snapshot. Trade track still pulls Movement Center evidence when
-              available.
+              No sentiment coverage for {playerName} yet. Media tone appears once 3 headlines name
+              him in a week. Trade track still pulls Movement Center evidence when available.
             </p>
           )}
 
           {disclaimer ? (
-            <p className={cn(type.caption, "text-muted-foreground")}>
-              {snapshotStatus === "CURATED_PROTOTYPE" ? "Prototype · " : ""}
-              {disclaimer}
-              {!sentimentProfile
-                ? " Deep charts load for players in the illustrative M1 seed."
-                : ""}
-            </p>
+            <p className={cn(type.caption, "text-muted-foreground")}>{disclaimer}</p>
           ) : null}
         </GlassSurface>
 

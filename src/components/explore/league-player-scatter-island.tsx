@@ -1,4 +1,4 @@
-import { LeaguePlayerScatterLazy } from "@/components/charts/recharts-lazy";
+import { LeaguePlayerScatterBoard } from "@/components/explore/league-viz-board";
 import { type } from "@/lib/design-system";
 import {
   buildLeagueScatterPoints,
@@ -54,12 +54,11 @@ export async function LeaguePlayerScatterIsland({
   const peers = await getFilteredPlayerSeasonsCached(season, 15).catch(
     () => []
   );
-  const teamPlayerIds = new Set(
-    peers
-      .filter((row) => playerMatchesAnyVizTeam(row, teamKeys))
-      .map((row) => row.playerId)
-  );
-  const highlightIds = new Set([...pinIds, ...teamPlayerIds]);
+  const teamPlayerIds = peers
+    .filter((row) => playerMatchesAnyVizTeam(row, teamKeys))
+    .map((row) => row.playerId);
+  const teamPlayerIdSet = new Set(teamPlayerIds);
+  const highlightIds = new Set([...pinIds, ...teamPlayerIdSet]);
   const built = buildLeagueScatterPoints(peers, kind, highlightIds, {
     forceIncludeIds: highlightIds,
     minMinutes,
@@ -94,11 +93,13 @@ export async function LeaguePlayerScatterIsland({
   }
 
   return (
-    <LeaguePlayerScatterLazy
+    <LeaguePlayerScatterBoard
       kind={kind}
       points={points}
       season={season}
       playerName={pinLabel}
+      rankEnd={resolvedRankEnd}
+      teamPlayerIds={teamPlayerIds}
       highlightLabel="pin"
     />
   );

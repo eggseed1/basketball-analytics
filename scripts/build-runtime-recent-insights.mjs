@@ -82,18 +82,52 @@ async function main() {
   const dates = [...new Set(finals.map((g) => g.gameDate))].sort((a, b) =>
     b.localeCompare(a)
   );
-  /** Expand from newest date until we have enough games (or 10 dates). */
-  const selectedDates = [];
-  let slateGames = [];
-  for (const d of dates) {
-    selectedDates.push(d);
-    slateGames = finals.filter((g) => selectedDates.includes(g.gameDate));
-    if (slateGames.length >= 6 || selectedDates.length >= 5) break;
+  const LIMIT = 6;
+  const MAX_DATES = 10;
+  /** Expand from newest date until we have enough games (or 5 dates). */
+  let dateCount = 0;
+  while (dateCount < dates.length) {
+    dateCount += 1;
+    const n = finals.filter((g) => dates.slice(0, dateCount).includes(g.gameDate)).length;
+    if (n >= 6 || dateCount >= 5) break;
   }
-  const dateSet = new Set(selectedDates);
+
+  /** Widen further only when the window cannot fill every card. */
+  let built = buildForDates(dates.slice(0, dateCount));
+  while (built.insights.length < LIMIT && dateCount < Math.min(MAX_DATES, dates.length)) {
+    dateCount += 1;
+    built = buildForDates(dates.slice(0, dateCount));
+  }
+  const { insights, selectedDates, slateInputs, lines } = built;
   console.log(
-    `[recent-insights] slate dates ${selectedDates.join(", ")} (${slateGames.length} games)`
+    `[recent-insights] slate dates ${selectedDates.join(", ")} (${slateInputs.length} games)`
   );
+
+  const out = {
+    version: 2,
+    generatedAt: new Date().toISOString(),
+    season,
+    slateDates: selectedDates,
+    gameCount: slateInputs.length,
+    lineCount: lines.length,
+    insights,
+  };
+
+  const dest = path.join(
+    ROOT,
+    "src/data/runtime/recent-insights-snapshot.json"
+  );
+  fs.writeFileSync(dest, `${JSON.stringify(out)}\n`);
+  console.log(
+    `[recent-insights] wrote ${insights.length} cards → ${dest} (${lines.length} lines)`
+  );
+  for (const i of insights) {
+    console.log(`  · ${i.category} | ${i.headline}`);
+  }
+
+  function buildForDates(selectedDates) {
+  const slateGames = finals.filter((g) => selectedDates.includes(g.gameDate));
+  const dateSet = new Set(selectedDates);
 
   const logDir = path.join(ROOT, "public/runtime/player-game-logs", season);
   const files = fs.readdirSync(logDir).filter((f) => f.endsWith(".json"));
@@ -200,29 +234,10 @@ async function main() {
     games: slateInputs,
     lines: lines.filter((l) => gameById.has(l.gameId)),
     recentByPlayer,
-    limit: 6,
+    limit: LIMIT,
   });
 
-  const out = {
-    version: 1,
-    generatedAt: new Date().toISOString(),
-    season,
-    slateDates: selectedDates,
-    gameCount: slateInputs.length,
-    lineCount: lines.length,
-    insights,
-  };
-
-  const dest = path.join(
-    ROOT,
-    "src/data/runtime/recent-insights-snapshot.json"
-  );
-  fs.writeFileSync(dest, `${JSON.stringify(out)}\n`);
-  console.log(
-    `[recent-insights] wrote ${insights.length} cards → ${dest} (${lines.length} lines)`
-  );
-  for (const i of insights) {
-    console.log(`  · ${i.category} | ${i.headline}`);
+  return { insights, selectedDates, slateInputs, lines };
   }
 }
 

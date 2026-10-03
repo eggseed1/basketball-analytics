@@ -278,8 +278,8 @@ export function PlayerSavantSummary({
             </h2>
             <p className="text-sm text-muted-foreground">
               {inTimeline
-                ? "Career playback - markers move with this player’s growth or decline."
-                : "Savant-style value and skill percentiles - Poor ← Average → Great."}
+                ? "Career playback: markers move with this player’s growth or decline."
+                : "Savant-style value and skill percentiles (Poor ← Average → Great)."}
             </p>
           </div>
 

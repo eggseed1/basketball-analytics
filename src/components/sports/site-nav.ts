@@ -142,23 +142,18 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
     label: "Sentiment",
     match: (p) => p.startsWith("/sentiment"),
     subnav: [
-      {
-        href: "/sentiment",
-        label: "League board",
-        match: (p) => p === "/sentiment" || p.startsWith("/sentiment?"),
-      },
-      {
-        href: "/sentiment?narrative=overrated",
-        label: "Overrated watch",
-        match: (p) => p.startsWith("/sentiment"),
-      },
+      { href: "/sentiment", label: "League board" },
+      { href: "/sentiment?view=players", label: "Players" },
+      { href: "/sentiment?view=teams", label: "Teams" },
+      { href: "/sentiment?view=headlines", label: "Headlines" },
+      { href: "/sentiment?narrative=overrated", label: "Overrated watch" },
     ],
   },
   {
     id: "transactions",
     href: "/offseason",
     label: "Transactions",
-    match: (p) => p.startsWith("/offseason") || p.startsWith("/movement"),
+    match: (p) => p.startsWith("/offseason") || p.startsWith("/movement") || p.startsWith("/acquisitions"),
     subnav: [
       {
         href: "/offseason",
@@ -169,6 +164,11 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
         href: "/movement",
         label: "Movement Center",
         match: (p) => p.startsWith("/movement"),
+      },
+      {
+        href: "/acquisitions",
+        label: "How They Got Him",
+        match: (p) => p.startsWith("/acquisitions"),
       },
     ],
   },

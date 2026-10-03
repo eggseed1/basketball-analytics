@@ -41,6 +41,12 @@ export function getBundledCurrentTeamId(
   return getBundledCurrentRosterEntry(playerId)?.teamId ?? null;
 }
 
+export function bundledRosterPlayerIds(teamId: string): string[] {
+  return Object.entries(players)
+    .filter(([, row]) => String(row?.teamId) === teamId)
+    .map(([id]) => id);
+}
+
 /** Try several known ids (ESPN, NBA, route) for a current-team hit. */
 export function resolveBundledCurrentTeamId(
   ...playerIds: Array<string | null | undefined>

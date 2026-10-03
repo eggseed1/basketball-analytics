@@ -676,7 +676,7 @@ export function AskDrblView({
         <p className="max-w-2xl text-[16px] text-muted-foreground">
           {hasResult
             ? "Ask another question, or refine with the structured builder."
-            : "Natural language or a guided builder - both use the same trusted query engine. Not a chatbot."}
+            : "Type a question or use the guided builder. Both run the same query engine. This is not a chatbot."}
         </p>
       </header>
 

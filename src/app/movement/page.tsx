@@ -1,6 +1,10 @@
 import { MovementCenterView } from "@/components/movement/movement-center-view";
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
-import { getMovementCluster, getMovementFeed } from "@/data/queries/movement-center.server";
+import {
+  getMovementCluster,
+  getMovementFeed,
+  getMovementPlayerIdSet,
+} from "@/data/queries/movement-center.server";
 import { type } from "@/lib/design-system";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,7 +12,7 @@ import { notFound } from "next/navigation";
 export const metadata = {
   title: "Movement Center",
   description:
-    "Evidence-backed NBA movement reporting — separate from official transactions.",
+    "NBA trade and contract reporting from publisher headlines, scored for evidence and linked to the transactions that followed.",
 };
 
 interface PageProps {
@@ -28,7 +32,7 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
   const clusterId = one(sp, "cluster");
   const playerId = one(sp, "player");
 
-  const feed = getMovementFeed();
+  const feed = await getMovementFeed();
   if (!feed) {
     return (
       <main className="site-shell py-8">
@@ -38,7 +42,7 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
   }
 
   if (clusterId) {
-    const item = getMovementCluster(clusterId);
+    const item = await getMovementCluster(clusterId);
     if (!item) notFound();
     return (
       <main className="site-shell flex flex-col gap-4 py-6 sm:py-8">
@@ -51,23 +55,24 @@ export default async function MovementCenterPage({ searchParams }: PageProps) {
           cluster={item.cluster}
           claims={item.claims}
           score={item.score}
+          showAllClaims
         />
       </main>
     );
   }
 
-  const items = playerId
-    ? feed.items.filter((i) => i.cluster.linkedPlayerIds.includes(playerId))
+  const playerIds = playerId ? await getMovementPlayerIdSet(playerId) : null;
+  const items = playerIds
+    ? feed.items.filter((i) => i.cluster.linkedPlayerIds.some((id) => playerIds.has(id)))
     : feed.items;
 
   return (
     <main className="site-shell py-6 sm:py-8">
       <MovementCenterView
         feed={items}
-        season={feed.season}
-        disclaimer={feed.disclaimer}
-        status={feed.status}
-        highlightPlayerId={playerId}
+        meta={feed.meta}
+        highlightPlayerIds={playerIds ? [...playerIds] : undefined}
+        filtered={Boolean(playerIds)}
       />
     </main>
   );

@@ -64,7 +64,7 @@ export function GameBoxScoreTables({
       )}
 
       <BoxScoreSection
-        heading={`${awayLabel} — traditional`}
+        heading={`${awayLabel} · traditional`}
         players={awayPlayers}
         mode="traditional"
         contextIndex={contextIndex}
@@ -72,7 +72,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${homeLabel} — traditional`}
+        heading={`${homeLabel} · traditional`}
         players={homePlayers}
         mode="traditional"
         contextIndex={contextIndex}
@@ -80,7 +80,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${awayLabel} — advanced`}
+        heading={`${awayLabel} · advanced`}
         players={awayPlayers}
         mode="advanced"
         contextIndex={contextIndex}
@@ -88,7 +88,7 @@ export function GameBoxScoreTables({
         onToggle={(id) => setOpenId((cur) => (cur === id ? null : id))}
       />
       <BoxScoreSection
-        heading={`${homeLabel} — advanced`}
+        heading={`${homeLabel} · advanced`}
         players={homePlayers}
         mode="advanced"
         contextIndex={contextIndex}

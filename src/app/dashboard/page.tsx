@@ -49,7 +49,7 @@ export default async function DashboardPage({
           <h1 className="text-3xl font-semibold tracking-tight">Dashboard</h1>
           <p className="max-w-2xl text-sm text-muted-foreground">
             Histograms, categorical bars, and scatters with chart-to-chart
-            filtering - click bars to keep matching players across every board.
+            filtering. Click bars to keep matching players across every board.
             Prefer{" "}
             <Link
               href="/explore/players"

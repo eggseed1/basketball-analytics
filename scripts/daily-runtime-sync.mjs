@@ -12,7 +12,8 @@
  * DRBL numbers move when finals accumulate: nightly recompute refreshes the
  * precomputed artifact, then the overlay bake ships it. Not live per tip-off.
  *
- * Offseason (before ~Oct 15 / after Finals): transactions only unless FORCE_DAILY=1.
+ * Every run also refreshes transactions, news headlines and the Movement Center.
+ * Offseason (before ~Oct 15 / after Finals): only those unless FORCE_DAILY=1.
  *
  *   node scripts/daily-runtime-sync.mjs
  *   FORCE_DAILY=1 node scripts/daily-runtime-sync.mjs
@@ -74,6 +75,67 @@ function run(command, args, env = {}) {
   });
 }
 
+/** Headlines → Movement Center. Runs after transactions so stories can resolve against them. */
+const MOVEMENT_STEPS = [
+  { label: "news-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-news.ts"] },
+  { label: "movement-build", cmd: "npx", args: ["tsx", "scripts/movement-build-snapshot.ts"] },
+  { label: "movement-snapshot", cmd: "node", args: ["scripts/build-runtime-movement-snapshot.mjs"] },
+];
+
+/**
+ * Publisher feeds flake. A failed news fetch still rebuilds from stored
+ * headlines and the live ESPN ledger; a failed build keeps the last snapshot.
+ */
+async function runMovementSteps() {
+  const done = [];
+  let failed = null;
+  for (const step of MOVEMENT_STEPS) {
+    try {
+      await run(step.cmd, step.args);
+      done.push(step.label);
+    } catch (error) {
+      log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      failed ??= step.label;
+      if (step.label !== "news-ingest") break;
+    }
+  }
+  return { done, failed };
+}
+
+/** ESPN flakes too. Workers overlay the live feed, so a stale archive is survivable. */
+const TRANSACTION_STEPS = [
+  {
+    label: "transactions",
+    cmd: "npx",
+    args: [
+      "tsx",
+      "scripts/ingest-espn-transactions.ts",
+      "--from",
+      String(now.getUTCFullYear()),
+      "--to",
+      String(now.getUTCFullYear()),
+    ],
+  },
+  {
+    label: "transactions-snapshot",
+    cmd: "node",
+    args: ["scripts/build-runtime-transactions-snapshot.mjs"],
+  },
+];
+const SOFT_FAIL = new Set(["drbl-recompute", ...TRANSACTION_STEPS.map((s) => s.label)]);
+
+async function runTransactionSteps() {
+  for (const step of TRANSACTION_STEPS) {
+    try {
+      await run(step.cmd, step.args);
+    } catch (error) {
+      log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
+      return step.label;
+    }
+  }
+  return null;
+}
+
 async function main() {
   const started = Date.now();
   log(
@@ -83,21 +145,14 @@ async function main() {
   if (!info.shouldRefreshPlayerViz && !FORCE) {
     // Waivers and signings continue in the offseason. Refresh the ESPN
     // transaction archive even when player-viz bakes wait for tip-off.
-    // Cloudflare serves the baked snapshot; live ESPN overlay times out there.
-    const year = String(now.getUTCFullYear());
-    await run("npx", [
-      "tsx",
-      "scripts/ingest-espn-transactions.ts",
-      "--from",
-      year,
-      "--to",
-      year,
-    ]);
-    await run("node", ["scripts/build-runtime-transactions-snapshot.mjs"]);
+    const transactionsFailed = await runTransactionSteps();
+    const movement = await runMovementSteps();
     const report = {
       ok: true,
       skipped: false,
-      reason: "offseason — refreshed transactions only",
+      reason: "offseason: refreshed transactions and movement center",
+      movement,
+      softFailed: [transactionsFailed, movement.failed].filter(Boolean),
       phase: info.phase,
       season: info.season,
       shouldDeploy: true,
@@ -190,23 +245,7 @@ async function main() {
       cmd: "node",
       args: ["scripts/build-runtime-cf-assets.mjs"],
     },
-    {
-      label: "transactions",
-      cmd: "npx",
-      args: [
-        "tsx",
-        "scripts/ingest-espn-transactions.ts",
-        "--from",
-        String(now.getUTCFullYear()),
-        "--to",
-        String(now.getUTCFullYear()),
-      ],
-    },
-    {
-      label: "transactions-snapshot",
-      cmd: "node",
-      args: ["scripts/build-runtime-transactions-snapshot.mjs"],
-    },
+    ...TRANSACTION_STEPS,
   ];
 
   const completed = [];
@@ -217,7 +256,7 @@ async function main() {
       completed.push(step.label);
     } catch (error) {
       // Keep BRef / logs / standings moving if Stats NBA flakes on DRBL.
-      if (step.label === "drbl-recompute") {
+      if (SOFT_FAIL.has(step.label)) {
         log(
           `soft-fail ${step.label}: ${
             error instanceof Error ? error.message : String(error)
@@ -229,6 +268,9 @@ async function main() {
       throw error;
     }
   }
+  const movement = await runMovementSteps();
+  completed.push(...movement.done);
+  if (movement.failed) softFailed.push(movement.failed);
 
   const report = {
     ok: true,
@@ -238,6 +280,7 @@ async function main() {
     minGp,
     force: FORCE,
     steps: completed,
+    movement,
     softFailed,
     shouldDeploy: true,
     generatedAt: new Date().toISOString(),

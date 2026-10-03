@@ -1,4 +1,5 @@
 import { SentimentAssociationNote } from "@/components/sentiment/sentiment-association-note";
+import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import type { CuratedSentimentLane, SentimentProfileProvenance } from "@/sentiment/curated-types";
 import type { SentimentPolarity } from "@/sentiment/types";
 import { type } from "@/lib/design-system";
@@ -12,6 +13,8 @@ function provenanceLabel(provenance?: SentimentProfileProvenance): string | null
       return "Observation-backed";
     case "generated":
       return "Pilot sample";
+    case "ingest":
+      return "From headlines";
     default:
       return null;
   }
@@ -69,21 +72,38 @@ function SentimentLaneChart({
   topicLimit = 2,
 }: {
   label: string;
-  lane: CuratedSentimentLane;
+  lane?: CuratedSentimentLane;
   topicLimit?: number;
 }) {
+  if (!lane) {
+    return (
+      <div className="flex flex-col gap-1 rounded-md border border-dashed border-border/60 px-2 py-2">
+        <p className={cn(type.caption, "font-semibold")}>{label}</p>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          No source has enough coverage yet, so this lane is blank rather than neutral.
+        </p>
+      </div>
+    );
+  }
   const color = polarityColor(lane.polarity);
   const topTopics = Object.entries(lane.topicBreakdown)
     .sort((a, b) => b[1] - a[1])
     .slice(0, topicLimit);
+  const unit = lane.origin === "headlines" ? "headlines" : lane.origin === "reddit" ? "posts" : "mentions";
+  const showDirection = lane.origin === "curated" || lane.origin == null || lane.priorScore != null;
 
   return (
     <div className="flex flex-col gap-2 rounded-md border border-border/60 frost-surface-soft px-2 py-2">
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <p className={cn(type.caption, "font-semibold")}>{label}</p>
-        <p className={cn(type.caption, "capitalize text-muted-foreground")}>
-          {lane.direction}
-        </p>
+        <span className="flex items-center gap-1.5">
+          {showDirection ? (
+            <span className={cn(type.caption, "capitalize text-muted-foreground")}>
+              {lane.direction}
+            </span>
+          ) : null}
+          <LaneOriginTag lane={lane} />
+        </span>
       </div>
 
       <div className="relative mt-1 h-7">
@@ -117,7 +137,7 @@ function SentimentLaneChart({
       </div>
 
       <p className={cn(type.caption, "text-muted-foreground")}>
-        {lane.mentionVolume.toLocaleString()} mentions ·{" "}
+        {lane.mentionVolume.toLocaleString()} {unit} ·{" "}
         {Math.round(lane.coverageConfidence * 100)}% coverage
       </p>
 
@@ -161,8 +181,8 @@ export function PlayerSentimentGraph({
   profile?: {
     window: string;
     provenance?: SentimentProfileProvenance;
-    fan: CuratedSentimentLane;
-    media: CuratedSentimentLane;
+    fan?: CuratedSentimentLane;
+    media?: CuratedSentimentLane;
     association?: {
       explanation: string;
       eventKind?: string;
@@ -176,7 +196,7 @@ export function PlayerSentimentGraph({
     if (detailed) return null;
     return (
       <p className={cn(type.caption, "text-muted-foreground")}>
-        No sentiment coverage for {playerName} in the current prototype snapshot.
+        No sentiment coverage for {playerName} yet.
       </p>
     );
   }

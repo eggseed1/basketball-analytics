@@ -147,6 +147,9 @@
   --team-secondary: transparent;
   --team-accent-soft: color-mix(in oklab, var(--team-primary) 14%, transparent);
 
+  /* 0% light, 100% dark: lets TS-built color-mix() strings resolve per theme. */
+  --surface-dark-mix: 0%;
+
   /* ── Density ── */
   --density-comfortable-row: 40px;
   --density-compact-row: 32px;
@@ -154,26 +157,27 @@
 }
 
 .dark {
+  --surface-dark-mix: 100%;
   --surface-scrim: rgb(0 0 0 / 55%);
   --surface-hover: color-mix(in oklab, var(--foreground) 8%, var(--card));
   --surface-active: color-mix(in oklab, var(--foreground) 12%, var(--card));
 
   /* Nested glass: opaque-enough secondary fills (mirror light white frosts). */
-  --material-subtle-bg: rgb(44 44 46 / 78%);
-  --material-subtle-border: rgb(255 255 255 / 12%);
+  --material-subtle-bg: rgb(var(--glass-raised-rgb) / 78%);
+  --material-subtle-border: rgb(255 255 255 / 10%);
   --material-subtle-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 10%),
+    inset 0 1px 0 rgb(255 255 255 / 8%),
     0 1px 2px rgb(0 0 0 / 30%);
 
-  --material-standard-bg: rgb(28 28 30 / 72%);
-  --material-standard-border: rgb(255 255 255 / 14%);
+  --material-standard-bg: rgb(var(--glass-rgb) / 72%);
+  --material-standard-border: rgb(255 255 255 / 11%);
   --material-standard-shadow:
-    inset 0 1px 0 rgb(255 255 255 / 12%),
+    inset 0 1px 0 rgb(255 255 255 / 9%),
     0 1px 2px rgb(0 0 0 / 40%),
     0 12px 32px rgb(0 0 0 / 36%);
 
-  --material-elevated-bg: rgb(44 44 46 / 88%);
-  --material-elevated-border: rgb(255 255 255 / 14%);
+  --material-elevated-bg: rgb(var(--glass-raised-rgb) / 88%);
+  --material-elevated-border: rgb(255 255 255 / 12%);
   --material-elevated-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
     0 1px 2px rgb(0 0 0 / 45%),
@@ -185,16 +189,24 @@
   --shadow-lg: 0 4px 10px rgb(0 0 0 / 50%), 0 18px 44px rgb(0 0 0 / 42%);
   --shadow-overlay: 0 12px 28px rgb(0 0 0 / 55%), 0 28px 56px rgb(0 0 0 / 48%);
 
-  --accent-positive: #30d158;
-  --accent-negative: #ff453a;
-  --accent-warning: #ff9f0a;
-  --accent-info: #0a84ff;
-  --accent-elite: #ff453a;
+  /* Semantic hues lifted in lightness and eased in chroma so they read on the
+     tinted canvas without vibrating (pure sRGB-max greens/reds glow on dark). */
+  --accent-positive: #3fd26a;
+  --accent-negative: #ff6b61;
+  --accent-warning: #ffa726;
+  --accent-info: #3d94ff;
+  --accent-elite: #ff6b61;
 
-  --offense-positive: #30d158;
-  --offense-negative: #ff453a;
-  --defense-positive: #30d158;
-  --defense-negative: #ff453a;
+  --offense-positive: #3fd26a;
+  --offense-negative: #ff6b61;
+  --defense-positive: #3fd26a;
+  --defense-negative: #ff6b61;
+
+  --percentile-poor: rgb(74, 144, 226);
+  --percentile-weak: rgb(120, 186, 245);
+  --percentile-average: rgb(128, 138, 156);
+  --percentile-strong: rgb(240, 150, 150);
+  --percentile-elite: rgb(235, 80, 80);
 }
 
 @media (min-width: 640px) {

@@ -4,7 +4,7 @@ export default function Loading() {
   return (
     <DestinationLoadingFrame
       title="Time Machine"
-      subtitle="Season, date, and era theme stay coherent while the snapshot loads."
+      subtitle="Loading the snapshot for this season and date."
     />
   );
 }

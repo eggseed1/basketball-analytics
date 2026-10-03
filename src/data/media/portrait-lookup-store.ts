@@ -6,6 +6,8 @@
  * virtual `node:fs` does not mount OpenNext traced files, so disk reads return
  * empty and every headshot falls through to initials.
  */
+import legendPortraitsJson from "@/data/media/legend-portraits.json";
+import portraitFallbacksJson from "@/data/media/portrait-fallbacks.json";
 import portraitLookupJson from "@/data/media/portrait-lookup.json";
 
 export type PortraitLookupFile = {
@@ -17,6 +19,15 @@ export type PortraitLookupFile = {
 const file = portraitLookupJson as PortraitLookupFile;
 const portraits: Record<string, string> =
   file?.portraits && typeof file.portraits === "object" ? file.portraits : {};
+/** Routes the registry misses (scripts/build-player-photo-fallbacks.ts). */
+const fallbacks: Record<string, string> =
+  (portraitFallbacksJson as { portraits?: Record<string, string> }).portraits ?? {};
+/**
+ * Playing-days photos for pre-1996-97 players (scripts/build-legend-portraits.ts).
+ * Wins over the registry, whose legend entries are often post-career shots.
+ */
+const legends: Record<string, string> =
+  (legendPortraitsJson as { portraits?: Record<string, string> }).portraits ?? {};
 
 export function loadPortraitLookup(): PortraitLookupFile | null {
   if (!Object.keys(portraits).length) return null;
@@ -32,17 +43,28 @@ export function clearPortraitLookupCache() {
   // Bundled map is immutable for the Worker lifetime.
 }
 
-export function lookupApprovedPortraitUrl(
-  ...ids: Array<string | null | undefined>
+function lookupIn(
+  map: Record<string, string>,
+  ids: Array<string | null | undefined>
 ): string | null {
   for (const id of ids) {
     if (!id) continue;
     const key = String(id);
-    const url =
-      portraits[key] ??
-      portraits[`espn:${key}`] ??
-      null;
+    const url = map[key] ?? map[`espn:${key}`] ?? null;
     if (url) return url;
   }
   return null;
+}
+
+/** Main registry only (what scripts/build-player-photo-fallbacks.ts fills around). */
+export function lookupRegistryPortraitUrl(
+  ...ids: Array<string | null | undefined>
+): string | null {
+  return lookupIn(portraits, ids);
+}
+
+export function lookupApprovedPortraitUrl(
+  ...ids: Array<string | null | undefined>
+): string | null {
+  return lookupIn(legends, ids) ?? lookupIn(portraits, ids) ?? lookupIn(fallbacks, ids);
 }

@@ -265,7 +265,7 @@ export function parseTradeSides(description: string): ParsedTradeSides {
 
   {
     const m = d.match(
-      /(?:^|[.]\s*)Traded\s+(.+?)\s+to\s+(?:the\s+)?(.+?)\s+for\s+(.+?)(?:\.|$)/i
+      /(?:^|[.]\s*)Traded\s+(.+?)\s+to\s+(?:the\s+)?(.+?)\s+for\s+(.+?)(?:(?<!\b(?:Jr|Sr|[A-Z]))\.(?=\s|$)|$)/i
     );
     if (m) {
       return {
@@ -281,7 +281,7 @@ export function parseTradeSides(description: string): ParsedTradeSides {
     const m = lastMatch(
       d,
       new RegExp(
-        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+in exchange for\\s+(.+?)(?:\\.|$)`,
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+in exchange for\\s+(.+?)(?:(?<!\\b(?:Jr|Sr|[A-Z]))\\.(?=\\s|$)|$)`,
         "i"
       )
     );
@@ -300,7 +300,7 @@ export function parseTradeSides(description: string): ParsedTradeSides {
     const m = lastMatch(
       d,
       new RegExp(
-        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+for\\s+(.+?)(?:\\.|$)`,
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+from\\s+([^,.]+?)\\s+for\\s+(.+?)(?:(?<!\\b(?:Jr|Sr|[A-Z]))\\.(?=\\s|$)|$)`,
         "i"
       )
     );
@@ -318,7 +318,7 @@ export function parseTradeSides(description: string): ParsedTradeSides {
   {
     const m = d.match(
       new RegExp(
-        `${ACQUIRE_VERB}\\s+(.+?)\\s+in a sign-and-trade deal with\\s+(.+?)\\s+for\\s+(.+?)(?:\\.|$)`,
+        `${ACQUIRE_VERB}\\s+(.+?)\\s+in a sign-and-trade deal with\\s+(.+?)\\s+for\\s+(.+?)(?:(?<!\\b(?:Jr|Sr|[A-Z]))\\.(?=\\s|$)|$)`,
         "i"
       )
     );

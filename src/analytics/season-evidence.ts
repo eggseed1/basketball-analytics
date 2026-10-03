@@ -70,10 +70,10 @@ export const SEASON_EVIDENCE_CATEGORIES: SeasonEvidenceCategoryDef[] = [
 
 /** Documented as unavailable without per-game team box aggregates. */
 export const SEASON_EVIDENCE_UNSUPPORTED = [
-  "Best / worst eFG% or TS% game - not on schedule rows; requires box/Game Lab aggregates.",
-  "Best rebounding game - no team game rebound fields on GameSummary.",
-  "Turnover differential - not on GameSummary.",
-  "Pace / possessions / win probability / PBP importance - not available.",
+  "Best / worst eFG% or TS% game: not on schedule rows; requires box/Game Lab aggregates.",
+  "Best rebounding game: no team game rebound fields on GameSummary.",
+  "Turnover differential: not on GameSummary.",
+  "Pace / possessions / win probability / PBP importance: not available.",
 ] as const;
 
 export type SeasonEvidenceMethodology = {
@@ -249,6 +249,7 @@ function perspective(
 
 function isEligibleFinal(game: GameSummary): boolean {
   if (game.gameType && game.gameType !== "regular") return false;
+  if (game.cupChampionship) return false;
   if (game.status && game.status !== "final") return false;
   if (game.homeScore === 0 && game.awayScore === 0) return false;
   return true;

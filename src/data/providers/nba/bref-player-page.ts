@@ -57,6 +57,15 @@ export type BrefCountingRow = {
   threePointPct: number | null;
   freeThrowPct: number | null;
   effectiveFieldGoalPct: number | null;
+  fieldGoalsMade?: number | null;
+  fieldGoalsAttempted?: number | null;
+  threePointersMade?: number | null;
+  threePointersAttempted?: number | null;
+  freeThrowsMade?: number | null;
+  freeThrowsAttempted?: number | null;
+  offensiveRebounds?: number | null;
+  defensiveRebounds?: number | null;
+  personalFouls?: number | null;
 };
 
 export type BrefPlayerAdvancedRow = {
@@ -76,6 +85,17 @@ export type BrefPlayerAdvancedRow = {
   winShares: number | null;
   offensiveRating: number | null;
   defensiveRating: number | null;
+  offensiveReboundPct?: number | null;
+  defensiveReboundPct?: number | null;
+  stealPct?: number | null;
+  blockPct?: number | null;
+  threePointAttemptRate?: number | null;
+  freeThrowRate?: number | null;
+  offensiveWinShares?: number | null;
+  defensiveWinShares?: number | null;
+  winSharesPer48?: number | null;
+  offensiveBpm?: number | null;
+  defensiveBpm?: number | null;
 };
 
 export type BrefStatBundle = {
@@ -134,6 +154,12 @@ function optionalRate(raw: string | undefined): number | null {
   return n > 1 ? n / 100 : n;
 }
 
+/** Columns BRef always publishes on a 0-100 scale (AST%, BLK%, USG%, …). */
+function optionalPercent(raw: string | undefined): number | null {
+  const n = optionalNum(raw);
+  return n == null ? null : n / 100;
+}
+
 function normalizeTeam(raw: string): { teamAbbr: string; combined: boolean } {
   const teamAbbr = raw.toUpperCase().trim();
   if (isBrefCombinedTeam(teamAbbr)) {
@@ -177,6 +203,10 @@ function parseCountingTable(
   const table = extractTable(html, tableId);
   if (!table) return [];
   const rows: BrefCountingRow[] = [];
+  // Every counting column shares the table's suffix: "", "_per_g", ….
+  const suffix = keys.pts.replace(/^pts/, "");
+  const stat = (cells: Map<string, string>, key: string) =>
+    optionalNum(cells.get(`${key}${suffix}`));
   for (const rowMatch of table.matchAll(/<tr[^>]*>([\s\S]*?)<\/tr>/gi)) {
     const cells = cellMap(rowMatch[1] ?? "");
     const season = cells.get("year_id") ?? "";
@@ -186,6 +216,15 @@ function parseCountingTable(
     if (!teamRaw) continue;
     const { teamAbbr, combined } = normalizeTeam(teamRaw);
     rows.push({
+      fieldGoalsMade: stat(cells, "fg"),
+      fieldGoalsAttempted: stat(cells, "fga"),
+      threePointersMade: stat(cells, "fg3"),
+      threePointersAttempted: stat(cells, "fg3a"),
+      freeThrowsMade: stat(cells, "ft"),
+      freeThrowsAttempted: stat(cells, "fta"),
+      offensiveRebounds: stat(cells, "orb"),
+      defensiveRebounds: stat(cells, "drb"),
+      personalFouls: stat(cells, "pf"),
       season,
       teamAbbr,
       combined,
@@ -232,15 +271,26 @@ function parseAdvancedTable(
       gamesPlayed: optionalNum(cells.get("games") ?? cells.get("g")),
       per: optionalNum(cells.get("per")),
       trueShootingPct: optionalRate(cells.get("ts_pct")),
-      usagePct: optionalRate(cells.get("usg_pct")),
-      turnoverPct: optionalRate(cells.get("tov_pct")),
-      assistPct: optionalRate(cells.get("ast_pct")),
-      reboundPct: optionalRate(cells.get("trb_pct")),
+      usagePct: optionalPercent(cells.get("usg_pct")),
+      turnoverPct: optionalPercent(cells.get("tov_pct")),
+      assistPct: optionalPercent(cells.get("ast_pct")),
+      reboundPct: optionalPercent(cells.get("trb_pct")),
       bpm: optionalNum(cells.get("bpm")),
       vorp: optionalNum(cells.get("vorp")),
       winShares: optionalNum(cells.get("ws")),
       offensiveRating: optionalNum(cells.get("off_rtg")),
       defensiveRating: optionalNum(cells.get("def_rtg")),
+      offensiveReboundPct: optionalPercent(cells.get("orb_pct")),
+      defensiveReboundPct: optionalPercent(cells.get("drb_pct")),
+      stealPct: optionalPercent(cells.get("stl_pct")),
+      blockPct: optionalPercent(cells.get("blk_pct")),
+      threePointAttemptRate: optionalRate(cells.get("fg3a_per_fga_pct")),
+      freeThrowRate: optionalRate(cells.get("fta_per_fga_pct")),
+      offensiveWinShares: optionalNum(cells.get("ows")),
+      defensiveWinShares: optionalNum(cells.get("dws")),
+      winSharesPer48: optionalNum(cells.get("ws_per_48")),
+      offensiveBpm: optionalNum(cells.get("obpm")),
+      defensiveBpm: optionalNum(cells.get("dbpm")),
     });
   }
   return rows;

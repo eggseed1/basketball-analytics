@@ -39,7 +39,7 @@ export function LiveFreshness({
       )}
       title={
         band === "stale"
-          ? "Provider feed has not updated recently - status still from last trusted snapshot"
+          ? "Provider feed has not updated recently. Status is from the last trusted snapshot."
           : undefined
       }
     >

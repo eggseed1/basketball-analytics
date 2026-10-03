@@ -1,0 +1,133 @@
+import type {
+  CuratedSentimentLane,
+  SentimentLaneOrigin,
+  SentimentSourceSummary,
+} from "@/sentiment/curated-types";
+import { type } from "@/lib/design-system";
+import { cn } from "@/lib/utils";
+
+export function sentimentPct(score: number): string {
+  return `${Math.round(((score + 1) / 2) * 100)}%`;
+}
+
+export function formatSentimentDate(iso?: string | null, withYear = false): string {
+  if (!iso) return "—";
+  const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
+  return d.toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    ...(withYear ? { year: "numeric" } : {}),
+    timeZone: "UTC",
+  });
+}
+
+const ORIGIN_LABEL: Record<SentimentLaneOrigin, string> = {
+  curated: "Curated",
+  headlines: "Headlines",
+  reddit: "Reddit",
+};
+
+const ORIGIN_HINT: Record<SentimentLaneOrigin, string> = {
+  curated: "Hand-written prototype value, not measured.",
+  headlines: "Average tone of publisher headlines that name this subject.",
+  reddit: "Average tone of post titles from approved subreddits.",
+};
+
+export function laneOriginLabel(origin?: SentimentLaneOrigin): string {
+  return origin ? ORIGIN_LABEL[origin] : "Curated";
+}
+
+export function LaneOriginTag({
+  lane,
+  className,
+  inactive = false,
+}: {
+  lane?: Pick<CuratedSentimentLane, "origin" | "asOf" | "mentionVolume"> | null;
+  className?: string;
+  /** Source exists in the pipeline but has produced no data yet. */
+  inactive?: boolean;
+}) {
+  if (!lane) return null;
+  const origin = lane.origin ?? "curated";
+  const measured = origin !== "curated";
+  const title = `${ORIGIN_HINT[origin]}${lane.asOf ? ` Latest sample ${formatSentimentDate(lane.asOf, true)}.` : ""}`;
+  return (
+    <span
+      title={title}
+      className={cn(
+        "inline-flex items-center gap-1 rounded-full border px-1.5 py-px text-[10px] font-semibold leading-4",
+        inactive
+          ? "border-border bg-muted/40 text-muted-foreground"
+          : measured
+            ? "border-emerald-600/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+            : "border-amber-600/35 bg-amber-500/10 text-amber-700 dark:text-amber-300",
+        className
+      )}
+    >
+      {ORIGIN_LABEL[origin]}
+      {lane.asOf ? <span className="font-normal opacity-80">· {formatSentimentDate(lane.asOf)}</span> : null}
+    </span>
+  );
+}
+
+/** One line per source: what it is, how much of it there is, and how fresh it is. */
+export function SentimentSourcesStrip({
+  sources,
+  snapshotDate,
+}: {
+  sources: SentimentSourceSummary | null;
+  snapshotDate: string | null;
+}) {
+  const headlines = sources?.headlines;
+  const reddit = sources?.reddit;
+  const curated = sources?.curated;
+  return (
+    <div
+      className={cn(
+        type.caption,
+        "flex flex-col gap-1.5 rounded-md border border-border/70 frost-surface px-3 py-2.5 text-muted-foreground"
+      )}
+    >
+      <p className="font-semibold text-foreground">
+        Data as of {formatSentimentDate(snapshotDate, true)}
+      </p>
+      <ul className="flex flex-col gap-1">
+        <li className="flex flex-wrap items-baseline gap-1.5">
+          <LaneOriginTag lane={{ origin: "headlines", asOf: headlines?.asOf ?? undefined, mentionVolume: 0 }} />
+          {headlines?.itemCount ? (
+            <span>
+              Media lanes. {headlines.itemCount.toLocaleString()} NBA headlines from{" "}
+              {headlines.outlets.join(", ")}, {formatSentimentDate(headlines.firstDate)} to{" "}
+              {formatSentimentDate(headlines.asOf)}. A player needs {headlines.floor} headlines in
+              the last 7 days to get a score. Tone comes from a word list that hasn&apos;t been
+              checked against hand labels yet, so read it as rough.
+            </span>
+          ) : (
+            <span>No headlines ingested yet.</span>
+          )}
+        </li>
+        <li className="flex flex-wrap items-baseline gap-1.5">
+          <LaneOriginTag
+            lane={{ origin: "reddit", asOf: reddit?.asOf ?? undefined, mentionVolume: 0 }}
+            inactive={!reddit?.itemCount}
+          />
+          {reddit?.itemCount ? (
+            <span>
+              Fan lanes. {reddit.itemCount.toLocaleString()} posts from approved subreddits. A player
+              needs {reddit.floor} posts in the last 7 days to get a score.
+            </span>
+          ) : (
+            <span>Not connected yet. Fan lanes below use curated values until it is.</span>
+          )}
+        </li>
+        <li className="flex flex-wrap items-baseline gap-1.5">
+          <LaneOriginTag lane={{ origin: "curated", asOf: curated?.asOf ?? undefined, mentionVolume: 0 }} />
+          <span>
+            Hand-written prototype values dated {formatSentimentDate(curated?.asOf, true)}. They show
+            how the board works and are not measurements.
+          </span>
+        </li>
+      </ul>
+    </div>
+  );
+}

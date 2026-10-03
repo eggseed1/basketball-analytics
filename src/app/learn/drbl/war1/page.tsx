@@ -1,24 +1,20 @@
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
 import { getStatGuide } from "@/content/stats/guides";
-import { getLearnConcept } from "@/content/learn/registry";
-import { relatedLearnLinks } from "@/content/learn/resolve";
 
 export const metadata: Metadata = {
   title: "WAR1",
   description:
-    "How much season value did the player accumulate? Wins-style total above DRBL’s R1 baseline — not classic WAR.",
+    "The season value a player accumulated, as a wins-style total above DRBL’s R1 baseline. This is not classic WAR.",
 };
 
 export default function LearnWar1Page() {
   const guide = getStatGuide("war1");
   if (!guide) notFound();
-
-  const concept = getLearnConcept(guide.id);
-  const related = relatedLearnLinks(concept?.relatedIds ?? []);
 
   return (
     <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
@@ -27,28 +23,12 @@ export default function LearnWar1Page() {
           href="/learn/drbl"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
-          ← DRBL overview
+          ← What is DRBL?
         </AppLink>
 
-        <StatGuideView guide={guide} />
+        <StatGuideView guide={guide} eyebrow={learnEyebrow(guide.id)} />
 
-        {related.length > 0 ? (
-          <section className="flex flex-col gap-2 border-t border-border pt-6">
-            <h2 className="text-lg font-semibold">Related</h2>
-            <ul className="flex flex-wrap gap-2">
-              {related.map((r) => (
-                <li key={r.href}>
-                  <AppLink
-                    href={r.href}
-                    className="text-sm font-medium underline-offset-2 hover:underline"
-                  >
-                    {r.label}
-                  </AppLink>
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
+        <LearnPageFooter conceptId={guide.id} />
       </div>
     </main>
   );

@@ -70,7 +70,8 @@ export type MatchupSummary = {
   pairKey: string;
   franchiseA: string;
   franchiseB: string;
-  scope: typeof MATCHUP_SCOPE_LABEL;
+  /** "Since YYYY-YY" for the earliest season actually loaded. */
+  scope: string;
   games: number;
   winsA: number;
   winsB: number;
@@ -232,9 +233,15 @@ export function compactRowsToGameSummaries(
   return rows.map((r) => {
     const totalPoints = r.homeScore + r.awayScore;
     const margin = r.homeScore - r.awayScore;
-    const gameType = r.seasonType.toLowerCase().includes("playoff")
-      ? ("playoff" as const)
-      : ("regular" as const);
+    const kind = seasonTypeKind(r.seasonType);
+    const gameType =
+      kind === "playoff"
+        ? ("playoff" as const)
+        : kind === "play-in"
+          ? ("play-in" as const)
+          : kind === "preseason"
+            ? ("preseason" as const)
+            : ("regular" as const);
     const espn = /^40\d{7,}$/.test(r.gameId);
     return {
       id: r.gameId,
@@ -250,7 +257,11 @@ export function compactRowsToGameSummaries(
       homeScore: r.homeScore,
       awayScore: r.awayScore,
       gameType,
-      status: "final" as const,
+      ...(kind === "cup-final" ? { cupChampionship: true } : {}),
+      status:
+        r.homeScore === 0 && r.awayScore === 0
+          ? ("scheduled" as const)
+          : ("final" as const),
       totalPoints,
       margin,
       absMargin: Math.abs(margin),
@@ -292,21 +303,38 @@ export function getTeamSeasonGamesPage(options: {
   return { ...paged, source: "history_product" };
 }
 
+type SeasonTypeKind = "preseason" | "regular" | "cup-final" | "play-in" | "playoff";
+
+/** History rows store display labels ("Regular Season", "Play-In", …). */
+export function seasonTypeKind(label: string | null | undefined): SeasonTypeKind {
+  const s = String(label ?? "").toLowerCase();
+  if (s.includes("pre")) return "preseason";
+  if (s.includes("play-in") || s.includes("play in")) return "play-in";
+  if (s.includes("playoff")) return "playoff";
+  if (s.includes("cup")) return "cup-final";
+  return "regular";
+}
+
 function filterMatchupGames(
   games: CompactMatchupGame[],
   seasonType: "ALL" | "Regular Season" | "Playoffs"
 ): CompactMatchupGame[] {
-  if (seasonType === "ALL") return games;
+  // Exhibitions never count toward a head-to-head record.
+  const competitive = games.filter(
+    (g) => seasonTypeKind(g.seasonType) !== "preseason"
+  );
+  if (seasonType === "ALL") return competitive;
   if (seasonType === "Playoffs") {
-    return games.filter((g) => g.seasonType.toLowerCase().includes("playoff"));
+    return competitive.filter((g) => seasonTypeKind(g.seasonType) === "playoff");
   }
-  return games.filter((g) => !g.seasonType.toLowerCase().includes("playoff"));
+  return competitive.filter((g) => seasonTypeKind(g.seasonType) === "regular");
 }
 
 function summarizeFiltered(
   franchiseA: string,
   franchiseB: string,
-  games: CompactMatchupGame[]
+  games: CompactMatchupGame[],
+  scope: string = MATCHUP_SCOPE_LABEL
 ): MatchupSummary {
   let winsA = 0;
   let winsB = 0;
@@ -314,7 +342,7 @@ function summarizeFiltered(
   let otGames = 0;
   for (const g of games) {
     if (g.ot) otGames += 1;
-    if (g.seasonType.toLowerCase().includes("playoff")) playoffGames += 1;
+    if (seasonTypeKind(g.seasonType) === "playoff") playoffGames += 1;
     const winner =
       g.homeScore > g.awayScore ? g.homeCanonicalId : g.awayCanonicalId;
     if (winner === franchiseA) winsA += 1;
@@ -324,7 +352,7 @@ function summarizeFiltered(
     pairKey: makePairKey(franchiseA, franchiseB),
     franchiseA,
     franchiseB,
-    scope: MATCHUP_SCOPE_LABEL,
+    scope,
     games: games.length,
     winsA,
     winsB,
@@ -359,15 +387,18 @@ export function getFranchiseMatchupPage(options: {
   let franchiseA = artifact?.franchiseA ?? (a < b ? a : b);
   let franchiseB = artifact?.franchiseB ?? (a < b ? b : a);
 
+  let scope: string = MATCHUP_SCOPE_LABEL;
   if (!games.length) {
     // Fallback: intersect season indexes (still no raw PBP). Prefer artifact.
-    games = buildMatchupGamesFallback(a, b);
+    const fallback = buildMatchupGamesFallback(a, b);
+    games = fallback.games;
+    if (fallback.coverageFrom) scope = `Since ${fallback.coverageFrom}`;
     franchiseA = a < b ? a : b;
     franchiseB = a < b ? b : a;
   }
 
   const filtered = filterMatchupGames(games, filter);
-  const summary = summarizeFiltered(franchiseA, franchiseB, filtered);
+  const summary = summarizeFiltered(franchiseA, franchiseB, filtered, scope);
   const pageSize = MATCHUP_GAMES_PAGE_SIZE;
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize) || 1);
   const page = Math.min(Math.max(1, options.page ?? 1), pageCount);
@@ -387,25 +418,47 @@ export function getFranchiseMatchupPage(options: {
 function buildMatchupGamesFallback(
   a: string,
   b: string
-): CompactMatchupGame[] {
+): { games: CompactMatchupGame[]; coverageFrom: string | null } {
   const nbaA = nbaIdForCanonical(a);
   const nbaB = nbaIdForCanonical(b);
-  if (!nbaA || !nbaB) return [];
+  if (!nbaA || !nbaB) return { games: [], coverageFrom: null };
+  let coverageFrom: string | null = null;
   const seasons = listHistoryProductSeasons().filter((s) => s >= "1996-97");
   const out: CompactMatchupGame[] = [];
   const seen = new Set<string>();
+  const idsFor = (canonical: string, nba: string) =>
+    new Set(
+      [canonical, nba, getCanonicalTeamById(canonical)?.providerIds.espn].filter(
+        (id): id is string => Boolean(id)
+      )
+    );
+  const idsA = idsFor(a, nbaA);
+  const idsB = idsFor(b, nbaB);
   for (const season of seasons) {
     const idx = readJson<Record<string, string[]>>(
       path.join(HISTORY_ROOT, season, "index-by-team.json")
     );
-    if (!idx) continue;
-    const setA = new Set(idx[nbaA] ?? []);
-    const setB = new Set(idx[nbaB] ?? []);
-    const shared = [...setA].filter((id) => setB.has(id));
-    if (!shared.length) continue;
-    const sharedSet = new Set(shared);
-    for (const g of getHistoricalGameSummaries(season)) {
-      if (!sharedSet.has(g.gameId) || seen.has(g.gameId)) continue;
+    // Without a disk index (Cloudflare), match on the runtime schedule's team ids.
+    let isShared: (g: { gameId: string; homeTeamId: string; awayTeamId: string }) => boolean;
+    if (idx) {
+      const setA = new Set(idx[nbaA] ?? []);
+      const sharedSet = new Set((idx[nbaB] ?? []).filter((id) => setA.has(id)));
+      if (!sharedSet.size) continue;
+      isShared = (g) => sharedSet.has(g.gameId);
+    } else {
+      isShared = (g) =>
+        (idsA.has(g.homeTeamId) && idsB.has(g.awayTeamId)) ||
+        (idsB.has(g.homeTeamId) && idsA.has(g.awayTeamId));
+    }
+    const seasonGames = getHistoricalGameSummaries(season);
+    if (seasonGames.length && (!coverageFrom || season < coverageFrom)) {
+      coverageFrom = season;
+    }
+    for (const g of seasonGames) {
+      if (!isShared(g) || seen.has(g.gameId)) continue;
+      if (g.winnerTeamId == null && g.homeScore === 0 && g.awayScore === 0) {
+        continue;
+      }
       seen.add(g.gameId);
       out.push({
         gameId: g.gameId,
@@ -424,11 +477,12 @@ function buildMatchupGamesFallback(
       });
     }
   }
-  return out.sort((x, y) =>
+  const games = out.sort((x, y) =>
     x.date === y.date
       ? y.gameId.localeCompare(x.gameId)
       : y.date.localeCompare(x.date)
   );
+  return { games, coverageFrom };
 }
 
 export function listMatchupPairSummaries(): MatchupSummary[] {

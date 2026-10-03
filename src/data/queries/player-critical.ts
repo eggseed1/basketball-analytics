@@ -269,6 +269,16 @@ function overlayProfileTeamForPreseason(
 ): PlayerSeason[] {
   const season = canonicalSeasonFromStartYear(currentNbaStartYear());
   if (!isPreseasonRosterSeason(season) || !player?.currentTeamId) return rows;
+  // Profiles of long-retired players still carry their last team id.
+  const lastPlayed = rows
+    .filter((row) => Number.isFinite(row.gamesPlayed) && row.gamesPlayed > 0)
+    .reduce<string | null>((max, row) => (!max || row.season > max ? row.season : max), null);
+  if (
+    lastPlayed &&
+    lastPlayed < canonicalSeasonFromStartYear(currentNbaStartYear() - 3)
+  ) {
+    return rows;
+  }
 
   const teamId = String(player.currentTeamId).trim();
   if (!teamId) return rows;

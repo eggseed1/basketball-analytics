@@ -49,7 +49,7 @@ export function TeamLogo({
       alt=""
       width={px}
       height={px}
-      className={cn("shrink-0 object-contain", className)}
+      className={cn("team-logo-img shrink-0 object-contain", className)}
       onError={() => setFailed(true)}
       unoptimized
     />

@@ -199,15 +199,33 @@ try {
   const BREF_UA =
     "Mozilla/5.0 (compatible; BasketballAnalytics/0.1; educational)";
   let allEraAdded = 0;
+  const endYear = (season) => Number(String(season).slice(0, 4)) + 1;
+  const rowsByName = new Map();
+  const usedIds = new Set();
+  for (const row of byKey.values()) {
+    const key = normName(row[1]);
+    rowsByName.set(key, [...(rowsByName.get(key) ?? []), row]);
+    usedIds.add(String(row[0]));
+  }
+  const failedLetters = [];
   const letters = "abcdefghijklmnopqrstuvwxyz".split("");
   for (const letter of letters) {
     try {
       const url = `https://www.basketball-reference.com/players/${letter}/`;
-      const res = await fetch(url, {
-        headers: { Accept: "text/html", "User-Agent": BREF_UA },
-      });
-      if (!res.ok) {
-        console.warn(`[cf-assets] bref index ${letter}/ HTTP ${res.status}`);
+      let res = null;
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        if (attempt) await new Promise((r) => setTimeout(r, 5000 * attempt));
+        res = await fetch(url, {
+          headers: { Accept: "text/html", "User-Agent": BREF_UA },
+          signal: AbortSignal.timeout(20000),
+        }).catch(() => null);
+        if (res?.ok) break;
+      }
+      if (!res?.ok) {
+        console.warn(
+          `[cf-assets] bref index ${letter}/ HTTP ${res?.status ?? "error"}`
+        );
+        failedLetters.push(letter);
         continue;
       }
       const html = await res.text();
@@ -225,37 +243,40 @@ try {
         const last = seasonFromEndYear(match[4]);
         if (!slug || !name || !last) continue;
         const nameKey = normName(name);
-        const espnId = nameIndexByName[nameKey] ?? "";
-        const dedupe = espnId || nameKey || slug;
-        if (!dedupe) continue;
-        if (byKey.has(dedupe)) {
-          // Keep modern board row; backfill firstSeason when missing.
-          const existing = byKey.get(dedupe);
-          if (existing && !existing[5] && first) existing[5] = first;
+        // Same name is not the same player (Tim Hardaway / Tim Hardaway Jr.,
+        // two Nate Williamses): join a modern row only when careers end together.
+        const existing = (rowsByName.get(nameKey) ?? []).find(
+          (row) => Math.abs(endYear(row[3]) - endYear(last)) <= 1
+        );
+        if (existing) {
+          if (!existing[5] && first) existing[5] = first;
           // Upgrade name-shaped bref: ids to bref:{slug} so player pages can
           // scrape the full career (Jordan/Barkley/etc. are not ESPN-linked).
-          const curId = String(existing?.[0] ?? "");
+          const curId = String(existing[0] ?? "");
           if (
-            existing &&
             curId.toLowerCase().startsWith("bref:") &&
             !/^[a-z]{3,12}\d{2}$/i.test(curId.slice(curId.indexOf(":") + 1))
           ) {
-            existing[0] = espnId || `bref:${slug}`;
+            existing[0] = `bref:${slug}`;
           }
           continue;
         }
-        byKey.set(dedupe, [
-          espnId || `bref:${slug}`,
-          name,
-          "",
-          last,
-          0,
-          first || last,
-        ]);
+        // The name index strips suffixes, so its ESPN id can belong to a
+        // namesake who already has a row.
+        const indexedEspn = nameIndexByName[nameKey] ?? "";
+        const espnId =
+          indexedEspn && !usedIds.has(indexedEspn) && !rowsByName.has(nameKey)
+            ? indexedEspn
+            : "";
+        const row = [espnId || `bref:${slug}`, name, "", last, 0, first || last];
+        byKey.set(espnId || `bref:${slug}`, row);
+        usedIds.add(row[0]);
+        rowsByName.set(nameKey, [...(rowsByName.get(nameKey) ?? []), row]);
         allEraAdded += 1;
       }
       await new Promise((r) => setTimeout(r, 700));
     } catch (error) {
+      failedLetters.push(letter);
       console.warn(
         `[cf-assets] bref index ${letter}/ skipped: ${
           error instanceof Error ? error.message : error
@@ -265,6 +286,39 @@ try {
   }
 
   const searchDest = path.join(RUNTIME, "player-search-snapshot.json");
+
+  // A rate-limited BRef letter page must not drop pre-1997 players from search:
+  // carry their rows forward from the last snapshot that had them.
+  let carried = 0;
+  if (failedLetters.length) {
+    const previous = await fs
+      .readFile(searchDest, "utf8")
+      .then((text) => JSON.parse(text))
+      .catch(() => null);
+    const failed = new Set(failedLetters);
+    const presentNames = new Set(
+      [...byKey.values()].map((row) => normName(row[1]))
+    );
+    for (const row of previous?.players ?? []) {
+      if (!row?.[5]) continue;
+      const slug = String(row[0]).startsWith("bref:")
+        ? String(row[0]).slice(5)
+        : "";
+      const letter = /^[a-z]+\d{2}$/.test(slug)
+        ? slug[0]
+        : String(row[1]).trim().split(/\s+/).pop()?.[0]?.toLowerCase();
+      if (!letter || !failed.has(letter)) continue;
+      const nameKey = normName(row[1]);
+      if (presentNames.has(nameKey)) continue;
+      presentNames.add(nameKey);
+      byKey.set(`carried:${row[0]}`, row);
+      carried += 1;
+    }
+    console.warn(
+      `[cf-assets] bref index failed for ${failedLetters.join(",")}; carried ${carried} rows from the previous snapshot`
+    );
+  }
+
   const players = [...byKey.values()];
   await fs.writeFile(
     searchDest,

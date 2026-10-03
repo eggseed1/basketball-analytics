@@ -9,6 +9,8 @@ import {
   PLAYER_RACE_METRICS,
   PLAYER_RACE_MIN_MINUTES_OPTIONS,
   PLAYER_RACE_TOP_N_OPTIONS,
+  PLAYER_RACE_DEFAULT_FIELD_SIZE,
+  VIZ_SCATTER_DEFAULT_FIELD_SIZE,
   parsePlayerRaceFieldSize,
   parsePlayerRaceMetric,
   parsePlayerRaceMinMinutes,
@@ -142,7 +144,9 @@ export function PlayerVisualizationsHubChrome({
   const fieldSize: PlayerRaceFieldSize = (() => {
     const raw = searchParams.get("top");
     if (raw == null || raw === "") {
-      return "all";
+      return view === "race"
+        ? PLAYER_RACE_DEFAULT_FIELD_SIZE
+        : VIZ_SCATTER_DEFAULT_FIELD_SIZE;
     }
     return parsePlayerRaceFieldSize(raw);
   })();

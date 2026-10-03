@@ -202,7 +202,7 @@ export function GameMarginFlowChart({
         </div>
       ) : (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Hover a scoring play for the correlated description.
+          Hover a scoring play to see its description.
         </p>
       )}
     </div>
@@ -424,7 +424,7 @@ export function GameWinProbabilityChart({
           </p>
         ) : (
           <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-            Approximate scoreboard model — not Vegas odds.
+            Approximate scoreboard model, not Vegas odds.
           </p>
         )}
       </div>

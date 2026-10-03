@@ -15,6 +15,8 @@ export type RankedMetric = {
   value: number | null;
   rank: number | null;
   rankDenominator: number | null;
+  /** Appended to the rank line, e.g. "in the West". */
+  rankScope?: string;
   percentile: number | null;
   leagueAverage: number | null;
   differenceFromAverage: number | null;
@@ -39,10 +41,23 @@ function rankPool(
   const better = invert
     ? pool.filter((v) => v < value).length
     : pool.filter((v) => v > value).length;
-  const below = pool.filter((v) => v < value).length;
-  const percentile = invert ? 100 - (below / n) * 100 : (below / n) * 100;
+  const worse = invert
+    ? pool.filter((v) => v > value).length
+    : pool.filter((v) => v < value).length;
+  // Best team = 100, worst = 0, whichever direction is "better".
+  const percentile = n > 1 ? (worse / (n - 1)) * 100 : 50;
   const avg = pool.reduce((a, b) => a + b, 0) / n;
   return { rank: better + 1, percentile, avg };
+}
+
+const RATE_KEYS = new Set(["ts", "efg", "fg3", "3par", "orb", "ftr"]);
+
+/** Signed delta: percentage points for rate stats, plain numbers otherwise. */
+export function formatMetricDelta(key: string, delta: number): string {
+  const sign = delta > 0 ? "+" : delta < 0 ? "-" : "";
+  const abs = Math.abs(delta);
+  if (RATE_KEYS.has(key)) return `${sign}${(abs * 100).toFixed(1)} pts`;
+  return `${sign}${formatNumber(abs, key === "asttov" ? 2 : 1)}`;
 }
 
 function missing(
@@ -86,7 +101,7 @@ export function buildTeamRankedMetrics(options: {
   const n = league.length;
   const source = "Season board · ESPN by-team totals";
   const notOnBoard =
-    "Not on the season board. Missing, not zero - no ORtg/DRtg/Pace/SRS feed here.";
+    "Not on the season board. Missing, not zero. No ORtg/DRtg/Pace/SRS feed here.";
 
   const fromTrait = (id: string, group: RankedMetric["group"]): RankedMetric => {
     const trait = traits.find((t) => t.id === id);
@@ -114,22 +129,10 @@ export function buildTeamRankedMetrics(options: {
       })
       .filter((v): v is number => finite(v));
     const ranked = rankPool(trait.context.value, pool, invert);
-    let previousFormatted: string | null = null;
-    if (prior) {
-      const prevTrait = traits.find((t) => t.id === id);
-      if (prevTrait && finite(trait.context.vsPrior)) {
-        const sign = trait.context.vsPrior > 0 ? "+" : "";
-        previousFormatted = `${sign}${
-          id === "ts" ||
-          id === "efg" ||
-          id === "fg3" ||
-          id === "3par" ||
-          id === "orb"
-            ? formatPct(trait.context.vsPrior)
-            : formatNumber(trait.context.vsPrior, 1)
-        } vs prior`;
-      }
-    }
+    const previousFormatted =
+      prior && finite(trait.context.vsPrior)
+        ? `${formatMetricDelta(id, trait.context.vsPrior)} vs last season`
+        : null;
     return {
       key: id,
       label: trait.label,
@@ -149,15 +152,23 @@ export function buildTeamRankedMetrics(options: {
     };
   };
 
+  const conferenceSize = league.filter(
+    (row) => row.conference === team.conference
+  ).length;
   const record: RankedMetric = standing
     ? {
         key: "record",
         label: "Record",
         formattedValue: `${standing.wins}-${standing.losses}`,
         value: standing.winPct,
+        // standing.rank is the conference seed, not a league rank.
         rank: standing.rank,
-        rankDenominator: n || 15,
-        percentile: n ? ((n - standing.rank) / n) * 100 : null,
+        rankDenominator: conferenceSize || 15,
+        rankScope: `in the ${standing.conference}`,
+        percentile:
+          conferenceSize > 1
+            ? ((conferenceSize - standing.rank) / (conferenceSize - 1)) * 100
+            : null,
         leagueAverage: null,
         differenceFromAverage: null,
         previousFormatted: standing.lastTen
@@ -194,7 +205,7 @@ export function buildTeamRankedMetrics(options: {
             differenceFromAverage: ftrValue - ranked.avg,
             previousFormatted:
               prior && ftRate(prior) != null
-                ? `${formatPct(ftrValue - (ftRate(prior) as number))} vs prior`
+                ? `${formatMetricDelta("ftr", ftrValue - (ftRate(prior) as number))} vs last season`
                 : null,
             direction: "higher" as const,
             sample: team.gamesPlayed,
@@ -219,7 +230,9 @@ export function buildTeamRankedMetrics(options: {
     fromTrait("3par", "offense"),
     fromTrait("orb", "offense"),
     fromTrait("asttov", "offense"),
-    fromTrait("tov", "defense"),
+    // `topg` is the team's own giveaways (ball security), not turnovers forced.
+    fromTrait("tov", "offense"),
+    fromTrait("opp", "defense"),
     fromTrait("stl", "defense"),
     fromTrait("blk", "defense"),
     fromTrait("efg", "factors"),
@@ -236,5 +249,6 @@ export function formatRankLine(metric: RankedMetric): string {
     metric.percentile != null
       ? ` · ${formatOrdinal(Math.round(metric.percentile))} pct`
       : "";
-  return `${formatOrdinal(metric.rank)} of ${metric.rankDenominator}${pct}`;
+  const scope = metric.rankScope ? ` ${metric.rankScope}` : "";
+  return `${formatOrdinal(metric.rank)} of ${metric.rankDenominator}${scope}${pct}`;
 }

@@ -4,8 +4,8 @@ import type { MovementClaim } from "./types";
 
 /**
  * Movement claim links must never point at fabricated outlet URLs.
- * Prototype seed rows omit external hrefs; only internal ledger links
- * (e.g. /offseason) or future verified ingest URLs are linked.
+ * Only internal ledger links (e.g. /offseason) and publisher URLs taken
+ * from ingested feed items are linked.
  */
 export function resolveMovementClaimHref(
   claim: MovementClaim

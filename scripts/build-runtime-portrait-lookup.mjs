@@ -450,6 +450,37 @@ await mapPool(brefSearchSlugs, 16, async (slug) => {
   brefFallback += 1;
 });
 
+// Stale preserved rows once pointed legend slugs at another player's headshot
+// (Willis Reed → Bob Pettit on the NBA CDN; P.J. Brown's NBA id 136 read as
+// ESPN 136, Vince Carter). Drop any bref key whose CDN id names someone else.
+const nameByNba = new Map();
+const nameByEspn = new Map();
+const nameBySlug = new Map();
+for (const person of people) {
+  if (person.nbaId && person.name) nameByNba.set(person.nbaId, normalizeName(person.name));
+  if (person.espnId && person.name) nameByEspn.set(person.espnId, normalizeName(person.name));
+  if (person.brefSlug && person.name) nameBySlug.set(person.brefSlug, normalizeName(person.name));
+}
+for (const p of searchSnap.players ?? []) {
+  if (Array.isArray(p) && String(p[0]).startsWith("bref:") && p[1]) {
+    const slug = String(p[0]).slice(5).toLowerCase();
+    if (!nameBySlug.has(slug)) nameBySlug.set(slug, normalizeName(p[1]));
+  }
+}
+let droppedWrongPerson = 0;
+for (const [key, url] of Object.entries(portraits)) {
+  if (!key.startsWith("bref:") || typeof url !== "string") continue;
+  const cdnId = url.match(/cdn\.nba\.com\/headshots\/nba\/latest\/\d+x\d+\/(\d+)\.png/)?.[1];
+  const espnId = url.match(/espncdn\.com\/i\/headshots\/nba\/players\/full\/(\d+)\.png/)?.[1];
+  const want = nameBySlug.get(key.slice(5));
+  const got = cdnId ? nameByNba.get(cdnId) : espnId ? nameByEspn.get(espnId) : null;
+  if (want && got && want !== got) {
+    delete portraits[key];
+    droppedWrongPerson += 1;
+  }
+}
+console.log(`[portraits] dropped wrong-person bref keys=${droppedWrongPerson}`);
+
 const payload = {
   version: "drbl-player-media-v2",
   updatedAt: new Date().toISOString(),

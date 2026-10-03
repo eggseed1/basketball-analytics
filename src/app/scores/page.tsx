@@ -20,6 +20,7 @@ import {
 import { toGameSummary } from "@/data/queries/filter-utils";
 import type { Game, GameSummary } from "@/data/types";
 import { isPreTipStatus } from "@/lib/game-status";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 export const metadata = {
   title: "Games",
@@ -62,7 +63,7 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const statsSeason = canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
   const scheduleSeason = upcomingScheduleSeason();
   const view = parseView(one(sp, "view"));
-  const today = new Date().toISOString().slice(0, 10);
+  const today = nbaTodayIso();
 
   const monthParam = one(sp, "month");
   const monthKey =

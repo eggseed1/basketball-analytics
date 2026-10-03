@@ -28,8 +28,9 @@ export function FranchiseTimeline({
           Franchise timeline
         </h2>
         <p className="text-[13px] text-muted-foreground">
-          Explicit lineage (renames / relocations). Historical names are not
-          replaced by the current brand.
+          {f.identities.length === 1
+            ? "Only the current name is mapped for this franchise. Earlier names, if any, are listed in the scrapbook above."
+            : "Explicit lineage (renames / relocations). Historical names are not replaced by the current brand."}
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">

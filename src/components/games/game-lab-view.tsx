@@ -95,8 +95,8 @@ export function GameLabView({
           <h2 className={type.heading}>Game flow</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
             {flowTab === "margin"
-              ? "Score margin by game time — dots use team colors; hover for the correlated play."
-              : "Approximate win probability over the game — hover for the correlated play."}
+              ? "Score margin by game time. Dots use team colors; hover for the matching play."
+              : "Approximate win probability over the game. Hover for the matching play."}
           </p>
         </div>
 

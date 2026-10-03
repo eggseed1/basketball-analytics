@@ -870,7 +870,7 @@ export function TradeSimulator({
             </p>
             <p className="max-w-md text-[13px] leading-snug text-muted-foreground">
               {teamA.abbr} on the left, {teamB.abbr} on the right. Click a name
-              to seed the deal — salary-matching packages appear below.
+              to seed the deal, and salary-matching packages appear below.
             </p>
           </div>
         ) : (
@@ -955,7 +955,7 @@ export function TradeSimulator({
             <p className="mt-1 text-[12px] leading-snug text-muted-foreground">
               Salary-match sketch from known commitments and published{" "}
               {board.season} bands (Expanded / Standard / Room / 2nd apron). Not
-              a legality ruling — TPEs, holds, dead money, NTCs, picks, and BYC
+              a legality ruling: TPEs, holds, dead money, NTCs, picks, and BYC
               are unchecked.
             </p>
           </div>
@@ -1007,7 +1007,7 @@ export function TradeSimulator({
               {board.statsSeason !== board.season
                 ? " (last completed season with model rows)"
                 : ""}
-              . Salary-match sketch vs published {board.season} lines — not a
+              . Salary-match sketch vs published {board.season} lines, not a
               legality check. Picks, exceptions, holds, and dead money are
               omitted.
             </p>
@@ -1057,10 +1057,10 @@ export function TradeSimulator({
               <li>
                 Salary match fails under published bands
                 {salaryFit.sideA.reasons[0]
-                  ? ` — ${teamA.abbr}: ${salaryFit.sideA.reasons[0]}`
+                  ? `. ${teamA.abbr}: ${salaryFit.sideA.reasons[0]}`
                   : ""}
                 {salaryFit.sideB.reasons[0]
-                  ? ` — ${teamB.abbr}: ${salaryFit.sideB.reasons[0]}`
+                  ? `. ${teamB.abbr}: ${salaryFit.sideB.reasons[0]}`
                   : ""}
                 .
               </li>

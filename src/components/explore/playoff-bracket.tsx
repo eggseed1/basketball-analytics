@@ -301,14 +301,19 @@ function PlayInStack({
   );
   if (!show) return null;
 
-  // 9/10 feeds 1-seed game (track 0); 7/8 feeds 2-seed game (track 3).
+  // 9/10 feeds 1-seed game (track 0); 7/8 feeds 2-seed game (track 3);
+  // the 8-seed decider sits between them.
   return (
     <div className="flex shrink-0 flex-col">
       <RoundLabel align={align}>Play-In</RoundLabel>
       <Slot span={1}>
         <MatchCard matchup={bracket.playIn[0]!} />
       </Slot>
-      <Slot span={1} />
+      <Slot span={1}>
+        {bracket.playInFinal ? (
+          <MatchCard matchup={bracket.playInFinal} />
+        ) : null}
+      </Slot>
       <Slot span={1} />
       <Slot span={1}>
         <MatchCard matchup={bracket.playIn[1]!} />

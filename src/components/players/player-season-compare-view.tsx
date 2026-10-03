@@ -259,9 +259,9 @@ export function PlayerSeasonCompareView({
           </p>
         ) : null}
         <p className="text-[12px] text-muted-foreground">
-          There is no single universal “best season” score - overall is which
-          season wins more category groups (production, efficiency, etc.) from
-          the metrics below.
+          There is no universal “best season” score. Overall is the season
+          that wins more category groups (production, efficiency, etc.) in the
+          metrics below.
         </p>
       </section>
 
@@ -460,7 +460,7 @@ export function PlayerSeasonCompareControl({
       <div>
         <h2 className="text-[20px] font-bold tracking-tight">Compare seasons</h2>
         <p className="text-[14px] text-muted-foreground">
-          Which version of this player was better - by production, efficiency,
+          Which version of this player was better on production, efficiency,
           and more.
         </p>
       </div>

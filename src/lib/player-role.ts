@@ -362,7 +362,7 @@ export function assignPlayerRole(options: {
   why.push(`${DIET_LINES[diet]}.`);
   if (shell === "big") why.push("Sized as a big from position / rebound rate.");
   if (defense) why.push(`Defensive clause: ${DEFENSE_LABELS[defense]}.`);
-  why.push("Describes how they're used — not how good they are.");
+  why.push("Describes how they're used, not how good they are.");
 
   return {
     id,

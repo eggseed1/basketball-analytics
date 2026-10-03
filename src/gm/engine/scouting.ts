@@ -39,11 +39,11 @@ const GRADE_SCALE: ScoutLetterGrade[] = [
 
 /** Letter grades ≈ projected NBA tool vs an average rotation player. */
 export const GRADE_LEGEND: { grade: string; meaning: string }[] = [
-  { grade: "A+ / A", meaning: "Elite NBA tool - star / All-NBA caliber in that skill" },
-  { grade: "A- / B+", meaning: "Plus starter skill - clear strength on a good roster" },
-  { grade: "B / B-", meaning: "Solid NBA average - holds up as a rotation piece" },
-  { grade: "C+ / C", meaning: "Fringe / below-average - needs scheme or limited role" },
-  { grade: "C- / D / F", meaning: "Well below NBA average - major weakness or non-translator" },
+  { grade: "A+ / A", meaning: "Elite NBA tool: star / All-NBA caliber in that skill" },
+  { grade: "A- / B+", meaning: "Plus starter skill: clear strength on a good roster" },
+  { grade: "B / B-", meaning: "Solid NBA average: holds up as a rotation piece" },
+  { grade: "C+ / C", meaning: "Fringe / below-average: needs scheme or limited role" },
+  { grade: "C- / D / F", meaning: "Well below NBA average: major weakness or non-translator" },
 ];
 
 export function gradeMeaning(g: ScoutLetterGrade | null | undefined): string {
@@ -99,15 +99,15 @@ function fogGrade(
 }
 
 const MEDICAL_NOTES = [
-  "Clean medical so far - trainers like the load profile.",
+  "Clean medical so far; trainers like the load profile.",
   "Minor ankle history; nothing that scares most boards.",
-  "Conditioning flag after combine shuttle - worth a deeper look.",
+  "Conditioning flag after combine shuttle; worth a closer look.",
   "Knee monitored in college; imaging reportedly clean.",
   "Durability projection is a soft concern for some staffs.",
 ];
 
 const FOG_SUMMARIES = [
-  "Tape is noisy - tools flash, translation still debated.",
+  "Tape is noisy: tools flash, translation still debated.",
   "High-upside skeleton with incomplete offensive polish.",
   "Role clarity is the swing skill; floor looks rotation-ready.",
   "Some teams see a star pathway; others see a specialist.",
@@ -193,7 +193,7 @@ export function buildScoutProfile(
         ? (def?.comps ?? ["Mystery upside"]).slice(0, 1)
         : overall >= 1 && def?.comps?.[0]
           ? [`Maybe ${def.comps[0]}?`]
-          : ["Unclear - need more tape"];
+          : ["Unclear, need more tape"];
 
   const heightNoise = overall >= 4 ? 0 : randInt(rng, -2, 2);
   const weightNoise = overall >= 4 ? 0 : randInt(rng, -12, 12);
@@ -242,7 +242,7 @@ export function buildScoutProfile(
       overall >= 3
         ? pick(rng, MEDICAL_NOTES)
         : overall >= 2 && rng() > 0.6
-          ? "Limited medical - waiting on team workouts."
+          ? "Limited medical; waiting on team workouts."
           : null,
     summary: buildSummary(def?.flavor, def?.archetype ?? archetype, overall, rng),
     confidence: clamp(0.2 + overall * 0.16 + (rng() * 0.08 - 0.04), 0.15, 0.95),

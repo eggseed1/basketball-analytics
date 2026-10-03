@@ -38,7 +38,7 @@ export function TeamPayrollView({ data }: { data: TeamPayrollPresentation }) {
                 : "Unknown"}
           </span>
           {data.capContext.status === "PROJECTED"
-            ? " — projected values are not official."
+            ? ". Projected values are not official."
             : null}
         </p>
         <dl className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
@@ -81,7 +81,7 @@ export function TeamPayrollView({ data }: { data: TeamPayrollPresentation }) {
         <p className="text-sm text-muted-foreground">
           {data.summary.playersWithSalary} players with known salary ·{" "}
           {data.summary.playersWithoutSalary} roster players without matched
-          salary (shown as — , never $0)
+          salary (shown as —, never $0)
         </p>
         <PayrollCommitmentsChart bars={data.futureCommitments} />
       </section>
@@ -97,7 +97,7 @@ export function TeamPayrollView({ data }: { data: TeamPayrollPresentation }) {
             <li key={d}>{d}</li>
           ))}
           <li>
-            Capabilities — payroll: {data.capabilities.PAYROLL}; contracts:{" "}
+            Capabilities · payroll: {data.capabilities.PAYROLL}; contracts:{" "}
             {data.capabilities.CONTRACTS}; full cap accounting:{" "}
             {data.capabilities.FULL_CAP_ACCOUNTING}
           </li>

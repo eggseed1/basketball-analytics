@@ -22,7 +22,7 @@ function CapBody() {
 
   return (
     <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold">Cap sheet - {team.abbr}</h2>
+      <h2 className="text-lg font-semibold">Cap sheet · {team.abbr}</h2>
       <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
         <Stat label="Payroll" value={`$${formatNumber(cap.payrollM, 1)}M`} />
         <Stat
@@ -52,7 +52,7 @@ function CapBody() {
         </li>
         <li>
           {cap.overSecondApron
-            ? "Second apron - hard limits."
+            ? "Second apron: hard limits."
             : "Below second apron."}
         </li>
         <li>

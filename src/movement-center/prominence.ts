@@ -32,7 +32,7 @@ export function resolveMovementPresentation(now = new Date()): MovementPresentat
     return {
       mode: "deadline_week",
       productName: "Movement Center",
-      seasonalLabel: "Rumor Mill — Trade Deadline Mode",
+      seasonalLabel: "Rumor Mill: trade deadline mode",
       tagline: "Live market reporting around the deadline",
       navProminence: "featured",
     };
@@ -63,7 +63,7 @@ export function resolveMovementPresentation(now = new Date()): MovementPresentat
       mode: "post_deadline",
       productName: "Movement Center",
       seasonalLabel: "Movement Center",
-      tagline: "Post-deadline landscape",
+      tagline: "Movement after the deadline",
       navProminence: "discovery",
     };
   }

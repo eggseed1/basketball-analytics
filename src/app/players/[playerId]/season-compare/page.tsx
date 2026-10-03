@@ -12,7 +12,7 @@ import { dedupeCareerSeasons } from "@/analytics/career-resume";
 export const metadata = {
   title: "Season compare",
   description:
-    "Compare multiple seasons of the same player - production, efficiency, and more.",
+    "Compare seasons of the same player on production, efficiency, and more.",
 };
 
 interface PageProps {

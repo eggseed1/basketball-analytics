@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-09-20",
-    "retrievedAt": "2026-09-20T03:46:02.625Z",
+    "snapshotDate": "2026-09-25",
+    "retrievedAt": "2026-09-25T18:41:18.909Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "aba73be886df33c4a6172f7561fd90262b722837ddafda57e537baeea1870067",
+    "sourceHash": "e2cdefb46ad505408973a55845155107c148663c643d4076c9c95070a5e29bd6",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -349,29 +349,6 @@
           "href": "/players/1641757"
         },
         {
-          "playerId": "1641780",
-          "playerName": "Johni Broome",
-          "age": null,
-          "contractId": "cy-1641780-2026",
-          "contractType": "UNKNOWN",
-          "years": [
-            {
-              "contractId": "cy-1641780-2026",
-              "playerId": "1641780",
-              "franchiseId": "12",
-              "season": "2026-27",
-              "salary": null,
-              "capHit": null,
-              "guaranteedAmount": null,
-              "guaranteeStatus": "UNKNOWN",
-              "optionType": "UNKNOWN",
-              "source": "espn-roster-no-salary"
-            }
-          ],
-          "guaranteedTotal": null,
-          "href": "/players/1641780"
-        },
-        {
           "playerId": "5105832",
           "playerName": "Nick Martinelli",
           "age": null,
@@ -565,7 +542,7 @@
       ],
       "playerSalaryCommitments": 206147829,
       "playersWithSalary": 13,
-      "playersWithoutSalary": 9
+      "playersWithoutSalary": 8
     },
     "draftAssets": {
       "franchiseId": "12",

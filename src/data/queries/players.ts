@@ -8,6 +8,7 @@ import type {
   PlayerGame,
   PlayerSeason,
 } from "@/data/types";
+import { loadBakedLegendPlayer } from "@/data/runtime/legend-player-bio";
 import { applyPlayerSeasonFilters } from "./filter-utils";
 import { overlayDraftYears } from "@/data/providers/nba/draft-history";
 import {
@@ -87,6 +88,11 @@ export type TeamRosterResult = {
   warning?: string;
   /** Diagnostic detail. */
   error?: string;
+  /**
+   * Board only carries a combined line for players who changed teams mid-season,
+   * so they are absent from every team's roster.
+   */
+  omitsMidSeasonMoves?: boolean;
 };
 
 export function isTeamRosterBoardSupported(season: string): boolean {
@@ -422,7 +428,11 @@ async function loadEspnTeamRoster(
   canonicalTeamId: string,
   season: string,
   filters: Omit<BasketballFilters, "team" | "season">
-): Promise<{ boardCount: number; players: PlayerSeason[] }> {
+): Promise<{
+  boardCount: number;
+  players: PlayerSeason[];
+  omitsMidSeasonMoves?: boolean;
+}> {
   const { preferBundledProductDataOnEdge } = await import(
     "@/data/providers/nba/runtime-policy"
   );
@@ -430,6 +440,7 @@ async function loadEspnTeamRoster(
   async function fromBundledBref(): Promise<{
     boardCount: number;
     players: PlayerSeason[];
+    omitsMidSeasonMoves: boolean;
   } | null> {
     try {
       const { getBundledBrefPeerBoard } = await import(
@@ -451,17 +462,18 @@ async function loadEspnTeamRoster(
         team: canonicalTeamId,
       });
       if (!players.length) return null;
-      return { boardCount: bundled.length, players };
+      return { boardCount: bundled.length, players, omitsMidSeasonMoves: true };
     } catch {
       return null;
     }
   }
 
-  // Cloudflare: ESPN by-athlete boards hang / empty for older seasons — use
-  // the baked BRef peer board (same source as explore players).
+  // ESPN by-athlete boards tag every season with the player's *current* team
+  // (a summer signing shows up on last season's roster), and they hang on
+  // Cloudflare. The baked BRef board is season-true, so it wins whenever it exists.
+  const bundled = await fromBundledBref();
+  if (bundled) return bundled;
   if (preferBundledProductDataOnEdge()) {
-    const bundled = await fromBundledBref();
-    if (bundled) return bundled;
     return { boardCount: 0, players: [] };
   }
 
@@ -470,7 +482,7 @@ async function loadEspnTeamRoster(
   if (isHustleStatsSeason(season)) {
     seasons = await overlayHustleRows(seasons, season);
   }
-  let players = applyPlayerSeasonFilters(seasons, {
+  const players = applyPlayerSeasonFilters(seasons, {
     ...filters,
     season,
     team: canonicalTeamId,
@@ -493,9 +505,6 @@ async function loadEspnTeamRoster(
     if (filtered.length > 0) {
       return { boardCount: roster.length, players: filtered };
     }
-
-    const bundled = await fromBundledBref();
-    if (bundled) return bundled;
   }
 
   return { boardCount: seasons.length, players };
@@ -575,6 +584,13 @@ export async function getPlayer(playerId: string): Promise<Player | null> {
         /* draft history optional */
       }
     }
+  }
+
+  // Workers can't reach NBA commonplayerinfo; legends fall back to the baked
+  // BRef bio so the header still has birth, size, and draft.
+  if (!merged?.birthDate) {
+    const baked = await loadBakedLegendPlayer(playerId, identity.nbaId);
+    if (baked) merged = mergePlayerBio(baked, merged);
   }
 
   return merged;
@@ -697,9 +713,9 @@ export async function getPlayerCareerSeasons(
       const threePm = h.threePm ?? 0;
       const fta = h.fta ?? 0;
       const ftm = h.ftm ?? 0;
-      const fgPct = fga > 0 ? fgm / fga : 0;
-      const tpPct = threePa > 0 ? threePm / threePa : 0;
-      const ftPct = fta > 0 ? ftm / fta : 0;
+      const fgPct = fga > 0 ? fgm / fga : undefined;
+      const tpPct = threePa > 0 ? threePm / threePa : undefined;
+      const ftPct = fta > 0 ? ftm / fta : undefined;
       const multi = h.teamIds.length > 1;
       return withPlayerSeasonDefaults({
         playerId: h.playerId,
@@ -711,14 +727,14 @@ export async function getPlayerCareerSeasons(
         nbaTeamId: h.primaryTeamId,
         season: h.season,
         gamesPlayed: h.gp,
-        gamesStarted: h.gs ?? 0,
-        minutes: h.minutes ?? 0,
-        points: h.points ?? 0,
-        rebounds: h.rebounds ?? 0,
-        assists: h.assists ?? 0,
-        steals: h.steals ?? 0,
-        blocks: h.blocks ?? 0,
-        turnovers: h.turnovers ?? 0,
+        gamesStarted: h.gs ?? undefined,
+        minutes: h.minutes ?? undefined,
+        points: h.points ?? undefined,
+        rebounds: h.rebounds ?? undefined,
+        assists: h.assists ?? undefined,
+        steals: h.steals ?? undefined,
+        blocks: h.blocks ?? undefined,
+        turnovers: h.turnovers ?? undefined,
         fieldGoalsMade: fgm,
         fieldGoalsAttempted: fga,
         threePointersMade: threePm,
@@ -912,7 +928,11 @@ export async function getTeamRoster(
         error: "empty_espn_player_board",
       };
     }
-    return { players: loaded.players, status: "ok" };
+    return {
+      players: loaded.players,
+      status: "ok",
+      ...(loaded.omitsMidSeasonMoves ? { omitsMidSeasonMoves: true } : {}),
+    };
   } catch (error) {
     const detail = classifyRosterError(error);
     if (detail === "timeout" || /timeout_after_/.test(String(error))) {

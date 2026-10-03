@@ -7,6 +7,7 @@ import { teamSeasonStub } from "@/lib/team-season-stub";
 import { brandableTeamKey } from "@/lib/player-team-context";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { gameInvolvesTeam } from "@/lib/team-explorer";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 async function upcomingGamesForTeam(
   scheduleTeamKey: string,
@@ -17,7 +18,7 @@ async function upcomingGamesForTeam(
   const { getRuntimeSnapshotGames } = await import(
     "@/data/runtime/game-snapshot"
   );
-  const today = new Date().toISOString().slice(0, 10);
+  const today = nbaTodayIso();
   const team = teamSeasonStub(scheduleTeamKey, season);
   const brand = resolveTeamBrand(scheduleTeamKey);
   if (!team) return [];

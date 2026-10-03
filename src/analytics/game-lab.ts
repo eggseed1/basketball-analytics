@@ -42,11 +42,11 @@ export const GAME_LAB_METHODOLOGY = {
   teamTotalsRule:
     "Team game totals are the sum of player box-score lines for that team. Missing OREB on every line means offensive rebounds are unavailable (not zero).",
   winningFactorsRule:
-    "Each metric compares home vs away totals (or rates). A difference counts only when |delta| meets the metric tolerance. Overall edge is a plurality of meaningful advantages - not an opaque game score.",
+    "Each metric compares home vs away totals (or rates). A difference counts only when |delta| meets the metric tolerance. Overall edge is a plurality of meaningful advantages, not an opaque game score.",
   teamContextRule:
     `Team game values compare to that team's same-season board averages when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
   gameSeasonContextRule:
-    "Game Lab V1.1 adds How Unusual / What Stood Out - scoreboard points and box rates vs same-season baselines with explicit direction and tolerances. Descriptive only; not a game grade.",
+    "Game Lab V1.1 adds How Unusual / What Stood Out: scoreboard points and box rates vs same-season baselines with explicit direction and tolerances. Descriptive only; not a game grade.",
   flowRule:
     "Game Flow prefers validated provider linescores, then a PBP-derived score timeline that conserves the official final exactly. Mid-period leads, lead changes, ties, and strict runs come from the PBP timeline when present.",
   playerHighlightsRule:
@@ -939,7 +939,7 @@ export function analyzeGame(options: {
   } else if (!winningFactors.length) {
     overallEdge = "even";
     overallReason =
-      "No metric cleared its meaningful-difference tolerance - the statistical profile is essentially even.";
+      "No metric cleared its meaningful-difference tolerance, so the statistical profile is essentially even.";
   } else if (homeAdvantages.length === awayAdvantages.length) {
     overallEdge = "even";
     overallReason = `Each side holds ${homeAdvantages.length} meaningful statistical advantage${homeAdvantages.length === 1 ? "" : "s"}.`;
@@ -1034,7 +1034,7 @@ export function analyzeGame(options: {
   }
   if (!hasPeriodScores) {
     coverageNotes.push(
-      "Game flow unavailable - scoring timeline could not be validated."
+      "Game flow unavailable: the scoring timeline could not be validated."
     );
   }
   if (!hasHomeSeasonContext && !hasAwaySeasonContext) {
@@ -1048,7 +1048,7 @@ export function analyzeGame(options: {
     );
   } else if (!pbp.rawPbpAvailable) {
     coverageNotes.push(
-      "Play-by-play unavailable for this game — game flow may rely on provider linescores only."
+      "Play-by-play unavailable for this game. Game flow may rely on provider linescores only."
     );
   }
 

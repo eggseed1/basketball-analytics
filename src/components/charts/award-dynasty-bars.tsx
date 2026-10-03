@@ -66,8 +66,8 @@ export function AwardDynastyBars({
           id={`${chartId}-desc`}
           className={cn(type.caption, "text-muted-foreground")}
         >
-          Most {unitLabel} in this history list — click a bar (or tooltip name)
-          when linked to open the player.
+          Most {unitLabel} in this history list. Click a linked bar (or tooltip
+          name) to open the player.
         </p>
       </div>
       <div

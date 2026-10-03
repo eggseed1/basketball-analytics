@@ -148,7 +148,7 @@ function ScaleLegend() {
 
 function PercentileRow({ row }: { row: LukaPercentileRow }) {
   const pct = Math.max(0, Math.min(100, row.fillPercentile));
-  const fill = percentileSavantColor(pct);
+  const fill = percentileSavantColor(pct, "auto");
   return (
     <div className="grid w-full grid-cols-[7.5rem_minmax(0,1fr)_3.5rem] items-center gap-x-2 whitespace-nowrap px-2 py-1.5">
       <span className={cn(type.bodySm, "text-right font-semibold")}>

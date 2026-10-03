@@ -45,7 +45,7 @@ export const ERA_THEMES: readonly EraTheme[] = [
     name: "Early NBA",
     shortLabel: "Early",
     cssKey: "early",
-    description: "Pre-1980 atmosphere — print, wood, classic serif character.",
+    description: "Pre-1980 feel with print, wood, and classic serif type.",
   },
   {
     id: "1980s",
@@ -54,7 +54,7 @@ export const ERA_THEMES: readonly EraTheme[] = [
     name: "1980s",
     shortLabel: "80s",
     cssKey: "1980s",
-    description: "Showtime era — warm neutrals, bold sans, soft amber accent.",
+    description: "Showtime era with warm neutrals, bold sans, and a soft amber accent.",
   },
   {
     id: "1990s",
@@ -63,7 +63,7 @@ export const ERA_THEMES: readonly EraTheme[] = [
     name: "1990s",
     shortLabel: "90s",
     cssKey: "1990s",
-    description: "Mid-90s broadcast feel — cooler slate, tighter geometry.",
+    description: "Mid-90s broadcast feel with cooler slate and tighter geometry.",
   },
   {
     id: "2000s",
@@ -72,7 +72,7 @@ export const ERA_THEMES: readonly EraTheme[] = [
     name: "2000s",
     shortLabel: "00s",
     cssKey: "2000s",
-    description: "Early web / HD transition — crisp panels, blue-steel accent.",
+    description: "Early web / HD transition, with crisp panels and a blue-steel accent.",
   },
   {
     id: "2010s",
@@ -81,7 +81,7 @@ export const ERA_THEMES: readonly EraTheme[] = [
     name: "2010s",
     shortLabel: "10s",
     cssKey: "2010s",
-    description: "Analytics decade — clean surfaces, restrained contrast.",
+    description: "Analytics decade with clean surfaces and restrained contrast.",
   },
   {
     id: "modern",

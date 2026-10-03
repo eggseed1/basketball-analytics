@@ -98,7 +98,7 @@ export function computeImpactMovers(options: {
     risers,
     fallers,
     metricLabel,
-    note: `Same-metric YoY on ${metricLabel} only (${fromSeason} → ${toSeason}). Missing prior seasons are skipped — never cross-metric.`,
+    note: `Same-metric YoY on ${metricLabel} only (${fromSeason} → ${toSeason}). Missing prior seasons are skipped. Deltas never cross metrics.`,
   };
 }
 

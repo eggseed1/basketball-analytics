@@ -7,6 +7,7 @@ import {
   buildRosterBuckets,
   buildRotationLadder,
   buildRotationPositionShape,
+  MID_SEASON_MOVES_NOTE,
   rotationMinutesPct,
   rotationStartRate,
 } from "@/lib/team-explorer";
@@ -194,7 +195,8 @@ function PositionShapeCard({
       <div>
         <h3 className={cn(type.bodySm, "font-semibold")}>Minutes by shell</h3>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Listed positions mapped to guard / wing / big — not tracking lineups.
+          Listed positions mapped to guard / wing / big. This is not lineup
+          tracking.
         </p>
       </div>
       <div
@@ -235,8 +237,8 @@ function PositionShapeCard({
       </ul>
       {shape.unknownMinutes > 0 ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          {formatNumber(shape.unknownMinutes, 0)} MIN have no listed position —
-          omitted from the bar.
+          {formatNumber(shape.unknownMinutes, 0)} MIN have no listed position
+          and are left out of the bar.
         </p>
       ) : null}
     </div>
@@ -299,8 +301,9 @@ export async function TeamLineupsIsland({
           <h2 className="text-[20px] font-bold tracking-tight">Rotation</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             Starter / bench ladder from box-score minutes and starts for{" "}
-            {season}. Five-man on/off nets need play-by-play — this tab does not
-            invent them.
+            {season}. Five-man on/off nets need play-by-play, so this tab does
+            not show them.
+            {roster.omitsMidSeasonMoves ? ` ${MID_SEASON_MOVES_NOTE}` : null}
           </p>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -366,7 +369,7 @@ export async function TeamLineupsIsland({
                 Spot minutes
               </h3>
               <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
-                Deeper board — still played, thinner share.
+                Deeper bench players who still logged smaller minute shares.
               </p>
               <RotationTable
                 rows={ladder.spot}
@@ -390,14 +393,14 @@ export async function TeamLineupsIsland({
             />
             <SideList
               title="Creation load"
-              hint="Highest usage among players with minutes"
+              hint="Highest usage among 100+ minute rows"
               rows={[...roster.players]
                 .filter(
                   (p) =>
                     p.usagePct != null &&
                     Number.isFinite(p.usagePct) &&
                     p.usagePct > 0 &&
-                    p.minutes > 0
+                    p.minutes >= 100
                 )
                 .sort((a, b) => (b.usagePct ?? 0) - (a.usagePct ?? 0))
                 .slice(0, 5)}
@@ -407,7 +410,7 @@ export async function TeamLineupsIsland({
             />
             <SideList
               title="Leading scorers"
-              hint="PPG on this roster board"
+              hint={`PPG among players with at least ${buckets.scorerMinGames} games`}
               rows={buckets.leadingScorers}
               season={season}
               teamKey={teamKey}

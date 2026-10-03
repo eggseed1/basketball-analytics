@@ -512,7 +512,7 @@ async function loadHomeAnalytics(): Promise<HomeAnalytics> {
   const drblFallbackNote = drblOverlayOk
     ? null
     : drblSeasonOk
-      ? "DRBL/100 leaders unavailable for this load — showing DARKO as secondary impact context, not as first-party DRBL."
+      ? "DRBL/100 leaders are unavailable for this load. Showing DARKO as secondary impact context, not as first-party DRBL."
       : `DRBL is not published for ${season}; DARKO shown as external impact context.`;
 
   return {

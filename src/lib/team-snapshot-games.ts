@@ -55,6 +55,13 @@ export function teamSnapshotGames(
     .sort((a, b) => b.gameDate.localeCompare(a.gameDate));
 }
 
+/** Regular-season games that count in the standings (no NBA Cup Championship). */
+function standingsGames(teamId: string, season: string): GameSummary[] {
+  return teamSnapshotGames(teamId, season, { gameType: "regular" }).filter(
+    (game) => !game.cupChampionship
+  );
+}
+
 export function hasTeamSnapshotGames(teamId: string, season: string): boolean {
   return teamSnapshotGames(teamId, season).length > 0;
 }
@@ -104,7 +111,7 @@ export function computeTeamSplits(
   teamId: string,
   season: string
 ): TeamSplitBucket[] {
-  const regular = teamSnapshotGames(teamId, season, { gameType: "regular" });
+  const regular = standingsGames(teamId, season);
   const finalsDesc = regular.filter((game) => game.status === "final");
   const home = regular.filter((game) => game.homeTeamId === teamId);
   const away = regular.filter((game) => game.awayTeamId === teamId);
@@ -125,9 +132,9 @@ export function computeTeamMarginSplits(
   teamId: string,
   season: string
 ): TeamMarginBucket[] {
-  const finals = teamSnapshotGames(teamId, season, {
-    gameType: "regular",
-  }).filter((game) => game.status === "final");
+  const finals = standingsGames(teamId, season).filter(
+    (game) => game.status === "final"
+  );
 
   const close = finals.filter((g) => Math.abs(g.homeScore - g.awayScore) <= 5);
   const medium = finals.filter((g) => {
@@ -166,22 +173,22 @@ export function computeTeamFormSummary(
   teamId: string,
   season: string
 ): TeamFormSummary {
-  const finalsDesc = teamSnapshotGames(teamId, season, {
-    gameType: "regular",
-  }).filter((game) => game.status === "final");
+  const finalsDesc = standingsGames(teamId, season).filter(
+    (game) => game.status === "final"
+  );
 
-  const recentResults: Array<"W" | "L"> = [];
-  for (const game of finalsDesc.slice(0, 10)) {
+  const results: Array<"W" | "L"> = [];
+  for (const game of finalsDesc) {
     const { win } = teamPoints(game, teamId);
-    if (win === true) recentResults.push("W");
-    else if (win === false) recentResults.push("L");
+    if (win === true) results.push("W");
+    else if (win === false) results.push("L");
   }
 
   let streakLabel = "—";
-  if (recentResults.length) {
-    const head = recentResults[0]!;
+  if (results.length) {
+    const head = results[0]!;
     let n = 0;
-    for (const r of recentResults) {
+    for (const r of results) {
       if (r !== head) break;
       n += 1;
     }
@@ -190,7 +197,7 @@ export function computeTeamFormSummary(
 
   return {
     streakLabel,
-    recentResults,
+    recentResults: results.slice(0, 10),
     finalsPlayed: finalsDesc.length,
   };
 }
@@ -200,9 +207,9 @@ export function computeTeamMonthSplits(
   teamId: string,
   season: string
 ): TeamSplitBucket[] {
-  const finals = teamSnapshotGames(teamId, season, {
-    gameType: "regular",
-  }).filter((game) => game.status === "final");
+  const finals = standingsGames(teamId, season).filter(
+    (game) => game.status === "final"
+  );
 
   const byMonth = new Map<string, GameSummary[]>();
   for (const game of finals) {
@@ -260,11 +267,13 @@ export function gameSummariesToCompactRows(
       homeAway: home ? "home" : "away",
       result,
       seasonType:
-        game.gameType === "playoff" || game.gameType === "play-in"
+        game.gameType === "playoff"
           ? "Playoffs"
-          : game.gameType === "preseason"
-            ? "Preseason"
-            : "Regular Season",
+          : game.gameType === "play-in"
+            ? "Play-In"
+            : game.gameType === "preseason"
+              ? "Preseason"
+              : "Regular Season",
     };
   });
 }

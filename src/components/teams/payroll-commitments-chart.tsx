@@ -11,8 +11,8 @@ export function PayrollCommitmentsChart({
   if (!bars.length) {
     return (
       <p className="text-sm text-muted-foreground">
-        Future commitment visualization unavailable — no known salaries for this
-        franchise snapshot.
+        Future commitments are unavailable because this franchise snapshot has
+        no known salaries.
       </p>
     );
   }

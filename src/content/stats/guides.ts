@@ -50,7 +50,7 @@ export const STAT_GUIDES: StatGuide[] = [
       doesnt: [
         "Who “tried hardest” or who had the flashiest highlights.",
         "Chemistry, coaching schemes, or playoff-specific matchups by themselves.",
-        "A guarantee - it’s a projection, not a box-score fact.",
+        "A guarantee. It’s a projection, not a box-score fact.",
       ],
       upsides: [
         "Puts stars and role players on one comparable scale.",
@@ -58,7 +58,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Splits offense and defense so you can see where the value lives.",
       ],
       downsides: [
-        "Opaque internals - you can’t recompute it from a box score alone.",
+        "Opaque internals: you can’t recompute it from a box score alone.",
         "Can lag sudden role changes or brand-new injuries.",
         "Easy to overtrust one number without minutes, age, or context.",
       ],
@@ -75,7 +75,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "DPM ≈ O-DPM + D-DPM  (reported as points / 100 possessions vs average)",
       calculation: [
         "Inputs blend box outcomes, on/off style signals, and time-series updating (Kalman-style) so recent play matters without discarding prior information.",
-        "Regression pulls extreme small-sample marks toward a prior - early-season spikes dampen.",
+        "Regression pulls extreme small-sample marks toward a prior, so early-season spikes dampen.",
         "O-DPM and D-DPM are estimated separately, then combined into total DPM.",
         "Leaderboards also expose box and on/off flavors of DPM; treat those as diagnostic slices, not replacements for total DPM.",
         "This site mirrors the public darko.app board; we do not re-derive proprietary weights.",
@@ -98,13 +98,13 @@ export const STAT_GUIDES: StatGuide[] = [
       downsides: [
         "Black-box coefficients limit auditability.",
         "Possessions and lineup context still sit underneath the headline number.",
-        "Cross-era comparisons are unreliable - stick to within-season boards.",
+        "Cross-era comparisons are unreliable; stick to within-season boards.",
       ],
       apply: [
         "Prioritize DPM for valuation; use O/D splits for fit.",
         "Stress-test with minutes, usage, and on/off before a trade.",
         "When DPM and eye test diverge, check role change, injury return, or tiny sample.",
-        "Never stack DARKO with another all-in-one impact metric as if independent - they share information.",
+        "Never stack DARKO with another all-in-one impact metric as if independent; they share information.",
       ],
       sources: ["darko.app public leaderboard", "Published DARKO methodology notes"],
     },
@@ -121,12 +121,12 @@ export const STAT_GUIDES: StatGuide[] = [
       teaches: [
         "How valuable a player was on a points-per-100 scale for that season.",
         "Where the value lived: O-RAPTOR (offense) vs D-RAPTOR (defense).",
-        "WAR — RAPTOR impact scaled by minutes into wins above replacement.",
+        "WAR: RAPTOR impact scaled by minutes into wins above replacement.",
       ],
       doesnt: [
         "Seasons after FiveThirtyEight stopped publishing RAPTOR (roughly post-2021-22).",
         "A clean forecast of next season the way DARKO aims to.",
-        "Basketball Index LEBRON — that metric is proprietary and not on this site.",
+        "Basketball Index LEBRON, which is proprietary and not on this site.",
       ],
       upsides: [
         "Open, documented, and free (538 GitHub, CC BY 4.0).",
@@ -134,7 +134,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Sits next to DARKO and BRef BPM for cross-checking eras.",
       ],
       downsides: [
-        "No new seasons after 538 ended the project — use BPM / VORP / DARKO for recent years.",
+        "No new seasons after 538 ended the project; use BPM / VORP / DARKO for recent years.",
         "Defense remains noisier than offense.",
         "Will not match proprietary boards like LEBRON.",
       ],
@@ -172,7 +172,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "O/D splits help role and fit conversations.",
       ],
       downsides: [
-        "Frozen history — no live continuation from 538.",
+        "Frozen history with no live continuation from 538.",
         "Defensive signal remains noisier than offensive.",
         "Cross-era comparisons still need care.",
       ],
@@ -216,7 +216,7 @@ export const STAT_GUIDES: StatGuide[] = [
       apply: [
         "Pair with usage: high usage + high TS% is rare and valuable.",
         "Don’t crown specialists with tiny attempt volume.",
-        "Compare to league average (~56-58% in modern seasons) for context.",
+        "Compare to league average (about 56–58% in modern seasons) for context.",
       ],
     },
     deep: {
@@ -278,7 +278,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Great for team shot-profile conversations.",
       ],
       downsides: [
-        "Ignores the line completely - use TS% when FTs matter.",
+        "Ignores the line completely; use TS% when FTs matter.",
         "Doesn’t capture shot difficulty.",
       ],
       apply: [
@@ -293,7 +293,7 @@ export const STAT_GUIDES: StatGuide[] = [
       calculation: [
         "Take makes, add half of three-pointers made, divide by field-goal attempts.",
         "Example: 10 FGM, 4 threes, 22 FGA → eFG% = (10 + 0.5×4) / 22 = 12/22 ≈ 54.5%.",
-        "Raw FG% would be 10/22 ≈ 45.5% - eFG% shows the three-point boost.",
+        "Raw FG% would be 10/22 ≈ 45.5%; eFG% shows the three-point boost.",
       ],
       teaches: [
         "Shooting efficiency from the field with three-point equity.",
@@ -344,7 +344,7 @@ export const STAT_GUIDES: StatGuide[] = [
       ],
       apply: [
         "Always read TS% (or scoring) next to usage.",
-        "High usage + mediocre efficiency can still be required - check alternatives on the roster.",
+        "High usage + mediocre efficiency can still be required; check alternatives on the roster.",
       ],
     },
     deep: {
@@ -388,7 +388,7 @@ export const STAT_GUIDES: StatGuide[] = [
     name: "Net rating",
     shortName: "NET",
     category: "team",
-    blurb: "Point margin per 100 possessions - offense minus defense.",
+    blurb: "Point margin per 100 possessions: offense minus defense.",
     plain: {
       teaches: [
         "Whether a team (or on-court group) outscores opponents on a possession-normalized scale.",
@@ -409,7 +409,7 @@ export const STAT_GUIDES: StatGuide[] = [
       ],
       apply: [
         "Team tier lists and playoff outlooks.",
-        "Lineup research - always show possessions with the net.",
+        "For lineups, always check how many possessions the net rating covers.",
       ],
     },
     deep: {
@@ -417,7 +417,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Net rating is offensive rating minus defensive rating: points scored per 100 possessions minus points allowed per 100.",
       formula: "NET = ORtg − DRtg",
       calculation: [
-        "Compute team (or lineup) possessions - methods vary (NBA, Basketball-Reference, etc.).",
+        "Compute team (or lineup) possessions. Methods vary (NBA, Basketball-Reference, etc.).",
         "ORtg = 100 × points / possessions.",
         "DRtg = 100 × points allowed / possessions.",
         "Subtract. Example: ORtg 118, DRtg 110 → NET +8.",
@@ -464,7 +464,7 @@ export const STAT_GUIDES: StatGuide[] = [
       ],
       upsides: [
         "Comparable across fast and slow teams.",
-        "Pairs with Four Factors diagnostics.",
+        "Pairs well with the Four Factors.",
       ],
       downsides: [
         "Individual ORtg definitions differ and can mislead.",
@@ -482,7 +482,7 @@ export const STAT_GUIDES: StatGuide[] = [
       calculation: [
         "Estimate possessions (common: FGA − ORB + TOV + 0.44×FTA, with variants).",
         "Scale points to per-100.",
-        "Individual offensive rating (Oliver-style) allocates scoring and possessions used - treat vendor formulas carefully.",
+        "Individual offensive rating (Oliver-style) allocates scoring and possessions used; treat vendor formulas carefully.",
       ],
       teaches: [
         "Pace-free offensive strength.",

@@ -333,6 +333,6 @@ export async function getTradeExceptionFits(options: {
   return EMPTY_TRADE_EXCEPTION_FIT(
     options.exceptionId,
     options.teamId,
-    "Structured trade-exception and salary data are not available. Fit lists stay empty - DRBL will not invent them."
+    "Structured trade-exception and salary data are not available. Fit lists stay empty; DRBL will not invent them."
   );
 }

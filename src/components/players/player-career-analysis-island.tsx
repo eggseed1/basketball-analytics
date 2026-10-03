@@ -103,7 +103,7 @@ export async function PlayerCareerAnalysisIsland({
               Compare seasons
             </h3>
             <p className={cn(type.bodySm, "text-muted-foreground")}>
-              Pick two seasons — bars run from center toward each side.
+              Pick two seasons. Bars run from the center toward each side.
             </p>
           </div>
         </div>

@@ -60,21 +60,31 @@ export async function resolveTeamStandingsDisplay(input: {
   const seasonAwaitingGames = isSeasonAwaitingFirstGame(season, boardRows);
   const divisionMeta = resolveTeamDivisionMeta(brand, team.teamId);
 
-  let standings = await getLeagueStandings(season).catch(() => null);
-  let rows = standingRows(standings);
-  let standingsEmpty = rows.length === 0;
+  // getLeagueStandings serves the prior season's final table before tip-off;
+  // never present those rows as this season's record.
+  const standings = await getLeagueStandings(season).catch(() => null);
+  const sameSeason = standings != null && standings.season === season;
+  const seasonRows = sameSeason ? standingRows(standings) : [];
+  const rows = seasonRows.some((r) => r.wins + r.losses > 0) ? seasonRows : [];
+  const standingsEmpty = rows.length === 0;
 
   let priorSeasonStanding: StandingRow | null = null;
   let priorSeasonLabel: string | null = null;
 
   if (standingsEmpty && isPreseasonRosterSeason(season)) {
     const priorSeason = shiftCanonicalSeason(season, -1);
-    const priorStandings = await getLeagueStandings(priorSeason).catch(
-      () => null
-    );
-    const priorRows = standingRows(priorStandings);
-    priorSeasonStanding = findStandingRow(priorRows, team, brand);
-    priorSeasonLabel = priorSeason;
+    const priorStandings =
+      standings?.season === priorSeason
+        ? standings
+        : await getLeagueStandings(priorSeason).catch(() => null);
+    if (priorStandings?.season === priorSeason) {
+      priorSeasonStanding = findStandingRow(
+        standingRows(priorStandings),
+        team,
+        brand
+      );
+      priorSeasonLabel = priorSeason;
+    }
   }
 
   const standing = findStandingRow(rows, team, brand);

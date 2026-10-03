@@ -32,6 +32,7 @@ type SiteHit = {
   kind: "player" | "team";
   teamKey?: string;
   subtitle?: string;
+  portraitUrl?: string;
 };
 
 const LOCAL_TEAMS: SiteHit[] = (() => {
@@ -187,6 +188,7 @@ export function SiteSearch() {
                 careerSpan?: string;
                 current?: boolean;
                 draftProspect?: boolean;
+                portraitUrl?: string;
               }>;
             })
           : { results: [] };
@@ -195,6 +197,7 @@ export function SiteSearch() {
           name: row.name,
           kind: "player" as const,
           teamKey: row.team || undefined,
+          portraitUrl: row.portraitUrl,
           subtitle: row.draftProspect
             ? [row.team, row.careerSpan].filter(Boolean).join(" · ") ||
               "Draft prospect"
@@ -406,6 +409,7 @@ export function SiteSearch() {
                               playerId={hit.id}
                               name={hit.name}
                               teamKey={hit.teamKey}
+                              portraitUrl={hit.portraitUrl}
                               size="xs"
                             />
                           )}

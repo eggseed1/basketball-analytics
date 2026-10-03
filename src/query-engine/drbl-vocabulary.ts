@@ -29,7 +29,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL/100",
     tier: "canonical",
     glossary:
-      "DRBL/100 estimates impact per 100 possessions — the primary ability-rate ranking number.",
+      "DRBL/100 estimates impact per 100 possessions. It is the primary ability-rate ranking number.",
     synonyms: [
       "drbl/100",
       "drbl 100",
@@ -96,7 +96,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL-LN",
     tier: "diagnostic",
     glossary:
-      "Some value shows up in lineup results even when box scores miss it. DRBL-LN is that lineup diagnostic — not proven off-ball value, and not additive with P and B into DRBL/100. Learn: /learn/drbl-ln",
+      "Some value shows up in lineup results even when box scores miss it. DRBL-LN is that lineup diagnostic. It is not proven off-ball value and is not additive with P and B into DRBL/100. Learn: /learn/drbl-ln",
     synonyms: ["drbl-ln", "drbl ln", "drblln"],
   },
   {
@@ -104,7 +104,7 @@ export const DRBL_VOCABULARY: DrblVocabEntry[] = [
     label: "DRBL-B",
     tier: "diagnostic",
     glossary:
-      "DRBL-B is a box/behavior diagnostic — not optical tracking. It is not additive with P and LN into DRBL/100. Learn: /learn/drbl-b",
+      "DRBL-B is a box/behavior diagnostic and does not use optical tracking. It is not additive with P and LN into DRBL/100. Learn: /learn/drbl-b",
     synonyms: ["drbl-b", "drbl b", "drblb"],
   },
 ];
@@ -126,7 +126,7 @@ export const FORBIDDEN_DRBL_CLAIMS = [
 ] as const;
 
 export const NON_ADDITIVE_COMPONENT_WARNING =
-  "DRBL-P, DRBL-LN, and DRBL-B are diagnostic disclosures — they do not sum to DRBL/100.";
+  "DRBL-P, DRBL-LN, and DRBL-B are diagnostic disclosures and do not sum to DRBL/100.";
 
 export function glossaryForMetricId(id: string): string | null {
   return DRBL_VOCABULARY.find((v) => v.id === id)?.glossary ?? null;

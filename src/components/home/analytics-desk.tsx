@@ -84,7 +84,7 @@ export function AnalyticsDesk({
     <div className="flex items-start justify-between gap-3">
       <div className="min-w-0">
         <h2 className="type-heading">
-          {embedded ? "Recent News" : "Analytics desk"}
+          {embedded ? "Recent news" : "Analytics desk"}
         </h2>
         {embedded ? (
           <p className="type-body-sm text-muted-foreground">
@@ -95,7 +95,7 @@ export function AnalyticsDesk({
           </p>
         ) : (
           <p className="type-body-sm text-muted-foreground">
-            Recent NBA analytics coverage - credited to the outlet and writer.
+            Recent NBA analytics coverage, credited to the outlet and writer.
             {updatedLabel ? ` · ${updatedLabel}` : ""}
           </p>
         )}

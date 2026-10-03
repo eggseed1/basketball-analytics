@@ -31,7 +31,10 @@ export type BracketMatchup = {
 
 export type ConferenceBracket = {
   conference: "East" | "West";
+  /** [9 vs 10, 7 vs 8]. */
   playIn: [BracketMatchup, BracketMatchup];
+  /** Loser of 7/8 vs winner of 9/10 for the 8 seed, once played. */
+  playInFinal: BracketMatchup | null;
   firstRound: BracketMatchup[];
   semifinals: [BracketMatchup, BracketMatchup];
   conferenceFinals: BracketMatchup;
@@ -315,8 +318,10 @@ function earliestSeriesByTeam(
  * (excludes later rounds where a winner already played).
  */
 function firstRoundSeriesList(confSeries: SeriesResult[]): SeriesResult[] {
-  const earliest = earliestSeriesByTeam(confSeries);
-  return confSeries
+  // Play-In games come first for seeds 7-10 and would hide their real R1 series.
+  const playoffSeries = confSeries.filter((s) => !s.playInOnly);
+  const earliest = earliestSeriesByTeam(playoffSeries);
+  return playoffSeries
     .filter((s) => {
       if (!s.startDate) return false;
       return (
@@ -347,7 +352,7 @@ function buildFirstRoundFromResults(
 ): BracketMatchup[] {
   const seedById = seedMap(seeds);
   const confSeries = conferenceSeries(conference, series);
-  const firstRound = firstRoundSeriesList(confSeries).filter((s) => !s.playInOnly);
+  const firstRound = firstRoundSeriesList(confSeries);
 
   const byHighSeed = new Map<
     number,
@@ -359,7 +364,14 @@ function buildFirstRoundFromResults(
     const b = teamFromSeriesSide(s.teamBId, seedById);
     if (!a || !b) continue;
     const high = a.seed <= b.seed ? a : b;
-    const low = a.seed <= b.seed ? b : a;
+    const lowRaw = a.seed <= b.seed ? b : a;
+    // Play-In winners carry their regular-season finish (7-10); the 1 seed
+    // meets the 8 and the 2 seed meets the 7.
+    const playoffSeed = 9 - high.seed;
+    const low =
+      high.seed <= 2 && lowRaw.seed >= 7 && lowRaw.seed !== playoffSeed
+        ? { ...lowRaw, seed: playoffSeed }
+        : lowRaw;
     // Prefer lower high-seed if a team somehow appears twice.
     const existing = byHighSeed.get(high.seed);
     if (!existing || (s.startDate ?? "") < (existing.series.startDate ?? "")) {
@@ -441,7 +453,10 @@ function buildPlayIn(
   seeds: BracketTeam[],
   series: Map<string, SeriesResult>,
   conference: "East" | "West"
-): [BracketMatchup, BracketMatchup] {
+): {
+  playIn: [BracketMatchup, BracketMatchup];
+  playInFinal: BracketMatchup | null;
+} {
   const s7 = bySeed(seeds, 7);
   const s8 = bySeed(seeds, 8);
   const s9 = bySeed(seeds, 9);
@@ -469,37 +484,45 @@ function buildPlayIn(
     series
   );
 
+  let playInFinal: BracketMatchup | null = null;
+
   for (const s of playInSeries) {
     const a = seedById.get(s.teamAId);
     const b = seedById.get(s.teamBId);
     if (!a || !b) continue;
-    const seedsInvolved = [a.seed, b.seed].sort((x, y) => x - y);
-    if (seedsInvolved[0] === 9 || seedsInvolved[1] === 10) {
+    const high = a.seed <= b.seed ? a : b;
+    const low = a.seed <= b.seed ? b : a;
+    if (high.seed === 9 && low.seed === 10) {
       nineTen = matchupFromResolved(
         `${prefix}-pi-9-10`,
         "playin",
-        a.seed <= b.seed ? a : b,
-        a.seed <= b.seed ? b : a,
+        high,
+        low,
         "10",
         series
       );
-    }
-    if (
-      (seedsInvolved[0] === 7 || seedsInvolved[0] === 8) &&
-      (seedsInvolved[1] === 8 || seedsInvolved[1] === 7)
-    ) {
+    } else if (high.seed === 7 && low.seed === 8) {
       sevenEight = matchupFromResolved(
         `${prefix}-pi-7-8`,
         "playin",
-        a.seed <= b.seed ? a : b,
-        a.seed <= b.seed ? b : a,
+        high,
+        low,
         "8",
+        series
+      );
+    } else if (high.seed <= 8 && low.seed >= 9) {
+      playInFinal = matchupFromResolved(
+        `${prefix}-pi-final`,
+        "playin",
+        high,
+        low,
+        "9/10",
         series
       );
     }
   }
 
-  return [nineTen, sevenEight];
+  return { playIn: [nineTen, sevenEight], playInFinal };
 }
 
 /**
@@ -583,7 +606,7 @@ function buildConferenceBracket(
   const seeds = enrichSeedsFromGames(seedsIn, games, conference);
   const seedById = seedMap(seeds);
 
-  const playIn = buildPlayIn(prefix, seeds, series, conference);
+  const { playIn, playInFinal } = buildPlayIn(prefix, seeds, series, conference);
 
   const firstRound =
     mode === "projected"
@@ -648,7 +671,17 @@ function buildConferenceBracket(
       2,
       ["TBD", "TBD"]
     );
-    semifinals = [semis[0]!, semis[1]!];
+    // Pool order is by start date; the top semi must hold the 1/8 or 4/5 winner.
+    const topIds = new Set(
+      [w1, w2].filter(Boolean).map((t) => t!.teamId)
+    );
+    const holdsTop = (m: BracketMatchup) =>
+      topIds.has(m.top.team?.teamId ?? "") ||
+      topIds.has(m.bottom.team?.teamId ?? "");
+    semifinals =
+      !holdsTop(semis[0]!) && holdsTop(semis[1]!)
+        ? [semis[1]!, semis[0]!]
+        : [semis[0]!, semis[1]!];
   }
 
   const w5 = winnerTeam(semifinals[0]!, seedById);
@@ -683,6 +716,7 @@ function buildConferenceBracket(
   return {
     conference,
     playIn,
+    playInFinal,
     firstRound,
     semifinals,
     conferenceFinals,

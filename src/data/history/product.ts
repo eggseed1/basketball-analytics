@@ -94,9 +94,13 @@ export function historicalSummaryFromGame(game: Game): HistoricalGameSummary {
     seasonType:
       game.gameType === "playoff"
         ? "Playoffs"
-        : game.gameType === "preseason"
-          ? "Preseason"
-          : "Regular Season",
+        : game.gameType === "play-in"
+          ? "Play-In"
+          : game.gameType === "preseason"
+            ? "Preseason"
+            : game.cupChampionship
+              ? "NBA Cup Final"
+              : "Regular Season",
     date: game.gameDate,
     homeTeamId: game.homeTeamId,
     awayTeamId: game.awayTeamId,
@@ -282,7 +286,7 @@ export function searchHistoricalProductGames(params: {
     }
   }
 
-  let all = getHistoricalGameSummaries(season);
+  const all = getHistoricalGameSummaries(season);
 
   // When disk indexes are missing, filter the schedule snapshot in memory.
   if (ids == null && (teamId || date)) {

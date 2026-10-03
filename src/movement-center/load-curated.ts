@@ -2,7 +2,10 @@ import "server-only";
 
 import { cache } from "react";
 
+import { fetchLiveEspnTransactionRows } from "@/data/providers/transactions/transaction-live-enrich";
 import { getRuntimeMovementSnapshot } from "@/data/runtime/movement-snapshot";
+import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
+import { resolveOpenStoriesWithLedger } from "@/movement-center/live-resolve";
 import type {
   MovementCuratedSnapshot,
   MovementFeedItem,
@@ -44,8 +47,43 @@ function readSnapshot(): MovementCuratedSnapshot | null {
   return getRuntimeMovementSnapshot() ?? readLocalSnapshot();
 }
 
-export const loadMovementSnapshot = cache((): MovementCuratedSnapshot | null =>
-  readSnapshot()
+let playerNames: Map<string, string> | null = null;
+
+function playerName(playerId: string): string | undefined {
+  if (!playerNames) {
+    playerNames = new Map();
+    for (const row of getPlayerSearchIndex()) {
+      if (!playerNames.has(row.id)) playerNames.set(row.id, row.name);
+    }
+  }
+  return playerNames.get(playerId);
+}
+
+/** Close open stories whose transaction ESPN posted after the bake. */
+async function withLiveLedger(
+  snapshot: MovementCuratedSnapshot
+): Promise<MovementCuratedSnapshot> {
+  if (process.env.DRBL_LIVE_TRANSACTIONS === "off") return snapshot;
+  try {
+    const live = await fetchLiveEspnTransactionRows();
+    if (!live.length) return snapshot;
+    const ledger = live.map((tx) => ({
+      id: tx.id,
+      date: tx.date,
+      description: tx.description,
+      teamIds: tx.teamIds,
+    }));
+    return resolveOpenStoriesWithLedger(snapshot, ledger, playerName);
+  } catch {
+    return snapshot;
+  }
+}
+
+export const loadMovementSnapshot = cache(
+  async (): Promise<MovementCuratedSnapshot | null> => {
+    const snapshot = readSnapshot();
+    return snapshot ? withLiveLedger(snapshot) : null;
+  }
 );
 
 function claimsForCluster(
@@ -55,8 +93,13 @@ function claimsForCluster(
   return snapshot.claims.filter((c) => c.clusterId === clusterId);
 }
 
+/** Expired stories stay in the snapshot for the record but leave the feed. */
+function visibleClusters(snapshot: MovementCuratedSnapshot): MovementStoryCluster[] {
+  return snapshot.clusters.filter((c) => c.state !== "expired");
+}
+
 function buildFeed(snapshot: MovementCuratedSnapshot): MovementFeedItem[] {
-  return snapshot.clusters
+  return visibleClusters(snapshot)
     .map((cluster) => {
       const claims = claimsForCluster(snapshot, cluster.id);
       const score = scoreMovementCluster(
@@ -69,19 +112,23 @@ function buildFeed(snapshot: MovementCuratedSnapshot): MovementFeedItem[] {
     .sort((a, b) => b.score.total - a.score.total);
 }
 
-export const getMovementFeed = cache((): {
+export type MovementFeed = {
   items: MovementFeedItem[];
   season: string;
   disclaimer: string;
   status: string;
-} | null => {
-  const snapshot = loadMovementSnapshot();
+  meta: MovementCuratedSnapshot["meta"];
+};
+
+export const getMovementFeed = cache(async (): Promise<MovementFeed | null> => {
+  const snapshot = await loadMovementSnapshot();
   if (!snapshot) return null;
   return {
     items: buildFeed(snapshot),
     season: snapshot.meta.season,
     disclaimer: snapshot.meta.disclaimer,
     status: snapshot.meta.status,
+    meta: snapshot.meta,
   };
 });
 
@@ -107,13 +154,13 @@ function sortClustersForDisplay(
   return [...byScore(active), ...byScore(resolved)];
 }
 
-export function buildPlayerMovementBundle(
+export async function buildPlayerMovementBundle(
   playerIds: Set<string>
-): PlayerMovementBundle | null {
-  const snapshot = loadMovementSnapshot();
+): Promise<PlayerMovementBundle | null> {
+  const snapshot = await loadMovementSnapshot();
   if (!snapshot || playerIds.size === 0) return null;
 
-  const clusters = snapshot.clusters.filter((c) =>
+  const clusters = visibleClusters(snapshot).filter((c) =>
     playerIdMatches(c.linkedPlayerIds, playerIds)
   );
   if (!clusters.length) return null;
@@ -167,11 +214,11 @@ export function buildPlayerMovementBundle(
   };
 }
 
-export function buildTeamMovementFeed(
+export async function buildTeamMovementFeed(
   teamId: string,
   options?: { activeOnly?: boolean }
-): MovementFeedItem[] | null {
-  const snapshot = loadMovementSnapshot();
+): Promise<MovementFeedItem[] | null> {
+  const snapshot = await loadMovementSnapshot();
   if (!snapshot) return null;
   let items = buildFeed(snapshot).filter((item) =>
     item.cluster.linkedTeamIds.includes(teamId)
@@ -185,16 +232,16 @@ export function buildTeamMovementFeed(
   return items;
 }
 
-export function getMovementCluster(
+export async function getMovementCluster(
   clusterId: string
-): MovementFeedItem | null {
-  const feed = getMovementFeed();
+): Promise<MovementFeedItem | null> {
+  const feed = await getMovementFeed();
   return feed?.items.find((i) => i.cluster.id === clusterId) ?? null;
 }
 
-export function listClustersForPlayer(
+export async function listClustersForPlayer(
   playerIds: Set<string>
-): MovementStoryCluster[] {
-  const bundle = buildPlayerMovementBundle(playerIds);
+): Promise<MovementStoryCluster[]> {
+  const bundle = await buildPlayerMovementBundle(playerIds);
   return bundle?.clusters ?? [];
 }

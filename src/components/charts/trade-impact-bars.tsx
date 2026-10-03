@@ -102,7 +102,7 @@ export function TradeImpactBars({
           id={`${chartId}-desc`}
           className={cn(type.caption, "mt-0.5 text-muted-foreground")}
         >
-          Who gains on the model nets — blank sides mean a moved player has no
+          Who gains on the model nets. A blank side means a moved player has no
           row (missing ≠ 0).
         </p>
       </div>

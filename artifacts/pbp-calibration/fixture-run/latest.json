@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-23T03:12:46.237Z",
+  "generatedAt": "2026-09-30T02:31:30.144Z",
   "options": {
     "seasons": [
       "1996-97",
@@ -298,7 +298,7 @@
       "flagrantFtCount": 0,
       "editedEventCount": 0,
       "failureReason": null,
-      "elapsedMs": 5,
+      "elapsedMs": 4,
       "comparable": true
     }
   ],
@@ -402,7 +402,7 @@
       "flagrantFtCount": 0,
       "editedEventCount": 0,
       "failureReason": null,
-      "elapsedMs": 5,
+      "elapsedMs": 4,
       "comparable": true
     },
     {

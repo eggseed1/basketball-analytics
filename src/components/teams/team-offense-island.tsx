@@ -126,7 +126,10 @@ export async function TeamOffenseIsland({
   const creators = [...board]
     .filter(
       (p) =>
-        p.usagePct != null && Number.isFinite(p.usagePct) && p.usagePct > 0
+        p.usagePct != null &&
+        Number.isFinite(p.usagePct) &&
+        p.usagePct > 0 &&
+        p.minutes >= 100
     )
     .sort((a, b) => (b.usagePct ?? 0) - (a.usagePct ?? 0))
     .slice(0, 5);
@@ -306,7 +309,7 @@ export async function TeamOffenseIsland({
         <div className="grid gap-4 lg:grid-cols-3">
           <SideList
             title="Creation load"
-            hint="Highest usage with minutes"
+            hint="Highest usage among 100+ minute rows"
             rows={creators}
             season={season}
             teamKey={teamKey}

@@ -1,0 +1,1461 @@
+{
+  "generatedAt": "2026-09-30T05:31:46.703Z",
+  "source": "https://en.wikipedia.org/wiki/List_of_NBA_retired_numbers",
+  "idSource": "nba_api static player list (stats.nba.com PERSON_ID)",
+  "policy": "Player banners only; future retirements, owners, coaches, broadcasters and fan banners are excluded from jerseys. bannerCounts counts every numbered banner except future ones. Names match NFD-stripped, lowercased, without . ' \" and with hyphens as spaces.",
+  "bannerCounts": {
+    "atl": 6,
+    "bos": 23,
+    "bkn": 7,
+    "cha": 2,
+    "chi": 5,
+    "cle": 7,
+    "dal": 5,
+    "den": 7,
+    "det": 11,
+    "gsw": 7,
+    "hou": 7,
+    "ind": 5,
+    "lac": 0,
+    "lal": 14,
+    "mem": 3,
+    "mia": 8,
+    "mil": 9,
+    "min": 1,
+    "nop": 1,
+    "nyk": 9,
+    "okc": 1,
+    "orl": 2,
+    "phi": 10,
+    "phx": 12,
+    "por": 12,
+    "sac": 11,
+    "sas": 10,
+    "sea": 6,
+    "tor": 1,
+    "uta": 10,
+    "was": 5
+  },
+  "ambiguousNames": [
+    "bobby jones",
+    "patrick ewing"
+  ],
+  "jerseys": [
+    {
+      "nbaPlayerId": "77847",
+      "teamKey": "atl",
+      "number": "9",
+      "playerName": "Bob Pettit",
+      "years": "1954–1965"
+    },
+    {
+      "nbaPlayerId": "1122",
+      "teamKey": "atl",
+      "number": "21",
+      "playerName": "Dominique Wilkins",
+      "years": "1982–1994"
+    },
+    {
+      "nbaPlayerId": "77074",
+      "teamKey": "atl",
+      "number": "23",
+      "playerName": "Lou Hudson",
+      "years": "1966–1977"
+    },
+    {
+      "nbaPlayerId": "77459",
+      "teamKey": "atl",
+      "number": "44",
+      "playerName": "Pete Maravich",
+      "years": "1970–1974"
+    },
+    {
+      "nbaPlayerId": "87",
+      "teamKey": "atl",
+      "number": "55",
+      "playerName": "Dikembe Mutombo",
+      "years": "1996–2001"
+    },
+    {
+      "nbaPlayerId": "305",
+      "teamKey": "bos",
+      "number": "00",
+      "playerName": "Robert Parish",
+      "years": "1980–1994"
+    },
+    {
+      "nbaPlayerId": "77141",
+      "teamKey": "bos",
+      "number": "3",
+      "playerName": "Dennis Johnson",
+      "years": "1983–1990"
+    },
+    {
+      "nbaPlayerId": "708",
+      "teamKey": "bos",
+      "number": "5",
+      "playerName": "Kevin Garnett",
+      "years": "2007–2013"
+    },
+    {
+      "nbaPlayerId": "78049",
+      "teamKey": "bos",
+      "number": "6",
+      "playerName": "Bill Russell",
+      "years": "1956–1969"
+    },
+    {
+      "nbaPlayerId": "78510",
+      "teamKey": "bos",
+      "number": "10",
+      "playerName": "Jo Jo White",
+      "years": "1969–1979"
+    },
+    {
+      "nbaPlayerId": "600003",
+      "teamKey": "bos",
+      "number": "14",
+      "playerName": "Bob Cousy",
+      "years": "1950–1963"
+    },
+    {
+      "nbaPlayerId": "76988",
+      "teamKey": "bos",
+      "number": "15",
+      "playerName": "Tom Heinsohn",
+      "years": "1956–1965"
+    },
+    {
+      "nbaPlayerId": "78060",
+      "teamKey": "bos",
+      "number": "16",
+      "playerName": "Satch Sanders",
+      "years": "1960–1973"
+    },
+    {
+      "nbaPlayerId": "76970",
+      "teamKey": "bos",
+      "number": "17",
+      "playerName": "John Havlicek",
+      "years": "1962–1978"
+    },
+    {
+      "nbaPlayerId": "76462",
+      "teamKey": "bos",
+      "number": "18",
+      "playerName": "Dave Cowens",
+      "years": "1970–1980"
+    },
+    {
+      "nbaPlayerId": "77700",
+      "teamKey": "bos",
+      "number": "19",
+      "playerName": "Don Nelson",
+      "years": "1965–1976"
+    },
+    {
+      "nbaPlayerId": "78126",
+      "teamKey": "bos",
+      "number": "21",
+      "playerName": "Bill Sharman",
+      "years": "1951–1961"
+    },
+    {
+      "nbaPlayerId": "77429",
+      "teamKey": "bos",
+      "number": "22",
+      "playerName": "Ed Macauley",
+      "years": "1950–1956"
+    },
+    {
+      "nbaPlayerId": "77907",
+      "teamKey": "bos",
+      "number": "23",
+      "playerName": "Frank Ramsey",
+      "years": "1954–1964"
+    },
+    {
+      "nbaPlayerId": "77196",
+      "teamKey": "bos",
+      "number": "24",
+      "playerName": "Sam Jones",
+      "years": "1957–1969"
+    },
+    {
+      "nbaPlayerId": "77188",
+      "teamKey": "bos",
+      "number": "25",
+      "playerName": "K. C. Jones",
+      "years": "1958–1967"
+    },
+    {
+      "nbaPlayerId": "77487",
+      "teamKey": "bos",
+      "number": "31",
+      "playerName": "Cedric Maxwell",
+      "years": "1977–1985"
+    },
+    {
+      "nbaPlayerId": "1450",
+      "teamKey": "bos",
+      "number": "32",
+      "playerName": "Kevin McHale",
+      "years": "1980–1993"
+    },
+    {
+      "nbaPlayerId": "1449",
+      "teamKey": "bos",
+      "number": "33",
+      "playerName": "Larry Bird",
+      "years": "1979–1992"
+    },
+    {
+      "nbaPlayerId": "1718",
+      "teamKey": "bos",
+      "number": "34",
+      "playerName": "Paul Pierce",
+      "years": "1998–2013"
+    },
+    {
+      "nbaPlayerId": "77384",
+      "teamKey": "bos",
+      "number": "35",
+      "playerName": "Reggie Lewis",
+      "years": "1987–1993"
+    },
+    {
+      "nbaPlayerId": "77845",
+      "teamKey": "bkn",
+      "number": "3",
+      "playerName": "Dražen Petrović",
+      "years": "1991–1993"
+    },
+    {
+      "nbaPlayerId": "467",
+      "teamKey": "bkn",
+      "number": "5",
+      "playerName": "Jason Kidd",
+      "years": "2001–2008"
+    },
+    {
+      "nbaPlayerId": "1713",
+      "teamKey": "bkn",
+      "number": "15",
+      "playerName": "Vince Carter",
+      "years": "2004–2009"
+    },
+    {
+      "nbaPlayerId": "78575",
+      "teamKey": "bkn",
+      "number": "23",
+      "playerName": "John Williamson",
+      "years": "1973–1980"
+    },
+    {
+      "nbaPlayerId": "77576",
+      "teamKey": "bkn",
+      "number": "25",
+      "playerName": "Bill Melchionni",
+      "years": "1969–1976"
+    },
+    {
+      "nbaPlayerId": "76681",
+      "teamKey": "bkn",
+      "number": "32",
+      "playerName": "Julius Erving",
+      "years": "1973–1976"
+    },
+    {
+      "nbaPlayerId": "433",
+      "teamKey": "bkn",
+      "number": "52",
+      "playerName": "Buck Williams",
+      "years": "1981–1989"
+    },
+    {
+      "nbaPlayerId": "184",
+      "teamKey": "cha",
+      "number": "13",
+      "playerName": "Bobby Phills",
+      "years": "1997–2000"
+    },
+    {
+      "nbaPlayerId": "209",
+      "teamKey": "cha",
+      "number": "30",
+      "playerName": "Dell Curry",
+      "years": "1988–1998"
+    },
+    {
+      "nbaPlayerId": "201565",
+      "teamKey": "chi",
+      "number": "1",
+      "playerName": "Derrick Rose",
+      "years": "2008–2016"
+    },
+    {
+      "nbaPlayerId": "78173",
+      "teamKey": "chi",
+      "number": "4",
+      "playerName": "Jerry Sloan",
+      "years": "1966–1976"
+    },
+    {
+      "nbaPlayerId": "77412",
+      "teamKey": "chi",
+      "number": "10",
+      "playerName": "Bob Love",
+      "years": "1968–1976"
+    },
+    {
+      "nbaPlayerId": "893",
+      "teamKey": "chi",
+      "number": "23",
+      "playerName": "Michael Jordan",
+      "years": "1984–1993<br>1995–1998"
+    },
+    {
+      "nbaPlayerId": "937",
+      "teamKey": "chi",
+      "number": "33",
+      "playerName": "Scottie Pippen",
+      "years": "1987–1998<br>2003–2004"
+    },
+    {
+      "nbaPlayerId": "78202",
+      "teamKey": "cle",
+      "number": "7",
+      "playerName": "Bingo Smith",
+      "years": "1970–1979"
+    },
+    {
+      "nbaPlayerId": "980",
+      "teamKey": "cle",
+      "number": "11",
+      "playerName": "Zydrunas Ilgauskas",
+      "years": "1996–2010"
+    },
+    {
+      "nbaPlayerId": "77685",
+      "teamKey": "cle",
+      "number": "22",
+      "playerName": "Larry Nance",
+      "years": "1988–1994"
+    },
+    {
+      "nbaPlayerId": "899",
+      "teamKey": "cle",
+      "number": "25",
+      "playerName": "Mark Price",
+      "years": "1986–1995"
+    },
+    {
+      "nbaPlayerId": "76348",
+      "teamKey": "cle",
+      "number": "34",
+      "playerName": "Austin Carr",
+      "years": "1971–1980"
+    },
+    {
+      "nbaPlayerId": "600001",
+      "teamKey": "cle",
+      "number": "42",
+      "playerName": "Nate Thurmond",
+      "years": "1975–1977"
+    },
+    {
+      "nbaPlayerId": "921",
+      "teamKey": "cle",
+      "number": "43",
+      "playerName": "Brad Daugherty",
+      "years": "1986–1996"
+    },
+    {
+      "nbaPlayerId": "157",
+      "teamKey": "dal",
+      "number": "12",
+      "playerName": "Derek Harper",
+      "years": "1983–1994<br>1996–1997"
+    },
+    {
+      "nbaPlayerId": "76516",
+      "teamKey": "dal",
+      "number": "15",
+      "playerName": "Brad Davis",
+      "years": "1980–1992"
+    },
+    {
+      "nbaPlayerId": "76176",
+      "teamKey": "dal",
+      "number": "22",
+      "playerName": "Rolando Blackman",
+      "years": "1981–1992"
+    },
+    {
+      "nbaPlayerId": "76016",
+      "teamKey": "dal",
+      "number": "24",
+      "playerName": "Mark Aguirre",
+      "years": "1981–1989"
+    },
+    {
+      "nbaPlayerId": "1717",
+      "teamKey": "dal",
+      "number": "41",
+      "playerName": "Dirk Nowitzki",
+      "years": "1998–2019"
+    },
+    {
+      "nbaPlayerId": "76673",
+      "teamKey": "den",
+      "number": "2",
+      "playerName": "Alex English",
+      "years": "1980–1990"
+    },
+    {
+      "nbaPlayerId": "77376",
+      "teamKey": "den",
+      "number": "12",
+      "playerName": "Fat Lever",
+      "years": "1984–1990"
+    },
+    {
+      "nbaPlayerId": "78326",
+      "teamKey": "den",
+      "number": "33",
+      "playerName": "David Thompson",
+      "years": "1975–1982"
+    },
+    {
+      "nbaPlayerId": "76134",
+      "teamKey": "den",
+      "number": "40",
+      "playerName": "Byron Beck",
+      "years": "1967–1977"
+    },
+    {
+      "nbaPlayerId": "77097",
+      "teamKey": "den",
+      "number": "44",
+      "playerName": "Dan Issel",
+      "years": "1975–1985"
+    },
+    {
+      "nbaPlayerId": "87",
+      "teamKey": "den",
+      "number": "55",
+      "playerName": "Dikembe Mutombo",
+      "years": "1991–1996"
+    },
+    {
+      "nbaPlayerId": "1497",
+      "teamKey": "det",
+      "number": "1",
+      "playerName": "Chauncey Billups",
+      "years": "2002–2008<br>2013–2014"
+    },
+    {
+      "nbaPlayerId": "1112",
+      "teamKey": "det",
+      "number": "3",
+      "playerName": "Ben Wallace",
+      "years": "2000–2006<br>2009–2012"
+    },
+    {
+      "nbaPlayerId": "247",
+      "teamKey": "det",
+      "number": "4",
+      "playerName": "Joe Dumars",
+      "years": "1985–1999"
+    },
+    {
+      "nbaPlayerId": "23",
+      "teamKey": "det",
+      "number": "10",
+      "playerName": "Dennis Rodman",
+      "years": "1986–1993"
+    },
+    {
+      "nbaPlayerId": "78318",
+      "teamKey": "det",
+      "number": "11",
+      "playerName": "Isiah Thomas",
+      "years": "1981–1994"
+    },
+    {
+      "nbaPlayerId": "77167",
+      "teamKey": "det",
+      "number": "15",
+      "playerName": "Vinnie Johnson",
+      "years": "1981–1991"
+    },
+    {
+      "nbaPlayerId": "600005",
+      "teamKey": "det",
+      "number": "16",
+      "playerName": "Bob Lanier",
+      "years": "1970–1980"
+    },
+    {
+      "nbaPlayerId": "76166",
+      "teamKey": "det",
+      "number": "21",
+      "playerName": "Dave Bing",
+      "years": "1966–1975"
+    },
+    {
+      "nbaPlayerId": "1888",
+      "teamKey": "det",
+      "number": "32",
+      "playerName": "Richard Hamilton",
+      "years": "2002–2011"
+    },
+    {
+      "nbaPlayerId": "100263",
+      "teamKey": "det",
+      "number": "40",
+      "playerName": "Bill Laimbeer",
+      "years": "1982–1993"
+    },
+    {
+      "nbaPlayerId": "2738",
+      "teamKey": "gsw",
+      "number": "9",
+      "playerName": "Andre Iguodala",
+      "years": "2013–2019<br>2021–2023"
+    },
+    {
+      "nbaPlayerId": "76375",
+      "teamKey": "gsw",
+      "number": "13",
+      "playerName": "Wilt Chamberlain",
+      "years": "1959–1965"
+    },
+    {
+      "nbaPlayerId": "77584",
+      "teamKey": "gsw",
+      "number": "14",
+      "playerName": "Tom Meschery",
+      "years": "1961–1967"
+    },
+    {
+      "nbaPlayerId": "76070",
+      "teamKey": "gsw",
+      "number": "16",
+      "playerName": "Al Attles",
+      "years": "1960–1971"
+    },
+    {
+      "nbaPlayerId": "904",
+      "teamKey": "gsw",
+      "number": "17",
+      "playerName": "Chris Mullin",
+      "years": "1985–1997<br>2000–2001"
+    },
+    {
+      "nbaPlayerId": "600013",
+      "teamKey": "gsw",
+      "number": "24",
+      "playerName": "Rick Barry",
+      "years": "1965–1967<br>1972–1978"
+    },
+    {
+      "nbaPlayerId": "600001",
+      "teamKey": "gsw",
+      "number": "42",
+      "playerName": "Nate Thurmond",
+      "years": "1963–1974"
+    },
+    {
+      "nbaPlayerId": "2397",
+      "teamKey": "hou",
+      "number": "11",
+      "playerName": "Yao Ming",
+      "years": "2002–2011"
+    },
+    {
+      "nbaPlayerId": "17",
+      "teamKey": "hou",
+      "number": "22",
+      "playerName": "Clyde Drexler",
+      "years": "1995–1998"
+    },
+    {
+      "nbaPlayerId": "77669",
+      "teamKey": "hou",
+      "number": "23",
+      "playerName": "Calvin Murphy",
+      "years": "1970–1983"
+    },
+    {
+      "nbaPlayerId": "77449",
+      "teamKey": "hou",
+      "number": "24",
+      "playerName": "Moses Malone",
+      "years": "1976–1982"
+    },
+    {
+      "nbaPlayerId": "165",
+      "teamKey": "hou",
+      "number": "34",
+      "playerName": "Hakeem Olajuwon",
+      "years": "1984–2001"
+    },
+    {
+      "nbaPlayerId": "76979",
+      "teamKey": "hou",
+      "number": "44",
+      "playerName": "Elvin Hayes",
+      "years": "1968–1972<br/>1981–1984"
+    },
+    {
+      "nbaPlayerId": "78350",
+      "teamKey": "hou",
+      "number": "45",
+      "playerName": "Rudy Tomjanovich",
+      "years": "1970–1981"
+    },
+    {
+      "nbaPlayerId": "77532",
+      "teamKey": "ind",
+      "number": "30",
+      "playerName": "George McGinnis",
+      "years": "1971–1975<br>1980–1982"
+    },
+    {
+      "nbaPlayerId": "397",
+      "teamKey": "ind",
+      "number": "31",
+      "playerName": "Reggie Miller",
+      "years": "1987–2005"
+    },
+    {
+      "nbaPlayerId": "76502",
+      "teamKey": "ind",
+      "number": "34",
+      "playerName": "Mel Daniels",
+      "years": "1967–1974"
+    },
+    {
+      "nbaPlayerId": "76286",
+      "teamKey": "ind",
+      "number": "35",
+      "playerName": "Roger Brown",
+      "years": "1967–1974"
+    },
+    {
+      "nbaPlayerId": "977",
+      "teamKey": "lal",
+      "number": "8",
+      "playerName": "Kobe Bryant",
+      "years": "1996–2016"
+    },
+    {
+      "nbaPlayerId": "76375",
+      "teamKey": "lal",
+      "number": "13",
+      "playerName": "Wilt Chamberlain",
+      "years": "1968–1973"
+    },
+    {
+      "nbaPlayerId": "2200",
+      "teamKey": "lal",
+      "number": "16",
+      "playerName": "Pau Gasol",
+      "years": "2008–2014"
+    },
+    {
+      "nbaPlayerId": "76444",
+      "teamKey": "lal",
+      "number": "21",
+      "playerName": "Michael Cooper",
+      "years": "1978–1990"
+    },
+    {
+      "nbaPlayerId": "76127",
+      "teamKey": "lal",
+      "number": "22",
+      "playerName": "Elgin Baylor",
+      "years": "1958–1971"
+    },
+    {
+      "nbaPlayerId": "977",
+      "teamKey": "lal",
+      "number": "24",
+      "playerName": "Kobe Bryant",
+      "years": "2006–2016"
+    },
+    {
+      "nbaPlayerId": "76832",
+      "teamKey": "lal",
+      "number": "25",
+      "playerName": "Gail Goodrich",
+      "years": "1965–1968<br>1970–1976"
+    },
+    {
+      "nbaPlayerId": "77142",
+      "teamKey": "lal",
+      "number": "32",
+      "playerName": "Magic Johnson",
+      "years": "1979–1991<br>1996"
+    },
+    {
+      "nbaPlayerId": "76003",
+      "teamKey": "lal",
+      "number": "33",
+      "playerName": "Kareem Abdul-Jabbar",
+      "years": "1975–1989"
+    },
+    {
+      "nbaPlayerId": "406",
+      "teamKey": "lal",
+      "number": "34",
+      "playerName": "Shaquille O'Neal",
+      "years": "1996–2004"
+    },
+    {
+      "nbaPlayerId": "1460",
+      "teamKey": "lal",
+      "number": "42",
+      "playerName": "James Worthy",
+      "years": "1982–1994"
+    },
+    {
+      "nbaPlayerId": "78497",
+      "teamKey": "lal",
+      "number": "44",
+      "playerName": "Jerry West",
+      "years": "1960–1974"
+    },
+    {
+      "nbaPlayerId": "78532",
+      "teamKey": "lal",
+      "number": "52",
+      "playerName": "Jamaal Wilkes",
+      "years": "1977–1985"
+    },
+    {
+      "nbaPlayerId": "600012",
+      "teamKey": "lal",
+      "number": "99",
+      "playerName": "George Mikan",
+      "years": "1947–1954<br>1956"
+    },
+    {
+      "nbaPlayerId": "2754",
+      "teamKey": "mem",
+      "number": "9",
+      "playerName": "Tony Allen",
+      "years": "2010–2017"
+    },
+    {
+      "nbaPlayerId": "201188",
+      "teamKey": "mem",
+      "number": "33",
+      "playerName": "Marc Gasol",
+      "years": "2008–2019"
+    },
+    {
+      "nbaPlayerId": "2216",
+      "teamKey": "mem",
+      "number": "50",
+      "playerName": "Zach Randolph",
+      "years": "2009–2017"
+    },
+    {
+      "nbaPlayerId": "2547",
+      "teamKey": "mia",
+      "number": "1",
+      "playerName": "Chris Bosh",
+      "years": "2010–2017"
+    },
+    {
+      "nbaPlayerId": "2548",
+      "teamKey": "mia",
+      "number": "3",
+      "playerName": "Dwyane Wade",
+      "years": "2003–2016<br>2018–2019"
+    },
+    {
+      "nbaPlayerId": "896",
+      "teamKey": "mia",
+      "number": "10",
+      "playerName": "Tim Hardaway",
+      "years": "1996–2001"
+    },
+    {
+      "nbaPlayerId": "893",
+      "teamKey": "mia",
+      "number": "23",
+      "playerName": "Michael Jordan",
+      "years": "—",
+      "honorary": true
+    },
+    {
+      "nbaPlayerId": "406",
+      "teamKey": "mia",
+      "number": "32",
+      "playerName": "Shaquille O'Neal",
+      "years": "2004–2008"
+    },
+    {
+      "nbaPlayerId": "297",
+      "teamKey": "mia",
+      "number": "33",
+      "playerName": "Alonzo Mourning",
+      "years": "1995–2003<br>2005–2008"
+    },
+    {
+      "nbaPlayerId": "2617",
+      "teamKey": "mia",
+      "number": "40",
+      "playerName": "Udonis Haslem",
+      "years": "2003–2023"
+    },
+    {
+      "nbaPlayerId": "600015",
+      "teamKey": "mil",
+      "number": "1",
+      "playerName": "Oscar Robertson",
+      "years": "1970–1974"
+    },
+    {
+      "nbaPlayerId": "76252",
+      "teamKey": "mil",
+      "number": "2",
+      "playerName": "Junior Bridgeman",
+      "years": "1975–1984<br>1986–1987"
+    },
+    {
+      "nbaPlayerId": "77626",
+      "teamKey": "mil",
+      "number": "4",
+      "playerName": "Sidney Moncrief",
+      "years": "1979–1989"
+    },
+    {
+      "nbaPlayerId": "77160",
+      "teamKey": "mil",
+      "number": "8",
+      "playerName": "Marques Johnson",
+      "years": "1977–1984"
+    },
+    {
+      "nbaPlayerId": "76500",
+      "teamKey": "mil",
+      "number": "10",
+      "playerName": "Bob Dandridge",
+      "years": "1969–1977<br>1981"
+    },
+    {
+      "nbaPlayerId": "77533",
+      "teamKey": "mil",
+      "number": "14",
+      "playerName": "Jon McGlocklin",
+      "years": "1968–1976"
+    },
+    {
+      "nbaPlayerId": "600005",
+      "teamKey": "mil",
+      "number": "16",
+      "playerName": "Bob Lanier",
+      "years": "1980–1984"
+    },
+    {
+      "nbaPlayerId": "78600",
+      "teamKey": "mil",
+      "number": "32",
+      "playerName": "Brian Winters",
+      "years": "1975–1983"
+    },
+    {
+      "nbaPlayerId": "76003",
+      "teamKey": "mil",
+      "number": "33",
+      "playerName": "Kareem Abdul-Jabbar",
+      "years": "1969–1975"
+    },
+    {
+      "nbaPlayerId": "907",
+      "teamKey": "min",
+      "number": "2",
+      "playerName": "Malik Sealy",
+      "years": "1997–2000"
+    },
+    {
+      "nbaPlayerId": "77459",
+      "teamKey": "nop",
+      "number": "7",
+      "playerName": "Pete Maravich",
+      "years": "—",
+      "honorary": true
+    },
+    {
+      "nbaPlayerId": "76750",
+      "teamKey": "nyk",
+      "number": "10",
+      "playerName": "Walt Frazier",
+      "years": "1967–1977"
+    },
+    {
+      "nbaPlayerId": "76107",
+      "teamKey": "nyk",
+      "number": "12",
+      "playerName": "Dick Barnett",
+      "years": "1965–1973"
+    },
+    {
+      "nbaPlayerId": "600006",
+      "teamKey": "nyk",
+      "number": "15",
+      "playerName": "Earl Monroe",
+      "years": "1971–1980"
+    },
+    {
+      "nbaPlayerId": "77537",
+      "teamKey": "nyk",
+      "number": "15",
+      "playerName": "Dick McGuire",
+      "years": "1949–1957"
+    },
+    {
+      "nbaPlayerId": "77929",
+      "teamKey": "nyk",
+      "number": "19",
+      "playerName": "Willis Reed",
+      "years": "1964–1974"
+    },
+    {
+      "nbaPlayerId": "76545",
+      "teamKey": "nyk",
+      "number": "22",
+      "playerName": "Dave DeBusschere",
+      "years": "1968–1974"
+    },
+    {
+      "nbaPlayerId": "76233",
+      "teamKey": "nyk",
+      "number": "24",
+      "playerName": "Bill Bradley",
+      "years": "1967–1977"
+    },
+    {
+      "nbaPlayerId": "121",
+      "teamKey": "nyk",
+      "number": "33",
+      "playerName": "Patrick Ewing",
+      "years": "1985–2000"
+    },
+    {
+      "nbaPlayerId": "2555",
+      "teamKey": "okc",
+      "number": "4",
+      "playerName": "Nick Collison",
+      "years": "2003–2018"
+    },
+    {
+      "nbaPlayerId": "406",
+      "teamKey": "orl",
+      "number": "32",
+      "playerName": "Shaquille O'Neal",
+      "years": "1992–1996"
+    },
+    {
+      "nbaPlayerId": "77449",
+      "teamKey": "phi",
+      "number": "2",
+      "playerName": "Moses Malone",
+      "years": "1982–1986<br>1993–1994"
+    },
+    {
+      "nbaPlayerId": "947",
+      "teamKey": "phi",
+      "number": "3",
+      "playerName": "Allen Iverson",
+      "years": "1996–2006<br>2009–2010"
+    },
+    {
+      "nbaPlayerId": "78076",
+      "teamKey": "phi",
+      "number": "4",
+      "playerName": "Dolph Schayes",
+      "years": "1949–1964"
+    },
+    {
+      "nbaPlayerId": "76681",
+      "teamKey": "phi",
+      "number": "6",
+      "playerName": "Julius Erving",
+      "years": "1976–1987"
+    },
+    {
+      "nbaPlayerId": "76385",
+      "teamKey": "phi",
+      "number": "10",
+      "playerName": "Maurice Cheeks",
+      "years": "1978–1989"
+    },
+    {
+      "nbaPlayerId": "76375",
+      "teamKey": "phi",
+      "number": "13",
+      "playerName": "Wilt Chamberlain",
+      "years": "1965–1968"
+    },
+    {
+      "nbaPlayerId": "76882",
+      "teamKey": "phi",
+      "number": "15",
+      "playerName": "Hal Greer",
+      "years": "1958–1973"
+    },
+    {
+      "nbaPlayerId": "77193",
+      "teamKey": "phi",
+      "number": "24",
+      "playerName": "Bobby Jones",
+      "years": "1978–1986"
+    },
+    {
+      "nbaPlayerId": "76487",
+      "teamKey": "phi",
+      "number": "32",
+      "playerName": "Billy Cunningham",
+      "years": "1965–1972<br>1974–1975"
+    },
+    {
+      "nbaPlayerId": "787",
+      "teamKey": "phi",
+      "number": "34",
+      "playerName": "Charles Barkley",
+      "years": "1984–1992"
+    },
+    {
+      "nbaPlayerId": "78398",
+      "teamKey": "phx",
+      "number": "5",
+      "playerName": "Dick Van Arsdale",
+      "years": "1968–1977"
+    },
+    {
+      "nbaPlayerId": "1453",
+      "teamKey": "phx",
+      "number": "6",
+      "playerName": "Walter Davis",
+      "years": "1977–1988"
+    },
+    {
+      "nbaPlayerId": "134",
+      "teamKey": "phx",
+      "number": "7",
+      "playerName": "Kevin Johnson",
+      "years": "1987–1998<br>2000"
+    },
+    {
+      "nbaPlayerId": "105",
+      "teamKey": "phx",
+      "number": "9",
+      "playerName": "Dan Majerle",
+      "years": "1988–1995<br>2001–2002"
+    },
+    {
+      "nbaPlayerId": "959",
+      "teamKey": "phx",
+      "number": "13",
+      "playerName": "Steve Nash",
+      "years": "1996–1998<br>2004–2012"
+    },
+    {
+      "nbaPlayerId": "1472",
+      "teamKey": "phx",
+      "number": "24",
+      "playerName": "Tom Chambers",
+      "years": "1988–1993"
+    },
+    {
+      "nbaPlayerId": "1890",
+      "teamKey": "phx",
+      "number": "31",
+      "playerName": "Shawn Marion",
+      "years": "1999–2008"
+    },
+    {
+      "nbaPlayerId": "2405",
+      "teamKey": "phx",
+      "number": "32",
+      "playerName": "Amar'e Stoudemire",
+      "years": "2002–2010"
+    },
+    {
+      "nbaPlayerId": "76011",
+      "teamKey": "phx",
+      "number": "33",
+      "playerName": "Alvan Adams",
+      "years": "1975–1988"
+    },
+    {
+      "nbaPlayerId": "787",
+      "teamKey": "phx",
+      "number": "34",
+      "playerName": "Charles Barkley",
+      "years": "1992–1996"
+    },
+    {
+      "nbaPlayerId": "76972",
+      "teamKey": "phx",
+      "number": "42",
+      "playerName": "Connie Hawkins",
+      "years": "1968–1974"
+    },
+    {
+      "nbaPlayerId": "78500",
+      "teamKey": "phx",
+      "number": "44",
+      "playerName": "Paul Westphal",
+      "years": "1975–1980<br>1983–1984"
+    },
+    {
+      "nbaPlayerId": "78387",
+      "teamKey": "por",
+      "number": "13",
+      "playerName": "Dave Twardzik",
+      "years": "1976–1981"
+    },
+    {
+      "nbaPlayerId": "77043",
+      "teamKey": "por",
+      "number": "14",
+      "playerName": "Lionel Hollins",
+      "years": "1975–1981"
+    },
+    {
+      "nbaPlayerId": "78245",
+      "teamKey": "por",
+      "number": "15",
+      "playerName": "Larry Steele",
+      "years": "1971–1981"
+    },
+    {
+      "nbaPlayerId": "77420",
+      "teamKey": "por",
+      "number": "20",
+      "playerName": "Maurice Lucas",
+      "years": "1976–1981<br>1987–1988"
+    },
+    {
+      "nbaPlayerId": "17",
+      "teamKey": "por",
+      "number": "22",
+      "playerName": "Clyde Drexler",
+      "years": "1983–1995"
+    },
+    {
+      "nbaPlayerId": "345",
+      "teamKey": "por",
+      "number": "30",
+      "playerName": "Terry Porter",
+      "years": "1985–1995"
+    },
+    {
+      "nbaPlayerId": "76895",
+      "teamKey": "por",
+      "number": "30",
+      "playerName": "Bob Gross",
+      "years": "1975–1982"
+    },
+    {
+      "nbaPlayerId": "78450",
+      "teamKey": "por",
+      "number": "32",
+      "playerName": "Bill Walton",
+      "years": "1974–1979"
+    },
+    {
+      "nbaPlayerId": "77696",
+      "teamKey": "por",
+      "number": "36",
+      "playerName": "Lloyd Neal",
+      "years": "1972–1979"
+    },
+    {
+      "nbaPlayerId": "77844",
+      "teamKey": "por",
+      "number": "45",
+      "playerName": "Geoff Petrie",
+      "years": "1970–1976"
+    },
+    {
+      "nbaPlayerId": "76054",
+      "teamKey": "sac",
+      "number": "1",
+      "playerName": "Nate Archibald",
+      "years": "1970–1976"
+    },
+    {
+      "nbaPlayerId": "782",
+      "teamKey": "sac",
+      "number": "2",
+      "playerName": "Mitch Richmond",
+      "years": "1991–1998"
+    },
+    {
+      "nbaPlayerId": "185",
+      "teamKey": "sac",
+      "number": "4",
+      "playerName": "Chris Webber",
+      "years": "1998–2005"
+    },
+    {
+      "nbaPlayerId": "76514",
+      "teamKey": "sac",
+      "number": "11",
+      "playerName": "Bob Davies",
+      "years": "1948–1955"
+    },
+    {
+      "nbaPlayerId": "600016",
+      "teamKey": "sac",
+      "number": "12",
+      "playerName": "Maurice Stokes",
+      "years": "1955–1958"
+    },
+    {
+      "nbaPlayerId": "600015",
+      "teamKey": "sac",
+      "number": "14",
+      "playerName": "Oscar Robertson",
+      "years": "1960–1970"
+    },
+    {
+      "nbaPlayerId": "978",
+      "teamKey": "sac",
+      "number": "16",
+      "playerName": "Peja Stojakovic",
+      "years": "1999–2006"
+    },
+    {
+      "nbaPlayerId": "124",
+      "teamKey": "sac",
+      "number": "21",
+      "playerName": "Vlade Divac",
+      "years": "1999–2004"
+    },
+    {
+      "nbaPlayerId": "78388",
+      "teamKey": "sac",
+      "number": "27",
+      "playerName": "Jack Twyman",
+      "years": "1955–1966"
+    },
+    {
+      "nbaPlayerId": "77326",
+      "teamKey": "sac",
+      "number": "44",
+      "playerName": "Sam Lacey",
+      "years": "1970–1981"
+    },
+    {
+      "nbaPlayerId": "77633",
+      "teamKey": "sas",
+      "number": "00",
+      "playerName": "Johnny Moore",
+      "years": "1980–1987<br>1989–1990"
+    },
+    {
+      "nbaPlayerId": "422",
+      "teamKey": "sas",
+      "number": "6",
+      "playerName": "Avery Johnson",
+      "years": "1991<br>1992–1993<br>1994–2001"
+    },
+    {
+      "nbaPlayerId": "2225",
+      "teamKey": "sas",
+      "number": "9",
+      "playerName": "Tony Parker",
+      "years": "2001–2018"
+    },
+    {
+      "nbaPlayerId": "1477",
+      "teamKey": "sas",
+      "number": "12",
+      "playerName": "Bruce Bowen",
+      "years": "2001–2009"
+    },
+    {
+      "nbaPlayerId": "78150",
+      "teamKey": "sas",
+      "number": "13",
+      "playerName": "James Silas",
+      "years": "1973–1981"
+    },
+    {
+      "nbaPlayerId": "1938",
+      "teamKey": "sas",
+      "number": "20",
+      "playerName": "Manu Ginobili",
+      "years": "2002–2018"
+    },
+    {
+      "nbaPlayerId": "1495",
+      "teamKey": "sas",
+      "number": "21",
+      "playerName": "Tim Duncan",
+      "years": "1997–2016"
+    },
+    {
+      "nbaPlayerId": "251",
+      "teamKey": "sas",
+      "number": "32",
+      "playerName": "Sean Elliott",
+      "years": "1989–1993<br>1994–2001"
+    },
+    {
+      "nbaPlayerId": "76804",
+      "teamKey": "sas",
+      "number": "44",
+      "playerName": "George Gervin",
+      "years": "1974–1985"
+    },
+    {
+      "nbaPlayerId": "764",
+      "teamKey": "sas",
+      "number": "50",
+      "playerName": "David Robinson",
+      "years": "1989–2003"
+    },
+    {
+      "nbaPlayerId": "78549",
+      "teamKey": "sea",
+      "number": "1",
+      "playerName": "Gus Williams",
+      "years": "1976–1985"
+    },
+    {
+      "nbaPlayerId": "203",
+      "teamKey": "sea",
+      "number": "10",
+      "playerName": "Nate McMillan",
+      "years": "1985–1998"
+    },
+    {
+      "nbaPlayerId": "78530",
+      "teamKey": "sea",
+      "number": "19",
+      "playerName": "Lenny Wilkens",
+      "years": "1968–1972"
+    },
+    {
+      "nbaPlayerId": "76981",
+      "teamKey": "sea",
+      "number": "24",
+      "playerName": "Spencer Haywood",
+      "years": "1971–1975"
+    },
+    {
+      "nbaPlayerId": "76272",
+      "teamKey": "sea",
+      "number": "32",
+      "playerName": "Fred Brown",
+      "years": "1971–1984"
+    },
+    {
+      "nbaPlayerId": "78149",
+      "teamKey": "sea",
+      "number": "43",
+      "playerName": "Jack Sikma",
+      "years": "1977–1986"
+    },
+    {
+      "nbaPlayerId": "1713",
+      "teamKey": "tor",
+      "number": "15",
+      "playerName": "Vince Carter",
+      "years": "1998–2004"
+    },
+    {
+      "nbaPlayerId": "76504",
+      "teamKey": "uta",
+      "number": "4",
+      "playerName": "Adrian Dantley",
+      "years": "1979–1986"
+    },
+    {
+      "nbaPlayerId": "77459",
+      "teamKey": "uta",
+      "number": "7",
+      "playerName": "Pete Maravich",
+      "years": "1974–1980"
+    },
+    {
+      "nbaPlayerId": "304",
+      "teamKey": "uta",
+      "number": "12",
+      "playerName": "John Stockton",
+      "years": "1984–2003"
+    },
+    {
+      "nbaPlayerId": "204",
+      "teamKey": "uta",
+      "number": "14",
+      "playerName": "Jeff Hornacek",
+      "years": "1994–2000"
+    },
+    {
+      "nbaPlayerId": "252",
+      "teamKey": "uta",
+      "number": "32",
+      "playerName": "Karl Malone",
+      "years": "1985–2003"
+    },
+    {
+      "nbaPlayerId": "76890",
+      "teamKey": "uta",
+      "number": "35",
+      "playerName": "Darrell Griffith",
+      "years": "1980–1991"
+    },
+    {
+      "nbaPlayerId": "76631",
+      "teamKey": "uta",
+      "number": "53",
+      "playerName": "Mark Eaton",
+      "years": "1982–1993"
+    },
+    {
+      "nbaPlayerId": "600006",
+      "teamKey": "was",
+      "number": "10",
+      "playerName": "Earl Monroe",
+      "years": "1967–1971"
+    },
+    {
+      "nbaPlayerId": "76979",
+      "teamKey": "was",
+      "number": "11",
+      "playerName": "Elvin Hayes",
+      "years": "1972–1981"
+    },
+    {
+      "nbaPlayerId": "77150",
+      "teamKey": "was",
+      "number": "25",
+      "playerName": "Gus Johnson",
+      "years": "1963–1972"
+    },
+    {
+      "nbaPlayerId": "78392",
+      "teamKey": "was",
+      "number": "41",
+      "playerName": "Wes Unseld",
+      "years": "1968–1981"
+    },
+    {
+      "nbaPlayerId": "76386",
+      "teamKey": "was",
+      "number": "45",
+      "playerName": "Phil Chenier",
+      "years": "1971–1979"
+    }
+  ]
+}

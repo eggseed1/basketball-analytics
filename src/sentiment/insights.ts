@@ -18,19 +18,22 @@ export function computeSentimentDivergences(
 
   for (const profile of profiles) {
     const playerId = profile.playerIds[0];
-    if (!playerId) continue;
-    const gap =
-      Math.round((profile.fan.score - profile.media.score) * 100) / 100;
+    const { fan, media } = profile;
+    if (!playerId || !fan || !media) continue;
+    // A curated lane and a measured lane cover different periods and methods; no gap between them.
+    if ((fan.origin === "curated") !== (media.origin === "curated")) continue;
+    const gap = Math.round((fan.score - media.score) * 100) / 100;
     const absGap = Math.abs(gap);
     if (absGap < minAbsGap) continue;
     rows.push({
       playerId,
       displayName: profile.displayName ?? playerId,
       teamKey: profile.teamKey,
-      fanScore: profile.fan.score,
-      mediaScore: profile.media.score,
+      fanScore: fan.score,
+      mediaScore: media.score,
       gap,
       absGap,
+      origin: fan.origin === "curated" ? "curated" : "measured",
     });
   }
 
@@ -53,6 +56,7 @@ export function computeSentimentTopicHeat(
   for (const profile of profiles) {
     const playerId = profile.playerIds[0] ?? profile.displayName ?? "?";
     for (const lane of [profile.fan, profile.media]) {
+      if (!lane) continue;
       const topics = lane.topicBreakdown ?? {};
       const vol = Math.max(1, lane.mentionVolume);
       for (const [topic, share] of Object.entries(topics)) {

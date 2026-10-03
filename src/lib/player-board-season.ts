@@ -92,7 +92,7 @@ export function priorSeasonStatsNotice(
   requestSeason: string,
   statsSeason: string
 ): string {
-  return `${requestSeason} hasn't started — showing ${statsSeason} stats until regular-season games are played.`;
+  return `${requestSeason} hasn't started. Showing ${statsSeason} stats until regular-season games are played.`;
 }
 
 /**

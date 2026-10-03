@@ -45,8 +45,7 @@ export function TeamGamesSection({
             Notable games
           </h3>
           <p className="mb-2 text-[12px] text-muted-foreground">
-            Transparent scoreboard dimensions from the recent slate - not Game
-            Lab.
+            Plain scoreboard stats from the recent slate (not Game Lab).
           </p>
           <ul className="grid gap-2 sm:grid-cols-2">
             {notables.map((n) => (
@@ -96,7 +95,7 @@ export function TeamGamesSection({
           Open scores →
         </TransitionLink>
         <span className="mx-2">·</span>
-        Team page is a gateway into Game Lab, not a duplicate.
+        Team page links to Game Lab instead of copying it.
       </p>
     </div>
   );

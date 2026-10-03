@@ -218,10 +218,10 @@ export function runDraftPick(
   );
 
   const revealHeadline = codename
-    ? `${team.abbr} selects ${codename} - it's ${trueName}`
+    ? `${team.abbr} selects ${codename}: it's ${trueName}`
     : `${team.abbr} selects ${trueName}`;
   const revealBody = codename
-    ? `Pick #${pickNum}: the board knew them as ${codename}. Identity confirmed - ${trueName} is on the roster.`
+    ? `Pick #${pickNum}: the board knew them as ${codename}. Identity confirmed: ${trueName} is on the roster.`
     : `Pick #${pickNum} is officially on the roster.`;
 
   return {

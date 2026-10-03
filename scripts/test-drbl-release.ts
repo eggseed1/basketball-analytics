@@ -36,6 +36,7 @@ const FIXTURE: Step[] = [
   { label: "possession-calibration", script: "test:possession-calibration" },
   { label: "playoff-bracket", script: "test:playoff-bracket" },
   { label: "offseason-tracker", script: "test:offseason-tracker" },
+  { label: "acquisition-paths", script: "test:acquisition-paths" },
   { label: "transaction-lineage", script: "test:transaction-lineage" },
   { label: "transaction-player-resolve", script: "test:transaction-player-resolve" },
 ];

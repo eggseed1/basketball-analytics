@@ -81,7 +81,7 @@ export const STAT_WINDOWS: Record<
   split5: {
     label: "Last 5 vs prior 5",
     question: "Who just flipped?",
-    note: "Last 5 regular-season games compared with the 5 before them — no overlap.",
+    note: "Last 5 regular-season games compared with the 5 before them, with no overlap.",
     baselineLabel: "Prior 5",
     windowLabel: "Last 5",
     minAbsPpg: 3,
@@ -105,7 +105,7 @@ export const STAT_DETECTIVE_METRICS: Record<
     label: "Points",
     shortLabel: "PPG",
     unit: "PPG",
-    honesty: "Counting only games we have — gaps aren’t zeros.",
+    honesty: "Counts only games we have. Gaps aren’t zeros.",
   },
   ts: {
     id: "ts",
@@ -113,7 +113,7 @@ export const STAT_DETECTIVE_METRICS: Record<
     shortLabel: "TS%",
     unit: "TS%",
     honesty:
-      "TS% is omitted when the shot sample is too thin — missing ≠ 0.",
+      "TS% is omitted when the shot sample is too thin. Missing ≠ 0.",
   },
   rpg: {
     id: "rpg",
@@ -121,7 +121,7 @@ export const STAT_DETECTIVE_METRICS: Record<
     shortLabel: "RPG",
     unit: "RPG",
     honesty:
-      "Only games with logged rebounds count toward RPG — missing ≠ 0.",
+      "Only games with logged rebounds count toward RPG. Missing ≠ 0.",
   },
 };
 

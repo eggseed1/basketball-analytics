@@ -47,6 +47,11 @@ export interface Game {
   /** Regular season, playoffs, etc. */
   gameType: "regular" | "playoff" | "play-in" | "preseason";
   /**
+   * NBA Cup Championship. ESPN types it as regular season, but it does not
+   * count toward standings, records, or the 82-game total.
+   */
+  cupChampionship?: boolean;
+  /**
    * Canonical provider-normalized status.
    * Never infer `final` from 0-0 alone.
    */

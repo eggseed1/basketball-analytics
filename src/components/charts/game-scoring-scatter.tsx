@@ -102,8 +102,8 @@ export function GameScoringScatter({ games }: GameScoringScatterProps) {
         </h2>
         <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
           Each marker is a completed game. X is combined scoring; Y is home
-          margin (positive = home win). Shape encodes blowouts vs one-possession
-          games - color is not required.
+          margin (positive = home win). Shape shows the margin band, so the
+          chart reads without color.
         </p>
       </div>
 

@@ -81,6 +81,8 @@ export async function GET(request: Request) {
     }
 
     const hits: WatchlistSearchHit[] = [];
+    // Seasons played, for baked-index rows only; breaks ties like Ed vs George Mikan.
+    const careerSpan = new Map<string, number>();
     const seen = new Set<string>();
     const seenPlayerNames = new Set<string>();
     const aliasIndex =
@@ -219,11 +221,17 @@ export async function GET(request: Request) {
         if (nameKey && seenPlayerNames.has(nameKey)) continue;
         seen.add(key);
         if (nameKey) seenPlayerNames.add(nameKey);
+        const firstYear = Number.parseInt(row.firstSeason || row.season, 10);
+        const lastYear = Number.parseInt(row.season, 10);
+        if (Number.isFinite(firstYear) && Number.isFinite(lastYear)) {
+          careerSpan.set(row.id, lastYear - firstYear + 1);
+        }
         hits.push({
           id: row.id,
           name: row.name,
           kind: "player",
-          teamKey: row.team || undefined,
+          teamKey:
+            row.team && !/^(TOT|\dTM)$/i.test(row.team) ? row.team : undefined,
           subtitle: row.firstSeason
             ? `${row.firstSeason} → ${row.season}`
             : row.season || "Player",
@@ -235,7 +243,12 @@ export async function GET(request: Request) {
     hits.sort((a, b) => {
       if (a.kind !== b.kind) return a.kind === "player" ? -1 : 1;
       if (a.kind === "player" && b.kind === "player") {
-        return awardWinnerSortRank(a.name) - awardWinnerSortRank(b.name);
+        const spanA = careerSpan.get(a.id);
+        const spanB = careerSpan.get(b.id);
+        return (
+          awardWinnerSortRank(a.name) - awardWinnerSortRank(b.name) ||
+          (spanA != null && spanB != null ? spanB - spanA : 0)
+        );
       }
       return 0;
     });

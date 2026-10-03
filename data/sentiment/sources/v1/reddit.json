@@ -1,0 +1,47 @@
+{
+  "note": "Approved subreddit list (S0 Reddit policy). Official OAuth API only. Titles are scored at ingest and not stored.",
+  "listings": [
+    { "sort": "top", "t": "week", "limit": 100 },
+    { "sort": "hot", "limit": 50 }
+  ],
+  "skipTitlePatterns": [
+    "^\\[?(post[ -]?)?game thread",
+    "daily (discussion|thread)",
+    "^\\[?highlight\\]?",
+    "free talk",
+    "trade (idea|proposal)"
+  ],
+  "subreddits": [
+    { "name": "nba" },
+    { "name": "AtlantaHawks", "teamId": "1" },
+    { "name": "bostonceltics", "teamId": "2" },
+    { "name": "NOLAPelicans", "teamId": "3" },
+    { "name": "chicagobulls", "teamId": "4" },
+    { "name": "clevelandcavs", "teamId": "5" },
+    { "name": "Mavericks", "teamId": "6" },
+    { "name": "denvernuggets", "teamId": "7" },
+    { "name": "DetroitPistons", "teamId": "8" },
+    { "name": "warriors", "teamId": "9" },
+    { "name": "rockets", "teamId": "10" },
+    { "name": "pacers", "teamId": "11" },
+    { "name": "LAClippers", "teamId": "12" },
+    { "name": "lakers", "teamId": "13" },
+    { "name": "heat", "teamId": "14" },
+    { "name": "MkeBucks", "teamId": "15" },
+    { "name": "timberwolves", "teamId": "16" },
+    { "name": "GoNets", "teamId": "17" },
+    { "name": "NYKnicks", "teamId": "18" },
+    { "name": "OrlandoMagic", "teamId": "19" },
+    { "name": "sixers", "teamId": "20" },
+    { "name": "suns", "teamId": "21" },
+    { "name": "ripcity", "teamId": "22" },
+    { "name": "kings", "teamId": "23" },
+    { "name": "NBASpurs", "teamId": "24" },
+    { "name": "Thunder", "teamId": "25" },
+    { "name": "UtahJazz", "teamId": "26" },
+    { "name": "washingtonwizards", "teamId": "27" },
+    { "name": "torontoraptors", "teamId": "28" },
+    { "name": "memphisgrizzlies", "teamId": "29" },
+    { "name": "CharlotteHornets", "teamId": "30" }
+  ]
+}

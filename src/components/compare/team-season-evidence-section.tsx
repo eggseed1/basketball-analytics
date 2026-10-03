@@ -24,7 +24,7 @@ function ResultBadge({ result }: { result: "W" | "L" | "-" }) {
 export function TeamSeasonEvidenceSection({
   evidence,
   title = "See the evidence",
-  subtitle = "Representative regular-season games from schedule scores - descriptive, not causal. Open Game Lab for the box.",
+  subtitle = "Representative regular-season games from schedule scores. They describe the season and do not show cause. Open Game Lab for the box.",
   highlightCategoryIds,
   compact,
 }: {
@@ -159,8 +159,8 @@ export function TeamSeasonEvidenceCompareSection({
           Compare the evidence
         </h3>
         <p className="mt-1 text-[12px] text-muted-foreground">
-          Representative games for each season - same descriptive rules, not a
-          cross-season game-matching algorithm.
+          Representative games for each season, picked by the same descriptive
+          rules. Games are not matched across seasons.
         </p>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">

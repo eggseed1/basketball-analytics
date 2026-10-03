@@ -4,6 +4,7 @@ import type {
 } from "@/analytics/types";
 import type { PlayerSeason } from "@/data/types";
 import { isCareerCompareKey } from "@/lib/career-average-row";
+import { formatOrdinal } from "@/lib/format";
 import {
   formatSheetStatValue,
   getSheetStatValue,
@@ -192,7 +193,7 @@ export function buildPlayerComparison(options: {
       delta,
       group: def.category,
       note: careerMode
-        ? "Career averages — bars scale within this matchup when league percentiles are unavailable."
+        ? "Career averages. Bars scale within this matchup when league percentiles are unavailable."
         : undefined,
     });
   }
@@ -269,9 +270,9 @@ function buildDifferenceSummary(
     const trail = (d.delta ?? 0) > 0 ? bName : aName;
     if (d.aPercentile != null && d.bPercentile != null) {
       lines.push(
-        `${leader} holds the edge in ${d.label} (${Math.round(
+        `${leader} holds the edge in ${d.label} (${formatOrdinal(
           Math.max(d.aPercentile, d.bPercentile)
-        )}th vs ${Math.round(Math.min(d.aPercentile, d.bPercentile))}th among peers).`
+        )} vs ${formatOrdinal(Math.min(d.aPercentile, d.bPercentile))} percentile among peers).`
       );
     } else {
       const leadDisp = (d.delta ?? 0) > 0 ? d.aDisplay : d.bDisplay;

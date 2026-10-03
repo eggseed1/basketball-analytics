@@ -5,9 +5,10 @@ function scorePct(score: number) {
   return `${Math.round(((score + 1) / 2) * 100)}%`;
 }
 
+/** Scores are −1..1 but shown as 0–100%, so one score unit is 50 percentage points. */
 function gapLabel(gap: number) {
-  const pts = Math.round(Math.abs(gap) * 100);
-  return gap >= 0 ? `Fans +${pts} vs media` : `Fans −${pts} vs media`;
+  const pts = Math.round(Math.abs(gap) * 50);
+  return gap >= 0 ? `Fans +${pts} pts vs media` : `Fans −${pts} pts vs media`;
 }
 
 /**
@@ -47,7 +48,7 @@ export function SentimentFanMediaGap({
         Fan lane {scorePct(fanScore)} · Media lane {scorePct(mediaScore)}.{" "}
         {fansWarmer
           ? "Fans are warmer than media on this player right now."
-          : "Fans are cooler than media — a common setup for overrated-player discourse."}
+          : "Fans are cooler than media, a common setup for overrated-player discourse."}
       </p>
     </div>
   );

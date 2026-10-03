@@ -142,7 +142,7 @@ export const PLAYER_SEASON_COMPARE_METHODOLOGY: PlayerSeasonCompareMethodology =
     scope: "regular_season",
     qualifyingRule: `A season needs Career Resume qualification (≥${CAREER_RESUME_MIN_GAMES} GP / 15 MPG, or shortened-season accommodation) for an overall verdict. Under-qualified seasons can still show metric rows but overall is "insufficient sample."`,
     toleranceNote:
-      "Each metric has a documented absolute tolerance. Differences inside the tolerance are labeled essentially even - not forced edges.",
+      "Each metric has a documented absolute tolerance. Differences inside the tolerance are labeled essentially even and do not count as edges.",
     categoryRule:
       "Category winner = plurality of decisive metric edges in that category. Ties or no decisive metrics → essentially even / unavailable.",
     overallRule:
@@ -150,7 +150,7 @@ export const PLAYER_SEASON_COMPARE_METHODOLOGY: PlayerSeasonCompareMethodology =
     impactRule:
       "DRBL/100 participates when both seasons have valid estimates (registry seasons only). Otherwise historical impact participates only when the same season-true metric (DARKO or RAPTOR) exists for BOTH seasons. Live DARKO stamped on one year is never compared to a year without it. CPI is never substituted for missing impact. Diagnostic P/LN/B are disclosed separately and are not additive into DRBL/100.",
     cpiNote:
-      "CPI (Career Production Index) is a documented box-score production composite - not impact, WAR, or true value.",
+      "CPI (Career Production Index) is a documented box-score production composite. It is not impact, WAR, or true value.",
     incompleteNote:
       "Current in-progress seasons are flagged. They remain comparable as snapshots but are marked incomplete.",
   };
@@ -221,7 +221,7 @@ function pushMetric(
       higherIsBetter,
       note:
         options.note ??
-        "Metric missing for one season - excluded from head-to-head edge.",
+        "Metric missing for one season, so it is left out of the head-to-head edge.",
       delta: undefined,
     });
     return;
@@ -317,7 +317,7 @@ function overallFromCategories(
     return {
       edge: "unavailable",
       reason:
-        "Overall verdict withheld - at least one season lacks a qualifying sample.",
+        "Overall verdict withheld: at least one season lacks a qualifying sample.",
     };
   }
 
@@ -373,7 +373,7 @@ function howDifferentLines(
     .slice(0, 5)
     .map((m) => `${m.label} (${m.bDisplay} vs ${m.aDisplay})`);
   const notes: string[] = [
-    "Edges use absolute tolerances - small gaps are labeled essentially even.",
+    "Edges use absolute tolerances, so small gaps are labeled essentially even.",
     "Regular season only. Playoffs are not mixed in.",
   ];
   if (!aStronger.length && !bStronger.length) {
@@ -483,7 +483,7 @@ export function comparePlayerSeasons(options: {
     bRaw: careerProductionIndex(b),
     format: (v) => formatNumber(v, 1),
     tolerance: SEASON_COMPARE_TOLERANCE.cpi,
-    note: "Box-score production index - not impact.",
+    note: "Box-score production index, not impact.",
   });
 
   // --- Efficiency / shooting ---
@@ -660,7 +660,7 @@ export function comparePlayerSeasons(options: {
         higherIsBetter: true,
         note:
           note ??
-          "Unavailable for at least one season - never shown as 0.",
+          "Unavailable for at least one season. Never shown as 0.",
       });
     }
   };
@@ -774,7 +774,7 @@ export function comparePlayerSeasons(options: {
       bValue: impactB?.value,
       edge: "unavailable",
       higherIsBetter: true,
-      note: "Impact excluded - season-true observation missing for at least one season (or metrics differ).",
+      note: "Impact excluded: season-true observation missing for at least one season (or metrics differ).",
     });
   }
 
@@ -801,7 +801,7 @@ export function comparePlayerSeasons(options: {
         teamB != null ? formatNumber(teamB.avgDiff, 1) : "Unavailable",
       edge: "unavailable",
       higherIsBetter: true,
-      note: "Team context excluded - board missing for one season.",
+      note: "Team context excluded: board missing for one season.",
     });
   }
 

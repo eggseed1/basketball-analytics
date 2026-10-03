@@ -532,7 +532,7 @@ export function PlayerSeasonTable({
           onClick={() => void loadMore()}
           className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
         >
-          Couldn’t load more - try again
+          Couldn’t load more. Try again
         </button>
       ) : null}
       {rows.length ? (

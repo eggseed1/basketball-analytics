@@ -73,7 +73,7 @@ function ListBoard({
     const message =
       source === "unavailable"
         ? "Live ESPN scoreboard is temporarily unavailable. Try again in a moment."
-        : "No upcoming tip-offs on the board yet — the next slate usually posts for October.";
+        : "No upcoming tip-offs on the board yet. The next slate usually posts for October.";
     return (
       <p className="rounded-md border border-dashed border-border px-4 py-8 text-center text-[14px] text-muted-foreground">
         {message}
@@ -219,7 +219,7 @@ export function UpcomingGameList({
               onClick={() => void loadMore()}
               className="self-center rounded-md bg-secondary px-4 py-2 text-[14px] font-semibold hover:bg-secondary/80"
             >
-              Couldn’t load more - try again
+              Couldn’t load more. Try again
             </button>
           ) : null}
           {liveGames.length ? (

@@ -9,6 +9,11 @@ name: Daily player-viz runtime refresh
 # Cache + artifacts keep the live season across nights so a soft-fail does not
 # wipe yesterday's board and skip-if-unchanged can see prior gamesProcessed.
 #
+# Transactions, news headlines and the Movement Center are committed back to
+# main after each sync. RSS feeds only carry the last day or two, so the
+# headline store has to persist between runs, and committing keeps a manual
+# deploy from an up-to-date checkout from rolling the data back.
+#
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token
 #   CLOUDFLARE_ACCOUNT_ID  — account id for wrangler / OpenNext
@@ -38,7 +43,7 @@ jobs:
     # Full DRBL season refit + overlay + OpenNext can exceed 3h on cold cache.
     timeout-minutes: 300
     permissions:
-      contents: read
+      contents: write
     env:
       DATA_PROVIDER: nba
       FULL_EDGE_PRODUCT: "1"
@@ -91,6 +96,28 @@ jobs:
         id: sync
         run: node scripts/daily-runtime-sync.mjs
 
+      - name: Commit refreshed data
+        if: steps.sync.outcome == 'success'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            data/sentiment/ingest/v1/news \
+            data/movement-center/v1/snapshot.json \
+            src/data/runtime/movement-snapshot.json \
+            data/transactions/espn-site-v2/v1 \
+            src/data/runtime/transactions-snapshot.json
+          if git diff --cached --quiet; then
+            echo "No data changes to commit."
+            exit 0
+          fi
+          git commit -m "Nightly data refresh: transactions, headlines, Movement Center [skip ci]"
+          for attempt in 1 2 3; do
+            git pull --rebase origin "${GITHUB_REF_NAME}" && git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((attempt * 10))
+          done
+          echo "::warning::Could not push the data refresh; the deploy still uses it."
+
       - name: Upload sync report
         if: always()
         uses: actions/upload-artifact@v4
@@ -123,7 +150,16 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-        run: npx opennextjs-cloudflare deploy
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::error title=Missing deploy token::The CLOUDFLARE_API_TOKEN repo secret is empty. Set it under Settings → Secrets and variables → Actions."
+            exit 1
+          fi
+          npx opennextjs-cloudflare deploy
+
+      - name: Check Movement Center freshness
+        if: always() && steps.sync.outcome != 'skipped'
+        run: node scripts/check-movement-freshness.mjs
 
       - name: Summary
         if: always()
@@ -134,3 +170,6 @@ jobs:
           echo "- season: \`${{ steps.sync.outputs.season }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- skipped: \`${{ steps.sync.outputs.skipped }}\`" >> "$GITHUB_STEP_SUMMARY"
           echo "- should_deploy: \`${{ steps.sync.outputs.should_deploy }}\`" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f artifacts/daily-runtime-sync.json ]; then
+            node -e "const r=require('./artifacts/daily-runtime-sync.json');console.log('- soft-failed: \`'+((r.softFailed||[]).join(', ')||'none')+'\`');console.log('- movement steps: \`'+((r.movement&&r.movement.done)||[]).join(', ')+'\`')" >> "$GITHUB_STEP_SUMMARY"
+          fi

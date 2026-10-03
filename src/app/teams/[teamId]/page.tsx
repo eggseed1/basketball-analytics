@@ -32,6 +32,8 @@ import { TeamAllStatsRankStrip } from "@/components/teams/team-all-stats-rank-st
 import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
 import { TeamRosterIsland } from "@/components/teams/team-roster-island";
+import { TeamRosterBuiltIsland } from "@/components/teams/team-roster-built-island";
+import { TeamScheduleIsland } from "@/components/teams/team-schedule-island";
 import { TeamTransactionsIsland } from "@/components/teams/team-transactions-island";
 import { EraThemeScope } from "@/components/time-machine/era-theme-scope";
 import { getCurrentFrontOfficeSeason } from "@/data/front-office/load-team-front-office";
@@ -40,8 +42,8 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { getTeamExploreSeasons } from "@/data/queries";
+import { getFranchiseHistory } from "@/data/queries/franchises";
 import { getTeamSeasonBoardCached } from "@/data/queries/request-cache";
-import type { TeamSeasonStats } from "@/data/types";
 import { formatOrdinal } from "@/lib/format";
 import { isSeasonAwaitingFirstGame } from "@/lib/nba-season-status";
 import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -280,6 +282,9 @@ export default async function TeamProfilePage({
     themeMode: themeMode === "modern" ? "modern" : "historical",
   };
 
+  const franchiseFirstSeason = modernBrand
+    ? getFranchiseHistory(modernBrand.id)?.firstSeason
+    : undefined;
   const seasonOptions = [
     ...new Set([
       season,
@@ -289,6 +294,12 @@ export default async function TeamProfilePage({
     ]),
   ]
     .filter(Boolean)
+    .filter(
+      (s) =>
+        s === season ||
+        !franchiseFirstSeason ||
+        s.localeCompare(franchiseFirstSeason) >= 0
+    )
     .sort((a, b) => b.localeCompare(a));
 
   const snapshotStats = seasonAwaitingGames
@@ -405,8 +416,9 @@ export default async function TeamProfilePage({
                 How good are they?
               </h2>
               <p className="text-[14px] text-muted-foreground">
-                Season board unavailable for {season}. Identity above uses
-                team-era resolution - rates are not fabricated as zeroes.
+                Season board unavailable for {season}. The team identity above
+                is matched to its era, and rates are left blank, not shown as
+                zeroes.
               </p>
             </section>
           )
@@ -423,6 +435,12 @@ export default async function TeamProfilePage({
               sortParam={Array.isArray(sp.sort) ? sp.sort[0] : sp.sort}
               sortDirParam={Array.isArray(sp.dir) ? sp.dir[0] : sp.dir}
             />
+          </Suspense>
+        ) : null}
+
+        {tab === "players" && season === currentSeason && askTeamId ? (
+          <Suspense fallback={null}>
+            <TeamRosterBuiltIsland espnTeamId={askTeamId} />
           </Suspense>
         ) : null}
 
@@ -490,6 +508,10 @@ export default async function TeamProfilePage({
           </Suspense>
         ) : null}
 
+        {tab === "schedule" ? (
+          <TeamScheduleIsland teamId={resolvedTeamId} season={season} />
+        ) : null}
+
         {tab === "splits" ? (
           <Suspense
             fallback={<DestinationSectionSkeleton label="Loading splits…" />}
@@ -510,6 +532,7 @@ export default async function TeamProfilePage({
           <div className="flex flex-col gap-4">
             <TeamFranchiseHistoryIsland
               abbreviation={identityTeam.abbreviation}
+              franchiseToken={modernBrand?.id}
             />
             <FranchiseTimeline canonicalTeamId={resolvedTeamId} />
             <Suspense
@@ -613,9 +636,9 @@ export default async function TeamProfilePage({
                     All Stats
                   </h2>
                   <p className="text-[14px] text-muted-foreground">
-                    Full board ledger. Overview explains; this tab proves.
-                    Rate mode is stored as {rate} - counting stats stay
-                    per-game until a totals endpoint is selected.
+                    Every metric on the season board. Rate mode is stored as{" "}
+                    {rate}; counting stats stay per game until a totals
+                    endpoint is selected.
                   </p>
                 </div>
                 <TeamAllStatsRankStrip

@@ -6,6 +6,7 @@ import type {
 } from "@/data/types/standings";
 import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { TEAM_BRANDS } from "@/lib/nba-brand";
+import { countsTowardStandings } from "@/lib/standings-game-filter";
 
 const NBA_TEAM_IDS = new Set(Object.keys(ESPN_TEAM_META));
 
@@ -43,7 +44,7 @@ export function computeStandingsFromGameArchive(
   for (const game of games) {
     if (game.season !== season) continue;
     if (game.status !== "final") continue;
-    if (game.gameType !== "regular") continue;
+    if (!countsTowardStandings(game)) continue;
 
     for (const side of ["home", "away"] as const) {
       const teamId = side === "home" ? game.homeTeamId : game.awayTeamId;

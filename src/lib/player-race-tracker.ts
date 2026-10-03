@@ -7,7 +7,7 @@ import type { CompactPlayerGameLogRow } from "@/data/history/player-game-log";
  * - season_total: season additive value (WAR1, VORP, WS, R1 pts) paced by
  *   minutes into a cumulative race
  * - season_rate: season rate (DRBL/100, BPM, TS%, …) — reconstructed as a
- *   game-by-game ability path that settles on the published season number
+ *   game-by-game credibility path that settles on the published season number
  */
 export type PlayerRaceMetricKind =
   | "counting"
@@ -81,9 +81,13 @@ export type PlayerRaceFieldSize = number | "all";
 export type PlayerRaceRankEnd = "high" | "low" | "both";
 
 export const PLAYER_RACE_TOP_N_OPTIONS = [25, 40, 60, 80] as const;
-/** Default Explore visualizations to the full uncapped field. */
-export const PLAYER_RACE_DEFAULT_FIELD_SIZE: PlayerRaceFieldSize = "all";
-/** @deprecated Prefer PLAYER_RACE_DEFAULT_FIELD_SIZE (`all`). */
+/** Race tracker default — full "all" fields are too heavy for Recharts lines. */
+export const PLAYER_RACE_DEFAULT_FIELD_SIZE: PlayerRaceFieldSize = 40;
+/** Scatters can keep the uncapped peer cloud (single series, not N lines). */
+export const VIZ_SCATTER_DEFAULT_FIELD_SIZE: PlayerRaceFieldSize = "all";
+/** Soft cap on SVG lines drawn for a race chart (pins/selection always kept). */
+export const PLAYER_RACE_CHART_MAX_LINES = 72;
+/** @deprecated Prefer PLAYER_RACE_DEFAULT_FIELD_SIZE. */
 export const PLAYER_RACE_DEFAULT_TOP_N = 40;
 /** Soft cap when not requesting the full league. */
 export const PLAYER_RACE_MAX_TOP_N = 80;
@@ -161,7 +165,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     kind: "season_rate",
     format: "pct",
     description:
-      "Season true shooting — cumulative from game logs when available.",
+      "Season true shooting, cumulative from game logs when available.",
   },
   // Playmaking
   {
@@ -248,7 +252,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     kind: "season_rate",
     format: "pct",
     description:
-      "Season usage rate — reconstructed path that settles on the published season rate.",
+      "Season usage rate, on a reconstructed path that settles on the published season rate.",
   },
   // Impact (DRBL / DARKO)
   {
@@ -281,7 +285,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "two",
     canBeNegative: true,
     description:
-      "Season DRBL ability per 100 — path follows games with minutes and settles on the published season rate (not live PBP).",
+      "Season DRBL ability per 100, on a smooth credibility path toward the published season rate as minutes accumulate (not live PBP).",
   },
   {
     id: "darkoDpm",
@@ -292,7 +296,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "two",
     canBeNegative: true,
     description:
-      "Season DARKO DPM — reconstructed path that settles on the published season rate.",
+      "Season DARKO DPM, on a reconstructed path that settles on the published season rate.",
   },
   // Advanced (BRef)
   {
@@ -304,7 +308,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "two",
     canBeNegative: true,
     description:
-      "Season Box Plus/Minus — reconstructed path that settles on the published season rate.",
+      "Season Box Plus/Minus, on a reconstructed path that settles on the published season rate.",
   },
   {
     id: "vorp",
@@ -325,7 +329,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "one",
     canBeNegative: true,
     description:
-      "Season PER — reconstructed path that settles on the published season rate.",
+      "Season PER, on a reconstructed path that settles on the published season rate.",
   },
   {
     id: "winShares",
@@ -346,7 +350,7 @@ export const PLAYER_RACE_METRICS: PlayerRaceMetricDef[] = [
     format: "two",
     canBeNegative: true,
     description:
-      "Season win shares per 48 — reconstructed path that settles on the published season rate.",
+      "Season win shares per 48, on a reconstructed path that settles on the published season rate.",
   },
 ];
 
@@ -389,7 +393,8 @@ export type PlayerRacePlayer = {
 export const PLAYER_RACE_MIN_MINUTES_OPTIONS = [
   0, 100, 200, 500, 1000, 1500,
 ] as const;
-export const PLAYER_RACE_DEFAULT_MIN_MINUTES = 0;
+/** Race defaults to a real minutes floor so tiny-sample rates don't own the board. */
+export const PLAYER_RACE_DEFAULT_MIN_MINUTES = 500;
 /** Default peer floor for league scatters when `minmp` is omitted. */
 export const VIZ_SCATTER_DEFAULT_MIN_MINUTES = 500;
 
@@ -443,7 +448,7 @@ export function playerRaceAxisTitle(metric: PlayerRaceMetric): string {
 
 export function playerRaceModeLabel(metric: PlayerRaceMetric): string {
   const kind = getPlayerRaceMetricDef(metric).kind;
-  if (kind === "season_rate") return "reconstructed season rate";
+  if (kind === "season_rate") return "credibility path to published rate";
   if (kind === "season_total") return "paced cumulative";
   return "cumulative";
 }
@@ -590,6 +595,32 @@ export function samplePlayerRaceFieldEvenly<T>(
   }
 
   return out;
+}
+
+/**
+ * Cap how many SVG lines Recharts draws on finite top-N fields.
+ * Always keep `keepIds` (selection / team / pins); fill the rest with an even
+ * sample. Callers must skip this for `fieldSize === "all"`.
+ */
+export function pickPlayerRaceChartPlayers<T extends { playerId: string }>(
+  players: T[],
+  keepIds: ReadonlySet<string>,
+  maxLines = PLAYER_RACE_CHART_MAX_LINES
+): T[] {
+  if (players.length <= maxLines) return players;
+  const kept = players.filter((player) => keepIds.has(player.playerId));
+  const rest = players.filter((player) => !keepIds.has(player.playerId));
+  const budget = Math.max(0, maxLines - kept.length);
+  const sampled = samplePlayerRaceFieldEvenly(
+    rest,
+    budget,
+    (player) => player.playerId
+  );
+  const order = new Map(players.map((player, index) => [player.playerId, index]));
+  return [...kept, ...sampled].sort(
+    (a, b) =>
+      (order.get(a.playerId) ?? 0) - (order.get(b.playerId) ?? 0)
+  );
 }
 
 export function parsePlayerRaceMinMinutes(
@@ -822,25 +853,24 @@ export function buildPlayerRaceSeries(
 function seasonRatePrior(metric: PlayerRaceMetric): {
   k: number;
   priorMean: number;
-  noiseAmp: number;
 } {
   switch (metric) {
     case "drbl100":
-      return { k: 420, priorMean: 0, noiseAmp: 2.6 };
+      return { k: 420, priorMean: 0 };
     case "darkoDpm":
-      return { k: 360, priorMean: 0, noiseAmp: 2.2 };
+      return { k: 360, priorMean: 0 };
     case "bpm":
-      return { k: 320, priorMean: 0, noiseAmp: 2.4 };
+      return { k: 320, priorMean: 0 };
     case "per":
-      return { k: 300, priorMean: 15, noiseAmp: 3.8 };
+      return { k: 300, priorMean: 15 };
     case "ws48":
-      return { k: 280, priorMean: 0.1, noiseAmp: 0.085 };
+      return { k: 280, priorMean: 0.1 };
     case "usagePct":
-      return { k: 220, priorMean: 0.2, noiseAmp: 0.075 };
+      return { k: 220, priorMean: 0.2 };
     case "trueShootingPct":
-      return { k: 220, priorMean: 0.55, noiseAmp: 0.065 };
+      return { k: 220, priorMean: 0.55 };
     default:
-      return { k: 320, priorMean: 0, noiseAmp: 2 };
+      return { k: 320, priorMean: 0 };
   }
 }
 
@@ -902,8 +932,12 @@ function seriesValueRange(points: PlayerRacePoint[]): number {
 
 /**
  * Reconstruct a season-rate path from game logs that ends exactly on the
- * published season rate. Uses a responsive EWMA of noisy game observations
- * so mid-season movement stays visible (not true PBP recompute).
+ * published season rate.
+ *
+ * Honest shape: Empirical-Bayes credibility blend from a prior toward the
+ * published rate as minutes/possessions accumulate. No synthetic game noise —
+ * mid-path zigzags were making DRBL/BPM boards look broken and were never
+ * live PBP.
  */
 export function buildSeasonRateProgressionSeries(options: {
   games: CompactPlayerGameLogRow[];
@@ -911,51 +945,31 @@ export function buildSeasonRateProgressionSeries(options: {
   seasonRate: number;
   playerId: string;
 }): PlayerRacePoint[] {
-  const { games, metric, playerId } = options;
+  const { games, metric } = options;
   if (!games.length) return [];
   const seasonRate = normalizeRaceSeasonRate(metric, options.seasonRate);
   if (!Number.isFinite(seasonRate)) return [];
 
-  const { k, priorMean, noiseAmp } = seasonRatePrior(metric);
+  const { k, priorMean } = seasonRatePrior(metric);
   const weights = games.map((g) =>
     seasonRateSampleWeight(metric, Number(g.minutesNum ?? 0))
   );
   const totalW = weights.reduce((a, b) => a + b, 0);
   if (!(totalW > 0)) return [];
 
-  const avgW = totalW / games.length;
-  const rng = mulberry32(
-    hashStringSeed(`${playerId}|${metric}|${games[0]!.date}|rate-v2`)
-  );
-  const randn = () => {
-    const u = Math.max(1e-12, rng());
-    const v = rng();
-    return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
-  };
-
-  // EWMA of noisy observations around the season rate — stays lively mid-year.
-  const alpha = Math.min(0.28, Math.max(0.12, 3.2 / Math.max(8, games.length)));
-  let ewma = priorMean + (seasonRate - priorMean) * 0.15;
   let wCum = 0;
   let gamesPlayed = 0;
   const rawPoints: PlayerRacePoint[] = [];
 
   for (let i = 0; i < games.length; i++) {
     const game = games[i]!;
-    const w = weights[i] ?? avgW;
-    // Milder weight dampening than 1/sqrt(minutes) so noise remains visible.
-    const noise =
-      (randn() * noiseAmp) / Math.sqrt(Math.max(0.65, w / Math.max(12, avgW)));
-    const obs = seasonRate + noise;
-    ewma = alpha * obs + (1 - alpha) * ewma;
+    const w = weights[i] ?? 0;
     wCum += w;
     gamesPlayed += 1;
-
-    // Blend responsive form with a soft reliability pull toward the season rate.
     const reliability = wCum / (wCum + k);
-    const form = ewma;
-    const anchored = (1 - reliability * 0.55) * form + reliability * 0.55 * seasonRate;
-    const value = (1 - reliability) * (priorMean * 0.35 + form * 0.65) + reliability * anchored;
+    // Ease early samples so the first few games don't jump to the season rate.
+    const eased = reliability * reliability * (3 - 2 * reliability);
+    const value = priorMean * (1 - eased) + seasonRate * eased;
 
     rawPoints.push({
       date: game.date,
@@ -964,22 +978,12 @@ export function buildSeasonRateProgressionSeries(options: {
     });
   }
 
-  // Collapse same-date games, then affine-nudge so the finale matches published.
   const byDate = new Map<string, PlayerRacePoint>();
   for (const point of rawPoints) byDate.set(point.date, point);
   let points = [...byDate.values()].sort((a, b) => a.date.localeCompare(b.date));
   if (!points.length) return [];
 
-  const last = points[points.length - 1]!;
-  const drift = seasonRate - last.value;
-  if (Math.abs(drift) > 1e-9) {
-    const denom = Math.max(1, points.length - 1);
-    points = points.map((point, index) => ({
-      ...point,
-      value: point.value + drift * (index / denom),
-    }));
-  }
-
+  // Finale must match the published rate exactly.
   points = points.map((point, index) => ({
     ...point,
     value:
@@ -987,32 +991,6 @@ export function buildSeasonRateProgressionSeries(options: {
         ? roundRaceValue(seasonRate, metric)
         : roundRaceValue(point.value, metric),
   }));
-
-  // Safety: if rounding flattened the path, re-seed a visible wobble.
-  const minRange = Math.max(
-    Math.abs(seasonRate - priorMean) * 0.12,
-    noiseAmp * 0.45,
-    getPlayerRaceMetricDef(metric).format === "pct" ? 0.02 : 0.35
-  );
-  if (seriesValueRange(points) < minRange && points.length >= 3) {
-    const wobbleRng = mulberry32(
-      hashStringSeed(`${playerId}|${metric}|wobble`)
-    );
-    points = points.map((point, index) => {
-      if (index === 0 || index === points.length - 1) return point;
-      const t = index / (points.length - 1);
-      const wave =
-        Math.sin(t * Math.PI * 2.2 + wobbleRng() * 0.7) * minRange * 0.55;
-      return {
-        ...point,
-        value: roundRaceValue(point.value + wave, metric),
-      };
-    });
-    points[points.length - 1] = {
-      ...points[points.length - 1]!,
-      value: roundRaceValue(seasonRate, metric),
-    };
-  }
 
   return downsampleRacePoints(points);
 }
@@ -1276,11 +1254,23 @@ export function formatPlayerRaceAxisDate(iso: string): string {
   return d.toLocaleDateString(undefined, { month: "numeric", day: "numeric" });
 }
 
+/** Longest gap between a player's own points that a rate line may bridge. */
+const RATE_HOLD_MAX_GAP_DAYS = 30;
+/** How long a rate line may hold past the player's final point. */
+const RATE_HOLD_TAIL_DAYS = 10;
+
+function daysBetween(a: string, b: string): number {
+  return Math.round(
+    (Date.parse(`${b}T12:00:00`) - Date.parse(`${a}T12:00:00`)) / 86_400_000
+  );
+}
+
 /**
  * Merge player curves onto a shared timeline.
  * Counting / paced totals forward-fill (cumulative value holds between games).
- * Season-rate metrics do not — missing dates stay null so inactive stretches
- * are not drawn as a continuing ability path.
+ * Season-rate metrics only hold a value inside the player's own active span:
+ * null before their first point, null across long absences, and null shortly
+ * after their last point — so late returns and injuries never read as play.
  */
 export function buildPlayerRaceChartRows(
   players: PlayerRacePlayer[],
@@ -1305,9 +1295,10 @@ export function buildPlayerRaceChartRows(
     if (!dates.length) dates = [end];
   }
 
-  // Dense fields: keep ~40 timeline steps so Recharts stays responsive.
-  if (players.length > 60 && dates.length > 45) {
-    const step = Math.max(1, Math.ceil(dates.length / 40));
+  // Dense fields: keep ~28 timeline steps so Recharts stays responsive.
+  if (players.length > 40 && dates.length > 32) {
+    const target = players.length > 80 ? 24 : 28;
+    const step = Math.max(1, Math.ceil(dates.length / target));
     const sampled: string[] = [];
     for (let i = 0; i < dates.length; i += step) {
       sampled.push(dates[i]!);
@@ -1318,17 +1309,34 @@ export function buildPlayerRaceChartRows(
   }
 
   if (!forwardFill) {
-    const byPlayer = players.map(
-      (player) => new Map(player.points.map((p) => [p.date, p.value]))
-    );
+    const rateCursors = players.map(() => 0);
     return dates.map((date) => {
       const row: PlayerRaceChartRow = {
         date,
         label: formatPlayerRaceAxisDate(date),
       };
       for (let i = 0; i < players.length; i++) {
-        const hit = byPlayer[i]!.get(date);
-        row[players[i]!.playerId] = hit ?? null;
+        const points = players[i]!.points;
+        let cursor = rateCursors[i]!;
+        while (cursor < points.length && points[cursor]!.date <= date) {
+          cursor += 1;
+        }
+        rateCursors[i] = cursor;
+        const prev = cursor > 0 ? points[cursor - 1]! : null;
+        const next = cursor < points.length ? points[cursor]! : null;
+        let value: number | null = null;
+        if (prev) {
+          if (prev.date === date) {
+            value = prev.value;
+          } else if (next) {
+            if (daysBetween(prev.date, next.date) <= RATE_HOLD_MAX_GAP_DAYS) {
+              value = prev.value;
+            }
+          } else if (daysBetween(prev.date, date) <= RATE_HOLD_TAIL_DAYS) {
+            value = prev.value;
+          }
+        }
+        row[players[i]!.playerId] = value;
       }
       return row;
     });

@@ -75,13 +75,13 @@ export function toTeamArcSeasonRow(row: TeamSeasonStats): TeamArcSeasonRow {
     avgDiff: row.avgDiff,
     avgDiffDisplay: `${row.avgDiff >= 0 ? "+" : ""}${formatNumber(row.avgDiff, 1)}`,
     trueShootingPct: ts,
-    tsDisplay: ts != null && ts > 0 ? formatPct(ts) : "-",
+    tsDisplay: ts != null && ts > 0 ? formatPct(ts) : "—",
     effectiveFieldGoalPct: efg,
-    efgDisplay: efg != null && efg > 0 ? formatPct(efg) : "-",
+    efgDisplay: efg != null && efg > 0 ? formatPct(efg) : "—",
     ppg,
-    ppgDisplay: ppg != null && ppg > 0 ? formatNumber(ppg, 1) : "-",
+    ppgDisplay: ppg != null && ppg > 0 ? formatNumber(ppg, 1) : "—",
     oppPpg: opp,
-    oppPpgDisplay: opp != null && opp > 0 ? formatNumber(opp, 1) : "-",
+    oppPpgDisplay: opp != null && opp > 0 ? formatNumber(opp, 1) : "—",
     gamesPlayed: row.gamesPlayed,
     thin,
   };
@@ -164,7 +164,7 @@ export function buildTeamArcModel(options: {
       ? `Team-season board rows available ${earliestAvailable} → ${latestAvailable} for this ESPN team id.`
       : `No team-season board rows in the requested window.`,
     `Cross-season metrics limited to stable ESPN counting/efficiency fields (point differential, TS%, eFG%, PPG, opp PPG).`,
-    `Arc coverage starts ${earliest} (documented team-board reliability floor) - earlier seasons are not implied as zeros.`,
+    `Arc coverage starts ${earliest} (documented team-board reliability floor). Earlier seasons are not treated as zeros.`,
   ];
   if (options.missingSeasons?.length) {
     coverageBits.push(
@@ -193,7 +193,7 @@ export function buildTeamArcModel(options: {
     allRows,
     transitions: buildTeamArcTransitions(allSorted, 4),
     continuityNote:
-      "Continuity follows this team's ESPN id across seasons - not a merged multi-franchise genealogy.",
+      "Continuity follows this team's ESPN id across seasons. It is not a merged multi-franchise genealogy.",
   };
 }
 

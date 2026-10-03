@@ -466,7 +466,7 @@ export function TopPerformersPanel({
       <div className="flex flex-col gap-3">
         <div className="flex min-w-0 items-start justify-between gap-3">
           <h2 className="type-heading min-w-0 wrap-break-word">
-            {season ? `${season} Top Performers` : "Top performers"}
+            {season ? `${season} top performers` : "Top performers"}
           </h2>
           <TextLink
             href={leaderboardHref}

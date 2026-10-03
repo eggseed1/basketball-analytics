@@ -23,13 +23,14 @@ import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamPageHref } from "@/lib/team-destination";
 import { TransitionLink } from "@/components/continuity/query-nav";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
 
 function snapshotPoolsForSeason(season: string): {
   recentPool: GameSummary[];
   upcomingPool: GameSummary[];
 } {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = nbaTodayIso();
   const snapshot = getRuntimeSnapshotGames(season).map(toGameSummary);
   return {
     upcomingPool: snapshot.filter(
@@ -68,7 +69,10 @@ function SnapshotTeamGamesBody({
 }) {
   const allTeamGames = teamSnapshotGames(team.teamId, season);
   const { recentPool, upcomingPool } = snapshotPoolsForSeason(season);
-  const compact = gameSummariesToCompactRows(team.teamId, allTeamGames);
+  const compact = gameSummariesToCompactRows(
+    team.teamId,
+    allTeamGames.filter((game) => game.status === "final")
+  );
   const page = paginateSnapshotTeamGames(compact, gamesPage ?? 1);
   const overall = computeTeamSplits(team.teamId, season).find(
     (s) => s.id === "overall"
@@ -188,8 +192,8 @@ export async function TeamGamesIsland({
         <div>
           <h2 className="text-[20px] font-bold tracking-tight">Games</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            Schedule snapshot · season slate · recent / upcoming · game log ·
-            opens Game Lab
+            Recent results, the next few games, and the season game log. Each
+            game opens in Game Lab. The full calendar is on the Schedule tab.
           </p>
         </div>
         <SnapshotTeamGamesBody

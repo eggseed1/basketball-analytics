@@ -74,6 +74,13 @@ export function getBundledPlayerBio(
   return null;
 }
 
+/** Name and draft line for every baked bio (keys repeat across ESPN/NBA/BRef ids). */
+export function bundledPlayerDraftLines(): Array<{ id: string; name: string; draft: string }> {
+  return Object.entries(players)
+    .filter(([, bio]) => bio.fn && bio.d)
+    .map(([id, bio]) => ({ id, name: bio.fn!, draft: bio.d! }));
+}
+
 export function bundledPlayerBioMeta() {
   return {
     version: data.version ?? 0,

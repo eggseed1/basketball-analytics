@@ -1,6 +1,6 @@
 /**
- * Movement Center / Rumor Mill — future Live NBA Intelligence layer.
- * Architecture + types only until Phase M1. See docs/architecture/movement-center.md
+ * Movement Center / Rumor Mill. Phase M1: publisher headlines + ESPN
+ * transaction log. See docs/architecture/movement-center.md
  */
 
 export * from "./types";

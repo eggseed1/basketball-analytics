@@ -118,7 +118,7 @@ export function validateBasketballQuery(
     return {
       ok: false,
       status: "invalid",
-      errors: ["This metric cannot be calculated — no supported metric matched."],
+      errors: ["This metric cannot be calculated: no supported metric matched."],
       ast,
     };
   }

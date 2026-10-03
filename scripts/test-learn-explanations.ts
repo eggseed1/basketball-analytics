@@ -8,6 +8,7 @@ import { explainMetric, listExplainedMetrics } from "../src/analytics/explanatio
 import {
   getLearnConcept,
   learnHrefFor,
+  listLearnConcepts,
   searchLearnConcepts,
 } from "../src/content/learn/registry";
 import { listAllLearnSlugs, resolveLearnPage } from "../src/content/learn/resolve";
@@ -182,6 +183,19 @@ function main() {
   if (war1?.kind === "guide") {
     assert.equal(war1.guide.name, "WAR1");
     assert.equal(war1.guide.slug, "war1");
+  }
+
+  // /learn index lists every page: each Learn slug needs a registry concept pointing at it
+  const conceptSlugs = new Set(
+    listLearnConcepts()
+      .map((c) => c.learnSlug)
+      .filter((s): s is string => Boolean(s))
+  );
+  for (const slug of slugs) {
+    const page = resolveLearnPage(slug);
+    const canonical =
+      page?.kind === "guide" ? page.guide.slug : page?.kind === "topic" ? page.topic.slug : slug;
+    assert.ok(conceptSlugs.has(canonical), `Learn page ${canonical} has no concept, so /learn won't list it`);
   }
 
   console.log("test-learn-explanations: all assertions passed");

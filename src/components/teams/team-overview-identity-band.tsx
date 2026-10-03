@@ -27,8 +27,8 @@ export function TeamOverviewIdentityBand({
       <div>
         <h2 className={type.heading}>Who they are</h2>
         <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          League-percentile bands from this season&apos;s board — not a quality
-          grade.
+          League-percentile bands from this season&apos;s board. These are not
+          a quality grade.
         </p>
       </div>
 

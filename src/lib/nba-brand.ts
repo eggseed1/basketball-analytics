@@ -364,7 +364,6 @@ export function resolveTeamBrand(
 export type ChartSurface = "light" | "dark";
 
 const CHART_INK_LIGHT = "#1d1d1f";
-const CHART_INK_DARK = "#f5f5f7";
 
 function expandHex(hex: string): string | null {
   const match = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(hex.trim());
@@ -393,18 +392,89 @@ function hexRelativeLuminance(hex: string): number {
   );
 }
 
-function mixHex(a: string, b: string, ratio: number): string {
-  const left = expandHex(a);
-  const right = expandHex(b);
-  if (!left || !right) return a;
-  const t = Math.min(1, Math.max(0, ratio));
-  const parts = [0, 2, 4].map((start) =>
-    Math.round(
-      parseInt(left.slice(start, start + 2), 16) * (1 - t) +
-        parseInt(right.slice(start, start + 2), 16) * t
+type Oklch = { l: number; c: number; h: number };
+
+function srgbToLinear(v: number): number {
+  return v <= 0.04045 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+}
+
+function linearToSrgb(v: number): number {
+  return v <= 0.0031308 ? 12.92 * v : 1.055 * v ** (1 / 2.4) - 0.055;
+}
+
+function hexToOklch(hex: string): Oklch | null {
+  const full = expandHex(hex);
+  if (!full) return null;
+  const [r, g, b] = [0, 2, 4].map((start) =>
+    srgbToLinear(parseInt(full.slice(start, start + 2), 16) / 255)
+  ) as [number, number, number];
+  const l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b);
+  const m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b);
+  const s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b);
+  const L = 0.2104542553 * l + 0.793617785 * m - 0.0040720468 * s;
+  const A = 1.9779984951 * l - 2.428592205 * m + 0.4505937099 * s;
+  const B = 0.0259040371 * l + 0.7827717662 * m - 0.808675766 * s;
+  return {
+    l: L,
+    c: Math.hypot(A, B),
+    h: (Math.atan2(B, A) * 180) / Math.PI,
+  };
+}
+
+function oklchToLinearRgb({ l, c, h }: Oklch): [number, number, number] {
+  const a = c * Math.cos((h * Math.PI) / 180);
+  const b = c * Math.sin((h * Math.PI) / 180);
+  const l3 = (l + 0.3963377774 * a + 0.2158037573 * b) ** 3;
+  const m3 = (l - 0.1055613458 * a - 0.0638541728 * b) ** 3;
+  const s3 = (l - 0.0894841775 * a - 1.291485548 * b) ** 3;
+  return [
+    4.0767416621 * l3 - 3.3077115913 * m3 + 0.2309699292 * s3,
+    -1.2684380046 * l3 + 2.6097574011 * m3 - 0.3413193965 * s3,
+    -0.0041960863 * l3 - 0.7034186147 * m3 + 1.707614701 * s3,
+  ];
+}
+
+function inGamut(rgb: [number, number, number]): boolean {
+  return rgb.every((v) => v >= -1e-4 && v <= 1 + 1e-4);
+}
+
+function oklchToHex(color: Oklch): string {
+  // Keep hue and lightness; shed only as much chroma as sRGB forces.
+  let lo = 0;
+  let hi = color.c;
+  let rgb = oklchToLinearRgb(color);
+  if (!inGamut(rgb)) {
+    for (let i = 0; i < 20; i++) {
+      const mid = (lo + hi) / 2;
+      if (inGamut(oklchToLinearRgb({ ...color, c: mid }))) lo = mid;
+      else hi = mid;
+    }
+    rgb = oklchToLinearRgb({ ...color, c: lo });
+  }
+  return `#${rgb
+    .map((v) =>
+      Math.round(Math.min(1, Math.max(0, linearToSrgb(v))) * 255)
+        .toString(16)
+        .padStart(2, "0")
     )
-  );
-  return `#${parts.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+    .join("")}`;
+}
+
+/** OKLCH lightness at which a brand color reads on the dark card (~4.5:1+). */
+const DARK_SURFACE_MIN_L = 0.72;
+
+/**
+ * Raise a brand color to a readable lightness on dark surfaces without
+ * mixing in white, which turns navies and purples chalky. Hue holds; chroma
+ * is kept up to the sRGB edge.
+ */
+export function liftForDarkSurface(
+  hex: string,
+  minLightness = DARK_SURFACE_MIN_L
+): string {
+  const color = hexToOklch(hex);
+  if (!color || color.l >= minLightness) return hex;
+  return oklchToHex({ ...color, l: minLightness });
 }
 
 /** Ensure franchise primaries stay readable on chart surfaces. */
@@ -428,11 +498,15 @@ export function ensureChartColorOnSurface(
     return secondary;
   }
   if (primaryLum >= 0.42) return primary;
-  if (primaryLum >= 0.26) {
-    return mixHex(primary, CHART_INK_DARK, 0.32);
+  if (secondaryLum >= 0.35 && primaryLum < 0.26) return secondary;
+  // Achromatic primaries (black, charcoal) lift to plain grey; a colored
+  // secondary keeps the team recognizable instead.
+  const primaryChroma = hexToOklch(primary)?.c ?? 0;
+  const secondaryChroma = hexToOklch(secondary)?.c ?? 0;
+  if (primaryChroma < 0.03 && secondaryChroma >= 0.08) {
+    return liftForDarkSurface(secondary);
   }
-  if (secondaryLum >= 0.35) return secondary;
-  return mixHex(primary, CHART_INK_DARK, primaryLum < 0.06 ? 0.62 : 0.48);
+  return liftForDarkSurface(primary);
 }
 
 /**
@@ -485,7 +559,7 @@ export function teamChartColor(
   const surface = options?.surface ?? "light";
   const brand = resolveTeamBrand(teamId);
   if (!brand) {
-    return { color: surface === "dark" ? "#98989d" : "#8e8e93", abbr: "-" };
+    return { color: surface === "dark" ? "#a6a9b1" : "#8e8e93", abbr: "-" };
   }
   const chartHex = TEAM_CHART_HEX[brand.id] ?? brand.primary;
   // Pair with the other brand stop so dark-surface lift can fall back sanely.
@@ -530,6 +604,85 @@ export function teamBrandBarGradient(teamKey?: string | null): string {
  */
 export function teamBrandCompareBarFill(teamKey?: string | null): string {
   return teamBrandBarColor(teamKey, { surface: "light" });
+}
+
+const MATCHUP_FALLBACK = {
+  light: { a: "#1d6fd8", b: "#e0620d" },
+  dark: { a: "#5b9cf0", b: "#ff8a4c" },
+} as const;
+
+function hexDistance(a: string, b: string): number {
+  const left = expandHex(a);
+  const right = expandHex(b);
+  if (!left || !right) return 0;
+  let sum = 0;
+  for (const start of [0, 2, 4]) {
+    const d =
+      parseInt(left.slice(start, start + 2), 16) -
+      parseInt(right.slice(start, start + 2), 16);
+    sum += d * d;
+  }
+  return Math.sqrt(sum);
+}
+
+/** Past this luminance a color washes out as text or a thin bar on white. */
+const LIGHT_SURFACE_MAX_LUM = 0.45;
+
+/**
+ * One team's side in a head-to-head, from its brand pair rather than the
+ * chart palette: TEAM_CHART_HEX swaps in secondaries (ATL volt, GSW gold,
+ * ORL silver) that only make sense when 30 lines share one chart.
+ */
+function matchupBrandColor(
+  first: string,
+  second: string,
+  surface: ChartSurface
+): string | null {
+  if (surface === "light") {
+    if (hexRelativeLuminance(first) <= LIGHT_SURFACE_MAX_LUM) return first;
+    return hexRelativeLuminance(second) <= LIGHT_SURFACE_MAX_LUM ? second : null;
+  }
+  const firstChroma = hexToOklch(first)?.c ?? 0;
+  const secondChroma = hexToOklch(second)?.c ?? 0;
+  return liftForDarkSurface(
+    firstChroma < 0.03 && secondChroma >= 0.08 ? second : first
+  );
+}
+
+/**
+ * Two distinguishable colors for a head-to-head. Unknown teams (career rows,
+ * multi-team seasons) and same-color franchises get a blue/orange fallback so
+ * the sides never collapse into one hue.
+ */
+export function compareMatchupColors(
+  aTeamKey?: string | null,
+  bTeamKey?: string | null,
+  surface: ChartSurface = "light"
+): { a: string; b: string } {
+  const fallback = MATCHUP_FALLBACK[surface];
+  const aBrand = resolveTeamBrand(aTeamKey);
+  const bBrand = resolveTeamBrand(bTeamKey);
+  const a =
+    (aBrand &&
+      matchupBrandColor(aBrand.primary, aBrand.secondary, surface)) ??
+    fallback.a;
+  let b =
+    (bBrand &&
+      matchupBrandColor(bBrand.primary, bBrand.secondary, surface)) ??
+    fallback.b;
+  if (hexDistance(a, b) < 110) {
+    const alt =
+      bBrand && aBrand?.id !== bBrand.id
+        ? matchupBrandColor(bBrand.secondary, bBrand.primary, surface)
+        : null;
+    b =
+      alt && hexDistance(a, alt) >= 110
+        ? alt
+        : hexDistance(a, fallback.b) >= 110
+          ? fallback.b
+          : fallback.a;
+  }
+  return { a, b };
 }
 
 /**

@@ -133,6 +133,86 @@ const GOOGLE_FEEDS = [
   "https://news.google.com/rss/search?q=NBA+(%22Cleaning+the+Glass%22+OR+%22BBall+Index%22+OR+%22Thinking+Basketball%22+OR+%22draft+model%22+OR+%22shot+quality%22)&hl=en-US&gl=US&ceid=US:en",
 ];
 
+/**
+ * Google News search returns anything that matches the query, including SEO spam
+ * on unrelated domains. Only these outlets (matched on the source domain Google
+ * reports) can reach the desk from Google; everything else is dropped.
+ */
+const GOOGLE_SOURCE_DOMAINS = [
+  // Analytics-native
+  "bball-index.com",
+  "cleaningtheglass.com",
+  "thinkingbasketball.net",
+  "inpredictable.com",
+  "nbastuffer.com",
+  "noceilingsnba.com",
+  "truehoop.com",
+  "natesilver.net",
+  "theanalyst.com",
+  "thef5.substack.com",
+  "neilpaine.substack.com",
+  "roycewebb.com",
+  "dunksandthrees.com",
+  "pudding.cool",
+  // National outlets and league
+  "nba.com",
+  "espn.com",
+  "espn.co.uk",
+  "nytimes.com",
+  "theathletic.com",
+  "theringer.com",
+  "si.com",
+  "sports.yahoo.com",
+  "cbssports.com",
+  "hoopshype.com",
+  "bleacherreport.com",
+  "sportsnet.ca",
+  "realgm.com",
+  "usatoday.com",
+  "washingtonpost.com",
+  "theguardian.com",
+  "apnews.com",
+  "reuters.com",
+  "nbcsports.com",
+  "foxsports.com",
+  "thescore.com",
+  "sbnation.com",
+  "defector.com",
+  "frontofficesports.com",
+  "sportico.com",
+  "bostonglobe.com",
+  "latimes.com",
+  "thestar.com",
+  "cbc.ca",
+  "thednvr.com",
+];
+
+export function isTrustedGoogleSource(sourceUrl: string | undefined): boolean {
+  if (!sourceUrl) return false;
+  let host: string;
+  try {
+    host = new URL(sourceUrl).hostname.toLowerCase().replace(/^www\./, "");
+  } catch {
+    return false;
+  }
+  return GOOGLE_SOURCE_DOMAINS.some(
+    (domain) => host === domain || host.endsWith(`.${domain}`)
+  );
+}
+
+/** Spam formatting: non-Latin scripts, random bracketed tokens, or a bare keyword stub. */
+export function looksLikeJunkTitle(title: string): boolean {
+  if (/[\u3040-\u30ff\u3400-\u9fff\uac00-\ud7af\u0400-\u04ff\u0600-\u06ff]/.test(title)) {
+    return true;
+  }
+  if (/\[[a-z0-9]{6,}\]/i.test(title)) return true;
+  const words = title
+    .replace(/\([^)]*\)/g, " ")
+    .split(/\s+/)
+    .filter((w) => /[a-z]{2,}/i.test(w));
+  return words.length < 4;
+}
+
 /** Phrases that signal analytical footing (title + summary). */
 const ANALYTICS_SIGNALS: Array<{ re: RegExp; weight: number }> = [
   // Metric names - avoid Darko Rajakovic / Toronto Raptors false hits.
@@ -163,7 +243,7 @@ const ANALYTICS_SIGNALS: Array<{ re: RegExp; weight: number }> = [
 ];
 
 const NON_ANALYTICS_PENALTIES: Array<{ re: RegExp; weight: number }> = [
-  { re: /\brumor\b|\btrade deadline gossip\b|\binsider says\b/i, weight: 3 },
+  { re: /\brumou?rs?\b|\btrade deadline gossip\b|\binsider says\b/i, weight: 3 },
   { re: /\bpower ranking\b|\bmock draft\b(?!.*model)/i, weight: 2 },
   { re: /\bhighlights?\b|\brecap\b|\bbox score\b/i, weight: 2 },
   { re: /\binjury report\b|\bgame preview\b|\bopening night odds\b|\bodds\b|\bbetting\b|\bdaily fantasy\b/i, weight: 4 },
@@ -441,6 +521,7 @@ function parsePublisherItem(
     block.match(/<link[^>]*href="([^"]+)"/i)?.[1] ||
     "";
   if (!title || !link) return null;
+  if (looksLikeJunkTitle(title)) return null;
 
   const creator =
     tagContent(block, "dc:creator") ||
@@ -481,8 +562,10 @@ function parseGoogleItem(block: string): InternalArticle | null {
   const rawTitle = tagContent(block, "title");
   const link = stripTags(block.match(/<link>([\s\S]*?)<\/link>/i)?.[1] ?? "");
   const source = tagContent(block, "source");
+  const sourceUrl = block.match(/<source[^>]*\burl="([^"]+)"/i)?.[1];
   const pubRaw = tagContent(block, "pubDate");
   if (!rawTitle || !link) return null;
+  if (!isTrustedGoogleSource(sourceUrl)) return null;
 
   let title = rawTitle;
   let publication = source || "News";
@@ -500,6 +583,7 @@ function parseGoogleItem(block: string): InternalArticle | null {
 
   const publishedMs = parsePublishedMs(pubRaw);
   const finalTitle = title || rawTitle;
+  if (looksLikeJunkTitle(finalTitle)) return null;
   const publicationCanon = canonicalPublication(publication);
 
   return {

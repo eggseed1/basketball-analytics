@@ -51,16 +51,21 @@ async function listRosterSentimentRows(): Promise<TrackedPlayerSentimentRow[]> {
         window: curated?.window ?? defaultWindow,
         fan: curated?.fan,
         media: curated?.media,
+        series: curated?.series,
+        headlineCount:
+          curated?.media?.origin === "headlines" ? curated.media.mentionVolume : undefined,
+        performance: curated?.performance,
         hasProfile: Boolean(curated),
         provenance: curated?.provenance,
       } satisfies TrackedPlayerSentimentRow;
     })
     .sort((a, b) => {
       const rank = (row: TrackedPlayerSentimentRow) => {
-        if (row.provenance === "observation") return 0;
-        if (row.provenance === "hand_crafted") return 1;
-        if (row.hasProfile) return 2;
-        return 3;
+        if (row.media?.origin === "headlines" || row.fan?.origin === "reddit") return 0;
+        if (row.provenance === "observation") return 1;
+        if (row.provenance === "hand_crafted") return 2;
+        if (row.hasProfile) return 3;
+        return 4;
       };
       const rankDiff = rank(a) - rank(b);
       if (rankDiff !== 0) return rankDiff;

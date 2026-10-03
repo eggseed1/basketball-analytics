@@ -17,7 +17,7 @@ import { withBudget } from "@/data/queries/budget";
 export const metadata = {
   title: "Playoff bracket",
   description:
-    "NBA playoff bracket — projected and completed postseason matchups by season.",
+    "NBA playoff bracket with projected and completed postseason matchups by season.",
 };
 
 interface PageProps {
@@ -76,7 +76,7 @@ export default async function ExploreBracketPage({ searchParams }: PageProps) {
       <PageHeader
         eyebrow="Standings"
         title="Playoff bracket"
-        subtitle={`${season} postseason bracket — projected seeds and series results.`}
+        subtitle={`${season} postseason bracket: projected seeds and series results.`}
       />
 
       <Suspense

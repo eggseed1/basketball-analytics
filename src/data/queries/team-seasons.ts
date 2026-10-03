@@ -99,7 +99,7 @@ export async function getTeamSeasonBoard(
       return {
         rows,
         status: "preseason",
-        warning: `Season hasn't started — ${season} rosters are live; team stats appear after tip-off.`,
+        warning: `Season hasn't started. ${season} rosters are live; team stats appear after tip-off.`,
       };
     }
     return { rows, status: "ok" };

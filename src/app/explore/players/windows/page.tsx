@@ -19,7 +19,7 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Stat Detective",
   description:
-    "Find NBA players whose recent points, true shooting, or rebounds are way up or way down versus their own usual rate — not versus the league.",
+    "Find NBA players whose recent points, true shooting, or rebounds are way up or way down compared with their own usual rate (not the league's).",
 };
 
 const METRIC_ORDER = ["ppg", "ts", "rpg"] as const;
@@ -52,7 +52,7 @@ export default async function StatDetectivePage({
         title="Stat Detective"
         subtitle={
           season
-            ? `Who's way above — or below — their own usual ${metricMeta.shortLabel} in ${season}? Compared to each player's baseline, not the league.`
+            ? `Who's way above or below their own usual ${metricMeta.shortLabel} in ${season}? Compared to each player's baseline, not the league.`
             : "No baked game logs for a window comparison yet."
         }
       />
@@ -65,12 +65,12 @@ export default async function StatDetectivePage({
           {
             step: "1",
             title: "Pick a metric + window",
-            body: "Points, true shooting, or rebounds — then a short streak, sustained form, or a flip.",
+            body: "Choose points, true shooting, or rebounds, then a short streak, sustained form, or a flip.",
           },
           {
             step: "2",
             title: "See the movers",
-            body: "Only big swings count — and only players with enough minutes on both sides.",
+            body: "Only big swings count, and only for players with enough minutes on both sides.",
           },
           {
             step: "3",

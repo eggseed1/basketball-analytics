@@ -11,7 +11,7 @@ import { getStandingsTrackerSeasonOptions } from "@/data/queries/standings-track
 export const metadata = {
   title: "Standings tracker",
   description:
-    "NBA standings race tracker — games above .500 over the regular season.",
+    "NBA standings race tracker showing games above .500 over the regular season.",
 };
 
 interface PageProps {
@@ -45,7 +45,7 @@ export default async function StandingsTrackerPage({ searchParams }: PageProps) 
       <PageHeader
         eyebrow="Standings"
         title="Standings tracker"
-        subtitle={`${season} race tracker — games above .500 over the regular season.`}
+        subtitle={`${season} race tracker: games above .500 over the regular season.`}
       />
 
       <Suspense

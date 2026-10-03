@@ -7,3 +7,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
 
 <!-- END:nextjs-agent-rules -->
+
+# User-facing copy
+
+When writing or editing text users see (page subtitles, captions, empty states, metric descriptions, ASK DRBL notes), follow `.cursor/skills/humanizer/SKILL.md`. No em dashes joining clauses. Keep honesty disclaimers such as "blank, not 0" or "not a legality ruling"; state them plainly. A lone "—" as a missing-value placeholder is correct and stays.

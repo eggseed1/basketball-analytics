@@ -21,7 +21,7 @@ export function toSentimentMoverRow(
   delta: number
 ): SentimentMoverRow | null {
   const playerId = profile.playerIds[0];
-  if (!playerId) return null;
+  if (!playerId || !profile.fan) return null;
   return {
     playerId,
     displayName: profile.displayName ?? playerId,
@@ -29,6 +29,8 @@ export function toSentimentMoverRow(
     fanScore: profile.fan.score,
     delta,
     mentionVolume: profile.fan.mentionVolume,
+    origin: profile.fan.origin,
+    asOf: profile.fan.asOf,
   };
 }
 

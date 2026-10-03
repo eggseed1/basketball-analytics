@@ -44,7 +44,7 @@ export function TeamArcSection({
         <div>
           <h2 className="text-[20px] font-bold tracking-tight">{arc.label}</h2>
           <p className="text-[14px] text-muted-foreground">
-            How this team got here - season board history, not asset genealogy.
+            How this team got here, from season board history (not asset genealogy).
           </p>
         </div>
         <div className="flex flex-wrap gap-3 text-[12px] font-semibold">
@@ -78,8 +78,7 @@ export function TeamArcSection({
             Biggest team changes
           </h3>
           <p className="mb-2 text-[12px] text-muted-foreground">
-            Same noise floors as analyzeTeamProfile - not a second trend
-            methodology.
+            Same noise floors and trend method as analyzeTeamProfile.
           </p>
           <ul className="flex flex-col gap-2">
             {arc.transitions.map((t) => (

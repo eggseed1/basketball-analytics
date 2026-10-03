@@ -66,6 +66,7 @@ export type TeamPageTab =
   | "defense"
   | "lineups"
   | "games"
+  | "schedule"
   | "splits"
   | "playoffs"
   | "history"
@@ -93,6 +94,7 @@ export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
   { id: "defense", label: "Defense" },
   { id: "lineups", label: "Rotation" },
   { id: "games", label: "Games" },
+  { id: "schedule", label: "Schedule" },
   { id: "splits", label: "Splits" },
   { id: "playoffs", label: "Playoffs" },
   { id: "history", label: "History" },

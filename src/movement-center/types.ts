@@ -1,5 +1,5 @@
 /**
- * Movement Center domain types (architecture only — no ingest yet).
+ * Movement Center domain types.
  * See docs/architecture/movement-center.md
  *
  * Distinct from `src/offseason` TransactionEvent (what happened) and
@@ -77,6 +77,40 @@ export type MovementClaim = {
   negotiationSpecificity?: "contact" | "framework" | "active_talks" | "offer";
 };
 
+export type MovementDealAsset = {
+  label: string;
+  playerId?: string;
+  /** Picks, cash, rights or considerations rather than a player. */
+  nonPlayer?: true;
+  /** Sending team, when the ledger names it. */
+  fromTeamId?: string;
+};
+
+/** What one team took back in a completed trade, as written in the ledger. */
+export type MovementDealSide = {
+  teamId: string;
+  teamName?: string;
+  receives: MovementDealAsset[];
+};
+
+/**
+ * An item one team's ledger entry says it sent, which the receiving team's own
+ * entry in the same deal does not list.
+ */
+export type MovementDealUnconfirmed = {
+  label: string;
+  playerId?: string;
+  nonPlayer?: true;
+  claimedByTeamId: string;
+  toTeamId: string;
+};
+
+export type MovementDeal = {
+  date: string;
+  sides: MovementDealSide[];
+  unconfirmed?: MovementDealUnconfirmed[];
+};
+
 /** Story cluster — duplicate / derivative reports collapse here. */
 export type MovementStoryCluster = {
   id: string;
@@ -89,6 +123,8 @@ export type MovementStoryCluster = {
   lastMeaningfulAt: string;
   linkedPlayerIds: string[];
   linkedTeamIds: string[];
+  /** Both sides of a completed trade, parsed from the transaction ledger. */
+  deal?: MovementDeal;
 };
 
 /** Explainable evidence strength 0–100 (not P(movement)). */
@@ -138,6 +174,11 @@ export type MovementCuratedSnapshot = {
     disclaimer: string;
     builtAt?: string;
     rosterPlayerCount?: number;
+    headlinesScanned?: number;
+    latestHeadlineAt?: string | null;
+    latestTransactionDate?: string | null;
+    tradeWindowStart?: string;
+    feeds?: string[];
   };
   sources: Record<string, { label: string; credibility: number }>;
   clusters: MovementStoryCluster[];

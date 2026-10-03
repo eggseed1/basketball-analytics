@@ -14,16 +14,17 @@ export function formatUsdCompact(dollars: number | null | undefined): string {
   if (dollars == null || !Number.isFinite(dollars)) return "—";
   const n = Math.trunc(dollars);
   const abs = Math.abs(n);
+  const sign = n < 0 ? "-" : "";
   if (abs >= 1_000_000_000) {
-    return `$${(n / 1_000_000_000).toFixed(2)}B`;
+    return `${sign}$${(abs / 1_000_000_000).toFixed(2)}B`;
   }
   if (abs >= 1_000_000) {
-    return `$${(n / 1_000_000).toFixed(1)}M`;
+    return `${sign}$${(abs / 1_000_000).toFixed(1)}M`;
   }
   if (abs >= 1_000) {
-    return `$${(n / 1_000).toFixed(0)}K`;
+    return `${sign}$${(abs / 1_000).toFixed(0)}K`;
   }
-  return formatUsdDollars(n);
+  return `${sign}${formatUsdDollars(abs)}`;
 }
 
 export function millionsToIntegerDollars(millions: number): number {

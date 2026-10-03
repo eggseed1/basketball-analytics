@@ -2,8 +2,10 @@ import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import type {
   SentimentDivergenceRow,
+  SentimentLaneOrigin,
   SentimentTopicHeatRow,
 } from "@/sentiment/curated-types";
 import { textLinkClassName, type } from "@/lib/design-system";
@@ -14,28 +16,36 @@ function scorePct(score: number) {
 }
 
 function gapLabel(gap: number) {
-  const pts = Math.round(Math.abs(gap) * 100);
-  return gap >= 0 ? `Fans +${pts}` : `Fans −${pts}`;
+  const pts = Math.round(Math.abs(gap) * 50);
+  return gap >= 0 ? `Fans +${pts} pts` : `Fans −${pts} pts`;
 }
 
 export function SentimentTopicHeat({
   rows,
   highlightTopic,
+  origin = "curated",
 }: {
   rows: SentimentTopicHeatRow[];
   highlightTopic?: string;
+  origin?: SentimentLaneOrigin;
 }) {
   if (!rows.length) return null;
   const max = rows[0]?.weight ?? 1;
   const active = highlightTopic?.trim().toLowerCase();
+  const fromHeadlines = origin === "headlines";
 
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className={cn(type.bodySm, "font-bold")}>Topic heat</h2>
+        <div className="flex items-center gap-2">
+          <h2 className={cn(type.bodySm, "font-bold")}>Topic heat</h2>
+          <LaneOriginTag lane={{ origin, mentionVolume: 0 }} />
+        </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Mention-weighted topics across tracked fan and media lanes — not a
-          census of all discussion. Click a topic to filter the roster board.
+          {fromHeadlines
+            ? "Share of topic tags across NBA headlines from the last 7 days, tagged by keyword. It covers what outlets wrote about, not all discussion."
+            : "Mention-weighted topics across the curated fan and media lanes. This is not a census of all discussion."}{" "}
+          Click a topic to filter the players table.
         </p>
       </div>
       <ul className="flex flex-col gap-2">
@@ -48,7 +58,7 @@ export function SentimentTopicHeat({
           <li key={row.topic} className="flex flex-col gap-1">
             <div className="flex items-baseline justify-between gap-2">
               <Link
-                href={`/sentiment?topic=${encodeURIComponent(row.topic)}`}
+                href={`/sentiment?view=players&topic=${encodeURIComponent(row.topic)}`}
                 className={cn(
                   type.bodySm,
                   "font-semibold capitalize hover:underline",
@@ -58,7 +68,8 @@ export function SentimentTopicHeat({
                 {row.topic.replace(/_/g, " ")}
               </Link>
               <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-                {Math.round(row.weight * 100)}% · {row.playerCount} players
+                {Math.round(row.weight * 100)}%
+                {fromHeadlines ? ` · ${row.mentionVolume} headlines` : ""} · {row.playerCount} players
               </span>
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-secondary/80">
@@ -76,7 +87,7 @@ export function SentimentTopicHeat({
       </ul>
       {active ? (
         <Link
-          href="/sentiment"
+          href="/sentiment?view=players"
           className={cn(type.caption, "font-semibold underline")}
         >
           Clear topic filter
@@ -92,14 +103,20 @@ export function SentimentDivergenceBoard({
   rows: SentimentDivergenceRow[];
 }) {
   if (!rows.length) return null;
+  const allCurated = rows.every((row) => row.origin !== "measured");
 
   return (
     <section className="flex flex-col gap-3">
       <div>
-        <h2 className={cn(type.bodySm, "font-bold")}>Fan vs media gaps</h2>
+        <div className="flex items-center gap-2">
+          <h2 className={cn(type.bodySm, "font-bold")}>Fan vs media gaps</h2>
+          {allCurated ? <LaneOriginTag lane={{ origin: "curated", mentionVolume: 0 }} /> : null}
+        </div>
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Largest disagreements between fan and media lanes. Lanes stay
-          separate — never blended into one unexplained score.
+          Largest disagreements between fan and media lanes. The two lanes are
+          never blended into one score. A gap is only shown when both lanes come
+          from the same kind of source, so a curated fan value is never compared
+          with a measured headline score.
         </p>
       </div>
       <ul className="grid gap-2 sm:grid-cols-2">

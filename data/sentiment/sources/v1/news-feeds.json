@@ -1,0 +1,9 @@
+{
+  "note": "Publisher RSS feeds. Headline + lede tone only (S0 news policy). Headlines are shown with a link back to the outlet.",
+  "feeds": [
+    { "id": "espn", "outlet": "ESPN", "url": "https://www.espn.com/espn/rss/nba/news" },
+    { "id": "cbs", "outlet": "CBS Sports", "url": "https://www.cbssports.com/rss/headlines/nba/" },
+    { "id": "yahoo", "outlet": "Yahoo Sports", "url": "https://sports.yahoo.com/nba/rss.xml" },
+    { "id": "realgm", "outlet": "RealGM", "url": "https://basketball.realgm.com/rss/wiretap/0/0.xml" }
+  ]
+}

@@ -248,8 +248,8 @@ export function buildRelatedTransactionEventClusters(
       evidence: [
         "Reciprocal counterparty trade language between distinct teams.",
         `Teams: ${abbrs.join(" ↔ ")}.`,
-        `Shared calendar date (${date}) used only as a candidate window — not transaction identity.`,
-        "Cluster groups ESPN source records for one underlying transaction event — not a verified structured trade ledger.",
+        `Shared calendar date (${date}) used only as a candidate window, not transaction identity.`,
+        "Cluster groups ESPN source records for one underlying transaction event. It is not a verified structured trade ledger.",
       ],
       status: "related_event_cluster",
       structuredLedgerAvailable: false,

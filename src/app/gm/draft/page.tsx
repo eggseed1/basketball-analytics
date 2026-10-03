@@ -105,7 +105,7 @@ function DraftBody() {
           </h2>
           <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
             Style tags until pick night. Only true top-of-board talent gets elite
-            codenames - most of the class is role projection, not legend cosplay.
+            codenames. Most of the class is role projection, not legend cosplay.
           </p>
           {league.phase === "draft" ? (
             <p className="mt-2 text-sm text-muted-foreground">
@@ -113,20 +113,20 @@ function DraftBody() {
               <span className="font-medium text-foreground">
                 {(onClock ?? "?").toUpperCase()}
               </span>
-              {yourTurn ? " - your selection" : ""}
+              {yourTurn ? " · your selection" : ""}
             </p>
           ) : null}
           {scout ? (
             <p className="mt-1 text-[12px] text-muted-foreground">
               Scout: {scout.name} · {expertiseLabel(scout.expertise)} · Eye{" "}
-              {scout.eye}/5 · {scout.yearsExperience} yrs - hire/replace in{" "}
+              {scout.eye}/5 · {scout.yearsExperience} yrs · hire/replace in{" "}
               <Link href="/gm/staff" className="underline underline-offset-2">
                 Staff
               </Link>
             </p>
           ) : (
             <p className="mt-1 text-[12px] text-amber-800 dark:text-amber-300">
-              No director of scouting hired - fog is heavy.{" "}
+              No director of scouting hired, so fog is heavy.{" "}
               <Link href="/gm/staff" className="underline underline-offset-2">
                 Hire a scout
               </Link>
@@ -150,7 +150,7 @@ function DraftBody() {
                 {GRADE_LEGEND.map((row) => (
                   <li key={row.grade}>
                     <span className="font-medium text-foreground">{row.grade}</span>
-                    {" - "}
+                    {": "}
                     {row.meaning}
                   </li>
                 ))}
@@ -184,7 +184,7 @@ function DraftBody() {
             {revealFlash.name}
           </p>
           <p className="mt-0.5 text-[12px] text-background/70">
-            That &ldquo;wait, I know this guy&rdquo; feeling - locked in.
+            That &ldquo;wait, I know this guy&rdquo; feeling, now locked in.
           </p>
         </div>
       ) : null}
@@ -406,7 +406,7 @@ function ScoutDossier({
             {profile.comps.join(" · ")}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            Style DNA - not a confirmed identity.
+            Style DNA, not a confirmed identity.
           </p>
         </div>
       ) : null}
@@ -438,7 +438,7 @@ function ScoutDossier({
       ) : (
         <p className="text-center text-[12px] text-muted-foreground">
           {player.codename
-            ? "Study the tape - identity stays sealed until pick night."
+            ? "Study the tape. Identity stays sealed until pick night."
             : "Waiting on the clock."}
         </p>
       )}

@@ -10,9 +10,10 @@ import {
   useTransition,
 } from "react";
 import { createPortal } from "react-dom";
-import { Search } from "lucide-react";
+import { Search, UserRound } from "lucide-react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
+import { NBA_ATMOSPHERE } from "@/components/brand/page-atmosphere";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { QueryUpdatingChrome } from "@/components/continuity/query-nav";
 import { PlayerIdentity } from "@/components/players/player-identity";
@@ -30,6 +31,7 @@ type Hit = {
   teamKey?: string;
   subtitle?: string;
   seasonHint?: string;
+  portraitUrl?: string;
 };
 
 function dedupeHits(rows: Hit[]): Hit[] {
@@ -44,8 +46,9 @@ function dedupeHits(rows: Hit[]): Hit[] {
 }
 
 function parseCareerSeasons(payload: unknown): string[] {
-  const rows = (payload as { data?: Array<{ season?: string; gamesPlayed?: number }> })
-    ?.data;
+  const rows = (
+    payload as { data?: Array<{ season?: string; gamesPlayed?: number }> }
+  )?.data;
   if (!Array.isArray(rows)) return [];
   const seasons = new Set<string>();
   for (const row of rows) {
@@ -57,6 +60,47 @@ function parseCareerSeasons(payload: unknown): string[] {
   return [...seasons].sort((a, b) => b.localeCompare(a));
 }
 
+function PlayerSlot({
+  selectedId,
+  selectedName,
+  portraitUrl,
+  label,
+}: {
+  selectedId?: string;
+  selectedName?: string;
+  portraitUrl?: string | null;
+  label: string;
+}) {
+  return (
+    <div className="flex flex-col items-center gap-2 pb-2 pt-1">
+      {selectedId && selectedName ? (
+        <PlayerHeadshot
+          playerId={selectedId}
+          name={selectedName}
+          portraitUrl={portraitUrl}
+          size="lg"
+        />
+      ) : (
+        <div
+          className="frost-surface flex size-24 items-center justify-center rounded-full border-2 border-dashed border-foreground/15 text-muted-foreground shadow-[inset_0_1px_0_rgb(255_255_255/0.6)]"
+          aria-hidden
+        >
+          <UserRound className="size-10" strokeWidth={1.5} />
+        </div>
+      )}
+      <p
+        className={cn(
+          type.caption,
+          "max-w-full truncate font-bold uppercase tracking-[0.12em]",
+          selectedName ? "text-foreground" : "text-muted-foreground"
+        )}
+      >
+        {selectedName || label}
+      </p>
+    </div>
+  );
+}
+
 function PlayerSearchField({
   label,
   selectedId,
@@ -65,14 +109,18 @@ function PlayerSearchField({
   seasonOptions,
   onPick,
   onSeasonChange,
+  hideLabel,
+  portraitUrl,
 }: {
   label: string;
   selectedId?: string;
   selectedName?: string;
+  portraitUrl?: string | null;
   season?: string;
   seasonOptions: string[];
   onPick: (hit: Hit) => void;
   onSeasonChange: (season: string) => void;
+  hideLabel?: boolean;
 }) {
   const listId = useId();
   const inputId = useId();
@@ -96,6 +144,10 @@ function PlayerSearchField({
   const modeValue = isCareerCompareKey(season)
     ? CAREER_COMPARE_KEY
     : (season ?? CAREER_COMPARE_KEY);
+  const seasonChoices =
+    modeValue !== CAREER_COMPARE_KEY && !seasonOptions.includes(modeValue)
+      ? [modeValue, ...seasonOptions]
+      : seasonOptions;
 
   useLayoutEffect(() => {
     if (!showList || !rootRef.current) {
@@ -145,6 +197,7 @@ function PlayerSearchField({
             position?: string | null;
             draftProspect?: boolean;
             current?: boolean;
+            portraitUrl?: string;
           }>;
         };
         setHits(
@@ -156,6 +209,7 @@ function PlayerSearchField({
                 name: row.name,
                 teamKey: row.team || undefined,
                 seasonHint: row.season || spanEnd,
+                portraitUrl: row.portraitUrl,
                 subtitle: [
                   row.current ? "Active" : null,
                   row.team,
@@ -239,7 +293,7 @@ function PlayerSearchField({
                       type.caption
                     )}
                   >
-                    No matching players in the career search index — try last
+                    No matching players in the career search index. Try last
                     name, first+last, or initials (e.g. SGA). Active and retired
                     players are both searchable.
                   </li>
@@ -265,6 +319,7 @@ function PlayerSearchField({
                         playerId={hit.id}
                         name={hit.name}
                         teamKey={hit.teamKey}
+                        portraitUrl={hit.portraitUrl}
                         size="xs"
                       />
                       <span className="min-w-0 flex-1">
@@ -299,17 +354,26 @@ function PlayerSearchField({
 
   return (
     <div ref={rootRef} className="relative flex flex-col gap-1.5">
-      <Label htmlFor={selectedId ? seasonId : inputId}>{label}</Label>
+      <Label
+        htmlFor={selectedId ? seasonId : inputId}
+        className={hideLabel ? "sr-only" : undefined}
+      >
+        {label}
+      </Label>
       {selectedId && selectedName ? (
         <div className="flex flex-col gap-1.5">
           <div className="site-search-field flex min-w-0 items-center gap-2 rounded-md px-3 py-2">
             <PlayerIdentity
               playerId={selectedId}
               name={selectedName}
+              portraitUrl={portraitUrl}
               teamKey={undefined}
               variant="compact"
               className="min-w-0 flex-1"
-              nameClassName={cn(type.bodySm, "font-semibold no-underline hover:underline")}
+              nameClassName={cn(
+                type.bodySm,
+                "font-semibold no-underline hover:underline"
+              )}
             />
             <button
               type="button"
@@ -346,7 +410,7 @@ function PlayerSearchField({
               aria-label={`${label} career or season`}
             >
               <option value={CAREER_COMPARE_KEY}>Career average</option>
-              {seasonOptions.map((s) => (
+              {seasonChoices.map((s) => (
                 <option key={s} value={s}>
                   {s} season
                 </option>
@@ -399,7 +463,7 @@ function PlayerSearchField({
                 setActiveIndex((i) => Math.max(i - 1, 0));
               }
             }}
-            placeholder="Any player — active or retired"
+            placeholder="Any player, active or retired"
             aria-label={label}
             autoComplete="off"
             className={cn(
@@ -421,6 +485,8 @@ export function ComparePicker({
   bName,
   seasonA,
   seasonB,
+  aPortraitUrl,
+  bPortraitUrl,
 }: {
   aId?: string;
   bId?: string;
@@ -428,6 +494,8 @@ export function ComparePicker({
   bName?: string;
   seasonA?: string;
   seasonB?: string;
+  aPortraitUrl?: string | null;
+  bPortraitUrl?: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -509,11 +577,7 @@ export function ComparePicker({
     }
     if (nextSa) sp.set("seasonA", nextSa);
     if (nextSb) sp.set("seasonB", nextSb);
-    if (
-      nextSa &&
-      nextSa === nextSb &&
-      !isCareerCompareKey(nextSa)
-    ) {
+    if (nextSa && nextSa === nextSb && !isCareerCompareKey(nextSa)) {
       sp.set("season", nextSa);
     }
     const qs = sp.toString();
@@ -522,52 +586,121 @@ export function ComparePicker({
     });
   };
 
-  return (
-    <form
+  const hero = !a?.id || !b?.id;
+
+  const fieldA = (
+    <PlayerSearchField
+      label="Player A"
+      hideLabel={hero}
+      selectedId={a?.id || undefined}
+      selectedName={a?.name || undefined}
+      portraitUrl={a?.id && a.id === aId ? aPortraitUrl : null}
+      season={sa || undefined}
+      seasonOptions={aSeasons}
+      onPick={(hit) => {
+        const next = hit.id ? hit : null;
+        setA(next);
+        const nextSa = next ? CAREER_COMPARE_KEY : "";
+        setSa(nextSa);
+        push(next, b, nextSa, sb);
+      }}
+      onSeasonChange={(next) => {
+        setSa(next);
+        push(a, b, next, sb);
+      }}
+    />
+  );
+  const fieldB = (
+    <PlayerSearchField
+      label="Player B"
+      hideLabel={hero}
+      selectedId={b?.id || undefined}
+      selectedName={b?.name || undefined}
+      portraitUrl={b?.id && b.id === bId ? bPortraitUrl : null}
+      season={sb || undefined}
+      seasonOptions={bSeasons}
+      onPick={(hit) => {
+        const next = hit.id ? hit : null;
+        setB(next);
+        const nextSb = next ? CAREER_COMPARE_KEY : "";
+        setSb(nextSb);
+        push(a, next, sa, nextSb);
+      }}
+      onSeasonChange={(next) => {
+        setSb(next);
+        push(a, b, sa, next);
+      }}
+    />
+  );
+
+  const vs = (
+    <span
+      aria-hidden
       className={cn(
-        "relative grid gap-3 rounded-xl border border-border bg-card p-4 sm:grid-cols-2",
-        pending && "opacity-70"
+        type.caption,
+        "glass-pill glass-pill-active flex size-12 shrink-0 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.12)]"
       )}
+    >
+      vs
+    </span>
+  );
+
+  const formClass = cn(
+    "relative rounded-xl",
+    hero ? "p-5 sm:p-6" : "p-4",
+    pending && "opacity-70"
+  );
+  // Liquid glass wraps children in its own div, so the grid lives one level in.
+  const gridClass = cn(
+    "grid items-start",
+    hero
+      ? "gap-4 sm:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] sm:gap-6"
+      : "gap-3 sm:grid-cols-2"
+  );
+
+  return (
+    <GlassSurface
+      as="form"
+      effect={hero ? "liquid" : "css"}
+      backdropBlur={hero ? 18 : 24}
+      overflowVisible
+      accentColor={hero ? NBA_ATMOSPHERE.colorA : null}
+      accentColorB={hero ? NBA_ATMOSPHERE.colorB : null}
+      className={formClass}
       data-updating={pending ? "true" : "false"}
       onSubmit={(e) => e.preventDefault()}
     >
       <QueryUpdatingChrome pending={pending} />
-      <PlayerSearchField
-        label="Player A"
-        selectedId={a?.id || undefined}
-        selectedName={a?.name || undefined}
-        season={sa || undefined}
-        seasonOptions={aSeasons}
-        onPick={(hit) => {
-          const next = hit.id ? hit : null;
-          setA(next);
-          const nextSa = next ? CAREER_COMPARE_KEY : "";
-          setSa(nextSa);
-          push(next, b, nextSa, sb);
-        }}
-        onSeasonChange={(next) => {
-          setSa(next);
-          push(a, b, next, sb);
-        }}
-      />
-      <PlayerSearchField
-        label="Player B"
-        selectedId={b?.id || undefined}
-        selectedName={b?.name || undefined}
-        season={sb || undefined}
-        seasonOptions={bSeasons}
-        onPick={(hit) => {
-          const next = hit.id ? hit : null;
-          setB(next);
-          const nextSb = next ? CAREER_COMPARE_KEY : "";
-          setSb(nextSb);
-          push(a, next, sa, nextSb);
-        }}
-        onSeasonChange={(next) => {
-          setSb(next);
-          push(a, b, sa, next);
-        }}
-      />
-    </form>
+      <div className={gridClass}>
+        {hero ? (
+          <>
+            <div className="flex min-w-0 flex-col">
+              <PlayerSlot
+                label="Player A"
+                selectedId={a?.id || undefined}
+                selectedName={a?.name || undefined}
+                portraitUrl={a?.id && a.id === aId ? aPortraitUrl : null}
+              />
+              {fieldA}
+            </div>
+            <div className="flex justify-center sm:pt-9">{vs}</div>
+            <div className="flex min-w-0 flex-col">
+              <PlayerSlot
+                label="Player B"
+                selectedId={b?.id || undefined}
+                selectedName={b?.name || undefined}
+                portraitUrl={b?.id && b.id === bId ? bPortraitUrl : null}
+              />
+              {fieldB}
+            </div>
+          </>
+        ) : (
+          <>
+            {fieldA}
+            {fieldB}
+          </>
+        )}
+      </div>
+    </GlassSurface>
   );
 }

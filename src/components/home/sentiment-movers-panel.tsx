@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
+import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import { getSentimentMoversBoard } from "@/data/queries/home-sentiment";
 import { textLinkClassName, type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -11,7 +12,7 @@ function scorePct(score: number) {
 }
 
 function deltaLabel(delta: number) {
-  const pts = Math.round(Math.abs(delta) * 100);
+  const pts = Math.round(Math.abs(delta) * 50);
   return delta > 0 ? `+${pts}` : `−${pts}`;
 }
 
@@ -99,14 +100,20 @@ function MoverList({
 export async function SentimentMoversPanel() {
   const board = getSentimentMoversBoard(4, 7);
   if (!board) return null;
+  const sample = board.risers[0] ?? board.fallers[0];
 
   return (
     <section className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5 sm:py-4">
       <div className="flex flex-wrap items-baseline justify-between gap-2">
         <div className="flex flex-col gap-0.5">
-          <h2 className={type.heading}>Sentiment movers</h2>
+          <div className="flex items-center gap-2">
+            <h2 className={type.heading}>Sentiment movers</h2>
+            {sample ? (
+              <LaneOriginTag lane={{ origin: sample.origin, asOf: sample.asOf, mentionVolume: 0 }} />
+            ) : null}
+          </div>
           <p className={cn(type.caption, "text-muted-foreground")}>
-            {board.season} · fan mood · {board.window} window
+            {board.season} · fan mood · change over {board.window}, in percentage points
           </p>
         </div>
         <Link
@@ -122,9 +129,7 @@ export async function SentimentMoversPanel() {
         <MoverList title="Fallers" tone="down" rows={board.fallers} />
       </div>
 
-      <p className={cn(type.caption, "text-muted-foreground")}>
-        Prototype coverage · {board.disclaimer}
-      </p>
+      <p className={cn(type.caption, "text-muted-foreground")}>{board.disclaimer}</p>
     </section>
   );
 }

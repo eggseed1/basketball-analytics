@@ -56,7 +56,7 @@ const BIOS: Record<ScoutExpertise, string[]> = {
     "Tracks wing measurables and closeout discipline obsessively.",
   ],
   bigs: [
-    "Paint-and-rim evaluator - drop vs switch fit is their edge.",
+    "Paint-and-rim evaluator whose edge is drop vs switch fit.",
     "Has a soft spot for stretch fives who can still protect.",
   ],
   defense: [
@@ -68,11 +68,11 @@ const BIOS: Record<ScoutExpertise, string[]> = {
     "Reads usage × efficiency better than raw scoring.",
   ],
   international: [
-    "Euro / Aus / NBL pipeline - context adjusts production.",
+    "Euro / Aus / NBL pipeline; context adjusts production.",
     "Fluent in federation tape and age-rule quirks.",
   ],
   general: [
-    "Balanced board builder - no positional blind spot, no specialty spike.",
+    "Balanced board builder with no positional blind spot or specialty spike.",
     "Trusted for cross-checks when the room disagrees.",
   ],
 };

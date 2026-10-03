@@ -30,7 +30,7 @@ export function TeamOrganizationHub({
       <div>
         <h2 className="text-[20px] font-bold tracking-tight">Organization</h2>
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          {payrollNote} Missing ledger rows stay blank — never invented as zero.
+          {payrollNote} Missing ledger rows stay blank instead of showing zero.
         </p>
       </div>
       <nav

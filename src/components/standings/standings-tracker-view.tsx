@@ -225,8 +225,8 @@ export function StandingsTrackerView({
 
       {payload.season !== payload.requestedSeason ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Showing {payload.season} tracker — {payload.requestedSeason} board
-          data was unavailable.
+          Showing the {payload.season} tracker because{" "}
+          {payload.requestedSeason} board data was unavailable.
         </p>
       ) : null}
 
@@ -296,7 +296,7 @@ export function StandingsTrackerView({
                 <option value="">Add team…</option>
                 {addableTeams.map((team) => (
                   <option key={team.teamId} value={team.teamId}>
-                    {team.abbreviation} {diffLabel(team.currentDiff)} —{" "}
+                    {team.abbreviation} {diffLabel(team.currentDiff)} ·{" "}
                     {team.displayName}
                   </option>
                 ))}
@@ -311,7 +311,7 @@ export function StandingsTrackerView({
           ) : null}
         </div>
 
-        <div className="rounded-lg bg-secondary/35 p-1 dark:bg-black/25">
+        <div className="rounded-lg bg-secondary/35 p-1 dark:bg-secondary/60">
           <StandingsTrackerChart
             rows={chartRows}
             teams={visibleTeams}

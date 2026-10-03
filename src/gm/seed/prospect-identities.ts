@@ -28,7 +28,7 @@ export const STYLE_CODENAMES: CodenameDef[] = [
     archetype: "three_and_d",
     comps: ["Corner specialist", "low-usage wing"],
     positions: ["SF", "SG", "PF"],
-    flavor: "Spacing and contests - never needs the ball to matter.",
+    flavor: "Spacing and contests; never needs the ball to matter.",
   },
   {
     codename: "Board Magician",
@@ -56,7 +56,7 @@ export const STYLE_CODENAMES: CodenameDef[] = [
     archetype: "glue_guy",
     comps: ["Connector", "dirty-work wing"],
     positions: ["PF", "SF", "PG"],
-    flavor: "Does the work box scores miss - cuts, helps, hockey assists.",
+    flavor: "Does the work box scores miss: cuts, helps, hockey assists.",
   },
   {
     codename: "Combo Voltage",
@@ -182,7 +182,7 @@ export const STYLE_CODENAMES: CodenameDef[] = [
     archetype: "glue_guy",
     comps: ["Versatile four", "extra passer"],
     positions: ["PF", "SF"],
-    flavor: "Links actions - screens, slips, and simple reads.",
+    flavor: "Links actions with screens, slips, and simple reads.",
   },
   {
     codename: "On-Ball Pest",

@@ -33,15 +33,15 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DPM: {
     title: "DARKO DPM",
-    body: "Daily Player Metric from DARKO (darko.app) - estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
+    body: "Daily Player Metric from DARKO (darko.app): estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
   },
   "O-DPM": {
     title: "DARKO offensive DPM",
-    body: "Offensive half of DARKO DPM - estimated points added on offense per 100 possessions.",
+    body: "Offensive half of DARKO DPM: estimated points added on offense per 100 possessions.",
   },
   "D-DPM": {
     title: "DARKO defensive DPM",
-    body: "Defensive half of DARKO DPM - estimated points prevented on defense per 100 possessions.",
+    body: "Defensive half of DARKO DPM: estimated points prevented on defense per 100 possessions.",
   },
   "Box DPM": {
     title: "DARKO box DPM",
@@ -49,41 +49,41 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "On/Off DPM": {
     title: "DARKO on/off DPM",
-    body: "On/off component of DARKO DPM - impact estimated from lineup plus/minus when the player is on the floor.",
+    body: "On/off component of DARKO DPM: impact estimated from lineup plus/minus when the player is on the floor.",
   },
   "DRBL-P": {
     title: "DRBL possession component",
-    body: "What happened on possessions - diagnostic attribution from expected-scoring changes. Does not sum with LN and B into DRBL/100.",
+    body: "What happened on possessions: diagnostic attribution from expected-scoring changes. Does not sum with LN and B into DRBL/100.",
     learnMoreHref: "/learn/drbl-p",
   },
   "DRBL-LN": {
     title: "DRBL lineup component",
-    body: "Lineup-context diagnostic. Adjusted association, not proven off-ball value - and not additive with P/B into DRBL/100.",
+    body: "Lineup-context diagnostic. Adjusted association, not proven off-ball value. Not additive with P/B into DRBL/100.",
     learnMoreHref: "/learn/drbl-ln",
   },
   "DRBL-B": {
     title: "DRBL behavior component",
-    body: "Box/behavior diagnostic from public features - not optical tracking and not measured gravity.",
+    body: "Box/behavior diagnostic from public features. It does not use optical tracking and does not measure gravity.",
     learnMoreHref: "/learn/drbl-b",
   },
   "DRBL-L": {
     title: "DRBL leverage",
-    body: "Leverage-weighted seasonal impact Σ BaseValue × λ*, where λ* ∝ ∂WP/∂ExpectedPoints normalized to mean 1. Descriptive only - never added into R1 Points or WAR1.",
+    body: "Leverage-weighted seasonal impact Σ BaseValue × λ*, where λ* ∝ ∂WP/∂ExpectedPoints normalized to mean 1. Descriptive only. Never added into R1 Points or WAR1.",
     learnMoreHref: "/learn/drbl-limitations",
   },
   "DRBL Δ": {
     title: "DRBL component disagreement",
-    body: "Scale-standardized disagreement among DRBL-P, DRBL-LN, and DRBL-B (z-scored components). Diagnostic only - not a calibrated standard error and not a ranking penalty.",
+    body: "Scale-standardized disagreement among DRBL-P, DRBL-LN, and DRBL-B (z-scored components). Diagnostic only. It is not a calibrated standard error or a ranking penalty.",
     learnMoreHref: "/learn/drbl-limitations",
   },
   "DRBL-O": {
     title: "DRBL offense",
-    body: "Offense - DRBL’s offensive split (DRBL-O). Higher is better. Not a substitute for DRBL/100.",
+    body: "Offense: DRBL’s offensive split (DRBL-O). Higher is better. Not a substitute for DRBL/100.",
     learnMoreHref: "/learn/drbl-o",
   },
   "DRBL-D": {
     title: "DRBL defense",
-    body: "Defense - DRBL’s defensive split (DRBL-D). Higher is better. Not a substitute for DRBL/100.",
+    body: "Defense: DRBL’s defensive split (DRBL-D). Higher is better. Not a substitute for DRBL/100.",
     learnMoreHref: "/learn/drbl-d",
   },
   "R1 Points": {
@@ -98,7 +98,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "Wins Above R1": {
     title: "WAR1",
-    body: "Legacy search alias for WAR1 - realized season value in win-equivalent units. Not traditional WAR.",
+    body: "Legacy search alias for WAR1: realized season value in win-equivalent units. Not traditional WAR.",
     learnMoreHref: "/learn/drbl/war1",
   },
   "R1 Win Eq.": {
@@ -113,7 +113,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL/100": {
     title: "DRBL/100",
-    body: "Estimated impact per 100 possessions - DRBL’s primary ability-rate ranking number. Deeper: validated ability rate vs a role-matched R1 reference after EB1600 shrinkage (k = 1600).",
+    body: "Estimated impact per 100 possessions. DRBL’s primary ability-rate ranking number. Deeper: validated ability rate vs a role-matched R1 reference after EB1600 shrinkage (k = 1600).",
     learnMoreHref: "/learn/drbl-100",
   },
   "DRBL impact": {
@@ -123,7 +123,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "DRBL ±": {
     title: "DRBL uncertainty (legacy diagnostic)",
-    body: "Not available for the validated DRBL/100 point estimate - predictive intervals remain unresolved. Legacy ± fields are diagnostic-only and are not shown as calibrated confidence intervals.",
+    body: "Not available for the validated DRBL/100 point estimate. Predictive intervals remain unresolved. Legacy ± fields are diagnostic-only and are not shown as calibrated confidence intervals.",
     learnMoreHref: "/learn/drbl-limitations",
   },
   DRBL: {
@@ -137,11 +137,11 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   OBPM: {
     title: "Offensive box plus/minus",
-    body: "Offensive half of box plus/minus - estimated points added on offense per 100 possessions.",
+    body: "Offensive half of box plus/minus: estimated points added on offense per 100 possessions.",
   },
   DBPM: {
     title: "Defensive box plus/minus",
-    body: "Defensive half of box plus/minus - estimated points prevented on defense per 100 possessions.",
+    body: "Defensive half of box plus/minus: estimated points prevented on defense per 100 possessions.",
   },
   WS: {
     title: "Win shares",
@@ -169,7 +169,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   NRtg: {
     title: "Net rating",
-    body: "Offensive rating minus defensive rating - point margin per 100 possessions. Positive means outscoring opponents.",
+    body: "Offensive rating minus defensive rating: point margin per 100 possessions. Positive means outscoring opponents.",
   },
   PTS: {
     title: "Points",
@@ -193,7 +193,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "FG%": {
     title: "Field goal %",
-    body: "Makes divided by field goal attempts. Does not extra-credit threes - use eFG% or TS% for efficiency.",
+    body: "Makes divided by field goal attempts. Does not extra-credit threes. Use eFG% or TS% for efficiency.",
   },
   "3P%": {
     title: "Three-point %",
@@ -217,15 +217,15 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   RAPTOR: {
     title: "RAPTOR",
-    body: "FiveThirtyEight RAPTOR — open pts/100 impact with offense, defense, and WAR. Historical seasons only after 538 stopped publishing.",
+    body: "FiveThirtyEight RAPTOR: open pts/100 impact with offense, defense, and WAR. Historical seasons only after 538 stopped publishing.",
   },
   "O-RAPTOR": {
     title: "O-RAPTOR",
-    body: "Offensive RAPTOR — estimated offensive impact per 100 possessions.",
+    body: "Offensive RAPTOR: estimated offensive impact per 100 possessions.",
   },
   "D-RAPTOR": {
     title: "D-RAPTOR",
-    body: "Defensive RAPTOR — estimated defensive impact per 100 possessions.",
+    body: "Defensive RAPTOR: estimated defensive impact per 100 possessions.",
   },
   WAR: {
     title: "WAR",
@@ -241,7 +241,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "AST%": {
     title: "Assist %",
-    body: "Estimated share of teammate field goals a player assisted while on the floor. Measures playmaking load, not just raw assists.",
+    body: "Estimated share of teammate field goals a player assisted while on the floor. A better read on playmaking load than raw assists.",
   },
   "TOV%": {
     title: "Turnover %",
@@ -281,7 +281,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   "+/-": {
     title: "Plus/minus",
-    body: "Point margin while the player (or team) is on the floor. Context-heavy - teammates and opponents matter a lot.",
+    body: "Point margin while the player (or team) is on the floor. Context-heavy: teammates and opponents matter a lot.",
   },
   "W%": {
     title: "Winning percentage",

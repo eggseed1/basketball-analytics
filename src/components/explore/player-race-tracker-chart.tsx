@@ -34,7 +34,6 @@ import {
   formatPlayerRaceYTick,
   nearestPlayerRaceAtPointer,
   playerRaceAxisTitle,
-  playerRaceIsRateMetric,
   playerRaceMetricShort,
   playerRaceNeighborsAt,
   playerRaceYAxisTicks,
@@ -141,20 +140,17 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
   selectedPlayerIds,
   hoveredPlayerId,
   isDark,
-  connectNulls,
   onSelectPlayer,
 }: {
   players: PlayerRacePlayer[];
   selectedPlayerIds: Set<string>;
   hoveredPlayerId: string | null;
   isDark: boolean;
-  /** Counting totals may bridge gaps; season rates must not invent continuity. */
-  connectNulls: boolean;
   onSelectPlayer: (playerId: string) => void;
 }) {
   const hasSelection = selectedPlayerIds.size > 0;
   const hasHover = hoveredPlayerId != null;
-  const dense = players.length > 80;
+  const dense = players.length > 48;
   const surface = isDark ? "dark" : "light";
   const colors = useMemo(() => {
     const map = new Map<string, string>();
@@ -167,63 +163,102 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
     return map;
   }, [players, surface]);
 
+  const { background, foreground } = useMemo(() => {
+    const bg: PlayerRacePlayer[] = [];
+    const fg: PlayerRacePlayer[] = [];
+    for (const player of players) {
+      const selected = selectedPlayerIds.has(player.playerId);
+      const hovered = hoveredPlayerId === player.playerId;
+      if (selected || hovered) fg.push(player);
+      else bg.push(player);
+    }
+    return { background: bg, foreground: fg };
+  }, [hoveredPlayerId, players, selectedPlayerIds]);
+
+  const lineType = dense ? "linear" : "monotone";
+
+  const renderLine = (
+    player: PlayerRacePlayer,
+    options: { selected: boolean; hovered: boolean; muted: boolean }
+  ) => {
+    const color = colors.get(player.playerId) ?? "#8e8e93";
+    const emphasis: ChartLineEmphasis = options.muted
+      ? "muted"
+      : options.hovered
+        ? "focus"
+        : options.selected
+          ? "selected"
+          : "default";
+    const baseOpacity = chartLineStrokeOpacity(emphasis, isDark);
+    const strokeOpacity =
+      dense && emphasis === "default" ? baseOpacity * 0.45 : baseOpacity;
+    return (
+      <Line
+        key={player.playerId}
+        yAxisId="right"
+        type={lineType}
+        dataKey={player.playerId}
+        name={player.shortName}
+        stroke={color}
+        strokeWidth={
+          options.hovered ? 3 : options.selected ? 2.75 : dense ? 0.85 : 1.15
+        }
+        strokeOpacity={strokeOpacity}
+        dot={false}
+        activeDot={false}
+        connectNulls
+        isAnimationActive={false}
+        onClick={() => onSelectPlayer(player.playerId)}
+        style={{ cursor: "pointer" }}
+      />
+    );
+  };
+
   return (
     <>
-      {players.map((player) => {
-        const selected = selectedPlayerIds.has(player.playerId);
+      {background.map((player) =>
+        renderLine(player, {
+          selected: false,
+          hovered: false,
+          // Dense fields: don't remute every stroke on hover — that reflows
+          // hundreds of <Line> props and feels choppy. Selection still dims.
+          muted:
+            hasSelection ||
+            (!dense && hasHover),
+        })
+      )}
+      {foreground.map((player) =>
+        renderLine(player, {
+          selected: selectedPlayerIds.has(player.playerId),
+          hovered: hoveredPlayerId === player.playerId,
+          muted: false,
+        })
+      )}
+      {/* Paint selected / hovered strokes again on top so they stay visible. */}
+      {foreground.map((player) => {
         const hovered = hoveredPlayerId === player.playerId;
         const color = colors.get(player.playerId) ?? "#8e8e93";
-        const muted =
-          (hasSelection && !selected && !hovered) ||
-          (hasHover && !hovered && !selected);
-        const emphasis: ChartLineEmphasis = muted
-          ? "muted"
-          : hovered
-            ? "focus"
-            : selected
-              ? "selected"
-              : "default";
-        const baseOpacity = chartLineStrokeOpacity(emphasis, isDark);
-        const strokeOpacity =
-          dense && emphasis === "default" ? baseOpacity * 0.55 : baseOpacity;
         return (
           <Line
-            key={player.playerId}
+            key={`top-${player.playerId}`}
             yAxisId="right"
-            type="monotone"
+            type={lineType}
             dataKey={player.playerId}
-            name={player.shortName}
             stroke={color}
-            strokeWidth={
-              hovered ? 2.75 : selected ? 2.25 : dense ? 0.9 : 1.15
-            }
-            strokeOpacity={strokeOpacity}
+            strokeWidth={hovered ? 3.25 : 2.85}
+            strokeOpacity={chartLineStrokeOpacity(
+              hovered ? "focus" : "selected",
+              isDark
+            )}
             dot={false}
             activeDot={false}
-            connectNulls={connectNulls}
+            connectNulls
             isAnimationActive={false}
-            onClick={() => onSelectPlayer(player.playerId)}
-            style={{ cursor: "pointer" }}
+            legendType="none"
+            style={{ pointerEvents: "none" }}
           />
         );
       })}
-      {hoveredPlayerId ? (
-        <Line
-          key={`hover-top-${hoveredPlayerId}`}
-          yAxisId="right"
-          type="monotone"
-          dataKey={hoveredPlayerId}
-          stroke={colors.get(hoveredPlayerId) ?? "#8e8e93"}
-          strokeWidth={3}
-          strokeOpacity={chartLineStrokeOpacity("focus", isDark)}
-          dot={false}
-          activeDot={false}
-          connectNulls={connectNulls}
-          isAnimationActive={false}
-          legendType="none"
-          style={{ pointerEvents: "none" }}
-        />
-      ) : null}
     </>
   );
 });
@@ -350,7 +385,7 @@ const RaceHoverStrip = memo(function RaceHoverStrip({
           "mt-2 text-center text-muted-foreground"
         )}
       >
-        Move along the chart to snap to the nearest player line — click to pin.
+        Move along the chart to snap to the nearest player line, then click to pin.
       </p>
     );
   }
@@ -534,7 +569,7 @@ export function PlayerRaceTrackerChart({
           >
             <CartesianGrid
               strokeDasharray="3 6"
-              vertical
+              vertical={players.length <= 48}
               className="stroke-border/50"
             />
             <XAxis
@@ -600,7 +635,6 @@ export function PlayerRaceTrackerChart({
               selectedPlayerIds={selectedPlayerIds}
               hoveredPlayerId={hoveredPlayerId}
               isDark={chartTheme.isDark}
-              connectNulls={!playerRaceIsRateMetric(metric)}
               onSelectPlayer={onSelectPlayer}
             />
           </LineChart>

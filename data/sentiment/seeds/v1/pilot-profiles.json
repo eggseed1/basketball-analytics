@@ -37,11 +37,6 @@
         "scoring": 0.15
       }
     },
-    "association": {
-      "explanation": "Positive fan discussion coincided with extension reporting in Movement Center.",
-      "eventKind": "movement_story",
-      "eventRef": "cl-sga-ext-26"
-    },
     "series": {
       "fan": [
         {
@@ -166,7 +161,7 @@
   {
     "playerIds": [
       "3945274",
-      "203999"
+      "1629029"
     ],
     "window": "7d",
     "fan": {
@@ -199,11 +194,6 @@
         "availability": 0.45,
         "championship_window": 0.3
       }
-    },
-    "association": {
-      "explanation": "Fan volume rose around availability monitoring reports; media tone stayed measured.",
-      "eventKind": "movement_story",
-      "eventRef": "cl-doncic-avail"
     },
     "series": {
       "fan": [
@@ -479,11 +469,6 @@
         }
       ]
     },
-    "association": {
-      "explanation": "Extension chatter in Movement Center tracks with steady positive fan tone around Boston's core.",
-      "eventKind": "movement_story",
-      "eventRef": "cl-tatum-ext"
-    },
     "displayName": "Jayson Tatum",
     "teamKey": "2"
   },
@@ -523,11 +508,6 @@
         "title_window": 0.28,
         "heat_depth": 0.14
       }
-    },
-    "association": {
-      "explanation": "Post-trade discourse centers on Miami fit with Bam and whether the Heat closed their title window.",
-      "eventKind": "movement_story",
-      "eventRef": "cl-giannis-interest"
     },
     "series": {
       "fan": [
@@ -687,11 +667,6 @@
         "title_window": 0.31,
         "load_management": 0.14
       }
-    },
-    "association": {
-      "explanation": "Fan chatter spiked after the Philadelphia signing; media debate centers on fit with Embiid and the closing title window.",
-      "eventKind": "movement_story",
-      "eventRef": "cl-lebron-phi-26"
     },
     "series": {
       "fan": [

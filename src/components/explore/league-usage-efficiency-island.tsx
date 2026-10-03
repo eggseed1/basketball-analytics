@@ -1,4 +1,4 @@
-import { PlayerUsageEfficiencyLazy } from "@/components/charts/recharts-lazy";
+import { LeagueUsageEfficiencyBoard } from "@/components/explore/league-viz-board";
 import { type } from "@/lib/design-system";
 import { buildUsageEfficiencyPoints } from "@/lib/player-usage-efficiency";
 import { applyVizFieldFilter } from "@/lib/viz-field-filter";
@@ -46,12 +46,11 @@ export async function LeagueUsageEfficiencyIsland({
   const peers = await getFilteredPlayerSeasonsCached(season, 15).catch(
     () => []
   );
-  const teamPlayerIds = new Set(
-    peers
-      .filter((row) => playerMatchesAnyVizTeam(row, teamKeys))
-      .map((row) => row.playerId)
-  );
-  const highlightIds = new Set([...pinIds, ...teamPlayerIds]);
+  const teamPlayerIds = peers
+    .filter((row) => playerMatchesAnyVizTeam(row, teamKeys))
+    .map((row) => row.playerId);
+  const teamPlayerIdSet = new Set(teamPlayerIds);
+  const highlightIds = new Set([...pinIds, ...teamPlayerIdSet]);
   const built = buildUsageEfficiencyPoints(peers, highlightIds, {
     forceIncludeIds: highlightIds,
     minMinutes,
@@ -86,10 +85,12 @@ export async function LeagueUsageEfficiencyIsland({
   }
 
   return (
-    <PlayerUsageEfficiencyLazy
+    <LeagueUsageEfficiencyBoard
       points={points}
       season={season}
       playerName={pinLabel}
+      rankEnd={rankEnd}
+      teamPlayerIds={teamPlayerIds}
       highlightLabel="pin"
     />
   );

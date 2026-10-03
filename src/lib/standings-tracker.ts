@@ -65,6 +65,7 @@ function teamGames(
       (game) =>
         game.status === "final" &&
         gameTypes.has(game.gameType) &&
+        !game.cupChampionship &&
         (game.homeTeamId === teamId || game.awayTeamId === teamId)
     )
     .sort(

@@ -20,7 +20,7 @@ export type PlayerMediaResult = {
   source: string | null;
 };
 
-function expandPortraitIds(playerId: string): string[] {
+export function expandPortraitIds(playerId: string): string[] {
   const id = String(playerId ?? "").trim();
   if (!id) return [];
   const ids: string[] = [id];

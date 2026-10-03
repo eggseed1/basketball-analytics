@@ -57,15 +57,15 @@ function buildSnapshotCells(input: {
       }
     : seasonAwaitingGames && priorSeasonStanding
       ? {
-          label: "Record",
+          label: `${priorSeasonLabel ?? "Last season"} record`,
           value: `${priorSeasonStanding.wins}-${priorSeasonStanding.losses}`,
-          hint: `${priorSeasonLabel ?? "Prior"} final · pre-tip`,
+          hint: "Final. This season hasn't started",
         }
       : seasonAwaitingGames
         ? {
             label: "Record",
             value: "—",
-            hint: "Pre-tip · season hasn't started",
+            hint: "Season hasn't started",
           }
         : {
             label: "Record",
@@ -83,7 +83,7 @@ function buildSnapshotCells(input: {
       ? {
           label: "Division",
           value: divisionMeta.division,
-          hint: `${divisionMeta.conference} · pre-tip`,
+          hint: `${divisionMeta.conference} · ${divisionMeta.divisionSize} teams`,
         }
       : standing
         ? {
@@ -236,7 +236,7 @@ export function TeamDestinationIdentity({
                 </p>
               ) : standingsContext.seasonAwaitingGames ? (
                 <p className={cn(type.caption, "mt-1.5 text-muted-foreground")}>
-                  Pre-tip {season}
+                  {season} hasn&apos;t started
                   {standingsContext.priorSeasonStanding
                     ? ` · ${standingsContext.priorSeasonLabel} final ${standingsContext.priorSeasonStanding.wins}-${standingsContext.priorSeasonStanding.losses}`
                     : ""}

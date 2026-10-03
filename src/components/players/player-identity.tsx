@@ -51,6 +51,8 @@ export type PlayerIdentityProps = {
   season?: string | null;
   espnId?: string | null;
   nbaId?: string | null;
+  /** Server-resolved approved portrait; the client registry does not cover every legend. */
+  portraitUrl?: string | null;
   /** Extra query on player page (e.g. season). */
   href?: string;
   className?: string;
@@ -148,6 +150,7 @@ export function PlayerIdentity({
   season,
   espnId,
   nbaId,
+  portraitUrl,
   href,
   className,
   nameClassName,
@@ -264,6 +267,7 @@ export function PlayerIdentity({
                   playerId={id}
                   espnId={espnId}
                   nbaId={nbaId}
+                  portraitUrl={portraitUrl}
                   name={name}
                   teamKey={brandTeamKey}
                   size={
@@ -340,6 +344,7 @@ export function PlayerIdentity({
                     playerId={id}
                     espnId={espnId}
                     nbaId={nbaId}
+                    portraitUrl={portraitUrl}
                     name={name}
                     teamKey={brandTeamKey}
                     size={resolved === "default" ? "sm" : "xs"}

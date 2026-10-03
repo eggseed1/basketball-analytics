@@ -109,7 +109,7 @@ export function computePeakImpact(options: {
   const primary = darko ?? raptor ?? bpm ?? null;
 
   let note =
-    "Peak Impact uses season-true overlays only — CPI Career Resume stays the production peak.";
+    "Peak Impact uses season-true overlays only. CPI Career Resume stays the production peak.";
   if (primary?.metricId === "darko") {
     note =
       "Peak Impact from DARKO (season-keyed overlay). RAPTOR peaks are listed separately when present (through 2021-22).";
@@ -118,7 +118,7 @@ export function computePeakImpact(options: {
       "Peak Impact from RAPTOR (through 2021-22). No season-true DARKO on these qualifying rows.";
   } else if (primary?.metricId === "bpm") {
     note =
-      "Peak Impact from BPM — no season-true DARKO/RAPTOR on these qualifying rows.";
+      "Peak Impact from BPM. No season-true DARKO/RAPTOR on these qualifying rows.";
   } else {
     note =
       "No season-true DARKO, RAPTOR, or BPM on qualifying seasons for Peak Impact.";

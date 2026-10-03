@@ -64,8 +64,8 @@ export function MovementRumorPanel({
       ) : (
         <div className="flex flex-col gap-2 rounded-md border border-dashed border-border/70 frost-surface-muted px-2.5 py-2">
           <p className={cn(type.caption, "text-muted-foreground")}>
-            No curated movement evidence for {playerName} in the current
-            snapshot.
+            No trade or contract reporting on {playerName} in the headlines we
+            track.
           </p>
         </div>
       )}

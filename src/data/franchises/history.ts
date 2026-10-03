@@ -1,8 +1,16 @@
 /**
- * Public franchise history book - curated NBA records for fan browsing.
- * As-of end of 2025-26 (Knicks 2026 title included). Counts treat continuous
- * franchises across relocations (e.g. OKC includes Seattle; MEM includes Vancouver).
+ * Public franchise history book for fan browsing. As-of end of 2025-26
+ * (Knicks 2026 title included). Counts treat continuous franchises across
+ * relocations (e.g. OKC includes Seattle; MEM includes Vancouver).
+ *
+ * Records, titles, best/worst seasons and career leaders come from
+ * `verified-records.json` (scripts/build-franchise-records.mjs). Retired
+ * number counts come from `retired-jerseys.json`. The curated entries below
+ * only supply what those sources lack: streaks, previous homes and fan lore.
  */
+import { retiredBannerCount } from "@/content/awards/retired-jerseys";
+
+import verifiedRecords from "./verified-records.json";
 
 export type FranchiseLeader = {
   player: string;
@@ -14,6 +22,8 @@ export type SeasonRecord = {
   season: string;
   wins: number;
   losses: number;
+  /** "ABA" / "BAA" when the season was not played in the NBA. */
+  league?: string;
 };
 
 export type StreakRecord = {
@@ -36,8 +46,9 @@ export type FranchiseHistory = {
   conferenceTitles: number;
   divisionTitles: number;
   playoffAppearances: number;
-  playoffWins: number;
-  playoffLosses: number;
+  /** Playoff game record. Null when no source-checked figure exists. */
+  playoffWins: number | null;
+  playoffLosses: number | null;
   regularSeasonWins: number;
   regularSeasonLosses: number;
   bestSeason: SeasonRecord;
@@ -55,11 +66,18 @@ export type FranchiseHistory = {
   };
   /** Short, fan-facing trivia - open to the weird and wonderful. */
   funFacts: string[];
+  /** Source of the record fields; null when only the curated entry exists. */
+  recordsSource: string | null;
 };
+
+type CuratedFranchiseHistory = Omit<
+  FranchiseHistory,
+  "playoffWins" | "playoffLosses" | "recordsSource"
+> & { playoffWins: number; playoffLosses: number };
 
 export const FRANCHISE_HISTORY_AS_OF = "2025-26";
 
-export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
+const CURATED_FRANCHISE_HISTORIES: CuratedFranchiseHistory[] = [
   {
     id: "atl",
     abbr: "ATL",
@@ -92,7 +110,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Trae Young", value: 1600, note: "Climbing" },
     },
     funFacts: [
-      "Only title came in St. Louis (1958) - Bob Pettit’s club.",
+      "Only title came in St. Louis (1958), with Bob Pettit’s club.",
       "Dominique’s 57-point night in the Garden is still Hawks lore.",
       "Spud Webb won the 1986 Dunk Contest at 5'7\".",
     ],
@@ -168,7 +186,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Joe Johnson", value: 891 },
     },
     funFacts: [
-      "ABA champions (1974, 1976) before the NBA merger - banners still matter in Brooklyn.",
+      "ABA champions (1974, 1976) before the NBA merger; banners still matter in Brooklyn.",
       "Jason Kidd’s Jersey teams reached back-to-back Finals (2002-03).",
       "Barclays era opened with Deron Williams / Joe Johnson splash.",
     ],
@@ -181,7 +199,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     conference: "East",
     division: "Southeast",
     firstSeason: "1988-89",
-    previousHomes: ["Bobcats era (2004-2014)"],
+    previousHomes: ["Charlotte Hornets (1988-2002)", "Charlotte Bobcats (2004-2014)"],
     championships: [],
     finalsAppearances: 0,
     conferenceTitles: 0,
@@ -205,9 +223,9 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Kemba Walker", value: 1283 },
     },
     funFacts: [
-      "Original Hornets were an expansion darling - teal teal teal.",
+      "Original Hornets were a teal-soaked expansion darling.",
       "Muggsy Bogues remains the shortest player in NBA history (5'3\").",
-      "Franchise reclaimed the Hornets name after the New Orleans years.",
+      "Reclaimed the Hornets name, and the 1988-2002 Hornets records, in 2014.",
     ],
   },
   {
@@ -242,7 +260,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     },
     funFacts: [
       "72-10 in 1995-96 stood as the NBA’s best record until the Warriors’ 73-9.",
-      "Two three-peats - the standard every modern dynasty is measured against.",
+      "Two three-peats set the bar modern dynasties get measured against.",
       "Jordan’s 63 in the Boston Garden (1986) is still playoff mythology.",
     ],
   },
@@ -278,7 +296,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     },
     funFacts: [
       "2016 title: first major Cleveland sports championship in 52 years.",
-      "Came back from 3-1 vs. 73-win Golden State - the Finals comeback.",
+      "Came back from 3-1 down vs. 73-win Golden State in the Finals.",
       "The Shot (1989) still lives rent-free in Chicago.",
     ],
   },
@@ -314,8 +332,8 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Chauncey Billups", value: 1140 },
     },
     funFacts: [
-      "Bad Boys beat Showtime - physical basketball as identity.",
-      "2004 title team had no perennial All-NBA superstar - quintessential team ball.",
+      "Bad Boys beat Showtime with physical basketball as their identity.",
+      "2004 title team had no perennial All-NBA superstar; it won on team ball.",
       "Holds the modern NBA record for consecutive losses (28).",
     ],
   },
@@ -350,7 +368,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Reggie Miller", value: 2560 },
     },
     funFacts: [
-      "Three ABA titles before the merger - Indiana’s championship DNA is real.",
+      "Three ABA titles before the merger gave Indiana real championship history.",
       "Reggie’s 8 points in 9 seconds vs. New York is playoff immortality.",
       "Reached the 2000 NBA Finals with the Jalen Rose / Reggie core.",
     ],
@@ -386,7 +404,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Tim Hardaway", value: 994 },
     },
     funFacts: [
-      "Culture - Pat Riley’s word became a brand.",
+      "“Culture,” Pat Riley’s word, became a brand.",
       "27-game win streak in 2013 is still the modern-era gold standard.",
       "Haslem: undrafted legend, championship glue, forever Heat.",
     ],
@@ -423,7 +441,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     },
     funFacts: [
       "Youngest team to win a title (1971) with Lew Alcindor.",
-      "2021: Giannis Finals MVP - “I told you guys, don’t forget about me.”",
+      "2021 Finals MVP Giannis: “I told you guys, don’t forget about me.”",
       "Deer District turned a midwestern arena into a playoff carnival.",
     ],
   },
@@ -458,7 +476,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "John Starks", value: 982 },
     },
     funFacts: [
-      "2026: ended a 53-year title drought - Garden shook.",
+      "2026: ended a 53-year title drought and the Garden shook.",
       "Willis Reed walking out in Game 7 (1970) is sports cinema.",
       "Clyde’s style guide still outsells half the league’s merch.",
     ],
@@ -531,7 +549,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Allen Iverson", value: 885 },
     },
     funFacts: [
-      "Wilt’s 100-point game (1962) was a Nationals/Warriors night - Philly claims the lore.",
+      "Wilt’s 100-point game (1962) was a Nationals/Warriors night, but Philly claims the lore.",
       "1983: Moses + Dr. J finally got the ring.",
       "Trust the Process became a national meme and a draft factory.",
     ],
@@ -604,7 +622,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Gilbert Arenas", value: 1075 },
     },
     funFacts: [
-      "1978 Bullets title - Wes Unseld Finals MVP.",
+      "1978 Bullets title, with Wes Unseld as Finals MVP.",
       "Gilbert Arenas’ Agent Zero era was chaos theater (in a fun way).",
       "Name change to Wizards in 1997 retired “Bullets” for good.",
     ],
@@ -640,8 +658,8 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Dirk Nowitzki", value: 1982 },
     },
     funFacts: [
-      "2011: Dirk beat the Heatles - one of the great Finals upsets.",
-      "Dirk is the franchise - German soft touch, Texas forever.",
+      "2011: Dirk beat the Heatles in one of the great Finals upsets.",
+      "Dirk is the franchise: German soft touch, Texas forever.",
       "Mark Cuban’s ownership era redefined NBA showmanship.",
     ],
   },
@@ -653,6 +671,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     conference: "West",
     division: "Northwest",
     firstSeason: "1967-68",
+    previousHomes: ["Denver Rockets (ABA)"],
     championships: [2023],
     finalsAppearances: 1,
     conferenceTitles: 1,
@@ -664,7 +683,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     regularSeasonLosses: 2180,
     bestSeason: { season: "2022-23", wins: 53, losses: 29 },
     worstSeason: { season: "1997-98", wins: 11, losses: 71 },
-    longestWinStreak: { games: 15, note: "Multiple Jokic-era runs" },
+    longestWinStreak: { games: 15, note: "2012-13" },
     longestLosingStreak: { games: 23, note: "1997-98" },
     retiredNumbers: 7,
     leaders: {
@@ -676,7 +695,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Jamal Murray", value: 1200, note: "Climbing" },
     },
     funFacts: [
-      "2023: first title in franchise history - Mile High finally exhaled.",
+      "2023: first title in franchise history, and Mile High finally exhaled.",
       "Jokić: three-time MVP who passes like a point guard from the post.",
       "Alex English was the 1980s scoring machine before the rainbow threes.",
     ],
@@ -715,7 +734,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     funFacts: [
       "73-9 is the single-season wins record.",
       "Curry rewired spacing for the entire sport.",
-      "We Believe (2007) upset Dallas as an 8-seed - Oracle bedlam.",
+      "We Believe (2007) upset Dallas as an 8-seed amid Oracle bedlam.",
     ],
   },
   {
@@ -750,7 +769,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "James Harden", value: 2304 },
     },
     funFacts: [
-      "Back-to-back titles in the Jordan retirement window - Clutch City.",
+      "Clutch City won back-to-back titles in the Jordan retirement window.",
       "Hakeem’s Dream Shake is a post-move museum piece.",
       "Moreyball popularized threes + layups as a public philosophy.",
     ],
@@ -829,7 +848,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     funFacts: [
       "Purple and gold = Hollywood basketball.",
       "33-game win streak (1971-72) is still the NBA record.",
-      "Showtime, Three-peat Shaq/Kobe, and the bubble title - eras stacked.",
+      "Eras stacked: Showtime, the Shaq/Kobe three-peat, and the bubble title.",
     ],
   },
   {
@@ -913,7 +932,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     conference: "West",
     division: "Southwest",
     firstSeason: "1988-89",
-    previousHomes: ["Charlotte Hornets (original)", "New Orleans Hornets"],
+    previousHomes: ["New Orleans Hornets", "New Orleans/Oklahoma City Hornets"],
     championships: [],
     finalsAppearances: 0,
     conferenceTitles: 0,
@@ -937,7 +956,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Peja Stojaković", value: 880 },
     },
     funFacts: [
-      "Franchise lineage includes the original Charlotte Hornets records for some stats.",
+      "The team moved from Charlotte in 2002, but the NBA returned the 1988-2002 Hornets records to Charlotte in 2014.",
       "Chris Paul’s Hornets teams were Western Conference pests.",
       "AD’s Brow era: block party meets unicorn scoring.",
     ],
@@ -975,7 +994,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     },
     funFacts: [
       "1979 Sonics title is still the franchise’s championship.",
-      "OKC drafted KD, Westbrook, and Harden - a generational talent factory.",
+      "OKC drafted KD, Westbrook, and Harden, a generational run of talent.",
       "SGA’s modern Thunder flipped tanking into a juggernaut.",
     ],
   },
@@ -1012,7 +1031,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     funFacts: [
       "Seven Seconds or Less made pace a personality.",
       "Barkley’s 1993 Finals run almost knocked off Jordan’s Bulls.",
-      "Still hunting the first Larry O’Brien - the longest Finals drought without a title among perennial contenders.",
+      "Still hunting the first Larry O’Brien: the longest Finals drought without a title among perennial contenders.",
     ],
   },
   {
@@ -1096,6 +1115,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     conference: "West",
     division: "Southwest",
     firstSeason: "1967-68",
+    previousHomes: ["Dallas Chaparrals (ABA)"],
     championships: [1999, 2003, 2005, 2007, 2014],
     finalsAppearances: 7,
     conferenceTitles: 6,
@@ -1119,7 +1139,7 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
       threes: { player: "Manu Ginóbili", value: 1495 },
     },
     funFacts: [
-      "Five titles under Pop - the model of sustained excellence.",
+      "Five titles under Pop, a model of sustained winning.",
       "The Big Three (Duncan / Parker / Manu) spanned eras of NBA style.",
       "Beautiful game 2014 Finals dismantled a superteam Heat rematch.",
     ],
@@ -1157,8 +1177,82 @@ export const FRANCHISE_HISTORIES: FranchiseHistory[] = [
     },
     funFacts: [
       "Stockton & Malone: the pick-and-roll encyclopedia.",
-      "Back-to-back Finals in 1997-98 - Jordan’s last Bulls obstacles.",
-      "Kept the Jazz name after leaving New Orleans - weird and perfect.",
+      "Back-to-back Finals in 1997-98 as the last obstacle for Jordan’s Bulls.",
+      "Kept the Jazz name after leaving New Orleans, which is weird and perfect.",
     ],
   },
 ];
+
+type VerifiedFranchise = {
+  leagues: string;
+  firstSeason: string;
+  regularSeasonWins: number | null;
+  regularSeasonLosses: number | null;
+  playoffAppearances: number | null;
+  divisionTitles: number | null;
+  conferenceTitles: number | null;
+  bestSeason?: SeasonRecord;
+  worstSeason?: SeasonRecord;
+  finalsAppearances?: number;
+  championships?: number[];
+  leaders?: Partial<Record<keyof FranchiseHistory["leaders"], FranchiseLeader>>;
+};
+
+const VERIFIED = verifiedRecords.franchises as Record<string, VerifiedFranchise>;
+
+function seasonLeague(season: string, leagues: string): string | undefined {
+  const start = Number(season.slice(0, 4));
+  if (leagues.includes("ABA") && start <= 1975) return "ABA";
+  if (leagues.includes("BAA") && start <= 1948) return "BAA";
+  return undefined;
+}
+
+function withLeague(
+  record: SeasonRecord | undefined,
+  leagues: string
+): SeasonRecord | undefined {
+  if (!record) return undefined;
+  const league = seasonLeague(record.season, leagues);
+  return league ? { ...record, league } : record;
+}
+
+function applyVerified(curated: CuratedFranchiseHistory): FranchiseHistory {
+  const v = VERIFIED[curated.id];
+  if (!v) {
+    return {
+      ...curated,
+      retiredNumbers: retiredBannerCount(curated.id) ?? curated.retiredNumbers,
+      recordsSource: null,
+    };
+  }
+  const leaders = v.leaders ?? {};
+  return {
+    ...curated,
+    firstSeason: v.firstSeason || curated.firstSeason,
+    championships: v.championships ?? curated.championships,
+    finalsAppearances: v.finalsAppearances ?? curated.finalsAppearances,
+    conferenceTitles: v.conferenceTitles ?? curated.conferenceTitles,
+    divisionTitles: v.divisionTitles ?? curated.divisionTitles,
+    playoffAppearances: v.playoffAppearances ?? curated.playoffAppearances,
+    // The source has no playoff game totals; the curated ones were estimates.
+    playoffWins: null,
+    playoffLosses: null,
+    regularSeasonWins: v.regularSeasonWins ?? curated.regularSeasonWins,
+    regularSeasonLosses: v.regularSeasonLosses ?? curated.regularSeasonLosses,
+    bestSeason: withLeague(v.bestSeason, v.leagues) ?? curated.bestSeason,
+    worstSeason: withLeague(v.worstSeason, v.leagues) ?? curated.worstSeason,
+    leaders: {
+      points: leaders.points ?? curated.leaders.points,
+      rebounds: leaders.rebounds ?? curated.leaders.rebounds,
+      assists: leaders.assists ?? curated.leaders.assists,
+      steals: leaders.steals ?? curated.leaders.steals,
+      blocks: leaders.blocks ?? curated.leaders.blocks,
+      threes: leaders.threes ?? curated.leaders.threes,
+    },
+    retiredNumbers: retiredBannerCount(curated.id) ?? curated.retiredNumbers,
+    recordsSource: "Basketball-Reference",
+  };
+}
+
+export const FRANCHISE_HISTORIES: FranchiseHistory[] =
+  CURATED_FRANCHISE_HISTORIES.map(applyVerified);

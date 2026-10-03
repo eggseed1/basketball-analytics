@@ -1,5 +1,4 @@
 {
-  "methodologyVersion": "movement-m1-0.1",
-  "status": "CURATED_PROTOTYPE",
-  "disclaimer": "Curated prototype: manually seeded Movement Center UI and scoring. Not a live rumor wire."
+  "status": "NEWS_INGEST_M1",
+  "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move."
 }

@@ -274,7 +274,7 @@ export async function PlayerCoreIsland({
         headlineExplain?.plain,
         headlineMetric.showPercentile
           ? `${headlineMetric.label} sits at the ${Math.round(headlineMetric.percentile)}th percentile among qualified peers in ${season}.`
-          : `${headlineMetric.label} is ${headlineMetric.display} in ${season} (descriptive - not a skill grade).`,
+          : `${headlineMetric.label} is ${headlineMetric.display} in ${season} (descriptive, not a skill grade).`,
       ]
         .filter(Boolean)
         .join(" ")
@@ -694,7 +694,7 @@ export async function PlayerCoreIsland({
               {recentSeasons.length === 0 ? (
                 <p className="py-4 text-[13px] text-muted-foreground">
                   {careerDataGuardSilentEmpty
-                    ? "Career seasons unavailable - data provider misconfiguration (see notice above)."
+                    ? "Career seasons unavailable: data provider misconfiguration (see notice above)."
                     : "No season rows yet."}
                 </p>
               ) : (
@@ -765,8 +765,7 @@ export async function PlayerCoreIsland({
               Analytical profile
             </h2>
             <p className="mb-3 text-[13px] text-muted-foreground">
-              How good is this player in the selected season - percentiles
-              among qualified peers.
+              Percentiles among qualified peers in the selected season.
             </p>
             <PlayerPercentilePanel
               key={`${playerId}-${season}`}
@@ -827,8 +826,7 @@ export async function PlayerCoreIsland({
             Season explorer
           </h2>
           <p className="text-[13px] text-muted-foreground">
-            Move through the career · compare · rank · ask - without a giant
-            new table.
+            Move through the career, compare, rank, or ask.
           </p>
         </div>
         <TeamWashCard
@@ -867,7 +865,7 @@ export async function PlayerCoreIsland({
             {career.length === 0 ? (
               <p className="text-[13px] text-muted-foreground">
                 {careerDataGuardSilentEmpty
-                  ? "Career seasons unavailable - data provider misconfiguration (see notice above)."
+                  ? "Career seasons unavailable: data provider misconfiguration (see notice above)."
                   : "No career season rows available."}
               </p>
             ) : (

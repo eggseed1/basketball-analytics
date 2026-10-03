@@ -36,7 +36,12 @@ const RAIL: Array<{
   {
     tab: "games",
     title: "Games",
-    blurb: "Schedule and recent results",
+    blurb: "Recent results and game log",
+  },
+  {
+    tab: "schedule",
+    title: "Schedule",
+    blurb: "Full season calendar",
   },
   {
     tab: "splits",

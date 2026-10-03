@@ -282,7 +282,59 @@ async function loadNameToNbaId() {
   } catch {
     /* optional */
   }
+  await correctAgainstOfficialIds(map);
   return map;
+}
+
+const NBA_API_URL =
+  "https://raw.githubusercontent.com/swar/nba_api/master/src/nba_api/stats/library/data.py";
+
+/**
+ * Hand-typed hrefs once pointed legends at other players' PERSON_IDs
+ * (Cousy → 76435 Darwin Cook), which put a stranger's bio on the legend's
+ * page. When the official list names someone else at that id and has exactly
+ * one player with this name, use that id instead. Renames the list lacks
+ * (Ron Artest) keep their id.
+ */
+async function correctAgainstOfficialIds(map) {
+  let text;
+  try {
+    const res = await fetch(NBA_API_URL, {
+      headers: { "User-Agent": UA["User-Agent"] },
+      signal: AbortSignal.timeout(20000),
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    text = await res.text();
+  } catch (error) {
+    console.warn(
+      `[player-awards] official id check skipped: ${
+        error instanceof Error ? error.message : error
+      }`
+    );
+    return;
+  }
+  const officialById = new Map();
+  const idsByName = new Map();
+  const rowRe = /\[(\d+), "[^"]*", "[^"]*", "([^"]*)", (?:True|False)\]/g;
+  let m;
+  while ((m = rowRe.exec(text))) {
+    const name = normalizeName(m[2]);
+    officialById.set(m[1], name);
+    idsByName.set(name, [...(idsByName.get(name) ?? []), m[1]]);
+  }
+  let fixed = 0;
+  for (const [name, nbaId] of map) {
+    const official = officialById.get(nbaId);
+    if (official === name) continue;
+    const candidates = idsByName.get(name) ?? [];
+    if (candidates.length !== 1 || candidates[0] === nbaId) continue;
+    console.warn(
+      `[player-awards] ${name}: ${nbaId} is ${official ?? "no player"}; using ${candidates[0]}`
+    );
+    map.set(name, candidates[0]);
+    fixed += 1;
+  }
+  console.log(`[player-awards] official id check: ${fixed} corrected`);
 }
 
 function resolveNbaId(nameToNba, name, brefSlug, slugToNba) {

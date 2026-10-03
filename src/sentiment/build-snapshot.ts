@@ -9,6 +9,7 @@ import {
 import { fetchEspnLeagueRosterPlayers } from "@/data/providers/nba/espn-roster-client";
 import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
 import type { PlayerSeason } from "@/data/types";
+import { resolveTeamBrand } from "@/lib/nba-brand";
 import {
   aggregateObservationBatches,
   aggregateTeamObservationBatches,
@@ -16,11 +17,29 @@ import {
   type SentimentObservationBatch,
 } from "@/sentiment/aggregate-observations";
 import type {
+  CuratedSentimentLane,
   LeagueSentimentSnapshot,
   PlayerSentimentProfile,
   SentimentCuratedSnapshot,
   SentimentProfileProvenance,
+  SentimentSourceSummary,
+  SentimentTopicHeatRow,
+  TeamSentimentProfile,
 } from "@/sentiment/curated-types";
+import { HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
+import {
+  buildIngestLane,
+  groupByEntity,
+  latestExemplars,
+  type LaneBuildOptions,
+  type ScoredIngestItem,
+} from "@/sentiment/ingest-aggregate";
+import { loadIngestRoster } from "@/sentiment/ingest-roster";
+import {
+  readIngestItems,
+  type NewsIngestItem,
+  type RedditIngestItem,
+} from "@/sentiment/ingest-store";
 import {
   expandPilotProfilesFromRoster,
   profileKey,
@@ -49,6 +68,23 @@ export type SentimentSeedManifest = {
     mentionVolume: number;
     coverageConfidence: number;
   };
+  ingest?: {
+    windowDays: number;
+    seriesDays: number;
+    headlineFloor: number;
+    redditFloor: number;
+    leagueHeadlineLimit: number;
+    profileHeadlineLimit: number;
+  };
+};
+
+const DEFAULT_INGEST: NonNullable<SentimentSeedManifest["ingest"]> = {
+  windowDays: 7,
+  seriesDays: 30,
+  headlineFloor: 3,
+  redditFloor: 5,
+  leagueHeadlineLimit: 16,
+  profileHeadlineLimit: 4,
 };
 
 const SEEDS_DIR = path.join(process.cwd(), "data", "sentiment", "seeds", "v1");
@@ -145,16 +181,152 @@ function syncProfileTeamFromRoster(
   };
 }
 
-function passesCoverageFloor(
-  profile: PlayerSentimentProfile,
+function curatedLanePasses(
+  lane: CuratedSentimentLane | undefined,
   floor: SentimentSeedManifest["coverageFloor"]
 ): boolean {
-  return (
-    profile.fan.mentionVolume >= floor.mentionVolume &&
-    profile.fan.coverageConfidence >= floor.coverageConfidence &&
-    profile.media.mentionVolume >= floor.mentionVolume &&
-    profile.media.coverageConfidence >= floor.coverageConfidence
+  return Boolean(
+    lane &&
+      lane.mentionVolume >= floor.mentionVolume &&
+      lane.coverageConfidence >= floor.coverageConfidence
   );
+}
+
+/**
+ * Automated lanes are floored when built. Curated lanes use the manifest
+ * floor. A lane below its floor is removed (blank, not neutral).
+ */
+function applyLaneFloors<T extends { fan?: CuratedSentimentLane; media?: CuratedSentimentLane }>(
+  profile: T,
+  floor: SentimentSeedManifest["coverageFloor"]
+): T | null {
+  const keep = (lane?: CuratedSentimentLane) =>
+    lane && (lane.origin !== "curated" || curatedLanePasses(lane, floor)) ? lane : undefined;
+  const fan = keep(profile.fan);
+  const media = keep(profile.media);
+  if (!fan && !media) return null;
+  return { ...profile, fan, media };
+}
+
+function lastSeriesDate(points?: { date: string }[]): string | undefined {
+  return points?.length ? points[points.length - 1]!.date : undefined;
+}
+
+function tagCuratedLanes<
+  T extends {
+    fan?: CuratedSentimentLane;
+    media?: CuratedSentimentLane;
+    series?: { fan: { date: string }[]; media: { date: string }[] };
+  },
+>(profile: T, fallbackAsOf: string | undefined): T {
+  const tag = (lane: CuratedSentimentLane | undefined, points?: { date: string }[]) =>
+    lane && !lane.origin
+      ? { ...lane, origin: "curated" as const, asOf: lastSeriesDate(points) ?? fallbackAsOf }
+      : lane;
+  return {
+    ...profile,
+    fan: tag(profile.fan, profile.series?.fan),
+    media: tag(profile.media, profile.series?.media),
+  };
+}
+
+type DrblOverlayRow = [string, string, string, number | null, number | null, number];
+
+/** Raw overlay rows so a null DRBL/100 stays blank instead of becoming 0. */
+function attachPerformance(
+  profiles: PlayerSentimentProfile[],
+  season: string,
+  minPossessions = 1000
+): PlayerSentimentProfile[] {
+  const overlayPath = path.join(process.cwd(), "src", "data", "runtime", "drbl-overlay-snapshot.json");
+  if (!existsSync(overlayPath)) return profiles;
+  const overlay = readJson<{ seasons?: Record<string, unknown[][]> }>(overlayPath);
+  const byName = new Map<string, { drbl100: number; possessions: number }>();
+  for (const raw of overlay.seasons?.[season] ?? []) {
+    const row = raw as unknown as DrblOverlayRow;
+    if (typeof row[1] !== "string" || typeof row[3] !== "number") continue;
+    if (row[5] < minPossessions) continue;
+    const key = normalizePlayerName(row[1]);
+    const prev = byName.get(key);
+    if (!prev || row[5] > prev.possessions) {
+      byName.set(key, { drbl100: row[3], possessions: row[5] });
+    }
+  }
+  return profiles.map((profile) => {
+    const hit = profile.displayName ? byName.get(normalizePlayerName(profile.displayName)) : undefined;
+    return hit ? { ...profile, performance: { season, ...hit } } : profile;
+  });
+}
+
+function newsToScored(rows: NewsIngestItem[]): ScoredIngestItem[] {
+  return rows.map((row) => ({
+    id: row.id,
+    date: row.publishedAt,
+    score: row.score,
+    topics: row.topics,
+    playerIds: row.playerIds,
+    teamIds: row.teamIds,
+  }));
+}
+
+function redditToScored(rows: RedditIngestItem[]): ScoredIngestItem[] {
+  return rows.map((row) => ({
+    id: row.id,
+    date: row.createdAt,
+    score: row.score,
+    topics: row.topics,
+    playerIds: row.playerIds,
+    teamIds: row.teamIds,
+  }));
+}
+
+function headlineExemplars(ids: string[], byId: Map<string, NewsIngestItem>, limit: number) {
+  return latestExemplars(
+    ids
+      .map((id) => byId.get(id))
+      .filter((row): row is NewsIngestItem => Boolean(row))
+      .map((row) => ({
+        title: row.title,
+        url: row.url,
+        outlet: row.outlet,
+        publishedAt: row.publishedAt,
+        score: row.score,
+      })),
+    limit
+  );
+}
+
+function headlineTopicHeat(
+  items: ScoredIngestItem[],
+  now: Date,
+  windowDays: number,
+  limit: number
+): SentimentTopicHeatRow[] {
+  const since = now.getTime() - windowDays * 86_400_000;
+  const acc = new Map<string, { count: number; players: Set<string> }>();
+  let total = 0;
+  for (const item of items) {
+    const t = Date.parse(item.date);
+    if (t <= since || t > now.getTime()) continue;
+    for (const topic of item.topics) {
+      if (topic === "general") continue;
+      const hit = acc.get(topic) ?? { count: 0, players: new Set<string>() };
+      hit.count += 1;
+      for (const id of item.playerIds) hit.players.add(id);
+      acc.set(topic, hit);
+      total += 1;
+    }
+  }
+  if (!total) return [];
+  return [...acc.entries()]
+    .map(([topic, row]) => ({
+      topic,
+      weight: Math.round((row.count / total) * 1000) / 1000,
+      playerCount: row.players.size,
+      mentionVolume: row.count,
+    }))
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, limit);
 }
 
 function loadObservationBatches(): SentimentObservationBatch[] {
@@ -192,9 +364,7 @@ function mergeObservationProfiles(
     for (const id of profile.playerIds) byId.set(id, profile);
   }
 
-  const lanePasses = (lane: PlayerSentimentProfile["fan"]) =>
-    lane.mentionVolume >= floor.mentionVolume &&
-    lane.coverageConfidence >= floor.coverageConfidence;
+  const lanePasses = (lane: PlayerSentimentProfile["fan"]) => curatedLanePasses(lane, floor);
 
   const profileDedupeKey = (profile: PlayerSentimentProfile) =>
     profile.playerIds.slice().sort().join("|");
@@ -321,6 +491,7 @@ export async function buildSentimentSnapshot(
     merged.observationKeys
   );
 
+  const curatedAsOf = pilotRoster?.endDate;
   let syncedTeamCount = 0;
   const synced: PlayerSentimentProfile[] = [];
   for (const profile of profiles) {
@@ -329,13 +500,111 @@ export async function buildSentimentSnapshot(
       ? syncProfileTeamFromRoster(profile, rosterRow)
       : profile;
     if (rosterRow) syncedTeamCount += 1;
-    if (passesCoverageFloor(next, manifest.coverageFloor)) {
-      synced.push(next);
-    }
+    synced.push(tagCuratedLanes(next, curatedAsOf));
   }
-  const droppedBelowFloor = profiles.length - synced.length;
   profiles = synced;
 
+  // Automated lanes: headlines → media, Reddit → fan. Each replaces the
+  // curated lane only when it clears its own floor.
+  const ingestConfig = { ...DEFAULT_INGEST, ...manifest.ingest };
+  const newsRows = readIngestItems<NewsIngestItem>("news").filter((row) => row.nba);
+  const redditRows = readIngestItems<RedditIngestItem>("reddit");
+  const newsById = new Map(newsRows.map((row) => [row.id, row]));
+  const newsScored = newsToScored(newsRows);
+  const redditScored = redditToScored(redditRows);
+  const laneOptions = (
+    origin: "headlines" | "reddit",
+    floor: number
+  ): LaneBuildOptions => ({
+    origin,
+    platform: origin === "headlines" ? "news" : "reddit",
+    modelVersion: HEADLINE_LEXICON_VERSION,
+    now,
+    windowDays: ingestConfig.windowDays,
+    seriesDays: ingestConfig.seriesDays,
+    floor,
+  });
+  const headlineOpts = laneOptions("headlines", ingestConfig.headlineFloor);
+  const redditOpts = laneOptions("reddit", ingestConfig.redditFloor);
+
+  const ingestRoster = new Map(loadIngestRoster().map((row) => [row.playerId, row]));
+  const profileById = new Map<string, PlayerSentimentProfile>();
+  for (const profile of profiles) {
+    for (const id of profile.playerIds) profileById.set(id, profile);
+  }
+  const upsertPlayer = (
+    playerId: string,
+    patch: (profile: PlayerSentimentProfile) => PlayerSentimentProfile
+  ) => {
+    const existing = profileById.get(playerId);
+    const rosterRow = rosterIndex.byId.get(playerId);
+    const ingestRow = ingestRoster.get(playerId);
+    const base: PlayerSentimentProfile = existing ?? {
+      playerIds: [playerId],
+      displayName: rosterRow?.playerName ?? ingestRow?.name ?? playerId,
+      teamKey: rosterRow?.teamId ?? ingestRow?.teamId,
+      window: `${ingestConfig.windowDays}d`,
+      provenance: "ingest",
+      series: { fan: [], media: [] },
+    };
+    const next = patch(base);
+    for (const id of next.playerIds) profileById.set(id, next);
+  };
+
+  let headlineLaneCount = 0;
+  for (const [playerId, items] of groupByEntity(newsScored, "playerIds")) {
+    const built = buildIngestLane(items, headlineOpts);
+    if (!built) continue;
+    headlineLaneCount += 1;
+    upsertPlayer(playerId, (profile) => ({
+      ...profile,
+      media: built.lane,
+      series: { fan: profile.series?.fan ?? [], media: built.series },
+      headlines: headlineExemplars(
+        items.map((item) => item.id),
+        newsById,
+        ingestConfig.profileHeadlineLimit
+      ),
+    }));
+  }
+  let redditLaneCount = 0;
+  for (const [playerId, items] of groupByEntity(redditScored, "playerIds")) {
+    const built = buildIngestLane(items, redditOpts);
+    if (!built) continue;
+    redditLaneCount += 1;
+    upsertPlayer(playerId, (profile) => ({
+      ...profile,
+      fan: built.lane,
+      series: { fan: built.series, media: profile.series?.media ?? [] },
+    }));
+  }
+
+  const uniqueProfiles = new Map<string, PlayerSentimentProfile>();
+  for (const profile of profileById.values()) {
+    uniqueProfiles.set(profile.playerIds.slice().sort().join("|"), profile);
+  }
+  const idOwner = new Map<string, string>();
+  for (const profile of uniqueProfiles.values()) {
+    for (const id of profile.playerIds) {
+      const owner = idOwner.get(id);
+      if (owner && owner !== profile.displayName) {
+        throw new Error(
+          `Sentiment player id ${id} is claimed by both ${owner} and ${profile.displayName}. Fix the seed ids.`
+        );
+      }
+      idOwner.set(id, profile.displayName ?? id);
+    }
+  }
+  const beforeFloor = uniqueProfiles.size;
+  profiles = [...uniqueProfiles.values()]
+    .map((profile) => applyLaneFloors(profile, manifest.coverageFloor))
+    .filter((profile): profile is PlayerSentimentProfile => profile != null);
+  const droppedBelowFloor = beforeFloor - profiles.length;
+
+  profiles = attachPerformance(
+    profiles,
+    canonicalSeasonFromStartYear(currentNbaStartYear(now) - 1)
+  );
   profiles = await enrichProfilesWithMovementAssociations(profiles);
 
   const movers = computeSentimentMovers(profiles, {
@@ -346,17 +615,153 @@ export async function buildSentimentSnapshot(
     limit: 8,
     minAbsGap: 0.12,
   });
-  const topicHeat = computeSentimentTopicHeat(profiles, { limit: 12 });
+  const headlineWindowCount = newsScored.filter(
+    (item) => Date.parse(item.date) > now.getTime() - ingestConfig.windowDays * 86_400_000
+  ).length;
+  const topicHeat =
+    headlineWindowCount >= 20
+      ? headlineTopicHeat(newsScored, now, ingestConfig.windowDays, 12)
+      : computeSentimentTopicHeat(profiles, { limit: 12 });
+  const topicHeatOrigin = headlineWindowCount >= 20 ? "headlines" : "curated";
 
   const teamObservationProfiles = aggregateTeamObservationBatches(
     observationBatches,
     manifest.pilotWindow
-  );
+  ).map((team) => tagCuratedLanes(team, curatedAsOf));
   const rosterTeamProfiles = computeRosterTeamProfiles(
     profiles,
     manifest.pilotWindow
   );
-  const teams = mergeTeamProfiles(rosterTeamProfiles, teamObservationProfiles);
+  const teamByKey = new Map<string, TeamSentimentProfile>();
+  for (const team of mergeTeamProfiles(rosterTeamProfiles, teamObservationProfiles)) {
+    teamByKey.set(team.teamKey ?? team.teamIds[0]!, team);
+  }
+  const upsertTeam = (
+    teamId: string,
+    patch: (team: TeamSentimentProfile) => TeamSentimentProfile
+  ) => {
+    const brandAbbr = resolveTeamBrand(teamId)?.abbr ?? teamId;
+    const base: TeamSentimentProfile = teamByKey.get(teamId) ?? {
+      teamIds: [teamId],
+      teamKey: teamId,
+      displayName: brandAbbr,
+      window: `${ingestConfig.windowDays}d`,
+      source: "headlines",
+      provenance: "ingest",
+      series: { fan: [], media: [] },
+    };
+    teamByKey.set(teamId, patch(base));
+  };
+  for (const [teamId, items] of groupByEntity(newsScored, "teamIds")) {
+    const built = buildIngestLane(items, headlineOpts);
+    if (!built) continue;
+    upsertTeam(teamId, (team) => ({
+      ...team,
+      media: built.lane,
+      series: { fan: team.series?.fan ?? [], media: built.series },
+      headlines: headlineExemplars(
+        items.map((item) => item.id),
+        newsById,
+        ingestConfig.profileHeadlineLimit
+      ),
+    }));
+  }
+  for (const [teamId, items] of groupByEntity(redditScored, "teamIds")) {
+    const built = buildIngestLane(items, redditOpts);
+    if (!built) continue;
+    upsertTeam(teamId, (team) => ({
+      ...team,
+      fan: built.lane,
+      series: { fan: built.series, media: team.series?.media ?? [] },
+    }));
+  }
+  const teams = [...teamByKey.values()]
+    .map((team) => applyLaneFloors(team, manifest.coverageFloor))
+    .filter((team): team is TeamSentimentProfile => team != null)
+    .sort((a, b) => (a.displayName ?? "").localeCompare(b.displayName ?? ""));
+
+  const canonicalName = new Map<string, { name: string; teamKey?: string }>();
+  for (const profile of profiles) {
+    for (const id of profile.playerIds) {
+      if (profile.displayName) canonicalName.set(id, { name: profile.displayName, teamKey: profile.teamKey });
+    }
+  }
+  const byFoldedName = new Map(
+    profiles
+      .filter((profile) => profile.displayName)
+      .map((profile) => [normalizePlayerName(profile.displayName!), profile])
+  );
+  league.narratives = league.narratives.map((narrative) => ({
+    ...narrative,
+    players: narrative.players.map((player) => {
+      const hit =
+        canonicalName.get(player.playerId) ??
+        (() => {
+          const profile = byFoldedName.get(normalizePlayerName(player.displayName));
+          return profile ? { name: profile.displayName!, teamKey: profile.teamKey } : undefined;
+        })();
+      return hit
+        ? { ...player, displayName: hit.name, teamKey: hit.teamKey ?? player.teamKey }
+        : player;
+    }),
+  }));
+
+  const leagueHeadlineLane = buildIngestLane(newsScored, { ...headlineOpts, floor: 1 });
+  const leagueRedditLane = buildIngestLane(redditScored, { ...redditOpts, floor: 1 });
+  league.headlineMood = leagueHeadlineLane ?? undefined;
+  league.redditMood = leagueRedditLane ?? undefined;
+  league.mood = {
+    fan: tagCuratedLanes({ fan: league.mood.fan }, lastSeriesDate(league.moodSeries?.fan)).fan!,
+    media: tagCuratedLanes({ media: league.mood.media }, lastSeriesDate(league.moodSeries?.media))
+      .media!,
+  };
+  league.latestHeadlines = latestExemplars(
+    newsRows.map((row) => ({
+      title: row.title,
+      url: row.url,
+      outlet: row.outlet,
+      publishedAt: row.publishedAt,
+      score: row.score,
+      players: row.playerIds.map((id) => ({
+        id,
+        name:
+          canonicalName.get(id)?.name ??
+          rosterIndex.byId.get(id)?.playerName ??
+          ingestRoster.get(id)?.name ??
+          id,
+      })),
+      teamIds: row.teamIds,
+      topics: row.topics,
+    })),
+    ingestConfig.leagueHeadlineLimit
+  );
+
+  const newsDates = newsRows.map((row) => row.publishedAt.slice(0, 10)).sort();
+  const redditDates = redditRows.map((row) => row.createdAt.slice(0, 10)).sort();
+  const curatedLaneCount = profiles.reduce(
+    (sum, p) => sum + (p.fan?.origin === "curated" ? 1 : 0) + (p.media?.origin === "curated" ? 1 : 0),
+    0
+  );
+  const sources: SentimentSourceSummary = {
+    curated: { asOf: curatedAsOf ?? null, laneCount: curatedLaneCount },
+    headlines: {
+      asOf: newsDates[newsDates.length - 1] ?? null,
+      firstDate: newsDates[0] ?? null,
+      itemCount: newsRows.length,
+      windowItemCount: headlineWindowCount,
+      outlets: [...new Set(newsRows.map((row) => row.outlet))].sort(),
+      modelVersion: HEADLINE_LEXICON_VERSION,
+      floor: ingestConfig.headlineFloor,
+      laneCount: headlineLaneCount,
+    },
+    reddit: {
+      configured: redditRows.length > 0,
+      asOf: redditDates[redditDates.length - 1] ?? null,
+      itemCount: redditRows.length,
+      floor: ingestConfig.redditFloor,
+      laneCount: redditLaneCount,
+    },
+  };
 
   const snapshot: SentimentCuratedSnapshot = {
     meta: {
@@ -383,6 +788,8 @@ export async function buildSentimentSnapshot(
         rows: divergences,
       },
       topicHeat,
+      topicHeatOrigin,
+      sources,
     },
     players: profiles,
     teams,
@@ -397,7 +804,7 @@ export async function buildSentimentSnapshot(
 
   if (options.verbose) {
     console.log(
-      `sentiment:build season=${season} profiles=${profiles.length} generated=${generatedProfileCount} roster=${roster.length} synced=${syncedTeamCount} dropped=${droppedBelowFloor} observations=${observationBatches.length}`
+      `sentiment:build season=${season} profiles=${profiles.length} generated=${generatedProfileCount} roster=${roster.length} synced=${syncedTeamCount} dropped=${droppedBelowFloor} observations=${observationBatches.length} headlines=${newsRows.length} (window ${headlineWindowCount}, lanes ${headlineLaneCount}) reddit=${redditRows.length} (lanes ${redditLaneCount}) teams=${teams.length}`
     );
     if (!options.dryRun) {
       console.log(`  → ${SNAPSHOT_PATH}`);

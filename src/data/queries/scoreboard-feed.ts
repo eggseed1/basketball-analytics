@@ -58,7 +58,7 @@ export type ScoreboardFeedResult<T> = {
 };
 
 const STALE_WARNING =
-  "Showing recently cached scoreboard data - not a live update.";
+  "Showing recently cached scoreboard data, not a live update.";
 const UNAVAILABLE_WARNING = "Live scores temporarily unavailable.";
 
 /** Soft last-good across serverless instances (memory L1 + Next Data Cache). */

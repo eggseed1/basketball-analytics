@@ -25,6 +25,19 @@ function monthsForSeason(startYear) {
   );
 }
 
+const etDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** League calendar day (US Eastern). ESPN stamps evening tips with the next UTC day. */
+function nbaCalendarDate(iso) {
+  const d = new Date(iso);
+  return Number.isNaN(d.getTime()) ? iso.slice(0, 10) : etDate.format(d);
+}
+
 function num(value) {
   const n = Number(value);
   return Number.isFinite(n) ? n : 0;
@@ -50,7 +63,16 @@ function gameType(event) {
   const type = Number(event?.season?.type ?? event?.seasonType ?? 2);
   if (type === 1) return "preseason";
   if (type === 3) return "playoff";
+  if (type === 5) return "play-in";
   return "regular";
+}
+
+/** NBA Cup Championship: typed regular season by ESPN, but not in standings. */
+function isCupChampionship(comp) {
+  if (comp?.type?.abbreviation === "CC") return true;
+  return (comp?.notes ?? []).some((n) =>
+    /NBA Cup Championship/i.test(String(n?.headline ?? ""))
+  );
 }
 
 function side(comp, homeAway) {
@@ -86,7 +108,7 @@ function transform(event, season) {
   return {
     id,
     season,
-    gameDate: date.slice(0, 10),
+    gameDate: nbaCalendarDate(date),
     tipOffAt: date || undefined,
     statusDetail: detail || undefined,
     homeTeamId: home.teamId,
@@ -106,6 +128,7 @@ function transform(event, season) {
       ? { homePeriodScores: home.periods, awayPeriodScores: away.periods }
       : {}),
     gameType: gameType(event),
+    ...(isCupChampionship(comp) ? { cupChampionship: true } : {}),
     status,
     period: num(event?.status?.period ?? comp?.status?.period) || undefined,
     displayClock:

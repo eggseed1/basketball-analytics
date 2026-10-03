@@ -113,8 +113,8 @@ export async function PlayerSimilarIsland({
         <h2 className={cn(type.heading, "tracking-tight")}>Similar players</h2>
         <p className="mt-1 text-[13px] leading-snug text-muted-foreground">
           Closest {statsSeason} profiles, historical lookalikes across eras, and
-          nearest comps by metric — not a new rating. Switch chips to change the
-          lens.
+          nearest comps by metric. This is not a new rating. Switch chips to
+          change the lens.
         </p>
       </div>
       <PlayerContextStrip

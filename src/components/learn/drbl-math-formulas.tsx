@@ -162,7 +162,7 @@ export function War1FormulaEquations() {
           />
           <MathNote>
             Same Approach-B attributed residual <MathVar>V</MathVar> as in the
-            DRBL/100 path. WAR1 is built from this realized ledger — not from
+            DRBL/100 path. WAR1 is built from this realized ledger, not from
             shrinking DRBL/100 again.
           </MathNote>
         </MathDisplay>
@@ -209,7 +209,7 @@ export function War1FormulaEquations() {
           <MathNote>
             Because <MathVar>P1</MathVar> is a fixed positive constant, ordering
             is identical. WAR1 means win-style units above the contextual
-            role-matched R1 reference — not classic replacement-level WAR.
+            role-matched R1 reference, not classic replacement-level WAR.
           </MathNote>
         </MathDisplay>
       </MathStack>

@@ -13,7 +13,8 @@ export type LearnCategoryId =
   | "proprietary"
   | "systems"
   | "status"
-  | "transactions";
+  | "transactions"
+  | "sentiment";
 
 export type LearnCategoryMeta = {
   id: LearnCategoryId;
@@ -51,7 +52,7 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
     id: "proprietary",
     label: "Proprietary stats",
     description:
-      "Original DRBL numbers built from play-by-play. The clearest read on who is playing at a high level and who delivered the most season value.",
+      "Original DRBL numbers built from play-by-play. They show who is playing at a high level and who delivered the most season value.",
   },
   {
     id: "systems",
@@ -67,6 +68,11 @@ export const LEARN_CATEGORIES: LearnCategoryMeta[] = [
     id: "transactions",
     label: "Transactions",
     description: "Source events vs structured trades, and why genealogy waits.",
+  },
+  {
+    id: "sentiment",
+    label: "Sentiment",
+    description: "How the Sentiment tab measures fan and media tone, and where each number comes from.",
   },
 ];
 
@@ -149,7 +155,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "TOV",
     category: "basics",
     tooltip:
-      "Possessions lost without a shot attempt. Raw turnovers per game are volume, they rise with minutes, touches, and usage, and are not a skill grade by themselves.",
+      "Possessions lost without a shot attempt. Raw turnovers per game measure volume. They rise with minutes, touches, and usage, and are not a skill grade by themselves.",
     showTooltip: true,
     learnSlug: "turnovers",
     relatedIds: ["ast_to", "usg"],
@@ -325,7 +331,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ORtg",
     category: "team",
     tooltip:
-      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate, missing ratings stay unavailable rather than fabricated.",
+      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate. Missing ratings stay unavailable, never fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],
@@ -391,7 +397,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "RAPTOR",
     category: "impact",
     tooltip:
-      "FiveThirtyEight RAPTOR (pts/100). Open historical data — blank for seasons after 538 stopped publishing.",
+      "FiveThirtyEight RAPTOR (pts/100). Open historical data, blank for seasons after 538 stopped publishing.",
     showTooltip: true,
     learnSlug: "raptor",
     relatedIds: ["darko", "raptor_o", "raptor_d", "wins_added", "bpm"],
@@ -713,7 +719,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "DRBL-LN",
     category: "proprietary",
     tooltip:
-      "Lineup-context diagnostic, who you played with. Not proven off-ball value; not part of a P+LN+B sum.",
+      "Lineup-context diagnostic: who you played with. Not proven off-ball value, and not part of a P+LN+B sum.",
     showTooltip: true,
     learnSlug: "drbl-ln",
     relatedIds: ["drbl", "drbl_p", "drbl_b"],
@@ -737,7 +743,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "R1",
     category: "proprietary",
     tooltip:
-      "The baseline DRBL compares players to, a role-aware expectation, not a classic “replacement player.”",
+      "The baseline DRBL compares players to: a role-aware expectation, not a classic “replacement player.”",
     showTooltip: true,
     learnSlug: "r1",
     relatedIds: ["r1_win_eq", "r1_points", "drbl"],
@@ -878,7 +884,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Longevity-only",
     category: "systems",
     tooltip:
-      "A qualifying season at 70, 89% of peak CPI, longevity-level production outside the prime band.",
+      "A qualifying season at 70–89% of peak CPI: longevity-level production outside the prime band.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_longevity", "career_prime", "career_arc"],
@@ -890,7 +896,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Contiguous prime",
     category: "systems",
     tooltip:
-      "Career Resume prime is the longest unbroken run of ≥90% seasons, a gap below 90% splits prime windows.",
+      "Career Resume prime is the longest unbroken run of ≥90% seasons. A gap below 90% splits prime windows.",
     showTooltip: true,
     learnSlug: "peak-prime-longevity",
     relatedIds: ["career_prime", "career_peak"],
@@ -914,7 +920,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Career Arc",
     category: "systems",
     tooltip:
-      "How Peak, Prime, Longevity, and trajectory phases fit together, overlapping performance bands, not exclusive buckets.",
+      "How Peak, Prime, Longevity, and trajectory phases fit together as overlapping performance bands, not exclusive buckets.",
     showTooltip: true,
     learnSlug: "career-arc",
     relatedIds: [
@@ -944,7 +950,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Rank My Seasons",
     category: "systems",
     tooltip:
-      "Ranks a player’s seasons with pairwise comparisons and Copeland points, no opaque season score.",
+      "Ranks a player’s seasons using only pairwise comparisons and Copeland points.",
     showTooltip: true,
     learnSlug: "rank-my-seasons",
     relatedIds: ["copeland", "contested", "close_top"],
@@ -971,7 +977,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Team Compare",
     category: "systems",
     tooltip:
-      "Head-to-head team seasons using board metrics, tolerances, and category plurality, no composite score.",
+      "Compares team seasons head-to-head on board metrics, tolerances, and category plurality, without a composite score.",
     showTooltip: true,
     learnSlug: "team-season-compare",
     relatedIds: ["essentially_even", "team_rank_seasons"],
@@ -1019,7 +1025,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Season evidence",
     category: "systems",
     tooltip:
-      "Representative games (largest win, highest scoring, etc.) that illustrate a season, descriptive, not “most important.”",
+      "Representative games (largest win, highest scoring, etc.) that illustrate a season. Descriptive only, not “most important.”",
     showTooltip: true,
     learnSlug: "season-evidence",
     relatedIds: ["game_lab", "team_rank_seasons", "season_baseline"],
@@ -1059,7 +1065,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ASK DRBL",
     category: "systems",
     tooltip:
-      "Natural-language questions routed to existing DRBL analyzers, not a free-form AI fantasy.",
+      "Natural-language questions routed to existing DRBL analyzers, not free-form AI.",
     showTooltip: true,
     learnSlug: "ask-drbl",
     seeInAction: [{ label: "Open ASK DRBL", href: "/ask" }],
@@ -1194,7 +1200,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Related cluster",
     category: "transactions",
     tooltip:
-      "Multiple source events safely linked as related reporting, still not a verified trade package.",
+      "Multiple source events safely linked as related reporting. Still not a verified trade package.",
     showTooltip: true,
     learnSlug: "transaction-layers",
   },
@@ -1205,7 +1211,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Structured tx",
     category: "transactions",
     tooltip:
-      "Verified asset-level transaction. Currently 0 in production, trade genealogy stays blocked.",
+      "Verified asset-level transaction. Currently 0 in production, so trade genealogy stays blocked.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: [
@@ -1263,6 +1269,70 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["structured_transaction", "source_event"],
+  },
+
+  // --- Sentiment ---
+  {
+    id: "sentiment_fan_lane",
+    aliases: ["fan_lane", "fan_mood", "fan_sentiment"],
+    label: "Fan lane",
+    shortName: "Fan",
+    category: "sentiment",
+    tooltip:
+      "Tone of fan discussion about a player or team, shown as 0–100% where 50% is neutral. It comes from approved subreddits once Reddit is connected, and from curated values until then.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["sentiment_media_lane", "sentiment_curated", "sentiment_coverage_floor"],
+    seeInAction: [{ label: "Sentiment board", href: "/sentiment" }],
+  },
+  {
+    id: "sentiment_media_lane",
+    aliases: ["media_lane", "media_mood", "media_sentiment"],
+    label: "Media lane",
+    shortName: "Media",
+    category: "sentiment",
+    tooltip:
+      "Tone of news coverage about a player or team, 0–100% with 50% neutral. It is measured from publisher headlines when a subject has enough of them. It is never merged with the fan lane.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["sentiment_headline_tone", "sentiment_fan_lane"],
+    seeInAction: [{ label: "Latest headlines", href: "/sentiment?view=headlines" }],
+  },
+  {
+    id: "sentiment_headline_tone",
+    aliases: ["headline_tone", "headline_sentiment"],
+    label: "Headline tone",
+    shortName: "Headline tone",
+    category: "sentiment",
+    tooltip:
+      "A score for one headline and the first lines of its summary, from a word list tuned for basketball (\"waived\" reads negative, \"extension\" positive). It hasn't been checked against hand labels yet, so single scores can be wrong.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["sentiment_media_lane"],
+  },
+  {
+    id: "sentiment_curated",
+    aliases: ["curated_sentiment", "illustrative_sentiment"],
+    label: "Curated sentiment value",
+    shortName: "Curated",
+    category: "sentiment",
+    tooltip:
+      "A hand-written prototype number that shows how the board works. It is not a measurement, and it is dated so you can see how old it is.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["sentiment_fan_lane"],
+  },
+  {
+    id: "sentiment_coverage_floor",
+    aliases: ["coverage_floor", "sentiment_floor"],
+    label: "Coverage floor",
+    shortName: "Coverage floor",
+    category: "sentiment",
+    tooltip:
+      "The minimum amount of source material before a lane gets a score: 3 headlines or 5 posts in the last 7 days. Below it the lane is blank, not neutral.",
+    showTooltip: true,
+    learnSlug: null,
+    relatedIds: ["sentiment_media_lane", "sentiment_fan_lane"],
   },
 ];
 

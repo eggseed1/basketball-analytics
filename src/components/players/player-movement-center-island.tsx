@@ -3,7 +3,7 @@ import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
 import { getPlayerMovementBundle } from "@/data/queries/movement-center.server";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
 
-/** Movement Center column — curated M1 snapshot when available. */
+/** Movement Center column from the news-ingest snapshot when available. */
 export async function PlayerMovementCenterIsland({
   playerId,
   playerName,

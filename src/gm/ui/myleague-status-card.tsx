@@ -23,7 +23,7 @@ export function MyLeagueStatusCard() {
   if (!myLeague || !simulation || !historical) {
     return (
       <div className="sports-card px-4 py-3 text-sm text-muted-foreground">
-        MyLeague shell inactive - start a Franchise Lab save to bootstrap Reality /
+        MyLeague shell inactive. Start a Franchise Lab save to bootstrap Reality /
         Simulation universes.
       </div>
     );

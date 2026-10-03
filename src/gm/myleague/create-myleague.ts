@@ -119,7 +119,7 @@ export function createMyLeagueBundle(
     career: emptyCareer(),
     notes: opts?.snapshot
       ? "Seeded from real NBA season data (ESPN + impact overlays)."
-      : "Milestone 2 scaffold - historical ingest lands in Milestone 3.",
+      : "Milestone 2 scaffold. Historical ingest lands in Milestone 3.",
   };
 
   const birth = createTimelineEvent({

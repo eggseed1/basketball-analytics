@@ -15,14 +15,12 @@ const REQUIRED = [
   "DRBL-P",
   "DRBL-LN",
   "DRBL-B",
-  "validatedDRBL100",
-  "k = 1600",
-  "UIR",
-  "M16j",
-  "M17b",
   "non-additive",
   "traditional WAR",
 ];
+
+/** Research codenames belong in reports, not on the fan-facing overview. */
+const FORBIDDEN = ["UIR", "M16j", "M17b", "research boundary"];
 
 async function main() {
   const file = path.join(
@@ -40,9 +38,12 @@ async function main() {
       `learn/drbl page missing public metric / phrase: ${needle}`
     );
   }
+  for (const needle of FORBIDDEN) {
+    assert.ok(!src.includes(needle), `learn/drbl page should not mention ${needle}`);
+  }
   // Primary surface should not headline both R1 Points and WAR1 as equals.
   const simpleIdx = src.indexOf("Two main numbers");
-  const deepIdx = src.indexOf("Deep rabbit hole");
+  const deepIdx = src.indexOf("R1 Points and the WAR1 conversion");
   assert.ok(simpleIdx >= 0 && deepIdx > simpleIdx);
   const simpleBlock = src.slice(simpleIdx, deepIdx);
   assert.ok(simpleBlock.includes("WAR1"));

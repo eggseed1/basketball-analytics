@@ -386,8 +386,8 @@ export function PlayerSeasonRankView({
           Open any two-season comparison
         </h2>
         <p className="mt-1 text-[12px] text-muted-foreground">
-          Same engine as the matrix - overall edge is which season won more
-          category comparisons.
+          Same engine as the matrix. Overall edge goes to the season that won
+          more category comparisons.
         </p>
         <ul className="mt-2 flex flex-col gap-1.5 text-[14px]">
           {result.pairwise.map((p) => (

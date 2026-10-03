@@ -218,8 +218,8 @@ export default async function HistorySeasonPage({
           {season} NBA Season
         </h1>
         <p className="mt-2 max-w-xl text-[14px] text-muted-foreground">
-          Season discovery hub — teams, entry points, and a bounded game page.
-          Full player boards live in Players.{" "}
+          Teams, a sample of players, and a paged game list for this season.
+          Full player boards are in Players.{" "}
           {caps?.fields.drbl === "SUPPORTED"
             ? "DRBL is available for this season."
             : "DRBL is currently available for supported seasons beginning in 2020-21."}
@@ -294,8 +294,8 @@ export default async function HistorySeasonPage({
                   Teams ({season})
                 </h2>
                 <p className="text-[13px] text-muted-foreground">
-                  Opens each club in this season&apos;s historical identity —
-                  not today&apos;s successor brand alone.
+                  Each link opens the club under the name and branding it used
+                  this season.
                 </p>
               </div>
               <ul className="flex flex-wrap gap-2">
@@ -373,9 +373,9 @@ export default async function HistorySeasonPage({
                   Players
                 </h2>
                 <p className="text-[13px] text-muted-foreground">
-                  {allPlayers.length.toLocaleString()} appeared in games — showing{" "}
-                  {featuredPlayers.length} as entry points. Open the full
-                  directory for the complete list.
+                  {allPlayers.length.toLocaleString()} appeared in games. Showing{" "}
+                  {featuredPlayers.length} here. Open the full directory for the
+                  complete list.
                 </p>
               </div>
               <div className="sports-card overflow-hidden">

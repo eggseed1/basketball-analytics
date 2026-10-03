@@ -62,12 +62,21 @@ export const getPlayerCached = cache(async (playerId: string) => {
     const identity = await resolvePlayerIdentityCached(playerId).catch(
       () => null
     );
-    return (
-      getBundledPlayerBio(playerId, [
-        identity?.nbaId,
-        identity?.espnId,
-      ]) ?? null
+    const bundled = getBundledPlayerBio(playerId, [
+      identity?.nbaId,
+      identity?.espnId,
+    ]);
+    if (bundled?.birthDate) return bundled;
+    const { loadBakedLegendPlayer } = await import(
+      "@/data/runtime/legend-player-bio"
     );
+    const { mergePlayerBio } = await import(
+      "@/data/providers/nba/athlete-bio"
+    );
+    const baked = await loadBakedLegendPlayer(playerId, identity?.nbaId).catch(
+      () => null
+    );
+    return baked ? mergePlayerBio(baked, bundled) : bundled ?? null;
   }
   const budgetMs = runtimeTimeoutMs(5_000, 800);
   const result = await withBudget(

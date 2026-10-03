@@ -27,7 +27,7 @@ export function LeaguePulse({
         <div>
           <h2 className="text-[20px] font-bold tracking-tight">League</h2>
           <p className="text-[14px] text-muted-foreground">
-            Conference race at a glance - expand here or open the full boards.
+            Conference race at a glance. Expand here or open the full boards.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">

@@ -44,8 +44,8 @@ export function TeamDraftAssetsView({
               "No product-approved structured draft-asset ledger."}
           </p>
           <p className="text-sm text-muted-foreground">
-            Future firsts controlled: Unavailable · Future seconds controlled:
-            Unavailable — not 0.
+            Own future firsts: Unavailable · Own future seconds: Unavailable
+            (not 0).
           </p>
         </section>
       )}

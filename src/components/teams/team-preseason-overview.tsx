@@ -3,7 +3,7 @@ import Link from "next/link";
 import { SeasonNotStartedNotice } from "@/components/explore/season-not-started-notice";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { type } from "@/lib/design-system";
-import { formatPct } from "@/lib/format";
+import { formatOrdinal, formatPct } from "@/lib/format";
 import type { TeamStandingsDisplay } from "@/lib/team-standings-context";
 import { cn } from "@/lib/utils";
 
@@ -44,7 +44,7 @@ export function TeamPreseasonOverview({
               {prior.winPct != null
                 ? ` · ${formatPct(prior.winPct, 0)}`
                 : ""}
-              {prior.rank ? ` · #${prior.rank} ${prior.conference}` : ""}
+              {prior.rank ? ` · ${formatOrdinal(prior.rank)} in the ${prior.conference}` : ""}
             </p>
           </GlassSurface>
         ) : null}
@@ -83,7 +83,7 @@ export function TeamPreseasonOverview({
               >
                 Roster
               </Link>{" "}
-              — ESPN preseason lists
+              · ESPN preseason lists
             </li>
             <li>
               <Link
@@ -92,16 +92,16 @@ export function TeamPreseasonOverview({
               >
                 Organization
               </Link>{" "}
-              — cap, movement, transactions
+              · cap, movement, transactions
             </li>
             <li>
               <Link
-                href={`/teams/${teamId}?tab=games&season=${encodeURIComponent(season)}`}
+                href={`/teams/${teamId}?tab=schedule&season=${encodeURIComponent(season)}`}
                 className="font-semibold text-foreground underline-offset-2 hover:underline"
               >
                 Schedule
               </Link>{" "}
-              — upcoming tip-offs when posted
+              · the full {season} calendar
             </li>
           </ul>
         </GlassSurface>

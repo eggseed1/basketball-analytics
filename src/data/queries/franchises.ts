@@ -26,9 +26,10 @@ export function franchiseWinPct(f: FranchiseHistory): number {
   return g ? f.regularSeasonWins / g : 0;
 }
 
-export function franchisePlayoffWinPct(f: FranchiseHistory): number {
+export function franchisePlayoffWinPct(f: FranchiseHistory): number | null {
+  if (f.playoffWins == null || f.playoffLosses == null) return null;
   const g = f.playoffWins + f.playoffLosses;
-  return g ? f.playoffWins / g : 0;
+  return g ? f.playoffWins / g : null;
 }
 
 export function franchiseTitleCount(f: FranchiseHistory): number {

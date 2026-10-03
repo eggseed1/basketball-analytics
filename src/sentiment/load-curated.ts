@@ -51,84 +51,36 @@ export function buildCuratedPlayerIndex(
   return byId;
 }
 
-function addDays(iso: string, days: number): string {
-  const d = new Date(`${iso}T12:00:00`);
-  d.setDate(d.getDate() + days);
-  return d.toISOString().slice(0, 10);
-}
+const DAY_MS = 86_400_000;
 
-function expandSeriesBackward(
-  points: SentimentSeriesPoint[],
-  totalDays: number
-): SentimentSeriesPoint[] {
+/** Real points within `days` of the series' own latest date. Nothing is extrapolated. */
+function windowSlice(points: SentimentSeriesPoint[], days: number): SentimentSeriesPoint[] {
   if (!points.length) return [];
-  const last = points[points.length - 1]!;
-  const first = points[0]!;
-  const endDate = last.date;
-  const slope =
-    points.length > 1 ? (last.score - first.score) / (points.length - 1) : 0;
-  const out: SentimentSeriesPoint[] = [];
-  for (let i = totalDays - 1; i >= 0; i--) {
-    const date = addDays(endDate, -i);
-    const hit = points.find((p) => p.date === date);
-    if (hit) {
-      out.push(hit);
-      continue;
-    }
-    const offset = totalDays - 1 - i;
-    const score = first.score + slope * offset * 0.55;
-    out.push({ date, score: Math.round(score * 100) / 100 });
-  }
-  return out;
+  const endMs = Date.parse(`${points[points.length - 1]!.date}T12:00:00Z`);
+  const startMs = endMs - (days - 1) * DAY_MS;
+  return points.filter((point) => Date.parse(`${point.date}T12:00:00Z`) >= startMs);
 }
 
-function weeklySample(points: SentimentSeriesPoint[]): SentimentSeriesPoint[] {
-  if (points.length <= 7) return points;
-  const out: SentimentSeriesPoint[] = [];
-  for (let i = 0; i < points.length; i += 7) {
-    const chunk = points.slice(i, i + 7);
-    const avg = chunk.reduce((sum, p) => sum + p.score, 0) / chunk.length;
-    out.push({
-      date: chunk[chunk.length - 1]!.date,
-      score: Math.round(avg * 100) / 100,
-    });
-  }
-  return out;
-}
-
+/** Automated series replace the curated seed lane when present. */
 export function resolveLeagueMoodSeriesByWindow(
   league: NonNullable<SentimentCuratedSnapshot["league"]>
 ): Record<SentimentWindowId, SentimentMoodSeries> {
-  const curated = league.moodSeriesByWindow;
-  if (
-    curated?.["7d"]?.fan?.length &&
-    curated?.["30d"]?.fan?.length &&
-    curated?.["90d"]?.fan?.length
-  ) {
-    return {
-      "7d": curated["7d"]!,
-      "30d": curated["30d"]!,
-      "90d": curated["90d"]!,
-    };
-  }
+  const fan = league.redditMood?.series.length
+    ? league.redditMood.series
+    : (league.moodSeries?.fan ?? []);
+  const media = league.headlineMood?.series.length
+    ? league.headlineMood.series
+    : (league.moodSeries?.media ?? []);
+  const slice = (days: number) => ({ fan: windowSlice(fan, days), media: windowSlice(media, days) });
+  return { "7d": slice(7), "30d": slice(30), "90d": slice(90) };
+}
 
-  const fan = league.moodSeries?.fan ?? [];
-  const media = league.moodSeries?.media ?? [];
-  const fan30 = expandSeriesBackward(fan, 30);
-  const media30 = expandSeriesBackward(media, 30);
-  const fan90 = expandSeriesBackward(fan, 90);
-  const media90 = expandSeriesBackward(media, 90);
-
+export function resolveLeagueMoodLanes(
+  league: NonNullable<SentimentCuratedSnapshot["league"]>
+): LeagueSentimentFeed["moodLanes"] {
   return {
-    "7d": {
-      fan: fan.slice(-7),
-      media: media.slice(-7),
-    },
-    "30d": { fan: fan30, media: media30 },
-    "90d": {
-      fan: weeklySample(fan90),
-      media: weeklySample(media90),
-    },
+    fan: league.redditMood?.lane ?? league.mood.fan,
+    media: league.headlineMood?.lane ?? league.mood.media,
   };
 }
 
@@ -139,10 +91,14 @@ export const getLeagueSentimentFeed = cache((): LeagueSentimentFeed | null => {
     season: snapshot.meta.season,
     disclaimer: snapshot.meta.disclaimer,
     status: snapshot.meta.status,
+    snapshotDate: snapshot.meta.snapshotDate ?? null,
+    sources: snapshot.meta.sources ?? null,
     league: snapshot.league,
     moodSeriesByWindow: resolveLeagueMoodSeriesByWindow(snapshot.league),
+    moodLanes: resolveLeagueMoodLanes(snapshot.league),
     divergences: snapshot.meta.divergences?.rows ?? [],
     topicHeat: snapshot.meta.topicHeat ?? [],
+    topicHeatOrigin: snapshot.meta.topicHeatOrigin ?? "curated",
   };
 });
 
@@ -160,6 +116,9 @@ export function listTrackedPlayerSentiment(): TrackedPlayerSentimentRow[] {
       window: row.window,
       fan: row.fan,
       media: row.media,
+      series: row.series,
+      headlineCount: row.media?.origin === "headlines" ? row.media.mentionVolume : undefined,
+      performance: row.performance,
       hasProfile: true,
       provenance: row.provenance,
     });

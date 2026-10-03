@@ -128,7 +128,7 @@ export default async function ExplorePlayersPage({
         title="Players"
         subtitle={
           parsePlayerSeasonSortKey(params.sort)
-            ? `Sorted by ${parsePlayerSeasonSortKey(params.sort)} - change any column header to re-rank.`
+            ? `Sorted by ${parsePlayerSeasonSortKey(params.sort)}. Click any column header to re-rank.`
             : undefined
         }
       />

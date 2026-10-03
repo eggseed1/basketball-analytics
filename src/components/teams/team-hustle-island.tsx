@@ -118,7 +118,7 @@ export async function TeamHustleIsland({
           <h2 className="text-[20px] font-bold tracking-tight">Defense</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             {roster.warning ??
-              "Roster unavailable — cannot load defense board for this team-season."}
+              "Roster unavailable, so the defense board cannot load for this team-season."}
           </p>
         </div>
       </section>
@@ -207,8 +207,8 @@ export async function TeamHustleIsland({
           Roster stocks
         </h3>
         <p className={cn(type.caption, "mb-3 text-muted-foreground")}>
-          Steals + blocks from the box score — available even when hustle
-          tracking is not.
+          Steals + blocks from the box score. These are available even when
+          hustle tracking is not.
         </p>
         {stockRows.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
@@ -286,6 +286,9 @@ export async function TeamHustleIsland({
               Cumulative tracking from the roster (
               {aggregate.playersWithData}/{aggregate.rosterSize} with data).
               Rates use max roster GP ({aggregate.teamGames}).
+              {roster.omitsMidSeasonMoves
+                ? " Totals leave out players who changed teams during the season."
+                : null}
             </p>
             <dl className="grid gap-3 sm:grid-cols-3 lg:grid-cols-6">
               {TEAM_METRICS.map((metric) => (

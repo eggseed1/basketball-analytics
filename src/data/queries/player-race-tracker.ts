@@ -323,8 +323,12 @@ function candidateMeetsMinMinutes(
   );
 }
 
-/** Honest GP for synthetic calendars — never assume a full 82 without evidence. */
-function estimateOverlayGamesPlayed(candidate: RaceCandidate): number {
+/**
+ * Honest GP for synthetic calendars — never invent a slate without activity
+ * evidence (board GP or minutes). Returns null when unknown so the player is
+ * omitted rather than drawn on a fabricated calendar.
+ */
+function estimateOverlayGamesPlayed(candidate: RaceCandidate): number | null {
   if (
     candidate.gamesPlayed != null &&
     Number.isFinite(candidate.gamesPlayed) &&
@@ -340,8 +344,7 @@ function estimateOverlayGamesPlayed(candidate: RaceCandidate): number {
     // High-MPG stars returning late still get a short calendar.
     return Math.min(82, Math.max(1, Math.round(candidate.minutes / 32)));
   }
-  // Unknown activity — short synthetic slate, not a fake full season.
-  return 24;
+  return null;
 }
 
 async function mapInBatches<T, R>(
@@ -544,9 +547,10 @@ function lookupPinnedCandidate(
  * Build race curves from bundled rankings + baked game logs only.
  * Never calls live ESPN — required for Cloudflare Workers.
  *
- * Performance: rank + minutes-filter on the board first, then fetch game logs
- * only for finite top-N fields. "All players" synthesizes a shared calendar from
- * season totals (counting + overlay metrics) so the full continuous field renders.
+ * Performance: rank + minutes-filter on the board first, then fetch game logs.
+ * Prefer baked logs for every field size. Overlay calendars are last-resort only
+ * when logs are missing and board GP/minutes can size a trailing window — never
+ * a fabricated October→April injury path.
  */
 export const getPlayerRaceTrackerPayload = cache(
   async (
@@ -709,6 +713,9 @@ export const getPlayerRaceTrackerPayload = cache(
           return player;
         }
 
+        const overlayGames = estimateOverlayGamesPlayed(candidate);
+        if (overlayGames == null) return null;
+
         if (
           playerRaceUsesSeasonOverlay(metric) &&
           Number.isFinite(candidate.total)
@@ -724,7 +731,7 @@ export const getPlayerRaceTrackerPayload = cache(
             seasonTotal: candidate.total,
             startDate: overlayWindow.startDate,
             endDate: overlayWindow.endDate,
-            gamesPlayed: estimateOverlayGamesPlayed(candidate),
+            gamesPlayed: overlayGames,
             minutesPlayed: candidate.minutes,
           });
         }
@@ -742,7 +749,7 @@ export const getPlayerRaceTrackerPayload = cache(
             seasonTotal: candidate.total,
             startDate: overlayWindow.startDate,
             endDate: overlayWindow.endDate,
-            gamesPlayed: estimateOverlayGamesPlayed(candidate),
+            gamesPlayed: overlayGames,
             minutesPlayed: candidate.minutes,
           });
         }
@@ -779,22 +786,22 @@ export const getPlayerRaceTrackerPayload = cache(
           : `${def.label} curves pace the season total across games by minutes.`
         : def.kind === "season_rate" && merged.length
           ? overlayOnlyAllField
-            ? `${def.label} paths use baked game dates when available; missing logs fall back to a short trailing calendar sized by minutes/GP — never a fake full-season injury path.`
-            : `${def.label} paths follow games with minutes (or a short synthetic trailing calendar when logs are missing) and settle on the published season rate — not live PBP recompute.`
+            ? `${def.label} paths use baked game dates when available; missing logs fall back to a short trailing calendar sized by minutes/GP instead of a fake full-season injury path.`
+            : `${def.label} paths follow games with minutes (or a short synthetic trailing calendar when logs are missing) and ease toward the published season rate. This is not a live PBP recompute.`
           : def.kind === "counting" && overlayOnlyAllField && merged.length
             ? `${def.label} curves pace each player's season total across a shared calendar (full league field).`
             : undefined;
 
     const minutesNote =
       minMinutes > 0
-        ? `Min ${minMinutes.toLocaleString()} MP — players under that (or without known minutes) are hidden; pins exempt.`
+        ? `Min ${minMinutes.toLocaleString()} MP: players under that (or without known minutes) are hidden; pins exempt.`
         : undefined;
 
     const endNote =
       rankEnd === "both" && fieldSize !== "all"
         ? `Showing both ends of the board (${Math.ceil(fieldSize / 2)} highest + ${Math.floor(fieldSize / 2)} lowest by ${def.shortLabel}).`
         : rankEnd === "both" && fieldSize === "all"
-          ? `Full field (${merged.length} players) — positive and negative ${def.shortLabel} on one chart.`
+          ? `Full field (${merged.length} players) with positive and negative ${def.shortLabel} on one chart.`
           : rankEnd === "low" && fieldSize !== "all"
             ? `Showing the lowest ${fieldSize} by ${def.shortLabel}.`
             : rankEnd === "low" && fieldSize === "all"
@@ -805,8 +812,8 @@ export const getPlayerRaceTrackerPayload = cache(
 
     const capNote = fieldCapped
       ? rankEnd === "both"
-        ? `Capped at ${MAX_LOG_LOADS} players (both ends) for speed — tighten Min MP or choose All players for the full field.`
-        : `Showing ${MAX_LOG_LOADS} players for speed — tighten Min MP or choose All players for the full field.`
+        ? `Capped at ${MAX_LOG_LOADS} players (both ends) for speed. Tighten Min MP or choose All players for the full field.`
+        : `Showing ${MAX_LOG_LOADS} players for speed. Tighten Min MP or choose All players for the full field.`
       : undefined;
 
     const shortField =
@@ -814,7 +821,7 @@ export const getPlayerRaceTrackerPayload = cache(
       fieldCandidates.length > 0 &&
       merged.filter((p) => !isPinned(p)).length <
         Math.min(fieldSize, fieldCandidates.length)
-        ? `Showing ${merged.length} players — some ${
+        ? `Showing ${merged.length} players. Some ${
             rankEnd === "low"
               ? "trailers"
               : rankEnd === "both"

@@ -243,8 +243,8 @@ export function TimeMachineLanding({
           )}
         >
           Pick a season for a day-by-day snapshot, open landmark eras with
-          period atmosphere, or jump into the season games archive — then drill
-          into era-true teams and players.
+          period atmosphere, or jump into the season games archive. From there,
+          drill into era-true teams and players.
         </p>
       </header>
 
@@ -253,7 +253,7 @@ export function TimeMachineLanding({
           [
             {
               title: "Season snapshot",
-              body: "Choose a year below — standings, leaders, and that day’s games.",
+              body: "Choose a year below to see standings, leaders, and that day’s games.",
             },
             {
               title: "Landmark eras",
@@ -261,7 +261,7 @@ export function TimeMachineLanding({
             },
             {
               title: "Season games hub",
-              body: "Full schedule for a season — separate from the date snapshot.",
+              body: "Full schedule for a season, separate from the date snapshot.",
               href: `/history/${encodeURIComponent(archiveSeason)}`,
             },
           ] as const
@@ -442,8 +442,8 @@ export function TimeMachineLanding({
           </p>
         ) : (
           <p className="text-[12px] text-muted-foreground">
-            Type a start year or full season code, then Enter — or tap an era
-            chip.
+            Type a start year or full season code and press Enter, or tap an
+            era chip.
           </p>
         )}
       </form>
@@ -464,7 +464,7 @@ export function TimeMachineLanding({
               "mt-1 text-center text-muted-foreground"
             )}
           >
-            Curated eras with product coverage — open the snapshot or a related
+            Curated eras with product coverage. Open the snapshot or a related
             board.
           </p>
           <div className="mt-5 flex flex-col gap-6">

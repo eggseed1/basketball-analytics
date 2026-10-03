@@ -77,10 +77,44 @@ Fan and media lanes are **never blended** into one unexplained number.
 
 ---
 
+## Automated ingest (S1, started 2026-09-29)
+
+### News headlines (live)
+
+- Sources: publisher RSS feeds listed in `data/sentiment/sources/v1/news-feeds.json` (ESPN, CBS Sports, Yahoo Sports, RealGM wiretap). Headline + first 280 characters of the summary are scored; full articles are never fetched.
+- Stored per item in `data/sentiment/ingest/v1/news/YYYY-MM.jsonl`: headline, link, outlet, publish time, tone score, valence hits, topic tags, resolved player/team ids. The summary text is not stored. Rows dedupe by canonical link, so each run extends the series.
+- Scorer: `headline-lexicon-v1` (`src/sentiment/headline-lexicon.ts`) = AFINN-165 valences + basketball overrides + two-token negation; resolved player names are masked before scoring.
+- Entity resolution (`src/sentiment/headline-entities.ts`): full names always; a lone surname only when unique on current rosters and not an ordinary word; a short nickname list; team nicknames from the headline only.
+- Other-sport items are kept but flagged `nba: false` and excluded from every lane.
+- Floor: a headline lane needs **3 headlines in the trailing 7 days** (`manifest.ingest.headlineFloor`). The 50-mention floor above was sized for social posts and would hide every headline lane. Below the floor the lane is absent (blank), never neutral.
+
+### Reddit (built, waiting on credentials)
+
+- `npm run sentiment:ingest:reddit` uses the official OAuth API (app-only `client_credentials`) with `REDDIT_CLIENT_ID` / `REDDIT_CLIENT_SECRET`. Without them it prints a notice and exits 0.
+- Approved list and listing caps: `data/sentiment/sources/v1/reddit.json` (r/nba + 30 team subreddits; top/week 100 + hot 50). Stickied, NSFW, removed, game-thread and daily-thread posts are skipped.
+- Stored: post id, subreddit, permalink, created time, upvotes, comment count, tone score, topics, resolved ids. **Titles are not stored** (retention rule above).
+- Floor: 5 posts in the trailing 7 days.
+
+### Lane provenance
+
+Every lane carries `origin` (`curated` | `headlines` | `reddit`) and `asOf`. Automated lanes replace curated ones only when they clear their floor. Rules that follow from mixing sources:
+
+- Fan vs media gaps are computed only when both lanes are curated or both are measured.
+- Team roster rollups average curated lanes only; team media lanes come from headlines naming the team.
+- League mood windows show real points only. The old backward extrapolation for 30d/90d was removed.
+- Trend (`priorScore`) is null until the previous 7-day window also clears the floor.
+
+### Evaluation status
+
+`headline-lexicon-v1` has **not** been evaluated against the gates above (no 500-mention labeled set yet). Every surface that shows headline tone says so in plain words. Treat it as S1 exploratory until the gate passes.
+
 ## Build pipeline
 
 ```bash
-# Rebuild curated snapshot from seeds + observations (writes data/ AND runtime bundle)
+# Pull headlines + Reddit (skips without creds), then rebuild
+npm run sentiment:refresh
+
+# Rebuild snapshot from seeds + observations + ingest (writes data/ AND runtime bundle)
 npm run sentiment:build
 
 # Deploy-time copy only (if data/snapshot already fresh)
@@ -91,6 +125,7 @@ Inputs:
 
 - `data/sentiment/seeds/v1/` — manifest, pilot roster, hand-crafted profiles, league mood
 - `data/sentiment/observations/v1/*.json` — raw observation batches (see `_template.example.json`)
+- `data/sentiment/ingest/v1/{news,reddit}/*.jsonl` — automated ingest stores
 - `data/movement-center/v1/snapshot.json` — trade-resolution hygiene
 
 Outputs:

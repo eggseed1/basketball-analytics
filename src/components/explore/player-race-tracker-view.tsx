@@ -15,6 +15,7 @@ import {
   buildPlayerRaceChartRows,
   formatPlayerRaceValue,
   getPlayerRaceMetricDef,
+  pickPlayerRaceChartPlayers,
   playerRaceIsRateMetric,
   playerRaceModeLabel,
   playerRaceYAxisDomain,
@@ -125,22 +126,43 @@ export function PlayerRaceTrackerView({
     return next;
   }, [selectedPlayerIds, teamPlayerIds]);
 
+  const chartKeepIds = useMemo(() => {
+    const next = new Set(effectiveSelectedIds);
+    for (const id of pinIds) next.add(id);
+    for (const player of deferredPlayers) {
+      if (
+        pinIds.includes(player.playerId) ||
+        (player.nbaId != null && pinIds.includes(player.nbaId)) ||
+        (player.espnId != null && pinIds.includes(player.espnId))
+      ) {
+        next.add(player.playerId);
+      }
+    }
+    return next;
+  }, [deferredPlayers, effectiveSelectedIds, pinIds]);
+
+  const chartPlayers = useMemo(() => {
+    // Explicit "All players" must chart the full payload — do not sample.
+    if (payload.fieldSize === "all") return deferredPlayers;
+    return pickPlayerRaceChartPlayers(deferredPlayers, chartKeepIds);
+  }, [chartKeepIds, deferredPlayers, payload.fieldSize]);
+
   const chartRows = useMemo(
     () =>
-      buildPlayerRaceChartRows(deferredPlayers, chartWindow, {
+      buildPlayerRaceChartRows(chartPlayers, chartWindow, {
         forwardFill: !playerRaceIsRateMetric(payload.metric),
       }),
-    [deferredPlayers, chartWindow, payload.metric]
+    [chartPlayers, chartWindow, payload.metric]
   );
 
   const yDomain = useMemo(
     () =>
       playerRaceYAxisDomain(
         chartRows,
-        deferredPlayers.map((player) => player.playerId),
+        chartPlayers.map((player) => player.playerId),
         payload.metric
       ),
-    [chartRows, payload.metric, deferredPlayers]
+    [chartRows, payload.metric, chartPlayers]
   );
 
   const filteredLeaders = useMemo(() => {
@@ -224,6 +246,9 @@ export function PlayerRaceTrackerView({
         {payload.players.length} players ·{" "}
         {playerRaceModeLabel(payload.metric)}{" "}
         {payload.metricLabel.toLowerCase()}
+        {chartPlayers.length < deferredPlayers.length
+          ? ` · charting ${chartPlayers.length} lines (pins/selection always included)`
+          : ""}
         {getPlayerRaceMetricDef(payload.metric).description
           ? ` · ${getPlayerRaceMetricDef(payload.metric).description}`
           : ""}
@@ -235,7 +260,7 @@ export function PlayerRaceTrackerView({
         </p>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_240px]">
+      <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(200px,240px)]">
         <div className="sports-card overflow-hidden p-3 sm:p-4">
           <div className="mb-3 flex min-h-9 flex-wrap items-center gap-2">
             {effectiveSelectedIds.size ? (
@@ -299,16 +324,15 @@ export function PlayerRaceTrackerView({
               </>
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>
-                Click a line or the side list to highlight players. Use the team
-                dropdown or Pin above to focus a roster.
+                Click a line or the side list to highlight players.
               </p>
             )}
           </div>
 
-          <div className="rounded-lg bg-secondary/35 p-1 dark:bg-black/25">
+          <div className="rounded-lg bg-secondary/35 p-1 dark:bg-secondary/60">
             <PlayerRaceTrackerChart
               rows={chartRows}
-              players={deferredPlayers}
+              players={chartPlayers}
               selectedPlayerIds={effectiveSelectedIds}
               onSelectPlayer={togglePlayer}
               yDomain={yDomain}
@@ -333,7 +357,7 @@ export function PlayerRaceTrackerView({
           </div>
         </div>
 
-        <aside className="sports-card flex max-h-[min(560px,70vh)] flex-col overflow-hidden p-3">
+        <aside className="sports-card flex max-h-[min(560px,70vh)] flex-col overflow-hidden p-3 md:sticky md:top-20">
           <div className="mb-2 flex items-center justify-between gap-2">
             <h2 className={cn(type.bodySm, "font-bold")}>
               {rankEnd === "low"
@@ -396,14 +420,22 @@ export function PlayerRaceTrackerView({
                       >
                         {index + 1}
                       </span>
-                      <PlayerHeadshot
-                        playerId={player.playerId}
-                        espnId={player.espnId}
-                        nbaId={player.nbaId}
-                        name={player.displayName}
-                        teamKey={player.teamId}
-                        size="xs"
-                      />
+                      {selected || pinned || onTeam || index < 24 ? (
+                        <PlayerHeadshot
+                          playerId={player.playerId}
+                          espnId={player.espnId}
+                          nbaId={player.nbaId}
+                          name={player.displayName}
+                          teamKey={player.teamId}
+                          size="xs"
+                        />
+                      ) : (
+                        <span
+                          className="size-5 shrink-0 rounded-full border border-border/60"
+                          style={{ backgroundColor: color }}
+                          aria-hidden
+                        />
+                      )}
                       <span className="min-w-0 flex-1">
                         <span
                           className={cn(

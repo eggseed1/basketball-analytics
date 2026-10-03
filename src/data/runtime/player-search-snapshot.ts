@@ -69,6 +69,45 @@ export function getPlayerSearchIndexForSeason(
   return rows;
 }
 
+/** Punctuation-blind key: "Ed O'Bannon", "ed obannon" and "ED O BANNON" match. */
+function looseNameKey(name: string): string {
+  return String(name ?? "")
+    .normalize("NFKD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "");
+}
+
+let byLooseName: Map<string, PlayerSearchIndexRow[]> | null = null;
+
+/**
+ * Index row for a name typed without its punctuation (name-shaped routes such
+ * as `bref:ed obannon`). With a season, prefers the player active that year so
+ * fathers and sons resolve apart.
+ */
+export function findPlayerSearchRowByName(
+  name: string,
+  season?: string | null
+): PlayerSearchIndexRow | null {
+  if (!byLooseName) {
+    byLooseName = new Map();
+    for (const row of getPlayerSearchIndex()) {
+      const key = looseNameKey(row.name);
+      if (!key) continue;
+      const list = byLooseName.get(key) ?? [];
+      list.push(row);
+      byLooseName.set(key, list);
+    }
+  }
+  const rows = byLooseName.get(looseNameKey(name)) ?? [];
+  if (rows.length <= 1 || !season) return rows[0] ?? null;
+  return (
+    rows.find((r) => (r.firstSeason ?? r.season) <= season && season <= r.season) ??
+    rows[0] ??
+    null
+  );
+}
+
 export function playerSearchSnapshotMeta() {
   return {
     version: data.version ?? 0,

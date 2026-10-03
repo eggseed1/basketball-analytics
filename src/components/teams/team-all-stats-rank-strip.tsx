@@ -55,7 +55,7 @@ export function TeamAllStatsRankStrip({
             League ranks (board)
           </h3>
           <p className={cn(type.caption, "text-muted-foreground")}>
-            Same season board as Overview — missing feeds stay blank, not 0.
+            Same season board as Overview. Missing feeds stay blank, not 0.
           </p>
         </div>
         <div className="flex flex-wrap gap-3">

@@ -4,7 +4,13 @@ import { useState } from "react";
 
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
 import {
+  formatSentimentDate,
+  LaneOriginTag,
+  sentimentPct,
+} from "@/components/sentiment/sentiment-source";
+import {
   SENTIMENT_WINDOW_OPTIONS,
+  type CuratedSentimentLane,
   type SentimentMoodSeries,
   type SentimentWindowId,
 } from "@/sentiment/curated-types";
@@ -38,11 +44,55 @@ function WindowChip({
   );
 }
 
+function MoodPanel({
+  title,
+  color,
+  lane,
+  points,
+}: {
+  title: string;
+  color: string;
+  lane: CuratedSentimentLane;
+  points: SentimentMoodSeries["fan"];
+}) {
+  const measured = lane.origin && lane.origin !== "curated";
+  const total = points.reduce((sum, p) => sum + (p.count ?? 0), 0);
+  return (
+    <div className="sports-card flex flex-col gap-2 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <div className="flex items-center gap-2">
+          <h3 className={cn(type.caption, "font-semibold text-foreground")}>{title}</h3>
+          <LaneOriginTag lane={lane} />
+        </div>
+        <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
+          {sentimentPct(lane.score)}
+          {measured && total ? ` · ${total.toLocaleString()} ${lane.origin === "reddit" ? "posts" : "headlines"}` : ""}
+        </span>
+      </div>
+      <SentimentTrendChart
+        label={title}
+        color={color}
+        points={points}
+        countLabel={lane.origin === "reddit" ? "posts" : "headlines"}
+        showLabel={false}
+      />
+      {!measured ? (
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Curated values from {formatSentimentDate(points[0]?.date)} to{" "}
+          {formatSentimentDate(lane.asOf)}. Only those days exist, so longer windows show the same points.
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 export function LeagueMoodCharts({
   moodSeriesByWindow,
+  moodLanes,
   defaultWindow = "7d",
 }: {
   moodSeriesByWindow: Record<SentimentWindowId, SentimentMoodSeries>;
+  moodLanes: { fan: CuratedSentimentLane; media: CuratedSentimentLane };
   defaultWindow?: SentimentWindowId;
 }) {
   const [window, setWindow] = useState<SentimentWindowId>(defaultWindow);
@@ -51,7 +101,12 @@ export function LeagueMoodCharts({
   return (
     <section className="flex flex-col gap-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className={cn(type.bodySm, "font-bold")}>League mood · {window}</h2>
+        <div className="flex flex-col gap-0.5">
+          <h2 className={cn(type.bodySm, "font-bold")}>League mood · {window}</h2>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            50% is neutral. The thick line is a 3-day average once there are enough days.
+          </p>
+        </div>
         <div className="flex flex-wrap items-center gap-1.5" role="group" aria-label="Time window">
           {SENTIMENT_WINDOW_OPTIONS.map((option) => (
             <WindowChip
@@ -65,20 +120,13 @@ export function LeagueMoodCharts({
         </div>
       </div>
       <div className="grid gap-4 lg:grid-cols-2">
-        <div className="sports-card p-4">
-          <SentimentTrendChart
-            label="Fan mood"
-            color="rgb(59 130 246)"
-            points={series.fan}
-          />
-        </div>
-        <div className="sports-card p-4">
-          <SentimentTrendChart
-            label="Media mood"
-            color="rgb(168 85 247)"
-            points={series.media}
-          />
-        </div>
+        <MoodPanel title="Fan mood" color="rgb(59 130 246)" lane={moodLanes.fan} points={series.fan} />
+        <MoodPanel
+          title="Media mood"
+          color="rgb(168 85 247)"
+          lane={moodLanes.media}
+          points={series.media}
+        />
       </div>
     </section>
   );

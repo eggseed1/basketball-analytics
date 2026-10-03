@@ -118,39 +118,52 @@
   --sidebar-ring: #0071e3;
 }
 
+/*
+ * Dark palette: tinted neutrals on one cool hue (OKLCH h≈268, chroma ≤0.012)
+ * with even lightness steps per elevation. Canvas is lifted off pure black so
+ * glass has something to sample and white text doesn't halo.
+ *   canvas L0.16 · card L0.21 · raised L0.25 · secondary L0.27 · active L0.315
+ * Text: fg L0.955 (15.4:1 on card), muted L0.735 (7.5:1 on card).
+ */
 .dark {
   color-scheme: dark;
-  --background: #000000;
-  --foreground: #f5f5f7;
-  --card: #1c1c1e;
-  --card-foreground: #f5f5f7;
-  --popover: #1c1c1e;
-  --popover-foreground: #f5f5f7;
-  --primary: #f5f5f7;
-  --primary-foreground: #1d1d1f;
-  --secondary: #2c2c2e;
-  --secondary-foreground: #f5f5f7;
-  --muted: #2c2c2e;
-  --muted-foreground: #98989d;
-  --accent: #2c2c2e;
-  --accent-foreground: #f5f5f7;
-  --destructive: #ff453a;
-  --border: rgb(255 255 255 / 12%);
-  --input: #2c2c2e;
-  --ring: #0a84ff;
-  --chart-1: #0a84ff;
-  --chart-2: #f5f5f7;
-  --chart-3: #30d158;
-  --chart-4: #ff9f0a;
-  --chart-5: #bf5af2;
-  --sidebar: #1c1c1e;
-  --sidebar-foreground: #f5f5f7;
-  --sidebar-primary: #0a84ff;
+  --background: #0c0d11;
+  --foreground: #eff0f3;
+  --card: #17191d;
+  --card-foreground: #eff0f3;
+  --popover: #202227;
+  --popover-foreground: #eff0f3;
+  --primary: #eff0f3;
+  --primary-foreground: #17191d;
+  --secondary: #24262b;
+  --secondary-foreground: #eff0f3;
+  --muted: #24262b;
+  --muted-foreground: #a6a9b1;
+  --accent: #24262b;
+  --accent-foreground: #eff0f3;
+  --destructive: #ff5a4f;
+  --border: rgb(255 255 255 / 9%);
+  --input: #24262b;
+  --ring: #3d94ff;
+  --chart-1: #3d94ff;
+  --chart-2: #eff0f3;
+  --chart-3: #3fd26a;
+  --chart-4: #ffa726;
+  --chart-5: #c07af0;
+  --sidebar: #17191d;
+  --sidebar-foreground: #eff0f3;
+  --sidebar-primary: #3d94ff;
   --sidebar-primary-foreground: #ffffff;
-  --sidebar-accent: #2c2c2e;
-  --sidebar-accent-foreground: #f5f5f7;
-  --sidebar-border: rgb(255 255 255 / 12%);
-  --sidebar-ring: #0a84ff;
+  --sidebar-accent: #24262b;
+  --sidebar-accent-foreground: #eff0f3;
+  --sidebar-border: rgb(255 255 255 / 9%);
+  --sidebar-ring: #3d94ff;
+  /* Glass fill channels, solved so the veil over its backdrop lands on the
+     next opaque step: 72% --glass-rgb over canvas = card; 88% raised over
+     card = raised. Opaque washes mixed from --card then sit flush in glass. */
+  --glass-rgb: 27 30 34;
+  --glass-raised-rgb: 33 35 40;
+  --active-fill: #2f3137;
 }
 
 @layer base {
@@ -195,7 +208,7 @@
   }
   /*
    * Nested soft surfaces — light uses translucent white lift; dark mirrors
-   * that hierarchy with secondary fills (#2c2c2e on #1c1c1e), not washed white/10.
+   * that hierarchy with the secondary step on card, not washed white/10.
    */
   .frost-surface {
     background-color: rgb(255 255 255 / 40%);
@@ -320,6 +333,13 @@
   box-shadow: inset 3px 0 0 0 var(--team-primary, transparent);
 }
 
+/* Black-inked marks (SAS, BKN, POR) vanish on the dark canvas; a hairline
+   light edge traces them without restyling colorful logos. */
+.dark .team-logo-img {
+  filter: drop-shadow(0 0 0.6px rgb(255 255 255 / 55%))
+    drop-shadow(0 0 2px rgb(255 255 255 / 10%));
+}
+
 .sports-card {
   @apply rounded-md border min-w-0 max-w-full;
   background: var(--material-standard-bg);
@@ -390,7 +410,7 @@ html[data-surface="glass"] .bg-card {
 }
 
 html.dark[data-surface="glass"] .bg-card {
-  background-color: rgb(28 28 30 / 72%);
+  background-color: rgb(var(--glass-rgb) / 72%);
 }
 
 .sports-pill {
@@ -422,7 +442,7 @@ html.dark[data-surface="glass"] .bg-card {
 }
 
 .dark .glass-pill-active {
-  background: #3a3a3c;
+  background: var(--active-fill);
   border-color: rgb(255 255 255 / 18%);
   color: var(--foreground);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 14%);
@@ -484,7 +504,7 @@ html.dark[data-surface="glass"] .bg-card {
 
 .dark .select-popup,
 .dark .hover-frost {
-  background: rgb(44 44 46 / 88%);
+  background: rgb(var(--glass-raised-rgb) / 88%);
   border-color: rgb(255 255 255 / 14%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
@@ -566,7 +586,7 @@ html:not([data-surface="glass"]) .board-scroll-frame {
 }
 
 .dark .board-scroll-frame > .board-scroll-host {
-  background: rgb(28 28 30 / 12%);
+  background: rgb(var(--glass-rgb) / 12%);
 }
 
 html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
@@ -699,7 +719,7 @@ html:not([data-surface="glass"]) .board-scroll-frame > .board-scroll-host {
 }
 
 .dark .sports-card.board-scroll-host {
-  background: rgb(28 28 30 / 28%);
+  background: rgb(var(--glass-rgb) / 28%);
 }
 
 html:not([data-surface="glass"]) .sports-card.board-scroll-host {
@@ -721,7 +741,7 @@ html:not([data-surface="glass"]) .sports-card.board-scroll-host {
 
 .dark .board-sticky-frost,
 .dark .board-sticky-frost-surface {
-  background: rgb(44 44 46 / 82%);
+  background: rgb(var(--glass-raised-rgb) / 82%);
   border-right-color: rgb(255 255 255 / 14%);
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),
@@ -765,7 +785,7 @@ tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
 
 .dark tr:hover > .board-sticky-frost,
 .dark tr:hover > td.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(44 44 46 / 48%);
+  background: rgb(var(--glass-raised-rgb) / 48%);
 }
 
 html:not([data-surface="glass"]) tr:hover > .board-sticky-frost,
@@ -804,7 +824,7 @@ html:not([data-surface="glass"]) .board-scroll-host tbody tr.board-row-active {
   tr.board-row-active
   > td.board-sticky-frost
   .board-sticky-frost-surface {
-  background: rgb(44 44 46 / 52%);
+  background: rgb(var(--glass-raised-rgb) / 52%);
 }
 
 html:not([data-surface="glass"])
@@ -830,7 +850,7 @@ html:not([data-surface="glass"])
 }
 
 .dark .board-scroll-host thead th {
-  background: rgb(28 28 30 / 42%);
+  background: rgb(var(--glass-rgb) / 42%);
   border-bottom-color: rgb(255 255 255 / 12%);
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 12%);
 }
@@ -858,7 +878,7 @@ html:not([data-surface="glass"]) .board-scroll-host thead th {
 
 .dark .board-scroll-host thead th.board-sticky-frost,
 .dark .board-scroll-host thead th.board-sticky-frost .board-sticky-frost-surface {
-  background: rgb(28 28 30 / 38%);
+  background: rgb(var(--glass-rgb) / 38%);
   border-right-color: rgb(255 255 255 / 16%);
   border-bottom-color: rgb(255 255 255 / 12%);
   box-shadow:
@@ -890,7 +910,7 @@ html:not([data-surface="glass"])
 
 html.dark .site-search-field,
 html.dark .color-scheme-switch {
-  background: rgb(44 44 46 / 82%);
+  background: rgb(var(--glass-raised-rgb) / 82%);
   border-color: rgb(255 255 255 / 12%);
 }
 
@@ -926,22 +946,27 @@ html:not([data-surface="glass"]) .color-scheme-switch {
     );
 }
 
+/* Dark: lower chroma than light (big saturated fields vibrate on dark) and an
+   eased mid stop, since two-stop radials band visibly at low lightness. */
 .dark .page-atmosphere {
   background:
     radial-gradient(
       ellipse 110% 70% at 0% -6%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 46%, transparent),
-      transparent 72%
+      color-mix(in oklab, var(--atmosphere-a, transparent) 34%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 14%, transparent) 36%,
+      transparent 74%
     ),
     radial-gradient(
       ellipse 100% 65% at 100% 4%,
-      color-mix(in oklab, var(--atmosphere-b, transparent) 40%, transparent),
-      transparent 70%
+      color-mix(in oklab, var(--atmosphere-b, transparent) 28%, transparent),
+      color-mix(in oklab, var(--atmosphere-b, transparent) 11%, transparent) 36%,
+      transparent 72%
     ),
     radial-gradient(
       ellipse 80% 50% at 50% 108%,
-      color-mix(in oklab, var(--atmosphere-a, transparent) 28%, transparent),
-      transparent 74%
+      color-mix(in oklab, var(--atmosphere-a, transparent) 20%, transparent),
+      color-mix(in oklab, var(--atmosphere-a, transparent) 8%, transparent) 40%,
+      transparent 76%
     );
 }
 
@@ -1038,8 +1063,8 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   border-color: rgb(255 255 255 / 15%);
   background: linear-gradient(
     145deg,
-    color-mix(in oklab, var(--drbl-blue) 48%, #1c1c1e),
-    color-mix(in oklab, var(--drbl-red) 32%, #1c1c1e)
+    color-mix(in oklab, var(--drbl-blue) 48%, var(--card)),
+    color-mix(in oklab, var(--drbl-red) 32%, var(--card))
   );
   box-shadow:
     inset 0 1px 0 rgb(255 255 255 / 12%),

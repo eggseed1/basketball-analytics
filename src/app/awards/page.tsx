@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Awards",
   description:
-    "NBA award history — championships, MVP, Finals MVP, DPOY, and more.",
+    "NBA award history: championships, MVP, Finals MVP, DPOY, and more.",
 };
 
 const GROUPS: Array<{
@@ -29,7 +29,7 @@ const GROUPS: Array<{
   },
   {
     title: "All-league & All-Star",
-    blurb: "Team selections and midseason showcase.",
+    blurb: "Team selections and the midseason All-Star Game.",
     slugs: ["all-nba", "all-defense", "all-star"],
   },
   {
@@ -47,7 +47,7 @@ export default function AwardsIndexPage() {
       <PageHeader
         eyebrow="Awards"
         title="Trophy case"
-        subtitle="League award history. Player pages show each star’s hardware — open a trophy for winners, dynasties, and eras."
+        subtitle="League award history. Player pages show each star’s hardware. Open a trophy to see its winners, dynasties, and eras."
       />
 
       {GROUPS.map((group) => (

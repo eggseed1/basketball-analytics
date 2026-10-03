@@ -33,8 +33,8 @@ function FaBody() {
     <div className="flex flex-col gap-4">
       <h2 className="text-lg font-semibold">Free agency</h2>
       <p className="text-sm text-muted-foreground">
-        Cap room: ${cap.capRoomM.toFixed(1)}M. Offer below uses mid-level-ish
-        defaults - tune salary/years then sign.
+        Cap room: ${cap.capRoomM.toFixed(1)}M. The offer below uses
+        mid-level-ish defaults. Tune salary and years, then sign.
       </p>
       <div className="flex flex-wrap gap-3">
         <div className="flex flex-col gap-1">

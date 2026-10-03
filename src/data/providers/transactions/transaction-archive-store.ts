@@ -239,6 +239,7 @@ export async function loadTransactionArchive(
 
   // Overlay recent ESPN pages so Home / Offseason stay fresh on CF without
   // a daily redeploy. Failures fall back to the static archive only.
+  if (process.env.DRBL_LIVE_TRANSACTIONS === "off") return base;
   try {
     const {
       fetchLiveEspnTransactionRows,

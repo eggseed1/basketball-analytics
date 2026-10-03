@@ -6,6 +6,7 @@
 import type { PlayerSeason } from "@/data/types";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { hustlePerGame } from "@/data/transformers/hustle-stats";
+import { maskUnrecordedEraStats } from "@/data/transformers/stat-eras";
 import { formatNumber, formatPct } from "@/lib/format";
 import { teamChartColor } from "@/lib/nba-brand";
 import { findSimilarForMetric } from "@/lib/player-stat-comps";
@@ -91,15 +92,17 @@ export function defaultPercentileMetricId(
 }
 
 function percentileOf(value: number, pool: number[]): number {
-  if (!pool.length || !Number.isFinite(value)) return 50;
-  const below = pool.filter((v) => v < value).length;
-  return (below / pool.length) * 100;
+  const known = pool.filter((v) => Number.isFinite(v));
+  if (!known.length || !Number.isFinite(value)) return 50;
+  const below = known.filter((v) => v < value).length;
+  return (below / known.length) * 100;
 }
 
+/** NaN when the stat was not published; cached rows carry that as null. */
 function perGame(row: PlayerSeason, key: keyof PlayerSeason): number {
   const raw = row[key];
-  const total = typeof raw === "number" ? raw : 0;
-  return total / Math.max(1, row.gamesPlayed);
+  if (typeof raw !== "number") return Number.NaN;
+  return raw / Math.max(1, row.gamesPlayed);
 }
 
 export const PLAYER_PERCENTILE_QUALIFY = {
@@ -207,6 +210,30 @@ export function buildPlayerPercentileMetrics(
      */
     light?: boolean;
   }
+): PercentileMetric[] {
+  // Old-era boards send 0 for stats nobody recorded yet; rank those as blank.
+  const mask = (rows: PlayerSeason[]) => rows.map(maskUnrecordedEraStats);
+  return buildMaskedPercentileMetrics(
+    seasonStats ? maskUnrecordedEraStats(seasonStats) : null,
+    mask(career),
+    mask(peers),
+    mask(historicalPeers),
+    focalPlayerId,
+    peersBySeason
+      ? new Map([...peersBySeason].map(([season, rows]) => [season, mask(rows)]))
+      : undefined,
+    options
+  );
+}
+
+function buildMaskedPercentileMetrics(
+  seasonStats: PlayerSeason | null,
+  career: PlayerSeason[],
+  peers: PlayerSeason[],
+  historicalPeers: PlayerSeason[],
+  focalPlayerId: string,
+  peersBySeason?: Map<string, PlayerSeason[]>,
+  options?: { light?: boolean }
 ): PercentileMetric[] {
   if (!seasonStats) return [];
   const light = Boolean(options?.light);

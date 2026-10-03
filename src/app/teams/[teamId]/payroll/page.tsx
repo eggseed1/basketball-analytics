@@ -1,7 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import { TeamContractsPageView } from "@/components/teams/team-contracts-view";
 import { TeamPayrollView } from "@/components/teams/team-payroll-view";
+import { getTeamContracts } from "@/data/queries/team-contracts";
 import {
   buildTeamPayrollPresentation,
   isCurrentFrontOfficeSeason,
@@ -51,6 +53,25 @@ export default async function TeamPayrollPage({
   }
 
   const slice = await resolveTeamFrontOfficeSlice(franchiseId);
+  const contracts = getTeamContracts(franchiseId);
+  if (contracts) {
+    const presentation = slice ? buildTeamPayrollPresentation(slice) : null;
+    const teamName = presentation?.team.displayName ?? contracts.code;
+    return (
+      <main className="mx-auto max-w-6xl px-4 py-8">
+        <p className="mb-4 text-sm">
+          <Link href={`/teams/${franchiseId}`} className="underline">
+            ← {teamName}
+          </Link>
+          {" · "}
+          <Link href={`/teams/${franchiseId}/draft-assets`} className="underline">
+            Draft picks &amp; rights
+          </Link>
+        </p>
+        <TeamContractsPageView teamName={teamName} contracts={contracts} capContext={presentation?.capContext} />
+      </main>
+    );
+  }
   if (!slice) {
     return (
       <main className="mx-auto max-w-5xl px-4 py-10">

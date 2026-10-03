@@ -5,7 +5,7 @@ import { loadTradeSimulatorBoard } from "@/data/queries/trade-simulator";
 export const metadata = {
   title: "Trade simulator",
   description:
-    "Build two-team swaps with CBA salary-matching package suggestions and DRBL impact. Salary-fit sketch only — not a full legality ruling.",
+    "Build two-team swaps with CBA salary-matching package suggestions and DRBL impact. This is a salary-fit sketch, not a full legality ruling.",
 };
 
 export default async function TradeSimulatorPage({
@@ -30,7 +30,7 @@ export default async function TradeSimulatorPage({
       <PageHeader
         eyebrow="Teams"
         title="Trade simulator"
-        subtitle="Current rosters and payroll, scored with the last completed season’s DRBL / rates. Salary-match sketch only — not a legality ruling."
+        subtitle="Current rosters and payroll, scored with the last completed season’s DRBL / rates. This is a salary-match sketch, not a legality ruling."
       />
       {board ? (
         <TradeSimulator

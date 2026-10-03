@@ -6,6 +6,7 @@ import { teamComparePath } from "@/analytics/compare-team-seasons";
 import type { TeamSeasonComparison } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
 import type { TeamSeasonRanking } from "@/analytics/rank-team-seasons";
+import { CompareEmptyState } from "@/components/compare/compare-empty-state";
 import { ComparePicker } from "@/components/compare/compare-picker";
 import { PlayerCompareView } from "@/components/compare/player-compare-view";
 import {
@@ -32,6 +33,7 @@ import {
 } from "@/data/providers/historical/season-range";
 import { preferBundledProductDataOnEdge } from "@/data/providers/nba/runtime-policy";
 import { hasRuntimeTeamBoard } from "@/data/runtime/team-board-snapshot";
+import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
   CAREER_COMPARE_KEY,
   buildCareerAverageRow,
@@ -47,7 +49,7 @@ import type { PlayerSeason } from "@/data/types";
 export const metadata = {
   title: "Compare",
   description:
-    "Side-by-side NBA player and team comparisons - dimension edges, no opaque scores.",
+    "Side-by-side NBA player and team comparisons that show edges by dimension instead of an opaque overall score.",
 };
 
 interface ComparePageProps {
@@ -298,7 +300,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
           <PageHeader
             title="Compare"
-            subtitle="Rank a franchise’s seasons via pairwise Team Season Compare - Copeland aggregation, no opaque team score."
+            subtitle="Rank a franchise’s seasons with pairwise Team Season Compare and Copeland aggregation instead of an opaque team score."
           >
             <p className={cn(type.bodySm, "font-semibold")}>
               <Link
@@ -406,7 +408,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
         <PageHeader
           title="Compare"
-          subtitle="Team season compare and team vs team - transparent board metrics, category plurality, no opaque team score."
+          subtitle="Team season compare and team vs team. Both use transparent board metrics and category plurality instead of an opaque team score."
         >
           <p className={cn(type.bodySm, "font-semibold")}>
             <Link
@@ -551,11 +553,14 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
         })
       : null;
 
+  const aPortraitUrl = aId ? getPlayerPortraitUrl(aId) : null;
+  const bPortraitUrl = bId ? getPlayerPortraitUrl(bId) : null;
+
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
       <PageHeader
         title="Compare"
-        subtitle="Search any player (active or retired). Default is career average — switch each side to a single season when you want year-true percentiles."
+        subtitle="Search any player (active or retired). Default is career average. Switch either side to a single season for year-true percentiles."
       >
         <p className={cn(type.bodySm, "font-semibold")}>
           <span>Players</span>
@@ -577,19 +582,13 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           bName={bRow?.playerName ?? bNameParam}
           seasonA={aId ? seasonA : undefined}
           seasonB={bId ? seasonB : undefined}
+          aPortraitUrl={aPortraitUrl}
+          bPortraitUrl={bPortraitUrl}
         />
       </Suspense>
 
       {!aId || !bId ? (
-        <p
-          className={cn(
-            type.bodySm,
-            "rounded-md border border-dashed border-border px-4 py-10 text-center text-muted-foreground"
-          )}
-        >
-          Search for Player A and Player B. Career averages load by default;
-          pick a season on either side for a year-true matchup.
-        </p>
+        <CompareEmptyState />
       ) : !result ? (
         <p
           className={cn(
@@ -603,7 +602,11 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           {isCareerCompareKey(seasonB) ? " (career)" : ` (${seasonB})`}.
         </p>
       ) : (
-        <PlayerCompareView result={result} />
+        <PlayerCompareView
+          result={result}
+          aPortraitUrl={aPortraitUrl}
+          bPortraitUrl={bPortraitUrl}
+        />
       )}
     </main>
   );

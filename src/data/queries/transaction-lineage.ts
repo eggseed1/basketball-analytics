@@ -103,7 +103,7 @@ export async function getPlayerAcquisitionLineage(
       playerId,
       path: null,
       unavailableReason:
-        "Historical lineage unavailable — no canonical player-asset / transaction archive for this player.",
+        "Historical lineage unavailable: no canonical player-asset / transaction archive for this player.",
     };
   }
   return {

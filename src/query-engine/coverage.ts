@@ -76,7 +76,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage: "Derived from PTS/FGA/FTA on career & boards",
       reliable: true,
       sourceLabel: "Player-season board (derived)",
-      notes: "Computed from counting stats — not a separate historical feed.",
+      notes: "Computed from counting stats. It does not come from a separate historical feed.",
     },
     {
       metricId: "efg_pct",
@@ -138,7 +138,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "Verified historical impact (DARKO season-keyed)",
       notes:
-        "Season-keyed overlay only. Wrong-season asks must return unavailable — never stamp another year's DARKO onto the asked season.",
+        "Season-keyed overlay only. Wrong-season asks must return unavailable. Never stamp another year's DARKO onto the asked season.",
     },
     {
       metricId: "raptor",
@@ -150,7 +150,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "Verified historical impact (RAPTOR season-keyed)",
       notes:
-        "Season-keyed through 2021-22 only. Missing seasons stay missing — no BPM/LEBRON substitute.",
+        "Season-keyed through 2021-22 only. Missing seasons stay missing; BPM and LEBRON are never substituted.",
     },
     {
       metricId: "bpm",
@@ -161,7 +161,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "Basketball-Reference advanced (BPM)",
       notes:
-        "Season-true when the BRef advanced bake includes the season. Missing BPM stays unavailable — never invent 0.",
+        "Season-true when the BRef advanced bake includes the season. Missing BPM stays unavailable. DRBL never fills it with 0.",
     },
     {
       metricId: "drbl100",
@@ -173,7 +173,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "DRBL season overlay (validated ability)",
       notes:
-        "Only registry DRBL seasons. Requires valid estimate + identity join — never invent 0 or substitute DARKO.",
+        "Only registry DRBL seasons. Requires a valid estimate + identity join. Never invents 0 or substitutes DARKO.",
     },
     {
       metricId: "r1_points",
@@ -184,7 +184,7 @@ export function getAskMetricCoverageAudit(
       reliable: true,
       sourceLabel: "DRBL R1 Points (accounting / advanced)",
       notes:
-        "Underlying point-equivalent attribution — prefer WAR1 on the public surface. Null when unpublished.",
+        "Underlying point-equivalent attribution. Prefer WAR1 on the public surface. Null when unpublished.",
     },
     {
       metricId: "r1_win_eq",
@@ -225,7 +225,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage: "Diagnostic DRBL component",
       reliable: true,
       sourceLabel: "DRBL-P (diagnostic)",
-      notes: "Diagnostic only — does not sum with LN+B into DRBL/100.",
+      notes: "Diagnostic only. Does not sum with LN+B into DRBL/100.",
     },
     {
       metricId: "drbl_ln",
@@ -235,7 +235,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage: "Diagnostic DRBL component",
       reliable: true,
       sourceLabel: "DRBL-LN (diagnostic)",
-      notes: "Diagnostic only — does not sum with P+B into DRBL/100.",
+      notes: "Diagnostic only. Does not sum with P+B into DRBL/100.",
     },
     {
       metricId: "drbl_b",
@@ -245,7 +245,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage: "Diagnostic DRBL component",
       reliable: true,
       sourceLabel: "DRBL-B (diagnostic)",
-      notes: "Diagnostic only — does not sum with P+LN into DRBL/100.",
+      notes: "Diagnostic only. Does not sum with P+LN into DRBL/100.",
     },
     {
       metricId: "cpi",
@@ -255,7 +255,7 @@ export function getAskMetricCoverageAudit(
       playerCoverage: "Derived for Career Resume qualifying seasons",
       reliable: true,
       sourceLabel: "Career Resume (CPI)",
-      notes: "Documented composite from counting rates — not an impact metric.",
+      notes: "Documented composite from counting rates. It is not an impact metric.",
     },
     {
       metricId: "team_diff",
@@ -308,7 +308,7 @@ export function getAskCoverageGaps(now = new Date()): Array<{
       playerCoverage: "ESPN approx from counting; definitions vary",
       reliable: false,
       notes:
-        "Not exposed in ASK DRBL yet — ESPN-derived individual ORtg is approximate and not methodology-frozen.",
+        "Not exposed in ASK DRBL yet. ESPN-derived individual ORtg is approximate and not methodology-frozen.",
     },
     {
       label: "DRtg (player)",
@@ -317,7 +317,7 @@ export function getAskCoverageGaps(now = new Date()): Array<{
       playerCoverage: "Unavailable on ESPN athlete season boards",
       reliable: false,
       notes:
-        "Not exposed — ESPN does not publish individual DRtg; DRBL keeps the field missing (never fabricates 0).",
+        "Not exposed. ESPN does not publish individual DRtg; DRBL keeps the field missing (never fabricates 0).",
     },
     {
       label: "Net rating (player)",

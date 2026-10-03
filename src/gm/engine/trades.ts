@@ -69,7 +69,7 @@ export function evaluateTrade(
   if (toValue - fromValue < threshold) {
     return {
       ok: false,
-      reason: `${partner.abbr} rejects - not enough value for them.`,
+      reason: `${partner.abbr} rejects: not enough value for them.`,
       fromValue,
       toValue,
     };

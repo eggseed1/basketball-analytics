@@ -61,7 +61,7 @@ function compareShareText(result: PlayerComparisonResult, pageUrl: string) {
         ? result.seasonA
         : `${result.seasonA} vs ${result.seasonB}`
       : result.season ?? "compare";
-  return `${result.aName} vs ${result.bName} (${seasonBit}) — DRBL player compare\n${pageUrl}`;
+  return `${result.aName} vs ${result.bName} (${seasonBit}) · DRBL player compare\n${pageUrl}`;
 }
 
 function slugFileName(result: PlayerComparisonResult) {

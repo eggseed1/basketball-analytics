@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Gamefeed, type GamefeedView } from "@/components/sports/gamefeed";
 import type { GameSummary } from "@/data/types";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 function shiftMonth(key: string, delta: number) {
   const [y, m] = key.split("-").map(Number);
@@ -40,6 +41,6 @@ export function RuntimeScoreboardFallback(props: { view: GamefeedView; season: s
   }, [months, props.season]);
   if (failed) return <p className="sports-card p-6 text-[14px] text-muted-foreground">Schedule data is temporarily unavailable from both the server and browser feeds.</p>;
   if (!games.length) return <p className="sports-card p-6 text-[14px] text-muted-foreground">Loading NBA schedule…</p>;
-  const today = new Date().toISOString().slice(0,10);
+  const today = nbaTodayIso();
   return <Gamefeed view={props.view} season={props.season} monthKey={props.monthKey} weekStart={props.weekStart} weekEnd={props.weekEnd} monthGames={games.filter(g => g.gameDate.startsWith(props.monthKey))} weekGames={games.filter(g => g.gameDate >= props.weekStart && g.gameDate <= props.weekEnd)} upcomingGames={games.filter(g => g.gameDate >= today)} upcomingHasMore={false} />;
 }

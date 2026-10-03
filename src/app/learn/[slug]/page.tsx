@@ -1,14 +1,10 @@
 import { notFound } from "next/navigation";
 
+import { LearnPageFooter, learnEyebrow } from "@/components/learn/learn-page-footer";
 import { LearnTopicView } from "@/components/learn/learn-topic-view";
 import { StatGuideView } from "@/components/learn/stat-guide-view";
 import { AppLink } from "@/components/ui/app-link";
-import {
-  listAllLearnSlugs,
-  relatedLearnLinks,
-  resolveLearnPage,
-} from "@/content/learn/resolve";
-import { getLearnConcept } from "@/content/learn/registry";
+import { listAllLearnSlugs, resolveLearnPage } from "@/content/learn/resolve";
 
 export function generateStaticParams() {
   return listAllLearnSlugs().map((slug) => ({ slug }));
@@ -38,31 +34,10 @@ export default async function LearnStatPage({
 }) {
   const { slug } = await params;
   const page = resolveLearnPage(slug);
-  if (!page) notFound();
-  if (page.kind === "portal") notFound();
+  if (!page || page.kind === "portal") notFound();
 
-  const concept = getLearnConcept(
-    page.kind === "guide" ? page.guide.id : page.topic.id
-  );
-  const relatedFromConcept = relatedLearnLinks(concept?.relatedIds ?? []);
-  const seeInAction =
-    page.kind === "topic"
-      ? page.topic.seeInAction
-      : (concept?.seeInAction ?? []);
-
-  const others = listAllLearnSlugs()
-    .filter((s) => s !== slug)
-    .slice(0, 8)
-    .map((s) => {
-      const resolved = resolveLearnPage(s);
-      if (!resolved || resolved.kind === "portal") return null;
-      const label =
-        resolved.kind === "guide"
-          ? resolved.guide.shortName
-          : resolved.topic.shortName;
-      return { slug: s, label };
-    })
-    .filter(Boolean) as Array<{ slug: string; label: string }>;
+  const conceptId = page.kind === "guide" ? page.guide.id : page.topic.id;
+  const eyebrow = learnEyebrow(conceptId);
 
   return (
     <main className="site-shell flex flex-col gap-8 py-6 sm:py-8">
@@ -71,69 +46,24 @@ export default async function LearnStatPage({
           href="/learn"
           className="text-[14px] font-semibold text-muted-foreground underline-offset-4 hover:underline"
         >
-          All concepts
+          ← All terms
         </AppLink>
 
         {page.kind === "guide" ? (
-          <StatGuideView guide={page.guide} />
+          <StatGuideView guide={page.guide} eyebrow={eyebrow} />
         ) : (
-          <LearnTopicView topic={page.topic} />
+          <LearnTopicView topic={page.topic} eyebrow={eyebrow} />
         )}
 
-        {page.kind === "guide" && (relatedFromConcept.length || seeInAction.length) ? (
-          <section className="flex flex-col gap-4">
-            {relatedFromConcept.length ? (
-              <div>
-                <h2 className="mb-2 text-[16px] font-bold">Related concepts</h2>
-                <div className="flex flex-wrap gap-2">
-                  {relatedFromConcept.map((r) => (
-                    <AppLink
-                      key={r.href}
-                      href={r.href}
-                      className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold"
-                    >
-                      {r.label}
-                    </AppLink>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-            {seeInAction.length ? (
-              <div>
-                <h2 className="mb-2 text-[16px] font-bold">See it in DRBL</h2>
-                <ul className="flex flex-col gap-1.5">
-                  {seeInAction.map((a) => (
-                    <li key={a.href}>
-                      <AppLink
-                        href={a.href}
-                        className="text-[14px] font-semibold underline-offset-2 hover:underline"
-                      >
-                        {a.label} →
-                      </AppLink>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ) : null}
-          </section>
-        ) : null}
-
-        <section className="mb-8 flex flex-col gap-2">
-          <h2 className="text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-            More in Learn
-          </h2>
-          <div className="flex flex-wrap gap-2">
-            {others.map((o) => (
-              <AppLink
-                key={o.slug}
-                href={`/learn/${o.slug}`}
-                className="rounded-full bg-secondary px-3 py-1.5 text-[14px] font-semibold"
-              >
-                {o.label}
-              </AppLink>
-            ))}
-          </div>
-        </section>
+        {page.kind === "guide" ? (
+          <LearnPageFooter conceptId={conceptId} />
+        ) : (
+          <LearnPageFooter
+            conceptId={conceptId}
+            relatedIds={page.topic.relatedIds}
+            seeInAction={page.topic.seeInAction}
+          />
+        )}
       </div>
     </main>
   );

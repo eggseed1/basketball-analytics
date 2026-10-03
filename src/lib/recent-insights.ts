@@ -18,17 +18,77 @@ export type RecentInsightCategory =
   | "TREND · LAST 5"
   | "TREND · STREAK";
 
+/** Which number the card is about; drives what the visual emphasizes. */
+export type RecentInsightFocus =
+  | "points"
+  | "efficiency"
+  | "rebounds"
+  | "assists"
+  | "stocks"
+  | "triple_double"
+  | "margin"
+  | "comeback"
+  | "clutch"
+  | "combined"
+  | "overtime"
+  | "trend";
+
+/** Box-score line behind a player card. Counts only; nothing derived is stored. */
+export type RecentInsightStatLine = {
+  playerName: string;
+  teamAbbr: string;
+  opponentAbbr: string;
+  result: string;
+  minutes: number;
+  points: number;
+  rebounds: number;
+  assists: number;
+  steals: number;
+  blocks: number;
+  fgm: number;
+  fga: number;
+  threePm: number;
+  threePa: number;
+  ftm: number;
+  fta: number;
+  seasonPpg?: number | null;
+};
+
+export type RecentInsightGameSide = {
+  teamId: string;
+  abbr: string;
+  score: number;
+  /** Points per period (Q1..Q4, then OT). Absent when the feed had none. */
+  periods?: number[];
+};
+
+export type RecentInsightGame = {
+  away: RecentInsightGameSide;
+  home: RecentInsightGameSide;
+};
+
+export type RecentInsightTrendPoint = {
+  gameDate: string;
+  opponentAbbr: string;
+  points: number;
+};
+
 export type RecentInsight = {
   id: string;
   category: RecentInsightCategory;
   headline: string;
   description: string;
-  /** Scoreline + date label, e.g. "NYK 94 — SA 90 · Jun 14". */
+  /** Scoreline + date label, e.g. "NYK 94, SA 90 · Jun 14". */
   context: string;
   gameId?: string;
   playerId?: string;
   teamId?: string;
   gameDate: string;
+  focus?: RecentInsightFocus;
+  line?: RecentInsightStatLine;
+  game?: RecentInsightGame;
+  /** Chronological, oldest first. */
+  trend?: RecentInsightTrendPoint[];
   /** Higher = more interesting. */
   priority: number;
   /** Soft diversity bucket for selection. */
@@ -111,7 +171,7 @@ function formatNum(n: number, digits = 1): string {
 }
 
 function scoreline(g: SlateGameInput): string {
-  return `${g.awayTeamAbbr} ${g.awayScore} — ${g.homeTeamAbbr} ${g.homeScore}`;
+  return `${g.awayTeamAbbr} ${g.awayScore}, ${g.homeTeamAbbr} ${g.homeScore}`;
 }
 
 function formatShortDate(iso: string): string {
@@ -137,6 +197,53 @@ function formatShortDate(iso: string): string {
 
 function contextFor(g: SlateGameInput): string {
   return `${scoreline(g)} · ${formatShortDate(g.gameDate)}`;
+}
+
+function statLineOf(line: SlatePlayerLine): RecentInsightStatLine {
+  return {
+    playerName: line.playerName,
+    teamAbbr: line.teamAbbr,
+    opponentAbbr: line.opponentAbbr,
+    result: line.result,
+    minutes: line.minutesNum,
+    points: line.points,
+    rebounds: line.rebounds,
+    assists: line.assists,
+    steals: line.steals,
+    blocks: line.blocks,
+    fgm: line.fgm,
+    fga: line.fga,
+    threePm: line.threePm,
+    threePa: line.threePa,
+    ftm: line.ftm,
+    fta: line.fta,
+    seasonPpg: line.seasonPpg ?? null,
+  };
+}
+
+function periodsOf(raw?: number[]): number[] | undefined {
+  if (!raw?.length || raw.some((n) => !Number.isFinite(n))) return undefined;
+  return raw;
+}
+
+function gameOf(g: SlateGameInput): RecentInsightGame {
+  const home = periodsOf(g.homePeriodScores);
+  const away = periodsOf(g.awayPeriodScores);
+  const paired = home && away && home.length === away.length;
+  return {
+    away: {
+      teamId: g.awayTeamId,
+      abbr: g.awayTeamAbbr,
+      score: g.awayScore,
+      periods: paired ? away : undefined,
+    },
+    home: {
+      teamId: g.homeTeamId,
+      abbr: g.homeTeamAbbr,
+      score: g.homeScore,
+      periods: paired ? home : undefined,
+    },
+  };
 }
 
 function winnerLoser(g: SlateGameInput): {
@@ -252,6 +359,9 @@ export function buildRecentInsights(
         Math.min(30, topScorer.points - 25) +
         (topScorer.points >= 50 ? 25 : topScorer.points >= 40 ? 15 : 0),
       bucket: "player",
+      focus: "points",
+      line: statLineOf(topScorer),
+      game: gameOf(g),
     });
   }
 
@@ -280,6 +390,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: line.points >= 50 ? 85 : 70,
       bucket: "player",
+      focus: "points",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -298,6 +411,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 78 + Math.min(10, line.points + line.rebounds + line.assists - 30),
       bucket: "support",
+      focus: "triple_double",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -308,7 +424,7 @@ export function buildRecentInsights(
       id: `near-td-${line.gameId}-${line.profileId}`,
       category: "PLAYER · PLAYMAKING",
       headline: `${line.playerName} · Near triple-double`,
-      description: `${line.points} PTS / ${line.rebounds} REB / ${line.assists} AST — one category shy of a triple-double.`,
+      description: `${line.points} PTS / ${line.rebounds} REB / ${line.assists} AST, one category shy of a triple-double.`,
       context: contextFor(g),
       gameId: g.id,
       playerId: line.profileId,
@@ -316,6 +432,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 55,
       bucket: "support",
+      focus: "triple_double",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -340,7 +459,7 @@ export function buildRecentInsights(
       id: `eff-${line.gameId}-${line.profileId}`,
       category: "PLAYER · EFFICIENCY",
       headline: `${line.playerName} · ${formatPct(ts!)} TS`,
-      description: `${line.points} points on ${line.fgm}/${line.fga} FG — elite efficiency on ${line.fga} shot attempts.`,
+      description: `${line.points} points on ${line.fgm}/${line.fga} FG, very efficient for ${line.fga} shot attempts.`,
       context: contextFor(g),
       gameId: g.id,
       playerId: line.profileId,
@@ -348,6 +467,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 62 + Math.min(15, ((ts ?? 0) - 0.68) * 100),
       bucket: "efficiency",
+      focus: "efficiency",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -367,6 +489,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 50 + Math.min(15, line.assists - 12),
       bucket: "support",
+      focus: "assists",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -378,7 +503,7 @@ export function buildRecentInsights(
       id: `reb-${line.gameId}-${line.profileId}`,
       category: "PLAYER · REBOUNDING",
       headline: `${line.playerName} · ${line.rebounds} REB`,
-      description: `Board dominance on the slate (${line.points} PTS / ${line.assists} AST).`,
+      description: `Slate-high rebound total with ${line.points} points and ${line.assists} assists.`,
       context: contextFor(g),
       gameId: g.id,
       playerId: line.profileId,
@@ -386,6 +511,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 48 + Math.min(12, line.rebounds - 15),
       bucket: "support",
+      focus: "rebounds",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -400,7 +528,7 @@ export function buildRecentInsights(
       id: `stocks-${line.gameId}-${line.profileId}`,
       category: "PLAYER · DEFENSE",
       headline: `${line.playerName} · ${stocks} stocks`,
-      description: `${line.steals} STL and ${line.blocks} BLK — top defensive event total on the slate.`,
+      description: `${line.steals} STL and ${line.blocks} BLK, the top defensive event total on the slate.`,
       context: contextFor(g),
       gameId: g.id,
       playerId: line.profileId,
@@ -408,6 +536,9 @@ export function buildRecentInsights(
       gameDate: g.gameDate,
       priority: 52 + Math.min(12, stocks - 5),
       bucket: "support",
+      focus: "stocks",
+      line: statLineOf(line),
+      game: gameOf(g),
     });
   }
 
@@ -431,6 +562,8 @@ export function buildRecentInsights(
         gameDate: g.gameDate,
         priority: 45 + Math.min(25, margin - 15),
         bucket: "team",
+        focus: "margin",
+        game: gameOf(g),
       });
     }
   }
@@ -449,7 +582,7 @@ export function buildRecentInsights(
         headline: scoreline(g),
         description:
           margin === 0
-            ? "Tied after regulation drama."
+            ? "Tied after regulation."
             : margin === 1
               ? "Closest finish of the slate, decided by one point."
               : `One of the tightest finishes (${margin}-point margin).`,
@@ -458,6 +591,8 @@ export function buildRecentInsights(
         gameDate: g.gameDate,
         priority: 72 - margin * 4 + (isOt(g) ? 12 : 0),
         bucket: "game",
+        focus: "clutch",
+        game: gameOf(g),
       });
     }
   }
@@ -480,6 +615,8 @@ export function buildRecentInsights(
         gameDate: g.gameDate,
         priority: 44 + Math.min(20, total - 230),
         bucket: "game",
+        focus: "combined",
+        game: gameOf(g),
       });
     }
   }
@@ -490,30 +627,34 @@ export function buildRecentInsights(
       id: `ot-${g.id}`,
       category: "GAME · PACE",
       headline: `${g.awayTeamAbbr} @ ${g.homeTeamAbbr} · OT`,
-      description: `Needed overtime — final ${scoreline(g)}.`,
+      description: `Needed overtime. Final: ${scoreline(g)}.`,
       context: contextFor(g),
       gameId: g.id,
       gameDate: g.gameDate,
       priority: 58,
       bucket: "game",
+      focus: "overtime",
+      game: gameOf(g),
     });
   }
 
   for (const g of games) {
     const deficit = q3Comeback(g);
     if (deficit == null || deficit < 8) continue;
-    const { winnerAbbr, winnerId } = winnerLoser(g);
+    const { winnerAbbr, winnerId, margin } = winnerLoser(g);
     push({
       id: `comeback-${g.id}`,
       category: "TEAM · MARGIN",
       headline: `${winnerAbbr} · erased ${deficit}`,
-      description: `Trailed by ${deficit} after three quarters and still won.`,
+      description: `Trailed by ${deficit} after three quarters and won by ${margin}${isOt(g) ? " in overtime" : ""}.`,
       context: contextFor(g),
       gameId: g.id,
       teamId: winnerId,
       gameDate: g.gameDate,
       priority: 68 + Math.min(15, deficit - 8),
       bucket: "team",
+      focus: "comeback",
+      game: gameOf(g),
     });
   }
 
@@ -545,6 +686,13 @@ export function buildRecentInsights(
         gameDate: last.gameDate,
         priority: 42 + Math.min(20, ppg - 32),
         bucket: "trend",
+        focus: "trend",
+        line: statLineOf(last),
+        trend: last5.map((r) => ({
+          gameDate: r.gameDate,
+          opponentAbbr: r.opponentAbbr,
+          points: r.points,
+        })),
       });
     }
   }
@@ -568,14 +716,20 @@ function selectDiverseInsights(
   const tryAdd = (c: RecentInsight, enforceDiversity: boolean) => {
     if (out.length >= limit) return;
     if (out.some((x) => x.id === c.id)) return;
-    // One card per player — combine related stories into the highest-priority one.
-    if (c.playerId && usedPlayers.has(c.playerId)) {
-      if (enforceDiversity) return;
+    // One card per player; the highest-priority story wins.
+    if (c.playerId && usedPlayers.has(c.playerId)) return;
+    // One game-level story per game (a comeback and a close finish are the same game).
+    const gameLevel = (x: RecentInsight) => x.bucket === "game" || x.bucket === "team";
+    if (
+      c.gameId &&
+      gameLevel(c) &&
+      out.some((x) => x.gameId === c.gameId && gameLevel(x))
+    ) {
+      return;
     }
     if (enforceDiversity) {
       const n = usedBuckets.get(c.bucket) ?? 0;
       if (n >= softBucketCap) return;
-      if (c.gameId && usedGames.has(c.gameId) && c.bucket === "game") return;
     }
     out.push(c);
     if (c.playerId) usedPlayers.add(c.playerId);

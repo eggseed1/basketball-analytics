@@ -5,8 +5,10 @@ import { formatUsdCompact } from "@/lib/format-money";
 
 export function TeamFrontOfficeSummaryCard({
   summary,
+  labels,
 }: {
   summary: TeamFrontOfficeSummary;
+  labels?: { salary?: string; firsts?: string; seconds?: string };
 }) {
   return (
     <section
@@ -30,7 +32,7 @@ export function TeamFrontOfficeSummaryCard({
       <dl className="grid gap-4 sm:grid-cols-3">
         <div>
           <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Player salary commitments
+            {labels?.salary ?? "Player salary commitments"}
           </dt>
           <dd className="mt-1 text-2xl font-semibold tabular-nums">
             {summary.playerSalaryCommitments == null
@@ -40,7 +42,7 @@ export function TeamFrontOfficeSummaryCard({
         </div>
         <div>
           <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Future firsts controlled
+            {labels?.firsts ?? "Own future firsts"}
           </dt>
           <dd className="mt-1 text-2xl font-semibold">
             {summary.futureFirstsControlled == null
@@ -50,7 +52,7 @@ export function TeamFrontOfficeSummaryCard({
         </div>
         <div>
           <dt className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-            Future seconds controlled
+            {labels?.seconds ?? "Own future seconds"}
           </dt>
           <dd className="mt-1 text-2xl font-semibold">
             {summary.futureSecondsControlled == null

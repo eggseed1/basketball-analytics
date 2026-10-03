@@ -189,15 +189,15 @@ function pushMetric(
       id: options.id,
       label: options.label,
       category: options.category,
-      aDisplay: aRaw != null ? options.format(aRaw) : "-",
-      bDisplay: bRaw != null ? options.format(bRaw) : "-",
+      aDisplay: aRaw != null ? options.format(aRaw) : "—",
+      bDisplay: bRaw != null ? options.format(bRaw) : "—",
       aValue: aRaw ?? undefined,
       bValue: bRaw ?? undefined,
       edge: "unavailable",
       higherIsBetter,
       note:
         options.note ??
-        "Metric missing for one side - excluded from head-to-head edge.",
+        "Metric missing for one side, so it is left out of the head-to-head edge.",
       delta: undefined,
     });
     return;
@@ -288,7 +288,7 @@ function overallFromCategories(
     return {
       edge: "unavailable",
       reason:
-        "Overall verdict withheld - at least one side lacks a qualifying sample (≥20 GP).",
+        "Overall verdict withheld: at least one side lacks a qualifying sample (≥20 GP).",
     };
   }
 
@@ -311,7 +311,7 @@ function overallFromCategories(
       edge: "even",
       reason: `Categories split ${a}-${b} (${decisive
         .map((c) => c.label)
-        .join(", ")}). Mixed profile.`,
+        .join(", ")}).`,
     };
   }
   const edge: TeamCompareEdge = a > b ? "a" : "b";

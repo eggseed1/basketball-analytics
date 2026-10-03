@@ -80,7 +80,7 @@ export function BoardScrollFrame({
           background: solid
             ? "var(--card)"
             : resolvedDark
-              ? "rgba(28, 28, 30, 0.22)"
+              ? "rgb(var(--glass-rgb) / 22%)"
               : "rgba(255, 255, 255, 0.22)",
           backdropFilter: solid ? undefined : "saturate(160%) blur(10px)",
           WebkitBackdropFilter: solid ? undefined : "saturate(160%) blur(10px)",

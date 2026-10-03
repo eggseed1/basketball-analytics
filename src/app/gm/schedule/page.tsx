@@ -21,7 +21,7 @@ function ScheduleBody() {
       <header>
         <h1 className="text-[28px] font-bold tracking-tight">Schedule</h1>
         <p className="text-[16px] text-muted-foreground">
-          Real NBA tips for your franchise - home and away marked on the
+          Real NBA tips for your franchise, with home and away marked on the
           calendar.
         </p>
       </header>

@@ -86,7 +86,7 @@ export function StandingsDiffBars({
           id={`${chartId}-desc`}
           className={cn(type.caption, "text-muted-foreground")}
         >
-          Average point differential across both conferences — the race behind
+          Average point differential across both conferences, to read alongside
           the W/L table.
         </p>
       </div>

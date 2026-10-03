@@ -3,6 +3,7 @@ import {
   type GlassSurfaceHonor,
 } from "@/components/brand/glass-surface";
 import { SentimentAssociationNote } from "@/components/sentiment/sentiment-association-note";
+import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -26,22 +27,33 @@ function LaneRow({
   label: string;
   lane: PlayerSentimentProfile["fan"];
 }) {
+  if (!lane) {
+    return (
+      <div className="flex flex-col gap-1 rounded-md border border-dashed border-border/60 px-2 py-1.5">
+        <p className={cn(type.caption, "font-semibold")}>{label}</p>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          No source has enough coverage yet.
+        </p>
+      </div>
+    );
+  }
   const topTopic = Object.entries(lane.topicBreakdown).sort(
     (a, b) => b[1] - a[1]
   )[0];
+  const unit = lane.origin === "headlines" ? "headlines" : lane.origin === "reddit" ? "posts" : "mentions";
+  const showDirection = lane.origin === "curated" || lane.origin == null || lane.priorScore != null;
   return (
     <div className="flex flex-col gap-1 rounded-md border border-border/60 frost-surface-soft px-2 py-1.5">
-      <div className="flex items-baseline justify-between gap-2">
+      <div className="flex items-center justify-between gap-2">
         <p className={cn(type.caption, "font-semibold")}>{label}</p>
-        <p className={cn(type.caption, "capitalize text-muted-foreground")}>
-          {lane.direction}
-        </p>
+        <LaneOriginTag lane={lane} />
       </div>
       <p className={cn(type.caption, "tabular-nums")}>
         {polarityLabel(lane.polarity)} · {scoreLabel(lane.score)}
+        {showDirection ? <span className="capitalize text-muted-foreground"> · {lane.direction}</span> : null}
       </p>
       <p className={cn(type.caption, "text-muted-foreground")}>
-        {lane.mentionVolume.toLocaleString()} mentions ·{" "}
+        {lane.mentionVolume.toLocaleString()} {unit} ·{" "}
         {Math.round(lane.coverageConfidence * 100)}% coverage
       </p>
       {topTopic ? (
@@ -108,8 +120,8 @@ export function PlayerSentimentColumn({
           </>
         ) : (
           <p className={cn(type.caption, "text-muted-foreground")}>
-            No sentiment coverage for {playerName} in the current prototype
-            snapshot.
+            No sentiment coverage for {playerName} yet. Media tone appears once
+            3 headlines name him in a week.
           </p>
         )}
       </div>

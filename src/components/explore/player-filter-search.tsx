@@ -19,6 +19,7 @@ type Hit = {
   name: string;
   team: string;
   position: string | null;
+  portraitUrl?: string;
 };
 
 function dedupeHits(rows: Hit[]): Hit[] {
@@ -167,7 +168,7 @@ export function PlayerFilterSearch({
               {/* Frost layer only — keeps list text/headshots crisp. */}
               <div
                 aria-hidden
-                className="pointer-events-none absolute inset-0 z-0 bg-white/42 backdrop-blur-xl dark:bg-[rgb(28_28_30_/_0.55)]"
+                className="pointer-events-none absolute inset-0 z-0 bg-white/42 backdrop-blur-xl dark:bg-[rgb(var(--glass-rgb)/0.72)]"
               />
               <ul
                 id={listId}
@@ -216,6 +217,7 @@ export function PlayerFilterSearch({
                         playerId={hit.id}
                         name={hit.name}
                         teamKey={hit.team}
+                        portraitUrl={hit.portraitUrl}
                         size="xs"
                       />
                       <span className="min-w-0 flex-1">

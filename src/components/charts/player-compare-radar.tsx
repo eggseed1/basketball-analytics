@@ -1,14 +1,12 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
-  Legend,
   PolarAngleAxis,
   PolarGrid,
   PolarRadiusAxis,
   Radar,
   RadarChart,
-  ResponsiveContainer,
   Tooltip,
 } from "recharts";
 
@@ -17,88 +15,102 @@ import {
   rechartsFrostWrapperStyle,
 } from "@/components/brand/frost-recharts-tooltip";
 import type { ComparisonDimension } from "@/analytics";
+import {
+  compareScore,
+  hasPeerPercentiles,
+  pickRadarAxes,
+} from "@/components/compare/compare-scale";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
-import { teamBrandCompareBarFill } from "@/lib/nba-brand";
+import { formatOrdinal } from "@/lib/format";
 import { cn } from "@/lib/utils";
 
-function axisScore(
-  dimension: ComparisonDimension,
-  side: "a" | "b"
-): number | null {
-  const pct = side === "a" ? dimension.aPercentile : dimension.bPercentile;
-  if (pct != null && Number.isFinite(pct)) {
-    return Math.max(0, Math.min(100, pct));
-  }
-  const bar = side === "a" ? dimension.aBar : dimension.bBar;
-  if (bar != null && Number.isFinite(bar)) {
-    return Math.max(0, Math.min(100, bar));
-  }
-  return null;
+/** Rendered width of the tile, tracked so the radius can leave room for labels. */
+function useElementWidth<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const update = () => setWidth(Math.round(el.getBoundingClientRect().width));
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, width] as const;
 }
 
 /**
- * Spider overview for head-to-head compare — shape of the matchup at a glance.
- * Prefer peer percentiles when present; otherwise relative matchup bars.
+ * Height follows width so phones do not get a small shape floating in a tall
+ * box, and the radius shrinks by the widest label so side labels never clip.
+ */
+function radarGeometry(width: number, labels: string[]) {
+  const fontSize = width < 300 ? 10 : 11;
+  const height = Math.round(Math.min(340, Math.max(210, width * 0.86)));
+  const longest = labels.reduce((n, l) => Math.max(n, l.length), 0);
+  const labelWidth = longest * fontSize * 0.6;
+  const sideRoom = width / 2 - labelWidth - 8;
+  const verticalRoom = height / 2 - fontSize - 14;
+  const outerRadius = Math.max(48, Math.min(sideRoom, verticalRoom));
+  return { fontSize, height, outerRadius };
+}
+
+/**
+ * Spider overview for head-to-head compare. Outlines carry the read; fills stay
+ * faint so two elite players do not merge into one blob.
  */
 export function PlayerCompareRadar({
+  axes,
   dimensions,
   aName,
   bName,
-  aTeamKey,
-  bTeamKey,
+  aColor,
+  bColor,
   className,
 }: {
+  /** Pre-picked axes; derived from `dimensions` when omitted. */
+  axes?: ComparisonDimension[];
   dimensions: ComparisonDimension[];
   aName: string;
   bName: string;
-  aTeamKey?: string | null;
-  bTeamKey?: string | null;
+  aColor: string;
+  bColor: string;
   className?: string;
 }) {
   const chartId = useId();
   const theme = useChartTheme();
-  const aFill = teamBrandCompareBarFill(aTeamKey);
-  const bFill = teamBrandCompareBarFill(bTeamKey);
+  const [boxRef, width] = useElementWidth<HTMLDivElement>();
 
-  const data = useMemo(() => {
-    const rows: Array<{
-      metric: string;
-      a: number;
-      b: number;
-      aDisplay: string;
-      bDisplay: string;
-    }> = [];
-    for (const d of dimensions) {
-      const a = axisScore(d, "a");
-      const b = axisScore(d, "b");
-      if (a == null && b == null) continue;
-      rows.push({
+  const picked = useMemo(
+    () => axes ?? pickRadarAxes(dimensions),
+    [axes, dimensions]
+  );
+  const data = useMemo(
+    () =>
+      picked.map((d) => ({
         metric: d.label,
-        a: a ?? 0,
-        b: b ?? 0,
+        a: compareScore(d, "a") ?? 0,
+        b: compareScore(d, "b") ?? 0,
         aDisplay: d.aDisplay,
         bDisplay: d.bDisplay,
-      });
-      if (rows.length >= 8) break;
-    }
-    return rows;
-  }, [dimensions]);
+      })),
+    [picked]
+  );
 
   if (data.length < 3) return null;
 
-  const usesPercentile = dimensions.some(
-    (d) => d.aPercentile != null || d.bPercentile != null
+  const usesPercentile = picked.every(hasPeerPercentiles);
+  const geo = radarGeometry(
+    width,
+    data.map((d) => d.metric)
   );
 
   return (
     <figure
       aria-labelledby={`${chartId}-title`}
       aria-describedby={`${chartId}-desc`}
-      className={cn(
-        "flex flex-col gap-2 border-b border-border px-3 py-3 sm:px-5",
-        className
-      )}
+      className={cn("flex min-w-0 flex-col gap-2", className)}
     >
       <div>
         <p
@@ -115,22 +127,38 @@ export function PlayerCompareRadar({
           className={cn(type.caption, "mt-0.5 text-muted-foreground")}
         >
           {usesPercentile
-            ? "Peer percentiles across the sheet — larger area means higher league standing on that axis."
-            : "Relative scale across the sheet — larger area means the stronger side of each matchup bar."}
+            ? "Peer percentile on each axis. The outer ring is the top of the league."
+            : "No league percentiles for these rows. The leader on each axis sits on the outer ring, and the other side is shorter by the percent gap."}
         </p>
       </div>
-      <div className="mx-auto h-64 w-full max-w-lg min-w-0 sm:h-72">
-        <ResponsiveContainer width="100%" height="100%">
-          <RadarChart cx="50%" cy="50%" outerRadius="68%" data={data}>
+      <div
+        ref={boxRef}
+        className="mx-auto w-full min-w-0 max-w-md"
+        style={{ height: geo.height }}
+      >
+        {width > 0 ? (
+          <RadarChart
+            width={width}
+            height={geo.height}
+            cx="50%"
+            cy="50%"
+            outerRadius={geo.outerRadius}
+            margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
+            data={data}
+          >
             <PolarGrid
               stroke="currentColor"
               className="text-border"
-              strokeOpacity={theme.gridOpacity()}
+              strokeOpacity={theme.gridOpacity() * 1.4}
             />
             <PolarAngleAxis
               dataKey="metric"
-              tick={{ fontSize: 11 }}
-              className="fill-muted-foreground"
+              tick={{
+                fontSize: geo.fontSize,
+                fontWeight: 600,
+                fill: "var(--muted-foreground)",
+              }}
+              axisLine={false}
             />
             <PolarRadiusAxis
               angle={90}
@@ -149,16 +177,16 @@ export function PlayerCompareRadar({
                   <FrostRechartsTooltip active={active}>
                     <p className="text-[12px] font-semibold">{row.metric}</p>
                     <p className="mt-1 text-[11px] tabular-nums">
-                      <span style={{ color: aFill }}>{aName}</span>
+                      <span style={{ color: aColor }}>{aName}</span>
                       {": "}
                       {row.aDisplay}
-                      {usesPercentile ? ` (${Math.round(row.a)}th)` : ""}
+                      {usesPercentile ? ` (${formatOrdinal(row.a)})` : ""}
                     </p>
                     <p className="text-[11px] tabular-nums">
-                      <span style={{ color: bFill }}>{bName}</span>
+                      <span style={{ color: bColor }}>{bName}</span>
                       {": "}
                       {row.bDisplay}
-                      {usesPercentile ? ` (${Math.round(row.b)}th)` : ""}
+                      {usesPercentile ? ` (${formatOrdinal(row.b)})` : ""}
                     </p>
                   </FrostRechartsTooltip>
                 );
@@ -168,25 +196,53 @@ export function PlayerCompareRadar({
             <Radar
               name={aName}
               dataKey="a"
-              stroke={aFill}
-              fill={aFill}
-              fillOpacity={0.28}
-              strokeWidth={2}
+              stroke={aColor}
+              fill={aColor}
+              fillOpacity={0.14}
+              strokeWidth={2.5}
+              dot={{ r: 3, fill: aColor, strokeWidth: 0 }}
+              isAnimationActive={false}
             />
             <Radar
               name={bName}
               dataKey="b"
-              stroke={bFill}
-              fill={bFill}
-              fillOpacity={0.22}
-              strokeWidth={2}
-            />
-            <Legend
-              wrapperStyle={{ fontSize: 12, paddingTop: 4 }}
-              iconType="circle"
+              stroke={bColor}
+              fill={bColor}
+              fillOpacity={0.1}
+              strokeWidth={2.5}
+              strokeDasharray="6 4"
+              dot={{ r: 3, fill: bColor, strokeWidth: 0 }}
+              isAnimationActive={false}
             />
           </RadarChart>
-        </ResponsiveContainer>
+        ) : null}
+      </div>
+      <div
+        className={cn(
+          type.caption,
+          "flex flex-wrap items-center justify-center gap-x-4 gap-y-1 font-semibold"
+        )}
+      >
+        <span className="inline-flex items-center gap-1.5">
+          <svg width="18" height="6" aria-hidden>
+            <line x1="0" y1="3" x2="18" y2="3" stroke={aColor} strokeWidth="3" />
+          </svg>
+          {aName}
+        </span>
+        <span className="inline-flex items-center gap-1.5">
+          <svg width="18" height="6" aria-hidden>
+            <line
+              x1="0"
+              y1="3"
+              x2="18"
+              y2="3"
+              stroke={bColor}
+              strokeWidth="3"
+              strokeDasharray="5 3"
+            />
+          </svg>
+          {bName}
+        </span>
       </div>
     </figure>
   );

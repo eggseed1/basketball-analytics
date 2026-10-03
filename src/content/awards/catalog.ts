@@ -54,7 +54,7 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophy: "michael-jordan",
     descriptions: ["NBA Most Valuable Player"],
     blurb:
-      "Regular-season MVP — the league’s top individual honor, presented as the Michael Jordan Trophy.",
+      "The regular-season MVP is the league’s top individual honor, presented as the Michael Jordan Trophy.",
     sort: 20,
   },
   {
@@ -66,7 +66,7 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophy: "bill-russell",
     descriptions: ["NBA Finals Most Valuable Player"],
     blurb:
-      "Finals MVP — awarded to the outstanding player of the NBA Finals (Bill Russell Trophy).",
+      "The Bill Russell Trophy goes to the outstanding player of the NBA Finals.",
     sort: 30,
   },
   {
@@ -78,7 +78,7 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophy: "olajuwon",
     descriptions: ["NBA Defensive Player of the Year"],
     blurb:
-      "Defensive Player of the Year — the league’s top defensive performer (Hakeem Olajuwon Trophy).",
+      "The Hakeem Olajuwon Trophy honors the league’s top defensive performer.",
     sort: 40,
   },
   {
@@ -89,7 +89,7 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophyName: "Wilt Chamberlain Trophy",
     trophy: "tip-off",
     descriptions: ["NBA Rookie of the Year"],
-    blurb: "Rookie of the Year — the top first-year player in the league.",
+    blurb: "Rookie of the Year honors the top first-year player in the league.",
     sort: 50,
   },
   {
@@ -125,7 +125,7 @@ export const AWARD_DEFINITIONS: AwardDefinition[] = [
     trophy: "all-star",
     descriptions: ["NBA All-Star"],
     blurb:
-      "All-Star selections for the midseason showcase — ranked here by career selection count from the awards bake.",
+      "All-Star selections for the midseason game, ranked by career selection count from the awards data.",
     sort: 80,
   },
   {

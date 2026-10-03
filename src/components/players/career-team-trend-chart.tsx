@@ -396,7 +396,9 @@ export function CareerTeamTrendChart({
         rawValue: p.rawValue ?? p.value,
         percentile: pct ?? p.percentile,
         color:
-          pct != null ? percentileSavantColor(pct) : chartTheme.teamColor(p.teamId).color,
+          pct != null
+            ? percentileSavantColor(pct, chartTheme.surface)
+            : chartTheme.teamColor(p.teamId).color,
       };
     });
   }, [points, hasPercentileColors, chartTheme]);

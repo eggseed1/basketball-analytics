@@ -18,6 +18,8 @@ async function playerIdSet(playerId: string): Promise<Set<string>> {
   return ids;
 }
 
+export const getMovementPlayerIdSet = cache(playerIdSet);
+
 export const getPlayerMovementBundle = cache(
   async (playerId: string) => {
     const ids = await playerIdSet(playerId);

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import type { PlayerPercentile, PercentileSide } from "@/data/queries";
 import { StatTooltip } from "@/components/ui/stat-tooltip";
+import { surfaceColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
 
 /**
@@ -17,13 +18,13 @@ export function percentileColor(quality: number): string {
     const r = Math.round(30 + t * 180);
     const g = Math.round(80 + t * 120);
     const b = Math.round(180 - t * 40);
-    return `rgb(${r}, ${g}, ${b})`;
+    return surfaceColor([r, g, b], "auto");
   }
   const t = (q - 0.5) / 0.5;
   const r = Math.round(210 + t * 45);
   const g = Math.round(200 - t * 140);
   const b = Math.round(140 - t * 100);
-  return `rgb(${r}, ${g}, ${b})`;
+  return surfaceColor([r, g, b], "auto");
 }
 
 const TABS: Array<{ id: PercentileSide | "all"; label: string }> = [

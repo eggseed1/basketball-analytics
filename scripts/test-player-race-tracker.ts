@@ -5,7 +5,9 @@
 import assert from "node:assert/strict";
 
 import {
+  buildPlayerRaceChartRows,
   buildPlayerRaceOverlayPlayer,
+  type PlayerRacePlayer,
   samplePlayerRaceFieldEvenly,
   takePlayerRaceFieldSlice,
 } from "../src/lib/player-race-tracker";
@@ -95,6 +97,61 @@ function main() {
   assert.ok(
     Math.abs((countingOverlay!.points.at(-1)?.value ?? 0) - 2100) < 1,
     "counting overlay should settle on season total"
+  );
+
+  // Dense rate field: staggered game dates must not leave partial lines.
+  const isoPlus = (start: string, days: number) => {
+    const d = new Date(`${start}T12:00:00Z`);
+    d.setUTCDate(d.getUTCDate() + days);
+    return d.toISOString().slice(0, 10);
+  };
+  const ratePlayer = (id: string, dates: string[]): PlayerRacePlayer => ({
+    playerId: id,
+    espnId: null,
+    nbaId: null,
+    displayName: id,
+    shortName: id,
+    teamId: "1",
+    teamAbbr: "AAA",
+    points: dates.map((date, i) => ({ date, value: i * 0.1, games: i + 1 })),
+    currentValue: dates.length * 0.1,
+    gamesPlayed: dates.length,
+    minutesPlayed: 1500,
+  });
+  const denseField = Array.from({ length: 150 }, (_, i) =>
+    ratePlayer(
+      `r${i}`,
+      Array.from({ length: 28 }, (_, k) => isoPlus("2025-10-22", (i % 5) + k * 6 + 2))
+    )
+  );
+  const lateDates = Array.from({ length: 12 }, (_, k) => isoPlus("2026-02-10", k * 5));
+  const gapDates = [
+    ...Array.from({ length: 8 }, (_, k) => isoPlus("2025-10-24", k * 5)),
+    ...Array.from({ length: 8 }, (_, k) => isoPlus("2026-01-20", k * 5)),
+  ];
+  denseField.push(ratePlayer("late", lateDates), ratePlayer("gap", gapDates));
+  const denseRows = buildPlayerRaceChartRows(denseField, "all", { forwardFill: false });
+  const full = denseField[7]!;
+  const inSpan = denseRows.filter(
+    (row) => row.date >= full.points[0]!.date && row.date <= full.points.at(-1)!.date
+  );
+  assert.ok(
+    inSpan.every((row) => row[full.playerId] != null),
+    "full-season rate line must be continuous across its own span"
+  );
+  assert.ok(
+    denseRows.every((row) => row.date >= "2026-02-10" || row.late == null),
+    "late-return rate line must stay null before the first game"
+  );
+  assert.ok(
+    denseRows.some((row) => row.date >= "2026-02-10" && row.late != null),
+    "late-return rate line must render after returning"
+  );
+  assert.ok(
+    denseRows
+      .filter((row) => row.date > "2025-12-01" && row.date < "2026-01-20")
+      .every((row) => row.gap == null),
+    "long absences must break the rate line"
   );
 
   console.log("test-player-race-tracker: ok");

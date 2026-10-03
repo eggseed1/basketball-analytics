@@ -550,7 +550,7 @@ export const useGmStore = create<GmStore>()(
                   id: uid("news"),
                   day: league.day,
                   season: league.season,
-                  headline: "Champions crowned - draft is next",
+                  headline: "Champions crowned, draft is next",
                   body: "The Finals are over. Lottery order is locked. Make your selection.",
                   tone: "good" as const,
                 },

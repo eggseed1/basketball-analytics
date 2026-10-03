@@ -15,6 +15,7 @@ function gamesPageHref(
 ): string {
   const q = new URLSearchParams();
   q.set("season", season);
+  q.set("tab", "games");
   if (page > 1) q.set("gamesPage", String(page));
   for (const [k, v] of Object.entries(extra ?? {})) {
     if (v) q.set(k, v);
@@ -82,6 +83,9 @@ export function TeamGamesLog({
                       {g.homeAway === "home" ? "vs" : "@"} {opp}
                       {g.result ? ` · ${g.result}` : ""}
                       {g.ot ? " · OT" : ""}
+                      {g.seasonType && g.seasonType !== "Regular Season"
+                        ? ` · ${g.seasonType}`
+                        : ""}
                     </span>
                   </span>
                   <span className="tabular-nums text-muted-foreground">

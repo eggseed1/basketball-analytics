@@ -16,6 +16,7 @@ import {
 } from "@/data/transformers/espn";
 import { LIVE_SCOREBOARD_TTL_MS } from "@/lib/live-refresh-policy";
 import { getRuntimeSnapshotGames } from "@/data/runtime/game-snapshot";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 const SITE_API = "https://site.api.espn.com";
 /** Scoreboard months are large payloads — give Vercel more than identity TTLs. */
@@ -372,7 +373,7 @@ export async function fetchHomeWeekStrip(options: {
     r.status === "fulfilled" ? r.value : []
   );
 
-  const todayIso = toIsoDate(now);
+  const todayIso = nbaTodayIso(now);
   const upcoming = upcomingPool
     .filter(
       (g) =>
@@ -409,7 +410,7 @@ function homeStripFromRuntimeSnapshot(options: {
   const limit = options.limit;
   const now = options.now;
   const season = upcomingScheduleSeason(now);
-  const todayIso = toIsoDate(now);
+  const todayIso = nbaTodayIso(now);
   const weekStart = startOfWeekSunday(now);
   const weekStartIso = toIsoDate(weekStart);
   const weekEndIso = toIsoDate(addDays(weekStart, 6));

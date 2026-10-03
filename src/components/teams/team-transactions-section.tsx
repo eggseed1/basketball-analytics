@@ -22,8 +22,7 @@ export function TeamTransactionsSection({
     <div className="flex flex-col gap-3">
       <p className="type-body-sm text-muted-foreground">
         ESPN transaction <span className="font-semibold text-foreground">events</span>{" "}
-        for this franchise - factual date + description only. Not asset
-        genealogy.
+        for this franchise: date and description only, not asset genealogy.
       </p>
       {events.length === 0 ? (
         <p className="type-body-sm text-muted-foreground">

@@ -190,8 +190,8 @@ export function RelatedEventClusterCard({
           <p className="mt-1 text-[14px] text-muted-foreground">
             {presentation.sourceCountLabel}
             {isTradeRelated
-              ? " - source evidence from the ESPN transaction archive (not a verified structured trade ledger)."
-              : " - assembled from source events, not a verified structured trade ledger."}
+              ? ". Source evidence from the ESPN transaction archive, not a verified structured trade ledger."
+              : ". Assembled from source events, not a verified structured trade ledger."}
           </p>
           {tradeAcquire ? (
             <TradeAcquireBoxes
@@ -406,8 +406,8 @@ export function OffseasonFilters({
         </button>
       </div>
       <p className="text-[12px] text-muted-foreground">
-        Search matches free-text ESPN descriptions - not entity-aware player
-        lookup. Same-day activity stays separate unless reciprocal evidence
+        Search matches the free text of ESPN descriptions, not player
+        identities. Same-day activity stays separate unless reciprocal evidence
         shows one underlying transaction (then source-record count explains
         the evidence).
       </p>
@@ -632,7 +632,7 @@ export function TransactionEventDetail({
         <p className="text-[12px] text-muted-foreground">
           This is a single-team ESPN source event. One-sided wording (for
           example “acquired X for draft considerations”) is shown exactly as
-          recorded - DRBL does not invent the other side of the deal from free
+          recorded. DRBL does not invent the other side of the deal from free
           text.
         </p>
       )}
@@ -647,8 +647,8 @@ export function TransactionEventDetail({
             Source-text category
           </dt>
           <dd>
-            {sourceTextCategoryLabel(event.sourceTextCategory)} - classifies
-            wording only; not a complete package claim
+            {sourceTextCategoryLabel(event.sourceTextCategory)} (wording only;
+            not a complete package claim)
           </dd>
         </div>
         <div>
@@ -663,8 +663,8 @@ export function TransactionEventDetail({
         </div>
       </dl>
       <p className="text-[12px] text-muted-foreground">
-        Structured players, picks, and ownership are not available for this
-        event. Genealogy remains blocked.
+        This record is ESPN&apos;s free text. Players and picks are read from
+        it, not from a structured ownership ledger.
       </p>
     </div>
   );

@@ -154,7 +154,7 @@ export function StatDetectiveDivergenceChart({
           id={`${chartId}-desc`}
           className={cn(type.bodySm, "text-muted-foreground")}
         >
-          Bars show how far each player is from their own usual {unit} — not
+          Bars show how far each player is from their own usual {unit}, not
           from the league. Thin samples stay off the board (missing ≠ 0).
         </p>
       </div>

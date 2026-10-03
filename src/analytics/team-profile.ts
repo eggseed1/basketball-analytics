@@ -2,13 +2,18 @@ import type { AnalyticalFinding, StatContext } from "@/analytics/types";
 import { buildStatContext } from "@/analytics/context";
 import { learnHrefFor } from "@/content/learn/registry";
 import type { TeamSeasonStats } from "@/data/types";
-import { formatNumber, formatPct } from "@/lib/format";
+import { formatNumber, formatOrdinal, formatPct } from "@/lib/format";
 
 export type TeamTrait = {
   id: string;
   label: string;
   display: string;
   percentile: number;
+  /** 1 = best in the league on this trait (ties share a rank). */
+  rank: number;
+  /** Teams strictly worse on this trait. */
+  worseCount: number;
+  poolSize: number;
   context: StatContext;
   /** Higher = stronger identity signal. */
   strength: number;
@@ -30,11 +35,20 @@ export type TeamProfileAnalysis = {
   } | null;
 };
 
-function percentileOf(value: number, pool: number[], invert = false): number {
-  if (!pool.length || !Number.isFinite(value)) return 50;
-  const below = pool.filter((v) => v < value).length;
-  const raw = (below / pool.length) * 100;
-  return invert ? 100 - raw : raw;
+/** Best team = 100, worst = 0, whichever direction is "better". */
+function rankOf(
+  value: number,
+  pool: number[],
+  invert = false
+): { percentile: number; rank: number; worseCount: number } {
+  if (!pool.length || !Number.isFinite(value)) {
+    return { percentile: 50, rank: 1, worseCount: 0 };
+  }
+  const better = pool.filter((v) => (invert ? v < value : v > value)).length;
+  const worse = pool.filter((v) => (invert ? v > value : v < value)).length;
+  const percentile =
+    pool.length > 1 ? (worse / (pool.length - 1)) * 100 : 50;
+  return { percentile, rank: better + 1, worseCount: worse };
 }
 
 type TraitDef = {
@@ -147,12 +161,15 @@ export function analyzeTeamProfile(options: {
     const pool = league
       .map((t) => def.pick(t))
       .filter((n): n is number => n != null && Number.isFinite(n));
-    const percentile = percentileOf(value, pool, def.invert);
+    const { percentile, rank, worseCount } = rankOf(value, pool, def.invert);
     traits.push({
       id: def.id,
       label: def.label,
       display: def.format(value),
       percentile,
+      rank,
+      worseCount,
+      poolSize: pool.length,
       strength: Math.max(0, percentile - 50),
       context: buildStatContext({
         display: def.format(value),
@@ -187,7 +204,7 @@ export function analyzeTeamProfile(options: {
       id: `win-${t.id}`,
       eyebrow: "How they win",
       title: t.label,
-      body: `${team.fullName} ranks in the ${Math.round(t.percentile)}th percentile for ${phrase} (${t.display}).`,
+      body: `${team.fullName} ranks ${formatOrdinal(t.rank)} of ${t.poolSize} at ${t.display}, a sign of ${phrase}.`,
       level: 2,
       teamIds: [team.teamId],
     };
@@ -199,7 +216,7 @@ export function analyzeTeamProfile(options: {
       id: "win-relative",
       eyebrow: "How they win",
       title: t.label,
-      body: `No elite (70th+ percentile) identity traits yet. Relative strength so far: ${t.label} at the ${Math.round(t.percentile)}th percentile (${t.display}).`,
+      body: `No trait at the 70th percentile or better yet. Best so far: ${t.label} at ${t.display}, ${formatOrdinal(t.rank)} of ${t.poolSize}.`,
       level: 2,
       teamIds: [team.teamId],
     });

@@ -30,7 +30,7 @@ function StaffBody() {
       <h2 className="text-lg font-semibold">Staff & culture</h2>
       <div className="grid gap-3 sm:grid-cols-2">
         <div className="rounded-xl border border-border p-4">
-          <h3 className="font-medium">Head coach - {coach.name}</h3>
+          <h3 className="font-medium">Head coach: {coach.name}</h3>
           <ul className="mt-2 space-y-1 text-sm text-muted-foreground">
             <li>Offense bonus: {coach.offenseBonus.toFixed(2)}</li>
             <li>Defense bonus: {coach.defenseBonus.toFixed(2)}</li>
@@ -58,7 +58,7 @@ function StaffBody() {
                 </>
               ) : (
                 <p className="mt-2 text-sm text-muted-foreground">
-                  No director hired - draft fog is heavy. Pick someone below.
+                  No director hired, so draft fog is heavy. Pick someone below.
                 </p>
               )}
             </div>
@@ -109,7 +109,7 @@ function StaffBody() {
               ))}
               {!market.length ? (
                 <li className="text-sm text-muted-foreground">
-                  Market empty - refresh for new candidates.
+                  Market empty. Refresh for new candidates.
                 </li>
               ) : null}
             </ul>
@@ -118,7 +118,7 @@ function StaffBody() {
         <div className="rounded-xl border border-border p-4">
           <h3 className="font-medium">Training staff</h3>
           <p className="mt-2 text-sm text-muted-foreground">
-            Level {team.staff.trainerLevel}/5 - fewer / shorter injuries.
+            Level {team.staff.trainerLevel}/5: fewer and shorter injuries.
           </p>
           <Button
             className="mt-3"

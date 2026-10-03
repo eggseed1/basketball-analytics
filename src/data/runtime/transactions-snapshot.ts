@@ -100,7 +100,7 @@ export function getBundledTransactionArchive(): TransactionArchiveBundle | null 
       earliestDate: data.earliestDate ?? null,
       latestDate: data.latestDate ?? null,
       contentHash: data.contentHash ?? "",
-      limitations: ["Bundled snapshot — no ownership edges on edge runtime."],
+      limitations: ["Bundled snapshot. No ownership edges on edge runtime."],
     },
     transactions,
     ownershipEdges: [],

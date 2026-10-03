@@ -18,7 +18,7 @@ import type { TeamSeasonStats } from "@/data/types/team-season";
 export const metadata = {
   title: "Teams",
   description:
-    "NBA team advanced stats - differential, true shooting, eFG%, and more.",
+    "NBA team advanced stats: differential, true shooting, eFG%, and more.",
 };
 
 interface ExploreTeamsPageProps {
@@ -77,7 +77,7 @@ export default async function ExploreTeamsPage({
     <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
       <PageHeader
         title="Teams"
-        subtitle={`Efficiency board for ${season} — sorted by point differential by default. Click a team to open its profile.`}
+        subtitle={`Efficiency board for ${season}, sorted by point differential by default. Click a team to open its profile.`}
       />
 
       <Suspense

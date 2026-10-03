@@ -198,7 +198,7 @@ export function TeamSeasonRankView({
               <MetricHelp conceptId="close_top" labelClassName="font-semibold">
                 Close top
               </MetricHelp>
-              {" - "}
+              {": "}
               {result.closeTopNote}
             </p>
           ) : null}
@@ -207,7 +207,7 @@ export function TeamSeasonRankView({
               <MetricHelp conceptId="contested" labelClassName="font-semibold">
                 Contested
               </MetricHelp>
-              {" - "}
+              {": "}
               {result.contestedNote}
             </p>
           ) : null}
@@ -312,7 +312,7 @@ export function TeamSeasonRankView({
               ? `See the evidence · ${topSeason}`
               : "See the evidence"
           }
-          subtitle="Representative games that illustrate the #1 season’s scoreboard profile - not “most important” games. Each card opens Game Lab."
+          subtitle="Representative games that illustrate the #1 season’s scoreboard profile. They are not picked as the “most important” games. Each card opens Game Lab."
           highlightCategoryIds={evidenceHighlights}
         />
       ) : null}

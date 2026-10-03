@@ -134,7 +134,7 @@ export async function TeamSplitsIsland({
           <h2 className="text-[20px] font-bold tracking-tight">Splits</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             Regular-season home/road, form, and margin bands from the bundled
-            schedule ({season}). Box-score only — not opponent-adjusted.
+            schedule ({season}). Box-score only and not opponent-adjusted.
           </p>
         </div>
         <TransitionLink
@@ -187,7 +187,7 @@ export async function TeamSplitsIsland({
 
       <SplitsTable
         rows={splits}
-        caption="Context splits — overall, home/road, and rolling windows."
+        caption="Context splits: overall, home/road, and rolling windows."
       />
 
       <div>

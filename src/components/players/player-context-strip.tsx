@@ -157,7 +157,7 @@ export function PlayerContextStrip({
           </>
         ) : (
           <>
-            Similarity is nearest on the selected metric only — not a
+            Similarity is nearest on the selected metric only, not a
             multi-metric profile match.{" "}
           </>
         )}

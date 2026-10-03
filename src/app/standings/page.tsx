@@ -16,7 +16,7 @@ import { cn } from "@/lib/utils";
 export const metadata = {
   title: "Standings",
   description:
-    "NBA conference standings — W/L, games back, and scoring margin.",
+    "NBA conference standings: W/L, games back, and scoring margin.",
 };
 
 interface PageProps {
@@ -66,8 +66,8 @@ async function StandingsBody({ season }: { season: string }) {
           )}
           role="status"
         >
-          Showing {data.season} final standings — {season} season has not
-          started.
+          Showing {data.season} final standings because the {season} season
+          has not started.
         </p>
       ) : null}
       <StandingsDiffBarsLazy season={data.season} east={east} west={west} />
@@ -102,7 +102,7 @@ export default async function StandingsPage({ searchParams }: PageProps) {
       <PageHeader
         eyebrow="Standings"
         title="Standings"
-        subtitle={`${season} conference race — W/L, games back, and scoring margin.`}
+        subtitle={`${season} conference race: W/L, games back, and scoring margin.`}
       />
 
       <Suspense

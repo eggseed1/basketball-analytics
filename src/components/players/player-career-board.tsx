@@ -469,8 +469,8 @@ export function PlayerCareerBoard({
               </table>
             </div>
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Showing {kindLabel.toLowerCase()} · {tableCols.length} columns —
-              switch category or scroll sideways for more.
+              Showing {kindLabel.toLowerCase()} · {tableCols.length} columns.
+              Switch category or scroll sideways for more.
             </p>
           </>
         )}

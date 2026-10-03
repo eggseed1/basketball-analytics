@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import type { ReactNode } from "react";
 
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
@@ -17,8 +18,10 @@ import {
   shouldDisplayScores,
   statusHeadline,
 } from "@/lib/game-status";
+import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { gameSideBrandKey } from "@/lib/game-team-identity";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
 
 export type GamefeedView = "week" | "month" | "list";
@@ -102,6 +105,120 @@ function abbr(game: GameSummary, side: "away" | "home") {
     resolveTeamBrand(key)?.abbr ??
     (side === "away" ? game.awayTeamAbbr : game.homeTeamAbbr) ??
     String(key).slice(0, 3).toUpperCase()
+  );
+}
+
+/**
+ * Frosted matchup chip with the same faint team wash as the score rows.
+ * The day card is already glass, so the chip skips its own backdrop blur.
+ */
+function MatchupChip({
+  game,
+  className,
+  title,
+  children,
+}: {
+  game: GameSummary;
+  className?: string;
+  title?: string;
+  children: ReactNode;
+}) {
+  const matchup = buildGameMatchupTheme(
+    gameSideBrandKey(game, "away"),
+    gameSideBrandKey(game, "home")
+  );
+  return (
+    <GlassSurface
+      effect="css"
+      accentColor={matchup.awayWash}
+      accentColorB={matchup.homeWash}
+      className={cn(
+        "relative transition-[filter] hover:brightness-[0.98] dark:hover:brightness-110",
+        className
+      )}
+      style={{ backdropFilter: "none", WebkitBackdropFilter: "none" }}
+    >
+      <Link
+        href={`/games/${game.id}`}
+        className="absolute inset-0 z-0 rounded-md outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        aria-label={title}
+        title={title}
+      />
+      <div className="pointer-events-none relative z-[1]">{children}</div>
+    </GlassSurface>
+  );
+}
+
+/** Split "7:00 PM EDT" into the clock and a zone caption. */
+function splitTipLabel(label: string): { primary: string; secondary: string | null } {
+  const match = /^(.*\d(?:\s?[AP]M)?)\s+([A-Z]{2,5})$/.exec(label.trim());
+  if (!match || /^[AP]M$/.test(match[2]!)) {
+    return { primary: label, secondary: null };
+  }
+  return { primary: match[1]!, secondary: match[2]! };
+}
+
+function WeekMatchupChip({ game }: { game: GameSummary }) {
+  const away = abbr(game, "away");
+  const home = abbr(game, "home");
+  const showScores = shouldDisplayScores({
+    status: game.status,
+    homeScore: game.homeScore,
+    awayScore: game.awayScore,
+  });
+  const awayLosing =
+    showScores &&
+    game.awayScore != null &&
+    game.homeScore != null &&
+    game.awayScore < game.homeScore;
+  const homeLosing =
+    showScores &&
+    game.awayScore != null &&
+    game.homeScore != null &&
+    game.homeScore < game.awayScore;
+  const tip = splitTipLabel(tipLabel(game));
+
+  const side = (key: string, label: string, end: boolean) => (
+    <div
+      className={cn(
+        "flex min-w-0 flex-col gap-0.5",
+        end ? "items-end" : "items-start"
+      )}
+    >
+      <TeamLogo teamKey={key} size="xs" />
+      <span className="text-[11px] font-semibold tabular-nums text-muted-foreground">
+        {label}
+      </span>
+    </div>
+  );
+
+  return (
+    <MatchupChip game={game} title={`${away} at ${home}`} className="px-2.5 py-2">
+      <div className="grid grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-1.5">
+        {side(gameSideBrandKey(game, "away"), away, false)}
+        <div className="flex flex-col items-center text-center">
+          <span className="text-[14px] font-semibold leading-tight tabular-nums">
+            {showScores ? (
+              <>
+                <span className={awayLosing ? "text-muted-foreground" : undefined}>
+                  {game.awayScore}
+                </span>
+                <span className="px-0.5 font-medium text-muted-foreground">-</span>
+                <span className={homeLosing ? "text-muted-foreground" : undefined}>
+                  {game.homeScore}
+                </span>
+              </>
+            ) : (
+              tip.primary
+            )}
+          </span>
+          <span className="text-[10px] leading-tight text-muted-foreground">
+            {showScores ? tipLabel(game) : (tip.secondary ?? "")}
+          </span>
+        </div>
+        {side(gameSideBrandKey(game, "home"), home, true)}
+      </div>
+    </MatchupChip>
   );
 }
 
@@ -213,7 +330,7 @@ function MonthGrid({
     cells.push({ iso, day: d });
   }
   while (cells.length % 7 !== 0) cells.push({ iso: null, day: null });
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayIso = nbaTodayIso();
 
   return (
     <>
@@ -262,11 +379,11 @@ function MonthGrid({
                     awayScore: g.awayScore,
                   });
                   return (
-                    <Link
+                    <MatchupChip
                       key={g.id}
-                      href={`/games/${g.id}`}
-                      className="rounded-sm bg-secondary/70 px-1 py-0.5 transition-colors hover:bg-secondary"
-                      title={`${away} @ ${home}`}
+                      game={g}
+                      title={`${away} at ${home}`}
+                      className="rounded-sm px-1 py-0.5"
                     >
                       <span className="flex items-center gap-1">
                         <TeamLogo
@@ -291,7 +408,7 @@ function MonthGrid({
                           ) : null}
                         </span>
                       </span>
-                    </Link>
+                    </MatchupChip>
                   );
                 })}
                 {dayGames.length > 4 ? (
@@ -316,7 +433,7 @@ function WeekBoard({
   games: GameSummary[];
 }) {
   const byDate = groupByDate(games);
-  const todayIso = new Date().toISOString().slice(0, 10);
+  const todayIso = nbaTodayIso();
   const days = Array.from({ length: 7 }, (_, i) => addDaysIso(weekStart, i));
 
   return (
@@ -350,33 +467,9 @@ function WeekBoard({
               <p className="text-[12px] text-muted-foreground">No games</p>
             ) : (
               <div className="flex flex-col gap-1.5">
-                {dayGames.map((g) => {
-                  const away = abbr(g, "away");
-                  const home = abbr(g, "home");
-                  const finalish = shouldDisplayScores({
-                    status: g.status,
-                    homeScore: g.homeScore,
-                    awayScore: g.awayScore,
-                  });
-                  return (
-                    <Link
-                      key={g.id}
-                      href={`/games/${g.id}`}
-                      className="rounded-sm bg-secondary/70 px-2 py-1.5 transition-colors hover:bg-secondary"
-                    >
-                      <p className="text-[12px] font-semibold leading-tight">
-                        {away}
-                        {finalish ? ` ${g.awayScore}` : ""}
-                        <span className="text-muted-foreground"> @ </span>
-                        {home}
-                        {finalish ? ` ${g.homeScore}` : ""}
-                      </p>
-                      <p className="mt-0.5 text-[10px] text-muted-foreground">
-                        {tipLabel(g)}
-                      </p>
-                    </Link>
-                  );
-                })}
+                {dayGames.map((g) => (
+                  <WeekMatchupChip key={g.id} game={g} />
+                ))}
               </div>
             )}
           </div>
@@ -419,10 +512,10 @@ export function Gamefeed({
 
   const subtitle =
     view === "list"
-      ? `Upcoming tip-offs from ESPN - ${season}`
+      ? `Upcoming tip-offs from ESPN · ${season}`
       : view === "week"
-        ? `Weekly slate - ${season}`
-        : `Monthly calendar - ${season}`;
+        ? `Weekly slate · ${season}`
+        : `Monthly calendar · ${season}`;
 
   return (
     <QueryNavProvider className="gap-0">

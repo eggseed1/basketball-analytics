@@ -20,7 +20,7 @@ export async function generateMetadata({ params }: PageProps) {
   if (!f) return { title: "Franchise | Basketball Analytics" };
   return {
     title: `${f.city} ${f.name} history | Basketball Analytics`,
-    description: `All-time ${f.city} ${f.name} records - titles, playoffs, leaders, and fan lore.`,
+    description: `All-time ${f.city} ${f.name} records: titles, playoffs, leaders, and fan lore.`,
   };
 }
 

@@ -193,7 +193,7 @@ async function PlayerStatDepthIslandInner({
         <EraUnavailable
           title="Game logs"
           season={season}
-          detail="Comprehensive player game logs start in 1996-97. Career season stats remain available."
+          detail="Full player game logs start in 1996-97. Career season stats remain available."
         />
       );
     }
@@ -367,7 +367,7 @@ async function CareerView({
       {historySeasons.length > 0 ? (
         <>
           <PlayerCareerArcChart
-            title="Career arc — points per game"
+            title="Career arc · points per game"
             points={arcPoints}
             selectedSeason={season}
             peakSeason={peak?.season ?? null}
@@ -511,18 +511,18 @@ async function GamesView({
 
           <div className="grid gap-3 lg:grid-cols-3">
             <PlayerSparkTrend
-              title="Rolling 5 — PTS"
+              title="Rolling 5 · PTS"
               question="5-game form"
               points={roll5.map((p) => ({ x: p.date, y: p.value }))}
               valueDigits={1}
             />
             <PlayerSparkTrend
-              title="Rolling 10 — PTS"
+              title="Rolling 10 · PTS"
               question="10-game form"
               points={roll10.map((p) => ({ x: p.date, y: p.value }))}
             />
             <PlayerSparkTrend
-              title="Rolling 20 — PTS"
+              title="Rolling 20 · PTS"
               question="20-game form"
               points={roll20.map((p) => ({ x: p.date, y: p.value }))}
             />
@@ -845,8 +845,8 @@ async function ShootingView({
           <PlayerShotProfileBars
             title={
               zoneRows.length > 0
-                ? "Shot diet by zone — frequency + accuracy"
-                : "Shot diet — frequency + accuracy"
+                ? "Shot diet by zone · frequency + accuracy"
+                : "Shot diet · frequency + accuracy"
             }
             slices={zoneSlices}
           />
@@ -1111,14 +1111,14 @@ async function AdvancedView({
       <div>
         <h2 className="text-[17px] font-bold tracking-tight">Advanced</h2>
         <p className="text-[13px] text-muted-foreground">
-          Impact, efficiency, role context — only validated metrics
+          Impact, efficiency, and role context. Validated metrics only.
         </p>
       </div>
 
       <div className="grid gap-3 lg:grid-cols-2">
         {caps.advancedDrbl ? (
           <PlayerImpactMarker
-            title="DRBL/100 — how good?"
+            title="DRBL/100: how good?"
             valueLabel={drblOk ? formatNumber(merged!.drbl100, 1) : "unavailable"}
             percentile={byKey.get("drbl100")?.percentile ?? null}
             bins={drblBins}
@@ -1130,7 +1130,7 @@ async function AdvancedView({
         )}
         {caps.advancedDrbl ? (
           <PlayerImpactMarker
-            title="WAR1 — how much?"
+            title="WAR1: how much?"
             valueLabel={
               drblOk && merged?.r1WinEquivalents != null
                 ? formatNumber(merged.r1WinEquivalents, 1)
@@ -1160,7 +1160,7 @@ async function AdvancedView({
       <section className="flex flex-col gap-2">
         <h3 className="text-[14px] font-bold">Box defensive events</h3>
         <p className="text-[12px] text-muted-foreground">
-          BOX DEFENSIVE EVENTS DO NOT REPRESENT TOTAL DEFENSIVE VALUE.
+          Box defensive events do not represent total defensive value.
         </p>
         {merged ? (
           <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -1181,7 +1181,7 @@ async function AdvancedView({
         <ul className="mt-2 space-y-1 text-[12px] text-muted-foreground">
           {PLAYER_SEASON_ADVANCED_METRIC_REGISTRY.map((m) => (
             <li key={m.metricId}>
-              <span className="font-semibold text-foreground">{m.name}</span> —{" "}
+              <span className="font-semibold text-foreground">{m.name}</span>:{" "}
               {m.validationStatus} · {m.eraCoverage}
             </li>
           ))}

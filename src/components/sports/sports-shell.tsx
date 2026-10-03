@@ -24,7 +24,34 @@ import {
   type PrimaryNavItem,
 } from "@/components/sports/site-nav";
 
-function subnavActive(link: NavLink, pathname: string, search: string): boolean {
+function queryLinkActive(link: NavLink, pathname: string, search: string): boolean {
+  const [pathOnly, query] = link.href.split("?");
+  if (!query || pathname !== pathOnly) return false;
+  const current = new URLSearchParams(search);
+  for (const [key, value] of new URLSearchParams(query)) {
+    if (current.get(key) !== value) return false;
+  }
+  return true;
+}
+
+/** Sibling tabs that share a path differ only by query; the bare-path tab yields to them. */
+function subnavActive(
+  link: NavLink,
+  pathname: string,
+  search: string,
+  siblings: NavLink[] = []
+): boolean {
+  const pathOnly = link.href.split("?")[0] ?? link.href;
+  const sharesPathWithQueryTab = siblings.some(
+    (s) => s !== link && s.href.includes("?") && s.href.split("?")[0] === pathOnly
+  );
+  if (sharesPathWithQueryTab && pathOnly !== "/scores") {
+    if (link.href.includes("?")) return queryLinkActive(link, pathname, search);
+    if (siblings.some((s) => s !== link && queryLinkActive(s, pathname, search))) {
+      return false;
+    }
+    return pathname === pathOnly;
+  }
   if (link.match) {
     // Schedule vs Scores both live on /scores - disambiguate by view=.
     if (link.href.includes("view=week")) {
@@ -42,7 +69,6 @@ function subnavActive(link: NavLink, pathname: string, search: string): boolean 
     }
     return link.match(pathname);
   }
-  const pathOnly = link.href.split("?")[0] ?? link.href;
   return pathname === pathOnly || pathname.startsWith(`${pathOnly}/`);
 }
 
@@ -62,7 +88,7 @@ function DomainSubnav({ item }: { item: PrimaryNavItem }) {
         className="flex max-w-full items-center gap-0.5 touch-scroll-x [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
         {item.subnav.map((link) => {
-          const active = subnavActive(link, pathname, search);
+          const active = subnavActive(link, pathname, search, item.subnav);
           return (
             <TransitionLink
               key={link.href}
@@ -216,7 +242,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                     ? "glass-pill glass-pill-active text-foreground"
                     : "text-muted-foreground hover:text-foreground"
                 )}
-                title="Franchise Lab — unfinished simulation scaffold"
+                title="Franchise Lab: unfinished simulation scaffold"
               >
                 GM lab
               </TransitionLink>

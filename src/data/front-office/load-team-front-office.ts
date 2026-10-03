@@ -166,12 +166,12 @@ export function buildTeamDraftAssetsPresentation(
     capabilities: slice.capabilities,
     disclosures: hasAssets
       ? [
-          "Own first and second round picks shown for 2027–2030.",
+          "Each team's own first and second round picks for 2027–2030. \"Own\" means the team's original pick, not confirmed ownership.",
           "Traded, conveyed, protected, and swap-affected picks are not modeled yet.",
         ]
       : [
           "Draft asset ledger requires an authoritative current snapshot or validated starting ownership plus complete transaction chain.",
-          "Showing unavailable state — never a false zero.",
+          "Showing an unavailable state instead of a false zero.",
         ],
   };
 }
@@ -213,7 +213,7 @@ export function buildTeamFrontOfficeSummary(
             : "Salary data unavailable for this franchise snapshot.",
         ]
       : [
-          "Draft asset counts omitted — source unavailable.",
+          "Draft asset counts omitted: source unavailable.",
           salaryOk
             ? "Salary figure is Player Salary Commitments (approximate cap space on Cap & assets)."
             : "Salary data unavailable for this franchise snapshot.",

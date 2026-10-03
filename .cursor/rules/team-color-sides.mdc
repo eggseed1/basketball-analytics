@@ -1,0 +1,24 @@
+---
+description: Two-team color washes put each player's face or team logo on its own color side; headshots fill their rings exactly
+globs: src/components/**/*.tsx,src/app/**/*.tsx
+alwaysApply: false
+---
+
+# Faces sit on their color
+
+Any surface that runs one team color into another (`.matchup-wash`, `.matchup-wash--subtle`, `.score-card-wash`, split bars, left/right tinted panels) must place each side's identity on that side's color:
+
+- Player A's headshot or team A's logo on the left, where A's color is.
+- Player B's headshot or team B's logo on the right, where B's color is.
+- Never stack or overlap both faces on one side of a two-color wash.
+- Values, labels and bars keep the same order: A left, B right.
+
+The wash direction itself is frozen (see `team-wash-gradient-freeze.mdc`). Match the content to the wash, never the other way around.
+
+# Headshots fill their ring
+
+When a `PlayerHeadshot` sits inside a colored ring:
+
+- The ring wrapper is `flex` or `block`, never a bare inline `span` (inline leaves a line-height crescent at the bottom).
+- Padding is even on all four sides.
+- Pass `className="ring-0"` to the headshot so its default white ring does not show inside the colored one.

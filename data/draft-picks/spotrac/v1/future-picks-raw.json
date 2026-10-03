@@ -1,0 +1,4926 @@
+{
+ "retrievedAt": "2026-10-01",
+ "sourceUrl": "https://www.spotrac.com/nba/draft/future",
+ "tables": [
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_atl.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "nba_mil.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of MIL and NOP then other to NOP (via NOP)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of (i) ATL and less favorable (ii) CLE and UTA then other to CLE (via ATL swap for CLE or UTA)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": "(via BOS to MEM to POR)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_atl.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via GSW)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_atl.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of ATL and MIA the other to OKC (via OKC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cle1.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_atl.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_ny.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via POR)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_atl.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of ATL and HOU 31-55 (or just ATL if HOU 56-60) (via ATL)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_atl.png",
+     "bar": "ATL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of ATL and LAL then other to OKC (via ATL)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_bos.png",
+     "bar": "BOS SAS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap 2-30 with SAS (via SAS swap for BOS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lac1.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_sa.png",
+     "bar": "SAS BOS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BOS 2-30 (via SAS swap for BOS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_bos.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most and least favorable of BOS, MIL and POR to POR then other to WAS (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_phi.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": "FROZEN PICK"
+    },
+    {
+     "year": "2033",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_bos.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BKN and DAL to WAS then other to DET"
+    },
+    {
+     "year": "2028",
+     "img": "nba_bos.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 46-60 (via ORL to PHX)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mil.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of GSW, MIL and OKC (via BKN to HOU to OKC to PHI)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_bos.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_bos.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 30-55"
+    },
+    {
+     "year": "2030",
+     "img": "nba_wsh.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of PHX, POR and WAS then others to PHI and WAS (via PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": "Less favorable of BOS and CLE then other to UTA (via CLE to ATL to BOS)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of HOU 31-55 and ATL (via ATL swap for HOU)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_bos.png",
+     "bar": "BOS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "bkn_2025.png",
+     "bar": "BKN HOU",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with HOU (via HOU swap for BKN)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU BKN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BKN (via HOU swap for BKN)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": "Two most favorable of BKN, PHI 9-30 and PHX (via BKN swap for PHX) Or swap with NYK"
+    },
+    {
+     "year": "2028",
+     "img": "nba_ny.png",
+     "bar": "NYK BKN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BKN (via BKN swap for NYK)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-8 or LAC or BOS (via BOS swap for LAC or PHI 1-8)"
+    },
+    {
+     "year": "2029",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_hou_20261.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of DAL HOU and PHX then others to HOU"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_den.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "bkn_2025.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BKN and DAL to WAS then other to DET"
+    },
+    {
+     "year": "2028",
+     "img": "nba_atl.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via GSW)"
+    },
+    {
+     "year": "2028",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_mem.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_phi.png",
+     "bar": "PHI BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": "PHI pick if PHI conveys second 1st to BKN by 2028; BKN pick if PHI does not convey second 1st to BKN by 2028"
+    },
+    {
+     "year": "2029",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_dal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_gs.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_mem.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_bos.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU)"
+    },
+    {
+     "year": "2030",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_dal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via BOS to MEM)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_lal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_lal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "bkn_2025.png",
+     "bar": "BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_den.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_mia.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_tor.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-2"
+    },
+    {
+     "year": "2027",
+     "img": "nba_mia.png",
+     "bar": "MIA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-14"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cha.png",
+     "bar": "CHA MIN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for MIN (via CHA swap for MIN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mia.png",
+     "bar": "MIA CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If MIA does not convey 1st to CHA in 2027"
+    },
+    {
+     "year": "2028",
+     "img": "nba_min_2026.png",
+     "bar": "MIN CHA",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with CHA (via CHA swap for MIN)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cha.png",
+     "bar": "PHX",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CHA or CLE, MIN 6-30 and UTA (via CHA swap to PHX)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cle1.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CLE, MIN 6-30 and UTA to PHX then others to UTA (via UTA to PHX)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "Or swap for least favorable of DAL, MIN 2-30 and SAS (via CHA swap for MIN)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_phx.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cha.png",
+     "bar": "OKC SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "OKC If SAS is 1-16, SAC If SAS is 17-30"
+    },
+    {
+     "year": "2027",
+     "img": "nba_mem.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via LAC to HOU)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_no.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of NOP and POR to CHA then other to POR (via POR)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_phi.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via LAC) Second most favorable of (i) PHL, (ii) more favorable of GOS and PHX (via WAS) and (iii) most favorable of OKC, HOU, IND and MIA (via HOU to DET to OKC; via IND and MIA to OKC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of CHA and LAC then other to DET (via LAC to CHA to DAL)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_hou_20261.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to ATL to HOU)"
+    },
+    {
+     "year": "2028",
+     "img": "orl_20251.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_atl.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of ATL and MIA the other to OKC (via OKC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_den.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "If DEN conveys 1st to OKC by 2029"
+    },
+    {
+     "year": "2029",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "MIN pick if MIN conveys 1st to UTA in 2029; UTA pick if MIN does not convey 1st to UTA in 2029 or CHA if does not convery"
+    },
+    {
+     "year": "2030",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 30-55"
+    },
+    {
+     "year": "2030",
+     "img": "uta_20251.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of LAC and UTA (via UTA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_mil.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_phx.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_cha.png",
+     "bar": "CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_mil.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_por.png",
+     "bar": "POR MIL",
+     "arrow": false,
+     "swap": true,
+     "terms": "or swap with MIL"
+    },
+    {
+     "year": "2029",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_chi.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via WAS to NOP to WAS to DAL)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_cle1.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via ATL to MIN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of CHI, IND and PHX then others to IND and NYK"
+    },
+    {
+     "year": "2028",
+     "img": "nba_por.png",
+     "bar": "POR CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "(via CHI to SAC to MEM)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_ny.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via NYK to DET to SAC)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of CHI and IND then other to IND"
+    },
+    {
+     "year": "2030",
+     "img": "nba_ind.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of CHI and IND then other to CHI"
+    },
+    {
+     "year": "2031",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_den.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX to CHA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_min_2026.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of GSW and MIN then other to DET (via MIN swap for GSW (via MIN))"
+    },
+    {
+     "year": "2031",
+     "img": "nba_ny.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DET to CHA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_chi.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_hou_20261.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of HOU and PHX then other to PHX (via PHX to MIN)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cle1.png",
+     "bar": "PHX",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CLE, MIN and UTA then others to MEM and UTA (via UTA)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cle1.png",
+     "bar": "CLE",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of CLE, ATL and UTA (via UTH swap for CLE; via ATL swap for CLE or UTH)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cle1.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CLE, MIN 6-30 and UTA to PHX then others to UTA (via UTA to PHX)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_cle1.png",
+     "bar": "CLE",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_cle1.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_cle1.png",
+     "bar": "CLE",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_cle1.png",
+     "bar": "CLE",
+     "arrow": false,
+     "swap": false,
+     "terms": "FROZEN PICK"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cle1.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via ATL to MIN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_cle1.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_cle1.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BOS and CLE then other to BOS (via CLE to ATL to BOS)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-2"
+    },
+    {
+     "year": "2028",
+     "img": "nba_dal.png",
+     "bar": "DAL OKC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with OKC (via OKC swap for DAL)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_okc.png",
+     "bar": "OKC DAL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with DAL (via OKC swap for DAL)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_dal.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of BKN, DAL and PHX to HOU then other to BKN"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lal.png",
+     "bar": "DAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of DAL and SAS (via SAN swap for DAL)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_dal.png",
+     "bar": "DAL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_dal.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of BKN and DAL to MIL then other to WAS (via DET)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_dal.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAC to IND)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_dal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_hou_20261.png",
+     "bar": "DAL",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via OKC to WAS)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_dal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via BOS to MEM)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_dal.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_dal.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5"
+    },
+    {
+     "year": "2028",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC"
+    },
+    {
+     "year": "2029",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC or 1-5 if DEN conveys 1st to OKC by 2027"
+    },
+    {
+     "year": "2030",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC or 1-5 if DEN conveys 1st to OKC by 2028"
+    },
+    {
+     "year": "2031",
+     "img": "nba_cle1.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_den.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_den.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE to CHI to BOS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 31-33"
+    },
+    {
+     "year": "2028",
+     "img": "nba_min_2026.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_den.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "If DEN conveys 1st to OKC by 2029"
+    },
+    {
+     "year": "2030",
+     "img": "nba_den.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable picks of DEN, HOU and MIA then other to MEM (via CHA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_den.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX to CHA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sac.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_den.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_sac.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of DET 31-55, CHA, LAC, MIA and NYK to UTA then others to DET"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lac1.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CHA and LAC then other to CHA (via LAC to CHA to DAL)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mia.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "If DAL conveys 1st to CHA in 2027(via SAS to DAL to DET) or to CHA if DAL does not convey 1st to CHA in 2027"
+    },
+    {
+     "year": "2029",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "Two most favorable of DET, MIL and NYK then other to SAC (via MIL to BRK to DET; via NYK to DET)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mil.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DET, MIL and NYK then other to SAC (via MIL to BRK to DET; via NYK to DET)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_dal.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_gs.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of GSW and MIN then other to MIN (via MIN swap for GSW (via GSW))"
+    },
+    {
+     "year": "2032",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "(via MEM)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-20"
+    },
+    {
+     "year": "2031",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_gs.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of GSW and PHX to WAS then other to PHI (via WAS to PHI)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_gs.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable of GSW, MIL and OKC to PHI then other to BOS (via POR to WAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_gs.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_gs.png",
+     "bar": "GSW WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "GSW pick if GSW conveys 1st to WAS in 2030; WAS pick if GSW does not convey 1st to WAS in 2030"
+    },
+    {
+     "year": "2031",
+     "img": "nba_gs.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of GSW and MIN then other to MIN (via MIN swap for GSW (via GSW))"
+    },
+    {
+     "year": "2032",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 31-50"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "bkn_2025.png",
+     "bar": "BKN HOU",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with HOU (via HOU swap for BKN)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU BKN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BKN (via HOU swap for BKN)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_phx.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via BKN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_dal.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of BKN, DAL and PHX to HOU then other to BKN"
+    },
+    {
+     "year": "2029",
+     "img": "nba_hou_20261.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of DAL HOU and PHX then others to HOU"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phx.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of BKN, DAL and PHX to HOU then other to BKN"
+    },
+    {
+     "year": "2030",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_hou_20261.png",
+     "bar": "NOP",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of HOU, IND, MIA and OKC to NYK; then others to PHI and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_por.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "If POR 56-60 then less favorable of NOP and POR 56-60 (via POR to BOS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_hou_20261.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to ATL to HOU)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_hou_20261.png",
+     "bar": "DAL",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via OKC to WAS)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_hou_20261.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable pick of DEN, HOU and MIA then others to OKC (via OKC)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_hou_20261.png",
+     "bar": "HOU",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of HOU 31-55 and ATL (via ATL swap for HOU)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_hou_20261.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of HOU and PHX then other to PHX (via PHX to MIN)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_ind.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "FORFEIT"
+    },
+    {
+     "year": "2030",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_ind.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "Third most favorable of HOU, IND, MIA and OKC to NYK; then others to PHI and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "uta_20251.png",
+     "bar": "IND",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE) or to NOP if IND does not convey 1st to NOP by 2027"
+    },
+    {
+     "year": "2028",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": "Middle Pick of CHI, IND and PHX then others to CHI and NYK"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ind.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of IND and WAS to POR then other to IND (via NYK)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_wsh.png",
+     "bar": "IND",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of IND and WAS to IND then other to POR (via NYK)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_ind.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of CHI and IND then other to CHI"
+    },
+    {
+     "year": "2031",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of IND, MEM and MIA then others to MEM and WAS (via MIA swap for IND; via UTH to WAS; via MEM swap for IND or MIA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_ind.png",
+     "bar": "IND",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_lac1.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DEN 6-30, LAC and OKC (via OKC swap for LAC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_okc.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DEN 6-30, LAC and OKC (via OKC swap for LAC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lac1.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ind.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "FORFEIT"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lac1.png",
+     "bar": "LAC PHI",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap 4-30 with PHI (via PHI swap for LAC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phi.png",
+     "bar": "PHI LAC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with LAC 4-30 (via PHI swap for LAC)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": "FORFEIT"
+    },
+    {
+     "year": "2031",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": "FORFEIT"
+    },
+    {
+     "year": "2032",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": "FORFEIT"
+    },
+    {
+     "year": "2033",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": "FORFEIT"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_lac1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via ATL to LAC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_dal.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAC to IND)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lac1.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CHA and LAC then other to CHA (via LAC to CHA to DAL)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lac1.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_lac1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of LAC and UTA then other to CHA (via LAC to UTA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_lac1.png",
+     "bar": "LAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_lal.png",
+     "bar": "LAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-4"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lal.png",
+     "bar": "LAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of LAL and more favorable or CLE and UTA then other to UTA (via UTA swap for CLE and LAL)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lal.png",
+     "bar": "DAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_lal.png",
+     "bar": "LAL UTA",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with UTA (via UTA swap for LAL)"
+    },
+    {
+     "year": "2030",
+     "img": "uta_20251.png",
+     "bar": "UTA LAL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for LAL (via UTA swap for LAL)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_lal.png",
+     "bar": "LAL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "If LAL does not convey 1st to UTA in 2027 or to BKN"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lal.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of LAL and WAS then other to ORL (via LAL to WAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lal.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_lal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_lal.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_wsh.png",
+     "bar": "LAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_lal.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of ATL and LAL then other to ATL (via ATL)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_wsh.png",
+     "bar": "LAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_lal.png",
+     "bar": "LAL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-4"
+    },
+    {
+     "year": "2027",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "uta_20251.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of CLE, MIN and UTA then others to PHX and UTA (via UTA)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_mem.png",
+     "bar": "MEM ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Or swap for ORL 3-30 (via MEM swap for ORL)"
+    },
+    {
+     "year": "2029",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-2 or swap 3-30 with MEM (via MEM swap for ORL"
+    },
+    {
+     "year": "2030",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-20"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of MEM and less favorable of PHX and WAS"
+    },
+    {
+     "year": "2030",
+     "img": "orl_20251.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_phx.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via UTA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_mem.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via LAC to HOU)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mem.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mem.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHX)"
+    },
+    {
+     "year": "2029",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If ORL 3-30 in 2029"
+    },
+    {
+     "year": "2029",
+     "img": "nba_por.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI to IND)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_hou_20261.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable pick of DEN, HOU and MIA then others to OKC (via OKC)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": "31-50"
+    },
+    {
+     "year": "2031",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of MEM, IND and MIA then others to IND and UTA (via MIA swap for IND; via MEM swap for IND or MIA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_gs.png",
+     "bar": "GSW",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 31-50"
+    },
+    {
+     "year": "2032",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of MEM, PHI and UTA (via MEM swap for PHI or UTA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_phi.png",
+     "bar": "MEM PHI",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or MEM via MEM swap for PHI"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_mia.png",
+     "bar": "MIA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-14"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mia.png",
+     "bar": "MIA CHA",
+     "arrow": false,
+     "swap": false,
+     "terms": "If MIA does not convey 1st to CHA in 2027"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mia.png",
+     "bar": "MIA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_mia.png",
+     "bar": "MIA",
+     "arrow": false,
+     "swap": false,
+     "terms": "Or swap for least favorable of MIL and POR (via MIL swap for MIA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_mia.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_mia.png",
+     "bar": "MIA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_mia.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_mia.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of HOU, IND, MIA and OKC to PHI; then others to NYK and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_okc.png",
+     "bar": "MIA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of HOU, IND, MIA and OKC then others to NYK, PHI and SAS (via HOU to DET to OKC; via UTA to SAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mia.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "If DAL conveys 1st to CHA in 2027(via SAS to DAL to DET) or to CHA if DAL does not convey 1st to CHA in 2027"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mia.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of ATL and MIA the other to CHA (via OKC)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mia.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable picks of DEN, HOU and MIA then other to MEM"
+    },
+    {
+     "year": "2031",
+     "img": "nba_mia.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of MIA and IND (via MIA swap for IND; via UTH)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_mia.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_mil.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of MIL and NOP then other to NOP (via NOP)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mil.png",
+     "bar": "MIL POR",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with POR (via POR swap for MIL)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_por.png",
+     "bar": "POR MIL",
+     "arrow": false,
+     "swap": true,
+     "terms": "or swap with MIL"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mil.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most and least favorable of BOS, MIL and POR to POR then other to WAS (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mil.png",
+     "bar": "MIL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Or swap with POR (via POR swap for MIL) or swap for most favorable of MIL and POR (via MIL swap for MIA)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_por.png",
+     "bar": "POR MIL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with MIL"
+    },
+    {
+     "year": "2031",
+     "img": "nba_mia.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_mil.png",
+     "bar": "MIL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_mil.png",
+     "bar": "MIL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_mia.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_mil.png",
+     "bar": "MIL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_dal.png",
+     "bar": "MIL",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of BKN and DAL to MIL then other to WAS (via DET)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_mil.png",
+     "bar": "MIL",
+     "arrow": false,
+     "swap": false,
+     "terms": "(via PHI to DET)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_mil.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of GSW, MIL and OKC (via BKN to HOU to OKC to PHI)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mil.png",
+     "bar": "DET",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DET, MIL and NYK then other to SAC (via MIL to BRK to DET; via NYK to DET)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mil.png",
+     "bar": "ORL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_mil.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_mil.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_min_2026.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of CLE, MIN and UTA then others to MEM and PHX"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cha.png",
+     "bar": "CHA MIN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for MIN (via CHA swap for MIN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_min_2026.png",
+     "bar": "MIN CHA",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with CHA (via CHA swap for MIN)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_min_2026.png",
+     "bar": "MIN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5"
+    },
+    {
+     "year": "2030",
+     "img": "nba_min_2026.png",
+     "bar": "MIN",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of MIN 2-30, CHA, DAL and SAS (via SAN swap for DAL; via SAN swap of SAN or DAL for MIN; via CHA swap for MIN)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_min_2026.png",
+     "bar": "SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_min_2026.png",
+     "bar": "MIN",
+     "arrow": false,
+     "swap": false,
+     "terms": "FROZEN PICK"
+    },
+    {
+     "year": "2033",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_min_2026.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to OKC to NYK)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_min_2026.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "MIN pick if MIN conveys 1st to UTA in 2029; UTA pick if MIN does not convey 1st to UTA in 2029 or CHA if does not convery"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mem.png",
+     "bar": "MEM",
+     "arrow": false,
+     "swap": false,
+     "terms": "31-50"
+    },
+    {
+     "year": "2030",
+     "img": "nba_min_2026.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DET)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_min_2026.png",
+     "bar": "CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of GSW and MIN then other to DET (via MIN swap for GSW (via MIN))"
+    },
+    {
+     "year": "2032",
+     "img": "nba_min_2026.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of MIL and NOP then other to ATL"
+    },
+    {
+     "year": "2028",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_hou_20261.png",
+     "bar": "NOP",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of HOU, IND, MIA and OKC to NYK; then others to PHI and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_no.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of NOP and POR to CHA then other to POR (via POR)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_no.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_no.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_no.png",
+     "bar": "NOP ORL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with ORL (via ORL swap for NOP)"
+    },
+    {
+     "year": "2030",
+     "img": "orl_20251.png",
+     "bar": "ORL NOP",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with NOP"
+    },
+    {
+     "year": "2031",
+     "img": "nba_no.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of ORL and NOP (via ORL swap for NOP (via NOP))"
+    },
+    {
+     "year": "2031",
+     "img": "nba_tor.png",
+     "bar": "NOP",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_no.png",
+     "bar": "NOP",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_ny.png",
+     "bar": "NYK BKN",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BKN (via BKN swap for NYK)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_ny.png",
+     "bar": "NYK",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_ny.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_ny.png",
+     "bar": "NYK",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_ny.png",
+     "bar": "NYK",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_ind.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "Third most favorable of HOU, IND, MIA and OKC to NYK; then others to PHI and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_ny.png",
+     "bar": "NYK",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "nba_wsh.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to OKC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_bos.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 46-60 (via ORL to PHX)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_ny.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_phx.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of CHI, IND and PHX then others to CHI and IND (via IND)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ny.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via NYK to DET to SAC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phx.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_sac.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via WAS to HOU)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_ny.png",
+     "bar": "ATL",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via POR)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_phi.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DAL)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_ny.png",
+     "bar": "CHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DET to CHA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_dal.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_ny.png",
+     "bar": "NYK",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5"
+    },
+    {
+     "year": "2027",
+     "img": "nba_lac1.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DEN 6-30, LAC and OKC (via OKC swap for LAC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_okc.png",
+     "bar": "LAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of DEN 6-30, LAC and OKC (via OKC swap for LAC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_sa.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 17-30 (via SAC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_dal.png",
+     "bar": "DAL OKC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with OKC (via OKC swap for DAL)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC"
+    },
+    {
+     "year": "2028",
+     "img": "nba_okc.png",
+     "bar": "OKC DAL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with DAL (via OKC swap for DAL)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC or 1-5 if DEN conveys 1st to OKC by 2027"
+    },
+    {
+     "year": "2029",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5 if not already settled with OKC or 1-5 if DEN conveys 1st to OKC by 2028"
+    },
+    {
+     "year": "2030",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cha.png",
+     "bar": "OKC SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "OKC If SAS is 1-16, SAC If SAS is 17-30"
+    },
+    {
+     "year": "2027",
+     "img": "nba_chi.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via WAS to NOP to WAS to DAL)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_okc.png",
+     "bar": "MIA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of HOU, IND, MIA and OKC then others to NYK, PHI and SAS (via HOU to DET to OKC; via UTA to SAS)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_sac.png",
+     "bar": "OKC SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "OKC If SAS is 1-16, SAC If SAS is 17-30"
+    },
+    {
+     "year": "2028",
+     "img": "nba_okc.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable of GSW, MIL and OKC to PHI then other to BOS"
+    },
+    {
+     "year": "2028",
+     "img": "uta_20251.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_bos.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_mia.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of ATL and MIA the other to CHA (via OKC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_atl.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_den.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable picks of DEN, HOU and MIA then other to MEM (via CHA)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mia.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable picks of DEN, HOU and MIA then other to MEM"
+    },
+    {
+     "year": "2030",
+     "img": "nba_min_2026.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DET)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_atl.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of ATL and HOU 31-55 (or just ATL if HOU 56-60) (via ATL)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "orl_20251.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of ORL and NOP (via ORL swap for NOP (via NOP))"
+    },
+    {
+     "year": "2032",
+     "img": "nba_lal.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of ATL and LAL then other to ATL (via ATL)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_okc.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "orl_20251.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via MEM)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mem.png",
+     "bar": "MEM ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Or swap for ORL 3-30 (via MEM swap for ORL)"
+    },
+    {
+     "year": "2029",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-2 or swap 3-30 with MEM (via MEM swap for ORL"
+    },
+    {
+     "year": "2030",
+     "img": "orl_20251.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "orl_20251.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BOS and UTA then other to CHA (via BOS to ORL to BOS to ORL)"
+    },
+    {
+     "year": "2028",
+     "img": "orl_20251.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_wsh.png",
+     "bar": "ORL",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of LAL and WAS to ORL then other to WAS"
+    },
+    {
+     "year": "2029",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "If ORL 3-30 in 2029"
+    },
+    {
+     "year": "2030",
+     "img": "nba_mil.png",
+     "bar": "ORL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_no.png",
+     "bar": "NOP ORL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with ORL (via ORL swap for NOP)"
+    },
+    {
+     "year": "2030",
+     "img": "orl_20251.png",
+     "bar": "ORL NOP",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with NOP"
+    },
+    {
+     "year": "2031",
+     "img": "nba_no.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of ORL and NOP (via ORL swap for NOP (via NOP))"
+    },
+    {
+     "year": "2031",
+     "img": "orl_20251.png",
+     "bar": "OKC",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of ORL and NOP (via ORL swap for NOP (via NOP))"
+    },
+    {
+     "year": "2032",
+     "img": "orl_20251.png",
+     "bar": "ORL",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-8 or LAC or BOS (via BOS swap for LAC or PHI 1-8)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lac1.png",
+     "bar": "LAC PHI",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap 4-30 with PHI (via PHI swap for LAC)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phi.png",
+     "bar": "PHI LAC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with LAC 4-30 (via PHI swap for LAC)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_phi.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_mia.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of HOU, IND, MIA and OKC to PHI; then others to NYK and SAS (via HOU to DET to UTA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_phi.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via LAC) Second most favorable of (i) PHL, (ii) more favorable of GOS and PHX (via WAS) and (iii) most favorable of OKC, HOU, IND and MIA (via HOU to DET to OKC; via IND and MIA to OKC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_phx.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of GSW and PHX to PHI then other to WAS (via WAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_det.png",
+     "bar": "DET",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of DET 31-55, CHA, LAC, MIA and NYK to UTA then others to DET"
+    },
+    {
+     "year": "2028",
+     "img": "nba_gs.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable of GSW, MIL and OKC to PHI then other to BOS (via POR to WAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_okc.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two least favorable of GSW, MIL and OKC to PHI then other to BOS"
+    },
+    {
+     "year": "2028",
+     "img": "nba_phi.png",
+     "bar": "PHI BKN",
+     "arrow": false,
+     "swap": false,
+     "terms": "PHI pick if PHI conveys second 1st to BKN by 2028; BKN pick if PHI does not convey second 1st to BKN by 2028"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_phi.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via DAL)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_por.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of PHX, POR and WAS then others to BOS and WAS (via WAS to PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_phi.png",
+     "bar": "PHI",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_phi.png",
+     "bar": "MEM PHI",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or MEM via MEM swap for PHI"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cle1.png",
+     "bar": "PHX",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CLE, MIN and UTA then others to MEM and UTA (via UTA)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_phx.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via BKN)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_phx.png",
+     "bar": "PHX",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least Favorable of WAS and BKN, PHI 9-30 and PHX (via BKN and WAS swap for PHX)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_cha.png",
+     "bar": "PHX",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of CHA or CLE, MIN 6-30 and UTA (via CHA swap to PHX)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phx.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "Two most favorable of BKN, DAL and PHX to HOU then other to BKN"
+    },
+    {
+     "year": "2030",
+     "img": "nba_phx.png",
+     "bar": "PHX",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of PHX, MEM and WAS"
+    },
+    {
+     "year": "2031",
+     "img": "nba_phx.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via UTA)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_phx.png",
+     "bar": "PHX",
+     "arrow": false,
+     "swap": false,
+     "terms": "FROZEN PICK"
+    },
+    {
+     "year": "2033",
+     "img": "nba_phx.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_phx.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of GSW and PHX to PHI then other to WAS (via WAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_phx.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of CHI, IND and PHX then others to CHI and IND (via IND)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_phx.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_phx.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favor of PHX, POR and WAS then others to BOS and PHI (via PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_phx.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_phx.png",
+     "bar": "PHX",
+     "arrow": false,
+     "swap": false,
+     "terms": "Least favorable of HOU and PHX then other to CHI (via PHX)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_mil.png",
+     "bar": "MIL POR",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with POR (via POR swap for MIL)"
+    },
+    {
+     "year": "2028",
+     "img": "orl_20251.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via MEM)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_por.png",
+     "bar": "POR MIL",
+     "arrow": false,
+     "swap": true,
+     "terms": "or swap with MIL"
+    },
+    {
+     "year": "2029",
+     "img": "nba_bos.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most and least favorable of BOS, MIL and POR to POR then other to WAS (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_mil.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most and least favorable of BOS, MIL and POR to POR then other to WAS (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_por.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of BOS, POR and MIL then others to POR (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_por.png",
+     "bar": "POR MIL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with MIL"
+    },
+    {
+     "year": "2031",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_min_2026.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to OKC to NYK)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_por.png",
+     "bar": "HOU",
+     "arrow": true,
+     "swap": false,
+     "terms": "If POR 56-60 then less favorable of NOP and POR 56-60 (via POR to BOS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_por.png",
+     "bar": "POR CHI",
+     "arrow": false,
+     "swap": false,
+     "terms": "(via CHI to SAC to MEM)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_sac.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CHI to SAC to MEM)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_ind.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of IND and WAS to POR then other to IND (via NYK)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_por.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI to IND)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_por.png",
+     "bar": "PHI",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of PHX, POR and WAS then others to BOS and WAS (via WAS to PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_por.png",
+     "bar": "POR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "nba_sa.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 17-30 (via SAC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_min_2026.png",
+     "bar": "SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sac.png",
+     "bar": "SAC SAS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with SAS (via SAS swap for SAC)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sa.png",
+     "bar": "SAS SAC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for SAC"
+    },
+    {
+     "year": "2032",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_sac.png",
+     "bar": "SAC",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_cha.png",
+     "bar": "OKC SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "OKC If SAS is 1-16, SAC If SAS is 17-30"
+    },
+    {
+     "year": "2027",
+     "img": "nba_sac.png",
+     "bar": "OKC SAC",
+     "arrow": true,
+     "swap": false,
+     "terms": "OKC If SAS is 1-16, SAC If SAS is 17-30"
+    },
+    {
+     "year": "2028",
+     "img": "nba_sac.png",
+     "bar": "POR",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CHI to SAC to MEM)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_sac.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via WAS to HOU)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_sac.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via IND)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sac.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via SAS)"
+    },
+    {
+     "year": "2032",
+     "img": "nba_sac.png",
+     "bar": "DEN",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE)"
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_atl.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2027",
+     "img": "nba_sa.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 17-30 (via SAC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_bos.png",
+     "bar": "BOS SAS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap 2-30 with SAS (via SAS swap for BOS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_sa.png",
+     "bar": "SAS BOS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with BOS 2-30 (via SAS swap for BOS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of SAS, DAL and MIN 2-30 (via SAN swap for DAL; via SAN swap of SAN or DAL for MIN)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sac.png",
+     "bar": "SAC SAS",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with SAS (via SAS swap for SAC)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_sa.png",
+     "bar": "SAS SAC",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for SAC"
+    },
+    {
+     "year": "2032",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable SAS and least favorable of HOU, IND, MIA and OKC then others to NYK and PHI (via HOU to DET to OKC; via UTA to SAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_bos.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "If 46-60 (via ORL to PHX)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_no.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_lac1.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via PHI)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_no.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_cle1.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_sac.png",
+     "bar": "SAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via IND)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_sa.png",
+     "bar": "SAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_tor.png",
+     "bar": "TOR",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "nba_tor.png",
+     "bar": "NOP",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_tor.png",
+     "bar": "BKN",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_min_2026.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of CLE, MIN and UTA then others to MEM and PHX"
+    },
+    {
+     "year": "2027",
+     "img": "uta_20251.png",
+     "bar": "MEM",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of CLE, MIN and UTA then others to PHX and UTA (via UTA)"
+    },
+    {
+     "year": "2028",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of LAL and more favorable or CLE and UTA then other to LAL (via UTA swap for CLE and LAL)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_min_2026.png",
+     "bar": "MIN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 1-5"
+    },
+    {
+     "year": "2029",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": "Two most favorable of CLE, MIN 6-30 and UTA then other to CHA"
+    },
+    {
+     "year": "2030",
+     "img": "nba_lal.png",
+     "bar": "LAL UTA",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap with UTA (via UTA swap for LAL)"
+    },
+    {
+     "year": "2030",
+     "img": "uta_20251.png",
+     "bar": "UTA LAL",
+     "arrow": false,
+     "swap": true,
+     "terms": "Or swap for LAL (via UTA swap for LAL)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2031",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_den.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE to CHI to BOS)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_lac1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via ATL to LAC)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_lal.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "If LAL does not convey 1st to UTA in 2027 or to BKN"
+    },
+    {
+     "year": "2027",
+     "img": "orl_20251.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BOS and UTA then other to CHA (via BOS to ORL to BOS to ORL)"
+    },
+    {
+     "year": "2027",
+     "img": "uta_20251.png",
+     "bar": "IND",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via CLE) or to NOP if IND does not convey 1st to NOP by 2027"
+    },
+    {
+     "year": "2028",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_ny.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "uta_20251.png",
+     "bar": "OKC",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_lac1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of LAC and UTA then other to CHA (via LAC to UTA)"
+    },
+    {
+     "year": "2030",
+     "img": "uta_20251.png",
+     "bar": "CHA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of LAC and UTA (via UTA)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BOS and CLE then other to BOS (via CLE to ATL to BOS)"
+    },
+    {
+     "year": "2031",
+     "img": "uta_20251.png",
+     "bar": "UTA",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_cle1.png",
+     "bar": "UTA",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "uta_20251.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2028",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most Favorable of WAS and BKN, PHI 9-30 and PHX (via BKN and WAS swap for PHX) or swap for MIL or POR"
+    },
+    {
+     "year": "2029",
+     "img": "nba_por.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Second most favorable of BOS, POR and MIL then others to POR (via BOS to POR; via MIL to POR; via POR to WAS)"
+    },
+    {
+     "year": "2029",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2030",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "Most favorable of WAS, MEM and PHX"
+    },
+    {
+     "year": "2031",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2033",
+     "img": "nba_wsh.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  },
+  {
+   "rows": [
+    {
+     "year": "2027",
+     "img": "nba_bos.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BKN and DAL to WAS then other to DET"
+    },
+    {
+     "year": "2027",
+     "img": "bkn_2025.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of BKN and DAL to WAS then other to DET"
+    },
+    {
+     "year": "2027",
+     "img": "nba_gs.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favorable of GSW and PHX to WAS then other to PHI (via WAS to PHI)"
+    },
+    {
+     "year": "2027",
+     "img": "nba_wsh.png",
+     "bar": "NYK",
+     "arrow": true,
+     "swap": false,
+     "terms": "(via HOU to OKC)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_den.png",
+     "bar": "DEN",
+     "arrow": false,
+     "swap": false,
+     "terms": "If 31-33"
+    },
+    {
+     "year": "2028",
+     "img": "nba_lal.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Less favorable of LAL and WAS then other to ORL (via LAL to WAS)"
+    },
+    {
+     "year": "2028",
+     "img": "nba_wsh.png",
+     "bar": "ORL",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of LAL and WAS to ORL then other to WAS"
+    },
+    {
+     "year": "2029",
+     "img": "nba_lal.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2029",
+     "img": "nba_wsh.png",
+     "bar": "IND",
+     "arrow": true,
+     "swap": false,
+     "terms": "More favorable of IND and WAS to IND then other to POR (via NYK)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_gs.png",
+     "bar": "GSW WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "GSW pick if GSW conveys 1st to WAS in 2030; WAS pick if GSW does not convey 1st to WAS in 2030"
+    },
+    {
+     "year": "2030",
+     "img": "nba_phx.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Least favor of PHX, POR and WAS then others to BOS and PHI (via PHI)"
+    },
+    {
+     "year": "2030",
+     "img": "nba_wsh.png",
+     "bar": "BOS",
+     "arrow": true,
+     "swap": false,
+     "terms": "Most favorable of PHX, POR and WAS then others to PHI and WAS (via PHI)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_mia.png",
+     "bar": "WAS",
+     "arrow": false,
+     "swap": false,
+     "terms": "More favorable of MIA and IND (via MIA swap for IND; via UTH)"
+    },
+    {
+     "year": "2031",
+     "img": "nba_wsh.png",
+     "bar": "LAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "uta_20251.png",
+     "bar": "WAS",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    },
+    {
+     "year": "2032",
+     "img": "nba_wsh.png",
+     "bar": "LAL",
+     "arrow": true,
+     "swap": false,
+     "terms": ""
+    }
+   ]
+  }
+ ]
+}

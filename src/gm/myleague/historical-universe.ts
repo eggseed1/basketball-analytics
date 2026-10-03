@@ -78,7 +78,7 @@ export function createPlaceholderSnapshot(
         twoWayContracts: false,
         draftRounds: 2,
         lotteryModel: "none",
-        notes: "Placeholder CBA - Milestone 5 fills era rules.",
+        notes: "Placeholder CBA. Milestone 5 fills era rules.",
       },
       provenance,
     },

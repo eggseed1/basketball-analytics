@@ -853,7 +853,8 @@ export async function getUpcomingGameSummaries(
   );
   const { isPreTipStatus } = await import("@/lib/game-status");
   const season = options.season ?? upcomingScheduleSeason();
-  const today = options.fromDate ?? new Date().toISOString().slice(0, 10);
+  const { nbaTodayIso } = await import("@/lib/nba-calendar-date");
+  const today = options.fromDate ?? nbaTodayIso();
   const limit = options.limit ?? 40;
   let pool = getRuntimeSnapshotGames(season)
     .filter(
@@ -878,7 +879,7 @@ export async function getUpcomingGameSummaries(
     games: slice.map(toGameSummary),
     hasMore: pool.length > limit,
     source: "cached-espn",
-    warnings: ["Showing build-time schedule snapshot — live ESPN unavailable."],
+    warnings: ["Showing build-time schedule snapshot; live ESPN unavailable."],
     isStale: true,
   };
 }

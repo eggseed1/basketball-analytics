@@ -178,7 +178,7 @@ function MetricRow({
   onSelect: () => void;
 }) {
   const pct = Math.max(0, Math.min(100, metric.percentile));
-  const fill = percentileSavantColor(pct);
+  const fill = percentileSavantColor(pct, "auto");
 
   const caption =
     metric.interpretation === "descriptive"
@@ -711,7 +711,7 @@ function PercentileHeatTile({
 }) {
   const pct = Math.max(0, Math.min(100, metric.percentile));
   const fill = metric.showPercentile
-    ? percentileSavantColor(pct)
+    ? percentileSavantColor(pct, "auto")
     : "color-mix(in oklch, var(--muted) 70%, transparent)";
 
   return (
@@ -1448,7 +1448,7 @@ export function PlayerPercentilePanel({
           )}
         >
           No verified advanced rates for this season. Missing ratings stay
-          unavailable rather than fabricated.
+          unavailable and are never fabricated.
         </p>
       ) : (
         <div className="flex min-h-0 flex-col gap-4">

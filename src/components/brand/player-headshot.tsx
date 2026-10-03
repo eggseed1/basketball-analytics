@@ -1,14 +1,17 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { cn } from "@/lib/utils";
+import { faceCropBox, parsePortraitPhoto } from "@/lib/portrait-photo";
 import {
   playerHeadshotCandidates,
   resolveTeamBrand,
 } from "@/lib/nba-brand";
 
 type Size = "xs" | "sm" | "md" | "lg" | "xl";
+
+const BREF_HEADSHOT = /basketball-reference\.com\/.*\/headshots\//;
 
 const PX: Record<Size, number> = {
   xs: 28,
@@ -72,17 +75,15 @@ export function PlayerHeadshot({
       }),
     [playerId, espnId, nbaId, portraitUrl, registryOnly]
   );
-  const [index, setIndex] = useState(0);
+  // Failed-candidate count resets whenever the inputs (and so the list) change.
+  const [failed, setFailed] = useState({ list: candidates, index: 0 });
+  const index = failed.list === candidates ? failed.index : 0;
 
-  useEffect(() => {
-    setIndex(0);
-  }, [playerId, espnId, nbaId, portraitUrl, registryOnly]);
-
-  const src = candidates[index];
+  const candidate = candidates[index];
   const brand = resolveTeamBrand(teamKey);
   const px = PX[size];
 
-  if (!src) {
+  if (!candidate) {
     return (
       <span
         className={cn(
@@ -101,6 +102,13 @@ export function PlayerHeadshot({
     );
   }
 
+  const photo = parsePortraitPhoto(candidate);
+  const box = photo.crop ? faceCropBox(photo.crop) : null;
+  // Basketball-Reference headshots are tight 2:3 portraits; covering the
+  // circle cuts off the chin, so show them whole.
+  const tallPortrait = !box && BREF_HEADSHOT.test(photo.src);
+  const backdrop = tallPortrait || (box !== null && !box.covers);
+
   return (
     <span
       className={cn(
@@ -111,22 +119,45 @@ export function PlayerHeadshot({
       style={{
         boxShadow: brand ? `0 0 0 2px ${brand.primary}` : undefined,
       }}
+      title={photo.credit ?? undefined}
     >
+      {backdrop ? (
+        <Image
+          key={`${candidate}-backdrop`}
+          src={photo.src}
+          alt=""
+          aria-hidden
+          width={px}
+          height={px}
+          loading={priority ? undefined : "eager"}
+          className="absolute inset-0 h-full w-full scale-125 object-cover"
+          style={{ filter: `blur(${Math.max(2, Math.round(px * 0.06))}px)` }}
+          unoptimized
+        />
+      ) : null}
       <Image
-        key={src}
-        src={src}
-        alt={name ? `${name} headshot` : ""}
+        key={candidate}
+        src={photo.src}
+        alt={name ? `${name} ${photo.crop ? "photo" : "headshot"}` : ""}
         width={px}
         height={px}
         priority={priority}
         // Small avatars sit in overflow boards; native lazy often never fires on
         // mobile Safari inside horizontal scrollers.
         loading={priority ? undefined : "eager"}
-        className="h-full w-full object-cover object-top"
+        className={
+          box
+            ? "absolute max-w-none"
+            : tallPortrait
+              ? "relative h-full w-full object-contain"
+              : "h-full w-full object-cover object-top"
+        }
+        style={box?.style}
         onError={() => {
-          setIndex((i) => {
-            if (i + 1 < candidates.length) return i + 1;
-            return candidates.length; // past end → initials
+          setFailed((prev) => {
+            const i = prev.list === candidates ? prev.index : 0;
+            // Past the end → initials.
+            return { list: candidates, index: Math.min(i + 1, candidates.length) };
           });
         }}
         unoptimized

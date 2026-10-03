@@ -71,9 +71,9 @@ export function GmShell({ children }: { children: ReactNode }) {
     return (
       <main className="site-shell flex flex-1 flex-col gap-5 py-6 sm:py-8">
         <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
-          Franchise Lab is an unfinished Milestone 2 scaffold — draft, medical,
-          staff, and cap tools are simulation shells, not a finished MyLeague
-          product.
+          Franchise Lab is an unfinished Milestone 2 scaffold. Its draft,
+          medical, staff, and cap tools are simulation shells, not a finished
+          MyLeague product.
         </p>
         <div>
           <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
@@ -174,7 +174,7 @@ export function GmShell({ children }: { children: ReactNode }) {
       }
     >
       <p className="rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-[13px] text-muted-foreground">
-        Franchise Lab · unfinished Milestone 2 scaffold — not a finished
+        Franchise Lab · unfinished Milestone 2 scaffold, not a finished
         MyLeague product.
       </p>
       <header

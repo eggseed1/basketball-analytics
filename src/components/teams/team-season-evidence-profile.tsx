@@ -73,7 +73,7 @@ export function TeamSeasonEvidenceProfileSection({
               <TeamSeasonEvidenceSection
                 evidence={evidence}
                 title="Representative games"
-                subtitle="Same Season Evidence rules as Team Rank / Compare - open Game Lab for the box."
+                subtitle="Same Season Evidence rules as Team Rank / Compare. Open Game Lab for the box."
               />
             </div>
           </details>
@@ -81,7 +81,7 @@ export function TeamSeasonEvidenceProfileSection({
 
         {hasGames ? (
           <p className="text-[12px] text-muted-foreground">
-            Descriptive only - not “most important.” Open a game for Game Lab.
+            Descriptive only, not “most important.” Open a game for Game Lab.
           </p>
         ) : null}
       </div>

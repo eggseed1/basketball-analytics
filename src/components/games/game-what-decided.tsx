@@ -84,7 +84,7 @@ export function GameWhatDecided({
         <div>
           <h2 className={type.heading}>What decided it</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Statistical edges from the box — not a causal score.
+            Statistical edges from the box score, not a causal score.
           </p>
         </div>
         {coverage.hasTeamTotals ? (

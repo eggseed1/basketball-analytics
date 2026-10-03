@@ -8,6 +8,8 @@
 
 import { NextResponse } from "next/server";
 
+import { expandPortraitIds } from "@/data/media/get-player-media";
+import { lookupApprovedPortraitUrl } from "@/data/media/portrait-lookup-store";
 import { nbaTeamAbbr } from "@/data/providers/nba/nba-team-meta";
 import { defaultCanonicalSeasons } from "@/data/providers/nba/season";
 import {
@@ -34,6 +36,14 @@ type SearchResult = {
   current?: boolean;
   draftProspect?: boolean;
 };
+
+/** Legends route by `bref:` slug, so the client can't guess a CDN headshot for them. */
+function withPortraits(rows: SearchResult[]) {
+  return rows.map((row) => ({
+    ...row,
+    portraitUrl: lookupApprovedPortraitUrl(...expandPortraitIds(row.id)) ?? undefined,
+  }));
+}
 
 type SearchRow = {
   id: string;
@@ -540,7 +550,7 @@ export async function GET(request: Request) {
         ALL_SCOPE_LIMIT
       );
       return NextResponse.json({
-        results,
+        results: withPortraits(results),
         season,
         scope: "all",
         universe,
@@ -568,7 +578,7 @@ export async function GET(request: Request) {
         RESULT_LIMIT
       );
       return NextResponse.json({
-        results: past,
+        results: withPortraits(past),
         season,
         scope: "master-fallback",
         universe,
@@ -576,7 +586,7 @@ export async function GET(request: Request) {
     }
 
     return NextResponse.json({
-      results,
+      results: withPortraits(results),
       season,
       universe: results.some((r) => r.draftProspect)
         ? "bundled-player-search+draft-class"

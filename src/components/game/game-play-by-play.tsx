@@ -32,7 +32,7 @@ function PlayDescription({ event }: { event: PlayByPlayEvent }) {
         >
           {event.playerName}
         </Link>
-        {text ? ` — ${text}` : null}
+        {text ? `: ${text}` : null}
       </>
     );
   }

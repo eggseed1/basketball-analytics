@@ -384,7 +384,7 @@ export function PlayerShotProfileBars({
     <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
-        How often (bar) + how well (dot) — league baseline marker when available.
+        How often (bar) and how well (dot), with a league baseline marker when available.
       </p>
       <ul className="mt-3 flex flex-col gap-3">
         {slices.map((s) => (
@@ -655,7 +655,7 @@ export function PlayerGameHighTimeline({
     <figure className="rounded-md border border-border p-3">
       <figcaption className="text-[13px] font-semibold">{title}</figcaption>
       <p className="mt-0.5 text-[12px] text-muted-foreground">
-        Biggest nights by category — open the game for flow / shots / PBP.
+        Biggest nights by category. Open the game for flow, shots, and PBP.
       </p>
       <ol className="relative mt-4 space-y-3 border-l border-border pl-4">
         {events.map((e) => (

@@ -92,8 +92,8 @@ export function PlayerRollingFormChart({
             id={`${chartId}-desc`}
             className={cn(type.bodySm, "mt-1 text-muted-foreground")}
           >
-            {season} game-by-game scoring and true shooting — how the stretch is
-            going, not just the season average.
+            {season} game-by-game scoring and true shooting, so you can see how
+            the stretch is going beyond the season average.
           </p>
         </div>
         <SegmentedControl

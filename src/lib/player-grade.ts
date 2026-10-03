@@ -1,3 +1,5 @@
+import { liftForDarkSurface, type ChartSurface } from "@/lib/nba-brand";
+
 export type GradeBand =
   | "poor"
   | "below"
@@ -20,15 +22,39 @@ const SAVANT_STOPS: Array<[number, [number, number, number]]> = [
   [100, [183, 28, 28]],
 ];
 
-export const SAVANT_LEGEND = {
-  poor: "rgb(21, 101, 192)",
-  average: "rgb(148, 163, 184)",
-  great: "rgb(229, 57, 53)",
-} as const;
-
 function rgbCss(rgb: [number, number, number]) {
   return `rgb(${rgb[0]}, ${rgb[1]}, ${rgb[2]})`;
 }
+
+function rgbHex(rgb: [number, number, number]) {
+  return `#${rgb.map((v) => v.toString(16).padStart(2, "0")).join("")}`;
+}
+
+/** Deep Savant ends (navy, oxblood) sit under 3:1 on the dark card; lift them. */
+const SAVANT_DARK_MIN_L = 0.64;
+
+/**
+ * `auto` resolves per theme in CSS via `--surface-dark-mix` (0% light, 100%
+ * dark), so server-rendered inline styles stay correct in both modes. Use an
+ * explicit surface for SVG attributes, where CSS variables don't resolve.
+ */
+export type SavantSurface = ChartSurface | "auto";
+
+export function surfaceColor(
+  rgb: [number, number, number],
+  surface: SavantSurface
+): string {
+  if (surface === "light") return rgbCss(rgb);
+  const dark = liftForDarkSurface(rgbHex(rgb), SAVANT_DARK_MIN_L);
+  if (surface === "dark") return dark;
+  return `color-mix(in oklab, ${dark} var(--surface-dark-mix, 0%), ${rgbCss(rgb)})`;
+}
+
+export const SAVANT_LEGEND = {
+  poor: surfaceColor([21, 101, 192], "auto"),
+  average: surfaceColor([148, 163, 184], "auto"),
+  great: surfaceColor([229, 57, 53], "auto"),
+} as const;
 
 function mixRgb(
   a: [number, number, number],
@@ -55,8 +81,11 @@ function savantRgb(percentile: number): [number, number, number] {
 }
 
 /** Continuous Savant fill for a percentile pip / swatch. */
-export function percentileSavantColor(percentile: number): string {
-  return rgbCss(savantRgb(percentile));
+export function percentileSavantColor(
+  percentile: number,
+  surface: SavantSurface = "light"
+): string {
+  return surfaceColor(savantRgb(percentile), surface);
 }
 
 /** Dark text on the icy mid-scale so the number stays readable. */
@@ -67,12 +96,12 @@ export function percentileSavantForeground(percentile: number): string {
 }
 
 export const GRADE_BAND_FILL: Record<GradeBand, string> = {
-  poor: percentileSavantColor(10),
-  below: percentileSavantColor(30),
-  average: percentileSavantColor(50),
-  good: percentileSavantColor(65),
-  great: percentileSavantColor(82),
-  elite: percentileSavantColor(96),
+  poor: percentileSavantColor(10, "auto"),
+  below: percentileSavantColor(30, "auto"),
+  average: percentileSavantColor(50, "auto"),
+  good: percentileSavantColor(65, "auto"),
+  great: percentileSavantColor(82, "auto"),
+  elite: percentileSavantColor(96, "auto"),
 };
 
 export const GRADE_BAND_LEGEND: Array<[GradeBand, string]> = [

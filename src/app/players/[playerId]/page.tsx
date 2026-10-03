@@ -39,6 +39,12 @@ import { getPlayerCareerSeasonsCached } from "@/data/queries";
 import { getPlayerCached } from "@/data/queries/request-cache";
 import { lookupEspnIdByPlayerName } from "@/data/runtime/espn-name-index";
 import { remapLegendNbaIdToBref, resolveLegacyNbaPersonId } from "@/data/runtime/legend-nba-to-bref";
+import { awardWinnerIdForQuery } from "@/data/runtime/awards-search-boost";
+import { parseBrefPlayerSlug } from "@/data/providers/nba/bref-career-from-page";
+import {
+  findPlayerSearchRowByName,
+  getPlayerSearchIndex,
+} from "@/data/runtime/player-search-snapshot";
 import {
   getBundledCurrentRosterEntry,
   resolveBundledCurrentTeamId,
@@ -151,10 +157,26 @@ function resolvePublicPlayerId(raw: string): string {
   const remapped = remapLegendNbaIdToBref(id);
   if (remapped) return remapped;
 
+  // Search lists a few pre-1997 legends (Bird, Jordan) under ESPN ids; their
+  // careers only exist in the baked BRef bundle.
+  if (/^\d+$/.test(id)) {
+    const row = getPlayerSearchIndex().find((r) => r.id === id);
+    if (row && (row.firstSeason ?? row.season) < "1996-97") {
+      const legend = awardWinnerIdForQuery(row.name);
+      if (legend?.startsWith("bref:")) return legend;
+    }
+  }
+
   if (!id.toLowerCase().startsWith("bref:")) return id;
+  if (parseBrefPlayerSlug(id)) return id;
+  // Name-shaped ids (`bref:ed o'bannon|tot:1996-97`, `bref:ed obannon`).
   const inner = id.slice(id.indexOf(":") + 1);
   const namePart = inner.split("|")[0] ?? "";
-  return lookupEspnIdByPlayerName(namePart) ?? id;
+  const season = /(\d{4}-\d{2})$/.exec(inner)?.[1] ?? null;
+  const fromEspn = lookupEspnIdByPlayerName(namePart);
+  if (fromEspn) return fromEspn;
+  const row = findPlayerSearchRowByName(namePart, season);
+  return row?.id && row.id !== id ? row.id : id;
 }
 
 export async function generateMetadata({ params }: PlayerPageProps) {
@@ -498,6 +520,7 @@ export default async function PlayerPage({
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
                 <PlayerAccoladesIsland
                   playerId={playerId}
+                  playerName={displayName === playerId ? null : displayName}
                   teamKey={teamKey}
                   historicalBrand={historicalBrand}
                   honor={honor}
@@ -519,6 +542,8 @@ export default async function PlayerPage({
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
                 <PlayerContractTransactionsIsland
                   playerId={playerId}
+                  espnId={identity?.espnId}
+                  nbaId={identity?.nbaId}
                   playerName={displayName}
                   teamKey={teamKey}
                   historicalBrand={historicalBrand}

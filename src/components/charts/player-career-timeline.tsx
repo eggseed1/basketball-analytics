@@ -99,7 +99,7 @@ export function PlayerCareerTimeline({
             Career timeline
           </h2>
           <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
-            {playerName}&apos;s growth by season - pick a stat to track over
+            {playerName}&apos;s growth by season. Pick a stat to track over
             time.
           </p>
         </div>

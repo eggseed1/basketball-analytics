@@ -33,7 +33,7 @@ function MedicalBody() {
           <ul className="divide-y divide-border rounded-xl border border-border">
             {injured.map((p) => (
               <li key={p.id} className="px-3 py-2 text-sm">
-                <span className="font-medium">{p.name}</span> - {p.injury!.type}{" "}
+                <span className="font-medium">{p.name}</span> · {p.injury!.type}{" "}
                 · {p.injury!.gamesRemaining} games · re-injury risk{" "}
                 {(p.injury!.reinjuryRisk * 100).toFixed(0)}%
               </li>

@@ -15,7 +15,6 @@ import {
   getTransactionEventCoverage,
   listAvailableOffseasonYears,
 } from "@/data/queries/offseason-tracker";
-import { TradeTreeIsland } from "@/components/offseason/trade-tree-island";
 import { buildOffseasonFeedItems } from "@/data/providers/transactions/transaction-event-clusters";
 import { buildTransactionEventIndex } from "@/data/providers/transactions/transaction-event-index";
 import {
@@ -26,6 +25,7 @@ import { ESPN_TEAM_META } from "@/data/providers/nba/team-meta";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { resolveTeamBrand } from "@/lib/nba-brand";
+import { redirect } from "next/navigation";
 import { normalizeTeamParam } from "@/lib/team-identity";
 import { parseSeasonParam } from "@/data/providers/historical/season-range";
 import {
@@ -36,7 +36,7 @@ import {
 export const metadata = {
   title: "Transactions",
   description:
-    "NBA transaction events from the ESPN archive - factual date, team, and description.",
+    "NBA transaction events from the ESPN archive, with factual date, team, and description.",
 };
 
 /** Refresh live ESPN overlay at least hourly. */
@@ -100,8 +100,10 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
   const dateFrom = one(sp, "from");
   const dateTo = one(sp, "to");
   const eventId = one(sp, "event");
-  const rootEventId = one(sp, "root");
   const focusPlayer = one(sp, "player");
+  if (focusPlayer && teamId) {
+    redirect(`/acquisitions?${new URLSearchParams({ team: teamId, player: focusPlayer }).toString()}`);
+  }
   const page = Math.max(1, Number(one(sp, "page") ?? "1") || 1);
 
   let season: string | undefined;
@@ -187,8 +189,8 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         </h1>
         <p className="max-w-2xl text-[16px] text-muted-foreground">
           What was recorded from {window.startDate} to {window.endDate} (into{" "}
-          {window.upcomingSeason}). Free-text ESPN source events - not a
-          structured trade ledger.
+          {window.upcomingSeason}). These are free-text ESPN source events, not
+          a structured trade ledger.
         </p>
       </header>
 
@@ -257,13 +259,20 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
         ) : null}
 
         <div className="query-updating-content flex flex-col gap-5">
-          <TradeTreeIsland
-            teamId={teamId}
-            rootEventId={rootEventId}
-            focusPlayer={focusPlayer}
-            offseasonYear={offseasonYear}
-            teams={teamOptions.map((t) => ({ id: t.teamId, label: t.label }))}
-          />
+          <section className="sports-card flex flex-wrap items-center justify-between gap-3 px-4 py-3 sm:px-5">
+            <div className="flex flex-col gap-0.5">
+              <h2 className="text-[16px] font-bold tracking-tight">How they got him</h2>
+              <p className="text-[13px] text-muted-foreground">
+                Pick a player to see the trade, signing or draft that brought him in, and where the outgoing pieces went.
+              </p>
+            </div>
+            <TransitionLink
+              href={teamId ? `/acquisitions?team=${encodeURIComponent(teamId)}` : "/acquisitions"}
+              className="rounded-md bg-secondary px-3 py-1.5 text-[14px] font-semibold"
+            >
+              {teamId ? `Open ${resolveTeamBrand(teamId)?.abbr ?? "team"} roster history` : "Open"}
+            </TransitionLink>
+          </section>
 
           {detailBundle ? (
             <section className="flex flex-col gap-2">
@@ -377,11 +386,6 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           {coverage.structuredTransactionCount} structured transactions ·{" "}
           {coverage.ownershipEdgeCount} ownership edges ·{" "}
           {coverage.earliestDate} → {coverage.latestDate}
-        </p>
-        <p className="mt-1">
-          {coverage.genealogyUiReady
-            ? "Pick and exception genealogy views are enabled for covered assets."
-            : "Pick and exception genealogy is incomplete — asset history may be partial."}
         </p>
         <ul className="mt-2 list-disc space-y-1 pl-4">
           {coverage.notes.map((n) => (

@@ -14,6 +14,7 @@ import {
   resolveCanonicalTeam,
   type CanonicalTeam,
 } from "@/data/identity/team-map";
+import { FRANCHISE_HISTORIES } from "@/data/franchises/history";
 import { ALL_TEAM_ABBRS, TEAM_BRANDS } from "@/lib/nba-brand";
 
 export type FranchiseLineageEventType =
@@ -103,12 +104,20 @@ function identitiesFromEras(
   }));
 }
 
+/** First season of the continuous franchise (source-checked history book). */
+function franchiseFirstSeason(team: CanonicalTeam): string {
+  return (
+    FRANCHISE_HISTORIES.find((f) => f.id === team.brandId)?.firstSeason ??
+    "1946-47"
+  );
+}
+
 function continuousIdentity(team: CanonicalTeam): TeamSeasonIdentity {
   return {
     teamSeasonIdentityId: `${team.canonicalTeamId}:${team.abbr}:continuous`,
     franchiseId: team.brandId,
     canonicalTeamId: team.canonicalTeamId,
-    seasonFrom: "1946-47",
+    seasonFrom: franchiseFirstSeason(team),
     seasonTo: null,
     displayName: team.displayName,
     city: team.displayName.split(" ").slice(0, -1).join(" ") || team.abbr,
@@ -155,7 +164,7 @@ export function listFranchiseRecords(): FranchiseRecord[] {
       lineageEvents: [
         {
           type: "expansion",
-          season: "1946-47",
+          season: franchiseFirstSeason(team),
           toAbbr: team.abbr,
           note: `${team.displayName} (continuous modern identity; no multi-era table)`,
         },

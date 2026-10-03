@@ -417,7 +417,7 @@ export function PlayerCareerSeasonTable({
         </table>
       </div>
       <p className="text-[11px] text-muted-foreground">
-        All modes derive from canonical season TOTALS. Percentages and TS% are
+        All modes derive from canonical season totals. Percentages and TS% are
         derived from totals (TS% uses 0.44 FTA). Minutes recover ISO-8601
         PT…M…S durations from player-game rows when season aggregates were
         under-parsed.

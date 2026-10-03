@@ -83,14 +83,14 @@ export function leagueScatterMeta(kind: LeagueScatterKind): {
       return {
         title: "Creation",
         blurb:
-          "Assist rate × turnover rate — who generates offense vs who coughs it up.",
+          "Assist rate × turnover rate: who generates offense vs who coughs it up.",
         xLabel: "AST %",
         yLabel: "TOV %",
       };
     case "volume":
       return {
         title: "Scoring volume",
-        blurb: "Points per game × minutes — scoring load among qualified peers.",
+        blurb: "Points per game × minutes: scoring load among qualified peers.",
         xLabel: "PPG",
         yLabel: "Minutes",
       };
@@ -98,7 +98,7 @@ export function leagueScatterMeta(kind: LeagueScatterKind): {
       return {
         title: "Usage vs impact",
         blurb:
-          "Usage rate × DARKO (or DRBL/100) — high-usage creators vs efficient role players.",
+          "Usage rate × DARKO (or DRBL/100): high-usage creators vs efficient role players.",
         xLabel: "Usage %",
         yLabel: "Impact",
         allowNegativeY: true,
@@ -107,7 +107,7 @@ export function leagueScatterMeta(kind: LeagueScatterKind): {
       return {
         title: "Free-throw pressure",
         blurb:
-          "Free-throw rate × true shooting — who lives at the line and who converts overall.",
+          "Free-throw rate × true shooting: who lives at the line and who converts overall.",
         xLabel: "FT rate %",
         yLabel: "TS %",
       };
@@ -123,7 +123,7 @@ export function leagueScatterMeta(kind: LeagueScatterKind): {
       return {
         title: "Stocks",
         blurb:
-          "Steal rate × block rate — disruptive defenders among qualified peers.",
+          "Steal rate × block rate: disruptive defenders among qualified peers.",
         xLabel: "STL %",
         yLabel: "BLK %",
       };
@@ -131,7 +131,7 @@ export function leagueScatterMeta(kind: LeagueScatterKind): {
       return {
         title: "Usage vs BPM",
         blurb:
-          "Usage rate × box plus-minus — board impact without DARKO/DRBL overlays.",
+          "Usage rate × box plus-minus: board impact without DARKO/DRBL overlays.",
         xLabel: "Usage %",
         yLabel: "BPM",
         allowNegativeY: true,

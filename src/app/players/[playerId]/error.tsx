@@ -21,11 +21,11 @@ export default function PlayerRouteError({
           Player page interrupted
         </p>
         <h1 className="mt-2 text-2xl font-bold tracking-tight">
-          The player data provider did not finish cleanly.
+          Player data did not finish loading.
         </h1>
         <p className="mt-2 max-w-2xl text-[14px] leading-relaxed text-muted-foreground">
-          The route is valid. Retry the request, or return to the player board
-          while the upstream data source recovers.
+          This player page exists. Retry, or go back to the player board while
+          the data source recovers.
         </p>
         {error.digest ? (
           <p className="mt-3 font-mono text-[11px] text-muted-foreground">

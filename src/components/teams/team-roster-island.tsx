@@ -8,6 +8,7 @@ import { formatNumber } from "@/lib/format";
 import {
   buildRosterBuckets,
   buildRotationLadder,
+  MID_SEASON_MOVES_NOTE,
 } from "@/lib/team-explorer";
 import {
   defaultPlayerSeasonSortDir,
@@ -57,7 +58,7 @@ export async function TeamRosterIsland({
   const buckets = buildRosterBuckets(players);
   const ladder = buildRotationLadder(players);
   const withMinutes = players.filter((p) => p.minutes > 0);
-  const topMpg = buckets.rotation[0];
+  const minutesLeader = buckets.rotation[0];
   const rotationHref = teamPageHref(teamId, { season, tab: "lineups" });
   const offenseHref = teamPageHref(teamId, { season, tab: "offense" });
 
@@ -74,8 +75,11 @@ export async function TeamRosterIsland({
               Roster board
             </h2>
             <p className={cn(type.bodySm, "text-muted-foreground")}>
-              Full {season} roster — same columns as Explore Players, scoped to
-              this team.
+              {season} roster with the same columns as Explore Players, scoped
+              to this team.
+              {roster.omitsMidSeasonMoves
+                ? ` ${MID_SEASON_MOVES_NOTE}`
+                : null}
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
@@ -126,11 +130,11 @@ export async function TeamRosterIsland({
                   Minutes leader
                 </dt>
                 <dd className="text-lg font-semibold">
-                  {topMpg
-                    ? `${topMpg.playerName.split(" ").slice(-1)[0]} · ${formatNumber(
-                        topMpg.minutes / Math.max(1, topMpg.gamesPlayed),
-                        1
-                      )} MPG`
+                  {minutesLeader
+                    ? `${minutesLeader.playerName.split(" ").slice(-1)[0]} · ${formatNumber(
+                        minutesLeader.minutes,
+                        0
+                      )} min`
                     : "—"}
                 </dd>
               </div>

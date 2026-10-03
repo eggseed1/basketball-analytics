@@ -18,6 +18,7 @@ import {
 import { enrichBoxScoreAdvanced } from "@/data/providers/nba/enrich-box-score";
 import { normalizeEspnStatusType } from "@/lib/game-status";
 import { mapEspnBroadcasts } from "@/lib/game-watch";
+import { nbaCalendarDate } from "@/lib/nba-calendar-date";
 import { normalizeGameTeamSide, applyHistoricalTeamEraToGame } from "@/lib/game-team-identity";
 
 export interface EspnStatCategorySchema {
@@ -303,7 +304,7 @@ export function transformEspnPlayerGame(
     playerId,
     teamId,
     season,
-    gameDate: (event.gameDate ?? "").slice(0, 10),
+    gameDate: nbaCalendarDate(event.gameDate ?? ""),
     opponentTeamId: String(event.opponent?.id ?? ""),
     isHome: (event.homeAway ?? event.atVs ?? "").toLowerCase() === "home",
     minutes: Number(stats.get("minutes") ?? 0) || 0,
@@ -349,6 +350,8 @@ export interface EspnScheduleEvent {
     };
   };
   competitions?: Array<{
+    type?: { id?: string; abbreviation?: string };
+    notes?: Array<{ type?: string; headline?: string }>;
     status?: {
       clock?: number;
       displayClock?: string;
@@ -448,15 +451,21 @@ export function transformEspnScheduleEvent(
       : undefined;
   const displayClock = competition.status?.displayClock?.trim() || undefined;
 
-  // ESPN season.type: 1 preseason · 2 regular · 3 postseason.
-  // Play-in often still typed as postseason; notes can refine later.
+  // ESPN season.type: 1 preseason · 2 regular · 3 postseason · 5 play-in.
   const espnSeasonType = event.season?.type;
   const gameType: Game["gameType"] =
     espnSeasonType === 1
       ? "preseason"
       : espnSeasonType === 3
         ? "playoff"
-        : "regular";
+        : espnSeasonType === 5
+          ? "play-in"
+          : "regular";
+  const cupChampionship =
+    competition.type?.abbreviation === "CC" ||
+    (competition.notes ?? []).some((n) =>
+      /NBA Cup Championship/i.test(n.headline ?? "")
+    );
 
   const homeSide = normalizeGameTeamSide({
     provider: "espn",
@@ -474,7 +483,7 @@ export function transformEspnScheduleEvent(
   return applyHistoricalTeamEraToGame({
     id: event.id,
     season,
-    gameDate: (event.date ?? "").slice(0, 10),
+    gameDate: nbaCalendarDate(event.date ?? ""),
     tipOffAt,
     statusDetail,
     homeTeamId: homeSide.canonicalTeamId,
@@ -492,6 +501,7 @@ export function transformEspnScheduleEvent(
       ? { homePeriodScores, awayPeriodScores }
       : {}),
     gameType,
+    ...(cupChampionship ? { cupChampionship: true } : {}),
     status,
     ...(period != null ? { period } : {}),
     ...(displayClock ? { displayClock } : {}),

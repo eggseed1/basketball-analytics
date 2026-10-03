@@ -113,6 +113,14 @@ export const SentimentTrendChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const SentimentPerformanceScatterLazy = dynamic(
+  () =>
+    import("@/components/sentiment/sentiment-performance-scatter").then((m) => ({
+      default: m.SentimentPerformanceScatter,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export const CareerTeamTrendChartLazy = dynamic(
   () =>
     import("@/components/players/career-team-trend-chart").then((m) => ({
@@ -158,7 +166,12 @@ export const PlayerCompareRadarLazy = dynamic(
     import("@/components/charts/player-compare-radar").then((m) => ({
       default: m.PlayerCompareRadar,
     })),
-  { ssr: false, loading: () => pulse }
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-[19rem] animate-pulse rounded-lg bg-muted/30 sm:h-[22rem]" />
+    ),
+  }
 );
 
 export const AwardDynastyBarsLazy = dynamic(

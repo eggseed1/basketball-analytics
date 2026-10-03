@@ -27,6 +27,21 @@ const ALIASES = path.join(
   "player-id-aliases-snapshot.json"
 );
 
+const etDate = new Intl.DateTimeFormat("en-CA", {
+  timeZone: "America/New_York",
+  year: "numeric",
+  month: "2-digit",
+  day: "2-digit",
+});
+
+/** League calendar day (US Eastern). ESPN stamps evening tips with the next UTC day. */
+function nbaCalendarDate(raw) {
+  const s = String(raw ?? "").trim();
+  if (!/^\d{4}-\d{2}-\d{2}T/.test(s)) return s.slice(0, 10);
+  const d = new Date(s);
+  return Number.isNaN(d.getTime()) ? s.slice(0, 10) : etDate.format(d);
+}
+
 const FORCE = process.env.FORCE === "1";
 /** Re-fetch files that have points but zero rebounds (broken older bakes). */
 const REPAIR_ZERO_REB = process.env.REPAIR_ZERO_REB === "1" || FORCE;
@@ -162,7 +177,7 @@ function compactFromEspn(entry, meta, names, season, teamId) {
   return {
     gameId: String(entry.eventId ?? meta.id ?? ""),
     season,
-    date: String(meta?.gameDate ?? meta?.date ?? "").slice(0, 10),
+    date: nbaCalendarDate(meta?.gameDate ?? meta?.date),
     teamNbaId: String(teamId ?? meta?.team?.id ?? ""),
     opponentNbaId: String(meta?.opponent?.id ?? ""),
     teamAbbr: String(meta?.team?.abbreviation ?? ""),

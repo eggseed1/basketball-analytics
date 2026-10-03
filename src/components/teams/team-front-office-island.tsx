@@ -7,6 +7,7 @@ import {
   resolveFrontOfficeFranchiseId,
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
+import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
 
 export async function TeamFrontOfficeIsland({
   teamId,
@@ -36,7 +37,33 @@ export async function TeamFrontOfficeIsland({
     );
   }
 
-  const summary = buildTeamFrontOfficeSummary(slice);
+  const base = buildTeamFrontOfficeSummary(slice);
+  const contracts = getTeamContracts(franchiseId);
+  const picks = getTeamFuturePicks(franchiseId);
+  const held = (round: 1 | 2) =>
+    picks ? picks.picks.filter((p) => p.round === round && p.holder === picks.teamAbbr).length : null;
+  const lastYear = picks ? Math.max(...picks.picks.map((p) => p.year)) : null;
+  const summary = {
+    ...base,
+    playerSalaryCommitments: contracts?.totals?.years[0] ?? base.playerSalaryCommitments,
+    futureFirstsControlled: held(1) ?? base.futureFirstsControlled,
+    futureSecondsControlled: held(2) ?? base.futureSecondsControlled,
+    disclosures: [
+      ...(contracts
+        ? [`Payroll is Basketball-Reference's ${contracts.capSeason ?? frontOfficeSeason} total, guaranteed or not.`]
+        : base.disclosures.filter((d) => /salary/i.test(d))),
+      ...(picks
+        ? [
+            `Picks held counts every first or second the team holds through ${lastYear}, including ones it traded for. Picks it may only get under conditions aren't counted.`,
+          ]
+        : base.disclosures.filter((d) => !/salary/i.test(d))),
+    ],
+  };
+  const labels = {
+    salary: contracts ? "Payroll" : undefined,
+    firsts: picks ? "Firsts held" : undefined,
+    seconds: picks ? "Seconds held" : undefined,
+  };
 
   return (
     <div className="flex flex-col gap-3 border-t border-border/70 pt-8">
@@ -52,7 +79,7 @@ export async function TeamFrontOfficeIsland({
           </Link>
         </p>
       ) : null}
-      <TeamFrontOfficeSummaryCard summary={summary} />
+      <TeamFrontOfficeSummaryCard summary={summary} labels={labels} />
     </div>
   );
 }

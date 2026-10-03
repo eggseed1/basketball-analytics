@@ -3,37 +3,50 @@ import Link from "next/link";
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
 import { isResolvedMovementState } from "@/movement-center/cluster-state";
 import { resolveMovementPresentation } from "@/movement-center/prominence";
-import type { MovementFeedItem } from "@/movement-center/types";
+import type { MovementCuratedSnapshot, MovementFeedItem } from "@/movement-center/types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
+function formatDay(iso: string | null | undefined): string | null {
+  if (!iso) return null;
+  const d = new Date(iso.length === 10 ? `${iso}T12:00:00Z` : iso);
+  if (Number.isNaN(d.getTime())) return null;
+  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+}
+
+function listOutlets(outlets: string[]): string {
+  if (outlets.length <= 1) return outlets[0] ?? "";
+  return `${outlets.slice(0, -1).join(", ")} and ${outlets.at(-1)}`;
+}
+
 export function MovementCenterView({
   feed,
-  season,
-  disclaimer,
-  status,
-  highlightPlayerId,
+  meta,
+  highlightPlayerIds,
+  filtered = false,
 }: {
   feed: MovementFeedItem[];
-  season: string;
-  disclaimer: string;
-  status: string;
-  highlightPlayerId?: string;
+  meta: MovementCuratedSnapshot["meta"];
+  highlightPlayerIds?: string[];
+  filtered?: boolean;
 }) {
   const presentation = resolveMovementPresentation();
   const activeFeed = feed.filter(
     (item) => !isResolvedMovementState(item.cluster.state)
   );
-  const resolvedFeed = feed.filter((item) =>
-    isResolvedMovementState(item.cluster.state)
-  );
+  const resolvedFeed = feed
+    .filter((item) => isResolvedMovementState(item.cluster.state))
+    .sort((a, b) => b.cluster.lastMeaningfulAt.localeCompare(a.cluster.lastMeaningfulAt));
+  const headlineDay = formatDay(meta.latestHeadlineAt);
+  const ledgerDay = formatDay(meta.latestTransactionDate);
+  const windowDay = formatDay(meta.tradeWindowStart);
 
   const renderFeed = (items: MovementFeedItem[]) => (
     <ul className="flex flex-col gap-3">
       {items.map((item) => {
-        const playerHit =
-          highlightPlayerId &&
-          item.cluster.linkedPlayerIds.includes(highlightPlayerId);
+        const playerHit = item.cluster.linkedPlayerIds.some((id) =>
+          highlightPlayerIds?.includes(id)
+        );
         return (
           <li
             key={item.cluster.id}
@@ -60,29 +73,49 @@ export function MovementCenterView({
             "font-semibold uppercase tracking-wide text-muted-foreground"
           )}
         >
-          {presentation.productName} · curated prototype · {season}
+          {presentation.productName} · {meta.season}
         </p>
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           {presentation.seasonalLabel}
         </h1>
         <p className={cn(type.bodySm, "max-w-2xl text-muted-foreground")}>
-          {presentation.tagline}. Unresolved movement reporting is separate from{" "}
+          {presentation.tagline}. Moves that are already official live on the{" "}
           <Link href="/offseason" className="font-semibold underline">
-            official transactions
+            transactions page
           </Link>
           .
         </p>
-        <p className={cn(type.caption, "rounded-md border border-dashed border-amber-600/30 bg-amber-500/5 px-3 py-2 text-muted-foreground")}>
-          Curated prototype — not a live rumor wire. {disclaimer} Snapshot
-          status: {status}.
+        <p className={cn(type.caption, "max-w-3xl rounded-md border border-border/60 frost-surface-muted px-3 py-2 text-muted-foreground")}>
+          {meta.headlinesScanned != null && meta.feeds?.length ? (
+            <>
+              Scanned {meta.headlinesScanned} headlines from {listOutlets(meta.feeds)}
+              {headlineDay ? `, newest ${headlineDay}` : ""}.{" "}
+            </>
+          ) : null}
+          {ledgerDay ? <>ESPN transaction log through {ledgerDay}. </> : null}
+          {meta.disclaimer}
         </p>
+        {filtered ? (
+          <p className={type.caption}>
+            <Link href="/movement" className="font-semibold underline">
+              Show all stories
+            </Link>
+          </p>
+        ) : null}
       </header>
 
       <section className="flex flex-col gap-3">
-        <h2 className={cn(type.bodySm, "font-bold")}>Active story clusters</h2>
+        <div className="flex flex-col gap-0.5">
+          <h2 className={cn(type.bodySm, "font-bold")}>Open stories</h2>
+          <p className={cn(type.caption, "text-muted-foreground")}>
+            Trade and contract reporting that has not shown up in the transaction log yet.
+          </p>
+        </div>
         {activeFeed.length === 0 ? (
           <p className={cn(type.bodySm, "text-muted-foreground")}>
-            No unresolved clusters in this snapshot.
+            {filtered
+              ? "No open trade or contract stories for this player in the headlines we track."
+              : "No open trade or contract stories in the headlines we track right now."}
           </p>
         ) : (
           renderFeed(activeFeed)
@@ -92,10 +125,10 @@ export function MovementCenterView({
       {resolvedFeed.length > 0 ? (
         <section className="flex flex-col gap-3">
           <div className="flex flex-col gap-0.5">
-            <h2 className={cn(type.bodySm, "font-bold")}>Resolved clusters</h2>
+            <h2 className={cn(type.bodySm, "font-bold")}>Completed moves</h2>
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Completed transactions — movement story closed, not active rumor
-              language.
+              {windowDay ? `Trades in the ESPN transaction log since ${windowDay}` : "Trades in the ESPN transaction log"}
+              , plus reported stories that turned into a logged move.
             </p>
           </div>
           {renderFeed(resolvedFeed)}

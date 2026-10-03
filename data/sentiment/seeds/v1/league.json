@@ -352,7 +352,7 @@
       "id": "narr-trade",
       "slug": "trade_speculation",
       "label": "Trade speculation",
-      "description": "Unresolved movement language in fan spaces — not official transactions.",
+      "description": "Unresolved movement language in fan spaces. These are not official transactions.",
       "direction": "stable",
       "mentionVolume": 11200,
       "coverageConfidence": 0.55,

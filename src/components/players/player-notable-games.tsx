@@ -101,8 +101,8 @@ export function PlayerNotableGames({
   return (
     <div className="flex flex-col gap-2">
       <p className="text-[12px] text-muted-foreground">
-        Notable performances this season - transparent box-score dimensions, not
-        a composite Game Score.
+        Notable performances this season by single box-score stats, not a
+        composite Game Score.
       </p>
       <ul className="grid gap-2 sm:grid-cols-2">
         {notables.map((n) => (

@@ -16,8 +16,7 @@ import { cn } from "@/lib/utils";
 /** Liquid SVG glass — only fetched when a surface opts into `effect="liquid"`. */
 const LiquidGlass = dynamic(
   () =>
-    import("react-liquid-glass-svg").then((m) => ({ default: m.LiquidGlass })),
-  { ssr: false }
+    import("react-liquid-glass-svg").then((m) => ({ default: m.LiquidGlass }))
 );
 
 export type GlassSurfaceEffect = "liquid" | "css";
@@ -54,10 +53,8 @@ export function GlassSurface({
   style?: CSSProperties;
 } & Omit<HTMLAttributes<HTMLElement>, "children" | "className" | "style">) {
   const { resolvedDark, surface } = useOwnerTheme();
-  // Match `.sports-card` glass fill so CSS panels read like site chrome frost.
-  const veil = resolvedDark
-    ? "rgba(28, 28, 30, 0.38)"
-    : "rgba(255, 255, 255, 0.42)";
+  // Same fill as `.sports-card`, so opaque washes mixed from --card sit flush.
+  const veil = "var(--material-standard-bg)";
   const a = accentColor?.trim() || null;
   const b = accentColorB?.trim() || null;
   const stop = (color: string, amount: number) =>
@@ -72,7 +69,7 @@ export function GlassSurface({
         ? `linear-gradient(135deg, ${stop(a, edge)} 0%, ${stop(a, inner)} 38%, ${veil} 100%)`
         : veil;
   const insetShadow = resolvedDark
-    ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 36%)"
+    ? "inset 0 1px 0 rgba(255,255,255,0.09), 0 1px 2px rgb(0 0 0 / 40%), 0 12px 32px rgb(0 0 0 / 36%)"
     : "inset 0 1px 0 rgba(255,255,255,0.70), 0 1px 2px rgb(0 0 0 / 4%), 0 8px 24px rgb(0 0 0 / 6%)";
 
   if (effect === "css") {
@@ -98,7 +95,7 @@ export function GlassSurface({
           border: solid
             ? undefined
             : resolvedDark
-              ? "1px solid rgba(255,255,255,0.16)"
+              ? "1px solid rgba(255,255,255,0.11)"
               : "1px solid rgba(255,255,255,0.58)",
           boxShadow: solid ? undefined : insetShadow,
           ...style,
@@ -110,7 +107,7 @@ export function GlassSurface({
 
   // Liquid heroes keep a thinner veil so SVG displacement reads clearly.
   const liquidVeil = resolvedDark
-    ? "rgba(0, 0, 0, 0.28)"
+    ? "rgb(var(--glass-rgb) / 40%)"
     : "rgba(255, 255, 255, 0.22)";
   const liquidStop = (color: string, amount: number) =>
     `color-mix(in oklab, ${color} ${amount}%, ${liquidVeil})`;

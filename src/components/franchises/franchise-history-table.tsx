@@ -14,7 +14,6 @@ import {
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import type { FranchiseHistory } from "@/data/franchises/history";
 import {
-  franchisePlayoffWinPct,
   franchiseTitleCount,
   franchiseWinPct,
 } from "@/data/queries/franchises";
@@ -28,8 +27,6 @@ type SortKey =
   | "titles"
   | "finals"
   | "playoffApps"
-  | "playoffWins"
-  | "playoffPct"
   | "rsWins"
   | "rsPct"
   | "founded";
@@ -49,10 +46,6 @@ function sortValue(f: FranchiseHistory, key: SortKey): string | number {
       return f.finalsAppearances;
     case "playoffApps":
       return f.playoffAppearances;
-    case "playoffWins":
-      return f.playoffWins;
-    case "playoffPct":
-      return franchisePlayoffWinPct(f);
     case "rsWins":
       return f.regularSeasonWins;
     case "rsPct":
@@ -154,20 +147,6 @@ export function FranchiseHistoryTable({
                 Playoff apps
               </SortableTableHead>
               <SortableTableHead
-                active={sortKey === "playoffWins"}
-                dir={sortDir}
-                onClick={() => onSort("playoffWins")}
-              >
-                Playoff W
-              </SortableTableHead>
-              <SortableTableHead
-                active={sortKey === "playoffPct"}
-                dir={sortDir}
-                onClick={() => onSort("playoffPct")}
-              >
-                Playoff %
-              </SortableTableHead>
-              <SortableTableHead
                 active={sortKey === "rsWins"}
                 dir={sortDir}
                 onClick={() => onSort("rsWins")}
@@ -223,12 +202,6 @@ export function FranchiseHistoryTable({
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {f.playoffAppearances}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatNumber(f.playoffWins)}
-                  </TableCell>
-                  <TableCell className="text-right tabular-nums">
-                    {formatPct(franchisePlayoffWinPct(f))}
                   </TableCell>
                   <TableCell className="text-right tabular-nums">
                     {formatNumber(f.regularSeasonWins)}

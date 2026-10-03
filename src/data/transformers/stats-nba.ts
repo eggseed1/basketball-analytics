@@ -22,6 +22,13 @@ function n(row: Record<string, string | number | null>, key: string): number {
   return 0;
 }
 
+/** Like `n`, but a blank cell (untracked in early seasons) stays NaN, not 0. */
+function tracked(row: Record<string, string | number | null>, key: string): number {
+  const value = row[key];
+  if (value == null || value === "") return Number.NaN;
+  return n(row, key);
+}
+
 function s(row: Record<string, string | number | null>, key: string): string {
   const value = row[key];
   return value == null ? "" : String(value);
@@ -359,8 +366,9 @@ export function transformStatsNbaCareerTotalsRow(
   const tpa = n(row, "FG3A");
   const ftm = n(row, "FTM");
   const fta = n(row, "FTA");
-  const tov = n(row, "TOV");
+  const tov = tracked(row, "TOV");
   const points = n(row, "PTS");
+  const threesTracked = row.FG3A != null && row.FG3A !== "";
 
   const team = normalizeNbaPlayerSeasonTeam({
     teamId: String(row.TEAM_ID ?? ""),
@@ -379,34 +387,41 @@ export function transformStatsNbaCareerTotalsRow(
     season,
     age: n(row, "PLAYER_AGE") || undefined,
     gamesPlayed: n(row, "GP"),
-    gamesStarted: n(row, "GS"),
+    // NBA Stats sends GS 0 (not blank) before starts were logged in 1982-83.
+    gamesStarted:
+      season < "1982-83" && !n(row, "GS") ? Number.NaN : tracked(row, "GS"),
     minutes: n(row, "MIN"),
     fieldGoalsMade: fgm,
     fieldGoalsAttempted: fga,
-    threePointersMade: tpm,
-    threePointersAttempted: tpa,
+    threePointersMade: threesTracked ? tpm : Number.NaN,
+    threePointersAttempted: threesTracked ? tpa : Number.NaN,
     freeThrowsMade: ftm,
     freeThrowsAttempted: fta,
-    offensiveRebounds: n(row, "OREB"),
-    defensiveRebounds: n(row, "DREB"),
+    offensiveRebounds: tracked(row, "OREB"),
+    defensiveRebounds: tracked(row, "DREB"),
     rebounds: n(row, "REB"),
     assists: n(row, "AST"),
-    steals: n(row, "STL"),
-    blocks: n(row, "BLK"),
+    steals: tracked(row, "STL"),
+    blocks: tracked(row, "BLK"),
     turnovers: tov,
     personalFouls: n(row, "PF"),
     points,
-    plusMinus: 0,
+    // Career totals never publish plus-minus.
+    plusMinus: Number.NaN,
     fieldGoalPct: n(row, "FG_PCT") || safePct(fgm, fga),
     twoPointPct: twoPointPct(fgm, tpm, fga, tpa),
-    threePointPct: n(row, "FG3_PCT") || safePct(tpm, tpa),
+    threePointPct: threesTracked
+      ? n(row, "FG3_PCT") || safePct(tpm, tpa)
+      : Number.NaN,
     freeThrowPct: n(row, "FT_PCT") || safePct(ftm, fta),
     effectiveFieldGoalPct: fga > 0 ? (fgm + 0.5 * tpm) / fga : undefined,
     trueShootingPct:
       points > 0 && fga + fta > 0
         ? points / (2 * (fga + 0.44 * fta))
         : undefined,
-    threePointAttemptRate: threePointAttemptRate(tpa, fga),
+    threePointAttemptRate: threesTracked
+      ? threePointAttemptRate(tpa, fga)
+      : Number.NaN,
     freeThrowRate: freeThrowRate(fta, fga),
     turnoverPct: turnoverPct(tov, fga, fta) ?? 0,
     usagePct: undefined,

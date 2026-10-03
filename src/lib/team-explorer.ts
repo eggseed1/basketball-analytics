@@ -43,10 +43,12 @@ export type TeamAskLink = {
 export type TeamRosterBuckets = {
   /** Highest minutes among rotation. */
   rotation: PlayerSeason[];
-  /** Leading scorers (PPG). */
+  /** Leading scorers (PPG) among players meeting `scorerMinGames`. */
   leadingScorers: PlayerSeason[];
   /** Highest DARKO when present - otherwise empty (no invented value score). */
   highestValue: PlayerSeason[];
+  /** Games-played floor applied to leading scorers. */
+  scorerMinGames: number;
 };
 
 export type RotationLadder = {
@@ -239,10 +241,10 @@ export function buildTeamIdentityStatements(
   for (const t of traits) {
     const p = t.percentile;
     let band: TeamIdentityStatement["band"] | null = null;
-    if (p >= 83.3) band = "top5";
-    else if (p >= 66.7) band = "top10";
-    else if (p <= 16.7) band = "bottom5";
-    else if (p <= 33.3) band = "bottom10";
+    if (t.rank <= 5) band = "top5";
+    else if (t.rank <= 10) band = "top10";
+    else if (t.worseCount < 5) band = "bottom5";
+    else if (t.worseCount < 10) band = "bottom10";
     if (!band) continue;
     const bandLabel =
       band === "top5"
@@ -486,6 +488,12 @@ export function computeDivisionStanding(
   return { division: meta.division, rank: idx + 1, of: ordered.length };
 }
 
+export const MID_SEASON_MOVES_NOTE =
+  "Players who changed teams during the season are not listed: the source board only has their combined line, not a per-team split.";
+
+/** Leading scorers must have played this share of the team's most-used player's games. */
+export const LEADING_SCORER_GAMES_SHARE = 0.4;
+
 export function buildRosterBuckets(
   roster: PlayerSeason[],
   options?: { rotationLimit?: number; listLimit?: number }
@@ -493,7 +501,15 @@ export function buildRosterBuckets(
   const rotationLimit = options?.rotationLimit ?? 8;
   const listLimit = options?.listLimit ?? 5;
   const byMinutes = [...roster].sort((a, b) => b.minutes - a.minutes);
-  const byPpg = [...roster].sort(
+  const teamMaxGames = roster.reduce(
+    (max, p) => Math.max(max, p.gamesPlayed || 0),
+    0
+  );
+  const scorerMinGames = Math.max(
+    1,
+    Math.ceil(teamMaxGames * LEADING_SCORER_GAMES_SHARE)
+  );
+  const byPpg = roster.filter((p) => p.gamesPlayed >= scorerMinGames).sort(
     (a, b) =>
       b.points / Math.max(1, b.gamesPlayed) -
       a.points / Math.max(1, a.gamesPlayed)
@@ -515,6 +531,7 @@ export function buildRosterBuckets(
     rotation: byMinutes.slice(0, rotationLimit),
     leadingScorers: byPpg.slice(0, listLimit),
     highestValue,
+    scorerMinGames,
   };
 }
 

@@ -22,14 +22,14 @@ const HUB_SECTIONS = [
     title: "Roster decisions",
     phase: "ROSTER_DECISIONS",
     href: "/gm/roster",
-    blurb: "Options, waives, extensions - manage the 15-man board.",
+    blurb: "Options, waives, and extensions for the 15-man board.",
   },
   {
     id: "staff",
     title: "Staff",
     phase: "STAFF_REVIEW",
     href: "/gm/staff",
-    blurb: "Hire a director of scouting - eye + expertise set draft fog.",
+    blurb: "Hire a director of scouting. Their eye + expertise set draft fog.",
   },
   {
     id: "draft",
@@ -79,7 +79,7 @@ export function OffseasonHub() {
         <h1 className="text-[28px] font-bold tracking-tight">Offseason Hub</h1>
         <p className="text-[15px] text-muted-foreground">
           Front-office workspace for the annual loop. Deep decision flows land
-          in later milestones - links below jump into the live tools.
+          in later milestones; the links below open the live tools.
         </p>
       </header>
 

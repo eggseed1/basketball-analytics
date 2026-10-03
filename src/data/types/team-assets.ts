@@ -158,7 +158,7 @@ export type TradeExceptionFitResult = {
 };
 
 export const TRADE_EXCEPTION_FIT_DISCLAIMER =
-  "Salary fit only. Full trade legality requires additional roster, timing, and CBA rules — DRBL does not treat fit as permission to trade.";
+  "Salary fit only. Full trade legality requires additional roster, timing, and CBA rules. DRBL does not treat fit as permission to trade.";
 
 export const EMPTY_TRADE_EXCEPTION_FIT = (
   exceptionId: string,

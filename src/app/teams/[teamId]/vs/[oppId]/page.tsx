@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 
 import {
   getFranchiseMatchupPage,
-  MATCHUP_SCOPE_LABEL,
   matchupHref,
 } from "@/data/history/team-matchup-index";
 import { getCanonicalTeamById } from "@/data/identity/team-map";
@@ -47,7 +46,7 @@ export async function generateMetadata({ params }: PageProps) {
   const b = getCanonicalTeamById(oppId)?.abbr ?? oppId;
   return {
     title: `${a} vs ${b} | Matchup history`,
-    description: `${MATCHUP_SCOPE_LABEL} matchup games between ${a} and ${b}.`,
+    description: `Matchup games between ${a} and ${b}.`,
   };
 }
 
@@ -117,15 +116,16 @@ export default async function TeamMatchupPage({
 
       <header className="flex flex-col gap-2">
         <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Franchise matchup · {MATCHUP_SCOPE_LABEL}
+          Franchise matchup · {summary.scope}
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           {nameA} vs {nameB}
         </h1>
         <p className="max-w-2xl text-[15px] text-muted-foreground">
-          Game archive coverage starts in 1996-97. Historical names stay as they
-          were on each tip-off — not modern successor brands. This is franchise
-          lineage mode, not exact single-era team identity.
+          Game archive coverage starts in{" "}
+          {summary.scope.replace(/^Since /, "")}. Games are grouped by
+          franchise lineage, and each one shows the team names used at that
+          tip-off rather than today&apos;s successor brands.
         </p>
       </header>
 

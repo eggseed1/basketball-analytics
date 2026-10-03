@@ -107,7 +107,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Playoffs - advance one day of series games at a time.
+            Playoffs: advance one day of series games at a time.
           </p>
         </header>
         <ol className="flex flex-col gap-1">
@@ -133,7 +133,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
         <header>
           <h2 className="text-[17px] font-bold tracking-tight">Your plan</h2>
           <p className="text-[13px] text-muted-foreground">
-            Draft is open - scout the codenames, take your swing, then start the
+            Draft is open. Scout the codenames, take your swing, then start the
             next season.
           </p>
         </header>
@@ -141,7 +141,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
           <StepRow
             n={1}
             title="Scout & make your pick"
-            detail="Codenames only until the selection - then the identity drops."
+            detail="Codenames only until the selection, then the identity drops."
             status="current"
             action={
               <Button onClick={() => router.push("/gm/draft")}>
@@ -296,7 +296,7 @@ export function GmGamePlan({ league }: { league: GmLeagueState }) {
           <StepRow
             n={4}
             title="Repeat for the next tip"
-            detail="Come back here after each game - work through the calendar one by one."
+            detail="Come back here after each game and work through the calendar one by one."
             status={remaining > 0 ? "upcoming" : "done"}
           />
         </ol>

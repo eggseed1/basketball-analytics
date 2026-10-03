@@ -273,7 +273,7 @@ function GameFlowPanel({
       <div>
         <h2 className="text-[15px] font-semibold tracking-tight">Game Flow</h2>
         <p className="mt-1 text-[13px] text-muted-foreground">
-          How the score moved — leads, runs, and the swing.
+          How the score moved: leads, runs, and the swing.
         </p>
       </div>
       <div className="grid gap-3 sm:grid-cols-3">
@@ -494,7 +494,7 @@ function PlayByPlayPanel({
         <p className="mt-1 text-[13px] text-muted-foreground">
           {runWindow
             ? "Showing plays inside the selected run."
-            : "Recorded events. Substitutions shown as logged — no lineup claims."}
+            : "Recorded events. Substitutions are shown as logged, without lineup claims."}
         </p>
       </div>
       <div className="flex flex-wrap gap-2">
@@ -681,7 +681,7 @@ export function HistoricalGameSurface({
 
       <section>
         <h2 className="text-[15px] font-semibold tracking-tight">
-          Top Performers
+          Top performers
         </h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-2">
           <PerformerCard label={s.awayTricode ?? "Away"} player={away} />
@@ -748,7 +748,7 @@ function QuarterByQuarter({
   return (
     <section>
       <h2 className="text-[15px] font-semibold tracking-tight">
-        Quarter by Quarter
+        Quarter by quarter
       </h2>
       <div className="mt-3 overflow-x-auto">
         <table className="w-full min-w-[20rem] text-left text-[13px]">

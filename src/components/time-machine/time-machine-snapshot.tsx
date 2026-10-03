@@ -572,7 +572,7 @@ function HistoricalTeamsBoardTable({
       <p className="border-t border-border px-3 py-2 text-[12px] text-muted-foreground">
         {hasBoardStats
           ? "Season team board · sorted by point differential."
-          : "Directory only — season board stats unavailable for this era."}
+          : "Directory only. Season board stats are unavailable for this era."}
       </p>
     </div>
   );

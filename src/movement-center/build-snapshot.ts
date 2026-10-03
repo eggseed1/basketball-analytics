@@ -1,91 +1,58 @@
-import { writeFileSync } from "node:fs";
+import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 
-import { resolvePlayerIdentity } from "@/data/identity/player-identity";
 import {
   canonicalSeasonFromStartYear,
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
-import { fetchEspnLeagueRosterPlayers } from "@/data/providers/nba/espn-roster-client";
-import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
-import type { PlayerSeason } from "@/data/types";
-import type {
-  MovementClaim,
-  MovementCuratedSnapshot,
-  MovementResolution,
-  MovementStoryCluster,
-} from "@/movement-center/types";
+import { fetchLiveEspnTransactionRows } from "@/data/providers/transactions/transaction-live-enrich";
+import { MOVEMENT_RULES_VERSION } from "@/movement-center/classify-headline";
+import { buildNewsClusters } from "@/movement-center/news-claims";
+import { EVIDENCE_SCORE_METHODOLOGY } from "@/movement-center/scoring";
+import { linkLedger, type LedgerRow } from "@/movement-center/transaction-clusters";
+import type { MovementCuratedSnapshot } from "@/movement-center/types";
 import { readJsonFile, SEEDS_DIR, SNAPSHOT_PATH } from "@/movement-center/seed-paths";
+import {
+  createHeadlineEntityResolver,
+  ESPN_TEAM_NICKNAMES,
+} from "@/sentiment/headline-entities";
+import { loadIngestRoster } from "@/sentiment/ingest-roster";
+import { readIngestItems, type NewsIngestItem } from "@/sentiment/ingest-store";
 
 export type MovementSeedManifest = {
-  methodologyVersion: string;
   status: string;
   disclaimer: string;
 };
 
-function buildRosterIndex(roster: PlayerSeason[]): {
-  byId: Map<string, PlayerSeason>;
-  byName: Map<string, PlayerSeason>;
-} {
-  const byId = new Map<string, PlayerSeason>();
-  const byName = new Map<string, PlayerSeason>();
-  for (const row of roster) {
-    byId.set(row.playerId, row);
-    const key = normalizePlayerName(row.playerName);
-    if (key && !byName.has(key)) byName.set(key, row);
-  }
-  return { byId, byName };
-}
+/** Headlines older than this are not re-clustered on each build. */
+const NEWS_LOOKBACK_DAYS = 180;
 
-async function findRosterRow(
-  playerId: string,
-  rosterIndex: ReturnType<typeof buildRosterIndex>
-): Promise<PlayerSeason | null> {
-  const identity = await resolvePlayerIdentity(playerId).catch(() => null);
-  const ids = new Set<string>([playerId]);
-  if (identity?.nbaId) ids.add(identity.nbaId);
-  if (identity?.espnId) ids.add(identity.espnId);
-  if (identity?.routeId) ids.add(identity.routeId);
-  for (const id of ids) {
-    const hit = rosterIndex.byId.get(id);
-    if (hit) return hit;
-  }
-  if (identity?.displayName) {
-    return (
-      rosterIndex.byName.get(normalizePlayerName(identity.displayName)) ?? null
-    );
-  }
-  return null;
-}
+const LEDGER_FILES = [
+  ["data", "transactions", "espn-site-v2", "v1", "transactions.jsonl"],
+  ["data", "transactions", "curated", "v1", "transactions.jsonl"],
+];
 
-async function syncClustersFromRoster(
-  clusters: MovementStoryCluster[],
-  rosterIndex: ReturnType<typeof buildRosterIndex>
-): Promise<number> {
-  let synced = 0;
-  for (const cluster of clusters) {
-    const teamIds = new Set(cluster.linkedTeamIds);
-    let changed = false;
-    for (const playerId of cluster.linkedPlayerIds) {
-      const row = await findRosterRow(playerId, rosterIndex);
-      if (!row) continue;
-      if (!teamIds.has(row.teamId)) {
-        teamIds.add(row.teamId);
-        changed = true;
-      }
-    }
-    if (changed) {
-      cluster.linkedTeamIds = [...teamIds];
-      synced += 1;
+function readLedgerArchive(): LedgerRow[] {
+  const rows: LedgerRow[] = [];
+  for (const parts of LEDGER_FILES) {
+    const file = path.join(process.cwd(), ...parts);
+    if (!existsSync(file)) continue;
+    for (const line of readFileSync(file, "utf8").split("\n")) {
+      if (!line.trim()) continue;
+      const row = JSON.parse(line) as LedgerRow & { status?: string };
+      if (row.status && row.status !== "real") continue;
+      rows.push({ id: row.id, date: row.date, description: row.description, teamIds: row.teamIds ?? [] });
     }
   }
-  return synced;
+  return rows;
 }
 
 export type BuildMovementSnapshotOptions = {
   now?: Date;
   dryRun?: boolean;
   verbose?: boolean;
+  /** Skip the live ESPN overlay (offline builds and tests). */
+  offline?: boolean;
 };
 
 export type BuildMovementSnapshotResult = {
@@ -93,7 +60,9 @@ export type BuildMovementSnapshotResult = {
   clusterCount: number;
   claimCount: number;
   resolutionCount: number;
-  syncedClusterCount: number;
+  storyCount: number;
+  materialized: number;
+  expired: number;
   outputPath: string;
 };
 
@@ -101,41 +70,77 @@ export async function buildMovementSnapshot(
   options: BuildMovementSnapshotOptions = {}
 ): Promise<BuildMovementSnapshotResult> {
   const now = options.now ?? new Date();
-  const manifest = readJsonFile<MovementSeedManifest>(
-    path.join(SEEDS_DIR, "manifest.json")
-  );
-  const sources = readJsonFile<MovementCuratedSnapshot["sources"]>(
-    path.join(SEEDS_DIR, "sources.json")
-  );
-  const clusters = readJsonFile<MovementStoryCluster[]>(
-    path.join(SEEDS_DIR, "clusters.json")
-  );
-  const claims = readJsonFile<MovementClaim[]>(
-    path.join(SEEDS_DIR, "claims.json")
-  );
-  const resolutions = readJsonFile<MovementResolution[]>(
-    path.join(SEEDS_DIR, "resolutions.json")
+  const manifest = readJsonFile<MovementSeedManifest>(path.join(SEEDS_DIR, "manifest.json"));
+  const startYear = currentNbaStartYear(now);
+  const season = canonicalSeasonFromStartYear(startYear);
+  const tradeWindowStart = `${startYear}-06-01`;
+
+  const roster = loadIngestRoster();
+  const resolve = createHeadlineEntityResolver(roster);
+  const resolveLedger = createHeadlineEntityResolver(roster, { fullNamesOnly: true });
+  const rosterById = new Map(roster.map((p) => [p.playerId, p]));
+  const playerName = (id: string) => rosterById.get(id)?.name;
+  const teamName = (id: string) => ESPN_TEAM_NICKNAMES[id]?.[0];
+
+  const cutoff = new Date(now.getTime() - NEWS_LOOKBACK_DAYS * 86_400_000).toISOString();
+  const newsRows = readIngestItems<NewsIngestItem>("news").filter(
+    (row) => row.nba && row.publishedAt >= cutoff && row.publishedAt <= now.toISOString()
   );
 
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear(now));
-  const roster = await fetchEspnLeagueRosterPlayers(season).catch(() => []);
-  const rosterIndex = buildRosterIndex(roster);
-  const syncedClusterCount = await syncClustersFromRoster(clusters, rosterIndex);
+  const news = buildNewsClusters(newsRows, { resolveTitle: resolve, playerName, teamName });
+  for (const cluster of news.clusters) {
+    const teams = new Set(cluster.linkedTeamIds);
+    for (const id of cluster.linkedPlayerIds) {
+      const teamId = rosterById.get(id)?.teamId;
+      if (teamId) teams.add(teamId);
+    }
+    cluster.linkedTeamIds = [...teams];
+  }
+
+  let ledger = readLedgerArchive();
+  if (!options.offline) {
+    const live = await fetchLiveEspnTransactionRows(now).catch(() => []);
+    const byId = new Map(ledger.map((row) => [row.id, row]));
+    for (const tx of live) {
+      byId.set(tx.id, { id: tx.id, date: tx.date, description: tx.description, teamIds: tx.teamIds });
+    }
+    ledger = [...byId.values()];
+  }
+
+  const linked = linkLedger(
+    {
+      newsClusters: news.clusters,
+      newsClaims: news.claims,
+      families: news.families,
+      ledger,
+      tradeWindowStart,
+      now,
+    },
+    { resolveText: resolveLedger, playerName, teamName }
+  );
+
+  const latestLedgerDate = ledger.map((row) => row.date).sort().at(-1) ?? null;
+  const latestHeadline = newsRows.map((row) => row.publishedAt).sort().at(-1) ?? null;
 
   const snapshot: MovementCuratedSnapshot = {
     meta: {
-      methodologyVersion: manifest.methodologyVersion,
+      methodologyVersion: `${EVIDENCE_SCORE_METHODOLOGY}+${MOVEMENT_RULES_VERSION}`,
       status: manifest.status,
       season,
       snapshotDate: now.toISOString().slice(0, 10),
       disclaimer: manifest.disclaimer,
       builtAt: now.toISOString(),
       rosterPlayerCount: roster.length,
+      headlinesScanned: newsRows.length,
+      latestHeadlineAt: latestHeadline,
+      latestTransactionDate: latestLedgerDate,
+      tradeWindowStart,
+      feeds: [...new Set(newsRows.map((row) => row.outlet))].sort(),
     },
-    sources,
-    clusters,
-    claims,
-    resolutions,
+    sources: { ...news.sources, ...linked.sources },
+    clusters: linked.clusters,
+    claims: linked.claims,
+    resolutions: linked.resolutions,
   };
 
   if (!options.dryRun) {
@@ -144,16 +149,18 @@ export async function buildMovementSnapshot(
 
   if (options.verbose) {
     console.log(
-      `movement:build season=${season} clusters=${clusters.length} claims=${claims.length} resolutions=${resolutions.length} synced=${syncedClusterCount}`
+      `movement:build season=${season} headlines=${newsRows.length} stories=${news.clusters.length} claims=${linked.claims.length} clusters=${linked.clusters.length} materialized=${linked.materialized} expired=${linked.expired} ledgerThrough=${latestLedgerDate}`
     );
   }
 
   return {
     snapshot,
-    clusterCount: clusters.length,
-    claimCount: claims.length,
-    resolutionCount: resolutions.length,
-    syncedClusterCount,
+    clusterCount: linked.clusters.length,
+    claimCount: linked.claims.length,
+    resolutionCount: linked.resolutions.length,
+    storyCount: news.clusters.length,
+    materialized: linked.materialized,
+    expired: linked.expired,
     outputPath: SNAPSHOT_PATH,
   };
 }

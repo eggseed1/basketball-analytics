@@ -23,8 +23,10 @@ function mergeWeightedBreakdown(
   const acc = new Map<string, number>();
   let total = 0;
   for (const profile of profiles) {
-    const source = profile[lane][field] ?? {};
-    const vol = Math.max(1, profile[lane].mentionVolume);
+    const laneData = profile[lane];
+    if (!laneData) continue;
+    const source = laneData[field] ?? {};
+    const vol = Math.max(1, laneData.mentionVolume);
     for (const [key, share] of Object.entries(source)) {
       if (!key || !Number.isFinite(share) || share <= 0) continue;
       const weight = share * vol;
@@ -64,24 +66,25 @@ function rosterSeries(
 }
 
 function buildRosterLane(
-  profiles: PlayerSentimentProfile[],
-  lane: "fan" | "media"
-): CuratedSentimentLane {
-  const weighted = profiles.map((profile) => ({
-    score: profile[lane].score,
-    weight: Math.max(1, profile[lane].mentionVolume),
+  allProfiles: PlayerSentimentProfile[],
+  lane: "fan" | "media",
+  minPlayers: number
+): CuratedSentimentLane | undefined {
+  // Roll up curated lanes only, so illustrative and measured numbers never average together.
+  const profiles = allProfiles.filter((profile) => profile[lane]?.origin === "curated");
+  if (profiles.length < minPlayers) return undefined;
+  const lanes = profiles.map((profile) => profile[lane]!);
+  const weighted = lanes.map((l) => ({
+    score: l.score,
+    weight: Math.max(1, l.mentionVolume),
   }));
   const score = Math.round(meanWeighted(weighted) * 100) / 100;
-  const mentionVolume = profiles.reduce(
-    (sum, profile) => sum + profile[lane].mentionVolume,
-    0
-  );
+  const mentionVolume = lanes.reduce((sum, l) => sum + l.mentionVolume, 0);
   const coverageConfidence =
     Math.round(
-      (profiles.reduce((sum, profile) => sum + profile[lane].coverageConfidence, 0) /
-        profiles.length) *
-        100
+      (lanes.reduce((sum, l) => sum + l.coverageConfidence, 0) / lanes.length) * 100
     ) / 100;
+  const asOf = lanes.map((l) => l.asOf).filter(Boolean).sort().pop();
 
   let polarity: CuratedSentimentLane["polarity"] = "neutral";
   if (score >= 0.2) polarity = "positive";
@@ -96,6 +99,8 @@ function buildRosterLane(
     coverageConfidence,
     platformBreakdown: mergeWeightedBreakdown(profiles, lane, "platformBreakdown"),
     topicBreakdown: mergeWeightedBreakdown(profiles, lane, "topicBreakdown"),
+    origin: "curated",
+    asOf,
   };
 }
 
@@ -118,9 +123,11 @@ export function computeRosterTeamProfiles(
 
   const out: TeamSentimentProfile[] = [];
   for (const [teamKey, teamPlayers] of byTeam) {
-    if (teamPlayers.length < minPlayers) continue;
-    const fan = buildRosterLane(teamPlayers, "fan");
-    const media = buildRosterLane(teamPlayers, "media");
+    const fan = buildRosterLane(teamPlayers, "fan", minPlayers);
+    const media = buildRosterLane(teamPlayers, "media", minPlayers);
+    if (!fan && !media) continue;
+    const curatedPlayers = (lane: "fan" | "media") =>
+      teamPlayers.filter((profile) => profile[lane]?.origin === "curated");
     const brand = resolveTeamBrand(teamKey);
     out.push({
       teamIds: [teamKey],
@@ -132,8 +139,8 @@ export function computeRosterTeamProfiles(
       fan,
       media,
       series: {
-        fan: rosterSeries(teamPlayers, "fan"),
-        media: rosterSeries(teamPlayers, "media"),
+        fan: fan ? rosterSeries(curatedPlayers("fan"), "fan") : [],
+        media: media ? rosterSeries(curatedPlayers("media"), "media") : [],
       },
     });
   }

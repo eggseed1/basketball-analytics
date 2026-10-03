@@ -1,9 +1,10 @@
 import type { AnalyticalFinding, TeamTrait } from "@/analytics";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { type } from "@/lib/design-system";
-import { formatNumber, formatOrdinal } from "@/lib/format";
+import { formatOrdinal } from "@/lib/format";
 import { percentileSavantColor } from "@/lib/player-grade";
 import {
+  formatMetricDelta,
   formatRankLine,
   type RankedMetric,
 } from "@/lib/team-page-metrics";
@@ -28,8 +29,8 @@ function MetricCard({ metric }: { metric: RankedMetric }) {
       </p>
       {metric.differenceFromAverage != null && metric.missingReason == null ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          {metric.differenceFromAverage >= 0 ? "+" : ""}
-          {formatNumber(metric.differenceFromAverage, 2)} vs league avg
+          {formatMetricDelta(metric.key, metric.differenceFromAverage)} vs
+          league avg
         </p>
       ) : null}
       {metric.previousFormatted ? (
@@ -59,7 +60,7 @@ function PercentileRow({ metric }: { metric: RankedMetric }) {
           className="absolute top-1/2 size-3.5 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 border-background"
           style={{
             left: `calc(8px + (100% - 16px) * ${pct / 100})`,
-            backgroundColor: percentileSavantColor(pct),
+            backgroundColor: percentileSavantColor(pct, "auto"),
           }}
           aria-hidden
         />

@@ -7,6 +7,7 @@ import {
   resolveTeamFrontOfficeSlice,
 } from "@/data/front-office/load-team-front-office";
 import { getTeamAssets } from "@/data/queries/team-assets";
+import { getTeamContracts, getTeamFuturePicks } from "@/data/queries/team-contracts";
 import type { TeamAssetLedger } from "@/data/types/team-assets";
 
 export async function TeamAssetsIsland({
@@ -32,6 +33,8 @@ export async function TeamAssetsIsland({
   const draftAssets = frontOffice
     ? buildTeamDraftAssetsPresentation(frontOffice)
     : null;
+  const contracts = franchiseId ? getTeamContracts(franchiseId) : null;
+  const futurePicks = franchiseId ? getTeamFuturePicks(franchiseId) : null;
 
   const assetLedger = await getTeamAssets({
     teamId,
@@ -77,11 +80,13 @@ export async function TeamAssetsIsland({
           Cap &amp; assets
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          {frontOfficeSeason} payroll, cap space, and draft picks from the
-          current roster snapshot
-          {assetLedger.structuredLedgerAvailable
-            ? " plus the structured asset ledger (picks, exceptions, rights)."
-            : "."}
+          {contracts
+            ? "Salaries by season, future picks and unsigned draft rights."
+            : `${frontOfficeSeason} payroll, cap space, and draft picks from the current roster snapshot${
+                assetLedger.structuredLedgerAvailable
+                  ? " plus the structured asset ledger (picks, exceptions, rights)."
+                  : "."
+              }`}
           {viewingHistoricalStats ? (
             <>
               {" "}
@@ -95,6 +100,8 @@ export async function TeamAssetsIsland({
           ledger={assetLedger}
           payroll={payroll}
           draftAssets={draftAssets}
+          contracts={contracts}
+          futurePicks={futurePicks}
           payrollHref={
             franchiseId ? `/teams/${franchiseId}/payroll` : undefined
           }

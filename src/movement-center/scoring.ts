@@ -5,7 +5,7 @@ import type {
   MovementStoryCluster,
 } from "@/movement-center/types";
 
-export const EVIDENCE_SCORE_METHODOLOGY = "movement-m1-0.1";
+export const EVIDENCE_SCORE_METHODOLOGY = "movement-m1-0.2";
 
 type SourceTier = { label: string; credibility: number };
 
@@ -56,6 +56,17 @@ function directnessPoints(claim: ScoringClaim): number {
   return 8;
 }
 
+/**
+ * Independent source behind a claim. Relays that name the reporter count as
+ * that reporter, so five outlets repeating one scoop corroborate once.
+ * Unattributed relays add nothing.
+ */
+function independentSourceKey(claim: MovementClaim): string | null {
+  if (claim.provenanceKind === "original_report" && !claim.citesClaimId) return claim.sourceId;
+  if (claim.sourceId.startsWith("reporter:")) return claim.sourceId;
+  return null;
+}
+
 /** Score a cluster from its claims — evidence strength, not P(movement). */
 export function scoreMovementCluster(
   cluster: MovementStoryCluster,
@@ -63,11 +74,10 @@ export function scoreMovementCluster(
   sources: Record<string, SourceTier>,
   now = new Date()
 ): MovementEvidenceScore {
-  const originals = claims.filter(
-    (c) => c.isOriginal && !c.citesClaimId && c.provenanceKind === "original_report"
+  const independentSources = new Set(
+    claims.map(independentSourceKey).filter((key): key is string => key !== null)
   );
-  const uniqueOriginalSources = new Set(originals.map((c) => c.sourceId));
-  const corroboration = Math.min(20, uniqueOriginalSources.size * 5);
+  const corroboration = Math.min(20, independentSources.size * 5);
 
   let sourceCredibility = 0;
   let reportDirectness = 0;

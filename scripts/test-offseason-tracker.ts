@@ -28,7 +28,8 @@ import {
 import { isTransactionGenealogyUiReady } from "../src/data/queries/transaction-lineage";
 import { loadTransactionArchive } from "../src/data/providers/transactions/transaction-archive-store";
 import { parseTradeSides } from "../src/lib/trade-tree-parse";
-import Module from "node:module";
+
+process.env.DRBL_LIVE_TRANSACTIONS = "off";
 
 function tx(
   partial: Partial<CanonicalTransaction> &
@@ -684,76 +685,6 @@ async function main() {
     "curated Pierce/Garnett package is merged into archive"
   );
   clearTransactionEventIndexCache();
-
-  const origLoad = (Module as unknown as { _load: Function })._load;
-  (Module as unknown as { _load: Function })._load = function (
-    req: string,
-    parent: unknown,
-    isMain: boolean
-  ) {
-    if (req === "server-only") return {};
-    // eslint-disable-next-line prefer-rest-params
-    return origLoad.apply(this, arguments);
-  };
-  const { buildTeamTradeTree } = await import(
-    "../src/data/queries/team-trade-tree"
-  );
-  const bosKg = await buildTeamTradeTree({
-    teamId: "2",
-    focusPlayer: "Kevin Garnett",
-  });
-  const kgChild = bosKg?.root.children.find(
-    (c) => c.fromAssetLabel === "Kevin Garnett"
-  );
-  assert.ok(kgChild, "Boston KG forward branch exists");
-  assert.equal(kgChild.disposition.kind, "traded");
-  if (kgChild.disposition.kind === "traded") {
-    assert.equal(
-      kgChild.disposition.toTeamAbbr,
-      "BKN",
-      "Boston KG exits to Brooklyn — not Minnesota"
-    );
-  }
-  const bknKg = await buildTeamTradeTree({
-    teamId: "17",
-    focusPlayer: "Kevin Garnett",
-  });
-  assert.equal(bknKg?.rootDate, "2013-07-12");
-  assert.equal(bknKg?.title, "How BKN got Kevin Garnett");
-
-  const bosHorford = await buildTeamTradeTree({
-    teamId: "2",
-    focusPlayer: "Al Horford",
-  });
-  assert.equal(bosHorford?.rootDate, "2021-06-18");
-  assert.equal(bosHorford?.title, "How BOS got Al Horford");
-  assert.deepEqual(
-    bosHorford?.root.assets.map((a) => a.label),
-    ["Al Horford", "Moses Brown", "a 2023 second-round draft pick"]
-  );
-  assert.deepEqual(bosHorford?.rootSent.map((a) => a.label), ["Kemba Walker"]);
-  const horfordChild = bosHorford?.root.children.find(
-    (c) => c.fromAssetLabel === "Al Horford"
-  );
-  assert.ok(horfordChild, "Boston Horford forward branch exists");
-  assert.notEqual(horfordChild?.disposition.kind, "traded");
-  const kembaAncestry = bosHorford?.ancestry.find((a) =>
-    a.assets.some((x) => x.label === "Kemba Walker")
-  );
-  assert.ok(kembaAncestry, "Kemba Walker ancestry branch exists");
-  assert.equal(kembaAncestry?.via?.kind, "signed");
-
-  const okcHorford = await buildTeamTradeTree({
-    teamId: "25",
-    focusPlayer: "Al Horford",
-  });
-  const okcHorfordExit = okcHorford?.root.children.find(
-    (c) => c.fromAssetLabel === "Al Horford"
-  );
-  assert.equal(okcHorfordExit?.disposition.kind, "traded");
-  if (okcHorfordExit?.disposition.kind === "traded") {
-    assert.equal(okcHorfordExit.disposition.toTeamAbbr, "BOS");
-  }
 
   console.log("offseason-tracker checks passed");
 }

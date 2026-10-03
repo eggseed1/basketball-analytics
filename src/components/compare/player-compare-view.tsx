@@ -1,6 +1,13 @@
 "use client";
 
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { ChevronDown } from "lucide-react";
 
 import type { ComparisonDimension, PlayerComparisonResult } from "@/analytics";
@@ -8,45 +15,102 @@ import {
   CATEGORY_ORDER,
   COMPARE_DEFAULT_METRIC_IDS,
 } from "@/analytics/compare-players";
+import { GlassSurface } from "@/components/brand/glass-surface";
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerCompareRadarLazy } from "@/components/charts/recharts-lazy";
 import { CompareShareControls } from "@/components/compare/compare-share-controls";
+import {
+  compareGap,
+  compareScore,
+  pickRadarAxes,
+} from "@/components/compare/compare-scale";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { SegmentedControl } from "@/components/ui/segmented-control";
+import { useChartTheme } from "@/lib/chart-theme";
 import { conceptIdForColumnLabel } from "@/lib/learn-column-concepts";
 import { type } from "@/lib/design-system";
-import { teamBrandBarGradient, teamBrandCompareBarFill } from "@/lib/nba-brand";
+import { formatOrdinal } from "@/lib/format";
+import {
+  compareMatchupColors,
+  resolveTeamBrand,
+  teamBrandCompareBarFill,
+} from "@/lib/nba-brand";
+import { normalizeTeamParam } from "@/lib/team-identity";
 import { cn } from "@/lib/utils";
 
 type ValueMode = "raw" | "percentile";
+type Edge = "a" | "b" | "even";
 
 /** Mirror share graphic: value+bar | metric | value+bar */
 const MATCHUP_ROW_GRID =
   "grid grid-cols-[minmax(0,1fr)_4.75rem_minmax(0,1fr)] items-center gap-x-2 sm:gap-x-3";
 
+const KEY_NUMBER_IDS = ["pts", "trb", "ast", "ts", "drbl100"] as const;
+
+/** Header wash holds full strength behind the faces, then eases into the body. */
+const WASH_FADE =
+  "linear-gradient(to bottom, #000 0%, #000 58%, rgb(0 0 0 / 0.55) 80%, transparent 100%)";
+
+/** Percentile points inside which two players read as even. */
+const EVEN_PCT_POINTS = 3;
+/** Relative raw gap inside which two players read as even (no percentiles). */
+const EVEN_RAW_SHARE = 0.02;
+
+const SECTION_LABEL = cn(
+  type.micro,
+  "font-bold uppercase tracking-[0.12em] text-muted-foreground"
+);
+
+/** Nested tile inside the glass card: translucent fill, no second blur layer. */
+const FROST_TILE =
+  "frost-surface rounded-lg shadow-[inset_0_1px_0_rgb(255_255_255/0.55)] dark:shadow-[inset_0_1px_0_rgb(255_255_255/0.07)]";
+
+/** Quiet capsule track shared by every compare bar, matching the percentile panel. */
+const BAR_TRACK = "overflow-hidden rounded-full bg-foreground/[0.08]";
+
 function formatPctile(n: number | undefined): string {
   if (n == null || !Number.isFinite(n)) return "—";
-  return `${Math.round(n)}th`;
+  return formatOrdinal(n);
+}
+
+function edgeOf(d: ComparisonDimension): Edge {
+  if (d.delta == null || !Number.isFinite(d.delta)) return "even";
+  if (d.aPercentile != null && d.bPercentile != null) {
+    if (Math.abs(d.delta) < EVEN_PCT_POINTS) return "even";
+    return d.delta > 0 ? "a" : "b";
+  }
+  const peak = Math.max(Math.abs(d.aValue ?? 0), Math.abs(d.bValue ?? 0));
+  if (peak > 0 && Math.abs(d.delta) / peak < EVEN_RAW_SHARE) return "even";
+  if (d.delta === 0) return "even";
+  return d.delta > 0 ? "a" : "b";
+}
+
+function tallyEdges(rows: ComparisonDimension[]) {
+  let a = 0;
+  let b = 0;
+  let even = 0;
+  for (const d of rows) {
+    if (d.delta == null || !Number.isFinite(d.delta)) continue;
+    const edge = edgeOf(d);
+    if (edge === "a") a += 1;
+    else if (edge === "b") b += 1;
+    else even += 1;
+  }
+  return { a, b, even, total: a + b + even };
 }
 
 function EdgeLabel({
-  delta,
-  evenThreshold = 3,
+  edge,
   aName,
   bName,
 }: {
-  delta?: number;
-  evenThreshold?: number;
+  edge: Edge;
   aName: string;
   bName: string;
 }) {
-  if (
-    delta == null ||
-    !Number.isFinite(delta) ||
-    Math.abs(delta) < evenThreshold
-  ) {
+  if (edge === "even") {
     return (
       <span
         className={cn(
@@ -65,31 +129,18 @@ function EdgeLabel({
         "font-semibold uppercase tracking-wide text-muted-foreground"
       )}
     >
-      {delta > 0 ? `${aName} ↑` : `${bName} ↑`}
+      {edge === "a" ? `${aName} ↑` : `${bName} ↑`}
     </span>
   );
 }
 
-function trackPct(
-  dimension: ComparisonDimension,
-  side: "a" | "b"
-): number | undefined {
-  const pct =
-    side === "a" ? dimension.aPercentile : dimension.bPercentile;
-  const bar = side === "a" ? dimension.aBar : dimension.bBar;
-  if (pct != null && Number.isFinite(pct)) {
-    return Math.max(0, Math.min(100, pct));
-  }
-  if (bar != null && Number.isFinite(bar)) {
-    return Math.max(0, Math.min(100, bar));
-  }
-  const a = dimension.aValue;
-  const b = dimension.bValue;
-  if (a == null && b == null) return undefined;
-  const peak = Math.max(Math.abs(a ?? 0), Math.abs(b ?? 0), 1e-9);
-  const v = side === "a" ? a : b;
-  if (v == null) return undefined;
-  return Math.max(8, (Math.abs(v) / peak) * 100);
+function metricLabel(label: string) {
+  const conceptId = conceptIdForColumnLabel(label);
+  return conceptId ? (
+    <MetricHelp conceptId={conceptId}>{label}</MetricHelp>
+  ) : (
+    label
+  );
 }
 
 function MatchupBarRow({
@@ -111,32 +162,13 @@ function MatchupBarRow({
     dimension.aPercentile != null || dimension.bPercentile != null;
   const showPct = valueMode === "percentile" && hasPct;
 
-  const aTrack = trackPct(dimension, "a");
-  const bTrack = trackPct(dimension, "b");
+  const aTrack = compareScore(dimension, "a");
+  const bTrack = compareScore(dimension, "b");
 
-  const evenThreshold = showPct || hasPct ? 3 : 0.05;
-  const aWins =
-    dimension.delta != null &&
-    Number.isFinite(dimension.delta) &&
-    dimension.delta > evenThreshold;
-  const bWins =
-    dimension.delta != null &&
-    Number.isFinite(dimension.delta) &&
-    dimension.delta < -evenThreshold;
-  const tied = !aWins && !bWins;
-
+  const edge = edgeOf(dimension);
   // Keep the trailing side readable — faint fills made losing bars disappear.
-  const aOpacity = tied || aWins ? 1 : 0.72;
-  const bOpacity = tied || bWins ? 1 : 0.72;
-
-  const label = (() => {
-    const conceptId = conceptIdForColumnLabel(dimension.label);
-    return conceptId ? (
-      <MetricHelp conceptId={conceptId}>{dimension.label}</MetricHelp>
-    ) : (
-      dimension.label
-    );
-  })();
+  const aOpacity = edge === "b" ? 0.72 : 1;
+  const bOpacity = edge === "a" ? 0.72 : 1;
 
   const aValue = showPct
     ? formatPctile(dimension.aPercentile)
@@ -147,12 +179,12 @@ function MatchupBarRow({
   const aTitle = showPct
     ? dimension.aDisplay
     : dimension.aPercentile != null
-      ? `${Math.round(dimension.aPercentile)}th %ile`
+      ? `${formatOrdinal(dimension.aPercentile)} percentile`
       : undefined;
   const bTitle = showPct
     ? dimension.bDisplay
     : dimension.bPercentile != null
-      ? `${Math.round(dimension.bPercentile)}th %ile`
+      ? `${formatOrdinal(dimension.bPercentile)} percentile`
       : undefined;
 
   return (
@@ -169,13 +201,10 @@ function MatchupBarRow({
             >
               {aValue}
             </span>
-            <div className="h-2.5 w-full overflow-hidden rounded-full border border-foreground/15 bg-foreground/[0.08]">
+            <div className={cn(BAR_TRACK, "h-2 w-full")}>
               <div
                 className="ml-auto h-full rounded-full"
-                style={{
-                  width: `${aTrack ?? 0}%`,
-                  backgroundColor: aFill,
-                }}
+                style={{ width: `${aTrack ?? 0}%`, background: aFill }}
               />
             </div>
           </div>
@@ -188,14 +217,9 @@ function MatchupBarRow({
               "max-w-full truncate font-bold leading-tight tracking-tight"
             )}
           >
-            {label}
+            {metricLabel(dimension.label)}
           </p>
-          <EdgeLabel
-            delta={dimension.delta}
-            aName={aName}
-            bName={bName}
-            evenThreshold={evenThreshold}
-          />
+          <EdgeLabel edge={edge} aName={aName} bName={bName} />
         </div>
 
         <div className="min-w-0" style={{ opacity: bOpacity }}>
@@ -209,13 +233,10 @@ function MatchupBarRow({
             >
               {bValue}
             </span>
-            <div className="h-2.5 w-full overflow-hidden rounded-full border border-foreground/15 bg-foreground/[0.08]">
+            <div className={cn(BAR_TRACK, "h-2 w-full")}>
               <div
                 className="h-full rounded-full"
-                style={{
-                  width: `${bTrack ?? 0}%`,
-                  backgroundColor: bFill,
-                }}
+                style={{ width: `${bTrack ?? 0}%`, background: bFill }}
               />
             </div>
           </div>
@@ -240,112 +261,268 @@ const GROUP_TITLE: Record<string, string> = {
   impact: "Impact",
 };
 
-type CategoryEdge = "a" | "b" | "even";
-
-function categoryEdge(
-  rows: ComparisonDimension[],
-  evenThreshold: number
-): CategoryEdge {
-  let aWins = 0;
-  let bWins = 0;
-  for (const d of rows) {
-    if (d.delta == null || !Number.isFinite(d.delta)) continue;
-    if (Math.abs(d.delta) < evenThreshold) continue;
-    if (d.delta > 0) aWins += 1;
-    else bWins += 1;
-  }
-  if (aWins === bWins) return "even";
-  return aWins > bWins ? "a" : "b";
+function SplitBar({
+  a,
+  even,
+  b,
+  aColor,
+  bColor,
+  className,
+}: {
+  a: number;
+  even: number;
+  b: number;
+  aColor: string;
+  bColor: string;
+  className?: string;
+}) {
+  const total = a + even + b;
+  if (!total) return null;
+  return (
+    <div
+      className={cn(
+        BAR_TRACK,
+        "flex w-full gap-0.5",
+        className
+      )}
+      aria-hidden
+    >
+      {a ? (
+        <div
+          className="rounded-full"
+          style={{ flexGrow: a, background: aColor }}
+        />
+      ) : null}
+      {even ? (
+        <div
+          className="rounded-full bg-foreground/20"
+          style={{ flexGrow: even }}
+        />
+      ) : null}
+      {b ? (
+        <div
+          className="rounded-full"
+          style={{ flexGrow: b, background: bColor }}
+        />
+      ) : null}
+    </div>
+  );
 }
 
-function CategoryScorecard({
+/** Head count of metric edges. Every metric counts once, so it is a tally. */
+function EdgeTally({
   dimensions,
   aName,
   bName,
-  aTeamKey,
-  bTeamKey,
-  usePercentile,
+  aColor,
+  bColor,
 }: {
   dimensions: ComparisonDimension[];
   aName: string;
   bName: string;
-  aTeamKey?: string;
-  bTeamKey?: string;
-  usePercentile: boolean;
+  aColor: string;
+  bColor: string;
 }) {
-  const evenThreshold = usePercentile ? 3 : 0.05;
-  const cards = CATEGORY_ORDER.map((group) => {
-    const rows = dimensions.filter((d) => d.group === group);
-    if (!rows.length) return null;
-    const edge = categoryEdge(rows, evenThreshold);
-    return { group, edge, label: GROUP_TITLE[group] ?? group };
-  }).filter(Boolean) as Array<{
-    group: string;
-    edge: CategoryEdge;
-    label: string;
-  }>;
-
-  if (!cards.length) return null;
-
+  const t = tallyEdges(dimensions);
+  if (!t.total) return null;
   return (
     <section
-      className="border-b border-border px-3 py-3 sm:px-5"
-      aria-label="Category scorecard"
+      className="border-b border-border/60 px-3 py-4 sm:px-5"
+      aria-label="Metric edges"
     >
-      <p
-        className={cn(
-          type.micro,
-          "mb-2 font-bold uppercase tracking-[0.12em] text-muted-foreground"
-        )}
-      >
-        Category edge
+      <div className="flex items-end justify-between gap-3">
+        <div className="min-w-0">
+          <p
+            className="text-3xl font-black tabular-nums leading-none tracking-tight"
+            style={{ color: aColor }}
+          >
+            {t.a}
+          </p>
+          <p className={cn(type.caption, "mt-1 truncate font-semibold")}>
+            {aName} ahead
+          </p>
+        </div>
+        <div className="min-w-0 text-center">
+          <p className={SECTION_LABEL}>Metric edges</p>
+          <p
+            className={cn(
+              type.caption,
+              "mt-1 font-semibold tabular-nums text-muted-foreground"
+            )}
+          >
+            {t.even} even of {t.total}
+          </p>
+        </div>
+        <div className="min-w-0 text-right">
+          <p
+            className="text-3xl font-black tabular-nums leading-none tracking-tight"
+            style={{ color: bColor }}
+          >
+            {t.b}
+          </p>
+          <p className={cn(type.caption, "mt-1 truncate font-semibold")}>
+            {bName} ahead
+          </p>
+        </div>
+      </div>
+      <SplitBar
+        a={t.a}
+        even={t.even}
+        b={t.b}
+        aColor={aColor}
+        bColor={bColor}
+        className="mt-3 h-3"
+      />
+      <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
+        A count of the metrics shown. Each one counts the same, so this is a
+        tally, not an overall rating.
       </p>
-      <ul className="grid grid-cols-2 gap-1.5 sm:grid-cols-3 lg:grid-cols-6">
-        {cards.map((card) => {
+    </section>
+  );
+}
+
+function KeyNumbers({
+  dimensions,
+  aColor,
+  bColor,
+}: {
+  dimensions: ComparisonDimension[];
+  aColor: string;
+  bColor: string;
+}) {
+  const byId = new Map(dimensions.map((d) => [d.id, d]));
+  const cards = KEY_NUMBER_IDS.map((id) => byId.get(id)).filter(
+    (d): d is ComparisonDimension =>
+      d != null && (d.aValue != null || d.bValue != null)
+  );
+  if (!cards.length) return null;
+  return (
+    <section
+      className="grid grid-cols-2 gap-2 border-b border-border/60 p-3 sm:grid-cols-5 sm:px-5"
+      aria-label="Key numbers"
+    >
+      {cards.map((d) => {
+        const edge = edgeOf(d);
+        const aTrack = compareScore(d, "a") ?? 0;
+        const bTrack = compareScore(d, "b") ?? 0;
+        return (
+          <div key={d.id} className={cn(FROST_TILE, "px-3 py-3")}>
+            <p className={cn(SECTION_LABEL, "text-center")}>
+              {metricLabel(d.label)}
+            </p>
+            <div className="mt-1.5 flex items-baseline justify-between gap-2 tabular-nums">
+              <span
+                className={cn(
+                  "text-lg font-black tracking-tight",
+                  edge === "b" && "text-muted-foreground"
+                )}
+                style={edge === "a" ? { color: aColor } : undefined}
+              >
+                {d.aDisplay}
+              </span>
+              <span
+                className={cn(
+                  "text-lg font-black tracking-tight",
+                  edge === "a" && "text-muted-foreground"
+                )}
+                style={edge === "b" ? { color: bColor } : undefined}
+              >
+                {d.bDisplay}
+              </span>
+            </div>
+            <div className="mt-1.5 flex items-center gap-0.5" aria-hidden>
+              <div className={cn(BAR_TRACK, "flex h-1.5 flex-1 justify-end")}>
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${aTrack}%`, background: aColor }}
+                />
+              </div>
+              <div className={cn(BAR_TRACK, "flex h-1.5 flex-1")}>
+                <div
+                  className="h-full rounded-full"
+                  style={{ width: `${bTrack}%`, background: bColor }}
+                />
+              </div>
+            </div>
+          </div>
+        );
+      })}
+    </section>
+  );
+}
+
+function CategoryEdges({
+  dimensions,
+  aName,
+  bName,
+  aColor,
+  bColor,
+}: {
+  dimensions: ComparisonDimension[];
+  aName: string;
+  bName: string;
+  aColor: string;
+  bColor: string;
+}) {
+  const rows = CATEGORY_ORDER.map((group) => {
+    const t = tallyEdges(dimensions.filter((d) => d.group === group));
+    return { group, label: GROUP_TITLE[group] ?? group, ...t };
+  }).filter((r) => r.total > 0);
+  if (!rows.length) return null;
+  return (
+    <section className="flex min-w-0 flex-col gap-2" aria-label="Category edge">
+      <div>
+        <p className={SECTION_LABEL}>Category edge</p>
+        <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
+          Metrics won in each group. Grey is even.
+        </p>
+      </div>
+      <ul className="flex flex-col gap-3 pt-1">
+        {rows.map((r) => {
           const winner =
-            card.edge === "a" ? aName : card.edge === "b" ? bName : "Even";
-          const gradient =
-            card.edge === "a"
-              ? teamBrandBarGradient(aTeamKey)
-              : card.edge === "b"
-                ? teamBrandBarGradient(bTeamKey)
-                : undefined;
+            r.a === r.b ? "Even" : r.a > r.b ? aName : bName;
+          const winnerColor =
+            r.a === r.b ? undefined : r.a > r.b ? aColor : bColor;
           return (
-            <li
-              key={card.group}
-              className={cn(
-                "relative overflow-hidden rounded-lg border border-border/60 px-2.5 py-2 text-center",
-                card.edge === "even" && "bg-secondary/50"
-              )}
-              style={
-                gradient
-                  ? { background: gradient }
-                  : undefined
-              }
-            >
-              <p
-                className={cn(
-                  type.micro,
-                  "font-bold uppercase tracking-wide",
-                  card.edge === "even"
-                    ? "text-muted-foreground"
-                    : "text-foreground/70"
-                )}
-              >
-                {card.label}
-              </p>
-              <p
-                className={cn(
-                  type.caption,
-                  "mt-0.5 truncate font-bold tracking-tight",
-                  card.edge === "even"
-                    ? "text-muted-foreground"
-                    : "text-foreground"
-                )}
-                title={winner}
-              >
-                {winner}
-              </p>
+            <li key={r.group}>
+              <div className="flex items-baseline justify-between gap-2">
+                <span className={cn(type.caption, "font-bold")}>
+                  {r.label}
+                </span>
+                <span
+                  className={cn(
+                    type.caption,
+                    "truncate font-bold",
+                    !winnerColor && "text-muted-foreground"
+                  )}
+                  style={winnerColor ? { color: winnerColor } : undefined}
+                >
+                  {winner}
+                </span>
+              </div>
+              <div className="mt-1 flex items-center gap-2">
+                <span
+                  className={cn(
+                    type.micro,
+                    "w-4 text-right font-bold tabular-nums"
+                  )}
+                >
+                  {r.a}
+                </span>
+                <SplitBar
+                  a={r.a}
+                  even={r.even}
+                  b={r.b}
+                  aColor={aColor}
+                  bColor={bColor}
+                  className="h-2.5"
+                />
+                <span
+                  className={cn(type.micro, "w-4 font-bold tabular-nums")}
+                >
+                  {r.b}
+                </span>
+              </div>
             </li>
           );
         })}
@@ -354,28 +531,240 @@ function CategoryScorecard({
   );
 }
 
+function BiggestGaps({
+  dimensions,
+  aName,
+  bName,
+  aColor,
+  bColor,
+  fallbackNote,
+}: {
+  dimensions: ComparisonDimension[];
+  aName: string;
+  bName: string;
+  aColor: string;
+  bColor: string;
+  fallbackNote?: string;
+}) {
+  const usesPercentile = dimensions.some(
+    (d) => d.aPercentile != null && d.bPercentile != null
+  );
+  const gaps = dimensions
+    .map((d) => ({ d, gap: compareGap(d) }))
+    .filter(
+      (x): x is { d: ComparisonDimension; gap: number } =>
+        x.gap != null && Number.isFinite(x.gap) && edgeOf(x.d) !== "even"
+    )
+    .sort((x, y) => Math.abs(y.gap) - Math.abs(x.gap))
+    .slice(0, 6);
+
+  return (
+    <section
+      className="border-t border-border/60 px-3 py-4 sm:px-5"
+      aria-label="Where they differ most"
+    >
+      <p className={SECTION_LABEL}>Where they differ most</p>
+      {gaps.length ? (
+        <>
+          <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
+            {usesPercentile
+              ? "Gap in peer percentile points. Bars point toward the player who leads."
+              : "Percent gap between the two numbers. Bars point toward the player who leads."}
+          </p>
+          <div
+            className={cn(
+              type.micro,
+              "mt-3 grid grid-cols-[minmax(0,1fr)_6.5rem_minmax(0,1fr)] font-bold uppercase tracking-wide text-muted-foreground"
+            )}
+          >
+            <span className="truncate text-right">← {aName}</span>
+            <span />
+            <span className="truncate">{bName} →</span>
+          </div>
+          <ul className="mt-1 flex flex-col gap-2">
+            {gaps.map(({ d, gap }) => {
+              const width = Math.min(100, Math.abs(gap));
+              const aLeads = gap > 0;
+              const gapLabel = `+${Math.round(Math.abs(gap))}${
+                d.aPercentile != null && d.bPercentile != null ? "" : "%"
+              }`;
+              return (
+                <li
+                  key={d.id}
+                  className="grid grid-cols-[minmax(0,1fr)_6.5rem_minmax(0,1fr)] items-center"
+                >
+                  <div className="flex h-6 items-center gap-1.5">
+                    <span
+                      className={cn(
+                        type.micro,
+                        "w-9 shrink-0 text-right font-bold tabular-nums"
+                      )}
+                    >
+                      {aLeads ? gapLabel : null}
+                    </span>
+                    <div className={cn(BAR_TRACK, "flex h-2 flex-1 justify-end")}>
+                      {aLeads ? (
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${width}%`, background: aColor }}
+                        />
+                      ) : null}
+                    </div>
+                  </div>
+                  <div className="flex min-w-0 flex-col items-center px-1 text-center">
+                    <span
+                      className={cn(
+                        type.caption,
+                        "max-w-full truncate font-bold leading-tight"
+                      )}
+                    >
+                      {metricLabel(d.label)}
+                    </span>
+                    <span
+                      className={cn(
+                        type.micro,
+                        "max-w-full truncate tabular-nums text-muted-foreground"
+                      )}
+                    >
+                      {d.aDisplay} vs {d.bDisplay}
+                    </span>
+                  </div>
+                  <div className="flex h-6 items-center gap-1.5">
+                    <div className={cn(BAR_TRACK, "flex h-2 flex-1")}>
+                      {!aLeads ? (
+                        <div
+                          className="h-full rounded-full"
+                          style={{ width: `${width}%`, background: bColor }}
+                        />
+                      ) : null}
+                    </div>
+                    <span
+                      className={cn(
+                        type.micro,
+                        "w-9 shrink-0 font-bold tabular-nums"
+                      )}
+                    >
+                      {!aLeads ? gapLabel : null}
+                    </span>
+                  </div>
+                </li>
+              );
+            })}
+          </ul>
+        </>
+      ) : fallbackNote ? (
+        <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+          {fallbackNote}
+        </p>
+      ) : null}
+    </section>
+  );
+}
+
 function TeamChipRow({ teamKeys }: { teamKeys: string[] }) {
-  if (!teamKeys.length) return null;
+  // Keys arrive as abbreviations or ESPN ids ("ATL" and "1"); show one chip
+  // per franchise, labeled by abbreviation.
+  const chips = new Map<string, { key: string; label: string; title: string }>();
+  for (const key of teamKeys) {
+    const brand = resolveTeamBrand(key);
+    const id = brand?.id ?? key;
+    if (chips.has(id)) continue;
+    chips.set(id, {
+      key,
+      label: brand?.abbr ?? key,
+      title: normalizeTeamParam(key)?.displayName ?? brand?.abbr ?? key,
+    });
+  }
+  if (!chips.size) return null;
   return (
     <ul className="mt-1.5 flex max-w-full flex-wrap items-center justify-center gap-1.5">
-      {teamKeys.map((key) => (
+      {[...chips.entries()].map(([id, chip]) => (
         <li
-          key={key}
+          key={id}
           className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-background/60 px-1.5 py-0.5"
-          title={key}
+          title={chip.title}
         >
-          <TeamLogo teamKey={key} size="2xs" />
+          <TeamLogo teamKey={chip.key} size="2xs" />
           <span
             className={cn(
               type.micro,
               "font-bold uppercase tracking-wide text-muted-foreground"
             )}
           >
-            {key}
+            {chip.label}
           </span>
         </li>
       ))}
     </ul>
+  );
+}
+
+function FaceSide({
+  playerId,
+  name,
+  season,
+  linkSeason,
+  teamKeys,
+  portraitUrl,
+  color,
+  align,
+}: {
+  playerId: string;
+  name: string;
+  season?: string;
+  linkSeason?: string;
+  teamKeys: string[];
+  portraitUrl?: string | null;
+  color: string;
+  align: "left" | "right";
+}) {
+  return (
+    <div
+      className={cn(
+        "relative flex min-w-0 flex-1 flex-col items-center px-2 pb-5 pt-6",
+        align === "left" ? "pr-8" : "pl-8"
+      )}
+    >
+      <PlayerIdentity
+        playerId={playerId}
+        name={name}
+        season={linkSeason}
+        className="flex min-w-0 max-w-full flex-col items-center"
+        nameClassName="flex max-w-full flex-col items-center gap-1.5 text-center no-underline hover:underline"
+      >
+        <span
+          className="flex shrink-0 rounded-full p-[3px] shadow-[0_8px_24px_rgb(0_0_0/0.12)]"
+          style={{ background: color }}
+        >
+          <PlayerHeadshot
+            playerId={playerId}
+            name={name}
+            portraitUrl={portraitUrl}
+            size="lg"
+            className="ring-0"
+          />
+        </span>
+        <span
+          className={cn(
+            type.body,
+            "mt-1 max-w-full truncate font-bold tracking-tight"
+          )}
+        >
+          {name}
+        </span>
+        {season ? (
+          <span
+            className={cn(
+              type.caption,
+              "font-semibold tabular-nums text-muted-foreground"
+            )}
+          >
+            {season}
+          </span>
+        ) : null}
+        <TeamChipRow teamKeys={teamKeys} />
+      </PlayerIdentity>
+    </div>
   );
 }
 
@@ -439,8 +828,9 @@ function MetricPicker({
         onClick={() => setOpen((v) => !v)}
         className={cn(
           type.caption,
-          "inline-flex items-center gap-1.5 rounded-[var(--radius-md)] border border-border bg-card px-2.5 py-1.5 font-semibold shadow-sm",
-          "transition-colors hover:bg-secondary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50"
+          "glass-pill inline-flex items-center gap-1.5 rounded-[var(--radius-md)] px-2.5 py-1.5 font-semibold",
+          "transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
+          open && "glass-pill-active"
         )}
       >
         Metrics
@@ -460,7 +850,11 @@ function MetricPicker({
           id={listId}
           role="group"
           aria-label="Visible metrics"
-          className="absolute right-0 z-30 mt-1.5 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-[var(--radius-lg)] border border-border bg-card shadow-[var(--shadow-md)]"
+          className="hover-frost absolute right-0 z-30 mt-1.5 w-[min(22rem,calc(100vw-2rem))] overflow-hidden rounded-[var(--radius-lg)]"
+          // Backdrop blur can't sample through the glass article, so the fill carries legibility.
+          style={{
+            background: "color-mix(in oklab, var(--popover) 90%, transparent)",
+          }}
         >
           <div className="flex items-center justify-between gap-2 border-b border-border px-3 py-2">
             <p
@@ -556,10 +950,15 @@ function defaultVisibleIds(dimensions: ComparisonDimension[]): string[] {
 
 export function PlayerCompareView({
   result,
+  aPortraitUrl,
+  bPortraitUrl,
 }: {
   result: PlayerComparisonResult;
+  aPortraitUrl?: string | null;
+  bPortraitUrl?: string | null;
 }) {
   const [origin, setOrigin] = useState("");
+  const theme = useChartTheme();
   const hasAnyPercentile = result.dimensions.some(
     (d) => d.aPercentile != null || d.bPercentile != null
   );
@@ -593,6 +992,11 @@ export function PlayerCompareView({
     () => result.dimensions.filter((d) => visibleSet.has(d.id)),
     [result.dimensions, visibleSet]
   );
+  const radarAxes = useMemo(
+    () => pickRadarAxes(visibleDimensions),
+    [visibleDimensions]
+  );
+  const showRadar = radarAxes.length >= 3;
 
   const seasonLine =
     result.seasonA && result.seasonB
@@ -606,8 +1010,13 @@ export function PlayerCompareView({
   const bShort = shortName(result.bName);
   const aTeamKey = result.aTeamKeys?.[0] ?? result.aTeamKey;
   const bTeamKey = result.bTeamKeys?.[0] ?? result.bTeamKey;
-  const aFill = teamBrandCompareBarFill(aTeamKey);
-  const bFill = teamBrandCompareBarFill(bTeamKey);
+  const colors = compareMatchupColors(aTeamKey, bTeamKey, theme.surface);
+  const aFill = colors.a;
+  const bFill = colors.b;
+
+  const closeNote = careerMode
+    ? "The career metrics shown are close. No gap clears the even line."
+    : "The season metrics shown are within a few percentile points of each other. Small gaps may be sample noise.";
 
   return (
     <div className="flex flex-col gap-3">
@@ -618,13 +1027,26 @@ export function PlayerCompareView({
         <CompareShareControls result={result} />
       </div>
 
-      <article
-        className={cn(
-          "compare-snapshot overflow-hidden rounded-xl border border-border",
-          "bg-card text-card-foreground shadow-[var(--shadow-md)]"
-        )}
+      <GlassSurface
+        as="article"
+        accentColor={aFill}
+        accentColorB={bFill}
+        className="compare-snapshot rounded-xl text-card-foreground"
       >
-        <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-5">
+        <div className="relative isolate">
+        <div
+          aria-hidden
+          className="matchup-wash--subtle pointer-events-none absolute inset-0 -z-10"
+          style={
+            {
+              "--away-color": aFill,
+              "--home-color": bFill,
+              maskImage: WASH_FADE,
+              WebkitMaskImage: WASH_FADE,
+            } as CSSProperties
+          }
+        />
+        <div className="flex items-center justify-between gap-3 px-4 py-3 sm:px-5">
           <div className="min-w-0">
             <p
               className={cn(
@@ -650,106 +1072,98 @@ export function PlayerCompareView({
           ) : null}
         </div>
 
-        <header className="flex min-w-0 items-center justify-center gap-3 overflow-x-clip px-3 py-5 sm:gap-8 sm:px-5">
-          <PlayerIdentity
+        <header className="relative flex min-w-0 items-stretch">
+          <FaceSide
             playerId={result.aId}
             name={result.aName}
-            season={
+            season={result.seasonA}
+            linkSeason={
               careerMode ? undefined : (result.seasonA ?? result.season)
             }
-            className="flex min-w-0 flex-1 flex-col items-center"
-            nameClassName="flex max-w-full flex-col items-center gap-1.5 text-center no-underline hover:underline"
-          >
-            <PlayerHeadshot
-              playerId={result.aId}
-              name={result.aName}
-              size="lg"
-            />
+            teamKeys={result.aTeamKeys ?? []}
+            portraitUrl={aPortraitUrl}
+            color={aFill}
+            align="left"
+          />
+          <div className="pointer-events-none absolute inset-y-0 left-1/2 flex -translate-x-1/2 items-center">
             <span
               className={cn(
-                type.body,
-                "max-w-full truncate font-bold tracking-tight"
+                type.caption,
+                "glass-pill glass-pill-active flex size-12 items-center justify-center rounded-full font-black uppercase tracking-wide shadow-[0_6px_18px_rgb(0_0_0/0.14)]"
               )}
             >
-              {result.aName}
+              vs
             </span>
-            {result.seasonA ? (
-              <span
-                className={cn(
-                  type.caption,
-                  "font-semibold tabular-nums text-muted-foreground"
-                )}
-              >
-                {result.seasonA}
-              </span>
-            ) : null}
-            <TeamChipRow teamKeys={result.aTeamKeys ?? []} />
-          </PlayerIdentity>
-
-          <p
-            className={cn(
-              type.caption,
-              "shrink-0 font-bold uppercase tracking-[0.14em] text-muted-foreground"
-            )}
-          >
-            vs
-          </p>
-
-          <PlayerIdentity
+          </div>
+          <FaceSide
             playerId={result.bId}
             name={result.bName}
-            season={
+            season={result.seasonB}
+            linkSeason={
               careerMode ? undefined : (result.seasonB ?? result.season)
             }
-            className="flex min-w-0 flex-1 flex-col items-center"
-            nameClassName="flex max-w-full flex-col items-center gap-1.5 text-center no-underline hover:underline"
-          >
-            <PlayerHeadshot
-              playerId={result.bId}
-              name={result.bName}
-              size="lg"
-            />
-            <span
-              className={cn(
-                type.body,
-                "max-w-full truncate font-bold tracking-tight"
-              )}
-            >
-              {result.bName}
-            </span>
-            {result.seasonB ? (
-              <span
-                className={cn(
-                  type.caption,
-                  "font-semibold tabular-nums text-muted-foreground"
-                )}
-              >
-                {result.seasonB}
-              </span>
-            ) : null}
-            <TeamChipRow teamKeys={result.bTeamKeys ?? []} />
-          </PlayerIdentity>
+            teamKeys={result.bTeamKeys ?? []}
+            portraitUrl={bPortraitUrl}
+            color={bFill}
+            align="right"
+          />
         </header>
+        </div>
 
-        <PlayerCompareRadarLazy
-          dimensions={visibleDimensions}
-          aName={aShort}
-          bName={bShort}
-          aTeamKey={aTeamKey}
-          bTeamKey={bTeamKey}
+        <KeyNumbers
+          dimensions={result.dimensions}
+          aColor={aFill}
+          bColor={bFill}
         />
 
-        <CategoryScorecard
+        <EdgeTally
           dimensions={visibleDimensions}
           aName={aShort}
           bName={bShort}
-          aTeamKey={aTeamKey}
-          bTeamKey={bTeamKey}
-          usePercentile={valueMode === "percentile" && hasAnyPercentile}
+          aColor={aFill}
+          bColor={bFill}
         />
 
         <div
-          className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-b border-border px-3 py-3 sm:px-5"
+          className={cn(
+            "grid min-w-0 gap-3 border-b border-border/60 p-3 sm:px-5 sm:py-4",
+            showRadar && "md:grid-cols-[minmax(0,1.15fr)_minmax(0,1fr)]"
+          )}
+        >
+          {showRadar ? (
+            <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+              <PlayerCompareRadarLazy
+                axes={radarAxes}
+                dimensions={visibleDimensions}
+                aName={aShort}
+                bName={bShort}
+                aColor={aFill}
+                bColor={bFill}
+              />
+            </div>
+          ) : null}
+          <div className={cn(FROST_TILE, "min-w-0 p-4")}>
+            <CategoryEdges
+              dimensions={visibleDimensions}
+              aName={aShort}
+              bName={bShort}
+              aColor={aFill}
+              bColor={bFill}
+            />
+          </div>
+        </div>
+
+        <BiggestGaps
+          dimensions={visibleDimensions}
+          aName={aShort}
+          bName={bShort}
+          aColor={aFill}
+          bColor={bFill}
+          fallbackNote={closeNote}
+        />
+
+        <div
+          className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
           data-capture-exclude=""
         >
           <SegmentedControl
@@ -774,7 +1188,7 @@ export function PlayerCompareView({
           />
         </div>
 
-        <section className="border-t border-border px-3 py-1 sm:px-5">
+        <section className="px-3 py-1 sm:px-5">
           <h2 className="sr-only">Dimensions</h2>
           {CATEGORY_ORDER.map((group) => {
             const rows = visibleDimensions.filter((d) => d.group === group);
@@ -805,28 +1219,7 @@ export function PlayerCompareView({
           })}
         </section>
 
-        {result.differenceSummary.length ? (
-          <section className="border-t border-border px-4 py-4 sm:px-5">
-            <h2 className={cn(type.bodySm, "font-bold tracking-tight")}>
-              How they differ
-            </h2>
-            <ul className="mt-2 flex flex-col gap-1.5">
-              {result.differenceSummary.slice(0, 3).map((line) => (
-                <li
-                  key={line}
-                  className={cn(
-                    type.bodySm,
-                    "leading-relaxed text-muted-foreground"
-                  )}
-                >
-                  {line}
-                </li>
-              ))}
-            </ul>
-          </section>
-        ) : null}
-
-        <footer className="flex items-center justify-between gap-3 border-t border-border bg-secondary/40 px-4 py-2.5 sm:px-5">
+        <footer className="frost-surface-muted flex items-center justify-between gap-3 border-t border-border/60 px-4 py-2.5 sm:px-5">
           <p
             className={cn(
               type.micro,
@@ -839,7 +1232,7 @@ export function PlayerCompareView({
             {origin ? origin.replace(/^https?:\/\//, "") : "drbl"} · compare
           </p>
         </footer>
-      </article>
+      </GlassSurface>
     </div>
   );
 }

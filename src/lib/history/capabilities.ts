@@ -137,7 +137,7 @@ export const SEASON_CAPABILITIES: SeasonCapabilityRow[] = (() => {
           season,
           "STATS_V3_ADAPT",
           { ...ARCHIVE_FACTUAL, pbp: "PARTIAL", scoreTimeline: "PARTIAL" },
-          "Known source anomalies — descriptive product OK; canonical DRBL blocked"
+          "Known source anomalies: descriptive product OK; canonical DRBL blocked"
         )
       );
       continue;

@@ -12,25 +12,28 @@ import {
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 
+export type LearnIndexConcept = LearnConcept & { href: string | null };
+
 export function LearnIndexClient({
   concepts,
 }: {
-  concepts: LearnConcept[];
+  concepts: LearnIndexConcept[];
 }) {
   const [q, setQ] = useState("");
   const [cat, setCat] = useState<LearnCategoryId | "all">("all");
 
   const filtered = useMemo(() => {
-    const base = q.trim() ? searchLearnConcepts(q) : concepts;
-    return base.filter((c) => {
-      if (!c.learnSlug && !c.showTooltip) return false;
-      if (cat !== "all" && c.category !== cat) return false;
-      return Boolean(c.learnSlug);
+    const ids = q.trim()
+      ? new Set(searchLearnConcepts(q).map((c) => c.id))
+      : null;
+    return concepts.filter((c) => {
+      if (ids && !ids.has(c.id)) return false;
+      return cat === "all" || c.category === cat;
     });
   }, [concepts, q, cat]);
 
   const byCat = useMemo(() => {
-    const map = new Map<LearnCategoryId, LearnConcept[]>();
+    const map = new Map<LearnCategoryId, LearnIndexConcept[]>();
     for (const c of filtered) {
       const list = map.get(c.category) ?? [];
       list.push(c);
@@ -44,27 +47,23 @@ export function LearnIndexClient({
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div className="w-full max-w-md">
           <label className="text-[12px] font-semibold text-muted-foreground">
-            Search concepts
+            Search terms
           </label>
           <Input
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder="TS%, Copeland, percentile, CPI…"
             className="mt-1"
-            aria-label="Search Learn concepts"
+            aria-label="Search Learn terms"
           />
         </div>
         <p className="text-[12px] text-muted-foreground">
-          {filtered.length} Learn page{filtered.length === 1 ? "" : "s"}
+          {filtered.length} term{filtered.length === 1 ? "" : "s"}
         </p>
       </div>
 
       <div className="flex flex-wrap gap-2" role="tablist" aria-label="Learn categories">
-        <CatChip
-          active={cat === "all"}
-          onClick={() => setCat("all")}
-          label="All"
-        />
+        <CatChip active={cat === "all"} onClick={() => setCat("all")} label="All" />
         {LEARN_CATEGORIES.map((c) => (
           <CatChip
             key={c.id}
@@ -77,53 +76,68 @@ export function LearnIndexClient({
 
       {filtered.length === 0 ? (
         <p className="rounded-md border border-dashed border-border px-4 py-10 text-center text-[14px] text-muted-foreground">
-          No Learn pages match that search.
+          No terms match that search.
         </p>
       ) : (
         <div className="grid gap-6 lg:grid-cols-2">
-          {LEARN_CATEGORIES.filter(
-            (c) => cat === "all" || cat === c.id
-          ).map((meta) => {
-            const items = byCat.get(meta.id) ?? [];
-            if (!items.length) return null;
-            return (
-              <section key={meta.id} className="flex flex-col gap-2">
-                <div>
-                  <h2 className="text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
-                    {meta.label}
-                  </h2>
-                  <p className="text-[12px] text-muted-foreground">
-                    {meta.description}
-                  </p>
-                </div>
-                <ul className="sports-card divide-y divide-black/5">
-                  {items.map((g) => (
-                    <li key={g.id}>
-                      <TransitionLink
-                        href={`/learn/${g.learnSlug}`}
-                        className="flex items-baseline justify-between gap-3 px-4 py-3 hover:bg-secondary/50"
-                      >
-                        <span>
-                          <span className="block text-[16px] font-semibold">
-                            {g.shortName}
-                          </span>
-                          <span className="block text-[14px] text-muted-foreground">
-                            {g.tooltip}
-                          </span>
-                        </span>
-                        <span className="shrink-0 text-[14px] font-semibold text-muted-foreground">
-                          Learn
-                        </span>
-                      </TransitionLink>
-                    </li>
-                  ))}
-                </ul>
-              </section>
-            );
-          })}
+          {LEARN_CATEGORIES.filter((c) => cat === "all" || cat === c.id).map(
+            (meta) => {
+              const items = byCat.get(meta.id) ?? [];
+              if (!items.length) return null;
+              return (
+                <section key={meta.id} className="flex flex-col gap-2">
+                  <div>
+                    <h2 className="text-[14px] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+                      {meta.label}
+                    </h2>
+                    <p className="text-[12px] text-muted-foreground">
+                      {meta.description}
+                    </p>
+                  </div>
+                  <ul className="sports-card divide-y divide-black/5 dark:divide-white/10">
+                    {items.map((g) => (
+                      <li key={g.id}>
+                        <TermRow concept={g} />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
+              );
+            }
+          )}
         </div>
       )}
     </div>
+  );
+}
+
+function TermRow({ concept: g }: { concept: LearnIndexConcept }) {
+  const body = (
+    <span>
+      <span className="block text-[16px] font-semibold">
+        {g.shortName}
+        {g.label && g.label !== g.shortName ? (
+          <span className="ml-2 text-[13px] font-medium text-muted-foreground">
+            {g.label}
+          </span>
+        ) : null}
+      </span>
+      <span className="block text-[14px] text-muted-foreground">{g.tooltip}</span>
+    </span>
+  );
+  if (!g.href) {
+    return <div className="px-4 py-3">{body}</div>;
+  }
+  return (
+    <TransitionLink
+      href={g.href}
+      className="flex items-baseline justify-between gap-3 px-4 py-3 hover:bg-secondary/50"
+    >
+      {body}
+      <span className="shrink-0 text-[14px] font-semibold text-muted-foreground">
+        Learn
+      </span>
+    </TransitionLink>
   );
 }
 

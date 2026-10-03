@@ -204,7 +204,7 @@ export function PlayerStatsBoard({
         <div>
           <h2 className={type.heading}>Statistics</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-            Spreadsheet view — scroll sideways for every published column.
+            Spreadsheet view. Scroll sideways for every published column.
             Counting stats follow the rate toggle; percentages and ratings stay
             unscaled.
           </p>

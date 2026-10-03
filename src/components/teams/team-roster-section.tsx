@@ -127,12 +127,12 @@ export function TeamRosterSection({
                 <MetricHelp conceptId="r1_win_eq">WAR1</MetricHelp>{" "}
                 is realized season value.{" "}
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> shown as
-                secondary context when present - rows do not sum to team value.
+                secondary context when present. Rows do not sum to team value.
               </>
             ) : (
               <>
                 <MetricHelp conceptId="darko">DARKO</MetricHelp> DPM when
-                season-true on the board - not a team MVP score.
+                season-true on the board (not a team MVP score).
               </>
             )
           }
@@ -151,7 +151,7 @@ export function TeamRosterSection({
 
       <Bucket
         title="Leading scorers"
-        hint="Points per game among qualified rotation pieces."
+        hint={`Points per game among players with at least ${buckets.scorerMinGames} ${buckets.scorerMinGames === 1 ? "game" : "games"} for this team.`}
       >
         {buckets.leadingScorers.map((p) => (
           <PlayerRow
@@ -166,7 +166,7 @@ export function TeamRosterSection({
 
       <Bucket
         title="Primary rotation"
-        hint="Highest minutes - gateway into player pages."
+        hint="Most total minutes for this team, with minutes per game and games played."
       >
         {buckets.rotation.map((p) => (
           <PlayerRow
@@ -174,7 +174,7 @@ export function TeamRosterSection({
             player={p}
             season={season}
             teamKey={teamKey}
-            detail={`${formatNumber(p.minutes / Math.max(1, p.gamesPlayed), 1)} MPG`}
+            detail={`${formatNumber(p.minutes, 0)} min · ${formatNumber(p.minutes / Math.max(1, p.gamesPlayed), 1)} MPG · ${p.gamesPlayed} GP`}
           />
         ))}
       </Bucket>
@@ -188,7 +188,7 @@ export function TeamRosterSection({
             Full roster board →
           </Link>
           <span className="mx-2">·</span>
-          Lineup plus-minus and possession evidence are not available yet — use
+          Lineup plus-minus and possession evidence are not available yet. Use
           the Rotation tab for minutes-ranked playing time.
         </p>
       ) : null}

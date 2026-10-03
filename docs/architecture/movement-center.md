@@ -108,7 +108,30 @@ Represents **strength of available evidence**, not probability of movement.
 
 ---
 
-## Ingestion pipeline (intended — not built)
+## Ingestion pipeline
+
+### Built (M1, news ingest)
+
+```text
+npm run sentiment:ingest:news   publisher RSS → data/sentiment/ingest/v1/news/YYYY-MM.jsonl
+                                (headline, link, outlet, time, resolved ids, credited reporters;
+                                 summary text is never stored)
+npm run movement:build          → data/movement-center/v1/snapshot.json
+node scripts/build-runtime-movement-snapshot.mjs → src/data/runtime/movement-snapshot.json
+npm run movement:refresh        all three
+npm run test:movement-ingest
+```
+
+- `reporters.ts`: credited reporters from "per X", "sources told X of Outlet", "ESPN's X". Unknown names need a recognized outlet. Credibility values are an editorial table, not accuracy measurements.
+- `classify-headline.ts` (`movement-rules-v1`): claim type, evidence class (reported or rumored; opinion columns, grades, retrospectives, minor signings and off-court stories are dropped), provenance, negotiation stage, denial, agreement.
+- `news-claims.ts`: one claim per headline (title players only, max 3), clustered by player + family (trade or contract) while reports keep arriving within 45 days.
+- `transaction-clusters.ts`: ESPN ledger trades since June 1 become completed clusters (both team rows merge into one deal). A story resolves as `materialized` when a matching ledger row (same player, same family, dated no earlier than 2 days before the first report) appears. Stories with no new reports for 60 days expire and leave the feed.
+- Scoring `movement-m1-0.2`: relays that credit a reporter count as that reporter for corroboration, so five outlets repeating one scoop corroborate once.
+- The build is stateless over the append-only headline store, so rule changes apply retroactively. The modules are pure so a scheduled Worker can reuse them.
+
+Known gaps: RSS summaries rarely credit reporters, so most claims fall back to outlet-level credibility. No human evaluation set yet. CI runs do not persist the headline store, so history depends on the store committed from local runs until the Worker + KV path lands.
+
+### Original design
 
 ```text
 Permitted source ingestion
@@ -252,7 +275,9 @@ erDiagram
 
 ## Implementation phases
 
-### M0 — Architecture & source policy ← **current**
+Status (Sep 2026): M1 news ingest and the ledger half of M4 are built (see Ingestion pipeline). The hand-written prototype seeds were removed. Next: scheduled Worker writing to KV for sub-daily freshness, a 50-claim evaluation set, and team market boards.
+
+### M0 — Architecture & source policy
 
 - [x] Domain types (`src/movement-center/`)
 - [x] Product docs + roadmap placement

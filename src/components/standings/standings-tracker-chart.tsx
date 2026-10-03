@@ -461,7 +461,7 @@ export function StandingsTrackerChart({
         </div>
       ) : (
         <p className={cn(type.caption, "mt-2 text-center text-muted-foreground")}>
-          Move along the chart to snap to the nearest team line — click to pin.
+          Move along the chart to snap to the nearest team line. Click to pin.
         </p>
       )}
     </div>

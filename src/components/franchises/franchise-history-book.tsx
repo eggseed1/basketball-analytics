@@ -81,13 +81,16 @@ function SeasonLine({
       <p className="mt-1 text-[20px] font-bold tabular-nums">
         {season.wins}-{season.losses}
       </p>
-      <p className="text-[13px] text-muted-foreground">{season.season}</p>
+      <p className="text-[13px] text-muted-foreground">
+        {season.season}
+        {season.league ? ` · ${season.league}` : null}
+      </p>
     </div>
   );
 }
 
 /**
- * Curated franchise scrapbook — titles, peaks, leaders, fan lore.
+ * Franchise scrapbook: source-checked records and leaders plus curated lore.
  * Lives on the team History tab (and was formerly /franchises/[id]).
  */
 export function FranchiseHistoryBook({
@@ -115,8 +118,10 @@ export function FranchiseHistoryBook({
           Franchise scrapbook
         </h2>
         <p className="text-[13px] text-muted-foreground">
-          All-time ledger and fan lore through {asOf} — curated snapshots, not
-          live season intelligence.
+          All-time ledger and fan lore through {asOf}.
+          {f.recordsSource
+            ? ` Records, titles and leaders come from ${f.recordsSource} and include every league this franchise played in (NBA, ABA or BAA). Retired numbers follow Wikipedia's list of NBA retired numbers and include banners for coaches and owners. Streaks and lore are curated.`
+            : " These are curated snapshots, not live season data."}
           {f.previousHomes?.length
             ? ` Also known as: ${f.previousHomes.join(" → ")}.`
             : null}
@@ -132,13 +137,21 @@ export function FranchiseHistoryBook({
         <StatTile
           label="Finals appearances"
           value={String(f.finalsAppearances)}
-          hint={`${f.conferenceTitles} conference titles`}
+          hint={`${f.conferenceTitles} conference ${f.conferenceTitles === 1 ? "title" : "titles"}`}
         />
-        <StatTile
-          label="Playoff record"
-          value={`${formatNumber(f.playoffWins)}-${formatNumber(f.playoffLosses)}`}
-          hint={`${formatPct(poPct)} · ${f.playoffAppearances} appearances`}
-        />
+        {f.playoffWins != null && f.playoffLosses != null ? (
+          <StatTile
+            label="Playoff record"
+            value={`${formatNumber(f.playoffWins)}-${formatNumber(f.playoffLosses)}`}
+            hint={`${poPct != null ? formatPct(poPct) : "—"} · ${f.playoffAppearances} appearances`}
+          />
+        ) : (
+          <StatTile
+            label="Playoff seasons"
+            value={String(f.playoffAppearances)}
+            hint="Seasons that reached the postseason"
+          />
+        )}
         <StatTile
           label="Regular season"
           value={`${formatNumber(f.regularSeasonWins)}-${formatNumber(f.regularSeasonLosses)}`}
@@ -166,7 +179,7 @@ export function FranchiseHistoryBook({
                 {f.longestWinStreak.games}
               </p>
               <p className="text-[13px] text-muted-foreground">
-                {f.longestWinStreak.note}
+                {f.longestWinStreak.note} · curated
               </p>
             </div>
             <div className="rounded-md border border-border bg-card px-4 py-3">
@@ -177,7 +190,7 @@ export function FranchiseHistoryBook({
                 {f.longestLosingStreak.games}
               </p>
               <p className="text-[13px] text-muted-foreground">
-                {f.longestLosingStreak.note}
+                {f.longestLosingStreak.note} · curated
               </p>
             </div>
           </div>
@@ -194,7 +207,11 @@ export function FranchiseHistoryBook({
             <StatTile
               label="History as of"
               value={asOf}
-              hint="Curated franchise book"
+              hint={
+                f.recordsSource
+                  ? `Records from ${f.recordsSource}`
+                  : "Curated franchise book"
+              }
             />
           </div>
         </div>
@@ -243,9 +260,9 @@ export function FranchiseHistoryBook({
       </div>
 
       <p className="text-[12px] text-muted-foreground">
-        Continuous franchises keep relocated history. Counts are curated
-        snapshots through {asOf}. Season boards and roster live on the other
-        team tabs.
+        Continuous franchises keep relocated history. Conference titles count
+        from 1970-71, when the NBA split into conferences. Season boards and
+        roster live on the other team tabs.
       </p>
     </section>
   );

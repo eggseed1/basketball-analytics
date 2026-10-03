@@ -1,4 +1,5 @@
 import type { PlayerSeason } from "@/data/types";
+import { maskUnrecordedEraStats } from "@/data/transformers/stat-eras";
 
 /**
  * Runtime sentinel for numeric statistics that the source did not publish.
@@ -95,7 +96,10 @@ export function withPlayerSeasonDefaults(
     drblUncertainty: missing,
     drblIntervalLo: missing,
     drblIntervalHi: missing,
-    ...partial,
+    // An explicit `undefined` means "not published" too; keep the NaN marker.
+    ...(Object.fromEntries(
+      Object.entries(partial).filter(([, value]) => value !== undefined)
+    ) as typeof partial),
   };
 
   // Preserve null R1 semantics if partial omitted the fields.
@@ -118,5 +122,5 @@ export function withPlayerSeasonDefaults(
     }
   }
 
-  return out;
+  return maskUnrecordedEraStats(out);
 }

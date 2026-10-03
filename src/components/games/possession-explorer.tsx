@@ -350,7 +350,7 @@ function DataDetailsDisclosure({
     officialComparison === "matched"
       ? "Exact match"
       : officialComparison === "within_tolerance"
-        ? "Within tolerance (±1) — not an exact match"
+        ? "Within tolerance (±1), not an exact match"
         : officialComparison === "mismatched"
           ? "Mismatched"
           : "Unavailable";

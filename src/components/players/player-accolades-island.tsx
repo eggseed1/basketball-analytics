@@ -8,15 +8,17 @@ import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
 /** Streams trophy tags + retired jerseys off the player-page critical path. */
 export async function PlayerAccoladesIsland({
   playerId,
+  playerName,
 }: {
   playerId: string;
+  playerName?: string | null;
   teamKey?: string | null;
   historicalBrand?: HistoricalTeamBrand | null;
   honor?: GlassSurfaceHonor;
 }) {
   const [badges, jerseys] = await Promise.all([
     getPlayerAccolades(playerId).catch(() => []),
-    getPlayerRetiredJerseys(playerId).catch(() => []),
+    getPlayerRetiredJerseys(playerId, playerName).catch(() => []),
   ]);
   if (!badges.length && !jerseys.length) return null;
 
