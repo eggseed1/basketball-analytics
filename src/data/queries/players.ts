@@ -693,6 +693,18 @@ export async function getPlayerCareerSeasons(
     seasons = await provider.getPlayerCareerSeasons(playerId);
   }
   if (seasons.length === 0) {
+    // Workers can't reach stats.nba.com, so bref: legends read the baked careers.
+    const { loadCareerFromBrefSlug, parseBrefPlayerSlug } = await import(
+      "@/data/providers/nba/bref-career-from-page"
+    );
+    const slug = parseBrefPlayerSlug(playerId);
+    if (slug) {
+      seasons = await loadCareerFromBrefSlug(slug, playerId).catch(
+        () => [] as PlayerSeason[]
+      );
+    }
+  }
+  if (seasons.length === 0) {
     // Historical / all-era product fallback — factual counting seasons (no invented DRBL).
     const { getUniverseSeasonsForPlayer } = await import(
       "@/data/history/player-universe"
