@@ -60,7 +60,20 @@ function weightedMean(
 export function buildCareerAverageRow(
   seasons: PlayerSeason[]
 ): PlayerSeason | null {
-  // One row per season: prefer TOT aggregate when present.
+  const pool = careerSeasonPool(seasons);
+  if (!pool.length) return null;
+
+  const first = pool[0]!;
+  const gp = sumField(pool, (r) => r.gamesPlayed);
+  const gs = sumField(pool, (r) => r.gamesStarted);
+  const minutes = sumField(pool, (r) => r.minutes);
+  if (gp <= 0) return null;
+
+  return buildFromPool(pool, first, gp, gs, minutes);
+}
+
+/** One row per played season, preferring the TOT aggregate when present. */
+export function careerSeasonPool(seasons: PlayerSeason[]): PlayerSeason[] {
   const bySeason = new Map<string, PlayerSeason[]>();
   for (const row of seasons) {
     if (!(row.gamesPlayed > 0) || !Number.isFinite(row.gamesPlayed)) continue;
@@ -74,14 +87,16 @@ export function buildCareerAverageRow(
     const tot = list.find((r) => String(r.teamId).toUpperCase() === "TOT");
     pool.push(tot ?? list[0]!);
   }
-  if (!pool.length) return null;
+  return pool;
+}
 
-  const first = pool[0]!;
-  const gp = sumField(pool, (r) => r.gamesPlayed);
-  const gs = sumField(pool, (r) => r.gamesStarted);
-  const minutes = sumField(pool, (r) => r.minutes);
-  if (gp <= 0) return null;
-
+function buildFromPool(
+  pool: PlayerSeason[],
+  first: PlayerSeason,
+  gp: number,
+  gs: number,
+  minutes: number
+): PlayerSeason {
   return withPlayerSeasonDefaults({
     playerId: first.playerId,
     playerName: first.playerName,

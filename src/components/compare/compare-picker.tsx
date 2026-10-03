@@ -580,6 +580,8 @@ export function ComparePicker({
     if (nextSa && nextSa === nextSb && !isCareerCompareKey(nextSa)) {
       sp.set("season", nextSa);
     }
+    const era = new URLSearchParams(window.location.search).get("era");
+    if (era) sp.set("era", era);
     const qs = sp.toString();
     startTransition(() => {
       router.replace(qs ? `/compare?${qs}` : "/compare", { scroll: false });

@@ -948,17 +948,103 @@ function defaultVisibleIds(dimensions: ComparisonDimension[]): string[] {
   return defaults.length ? [...defaults] : dimensions.map((d) => d.id);
 }
 
+export type PlayerCompareEra = {
+  result: PlayerComparisonResult;
+  reference: string;
+  source: string;
+  unadjustedA: string[];
+  unadjustedB: string[];
+  initiallyOn: boolean;
+};
+
+function EraNote({
+  era,
+  aName,
+  bName,
+  percentileOnly,
+}: {
+  era: PlayerCompareEra;
+  aName: string;
+  bName: string;
+  percentileOnly: boolean;
+}) {
+  const left = [
+    { name: aName, labels: era.unadjustedA },
+    { name: bName, labels: era.unadjustedB },
+  ].filter((x) => x.labels.length);
+  return (
+    <div
+      className={cn(
+        type.caption,
+        "flex flex-col gap-1 border-b border-border/60 px-3 py-2.5 text-muted-foreground sm:px-5"
+      )}
+    >
+      <p>
+        Restated in {era.reference} league terms. Counting stats scale by each
+        season&apos;s league average: if teams grabbed 60% more rebounds a game
+        back then, a player&apos;s rebounds are divided by 1.6. Shooting
+        percentages and ORtg/DRtg move by the gap in league averages. USG%,
+        PER, BPM and the other rate stats already measure a player against his
+        own league, so they stay as played. 3-point volume isn&apos;t scaled.
+        The result is an estimate of how far each player stood above his
+        league. It can&apos;t tell you how anyone would play today.
+      </p>
+      {percentileOnly ? (
+        <p>
+          Percentiles already rank each player within his own season, so they
+          don&apos;t change. Switch Display to raw values to see the adjusted
+          numbers.
+        </p>
+      ) : null}
+      {left.map((x) => (
+        <p key={x.name}>
+          Left as played for {x.name}: {x.labels.join(", ")}. The league
+          didn&apos;t track these for some of those seasons.
+        </p>
+      ))}
+      <p>
+        League averages:{" "}
+        <a
+          href={era.source}
+          target="_blank"
+          rel="noreferrer"
+          className="underline underline-offset-2 hover:text-foreground"
+        >
+          Basketball-Reference
+        </a>
+        .
+      </p>
+    </div>
+  );
+}
+
 export function PlayerCompareView({
-  result,
+  result: playedResult,
+  era,
+  coverage = [],
   aPortraitUrl,
   bPortraitUrl,
 }: {
   result: PlayerComparisonResult;
+  era?: PlayerCompareEra | null;
+  /** Notes on stats the league hadn't started tracking yet. */
+  coverage?: string[];
   aPortraitUrl?: string | null;
   bPortraitUrl?: string | null;
 }) {
   const [origin, setOrigin] = useState("");
+  const [eraOn, setEraOn] = useState(() => Boolean(era?.initiallyOn));
+  const eraActive = Boolean(era && eraOn);
+  const result = eraActive && era ? era.result : playedResult;
   const theme = useChartTheme();
+
+  const setEraMode = (on: boolean) => {
+    setEraOn(on);
+    const url = new URL(window.location.href);
+    if (on) url.searchParams.set("era", "adj");
+    else url.searchParams.delete("era");
+    window.history.replaceState(window.history.state, "", url);
+  };
   const hasAnyPercentile = result.dimensions.some(
     (d) => d.aPercentile != null || d.bPercentile != null
   );
@@ -1061,14 +1147,19 @@ export function PlayerCompareView({
             </p>
           </div>
           {seasonLine ? (
-            <p
+            <div
               className={cn(
                 type.caption,
-                "shrink-0 font-semibold tabular-nums text-muted-foreground"
+                "flex shrink-0 flex-col items-end font-semibold tabular-nums text-muted-foreground"
               )}
             >
-              {seasonLine}
-            </p>
+              <p>{seasonLine}</p>
+              {eraActive && era ? (
+                <p className={cn(type.micro, "uppercase tracking-wide")}>
+                  Era-adjusted to {era.reference}
+                </p>
+              ) : null}
+            </div>
           ) : null}
         </div>
 
@@ -1166,27 +1257,64 @@ export function PlayerCompareView({
           className="flex min-w-0 flex-wrap items-center justify-between gap-3 border-y border-border/60 px-3 py-3 sm:px-5"
           data-capture-exclude=""
         >
-          <SegmentedControl
-            size="sm"
-            label="Display"
-            value={valueMode}
-            onChange={setValueMode}
-            className="min-w-0 max-w-full"
-            options={[
-              { id: "raw", label: "Raw values" },
-              {
-                id: "percentile",
-                label: "Percentile",
-                disabled: !hasAnyPercentile,
-              },
-            ]}
-          />
+          <div className="flex min-w-0 flex-wrap items-end gap-3">
+            <SegmentedControl
+              size="sm"
+              label="Display"
+              value={valueMode}
+              onChange={setValueMode}
+              className="min-w-0 max-w-full"
+              options={[
+                { id: "raw", label: "Raw values" },
+                {
+                  id: "percentile",
+                  label: "Percentile",
+                  disabled: !hasAnyPercentile,
+                },
+              ]}
+            />
+            {era ? (
+              <SegmentedControl
+                size="sm"
+                label="Era"
+                value={eraActive ? "adjusted" : "played"}
+                onChange={(id) => setEraMode(id === "adjusted")}
+                className="min-w-0 max-w-full"
+                options={[
+                  { id: "played", label: "As played" },
+                  { id: "adjusted", label: `Adjusted to ${era.reference}` },
+                ]}
+              />
+            ) : null}
+          </div>
           <MetricPicker
             dimensions={result.dimensions}
             selectedIds={visibleIds}
             onChange={setVisibleIds}
           />
         </div>
+
+        {eraActive && era ? (
+          <EraNote
+            era={era}
+            aName={result.aName}
+            bName={result.bName}
+            percentileOnly={!careerMode && valueMode === "percentile"}
+          />
+        ) : null}
+
+        {coverage.length ? (
+          <div
+            className={cn(
+              type.caption,
+              "flex flex-col gap-1 border-b border-border/60 px-3 py-2.5 text-muted-foreground sm:px-5"
+            )}
+          >
+            {coverage.map((note) => (
+              <p key={note}>{note}</p>
+            ))}
+          </div>
+        ) : null}
 
         <section className="px-3 py-1 sm:px-5">
           <h2 className="sr-only">Dimensions</h2>

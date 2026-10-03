@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Suspense } from "react";
 
 import { buildPlayerComparison } from "@/analytics";
+import type { PlayerComparisonResult } from "@/analytics";
 import { teamComparePath } from "@/analytics/compare-team-seasons";
 import type { TeamSeasonComparison } from "@/analytics/compare-team-seasons";
 import { teamSeasonRankPath } from "@/analytics/rank-team-seasons";
@@ -37,12 +38,23 @@ import { getPlayerPortraitUrl } from "@/data/media/get-player-media";
 import {
   CAREER_COMPARE_KEY,
   buildCareerAverageRow,
+  careerSeasonPool,
   careerSpanLabel,
   careerTeamKeysByTenure,
   isCareerCompareKey,
 } from "@/lib/career-average-row";
 import { type } from "@/lib/design-system";
+import {
+  ERA_REFERENCE_SEASON,
+  LEAGUE_AVERAGES_SOURCE,
+  applyTrackedCareerStats,
+  blankUntrackedSeasonStats,
+  eraAdjustCareer,
+  eraAdjustSeasonRow,
+  trackedSince,
+} from "@/lib/era-adjust";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
+import type { SheetStatId } from "@/lib/player-stat-sheet-registry";
 import { cn } from "@/lib/utils";
 import type { PlayerSeason } from "@/data/types";
 
@@ -62,6 +74,81 @@ function one(
 ): string | undefined {
   const v = sp[key];
   return Array.isArray(v) ? v[0] : v;
+}
+
+type EraSide = {
+  row: PlayerSeason;
+  peers: PlayerSeason[];
+  unadjusted: Set<SheetStatId>;
+};
+
+/** Labels of shown metrics this side couldn't adjust (no league average). */
+function unadjustedLabels(
+  result: PlayerComparisonResult,
+  unadjusted: Set<SheetStatId>,
+  side: "a" | "b"
+): string[] {
+  return result.dimensions
+    .filter(
+      (d) =>
+        unadjusted.has(d.id as SheetStatId) &&
+        (side === "a" ? d.aValue : d.bValue) != null
+    )
+    .map((d) => d.label);
+}
+
+function joinAnd(items: string[]): string {
+  return items.length > 1
+    ? `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`
+    : (items[0] ?? "");
+}
+
+/** "ORB, STL and BLK from 1973-74 and TOV from 1977-78" */
+function sinceList(ids: SheetStatId[], labelOf: (id: SheetStatId) => string) {
+  const bySeason = new Map<string, string[]>();
+  for (const id of ids) {
+    const since = trackedSince(id) ?? "later";
+    bySeason.set(since, [...(bySeason.get(since) ?? []), labelOf(id)]);
+  }
+  const parts = [...bySeason.entries()]
+    .sort(([x], [y]) => x.localeCompare(y))
+    .map(([since, labels]) => `${joinAnd(labels)} from ${since}`);
+  return parts.length > 1
+    ? `${parts.slice(0, -1).join(", ")} and ${parts.at(-1)}`
+    : (parts[0] ?? "");
+}
+
+/** Plain notes for stats the league hadn't started tracking yet. */
+function trackingNotes(
+  result: PlayerComparisonResult,
+  side: "a" | "b",
+  partial: SheetStatId[]
+): string[] {
+  const name = side === "a" ? result.aName : result.bName;
+  const labelOf = (id: SheetStatId) =>
+    result.dimensions.find((d) => d.id === id)?.label ?? id.toUpperCase();
+  const notes: string[] = [];
+  const blank = result.dimensions
+    .filter((d) => {
+      const mine = side === "a" ? d.aValue : d.bValue;
+      const theirs = side === "a" ? d.bValue : d.aValue;
+      return mine == null && theirs != null && trackedSince(d.id as SheetStatId);
+    })
+    .map((d) => d.id as SheetStatId);
+  if (blank.length) {
+    notes.push(
+      `${name}'s ${joinAnd(blank.map(labelOf))} ${blank.length > 1 ? "are" : "is"} blank, not 0. The league only tracked ${sinceList(blank, labelOf)} on.`
+    );
+  }
+  const shown = partial.filter((id) =>
+    result.dimensions.some((d) => d.id === id)
+  );
+  if (shown.length) {
+    notes.push(
+      `${name}'s ${joinAnd(shown.map(labelOf))} ${shown.length > 1 ? "average" : "averages"} only the seasons the league tracked: ${sinceList(shown, labelOf)} on.`
+    );
+  }
+  return notes;
 }
 
 function findPeerRow(
@@ -496,6 +583,10 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   let careerSpanB: string | undefined;
   let teamKeysA: string[] = [];
   let teamKeysB: string[] = [];
+  let eraSideA: EraSide | null = null;
+  let eraSideB: EraSide | null = null;
+  let partialA: SheetStatId[] = [];
+  let partialB: SheetStatId[] = [];
 
   if (aId && bId) {
     const loadSide = async (
@@ -506,23 +597,61 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       peers: PlayerSeason[];
       span?: string;
       teamKeys: string[];
+      partial: SheetStatId[];
+      era: EraSide | null;
     }> => {
       if (isCareerCompareKey(seasonKey)) {
         const career = await getPlayerCareerSeasons(playerId).catch(
           () => [] as PlayerSeason[]
         );
-        const row = buildCareerAverageRow(career);
+        const careerRow = (seasons: PlayerSeason[]) => {
+          const built = buildCareerAverageRow(seasons);
+          return built
+            ? applyTrackedCareerStats(built, careerSeasonPool(seasons))
+            : null;
+        };
+        const played = careerRow(career);
+        const adjusted = eraAdjustCareer(
+          career.filter((r) => r.gamesPlayed > 0)
+        );
+        const eraRow = careerRow(adjusted.map((x) => x.row));
         return {
-          row: row ? { ...row, playerId } : null,
+          row: played ? { ...played.row, playerId } : null,
           peers: [],
           span: careerSpanLabel(career),
           teamKeys: careerTeamKeysByTenure(career),
+          partial: played?.partial ?? [],
+          era: eraRow
+            ? {
+                row: { ...eraRow.row, playerId },
+                peers: [],
+                unadjusted: new Set(adjusted.flatMap((x) => [...x.unadjusted])),
+              }
+            : null,
         };
       }
       const peers = await loadPeersForSeason(seasonKey);
-      const row = await loadSeasonRow(playerId, seasonKey, peers);
+      const loaded = await loadSeasonRow(playerId, seasonKey, peers);
+      const row = loaded
+        ? blankUntrackedSeasonStats({ ...loaded, season: seasonKey })
+        : null;
       const teamKeys = seasonTeamKeysForRow(row, seasonKey);
-      return { row, peers, teamKeys };
+      const adjusted = row ? eraAdjustSeasonRow(row) : null;
+      return {
+        row,
+        peers,
+        teamKeys,
+        partial: [],
+        era: adjusted
+          ? {
+              row: adjusted.row,
+              peers: peers.map(
+                (p) => eraAdjustSeasonRow({ ...p, season: seasonKey }).row
+              ),
+              unadjusted: adjusted.unadjusted,
+            }
+          : null,
+      };
     };
 
     const [sideA, sideB] = await Promise.all([
@@ -537,6 +666,10 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
     careerSpanB = sideB.span;
     teamKeysA = sideA.teamKeys;
     teamKeysB = sideB.teamKeys;
+    eraSideA = sideA.era;
+    eraSideB = sideB.era;
+    partialA = sideA.partial;
+    partialB = sideB.partial;
   }
 
   const result =
@@ -552,6 +685,38 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           teamKeysB,
         })
       : null;
+
+  // One shared season needs no era translation.
+  const sameSeason = seasonA === seasonB && !isCareerCompareKey(seasonA);
+  const eraResult =
+    result && !sameSeason && eraSideA && eraSideB
+      ? buildPlayerComparison({
+          a: eraSideA.row,
+          b: eraSideB.row,
+          peersA: eraSideA.peers,
+          peersB: eraSideB.peers,
+          careerSpanA,
+          careerSpanB,
+          teamKeysA,
+          teamKeysB,
+        })
+      : null;
+  const era = eraResult
+    ? {
+        result: eraResult,
+        reference: ERA_REFERENCE_SEASON,
+        source: LEAGUE_AVERAGES_SOURCE,
+        unadjustedA: unadjustedLabels(eraResult, eraSideA!.unadjusted, "a"),
+        unadjustedB: unadjustedLabels(eraResult, eraSideB!.unadjusted, "b"),
+        initiallyOn: one(sp, "era") === "adj",
+      }
+    : null;
+  const coverage = result
+    ? [
+        ...trackingNotes(result, "a", partialA),
+        ...trackingNotes(result, "b", partialB),
+      ]
+    : [];
 
   const aPortraitUrl = aId ? getPlayerPortraitUrl(aId) : null;
   const bPortraitUrl = bId ? getPlayerPortraitUrl(bId) : null;
@@ -604,6 +769,8 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       ) : (
         <PlayerCompareView
           result={result}
+          era={era}
+          coverage={coverage}
           aPortraitUrl={aPortraitUrl}
           bPortraitUrl={bPortraitUrl}
         />
