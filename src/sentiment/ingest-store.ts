@@ -3,7 +3,8 @@
  * Node-only (scripts + sentiment:build); the Worker reads the built snapshot.
  *
  * News rows keep the headline and link so the UI can cite exemplars.
- * Reddit rows keep ids, counts and scores only (S0: exemplar ids, not raw posts).
+ * Reddit, Bluesky and YouTube rows keep ids, counts and scores only (S0:
+ * exemplar ids, not raw posts).
  */
 
 import { appendFileSync, existsSync, mkdirSync, readFileSync, readdirSync } from "node:fs";
@@ -46,7 +47,28 @@ export type RedditIngestItem = {
   modelVersion: string;
 };
 
-export type IngestSource = "news" | "reddit";
+/**
+ * A Bluesky post or YouTube comment. The id is a hash of the platform id, and
+ * no text, handle or author is kept.
+ */
+export type FanPostIngestItem = {
+  id: string;
+  platform: "bluesky" | "youtube";
+  /** Search query id (Bluesky) or team channel id (YouTube). */
+  source: string;
+  createdAt: string;
+  fetchedAt: string;
+  /** Bluesky only; YouTube API stats may not be kept past 30 days. */
+  likes?: number;
+  score: number;
+  topics: string[];
+  playerIds: string[];
+  teamIds: string[];
+  modelVersion: string;
+};
+
+/** news: national outlets. fanblogs: team fan blogs (same row shape as news). */
+export type IngestSource = "news" | "reddit" | "fanblogs" | "bluesky" | "youtube";
 
 function sourceDir(source: IngestSource): string {
   return path.join(INGEST_ROOT, source);

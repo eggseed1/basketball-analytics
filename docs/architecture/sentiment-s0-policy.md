@@ -83,7 +83,8 @@ Fan and media lanes are **never blended** into one unexplained number.
 
 - Sources: publisher RSS feeds listed in `data/sentiment/sources/v1/news-feeds.json` (ESPN, CBS Sports, Yahoo Sports, RealGM wiretap). Headline + first 280 characters of the summary are scored; full articles are never fetched.
 - Stored per item in `data/sentiment/ingest/v1/news/YYYY-MM.jsonl`: headline, link, outlet, publish time, tone score, valence hits, topic tags, resolved player/team ids. The summary text is not stored. Rows dedupe by canonical link, so each run extends the series.
-- Scorer: `headline-lexicon-v1` (`src/sentiment/headline-lexicon.ts`) = AFINN-165 valences + basketball overrides + two-token negation; resolved player names are masked before scoring.
+- Scorer: `headline-lexicon-v1.1` (`src/sentiment/headline-lexicon.ts`) = AFINN-165 valences + basketball overrides + two-token negation; resolved player names are masked before scoring. v1.1 stops scoring "offense"/"offensive" as insults. Rows keep the version they were scored with.
+- Fan posts and comments (Bluesky, YouTube) use `fan-lexicon-v1`: the headline scorer plus a short fan-chatter list (hype words like "insane" go to 0, laughter is not counted, insults like "washed" score negative).
 - Entity resolution (`src/sentiment/headline-entities.ts`): full names always; a lone surname only when unique on current rosters and not an ordinary word; a short nickname list; team nicknames from the headline only.
 - Other-sport items are kept but flagged `nba: false` and excluded from every lane.
 - Floor: a headline lane needs **3 headlines in the trailing 7 days** (`manifest.ingest.headlineFloor`). The 50-mention floor above was sized for social posts and would hide every headline lane. Below the floor the lane is absent (blank), never neutral.

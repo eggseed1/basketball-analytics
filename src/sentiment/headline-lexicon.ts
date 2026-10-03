@@ -8,7 +8,7 @@
 
 import { afinn165 } from "afinn-165";
 
-export const HEADLINE_LEXICON_VERSION = "headline-lexicon-v1";
+export const HEADLINE_LEXICON_VERSION = "headline-lexicon-v1.1";
 
 /**
  * Words whose everyday valence is wrong in NBA coverage, or that AFINN lacks.
@@ -22,6 +22,8 @@ const BASKETBALL_OVERRIDES: Record<string, number> = {
   shooting: 0,
   attack: 0,
   attacks: 0,
+  offense: 0,
+  offensive: 0,
   steal: 0,
   steals: 0,
   stole: 0,
@@ -170,7 +172,36 @@ const NEGATORS = new Set([
   "cannot",
 ]);
 
-function valence(token: string): number {
+export const FAN_LEXICON_VERSION = "fan-lexicon-v1";
+
+/**
+ * Fan chatter on top of the headline list. Hype words AFINN reads as negative
+ * ("insane dunk", "sick pass") go to 0, laughter is too often mockery to
+ * count, and common fan insults get a score.
+ */
+const FAN_OVERRIDES: Record<string, number> = {
+  insane: 0,
+  crazy: 0,
+  sick: 0,
+  ridiculous: 0,
+  damn: 0,
+  filthy: 0,
+  lol: 0,
+  lmao: 0,
+  haha: 0,
+  washed: -2,
+  frauds: -2,
+  bum: -2,
+  bums: -2,
+  trash: -2,
+  garbage: -2,
+  mid: -1,
+  goat: 2,
+  hooping: 2,
+};
+
+function valence(token: string, extra?: Record<string, number>): number {
+  if (extra && token in extra) return extra[token]!;
   if (token in BASKETBALL_OVERRIDES) return BASKETBALL_OVERRIDES[token]!;
   const base = (afinn165 as Record<string, number>)[token];
   return typeof base === "number" ? base : 0;
@@ -215,7 +246,8 @@ function maskPhrases(text: string, phrases: string[]): string {
 export function scoreHeadline(
   title: string,
   lede = "",
-  maskNames: string[] = []
+  maskNames: string[] = [],
+  extra?: Record<string, number>
 ): HeadlineTone {
   const hits: string[] = [];
   const scorePart = (input: string, weight: number) => {
@@ -227,7 +259,7 @@ export function scoreHeadline(
         negateLeft = 2;
         continue;
       }
-      const v = valence(token);
+      const v = valence(token, extra);
       if (v !== 0) {
         const signed = negateLeft > 0 ? -v : v;
         sum += signed * weight;
@@ -240,6 +272,11 @@ export function scoreHeadline(
   const raw = scorePart(title, 1) + scorePart(lede, 0.5);
   const score = Math.round(Math.tanh(raw / 4) * 100) / 100;
   return { score, raw, hits };
+}
+
+/** Tone of a fan post or comment: headline scoring plus fan chatter. */
+export function scoreFanText(text: string, maskNames: string[] = []): HeadlineTone {
+  return scoreHeadline(text, "", maskNames, FAN_OVERRIDES);
 }
 
 const TOPIC_RULES: { topic: string; pattern: RegExp }[] = [

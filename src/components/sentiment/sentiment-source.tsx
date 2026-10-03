@@ -25,16 +25,25 @@ const ORIGIN_LABEL: Record<SentimentLaneOrigin, string> = {
   curated: "Curated",
   headlines: "Headlines",
   reddit: "Reddit",
+  fans: "Fans",
 };
 
 const ORIGIN_HINT: Record<SentimentLaneOrigin, string> = {
   curated: "Hand-written prototype value, not measured.",
   headlines: "Average tone of publisher headlines that name this subject.",
   reddit: "Average tone of post titles from approved subreddits.",
+  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on team YouTube channels.",
 };
 
 export function laneOriginLabel(origin?: SentimentLaneOrigin): string {
   return origin ? ORIGIN_LABEL[origin] : "Curated";
+}
+
+/** What one counted item is called for a lane of this origin. */
+export function laneUnit(origin?: SentimentLaneOrigin): string {
+  if (origin === "headlines") return "headlines";
+  if (origin === "reddit" || origin === "fans") return "posts";
+  return "mentions";
 }
 
 export function LaneOriginTag({
@@ -70,6 +79,20 @@ export function LaneOriginTag({
   );
 }
 
+function fanPartsText(fans: NonNullable<SentimentSourceSummary["fans"]>): string {
+  const n = (platform: keyof typeof fans.platforms) => fans.platforms[platform] ?? 0;
+  const parts = [
+    n("fan_blog")
+      ? `${n("fan_blog").toLocaleString()} headlines from ${fans.blogCount} team fan blogs`
+      : null,
+    n("bluesky") ? `${n("bluesky").toLocaleString()} Bluesky posts` : null,
+    n("youtube") ? `${n("youtube").toLocaleString()} comments on team YouTube channels` : null,
+    n("reddit") ? `${n("reddit").toLocaleString()} Reddit post titles` : null,
+  ].filter((part): part is string => Boolean(part));
+  if (parts.length <= 1) return parts.join("");
+  return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
+}
+
 /** One line per source: what it is, how much of it there is, and how fresh it is. */
 export function SentimentSourcesStrip({
   sources,
@@ -80,6 +103,7 @@ export function SentimentSourcesStrip({
 }) {
   const headlines = sources?.headlines;
   const reddit = sources?.reddit;
+  const fans = sources?.fans;
   const curated = sources?.curated;
   return (
     <div
@@ -107,17 +131,40 @@ export function SentimentSourcesStrip({
           )}
         </li>
         <li className="flex flex-wrap items-baseline gap-1.5">
-          <LaneOriginTag
-            lane={{ origin: "reddit", asOf: reddit?.asOf ?? undefined, mentionVolume: 0 }}
-            inactive={!reddit?.itemCount}
-          />
-          {reddit?.itemCount ? (
-            <span>
-              Fan lanes. {reddit.itemCount.toLocaleString()} posts from approved subreddits. A player
-              needs {reddit.floor} posts in the last 7 days to get a score.
-            </span>
+          {fans ? (
+            <>
+              <LaneOriginTag
+                lane={{ origin: "fans", asOf: fans.asOf ?? undefined, mentionVolume: 0 }}
+                inactive={!fans.itemCount}
+              />
+              {fans.itemCount ? (
+                <span>
+                  Fan lanes. {fans.itemCount.toLocaleString()} fan posts: {fanPartsText(fans)},{" "}
+                  {formatSentimentDate(fans.firstDate)} to {formatSentimentDate(fans.asOf)}.
+                  {fans.platforms.reddit ? "" : " Reddit isn't connected yet."} A player or team needs{" "}
+                  {fans.floor} posts in the last 7 days to get a score. Tone comes from a word list
+                  with extra fan slang that hasn&apos;t been checked against hand labels, so read it
+                  as rough.
+                </span>
+              ) : (
+                <span>No fan posts collected yet. Fan lanes below use curated values until they are.</span>
+              )}
+            </>
           ) : (
-            <span>Not connected yet. Fan lanes below use curated values until it is.</span>
+            <>
+              <LaneOriginTag
+                lane={{ origin: "reddit", asOf: reddit?.asOf ?? undefined, mentionVolume: 0 }}
+                inactive={!reddit?.itemCount}
+              />
+              {reddit?.itemCount ? (
+                <span>
+                  Fan lanes. {reddit.itemCount.toLocaleString()} posts from approved subreddits. A
+                  player needs {reddit.floor} posts in the last 7 days to get a score.
+                </span>
+              ) : (
+                <span>Not connected yet. Fan lanes below use curated values until it is.</span>
+              )}
+            </>
           )}
         </li>
         <li className="flex flex-wrap items-baseline gap-1.5">

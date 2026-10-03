@@ -18,6 +18,8 @@ export type ScoredIngestItem = {
   topics: string[];
   playerIds: string[];
   teamIds: string[];
+  /** Set when one lane blends several platforms (the fan lane). */
+  platform?: SentimentPlatform;
 };
 
 export type LaneBuildOptions = {
@@ -112,6 +114,16 @@ export function buildIngestLane(
     topicBreakdown[topic] = Math.round((count / topicTotal) * 1000) / 1000;
   }
 
+  const platformCounts: Partial<Record<SentimentPlatform, number>> = {};
+  for (const item of current) {
+    const platform = item.platform ?? options.platform;
+    platformCounts[platform] = (platformCounts[platform] ?? 0) + 1;
+  }
+  const platformBreakdown: Partial<Record<SentimentPlatform, number>> = {};
+  for (const [platform, count] of Object.entries(platformCounts) as [SentimentPlatform, number][]) {
+    platformBreakdown[platform] = Math.round((count / current.length) * 1000) / 1000;
+  }
+
   const dates = current.map((item) => dayKey(item.date)).sort();
   return {
     lane: {
@@ -120,7 +132,7 @@ export function buildIngestLane(
       direction,
       mentionVolume: current.length,
       coverageConfidence: round2(Math.min(0.95, 0.35 + Math.log10(current.length + 1) * 0.12)),
-      platformBreakdown: { [options.platform]: 1 },
+      platformBreakdown,
       topicBreakdown,
       origin: options.origin,
       asOf: dates[dates.length - 1],

@@ -26,6 +26,7 @@ type Lane = "media" | "fan";
 const ORIGIN_COLOR: Record<SentimentLaneOrigin, string> = {
   headlines: "rgb(16 185 129)",
   reddit: "rgb(59 130 246)",
+  fans: "rgb(59 130 246)",
   curated: "rgb(245 158 11)",
 };
 

@@ -52,7 +52,39 @@ function plainText(html: string): string {
     .trim();
 }
 
+function atomLink(block: string): string | null {
+  const links = [...block.matchAll(/<link\b([^>]*)\/?>/gi)].map((m) => m[1]!);
+  const pick =
+    links.find((attrs) => /rel=["']alternate["']/i.test(attrs)) ??
+    links.find((attrs) => !/rel=/i.test(attrs));
+  const href = pick?.match(/href=["']([^"']+)["']/i)?.[1];
+  return href ? decodeEntities(href) : null;
+}
+
+/** Atom feeds (SB Nation and friends) use <entry> with <link href> and <published>. */
+function parseAtom(xml: string): RssItem[] {
+  const items: RssItem[] = [];
+  for (const match of xml.matchAll(/<entry\b[\s\S]*?<\/entry>/gi)) {
+    const block = match[0];
+    const title = plainText(tagText(block, "title") ?? "");
+    const link = atomLink(block);
+    if (!title || !link) continue;
+    const pub = tagText(block, "published") ?? tagText(block, "updated");
+    const parsed = pub ? new Date(plainText(pub)) : null;
+    items.push({
+      title,
+      link,
+      description: plainText(tagText(block, "summary") ?? tagText(block, "content") ?? ""),
+      publishedAt:
+        parsed && !Number.isNaN(parsed.getTime()) ? parsed.toISOString() : null,
+      guid: tagText(block, "id") ? plainText(tagText(block, "id")!) : null,
+    });
+  }
+  return items;
+}
+
 export function parseRss(xml: string): RssItem[] {
+  if (!/<item\b/i.test(xml) && /<entry\b/i.test(xml)) return parseAtom(xml);
   const items: RssItem[] = [];
   for (const match of xml.matchAll(/<item\b[\s\S]*?<\/item>/gi)) {
     const block = match[0];

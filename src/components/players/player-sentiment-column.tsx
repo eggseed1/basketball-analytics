@@ -3,7 +3,7 @@ import {
   type GlassSurfaceHonor,
 } from "@/components/brand/glass-surface";
 import { SentimentAssociationNote } from "@/components/sentiment/sentiment-association-note";
-import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
+import { LaneOriginTag, laneUnit } from "@/components/sentiment/sentiment-source";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
 import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import type { HistoricalTeamBrand } from "@/lib/historical-team-brand";
@@ -40,7 +40,7 @@ function LaneRow({
   const topTopic = Object.entries(lane.topicBreakdown).sort(
     (a, b) => b[1] - a[1]
   )[0];
-  const unit = lane.origin === "headlines" ? "headlines" : lane.origin === "reddit" ? "posts" : "mentions";
+  const unit = laneUnit(lane.origin);
   const showDirection = lane.origin === "curated" || lane.origin == null || lane.priorScore != null;
   return (
     <div className="flex flex-col gap-1 rounded-md border border-border/60 frost-surface-soft px-2 py-1.5">

@@ -65,9 +65,8 @@ function windowSlice(points: SentimentSeriesPoint[], days: number): SentimentSer
 export function resolveLeagueMoodSeriesByWindow(
   league: NonNullable<SentimentCuratedSnapshot["league"]>
 ): Record<SentimentWindowId, SentimentMoodSeries> {
-  const fan = league.redditMood?.series.length
-    ? league.redditMood.series
-    : (league.moodSeries?.fan ?? []);
+  const automatedFan = league.fanMood ?? league.redditMood;
+  const fan = automatedFan?.series.length ? automatedFan.series : (league.moodSeries?.fan ?? []);
   const media = league.headlineMood?.series.length
     ? league.headlineMood.series
     : (league.moodSeries?.media ?? []);
@@ -79,7 +78,7 @@ export function resolveLeagueMoodLanes(
   league: NonNullable<SentimentCuratedSnapshot["league"]>
 ): LeagueSentimentFeed["moodLanes"] {
   return {
-    fan: league.redditMood?.lane ?? league.mood.fan,
+    fan: league.fanMood?.lane ?? league.redditMood?.lane ?? league.mood.fan,
     media: league.headlineMood?.lane ?? league.mood.media,
   };
 }

@@ -28,9 +28,11 @@ export type SentimentSeriesPoint = {
  * Where a lane's numbers come from.
  * curated: hand-written prototype values (illustrative, not measured).
  * headlines: publisher RSS headline tone (automated, lexicon v1).
- * reddit: approved-subreddit post-title tone via the official API.
+ * reddit: approved-subreddit post-title tone via the official API (older snapshots).
+ * fans: fan blogs, Bluesky posts, YouTube comments and Reddit titles blended;
+ *   platformBreakdown says how much each contributed.
  */
-export type SentimentLaneOrigin = "curated" | "headlines" | "reddit";
+export type SentimentLaneOrigin = "curated" | "headlines" | "reddit" | "fans";
 
 export type CuratedSentimentLane = {
   polarity: SentimentPolarity;
@@ -170,6 +172,18 @@ export type SentimentSourceSummary = {
     floor: number;
     laneCount: number;
   };
+  /** Every fan source together. Absent in snapshots built before fan blogs. */
+  fans?: {
+    asOf: string | null;
+    firstDate: string | null;
+    itemCount: number;
+    windowItemCount: number;
+    /** Items per platform: reddit, fan_blog, bluesky, youtube. */
+    platforms: Partial<Record<SentimentPlatform, number>>;
+    blogCount: number;
+    floor: number;
+    laneCount: number;
+  };
 };
 
 export type SentimentDivergenceRow = {
@@ -236,6 +250,8 @@ export type LeagueSentimentSnapshot = {
   headlineMood?: { lane: CuratedSentimentLane; series: SentimentSeriesPoint[] };
   /** Daily tone across approved subreddits (automated, needs Reddit credentials). */
   redditMood?: { lane: CuratedSentimentLane; series: SentimentSeriesPoint[] };
+  /** Daily tone across every fan source (automated). Replaces redditMood. */
+  fanMood?: { lane: CuratedSentimentLane; series: SentimentSeriesPoint[] };
   latestHeadlines?: (SentimentHeadlineExemplar & {
     players: { id: string; name: string }[];
     teamIds: string[];

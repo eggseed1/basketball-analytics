@@ -12,7 +12,8 @@
  * DRBL numbers move when finals accumulate: nightly recompute refreshes the
  * precomputed artifact, then the overlay bake ships it. Not live per tip-off.
  *
- * Every run also refreshes transactions, news and Reddit sentiment, the
+ * Every run also refreshes transactions, news and fan sentiment (Reddit, fan
+ * blogs, Bluesky, YouTube), the
  * Movement Center, BRef payrolls, front-office slices and the asset ledger.
  * Offseason (before ~Oct 15 / after Finals): only those unless FORCE_DAILY=1.
  *
@@ -110,6 +111,13 @@ async function runMovementSteps() {
  */
 const ORG_STEPS = [
   { label: "reddit-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-reddit.ts"] },
+  {
+    label: "fan-blogs-ingest",
+    cmd: "npx",
+    args: ["tsx", "scripts/sentiment-ingest-news.ts", "--feeds", "fan-blogs", "--store", "fanblogs"],
+  },
+  { label: "bluesky-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-bluesky.ts"] },
+  { label: "youtube-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-youtube.ts"] },
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },

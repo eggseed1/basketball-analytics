@@ -6,6 +6,7 @@ import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/cha
 import {
   formatSentimentDate,
   LaneOriginTag,
+  laneUnit,
   sentimentPct,
 } from "@/components/sentiment/sentiment-source";
 import {
@@ -66,14 +67,14 @@ function MoodPanel({
         </div>
         <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>
           {sentimentPct(lane.score)}
-          {measured && total ? ` · ${total.toLocaleString()} ${lane.origin === "reddit" ? "posts" : "headlines"}` : ""}
+          {measured && total ? ` · ${total.toLocaleString()} ${laneUnit(lane.origin)}` : ""}
         </span>
       </div>
       <SentimentTrendChart
         label={title}
         color={color}
         points={points}
-        countLabel={lane.origin === "reddit" ? "posts" : "headlines"}
+        countLabel={laneUnit(lane.origin)}
         showLabel={false}
       />
       {!measured ? (

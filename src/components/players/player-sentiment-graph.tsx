@@ -1,5 +1,5 @@
 import { SentimentAssociationNote } from "@/components/sentiment/sentiment-association-note";
-import { LaneOriginTag } from "@/components/sentiment/sentiment-source";
+import { LaneOriginTag, laneUnit } from "@/components/sentiment/sentiment-source";
 import type { CuratedSentimentLane, SentimentProfileProvenance } from "@/sentiment/curated-types";
 import type { SentimentPolarity } from "@/sentiment/types";
 import { type } from "@/lib/design-system";
@@ -89,7 +89,7 @@ function SentimentLaneChart({
   const topTopics = Object.entries(lane.topicBreakdown)
     .sort((a, b) => b[1] - a[1])
     .slice(0, topicLimit);
-  const unit = lane.origin === "headlines" ? "headlines" : lane.origin === "reddit" ? "posts" : "mentions";
+  const unit = laneUnit(lane.origin);
   const showDirection = lane.origin === "curated" || lane.origin == null || lane.priorScore != null;
 
   return (

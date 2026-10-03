@@ -61,7 +61,12 @@ async function listRosterSentimentRows(): Promise<TrackedPlayerSentimentRow[]> {
     })
     .sort((a, b) => {
       const rank = (row: TrackedPlayerSentimentRow) => {
-        if (row.media?.origin === "headlines" || row.fan?.origin === "reddit") return 0;
+        if (
+          row.media?.origin === "headlines" ||
+          row.fan?.origin === "reddit" ||
+          row.fan?.origin === "fans"
+        )
+          return 0;
         if (row.provenance === "observation") return 1;
         if (row.provenance === "hand_crafted") return 2;
         if (row.hasProfile) return 3;

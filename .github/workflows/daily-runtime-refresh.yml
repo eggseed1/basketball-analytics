@@ -18,9 +18,12 @@ name: Daily player-viz runtime refresh
 # Required repo secrets:
 #   CLOUDFLARE_API_TOKEN   — Workers deploy token
 #   CLOUDFLARE_ACCOUNT_ID  — account id for wrangler / OpenNext
-# Optional (fan sentiment lane; skipped when unset):
-#   REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET  — Reddit "script" app credentials
+# Optional (fan sentiment lane; each source is skipped when unset):
+#   REDDIT_CLIENT_ID, REDDIT_CLIENT_SECRET  — Reddit app credentials (needs Reddit API approval)
 #   vars.REDDIT_USER_AGENT                  — repo variable, not a secret
+#   YOUTUBE_API_KEY                         — Google Cloud key with YouTube Data API v3
+#   vars.BLUESKY_HANDLE, BLUESKY_APP_PASSWORD — only if logged-out Bluesky search stops working
+# Fan blogs need nothing.
 
 on:
   schedule:
@@ -102,6 +105,9 @@ jobs:
           REDDIT_CLIENT_ID: ${{ secrets.REDDIT_CLIENT_ID }}
           REDDIT_CLIENT_SECRET: ${{ secrets.REDDIT_CLIENT_SECRET }}
           REDDIT_USER_AGENT: ${{ vars.REDDIT_USER_AGENT }}
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
+          BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
         run: node scripts/daily-runtime-sync.mjs
 
       - name: Commit refreshed data

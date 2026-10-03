@@ -11,6 +11,8 @@ export type SentimentPlatform =
   | "reddit"
   | "news"
   | "youtube"
+  | "fan_blog"
+  | "bluesky"
   | "x_permitted"
   | "other";
 
