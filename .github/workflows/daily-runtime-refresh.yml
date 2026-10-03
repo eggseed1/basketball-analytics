@@ -119,6 +119,7 @@ jobs:
             data/sentiment/ingest/v1 \
             data/sentiment/v1/snapshot.json \
             src/data/runtime/sentiment-snapshot.json \
+            public/runtime/sentiment-history \
             data/movement-center/v1/snapshot.json \
             src/data/runtime/movement-snapshot.json \
             data/transactions/espn-site-v2/v1 \

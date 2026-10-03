@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import {
   GlassSurface,
   type GlassSurfaceHonor,
@@ -31,6 +33,7 @@ export function PlayerSentimentView({
   disclaimer,
   historicalBrand,
   honor,
+  gamesSlot,
 }: {
   playerId: string;
   playerName: string;
@@ -41,6 +44,8 @@ export function PlayerSentimentView({
   disclaimer?: string;
   historicalBrand?: HistoricalTeamBrand | null;
   honor?: GlassSurfaceHonor;
+  /** Server-streamed "Sentiment by game" section. */
+  gamesSlot?: ReactNode;
 }) {
   const modernBrand = resolveTeamBrand(teamKey);
   const wash = brandAtmosphereColors(
@@ -192,6 +197,18 @@ export function PlayerSentimentView({
           />
         </GlassSurface>
       </div>
+
+      {gamesSlot ? (
+        <GlassSurface
+          accentColor={wash?.colorA}
+          accentColorB={wash?.colorB}
+          className="min-w-0 p-4"
+          effect="css"
+          honor={honor}
+        >
+          {gamesSlot}
+        </GlassSurface>
+      ) : null}
     </section>
   );
 }

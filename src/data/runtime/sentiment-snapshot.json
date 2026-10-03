@@ -5,7 +5,7 @@
     "season": "2026-27",
     "disclaimer": "Fan lanes come from team fan blogs, Bluesky and team YouTube comments, and media lanes from publisher headlines. Neither is a census of all fans or media.",
     "snapshotDate": "2026-10-03",
-    "builtAt": "2026-10-03T15:45:10.279Z",
+    "builtAt": "2026-10-03T16:27:31.277Z",
     "rosterPlayerCount": 603,
     "pilotProfileCount": 72,
     "observationBatchCount": 15,
@@ -307,7 +307,7 @@
         "asOf": "2026-10-04",
         "firstDate": "2026-06-25",
         "itemCount": 3504,
-        "windowItemCount": 2742,
+        "windowItemCount": 2741,
         "platforms": {
           "fan_blog": 1113,
           "bluesky": 523,
@@ -3990,11 +3990,6 @@
       },
       "series": {
         "fan": [
-          {
-            "date": "2026-09-03",
-            "score": 0,
-            "count": 1
-          },
           {
             "date": "2026-09-04",
             "score": 0.24,
@@ -11396,8 +11391,8 @@
         "fan": [
           {
             "date": "2026-09-03",
-            "score": -0.32,
-            "count": 2
+            "score": -0.64,
+            "count": 1
           },
           {
             "date": "2026-09-04",
@@ -13234,13 +13229,13 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.23,
+        "score": 0.22,
         "direction": "stable",
-        "mentionVolume": 47,
+        "mentionVolume": 46,
         "coverageConfidence": 0.55,
         "platformBreakdown": {
-          "fan_blog": 0.255,
-          "youtube": 0.745
+          "fan_blog": 0.239,
+          "youtube": 0.761
         },
         "topicBreakdown": {
           "role_debate": 0.143,
@@ -13253,9 +13248,9 @@
         },
         "origin": "fans",
         "asOf": "2026-10-03",
-        "windowStart": "2026-09-26",
+        "windowStart": "2026-09-27",
         "modelVersion": "fan-lexicon-v1.1",
-        "priorScore": 0.21
+        "priorScore": 0.23
       }
     },
     {
@@ -15118,7 +15113,7 @@
         "polarity": "mixed",
         "score": 0.19,
         "direction": "stable",
-        "mentionVolume": 2740,
+        "mentionVolume": 2739,
         "coverageConfidence": 0.76,
         "platformBreakdown": {
           "fan_blog": 0.128,
@@ -15148,8 +15143,8 @@
       "series": [
         {
           "date": "2026-09-03",
-          "score": -0.14,
-          "count": 6
+          "score": -0.16,
+          "count": 5
         },
         {
           "date": "2026-09-04",

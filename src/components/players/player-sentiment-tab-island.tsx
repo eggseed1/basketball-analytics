@@ -1,3 +1,6 @@
+import { Suspense } from "react";
+
+import { PlayerSentimentGamesIsland } from "@/components/players/player-sentiment-games-island";
 import { PlayerSentimentView } from "@/components/players/player-sentiment-view";
 import { PlayerPanelUnavailable } from "@/components/players/player-page-skeletons";
 import type { GlassSurfaceHonor } from "@/components/brand/glass-surface";
@@ -52,6 +55,21 @@ export async function PlayerSentimentTabIsland({
         disclaimer={snapshot?.meta.disclaimer}
         historicalBrand={historicalBrand}
         honor={honor}
+        gamesSlot={
+          constrained ? null : (
+            <Suspense
+              fallback={
+                <div className="h-40 animate-pulse rounded-xl border border-border bg-muted/40" />
+              }
+            >
+              <PlayerSentimentGamesIsland
+                playerId={playerId}
+                playerName={playerName}
+                profileIds={sentimentProfile?.playerIds ?? []}
+              />
+            </Suspense>
+          )
+        }
       />
     );
   } catch {

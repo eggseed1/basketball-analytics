@@ -1,4 +1,11 @@
-import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  rmSync,
+  writeFileSync,
+} from "node:fs";
 import path from "node:path";
 
 import { resolvePlayerIdentity } from "@/data/identity/player-identity";
@@ -27,8 +34,10 @@ import type {
   TeamSentimentProfile,
 } from "@/sentiment/curated-types";
 import { FAN_LEXICON_VERSION, HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
+import type { SentimentHistoryFile } from "@/sentiment/game-reaction";
 import {
   buildIngestLane,
+  dailyScoreSeries,
   groupByEntity,
   latestExemplars,
   type LaneBuildOptions,
@@ -114,6 +123,53 @@ const RUNTIME_SNAPSHOT_PATH = path.join(
   "runtime",
   "sentiment-snapshot.json"
 );
+
+/** Per-player daily tone for the game-by-game view. Served as static assets. */
+const HISTORY_DIR = path.join(process.cwd(), "public", "runtime", "sentiment-history");
+/** Covers a full season plus the prior playoffs. */
+const HISTORY_DAYS = 400;
+
+function buildPlayerHistoryFiles(
+  profiles: PlayerSentimentProfile[],
+  newsByPlayer: Map<string, ScoredIngestItem[]>,
+  fanByPlayer: Map<string, ScoredIngestItem[]>,
+  now: Date
+): Map<string, SentimentHistoryFile> {
+  const sinceMs = now.getTime() - HISTORY_DAYS * 86_400_000;
+  const collect = (byPlayer: Map<string, ScoredIngestItem[]>, ids: string[]) => {
+    const byId = new Map<string, ScoredIngestItem>();
+    for (const id of ids) {
+      for (const item of byPlayer.get(id) ?? []) byId.set(item.id, item);
+    }
+    return dailyScoreSeries([...byId.values()], sinceMs, now.getTime());
+  };
+  const files = new Map<string, SentimentHistoryFile>();
+  for (const profile of profiles) {
+    const fan = collect(fanByPlayer, profile.playerIds);
+    const media = collect(newsByPlayer, profile.playerIds);
+    if (!fan.length && !media.length) continue;
+    const file: SentimentHistoryFile = {
+      playerIds: profile.playerIds,
+      builtAt: now.toISOString(),
+      fan,
+      media,
+    };
+    for (const id of profile.playerIds) files.set(id, file);
+  }
+  return files;
+}
+
+function writePlayerHistoryFiles(files: Map<string, SentimentHistoryFile>) {
+  mkdirSync(HISTORY_DIR, { recursive: true });
+  for (const name of readdirSync(HISTORY_DIR)) {
+    if (name.endsWith(".json") && !files.has(name.slice(0, -5))) {
+      rmSync(path.join(HISTORY_DIR, name));
+    }
+  }
+  for (const [id, file] of files) {
+    writeFileSync(path.join(HISTORY_DIR, `${id}.json`), `${JSON.stringify(file)}\n`);
+  }
+}
 
 function readJson<T>(filePath: string): T {
   return JSON.parse(readFileSync(filePath, "utf8")) as T;
@@ -570,8 +626,10 @@ export async function buildSentimentSnapshot(
     for (const id of next.playerIds) profileById.set(id, next);
   };
 
+  const newsByPlayer = groupByEntity(newsScored, "playerIds");
+  const fanByPlayer = groupByEntity(fanScored, "playerIds");
   let headlineLaneCount = 0;
-  for (const [playerId, items] of groupByEntity(newsScored, "playerIds")) {
+  for (const [playerId, items] of newsByPlayer) {
     const built = buildIngestLane(items, headlineOpts);
     if (!built) continue;
     headlineLaneCount += 1;
@@ -587,7 +645,7 @@ export async function buildSentimentSnapshot(
     }));
   }
   let fanLaneCount = 0;
-  for (const [playerId, items] of groupByEntity(fanScored, "playerIds")) {
+  for (const [playerId, items] of fanByPlayer) {
     const built = buildIngestLane(items, fanOpts);
     if (!built) continue;
     fanLaneCount += 1;
@@ -625,6 +683,7 @@ export async function buildSentimentSnapshot(
     canonicalSeasonFromStartYear(currentNbaStartYear(now) - 1)
   );
   profiles = await enrichProfilesWithMovementAssociations(profiles);
+  const historyFiles = buildPlayerHistoryFiles(profiles, newsByPlayer, fanByPlayer, now);
 
   const movers = computeSentimentMovers(profiles, {
     limit: manifest.moverLimit,
@@ -837,6 +896,7 @@ export async function buildSentimentSnapshot(
     const body = `${JSON.stringify(snapshot, null, 2)}\n`;
     writeFileSync(SNAPSHOT_PATH, body);
     writeFileSync(RUNTIME_SNAPSHOT_PATH, body);
+    writePlayerHistoryFiles(historyFiles);
   }
 
   if (options.verbose) {
@@ -846,6 +906,7 @@ export async function buildSentimentSnapshot(
     if (!options.dryRun) {
       console.log(`  → ${SNAPSHOT_PATH}`);
       console.log(`  → ${RUNTIME_SNAPSHOT_PATH}`);
+      console.log(`  → ${HISTORY_DIR} (${historyFiles.size} files)`);
     }
   }
 

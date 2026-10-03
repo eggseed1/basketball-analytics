@@ -113,6 +113,14 @@ export const SentimentTrendChartLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
+export const SentimentGameChartLazy = dynamic(
+  () =>
+    import("@/components/players/sentiment-game-chart").then((m) => ({
+      default: m.SentimentGameChart,
+    })),
+  { ssr: false, loading: () => pulse }
+);
+
 export const SentimentPerformanceScatterLazy = dynamic(
   () =>
     import("@/components/sentiment/sentiment-performance-scatter").then((m) => ({
