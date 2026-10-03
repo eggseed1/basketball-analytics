@@ -2,21 +2,31 @@ import { TradeAcquireBoxes } from "@/components/offseason/trade-acquire-boxes";
 import { TransactionDescription } from "@/components/offseason/transaction-description";
 import { TeamIdentity } from "@/components/teams/team-identity";
 import { TextLink } from "@/components/ui/text-link";
-import type { TransactionPlayerResolution } from "@/lib/transaction-player-resolution";
+import {
+  realignResolutions,
+  type TransactionPlayerResolution,
+} from "@/lib/transaction-player-resolution";
 import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { isTradeRelatedSourceCategory } from "@/lib/transaction-event-presentation";
-import { tradeAcquirePresentationFromEvent } from "@/lib/trade-acquire-presentation";
+import {
+  nonTradeSentences,
+  tradeAcquirePresentationFromEvent,
+  tradeAcquirePresentationFromEvents,
+} from "@/lib/trade-acquire-presentation";
 
 export function TeamTransactionsSection({
   events,
   teamFilterId,
   offseasonYear,
   resolutionsByEventId = {},
+  relatedByEventId = {},
 }: {
   events: NbaTransactionEvent[];
   teamFilterId: string;
   offseasonYear: number;
   resolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
+  /** Same-day partner-team blurbs that ESPN logged as separate events. */
+  relatedByEventId?: Record<string, NbaTransactionEvent[]>;
 }) {
   return (
     <div className="flex flex-col gap-3">
@@ -32,10 +42,24 @@ export function TeamTransactionsSection({
       ) : (
         <ul className="flex flex-col gap-2">
           {events.map((e) => {
-            const tradeAcquire =
-              isTradeRelatedSourceCategory(e.sourceTextCategory)
-                ? tradeAcquirePresentationFromEvent(e)
-                : null;
+            const related = relatedByEventId[e.id] ?? [];
+            const inTradeCluster =
+              isTradeRelatedSourceCategory(e.sourceTextCategory) ||
+              related.some((r) => isTradeRelatedSourceCategory(r.sourceTextCategory));
+            const fromCluster = related.length
+              ? tradeAcquirePresentationFromEvents([e, ...related])
+              : null;
+            const tradeAcquire = inTradeCluster
+              ? fromCluster?.sides.some((s) => s.teamId === e.teamId)
+                ? fromCluster
+                : isTradeRelatedSourceCategory(e.sourceTextCategory)
+                  ? tradeAcquirePresentationFromEvent(e)
+                  : null
+              : null;
+            const rest = tradeAcquire ? nonTradeSentences(e.description) : "";
+            const tradeResolutions = [e, ...related].flatMap(
+              (r) => resolutionsByEventId[r.id] ?? []
+            );
             return (
               <li
                 key={e.id}
@@ -59,17 +83,24 @@ export function TeamTransactionsSection({
                       />
                     </>
                   ) : null}
-                  {e.sourceTextCategory === "trade"
-                    ? " · Trade-related transaction"
-                    : null}
+                  {tradeAcquire ? " · Trade-related transaction" : null}
                 </p>
                 {tradeAcquire ? (
-                  <TradeAcquireBoxes
-                    presentation={tradeAcquire}
-                    resolutions={resolutionsByEventId[e.id]}
-                    compact
-                    className="mt-1.5"
-                  />
+                  <>
+                    <TradeAcquireBoxes
+                      presentation={tradeAcquire}
+                      resolutions={tradeResolutions}
+                      compact
+                      className="mt-1.5"
+                    />
+                    {rest ? (
+                      <TransactionDescription
+                        description={rest}
+                        resolutions={realignResolutions(rest, resolutionsByEventId[e.id])}
+                        className="type-body mt-2 leading-snug text-foreground"
+                      />
+                    ) : null}
+                  </>
                 ) : (
                   <TransactionDescription
                     description={e.description}

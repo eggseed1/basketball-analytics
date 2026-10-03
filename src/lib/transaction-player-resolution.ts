@@ -59,6 +59,26 @@ function splitTextWithTeams(text: string): DescriptionPart[] {
   return parts;
 }
 
+/**
+ * Mention offsets point into the original description. When rendering a
+ * trimmed excerpt, re-find each name in order and drop ones that are gone.
+ */
+export function realignResolutions(
+  excerpt: string,
+  resolutions: TransactionPlayerResolution[] = []
+): TransactionPlayerResolution[] {
+  const out: TransactionPlayerResolution[] = [];
+  let from = 0;
+  for (const r of [...resolutions].sort((a, b) => a.mention.start - b.mention.start)) {
+    const at = excerpt.indexOf(r.mention.rawName, from);
+    if (at < 0) continue;
+    const end = at + r.mention.rawName.length;
+    out.push({ ...r, mention: { ...r.mention, start: at, end } });
+    from = end;
+  }
+  return out;
+}
+
 /** Split description into text + player + team parts for rendering. */
 export function partitionTransactionDescription(
   description: string,

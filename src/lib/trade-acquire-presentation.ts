@@ -11,10 +11,15 @@ import {
   type ParsedTradeSides,
 } from "@/lib/trade-tree-parse";
 
+export type TradeAcquireAsset = ParsedTradeAsset & {
+  /** Set when only the partner team's ESPN entry lists this item. */
+  onlyListedBy?: string;
+};
+
 export type TradeAcquireSide = {
   teamId: string;
   teamAbbr: string;
-  assets: ParsedTradeAsset[];
+  assets: TradeAcquireAsset[];
 };
 
 export type TradeAcquirePresentation = {
@@ -42,7 +47,7 @@ function isStructuredPattern(pattern: ParsedTradeSides["pattern"]): boolean {
 
 function sideFromBrand(
   brand: NonNullable<ReturnType<typeof resolveTeamBrand>>,
-  assets: ParsedTradeAsset[]
+  assets: TradeAcquireAsset[]
 ): TradeAcquireSide {
   return {
     teamId: brand.espnTeamId,
@@ -88,6 +93,14 @@ export function tradeAcquirePresentationFromEvents(
   if (!events.length) return null;
 
   const byTeam = new Map<string, TradeAcquireSide>();
+  const counterpartSent = new Map<
+    string,
+    {
+      brand: NonNullable<ReturnType<typeof resolveTeamBrand>>;
+      assets: ParsedTradeAsset[];
+      listedBy: string;
+    }
+  >();
   let bestPattern: ParsedTradeSides["pattern"] = null;
 
   for (const event of events) {
@@ -103,8 +116,40 @@ export function tradeAcquirePresentationFromEvents(
         existing ? mergeAssets(existing.assets, parsed.got) : parsed.got
       )
     );
+    const counter = brandForHint(parsed.counterpartyHint);
+    if (counter && counter.espnTeamId !== brand.espnTeamId && parsed.sent.length) {
+      const prior = counterpartSent.get(counter.espnTeamId);
+      counterpartSent.set(counter.espnTeamId, {
+        brand: counter,
+        assets: prior ? mergeAssets(prior.assets, parsed.sent) : parsed.sent,
+        listedBy: brand.abbr,
+      });
+    }
     if (!bestPattern || parsed.pattern !== "acquired_from") {
       bestPattern = parsed.pattern;
+    }
+  }
+
+  // One team's blurb can list what it gave up while the partner's blurb
+  // leaves it out (ESPN's "draft considerations"). Fill those in, but never
+  // stack a second pick or cash line onto a side that already names one in
+  // its own words.
+  for (const [teamId, { brand, assets, listedBy }] of counterpartSent) {
+    const side = byTeam.get(teamId);
+    if (!side) continue;
+    const extra = assets.filter((asset) =>
+      asset.kind === "player"
+        ? !side.assets.some((a) => a.kind === "player" && a.matchKey === asset.matchKey)
+        : !side.assets.some((a) => a.kind === asset.kind)
+    );
+    if (extra.length) {
+      byTeam.set(
+        teamId,
+        sideFromBrand(brand, [
+          ...side.assets,
+          ...extra.map((asset) => ({ ...asset, onlyListedBy: listedBy })),
+        ])
+      );
     }
   }
 
@@ -123,6 +168,25 @@ export function tradeAcquirePresentationFromEvents(
   }
 
   return null;
+}
+
+const SENTENCE_BREAK = /(?<!\b(?:Jr|Sr|St|Mr|[A-Z]))\.\s+(?=[A-Z])/;
+const TRADE_SENTENCE = /\b(acquired|traded|in exchange for|sign-and-trade)\b/i;
+
+/**
+ * ESPN bundles a team's same-day moves into one blurb. When the trade part
+ * renders as acquire boxes, the signings and waivers around it still need
+ * to show.
+ */
+export function nonTradeSentences(description: string): string {
+  return description
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(SENTENCE_BREAK)
+    .map((s) => s.trim().replace(/\.$/, ""))
+    .filter((s) => s && !TRADE_SENTENCE.test(s))
+    .map((s) => `${s}.`)
+    .join(" ");
 }
 
 function mergeAssets(

@@ -1,6 +1,8 @@
 import { TeamTransactionsSection } from "@/components/teams/team-transactions-section";
 import { currentOffseasonLabelYear } from "@/data/providers/transactions/offseason-window";
 import { listTransactionEvents } from "@/data/queries";
+import { getTransactionEventWithRelations } from "@/data/queries/offseason-tracker";
+import type { NbaTransactionEvent } from "@/data/types/transaction-event";
 import { resolvePlayersForTransactionEvents } from "@/data/queries/transaction-player-resolve";
 
 export async function TeamTransactionsIsland({
@@ -20,10 +22,22 @@ export async function TeamTransactionsIsland({
     pageCount: 0,
   }));
 
+  const relatedByEventId: Record<string, NbaTransactionEvent[]> = {};
+  await Promise.all(
+    txPage.events
+      .filter((e) => e.relatedClusterId)
+      .map(async (e) => {
+        const rel = await getTransactionEventWithRelations(e.id).catch(() => null);
+        const others = rel?.relatedEvents.filter((r) => r.id !== e.id) ?? [];
+        if (others.length) relatedByEventId[e.id] = others;
+      })
+  );
+
   const txResolutionsByEventId = Object.fromEntries(
-    await resolvePlayersForTransactionEvents(txPage.events).catch(
-      () => new Map()
-    )
+    await resolvePlayersForTransactionEvents([
+      ...txPage.events,
+      ...Object.values(relatedByEventId).flat(),
+    ]).catch(() => new Map())
   );
 
   return (
@@ -46,6 +60,7 @@ export async function TeamTransactionsIsland({
           teamFilterId={teamFilterId}
           offseasonYear={offseasonYear}
           resolutionsByEventId={txResolutionsByEventId}
+          relatedByEventId={relatedByEventId}
         />
       </div>
     </section>

@@ -29,7 +29,15 @@ export function TransactionDescription({
   const parts: DescriptionPart[] = partitionTransactionDescription(
     description,
     resolutions ?? []
-  );
+  ).map((part, i, all) => {
+    // "Ron Harper Jr." as the linked name plus ESPN's own period reads "Jr.."
+    const prev = all[i - 1];
+    if (part.kind !== "text" || prev?.kind !== "player" || !part.text.startsWith(".")) {
+      return part;
+    }
+    const shown = prev.resolution.playerName ?? prev.resolution.mention.rawName;
+    return shown.endsWith(".") ? { ...part, text: part.text.slice(1) } : part;
+  });
 
   const mentionNameClass = "inline font-semibold";
 

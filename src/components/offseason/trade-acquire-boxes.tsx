@@ -3,7 +3,11 @@
 import { TeamLogo } from "@/components/brand/team-logo";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { TeamIdentity } from "@/components/teams/team-identity";
-import type { TradeAcquirePresentation, TradeAcquireSide } from "@/lib/trade-acquire-presentation";
+import type {
+  TradeAcquireAsset,
+  TradeAcquirePresentation,
+  TradeAcquireSide,
+} from "@/lib/trade-acquire-presentation";
 import { brandWashColor } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { normalizePlayerName } from "@/lib/player-name";
@@ -25,16 +29,29 @@ function resolutionForAsset(
   });
 }
 
+function OnlyListedBy({ abbr }: { abbr?: string }) {
+  if (!abbr) return null;
+  return (
+    <span className="font-normal text-muted-foreground">
+      {" "}
+      · only {abbr}&apos;s entry lists this, so it&apos;s unconfirmed
+    </span>
+  );
+}
+
 function AssetLine({
   asset,
   resolutions,
 }: {
-  asset: ParsedTradeAsset;
+  asset: TradeAcquireAsset;
   resolutions?: TransactionPlayerResolution[];
 }) {
   if (asset.kind !== "player") {
     return (
-      <li className="text-[13px] leading-snug text-foreground">{asset.label}</li>
+      <li className="text-[13px] leading-snug text-foreground">
+        {asset.label}
+        <OnlyListedBy abbr={asset.onlyListedBy} />
+      </li>
     );
   }
 
@@ -49,6 +66,7 @@ function AssetLine({
     return (
       <li className="text-[13px] leading-snug font-semibold text-foreground">
         {name}
+        <OnlyListedBy abbr={asset.onlyListedBy} />
       </li>
     );
   }
@@ -68,6 +86,7 @@ function AssetLine({
       >
         {name}
       </PlayerIdentity>
+      <OnlyListedBy abbr={asset.onlyListedBy} />
     </li>
   );
 }
