@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-03",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-03T01:24:02.822Z",
+    "builtAt": "2026-10-03T15:38:52.098Z",
     "rosterPlayerCount": 475,
-    "headlinesScanned": 275,
-    "latestHeadlineAt": "2026-10-02T23:12:07.000Z",
+    "headlinesScanned": 291,
+    "latestHeadlineAt": "2026-10-03T12:00:00.000Z",
     "latestTransactionDate": "2026-10-02",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -41,6 +41,10 @@
     },
     "reporter:jake-fischer": {
       "label": "Jake Fischer (The Stein Line)",
+      "credibility": 30
+    },
+    "reporter:shams-charania": {
+      "label": "Shams Charania (ESPN)",
       "credibility": 30
     },
     "ledger:espn-transactions": {
@@ -244,6 +248,24 @@
       ],
       "linkedTeamIds": [
         "6"
+      ]
+    },
+    {
+      "id": "mv-contract-3908809-20261003",
+      "headline": "Donovan Mitchell: contract future",
+      "primaryClaimId": "mv-3f4596eeb4061002",
+      "claimIds": [
+        "mv-3f4596eeb4061002"
+      ],
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "firstSeenAt": "2026-10-03T05:32:55.000Z",
+      "lastMeaningfulAt": "2026-10-03T05:32:55.000Z",
+      "linkedPlayerIds": [
+        "3908809"
+      ],
+      "linkedTeamIds": [
+        "5"
       ]
     },
     {
@@ -1951,6 +1973,25 @@
         "9"
       ],
       "isOriginal": true
+    },
+    {
+      "id": "mv-3f4596eeb4061002",
+      "clusterId": "mv-contract-3908809-20261003",
+      "summary": "Donovan Mitchell Signs Multi-Year Extension With Adidas",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-03T05:32:55.000Z",
+      "sourceId": "reporter:shams-charania",
+      "sourceLabel": "RealGM, citing Shams Charania (ESPN)",
+      "reporterLabel": "Shams Charania",
+      "sourceUrl": "https://basketball.realgm.com/wiretap/287502/Donovan-Mitchell-Signs-Multi-Year-Extension-With-Adidas",
+      "playerIds": [
+        "3908809"
+      ],
+      "teamIds": [],
+      "isOriginal": false
     },
     {
       "id": "mv-espn-tx-48599cfb4807969c",
