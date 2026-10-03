@@ -197,6 +197,32 @@
   table {
     max-width: 100%;
   }
+  /* Disclosures ease open and shut. Height animates where interpolate-size
+     exists (Chromium); elsewhere the body still fades. Clip only the block
+     axis so wide tables inside keep their horizontal scroll. */
+  @media (prefers-reduced-motion: no-preference) {
+    details {
+      interpolate-size: allow-keywords;
+    }
+    details::details-content {
+      block-size: 0;
+      opacity: 0;
+      overflow-y: clip;
+      transition:
+        block-size 220ms cubic-bezier(0.2, 0, 0, 1),
+        opacity 180ms ease-out,
+        content-visibility 220ms allow-discrete;
+    }
+    details[open]::details-content {
+      block-size: auto;
+      opacity: 1;
+    }
+    @supports not selector(::details-content) {
+      details[open] > :not(summary) {
+        animation: details-reveal 200ms ease-out;
+      }
+    }
+  }
 }
 
 @layer utilities {
@@ -1338,6 +1364,13 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
   100% {
     background-position: -100% 0;
+  }
+}
+
+@keyframes details-reveal {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
   }
 }
 
