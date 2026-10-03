@@ -1,14 +1,15 @@
 /**
- * Score top comments on the newest uploads of each team channel and each
- * NBA-only league/show channel via the YouTube Data API, and append hashed
- * ids + scores to data/sentiment/ingest/v1/youtube. Comment text, authors
- * and like counts are not stored.
+ * Score top comments on the newest uploads of official team channels, team
+ * podcast/fan channels and league/show channels via the YouTube Data API, and
+ * append hashed ids + scores to data/sentiment/ingest/v1/youtube. Comment
+ * text, authors and like counts are not stored.
  *
  *   YOUTUBE_API_KEY=... npm run sentiment:ingest:youtube
  *
- * One quota unit per uploads list and per comment page: about 6 per team
- * channel and 31 per league channel, roughly 400 of the free 10,000 daily
- * units. Without a key the script prints a notice and exits 0.
+ * One quota unit per uploads list and per comment page: about 6 per official
+ * team channel, 8 per team fan channel and 31 per league channel, roughly
+ * 1,300 of the free 10,000 daily units. Without a key the script prints a
+ * notice and exits 0.
  */
 
 import { createHash } from "node:crypto";
@@ -28,10 +29,12 @@ type YoutubeConfig = {
   videosPerChannel: number;
   maxVideoAgeDays: number;
   commentsPerVideo: number;
+  teamFanVideosPerChannel: number;
   leagueVideosPerChannel: number;
   leagueCommentPagesPerVideo: number;
   channels: { teamId: string; channelId: string; name: string }[];
-  leagueChannels: { channelId: string; name: string }[];
+  teamFanChannels: { teamId: string; channelId: string; name: string }[];
+  leagueChannels: { channelId: string; name: string; multiSport?: boolean }[];
 };
 
 type ChannelPlan = {
@@ -40,6 +43,8 @@ type ChannelPlan = {
   teamId: string | null;
   videos: number;
   pages: number;
+  /** Only videos whose title names a rostered player in full or says NBA. */
+  multiSport: boolean;
 };
 
 type PlaylistItem = {
@@ -87,7 +92,7 @@ async function main() {
   const key = process.env.YOUTUBE_API_KEY;
   if (!key) {
     console.log(
-      "sentiment:ingest:youtube skipped: set YOUTUBE_API_KEY (Google Cloud, YouTube Data API v3) to add team-channel comments to the fan lane."
+      "sentiment:ingest:youtube skipped: set YOUTUBE_API_KEY (Google Cloud, YouTube Data API v3) to add NBA channel comments to the fan lane."
     );
     return;
   }
@@ -97,6 +102,12 @@ async function main() {
   const roster = loadIngestRoster();
   const nameById = new Map(roster.map((p) => [p.playerId, p.name]));
   const resolve = createHeadlineEntityResolver(roster);
+  const resolveFullNames = createHeadlineEntityResolver(roster, { fullNamesOnly: true });
+  // One nickname like Kings or Heat is ambiguous across sports; two rarely are.
+  const isNbaTitle = (title: string) => {
+    const entities = resolveFullNames(title);
+    return /\bNBA\b/.test(title) || entities.playerIds.length > 0 || entities.teamIds.length >= 2;
+  };
   const fetchedAt = new Date().toISOString();
   const oldestVideoMs = Date.now() - config.maxVideoAgeDays * 86_400_000;
   const rows = new Map<string, FanPostIngestItem>();
@@ -109,6 +120,15 @@ async function main() {
       teamId: c.teamId,
       videos: config.videosPerChannel,
       pages: 1,
+      multiSport: false,
+    })),
+    ...(config.teamFanChannels ?? []).map((c) => ({
+      channelId: c.channelId,
+      name: c.name,
+      teamId: c.teamId,
+      videos: config.teamFanVideosPerChannel,
+      pages: 1,
+      multiSport: false,
     })),
     ...(config.leagueChannels ?? []).map((c) => ({
       channelId: c.channelId,
@@ -116,6 +136,7 @@ async function main() {
       teamId: null,
       videos: config.leagueVideosPerChannel,
       pages: config.leagueCommentPagesPerVideo,
+      multiSport: Boolean(c.multiSport),
     })),
   ];
 
@@ -127,12 +148,13 @@ async function main() {
         {
           part: channel.teamId ? "contentDetails" : "snippet,contentDetails",
           playlistId: `UU${channel.channelId.slice(2)}`,
-          maxResults: String(Math.min(50, Math.max(10, channel.videos * 2))),
+          maxResults: channel.multiSport ? "50" : String(Math.min(50, Math.max(10, channel.videos * 2))),
         },
         key
       );
       const videos = (uploads.items ?? [])
         .filter((item) => Date.parse(item.contentDetails.videoPublishedAt ?? "") >= oldestVideoMs)
+        .filter((item) => !channel.multiSport || isNbaTitle(item.snippet?.title ?? ""))
         .slice(0, channel.videos);
       for (const video of videos) {
         // League channels have no home team, so a comment that names nobody

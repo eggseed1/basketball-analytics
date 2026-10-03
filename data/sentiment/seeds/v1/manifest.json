@@ -1,7 +1,7 @@
 {
   "methodologyVersion": "sentiment-s1-0.2",
   "status": "CURATED_PLUS_HEADLINES",
-  "disclaimer": "Fan lanes come from team fan blogs, Bluesky and YouTube comments on team and NBA show channels, and media lanes from publisher headlines. Neither is a census of all fans or media.",
+  "disclaimer": "Fan lanes come from team fan blogs, Bluesky and comments on NBA YouTube channels (teams, team podcasts and league shows), and media lanes from publisher headlines. Neither is a census of all fans or media.",
   "pilotWindow": "7d",
   "moverLimit": 4,
   "moverLookbackDays": 7,

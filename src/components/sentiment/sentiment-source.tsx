@@ -35,7 +35,7 @@ const ORIGIN_HINT: Record<SentimentLaneOrigin, string> = {
   curated: "Hand-written prototype value, not measured.",
   headlines: "Average tone of publisher headlines that name this subject.",
   reddit: "Average tone of post titles from approved subreddits.",
-  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on team and NBA show YouTube channels.",
+  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on NBA YouTube channels (teams, team podcasts and league shows).",
 };
 
 export function laneOriginLabel(origin?: SentimentLaneOrigin): string {
@@ -89,7 +89,7 @@ function fanPartsText(fans: NonNullable<SentimentSourceSummary["fans"]>): string
       ? `${n("fan_blog").toLocaleString()} headlines from ${fans.blogCount} team fan blogs`
       : null,
     n("bluesky") ? `${n("bluesky").toLocaleString()} Bluesky posts` : null,
-    n("youtube") ? `${n("youtube").toLocaleString()} comments on team and NBA show YouTube channels` : null,
+    n("youtube") ? `${n("youtube").toLocaleString()} comments on NBA YouTube channels (teams, team podcasts and league shows)` : null,
     n("reddit") ? `${n("reddit").toLocaleString()} Reddit post titles` : null,
   ].filter((part): part is string => Boolean(part));
   if (parts.length <= 1) return parts.join("");
