@@ -14,7 +14,7 @@ function Dot() {
 }
 
 /**
- * Height / weight on one line; birth (+ optional college) on the next.
+ * Height / weight on one line; birth (+ optional pre-NBA school or club) on the next.
  * Age follows the selected season (slider / URL).
  */
 export function PlayerIdentityVitals({
@@ -62,7 +62,7 @@ export function PlayerIdentityVitals({
         <p className="flex flex-wrap items-center justify-center gap-x-2 gap-y-0.5 sm:justify-start">
           {birthLine ? <span>{birthLine}</span> : null}
           {birthLine && collegeLabel ? <Dot /> : null}
-          {collegeLabel ? <span>{collegeLabel}</span> : null}
+          {collegeLabel ? <span>Pre-NBA: {collegeLabel}</span> : null}
         </p>
       ) : null}
     </div>

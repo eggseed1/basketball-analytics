@@ -83,7 +83,7 @@ export function PlayerDraftLine({
               ·
             </span>
           ) : null}
-          <span>{collegeLabel}</span>
+          <span>Pre-NBA: {collegeLabel}</span>
         </>
       ) : null}
     </p>
