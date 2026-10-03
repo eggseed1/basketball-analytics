@@ -129,7 +129,7 @@ function testSnapshot() {
       assert.ok(lane.origin, "every lane is tagged with its origin");
       if (lane.origin === "headlines") assert.ok(lane.mentionVolume >= floor);
     }
-    if (profile.fan && profile.fan.origin !== "curated") assert.equal(profile.fan.origin, "reddit");
+    if (profile.fan && profile.fan.origin !== "curated") assert.equal(profile.fan.origin, "fans");
     if (profile.media && profile.media.origin !== "curated") assert.equal(profile.media.origin, "headlines");
   }
   for (const row of snapshot.meta.divergences?.rows ?? []) {
@@ -142,7 +142,7 @@ function testSnapshot() {
   }
   for (const player of snapshot.players) {
     if (player.provenance === "ingest") {
-      assert.ok(player.fan == null || player.fan.origin === "reddit", "ingest-only players get no curated fan lane");
+      assert.ok(player.fan == null || player.fan.origin === "fans", "ingest-only players get no curated fan lane");
     }
   }
   const disclaimer = snapshot.meta.disclaimer;

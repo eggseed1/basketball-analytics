@@ -25,6 +25,7 @@ import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-st
 
 type BlueskyConfig = {
   limit: number;
+  maxPages?: number;
   lookbackHours: number;
   maxHashtags: number;
   queries: { id: string; q: string; teamId?: string; strict?: boolean; exclude?: string[] }[];
@@ -66,19 +67,32 @@ async function search(
   auth: { base: string; token: string | null },
   q: string,
   limit: number,
-  since: string
+  since: string,
+  maxPages: number
 ): Promise<BlueskyPost[]> {
-  const params = new URLSearchParams({ q, limit: String(limit), sort: "latest", lang: "en", since });
-  const response = await fetch(`${auth.base}/app.bsky.feed.searchPosts?${params}`, {
-    headers: {
-      "user-agent": USER_AGENT,
-      ...(auth.token ? { authorization: `Bearer ${auth.token}` } : {}),
-    },
-    signal: AbortSignal.timeout(15_000),
-  });
-  if (!response.ok) throw new Error(`HTTP ${response.status}`);
-  const body = (await response.json()) as { posts?: BlueskyPost[] };
-  return body.posts ?? [];
+  const posts: BlueskyPost[] = [];
+  let cursor: string | undefined;
+  for (let page = 0; page < maxPages; page += 1) {
+    const params = new URLSearchParams({ q, limit: String(limit), sort: "latest", lang: "en", since });
+    if (cursor) params.set("cursor", cursor);
+    const response = await fetch(`${auth.base}/app.bsky.feed.searchPosts?${params}`, {
+      headers: {
+        "user-agent": USER_AGENT,
+        ...(auth.token ? { authorization: `Bearer ${auth.token}` } : {}),
+      },
+      signal: AbortSignal.timeout(15_000),
+    });
+    if (!response.ok) {
+      if (page > 0) break;
+      throw new Error(`HTTP ${response.status}`);
+    }
+    const body = (await response.json()) as { posts?: BlueskyPost[]; cursor?: string };
+    posts.push(...(body.posts ?? []));
+    cursor = body.cursor;
+    if (!cursor || (body.posts?.length ?? 0) < limit) break;
+    await sleep(300);
+  }
+  return posts;
 }
 
 /**
@@ -130,7 +144,7 @@ async function main() {
     let kept = 0;
     const exclude = (query.exclude ?? []).map((p) => new RegExp(p, "i"));
     try {
-      const posts = await search(auth, query.q, config.limit, since);
+      const posts = await search(auth, query.q, config.limit, since, config.maxPages ?? 1);
       for (const post of posts) {
         const text = (post.record.text ?? "").slice(0, 300);
         if (!isFanVoice(post, text, config.maxHashtags)) continue;

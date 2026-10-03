@@ -1,8 +1,8 @@
 {
   "note": "Official team YouTube channels (ids read from each channel page and NBA.com team sites, 2026-10-02). Top comments on the newest uploads are scored; comment text, authors and like counts are not stored.",
-  "videosPerChannel": 3,
+  "videosPerChannel": 5,
   "maxVideoAgeDays": 7,
-  "commentsPerVideo": 50,
+  "commentsPerVideo": 100,
   "channels": [
     { "teamId": "1", "channelId": "UCpfcwELvR1wtcRJ0UxNXHYw", "name": "Atlanta Hawks" },
     { "teamId": "2", "channelId": "UCMfT9dr6xC_RIWoA9hI0meQ", "name": "Boston Celtics" },

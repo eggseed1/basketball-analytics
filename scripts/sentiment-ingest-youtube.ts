@@ -5,8 +5,8 @@
  *
  *   YOUTUBE_API_KEY=... npm run sentiment:ingest:youtube
  *
- * About 4 quota units per team per run (one uploads list, three comment
- * pages), roughly 120 of the free 10,000 daily units.
+ * About 6 quota units per team per run (one uploads list, five comment
+ * pages), roughly 180 of the free 10,000 daily units.
  * Without a key the script prints a notice and exits 0.
  */
 

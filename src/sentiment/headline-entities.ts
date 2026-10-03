@@ -51,9 +51,13 @@ export const ESPN_TEAM_NICKNAMES: Record<string, string[]> = {
   "30": ["Hornets"],
 };
 
-/** Widely used single-token handles. Matched case-sensitively. */
+/**
+ * Widely used single-token handles, matched case-sensitively. First names
+ * belong here only when fans use them alone and one player owns them.
+ */
 const PLAYER_NICKNAMES: Record<string, string> = {
   SGA: "Shai Gilgeous-Alexander",
+  Shai: "Shai Gilgeous-Alexander",
   Giannis: "Giannis Antetokounmpo",
   LeBron: "LeBron James",
   Wemby: "Victor Wembanyama",
@@ -63,6 +67,15 @@ const PLAYER_NICKNAMES: Record<string, string> = {
   "Ant-Man": "Anthony Edwards",
   KAT: "Karl-Anthony Towns",
   Embiid: "Joel Embiid",
+  Kawhi: "Kawhi Leonard",
+  Steph: "Stephen Curry",
+  KD: "Kevin Durant",
+  Kyrie: "Kyrie Irving",
+  Jayson: "Jayson Tatum",
+  Cade: "Cade Cunningham",
+  Trae: "Trae Young",
+  Paolo: "Paolo Banchero",
+  Lauri: "Lauri Markkanen",
 };
 
 /** Surnames that are also everyday words or place names in headlines. */

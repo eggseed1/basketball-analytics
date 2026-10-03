@@ -1487,11 +1487,13 @@ export function PlayerPercentilePanel({
             })}
           </div>
 
+          <div className="@container">
           <div
             className={cn(
               "grid items-start gap-4",
-              // Aside needs room for chart + comps; require a usable metrics track.
-              "min-[960px]:grid-cols-[minmax(14rem,1fr)_minmax(16rem,20rem)]"
+              // Sized off the card, not the viewport: the panel sits in a
+              // narrow column on wide screens and the bars collapsed there.
+              "@min-[44rem]:grid-cols-[minmax(26rem,1fr)_minmax(16rem,20rem)]"
             )}
           >
             <div className="relative min-w-0 overflow-hidden">
@@ -1546,7 +1548,7 @@ export function PlayerPercentilePanel({
 
             {active ? (
               <aside
-                className="min-w-0 self-start overflow-hidden min-[960px]:sticky min-[960px]:top-4"
+                className="min-w-0 self-start overflow-hidden @min-[44rem]:sticky @min-[44rem]:top-4"
                 aria-label="Metric chart and comparisons"
               >
                 <div
@@ -1579,6 +1581,7 @@ export function PlayerPercentilePanel({
                 Select a ranking to compare.
               </p>
             )}
+          </div>
           </div>
         </div>
       )}

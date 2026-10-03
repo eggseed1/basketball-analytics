@@ -70,10 +70,9 @@ export function teamSeasonFillStyle(
 }
 
 /**
- * Full career timeline track. Each season owns the stretch halfway to its
- * neighbors, in its team's color, with hard edges so a stint never fades into
- * an in-between color that belongs to no team. A traded-midseason stretch
- * splits evenly between its teams.
+ * Full career timeline track: a color stop at each season tick so adjacent
+ * franchises blend across the gap between them. A traded-midseason tick
+ * spreads its teams across the middle half of its slot.
  */
 export function seasonTrackGradientStyle(
   seasons: string[],
@@ -86,16 +85,17 @@ export function seasonTrackGradientStyle(
     return teamSeasonFillStyle(resolveKeys(seasons[0]!), surface, palette);
   }
   const last = seasons.length - 1;
+  const slot = 100 / last;
   const stops: string[] = [];
   seasons.forEach((season, index) => {
-    const start = index === 0 ? 0 : ((index - 0.5) / last) * 100;
-    const end = index === last ? 100 : ((index + 0.5) / last) * 100;
+    const center = index * slot;
     const colors = teamSeasonChartColors(resolveKeys(season), surface, palette);
     const list = colors.length ? colors : ["#8e8e93"];
     list.forEach((color, i) => {
-      const a = start + ((end - start) * i) / list.length;
-      const b = start + ((end - start) * (i + 1)) / list.length;
-      stops.push(`${color} ${a}% ${b}%`);
+      const offset =
+        list.length === 1 ? 0 : (i / (list.length - 1) - 0.5) * slot * 0.5;
+      const pos = Math.max(0, Math.min(100, center + offset));
+      stops.push(`${color} ${pos.toFixed(2)}%`);
     });
   });
   return { background: `linear-gradient(90deg, ${stops.join(", ")})` };
