@@ -160,7 +160,13 @@ export function buildRotationPositionShape(
       unknownMinutes += p.minutes;
       continue;
     }
-    const shell = resolveRoleShell(p.position, p.reboundPct);
+    const shell = resolveRoleShell(p.position, {
+      reboundPct: p.reboundPct,
+      blockPct: p.blockPct,
+      assistPct: p.assistPct,
+      usagePct: p.usagePct,
+      threePointAttemptRate: p.threePointAttemptRate,
+    });
     minutes[shell] += p.minutes;
     counts[shell] += 1;
   }

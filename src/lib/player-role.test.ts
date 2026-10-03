@@ -96,6 +96,33 @@ test("shell treats centers as bigs", () => {
   assert.equal(resolveRoleShell("SF", 0.08), "wing");
 });
 
+test("a PF listing alone does not make a creator a big", () => {
+  const tatum = assignPlayerRole({
+    row: base({
+      position: "PF",
+      usagePct: 0.31,
+      assistPct: 0.27,
+      reboundPct: 0.13,
+      blockPct: 0.013,
+      threePointAttemptRate: 0.5,
+    }),
+  });
+  assert.equal(tatum?.shell, "wing");
+  assert.equal(tatum?.id, "half_court_engine");
+
+  const zion = assignPlayerRole({
+    row: base({
+      position: "PF",
+      usagePct: 0.26,
+      assistPct: 0.18,
+      reboundPct: 0.1,
+      threePointAttemptRate: 0.01,
+    }),
+  });
+  assert.equal(zion?.shell, "big");
+  assert.equal(zion?.id, "post_paint_big");
+});
+
 test("engine vs volume scorer from usage × assist", () => {
   const engine = assignPlayerRole({
     row: base({ usagePct: 0.31, assistPct: 0.4, threePointAttemptRate: 0.35 }),

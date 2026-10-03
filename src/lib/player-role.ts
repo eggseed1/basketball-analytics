@@ -79,7 +79,7 @@ const DIET_LINES: Record<ShotDietKind, string> = {
   corner: "Corner-three heavy diet",
   above_break: "Above-break three diet",
   perimeter: "Perimeter-leaning shot diet",
-  inside: "Inside-leaning shot diet",
+  inside: "Shot diet lives inside the arc",
   hybrid: "Hybrid shot diet",
 };
 
@@ -121,22 +121,53 @@ function normalizeZoneKey(zone: string): ShotZoneId | "OTHER" {
   return "OTHER";
 }
 
+export type RoleShellSignals = {
+  reboundPct?: number | null;
+  blockPct?: number | null;
+  assistPct?: number | null;
+  usagePct?: number | null;
+  threePointAttemptRate?: number | null;
+};
+
+function finite(n: number | null | undefined): number | null {
+  return n != null && Number.isFinite(n) ? n : null;
+}
+
+/**
+ * Centers are bigs. A forward is a big only when he rebounds like one and
+ * also protects the rim, lives inside, or rarely creates. A PF listing alone
+ * is not enough: Tatum and Siakam are listed PF and play on the wing.
+ */
 export function resolveRoleShell(
   position: Position | string | null | undefined,
-  reboundPct: number | null | undefined
+  signals: RoleShellSignals | number | null | undefined
 ): PlayerRoleShell {
+  const s: RoleShellSignals =
+    typeof signals === "number" || signals == null
+      ? { reboundPct: signals ?? null }
+      : signals;
   const pos = String(position ?? "")
     .trim()
     .toUpperCase();
-  const trb = reboundPct != null && Number.isFinite(reboundPct) ? reboundPct : 0;
   if (pos === "C" || pos.startsWith("C-") || pos.endsWith("-C")) return "big";
-  if (pos === "PF" || pos.includes("PF")) {
-    return trb >= 0.12 || pos === "PF" ? "big" : "wing";
+  if (pos === "PG" || pos === "SG" || (pos.includes("G") && !pos.includes("F"))) {
+    return "guard";
   }
-  if (trb >= 0.15) return "big";
-  if (pos === "SF" || pos.includes("SF") || pos.includes("F")) return "wing";
-  if (pos === "PG" || pos === "SG" || pos.includes("G")) return "guard";
-  if (trb >= 0.12) return "big";
+
+  const trb = finite(s.reboundPct) ?? 0;
+  const blk = finite(s.blockPct);
+  const ast = finite(s.assistPct);
+  const usg = finite(s.usagePct);
+  const threePar = finite(s.threePointAttemptRate);
+  const creator = ast != null && usg != null && ast >= 0.2 && usg >= 0.22;
+  const inside = threePar != null && threePar < 0.12;
+  const rimProtector = blk != null && blk >= 0.03;
+  const perimeterHeavy = threePar != null && threePar >= 0.35;
+
+  if (trb >= 0.14 && (rimProtector || inside || (!creator && !perimeterHeavy))) {
+    return "big";
+  }
+  if (inside && trb >= 0.1 && (pos.includes("PF") || pos === "F")) return "big";
   return "wing";
 }
 
@@ -255,14 +286,20 @@ function scoreRoles(input: {
   if (usg >= 0.2 && usg < 0.28 && ast >= 0.2) scores.secondary_initiator += 3.5;
   if (usg >= 0.18 && usg < 0.26 && ast >= 0.24) scores.secondary_initiator += 1;
   if (usg >= 0.27 && ast < 0.18) scores.volume_scorer += 4;
+  if (usg >= 0.28 && ast >= 0.18 && ast < 0.24) scores.volume_scorer += 3;
   if (usg >= 0.3 && ast < 0.22) scores.volume_scorer += 1.5;
 
   // Spacer / connector / finisher
-  if (usg < 0.22 && threePar >= 0.4) scores.catch_and_shoot_spacer += 4;
+  if (usg < 0.22 && threePar >= 0.4) {
+    scores.catch_and_shoot_spacer += ast < 0.2 ? 4 : 2;
+  }
   if (usg < 0.2 && perimeter) scores.catch_and_shoot_spacer += 1.5;
   if (usg < 0.2 && ast >= 0.14 && tov <= 0.14) scores.connector += 3.2;
   if (usg < 0.18 && ast >= 0.18) scores.connector += 1.2;
-  if (usg < 0.24 && inside) scores.cut_roll_finisher += 3.5;
+  if (usg < 0.22 && ast >= 0.25) scores.connector += 2.5;
+  // Finishers rarely create; a low-3PAr creator is usually a midrange or
+  // drive-and-kick player, which zone-less diet can't tell apart.
+  if (usg < 0.24 && inside && ast < 0.18) scores.cut_roll_finisher += 3.5;
   if (usg < 0.22 && (diet === "rim" || diet === "paint"))
     scores.cut_roll_finisher += 1.5;
 
@@ -272,6 +309,7 @@ function scoreRoles(input: {
     scores.stretch_big += threePar >= 0.25 ? 4 : 0;
     if (threePar >= 0.3) scores.stretch_big += 1.5;
     if (threePar < 0.2) scores.post_paint_big += 2.5;
+    if (usg >= 0.27 && ast >= 0.3) scores.half_court_engine += 2;
     // Finisher label is for wings/guards who dive — bigs use paint/post.
     scores.cut_roll_finisher *= 0.2;
     // Suppress guard-coded roles for true bigs unless creation is extreme
@@ -318,10 +356,13 @@ export function assignPlayerRole(options: {
     ? row.threePointAttemptRate
     : 0;
   const tov = Number.isFinite(row.turnoverPct) ? row.turnoverPct : 0.12;
-  const shell = resolveRoleShell(
-    options.position ?? row.position,
-    row.reboundPct
-  );
+  const shell = resolveRoleShell(options.position ?? row.position, {
+    reboundPct: row.reboundPct,
+    blockPct: row.blockPct,
+    assistPct: ast,
+    usagePct: usg,
+    threePointAttemptRate: threePar,
+  });
   const diet = resolveShotDiet(row, options.zones);
   const ranked = scoreRoles({ usg, ast, threePar, tov, shell, diet });
   const top = ranked[0];

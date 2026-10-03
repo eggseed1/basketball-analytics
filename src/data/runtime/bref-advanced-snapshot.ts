@@ -131,6 +131,15 @@ function pctAsFraction(value: number): number {
   return value > 1 ? value / 100 : value;
 }
 
+/**
+ * BRef rate columns (USG%, AST%, TRB%, STL%, BLK%, TOV%) are always percent
+ * points, so a 0.6% block rate must not pass through as 0.6.
+ */
+function percentPoints(value: number | undefined): number {
+  if (value == null || !Number.isFinite(value) || value <= 0) return 0;
+  return value / 100;
+}
+
 function dedupeSlimByPlayerTeam<
   T extends { n: string; t: string; gp: number; mp?: number },
 >(rows: T[]): T[] {
@@ -189,14 +198,14 @@ export function getBundledBrefAdvancedSeason(
       trueShootingPct: pctAsFraction(r.ts),
       threePointAttemptRate: pctAsFraction(r.fg3Ar ?? 0),
       freeThrowRate: pctAsFraction(r.ftr ?? 0),
-      offensiveReboundPct: pctAsFraction(r.orbPct ?? 0),
-      defensiveReboundPct: pctAsFraction(r.drbPct ?? 0),
-      reboundPct: pctAsFraction(r.trbPct ?? 0),
-      assistPct: pctAsFraction(r.astPct ?? 0),
-      stealPct: pctAsFraction(r.stlPct ?? 0),
-      blockPct: pctAsFraction(r.blkPct ?? 0),
-      turnoverPct: pctAsFraction(r.tovPct ?? 0),
-      usagePct: pctAsFraction(r.usg),
+      offensiveReboundPct: percentPoints(r.orbPct ?? 0),
+      defensiveReboundPct: percentPoints(r.drbPct ?? 0),
+      reboundPct: percentPoints(r.trbPct ?? 0),
+      assistPct: percentPoints(r.astPct ?? 0),
+      stealPct: percentPoints(r.stlPct ?? 0),
+      blockPct: percentPoints(r.blkPct ?? 0),
+      turnoverPct: percentPoints(r.tovPct ?? 0),
+      usagePct: percentPoints(r.usg),
       ows: r.ows,
       dws: r.dws,
       winShares: r.ws,
@@ -395,14 +404,14 @@ function toPeerSeasonRow(
     effectiveFieldGoalPct: efg,
     threePointAttemptRate: pctAsFraction(adv.fg3Ar ?? 0),
     freeThrowRate: pctAsFraction(adv.ftr ?? 0),
-    usagePct: pctAsFraction(adv.usg),
-    turnoverPct: pctAsFraction(adv.tovPct ?? 0),
-    assistPct: pctAsFraction(adv.astPct ?? 0),
-    offensiveReboundPct: pctAsFraction(adv.orbPct ?? 0),
-    defensiveReboundPct: pctAsFraction(adv.drbPct ?? 0),
-    reboundPct: pctAsFraction(adv.trbPct ?? 0),
-    stealPct: pctAsFraction(adv.stlPct ?? 0),
-    blockPct: pctAsFraction(adv.blkPct ?? 0),
+    usagePct: percentPoints(adv.usg),
+    turnoverPct: percentPoints(adv.tovPct ?? 0),
+    assistPct: percentPoints(adv.astPct ?? 0),
+    offensiveReboundPct: percentPoints(adv.orbPct ?? 0),
+    defensiveReboundPct: percentPoints(adv.drbPct ?? 0),
+    reboundPct: percentPoints(adv.trbPct ?? 0),
+    stealPct: percentPoints(adv.stlPct ?? 0),
+    blockPct: percentPoints(adv.blkPct ?? 0),
     per: adv.per,
     ows: adv.ows,
     dws: adv.dws,
