@@ -1,14 +1,14 @@
 "use client";
 
-import { useCallback, useId, useLayoutEffect, useRef, useState } from "react";
+import { useCallback, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 
 import { FrostFloatingSurface } from "@/components/brand/frost-floating-surface";
 import { TeamLogo } from "@/components/brand/team-logo";
-import { TeamSeasonSwatch } from "@/components/brand/team-season-swatch";
 import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
 import {
+  careerTeamPalette,
   normalizeSeasonTeamKeys,
   seasonTrackGradientStyle,
   teamSeasonFillStyle,
@@ -149,7 +149,16 @@ export function SeasonBarSlider({
     seasonTeamKeys,
     seasonTeams
   );
-  const thumbStyle = teamSeasonFillStyle(previewKeys);
+  const palette = useMemo(
+    () =>
+      careerTeamPalette(
+        seasons,
+        (season) => resolveSeasonKeys(season, seasonTeamKeys, seasonTeams),
+        surface
+      ),
+    [seasons, seasonTeamKeys, seasonTeams, surface]
+  );
+  const thumbStyle = teamSeasonFillStyle(previewKeys, surface, palette);
   const thumbFallback =
     !previewKeys.length && accentColor
       ? { backgroundColor: accentColor }
@@ -246,7 +255,8 @@ export function SeasonBarSlider({
               seasons,
               (season) =>
                 resolveSeasonKeys(season, seasonTeamKeys, seasonTeams),
-              surface
+              surface,
+              palette
             ),
             // Dim the trailing (future-of-thumb) portion via a soft mask overlay.
             opacity: isDark ? 0.72 : 0.85,
@@ -276,7 +286,10 @@ export function SeasonBarSlider({
                 onCommit(season);
               }}
             >
-              <TeamSeasonSwatch teamKeys={teamKeys} size="xs" />
+              <span
+                className="size-1 rounded-full bg-background/90 shadow-[0_0_0_0.5px_rgba(0,0,0,0.25)] transition-transform group-hover/tick:scale-150"
+                aria-hidden
+              />
               {!dragging ? (
                 <TickHoverTip
                   season={season}

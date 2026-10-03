@@ -5,6 +5,7 @@ import {
   teamBrandBarColor,
   teamBrandTint,
   teamChartColor,
+  teamLeagueChartColor,
   type ChartSurface,
 } from "@/lib/nba-brand";
 
@@ -80,6 +81,9 @@ export function useChartTheme() {
     surface,
     semantic: chartSemantic,
     teamColor: (teamId?: string | null) => teamChartColor(teamId, { surface }),
+    /** For charts with many franchises at once (league scatters, standings, races). */
+    leagueTeamColor: (teamId?: string | null) =>
+      teamLeagueChartColor(teamId, { surface }),
     teamBarColor: (teamId?: string | null) =>
       teamBrandBarColor(teamId, { surface }),
     teamTint: (teamId?: string | null, opacity?: number) =>

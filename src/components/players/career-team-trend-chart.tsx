@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useMemo } from "react";
+import { useCallback, useId, useMemo } from "react";
 import {
   Curve,
   Line,
@@ -19,6 +19,7 @@ import {
 import { TeamLogo } from "@/components/brand/team-logo";
 import { type } from "@/lib/design-system";
 import { useChartTheme } from "@/lib/chart-theme";
+import { distinctTeamColors } from "@/lib/nba-brand";
 import { formatNumber } from "@/lib/format";
 import { percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
@@ -380,6 +381,15 @@ export function CareerTeamTrendChart({
   showLegend?: boolean;
 }) {
   const chartTheme = useChartTheme();
+  const palette = useMemo(
+    () => distinctTeamColors(points.map((p) => p.teamId), chartTheme.surface),
+    [points, chartTheme.surface]
+  );
+  const teamColor = useCallback(
+    (teamId?: string | null) =>
+      (teamId && palette.get(teamId)) || chartTheme.teamColor(teamId).color,
+    [palette, chartTheme]
+  );
   const hasPercentileColors =
     savantScale && points.some((p) => p.percentile != null);
 
@@ -398,18 +408,18 @@ export function CareerTeamTrendChart({
         color:
           pct != null
             ? percentileSavantColor(pct, chartTheme.surface)
-            : chartTheme.teamColor(p.teamId).color,
+            : teamColor(p.teamId),
       };
     });
-  }, [points, hasPercentileColors, chartTheme]);
+  }, [points, hasPercentileColors, chartTheme.surface, teamColor]);
 
   const themedPlotPoints = useMemo((): CareerSeriesPoint[] => {
     if (hasPercentileColors) return plotPoints;
     return plotPoints.map((point) => ({
       ...point,
-      color: chartTheme.teamColor(point.teamId).color,
+      color: teamColor(point.teamId),
     }));
-  }, [chartTheme, hasPercentileColors, plotPoints]);
+  }, [teamColor, hasPercentileColors, plotPoints]);
 
   const strokeGradId = `career-stroke-${useId().replace(/:/g, "")}`;
 
@@ -435,9 +445,9 @@ export function CareerTeamTrendChart({
     () =>
       franchiseLegend.map((entry) => ({
         ...entry,
-        color: chartTheme.teamColor(entry.teamId).color,
+        color: teamColor(entry.teamId),
       })),
-    [chartTheme, franchiseLegend]
+    [teamColor, franchiseLegend]
   );
 
   const handleSelect = (row: ChartRow) => {

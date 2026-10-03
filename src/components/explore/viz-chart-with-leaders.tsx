@@ -94,7 +94,7 @@ export function VizChartWithLeaders({
         <ul className="flex min-h-0 flex-1 flex-col gap-1 overflow-y-auto pr-1">
           {filtered.map((player, index) => {
             const selected = Boolean(player.pinned || player.onTeam);
-            const { color } = chartTheme.teamColor(
+            const { color } = chartTheme.leagueTeamColor(
               player.teamId ?? player.teamAbbr
             );
             return (

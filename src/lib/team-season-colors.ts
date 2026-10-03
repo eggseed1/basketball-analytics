@@ -1,10 +1,14 @@
 import type { CSSProperties } from "react";
 
 import {
+  distinctTeamColors,
   teamChartColor,
   type ChartSurface,
 } from "@/lib/nba-brand";
 import { normalizeTeamParam } from "@/lib/team-identity";
+
+/** Team key → color for one chart. Build with `careerTeamPalette`. */
+export type TeamPalette = Map<string, string>;
 
 export function normalizeSeasonTeamKeys(
   keys?: string[] | null,
@@ -17,14 +21,28 @@ export function normalizeSeasonTeamKeys(
   return [];
 }
 
+/**
+ * Brand colors for every franchise in a career, assigned in the order the
+ * player joined them so a later stint yields when its color matches an
+ * earlier one (after a Raptors stint, the Pistons fall back to their blue).
+ */
+export function careerTeamPalette(
+  seasons: string[],
+  resolveKeys: (season: string) => string[],
+  surface: ChartSurface = "light"
+): TeamPalette {
+  return distinctTeamColors(seasons.flatMap(resolveKeys), surface);
+}
+
 export function teamSeasonChartColors(
   teamKeys: string[],
-  surface: ChartSurface = "light"
+  surface: ChartSurface = "light",
+  palette?: TeamPalette
 ): string[] {
   const colors: string[] = [];
   const seen = new Set<string>();
   for (const key of teamKeys) {
-    const { color } = teamChartColor(key, { surface });
+    const color = palette?.get(key) ?? teamChartColor(key, { surface }).color;
     if (seen.has(color)) continue;
     seen.add(color);
     colors.push(color);
@@ -32,12 +50,13 @@ export function teamSeasonChartColors(
   return colors;
 }
 
-/** Solid or multi-franchise gradient fill for season ticks, bars, and swatches. */
+/** Solid or multi-franchise split fill for season ticks, bars, and swatches. */
 export function teamSeasonFillStyle(
   teamKeys: string[],
-  surface: ChartSurface = "light"
+  surface: ChartSurface = "light",
+  palette?: TeamPalette
 ): CSSProperties {
-  const colors = teamSeasonChartColors(teamKeys, surface);
+  const colors = teamSeasonChartColors(teamKeys, surface, palette);
   if (colors.length === 0) return { backgroundColor: "#8e8e93" };
   if (colors.length === 1) return { backgroundColor: colors[0] };
   const stops = colors
@@ -51,24 +70,33 @@ export function teamSeasonFillStyle(
 }
 
 /**
- * Full career timeline track: color stops at each season tick so adjacent
- * franchises blend across the gap instead of a hard midpoint cut.
+ * Full career timeline track. Each season owns the stretch halfway to its
+ * neighbors, in its team's color, with hard edges so a stint never fades into
+ * an in-between color that belongs to no team. A traded-midseason stretch
+ * splits evenly between its teams.
  */
 export function seasonTrackGradientStyle(
   seasons: string[],
   resolveKeys: (season: string) => string[],
-  surface: ChartSurface = "light"
+  surface: ChartSurface = "light",
+  palette?: TeamPalette
 ): CSSProperties {
   if (seasons.length === 0) return { backgroundColor: "#8e8e93" };
   if (seasons.length === 1) {
-    return teamSeasonFillStyle(resolveKeys(seasons[0]!), surface);
+    return teamSeasonFillStyle(resolveKeys(seasons[0]!), surface, palette);
   }
   const last = seasons.length - 1;
-  const stops = seasons.map((season, index) => {
-    const colors = teamSeasonChartColors(resolveKeys(season), surface);
-    const color = colors[0] ?? "#8e8e93";
-    const pos = (index / last) * 100;
-    return `${color} ${pos}%`;
+  const stops: string[] = [];
+  seasons.forEach((season, index) => {
+    const start = index === 0 ? 0 : ((index - 0.5) / last) * 100;
+    const end = index === last ? 100 : ((index + 0.5) / last) * 100;
+    const colors = teamSeasonChartColors(resolveKeys(season), surface, palette);
+    const list = colors.length ? colors : ["#8e8e93"];
+    list.forEach((color, i) => {
+      const a = start + ((end - start) * i) / list.length;
+      const b = start + ((end - start) * (i + 1)) / list.length;
+      stops.push(`${color} ${a}% ${b}%`);
+    });
   });
   return { background: `linear-gradient(90deg, ${stops.join(", ")})` };
 }

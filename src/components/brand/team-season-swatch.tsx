@@ -3,6 +3,7 @@
 import {
   teamSeasonFillStyle,
   teamSeasonIsMulti,
+  type TeamPalette,
 } from "@/lib/team-season-colors";
 import { useChartTheme } from "@/lib/chart-theme";
 import { cn } from "@/lib/utils";
@@ -11,10 +12,12 @@ export function TeamSeasonSwatch({
   teamKeys,
   className,
   size = "sm",
+  palette,
 }: {
   teamKeys: string[];
   className?: string;
   size?: "xs" | "sm" | "md";
+  palette?: TeamPalette;
 }) {
   const { surface } = useChartTheme();
   const sizeClass =
@@ -27,7 +30,7 @@ export function TeamSeasonSwatch({
         sizeClass,
         className
       )}
-      style={teamSeasonFillStyle(teamKeys, surface)}
+      style={teamSeasonFillStyle(teamKeys, surface, palette)}
       aria-hidden
     />
   );

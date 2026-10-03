@@ -300,7 +300,7 @@ export function PlayerRaceTrackerView({
                     (row) => row.playerId === playerId
                   );
                   if (!player) return null;
-                  const { color } = chartTheme.teamColor(player.teamId);
+                  const { color } = chartTheme.leagueTeamColor(player.teamId);
                   return (
                     <button
                       key={playerId}
@@ -387,7 +387,7 @@ export function PlayerRaceTrackerView({
                 pinIds.includes(player.playerId) ||
                 (player.nbaId != null && pinIds.includes(player.nbaId)) ||
                 (player.espnId != null && pinIds.includes(player.espnId));
-              const { color } = chartTheme.teamColor(player.teamId);
+              const { color } = chartTheme.leagueTeamColor(player.teamId);
               const hrefId =
                 player.espnId ?? player.nbaId ?? player.playerId;
               return (

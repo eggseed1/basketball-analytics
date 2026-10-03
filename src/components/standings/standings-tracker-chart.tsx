@@ -362,7 +362,7 @@ export function StandingsTrackerChart({
             />
             {teams.map((team) => {
               const selected = selectedTeamIds.has(team.teamId);
-              const { color } = chartTheme.teamColor(team.teamId);
+              const { color } = chartTheme.leagueTeamColor(team.teamId);
               const muted = hasSelection && !selected;
               const isFocus = focusTeamId === team.teamId;
               const emphasis = muted

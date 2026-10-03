@@ -97,7 +97,7 @@ export function PlayerUsageEfficiencyChart({
   const data = useMemo<ChartPoint[]>(
     () =>
       deferredPoints.map((p) => {
-        const teamFill = chartTheme.teamColor(p.teamId ?? p.teamAbbr).color;
+        const teamFill = chartTheme.leagueTeamColor(p.teamId ?? p.teamAbbr).color;
         return {
           ...p,
           usageDisplay: p.usagePct * 100,

@@ -548,8 +548,12 @@ const TEAM_CHART_HEX: Record<string, string> = {
   was: "#E31837", // wizards red — navy collides with IND
 };
 
-/** Chart/timeline stroke color for a team - safe for server + client. */
-export function teamChartColor(
+/**
+ * League-wide chart stroke, for charts that put many franchises on one canvas
+ * (standings tracker, league scatters, race tracker). Uses TEAM_CHART_HEX so
+ * 30 lines stay separable. Everywhere else, use `teamChartColor`.
+ */
+export function teamLeagueChartColor(
   teamId?: string | null,
   options?: { surface?: ChartSurface }
 ): {
@@ -559,7 +563,7 @@ export function teamChartColor(
   const surface = options?.surface ?? "light";
   const brand = resolveTeamBrand(teamId);
   if (!brand) {
-    return { color: surface === "dark" ? "#a6a9b1" : "#8e8e93", abbr: "-" };
+    return { color: neutralChartColor(surface), abbr: "-" };
   }
   const chartHex = TEAM_CHART_HEX[brand.id] ?? brand.primary;
   // Pair with the other brand stop so dark-surface lift can fall back sanely.
@@ -571,8 +575,150 @@ export function teamChartColor(
   return { color, abbr: brand.abbr };
 }
 
+function neutralChartColor(surface: ChartSurface): string {
+  return surface === "dark" ? "#a6a9b1" : "#8e8e93";
+}
+
+/** The franchise's own colors in the order to try them, readable on `surface`. */
+function brandColorCandidates(
+  brand: { primary: string; secondary: string; id: string },
+  surface: ChartSurface
+): string[] {
+  const out: string[] = [];
+  const push = (color: string | null) => {
+    if (color && !out.some((c) => c.toLowerCase() === color.toLowerCase())) out.push(color);
+  };
+  push(matchupBrandColor(brand.primary, brand.secondary, surface));
+  push(matchupBrandColor(brand.secondary, brand.primary, surface));
+  const league = TEAM_CHART_HEX[brand.id];
+  if (league) push(ensureChartColorOnSurface(league, brand.primary, surface));
+  if (surface === "light") push(darkenForLightSurface(brand.secondary));
+  return out;
+}
+
+/** Heat gold or Pacers yellow, deepened until it reads on white. */
+function darkenForLightSurface(hex: string): string | null {
+  const color = hexToOklch(hex);
+  if (!color || color.c < 0.03) return null;
+  for (let l = color.l; l > 0.3; l -= 0.02) {
+    const candidate = oklchToHex({ ...color, l });
+    if (hexRelativeLuminance(candidate) <= LIGHT_SURFACE_MAX_LUM) return candidate;
+  }
+  return null;
+}
+
 /**
- * Solid accent for bars / chips — uses the chart-distinct franchise color.
+ * A franchise's own color for charts, swatches, bars and timelines: the brand
+ * primary, or the secondary when the primary would wash out on `surface`
+ * (Spurs silver on white, Nets black on the dark card).
+ */
+export function teamChartColor(
+  teamId?: string | null,
+  options?: { surface?: ChartSurface }
+): {
+  color: string;
+  abbr: string;
+} {
+  const surface = options?.surface ?? "light";
+  const brand = resolveTeamBrand(teamId);
+  if (!brand) return { color: neutralChartColor(surface), abbr: "-" };
+  return {
+    color: brandColorCandidates(brand, surface)[0] ?? neutralChartColor(surface),
+    abbr: brand.abbr,
+  };
+}
+
+function oklabDistance(a: string, b: string): number {
+  const x = hexToOklch(a);
+  const y = hexToOklch(b);
+  if (!x || !y) return 0;
+  const toLab = (c: Oklch) => [
+    c.l,
+    c.c * Math.cos((c.h * Math.PI) / 180),
+    c.c * Math.sin((c.h * Math.PI) / 180),
+  ];
+  const [l1, a1, b1] = toLab(x);
+  const [l2, a2, b2] = toLab(y);
+  return Math.hypot(l1 - l2, a1 - a2, b1 - b2);
+}
+
+/** Below this OKLab distance two franchise colors read as the same team. */
+const DISTINCT_TEAM_MIN_DELTA = 0.12;
+
+/**
+ * Brand colors for a handful of teams on one chart (a career timeline, a
+ * trade). Each team keeps its primary unless an earlier team already owns a
+ * near-identical color (Clippers red, then Raptors red); then it falls back to
+ * its secondary, then its league-chart color. When no option clears every
+ * earlier team, the one that differs from the team right before it wins, since
+ * neighbors are what a timeline puts side by side. Order the keys by priority.
+ * Picks are made on the light surface so a team keeps the same color in both
+ * themes.
+ */
+export function distinctTeamColors(
+  teamKeys: (string | null | undefined)[],
+  surface: ChartSurface = "light"
+): Map<string, string> {
+  const light = pickDistinctTeamColors(teamKeys);
+  if (surface === "light") return light;
+  return new Map(
+    [...light].map(([key, color]) => [
+      key,
+      resolveTeamBrand(key) ? liftKeepingContrast(color) : neutralChartColor("dark"),
+    ])
+  );
+}
+
+/**
+ * Dark-surface version of a light-surface pick. `liftForDarkSurface` raises
+ * every dark color to the same floor, so navy and royal blue land on one shade;
+ * this maps lightness into a readable band instead, so a navy stint stays
+ * darker than the royal blue next to it.
+ */
+function liftKeepingContrast(hex: string): string {
+  const color = hexToOklch(hex);
+  if (!color) return hex;
+  if (color.c < 0.03) return oklchToHex({ ...color, l: Math.max(color.l, 0.68) });
+  return oklchToHex({ ...color, l: Math.min(0.94, 0.52 + 0.46 * color.l) });
+}
+
+function pickDistinctTeamColors(
+  teamKeys: (string | null | undefined)[]
+): Map<string, string> {
+  const surface: ChartSurface = "light";
+  const out = new Map<string, string>();
+  const used: string[] = [];
+  for (const key of teamKeys) {
+    if (!key || out.has(key)) continue;
+    const brand = resolveTeamBrand(key);
+    if (!brand) {
+      out.set(key, neutralChartColor(surface));
+      continue;
+    }
+    const sameFranchise = [...out.keys()].find((k) => resolveTeamBrand(k)?.id === brand.id);
+    if (sameFranchise) {
+      out.set(key, out.get(sameFranchise)!);
+      continue;
+    }
+    const candidates = brandColorCandidates(brand, surface);
+    const gap = (color: string) =>
+      used.length ? Math.min(...used.map((u) => oklabDistance(color, u))) : Infinity;
+    const previous = used.at(-1);
+    const clearOfPrevious = (color: string) =>
+      !previous || oklabDistance(color, previous) >= DISTINCT_TEAM_MIN_DELTA;
+    const color =
+      candidates.find((c) => gap(c) >= DISTINCT_TEAM_MIN_DELTA) ??
+      candidates.find(clearOfPrevious) ??
+      [...candidates].sort((p, q) => gap(q) - gap(p))[0] ??
+      neutralChartColor(surface);
+    out.set(key, color);
+    used.push(color);
+  }
+  return out;
+}
+
+/**
+ * Solid accent for bars / chips — the franchise's own color.
  */
 export function teamBrandBarColor(
   teamKey?: string | null,

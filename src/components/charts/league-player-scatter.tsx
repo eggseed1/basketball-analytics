@@ -88,7 +88,7 @@ export function LeaguePlayerScatterChart({
   const data = useMemo<ChartPoint[]>(
     () =>
       deferredPoints.map((p) => {
-        const { color } = chartTheme.teamColor(p.teamId ?? p.teamAbbr);
+        const { color } = chartTheme.leagueTeamColor(p.teamId ?? p.teamAbbr);
         return {
           ...p,
           z: p.isSelf ? 140 : 36,

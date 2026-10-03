@@ -249,7 +249,7 @@ export function StandingsTrackerView({
           {[...selectedTeamIds].map((teamId) => {
             const team = payload.teams.find((row) => row.teamId === teamId);
             if (!team) return null;
-            const { color } = chartTheme.teamColor(teamId);
+            const { color } = chartTheme.leagueTeamColor(teamId);
             return (
               <button
                 key={teamId}

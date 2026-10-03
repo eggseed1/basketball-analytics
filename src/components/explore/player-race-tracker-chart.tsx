@@ -43,7 +43,7 @@ import {
   useChartTheme,
   type ChartLineEmphasis,
 } from "@/lib/chart-theme";
-import { teamChartColor } from "@/lib/nba-brand";
+import { teamLeagueChartColor } from "@/lib/nba-brand";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -157,7 +157,7 @@ const PlayerRaceLines = memo(function PlayerRaceLines({
     for (const player of players) {
       map.set(
         player.playerId,
-        teamChartColor(player.teamId, { surface }).color
+        teamLeagueChartColor(player.teamId, { surface }).color
       );
     }
     return map;
