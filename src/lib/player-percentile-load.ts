@@ -46,6 +46,7 @@ async function enrichCareerForFastHero(
   const {
     attachDrblToPlayerSeasons,
     attachBrefDarkoRaptorToPlayerSeasons,
+    attachBundledBrefDarkoRaptor,
     attachHustleToPlayerSeasons,
     mergeOverlaySeasonFields,
   } = await import("@/data/queries/players");
@@ -54,24 +55,26 @@ async function enrichCareerForFastHero(
   );
 
   // Bundled DRBL is cheap (~300KB) and required for WAR1 / DRBL percentile
-  // defaults — always attach it, including on Cloudflare.
-  const drblBudget = preferBundledProductDataOnEdge() ? 800 : 1_500;
+  // defaults. It is a local lookup, so it runs without a soft budget.
   const impactBudget = preferBundledProductDataOnEdge() ? 1_200 : 1_500;
   const hustleBudget = preferBundledProductDataOnEdge() ? 800 : 1_200;
+  const bundledImpact = attachBundledBrefDarkoRaptor(playerId, career).catch(
+    () => career
+  );
 
   const [withDrbl, withImpact, withHustle] = await Promise.all([
-    withBudget(
-      attachDrblToPlayerSeasons(playerId, career).catch(() => career),
-      drblBudget,
-      career
-    ).then((r) => r.value),
-    withBudget(
-      attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
-        () => career
-      ),
-      impactBudget,
-      career
-    ).then((r) => r.value),
+    attachDrblToPlayerSeasons(playerId, career).catch(() => career),
+    preferBundledProductDataOnEdge()
+      ? bundledImpact
+      : bundledImpact.then((fallback) =>
+          withBudget(
+            attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
+              () => fallback
+            ),
+            impactBudget,
+            fallback
+          ).then((r) => r.value)
+        ),
     withBudget(
       attachHustleToPlayerSeasons(playerId, career).catch(() => career),
       hustleBudget,

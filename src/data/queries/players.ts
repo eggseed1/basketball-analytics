@@ -1746,14 +1746,109 @@ export async function attachHustleToPlayerSeasons(
 }
 
 /**
- * Attach BRef advanced (PER/BPM/VORP/WS) + per-season DARKO + RAPTOR onto
- * career rows. Shared by Statistics / Career / percentile enrich paths.
+ * Bundled-snapshot BRef / DARKO / RAPTOR attach. CPU-only (no network), so
+ * callers can run it without a soft time budget.
  */
-export async function attachBrefDarkoRaptorToPlayerSeasons(
+export async function attachBundledBrefDarkoRaptor(
   playerId: string,
   rows: PlayerSeason[]
 ): Promise<PlayerSeason[]> {
   if (!rows.length) return rows;
+  const { findBundledBrefPlayer } = await import(
+    "@/data/runtime/bref-advanced-snapshot"
+  );
+  const {
+    findBundledDarkoPlayer,
+    findBundledRaptorPlayer,
+  } = await import("@/data/runtime/impact-overlay-snapshot");
+  const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
+
+  return rows.map((row) => {
+    let next = row;
+    if (
+      !(
+        (row.per != null && row.per !== 0) ||
+        (row.winShares != null && row.winShares !== 0) ||
+        (row.vorp != null && row.vorp !== 0)
+      )
+    ) {
+      const bref = findBundledBrefPlayer(
+        row.season,
+        row.playerName,
+        row.teamAbbreviation
+      );
+      if (bref) {
+        next = {
+          ...next,
+          per: bref.per !== 0 ? bref.per : next.per,
+          ows: Number.isFinite(bref.ows) ? bref.ows : next.ows,
+          dws: Number.isFinite(bref.dws) ? bref.dws : next.dws,
+          winShares: bref.ws !== 0 ? bref.ws : next.winShares,
+          winSharesPer48: bref.ws48 !== 0 ? bref.ws48 : next.winSharesPer48,
+          obpm: Number.isFinite(bref.obpm) ? bref.obpm : next.obpm,
+          dbpm: Number.isFinite(bref.dbpm) ? bref.dbpm : next.dbpm,
+          bpm: Number.isFinite(bref.bpm) ? bref.bpm : next.bpm,
+          vorp: Number.isFinite(bref.vorp) ? bref.vorp : next.vorp,
+          usagePct:
+            next.usagePct ||
+            (bref.usg > 1 ? bref.usg / 100 : bref.usg) ||
+            undefined,
+          trueShootingPct:
+            next.trueShootingPct ||
+            (bref.ts > 1 ? bref.ts / 100 : bref.ts) ||
+            undefined,
+        };
+      }
+    }
+
+    const darko = findBundledDarkoPlayer(row.season, {
+      nbaId,
+      playerId,
+      playerName: row.playerName,
+    });
+    if (darko && Number.isFinite(darko.impact)) {
+      const oDpm = darko.offensive;
+      const dDpm = darko.defensive;
+      next = {
+        ...next,
+        dpm: darko.impact,
+        ...(typeof oDpm === "number" ? { oDpm } : {}),
+        ...(typeof dDpm === "number" ? { dDpm } : {}),
+        darkoDpm: darko.impact,
+        darkoOff: oDpm,
+        darkoDef: dDpm,
+      };
+    }
+
+    const raptor = findBundledRaptorPlayer(row.season, {
+      nbaId,
+      playerId,
+      playerName: row.playerName,
+    });
+    if (raptor && Number.isFinite(raptor.impact)) {
+      next = {
+        ...next,
+        raptor: raptor.impact,
+        oRaptor: raptor.offensive,
+        dRaptor: raptor.defensive,
+        winsAdded: raptor.winsAdded ?? next.winsAdded,
+      };
+    }
+    return next;
+  });
+}
+
+/**
+ * Attach BRef advanced (PER/BPM/VORP/WS) + per-season DARKO + RAPTOR onto
+ * career rows. Shared by Statistics / Career / percentile enrich paths.
+ * Live scrapes layer over the bundled snapshot, so a live miss or empty
+ * upstream keeps the bundled values instead of blanking the season.
+ */
+export async function attachBrefDarkoRaptorToPlayerSeasons(
+  playerId: string,
+  career: PlayerSeason[]
+): Promise<PlayerSeason[]> {
+  if (!career.length) return career;
 
   const {
     slimEdgeProductEnabled,
@@ -1762,90 +1857,10 @@ export async function attachBrefDarkoRaptorToPlayerSeasons(
   const preferBundled =
     slimEdgeProductEnabled() || preferBundledProductDataOnEdge();
 
-  if (preferBundled) {
-    const { findBundledBrefPlayer } = await import(
-      "@/data/runtime/bref-advanced-snapshot"
-    );
-    const {
-      findBundledDarkoPlayer,
-      findBundledRaptorPlayer,
-    } = await import("@/data/runtime/impact-overlay-snapshot");
-    const nbaId = await resolveNbaIdForDrbl(playerId).catch(() => null);
-
-    return rows.map((row) => {
-      let next = row;
-      if (
-        !(
-          (row.per != null && row.per !== 0) ||
-          (row.winShares != null && row.winShares !== 0) ||
-          (row.vorp != null && row.vorp !== 0)
-        )
-      ) {
-        const bref = findBundledBrefPlayer(
-          row.season,
-          row.playerName,
-          row.teamAbbreviation
-        );
-        if (bref) {
-          next = {
-            ...next,
-            per: bref.per !== 0 ? bref.per : next.per,
-            ows: Number.isFinite(bref.ows) ? bref.ows : next.ows,
-            dws: Number.isFinite(bref.dws) ? bref.dws : next.dws,
-            winShares: bref.ws !== 0 ? bref.ws : next.winShares,
-            winSharesPer48: bref.ws48 !== 0 ? bref.ws48 : next.winSharesPer48,
-            obpm: Number.isFinite(bref.obpm) ? bref.obpm : next.obpm,
-            dbpm: Number.isFinite(bref.dbpm) ? bref.dbpm : next.dbpm,
-            bpm: Number.isFinite(bref.bpm) ? bref.bpm : next.bpm,
-            vorp: Number.isFinite(bref.vorp) ? bref.vorp : next.vorp,
-            usagePct:
-              next.usagePct ||
-              (bref.usg > 1 ? bref.usg / 100 : bref.usg) ||
-              undefined,
-            trueShootingPct:
-              next.trueShootingPct ||
-              (bref.ts > 1 ? bref.ts / 100 : bref.ts) ||
-              undefined,
-          };
-        }
-      }
-
-      const darko = findBundledDarkoPlayer(row.season, {
-        nbaId,
-        playerId,
-        playerName: row.playerName,
-      });
-      if (darko && Number.isFinite(darko.impact)) {
-        const oDpm = darko.offensive;
-        const dDpm = darko.defensive;
-        next = {
-          ...next,
-          dpm: darko.impact,
-          ...(typeof oDpm === "number" ? { oDpm } : {}),
-          ...(typeof dDpm === "number" ? { dDpm } : {}),
-          darkoDpm: darko.impact,
-          darkoOff: oDpm,
-          darkoDef: dDpm,
-        };
-      }
-
-      const raptor = findBundledRaptorPlayer(row.season, {
-        nbaId,
-        playerId,
-        playerName: row.playerName,
-      });
-      if (raptor && Number.isFinite(raptor.impact)) {
-        next = {
-          ...next,
-          raptor: raptor.impact,
-          oRaptor: raptor.offensive,
-          dRaptor: raptor.defensive,
-          winsAdded: raptor.winsAdded ?? next.winsAdded,
-        };
-      }
-      return next;
-    });
-  }
+  const rows = await attachBundledBrefDarkoRaptor(playerId, career).catch(
+    () => career
+  );
+  if (preferBundled) return rows;
 
   const uniqueSeasons = [...new Set(rows.map((r) => r.season))];
   const scrapeSeasons = [...uniqueSeasons]
@@ -2098,30 +2113,33 @@ export async function enrichPlayerCareerAdvanced(
     );
 
   // Overlays touch largely disjoint fields — run in parallel to cut wall time.
-  const drblBudget = fullProduct ? 2_500 : 800;
   const hustleBudget = fullProduct ? 2_000 : 800;
-  const impactBudget = preferBundled ? 1_500 : fullProduct ? 8_000 : 1_500;
+  const impactBudget = fullProduct ? 8_000 : 1_500;
+
+  // DRBL and the bundled impact snapshot are local lookups. A soft budget on
+  // them lost the race on cold Workers isolates and blanked whole columns.
+  const bundledImpact = skipImpactAttach
+    ? Promise.resolve(career)
+    : attachBundledBrefDarkoRaptor(playerId, career).catch(() => career);
 
   const [withDrbl, withHustle, withImpactBase] = await Promise.all([
-    withBudget(
-      attachDrblToPlayerSeasons(playerId, career).catch(() => career),
-      drblBudget,
-      career
-    ).then((r) => r.value),
+    attachDrblToPlayerSeasons(playerId, career).catch(() => career),
     withBudget(
       attachHustleToPlayerSeasons(playerId, career).catch(() => career),
       hustleBudget,
       career
     ).then((r) => r.value),
-    skipImpactAttach
-      ? Promise.resolve(career)
-      : withBudget(
-          attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
-            () => career
-          ),
-          impactBudget,
-          career
-        ).then((r) => r.value),
+    skipImpactAttach || preferBundled || slim
+      ? bundledImpact
+      : bundledImpact.then((fallback) =>
+          withBudget(
+            attachBrefDarkoRaptorToPlayerSeasons(playerId, career).catch(
+              () => fallback
+            ),
+            impactBudget,
+            fallback
+          ).then((r) => r.value)
+        ),
   ]);
 
   // Field-merge overlays so a later source can't wipe earlier non-zero values
