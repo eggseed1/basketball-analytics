@@ -20,6 +20,11 @@ export type ScoredIngestItem = {
   teamIds: string[];
   /** Set when one lane blends several platforms (the fan lane). */
   platform?: SentimentPlatform;
+  /**
+   * Items sharing a conversation (comments under one video) share its weight.
+   * Unset means the item is its own conversation.
+   */
+  conversation?: string;
 };
 
 export type LaneBuildOptions = {
@@ -38,8 +43,23 @@ function round2(value: number): number {
   return Math.round(value * 100) / 100;
 }
 
-function mean(values: number[]): number {
-  return values.length ? values.reduce((a, b) => a + b, 0) / values.length : 0;
+/**
+ * A conversation with n items weighs sqrt(n) in total, so 100 comments under
+ * one video count about like 10, while 100 separate posts count as 100.
+ */
+function conversationWeighted(items: ScoredIngestItem[]): { mean: number; weight: number } {
+  const sizes = new Map<string, number>();
+  for (const item of items) {
+    if (item.conversation) sizes.set(item.conversation, (sizes.get(item.conversation) ?? 0) + 1);
+  }
+  let total = 0;
+  let weighted = 0;
+  for (const item of items) {
+    const w = item.conversation ? 1 / Math.sqrt(sizes.get(item.conversation)!) : 1;
+    total += w;
+    weighted += w * item.score;
+  }
+  return { mean: total ? weighted / total : 0, weight: total };
 }
 
 function dayKey(iso: string): string {
@@ -63,17 +83,21 @@ export function dailyScoreSeries(
   sinceMs: number,
   untilMs: number
 ): SentimentSeriesPoint[] {
-  const byDay = new Map<string, number[]>();
+  const byDay = new Map<string, ScoredIngestItem[]>();
   for (const item of items) {
     if (!inRange(item, sinceMs, untilMs)) continue;
     const key = dayKey(item.date);
     const list = byDay.get(key) ?? [];
-    list.push(item.score);
+    list.push(item);
     byDay.set(key, list);
   }
   return [...byDay.entries()]
     .sort(([a], [b]) => a.localeCompare(b))
-    .map(([date, scores]) => ({ date, score: round2(mean(scores)), count: scores.length }));
+    .map(([date, dayItems]) => ({
+      date,
+      score: round2(conversationWeighted(dayItems).mean),
+      count: dayItems.length,
+    }));
 }
 
 /**
@@ -92,9 +116,10 @@ export function buildIngestLane(
     inRange(item, windowStartMs - options.windowDays * DAY_MS, windowStartMs)
   );
 
-  const score = round2(mean(current.map((item) => item.score)));
+  const weighted = conversationWeighted(current);
+  const score = round2(weighted.mean);
   const priorScore =
-    prior.length >= options.floor ? round2(mean(prior.map((item) => item.score))) : null;
+    prior.length >= options.floor ? round2(conversationWeighted(prior).mean) : null;
   let direction: CuratedSentimentLane["direction"] = "stable";
   if (priorScore != null) {
     if (score - priorScore >= 0.1) direction = "rising";
@@ -131,7 +156,7 @@ export function buildIngestLane(
       score,
       direction,
       mentionVolume: current.length,
-      coverageConfidence: round2(Math.min(0.95, 0.35 + Math.log10(current.length + 1) * 0.12)),
+      coverageConfidence: round2(Math.min(0.95, 0.35 + Math.log10(weighted.weight + 1) * 0.12)),
       platformBreakdown,
       topicBreakdown,
       origin: options.origin,

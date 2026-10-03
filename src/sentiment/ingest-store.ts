@@ -60,6 +60,8 @@ export type FanPostIngestItem = {
   platform: "bluesky" | "youtube";
   /** Search query id (Bluesky) or channel id (YouTube). */
   source: string;
+  /** YouTube only: hash of the video id, so comments under one video share weight. */
+  thread?: string;
   createdAt: string;
   fetchedAt: string;
   /** Bluesky only; YouTube API stats may not be kept past 30 days. */

@@ -5,7 +5,7 @@
     "season": "2026-27",
     "disclaimer": "Fan lanes come from team fan blogs, Bluesky and YouTube comments on team and NBA show channels, and media lanes from publisher headlines. Neither is a census of all fans or media.",
     "snapshotDate": "2026-10-03",
-    "builtAt": "2026-10-03T20:14:31.489Z",
+    "builtAt": "2026-10-03T20:23:58.671Z",
     "rosterPlayerCount": 603,
     "pilotProfileCount": 91,
     "observationBatchCount": 15,
@@ -55,8 +55,8 @@
           "playerId": "4277905",
           "displayName": "Trae Young",
           "teamKey": "27",
-          "fanScore": 0.34,
-          "delta": 1.04,
+          "fanScore": 0.32,
+          "delta": 1,
           "mentionVolume": 8,
           "origin": "fans",
           "asOf": "2026-10-03"
@@ -77,8 +77,8 @@
           "playerId": "6450",
           "displayName": "Kawhi Leonard",
           "teamKey": "28",
-          "fanScore": 0.13,
-          "delta": -0.8,
+          "fanScore": 0.11,
+          "delta": -0.84,
           "mentionVolume": 110,
           "origin": "fans",
           "asOf": "2026-10-03"
@@ -87,8 +87,8 @@
           "playerId": "3136193",
           "displayName": "Devin Booker",
           "teamKey": "21",
-          "fanScore": 0.43,
-          "delta": -0.62,
+          "fanScore": 0.4,
+          "delta": -0.63,
           "mentionVolume": 5,
           "origin": "fans",
           "asOf": "2026-10-03"
@@ -97,19 +97,19 @@
           "playerId": "4683774",
           "displayName": "Bronny James",
           "teamKey": "13",
-          "fanScore": 0.2,
+          "fanScore": 0.25,
           "delta": -0.62,
           "mentionVolume": 22,
           "origin": "fans",
           "asOf": "2026-10-03"
         },
         {
-          "playerId": "6606",
-          "displayName": "Damian Lillard",
-          "teamKey": "22",
-          "fanScore": -0.22,
-          "delta": -0.57,
-          "mentionVolume": 5,
+          "playerId": "3934672",
+          "displayName": "Jalen Brunson",
+          "teamKey": "18",
+          "fanScore": 0.22,
+          "delta": -0.58,
+          "mentionVolume": 48,
           "origin": "fans",
           "asOf": "2026-10-03"
         }
@@ -150,46 +150,6 @@
           "origin": "measured"
         },
         {
-          "playerId": "4433136",
-          "displayName": "Walker Kessler",
-          "teamKey": "13",
-          "fanScore": 0.2,
-          "mediaScore": 0.47,
-          "gap": -0.27,
-          "absGap": 0.27,
-          "origin": "measured"
-        },
-        {
-          "playerId": "3112335",
-          "displayName": "Nikola Jokic",
-          "teamKey": "7",
-          "fanScore": 0.19,
-          "mediaScore": 0.43,
-          "gap": -0.24,
-          "absGap": 0.24,
-          "origin": "measured"
-        },
-        {
-          "playerId": "3064514",
-          "displayName": "Julius Randle",
-          "teamKey": "17",
-          "fanScore": -0.01,
-          "mediaScore": 0.22,
-          "gap": -0.23,
-          "absGap": 0.23,
-          "origin": "measured"
-        },
-        {
-          "playerId": "4066457",
-          "displayName": "Austin Reaves",
-          "teamKey": "13",
-          "fanScore": 0.45,
-          "mediaScore": 0.22,
-          "gap": 0.23,
-          "absGap": 0.23,
-          "origin": "measured"
-        },
-        {
           "playerId": "3195",
           "displayName": "Mike Conley",
           "teamKey": "2",
@@ -197,6 +157,46 @@
           "mediaScore": 0.27,
           "gap": 0.22,
           "absGap": 0.22,
+          "origin": "measured"
+        },
+        {
+          "playerId": "4065648",
+          "displayName": "Jayson Tatum",
+          "teamKey": "2",
+          "fanScore": 0.3,
+          "mediaScore": 0.51,
+          "gap": -0.21,
+          "absGap": 0.21,
+          "origin": "measured"
+        },
+        {
+          "playerId": "6589",
+          "displayName": "Draymond Green",
+          "teamKey": "9",
+          "fanScore": -0.39,
+          "mediaScore": -0.18,
+          "gap": -0.21,
+          "absGap": 0.21,
+          "origin": "curated"
+        },
+        {
+          "playerId": "4433136",
+          "displayName": "Walker Kessler",
+          "teamKey": "13",
+          "fanScore": 0.26,
+          "mediaScore": 0.47,
+          "gap": -0.21,
+          "absGap": 0.21,
+          "origin": "measured"
+        },
+        {
+          "playerId": "4431678",
+          "displayName": "Tyrese Maxey",
+          "teamKey": "20",
+          "fanScore": 0.28,
+          "mediaScore": 0.49,
+          "gap": -0.21,
+          "absGap": 0.21,
           "origin": "measured"
         }
       ]
@@ -494,10 +494,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.13,
+        "score": 0.08,
         "direction": "stable",
         "mentionVolume": 74,
-        "coverageConfidence": 0.58,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
           "fan_blog": 0.014,
           "bluesky": 0.081,
@@ -549,22 +549,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.04,
+            "score": 0,
             "count": 5
           },
           {
             "date": "2026-10-01",
-            "score": 0.22,
+            "score": 0.27,
             "count": 8
           },
           {
             "date": "2026-10-02",
-            "score": 0.1,
+            "score": -0.02,
             "count": 35
           },
           {
             "date": "2026-10-03",
-            "score": 0.15,
+            "score": 0.14,
             "count": 26
           }
         ],
@@ -633,7 +633,7 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.32,
+        "score": 0.3,
         "direction": "stable",
         "mentionVolume": 22,
         "coverageConfidence": 0.51,
@@ -679,12 +679,12 @@
         "fan": [
           {
             "date": "2026-09-30",
-            "score": 0.47,
+            "score": 0.41,
             "count": 5
           },
           {
             "date": "2026-10-01",
-            "score": 0.27,
+            "score": 0.26,
             "count": 11
           },
           {
@@ -753,7 +753,7 @@
       "window": "7d",
       "fan": {
         "polarity": "neutral",
-        "score": 0,
+        "score": 0.01,
         "direction": "falling",
         "mentionVolume": 49,
         "coverageConfidence": 0.55,
@@ -904,7 +904,7 @@
           },
           {
             "date": "2026-10-01",
-            "score": -0.03,
+            "score": -0.04,
             "count": 15
           },
           {
@@ -914,7 +914,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": -0.11,
+            "score": -0.09,
             "count": 9
           }
         ],
@@ -971,10 +971,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.13,
+        "score": 0.15,
         "direction": "stable",
         "mentionVolume": 209,
-        "coverageConfidence": 0.63,
+        "coverageConfidence": 0.61,
         "platformBreakdown": {
           "fan_blog": 0.038,
           "bluesky": 0.426,
@@ -1055,32 +1055,32 @@
           },
           {
             "date": "2026-09-28",
-            "score": 0.2,
+            "score": 0.26,
             "count": 8
           },
           {
             "date": "2026-09-29",
-            "score": -0.14,
+            "score": -0.08,
             "count": 6
           },
           {
             "date": "2026-09-30",
-            "score": 0.25,
+            "score": 0.34,
             "count": 9
           },
           {
             "date": "2026-10-01",
-            "score": 0.02,
+            "score": 0.05,
             "count": 18
           },
           {
             "date": "2026-10-02",
-            "score": 0.13,
+            "score": 0.16,
             "count": 61
           },
           {
             "date": "2026-10-03",
-            "score": 0.15,
+            "score": 0.14,
             "count": 103
           }
         ],
@@ -1175,11 +1175,11 @@
       "teamKey": "7",
       "window": "7d",
       "fan": {
-        "polarity": "mixed",
-        "score": 0.19,
+        "polarity": "positive",
+        "score": 0.25,
         "direction": "stable",
         "mentionVolume": 240,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.54,
         "platformBreakdown": {
           "fan_blog": 0.025,
           "bluesky": 0.038,
@@ -1322,12 +1322,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.19,
+            "score": 0.27,
             "count": 173
           },
           {
             "date": "2026-10-03",
-            "score": 0.13,
+            "score": 0.18,
             "count": 54
           }
         ],
@@ -1448,7 +1448,7 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.29,
+            "score": 0.31,
             "count": 8
           },
           {
@@ -1537,11 +1537,11 @@
       "teamKey": "9",
       "window": "7d",
       "fan": {
-        "polarity": "positive",
-        "score": 0.2,
+        "polarity": "mixed",
+        "score": 0.14,
         "direction": "stable",
         "mentionVolume": 47,
-        "coverageConfidence": 0.55,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.021,
           "bluesky": 0.128,
@@ -1600,17 +1600,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.17,
+            "score": 0,
             "count": 17
           },
           {
             "date": "2026-10-02",
-            "score": 0.17,
+            "score": 0.15,
             "count": 14
           },
           {
             "date": "2026-10-03",
-            "score": 0.24,
+            "score": 0.18,
             "count": 13
           }
         ],
@@ -1698,11 +1698,11 @@
       "teamKey": "10",
       "window": "7d",
       "fan": {
-        "polarity": "mixed",
-        "score": 0.12,
+        "polarity": "neutral",
+        "score": 0.06,
         "direction": "stable",
         "mentionVolume": 41,
-        "coverageConfidence": 0.54,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "bluesky": 0.341,
           "youtube": 0.659
@@ -1754,7 +1754,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": -0.01,
+            "score": -0.04,
             "count": 23
           },
           {
@@ -1975,10 +1975,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.13,
         "direction": "stable",
         "mentionVolume": 322,
-        "coverageConfidence": 0.65,
+        "coverageConfidence": 0.56,
         "platformBreakdown": {
           "fan_blog": 0.006,
           "bluesky": 0.047,
@@ -2040,7 +2040,7 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.08,
+            "score": 0.2,
             "count": 60
           },
           {
@@ -2050,7 +2050,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": -0.02,
+            "score": 0.03,
             "count": 45
           }
         ],
@@ -2177,7 +2177,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.32,
+            "score": 0.33,
             "count": 11
           },
           {
@@ -2244,10 +2244,10 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.22,
+        "score": 0.34,
         "direction": "stable",
         "mentionVolume": 8,
-        "coverageConfidence": 0.46,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "fan_blog": 0.375,
           "bluesky": 0.125,
@@ -2397,7 +2397,7 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.43,
+        "score": 0.4,
         "direction": "stable",
         "mentionVolume": 5,
         "coverageConfidence": 0.44,
@@ -2439,7 +2439,7 @@
         "fan": [
           {
             "date": "2026-10-01",
-            "score": 0.68,
+            "score": 0.69,
             "count": 3
           },
           {
@@ -2634,7 +2634,7 @@
       "window": "7d",
       "fan": {
         "polarity": "positive",
-        "score": 0.34,
+        "score": 0.32,
         "direction": "stable",
         "mentionVolume": 8,
         "coverageConfidence": 0.46,
@@ -2702,7 +2702,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": 0.8,
+            "score": 0.76,
             "count": 3
           }
         ],
@@ -3544,10 +3544,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.13,
         "direction": "stable",
         "mentionVolume": 72,
-        "coverageConfidence": 0.57,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.028,
           "bluesky": 0.097,
@@ -3606,17 +3606,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": -0.1,
+            "score": -0.22,
             "count": 10
           },
           {
             "date": "2026-10-02",
-            "score": 0.18,
+            "score": 0.15,
             "count": 48
           },
           {
             "date": "2026-10-03",
-            "score": 0.24,
+            "score": 0.28,
             "count": 14
           }
         ],
@@ -3830,10 +3830,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.13,
+        "score": 0.11,
         "direction": "rising",
         "mentionVolume": 110,
-        "coverageConfidence": 0.6,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.045,
           "bluesky": 0.218,
@@ -3975,12 +3975,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.21,
+            "score": 0.18,
             "count": 30
           },
           {
             "date": "2026-10-03",
-            "score": 0.11,
+            "score": 0.07,
             "count": 65
           }
         ],
@@ -4502,11 +4502,11 @@
       "teamKey": "18",
       "window": "7d",
       "fan": {
-        "polarity": "mixed",
-        "score": 0.19,
+        "polarity": "positive",
+        "score": 0.22,
         "direction": "stable",
         "mentionVolume": 48,
-        "coverageConfidence": 0.55,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "bluesky": 0.271,
           "youtube": 0.729
@@ -4555,12 +4555,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.16,
+            "score": 0.19,
             "count": 24
           },
           {
             "date": "2026-10-03",
-            "score": 0.19,
+            "score": 0.18,
             "count": 19
           }
         ],
@@ -4634,10 +4634,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.1,
         "direction": "stable",
         "mentionVolume": 140,
-        "coverageConfidence": 0.61,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
           "bluesky": 0.014,
           "youtube": 0.986
@@ -4688,12 +4688,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.12,
+            "score": 0.1,
             "count": 105
           },
           {
             "date": "2026-10-03",
-            "score": 0.2,
+            "score": 0.17,
             "count": 7
           }
         ],
@@ -5429,7 +5429,7 @@
         "score": 0.07,
         "direction": "stable",
         "mentionVolume": 178,
-        "coverageConfidence": 0.62,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.017,
           "bluesky": 0.011,
@@ -5500,17 +5500,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.08,
+            "score": 0.12,
             "count": 72
           },
           {
             "date": "2026-10-02",
-            "score": 0.05,
+            "score": -0.01,
             "count": 96
           },
           {
             "date": "2026-10-03",
-            "score": 0.19,
+            "score": 0.23,
             "count": 8
           }
         ],
@@ -5925,10 +5925,10 @@
       "window": "7d",
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.12,
         "direction": "falling",
         "mentionVolume": 191,
-        "coverageConfidence": 0.62,
+        "coverageConfidence": 0.5,
         "platformBreakdown": {
           "fan_blog": 0.016,
           "youtube": 0.984
@@ -6107,11 +6107,11 @@
       "teamKey": "8",
       "window": "7d",
       "fan": {
-        "polarity": "mixed",
-        "score": 0.14,
+        "polarity": "positive",
+        "score": 0.2,
         "direction": "stable",
         "mentionVolume": 104,
-        "coverageConfidence": 0.59,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "bluesky": 0.029,
           "youtube": 0.971
@@ -6165,12 +6165,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.33,
+            "score": 0.32,
             "count": 15
           },
           {
             "date": "2026-10-03",
-            "score": 0.25,
+            "score": 0.29,
             "count": 17
           }
         ],
@@ -6678,10 +6678,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.26,
         "direction": "stable",
         "mentionVolume": 12,
-        "coverageConfidence": 0.48,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
           "fan_blog": 0.25,
           "bluesky": 0.083,
@@ -6790,10 +6790,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.25,
         "direction": "stable",
         "mentionVolume": 22,
-        "coverageConfidence": 0.51,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "fan_blog": 0.045,
           "youtube": 0.955
@@ -6956,7 +6956,7 @@
         "fan": [
           {
             "date": "2026-09-29",
-            "score": -0.08,
+            "score": -0.01,
             "count": 6
           },
           {
@@ -6971,7 +6971,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.23,
+            "score": 0.21,
             "count": 3
           },
           {
@@ -7037,10 +7037,10 @@
       ],
       "fan": {
         "polarity": "neutral",
-        "score": -0.01,
+        "score": 0.06,
         "direction": "stable",
         "mentionVolume": 13,
-        "coverageConfidence": 0.49,
+        "coverageConfidence": 0.47,
         "platformBreakdown": {
           "fan_blog": 0.154,
           "youtube": 0.846
@@ -7085,7 +7085,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.64,
+            "score": 0.62,
             "count": 3
           },
           {
@@ -7158,7 +7158,7 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.45,
+        "score": 0.41,
         "direction": "stable",
         "mentionVolume": 6,
         "coverageConfidence": 0.45,
@@ -7475,17 +7475,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.19,
+            "score": 0.1,
             "count": 12
           },
           {
             "date": "2026-10-02",
-            "score": 0.15,
+            "score": 0.22,
             "count": 166
           },
           {
             "date": "2026-10-03",
-            "score": 0.02,
+            "score": 0.12,
             "count": 95
           }
         ],
@@ -7572,10 +7572,10 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.11,
+        "score": 0.19,
         "direction": "rising",
         "mentionVolume": 277,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.025,
           "bluesky": 0.076,
@@ -7637,7 +7637,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": 0.57,
+            "score": 0.62,
             "count": 4
           }
         ],
@@ -7714,7 +7714,7 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.37,
+        "score": 0.35,
         "direction": "stable",
         "mentionVolume": 8,
         "coverageConfidence": 0.46,
@@ -7913,12 +7913,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.19,
+            "score": 0.23,
             "count": 8
           },
           {
             "date": "2026-10-03",
-            "score": 0.25,
+            "score": 0.23,
             "count": 17
           }
         ],
@@ -8582,10 +8582,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.44,
+        "score": 0.42,
         "direction": "stable",
         "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "coverageConfidence": 0.42,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -8703,12 +8703,12 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.15,
+            "score": 0.25,
             "count": 5
           },
           {
             "date": "2026-10-02",
-            "score": 0.29,
+            "score": 0.33,
             "count": 9
           },
           {
@@ -8721,10 +8721,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.29,
+        "score": 0.35,
         "direction": "stable",
         "mentionVolume": 17,
-        "coverageConfidence": 0.5,
+        "coverageConfidence": 0.48,
         "platformBreakdown": {
           "fan_blog": 0.118,
           "bluesky": 0.059,
@@ -9245,17 +9245,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.08,
+            "score": 0.09,
             "count": 13
           },
           {
             "date": "2026-10-02",
-            "score": 0.11,
+            "score": 0.12,
             "count": 11
           },
           {
             "date": "2026-10-03",
-            "score": 0.21,
+            "score": 0.18,
             "count": 4
           }
         ],
@@ -9263,10 +9263,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.11,
         "direction": "stable",
         "mentionVolume": 30,
-        "coverageConfidence": 0.53,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
           "fan_blog": 0.067,
           "bluesky": 0.033,
@@ -9372,10 +9372,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.4,
+        "score": 0.37,
         "direction": "stable",
         "mentionVolume": 6,
-        "coverageConfidence": 0.45,
+        "coverageConfidence": 0.44,
         "platformBreakdown": {
           "fan_blog": 0.333,
           "youtube": 0.667
@@ -9524,7 +9524,7 @@
         "score": 0.08,
         "direction": "stable",
         "mentionVolume": 7,
-        "coverageConfidence": 0.46,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "fan_blog": 0.429,
           "bluesky": 0.143,
@@ -9838,10 +9838,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.18,
+        "score": 0.14,
         "direction": "stable",
         "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "coverageConfidence": 0.43,
         "platformBreakdown": {
           "fan_blog": 0.2,
           "youtube": 0.8
@@ -9885,7 +9885,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.65,
+            "score": 0.63,
             "count": 3
           }
         ],
@@ -9893,10 +9893,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.31,
+        "score": 0.3,
         "direction": "stable",
         "mentionVolume": 7,
-        "coverageConfidence": 0.46,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "fan_blog": 0.143,
           "bluesky": 0.286,
@@ -10158,11 +10158,11 @@
         "media": []
       },
       "fan": {
-        "polarity": "mixed",
-        "score": -0.09,
+        "polarity": "neutral",
+        "score": -0.07,
         "direction": "stable",
         "mentionVolume": 5,
-        "coverageConfidence": 0.44,
+        "coverageConfidence": 0.43,
         "platformBreakdown": {
           "bluesky": 0.2,
           "youtube": 0.8
@@ -10307,7 +10307,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": 0.43,
+            "score": 0.49,
             "count": 3
           }
         ],
@@ -10315,10 +10315,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.28,
         "direction": "stable",
         "mentionVolume": 8,
-        "coverageConfidence": 0.46,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "bluesky": 0.125,
           "youtube": 0.875
@@ -10353,7 +10353,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.61,
+            "score": 0.52,
             "count": 5
           },
           {
@@ -10366,10 +10366,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.41,
+        "score": 0.37,
         "direction": "stable",
         "mentionVolume": 9,
-        "coverageConfidence": 0.47,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -10409,7 +10409,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.12,
+            "score": 0.1,
             "count": 4
           }
         ],
@@ -10417,10 +10417,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.13,
         "direction": "stable",
         "mentionVolume": 8,
-        "coverageConfidence": 0.46,
+        "coverageConfidence": 0.45,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -10470,10 +10470,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.14,
+        "score": 0.12,
         "direction": "stable",
         "mentionVolume": 18,
-        "coverageConfidence": 0.5,
+        "coverageConfidence": 0.46,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -10523,10 +10523,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.08,
         "direction": "stable",
         "mentionVolume": 9,
-        "coverageConfidence": 0.47,
+        "coverageConfidence": 0.44,
         "platformBreakdown": {
           "youtube": 1
         },
@@ -10611,22 +10611,22 @@
           },
           {
             "date": "2026-09-29",
-            "score": 0.2,
+            "score": 0.32,
             "count": 7
           },
           {
             "date": "2026-09-30",
-            "score": 0.16,
+            "score": 0.2,
             "count": 5
           },
           {
             "date": "2026-10-01",
-            "score": 0.06,
+            "score": -0.06,
             "count": 10
           },
           {
             "date": "2026-10-02",
-            "score": 0.12,
+            "score": 0.06,
             "count": 7
           },
           {
@@ -10639,10 +10639,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.14,
+        "score": 0.13,
         "direction": "stable",
         "mentionVolume": 46,
-        "coverageConfidence": 0.55,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
           "fan_blog": 0.087,
           "bluesky": 0.239,
@@ -10681,27 +10681,27 @@
           },
           {
             "date": "2026-09-28",
-            "score": 0.18,
+            "score": 0.12,
             "count": 4
           },
           {
             "date": "2026-09-29",
-            "score": 0.25,
+            "score": 0.28,
             "count": 23
           },
           {
             "date": "2026-09-30",
-            "score": 0.04,
+            "score": 0.12,
             "count": 5
           },
           {
             "date": "2026-10-01",
-            "score": 0.37,
+            "score": 0.29,
             "count": 8
           },
           {
             "date": "2026-10-02",
-            "score": -0.11,
+            "score": -0.13,
             "count": 4
           },
           {
@@ -10790,7 +10790,7 @@
         "score": 0.24,
         "direction": "stable",
         "mentionVolume": 49,
-        "coverageConfidence": 0.55,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.245,
           "bluesky": 0.02,
@@ -10823,10 +10823,10 @@
       "source": "team_observation",
       "fan": {
         "polarity": "positive",
-        "score": 0.2,
+        "score": 0.21,
         "direction": "stable",
         "mentionVolume": 116,
-        "coverageConfidence": 0.6,
+        "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.121,
           "bluesky": 0.31,
@@ -10900,22 +10900,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.19,
+            "score": 0.22,
             "count": 13
           },
           {
             "date": "2026-10-01",
-            "score": 0.22,
+            "score": 0.2,
             "count": 31
           },
           {
             "date": "2026-10-02",
-            "score": 0.15,
+            "score": 0.16,
             "count": 37
           },
           {
             "date": "2026-10-03",
-            "score": 0.25,
+            "score": 0.29,
             "count": 34
           }
         ],
@@ -11027,7 +11027,7 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.14,
+            "score": 0.16,
             "count": 12
           },
           {
@@ -11094,10 +11094,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.23,
+        "score": 0.24,
         "direction": "stable",
         "mentionVolume": 27,
-        "coverageConfidence": 0.52,
+        "coverageConfidence": 0.49,
         "platformBreakdown": {
           "fan_blog": 0.185,
           "bluesky": 0.074,
@@ -11250,7 +11250,7 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.38,
+            "score": 0.4,
             "count": 7
           },
           {
@@ -11260,12 +11260,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.14,
+            "score": 0.08,
             "count": 66
           },
           {
             "date": "2026-10-03",
-            "score": 0.08,
+            "score": 0.21,
             "count": 34
           }
         ],
@@ -11343,11 +11343,11 @@
         }
       ],
       "fan": {
-        "polarity": "mixed",
-        "score": 0.17,
-        "direction": "falling",
+        "polarity": "positive",
+        "score": 0.25,
+        "direction": "stable",
         "mentionVolume": 129,
-        "coverageConfidence": 0.6,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.186,
           "bluesky": 0.016,
@@ -11381,10 +11381,10 @@
       "provenance": "generated",
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.22,
         "direction": "stable",
         "mentionVolume": 41,
-        "coverageConfidence": 0.54,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.268,
           "bluesky": 0.195,
@@ -11460,12 +11460,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.2,
+            "score": 0.08,
             "count": 9
           },
           {
             "date": "2026-10-03",
-            "score": 0.35,
+            "score": 0.42,
             "count": 19
           }
         ],
@@ -11536,7 +11536,7 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.18,
+            "score": 0.15,
             "count": 14
           },
           {
@@ -11546,12 +11546,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.13,
+            "score": 0.2,
             "count": 20
           },
           {
             "date": "2026-10-03",
-            "score": 0.23,
+            "score": 0.27,
             "count": 54
           }
         ],
@@ -11559,10 +11559,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.18,
+        "score": 0.19,
         "direction": "stable",
         "mentionVolume": 113,
-        "coverageConfidence": 0.6,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
           "fan_blog": 0.097,
           "bluesky": 0.018,
@@ -11713,17 +11713,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.06,
+            "score": 0.13,
             "count": 45
           },
           {
             "date": "2026-10-02",
-            "score": 0.07,
+            "score": 0.1,
             "count": 125
           },
           {
             "date": "2026-10-03",
-            "score": 0.13,
+            "score": 0.19,
             "count": 66
           }
         ],
@@ -11798,10 +11798,10 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.1,
+        "score": 0.17,
         "direction": "stable",
         "mentionVolume": 254,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.102,
           "bluesky": 0.02,
@@ -11900,17 +11900,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.03,
+            "score": 0.08,
             "count": 54
           },
           {
             "date": "2026-10-02",
-            "score": 0.19,
+            "score": 0.28,
             "count": 143
           },
           {
             "date": "2026-10-03",
-            "score": 0.17,
+            "score": 0.33,
             "count": 62
           }
         ],
@@ -12007,11 +12007,11 @@
         }
       ],
       "fan": {
-        "polarity": "mixed",
-        "score": 0.15,
+        "polarity": "positive",
+        "score": 0.26,
         "direction": "rising",
         "mentionVolume": 268,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.58,
         "platformBreakdown": {
           "fan_blog": 0.015,
           "bluesky": 0.134,
@@ -12049,10 +12049,10 @@
       "provenance": "generated",
       "fan": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.14,
         "direction": "stable",
         "mentionVolume": 273,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.04,
           "bluesky": 0.066,
@@ -12119,22 +12119,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.23,
+            "score": 0.2,
             "count": 20
           },
           {
             "date": "2026-10-01",
-            "score": 0.21,
+            "score": 0.25,
             "count": 101
           },
           {
             "date": "2026-10-02",
-            "score": 0.09,
+            "score": 0.1,
             "count": 84
           },
           {
             "date": "2026-10-03",
-            "score": 0.11,
+            "score": 0.1,
             "count": 66
           }
         ],
@@ -12485,7 +12485,7 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.32,
+            "score": 0.3,
             "count": 30
           },
           {
@@ -12495,7 +12495,7 @@
           },
           {
             "date": "2026-10-03",
-            "score": 0.28,
+            "score": 0.31,
             "count": 24
           }
         ],
@@ -12559,7 +12559,7 @@
         "score": 0.25,
         "direction": "rising",
         "mentionVolume": 86,
-        "coverageConfidence": 0.58,
+        "coverageConfidence": 0.54,
         "platformBreakdown": {
           "fan_blog": 0.163,
           "bluesky": 0.081,
@@ -12726,22 +12726,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": -0.11,
+            "score": -0.12,
             "count": 12
           },
           {
             "date": "2026-10-01",
-            "score": 0.16,
+            "score": 0.19,
             "count": 30
           },
           {
             "date": "2026-10-02",
-            "score": 0.12,
+            "score": 0.1,
             "count": 14
           },
           {
             "date": "2026-10-03",
-            "score": -0.2,
+            "score": -0.19,
             "count": 4
           }
         ],
@@ -12837,10 +12837,10 @@
       ],
       "fan": {
         "polarity": "neutral",
-        "score": 0.06,
+        "score": 0.03,
         "direction": "falling",
         "mentionVolume": 69,
-        "coverageConfidence": 0.57,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.203,
           "bluesky": 0.188,
@@ -12876,7 +12876,7 @@
         "score": 0.13,
         "direction": "stable",
         "mentionVolume": 292,
-        "coverageConfidence": 0.65,
+        "coverageConfidence": 0.59,
         "platformBreakdown": {
           "fan_blog": 0.045,
           "bluesky": 0.12,
@@ -12938,22 +12938,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.25,
+            "score": 0.23,
             "count": 64
           },
           {
             "date": "2026-10-01",
-            "score": 0.23,
+            "score": 0.22,
             "count": 39
           },
           {
             "date": "2026-10-02",
-            "score": 0.07,
+            "score": 0.05,
             "count": 140
           },
           {
             "date": "2026-10-03",
-            "score": 0.09,
+            "score": 0.17,
             "count": 49
           }
         ],
@@ -13080,22 +13080,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.37,
+            "score": 0.29,
             "count": 7
           },
           {
             "date": "2026-10-01",
-            "score": 0.18,
+            "score": 0.23,
             "count": 5
           },
           {
             "date": "2026-10-02",
-            "score": 0.22,
+            "score": 0.18,
             "count": 4
           },
           {
             "date": "2026-10-03",
-            "score": 0.18,
+            "score": 0.24,
             "count": 7
           }
         ],
@@ -13103,10 +13103,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.28,
+        "score": 0.26,
         "direction": "stable",
         "mentionVolume": 33,
-        "coverageConfidence": 0.53,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
           "fan_blog": 0.061,
           "bluesky": 0.242,
@@ -13266,17 +13266,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": -0.08,
+            "score": -0.07,
             "count": 7
           },
           {
             "date": "2026-10-02",
-            "score": -0.12,
+            "score": -0.11,
             "count": 18
           },
           {
             "date": "2026-10-03",
-            "score": 0.09,
+            "score": 0.03,
             "count": 28
           }
         ],
@@ -13346,10 +13346,10 @@
       ],
       "fan": {
         "polarity": "neutral",
-        "score": 0.03,
-        "direction": "stable",
+        "score": 0.01,
+        "direction": "falling",
         "mentionVolume": 67,
-        "coverageConfidence": 0.57,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.328,
           "bluesky": 0.269,
@@ -13415,17 +13415,17 @@
           },
           {
             "date": "2026-09-30",
-            "score": 0.49,
+            "score": 0.44,
             "count": 9
           },
           {
             "date": "2026-10-01",
-            "score": 0.45,
+            "score": 0.42,
             "count": 17
           },
           {
             "date": "2026-10-02",
-            "score": 0.31,
+            "score": 0.24,
             "count": 13
           },
           {
@@ -13507,10 +13507,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.37,
+        "score": 0.3,
         "direction": "stable",
         "mentionVolume": 49,
-        "coverageConfidence": 0.55,
+        "coverageConfidence": 0.53,
         "platformBreakdown": {
           "fan_blog": 0.245,
           "bluesky": 0.163,
@@ -13543,10 +13543,10 @@
       "provenance": "generated",
       "fan": {
         "polarity": "positive",
-        "score": 0.25,
+        "score": 0.21,
         "direction": "stable",
         "mentionVolume": 236,
-        "coverageConfidence": 0.63,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.047,
           "bluesky": 0.03,
@@ -13623,17 +13623,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.16,
+            "score": 0.14,
             "count": 64
           },
           {
             "date": "2026-10-02",
-            "score": 0.31,
+            "score": 0.23,
             "count": 121
           },
           {
             "date": "2026-10-03",
-            "score": 0.18,
+            "score": 0.17,
             "count": 45
           }
         ],
@@ -13844,17 +13844,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.33,
+            "score": 0.32,
             "count": 9
           },
           {
             "date": "2026-10-02",
-            "score": 0.18,
+            "score": 0.19,
             "count": 24
           },
           {
             "date": "2026-10-03",
-            "score": 0.19,
+            "score": 0.13,
             "count": 18
           }
         ],
@@ -13862,10 +13862,10 @@
       },
       "fan": {
         "polarity": "positive",
-        "score": 0.22,
+        "score": 0.21,
         "direction": "rising",
         "mentionVolume": 54,
-        "coverageConfidence": 0.56,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.148,
           "bluesky": 0.111,
@@ -13897,11 +13897,11 @@
       "window": "7d",
       "source": "team_observation",
       "fan": {
-        "polarity": "mixed",
-        "score": 0.16,
+        "polarity": "positive",
+        "score": 0.21,
         "direction": "stable",
         "mentionVolume": 251,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.59,
         "platformBreakdown": {
           "fan_blog": 0.06,
           "bluesky": 0.167,
@@ -14000,17 +14000,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.07,
+            "score": 0.16,
             "count": 37
           },
           {
             "date": "2026-10-02",
-            "score": 0.15,
+            "score": 0.22,
             "count": 121
           },
           {
             "date": "2026-10-03",
-            "score": 0.19,
+            "score": 0.22,
             "count": 85
           }
         ],
@@ -14094,10 +14094,10 @@
       "source": "team_observation",
       "fan": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.18,
         "direction": "stable",
         "mentionVolume": 64,
-        "coverageConfidence": 0.57,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.453,
           "bluesky": 0.031,
@@ -14239,22 +14239,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": -0.07,
+            "score": -0.05,
             "count": 7
           },
           {
             "date": "2026-10-01",
-            "score": 0.16,
+            "score": 0.29,
             "count": 22
           },
           {
             "date": "2026-10-02",
-            "score": 0.3,
+            "score": 0.33,
             "count": 15
           },
           {
             "date": "2026-10-03",
-            "score": -0.3,
+            "score": -0.38,
             "count": 4
           }
         ],
@@ -14420,17 +14420,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.2,
+            "score": 0.17,
             "count": 14
           },
           {
             "date": "2026-10-02",
-            "score": 0.23,
+            "score": 0.09,
             "count": 18
           },
           {
             "date": "2026-10-03",
-            "score": 0.02,
+            "score": 0.07,
             "count": 9
           }
         ],
@@ -14438,10 +14438,10 @@
       },
       "fan": {
         "polarity": "mixed",
-        "score": 0.18,
+        "score": 0.14,
         "direction": "falling",
         "mentionVolume": 52,
-        "coverageConfidence": 0.56,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.231,
           "youtube": 0.769
@@ -14490,27 +14490,27 @@
           },
           {
             "date": "2026-09-29",
-            "score": -0.14,
+            "score": -0.08,
             "count": 6
           },
           {
             "date": "2026-09-30",
-            "score": 0.02,
+            "score": -0.03,
             "count": 9
           },
           {
             "date": "2026-10-01",
-            "score": 0.13,
+            "score": 0.21,
             "count": 19
           },
           {
             "date": "2026-10-02",
-            "score": 0.15,
+            "score": 0.14,
             "count": 92
           },
           {
             "date": "2026-10-03",
-            "score": 0.2,
+            "score": 0.17,
             "count": 117
           }
         ],
@@ -14598,10 +14598,10 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.16,
+        "score": 0.15,
         "direction": "stable",
         "mentionVolume": 247,
-        "coverageConfidence": 0.64,
+        "coverageConfidence": 0.6,
         "platformBreakdown": {
           "fan_blog": 0.053,
           "bluesky": 0.332,
@@ -14654,12 +14654,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.18,
+            "score": 0.26,
             "count": 18
           },
           {
             "date": "2026-10-03",
-            "score": 0.27,
+            "score": 0.22,
             "count": 27
           }
         ],
@@ -14728,10 +14728,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.21,
+        "score": 0.2,
         "direction": "stable",
         "mentionVolume": 55,
-        "coverageConfidence": 0.56,
+        "coverageConfidence": 0.52,
         "platformBreakdown": {
           "fan_blog": 0.2,
           "bluesky": 0.055,
@@ -14776,17 +14776,17 @@
           },
           {
             "date": "2026-10-01",
-            "score": 0.26,
+            "score": 0.21,
             "count": 39
           },
           {
             "date": "2026-10-02",
-            "score": 0.25,
+            "score": 0.03,
             "count": 67
           },
           {
             "date": "2026-10-03",
-            "score": -0.06,
+            "score": -0.16,
             "count": 24
           }
         ],
@@ -14869,11 +14869,11 @@
         }
       ],
       "fan": {
-        "polarity": "mixed",
-        "score": 0.19,
+        "polarity": "neutral",
+        "score": 0.01,
         "direction": "stable",
         "mentionVolume": 131,
-        "coverageConfidence": 0.6,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.084,
           "bluesky": 0.13,
@@ -15041,27 +15041,27 @@
           },
           {
             "date": "2026-09-29",
-            "score": -0.12,
+            "score": -0.06,
             "count": 7
           },
           {
             "date": "2026-09-30",
-            "score": 0.1,
+            "score": 0.07,
             "count": 7
           },
           {
             "date": "2026-10-01",
-            "score": -0.03,
+            "score": 0.01,
             "count": 5
           },
           {
             "date": "2026-10-02",
-            "score": 0.21,
+            "score": 0.23,
             "count": 20
           },
           {
             "date": "2026-10-03",
-            "score": 0.01,
+            "score": -0.02,
             "count": 7
           }
         ],
@@ -15072,7 +15072,7 @@
         "score": 0.09,
         "direction": "stable",
         "mentionVolume": 51,
-        "coverageConfidence": 0.56,
+        "coverageConfidence": 0.54,
         "platformBreakdown": {
           "fan_blog": 0.373,
           "bluesky": 0.078,
@@ -15146,12 +15146,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.2,
+            "score": 0.1,
             "count": 69
           },
           {
             "date": "2026-10-03",
-            "score": 0.09,
+            "score": 0.11,
             "count": 73
           }
         ],
@@ -15231,10 +15231,10 @@
       ],
       "fan": {
         "polarity": "mixed",
-        "score": 0.16,
+        "score": 0.15,
         "direction": "stable",
         "mentionVolume": 184,
-        "coverageConfidence": 0.62,
+        "coverageConfidence": 0.56,
         "platformBreakdown": {
           "fan_blog": 0.071,
           "bluesky": 0.06,
@@ -15321,22 +15321,22 @@
           },
           {
             "date": "2026-09-30",
-            "score": -0.01,
+            "score": -0.03,
             "count": 14
           },
           {
             "date": "2026-10-01",
-            "score": 0.23,
+            "score": 0.32,
             "count": 39
           },
           {
             "date": "2026-10-02",
-            "score": 0.21,
+            "score": 0.22,
             "count": 28
           },
           {
             "date": "2026-10-03",
-            "score": 0.12,
+            "score": 0.2,
             "count": 60
           }
         ],
@@ -15437,11 +15437,11 @@
         }
       ],
       "fan": {
-        "polarity": "mixed",
-        "score": 0.17,
+        "polarity": "positive",
+        "score": 0.24,
         "direction": "rising",
         "mentionVolume": 201,
-        "coverageConfidence": 0.63,
+        "coverageConfidence": 0.57,
         "platformBreakdown": {
           "fan_blog": 0.05,
           "bluesky": 0.154,
@@ -15520,12 +15520,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.22,
+            "score": 0.25,
             "count": 14
           },
           {
             "date": "2026-10-03",
-            "score": 0.26,
+            "score": 0.25,
             "count": 30
           }
         ],
@@ -15586,10 +15586,10 @@
       ],
       "fan": {
         "polarity": "positive",
-        "score": 0.26,
+        "score": 0.28,
         "direction": "stable",
         "mentionVolume": 51,
-        "coverageConfidence": 0.56,
+        "coverageConfidence": 0.51,
         "platformBreakdown": {
           "fan_blog": 0.196,
           "bluesky": 0.039,
@@ -15622,12 +15622,12 @@
         "fan": [
           {
             "date": "2026-09-29",
-            "score": 0.29,
+            "score": 0.34,
             "count": 4
           },
           {
             "date": "2026-09-30",
-            "score": 0.09,
+            "score": 0.08,
             "count": 13
           },
           {
@@ -15637,12 +15637,12 @@
           },
           {
             "date": "2026-10-02",
-            "score": 0.07,
+            "score": 0.06,
             "count": 75
           },
           {
             "date": "2026-10-03",
-            "score": 0.08,
+            "score": 0.17,
             "count": 112
           }
         ],
@@ -15729,11 +15729,11 @@
         }
       ],
       "fan": {
-        "polarity": "neutral",
-        "score": 0.07,
+        "polarity": "mixed",
+        "score": 0.09,
         "direction": "stable",
         "mentionVolume": 213,
-        "coverageConfidence": 0.63,
+        "coverageConfidence": 0.55,
         "platformBreakdown": {
           "fan_blog": 0.038,
           "bluesky": 0.019,
@@ -16327,10 +16327,10 @@
     "fanMood": {
       "lane": {
         "polarity": "mixed",
-        "score": 0.15,
+        "score": 0.17,
         "direction": "stable",
         "mentionVolume": 5353,
-        "coverageConfidence": 0.8,
+        "coverageConfidence": 0.73,
         "platformBreakdown": {
           "fan_blog": 0.067,
           "bluesky": 0.123,
@@ -16479,37 +16479,37 @@
         },
         {
           "date": "2026-09-27",
-          "score": 0.25,
+          "score": 0.24,
           "count": 33
         },
         {
           "date": "2026-09-28",
-          "score": 0.26,
+          "score": 0.27,
           "count": 72
         },
         {
           "date": "2026-09-29",
-          "score": 0.17,
+          "score": 0.18,
           "count": 152
         },
         {
           "date": "2026-09-30",
-          "score": 0.19,
+          "score": 0.18,
           "count": 252
         },
         {
           "date": "2026-10-01",
-          "score": 0.15,
+          "score": 0.19,
           "count": 981
         },
         {
           "date": "2026-10-02",
-          "score": 0.15,
+          "score": 0.14,
           "count": 2190
         },
         {
           "date": "2026-10-03",
-          "score": 0.13,
+          "score": 0.16,
           "count": 1670
         }
       ]

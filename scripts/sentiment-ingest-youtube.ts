@@ -138,6 +138,7 @@ async function main() {
         // League channels have no home team, so a comment that names nobody
         // borrows the video title's subject when the title names one player.
         const titleEntities = channel.teamId ? null : resolve(video.snippet?.title ?? "");
+        const videoHash = createHash("sha1").update(video.contentDetails.videoId).digest("hex").slice(0, 16);
         const threads: CommentThread[] = [];
         let pageToken: string | undefined;
         try {
@@ -181,6 +182,7 @@ async function main() {
             id,
             platform: "youtube",
             source: channel.channelId,
+            thread: videoHash,
             createdAt: new Date(comment.publishedAt).toISOString(),
             fetchedAt,
             score: tone.score,

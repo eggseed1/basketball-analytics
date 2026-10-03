@@ -368,6 +368,10 @@ function fanPostsToScored(
     playerIds: row.playerIds,
     teamIds: row.teamIds,
     platform,
+    // Rows from before video ids were kept fall back to channel + day.
+    ...(row.platform === "youtube"
+      ? { conversation: row.thread ?? `${row.source}|${row.createdAt.slice(0, 10)}` }
+      : {}),
   }));
 }
 

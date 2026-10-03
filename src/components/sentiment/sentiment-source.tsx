@@ -160,7 +160,9 @@ export function SentimentSourcesStrip({
                   Fan lanes. {fans.itemCount.toLocaleString()} fan posts: {fanPartsText(fans)},{" "}
                   {formatSentimentDate(fans.firstDate)} to {formatSentimentDate(fans.asOf)}.
                   {fans.platforms.reddit ? "" : " Reddit isn't connected yet."} A player or team needs{" "}
-                  {fans.floor} posts in the last 7 days to get a score. Tone comes from a word list
+                  {fans.floor} posts in the last 7 days to get a score. Comments under the same
+                  video share weight, so 100 comments on one video count for less than 100 posts
+                  spread across many places. Tone comes from a word list
                   with extra fan slang that hasn&apos;t been checked against hand labels, so read it
                   as rough.
                 </span>
