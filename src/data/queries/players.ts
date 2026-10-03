@@ -1644,10 +1644,17 @@ export async function attachDrblToPlayerSeasons(
     seasons = [...seasons].sort((a, b) => b.localeCompare(a)).slice(0, 8);
   }
 
-  const [aliases, routeNbaId] = await Promise.all([
+  const { nbaPersonIdFromPlayerRoute } = await import(
+    "@/data/runtime/legend-nba-to-bref"
+  );
+  // Award winners route as `bref:slug`; only map those, never bare numeric ids.
+  const brefNbaId = (id: string) =>
+    id.toLowerCase().startsWith("bref:") ? nbaPersonIdFromPlayerRoute(id) : null;
+  const [aliases, resolvedRouteNbaId] = await Promise.all([
     getPlayerIdAliasIndex(),
     resolveNbaIdForDrbl(playerId).catch(() => null),
   ]);
+  const routeNbaId = resolvedRouteNbaId ?? brefNbaId(playerId);
   const overlays = await Promise.all(
     seasons.map(async (season) => {
       const drblRows = await fetchDrblSeason(season).catch(() => []);
@@ -1662,6 +1669,7 @@ export async function attachDrblToPlayerSeasons(
     const has = (id: string) => map.has(id);
     const rowId = String(row.playerId ?? "").trim();
     // Historical career rows carry `bref:slug` ids, so fall back to the route id.
+    const rowBrefNbaId = brefNbaId(rowId);
     const nbaId =
       nbaIdForKnownArtifact(
         { playerId: rowId || playerId, playerName: row.playerName },
@@ -1675,7 +1683,8 @@ export async function attachDrblToPlayerSeasons(
             aliases
           )
         : null) ??
-      (routeNbaId && has(routeNbaId) ? routeNbaId : null);
+      (routeNbaId && has(routeNbaId) ? routeNbaId : null) ??
+      (rowBrefNbaId && has(rowBrefNbaId) ? rowBrefNbaId : null);
     const drbl = nbaId ? map.get(nbaId) : undefined;
     if (!drbl) return row;
     return {
