@@ -6,10 +6,10 @@
  *
  *   YOUTUBE_API_KEY=... npm run sentiment:ingest:youtube
  *
- * One quota unit per uploads list and per comment page: about 6 per official
- * team channel, 8 per team fan channel and 31 per league channel, roughly
- * 1,300 of the free 10,000 daily units. Without a key the script prints a
- * notice and exits 0.
+ * One quota unit per uploads list and per comment page: at most 21 per team
+ * channel and 76 per league channel, about 4,600 of the free 10,000 daily
+ * units if every video has that many comments (most don't). Without a key
+ * the script prints a notice and exits 0.
  */
 
 import { createHash } from "node:crypto";
@@ -29,7 +29,9 @@ type YoutubeConfig = {
   videosPerChannel: number;
   maxVideoAgeDays: number;
   commentsPerVideo: number;
+  officialCommentPagesPerVideo?: number;
   teamFanVideosPerChannel: number;
+  teamFanCommentPagesPerVideo?: number;
   leagueVideosPerChannel: number;
   leagueCommentPagesPerVideo: number;
   channels: { teamId: string; channelId: string; name: string }[];
@@ -119,7 +121,7 @@ async function main() {
       name: c.name,
       teamId: c.teamId,
       videos: config.videosPerChannel,
-      pages: 1,
+      pages: config.officialCommentPagesPerVideo ?? 1,
       multiSport: false,
     })),
     ...(config.teamFanChannels ?? []).map((c) => ({
@@ -127,7 +129,7 @@ async function main() {
       name: c.name,
       teamId: c.teamId,
       videos: config.teamFanVideosPerChannel,
-      pages: 1,
+      pages: config.teamFanCommentPagesPerVideo ?? 1,
       multiSport: false,
     })),
     ...(config.leagueChannels ?? []).map((c) => ({
