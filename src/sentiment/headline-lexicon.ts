@@ -172,12 +172,13 @@ const NEGATORS = new Set([
   "cannot",
 ]);
 
-export const FAN_LEXICON_VERSION = "fan-lexicon-v1";
+export const FAN_LEXICON_VERSION = "fan-lexicon-v1.1";
 
 /**
  * Fan chatter on top of the headline list. Hype words AFINN reads as negative
- * ("insane dunk", "sick pass") go to 0, laughter is too often mockery to
- * count, and common fan insults get a score.
+ * ("insane dunk", "sick pass") go to 0, profanity used as an intensifier
+ * ("fucking awesome") carries no tone of its own, laughter is too often
+ * mockery to count, and common fan insults get a score.
  */
 const FAN_OVERRIDES: Record<string, number> = {
   insane: 0,
@@ -189,6 +190,10 @@ const FAN_OVERRIDES: Record<string, number> = {
   lol: 0,
   lmao: 0,
   haha: 0,
+  fucking: 0,
+  fuckin: 0,
+  tough: 0,
+  hard: 0,
   washed: -2,
   frauds: -2,
   bum: -2,
