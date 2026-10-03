@@ -127,8 +127,10 @@ export function MetricHelp({
   }
 
   const label = children ?? concept.shortName;
+  // A <button> can't sit inside the sortable header or row button that nests this.
+  const Trigger = nestable ? "span" : "button";
 
-  function onKeyDown(e: KeyboardEvent<HTMLButtonElement>) {
+  function onKeyDown(e: KeyboardEvent<HTMLElement>) {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
       setOpen((v) => !v);
@@ -142,8 +144,8 @@ export function MetricHelp({
       onMouseEnter={cancelClose}
       onMouseLeave={scheduleClose}
     >
-      <button
-        type="button"
+      <Trigger
+        {...(nestable ? { role: "button" } : { type: "button" as const })}
         tabIndex={nestable ? -1 : undefined}
         className={cn(
           "inline-flex max-w-full items-baseline gap-0.5 rounded-sm text-left underline decoration-dotted decoration-muted-foreground/70 underline-offset-2 hover:decoration-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -158,7 +160,7 @@ export function MetricHelp({
         onFocus={nestable ? undefined : () => setOpen(true)}
       >
         {label}
-      </button>
+      </Trigger>
       {open && panelStyle
         ? createPortal(
             <FrostFloatingSurface
