@@ -26,6 +26,11 @@ const nextConfig: NextConfig = {
         destination: "/learn/drbl/war1",
         permanent: true,
       },
+      {
+        source: "/explore/players/windows",
+        destination: "/explore/players/hot-cold",
+        permanent: true,
+      },
     ];
   },
   images: {

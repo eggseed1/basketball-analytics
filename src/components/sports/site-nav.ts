@@ -71,12 +71,12 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
           p.startsWith("/explore/players") &&
           !p.startsWith("/explore/players/race") &&
           !p.startsWith("/explore/players/visualizations") &&
-          !p.startsWith("/explore/players/windows"),
+          !p.startsWith("/explore/players/hot-cold"),
       },
       {
-        href: "/explore/players/windows",
-        label: "Stat Detective",
-        match: (p) => p.startsWith("/explore/players/windows"),
+        href: "/explore/players/hot-cold",
+        label: "Hot & Cold",
+        match: (p) => p.startsWith("/explore/players/hot-cold"),
       },
       {
         href: "/explore/players/visualizations",

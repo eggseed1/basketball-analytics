@@ -1,5 +1,5 @@
 /**
- * YoY impact movers from season-keyed boards (Stat Detective lite).
+ * YoY impact movers from season-keyed boards (Hot & Cold lite).
  * Never invents deltas across mismatched metrics or missing seasons.
  */
 

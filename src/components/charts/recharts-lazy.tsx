@@ -145,14 +145,6 @@ export const PlayerCareerResumeLazy = dynamic(
   { ssr: false, loading: () => pulse }
 );
 
-export const StatDetectiveDivergenceLazy = dynamic(
-  () =>
-    import("@/components/charts/stat-detective-divergence-chart").then((m) => ({
-      default: m.StatDetectiveDivergenceChart,
-    })),
-  { ssr: false, loading: () => pulse }
-);
-
 export const AskLeaderboardChartLazy = dynamic(
   () =>
     import("@/components/charts/ask-leaderboard-chart").then((m) => ({

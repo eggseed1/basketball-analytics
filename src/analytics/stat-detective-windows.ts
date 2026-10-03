@@ -59,9 +59,9 @@ export const STAT_WINDOWS: Record<
   }
 > = {
   last5: {
-    label: "Last 5 vs season",
-    question: "Who's heating up right now?",
-    note: "Last 5 regular-season games compared with that player's season average.",
+    label: "Last 5",
+    question: "Biggest swings over the last 5 games",
+    note: "Each player's last 5 regular-season games against his own season average.",
     baselineLabel: "Season avg",
     windowLabel: "Last 5",
     minAbsPpg: 3,
@@ -69,9 +69,9 @@ export const STAT_WINDOWS: Record<
     minAbsRpg: 2,
   },
   last10: {
-    label: "Last 10 vs season",
-    question: "Is the surge (or slump) sticking?",
-    note: "Last 10 regular-season games compared with that player's season average.",
+    label: "Last 10",
+    question: "Biggest swings over the last 10 games",
+    note: "Each player's last 10 regular-season games against his own season average. A longer stretch is less noisy.",
     baselineLabel: "Season avg",
     windowLabel: "Last 10",
     minAbsPpg: 2,
@@ -80,8 +80,8 @@ export const STAT_WINDOWS: Record<
   },
   split5: {
     label: "Last 5 vs prior 5",
-    question: "Who just flipped?",
-    note: "Last 5 regular-season games compared with the 5 before them, with no overlap.",
+    question: "Biggest swings from one 5-game stretch to the next",
+    note: "Each player's last 5 regular-season games against the 5 before them, with no overlap.",
     baselineLabel: "Prior 5",
     windowLabel: "Last 5",
     minAbsPpg: 3,

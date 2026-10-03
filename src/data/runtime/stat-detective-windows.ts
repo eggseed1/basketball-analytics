@@ -49,6 +49,8 @@ type SnapshotWindow = SnapshotBoard & {
 type SnapshotFile = {
   generatedAt?: string;
   season?: string;
+  /** Last regular-season game date in the logs behind the boards. */
+  throughDate?: string | null;
   source?: string;
   windows?: Partial<Record<StatWindowId, SnapshotWindow>>;
 };
@@ -63,6 +65,10 @@ function rows(value: StatDetectiveRow[] | undefined): StatDetectiveRow[] {
 export function statDetectiveSeason(): string | null {
   const season = data.season?.trim();
   return season || null;
+}
+
+export function statDetectiveThroughDate(): string | null {
+  return data.throughDate?.trim() || null;
 }
 
 function boardFor(

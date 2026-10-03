@@ -10,7 +10,7 @@ import { Suspense } from "react";
 
 import { AnalyticsDesk } from "@/components/home/analytics-desk";
 import { AppLink } from "@/components/ui/app-link";
-import { StatDetectiveLists } from "@/components/explore/stat-detective-panel";
+import { HotColdColumns } from "@/components/explore/hot-cold-board";
 import { FindingsSection } from "@/components/home/findings-section";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
@@ -63,7 +63,7 @@ async function HomeTopPerformers() {
   );
 }
 
-async function HomeStatDetective() {
+async function HomeHotCold() {
   const { statDetectiveSeason, statDetectiveWindow } = await import(
     "@/data/runtime/stat-detective-windows"
   );
@@ -74,26 +74,20 @@ async function HomeStatDetective() {
     <section className="sports-card flex flex-col gap-3 p-4">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 className="type-heading">Stat Detective</h2>
+          <h2 className="type-heading">Hot & Cold</h2>
           <p className="type-body-sm text-muted-foreground">
-            Players scoring well above or below their own {season} average
-            over the last five games. TS% and rebounds are on Detective.
+            Scoring over the last 5 games of {season} against each
+            player&apos;s own season average. Rows read season avg → last 5.
           </p>
         </div>
         <AppLink
-          href="/explore/players/windows"
+          href="/explore/players/hot-cold"
           className="text-[13px] font-semibold underline-offset-4 hover:underline"
         >
-          Open Detective →
+          Open Hot & Cold →
         </AppLink>
       </div>
-      <StatDetectiveLists
-        risers={window.risers}
-        fallers={window.fallers}
-        limit={4}
-        baselineLabel={window.baselineLabel}
-        windowLabel={window.windowLabel}
-      />
+      <HotColdColumns risers={window.risers} fallers={window.fallers} limit={4} />
     </section>
   );
 }
@@ -157,7 +151,7 @@ export default function HomePage() {
       </div>
 
       <Suspense fallback={<BlockSkeleton className="h-40" />}>
-        <HomeStatDetective />
+        <HomeHotCold />
       </Suspense>
       <Suspense fallback={<BlockSkeleton className="h-40" />}>
         <HomeFindings />

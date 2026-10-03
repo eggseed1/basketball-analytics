@@ -117,6 +117,7 @@ function main() {
     buckets.set(id, metricMap);
   }
 
+  let throughDate = "";
   for (const file of fs.readdirSync(dir)) {
     if (!file.endsWith(".json")) continue;
     const payload = JSON.parse(
@@ -152,6 +153,9 @@ function main() {
         teamAbbr: game.teamAbbr ? String(game.teamAbbr) : "",
       };
     });
+    for (const game of games) {
+      if (game.seasonType === "regular" && game.date > throughDate) throughDate = game.date;
+    }
     const deltas = playerWindowDeltas(games);
     const teamAbbr =
       [...games]
@@ -200,6 +204,7 @@ function main() {
   const snapshot = {
     generatedAt: new Date().toISOString(),
     season,
+    throughDate: throughDate || null,
     source: "regular-season game logs",
     windows: packed,
   };

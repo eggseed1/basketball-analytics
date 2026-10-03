@@ -22,7 +22,7 @@
 | Lineup Lab | **Missing** | Blocked on lineup minutes source |
 | Game Lab | **Partial** | Box “What decided” narrative + PBP flow + possession explorer via `getGamePossessions` |
 | Historical Time Machine | **Shipped** | `/history` discovery landing, era chips, landmarks, destination-aware explore |
-| Stat Detective | **Shipped** | `/explore/players/windows` — PPG / TS% / RPG boards + divergence chart |
+| Hot & Cold (was Stat Detective) | **Shipped** | `/explore/players/hot-cold` — PPG / TS% / RPG boards |
 | Automated Discovery / Home | **Partial** | Home findings rail (leaders + YoY); more discovery modes optional |
 | Ask the NBA / NL → AST | **Shipped** | `/ask` constrained AST → executors; rank/compare viz; player entry points |
 | Offseason tracker | **Shipped** | `/offseason` ESPN events; structured genealogy UI still gated |
@@ -130,7 +130,7 @@
 ### Phase 6 — Automated Discovery
 
 - [x] Risers / fallers from season boards (DARKO + BPM YoY on Home findings)
-- [x] Stat Detective for rolling / multi-window deltas (`/explore/players/windows`)
+- [x] Hot & Cold (was Stat Detective) for rolling / multi-window deltas (`/explore/players/hot-cold`)
 - [x] Home “What Matters Today” data-first findings rail (leaders + YoY)
 
 ### Phase 7 — Deep PBP / DRBL
