@@ -5,10 +5,10 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-04",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-04T13:50:17.648Z",
+    "builtAt": "2026-10-04T16:28:41.535Z",
     "rosterPlayerCount": 475,
-    "headlinesScanned": 751,
-    "latestHeadlineAt": "2026-10-04T01:37:13.000Z",
+    "headlinesScanned": 804,
+    "latestHeadlineAt": "2026-10-04T16:27:45.000Z",
     "latestTransactionDate": "2026-10-02",
     "tradeWindowStart": "2026-06-01",
     "feeds": [
@@ -535,17 +535,19 @@
     },
     {
       "id": "mv-contract-4431823-20261002",
-      "headline": "Miles McBride: contract future with the Knicks",
-      "primaryClaimId": "mv-c48edb09abf0e0a6",
+      "headline": "Miles McBride and Karl-Anthony Towns: contract future with the Knicks",
+      "primaryClaimId": "mv-3c89b8ac3f9ac8e7",
       "claimIds": [
-        "mv-c48edb09abf0e0a6"
+        "mv-c48edb09abf0e0a6",
+        "mv-3c89b8ac3f9ac8e7"
       ],
       "evidenceClass": "reported",
       "state": "unresolved",
       "firstSeenAt": "2026-10-02T15:41:33.000Z",
-      "lastMeaningfulAt": "2026-10-02T15:41:33.000Z",
+      "lastMeaningfulAt": "2026-10-04T06:05:47.000Z",
       "linkedPlayerIds": [
-        "4431823"
+        "4431823",
+        "3136195"
       ],
       "linkedTeamIds": [
         "18"
@@ -2824,6 +2826,28 @@
       ],
       "teamIds": [
         "8"
+      ],
+      "isOriginal": false
+    },
+    {
+      "id": "mv-3c89b8ac3f9ac8e7",
+      "clusterId": "mv-contract-4431823-20261002",
+      "summary": "Knicks unlikely to extend Towns, Hart and McBride before season",
+      "claimType": "extension_talks",
+      "evidenceClass": "reported",
+      "state": "unresolved",
+      "provenanceKind": "cites_report",
+      "publishedAt": "2026-10-04T06:05:47.000Z",
+      "sourceId": "reporter:ian-begley",
+      "sourceLabel": "TalkBasket, citing Ian Begley (SNY)",
+      "reporterLabel": "Ian Begley",
+      "sourceUrl": "https://www.talkbasket.net/224290-knicks-unlikely-to-extend-towns-hart-and-mcbride-before-season",
+      "playerIds": [
+        "3136195",
+        "4431823"
+      ],
+      "teamIds": [
+        "18"
       ],
       "isOriginal": false
     },
