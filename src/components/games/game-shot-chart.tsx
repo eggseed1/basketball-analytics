@@ -3,17 +3,23 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
+import { TransitionLink } from "@/components/continuity/query-nav";
 import type { PlayByPlayEvent } from "@/data/types";
 import { type } from "@/lib/design-system";
 import {
   buildCourtEvents,
   periodName,
   periodStart,
+  playerTally,
+  shotZone,
+  SHOT_ZONES,
   tallyAt,
   type CourtEvent,
   type ScoreMark,
+  type ShotZone,
   type Side,
   type SideTally,
+  type StatTick,
 } from "@/lib/games/court-events";
 import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
@@ -33,7 +39,7 @@ const LIVE_POLL_MS = 20_000;
 const LAYERS: { id: Layer; label: string }[] = [
   { id: "makes", label: "Makes" },
   { id: "misses", label: "Misses" },
-  { id: "assists", label: "Assisted" },
+  { id: "assists", label: "Assists" },
   { id: "rebounds", label: "Rebounds" },
   { id: "blocks", label: "Blocks" },
   { id: "steals", label: "Steals" },
@@ -165,38 +171,40 @@ function StatLine({ fgm, fga, tpm, tpa }: Pick<SideTally, "fgm" | "fga" | "tpm" 
   );
 }
 
-function playLabel(c: CourtEvent): string {
-  const value = c.three ? "three" : "two";
-  switch (c.kind) {
-    case "make":
-      return c.assisted ? `Made ${value}, assisted` : `Made ${value}`;
-    case "miss":
-      return c.blockedBy ? `Missed ${value}, blocked` : `Missed ${value}`;
-    case "steal":
-      return "Steal";
-    case "turnover":
-      return "Turnover";
-    case "foul":
-      return "Foul";
-  }
-}
-
-function ModeChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: string }) {
+function Chip({
+  active,
+  onClick,
+  children,
+  role,
+  className,
+}: {
+  active: boolean;
+  onClick: () => void;
+  children: ReactNode;
+  role?: "tab";
+  className?: string;
+}) {
   return (
     <button
       type="button"
-      role="tab"
-      aria-selected={active}
+      role={role}
+      aria-selected={role === "tab" ? active : undefined}
+      aria-pressed={role === "tab" ? undefined : active}
       onClick={onClick}
       className={cn(
         type.caption,
-        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
-        active ? "glass-pill-active" : "text-muted-foreground hover:text-foreground"
+        "glass-pill rounded-md px-2.5 py-1 font-semibold tabular-nums transition-colors",
+        active ? "glass-pill-active text-foreground" : "text-muted-foreground hover:text-foreground",
+        className
       )}
     >
       {children}
     </button>
   );
+}
+
+function pct(made: number, attempts: number): string {
+  return attempts > 0 ? `${Math.round((made / attempts) * 100)}%` : "—";
 }
 
 /**
@@ -225,7 +233,7 @@ export function GameShotChart({
   awayColor: string;
   homeTeamKey?: string;
   awayTeamKey?: string;
-  /** Box score roster, used to name the player on a hovered marker. */
+  /** Box score roster, used to name players on markers and in the player filter. */
   players?: ShotChartPlayer[];
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind);
@@ -244,8 +252,12 @@ export function GameShotChart({
   const [cutoff, setCutoff] = useState<number | null>(live ? null : 0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(2);
-  const [focus, setFocus] = useState<CourtEvent | null>(null);
+  const [hover, setHover] = useState<CourtEvent | null>(null);
+  const [pinned, setPinned] = useState<CourtEvent | null>(null);
   const [side, setSide] = useState<Side | null>(null);
+  const [quarter, setQuarter] = useState<number | null>(null);
+  const [player, setPlayer] = useState<string | null>(null);
+  const [zone, setZone] = useState<ShotZone | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const introDone = useRef(live);
   const playhead = useRef(0);
@@ -323,66 +335,105 @@ export function GameShotChart({
     };
   }, [live, gameId]);
 
+  const roster = useMemo(() => new Map(players.map((p) => [p.playerId, p])), [players]);
+  const nameOf = (id: string | null) => (id ? (roster.get(id)?.name ?? null) : null);
+  const colorOf = (s: Side) => (s === "home" ? homeColor : awayColor);
+  const labelOf = (s: Side) => (s === "home" ? homeLabel : awayLabel);
+  const teamKeyOf = (s: Side) => (s === "home" ? homeTeamKey : awayTeamKey);
+  const playerSide = player ? (roster.get(player)?.side ?? null) : null;
+
+  /** Layers a play counts toward for the current team or player filter. */
+  const layersOf = (c: CourtEvent): Layer[] => {
+    const mine = (id: string | null, s: Side) => (player ? id === player : !side || s === side);
+    const out: Layer[] = [];
+    switch (c.kind) {
+      case "make":
+        if (mine(c.playerId, c.side)) out.push("makes");
+        if (c.assisted && mine(c.assistId, c.side)) out.push("assists");
+        break;
+      case "miss":
+        if (mine(c.playerId, c.side)) out.push("misses");
+        if (c.rebound && mine(c.rebound.playerId, c.rebound.side)) out.push("rebounds");
+        if (c.blockedBy && mine(c.blockId, c.blockedBy)) out.push("blocks");
+        break;
+      case "steal":
+        if (mine(c.playerId, c.side)) out.push("steals");
+        if (player && c.stolenFromId === player) out.push("turnovers");
+        break;
+      case "turnover":
+        if (mine(c.playerId, c.side)) out.push("turnovers");
+        break;
+      case "foul":
+        if (mine(c.playerId, c.side)) out.push("fouls");
+        break;
+    }
+    return out;
+  };
+  const isShotBy = (c: CourtEvent) =>
+    (c.kind === "make" || c.kind === "miss") && (player ? c.playerId === player : !side || c.side === side);
+
   const at = cutoff ?? endT;
-  const visible = cutoff == null ? court : court.filter((c) => c.t <= cutoff);
-  const inMode = visible.filter((c) =>
+  const inQuarter = (period: number) => quarter == null || period === quarter;
+  const pool = court.filter((c) => (cutoff == null || c.t <= cutoff) && inQuarter(c.period));
+  const shown =
     mode === "shots"
-      ? c.kind === "make" || c.kind === "miss"
-      : c.kind === "make"
-        ? layers.has("makes") || (layers.has("assists") && c.assisted)
-        : c.kind === "miss"
-          ? layers.has("misses") ||
-            (layers.has("rebounds") && c.rebound != null) ||
-            (layers.has("blocks") && c.blockedBy != null)
-          : layers.has(c.kind === "steal" ? "steals" : c.kind === "turnover" ? "turnovers" : "fouls")
-  );
-  const shown = side
-    ? inMode.filter((c) => c.side === side || (c.blockedBy === side && layers.has("blocks")))
-    : inMode;
-  const latest = inMode.at(-1) ?? null;
+      ? pool.filter((c) => isShotBy(c) && (!zone || shotZone(c) === zone))
+      : pool.filter((c) => layersOf(c).some((l) => layers.has(l)));
+  const latest = shown.at(-1) ?? null;
   let mark: ScoreMark | null = null;
   for (const m of marks) {
     if (m.t <= at) mark = m;
     else break;
   }
-  const tally = useMemo(() => tallyAt(ticks, cutoff), [ticks, cutoff]);
+  const keepTick = (k: StatTick) => inQuarter(k.period);
+  const tally = tallyAt(ticks, cutoff, keepTick);
+  const subjectTally = player ? playerTally(ticks, cutoff, player, keepTick) : null;
+  const focus = hover ?? pinned;
   const ticker = focus ?? (playing || cutoff != null ? latest : null);
-  const colorOf = (s: Side) => (s === "home" ? homeColor : awayColor);
-  const labelOf = (s: Side) => (s === "home" ? homeLabel : awayLabel);
-  const playerById = useMemo(() => new Map(players.map((p) => [p.playerId, p])), [players]);
+  const filtersOn = quarter != null || player != null || side != null || zone != null;
 
-  /** Player the marker credits. Steals list the ball handler, so the stealer comes from the play text. */
-  const playerFor = (c: CourtEvent): ShotChartPlayer | null => {
-    if (c.kind === "steal") {
-      const name = /\(([^()]+?) steals?\)/i.exec(c.description)?.[1]?.trim().toLowerCase();
-      if (!name) return null;
-      return players.find((p) => p.side === c.side && p.name?.toLowerCase() === name) ?? null;
-    }
-    if (!c.playerId) return null;
-    return playerById.get(c.playerId) ?? { playerId: c.playerId, name: null, side: c.side };
-  };
+  const layerCount = (layer: Layer) => pool.filter((c) => layersOf(c).includes(layer)).length;
 
-  const layerCount = (layer: Layer) => {
-    const pool = side ? visible.filter((c) => c.side === side) : visible;
-    switch (layer) {
-      case "makes":
-        return pool.filter((c) => c.kind === "make").length;
-      case "misses":
-        return pool.filter((c) => c.kind === "miss").length;
-      case "assists":
-        return pool.filter((c) => c.assisted).length;
-      case "rebounds":
-        return pool.filter((c) => c.rebound).length;
-      case "blocks":
-        return (side ? visible.filter((c) => c.blockedBy === side) : visible.filter((c) => c.blockedBy)).length;
-      case "steals":
-        return pool.filter((c) => c.kind === "steal").length;
-      case "turnovers":
-        return pool.filter((c) => c.kind === "turnover").length;
-      case "fouls":
-        return pool.filter((c) => c.kind === "foul").length;
+  const periods = Array.from(new Set(marks.map((m) => m.period))).sort((a, b) => a - b);
+
+  /** Players with at least one play in the current mode, busiest first. */
+  const playerOptions = useMemo(() => {
+    const counts = new Map<string, number>();
+    const bump = (id: string | null) => {
+      if (id) counts.set(id, (counts.get(id) ?? 0) + 1);
+    };
+    for (const c of court) {
+      if (c.kind === "make" || c.kind === "miss") bump(c.playerId);
+      if (mode === "shots") continue;
+      if (c.kind !== "make" && c.kind !== "miss") bump(c.playerId);
+      bump(c.assistId);
+      bump(c.blockId);
+      bump(c.stolenFromId);
+      bump(c.rebound?.playerId ?? null);
     }
-  };
+    const bySide = { away: [] as (ShotChartPlayer & { n: number })[], home: [] as (ShotChartPlayer & { n: number })[] };
+    for (const p of players) {
+      const n = counts.get(p.playerId) ?? 0;
+      if (n > 0 && p.name) bySide[p.side].push({ ...p, n });
+    }
+    bySide.away.sort((a, b) => b.n - a.n);
+    bySide.home.sort((a, b) => b.n - a.n);
+    return bySide;
+  }, [court, players, mode]);
+
+  /** Located field goals by zone for each team, or for the selected player. */
+  const zoneRows = SHOT_ZONES.map((z) => ({ ...z, away: { m: 0, a: 0 }, home: { m: 0, a: 0 }, mine: { m: 0, a: 0 } }));
+  for (const c of pool) {
+    const row = zoneRows.find((r) => r.id === shotZone(c));
+    if (!row) continue;
+    const made = c.kind === "make" ? 1 : 0;
+    row[c.side].a++;
+    row[c.side].m += made;
+    if (player && c.playerId === player) {
+      row.mine.a++;
+      row.mine.m += made;
+    }
+  }
 
   if (located === 0) {
     return (
@@ -400,7 +451,8 @@ export function GameShotChart({
       return;
     }
     if (cutoff == null || cutoff >= endT) seek(0);
-    setFocus(null);
+    setHover(null);
+    setPinned(null);
     setPlaying(true);
   };
 
@@ -412,10 +464,68 @@ export function GameShotChart({
       return next;
     });
 
+  const choosePlayer = (id: string | null) => {
+    setPlayer(id);
+    setSide(null);
+    setPinned(null);
+  };
+
+  const clearFilters = () => {
+    setQuarter(null);
+    setPlayer(null);
+    setSide(null);
+    setZone(null);
+    setPinned(null);
+  };
+
   const tickerNote = (c: CourtEvent) => {
     if (mode !== "game" || c.kind !== "miss" || !c.rebound) return "";
     const kind = c.rebound.offensive ? "offensive" : "defensive";
     return ` · ${labelOf(c.rebound.side)} ${kind} rebound`;
+  };
+
+  /** Who the card features and what they did, from the filtered player's point of view when they were involved. */
+  const cardFor = (c: CourtEvent): { id: string; side: Side; label: string } | null => {
+    const value = c.three ? "three" : "two";
+    const shooter = nameOf(c.playerId);
+    const theirs = shooter ? `${shooter}'s ${value}` : `a ${value}`;
+    if (player && c.playerId !== player) {
+      const s = playerSide ?? c.side;
+      if (c.assistId === player) return { id: player, side: s, label: `Assist on ${theirs}` };
+      if (c.blockId === player) return { id: player, side: s, label: `Blocked ${theirs}` };
+      if (c.rebound?.playerId === player)
+        return { id: player, side: s, label: c.rebound.offensive ? "Offensive rebound" : "Defensive rebound" };
+      if (c.stolenFromId === player) {
+        const by = nameOf(c.playerId);
+        return { id: player, side: s, label: by ? `Turnover, stolen by ${by}` : "Turnover, stolen" };
+      }
+    }
+    if (!c.playerId) return null;
+    let label: string;
+    switch (c.kind) {
+      case "make": {
+        const by = nameOf(c.assistId);
+        label = c.assisted ? (by ? `Made ${value}, assist by ${by}` : `Made ${value}, assisted`) : `Made ${value}`;
+        break;
+      }
+      case "miss": {
+        const by = nameOf(c.blockId);
+        label = c.blockedBy ? (by ? `Missed ${value}, blocked by ${by}` : `Missed ${value}, blocked`) : `Missed ${value}`;
+        break;
+      }
+      case "steal": {
+        const from = nameOf(c.stolenFromId);
+        label = from ? `Steal from ${from}` : "Steal";
+        break;
+      }
+      case "turnover":
+        label = "Turnover";
+        break;
+      case "foul":
+        label = "Foul";
+        break;
+    }
+    return { id: c.playerId, side: c.side, label };
   };
 
   const renderEvent = (c: CourtEvent) => {
@@ -424,20 +534,29 @@ export function GameShotChart({
     const isFocus = focus?.id === c.id;
     const grow = isFocus ? 1.5 : 1;
     const bg = "var(--background)";
+    const own = mode === "game" ? new Set(layersOf(c).filter((l) => layers.has(l))) : null;
     let body: ReactNode;
     if (c.kind === "make") {
-      const showMake = mode === "shots" || layers.has("makes");
-      const ring = mode === "game" && layers.has("assists") && c.assisted;
+      const full = !own || own.has("makes");
+      const ring = own != null && layers.has("assists") && c.assisted;
       body = (
         <>
           <circle cx={cx} cy={cy} r={0.8} fill={color} className="shot-ripple" />
           {ring ? (
-            <circle cx={cx} cy={cy} r={1.35 * grow} fill="none" stroke={color} strokeWidth={0.2} className="shot-miss" />
+            <circle
+              cx={cx}
+              cy={cy}
+              r={1.35 * grow}
+              fill="none"
+              stroke={color}
+              strokeWidth={own?.has("assists") ? 0.3 : 0.2}
+              className="shot-miss"
+            />
           ) : null}
           <circle
             cx={cx}
             cy={cy}
-            r={(showMake ? 0.8 : 0.5) * grow}
+            r={(full ? 0.8 : 0.5) * grow}
             fill={color}
             stroke={bg}
             strokeWidth={0.22}
@@ -446,8 +565,9 @@ export function GameShotChart({
         </>
       );
     } else if (c.kind === "miss") {
-      const rebound = mode === "game" && layers.has("rebounds") ? c.rebound : null;
-      const blocked = mode === "game" && layers.has("blocks") ? c.blockedBy : null;
+      const strong = !own || own.has("misses");
+      const rebound = own && layers.has("rebounds") ? c.rebound : null;
+      const blocked = own && layers.has("blocks") ? c.blockedBy : null;
       body = (
         <g className="shot-miss">
           <circle
@@ -457,9 +577,11 @@ export function GameShotChart({
             fill="none"
             stroke={color}
             strokeWidth={0.26}
-            strokeOpacity={isFocus ? 1 : mode === "game" && !layers.has("misses") ? 0.3 : 0.6}
+            strokeOpacity={isFocus ? 1 : strong ? 0.6 : 0.3}
           />
-          {rebound ? <circle cx={cx} cy={cy} r={0.3 * grow} fill={colorOf(rebound.side)} /> : null}
+          {rebound ? (
+            <circle cx={cx} cy={cy} r={(own?.has("rebounds") ? 0.38 : 0.3) * grow} fill={colorOf(rebound.side)} />
+          ) : null}
           {blocked ? (
             <Cross cx={cx} cy={cy} r={0.75 * grow} fill="none" stroke={colorOf(blocked)} strokeWidth={0.3} />
           ) : null}
@@ -485,7 +607,15 @@ export function GameShotChart({
       );
     }
     return (
-      <g key={c.id} className="cursor-pointer" onPointerEnter={() => setFocus(c)} onClick={() => setFocus(c)}>
+      <g
+        key={c.id}
+        className="cursor-pointer"
+        onPointerEnter={() => setHover(c)}
+        onClick={(e) => {
+          e.stopPropagation();
+          setPinned((p) => (p?.id === c.id ? null : c));
+        }}
+      >
         {body}
         <circle cx={cx} cy={cy} r={1.8} fill="transparent" />
       </g>
@@ -494,67 +624,102 @@ export function GameShotChart({
 
   const focusCard = () => {
     if (!focus) return null;
-    const who = playerFor(focus);
-    if (!who) return null;
+    const card = cardFor(focus);
+    if (!card) return null;
+    const name = nameOf(card.id);
+    const isPinned = pinned?.id === focus.id;
     const { cx, cy } = toCourt(focus);
     const left = ((cx + 1) / (COURT_W + 2)) * 100;
     const top = ((cy + 1) / (COURT_H + 2)) * 100;
     const below = top < 32;
     const shiftX = left < 16 ? "-1rem" : left > 84 ? "calc(-100% + 1rem)" : "-50%";
     const shiftY = below ? "1rem" : "calc(-100% - 1rem)";
+    const onlyThem = player === card.id;
     return (
       <div
         key={focus.id}
-        className="pointer-events-none absolute z-10 flex items-center gap-2 whitespace-nowrap rounded-lg border border-border/60 bg-background/95 py-1.5 pl-1.5 pr-3 shadow-lg backdrop-blur-sm"
+        className={cn(
+          "absolute z-10 flex items-center gap-2 whitespace-nowrap rounded-lg border border-border/60 bg-background/95 py-1.5 pl-1.5 pr-3 shadow-lg backdrop-blur-sm",
+          isPinned ? "pointer-events-auto" : "pointer-events-none"
+        )}
         style={{ left: `${left}%`, top: `${top}%`, transform: `translate(${shiftX}, ${shiftY})` }}
-        aria-hidden
       >
-        <PlayerHeadshot
-          playerId={who.playerId}
-          name={who.name}
-          teamKey={who.side === "home" ? homeTeamKey : awayTeamKey}
-          size="sm"
-        />
+        <PlayerHeadshot playerId={card.id} name={name} teamKey={teamKeyOf(card.side)} size="sm" />
         <span className="flex flex-col">
-          {who.name ? <span className={cn(type.caption, "font-bold text-foreground")}>{who.name}</span> : null}
+          {name ? (
+            isPinned ? (
+              <TransitionLink
+                href={`/players/${encodeURIComponent(card.id)}`}
+                className={cn(type.caption, "font-bold text-foreground underline-offset-2 hover:underline")}
+              >
+                {name}
+              </TransitionLink>
+            ) : (
+              <span className={cn(type.caption, "font-bold text-foreground")}>{name}</span>
+            )
+          ) : null}
           <span className={cn(type.micro, "tabular-nums text-muted-foreground")}>
-            {periodName(focus.period)} {focus.clock} · {playLabel(focus)}
+            {periodName(focus.period)} {focus.clock} · {card.label}
           </span>
+          {isPinned && name ? (
+            <button
+              type="button"
+              onClick={() => choosePlayer(onlyThem ? null : card.id)}
+              className={cn(type.micro, "mt-0.5 self-start font-semibold text-foreground underline underline-offset-2")}
+            >
+              {onlyThem ? "Show everyone" : `Show only ${name.split(" ")[0]}`}
+            </button>
+          ) : null}
         </span>
       </div>
     );
   };
 
+  const subjectName = nameOf(player);
+
   return (
     <div ref={rootRef} className="flex flex-col gap-3">
       <div role="tablist" aria-label="Chart type" className="flex flex-wrap gap-1.5">
-        <ModeChip active={mode === "shots"} onClick={() => setMode("shots")}>
+        <Chip role="tab" active={mode === "shots"} onClick={() => setMode("shots")}>
           Shots
-        </ModeChip>
-        <ModeChip active={mode === "game"} onClick={() => setMode("game")}>
+        </Chip>
+        <Chip
+          role="tab"
+          active={mode === "game"}
+          onClick={() => {
+            setMode("game");
+            setZone(null);
+          }}
+        >
           Game chart
-        </ModeChip>
+        </Chip>
       </div>
 
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
-        {(["away", "home"] as const).map((s, i) => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setSide((v) => (v === s ? null : s))}
-            aria-pressed={side === s}
-            className={cn(
-              "min-w-0 rounded-md transition-opacity",
-              i === 0 ? "order-1 text-left" : "order-3 text-right",
-              side && side !== s && "opacity-45"
-            )}
-          >
-            <span className={cn(type.title, "block font-bold")} style={{ color: colorOf(s) }}>
-              {labelOf(s)}
-            </span>
-            <StatLine {...tally[s]} />
-          </button>
-        ))}
+        {(["away", "home"] as const).map((s, i) => {
+          const dim = player ? playerSide !== s : side != null && side !== s;
+          return (
+            <button
+              key={s}
+              type="button"
+              onClick={() => {
+                setPlayer(null);
+                setSide((v) => (v === s && !player ? null : s));
+              }}
+              aria-pressed={side === s}
+              className={cn(
+                "min-w-0 rounded-md transition-opacity",
+                i === 0 ? "order-1 text-left" : "order-3 text-right",
+                dim && "opacity-45"
+              )}
+            >
+              <span className={cn(type.title, "block font-bold")} style={{ color: colorOf(s) }}>
+                {labelOf(s)}
+              </span>
+              <StatLine {...tally[s]} />
+            </button>
+          );
+        })}
         <div className="order-2 text-center tabular-nums">
           <span className={cn(type.title, "block font-bold")}>
             {mark ? `${mark.away} – ${mark.home}` : "0 – 0"}
@@ -569,6 +734,51 @@ export function GameShotChart({
                 : "Tip-off"}
           </span>
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-center gap-1.5">
+        <div role="group" aria-label="Quarter" className="flex flex-wrap gap-1">
+          <Chip active={quarter == null} onClick={() => setQuarter(null)}>
+            All
+          </Chip>
+          {periods.map((p) => (
+            <Chip key={p} active={quarter === p} onClick={() => setQuarter((q) => (q === p ? null : p))}>
+              {periodName(p)}
+            </Chip>
+          ))}
+        </div>
+        <select
+          aria-label="Player"
+          value={player ?? ""}
+          onChange={(e) => choosePlayer(e.target.value || null)}
+          className={cn(
+            type.caption,
+            "glass-pill h-7 max-w-[14rem] cursor-pointer rounded-md border-0 px-2 font-semibold text-foreground outline-none",
+            "focus-visible:ring-2 focus-visible:ring-ring"
+          )}
+        >
+          <option value="">All players</option>
+          {(["away", "home"] as const).map((s) =>
+            playerOptions[s].length ? (
+              <optgroup key={s} label={labelOf(s)}>
+                {playerOptions[s].map((p) => (
+                  <option key={p.playerId} value={p.playerId}>
+                    {p.name} ({p.n})
+                  </option>
+                ))}
+              </optgroup>
+            ) : null
+          )}
+        </select>
+        {filtersOn ? (
+          <button
+            type="button"
+            onClick={clearFilters}
+            className={cn(type.caption, "px-1.5 font-semibold text-muted-foreground underline underline-offset-2 hover:text-foreground")}
+          >
+            Clear filters
+          </button>
+        ) : null}
       </div>
 
       {mode === "game" ? (
@@ -602,7 +812,8 @@ export function GameShotChart({
           className="block h-auto w-full select-none"
           role="img"
           aria-label={`${mode === "shots" ? "Shot chart" : "Game chart"}. ${awayLabel} attacks the left basket, ${homeLabel} the right.`}
-          onPointerLeave={() => setFocus(null)}
+          onPointerLeave={() => setHover(null)}
+          onClick={() => setPinned(null)}
         >
           <rect x={0} y={0} width={COURT_W / 2} height={COURT_H} fill={awayColor} fillOpacity={0.07} />
           <rect x={COURT_W / 2} y={0} width={COURT_W / 2} height={COURT_H} fill={homeColor} fillOpacity={0.07} />
@@ -625,8 +836,9 @@ export function GameShotChart({
 
           {mode === "game"
             ? (["away", "home"] as const).map((s) => {
-                const ft = tally[s];
+                const ft = subjectTally && playerSide === s ? subjectTally : tally[s];
                 const x = s === "away" ? 19 : COURT_W - 19;
+                const dim = player ? playerSide !== s : side != null && side !== s;
                 return (
                   <text
                     key={s}
@@ -637,7 +849,7 @@ export function GameShotChart({
                     fontWeight={700}
                     fill={colorOf(s)}
                     className="pointer-events-none tabular-nums"
-                    opacity={side && side !== s ? 0.25 : 0.7}
+                    opacity={dim ? 0.25 : 0.7}
                   >
                     FT {ft.ftm}-{ft.fta}
                   </text>
@@ -647,7 +859,7 @@ export function GameShotChart({
 
           {shown.map(renderEvent)}
 
-          {latest && (playing || cutoff != null) && (!side || latest.side === side) ? (
+          {latest && (playing || cutoff != null) ? (
             <circle
               key={`latest-${latest.id}`}
               cx={toCourt(latest).cx}
@@ -658,6 +870,18 @@ export function GameShotChart({
               strokeWidth={0.25}
               className="shot-latest pointer-events-none"
             />
+          ) : null}
+
+          {shown.length === 0 && filtersOn && cutoff == null ? (
+            <text
+              x={COURT_W / 2}
+              y={COURT_H / 2 - 9}
+              textAnchor="middle"
+              fontSize={2.2}
+              className="pointer-events-none fill-muted-foreground"
+            >
+              No plays match these filters
+            </text>
           ) : null}
         </svg>
         {focusCard()}
@@ -676,9 +900,9 @@ export function GameShotChart({
             {tickerNote(ticker)}
           </>
         ) : mode === "shots" ? (
-          "Filled dots are makes, rings are misses. Tap a team to isolate its shots."
+          "Filled dots are makes, rings are misses. Tap a dot to pin it, or a team to isolate its shots."
         ) : (
-          "Markers take the color of the team credited with the play. Tap a team to isolate it."
+          "Markers take the color of the team credited with the play. Tap a marker to pin it, or a team to isolate it."
         )}
       </p>
 
@@ -700,7 +924,8 @@ export function GameShotChart({
             aria-label="Game time"
             onChange={(e) => {
               setPlaying(false);
-              setFocus(null);
+              setHover(null);
+              setPinned(null);
               const v = Number(e.target.value);
               seek(v >= endT ? null : v);
             }}
@@ -730,12 +955,62 @@ export function GameShotChart({
         </button>
       </div>
 
-      {mode === "game" ? (
+      {mode === "shots" ? (
+        <div className="board-scroll-host overflow-x-auto rounded-md">
+          <table className="w-full min-w-[20rem] text-right">
+            <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
+              <tr className="border-b border-border/60">
+                <th className="py-1.5 pr-2 text-left font-semibold">Zone</th>
+                {player ? (
+                  <th className="px-2 py-1.5 font-semibold" colSpan={2}>
+                    {subjectName ?? "Player"}
+                  </th>
+                ) : (
+                  (["away", "home"] as const).map((s) => (
+                    <th key={s} className="px-2 py-1.5 font-semibold" colSpan={2} style={{ color: colorOf(s) }}>
+                      {labelOf(s)}
+                    </th>
+                  ))
+                )}
+              </tr>
+            </thead>
+            <tbody className={cn(type.caption, "tabular-nums")}>
+              {zoneRows.map((row) => {
+                const active = zone === row.id;
+                const cells = player ? [row.mine] : [row.away, row.home];
+                return (
+                  <tr
+                    key={row.id}
+                    className={cn("border-b border-border/40 transition-colors", active && "bg-foreground/[0.06]")}
+                  >
+                    <th scope="row" className="py-0 pr-2 text-left font-semibold">
+                      <button
+                        type="button"
+                        aria-pressed={active}
+                        onClick={() => setZone((z) => (z === row.id ? null : row.id))}
+                        className={cn(
+                          "w-full py-1.5 text-left underline-offset-2 hover:underline",
+                          zone && !active && "text-muted-foreground"
+                        )}
+                      >
+                        {row.label}
+                      </button>
+                    </th>
+                    {cells.map((cell, i) => (
+                      <FgCells key={i} made={cell.m} attempts={cell.a} dim={!player && side != null && side !== (i === 0 ? "away" : "home")} />
+                    ))}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      ) : (
         <div className="board-scroll-host overflow-x-auto rounded-md">
           <table className="w-full min-w-[34rem] text-right">
             <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
               <tr className="border-b border-border/60">
-                <th className="py-1.5 pr-2 text-left font-semibold">Team</th>
+                <th className="py-1.5 pr-2 text-left font-semibold">{player ? "Line" : "Team"}</th>
                 {STAT_COLUMNS.map((col) => (
                   <th key={col.label} title={col.title} className="px-2 py-1.5 font-semibold">
                     {col.label}
@@ -745,7 +1020,7 @@ export function GameShotChart({
             </thead>
             <tbody className={cn(type.caption, "tabular-nums")}>
               {(["away", "home"] as const).map((s) => (
-                <tr key={s} className="border-b border-border/40">
+                <tr key={s} className={cn("border-b border-border/40", player && "text-muted-foreground")}>
                   <td className="py-1.5 pr-2 text-left font-bold" style={{ color: colorOf(s) }}>
                     {labelOf(s)}
                   </td>
@@ -756,19 +1031,36 @@ export function GameShotChart({
                   ))}
                 </tr>
               ))}
+              {subjectTally && player ? (
+                <tr className="border-b border-border/40 bg-foreground/[0.04] font-semibold">
+                  <td className="max-w-[9rem] truncate py-1.5 pr-2 text-left">{subjectName ?? "Player"}</td>
+                  {STAT_COLUMNS.map((col) => (
+                    <td key={col.label} className="px-2 py-1.5">
+                      {col.value(subjectTally)}
+                    </td>
+                  ))}
+                </tr>
+              ) : null}
             </tbody>
           </table>
         </div>
-      ) : null}
+      )}
 
       <p className={cn(type.micro, "text-muted-foreground")}>
         {mode === "game"
           ? "Spots are ESPN's, logged on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
-          : located < fga
-            ? `${located} of ${fga} field goal attempts have a location. `
-            : ""}
+          : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone to show just those shots. `}
         Counts come from play-by-play and can differ slightly from the official box score, for example on heaves or stat corrections made after the game.
       </p>
     </div>
+  );
+}
+
+function FgCells({ made, attempts, dim }: { made: number; attempts: number; dim?: boolean }) {
+  return (
+    <>
+      <td className={cn("px-2 py-1.5", dim && "opacity-45")}>{attempts > 0 ? `${made}-${attempts}` : "—"}</td>
+      <td className={cn("px-2 py-1.5 text-muted-foreground", dim && "opacity-45")}>{pct(made, attempts)}</td>
+    </>
   );
 }

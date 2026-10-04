@@ -178,11 +178,10 @@ export function normalizeEspnSummary(raw: unknown): unknown {
     const made =
       isShot &&
       (Boolean(play.scoringPlay) || Number(play.scoreValue ?? 0) > 0);
-    // "X blocks Y's shot" lists the blocker first; the shooter is second.
-    const participant =
-      isShot && /\bblocks\b/i.test(text) && play.participants?.[1]?.athlete
-        ? play.participants[1].athlete
-        : play.participants?.[0]?.athlete;
+    // ESPN lists the shooter / ball handler / fouler first, then the assister,
+    // blocker, or stealer when the play has one.
+    const participant = play.participants?.[0]?.athlete;
+    const second = play.participants?.[1]?.athlete;
     const cx = Number(play.coordinate?.x);
     const cy = Number(play.coordinate?.y);
     // ESPN half-court grid: x 0-50 ft across with the rim at 25, y ft from the
@@ -211,6 +210,7 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       teamTricode: String(play.team?.abbreviation ?? ""),
       personId: Number(participant?.id ?? 0) || 0,
       playerName: participant?.displayName ?? participant?.shortName ?? "",
+      secondPersonId: Number(second?.id ?? 0) || 0,
       scoreHome: Number(play.homeScore ?? 0) || 0,
       scoreAway: Number(play.awayScore ?? 0) || 0,
       shotResult: isShot ? (made ? "Made" : "Missed") : "",

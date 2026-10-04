@@ -248,8 +248,8 @@ export function GameLabView({
             <h2 className={type.heading}>Shot chart</h2>
             <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
               Every field goal attempt, filling in as the game goes. Switch to Game chart to add
-              steals, blocks, turnovers, fouls and rebounds. {outcome.awayLabel} attacks the left
-              basket and {outcome.homeLabel} the right.
+              steals, blocks, turnovers, fouls and rebounds, and filter by quarter or player.{" "}
+              {outcome.awayLabel} attacks the left basket and {outcome.homeLabel} the right.
             </p>
           </div>
           <GameShotChart

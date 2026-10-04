@@ -21,6 +21,8 @@ export interface PlayByPlayEvent {
   teamTricode: string | null;
   playerId: string | null;
   playerName: string | null;
+  /** Assister on a make, blocker on a blocked shot, or stealer on a steal, when the source names one. */
+  secondPlayerId?: string | null;
   scoreHome: number;
   scoreAway: number;
   shotResult: "Made" | "Missed" | null;

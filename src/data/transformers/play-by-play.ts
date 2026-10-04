@@ -94,6 +94,11 @@ export function transformNbaPlayByPlay(
           ? shotResultRaw
           : null;
       const personId = asNumber(action.personId);
+      const secondPersonId =
+        asNumber(action.secondPersonId) ||
+        asNumber(action.assistPersonId) ||
+        asNumber(action.blockPersonId) ||
+        asNumber(action.stealPersonId);
       const teamIdRaw = asString(action.teamId).trim();
       const clockRaw = asString(action.clock);
       const clockSeconds = parsePlayClockToSeconds(clockRaw);
@@ -115,6 +120,7 @@ export function transformNbaPlayByPlay(
         teamId: teamIdRaw || null,
         teamTricode: asString(action.teamTricode) || null,
         playerId: personId ? String(personId) : null,
+        secondPlayerId: secondPersonId ? String(secondPersonId) : null,
         playerName:
           asString(action.playerNameI) ||
           asString(action.playerName) ||
