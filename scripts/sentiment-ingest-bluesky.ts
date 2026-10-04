@@ -133,7 +133,11 @@ async function main() {
   const roster = loadIngestRoster();
   const nameById = new Map(roster.map((p) => [p.playerId, p.name]));
   const resolve = createHeadlineEntityResolver(roster);
-  const auth = await session();
+  const auth = await session().catch((error: Error) => {
+    console.warn(`  Bluesky login failed (${error.message}), searching logged out`);
+    return { base: PUBLIC_APPVIEW, token: null };
+  });
+  console.log(`  auth=${auth.token ? "account" : "public"}`);
   const fetchedAt = new Date().toISOString();
   const since = new Date(Date.now() - config.lookbackHours * 3_600_000).toISOString();
   const rows = new Map<string, FanPostIngestItem>();
