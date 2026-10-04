@@ -13,8 +13,10 @@ import {
 } from "@/lib/team-overview-types";
 import { cn } from "@/lib/utils";
 
-const WIN = "var(--accent-positive)";
-const LOSS = "var(--accent-negative)";
+const WIN = "var(--data-positive)";
+const LOSS = "var(--data-negative)";
+const WIN_SOFT = "var(--accent-positive-soft)";
+const LOSS_SOFT = "var(--accent-negative-soft)";
 
 export function NetLadder({
   rows,
@@ -91,8 +93,7 @@ export function NetLadder({
                 <span
                   className="absolute inset-x-[12%] rounded-[3px] transition-opacity"
                   style={{
-                    background: own ? accent : r.net >= 0 ? WIN : LOSS,
-                    opacity: own || on ? 1 : hover ? 0.35 : 0.55,
+                    background: own ? accent : on ? (r.net >= 0 ? WIN : LOSS) : r.net >= 0 ? WIN_SOFT : LOSS_SOFT,
                     height: `${Math.max(1.5, h)}%`,
                     ...(r.net >= 0 ? { bottom: "50%" } : { top: "50%" }),
                     boxShadow: own ? `0 0 0 2px var(--background), 0 0 0 3.5px ${accent}` : undefined,

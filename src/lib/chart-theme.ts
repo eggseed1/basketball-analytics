@@ -59,8 +59,8 @@ export function chartPeriodLineOpacity(isDark: boolean): number {
 export const chartSemantic = {
   grid: "color-mix(in oklab, var(--foreground) 8%, transparent)",
   axis: "var(--text-secondary)",
-  positive: "var(--accent-positive)",
-  negative: "var(--accent-negative)",
+  positive: "var(--data-positive)",
+  negative: "var(--data-negative)",
   warning: "var(--accent-warning)",
   info: "var(--accent-info)",
   neutral: "var(--accent-neutral)",

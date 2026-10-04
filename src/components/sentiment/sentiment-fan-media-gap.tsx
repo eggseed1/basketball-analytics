@@ -36,8 +36,8 @@ export function SentimentFanMediaGap({
       className={cn(
         "rounded-md border px-3 py-2",
         fansWarmer
-          ? "border-emerald-600/25 bg-emerald-500/5"
-          : "border-rose-600/25 bg-rose-500/5",
+          ? "border-positive/25 bg-positive/5"
+          : "border-negative/25 bg-negative/5",
         className
       )}
     >

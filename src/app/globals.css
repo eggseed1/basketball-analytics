@@ -28,6 +28,12 @@
   --color-input: var(--input);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
+  --color-positive: var(--accent-positive);
+  --color-negative: var(--accent-negative);
+  --color-data-positive: var(--data-positive);
+  --color-data-negative: var(--data-negative);
+  --color-positive-soft: var(--accent-positive-soft);
+  --color-negative-soft: var(--accent-negative-soft);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
   --color-muted-foreground: var(--muted-foreground);

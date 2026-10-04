@@ -297,8 +297,8 @@ export function PlayerSplitDeltaMatrix({
                       key={m}
                       className={cn(
                         "px-2 py-1.5 text-right tabular-nums",
-                        d != null && d > 0 && "text-emerald-700 dark:text-emerald-400",
-                        d != null && d < 0 && "text-rose-700 dark:text-rose-400"
+                        d != null && d > 0 && "text-positive",
+                        d != null && d < 0 && "text-negative"
                       )}
                     >
                       {label}

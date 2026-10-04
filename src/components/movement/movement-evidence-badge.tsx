@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 
 const CLASS_STYLES: Record<MovementEvidenceClass, string> = {
   reported:
-    "border-emerald-600/40 bg-emerald-500/10 text-emerald-800 dark:text-emerald-300",
+    "border-positive/40 bg-positive/10 text-positive",
   rumored:
     "border-amber-600/40 bg-amber-500/10 text-amber-900 dark:text-amber-300",
   speculative:
@@ -17,11 +17,11 @@ const STATE_STYLES: Partial<Record<MovementClaimState, string>> = {
   completed:
     "border-sky-600/45 bg-sky-500/12 text-sky-900 dark:text-sky-200",
   official:
-    "border-emerald-600/45 bg-emerald-500/12 text-emerald-900 dark:text-emerald-200",
+    "border-positive/45 bg-positive/12 text-positive",
   fell_through:
     "border-orange-600/40 bg-orange-500/10 text-orange-900 dark:text-orange-200",
   denied:
-    "border-rose-600/40 bg-rose-500/10 text-rose-900 dark:text-rose-300",
+    "border-negative/40 bg-negative/10 text-negative",
   retracted:
     "border-border bg-muted/60 text-muted-foreground",
   expired:

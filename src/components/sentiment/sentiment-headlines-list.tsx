@@ -13,8 +13,8 @@ import { type, textLinkClassName } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 function toneClass(score: number): string {
-  if (score >= 0.2) return "border-emerald-600/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300";
-  if (score <= -0.2) return "border-rose-600/35 bg-rose-500/10 text-rose-700 dark:text-rose-300";
+  if (score >= 0.2) return "border-positive/35 bg-positive/10 text-positive";
+  if (score <= -0.2) return "border-negative/35 bg-negative/10 text-negative";
   return "border-border/70 bg-secondary/60 text-muted-foreground";
 }
 

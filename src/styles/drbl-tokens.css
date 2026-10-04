@@ -123,18 +123,27 @@
   --shadow-overlay: 0 8px 16px rgb(0 0 0 / 12%), 0 24px 48px rgb(0 0 0 / 16%);
 
   /* ── Data / analytics semantics ── */
-  --accent-positive: #1b7f4a;
-  --accent-negative: #c0392b;
+  /* Emerald and crimson matched in OKLCH lightness so wins and losses carry equal
+     weight; both clear 4.5:1 as text on white. */
+  --accent-positive: oklch(0.55 0.13 157);
+  --accent-negative: oklch(0.56 0.2 24);
+  /* Chart marks only need 3:1 against the card, so fills run brighter than text. */
+  --data-positive: oklch(0.64 0.165 152);
+  --data-negative: oklch(0.6 0.21 25);
+  /* Solid tints for secondary marks (loss share of a record bar, non-focus bars).
+     Mixed with the card instead of using opacity so they stay clean on glass. */
+  --accent-positive-soft: color-mix(in oklab, var(--data-positive) 50%, var(--card));
+  --accent-negative-soft: color-mix(in oklab, var(--data-negative) 50%, var(--card));
   --accent-warning: #c47a12;
   --accent-info: #0071e3;
   --accent-neutral: var(--muted-foreground);
   --accent-selected: var(--ring);
   --accent-elite: #b71c1c;
 
-  --offense-positive: #1b7f4a;
-  --offense-negative: #c0392b;
-  --defense-positive: #1b7f4a;
-  --defense-negative: #c0392b;
+  --offense-positive: var(--accent-positive);
+  --offense-negative: var(--accent-negative);
+  --defense-positive: var(--accent-positive);
+  --defense-negative: var(--accent-negative);
 
   --percentile-poor: rgb(21, 101, 192);
   --percentile-weak: rgb(66, 165, 245);
@@ -191,16 +200,15 @@
 
   /* Semantic hues lifted in lightness and eased in chroma so they read on the
      tinted canvas without vibrating (pure sRGB-max greens/reds glow on dark). */
-  --accent-positive: #3fd26a;
-  --accent-negative: #ff6b61;
+  --accent-positive: oklch(0.76 0.16 158);
+  --accent-negative: oklch(0.7 0.18 24);
+  --data-positive: oklch(0.74 0.17 156);
+  --data-negative: oklch(0.68 0.19 24);
+  --accent-positive-soft: color-mix(in oklab, var(--data-positive) 62%, var(--card));
+  --accent-negative-soft: color-mix(in oklab, var(--data-negative) 62%, var(--card));
   --accent-warning: #ffa726;
   --accent-info: #3d94ff;
   --accent-elite: #ff6b61;
-
-  --offense-positive: #3fd26a;
-  --offense-negative: #ff6b61;
-  --defense-positive: #3fd26a;
-  --defense-negative: #ff6b61;
 
   --percentile-poor: rgb(74, 144, 226);
   --percentile-weak: rgb(120, 186, 245);

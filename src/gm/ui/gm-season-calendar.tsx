@@ -253,8 +253,8 @@ export function GmSeasonCalendar({
                 <span
                   className={cn(
                     "text-[11px] font-semibold tabular-nums",
-                    won && "text-emerald-800 dark:text-emerald-300",
-                    lost && "text-red-800 dark:text-red-300",
+                    won && "text-positive",
+                    lost && "text-negative",
                     !won && !lost && (cell.isToday ? "text-foreground" : "text-muted-foreground")
                   )}
                 >
@@ -264,8 +264,8 @@ export function GmSeasonCalendar({
                   <span
                     className={cn(
                       "size-1.5 shrink-0 rounded-full",
-                      won && "bg-emerald-600",
-                      lost && "bg-red-600",
+                      won && "bg-data-positive",
+                      lost && "bg-data-negative",
                       !won && !lost && (home ? "bg-sky-600" : "bg-orange-700")
                     )}
                     title={
@@ -287,7 +287,7 @@ export function GmSeasonCalendar({
                     <span
                       className={cn(
                         "text-[10px] font-bold tabular-nums",
-                        won ? "text-emerald-800" : "text-red-800"
+                        won ? "text-positive" : "text-negative"
                       )}
                     >
                       {won ? "W" : "L"} {userScore}-{oppScore}
@@ -320,10 +320,10 @@ export function GmSeasonCalendar({
       <footer className="flex flex-wrap items-center justify-between gap-3 border-t border-black/5 pt-3 text-[12px]">
         <div className="flex items-center gap-3 text-muted-foreground">
           <span className="inline-flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-emerald-600" /> Win
+            <span className="size-2 rounded-full bg-data-positive" /> Win
           </span>
           <span className="inline-flex items-center gap-1.5">
-            <span className="size-2 rounded-full bg-red-600" /> Loss
+            <span className="size-2 rounded-full bg-data-negative" /> Loss
           </span>
           <span className="inline-flex items-center gap-1.5">
             <span className="size-2 rounded-full bg-sky-600" /> Home

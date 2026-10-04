@@ -7,7 +7,7 @@ import { type } from "@/lib/design-system";
 import { formatUsdDollars } from "@/lib/format-money";
 import { cn } from "@/lib/utils";
 
-const PLAYER_OPTION = "font-medium text-emerald-700 dark:text-emerald-400";
+const PLAYER_OPTION = "font-medium text-positive";
 const TEAM_OPTION = "font-medium text-sky-700 dark:text-sky-400";
 
 function shortSeason(season: string) {

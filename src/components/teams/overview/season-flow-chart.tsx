@@ -18,8 +18,12 @@ type Mode = "margin" | "record";
 
 const HEIGHT = 260;
 const PAD = { top: 18, right: 12, bottom: 26, left: 34 };
-const WIN = "var(--accent-positive)";
-const LOSS = "var(--accent-negative)";
+const WIN = "var(--data-positive)";
+const WIN_TEXT = "var(--accent-positive)";
+const LOSS = "var(--data-negative)";
+const LOSS_TEXT = "var(--accent-negative)";
+const WIN_SOFT = "var(--accent-positive-soft)";
+const LOSS_SOFT = "var(--accent-negative-soft)";
 
 function useElementWidth<T extends HTMLElement>(fallback: number) {
   const ref = useRef<T>(null);
@@ -241,12 +245,19 @@ export function SeasonFlowChart({
                     width={barW}
                     height={Math.max(1.5, Math.abs(y1 - y0))}
                     rx={Math.min(3, barW / 2)}
-                    fill={g.win ? WIN : LOSS}
-                    opacity={dim ? 0.35 : 0.9}
+                    fill={dim ? (g.win ? WIN_SOFT : LOSS_SOFT) : g.win ? WIN : LOSS}
                   />
                 );
               })}
-              <path d={rollingPath} fill="none" stroke={accent} strokeWidth={2.5} strokeLinejoin="round" strokeLinecap="round" />
+              <path d={rollingPath} fill="none" stroke="var(--card)" strokeWidth={5} strokeLinejoin="round" strokeLinecap="round" />
+              <path
+                d={rollingPath}
+                fill="none"
+                stroke="var(--foreground)"
+                strokeWidth={2}
+                strokeLinejoin="round"
+                strokeLinecap="round"
+              />
             </>
           ) : (
             <>
@@ -258,8 +269,7 @@ export function SeasonFlowChart({
                   cx={xAt(i)}
                   cy={yAt(g.overUnder)}
                   r={active === i ? 4.5 : Math.min(2.2, barW / 2)}
-                  fill={g.win ? WIN : LOSS}
-                  opacity={active != null && active !== i ? 0.4 : 1}
+                  fill={active != null && active !== i ? (g.win ? WIN_SOFT : LOSS_SOFT) : g.win ? WIN : LOSS}
                 />
               ))}
             </>
@@ -293,7 +303,7 @@ export function SeasonFlowChart({
               {shortDate(activeGame.date)} · {activeGame.phase === "regular" ? `Game ${active + 1}` : activeGame.phase === "playoff" ? "Playoffs" : "Play-in"}
             </p>
             <p className={cn(type.body, "mt-1 font-semibold")}>
-              <span style={{ color: activeGame.win ? WIN : LOSS }}>{activeGame.win ? "W" : "L"}</span>{" "}
+              <span style={{ color: activeGame.win ? WIN_TEXT : LOSS_TEXT }}>{activeGame.win ? "W" : "L"}</span>{" "}
               {activeGame.pf}-{activeGame.pa} {activeGame.home ? "vs" : "at"} {activeGame.opponentAbbr}
               {activeGame.overtime ? " (OT)" : ""}
             </p>
@@ -360,7 +370,7 @@ function Kpi({ label, value, pills }: { label: string; value: string; pills?: bo
         {pills?.length ? (
           <span className="flex gap-[3px]" aria-hidden>
             {pills.map((w, i) => (
-              <span key={i} className="h-3 w-1.5 rounded-full" style={{ background: w ? WIN : LOSS, opacity: 0.85 }} />
+              <span key={i} className="h-3 w-1.5 rounded-full" style={{ background: w ? WIN : LOSS }} />
             ))}
           </span>
         ) : null}

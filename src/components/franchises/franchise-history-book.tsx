@@ -72,8 +72,8 @@ function SeasonLine({
       className={cn(
         "rounded-md border px-4 py-3",
         tone === "good"
-          ? "border-emerald-500/25 bg-emerald-500/5"
-          : "border-rose-500/25 bg-rose-500/5"
+          ? "border-positive/25 bg-positive/5"
+          : "border-negative/25 bg-negative/5"
       )}
     >
       <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">

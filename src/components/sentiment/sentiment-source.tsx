@@ -78,7 +78,7 @@ export function LaneOriginTag({
         inactive
           ? "border-border bg-muted/40 text-muted-foreground"
           : measured
-            ? "border-emerald-600/35 bg-emerald-500/10 text-emerald-700 dark:text-emerald-300"
+            ? "border-positive/35 bg-positive/10 text-positive"
             : "border-amber-600/35 bg-amber-500/10 text-amber-700 dark:text-amber-300",
         className
       )}

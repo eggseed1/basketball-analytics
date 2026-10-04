@@ -70,7 +70,7 @@ function Column({
           <span
             className={cn(
               "size-1.5 rounded-full",
-              hot ? "bg-[var(--accent-positive)]" : "bg-[var(--accent-negative)]"
+              hot ? "bg-data-positive" : "bg-data-negative"
             )}
             aria-hidden
           />
@@ -141,7 +141,7 @@ function Column({
                   <span
                     className={cn(
                       "ml-auto block h-full rounded-full",
-                      hot ? "bg-[var(--accent-positive)]" : "bg-[var(--accent-negative)]"
+                      hot ? "bg-data-positive" : "bg-data-negative"
                     )}
                     style={{ width: `${Math.max(8, (Math.abs(values.delta) / scale) * 100)}%` }}
                   />

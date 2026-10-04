@@ -41,7 +41,7 @@ function BrefPayrollSummary({ contracts, payrollHref }: { contracts: TeamContrac
               ? undefined
               : space < 0
                 ? "text-amber-700 dark:text-amber-400"
-                : "text-emerald-700 dark:text-emerald-400"
+                : "text-positive"
           }
         />
       </div>
@@ -136,7 +136,7 @@ export function TeamAssetsSection({
                   "font-bold tabular-nums",
                   capSpace && capSpace.startsWith("-")
                     ? "text-amber-700 dark:text-amber-400"
-                    : "text-emerald-700 dark:text-emerald-400"
+                    : "text-positive"
                 )}
               >
                 {capSpace ?? "—"}

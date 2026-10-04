@@ -32,8 +32,8 @@ function statusOf(pick: FuturePick, team: string): Status {
 
 const TONE: Record<Status["tone"], string> = {
   own: "text-foreground",
-  in: "text-emerald-700 dark:text-emerald-400",
-  out: "text-rose-700 dark:text-rose-400",
+  in: "text-positive",
+  out: "text-negative",
   maybe: "text-amber-700 dark:text-amber-400",
 };
 

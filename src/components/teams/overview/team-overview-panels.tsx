@@ -6,9 +6,10 @@ import type { QuarterRow, SplitsBundle, TraitBar } from "@/lib/team-overview-dat
 import type { TeamSplitBucket } from "@/lib/team-snapshot-games";
 import { cn } from "@/lib/utils";
 
-const WIN = "var(--accent-positive)";
-const LOSS = "var(--accent-negative)";
-
+const WIN = "var(--data-positive)";
+const WIN_TEXT = "var(--accent-positive)";
+const LOSS = "var(--data-negative)";
+const LOSS_TEXT = "var(--accent-negative)";
 function signed(v: number, digits = 1) {
   return `${v > 0 ? "+" : ""}${formatNumber(v, digits)}`;
 }
@@ -63,14 +64,13 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
                   className="absolute inset-y-1 rounded-[4px]"
                   style={{
                     background: r.net >= 0 ? WIN : LOSS,
-                    opacity: 0.85,
                     width: `${Math.max(0.8, w)}%`,
                     ...(r.net >= 0 ? { left: "50%" } : { right: "50%" }),
                   }}
                 />
               </span>
               <span className={cn(type.caption, "tabular-nums text-muted-foreground")}>{formatNumber(r.pa, 1)}</span>
-              <span className={cn(type.bodySm, "text-right font-bold tabular-nums")} style={{ color: r.net >= 0 ? WIN : LOSS }}>
+              <span className={cn(type.bodySm, "text-right font-bold tabular-nums")} style={{ color: r.net >= 0 ? WIN_TEXT : LOSS_TEXT }}>
                 {signed(r.net)}
               </span>
             </li>
@@ -83,8 +83,6 @@ export function QuarterProfile({ rows, games, season }: { rows: QuarterRow[]; ga
 }
 
 function RecordBar({ row, label }: { row: TeamSplitBucket; label: string }) {
-  const total = row.wins + row.losses;
-  const pct = total ? row.wins / total : 0;
   return (
     <li className="flex flex-col gap-1">
       <div className="flex items-baseline justify-between gap-2">
@@ -96,9 +94,9 @@ function RecordBar({ row, label }: { row: TeamSplitBucket; label: string }) {
           {row.diff != null ? ` · ${signed(row.diff)}` : ""}
         </span>
       </div>
-      <div className="flex h-2.5 w-full overflow-hidden rounded-full bg-foreground/[0.06]">
-        <span style={{ width: `${pct * 100}%`, background: WIN, opacity: 0.85 }} />
-        <span style={{ width: `${(1 - pct) * 100}%`, background: LOSS, opacity: 0.55 }} />
+      <div className="flex h-2.5 w-full gap-0.5">
+        {row.wins ? <span className="rounded-full" style={{ flex: row.wins, background: WIN }} /> : null}
+        {row.losses ? <span className="rounded-full" style={{ flex: row.losses, background: LOSS }} /> : null}
       </div>
     </li>
   );
@@ -141,7 +139,7 @@ export function SplitsPanel({ splits, season }: { splits: SplitsBundle; season: 
                   <span className="relative flex h-24 w-full items-end overflow-hidden rounded-md bg-foreground/[0.05]">
                     <span
                       className="w-full rounded-md"
-                      style={{ height: `${Math.max(3, pct * 100)}%`, background: pct >= 0.5 ? WIN : LOSS, opacity: 0.8 }}
+                      style={{ height: `${Math.max(3, pct * 100)}%`, background: pct >= 0.5 ? WIN : LOSS }}
                     />
                     <span className="absolute inset-x-0 top-1/2 border-t border-dashed border-foreground/30" aria-hidden />
                   </span>
@@ -198,7 +196,7 @@ export function StrengthsPanel({
       </div>
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
-          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: WIN }}>
+          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: WIN_TEXT }}>
             Strengths
           </p>
           {strengths.length ? (
@@ -212,7 +210,7 @@ export function StrengthsPanel({
           )}
         </div>
         <div>
-          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: LOSS }}>
+          <p className={cn(type.micro, "mb-2 font-semibold uppercase tracking-wide")} style={{ color: LOSS_TEXT }}>
             Weaknesses
           </p>
           {weaknesses.length ? (

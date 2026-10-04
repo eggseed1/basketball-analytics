@@ -45,7 +45,7 @@ function salaryCellClass(year: PlayerContractYear | undefined): string {
   }
   switch (year.optionType) {
     case "PLAYER_OPTION":
-      return "font-medium text-emerald-700 dark:text-emerald-400";
+      return "font-medium text-positive";
     case "TEAM_OPTION":
       return "font-medium text-sky-700 dark:text-sky-400";
     default:
@@ -118,7 +118,7 @@ export function TeamPayrollTable({
           </h3>
           <p className={cn(type.caption, "text-muted-foreground")}>
             <span className="italic">Italic</span> = not fully guaranteed ·{" "}
-            <span className="font-medium text-emerald-700 dark:text-emerald-400">
+            <span className="font-medium text-positive">
               Green
             </span>{" "}
             = player option ·{" "}
