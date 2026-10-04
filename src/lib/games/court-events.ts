@@ -26,6 +26,8 @@ export interface CourtEvent {
   period: number;
   clock: string;
   description: string;
+  /** Player the feed attaches to the play: shooter, fouler, or the player who lost the ball (also on steals). */
+  playerId: string | null;
   three: boolean;
   assisted: boolean;
   blockedBy: Side | null;
@@ -143,6 +145,7 @@ export function buildCourtEvents(
       period: e.period,
       clock: e.clock,
       description: d,
+      playerId: e.playerId || null,
       three: false,
       assisted: false,
       blockedBy: null,

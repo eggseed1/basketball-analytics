@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } from "react";
 
+import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import type { PlayByPlayEvent } from "@/data/types";
 import { type } from "@/lib/design-system";
 import {
@@ -18,6 +19,7 @@ import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
 
 type Mode = "shots" | "game";
+export type ShotChartPlayer = { playerId: string; name: string | null; side: Side };
 type Layer = "makes" | "misses" | "assists" | "rebounds" | "blocks" | "steals" | "turnovers" | "fouls";
 
 const COURT_W = 94;
@@ -163,6 +165,22 @@ function StatLine({ fgm, fga, tpm, tpa }: Pick<SideTally, "fgm" | "fga" | "tpm" 
   );
 }
 
+function playLabel(c: CourtEvent): string {
+  const value = c.three ? "three" : "two";
+  switch (c.kind) {
+    case "make":
+      return c.assisted ? `Made ${value}, assisted` : `Made ${value}`;
+    case "miss":
+      return c.blockedBy ? `Missed ${value}, blocked` : `Missed ${value}`;
+    case "steal":
+      return "Steal";
+    case "turnover":
+      return "Turnover";
+    case "foul":
+      return "Foul";
+  }
+}
+
 function ModeChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: string }) {
   return (
     <button
@@ -194,6 +212,9 @@ export function GameShotChart({
   awayLabel,
   homeColor,
   awayColor,
+  homeTeamKey,
+  awayTeamKey,
+  players = [],
 }: {
   gameId: string;
   status: string;
@@ -202,6 +223,10 @@ export function GameShotChart({
   awayLabel: string;
   homeColor: string;
   awayColor: string;
+  homeTeamKey?: string;
+  awayTeamKey?: string;
+  /** Box score roster, used to name the player on a hovered marker. */
+  players?: ShotChartPlayer[];
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind);
   const [events, setEvents] = useState(initialEvents);
@@ -324,6 +349,18 @@ export function GameShotChart({
   const ticker = focus ?? (playing || cutoff != null ? latest : null);
   const colorOf = (s: Side) => (s === "home" ? homeColor : awayColor);
   const labelOf = (s: Side) => (s === "home" ? homeLabel : awayLabel);
+  const playerById = useMemo(() => new Map(players.map((p) => [p.playerId, p])), [players]);
+
+  /** Player the marker credits. Steals list the ball handler, so the stealer comes from the play text. */
+  const playerFor = (c: CourtEvent): ShotChartPlayer | null => {
+    if (c.kind === "steal") {
+      const name = /\(([^()]+?) steals?\)/i.exec(c.description)?.[1]?.trim().toLowerCase();
+      if (!name) return null;
+      return players.find((p) => p.side === c.side && p.name?.toLowerCase() === name) ?? null;
+    }
+    if (!c.playerId) return null;
+    return playerById.get(c.playerId) ?? { playerId: c.playerId, name: null, side: c.side };
+  };
 
   const layerCount = (layer: Layer) => {
     const pool = side ? visible.filter((c) => c.side === side) : visible;
@@ -455,6 +492,39 @@ export function GameShotChart({
     );
   };
 
+  const focusCard = () => {
+    if (!focus) return null;
+    const who = playerFor(focus);
+    if (!who) return null;
+    const { cx, cy } = toCourt(focus);
+    const left = ((cx + 1) / (COURT_W + 2)) * 100;
+    const top = ((cy + 1) / (COURT_H + 2)) * 100;
+    const below = top < 32;
+    const shiftX = left < 16 ? "-1rem" : left > 84 ? "calc(-100% + 1rem)" : "-50%";
+    const shiftY = below ? "1rem" : "calc(-100% - 1rem)";
+    return (
+      <div
+        key={focus.id}
+        className="pointer-events-none absolute z-10 flex items-center gap-2 whitespace-nowrap rounded-lg border border-border/60 bg-background/95 py-1.5 pl-1.5 pr-3 shadow-lg backdrop-blur-sm"
+        style={{ left: `${left}%`, top: `${top}%`, transform: `translate(${shiftX}, ${shiftY})` }}
+        aria-hidden
+      >
+        <PlayerHeadshot
+          playerId={who.playerId}
+          name={who.name}
+          teamKey={who.side === "home" ? homeTeamKey : awayTeamKey}
+          size="sm"
+        />
+        <span className="flex flex-col">
+          {who.name ? <span className={cn(type.caption, "font-bold text-foreground")}>{who.name}</span> : null}
+          <span className={cn(type.micro, "tabular-nums text-muted-foreground")}>
+            {periodName(focus.period)} {focus.clock} · {playLabel(focus)}
+          </span>
+        </span>
+      </div>
+    );
+  };
+
   return (
     <div ref={rootRef} className="flex flex-col gap-3">
       <div role="tablist" aria-label="Chart type" className="flex flex-wrap gap-1.5">
@@ -526,69 +596,72 @@ export function GameShotChart({
         </div>
       ) : null}
 
-      <svg
-        viewBox={`-1 -1 ${COURT_W + 2} ${COURT_H + 2}`}
-        className="block h-auto w-full select-none"
-        role="img"
-        aria-label={`${mode === "shots" ? "Shot chart" : "Game chart"}. ${awayLabel} attacks the left basket, ${homeLabel} the right.`}
-        onPointerLeave={() => setFocus(null)}
-      >
-        <rect x={0} y={0} width={COURT_W / 2} height={COURT_H} fill={awayColor} fillOpacity={0.07} />
-        <rect x={COURT_W / 2} y={0} width={COURT_W / 2} height={COURT_H} fill={homeColor} fillOpacity={0.07} />
-        <g
-          fill="none"
-          stroke="currentColor"
-          strokeOpacity={0.28}
-          strokeWidth={1}
-          className="text-foreground [&_*]:[vector-effect:non-scaling-stroke]"
+      <div className="relative">
+        <svg
+          viewBox={`-1 -1 ${COURT_W + 2} ${COURT_H + 2}`}
+          className="block h-auto w-full select-none"
+          role="img"
+          aria-label={`${mode === "shots" ? "Shot chart" : "Game chart"}. ${awayLabel} attacks the left basket, ${homeLabel} the right.`}
+          onPointerLeave={() => setFocus(null)}
         >
-          <rect x={0} y={0} width={COURT_W} height={COURT_H} />
-          <line x1={COURT_W / 2} x2={COURT_W / 2} y1={0} y2={COURT_H} />
-          <circle cx={COURT_W / 2} cy={COURT_H / 2} r={6} />
-          <circle cx={COURT_W / 2} cy={COURT_H / 2} r={2} />
-          <CourtEnd />
-          <g transform={`rotate(180 ${COURT_W / 2} ${COURT_H / 2})`}>
-            <CourtEnd />
-          </g>
-        </g>
-
-        {mode === "game"
-          ? (["away", "home"] as const).map((s) => {
-              const ft = tally[s];
-              const x = s === "away" ? 19 : COURT_W - 19;
-              return (
-                <text
-                  key={s}
-                  x={x}
-                  y={COURT_H / 2 + 0.9}
-                  textAnchor="middle"
-                  fontSize={1.8}
-                  fontWeight={700}
-                  fill={colorOf(s)}
-                  className="pointer-events-none tabular-nums"
-                  opacity={side && side !== s ? 0.25 : 0.7}
-                >
-                  FT {ft.ftm}-{ft.fta}
-                </text>
-              );
-            })
-          : null}
-
-        {shown.map(renderEvent)}
-
-        {latest && (playing || cutoff != null) && (!side || latest.side === side) ? (
-          <circle
-            key={`latest-${latest.id}`}
-            cx={toCourt(latest).cx}
-            cy={toCourt(latest).cy}
-            r={2}
+          <rect x={0} y={0} width={COURT_W / 2} height={COURT_H} fill={awayColor} fillOpacity={0.07} />
+          <rect x={COURT_W / 2} y={0} width={COURT_W / 2} height={COURT_H} fill={homeColor} fillOpacity={0.07} />
+          <g
             fill="none"
-            stroke={colorOf(latest.side)}
-            strokeWidth={0.25}
-            className="shot-latest pointer-events-none"
-          />
-        ) : null}
-      </svg>
+            stroke="currentColor"
+            strokeOpacity={0.28}
+            strokeWidth={1}
+            className="text-foreground [&_*]:[vector-effect:non-scaling-stroke]"
+          >
+            <rect x={0} y={0} width={COURT_W} height={COURT_H} />
+            <line x1={COURT_W / 2} x2={COURT_W / 2} y1={0} y2={COURT_H} />
+            <circle cx={COURT_W / 2} cy={COURT_H / 2} r={6} />
+            <circle cx={COURT_W / 2} cy={COURT_H / 2} r={2} />
+            <CourtEnd />
+            <g transform={`rotate(180 ${COURT_W / 2} ${COURT_H / 2})`}>
+              <CourtEnd />
+            </g>
+          </g>
+
+          {mode === "game"
+            ? (["away", "home"] as const).map((s) => {
+                const ft = tally[s];
+                const x = s === "away" ? 19 : COURT_W - 19;
+                return (
+                  <text
+                    key={s}
+                    x={x}
+                    y={COURT_H / 2 + 0.9}
+                    textAnchor="middle"
+                    fontSize={1.8}
+                    fontWeight={700}
+                    fill={colorOf(s)}
+                    className="pointer-events-none tabular-nums"
+                    opacity={side && side !== s ? 0.25 : 0.7}
+                  >
+                    FT {ft.ftm}-{ft.fta}
+                  </text>
+                );
+              })
+            : null}
+
+          {shown.map(renderEvent)}
+
+          {latest && (playing || cutoff != null) && (!side || latest.side === side) ? (
+            <circle
+              key={`latest-${latest.id}`}
+              cx={toCourt(latest).cx}
+              cy={toCourt(latest).cy}
+              r={2}
+              fill="none"
+              stroke={colorOf(latest.side)}
+              strokeWidth={0.25}
+              className="shot-latest pointer-events-none"
+            />
+          ) : null}
+        </svg>
+        {focusCard()}
+      </div>
 
       <p
         className={cn(type.caption, "line-clamp-2 h-10 text-muted-foreground sm:line-clamp-1 sm:h-5")}

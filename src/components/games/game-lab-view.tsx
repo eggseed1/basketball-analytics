@@ -9,7 +9,7 @@ import {
   GameWinProbabilityChart,
 } from "@/components/games/game-flow-charts";
 import { GameRosterBoard } from "@/components/games/game-roster-board";
-import { GameShotChart } from "@/components/games/game-shot-chart";
+import { GameShotChart, type ShotChartPlayer } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
 import { GameTopPerformers } from "@/components/games/game-top-performers";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
@@ -91,6 +91,10 @@ export function GameLabView({
 
   const colors = { away: awayColor, home: homeColor };
   const rosterHome = homeOnly.length ? homeOnly : homePlayers;
+  const shotChartPlayers: ShotChartPlayer[] = [
+    ...awayPlayers.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "away" as const })),
+    ...rosterHome.map((p) => ({ playerId: p.playerId, name: p.playerName ?? null, side: "home" as const })),
+  ];
 
   return (
     <div className="flex flex-col gap-5">
@@ -256,6 +260,9 @@ export function GameLabView({
             awayLabel={outcome.awayLabel}
             homeColor={homeColor}
             awayColor={awayColor}
+            homeTeamKey={homeKey}
+            awayTeamKey={awayKey}
+            players={shotChartPlayers}
           />
         </MatchupWashCard>
       ) : null}
