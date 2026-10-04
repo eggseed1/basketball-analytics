@@ -765,3 +765,4 @@
 {"id":"fanblogs:00fa62faf547cdeb:4251","store":"fanblogs","rowId":"00fa62faf547cdeb","playerId":"4251","publishedAt":"2026-09-04T10:00:03.000Z","tone":1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-04T01:50:42.512Z"}
 {"id":"fanblogs:7e04ca20ad28e3f8:4433621","store":"fanblogs","rowId":"7e04ca20ad28e3f8","playerId":"4433621","publishedAt":"2026-09-07T00:00:00.000Z","tone":1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-04T01:50:42.569Z"}
 {"id":"fanblogs:70af8b952bbfce55:3133603","store":"fanblogs","rowId":"70af8b952bbfce55","playerId":"3133603","publishedAt":"2026-09-04T19:44:38.000Z","tone":0,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-04T01:50:42.852Z"}
+{"id":"fanblogs:d08355c0b6542785:4898371","store":"fanblogs","rowId":"d08355c0b6542785","playerId":"4898371","publishedAt":"2026-09-20T18:00:00.000Z","tone":1,"modelVersion":"headline-llama33-70b-v1","ratedAt":"2026-10-04T02:02:38.134Z"}
