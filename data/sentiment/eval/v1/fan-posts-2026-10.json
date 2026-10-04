@@ -1,5 +1,5 @@
 {
- "description": "Tone toward one named player for fan posts that passed the nightly ingest filters, sampled Oct 3, 2026 (Bluesky logged-out search; YouTube comments from 12 evenly spaced configured channels). Labeled -1, 0 or +1 by the coding agent (not a human panel) from the post text alone; wrong_player means the name refers to someone else. Lists, injury and lineup reports and satire are 0. Post text was not kept. key is postId:playerId with the same hashed post id as the ingest store.",
+ "description": "Tone toward one named player for fan posts that passed the nightly ingest filters, sampled Oct 3, 2026 (Bluesky logged-out search; YouTube comments from 12 evenly spaced configured channels). Labeled -1, 0 or +1 by the coding agent (not a human panel) from the post text alone; wrong_player means the name refers to someone else; not_about means a league-channel comment inherited the player from the video title but is not about them. Lists, injury and lineup reports and satire are 0. Post text was not kept. key is postId:playerId with the same hashed post id as the ingest store.",
  "labeler": "coding agent, single pass, scores hidden while labeling",
  "lexicon": "fan-lexicon-v1.2",
  "items": [
@@ -677,6 +677,681 @@
    "otherPlayerCount": 1,
    "label": 1,
    "score": 0.76
+  },
+  {
+   "key": "97e1d27f306b8ee9:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.64
+  },
+  {
+   "key": "9242093555706fb6:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.46
+  },
+  {
+   "key": "3df1905cd3b314c2:4431823",
+   "platform": "youtube",
+   "playerId": "4431823",
+   "playerName": "Miles McBride",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.94
+  },
+  {
+   "key": "721cf55fe4ae53c8:6450",
+   "platform": "youtube",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "3492269c2797481e:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0
+  },
+  {
+   "key": "1979a329a83df96d:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.94
+  },
+  {
+   "key": "2d37a9bf9beb4d91:4351852",
+   "platform": "youtube",
+   "playerId": "4351852",
+   "playerName": "Mitchell Robinson",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "9b901ccd72fa744b:3064514",
+   "platform": "youtube",
+   "playerId": "3064514",
+   "playerName": "Julius Randle",
+   "otherPlayerCount": 0,
+   "label": "not_about",
+   "score": 0
+  },
+  {
+   "key": "c5257dc49e58cbbb:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.24
+  },
+  {
+   "key": "dea79fa71e01f050:4683774",
+   "platform": "youtube",
+   "playerId": "4683774",
+   "playerName": "Bronny James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.94
+  },
+  {
+   "key": "db1acd4357c58faa:5104157",
+   "platform": "youtube",
+   "playerId": "5104157",
+   "playerName": "Victor Wembanyama",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.94
+  },
+  {
+   "key": "49fdefe670f6eaf4:4432816",
+   "platform": "youtube",
+   "playerId": "4432816",
+   "playerName": "LaMelo Ball",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.24
+  },
+  {
+   "key": "0fe31415b67b332e:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "45bb09a7fb6e145d:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "6abcd5ec3226ad57:4433225",
+   "platform": "youtube",
+   "playerId": "4433225",
+   "playerName": "Tyler Kolek",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "119ae43c08fb26ed:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0
+  },
+  {
+   "key": "d81bfa2729b0003d:3442",
+   "platform": "youtube",
+   "playerId": "3442",
+   "playerName": "DeAndre Jordan",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.64
+  },
+  {
+   "key": "11dfa542d24fa3c8:3975",
+   "platform": "youtube",
+   "playerId": "3975",
+   "playerName": "Stephen Curry",
+   "otherPlayerCount": 0,
+   "label": "not_about",
+   "score": -0.24
+  },
+  {
+   "key": "500455c3b3270f54:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "e372ea6017af8aa8:3112335",
+   "platform": "youtube",
+   "playerId": "3112335",
+   "playerName": "Nikola Jokić",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "e5a79aab8002302f:5104157",
+   "platform": "youtube",
+   "playerId": "5104157",
+   "playerName": "Victor Wembanyama",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.99
+  },
+  {
+   "key": "a07c3d8159511181:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.64
+  },
+  {
+   "key": "7b68e7c0be1993a7:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.85
+  },
+  {
+   "key": "296033a4ae76a3e2:4433136",
+   "platform": "youtube",
+   "playerId": "4433136",
+   "playerName": "Walker Kessler",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.64
+  },
+  {
+   "key": "22d2747b9351bb74:4432165",
+   "platform": "youtube",
+   "playerId": "4432165",
+   "playerName": "Jalen Suggs",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 1
+  },
+  {
+   "key": "1e2520dcd3e4b25a:3136195",
+   "platform": "youtube",
+   "playerId": "3136195",
+   "playerName": "Karl-Anthony Towns",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "726bf3725286ee7a:6585",
+   "platform": "youtube",
+   "playerId": "6585",
+   "playerName": "Andre Drummond",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "cfb22d13ddfc62fc:4351852",
+   "platform": "youtube",
+   "playerId": "4351852",
+   "playerName": "Mitchell Robinson",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "a9bedd640e97d83a:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.64
+  },
+  {
+   "key": "a740ad1524da7ebb:5289900",
+   "platform": "youtube",
+   "playerId": "5289900",
+   "playerName": "Mohamed Diawara",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "2a0125ceb35e3a31:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.64
+  },
+  {
+   "key": "0abb3e565fe6e2ce:4432573",
+   "platform": "youtube",
+   "playerId": "4432573",
+   "playerName": "Paolo Banchero",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "0895585f51452568:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.85
+  },
+  {
+   "key": "80c1519ef40a58c6:6450",
+   "platform": "youtube",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "50bd8d0e7a1d21c5:3934719",
+   "platform": "youtube",
+   "playerId": "3934719",
+   "playerName": "OG Anunoby",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.76
+  },
+  {
+   "key": "1ccfd576eccc75e1:4278077",
+   "platform": "youtube",
+   "playerId": "4278077",
+   "playerName": "Jarred Vanderbilt",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "d30a599ff53b3fef:4431785",
+   "platform": "youtube",
+   "playerId": "4431785",
+   "playerName": "Scotty Pippen Jr.",
+   "otherPlayerCount": 0,
+   "label": "wrong_player",
+   "score": 0.64
+  },
+  {
+   "key": "a20f972232d893a4:6450",
+   "platform": "youtube",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.24
+  },
+  {
+   "key": "2f61c1c240d24409:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "4bad52148db6a7f1:3907387",
+   "platform": "youtube",
+   "playerId": "3907387",
+   "playerName": "Ben Simmons",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "2471635dacc0124d:4277869",
+   "platform": "youtube",
+   "playerId": "4277869",
+   "playerName": "Jose Alvarado",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.24
+  },
+  {
+   "key": "1438abfe35c8c6fa:3032977",
+   "platform": "youtube",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.64
+  },
+  {
+   "key": "875b9ada004a1ac3:4066218",
+   "platform": "youtube",
+   "playerId": "4066218",
+   "playerName": "Grant Williams",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.96
+  },
+  {
+   "key": "63f8690001857430:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 4,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "a3c0032e76a0bbb5:6450",
+   "platform": "youtube",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "0bd65950df2b5cf4:4277869",
+   "platform": "youtube",
+   "playerId": "4277869",
+   "playerName": "Jose Alvarado",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "ad61fd622be9e001:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "1903a29ee6539189:3907387",
+   "platform": "youtube",
+   "playerId": "3907387",
+   "playerName": "Ben Simmons",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "87f97cf0625de93f:4433136",
+   "platform": "youtube",
+   "playerId": "4433136",
+   "playerName": "Walker Kessler",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.24
+  },
+  {
+   "key": "5144de1e0b9d645c:4277869",
+   "platform": "youtube",
+   "playerId": "4277869",
+   "playerName": "Jose Alvarado",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "8e6af8778712b8cc:6450",
+   "platform": "youtube",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "e5ee796bc3e947db:4066218",
+   "platform": "youtube",
+   "playerId": "4066218",
+   "playerName": "Grant Williams",
+   "otherPlayerCount": 0,
+   "label": "not_about",
+   "score": 0
+  },
+  {
+   "key": "4ec7ac66c36567cb:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 0.76
+  },
+  {
+   "key": "50263eddacc67cc4:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.24
+  },
+  {
+   "key": "523acb2566834d25:4277869",
+   "platform": "youtube",
+   "playerId": "4277869",
+   "playerName": "Jose Alvarado",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "9c628ada00c6fbc3:3934672",
+   "platform": "youtube",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "ba7fddb87141df6d:4432573",
+   "platform": "youtube",
+   "playerId": "4432573",
+   "playerName": "Paolo Banchero",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.46
+  },
+  {
+   "key": "41718453dedfbcd3:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.24
+  },
+  {
+   "key": "f4cb7f5549b8b1b7:4592691",
+   "platform": "youtube",
+   "playerId": "4592691",
+   "playerName": "Jake LaRavia",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.46
+  },
+  {
+   "key": "34d9a29420bb6c69:4278073",
+   "platform": "youtube",
+   "playerId": "4278073",
+   "playerName": "Shai Gilgeous-Alexander",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.46
+  },
+  {
+   "key": "2ee1602b7fcda634:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.24
+  },
+  {
+   "key": "40da005aa45e00c3:4278049",
+   "platform": "youtube",
+   "playerId": "4278049",
+   "playerName": "Daniel Gafford",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.46
+  },
+  {
+   "key": "e3731f916e4462f2:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.85
+  },
+  {
+   "key": "5b818b733e8d23d4:4432573",
+   "platform": "youtube",
+   "playerId": "4432573",
+   "playerName": "Paolo Banchero",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.76
+  },
+  {
+   "key": "6f4eca8af9e7b252:3975",
+   "platform": "youtube",
+   "playerId": "3975",
+   "playerName": "Stephen Curry",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.91
+  },
+  {
+   "key": "319f719f018fceb6:5289900",
+   "platform": "youtube",
+   "playerId": "5289900",
+   "playerName": "Mohamed Diawara",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.24
+  },
+  {
+   "key": "3127cafb42742a63:3062679",
+   "platform": "youtube",
+   "playerId": "3062679",
+   "playerName": "Josh Hart",
+   "otherPlayerCount": 2,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "45ee25d79ca2918e:4433621",
+   "platform": "youtube",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "87be0391e13a2186:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.46
+  },
+  {
+   "key": "a2a329c006693ead:5104157",
+   "platform": "youtube",
+   "playerId": "5104157",
+   "playerName": "Victor Wembanyama",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.64
+  },
+  {
+   "key": "ed921b1f3e138367:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.24
+  },
+  {
+   "key": "1c4766b9f1bfb671:3975",
+   "platform": "youtube",
+   "playerId": "3975",
+   "playerName": "Stephen Curry",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "aa5ab23aedd7e181:1966",
+   "platform": "youtube",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.46
+  },
+  {
+   "key": "e315593464ad1e83:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "ebd426e99c352f59:4897943",
+   "platform": "youtube",
+   "playerId": "4897943",
+   "playerName": "Dalton Knecht",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
   }
  ]
 }
