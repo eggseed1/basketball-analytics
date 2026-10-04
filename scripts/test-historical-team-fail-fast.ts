@@ -110,6 +110,9 @@ async function main() {
     getSeasonGamesArchive,
     getTeamSeasonGames,
   } = await import("../src/data/queries/games");
+  const { cacheExists } = await import(
+    "../src/data/providers/historical/games-cache"
+  );
 
   const arch1978 = await getSeasonGamesArchive("1978-79");
   assert.equal(arch1978.source, "unavailable");
@@ -145,43 +148,52 @@ async function main() {
   );
 
   // Cached historical season: disk archive → Seattle games, no remote crawl.
-  const arch1996 = await getSeasonGamesArchive("1996-97");
-  assert.equal(arch1996.source, "disk_cache");
-  assert.ok(arch1996.games.length >= 1000);
+  // data/cache is gitignored; without it the archive must say unavailable, not invent games.
+  let games1996Ms: number | null = null;
+  if (!(await cacheExists("1996-97"))) {
+    const missing = await getSeasonGamesArchive("1996-97");
+    assert.equal(missing.source, "unavailable");
+    assert.equal(missing.games.length, 0);
+    console.log("  (skip 1996-97 archive asserts: no local games cache)");
+  } else {
+    const arch1996 = await getSeasonGamesArchive("1996-97");
+    assert.equal(arch1996.source, "disk_cache");
+    assert.ok(arch1996.games.length >= 1000);
 
-  const t96 = Date.now();
-  const games1996 = await getTeamSeasonGames({
-    teamId: "25",
-    season: "1996-97",
-    abbreviation: "SEA",
-  });
-  const games1996Ms = Date.now() - t96;
-  assert.equal(games1996.source, "disk_cache");
-  assert.ok(
-    games1996.games.length >= 70,
-    `expected Sonics slate, got ${games1996.games.length}`
-  );
-  assert.ok(
-    games1996.games.every(
-      (g) =>
-        g.homeTeamId === "25" ||
-        g.awayTeamId === "25" ||
-        (g.homeTeamAbbr ?? "").toUpperCase() === "SEA" ||
-        (g.awayTeamAbbr ?? "").toUpperCase() === "SEA"
-    ),
-    "1996 games must be Seattle-scoped (not Portland BDL 25 collision)"
-  );
-  assert.ok(games1996Ms < 500, `1996 archive games must be fast, got ${games1996Ms}ms`);
+    const t96 = Date.now();
+    const games1996 = await getTeamSeasonGames({
+      teamId: "25",
+      season: "1996-97",
+      abbreviation: "SEA",
+    });
+    games1996Ms = Date.now() - t96;
+    assert.equal(games1996.source, "disk_cache");
+    assert.ok(
+      games1996.games.length >= 70,
+      `expected Sonics slate, got ${games1996.games.length}`
+    );
+    assert.ok(
+      games1996.games.every(
+        (g) =>
+          g.homeTeamId === "25" ||
+          g.awayTeamId === "25" ||
+          (g.homeTeamAbbr ?? "").toUpperCase() === "SEA" ||
+          (g.awayTeamAbbr ?? "").toUpperCase() === "SEA"
+      ),
+      "1996 games must be Seattle-scoped (not Portland BDL 25 collision)"
+    );
+    assert.ok(games1996Ms < 500, `1996 archive games must be fast, got ${games1996Ms}ms`);
 
-  const ev1996 = await getTeamSeasonEvidence({
-    teamId: "25",
-    season: "1996-97",
-    abbreviation: "SEA",
-    fullName: "Seattle SuperSonics",
-  });
-  assert.ok(!ev1996.error, ev1996.error ?? "expected evidence from cache");
-  assert.ok(ev1996.games.length >= 1);
-  assert.match(ev1996.subject.fullName, /Seattle SuperSonics/i);
+    const ev1996 = await getTeamSeasonEvidence({
+      teamId: "25",
+      season: "1996-97",
+      abbreviation: "SEA",
+      fullName: "Seattle SuperSonics",
+    });
+    assert.ok(!ev1996.error, ev1996.error ?? "expected evidence from cache");
+    assert.ok(ev1996.games.length >= 1);
+    assert.match(ev1996.subject.fullName, /Seattle SuperSonics/i);
+  }
 
   // Current-season board + roster still works (live ESPN).
   clearEspnCache();
