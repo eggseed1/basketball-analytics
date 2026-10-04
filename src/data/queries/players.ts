@@ -1796,13 +1796,9 @@ export async function attachBundledBrefDarkoRaptor(
 
   return rows.map((row) => {
     let next = row;
-    if (
-      !(
-        (row.per != null && row.per !== 0) ||
-        (row.winShares != null && row.winShares !== 0) ||
-        (row.vorp != null && row.vorp !== 0)
-      )
-    ) {
+    const present = (v: number | null | undefined) =>
+      typeof v === "number" && Number.isFinite(v) && v !== 0;
+    if (!(present(row.per) || present(row.winShares) || present(row.vorp))) {
       const bref = findBundledBrefPlayer(
         row.season,
         row.playerName,

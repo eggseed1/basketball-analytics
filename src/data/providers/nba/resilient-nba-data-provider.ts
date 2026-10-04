@@ -22,7 +22,10 @@ import {
   transformCompleteEspnPlayerSeason,
   transformCompleteEspnTeamTotals,
 } from "./espn-stat-integrity";
-import { statsNbaNetworkEnabled } from "./runtime-policy";
+import {
+  preferBundledProductDataOnEdge,
+  statsNbaNetworkEnabled,
+} from "./runtime-policy";
 import {
   defaultCanonicalSeasons,
   espnYearFromCanonicalSeason,
@@ -34,6 +37,7 @@ const BOARD_TTL_MS = 1000 * 60 * 15;
 const CAREER_TTL_MS = 1000 * 60 * 60 * 12;
 const GAME_LOG_TTL_MS = 1000 * 60 * 10;
 const MIN_COMPLETE_BOARD_ROWS = 150;
+const EDGE_NBA_CAREER_GRACE_MS = 400;
 
 type ByAthleteResponse = {
   pagination?: { pages?: number; page?: number };
@@ -325,17 +329,28 @@ export class ResilientNBADataProvider extends StatsNbaDataProvider {
     const ids = await this.providerIds(playerId);
     // stats.nba is fail-closed on Vercel — skip the race so ESPN alone bounds TTFB.
     const allowNba = Boolean(ids.nbaId) && statsNbaNetworkEnabled();
-    const [espnCareer, nbaCareer, profile] = await Promise.all([
+    const nbaTask = allowNba
+      ? super.getPlayerCareerSeasons(ids.nbaId!).catch(() => [])
+      : Promise.resolve([] as PlayerSeason[]);
+    const [espnCareer, profile] = await Promise.all([
       ids.espnId
         ? this.loadEspnCareer(ids.espnId).catch(() => [])
-        : Promise.resolve([] as PlayerSeason[]),
-      allowNba
-        ? super.getPlayerCareerSeasons(ids.nbaId!).catch(() => [])
         : Promise.resolve([] as PlayerSeason[]),
       ids.espnId
         ? this.loadEspnProfile(ids.espnId).catch(() => null)
         : Promise.resolve(null),
     ]);
+    // Workers egress to stats.nba.com usually hangs until the client timeout,
+    // so once ESPN has a career only a warm or fast stats.nba answer joins it.
+    const nbaCareer =
+      espnCareer.length > 0 && preferBundledProductDataOnEdge()
+        ? await Promise.race([
+            nbaTask,
+            new Promise<PlayerSeason[]>((resolve) =>
+              setTimeout(() => resolve([]), EDGE_NBA_CAREER_GRACE_MS)
+            ),
+          ])
+        : await nbaTask;
 
     if (ids.espnId && (espnCareer.length || nbaCareer.length)) {
       return mergeCareerSources(

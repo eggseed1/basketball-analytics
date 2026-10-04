@@ -10,6 +10,10 @@ export type BundledCurrentRosterEntry = {
   teamName: string;
   /** ESPN display name; absent on sentiment gap-fill rows. */
   name?: string;
+  /** ESPN position abbreviation. */
+  pos?: string;
+  /** Birth date, YYYY-MM-DD. */
+  dob?: string;
 };
 
 type RosterFile = {
@@ -35,6 +39,8 @@ export function getBundledCurrentRosterEntry(
     teamAbbr: String(row.teamAbbr ?? row.teamId),
     teamName: String(row.teamName ?? ""),
     ...(row.name ? { name: String(row.name) } : {}),
+    ...(row.pos ? { pos: String(row.pos) } : {}),
+    ...(row.dob ? { dob: String(row.dob) } : {}),
   };
 }
 
@@ -59,6 +65,30 @@ export function resolveBundledCurrentTeamId(
     if (hit) return hit;
   }
   return null;
+}
+
+const FRESH_MAX_AGE_MS = 14 * 24 * 60 * 60 * 1000;
+
+/**
+ * True when the bundle lists the given season's rosters and was baked recently
+ * enough to stand in for a live 30-team ESPN crawl.
+ */
+export function bundledCurrentRosterIsFresh(
+  season: string,
+  now = Date.now()
+): boolean {
+  if (data.season !== season || Object.keys(players).length === 0) return false;
+  const generated = data.generatedAt ? Date.parse(data.generatedAt) : NaN;
+  return Number.isFinite(generated) && now - generated < FRESH_MAX_AGE_MS;
+}
+
+/** Rows that came from ESPN team rosters (not sentiment gap-fill). */
+export function listBundledEspnRosterEntries(): Array<
+  [string, BundledCurrentRosterEntry]
+> {
+  return Object.entries(players).filter(
+    ([, row]) => Boolean(row?.name) && /^\d+$/.test(String(row?.teamId ?? ""))
+  );
 }
 
 export function bundledCurrentRosterMeta() {

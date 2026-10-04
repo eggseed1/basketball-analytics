@@ -10,12 +10,21 @@ export function formatPct(value: number, digits = 1): string {
   return `${(value * 100).toFixed(digits)}%`;
 }
 
+// toLocaleString with options builds a fresh Intl.NumberFormat per call, which
+// dominated server CPU on stat-heavy pages.
+const numberFormats = new Map<number, Intl.NumberFormat>();
+
 export function formatNumber(value: number, digits = 0): string {
   if (!Number.isFinite(value)) return UNAVAILABLE_STAT_LABEL;
-  return value.toLocaleString(undefined, {
-    maximumFractionDigits: digits,
-    minimumFractionDigits: digits,
-  });
+  let fmt = numberFormats.get(digits);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat(undefined, {
+      maximumFractionDigits: digits,
+      minimumFractionDigits: digits,
+    });
+    numberFormats.set(digits, fmt);
+  }
+  return fmt.format(value);
 }
 
 /**

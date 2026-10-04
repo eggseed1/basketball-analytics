@@ -596,10 +596,17 @@ function toCandidates(
   return out;
 }
 
-function percentileAmong(value: number, pool: number[]): number {
-  if (!pool.length || !Number.isFinite(value)) return 50;
-  const below = pool.filter((v) => v < value).length;
-  return (below / pool.length) * 100;
+/** Percent of an ascending pool strictly below `value`. */
+function percentileAmongSorted(value: number, sortedPool: number[]): number {
+  if (!sortedPool.length || !Number.isFinite(value)) return 50;
+  let lo = 0;
+  let hi = sortedPool.length;
+  while (lo < hi) {
+    const mid = (lo + hi) >>> 1;
+    if (sortedPool[mid]! < value) lo = mid + 1;
+    else hi = mid;
+  }
+  return (lo / sortedPool.length) * 100;
 }
 
 /** Closest players on a single metric (by absolute distance). */
@@ -617,8 +624,9 @@ export function findSimilarForMetric(options: {
   const limit = options.limit ?? 6;
   const invert = Boolean(options.invert);
 
+  // Archive cohorts run to tens of thousands of rows and this runs once per
+  // metric, so only the returned comps pay for stints, display and percentile.
   const nearest = (rows: PlayerSeason[]) => {
-    const stintsByPlayerSeason = new Map<string, PlayerCardStint[]>();
     const grouped = new Map<string, PlayerSeason[]>();
     for (const row of rows) {
       const key = `${row.playerId}|${row.season}`;
@@ -626,46 +634,44 @@ export function findSimilarForMetric(options: {
       if (list) list.push(row);
       else grouped.set(key, [row]);
     }
-    for (const [key, list] of grouped) {
-      const season = key.slice(key.indexOf("|") + 1);
-      stintsByPlayerSeason.set(key, cardStintsForSeason(list, season));
-    }
 
     const candidates = toCandidates(rows, picker.pick);
-    const poolValues = candidates.map((c) => c.value);
-    const toPercentile = (value: number) => {
-      const raw = percentileAmong(value, poolValues);
-      return invert ? 100 - raw : raw;
-    };
+    const sortedPool = candidates
+      .map((c) => c.value)
+      .sort((a, b) => a - b);
 
+    type Candidate = (typeof candidates)[number];
     const ranked = candidates
       .filter((c) => c.playerId !== options.focalPlayerId)
-      .map((c) => {
-        const stints =
-          stintsByPlayerSeason.get(`${c.playerId}|${c.season}`) ?? [];
-        const last = stints.at(-1);
-        return {
-          playerId: c.playerId,
-          playerName: c.playerName,
-          season: c.season,
-          teamName: last?.teamLabel ?? c.teamName,
-          teamKey: last?.teamKey ?? c.teamKey,
-          stints: stints.length > 0 ? stints : undefined,
-          value: c.value,
-          display: picker.format(c.value),
-          delta: c.value - options.focalValue,
-          percentile: toPercentile(c.value),
-          distance: Math.abs(c.value - options.focalValue),
-        };
-      })
+      .map((c) => ({ c, distance: Math.abs(c.value - options.focalValue) }))
       .sort(
         (a, b) =>
-          a.distance - b.distance || a.playerName.localeCompare(b.playerName)
+          a.distance - b.distance ||
+          a.c.playerName.localeCompare(b.c.playerName)
       );
+
+    const materialize = (c: Candidate): StatComp => {
+      const key = `${c.playerId}|${c.season}`;
+      const stints = cardStintsForSeason(grouped.get(key) ?? [], c.season);
+      const last = stints.at(-1);
+      const raw = percentileAmongSorted(c.value, sortedPool);
+      return {
+        playerId: c.playerId,
+        playerName: c.playerName,
+        season: c.season,
+        teamName: last?.teamLabel ?? c.teamName,
+        teamKey: last?.teamKey ?? c.teamKey,
+        stints: stints.length > 0 ? stints : undefined,
+        value: c.value,
+        display: picker.format(c.value),
+        delta: c.value - options.focalValue,
+        percentile: invert ? 100 - raw : raw,
+      };
+    };
 
     return (maxPerSeason: number | null): StatComp[] => {
       if (maxPerSeason == null) {
-        return ranked.slice(0, limit).map(({ distance: _d, ...rest }) => rest);
+        return ranked.slice(0, limit).map(({ c }) => materialize(c));
       }
       const out: StatComp[] = [];
       const perSeason = new Map<string, number>();
@@ -674,16 +680,15 @@ export function findSimilarForMetric(options: {
         row: (typeof ranked)[number],
         enforceCap: boolean
       ) => {
-        const key = `${row.playerId}|${row.season}`;
+        const key = `${row.c.playerId}|${row.c.season}`;
         if (seen.has(key)) return;
         if (enforceCap) {
-          const n = perSeason.get(row.season) ?? 0;
+          const n = perSeason.get(row.c.season) ?? 0;
           if (n >= maxPerSeason) return;
-          perSeason.set(row.season, n + 1);
+          perSeason.set(row.c.season, n + 1);
         }
         seen.add(key);
-        const { distance: _d, ...rest } = row;
-        out.push(rest);
+        out.push(materialize(row.c));
       };
       for (const row of ranked) {
         if (out.length >= limit) break;
@@ -827,19 +832,21 @@ export function findSimilarProfile(options: {
     const valued = [options.focal, ...pool].filter(
       (row) => axisValue(row, axis) != null
     );
-    const values = valued.map((row) => axisValue(row, axis)!);
+    const values = valued
+      .map((row) => axisValue(row, axis)!)
+      .sort((a, b) => a - b);
     const byId = new Map<string, number>();
     for (const row of valued) {
       const key = focalIds.has(row.playerId) ? "__focal__" : poolKey(row);
       // Focal may appear once; peers use player|season.
       if (key === "__focal__" && byId.has("__focal__")) continue;
-      byId.set(key, percentileAmong(axisValue(row, axis)!, values));
+      byId.set(key, percentileAmongSorted(axisValue(row, axis)!, values));
     }
     // Ensure focal percentile even when focal id matched a peer key above.
     if (axisValue(options.focal, axis) != null) {
       byId.set(
         "__focal__",
-        percentileAmong(axisValue(options.focal, axis)!, values)
+        percentileAmongSorted(axisValue(options.focal, axis)!, values)
       );
     }
     percentiles.set(axis, byId);

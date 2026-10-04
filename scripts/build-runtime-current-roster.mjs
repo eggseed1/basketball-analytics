@@ -51,37 +51,80 @@ async function fetchTeamRoster(teamId) {
   return res.json();
 }
 
+async function fetchTeamRosterWithRetry(teamId, attempts = 3) {
+  let lastError;
+  for (let attempt = 0; attempt < attempts; attempt++) {
+    try {
+      return await fetchTeamRoster(teamId);
+    } catch (error) {
+      lastError = error;
+      if (attempt < attempts - 1) {
+        await new Promise((resolve) => setTimeout(resolve, 1000 * (attempt + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
+async function readPreviousSnapshot(season) {
+  try {
+    const prev = JSON.parse(await fs.readFile(OUT, "utf8"));
+    return prev?.season === season && prev.players ? prev.players : {};
+  } catch {
+    return {};
+  }
+}
+
 async function main() {
   const season = currentSeason();
-  /** @type {Record<string, { teamId: string, teamAbbr: string, teamName: string, name?: string }>} */
+  /** @type {Record<string, { teamId: string, teamAbbr: string, teamName: string, name?: string, pos?: string, dob?: string }>} */
   const byPlayerId = {};
   let teamsOk = 0;
+  const failedTeamIds = [];
+  const previous = await readPreviousSnapshot(season);
 
   for (const teamId of TEAM_IDS) {
     try {
-      const payload = await fetchTeamRoster(teamId);
+      const payload = await fetchTeamRosterWithRetry(teamId);
       const abbr = String(payload.team?.abbreviation ?? "").toUpperCase();
       const name = String(payload.team?.displayName ?? "");
       const tid = String(payload.team?.id ?? teamId);
       for (const athlete of payload.athletes ?? []) {
         const id = String(athlete.id ?? "").trim();
         if (!id) continue;
+        const pos = String(athlete.position?.abbreviation ?? "").trim();
+        const dob = String(athlete.dateOfBirth ?? "").slice(0, 10);
         byPlayerId[id] = {
           teamId: tid,
           teamAbbr: abbr || tid,
           teamName: name,
           name: String(athlete.displayName ?? athlete.fullName ?? "").trim(),
+          ...(pos ? { pos } : {}),
+          ...(/^\d{4}-\d{2}-\d{2}$/.test(dob) ? { dob } : {}),
         };
       }
       teamsOk += 1;
       console.log(`[current-roster] ${abbr || teamId} → ${(payload.athletes ?? []).length}`);
     } catch (error) {
+      failedTeamIds.push(teamId);
       console.warn(
         `[current-roster] team ${teamId} skipped: ${
           error instanceof Error ? error.message : error
         }`
       );
     }
+  }
+
+  // A transient ESPN error must not drop a whole roster from the bundle; keep
+  // that team's entries from the previous snapshot of the same season.
+  for (const teamId of failedTeamIds) {
+    let kept = 0;
+    for (const [id, row] of Object.entries(previous)) {
+      if (String(row?.teamId) !== teamId || byPlayerId[id]) continue;
+      byPlayerId[id] = row;
+      kept += 1;
+    }
+    console.warn(`[current-roster] team ${teamId} kept ${kept} players from previous snapshot`);
   }
 
   // Sentiment profiles already track post-trade teamKey — fill gaps only with

@@ -7,7 +7,14 @@ import {
   currentNbaStartYear,
 } from "@/data/providers/historical/season-range";
 import { espnFetchJson } from "@/data/providers/nba/espn-client";
-import { runtimeTimeoutMs } from "@/data/providers/nba/runtime-policy";
+import {
+  preferBundledProductDataOnEdge,
+  runtimeTimeoutMs,
+} from "@/data/providers/nba/runtime-policy";
+import {
+  bundledCurrentRosterIsFresh,
+  listBundledEspnRosterEntries,
+} from "@/data/runtime/current-roster-snapshot";
 
 const SITE_API = "https://site.api.espn.com";
 
@@ -96,9 +103,49 @@ type LeagueRosterEntry = {
 const leagueRosterProcessCache = new Map<string, LeagueRosterEntry>();
 const LEAGUE_ROSTER_TTL_MS = 10 * 60 * 1000;
 
+function ageOn(dob: string | undefined, now: Date): number | undefined {
+  if (!dob) return undefined;
+  const [y, m, d] = dob.split("-").map(Number);
+  if (!y || !m || !d) return undefined;
+  let age = now.getUTCFullYear() - y;
+  const beforeBirthday =
+    now.getUTCMonth() + 1 < m ||
+    (now.getUTCMonth() + 1 === m && now.getUTCDate() < d);
+  if (beforeBirthday) age -= 1;
+  return age;
+}
+
+/** Same row shape as the live crawl, read from the bundled ESPN rosters. */
+function bundledLeagueRosterPlayers(season: string): PlayerSeason[] {
+  const now = new Date();
+  return listBundledEspnRosterEntries().map(([playerId, row]) =>
+    withPlayerSeasonDefaults({
+      playerId,
+      playerName: row.name ?? "",
+      teamId: row.teamId,
+      teamName: row.teamName,
+      teamAbbreviation: row.teamAbbr,
+      season,
+      position: mapEspnPosition(row.pos),
+      age: ageOn(row.dob, now),
+      gamesPlayed: 0,
+      gamesStarted: 0,
+      minutes: 0,
+      teamIdProvider: "espn",
+      providerTeamId: row.teamId,
+    })
+  );
+}
+
 async function fetchEspnLeagueRosterPlayersUncached(
   season: string
 ): Promise<PlayerSeason[]> {
+  // Workers cap concurrent subrequests at six, so a live 30-roster crawl
+  // queues for seconds on every cold isolate.
+  if (preferBundledProductDataOnEdge() && bundledCurrentRosterIsFresh(season)) {
+    const rows = bundledLeagueRosterPlayers(season);
+    if (rows.length > 0) return rows;
+  }
   const teams = listCanonicalTeams();
   const chunks = await Promise.all(
     teams.map((team) =>

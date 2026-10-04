@@ -13,6 +13,10 @@ import {
   isPreseasonRosterSeason,
 } from "@/data/providers/nba/espn-roster-client";
 import { leagueRosterDiscoveryEnabled } from "@/data/providers/nba/runtime-policy";
+import {
+  bundledCurrentRosterIsFresh,
+  resolveBundledCurrentTeamId,
+} from "@/data/runtime/current-roster-snapshot";
 import { normalizePlayerName } from "@/data/providers/salaries/salary-store";
 import type { PlayerSeason } from "@/data/types";
 import { brandableTeamKey } from "@/lib/player-team-context";
@@ -65,16 +69,22 @@ export async function resolveRosterSeasonRow(
     nameKeys.add(normalizePlayerName(identity.displayName));
   }
 
+  const snapshotCovers = bundledCurrentRosterIsFresh(season);
+  const snapshotTeam = snapshotCovers
+    ? brandableTeamKey(resolveBundledCurrentTeamId(...ids))
+    : undefined;
   const preferTeam = brandableTeamKey(options?.preferTeamId);
-  if (preferTeam) {
-    const teamRoster = await teamRosterCache(preferTeam, season);
+  for (const team of new Set([snapshotTeam, preferTeam])) {
+    if (!team) continue;
+    const teamRoster = await teamRosterCache(team, season);
     const hit = findInRoster(teamRoster, ids, nameKeys);
     if (hit) return hit;
   }
 
   // A miss on the player's previous team used to trigger 30 parallel roster
-  // requests before the player page could render. On Vercel, fail open with the
-  // existing career/profile identity instead; a durable roster cache can opt in.
+  // requests before the player page could render. A fresh bundled snapshot
+  // already lists every rostered player, so a miss there means unsigned.
+  if (snapshotCovers) return null;
   if (!leagueRosterDiscoveryEnabled()) return null;
 
   const roster = await leagueRosterCache(season);
