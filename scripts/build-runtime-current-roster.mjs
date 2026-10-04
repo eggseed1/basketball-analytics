@@ -53,7 +53,7 @@ async function fetchTeamRoster(teamId) {
 
 async function main() {
   const season = currentSeason();
-  /** @type {Record<string, { teamId: string, teamAbbr: string, teamName: string }>} */
+  /** @type {Record<string, { teamId: string, teamAbbr: string, teamName: string, name?: string }>} */
   const byPlayerId = {};
   let teamsOk = 0;
 
@@ -70,6 +70,7 @@ async function main() {
           teamId: tid,
           teamAbbr: abbr || tid,
           teamName: name,
+          name: String(athlete.displayName ?? athlete.fullName ?? "").trim(),
         };
       }
       teamsOk += 1;

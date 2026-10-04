@@ -8,6 +8,8 @@ export type BundledCurrentRosterEntry = {
   teamId: string;
   teamAbbr: string;
   teamName: string;
+  /** ESPN display name; absent on sentiment gap-fill rows. */
+  name?: string;
 };
 
 type RosterFile = {
@@ -32,6 +34,7 @@ export function getBundledCurrentRosterEntry(
     teamId: String(row.teamId),
     teamAbbr: String(row.teamAbbr ?? row.teamId),
     teamName: String(row.teamName ?? ""),
+    ...(row.name ? { name: String(row.name) } : {}),
   };
 }
 

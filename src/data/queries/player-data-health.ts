@@ -17,6 +17,7 @@ import {
 } from "@/data/diagnostics/player-board-health";
 import { classifyProviderFailure } from "@/data/diagnostics/provider-failure";
 import { describeProvider } from "@/data/diagnostics/provider-meta";
+import { scopeRowsToCurrentTeam } from "./current-team-scope";
 import { applyPlayerSeasonFilters } from "./filter-utils";
 import { getFilteredPlayerSeasonsDetailed } from "./players";
 import {
@@ -73,6 +74,32 @@ function seedLastGood(season: string, unfiltered: PlayerSeason[]) {
     unfiltered,
     cachedAt: Date.now(),
     servingFromFallback: false,
+  });
+}
+
+/** Prior-season rows for a team filter follow players to their current team. */
+function filterBoardRows(
+  unfiltered: PlayerSeason[],
+  filters: BasketballFilters,
+  ctx: { requestSeason: string; statsSeason: string; usingPriorSeasonStats: boolean }
+): PlayerSeason[] {
+  if (ctx.usingPriorSeasonStats && filters.team) {
+    const scoped = scopeRowsToCurrentTeam(
+      applyPlayerSeasonFilters(unfiltered, { season: ctx.statsSeason }),
+      filters.team,
+      ctx.requestSeason
+    );
+    if (scoped) {
+      return applyPlayerSeasonFilters(scoped, {
+        ...filters,
+        team: undefined,
+        season: ctx.statsSeason,
+      });
+    }
+  }
+  return applyPlayerSeasonFilters(unfiltered, {
+    ...filters,
+    season: ctx.statsSeason,
   });
 }
 
@@ -142,9 +169,10 @@ export async function getPlayerSeasonBoardSnapshot(
 
   // Draft class / team / position / minutes only re-filter the season snapshot.
   if (cached && cached.unfiltered.length > 0 && narrowing) {
-    const rows = applyPlayerSeasonFilters(cached.unfiltered, {
-      ...filters,
-      season: statsSeason,
+    const rows = filterBoardRows(cached.unfiltered, filters, {
+      requestSeason,
+      statsSeason,
+      usingPriorSeasonStats,
     });
     const health = await buildHealth({
       providerName: boardLoaderOverride ? "nba" : provider.name,
@@ -196,9 +224,10 @@ export async function getPlayerSeasonBoardSnapshot(
     season.toUpperCase() !== "ALL"
   ) {
     seedLastGood(statsSeason, unfilteredRows);
-    rows = applyPlayerSeasonFilters(unfilteredRows, {
-      ...filters,
-      season: statsSeason,
+    rows = filterBoardRows(unfilteredRows, filters, {
+      requestSeason,
+      statsSeason,
+      usingPriorSeasonStats,
     });
   } else if (error == null && unfilteredRows.length > 0 && season.toUpperCase() === "ALL") {
     // Loader already applied filters for the all-seasons merge path.
@@ -219,9 +248,10 @@ export async function getPlayerSeasonBoardSnapshot(
       statsSeason = priorSeason;
       usingPriorSeasonStats = true;
       unfilteredRows = priorLoaded.rows;
-      rows = applyPlayerSeasonFilters(priorLoaded.rows, {
-        ...filters,
-        season: priorSeason,
+      rows = filterBoardRows(priorLoaded.rows, filters, {
+        requestSeason,
+        statsSeason,
+        usingPriorSeasonStats,
       });
       warnings.push(priorSeasonStatsNotice(season, priorSeason));
     }
@@ -232,9 +262,10 @@ export async function getPlayerSeasonBoardSnapshot(
   if (error != null && season) {
     const cached = lastGoodBySeason.get(statsSeason);
     if (cached && cached.unfiltered.length > 0) {
-      rows = applyPlayerSeasonFilters(cached.unfiltered, {
-        ...filters,
-        season: statsSeason,
+      rows = filterBoardRows(cached.unfiltered, filters, {
+        requestSeason,
+        statsSeason,
+        usingPriorSeasonStats,
       });
       source = "cached-espn";
       fromCachedRealBoard = true;

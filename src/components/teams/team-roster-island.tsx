@@ -1,6 +1,7 @@
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { PlayerSeasonTable } from "@/components/explore/player-season-table";
 import { TeamRosterSection } from "@/components/teams/team-roster-section";
+import { currentRosterPlayersMissing } from "@/data/queries/current-team-scope";
 import { getExplorePlayersBoardView } from "@/data/queries/explore-players-board";
 import { getTeamRosterCached } from "@/data/queries/request-cache";
 import { type } from "@/lib/design-system";
@@ -54,6 +55,14 @@ export async function TeamRosterIsland({
     }),
     getTeamRosterCached(teamId, season, 0),
   ]);
+  const preseason = view.usingPriorSeasonStats;
+  const noPriorRow = preseason
+    ? currentRosterPlayersMissing(
+        teamId,
+        season,
+        view.rows.map((row) => row.playerId)
+      )
+    : null;
   const players = roster.status === "ok" ? roster.players : [];
   const buckets = buildRosterBuckets(players);
   const ladder = buildRotationLadder(players);
@@ -75,9 +84,10 @@ export async function TeamRosterIsland({
               Roster board
             </h2>
             <p className={cn(type.bodySm, "text-muted-foreground")}>
-              {season} roster with the same columns as Explore Players, scoped
-              to this team.
-              {roster.omitsMidSeasonMoves
+              {preseason
+                ? `${season} roster as ESPN lists it today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
+                : `${season} roster with the same columns as Explore Players, scoped to this team.`}
+              {!preseason && roster.omitsMidSeasonMoves
                 ? ` ${MID_SEASON_MOVES_NOTE}`
                 : null}
             </p>
@@ -162,6 +172,23 @@ export async function TeamRosterIsland({
             seasonAwaitingGames={view.seasonAwaitingGames}
           />
         )}
+        {noPriorRow?.length ? (
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            Also on the roster, with no {view.statsSeason} NBA stats:{" "}
+            {noPriorRow.map((p, i) => (
+              <span key={p.playerId}>
+                {i ? ", " : null}
+                <TransitionLink
+                  href={`/players/${p.playerId}`}
+                  className="font-medium text-foreground underline-offset-2 hover:underline"
+                >
+                  {p.name}
+                </TransitionLink>
+              </span>
+            ))}
+            .
+          </p>
+        ) : null}
       </section>
 
       <section className="flex flex-col gap-3" aria-label="Who drives it">
@@ -179,8 +206,12 @@ export async function TeamRosterIsland({
             season={season}
             teamKey={teamKey}
             teamId={teamId}
-            status={roster.status}
-            unavailableMessage={roster.warning}
+            status={preseason && !withMinutes.length ? "error" : roster.status}
+            unavailableMessage={
+              preseason && !withMinutes.length
+                ? `Rotation highlights start once ${season} games are played.`
+                : roster.warning
+            }
             showExploreLink={false}
           />
         </div>
