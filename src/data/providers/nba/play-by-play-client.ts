@@ -185,11 +185,12 @@ export function normalizeEspnSummary(raw: unknown): unknown {
         : play.participants?.[0]?.athlete;
     const cx = Number(play.coordinate?.x);
     const cy = Number(play.coordinate?.y);
-    // ESPN court grid: x 0-50 ft across with the rim at 25, y ft from the rim.
-    // Free throws carry a huge negative sentinel instead of a location.
+    // ESPN half-court grid: x 0-50 ft across with the rim at 25, y ft from the
+    // attacked rim. Free throws carry a huge negative sentinel, and rebounds
+    // repeat the missed shot's spot rather than where the ball was grabbed.
     const hasSpot =
-      isShot &&
       actionType !== "freethrow" &&
+      actionType !== "rebound" &&
       Number.isFinite(cx) &&
       Number.isFinite(cy) &&
       cx >= -5 &&
@@ -215,8 +216,8 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       shotResult: isShot ? (made ? "Made" : "Missed") : "",
       isFieldGoal: actionType === "2pt" || actionType === "3pt" ? 1 : 0,
       points: Number(play.scoreValue ?? 0) || 0,
-      shotX: hasSpot ? cx - 25 : null,
-      shotY: hasSpot ? cy : null,
+      locX: hasSpot ? cx - 25 : null,
+      locY: hasSpot ? cy : null,
     };
   });
   return { game: { actions } };

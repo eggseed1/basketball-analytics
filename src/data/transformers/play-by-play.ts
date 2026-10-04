@@ -40,17 +40,20 @@ function finiteOrNull(value: unknown): number | null {
   return Number.isFinite(n) ? n : null;
 }
 
-/** Feet from the rim; ESPN adapter emits feet, NBA feeds tenths of a foot. */
-function shotSpot(
+/**
+ * Feet from the attacked rim. The ESPN adapter emits feet for any located
+ * play; NBA feeds give tenths of a foot, used here for field goals only.
+ */
+function playSpot(
   action: Record<string, unknown>,
   isFieldGoal: boolean
-): { shotX: number | null; shotY: number | null } {
-  if (!isFieldGoal) return { shotX: null, shotY: null };
-  const fx = finiteOrNull(action.shotX);
-  const fy = finiteOrNull(action.shotY);
-  if (fx != null && fy != null) return { shotX: fx, shotY: fy };
+): { locX: number | null; locY: number | null } {
+  const fx = finiteOrNull(action.locX);
+  const fy = finiteOrNull(action.locY);
+  if (fx != null && fy != null) return { locX: fx, locY: fy };
+  if (!isFieldGoal) return { locX: null, locY: null };
   const legacy = normalizeNbaLegacyCoords(action.xLegacy, action.yLegacy);
-  return { shotX: legacy?.x ?? null, shotY: legacy?.y ?? null };
+  return { locX: legacy?.x ?? null, locY: legacy?.y ?? null };
 }
 
 function pointsFromAction(
@@ -122,7 +125,7 @@ export function transformNbaPlayByPlay(
         isFieldGoal,
         points:
           asNumber(action.points) || pointsFromAction(actionType, shotResult),
-        ...shotSpot(action, isFieldGoal),
+        ...playSpot(action, isFieldGoal),
       } satisfies PlayByPlayEvent;
     })
     .filter((e) => e.description.trim().length > 0 || e.actionType === "period")

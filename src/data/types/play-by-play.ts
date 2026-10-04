@@ -28,11 +28,11 @@ export interface PlayByPlayEvent {
   /** Points scored on this action (0 if none). */
   points: number;
   /**
-   * Field goal location in feet from the rim (x across, y toward half court).
-   * Null when the source has no coordinate; never estimated.
+   * Where the source places the play, in feet from the attacked rim (x across,
+   * y toward half court). Null when the source has no real spot; never estimated.
    */
-  shotX?: number | null;
-  shotY?: number | null;
+  locX?: number | null;
+  locY?: number | null;
 }
 
 export interface GamePlayByPlay {

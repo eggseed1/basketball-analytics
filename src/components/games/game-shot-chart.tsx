@@ -1,35 +1,24 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } from "react";
 
 import type { PlayByPlayEvent } from "@/data/types";
 import { type } from "@/lib/design-system";
+import {
+  buildCourtEvents,
+  periodName,
+  periodStart,
+  tallyAt,
+  type CourtEvent,
+  type ScoreMark,
+  type Side,
+  type SideTally,
+} from "@/lib/games/court-events";
 import { isLiveLikeStatus, type GameStatusKind } from "@/lib/game-status";
 import { cn } from "@/lib/utils";
 
-type Side = "home" | "away";
-
-interface CourtShot {
-  id: string;
-  side: Side;
-  made: boolean;
-  three: boolean;
-  /** Court position in feet on a 94 x 50 floor. */
-  cx: number;
-  cy: number;
-  t: number;
-  period: number;
-  clock: string;
-  description: string;
-}
-
-interface ScoreMark {
-  t: number;
-  home: number;
-  away: number;
-  period: number;
-  clock: string;
-}
+type Mode = "shots" | "game";
+type Layer = "makes" | "misses" | "assists" | "rebounds" | "blocks" | "steals" | "turnovers" | "fouls";
 
 const COURT_W = 94;
 const COURT_H = 50;
@@ -39,91 +28,39 @@ const SPEEDS = [1, 2, 4] as const;
 const BASE_REPLAY_SECONDS = 40;
 const LIVE_POLL_MS = 20_000;
 
-function elapsedSeconds(period: number, clockSeconds: number): number {
-  if (period <= 4) return (period - 1) * 720 + (720 - clockSeconds);
-  return 2880 + (period - 5) * 300 + (300 - clockSeconds);
-}
+const LAYERS: { id: Layer; label: string }[] = [
+  { id: "makes", label: "Makes" },
+  { id: "misses", label: "Misses" },
+  { id: "assists", label: "Assisted" },
+  { id: "rebounds", label: "Rebounds" },
+  { id: "blocks", label: "Blocks" },
+  { id: "steals", label: "Steals" },
+  { id: "turnovers", label: "Turnovers" },
+  { id: "fouls", label: "Fouls" },
+];
 
-function periodStart(period: number): number {
-  return period <= 4 ? (period - 1) * 720 : 2880 + (period - 5) * 300;
-}
+const STAT_COLUMNS: { label: string; title: string; value: (t: SideTally) => string }[] = [
+  { label: "FG", title: "Field goals", value: (t) => `${t.fgm}-${t.fga}` },
+  { label: "3P", title: "Three pointers", value: (t) => `${t.tpm}-${t.tpa}` },
+  { label: "FT", title: "Free throws", value: (t) => `${t.ftm}-${t.fta}` },
+  { label: "OREB", title: "Offensive rebounds", value: (t) => String(t.oreb) },
+  { label: "DREB", title: "Defensive rebounds", value: (t) => String(t.dreb) },
+  { label: "AST", title: "Assists", value: (t) => String(t.ast) },
+  { label: "STL", title: "Steals", value: (t) => String(t.stl) },
+  { label: "BLK", title: "Blocks", value: (t) => String(t.blk) },
+  { label: "TOV", title: "Turnovers", value: (t) => String(t.tov) },
+  { label: "PF", title: "Personal fouls", value: (t) => String(t.pf) },
+];
 
-function periodName(period: number): string {
-  if (period <= 4) return `Q${period}`;
-  return period === 5 ? "OT" : `${period - 4}OT`;
-}
-
-/** Learn which feed team id is home/away from who the scoreboard credits. */
-function teamSides(
-  events: PlayByPlayEvent[],
-  homeLabel: string,
-  awayLabel: string
-): Map<string, Side> {
-  const votes = new Map<string, { home: number; away: number }>();
-  let home = 0;
-  let away = 0;
-  for (const e of events) {
-    const key = e.teamId ?? e.teamTricode;
-    if (key && (e.scoreHome !== home || e.scoreAway !== away)) {
-      const v = votes.get(key) ?? { home: 0, away: 0 };
-      if (e.scoreHome > home && e.scoreAway === away) v.home++;
-      if (e.scoreAway > away && e.scoreHome === home) v.away++;
-      votes.set(key, v);
-    }
-    if (e.scoreHome + e.scoreAway >= home + away) {
-      home = e.scoreHome;
-      away = e.scoreAway;
-    }
-  }
-  const sides = new Map<string, Side>();
-  for (const [key, v] of votes) {
-    if (v.home !== v.away) sides.set(key, v.home > v.away ? "home" : "away");
-  }
-  for (const e of events) {
-    const key = e.teamId ?? e.teamTricode;
-    if (!key || sides.has(key)) continue;
-    if (e.teamTricode === homeLabel) sides.set(key, "home");
-    else if (e.teamTricode === awayLabel) sides.set(key, "away");
-  }
-  return sides;
-}
-
-function buildShots(
-  events: PlayByPlayEvent[],
-  homeLabel: string,
-  awayLabel: string
-): { shots: CourtShot[]; marks: ScoreMark[]; attempts: number } {
-  const sides = teamSides(events, homeLabel, awayLabel);
-  const shots: CourtShot[] = [];
-  const marks: ScoreMark[] = [];
-  let attempts = 0;
-  for (const e of events) {
-    if (!e.period) continue;
-    const t = elapsedSeconds(e.period, e.clockSeconds);
-    marks.push({ t, home: e.scoreHome, away: e.scoreAway, period: e.period, clock: e.clock });
-    if (!e.isFieldGoal || !e.shotResult) continue;
-    attempts++;
-    const side = sides.get(e.teamId ?? e.teamTricode ?? "");
-    if (!side || e.shotX == null || e.shotY == null) continue;
-    // Away shoots at the left basket, home at the right (rotated 180°).
-    const along = RIM_FROM_BASELINE + e.shotY;
-    const cx = side === "away" ? along : COURT_W - along;
-    const cy = side === "away" ? COURT_H / 2 + e.shotX : COURT_H / 2 - e.shotX;
-    shots.push({
-      id: e.id,
-      side,
-      made: e.shotResult === "Made",
-      three: e.actionType === "3pt",
-      cx: Math.min(Math.max(cx, 0.6), COURT_W - 0.6),
-      cy: Math.min(Math.max(cy, 0.6), COURT_H - 0.6),
-      t,
-      period: e.period,
-      clock: e.clock,
-      description: e.description,
-    });
-  }
-  shots.sort((a, b) => a.t - b.t);
-  return { shots, marks, attempts };
+/** Feed spot (feet from the attacked rim) → full-court position. */
+function toCourt(ev: CourtEvent): { cx: number; cy: number } {
+  const along = RIM_FROM_BASELINE + ev.y;
+  const cx = ev.attack === "away" ? along : COURT_W - along;
+  const cy = ev.attack === "away" ? COURT_H / 2 + ev.x : COURT_H / 2 - ev.x;
+  return {
+    cx: Math.min(Math.max(cx, 0.6), COURT_W - 0.6),
+    cy: Math.min(Math.max(cy, 0.6), COURT_H - 0.6),
+  };
 }
 
 function CourtEnd() {
@@ -141,40 +78,113 @@ function CourtEnd() {
   );
 }
 
-function sideLine(shots: CourtShot[], side: Side) {
-  let fgm = 0;
-  let fga = 0;
-  let tpm = 0;
-  let tpa = 0;
-  for (const s of shots) {
-    if (s.side !== side) continue;
-    fga++;
-    if (s.made) fgm++;
-    if (s.three) {
-      tpa++;
-      if (s.made) tpm++;
-    }
-  }
-  return { fgm, fga, tpm, tpa };
+function Diamond({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
+  return <path d={`M ${cx} ${cy - r} L ${cx + r} ${cy} L ${cx} ${cy + r} L ${cx - r} ${cy} Z`} {...rest} />;
 }
 
-function StatLine({ line }: { line: ReturnType<typeof sideLine> }) {
+function Triangle({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
+  return (
+    <path
+      d={`M ${cx - r} ${cy - r * 0.7} L ${cx + r} ${cy - r * 0.7} L ${cx} ${cy + r} Z`}
+      strokeLinejoin="round"
+      {...rest}
+    />
+  );
+}
+
+function Cross({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
+  return (
+    <path
+      d={`M ${cx - r} ${cy - r} L ${cx + r} ${cy + r} M ${cx + r} ${cy - r} L ${cx - r} ${cy + r}`}
+      strokeLinecap="round"
+      {...rest}
+    />
+  );
+}
+
+/** Legend glyph for a layer chip, drawn in currentColor. */
+function LayerGlyph({ layer }: { layer: Layer }) {
+  const c = "currentColor";
+  let glyph: ReactNode;
+  switch (layer) {
+    case "makes":
+      glyph = <circle cx={6} cy={6} r={4} fill={c} />;
+      break;
+    case "misses":
+      glyph = <circle cx={6} cy={6} r={3.6} fill="none" stroke={c} strokeWidth={1.5} />;
+      break;
+    case "assists":
+      glyph = (
+        <>
+          <circle cx={6} cy={6} r={2.6} fill={c} />
+          <circle cx={6} cy={6} r={5} fill="none" stroke={c} strokeWidth={1} />
+        </>
+      );
+      break;
+    case "rebounds":
+      glyph = (
+        <>
+          <circle cx={6} cy={6} r={4} fill="none" stroke={c} strokeWidth={1.2} strokeOpacity={0.5} />
+          <circle cx={6} cy={6} r={1.8} fill={c} />
+        </>
+      );
+      break;
+    case "blocks":
+      glyph = <Cross cx={6} cy={6} r={3.6} fill="none" stroke={c} strokeWidth={1.6} />;
+      break;
+    case "steals":
+      glyph = <Diamond cx={6} cy={6} r={4.6} fill={c} />;
+      break;
+    case "turnovers":
+      glyph = <Triangle cx={6} cy={6} r={4.4} fill="none" stroke={c} strokeWidth={1.4} />;
+      break;
+    case "fouls":
+      glyph = <rect x={2.2} y={2.2} width={7.6} height={7.6} fill="none" stroke={c} strokeWidth={1.4} />;
+      break;
+  }
+  return (
+    <svg viewBox="0 0 12 12" className="size-3 shrink-0" aria-hidden>
+      {glyph}
+    </svg>
+  );
+}
+
+function StatLine({ fgm, fga, tpm, tpa }: Pick<SideTally, "fgm" | "fga" | "tpm" | "tpa">) {
   return (
     <span className={cn(type.caption, "block tabular-nums text-muted-foreground")}>
       <span className="block sm:inline">
-        {line.fgm}-{line.fga} FG
+        {fgm}-{fga} FG
       </span>
       <span className="hidden sm:inline"> · </span>
       <span className="block sm:inline">
-        {line.tpm}-{line.tpa} 3P
+        {tpm}-{tpa} 3P
       </span>
     </span>
   );
 }
 
+function ModeChip({ active, onClick, children }: { active: boolean; onClick: () => void; children: string }) {
+  return (
+    <button
+      type="button"
+      role="tab"
+      aria-selected={active}
+      onClick={onClick}
+      className={cn(
+        type.caption,
+        "glass-pill rounded-md px-2.5 py-1 font-semibold transition-colors",
+        active ? "glass-pill-active" : "text-muted-foreground hover:text-foreground"
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
 /**
- * Full-court shot chart that fills in over game time. Final games replay
- * once when scrolled into view; live games poll and animate new shots.
+ * Full-court chart that fills in over game time. "Shots" plots field goals;
+ * "Game chart" adds every other play the feed places on the floor. Final
+ * games replay once when scrolled into view; live games poll for new plays.
  */
 export function GameShotChart({
   gameId,
@@ -195,18 +205,21 @@ export function GameShotChart({
 }) {
   const live = isLiveLikeStatus(status as GameStatusKind);
   const [events, setEvents] = useState(initialEvents);
-  const { shots, marks, attempts } = useMemo(
-    () => buildShots(events, homeLabel, awayLabel),
+  const { court, ticks, marks, fga } = useMemo(
+    () => buildCourtEvents(events, homeLabel, awayLabel),
     [events, homeLabel, awayLabel]
   );
+  const located = court.filter((c) => c.kind === "make" || c.kind === "miss").length;
   const maxPeriod = Math.max(4, ...marks.map((m) => m.period));
   const endT = Math.max(periodStart(maxPeriod + 1), ...marks.map((m) => m.t));
 
+  const [mode, setMode] = useState<Mode>("shots");
+  const [layers, setLayers] = useState<Set<Layer>>(() => new Set(LAYERS.map((l) => l.id)));
   // null = everything so far. Final games start empty and replay on view.
   const [cutoff, setCutoff] = useState<number | null>(live ? null : 0);
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState<(typeof SPEEDS)[number]>(2);
-  const [focus, setFocus] = useState<CourtShot | null>(null);
+  const [focus, setFocus] = useState<CourtEvent | null>(null);
   const [side, setSide] = useState<Side | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
   const introDone = useRef(live);
@@ -285,23 +298,59 @@ export function GameShotChart({
     };
   }, [live, gameId]);
 
-  const visible = cutoff == null ? shots : shots.filter((s) => s.t <= cutoff);
-  const shown = side ? visible.filter((s) => s.side === side) : visible;
-  const latest = visible.at(-1) ?? null;
   const at = cutoff ?? endT;
+  const visible = cutoff == null ? court : court.filter((c) => c.t <= cutoff);
+  const inMode = visible.filter((c) =>
+    mode === "shots"
+      ? c.kind === "make" || c.kind === "miss"
+      : c.kind === "make"
+        ? layers.has("makes") || (layers.has("assists") && c.assisted)
+        : c.kind === "miss"
+          ? layers.has("misses") ||
+            (layers.has("rebounds") && c.rebound != null) ||
+            (layers.has("blocks") && c.blockedBy != null)
+          : layers.has(c.kind === "steal" ? "steals" : c.kind === "turnover" ? "turnovers" : "fouls")
+  );
+  const shown = side
+    ? inMode.filter((c) => c.side === side || (c.blockedBy === side && layers.has("blocks")))
+    : inMode;
+  const latest = inMode.at(-1) ?? null;
   let mark: ScoreMark | null = null;
   for (const m of marks) {
     if (m.t <= at) mark = m;
     else break;
   }
-  const away = sideLine(visible, "away");
-  const home = sideLine(visible, "home");
+  const tally = useMemo(() => tallyAt(ticks, cutoff), [ticks, cutoff]);
   const ticker = focus ?? (playing || cutoff != null ? latest : null);
+  const colorOf = (s: Side) => (s === "home" ? homeColor : awayColor);
+  const labelOf = (s: Side) => (s === "home" ? homeLabel : awayLabel);
 
-  if (shots.length === 0) {
+  const layerCount = (layer: Layer) => {
+    const pool = side ? visible.filter((c) => c.side === side) : visible;
+    switch (layer) {
+      case "makes":
+        return pool.filter((c) => c.kind === "make").length;
+      case "misses":
+        return pool.filter((c) => c.kind === "miss").length;
+      case "assists":
+        return pool.filter((c) => c.assisted).length;
+      case "rebounds":
+        return pool.filter((c) => c.rebound).length;
+      case "blocks":
+        return (side ? visible.filter((c) => c.blockedBy === side) : visible.filter((c) => c.blockedBy)).length;
+      case "steals":
+        return pool.filter((c) => c.kind === "steal").length;
+      case "turnovers":
+        return pool.filter((c) => c.kind === "turnover").length;
+      case "fouls":
+        return pool.filter((c) => c.kind === "foul").length;
+    }
+  };
+
+  if (located === 0) {
     return (
       <p className={cn(type.bodySm, "text-muted-foreground")}>
-        {attempts > 0
+        {fga > 0
           ? "This game's play-by-play has no shot locations, so there's no chart to draw."
           : "Shots appear here once the play-by-play has field goal attempts."}
       </p>
@@ -318,27 +367,125 @@ export function GameShotChart({
     setPlaying(true);
   };
 
-  const statLine = (s: ReturnType<typeof sideLine>) =>
-    `${s.fgm}-${s.fga} FG · ${s.tpm}-${s.tpa} 3P`;
+  const toggleLayer = (layer: Layer) =>
+    setLayers((prev) => {
+      const next = new Set(prev);
+      if (next.has(layer)) next.delete(layer);
+      else next.add(layer);
+      return next;
+    });
+
+  const tickerNote = (c: CourtEvent) => {
+    if (mode !== "game" || c.kind !== "miss" || !c.rebound) return "";
+    const kind = c.rebound.offensive ? "offensive" : "defensive";
+    return ` · ${labelOf(c.rebound.side)} ${kind} rebound`;
+  };
+
+  const renderEvent = (c: CourtEvent) => {
+    const { cx, cy } = toCourt(c);
+    const color = colorOf(c.side);
+    const isFocus = focus?.id === c.id;
+    const grow = isFocus ? 1.5 : 1;
+    const bg = "var(--background)";
+    let body: ReactNode;
+    if (c.kind === "make") {
+      const showMake = mode === "shots" || layers.has("makes");
+      const ring = mode === "game" && layers.has("assists") && c.assisted;
+      body = (
+        <>
+          <circle cx={cx} cy={cy} r={0.8} fill={color} className="shot-ripple" />
+          {ring ? (
+            <circle cx={cx} cy={cy} r={1.35 * grow} fill="none" stroke={color} strokeWidth={0.2} className="shot-miss" />
+          ) : null}
+          <circle
+            cx={cx}
+            cy={cy}
+            r={(showMake ? 0.8 : 0.5) * grow}
+            fill={color}
+            stroke={bg}
+            strokeWidth={0.22}
+            className="shot-make"
+          />
+        </>
+      );
+    } else if (c.kind === "miss") {
+      const rebound = mode === "game" && layers.has("rebounds") ? c.rebound : null;
+      const blocked = mode === "game" && layers.has("blocks") ? c.blockedBy : null;
+      body = (
+        <g className="shot-miss">
+          <circle
+            cx={cx}
+            cy={cy}
+            r={0.65 * grow}
+            fill="none"
+            stroke={color}
+            strokeWidth={0.26}
+            strokeOpacity={isFocus ? 1 : mode === "game" && !layers.has("misses") ? 0.3 : 0.6}
+          />
+          {rebound ? <circle cx={cx} cy={cy} r={0.3 * grow} fill={colorOf(rebound.side)} /> : null}
+          {blocked ? (
+            <Cross cx={cx} cy={cy} r={0.75 * grow} fill="none" stroke={colorOf(blocked)} strokeWidth={0.3} />
+          ) : null}
+        </g>
+      );
+    } else if (c.kind === "steal") {
+      body = <Diamond cx={cx} cy={cy} r={0.95 * grow} fill={color} stroke={bg} strokeWidth={0.2} className="shot-miss" />;
+    } else if (c.kind === "turnover") {
+      body = <Triangle cx={cx} cy={cy} r={0.85 * grow} fill="none" stroke={color} strokeWidth={0.26} className="shot-miss" />;
+    } else {
+      const s = 1.4 * grow;
+      body = (
+        <rect
+          x={cx - s / 2}
+          y={cy - s / 2}
+          width={s}
+          height={s}
+          fill="none"
+          stroke={color}
+          strokeWidth={0.26}
+          className="shot-miss"
+        />
+      );
+    }
+    return (
+      <g key={c.id} className="cursor-pointer" onPointerEnter={() => setFocus(c)} onClick={() => setFocus(c)}>
+        {body}
+        <circle cx={cx} cy={cy} r={1.8} fill="transparent" />
+      </g>
+    );
+  };
 
   return (
     <div ref={rootRef} className="flex flex-col gap-3">
+      <div role="tablist" aria-label="Chart type" className="flex flex-wrap gap-1.5">
+        <ModeChip active={mode === "shots"} onClick={() => setMode("shots")}>
+          Shots
+        </ModeChip>
+        <ModeChip active={mode === "game"} onClick={() => setMode("game")}>
+          Game chart
+        </ModeChip>
+      </div>
+
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3">
-        <button
-          type="button"
-          onClick={() => setSide((v) => (v === "away" ? null : "away"))}
-          aria-pressed={side === "away"}
-          className={cn(
-            "min-w-0 rounded-md text-left transition-opacity",
-            side === "home" && "opacity-45"
-          )}
-        >
-          <span className={cn(type.title, "block font-bold")} style={{ color: awayColor }}>
-            {awayLabel}
-          </span>
-          <StatLine line={away} />
-        </button>
-        <div className="text-center tabular-nums">
+        {(["away", "home"] as const).map((s, i) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSide((v) => (v === s ? null : s))}
+            aria-pressed={side === s}
+            className={cn(
+              "min-w-0 rounded-md transition-opacity",
+              i === 0 ? "order-1 text-left" : "order-3 text-right",
+              side && side !== s && "opacity-45"
+            )}
+          >
+            <span className={cn(type.title, "block font-bold")} style={{ color: colorOf(s) }}>
+              {labelOf(s)}
+            </span>
+            <StatLine {...tally[s]} />
+          </button>
+        ))}
+        <div className="order-2 text-center tabular-nums">
           <span className={cn(type.title, "block font-bold")}>
             {mark ? `${mark.away} – ${mark.home}` : "0 – 0"}
           </span>
@@ -352,27 +499,38 @@ export function GameShotChart({
                 : "Tip-off"}
           </span>
         </div>
-        <button
-          type="button"
-          onClick={() => setSide((v) => (v === "home" ? null : "home"))}
-          aria-pressed={side === "home"}
-          className={cn(
-            "min-w-0 rounded-md text-right transition-opacity",
-            side === "away" && "opacity-45"
-          )}
-        >
-          <span className={cn(type.title, "block font-bold")} style={{ color: homeColor }}>
-            {homeLabel}
-          </span>
-          <StatLine line={home} />
-        </button>
       </div>
+
+      {mode === "game" ? (
+        <div className="flex flex-wrap gap-1.5" aria-label="Plays to show">
+          {LAYERS.map((l) => {
+            const on = layers.has(l.id);
+            return (
+              <button
+                key={l.id}
+                type="button"
+                aria-pressed={on}
+                onClick={() => toggleLayer(l.id)}
+                className={cn(
+                  type.caption,
+                  "glass-pill flex items-center gap-1.5 rounded-md px-2 py-1 font-semibold tabular-nums transition-opacity",
+                  on ? "text-foreground" : "text-muted-foreground opacity-55"
+                )}
+              >
+                <LayerGlyph layer={l.id} />
+                {l.label}
+                <span className="font-normal text-muted-foreground">{layerCount(l.id)}</span>
+              </button>
+            );
+          })}
+        </div>
+      ) : null}
 
       <svg
         viewBox={`-1 -1 ${COURT_W + 2} ${COURT_H + 2}`}
         className="block h-auto w-full select-none"
         role="img"
-        aria-label={`Shot chart. ${awayLabel} ${statLine(away)}, shooting at the left basket. ${homeLabel} ${statLine(home)}, shooting at the right basket.`}
+        aria-label={`${mode === "shots" ? "Shot chart" : "Game chart"}. ${awayLabel} attacks the left basket, ${homeLabel} the right.`}
         onPointerLeave={() => setFocus(null)}
       >
         <rect x={0} y={0} width={COURT_W / 2} height={COURT_H} fill={awayColor} fillOpacity={0.07} />
@@ -394,54 +552,38 @@ export function GameShotChart({
           </g>
         </g>
 
-        {shown.map((s) => {
-          const color = s.side === "home" ? homeColor : awayColor;
-          const isFocus = focus?.id === s.id;
-          return (
-            <g
-              key={s.id}
-              className="cursor-pointer"
-              onPointerEnter={() => setFocus(s)}
-              onClick={() => setFocus(s)}
-            >
-              {s.made ? (
-                <>
-                  <circle cx={s.cx} cy={s.cy} r={0.8} fill={color} className="shot-ripple" />
-                  <circle
-                    cx={s.cx}
-                    cy={s.cy}
-                    r={isFocus ? 1.25 : 0.8}
-                    fill={color}
-                    stroke="var(--background)"
-                    strokeWidth={0.22}
-                    className="shot-make"
-                  />
-                </>
-              ) : (
-                <circle
-                  cx={s.cx}
-                  cy={s.cy}
-                  r={isFocus ? 1.1 : 0.65}
-                  fill="none"
-                  stroke={color}
-                  strokeWidth={0.26}
-                  strokeOpacity={isFocus ? 1 : 0.6}
-                  className="shot-miss"
-                />
-              )}
-              <circle cx={s.cx} cy={s.cy} r={1.8} fill="transparent" />
-            </g>
-          );
-        })}
+        {mode === "game"
+          ? (["away", "home"] as const).map((s) => {
+              const ft = tally[s];
+              const x = s === "away" ? 19 : COURT_W - 19;
+              return (
+                <text
+                  key={s}
+                  x={x}
+                  y={COURT_H / 2 + 0.9}
+                  textAnchor="middle"
+                  fontSize={1.8}
+                  fontWeight={700}
+                  fill={colorOf(s)}
+                  className="pointer-events-none tabular-nums"
+                  opacity={side && side !== s ? 0.25 : 0.7}
+                >
+                  FT {ft.ftm}-{ft.fta}
+                </text>
+              );
+            })
+          : null}
+
+        {shown.map(renderEvent)}
 
         {latest && (playing || cutoff != null) && (!side || latest.side === side) ? (
           <circle
             key={`latest-${latest.id}`}
-            cx={latest.cx}
-            cy={latest.cy}
+            cx={toCourt(latest).cx}
+            cy={toCourt(latest).cy}
             r={2}
             fill="none"
-            stroke={latest.side === "home" ? homeColor : awayColor}
+            stroke={colorOf(latest.side)}
             strokeWidth={0.25}
             className="shot-latest pointer-events-none"
           />
@@ -458,9 +600,12 @@ export function GameShotChart({
               {periodName(ticker.period)} {ticker.clock}
             </span>{" "}
             {ticker.description}
+            {tickerNote(ticker)}
           </>
-        ) : (
+        ) : mode === "shots" ? (
           "Filled dots are makes, rings are misses. Tap a team to isolate its shots."
+        ) : (
+          "Markers take the color of the team credited with the play. Tap a team to isolate it."
         )}
       </p>
 
@@ -512,11 +657,44 @@ export function GameShotChart({
         </button>
       </div>
 
+      {mode === "game" ? (
+        <div className="board-scroll-host overflow-x-auto rounded-md">
+          <table className="w-full min-w-[34rem] text-right">
+            <thead className={cn(type.caption, "uppercase tracking-wide text-muted-foreground")}>
+              <tr className="border-b border-border/60">
+                <th className="py-1.5 pr-2 text-left font-semibold">Team</th>
+                {STAT_COLUMNS.map((col) => (
+                  <th key={col.label} title={col.title} className="px-2 py-1.5 font-semibold">
+                    {col.label}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody className={cn(type.caption, "tabular-nums")}>
+              {(["away", "home"] as const).map((s) => (
+                <tr key={s} className="border-b border-border/40">
+                  <td className="py-1.5 pr-2 text-left font-bold" style={{ color: colorOf(s) }}>
+                    {labelOf(s)}
+                  </td>
+                  {STAT_COLUMNS.map((col) => (
+                    <td key={col.label} className="px-2 py-1.5">
+                      {col.value(tally[s])}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ) : null}
+
       <p className={cn(type.micro, "text-muted-foreground")}>
-        {shots.length < attempts
-          ? `${shots.length} of ${attempts} field goal attempts have a location. `
-          : ""}
-        Counts come from play-by-play and can differ from the box score by a heave or two.
+        {mode === "game"
+          ? "Spots are ESPN's, logged on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
+          : located < fga
+            ? `${located} of ${fga} field goal attempts have a location. `
+            : ""}
+        Counts come from play-by-play and can differ slightly from the official box score, for example on heaves or stat corrections made after the game.
       </p>
     </div>
   );
