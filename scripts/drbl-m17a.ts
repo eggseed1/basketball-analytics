@@ -193,8 +193,8 @@ async function main() {
   const reuseManifest =
     process.env.M17A_REUSE_MANIFEST === "1" &&
     existsSync(path.join(OUT, "03_raw_archive_manifest.csv"));
-  let inventoryRows: Record<string, unknown>[] = [];
-  let manifestRows: ManifestRow[] = [];
+  const inventoryRows: Record<string, unknown>[] = [];
+  const manifestRows: ManifestRow[] = [];
   let totalBytes = 0;
   let HISTORICAL_RAW_ARCHIVE_MANIFEST_HASH = "";
 
@@ -524,7 +524,7 @@ Unknowns remain \`null\` — never coerced to fake known values.
     let seasonLineupComplete = 0;
     let seasonGamesPerfect = 0;
     let seasonEvents = 0;
-    let unknownTeams = 0;
+    const unknownTeams = 0;
 
     lineupSeason[season] = {
       possessions: 0,

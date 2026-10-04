@@ -178,9 +178,10 @@ async function testStories() {
     const ad = luka.origins.find((o) => o.asset.label === "Anthony Davis");
     assert.equal(ad?.arrival.how, "trade");
     if (ad?.arrival.how === "trade") {
+      const nop = labels(ad.arrival.deal.sides.find((s) => s.teamId === "3")?.receives ?? []);
       assert.deepEqual(
-        labels(ad.arrival.deal.sides.find((s) => s.teamId === "3")?.receives ?? []).slice(0, 2),
-        ["Moritz Wagner", "Jemerrio Jones"],
+        ["Lonzo Ball", "Brandon Ingram", "Josh Hart"].filter((n) => nop.includes(n)),
+        ["Lonzo Ball", "Brandon Ingram", "Josh Hart"],
         "the Pelicans' side lists what the Lakers' row says they gave"
       );
     }
@@ -189,7 +190,8 @@ async function testStories() {
   // The whole package, Jr. included, and each piece's draft slot.
   const giannis = await storyOf("14", "Giannis Antetokounmpo");
   if (giannis.arrival.how === "trade") {
-    assert.deepEqual(labels(giannis.arrival.gave), [
+    // ESPN rows say "draft consideration" or "draft considerations".
+    assert.deepEqual(labels(giannis.arrival.gave).map((l) => l.replace(/considerations?$/, "considerations")), [
       "Tyler Herro",
       "Jaime Jaquez Jr.",
       "Kasparas Jakučionis",

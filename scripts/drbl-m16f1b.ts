@@ -465,7 +465,7 @@ async function main() {
 
   // Support + static collapse sample (same style as m16f1)
   const sampleHold = full.holdRows.filter((_, i) => i % 7 === 0).slice(0, 4000);
-  let supportCounts = { SUPPORTED: 0, WEAK_SUPPORT: 0, UNSUPPORTED: 0 };
+  const supportCounts = { SUPPORTED: 0, WEAK_SUPPORT: 0, UNSUPPORTED: 0 };
   const decompRows: Array<{
     totalDelta: number;
     staticMainEffect: number;

@@ -178,7 +178,10 @@ function main() {
   assert.equal(primaryNavLabelForPath("/franchises"), "Teams");
   const historyNav = PRIMARY_NAV.find((n) => n.id === "history");
   assert.ok(historyNav);
-  assert.equal(historyNav?.subnav, undefined);
+  assert.deepEqual(
+    historyNav?.subnav?.map((s) => s.href),
+    ["/history", "/awards"]
+  );
   assert.ok(!PRIMARY_NAV.some((n) => n.subnav?.some((s) => s.href === "/franchises")));
 
   // ASK context: season embedded in supported query strings (v1 contract)

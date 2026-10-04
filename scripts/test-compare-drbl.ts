@@ -90,18 +90,16 @@ function validDrbl(
   });
   const peers = [a, b, validDrbl({ playerId: "3", playerName: "C", season: "2024-25", drbl100: 1 })];
   const result = buildPlayerComparison({ a, b, peers });
-  const overall = result.dimensions.find((d) => d.id === "overall");
-  assert.ok(overall);
-  assert.match(overall!.label, /DRBL/i);
-  assert.ok(result.dimensions.some((d) => d.id === "r1_win_eq"));
-  assert.ok(!result.dimensions.some((d) => d.id === "r1_points"));
-  assert.ok(result.dimensions.some((d) => d.group === "rate_ability"));
-  assert.ok(result.dimensions.some((d) => d.group === "realized_value"));
-  assert.ok(result.dimensions.some((d) => d.group === "external"));
+  const drbl = result.dimensions.find((d) => d.id === "drbl100");
+  assert.ok(drbl);
+  assert.match(drbl!.label, /DRBL/i);
+  assert.ok(result.dimensions.some((d) => d.id === "war1"));
+  assert.ok(!result.dimensions.some((d) => String(d.id) === "r1_points"));
+  assert.ok(result.dimensions.some((d) => d.group === "impact"));
 }
 
 {
-  // Asymmetric DRBL → overall unavailable (not cross-metric with DARKO)
+  // Asymmetric DRBL → B stays blank (no 0, no DARKO stand-in)
   const a = validDrbl({ playerId: "1", playerName: "A", season: "2024-25" });
   const b = row({
     playerId: "2",
@@ -110,10 +108,11 @@ function validDrbl(
     darkoDpm: 3,
   });
   const result = buildPlayerComparison({ a, b, peers: [a, b] });
-  const overall = result.dimensions.find((d) => d.id === "overall");
-  assert.ok(overall);
-  assert.equal(overall!.bDisplay, "Unavailable");
-  assert.ok(overall!.note);
+  const drbl = result.dimensions.find((d) => d.id === "drbl100");
+  assert.ok(drbl);
+  assert.equal(drbl!.bValue, undefined);
+  assert.equal(drbl!.bDisplay, "—");
+  assert.equal(drbl!.bPercentile, undefined);
 }
 
 {

@@ -559,7 +559,7 @@ Unobserved is intentional parking (missing shooter, block contest half, assist a
   let possCount = 0;
   let offPlayers = 0;
   let defPlayers = 0;
-  let creditWeightSamples: number[] = [];
+  const creditWeightSamples: number[] = [];
   let mismatch = 0;
   let gamesAttr = 0;
   let possAttr = 0;

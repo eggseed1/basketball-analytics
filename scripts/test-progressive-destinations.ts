@@ -194,7 +194,10 @@ function main() {
 
   const gameLab = read("src/components/games/game-lab-view.tsx");
   assert.ok(gameLab.includes("omitHero"));
-  assert.ok(gameLab.includes("!omitHero"));
+  assert.ok(
+    !/<Game\w*Hero\b|<GameIdentityShell\b/.test(gameLab),
+    "Game lab never renders its own hero; the page shell owns it"
+  );
 
   // ——— CACHE ———
   const cache = read("src/data/queries/request-cache.ts");

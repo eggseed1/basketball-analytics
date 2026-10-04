@@ -71,7 +71,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.raptor!.id,
+        id: PLAYER_ALIASES.lebron!.id,
         name: "LeBron James",
       },
     ],
@@ -100,7 +100,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.raptor!.id,
+        id: PLAYER_ALIASES.lebron!.id,
         name: "LeBron James",
       },
     ],
@@ -269,7 +269,7 @@ function assertJsonSafe(value: unknown) {
     entities: [
       {
         kind: "player" as const,
-        id: PLAYER_ALIASES.raptor!.id,
+        id: PLAYER_ALIASES.lebron!.id,
         name: "LeBron James",
       },
     ],

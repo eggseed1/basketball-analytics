@@ -53,9 +53,10 @@ function main() {
   for (const rel of loadingRoutes) {
     assert.ok(existsSync(join(root, rel)), `missing ${rel}`);
     const src = read(rel);
+    // Shared frame, or a route-specific skeleton like PlayerPageLoadingFrame.
     assert.ok(
-      src.includes("DestinationLoadingFrame"),
-      `${rel} uses DestinationLoadingFrame`
+      /\b\w*LoadingFrame\b/.test(src),
+      `${rel} uses a destination loading frame`
     );
   }
 
@@ -136,8 +137,11 @@ function main() {
   const identityShell = read(
     "src/components/games/game-identity-shell.tsx"
   );
+  const scoreCard = read("src/components/sports/game-score-card.tsx");
   assert.ok(
-    identityShell.includes("resolveHistoricalTeamBrand"),
+    identityShell.includes("resolveHistoricalTeamBrand") ||
+      (identityShell.includes("resolveSideBrand") &&
+        /function resolveSideBrand[\s\S]{0,400}resolveHistoricalTeamBrand/.test(scoreCard)),
     "Identity shell uses historical brand resolver (no modern flash)"
   );
 

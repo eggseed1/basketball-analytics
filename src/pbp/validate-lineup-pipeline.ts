@@ -108,8 +108,8 @@ export function buildLineupValidationReport(input: {
   let substitutionInActiveCount = 0;
   let unresolvedSubstitutions = 0;
 
-  let home = new Set(homeStarters);
-  let away = new Set(awayStarters);
+  const home = new Set(homeStarters);
+  const away = new Set(awayStarters);
   const pendingOutHome: string[] = [];
   const pendingOutAway: string[] = [];
 

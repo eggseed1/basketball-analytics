@@ -432,11 +432,11 @@ export const useGmStore = create<GmStore>()(
       simPlayoffDay: () => {
         const league = get().league;
         if (!league?.playoffBracket) return;
-        let bracket = league.playoffBracket.map((s) => ({ ...s }));
-        let standings = league.standings;
-        let schedule = [...league.schedule];
+        const bracket = league.playoffBracket.map((s) => ({ ...s }));
+        const standings = league.standings;
+        const schedule = [...league.schedule];
         let boxScores = [...league.boxScores];
-        let players = league.players;
+        const players = league.players;
 
         for (const series of bracket) {
           if (series.done) continue;

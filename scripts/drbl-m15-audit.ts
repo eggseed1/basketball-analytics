@@ -341,7 +341,7 @@ async function extendedWarValidation() {
   // Attempt larger within-cache WAR calibration WITHOUT writing site artifacts.
   const results: Record<string, unknown>[] = [];
   for (const season of ["2024-25", "2025-26"] as const) {
-    let games = await listSeasonGames(season);
+    const games = await listSeasonGames(season);
     const limits = [50, 150, 400].filter((n) => n <= games.length || n === 50);
     // Always try up to available
     const tryLimits = [...new Set([50, Math.min(150, games.length), Math.min(400, games.length), games.length])].sort((a,b)=>a-b);

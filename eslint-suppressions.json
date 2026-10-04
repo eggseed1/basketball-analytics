@@ -1,0 +1,293 @@
+{
+  "scripts/build-runtime-player-game-logs.mjs": {
+    "@typescript-eslint/no-require-imports": {
+      "count": 1
+    }
+  },
+  "scripts/drbl-m16e0.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "scripts/drbl-m17a_1_supervisor.ts": {
+    "@typescript-eslint/no-require-imports": {
+      "count": 1
+    }
+  },
+  "scripts/lib/stub-server-only.cjs": {
+    "@typescript-eslint/no-require-imports": {
+      "count": 1
+    }
+  },
+  "scripts/p18b3-probe-commonall.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 8
+    }
+  },
+  "scripts/p18b3-probe-membership.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "scripts/p18b5-espn-alias-count.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 3
+    }
+  },
+  "scripts/p18b5-espn-roster-probe.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "scripts/p18b5-espn-verify.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "scripts/p18b5-overnight.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 6
+    }
+  },
+  "scripts/p18b51-overnight.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 2
+    }
+  },
+  "scripts/p18b52-fetch-test.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "scripts/p18b52-overnight.ts": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 1
+    }
+  },
+  "scripts/p18c-build-matchup-index.ts": {
+    "@typescript-eslint/no-require-imports": {
+      "count": 1
+    }
+  },
+  "scripts/p18perf0-static-audit.ts": {
+    "@typescript-eslint/no-require-imports": {
+      "count": 1
+    }
+  },
+  "src/app/global-error.tsx": {
+    "@next/next/no-html-link-for-pages": {
+      "count": 1
+    }
+  },
+  "src/app/gm/draft/page.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/ask/ask-drbl-view.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/brand/frost-recharts-tooltip.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/compare/compare-picker.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 7
+    }
+  },
+  "src/components/compare/compare-share-controls.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/compare/player-compare-view.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 4
+    }
+  },
+  "src/components/design-system/theme-provider.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/explore/player-filter-search.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/explore/player-race-tracker-chart.tsx": {
+    "react-hooks/refs": {
+      "count": 5
+    }
+  },
+  "src/components/explore/player-race-tracker-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 1
+    }
+  },
+  "src/components/explore/player-season-table.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/explore/player-visualizations-hub.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/explore/team-filter-toolbar.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/game/game-play-by-play.tsx": {
+    "react-hooks/refs": {
+      "count": 1
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/games/possession-explorer.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/games/runtime-game-fallback.tsx": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 7
+    }
+  },
+  "src/components/history/historical-game-surface.tsx": {
+    "react-hooks/immutability": {
+      "count": 1
+    }
+  },
+  "src/components/home/analytics-desk.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/home/home-standings-panel.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 1
+    }
+  },
+  "src/components/home/league-pulse-section.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 1
+    }
+  },
+  "src/components/home/watchlist-panel.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/layout/global-player-search.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/player/player-savant-summary.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/player/player-season-select.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/players/player-accolades.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/players/player-career-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 1
+    }
+  },
+  "src/components/players/player-games-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 8
+    }
+  },
+  "src/components/players/player-percentile-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 3
+    }
+  },
+  "src/components/players/player-percentile-panel.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 3
+    }
+  },
+  "src/components/players/player-sentiment-tab-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 4
+    }
+  },
+  "src/components/players/player-stats-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 1
+    }
+  },
+  "src/components/players/player-visualizations.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 11
+    }
+  },
+  "src/components/sports/game-score-card.tsx": {
+    "react-hooks/purity": {
+      "count": 2
+    }
+  },
+  "src/components/sports/game-watch-options.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/sports/runtime-scoreboard-fallback.tsx": {
+    "@typescript-eslint/no-explicit-any": {
+      "count": 4
+    }
+  },
+  "src/components/sports/site-search.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 2
+    }
+  },
+  "src/components/sports/upcoming-game-list.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/sports/use-live-scoreboard-refresh.ts": {
+    "react-hooks/refs": {
+      "count": 4
+    },
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/components/standings/standings-tracker-island.tsx": {
+    "react-hooks/error-boundaries": {
+      "count": 3
+    }
+  },
+  "src/components/time-machine/time-machine-landing.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  },
+  "src/gm/ui/gm-season-calendar.tsx": {
+    "react-hooks/set-state-in-effect": {
+      "count": 1
+    }
+  }
+}

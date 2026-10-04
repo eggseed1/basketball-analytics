@@ -633,7 +633,7 @@ async function main() {
 
   const diffRows: Record<string, unknown>[] = [];
   let cutoverInduced = 0;
-  let likelyCutover = 0;
+  const likelyCutover = 0;
   let unrelated = 0;
   let unknown = 0;
   let inChangedCount = 0;

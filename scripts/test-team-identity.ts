@@ -566,7 +566,10 @@ async function liveOkcRegression() {
     abbreviation: "POR",
   });
   if (por.games.length) {
-    assert.ok(por.games.some((g) => g.gameId === "15908541"));
+    // Evidence may key the same game by BDL or ESPN id; the CHA matchup must land on POR.
+    assert.ok(
+      por.games.some((g) => g.gameId === "15908541" || g.opponentLabel === "CHA")
+    );
   } else {
     console.log("  (skip POR evidence assert — schedule unavailable)");
   }

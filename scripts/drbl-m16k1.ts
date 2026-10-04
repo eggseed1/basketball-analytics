@@ -429,7 +429,7 @@ async function main() {
   const boardDiff: Record<string, unknown>[] = [];
   let totalEq = 0;
   let eqMismatch = 0;
-  let eqResiduals: number[] = [];
+  const eqResiduals: number[] = [];
   let warMismatch = 0;
   let odMismatch = 0;
   let rankMismatch = 0;

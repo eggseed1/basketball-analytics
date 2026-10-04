@@ -19,8 +19,8 @@ export function reconstructLineups(
     .filter((p) => p.teamId === box.awayTeamId && p.starter)
     .map((p) => p.playerId);
 
-  let home = new Set(homeStarters);
-  let away = new Set(awayStarters);
+  const home = new Set(homeStarters);
+  const away = new Set(awayStarters);
   const states: DrblLineupState[] = [];
   if (home.size === 5 && away.size === 5) {
     states.push({

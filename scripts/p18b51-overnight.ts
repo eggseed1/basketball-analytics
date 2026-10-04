@@ -355,9 +355,9 @@ NEW: ESPN route id → NBA-keyed lookup miss → placeholder
     qualityOf[playerId] = "VERIFIED_ESPN_PLAYER_GENERIC";
   }
 
-  let espnNew = 0;
-  let legacyNew = 0;
-  let nbaRecovered = 0;
+  const espnNew = 0;
+  const legacyNew = 0;
+  const nbaRecovered = 0;
 
   // Dual-key: production aliases + P18B.5 crosswalk espn ids → same verified URL
   const aliases = JSON.parse(

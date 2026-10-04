@@ -369,7 +369,7 @@ async function main() {
   const ctxSens: Map<string, number[]> = new Map();
   const offDeltas: number[] = [];
   const defDeltas: number[] = [];
-  let supportCounts = { SUPPORTED: 0, WEAK_SUPPORT: 0, UNSUPPORTED: 0 };
+  const supportCounts = { SUPPORTED: 0, WEAK_SUPPORT: 0, UNSUPPORTED: 0 };
   let maxOffResidual = 0;
   let maxDefResidual = 0;
   let playerSwapChanges = 0;

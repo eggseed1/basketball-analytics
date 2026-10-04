@@ -85,7 +85,7 @@ async function main() {
     const games = await listSeasonGames(season);
     let sComplete = 0;
     let sFail = 0;
-    let sUnavail = 0;
+    const sUnavail = 0;
     for (const g of games) {
       expected++;
       const pbpPath = rawPath("games", g.gameId, "playbyplay.json");

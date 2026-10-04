@@ -558,7 +558,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
   // Default to career averages when a side is selected without an explicit season.
   const rawSeasonA = one(sp, "seasonA") ?? sharedSeason;
   const rawSeasonB = one(sp, "seasonB") ?? sharedSeason;
-  let seasonA =
+  const seasonA =
     !aId
       ? CAREER_COMPARE_KEY
       : rawSeasonA && (isCareerCompareKey(rawSeasonA) || /^\d{4}-\d{2}$/.test(rawSeasonA))
@@ -566,7 +566,7 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
           ? CAREER_COMPARE_KEY
           : rawSeasonA
         : CAREER_COMPARE_KEY;
-  let seasonB =
+  const seasonB =
     !bId
       ? CAREER_COMPARE_KEY
       : rawSeasonB && (isCareerCompareKey(rawSeasonB) || /^\d{4}-\d{2}$/.test(rawSeasonB))

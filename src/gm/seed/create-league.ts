@@ -196,7 +196,7 @@ export function createGeneratedLeague(options?: {
   const draftPool = prospects.map((p) => p.id);
   const scoutMarket = generateScoutMarket(seed + 777, 5);
 
-  let state: GmLeagueState = {
+  const state: GmLeagueState = {
     version: 1,
     season,
     day: 0,

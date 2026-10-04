@@ -9,6 +9,10 @@ import {
   buildPlayerPercentileMetrics,
   isQualifiedPeer,
 } from "../src/lib/player-percentile-metrics";
+import {
+  SHEET_STAT_BY_ID,
+  type SheetStatId,
+} from "../src/lib/player-stat-sheet-registry";
 import { gradeFromPercentile } from "../src/components/players/player-percentile-panel";
 import type { PlayerSeason } from "../src/data/types";
 
@@ -130,32 +134,32 @@ function main() {
 
   const byId = Object.fromEntries(metrics.map((m) => [m.id, m]));
 
-  // Minutes / games / starts → counting with percentiles (availability context)
-  assert.equal(byId.min?.category, "counting");
+  // Minutes / games / starts → profile with percentiles (availability context)
+  assert.equal(byId.min?.category, "profile");
   assert.equal(byId.min?.interpretation, "descriptive");
   assert.equal(byId.min?.showPercentile, true);
   assert.equal(byId.min?.showGrade, false);
 
-  // Usage → rates (percentile OK, no skill grade)
-  assert.equal(byId.usg?.category, "rates");
+  // Usage → advanced (percentile OK, no skill grade)
+  assert.equal(byId.usg?.category, "advanced");
   assert.equal(byId.usg?.interpretation, "role");
   assert.equal(byId.usg?.showPercentile, true);
   assert.equal(byId.usg?.showGrade, false);
 
-  // Games / starts → counting with percentiles
-  assert.equal(byId.gp?.category, "counting");
+  // Games / starts → profile with percentiles
+  assert.equal(byId.gp?.category, "profile");
   assert.equal(byId.gp?.showPercentile, true);
   assert.equal(byId.gp?.showGrade, false);
-  assert.equal(byId.gs?.category, "counting");
+  assert.equal(byId.gs?.category, "profile");
   assert.equal(byId.gs?.showPercentile, true);
   assert.equal(byId.gs?.showGrade, false);
 
   // Turnovers still have a counting row; AST/TO is the preferred rate read.
-  assert.equal(byId.tov?.category, "counting");
+  assert.equal(byId.tov?.category, "profile");
   assert.equal(byId.tov?.interpretation, "lower_is_better");
 
-  // Assist / turnover → rates
-  assert.equal(byId.atr?.category, "rates");
+  // Assist / turnover → advanced
+  assert.equal(byId.atr?.category, "advanced");
   assert.equal(byId.atr?.interpretation, "higher_is_better");
   assert.equal(byId.atr?.showPercentile, true);
   assert.equal(byId.atr?.showGrade, true);
@@ -169,13 +173,20 @@ function main() {
   assert.equal(byId.drtg, undefined);
   assert.equal(byId.net, undefined);
 
-  // Advanced contains only approved metric ids
-  for (const m of metrics.filter((x) => x.category === "advanced")) {
-    assert.ok(
-      ADVANCED_PERCENTILE_METRIC_IDS.has(m.id),
-      `unexpected advanced metric ${m.id}`
-    );
+  // Rates fold into advanced; counting stats never do.
+  for (const id of ADVANCED_PERCENTILE_METRIC_IDS) {
+    if (byId[id]) assert.equal(byId[id].category, "advanced", id);
   }
+  for (const id of ["min", "gp", "gs", "pts", "reb", "ast", "tov"]) {
+    if (byId[id]) {
+      assert.notEqual(byId[id].category, "advanced", `${id} is a counting stat`);
+    }
+  }
+  assert.equal(
+    byId.usg?.category,
+    SHEET_STAT_BY_ID["usg" as SheetStatId]?.category,
+    "sheet registry drives categories"
+  );
 
   // Legitimate zero steals still ranks (higher_is_better with 0 value)
   const zeroStl = row({
@@ -262,7 +273,7 @@ function main() {
     [],
     "def"
   );
-  assert.equal(defMetrics.find((m) => m.id === "drtg")?.category, "advanced");
+  assert.equal(defMetrics.find((m) => m.id === "drtg")?.category, "defense");
   assert.equal(
     defMetrics.find((m) => m.id === "drtg")?.interpretation,
     "lower_is_better"

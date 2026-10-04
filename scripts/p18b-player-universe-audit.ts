@@ -110,7 +110,7 @@ for (const [season, rows] of [...bySeason.entries()].sort((a, b) =>
 )) {
   // Source = unique player IDs from season player-games artifact.
   const pgPath = path.join(HISTORY, season, "player-games.json");
-  let sourceIds = new Set<string>();
+  const sourceIds = new Set<string>();
   if (existsSync(pgPath)) {
     const pg = JSON.parse(readFileSync(pgPath, "utf8")) as {
       rows: Array<{ playerId: string; playerName?: string }>;

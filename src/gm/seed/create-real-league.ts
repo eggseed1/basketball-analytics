@@ -335,7 +335,7 @@ export function buildLeagueFromPlayerSeasons(
     ? options.schedule
     : generateSchedule(teams, season, seed);
 
-  let state: GmLeagueState = {
+  const state: GmLeagueState = {
     version: 1,
     season,
     day: 0,

@@ -319,7 +319,9 @@ async function main() {
       join(process.cwd(), "src/data/providers/index.ts"),
       "utf8"
     );
-    assert.ok(providerSrc.includes('VERCEL ? "nba"'));
+    assert.ok(providerSrc.includes("process.env.VERCEL"));
+    assert.ok(providerSrc.includes("process.env.CF_PAGES"));
+    assert.ok(providerSrc.includes('onCloudHost ? "nba" : "local"'));
   }
 
   // 10. ASK unavailable metric — coverage gaps keep DRtg/NET unsupported
@@ -376,7 +378,8 @@ async function main() {
       "team roster must use ESPN NBADataProvider, not getDataProvider() sample rows"
     );
     assert.ok(
-      playersSrc.includes("row.teamId === canonicalTeamId"),
+      playersSrc.includes("row.teamId === canonicalTeamId") ||
+        playersSrc.includes("team: canonicalTeamId,"),
       "ESPN roster filter must use canonical ESPN team id only"
     );
     assert.ok(

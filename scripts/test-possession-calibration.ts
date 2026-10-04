@@ -3,7 +3,8 @@
  * Run: npm run test:possession-calibration
  */
 import assert from "node:assert/strict";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
 
 import { statsBoxScoreV3ToCdnShape } from "../drbl/download/stats-boxscore-adapt";
@@ -336,12 +337,7 @@ async function testOfficialAvailableReconstructionUnavailableShape() {
 }
 
 async function testFixtureCalibrationSummary() {
-  const outDir = path.join(
-    process.cwd(),
-    "artifacts",
-    "pbp-calibration",
-    "fixture-run"
-  );
+  const outDir = mkdtempSync(path.join(tmpdir(), "pbp-calibration-"));
   const { rows } = await runPossessionCalibrationAudit([
     "--fixture-only",
     "--out",

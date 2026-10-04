@@ -1,5 +1,5 @@
 /* Soft dual-team wash for score / brand cards (light mode).
-   Neutral fallbacks — never Apple chart blue/purple.
+   Neutral fallbacks - never Apple chart blue/purple.
    Opaque tint plateaus (not edge→transparent fades) so mid never hollows. */
 .score-card-wash {
   background: linear-gradient(
@@ -28,7 +28,7 @@
   );
 }
 
-/* Game matchup wash — away (left) → home (right), opaque plateaus. */
+/* Game matchup wash - away (left) → home (right), opaque plateaus. */
 .matchup-wash {
   background: linear-gradient(
     90deg,
