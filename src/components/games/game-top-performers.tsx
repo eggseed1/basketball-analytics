@@ -40,9 +40,9 @@ function PerformerRow({ p, teamKey }: { p: PlayerGame; teamKey: string }) {
           name={name}
           season={p.season}
           teamKey={teamKey}
-          className={cn(type.bodySm, "truncate font-semibold")}
+          className={cn(type.bodySm, "min-w-0 font-semibold")}
         />
-        <span className={cn(type.micro, "pl-10 tabular-nums text-muted-foreground")}>
+        <span className={cn(type.micro, "pl-11 tabular-nums text-muted-foreground")}>
           {p.fieldGoalsMade}-{p.fieldGoalsAttempted} FG
           {p.threePointersAttempted > 0
             ? ` · ${p.threePointersMade}-${p.threePointersAttempted} 3P`
