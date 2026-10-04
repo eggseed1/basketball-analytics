@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 
 import { TeamLogo } from "@/components/brand/team-logo";
 import type { PlayByPlayEvent } from "@/data/types";
@@ -36,12 +36,59 @@ function playForPoint(
   return match?.description?.trim() || null;
 }
 
+function periodEndSeconds(period: number): number {
+  return period <= 4 ? period * 720 : 4 * 720 + (period - 4) * 300;
+}
+
+function periodName(period: number): string {
+  if (period <= 4) return `Q${period}`;
+  return period === 5 ? "OT" : `${period - 4}OT`;
+}
+
+/**
+ * Lead scale sized per side so a one-sided game doesn't leave half the chart
+ * empty. Each side keeps at least one gridline step.
+ */
+function marginScale(
+  homeMax: number,
+  awayMax: number
+): { up: number; down: number; ticksUp: number[]; ticksDown: number[] } {
+  const maxAbs = Math.max(homeMax, awayMax, 1);
+  const step = maxAbs <= 12 ? 5 : maxAbs <= 30 ? 10 : 15;
+  const side = (v: number) => Math.max(step, Math.ceil(v / step) * step);
+  const ticks = (max: number) => {
+    const out: number[] = [];
+    for (let v = step; v <= max; v += step) out.push(v);
+    return out;
+  };
+  const up = side(homeMax);
+  const down = side(awayMax);
+  return { up, down, ticksUp: ticks(up), ticksDown: ticks(down) };
+}
+
+function useElementWidth<T extends HTMLElement>() {
+  const ref = useRef<T>(null);
+  const [width, setWidth] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      if (entry) setWidth(Math.round(entry.contentRect.width));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+  return [ref, width] as const;
+}
+
+/**
+ * Lead over game time as a stepped area: the home side shades above zero,
+ * the away side below. Hover (or drag on touch) scrubs scoring plays.
+ */
 export function GameMarginFlowChart({
   timeline,
   homeLabel,
   awayLabel,
-  homeTeamKey,
-  awayTeamKey,
   homeColor,
   awayColor,
   events,
@@ -56,155 +103,249 @@ export function GameMarginFlowChart({
   events?: PlayByPlayEvent[];
 }) {
   const chartTheme = useChartTheme();
+  const clipId = useId().replace(/:/g, "");
+  const [wrapRef, width] = useElementWidth<HTMLDivElement>();
   const [hover, setHover] = useState<number | null>(null);
-  const { maxAbs, maxT, periodMarks, maxPeriod } = useMemo(() => {
-    if (!timeline.length) {
-      return { maxAbs: 1, maxT: 1, periodMarks: [] as number[], maxPeriod: 4 };
-    }
-    const maxT = Math.max(...timeline.map((p) => p.elapsedGameTime), 1);
-    const maxAbs = Math.max(...timeline.map((p) => Math.abs(p.margin)), 1);
+
+  const model = useMemo(() => {
+    if (!timeline.length) return null;
     const maxPeriod = Math.max(...timeline.map((p) => p.period), 4);
-    return {
-      maxAbs,
-      maxT,
-      maxPeriod,
-      periodMarks: periodMarksFor(maxT, maxPeriod),
-    };
+    const endT = Math.max(
+      periodEndSeconds(maxPeriod),
+      ...timeline.map((p) => p.elapsedGameTime)
+    );
+    let homePeak: ScoreTimelinePoint | null = null;
+    let awayPeak: ScoreTimelinePoint | null = null;
+    for (const p of timeline) {
+      if (p.margin > 0 && (!homePeak || p.margin > homePeak.margin)) homePeak = p;
+      if (p.margin < 0 && (!awayPeak || p.margin < awayPeak.margin)) awayPeak = p;
+    }
+    const scale = marginScale(homePeak?.margin ?? 0, -(awayPeak?.margin ?? 0));
+    return { maxPeriod, endT, scale, homePeak, awayPeak };
   }, [timeline]);
 
-  if (!timeline.length) return null;
+  if (!model) return null;
 
-  const w = 640;
-  const h = 200;
-  const mid = h / 2;
-  const padY = 16;
-  const coords = timeline.map((p) => {
-    const x = (p.elapsedGameTime / maxT) * w;
-    const y = mid - (p.margin / maxAbs) * (mid - padY);
-    return { x, y, p };
-  });
-  const poly = coords.map((c) => `${c.x},${c.y}`).join(" ");
+  const h = 236;
+  const pad = { left: 34, right: 10, top: 12, bottom: 26 };
+  const w = Math.max(width, 280);
+  const plotW = w - pad.left - pad.right;
+  const plotH = h - pad.top - pad.bottom;
+  const pxPerPoint = plotH / (model.scale.up + model.scale.down);
+  const mid = pad.top + model.scale.up * pxPerPoint;
+  const xOf = (t: number) => pad.left + (t / model.endT) * plotW;
+  const yOf = (m: number) => mid - m * pxPerPoint;
+
+  let line = `M ${xOf(0)} ${mid}`;
+  let prevY = mid;
+  for (const p of timeline) {
+    const x = xOf(p.elapsedGameTime);
+    const y = yOf(p.margin);
+    line += ` L ${x} ${prevY} L ${x} ${y}`;
+    prevY = y;
+  }
+  line += ` L ${xOf(model.endT)} ${prevY}`;
+  const area = `${line} L ${xOf(model.endT)} ${mid} L ${xOf(0)} ${mid} Z`;
+  const fillOpacity = chartTheme.isDark ? 0.3 : 0.2;
+
+  const periods = Array.from({ length: model.maxPeriod }, (_, i) => i + 1);
   const active = hover != null ? timeline[hover] : null;
-  const activePlay =
-    active != null ? playForPoint(events, active.eventIndex) : null;
+  const activePlay = active ? playForPoint(events, active.eventIndex) : null;
+  const activeX = active ? xOf(active.elapsedGameTime) : 0;
+  const leadNote = (p: ScoreTimelinePoint | null, side: "home" | "away") => {
+    const label = side === "home" ? homeLabel : awayLabel;
+    return (
+      <span>
+        <span className="font-semibold" style={{ color: side === "home" ? homeColor : awayColor }}>
+          {label} {p ? `+${Math.abs(p.margin)}` : "never led"}
+        </span>
+        {p ? (
+          <span className="text-muted-foreground">
+            {" "}
+            {periodName(p.period)} {p.clock}
+          </span>
+        ) : null}
+      </span>
+    );
+  };
+
+  const scrub = (clientX: number, rect: DOMRect) => {
+    const t = ((clientX - rect.left - pad.left) / plotW) * model.endT;
+    let lo = 0;
+    let hi = timeline.length - 1;
+    let idx = -1;
+    while (lo <= hi) {
+      const m = (lo + hi) >> 1;
+      if (timeline[m]!.elapsedGameTime <= t) {
+        idx = m;
+        lo = m + 1;
+      } else hi = m - 1;
+    }
+    setHover(idx >= 0 ? idx : null);
+  };
+
+  const peak = (p: ScoreTimelinePoint | null, side: "home" | "away") => {
+    if (!p) return null;
+    return (
+      <circle
+        pointerEvents="none"
+        cx={xOf(p.elapsedGameTime)}
+        cy={yOf(p.margin)}
+        r={4}
+        fill={side === "home" ? homeColor : awayColor}
+        stroke="var(--background)"
+        strokeWidth={1.5}
+      />
+    );
+  };
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex flex-wrap items-end justify-between gap-2">
-        <div>
-          <p
-            className={cn(
-              type.caption,
-              "font-semibold uppercase tracking-wide text-muted-foreground"
-            )}
-          >
-            Score margin
+    <div ref={wrapRef}>
+      <div className={cn(type.caption, "flex h-10 flex-col justify-center tabular-nums")} aria-live="polite">
+        {active ? (
+          <>
+            <p className="flex items-baseline justify-between gap-3">
+              <span className="font-semibold">
+                {awayLabel} {active.awayScore} · {homeLabel} {active.homeScore}
+              </span>
+              <span className="shrink-0 text-muted-foreground">
+                {periodName(active.period)} {active.clock}
+              </span>
+            </p>
+            {activePlay || active.scorerName ? (
+              <p className="truncate text-muted-foreground">{activePlay ?? active.scorerName}</p>
+            ) : null}
+          </>
+        ) : (
+          <p className="flex flex-wrap gap-x-3">
+            <span className="text-muted-foreground">Largest lead</span>
+            {leadNote(model.awayPeak, "away")}
+            {leadNote(model.homePeak, "home")}
           </p>
-          <p className={cn(type.caption, "text-muted-foreground")}>
-            {homeLabel} lead up · {awayLabel} lead down
-          </p>
-        </div>
-        <div className="flex items-center gap-3">
-          <span className="inline-flex items-center gap-1.5 text-[12px]">
-            <span
-              className="size-2.5 rounded-full"
-              style={{ backgroundColor: awayColor }}
-            />
-            {awayLabel}
-          </span>
-          <span className="inline-flex items-center gap-1.5 text-[12px]">
-            <span
-              className="size-2.5 rounded-full"
-              style={{ backgroundColor: homeColor }}
-            />
-            {homeLabel}
-          </span>
-        </div>
+        )}
       </div>
-      <svg
-        viewBox={`0 0 ${w} ${h}`}
-        className="h-auto w-full"
-        role="img"
-        aria-label="Score margin over game time"
-      >
-        <line
-          x1={0}
-          y1={mid}
-          x2={w}
-          y2={mid}
-          stroke="currentColor"
-          strokeOpacity={chartTheme.referenceOpacity()}
-        />
-        {periodMarks.map((t, i) => {
-          const x = (t / maxT) * w;
-          return (
-            <g key={t}>
+      {width > 0 ? (
+        <svg
+          width={w}
+          height={h}
+          className="block touch-pan-y select-none"
+          role="img"
+          aria-label={`Score margin over game time. Largest leads: ${homeLabel} ${model.homePeak ? `+${model.homePeak.margin}` : "never led"}, ${awayLabel} ${model.awayPeak ? `+${-model.awayPeak.margin}` : "never led"}.`}
+          onPointerMove={(e) => scrub(e.clientX, e.currentTarget.getBoundingClientRect())}
+          onPointerDown={(e) => scrub(e.clientX, e.currentTarget.getBoundingClientRect())}
+          onPointerLeave={() => setHover(null)}
+        >
+          <defs>
+            <clipPath id={`${clipId}-up`}>
+              <rect x={0} y={0} width={w} height={mid} />
+            </clipPath>
+            <clipPath id={`${clipId}-down`}>
+              <rect x={0} y={mid} width={w} height={h - mid} />
+            </clipPath>
+          </defs>
+
+          {[...model.scale.ticksUp, ...model.scale.ticksDown.map((v) => -v)].map((m) => (
+            <g key={m} className="text-muted-foreground">
               <line
-                x1={x}
-                y1={8}
-                x2={x}
-                y2={h - 8}
+                x1={pad.left}
+                x2={w - pad.right}
+                y1={yOf(m)}
+                y2={yOf(m)}
                 stroke="currentColor"
-                strokeOpacity={chartTheme.periodLineOpacity()}
+                strokeOpacity={chartTheme.gridOpacity()}
+                strokeDasharray="2 4"
               />
               <text
-                x={x + 4}
-                y={i % 2 === 0 ? 14 : h - 6}
-                className="fill-muted-foreground"
-                fontSize={11}
+                x={pad.left - 6}
+                y={yOf(m) + 3.5}
+                textAnchor="end"
+                fontSize={10}
+                className="fill-muted-foreground tabular-nums"
               >
-                {i + 1 < maxPeriod ? `Q${i + 1}` : ""}
+                +{Math.abs(m)}
               </text>
             </g>
-          );
-        })}
-        <polyline
-          fill="none"
-          stroke="currentColor"
-          strokeOpacity={chartTheme.gridOpacity()}
-          strokeWidth={1.5}
-          points={poly}
-        />
-        {coords.map(({ x, y, p }, i) => {
-          const isHome =
-            p.scoringTeamId === homeTeamKey ||
-            (!p.scoringTeamId && p.margin >= 0);
-          const color = isHome ? homeColor : awayColor;
-          return (
-            <circle
-              key={i}
-              cx={x}
-              cy={y}
-              r={hover === i ? 5 : 3.25}
-              fill={color}
-              stroke="var(--background)"
-              strokeWidth={hover === i ? 1.5 : 0}
-              className="cursor-pointer"
-              onMouseEnter={() => setHover(i)}
-              onMouseLeave={() => setHover(null)}
-            />
-          );
-        })}
-      </svg>
-      {active ? (
-        <div className="rounded-md bg-foreground/[0.04] px-3 py-2">
-          <p className={cn(type.caption, "font-semibold tabular-nums")}>
-            Q{active.period} {active.clock} · {awayLabel} {active.awayScore}–
-            {homeLabel} {active.homeScore}
-            {active.points ? ` · +${active.points}` : ""}
-            {active.scorerName ? ` · ${active.scorerName}` : ""}
-          </p>
-          {activePlay ? (
-            <p className={cn(type.bodySm, "mt-0.5 text-muted-foreground")}>
-              {activePlay}
-            </p>
+          ))}
+
+          {periods.map((p) => {
+            const start = p === 1 ? 0 : periodEndSeconds(p - 1);
+            const end = Math.min(periodEndSeconds(p), model.endT);
+            return (
+              <g key={p}>
+                {p > 1 ? (
+                  <line
+                    x1={xOf(start)}
+                    x2={xOf(start)}
+                    y1={pad.top}
+                    y2={h - pad.bottom}
+                    stroke="currentColor"
+                    strokeOpacity={chartTheme.periodLineOpacity()}
+                  />
+                ) : null}
+                <text
+                  x={(xOf(start) + xOf(end)) / 2}
+                  y={h - 7}
+                  textAnchor="middle"
+                  fontSize={11}
+                  fontWeight={600}
+                  className="fill-muted-foreground"
+                >
+                  {periodName(p)}
+                </text>
+              </g>
+            );
+          })}
+
+          <path d={area} fill={homeColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-up)`} />
+          <path d={area} fill={awayColor} fillOpacity={fillOpacity} clipPath={`url(#${clipId}-down)`} />
+          <line
+            x1={pad.left}
+            x2={w - pad.right}
+            y1={mid}
+            y2={mid}
+            stroke="currentColor"
+            strokeOpacity={chartTheme.referenceOpacity()}
+          />
+          <path d={line} fill="none" stroke={homeColor} strokeWidth={2} strokeLinejoin="round" clipPath={`url(#${clipId}-up)`} />
+          <path d={line} fill="none" stroke={awayColor} strokeWidth={2} strokeLinejoin="round" clipPath={`url(#${clipId}-down)`} />
+
+          <g pointerEvents="none" fontSize={11} fontWeight={700}>
+            <text x={pad.left + 6} y={pad.top + 11} fill={homeColor}>
+              {homeLabel} ahead
+            </text>
+            <text x={pad.left + 6} y={h - pad.bottom - 6} fill={awayColor}>
+              {awayLabel} ahead
+            </text>
+          </g>
+
+          {peak(model.homePeak, "home")}
+          {peak(model.awayPeak, "away")}
+
+          {active ? (
+            <g pointerEvents="none">
+              <line
+                x1={activeX}
+                x2={activeX}
+                y1={pad.top}
+                y2={h - pad.bottom}
+                stroke="currentColor"
+                strokeOpacity={0.35}
+              />
+              <circle
+                cx={activeX}
+                cy={yOf(active.margin)}
+                r={4.5}
+                fill={active.margin > 0 ? homeColor : active.margin < 0 ? awayColor : "currentColor"}
+                stroke="var(--background)"
+                strokeWidth={2}
+              />
+            </g>
           ) : null}
-        </div>
+        </svg>
       ) : (
-        <p className={cn(type.caption, "text-muted-foreground")}>
-          Hover a scoring play to see its description.
-        </p>
+        <div style={{ height: h }} />
       )}
+
     </div>
   );
 }
