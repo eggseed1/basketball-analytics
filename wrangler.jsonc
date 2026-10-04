@@ -9,7 +9,16 @@
 		"global_fetch_strictly_public"
 	],
 	"workers_dev": true,
-	"preview_urls": true,
+	"preview_urls": false,
+	// Only console.* output (errors/warnings) is kept, 7 days. Per-request invocation
+	// logs stay off; the privacy page promises no request logging.
+	"observability": {
+		"enabled": true,
+		"logs": {
+			"invocation_logs": false,
+			"head_sampling_rate": 1
+		}
+	},
 	"assets": {
 		"directory": ".open-next/assets",
 		"binding": "ASSETS"

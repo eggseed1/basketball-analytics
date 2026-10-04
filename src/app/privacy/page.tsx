@@ -27,7 +27,7 @@ export default function PrivacyPage() {
       <PageHeader
         eyebrow="Privacy"
         title="Privacy"
-        subtitle="Updated October 3, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
+        subtitle="Updated October 4, 2026. This is a free, non-commercial NBA stats site with no accounts and no ads."
       />
 
       <Section title="What we collect about you">
@@ -44,7 +44,9 @@ export default function PrivacyPage() {
         </p>
         <p>
           The site runs on Cloudflare, which handles each request the way any web host does. We
-          have not turned on request logging.
+          do not log individual requests. When something breaks, the server keeps the error
+          message and the player, team or season involved for up to 7 days so we can fix it. Those
+          logs do not include IP addresses or anything you typed.
         </p>
       </Section>
 
