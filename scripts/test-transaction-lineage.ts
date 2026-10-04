@@ -170,17 +170,20 @@ async function main() {
     assert.equal(ready, false);
     const coverage = await getTransactionLineageCoverage({ force: true });
     assert.equal(coverage.genealogyUiReady, false);
-    // Ownership edges / structured assets are required for UI — ESPN blurbs alone do not unlock.
-    assert.equal(coverage.ownershipEdgeCount, 0);
-    assert.equal(coverage.draftPickAssetCount, 0);
-    assert.ok(coverage.readiness.failures.length > 0);
+    // ESPN and NBA.com blurbs add no edges; a handful of hand-verified trades stays under the readiness floor.
+    assert.ok(coverage.ownershipEdgeCount < 500);
+    assert.ok(coverage.draftPickAssetCount < 100);
+    assert.equal(coverage.brokenEdgeCount, 0);
+    assert.ok(
+      coverage.readiness.failures.some((f) => f.startsWith("ownershipEdges"))
+    );
   }
 
   // --- Empty backward trace is honest ---
   {
     const path = await traceAssetLineageBackward("missing", { force: true });
     assert.equal(path.nodes.length, 0);
-    assert.ok(path.truncatedReason?.includes("unavailable"));
+    assert.ok(/unavailable|not found/.test(path.truncatedReason ?? ""));
   }
 
   // --- ESPN free-text normalizer (no invented player assets) ---

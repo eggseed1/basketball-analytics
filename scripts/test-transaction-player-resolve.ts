@@ -43,7 +43,12 @@ assert.equal(teamBrandBarColor("lal"), TEAM_BRANDS.lal.primary);
 assert.equal(teamBrandBarColor("gsw"), TEAM_BRANDS.gsw.primary);
 assert.equal(teamBrandBarColor("phx"), TEAM_BRANDS.phx.primary);
 assert.equal(teamBrandBarColor("bkn"), TEAM_BRANDS.bkn.primary);
-assert.equal(teamBrandBarColor("sas"), TEAM_BRANDS.sas.primary);
+// Spurs silver is too light for a bar on white, so light charts take the black secondary.
+assert.equal(teamBrandBarColor("sas"), TEAM_BRANDS.sas.secondary);
+assert.equal(
+  teamBrandBarColor("sas", { surface: "dark" }),
+  TEAM_BRANDS.sas.primary
+);
 // Similarity must not use iOS system green for Celtics identity.
 assert.notEqual(teamBrandBarColor("bos"), "#34c759");
 assert.equal(teamBrandBarColor("bos"), "#007A33");
