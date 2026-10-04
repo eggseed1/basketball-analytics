@@ -89,17 +89,14 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const board = await getTeamSeasonBoardCached(season);
-  const boardTeam = resolveTeamFromBoard(board.rows, teamId);
-  if (boardTeam) {
-    return {
-      title: `${boardTeam.fullName} | Basketball Analytics`,
-    };
-  }
-  const fallback = resolveTeamIdentityFallback(teamId, season, "era");
+  const fullName =
+    resolveTeamFromBoard(board.rows, teamId)?.fullName ??
+    resolveTeamIdentityFallback(teamId, season, "era")?.fullName;
   return {
-    title: fallback
-      ? `${fallback.fullName} | Basketball Analytics`
-      : "Team | Basketball Analytics",
+    title: fullName ?? "Team",
+    description: fullName
+      ? `${fullName} roster, games, transactions, and team stats.`
+      : undefined,
   };
 }
 

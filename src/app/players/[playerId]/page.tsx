@@ -191,9 +191,10 @@ export async function generateMetadata({ params }: PlayerPageProps) {
     player?.fullName
   );
   return {
-    title: displayName
-      ? `${displayName} | Basketball Analytics`
-      : "Player | Basketball Analytics",
+    title: displayName ?? "Player",
+    description: displayName
+      ? `${displayName} stats, game log, shot chart, and impact metrics.`
+      : undefined,
   };
 }
 

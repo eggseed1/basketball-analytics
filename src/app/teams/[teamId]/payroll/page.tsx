@@ -21,7 +21,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { teamId } = await params;
   const brand = resolveTeamBrand(teamId);
   const name = brand?.abbr ?? teamId;
-  return { title: `${name} Payroll & Contracts | Basketball Analytics` };
+  return { title: `${name} Payroll & Contracts` };
 }
 
 export default async function TeamPayrollPage({

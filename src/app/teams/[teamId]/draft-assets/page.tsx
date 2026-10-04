@@ -22,7 +22,7 @@ export async function generateMetadata({ params }: PageProps) {
   const { teamId } = await params;
   const brand = resolveTeamBrand(teamId);
   const name = brand?.abbr ?? teamId;
-  return { title: `${name} Draft Assets | Basketball Analytics` };
+  return { title: `${name} Draft Assets` };
 }
 
 export default async function TeamDraftAssetsPage({

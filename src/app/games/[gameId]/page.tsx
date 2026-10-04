@@ -18,7 +18,7 @@ import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy"
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
-export async function generateMetadata({ params }: GamePageProps) { const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game | Basketball Analytics" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
+export async function generateMetadata({ params }: GamePageProps) { const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
 async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean }) {

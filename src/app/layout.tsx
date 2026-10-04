@@ -7,6 +7,7 @@ import { OwnerThemeProvider } from "@/components/design-system/theme-provider";
 import { SportsShell } from "@/components/sports/sports-shell";
 import { SmoothScroll } from "@/components/smooth-scroll";
 import { OWNER_THEME_BOOT_SCRIPT } from "@/lib/owner-theme";
+import { SITE_NAME, SITE_URL } from "@/lib/site-url";
 
 import "./globals.css";
 const geistSans = Geist({
@@ -19,12 +20,25 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const SITE_DESCRIPTION =
+  "NBA scores, shot charts, impact and efficiency stats, and fan sentiment.";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(SITE_URL),
   title: {
-    default: "Basketball Analytics",
-    template: "%s | Basketball Analytics",
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`,
   },
-  description: "NBA impact, efficiency, and advanced stats.",
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 /** Device-width + safe-area for notched iPhones; zoom allowed for a11y. */

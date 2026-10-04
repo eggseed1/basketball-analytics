@@ -17,9 +17,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps) {
   const { id } = await params;
   const f = getFranchiseHistory(id);
-  if (!f) return { title: "Franchise | Basketball Analytics" };
+  if (!f) return { title: "Franchise" };
   return {
-    title: `${f.city} ${f.name} history | Basketball Analytics`,
+    title: `${f.city} ${f.name} history`,
     description: `All-time ${f.city} ${f.name} records: titles, playoffs, leaders, and fan lore.`,
   };
 }
