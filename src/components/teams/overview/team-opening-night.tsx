@@ -7,6 +7,9 @@ import { teamPageHref } from "@/lib/team-destination";
 import type { ScheduleFacts } from "@/lib/team-overview-data";
 import { cn } from "@/lib/utils";
 
+const REGULAR_SEASON_GAMES = 82;
+const PRE_CUP_GAMES = 80;
+
 function dateLabel(iso: string) {
   return new Date(`${iso}T12:00:00Z`).toLocaleDateString("en-US", {
     weekday: "short",
@@ -66,10 +69,16 @@ export function TeamOpeningNight({
         </div>
 
         {facts.regularGames ? (
-          <dl className="grid shrink-0 grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
+          <div className="flex shrink-0 flex-col gap-2">
+          <dl className="grid grid-cols-2 gap-2 sm:grid-cols-4 lg:grid-cols-2">
             {(
               [
-                ["On the schedule so far", String(facts.regularGames)],
+                [
+                  "Games scheduled",
+                  facts.regularGames < REGULAR_SEASON_GAMES
+                    ? `${facts.regularGames} of ${REGULAR_SEASON_GAMES}`
+                    : String(facts.regularGames),
+                ],
                 ["Home games", String(facts.homeGames)],
                 ["Back-to-backs", String(facts.backToBacks)],
                 ["Longest road trip", `${facts.longestRoadTrip} games`],
@@ -81,6 +90,15 @@ export function TeamOpeningNight({
               </div>
             ))}
           </dl>
+          {facts.regularGames < REGULAR_SEASON_GAMES ? (
+            <p className={cn(type.micro, "max-w-md text-muted-foreground")}>
+              {facts.regularGames === PRE_CUP_GAMES
+                ? "The NBA sets each team's last 2 games in December, after the NBA Cup group stage. "
+                : null}
+              These counts cover the {facts.regularGames} games announced so far.
+            </p>
+          ) : null}
+          </div>
         ) : null}
       </div>
 
