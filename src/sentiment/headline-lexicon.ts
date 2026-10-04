@@ -8,7 +8,7 @@
 
 import { afinn165 } from "afinn-165";
 
-export const HEADLINE_LEXICON_VERSION = "headline-lexicon-v1.1";
+export const HEADLINE_LEXICON_VERSION = "headline-lexicon-v1.2";
 
 /**
  * Words whose everyday valence is wrong in NBA coverage, or that AFINN lacks.
@@ -116,6 +116,14 @@ const BASKETBALL_OVERRIDES: Record<string, number> = {
   arrested: -3,
   ejected: -2,
   technical: -1,
+  punch: -2,
+  punches: -2,
+  punched: -2,
+  punching: -2,
+  // criticism AFINN lacks
+  ripped: -2,
+  rips: -2,
+  shortcomings: -2,
   // performance
   mvp: 2,
   "all-star": 2,
@@ -127,8 +135,10 @@ const BASKETBALL_OVERRIDES: Record<string, number> = {
   dominated: 2,
   clutch: 2,
   elite: 2,
-  star: 1,
+  // "Heat star Bam Adebayo" is a job title, not praise
+  star: 0,
   superstar: 2,
+  undisputed: 1,
   rookie: 0,
   slump: -2,
   struggles: -2,
@@ -154,7 +164,29 @@ const BASKETBALL_OVERRIDES: Record<string, number> = {
   deal: 0,
   exhibit: 0,
   "two-way": 0,
+  // headline framing that carries no tone toward the player
+  exclusive: 0,
+  interesting: 0,
+  admits: 0,
+  admitted: 0,
+  feeling: 0,
+  hope: 0,
+  hopes: 0,
+  joke: 0,
+  jokes: 0,
+  joked: 0,
+  crazy: 0,
+  battle: 0,
+  battles: 0,
+  fun: 1,
 };
+
+/** Phrases whose words mislead on their own. Matched before tokenizing. */
+const HEADLINE_PHRASES: { pattern: RegExp; valence: number; hit: string }[] = [
+  { pattern: /\blaugh(?:ed|s|ing)? at\b/g, valence: -2, hit: "laughed-at" },
+  { pattern: /\blaughing ?stock\b/g, valence: -3, hit: "laughingstock" },
+  { pattern: /\bnot close\b/g, valence: -2, hit: "not-close" },
+];
 
 const NEGATORS = new Set([
   "not",
@@ -172,7 +204,7 @@ const NEGATORS = new Set([
   "cannot",
 ]);
 
-export const FAN_LEXICON_VERSION = "fan-lexicon-v1.1";
+export const FAN_LEXICON_VERSION = "fan-lexicon-v1.2";
 
 /**
  * Fan chatter on top of the headline list. Hype words AFINN reads as negative
@@ -256,8 +288,17 @@ export function scoreHeadline(
 ): HeadlineTone {
   const hits: string[] = [];
   const scorePart = (input: string, weight: number) => {
-    const text = maskNames.length ? maskPhrases(input, maskNames) : input;
+    let text = (maskNames.length ? maskPhrases(input, maskNames) : input)
+      .toLowerCase()
+      .replace(/[’‘]/g, "'");
     let sum = 0;
+    for (const phrase of HEADLINE_PHRASES) {
+      text = text.replace(phrase.pattern, () => {
+        sum += phrase.valence * weight;
+        hits.push(`${phrase.hit}${phrase.valence}`);
+        return " ";
+      });
+    }
     let negateLeft = 0;
     for (const token of tokenizeHeadline(text)) {
       if (NEGATORS.has(token)) {

@@ -21,6 +21,9 @@ function testLexicon() {
   assert.ok(scoreHeadline("Coach is not happy with effort").score < 0);
   // Game vocabulary carries no tone.
   assert.equal(scoreHeadline("He shot, blocked and stole").score, 0);
+  assert.ok(scoreHeadline("Chet Holmgren gets laughed at over his measurements", "", ["Chet Holmgren"]).score < 0);
+  assert.ok(scoreHeadline("Knicks and guard 'not close' in talks").score < 0);
+  assert.equal(scoreHeadline("Exclusive: Heat star talks camp").score, 0);
   // Masked names do not score ("Rob" alone would be −2 in AFINN).
   assert.deepEqual(scoreHeadline("Rob Dillingham", "", ["Rob Dillingham"]).hits, []);
   const tone = scoreHeadline("Great great great amazing win");
