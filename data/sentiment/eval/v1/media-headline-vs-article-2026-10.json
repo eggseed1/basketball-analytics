@@ -13,7 +13,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.64,
    "sentenceScore": 0.3,
-   "sentenceCount": 6
+   "sentenceCount": 6,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2e5089059824f827:5104157",
@@ -25,7 +27,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.1,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "6de55d6fb1c933cc:3908809",
@@ -37,7 +41,9 @@
    "headlineScore": 0.81,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.94,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "31a97800f9fcb09c:4432247",
@@ -49,7 +55,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.26,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "068dc2c43b7ccc83:3907387",
@@ -61,7 +69,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": 0.13,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 1,
+   "llama33_70b": -1
   },
   {
    "key": "5a0b8de7508b803e:6450",
@@ -73,7 +83,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.05,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "f81f28629969b0f3:4251",
@@ -85,7 +97,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "545d662d5a749960:3062679",
@@ -97,7 +111,9 @@
    "headlineScore": -0.97,
    "headlineNoSelfNameScore": -0.91,
    "sentenceScore": -0.64,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "1c67498e27a9ec53:6583",
@@ -109,7 +125,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.76,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "0f928adedb9a5b85:1966",
@@ -121,7 +139,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": -0.42,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": -1
   },
   {
    "key": "3f5715cc4adc86d8:3917376",
@@ -133,7 +153,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.24,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "9631966161b0d822:1966",
@@ -145,7 +167,9 @@
    "headlineScore": 0.7,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": -0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "0b1084c769d72f53:6430",
@@ -157,7 +181,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": -0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "49b3642dd14086bc:4431767",
@@ -169,7 +195,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.33,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "40cb8f79b6f42290:3934672",
@@ -181,7 +209,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.06,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "1ea590f8bf1beae5:4594268",
@@ -193,7 +223,9 @@
    "headlineScore": 0.91,
    "headlineNoSelfNameScore": 0.91,
    "sentenceScore": 0.38,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "eba6c61de23e174f:3945274",
@@ -205,7 +237,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": 0.03,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "dfe30a3c818b3550:4684742",
@@ -217,7 +251,9 @@
    "headlineScore": 0.55,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.24,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "b4f67729bf77e84b:6450",
@@ -229,7 +265,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.21,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "2656d037170fbc25:4432166",
@@ -241,7 +279,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.05,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "ce7ea38d64f08d73:4351852",
@@ -253,7 +293,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": -0.23,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "df2e86a247ba7e61:3975",
@@ -265,7 +307,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.64,
    "sentenceScore": 0.22,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "f46789df98a5411f:4278073",
@@ -277,7 +321,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.06,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "fb95437abe979881:5104157",
@@ -289,7 +335,9 @@
    "headlineScore": 0.85,
    "headlineNoSelfNameScore": 0.85,
    "sentenceScore": 0.2,
-   "sentenceCount": 6
+   "sentenceCount": 6,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "755bd035d7ac442b:1966",
@@ -301,7 +349,9 @@
    "headlineScore": -0.55,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.32,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "c854933bde629b30:4432166",
@@ -313,7 +363,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.09,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "c021829570d40f34:3136776",
@@ -325,7 +377,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.11,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "55529dda91b6d6de:4683750",
@@ -337,7 +391,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": -0.03,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "0710dbb6b1c3ec1f:4432241",
@@ -349,7 +405,9 @@
    "headlineScore": 0.81,
    "headlineNoSelfNameScore": 0.64,
    "sentenceScore": 0.32,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "604e669b6c7f7677:2990984",
@@ -361,7 +419,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.09,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "53f6a20d533b4acf:4845374",
@@ -373,7 +433,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": 0.14,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "37c1a47c8d4652da:3032977",
@@ -385,7 +447,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.64,
    "sentenceScore": 0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "43fe252a8c4dfae7:3112335",
@@ -397,7 +461,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.2,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "93a79f8e26d0f83a:4845374",
@@ -409,7 +475,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": -0.22,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "ea8e7475b5862315:4066261",
@@ -421,7 +489,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.23,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": -1
   },
   {
    "key": "4d33bca19c854948:4433136",
@@ -433,7 +503,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.64,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "19b7ba38a424e152:3059319",
@@ -445,7 +517,9 @@
    "headlineScore": 0.7,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.16,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "4c160e448872806f:2991235",
@@ -457,7 +531,9 @@
    "headlineScore": -0.7,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.12,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "ffa408075ee76ef2:4433621",
@@ -469,7 +545,9 @@
    "headlineScore": 0.55,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.03,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "cc0a9238dba6f1b0:3913176",
@@ -481,7 +559,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "07bdac86b3ad83f7:2595516",
@@ -493,7 +573,9 @@
    "headlineScore": -0.55,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "a8a39a8d9c292770:3136195",
@@ -505,7 +587,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.48,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "62ee333567e4187a:4066457",
@@ -517,7 +601,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.45,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "aa736ba0d74bbfa4:4395628",
@@ -529,7 +615,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.32,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "d510f782fadebd47:6442",
@@ -541,7 +629,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.11,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "5a87c35380effd97:3032977",
@@ -553,7 +643,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.85,
    "sentenceScore": 0.1,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "d2b195d5db166af1:2990984",
@@ -565,7 +657,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.16,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "c885d0b9d2f60c31:4433621",
@@ -577,7 +671,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": -0.15,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "37183757cc2fbcce:3945274",
@@ -589,7 +685,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.17,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "1a547d2d39c6feb1:4433134",
@@ -601,7 +699,9 @@
    "headlineScore": 0.64,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.76,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "84b0b5e3150612b0:3136195",
@@ -613,7 +713,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.03,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "42f3d66a11bac589:3032977",
@@ -625,7 +727,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.44,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "9550fd611e3980ca:4593803",
@@ -637,7 +741,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.76,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "6066d34914a9550f:4433621",
@@ -649,7 +755,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.12,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "f7c72b58fe3ea819:3907387",
@@ -661,7 +769,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "df41640817e84e98:4433629",
@@ -673,7 +783,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.12,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "01cf5a44a6643274:3992",
@@ -685,7 +797,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.23,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "138dc1266fa9aa8b:4017837",
@@ -697,7 +811,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.25,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "d52af9c3e33be3fd:4066261",
@@ -709,7 +825,9 @@
    "headlineScore": 0.85,
    "headlineNoSelfNameScore": 0.85,
    "sentenceScore": 0.21,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": 1
   },
   {
    "key": "04ede4d94f6a5b67:4997528",
@@ -721,7 +839,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "9d7c6310a327971f:4066457",
@@ -733,7 +853,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.88,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "e659ac35df97c6ad:4684275",
@@ -745,7 +867,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.08,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "17a20667afdc7519:4066354",
@@ -757,7 +881,9 @@
    "headlineScore": 0.55,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "a1cbc1db418e79b1:3975",
@@ -769,7 +895,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.32,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "72e3282033b8a8c4:3202",
@@ -781,7 +909,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.16,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "0c4ccc813f0e472b:3975",
@@ -793,7 +923,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": 0.5,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "4041581d75d2e030:3934719",
@@ -805,7 +937,9 @@
    "headlineScore": 0.94,
    "headlineNoSelfNameScore": 0.91,
    "sentenceScore": 0.46,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "34feb3df48677c3b:5105592",
@@ -817,7 +951,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.09,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "492432fb75c5abe6:3934719",
@@ -829,7 +965,9 @@
    "headlineScore": 1,
    "headlineNoSelfNameScore": 0.85,
    "sentenceScore": 0.49,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "83d52afbbbddcfcd:3136195",
@@ -841,7 +979,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.12,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "b21ce85cd59471da:5041939",
@@ -853,7 +993,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.22,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "190e58c7fa2229bf:4709138",
@@ -865,7 +1007,9 @@
    "headlineScore": 0.85,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.23,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "433750fbdb180a55:6475",
@@ -877,7 +1021,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.76,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2297f63b6d927e51:6442",
@@ -889,7 +1035,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.15,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "7eb131194f0e30b8:4433627",
@@ -901,7 +1049,9 @@
    "headlineScore": 0.88,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.85,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "a743d4e27673f527:5041939",
@@ -913,7 +1063,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.08,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "2f1a1ebd59fb87c7:3907387",
@@ -925,7 +1077,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.06,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "21f0daf4dd92339a:3136193",
@@ -937,7 +1091,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.64,
    "sentenceScore": 0.31,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "cf436feb269f5657:4702352",
@@ -949,7 +1105,9 @@
    "headlineScore": 0.7,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.28,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "011b2e4859062d1a:3112335",
@@ -961,7 +1119,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.32,
-   "sentenceCount": 6
+   "sentenceCount": 6,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "f3ce2c2885f7de62:4433255",
@@ -973,7 +1133,9 @@
    "headlineScore": 0.64,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.12,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "d14c722f3a047289:3914044",
@@ -985,7 +1147,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.18,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "0fe223ddcc0d07a9:3136776",
@@ -997,7 +1161,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.18,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "fe22382571817f01:6583",
@@ -1009,7 +1175,9 @@
    "headlineScore": 0.81,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "d5b4275a814592f6:5104157",
@@ -1021,7 +1189,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.22,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "4a0cba78e7bd4d71:4711297",
@@ -1033,7 +1203,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "e7eee62c3418aa00:4431678",
@@ -1045,7 +1217,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.38,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "bf9b1daad5232fe6:6430",
@@ -1057,7 +1231,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.44,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "9bf54957b01ecfd6:4683750",
@@ -1069,7 +1245,9 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": 0.06,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "76ca7c17ea267666:4066457",
@@ -1081,7 +1259,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": -0.22,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "dbf792d3021f6e7f:2578185",
@@ -1093,7 +1273,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.23,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "7d13185f8ee305d3:4684740",
@@ -1105,7 +1287,9 @@
    "headlineScore": 0.88,
    "headlineNoSelfNameScore": 0.76,
    "sentenceScore": 0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "47db7cd85bf41214:6442",
@@ -1117,7 +1301,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.23,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "0ad0372620fa5e7c:4897943",
@@ -1129,7 +1315,9 @@
    "headlineScore": -0.81,
    "headlineNoSelfNameScore": -0.64,
    "sentenceScore": -0.14,
-   "sentenceCount": 6
+   "sentenceCount": 6,
+   "llama31_8b": 0,
+   "llama33_70b": -1
   },
   {
    "key": "e67d9781c95dbaf3:4845367",
@@ -1141,7 +1329,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "b31cd24c56701187:3934672",
@@ -1153,7 +1343,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.04,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "8cc099ae3085cdf6:4065648",
@@ -1165,7 +1357,9 @@
    "headlineScore": 0.97,
    "headlineNoSelfNameScore": 0.76,
    "sentenceScore": 0.19,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "933ec75d357a55b1:4395628",
@@ -1177,7 +1371,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.15,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "0902a9c8e6c756c2:3062679",
@@ -1189,7 +1385,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": -0.11,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": -1,
+   "llama33_70b": 1
   },
   {
    "key": "8a2c5676447d9a22:3136776",
@@ -1201,7 +1399,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "33e9fcf0abbf7e08:4432810",
@@ -1213,7 +1413,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.19,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "946406e468f13667:4432166",
@@ -1225,7 +1427,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.12,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "67daa45fd66480cd:4277905",
@@ -1237,7 +1441,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.24,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 1,
+   "llama33_70b": -1
   },
   {
    "key": "c9f5b8014aa4122d:4279888",
@@ -1249,7 +1455,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.19,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "7de12c337f08f045:4684275",
@@ -1261,7 +1469,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.16,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "b3843c0e24fe0393:4279888",
@@ -1273,7 +1483,9 @@
    "headlineScore": 0.46,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.23,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "064ce839e6e3a6bd:3102531",
@@ -1285,7 +1497,9 @@
    "headlineScore": -0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.08,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "23f6c8e310f6adb0:3155526",
@@ -1297,7 +1511,9 @@
    "headlineScore": -0.95,
    "headlineNoSelfNameScore": -0.85,
    "sentenceScore": -0.85,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "76914c7830c030b9:4683742",
@@ -1309,7 +1525,9 @@
    "headlineScore": 0.7,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "0ab5bc0e3e1c2fbf:4683021",
@@ -1321,7 +1539,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.22,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "c3315ae3613b8bd2:3917376",
@@ -1333,7 +1553,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "c001e5a822f62ecc:4437244",
@@ -1345,7 +1567,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "b5ac3668a4a62214:2990984",
@@ -1357,7 +1581,9 @@
    "headlineScore": 0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.23,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "30ddeffde3d30c46:4845374",
@@ -1369,7 +1595,9 @@
    "headlineScore": 0.81,
    "headlineNoSelfNameScore": 0.76,
    "sentenceScore": -0.01,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "fe1d8c77fd33eb27:4594268",
@@ -1381,7 +1609,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.17,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "52f9d9b2c702b14f:4396993",
@@ -1393,7 +1623,9 @@
    "headlineScore": -0.12,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": -0.07,
-   "sentenceCount": 7
+   "sentenceCount": 7,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "00fa679c0361390e:3936299",
@@ -1405,7 +1637,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.76,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "9dcb5f785629c401:4278104",
@@ -1417,7 +1651,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "c48edb09abf0e0a6:4431823",
@@ -1429,7 +1665,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0.15,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "0c1c084478661005:4433136",
@@ -1441,7 +1679,9 @@
    "headlineScore": 0.36,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.54,
-   "sentenceCount": 6
+   "sentenceCount": 6,
+   "llama31_8b": 1,
+   "llama33_70b": 0
   },
   {
    "key": "894e191055c9448a:4683750",
@@ -1453,7 +1693,9 @@
    "headlineScore": -0.76,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": -0.04,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "23c0b0527263c5a0:3995",
@@ -1465,7 +1707,9 @@
    "headlineScore": 0.55,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.21,
-   "sentenceCount": 3
+   "sentenceCount": 3,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "8fd6452f2b71ca86:3917376",
@@ -1477,7 +1721,9 @@
    "headlineScore": 0.76,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "1e5ac213327ac631:6583",
@@ -1489,7 +1735,9 @@
    "headlineScore": 0.64,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.46,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "478ca6bcdacd0500:3155526",
@@ -1501,7 +1749,9 @@
    "headlineScore": -0.93,
    "headlineNoSelfNameScore": -0.85,
    "sentenceScore": -0.91,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": -1,
+   "llama33_70b": -1
   },
   {
    "key": "c067dc760abcf12f:3202",
@@ -1513,7 +1763,9 @@
    "headlineScore": -0.64,
    "headlineNoSelfNameScore": -0.64,
    "sentenceScore": 0.23,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "4db5818888af6370:3112335",
@@ -1525,7 +1777,9 @@
    "headlineScore": 0.7,
    "headlineNoSelfNameScore": 0.64,
    "sentenceScore": 0.46,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "261a97758499e725:4432194",
@@ -1537,7 +1791,9 @@
    "headlineScore": 0,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 0,
+   "llama33_70b": 1
   },
   {
    "key": "0099f65561e4d0cd:4433136",
@@ -1549,7 +1805,9 @@
    "headlineScore": 0.64,
    "headlineNoSelfNameScore": 0.46,
    "sentenceScore": 0.43,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "61c0b251dfe8e69e:5037871",
@@ -1561,7 +1819,9 @@
    "headlineScore": 0.88,
    "headlineNoSelfNameScore": 0.76,
    "sentenceScore": 0.49,
-   "sentenceCount": 2
+   "sentenceCount": 2,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "0b7102c21d338a93:2991235",
@@ -1573,7 +1833,9 @@
    "headlineScore": -0.36,
    "headlineNoSelfNameScore": -0.24,
    "sentenceScore": -0.08,
-   "sentenceCount": 5
+   "sentenceCount": 5,
+   "llama31_8b": -1,
+   "llama33_70b": 0
   },
   {
    "key": "f10f499cbf71d529:4702177",
@@ -1585,7 +1847,9 @@
    "headlineScore": 0.24,
    "headlineNoSelfNameScore": 0.24,
    "sentenceScore": 0,
-   "sentenceCount": 1
+   "sentenceCount": 1,
+   "llama31_8b": 1,
+   "llama33_70b": 1
   },
   {
    "key": "76f287d9d2ad5d07:3945274",
@@ -1597,7 +1861,9 @@
    "headlineScore": 0.55,
    "headlineNoSelfNameScore": 0,
    "sentenceScore": 0.12,
-   "sentenceCount": 4
+   "sentenceCount": 4,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   },
   {
    "key": "709a34cc873a876c:4897943",
@@ -1609,7 +1875,10 @@
    "headlineScore": -0.46,
    "headlineNoSelfNameScore": -0.46,
    "sentenceScore": 0.14,
-   "sentenceCount": 8
+   "sentenceCount": 8,
+   "llama31_8b": 0,
+   "llama33_70b": 0
   }
- ]
+ ],
+ "modelPrompt": "System: You rate the tone of an NBA news headline toward one named player. Answer with only -1, 0 or 1. 1: positive toward the player, or good news for them. -1: negative toward the player, or bad news for them. 0: neutral or mixed, or the player is only mentioned in passing or not at all. User: Player: <name> / Headline: <title>. temperature 0, headline only."
 }
