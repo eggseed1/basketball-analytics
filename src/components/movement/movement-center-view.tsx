@@ -2,7 +2,10 @@ import Link from "next/link";
 
 import { MovementClusterCard } from "@/components/movement/movement-cluster-card";
 import { MoreInfo } from "@/components/ui/more-info";
-import { isResolvedMovementState } from "@/movement-center/cluster-state";
+import {
+  isFellThroughMovementState,
+  isResolvedMovementState,
+} from "@/movement-center/cluster-state";
 import { resolveMovementPresentation } from "@/movement-center/prominence";
 import type { MovementCuratedSnapshot, MovementFeedItem } from "@/movement-center/types";
 import { type } from "@/lib/design-system";
@@ -35,9 +38,18 @@ export function MovementCenterView({
   const activeFeed = feed.filter(
     (item) => !isResolvedMovementState(item.cluster.state)
   );
+  const byRecent = (a: MovementFeedItem, b: MovementFeedItem) =>
+    b.cluster.lastMeaningfulAt.localeCompare(a.cluster.lastMeaningfulAt);
   const resolvedFeed = feed
-    .filter((item) => isResolvedMovementState(item.cluster.state))
-    .sort((a, b) => b.cluster.lastMeaningfulAt.localeCompare(a.cluster.lastMeaningfulAt));
+    .filter(
+      (item) =>
+        isResolvedMovementState(item.cluster.state) &&
+        !isFellThroughMovementState(item.cluster.state)
+    )
+    .sort(byRecent);
+  const fellThroughFeed = feed
+    .filter((item) => isFellThroughMovementState(item.cluster.state))
+    .sort(byRecent);
   const headlineDay = formatDay(meta.latestHeadlineAt);
   const ledgerDay = formatDay(meta.latestTransactionDate);
   const windowDay = formatDay(meta.tradeWindowStart);
@@ -97,7 +109,7 @@ export function MovementCenterView({
                   {headlineDay ? `, newest ${headlineDay}` : ""}.{" "}
                 </>
               ) : null}
-              {ledgerDay ? <>ESPN transaction log through {ledgerDay}.</> : null}
+              {ledgerDay ? <>Transaction log (ESPN and NBA.com) through {ledgerDay}.</> : null}
             </p>
           </MoreInfo>
         ) : null}
@@ -133,11 +145,24 @@ export function MovementCenterView({
           <div className="flex flex-col gap-0.5">
             <h2 className={cn(type.bodySm, "font-bold")}>Completed moves</h2>
             <p className={cn(type.caption, "text-muted-foreground")}>
-              {windowDay ? `Trades in the ESPN transaction log since ${windowDay}` : "Trades in the ESPN transaction log"}
+              {windowDay ? `Trades in the transaction log since ${windowDay}` : "Trades in the transaction log"}
               , plus reported stories that turned into a logged move.
             </p>
           </div>
           {renderFeed(resolvedFeed)}
+        </section>
+      ) : null}
+
+      {fellThroughFeed.length > 0 ? (
+        <section className="flex flex-col gap-3">
+          <div className="flex flex-col gap-0.5">
+            <h2 className={cn(type.bodySm, "font-bold")}>Fell through</h2>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              Stories where the player moved to a team the reports didn&apos;t name, or the trade
+              deadline passed with no deal. The reporting may still have been accurate when it ran.
+            </p>
+          </div>
+          {renderFeed(fellThroughFeed)}
         </section>
       ) : null}
     </div>

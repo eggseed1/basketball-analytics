@@ -1,9 +1,13 @@
 /**
- * Link movement stories to the ESPN transaction ledger.
+ * Link movement stories to the transaction ledger (ESPN plus NBA.com gap rows).
  *
  * - Trades in the current window become completed clusters on their own.
- * - A reported story resolves as "materialized" when a matching ledger row
- *   (same player, same kind of move) lands on or after the first report.
+ * - A story whose player makes the same kind of move while the story is live
+ *   completes when the move lands with a team the reports named (or when they
+ *   named none besides his own), and falls through when it lands elsewhere.
+ * - A contract story falls through when the player is traded away from the
+ *   team in talks first. A trade story still open after the trade deadline
+ *   falls through.
  * - Stories with no new reports for EXPIRE_DAYS expire.
  *
  * Pure: callers pass ledger rows and a text entity resolver.
@@ -16,10 +20,13 @@ import {
   parseTradeText,
   teamIdForName,
 } from "@/lib/espn-ledger-text";
+import { DEADLINE_GRACE_DAYS, tradeDeadlineAfter } from "@/movement-center/calendar";
 import type { MovementFamily } from "@/movement-center/classify-headline";
 import {
   ESPN_TRANSACTIONS_SOURCE_ID,
   ESPN_TRANSACTIONS_TIER,
+  NBA_MOVEMENT_SOURCE_ID,
+  NBA_MOVEMENT_TIER,
   type MovementSourceTier,
 } from "@/movement-center/reporters";
 import type {
@@ -247,15 +254,23 @@ function mergeLinkedDeals(deals: TradeDeal[], ctx: LedgerContext): TradeDeal[] {
   return out;
 }
 
+function ledgerSource(row: LedgerRow): { id: string; tier: MovementSourceTier } {
+  return row.id.startsWith("nba-tx-")
+    ? { id: NBA_MOVEMENT_SOURCE_ID, tier: NBA_MOVEMENT_TIER }
+    : { id: ESPN_TRANSACTIONS_SOURCE_ID, tier: ESPN_TRANSACTIONS_TIER };
+}
+
 function ledgerClaim(
+  id: string,
   clusterId: string,
   row: LedgerRow,
   text: string,
   playerIds: string[],
   claimType: MovementClaim["claimType"]
 ): MovementClaim {
+  const source = ledgerSource(row);
   return {
-    id: `mv-${row.id}`,
+    id,
     clusterId,
     summary: text,
     claimType,
@@ -263,8 +278,8 @@ function ledgerClaim(
     state: "completed",
     provenanceKind: "completed_transaction",
     publishedAt: ledgerTime(row.date),
-    sourceId: ESPN_TRANSACTIONS_SOURCE_ID,
-    sourceLabel: ESPN_TRANSACTIONS_TIER.label,
+    sourceId: source.id,
+    sourceLabel: source.tier.label,
     sourceUrl: LEDGER_URL,
     playerIds,
     teamIds: row.teamIds,
@@ -303,8 +318,92 @@ export type LedgerLinkResult = {
   resolutions: MovementResolution[];
   sources: Record<string, MovementSourceTier>;
   materialized: number;
+  fellThrough: number;
   expired: number;
 };
+
+type MatchedRow = { row: LedgerRow; text: string; playerIds: string[] };
+
+type PlayerMove = { toTeamId: string; fromTeamId?: string };
+
+/** Where the story's players went in a parsed deal. */
+function playerMoves(deal: MovementDeal, playerIds: string[]): PlayerMove[] {
+  const moves: PlayerMove[] = [];
+  for (const side of deal.sides) {
+    for (const asset of side.receives) {
+      if (!asset.playerId || !playerIds.includes(asset.playerId)) continue;
+      const other = deal.sides.length === 2 ? deal.sides.find((s) => s.teamId !== side.teamId) : undefined;
+      moves.push({ toTeamId: side.teamId, fromTeamId: asset.fromTeamId ?? other?.teamId });
+    }
+  }
+  return moves;
+}
+
+function teamList(ids: string[], ctx: LedgerContext): string {
+  const names = ids.map((id) => ctx.teamName(id)).filter((n): n is string => Boolean(n)).map((n) => `the ${n}`);
+  if (names.length <= 1) return names[0] ?? "";
+  return `${names.slice(0, -1).join(", ")} or ${names.at(-1)}`;
+}
+
+function formatDeadline(date: string): string {
+  return new Date(ledgerTime(date)).toLocaleDateString("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+type Verdict =
+  | { kind: "completed" }
+  | { kind: "fell_through"; outcome: MovementResolution["outcome"]; note: string };
+
+const COMPLETED: Verdict = { kind: "completed" };
+
+/**
+ * A trade completes unless the reports named a destination and the player
+ * went somewhere else. Teams that sent the player don't count as named
+ * destinations; when the sender is unknown the trade counts as completed.
+ */
+function tradeVerdict(named: string[], moves: PlayerMove[], ctx: LedgerContext): Verdict {
+  if (!moves.length || moves.some((m) => !m.fromTeamId)) return COMPLETED;
+  const senders = new Set(moves.map((m) => m.fromTeamId));
+  const targets = named.filter((id) => !senders.has(id));
+  if (!targets.length || moves.some((m) => targets.includes(m.toTeamId))) return COMPLETED;
+  const to = teamList([moves[0]!.toTeamId], ctx);
+  const had = teamList(targets, ctx);
+  if (!to || !had) return COMPLETED;
+  return {
+    kind: "fell_through",
+    outcome: "partially_materialized",
+    note: `Traded to ${to}. Reports had named ${had}.`,
+  };
+}
+
+function contractVerdict(named: string[], signingTeamId: string | undefined, ctx: LedgerContext): Verdict {
+  if (!named.length || !signingTeamId || named.includes(signingTeamId)) return COMPLETED;
+  const signed = teamList([signingTeamId], ctx);
+  const had = teamList(named, ctx);
+  if (!signed || !had) return COMPLETED;
+  return {
+    kind: "fell_through",
+    outcome: "partially_materialized",
+    note: `Signed with ${signed}. Reports had named ${had}.`,
+  };
+}
+
+/** A contract story whose player was traded away from every team in the reports. */
+function tradedAwayVerdict(named: string[], moves: PlayerMove[], ctx: LedgerContext): Verdict | null {
+  if (!named.length || !moves.length || moves.some((m) => named.includes(m.toTeamId))) return null;
+  const to = teamList([moves[0]!.toTeamId], ctx);
+  if (!to) return null;
+  const from = moves[0]!.fromTeamId;
+  const note =
+    from && named.includes(from)
+      ? `Traded to ${to} before a new deal with ${teamList([from], ctx)}.`
+      : `Traded to ${to}. Reports had named ${teamList(named, ctx)}.`;
+  return { kind: "fell_through", outcome: "did_not_materialize", note };
+}
 
 export function linkLedger(input: LedgerLinkInput, ctx: LedgerContext): LedgerLinkResult {
   const nowIso = input.now.toISOString();
@@ -316,12 +415,33 @@ export function linkLedger(input: LedgerLinkInput, ctx: LedgerContext): LedgerLi
   const ledger = input.ledger.filter((row) => row.date >= scanFrom && row.date <= today);
 
   const deals = groupTradeDeals(ledger, ctx);
+  const parsedDeals = new Map<TradeDeal, MovementDeal>();
+  const parsedDeal = (deal: TradeDeal) => {
+    if (!parsedDeals.has(deal)) parsedDeals.set(deal, buildDeal(deal, ctx));
+    return parsedDeals.get(deal)!;
+  };
   const consumedDeals = new Set<TradeDeal>();
-  const consumedRows = new Set<string>();
   const claims: MovementClaim[] = [...input.newsClaims];
+  const claimIds = new Set(claims.map((c) => c.id));
+  const claimIdFor = (rowId: string, clusterId: string) => {
+    const base = `mv-${rowId}`;
+    const id = claimIds.has(base) ? `${base}~${clusterId}` : base;
+    claimIds.add(id);
+    return id;
+  };
+  const sources: Record<string, MovementSourceTier> = {};
   const resolutions: MovementResolution[] = [];
   let materialized = 0;
+  let fellThrough = 0;
   let expired = 0;
+
+  const namedTeams = new Map<string, Set<string>>();
+  for (const claim of input.newsClaims) {
+    if (claim.provenanceKind === "completed_transaction") continue;
+    const set = namedTeams.get(claim.clusterId) ?? new Set<string>();
+    for (const id of claim.teamIds) set.add(id);
+    namedTeams.set(claim.clusterId, set);
+  }
 
   const contractRows = ledger
     .map((row) => {
@@ -332,59 +452,110 @@ export function linkLedger(input: LedgerLinkInput, ctx: LedgerContext): LedgerLi
     })
     .filter((r): r is NonNullable<typeof r> => r !== null);
 
+  const attach = (cluster: MovementStoryCluster, rows: MatchedRow[], claimType: MovementClaim["claimType"]) => {
+    for (const m of rows) {
+      const source = ledgerSource(m.row);
+      sources[source.id] = source.tier;
+      const claim = ledgerClaim(claimIdFor(m.row.id, cluster.id), cluster.id, m.row, m.text, m.playerIds, claimType);
+      claims.push(claim);
+      cluster.claimIds.push(claim.id);
+    }
+  };
+
   for (const cluster of input.newsClusters) {
+    if (cluster.state !== "unresolved" && cluster.state !== "denied") continue;
     const family = input.families.get(cluster.id);
     const earliest = new Date(new Date(cluster.firstSeenAt).getTime() - MATCH_LEAD_DAYS * DAY_MS)
       .toISOString()
       .slice(0, 10);
+    const expiresAt = new Date(new Date(cluster.lastMeaningfulAt).getTime() + EXPIRE_DAYS * DAY_MS)
+      .toISOString()
+      .slice(0, 10);
+    const live = (date: string) => date >= earliest && date <= expiresAt;
     const hits = (ids: string[]) => ids.some((id) => cluster.linkedPlayerIds.includes(id));
+    const named = [...(namedTeams.get(cluster.id) ?? [])];
 
-    let matchedRows: { row: LedgerRow; text: string; playerIds: string[] }[] = [];
+    let matchedRows: MatchedRow[] = [];
+    let matchedTrade = family === "trade";
+    let verdict: Verdict | null = null;
     if (family === "trade") {
-      const deal = deals.find((d) => !consumedDeals.has(d) && d.date >= earliest && hits(d.playerIds));
+      const deal = deals.find((d) => live(d.date) && hits(d.playerIds));
       if (deal) {
         consumedDeals.add(deal);
         matchedRows = deal.rows;
-        cluster.linkedTeamIds = [...new Set([...cluster.linkedTeamIds, ...deal.teamIds])];
-        cluster.deal = buildDeal(deal, ctx);
+        cluster.deal = parsedDeal(deal);
         cluster.linkedTeamIds = [
-          ...new Set([...cluster.linkedTeamIds, ...cluster.deal.sides.map((s) => s.teamId)]),
+          ...new Set([...cluster.linkedTeamIds, ...deal.teamIds, ...cluster.deal.sides.map((s) => s.teamId)]),
         ];
+        verdict = tradeVerdict(named, playerMoves(cluster.deal, cluster.linkedPlayerIds), ctx);
       }
     } else {
-      const row = contractRows.find(
-        (r) => !consumedRows.has(r.row.id) && r.row.date >= earliest && hits(r.playerIds)
-      );
+      const row = contractRows.find((r) => live(r.row.date) && hits(r.playerIds));
       if (row) {
-        consumedRows.add(row.row.id);
         matchedRows = [row];
+        verdict = contractVerdict(named, row.row.teamIds[0], ctx);
+      } else {
+        const deal = deals.find((d) => live(d.date) && hits(d.playerIds));
+        const away = deal
+          ? tradedAwayVerdict(named, playerMoves(parsedDeal(deal), cluster.linkedPlayerIds), ctx)
+          : null;
+        if (deal && away) {
+          matchedRows = deal.rows;
+          matchedTrade = true;
+          verdict = away;
+        }
       }
     }
 
-    if (matchedRows.length) {
-      for (const m of matchedRows) {
-        const claim = ledgerClaim(
-          cluster.id,
-          m.row,
-          m.text,
-          m.playerIds,
-          family === "trade" ? "trade_interest" : "contract_movement"
-        );
-        claims.push(claim);
-        cluster.claimIds.push(claim.id);
-      }
+    if (matchedRows.length && verdict) {
+      attach(cluster, matchedRows, matchedTrade ? "trade_interest" : "contract_movement");
       const last = matchedRows[matchedRows.length - 1]!;
-      cluster.state = "completed";
       cluster.lastMeaningfulAt = ledgerTime(last.row.date);
+      if (verdict.kind === "completed") {
+        cluster.state = "completed";
+        resolutions.push({
+          clusterId: cluster.id,
+          playerIds: cluster.linkedPlayerIds,
+          outcome: "materialized",
+          resolvedAt: ledgerTime(last.row.date),
+          transactionRef: last.row.id,
+          suppressTradeSpeculation: family === "trade",
+        });
+        materialized += 1;
+      } else {
+        cluster.state = "fell_through";
+        cluster.resolutionNote = verdict.note;
+        resolutions.push({
+          clusterId: cluster.id,
+          playerIds: cluster.linkedPlayerIds,
+          outcome: verdict.outcome,
+          resolvedAt: ledgerTime(last.row.date),
+          transactionRef: last.row.id,
+          note: verdict.note,
+          suppressTradeSpeculation: family === "trade",
+        });
+        fellThrough += 1;
+      }
+      continue;
+    }
+
+    const deadline = family === "trade" ? tradeDeadlineAfter(cluster.firstSeenAt) : null;
+    if (
+      deadline &&
+      deadline <= expiresAt &&
+      daysBetween(ledgerTime(deadline), nowIso) > DEADLINE_GRACE_DAYS
+    ) {
+      const note = `No trade by the ${formatDeadline(deadline)} deadline.`;
+      cluster.state = "fell_through";
+      cluster.resolutionNote = note;
       resolutions.push({
         clusterId: cluster.id,
         playerIds: cluster.linkedPlayerIds,
-        outcome: "materialized",
-        resolvedAt: ledgerTime(last.row.date),
-        transactionRef: last.row.id,
-        suppressTradeSpeculation: family === "trade",
+        outcome: "did_not_materialize",
+        resolvedAt: ledgerTime(deadline),
+        note,
       });
-      materialized += 1;
+      fellThrough += 1;
       continue;
     }
 
@@ -404,11 +575,13 @@ export function linkLedger(input: LedgerLinkInput, ctx: LedgerContext): LedgerLi
   for (const deal of deals) {
     if (consumedDeals.has(deal) || deal.date < input.tradeWindowStart || !deal.playerIds.length) continue;
     const id = `mv-tx-${deal.rows[0]!.row.id}`;
-    const dealClaims = deal.rows.map((m) =>
-      ledgerClaim(id, m.row, m.text, m.playerIds, "trade_interest")
-    );
+    const dealClaims = deal.rows.map((m) => {
+      const source = ledgerSource(m.row);
+      sources[source.id] = source.tier;
+      return ledgerClaim(claimIdFor(m.row.id, id), id, m.row, m.text, m.playerIds, "trade_interest");
+    });
     claims.push(...dealClaims);
-    const parsed = buildDeal(deal, ctx);
+    const parsed = parsedDeal(deal);
     clusters.push({
       deal: parsed,
       id,
@@ -436,8 +609,9 @@ export function linkLedger(input: LedgerLinkInput, ctx: LedgerContext): LedgerLi
     clusters,
     claims,
     resolutions,
-    sources: { [ESPN_TRANSACTIONS_SOURCE_ID]: ESPN_TRANSACTIONS_TIER },
+    sources,
     materialized,
+    fellThrough,
     expired,
   };
 }

@@ -1,7 +1,11 @@
 import type { MovementClaimState } from "@/movement-center/types";
 
 export function isResolvedMovementState(state: MovementClaimState): boolean {
-  return state === "completed" || state === "official";
+  return state === "completed" || state === "official" || state === "fell_through";
+}
+
+export function isFellThroughMovementState(state: MovementClaimState): boolean {
+  return state === "fell_through";
 }
 
 export function movementStateLabel(state: MovementClaimState): string | null {
@@ -10,6 +14,8 @@ export function movementStateLabel(state: MovementClaimState): string | null {
       return "Completed";
     case "official":
       return "Official";
+    case "fell_through":
+      return "Fell through";
     case "denied":
       return "Denied";
     case "retracted":

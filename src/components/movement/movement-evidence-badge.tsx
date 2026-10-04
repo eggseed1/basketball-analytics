@@ -18,6 +18,8 @@ const STATE_STYLES: Partial<Record<MovementClaimState, string>> = {
     "border-sky-600/45 bg-sky-500/12 text-sky-900 dark:text-sky-200",
   official:
     "border-emerald-600/45 bg-emerald-500/12 text-emerald-900 dark:text-emerald-200",
+  fell_through:
+    "border-orange-600/40 bg-orange-500/10 text-orange-900 dark:text-orange-200",
   denied:
     "border-rose-600/40 bg-rose-500/10 text-rose-900 dark:text-rose-300",
   retracted:

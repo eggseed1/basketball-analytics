@@ -13,6 +13,8 @@ export type MovementEvidenceClass = "reported" | "rumored" | "speculative";
 export type MovementClaimState =
   | "official"
   | "completed"
+  /** The reported move didn't happen: the player went elsewhere or the window closed. */
+  | "fell_through"
   | "denied"
   | "retracted"
   | "expired"
@@ -125,6 +127,8 @@ export type MovementStoryCluster = {
   linkedTeamIds: string[];
   /** Both sides of a completed trade, parsed from the transaction ledger. */
   deal?: MovementDeal;
+  /** Why a story fell through, e.g. "Traded to the Celtics. Reports had named the Lakers." */
+  resolutionNote?: string;
 };
 
 /** Explainable evidence strength 0–100 (not P(movement)). */
@@ -161,6 +165,7 @@ export type MovementResolution = {
   outcome: MovementResolutionOutcome;
   resolvedAt: string;
   transactionRef?: string;
+  note?: string;
   /** When true, player is removed from unresolved trade-speculation sentiment lanes. */
   suppressTradeSpeculation?: boolean;
 };

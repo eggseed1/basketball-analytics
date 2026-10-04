@@ -1,10 +1,16 @@
-import { isResolvedMovementState } from "@/movement-center/cluster-state";
+import {
+  isFellThroughMovementState,
+  isResolvedMovementState,
+} from "@/movement-center/cluster-state";
 import { readMovementSnapshotSync } from "@/movement-center/read-snapshot";
 import type { PlayerSentimentProfile } from "@/sentiment/curated-types";
 
 import { expandPlayerIdAliases } from "./narrative-hygiene";
 
-function associationExplanation(headline: string, resolved: boolean): string {
+function associationExplanation(headline: string, resolved: boolean, fellThrough: boolean): string {
+  if (fellThrough) {
+    return `Sentiment shifts are associated with a movement story that fell through: “${headline}”.`;
+  }
   if (resolved) {
     return `Sentiment shifts are associated with the completed movement story: “${headline}”.`;
   }
@@ -51,7 +57,8 @@ export async function enrichProfilesWithMovementAssociations(
         association: {
           explanation: associationExplanation(
             top.headline,
-            isResolvedMovementState(top.state)
+            isResolvedMovementState(top.state),
+            isFellThroughMovementState(top.state)
           ),
           eventKind: "movement_story",
           eventRef: top.id,

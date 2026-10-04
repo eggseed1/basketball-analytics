@@ -239,6 +239,81 @@ function testDealSides() {
   );
 }
 
+/** Stories complete only when the move lands with a named team; otherwise they fall through. */
+function testOutcomes() {
+  const teamNames: Record<string, string> = {
+    "2": "Celtics", "4": "Bulls", "8": "Pistons", "12": "Clippers", "13": "Lakers", "18": "Knicks", "28": "Raptors",
+  };
+  const ledgerCtx = { resolveText: resolveLedger, playerName: ctx.playerName, teamName: (id: string) => teamNames[id] };
+  const run = (newsRows: MovementNewsRow[], ledger: Parameters<typeof linkLedger>[0]["ledger"], now: string) => {
+    const news = buildNewsClusters(newsRows, { ...ctx, teamName: ledgerCtx.teamName });
+    return linkLedger(
+      { newsClusters: news.clusters, newsClaims: news.claims, families: news.families, ledger, tradeWindowStart: "2026-06-01", now: new Date(now) },
+      ledgerCtx
+    );
+  };
+  const story = (linked: ReturnType<typeof run>, playerId: string) =>
+    linked.clusters.find((c) => c.linkedPlayerIds.includes(playerId) && !c.id.startsWith("mv-tx-"))!;
+
+  const kawhiTrade = [
+    { id: "nba-tx-tor", date: "2026-09-14", teamIds: ["28"], description: "Acquired forward Kawhi Leonard from LA Clippers in exchange for guard Gradey Dick and draft consideration." },
+    { id: "nba-tx-lac", date: "2026-09-14", teamIds: ["12"], description: "Acquired guard Gradey Dick and draft consideration from Toronto Raptors in exchange for forward Kawhi Leonard." },
+  ];
+
+  // NBA.com gap rows resolve a story ESPN never logged.
+  const done = run(rows.filter((r) => r.id === "f" || r.id === "g"), kawhiTrade, "2026-09-30T12:00:00Z");
+  const agreed = done.clusters.find((c) => c.linkedPlayerIds.includes("6450") && c.firstSeenAt.startsWith("2026-09"))!;
+  assert.equal(agreed.state, "completed");
+  assert.ok(done.claims.some((c) => c.clusterId === agreed.id && c.sourceLabel === "NBA.com player movement"));
+  assert.ok(done.sources["ledger:nba-player-movement"]);
+  // The June story went quiet for 60+ days before the trade, so it expires instead.
+  const june = done.clusters.find((c) => c.linkedPlayerIds.includes("6450") && c.firstSeenAt.startsWith("2026-06"))!;
+  assert.equal(june.state, "expired");
+  assert.equal(done.clusters.filter((c) => c.id.startsWith("mv-tx-")).length, 0, "the story owns the deal");
+
+  // Traded, but not to the team the reports named.
+  const lakers: MovementNewsRow = { id: "l", url: "https://x/l", outlet: "ESPN", publishedAt: "2026-09-10T10:00:00Z", title: "Sources: Lakers in talks to acquire Kawhi Leonard" };
+  const elsewhere = run([lakers], kawhiTrade, "2026-09-30T12:00:00Z");
+  const missed = story(elsewhere, "6450");
+  assert.equal(missed.state, "fell_through");
+  assert.equal(missed.resolutionNote, "Traded to the Raptors. Reports had named the Lakers.");
+  assert.equal(elsewhere.resolutions.find((r) => r.clusterId === missed.id)?.outcome, "partially_materialized");
+  assert.equal(elsewhere.fellThrough, 1);
+
+  // Signed with a team the reports didn't name.
+  const kat = rows.filter((r) => r.id === "c" || r.id === "d");
+  const signedElsewhere = run(kat, [{ id: "s1", date: "2026-10-02", teamIds: ["2"], description: "Signed C Karl-Anthony Towns to a contract." }], "2026-10-03T12:00:00Z");
+  assert.equal(story(signedElsewhere, "3136195").state, "fell_through");
+  assert.equal(story(signedElsewhere, "3136195").resolutionNote, "Signed with the Celtics. Reports had named the Knicks.");
+
+  // Re-signing with the team in talks completes it.
+  const resigned = run(kat, [{ id: "s2", date: "2026-10-02", teamIds: ["18"], description: "Re-signed C Karl-Anthony Towns to a contract extension." }], "2026-10-03T12:00:00Z");
+  assert.equal(story(resigned, "3136195").state, "completed");
+
+  // Traded away before an extension with the Knicks.
+  const tradedAway = run(
+    kat,
+    [
+      { id: "k1", date: "2026-10-02", teamIds: ["4"], description: "Acquired C Karl-Anthony Towns from the New York Knicks in exchange for G Buddy Hield." },
+      { id: "k2", date: "2026-10-02", teamIds: ["18"], description: "Acquired G Buddy Hield from the Chicago Bulls in exchange for C Karl-Anthony Towns." },
+    ],
+    "2026-10-03T12:00:00Z"
+  );
+  const katStory = story(tradedAway, "3136195");
+  assert.equal(katStory.state, "fell_through");
+  assert.equal(katStory.resolutionNote, "Traded to the Bulls before a new deal with the Knicks.");
+  assert.equal(tradedAway.resolutions.find((r) => r.clusterId === katStory.id)?.outcome, "did_not_materialize");
+  assert.ok(tradedAway.clusters.some((c) => c.id.startsWith("mv-tx-")), "the trade still gets its own card");
+  assert.equal(new Set(tradedAway.claims.map((c) => c.id)).size, tradedAway.claims.length, "claim ids stay unique");
+
+  // Trade stories close when the deadline passes with no deal, after a two-day grace.
+  const winter: MovementNewsRow = { id: "w", url: "https://x/w", outlet: "ESPN", publishedAt: "2027-01-20T10:00:00Z", title: "Sources: Lakers in talks to acquire Kawhi Leonard" };
+  assert.equal(story(run([winter], [], "2027-02-12T20:00:00Z"), "6450").state, "unresolved");
+  const closed = story(run([winter], [], "2027-02-14T12:00:00Z"), "6450");
+  assert.equal(closed.state, "fell_through");
+  assert.equal(closed.resolutionNote, "No trade by the Feb 11, 2027 deadline.");
+}
+
 /** A signing ESPN posts after the bake closes the open story at request time. */
 function testLiveResolve() {
   const baked = JSON.parse(
@@ -296,5 +371,6 @@ testReporters();
 testDealSides();
 testClustering();
 testLedger();
+testOutcomes();
 testLiveResolve();
 console.log("movement ingest tests passed");

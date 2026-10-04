@@ -195,3 +195,10 @@ export const ESPN_TRANSACTIONS_TIER: MovementSourceTier = {
   label: "ESPN transaction log",
   credibility: 32,
 };
+
+export const NBA_MOVEMENT_SOURCE_ID = "ledger:nba-player-movement";
+
+export const NBA_MOVEMENT_TIER: MovementSourceTier = {
+  label: "NBA.com player movement",
+  credibility: 32,
+};

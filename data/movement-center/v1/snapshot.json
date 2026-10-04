@@ -5,7 +5,7 @@
     "season": "2026-27",
     "snapshotDate": "2026-10-04",
     "disclaimer": "Stories are sorted by rules, so some may be missed or mislabeled. Evidence scores rate the reporting, not the odds of a move.",
-    "builtAt": "2026-10-04T01:58:36.084Z",
+    "builtAt": "2026-10-04T13:44:21.334Z",
     "rosterPlayerCount": 475,
     "headlinesScanned": 751,
     "latestHeadlineAt": "2026-10-04T01:37:13.000Z",
@@ -104,6 +104,10 @@
       "label": "Michael Scotto (HoopsHype)",
       "credibility": 30
     },
+    "ledger:nba-player-movement": {
+      "label": "NBA.com player movement",
+      "credibility": 32
+    },
     "ledger:espn-transactions": {
       "label": "ESPN transaction log",
       "credibility": 32
@@ -117,19 +121,58 @@
       "claimIds": [
         "mv-185526df333e959b",
         "mv-5a0b8de7508b803e",
-        "mv-84a3b749c812f42d"
+        "mv-84a3b749c812f42d",
+        "mv-nba-tx-4fbd3cd7ed6bc29b",
+        "mv-nba-tx-76c295a5724938b2"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-09-11T15:51:34.000Z",
-      "lastMeaningfulAt": "2026-09-15T16:36:15.000Z",
+      "lastMeaningfulAt": "2026-09-14T12:00:00.000Z",
       "linkedPlayerIds": [
         "6450"
       ],
       "linkedTeamIds": [
         "12",
         "28"
-      ]
+      ],
+      "deal": {
+        "date": "2026-09-14",
+        "sides": [
+          {
+            "teamId": "28",
+            "teamName": "Raptors",
+            "receives": [
+              {
+                "label": "Kawhi Leonard",
+                "playerId": "6450",
+                "fromTeamId": "12"
+              }
+            ]
+          },
+          {
+            "teamId": "12",
+            "teamName": "Clippers",
+            "receives": [
+              {
+                "label": "Gradey Dick",
+                "playerId": "5106258",
+                "fromTeamId": "28"
+              },
+              {
+                "label": "Brandon Ingram",
+                "playerId": "3913176",
+                "fromTeamId": "28"
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "28"
+              }
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "mv-contract-4433621-20260911",
@@ -237,7 +280,8 @@
         "mv-dbf792d3021f6e7f",
         "mv-b5ac3668a4a62214",
         "mv-03093be1e3ec34b6",
-        "mv-espn-tx-d82ce9b48537f012"
+        "mv-espn-tx-d82ce9b48537f012",
+        "mv-nba-tx-6dfba27a48c44010"
       ],
       "evidenceClass": "reported",
       "state": "completed",
@@ -316,12 +360,13 @@
         "mv-bfd38ba855ed91e6",
         "mv-63fb5a213b3b2e78",
         "mv-575ee62b7a318d43",
-        "mv-9294dc60b8271713"
+        "mv-9294dc60b8271713",
+        "mv-nba-tx-2e37f9a26a48f33b"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-09-23T17:41:45.000Z",
-      "lastMeaningfulAt": "2026-10-02T15:46:20.000Z",
+      "lastMeaningfulAt": "2026-09-25T12:00:00.000Z",
       "linkedPlayerIds": [
         "3975"
       ],
@@ -395,12 +440,13 @@
       "headline": "Ryan Nembhard: free agency",
       "primaryClaimId": "mv-7f75ff834e6c3bb5",
       "claimIds": [
-        "mv-7f75ff834e6c3bb5"
+        "mv-7f75ff834e6c3bb5",
+        "mv-nba-tx-2dfd265ed33302ce"
       ],
       "evidenceClass": "reported",
-      "state": "unresolved",
+      "state": "completed",
       "firstSeenAt": "2026-09-30T05:05:58.000Z",
-      "lastMeaningfulAt": "2026-09-30T05:05:58.000Z",
+      "lastMeaningfulAt": "2026-09-30T12:00:00.000Z",
       "linkedPlayerIds": [
         "4433629"
       ],
@@ -655,6 +701,105 @@
     },
     {
       "deal": {
+        "date": "2026-06-24",
+        "sides": [
+          {
+            "teamId": "4",
+            "teamName": "Bulls",
+            "receives": [
+              {
+                "label": "Kam Jones",
+                "playerId": "4697268",
+                "fromTeamId": "11"
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "11"
+              }
+            ]
+          },
+          {
+            "teamId": "11",
+            "teamName": "Pacers",
+            "receives": []
+          }
+        ]
+      },
+      "id": "mv-tx-nba-tx-f528b60b36bb502b",
+      "headline": "Bulls–Pacers trade: Kam Jones",
+      "primaryClaimId": "mv-nba-tx-f528b60b36bb502b",
+      "claimIds": [
+        "mv-nba-tx-f528b60b36bb502b"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-06-24T12:00:00.000Z",
+      "lastMeaningfulAt": "2026-06-24T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "4697268"
+      ],
+      "linkedTeamIds": [
+        "4",
+        "11"
+      ]
+    },
+    {
+      "deal": {
+        "date": "2026-06-29",
+        "sides": [
+          {
+            "teamId": "22",
+            "teamName": "Trail Blazers",
+            "receives": [
+              {
+                "label": "Ja Morant",
+                "playerId": "4279888",
+                "fromTeamId": "29"
+              }
+            ]
+          },
+          {
+            "teamId": "29",
+            "teamName": "Grizzlies",
+            "receives": [
+              {
+                "label": "Kris Murray",
+                "playerId": "4594326",
+                "fromTeamId": "22"
+              },
+              {
+                "label": "Jerami Grant",
+                "playerId": "2991070",
+                "fromTeamId": "22"
+              }
+            ]
+          }
+        ]
+      },
+      "id": "mv-tx-nba-tx-8a0ba5fe8b9775ad",
+      "headline": "Trail Blazers–Grizzlies trade: Jerami Grant, Ja Morant and 1 more",
+      "primaryClaimId": "mv-nba-tx-8a0ba5fe8b9775ad",
+      "claimIds": [
+        "mv-nba-tx-8a0ba5fe8b9775ad",
+        "mv-nba-tx-ed80806ec40243c6"
+      ],
+      "evidenceClass": "reported",
+      "state": "completed",
+      "firstSeenAt": "2026-06-29T12:00:00.000Z",
+      "lastMeaningfulAt": "2026-06-29T12:00:00.000Z",
+      "linkedPlayerIds": [
+        "2991070",
+        "4279888",
+        "4594326"
+      ],
+      "linkedTeamIds": [
+        "22",
+        "29"
+      ]
+    },
+    {
+      "deal": {
         "date": "2026-07-06",
         "sides": [
           {
@@ -788,7 +933,8 @@
       "headline": "Pistons–Thunder trade: Isaiah Joe",
       "primaryClaimId": "mv-espn-tx-1748bbe10589aa91",
       "claimIds": [
-        "mv-espn-tx-1748bbe10589aa91"
+        "mv-espn-tx-1748bbe10589aa91",
+        "mv-nba-tx-f90c6ccb00016573"
       ],
       "evidenceClass": "reported",
       "state": "completed",
@@ -859,7 +1005,8 @@
       "headline": "Heat–Bucks trade: Giannis Antetokounmpo, Bobby Portis and 4 more",
       "primaryClaimId": "mv-espn-tx-934efef0e45dc0bf",
       "claimIds": [
-        "mv-espn-tx-934efef0e45dc0bf"
+        "mv-espn-tx-934efef0e45dc0bf",
+        "mv-nba-tx-1fba643637ba9207"
       ],
       "evidenceClass": "reported",
       "state": "completed",
@@ -1046,6 +1193,17 @@
             ]
           },
           {
+            "teamId": "12",
+            "teamName": "Clippers",
+            "receives": [
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "8"
+              }
+            ]
+          },
+          {
             "teamId": "6",
             "teamName": "Mavericks",
             "receives": [
@@ -1076,11 +1234,6 @@
             "teamId": "27",
             "teamName": "Wizards",
             "receives": []
-          },
-          {
-            "teamId": "12",
-            "teamName": "Clippers",
-            "receives": []
           }
         ]
       },
@@ -1090,6 +1243,7 @@
       "claimIds": [
         "mv-espn-tx-69b6aae7bc346076",
         "mv-espn-tx-c5bf5a6f7cb49be5",
+        "mv-nba-tx-5dd0d3f02833becc",
         "mv-espn-tx-e7f6ee4b04355c20",
         "mv-espn-tx-f65ffff6cdb9b7ec"
       ],
@@ -1454,8 +1608,26 @@
               {
                 "label": "draft considerations",
                 "nonPlayer": true
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "1"
+              },
+              {
+                "label": "draft consideration",
+                "nonPlayer": true,
+                "fromTeamId": "6"
               }
             ]
+          }
+        ],
+        "unconfirmed": [
+          {
+            "label": "draft consideration",
+            "nonPlayer": true,
+            "claimedByTeamId": "6",
+            "toTeamId": "1"
           }
         ]
       },
@@ -1463,7 +1635,9 @@
       "headline": "Hawks–Mavericks–Thunder trade: Luguentz Dort, Ryan Nembhard and 1 more",
       "primaryClaimId": "mv-espn-tx-74257094b37a0d17",
       "claimIds": [
-        "mv-espn-tx-74257094b37a0d17"
+        "mv-espn-tx-74257094b37a0d17",
+        "mv-nba-tx-00c32c742900e222",
+        "mv-nba-tx-535be064441e3be2"
       ],
       "evidenceClass": "reported",
       "state": "completed",
@@ -3121,6 +3295,50 @@
       "isOriginal": false
     },
     {
+      "id": "mv-nba-tx-4fbd3cd7ed6bc29b",
+      "clusterId": "mv-trade-6450-20260911",
+      "summary": "Acquired forward Kawhi Leonard from LA Clippers in exchange for guard Gradey Dick, forward Brandon Ingram and draft consideration.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-14T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "6450",
+        "3913176",
+        "5106258"
+      ],
+      "teamIds": [
+        "28"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-76c295a5724938b2",
+      "clusterId": "mv-trade-6450-20260911",
+      "summary": "Acquired guard Gradey Dick, forward Brandon Ingram and draft consideration from Toronto Raptors in exchange for forward Kawhi Leonard.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-14T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "6450",
+        "3913176",
+        "5106258"
+      ],
+      "teamIds": [
+        "12"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-espn-tx-4bdb08e1854b6ba2",
       "clusterId": "mv-contract-4433621-20260911",
       "summary": "Signed G Ausar Thompson to a rookie-scale contract extension.",
@@ -3163,6 +3381,68 @@
       "isOriginal": true
     },
     {
+      "id": "mv-nba-tx-6dfba27a48c44010",
+      "clusterId": "mv-trade-2990984-20260922",
+      "summary": "Acquired forward Dorian Finney-Smith from Charlotte Hornets in exchange for guard Ryan Nembhard and guard Buddy Hield.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-22T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "2578185",
+        "2990984",
+        "4433629"
+      ],
+      "teamIds": [
+        "1"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-2e37f9a26a48f33b",
+      "clusterId": "mv-contract-3975-20260923",
+      "summary": "Re-signed guard Stephen Curry to a Veteran Extension.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-25T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "3975"
+      ],
+      "teamIds": [
+        "9"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-2dfd265ed33302ce",
+      "clusterId": "mv-contract-4433629-20260930",
+      "summary": "Signed guard Ryan Nembhard to a Two-Way Contract.",
+      "claimType": "contract_movement",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-09-30T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433629"
+      ],
+      "teamIds": [
+        "7"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-espn-tx-5e58bd3ff340c9fb",
       "clusterId": "mv-contract-4432241-20261001",
       "summary": "Re-signed G Jamal Shead to a veteran extension.",
@@ -3179,6 +3459,70 @@
       ],
       "teamIds": [
         "28"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-f528b60b36bb502b",
+      "clusterId": "mv-tx-nba-tx-f528b60b36bb502b",
+      "summary": "Acquired guard Kam Jones and draft consideration from Indiana Pacers.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-06-24T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4697268"
+      ],
+      "teamIds": [
+        "4"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-8a0ba5fe8b9775ad",
+      "clusterId": "mv-tx-nba-tx-8a0ba5fe8b9775ad",
+      "summary": "Acquired guard Ja Morant from Memphis Grizzlies in exchange for forward Kris Murray and forward Jerami Grant.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-06-29T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "2991070",
+        "4279888",
+        "4594326"
+      ],
+      "teamIds": [
+        "22"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-ed80806ec40243c6",
+      "clusterId": "mv-tx-nba-tx-8a0ba5fe8b9775ad",
+      "summary": "Acquired forward Kris Murray and forward Jerami Grant from Portland Trail Blazers in exchange for guard Ja Morant.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-06-29T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "2991070",
+        "4279888",
+        "4594326"
+      ],
+      "teamIds": [
+        "29"
       ],
       "isOriginal": true
     },
@@ -3283,6 +3627,26 @@
       "isOriginal": true
     },
     {
+      "id": "mv-nba-tx-f90c6ccb00016573",
+      "clusterId": "mv-tx-espn-tx-1748bbe10589aa91",
+      "summary": "Acquired draft consideration from Detroit Pistons in exchange for guard Isaiah Joe.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-06T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4395702"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-espn-tx-934efef0e45dc0bf",
       "clusterId": "mv-tx-espn-tx-934efef0e45dc0bf",
       "summary": "Acquired Fs Giannis Antetokounmpo and Bobby Portis from the Milwaukee Bucks in exchange for Gs Tyler Herro, Jaime Jaquez Jr. and Kasparas Jakucionis, C Kel'el Ware and draft considerations.",
@@ -3304,6 +3668,31 @@
       ],
       "teamIds": [
         "14"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-1fba643637ba9207",
+      "clusterId": "mv-tx-espn-tx-934efef0e45dc0bf",
+      "summary": "Acquired guard Kasparas Jakucionis, center Kel'el Ware, guard Jaime Jaquez Jr., guard Tyler Herro and draft consideration from Miami Heat in exchange for forward Bobby Portis Jr. and forward Giannis Antetokounmpo.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-06T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "3032977",
+        "3064482",
+        "4395725",
+        "4432848",
+        "5105623",
+        "5214640"
+      ],
+      "teamIds": [
+        "15"
       ],
       "isOriginal": true
     },
@@ -3407,6 +3796,26 @@
       ],
       "teamIds": [
         "8"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-5dd0d3f02833becc",
+      "clusterId": "mv-tx-espn-tx-69b6aae7bc346076",
+      "summary": "Acquired draft consideration from Detroit Pistons in exchange for forward John Collins.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-08T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "3908845"
+      ],
+      "teamIds": [
+        "12"
       ],
       "isOriginal": true
     },
@@ -3662,6 +4071,47 @@
       "isOriginal": true
     },
     {
+      "id": "mv-nba-tx-00c32c742900e222",
+      "clusterId": "mv-tx-espn-tx-74257094b37a0d17",
+      "summary": "Acquired forward Zaccharie Risacher and draft consideration from Atlanta Hawks in exchange for guard Ryan Nembhard and draft consideration.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-19T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4433629",
+        "5211175"
+      ],
+      "teamIds": [
+        "6"
+      ],
+      "isOriginal": true
+    },
+    {
+      "id": "mv-nba-tx-535be064441e3be2",
+      "clusterId": "mv-tx-espn-tx-74257094b37a0d17",
+      "summary": "Acquired draft consideration from Atlanta Hawks and draft consideration from Dallas Mavericks in exchange for guard Luguentz Dort.",
+      "claimType": "trade_interest",
+      "evidenceClass": "reported",
+      "state": "completed",
+      "provenanceKind": "completed_transaction",
+      "publishedAt": "2026-07-19T12:00:00.000Z",
+      "sourceId": "ledger:nba-player-movement",
+      "sourceLabel": "NBA.com player movement",
+      "sourceUrl": "/offseason",
+      "playerIds": [
+        "4397020"
+      ],
+      "teamIds": [
+        "25"
+      ],
+      "isOriginal": true
+    },
+    {
       "id": "mv-espn-tx-2c1517e2465f0dc5",
       "clusterId": "mv-tx-espn-tx-2c1517e2465f0dc5",
       "summary": "Acquired G Dennis Schroder from Cleveland.",
@@ -3874,6 +4324,16 @@
   ],
   "resolutions": [
     {
+      "clusterId": "mv-trade-6450-20260911",
+      "playerIds": [
+        "6450"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-09-14T12:00:00.000Z",
+      "transactionRef": "nba-tx-76c295a5724938b2",
+      "suppressTradeSpeculation": true
+    },
+    {
       "clusterId": "mv-contract-4433621-20260911",
       "playerIds": [
         "4433621",
@@ -3892,8 +4352,28 @@
       ],
       "outcome": "materialized",
       "resolvedAt": "2026-09-22T12:00:00.000Z",
-      "transactionRef": "espn-tx-d82ce9b48537f012",
+      "transactionRef": "nba-tx-6dfba27a48c44010",
       "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-contract-3975-20260923",
+      "playerIds": [
+        "3975"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-09-25T12:00:00.000Z",
+      "transactionRef": "nba-tx-2e37f9a26a48f33b",
+      "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-contract-4433629-20260930",
+      "playerIds": [
+        "4433629"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-09-30T12:00:00.000Z",
+      "transactionRef": "nba-tx-2dfd265ed33302ce",
+      "suppressTradeSpeculation": false
     },
     {
       "clusterId": "mv-contract-4432241-20261001",
@@ -3904,6 +4384,28 @@
       "resolvedAt": "2026-10-01T12:00:00.000Z",
       "transactionRef": "espn-tx-5e58bd3ff340c9fb",
       "suppressTradeSpeculation": false
+    },
+    {
+      "clusterId": "mv-tx-nba-tx-f528b60b36bb502b",
+      "playerIds": [
+        "4697268"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-06-24T12:00:00.000Z",
+      "transactionRef": "nba-tx-f528b60b36bb502b",
+      "suppressTradeSpeculation": true
+    },
+    {
+      "clusterId": "mv-tx-nba-tx-8a0ba5fe8b9775ad",
+      "playerIds": [
+        "2991070",
+        "4279888",
+        "4594326"
+      ],
+      "outcome": "materialized",
+      "resolvedAt": "2026-06-29T12:00:00.000Z",
+      "transactionRef": "nba-tx-8a0ba5fe8b9775ad",
+      "suppressTradeSpeculation": true
     },
     {
       "clusterId": "mv-tx-espn-tx-00938d83b22bd2a1",

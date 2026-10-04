@@ -125,7 +125,12 @@ npm run test:movement-ingest
 - `reporters.ts`: credited reporters from "per X", "sources told X of Outlet", "ESPN's X". Unknown names need a recognized outlet. Credibility values are an editorial table, not accuracy measurements.
 - `classify-headline.ts` (`movement-rules-v1`): claim type, evidence class (reported or rumored; opinion columns, grades, retrospectives, minor signings and off-court stories are dropped), provenance, negotiation stage, denial, agreement.
 - `news-claims.ts`: one claim per headline (title players only, max 3), clustered by player + family (trade or contract) while reports keep arriving within 45 days.
-- `transaction-clusters.ts`: ESPN ledger trades since June 1 become completed clusters (both team rows merge into one deal). A story resolves as `materialized` when a matching ledger row (same player, same family, dated no earlier than 2 days before the first report) appears. Stories with no new reports for 60 days expire and leave the feed.
+- `transaction-clusters.ts`: ledger trades since June 1 (ESPN plus NBA.com gap rows) become completed clusters (both team rows merge into one deal). A story resolves when a matching ledger row (same player, same family, dated from 2 days before the first report until the story would have expired) appears:
+  - `completed` / `materialized` when the move lands with a team the reports named, or when they named no team besides the one sending him.
+  - `fell_through` / `partially_materialized` when he is traded to or signs with a team the reports didn't name.
+  - `fell_through` / `did_not_materialize` when a contract story's player is traded away from every named team first, or when a trade story is still open 2 days after the trade deadline (`calendar.ts`; a season without a published deadline never closes by date).
+  - Each fell-through story carries a `resolutionNote` that says why. Stories with no new reports for 60 days expire and leave the feed.
+  - The same rules run at request time (`live-resolve.ts`) against ESPN's live feed.
 - Scoring `movement-m1-0.2`: relays that credit a reporter count as that reporter for corroboration, so five outlets repeating one scoop corroborate once.
 - The build is stateless over the append-only headline store, so rule changes apply retroactively. The modules are pure so a scheduled Worker can reuse them.
 

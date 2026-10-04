@@ -30,6 +30,7 @@ const NEWS_LOOKBACK_DAYS = 180;
 const LEDGER_FILES = [
   ["data", "transactions", "espn-site-v2", "v1", "transactions.jsonl"],
   ["data", "transactions", "curated", "v1", "transactions.jsonl"],
+  ["data", "transactions", "nba-player-movement", "v1", "transactions.jsonl"],
 ];
 
 function readLedgerArchive(): LedgerRow[] {
@@ -62,6 +63,7 @@ export type BuildMovementSnapshotResult = {
   resolutionCount: number;
   storyCount: number;
   materialized: number;
+  fellThrough: number;
   expired: number;
   outputPath: string;
 };
@@ -149,7 +151,7 @@ export async function buildMovementSnapshot(
 
   if (options.verbose) {
     console.log(
-      `movement:build season=${season} headlines=${newsRows.length} stories=${news.clusters.length} claims=${linked.claims.length} clusters=${linked.clusters.length} materialized=${linked.materialized} expired=${linked.expired} ledgerThrough=${latestLedgerDate}`
+      `movement:build season=${season} headlines=${newsRows.length} stories=${news.clusters.length} claims=${linked.claims.length} clusters=${linked.clusters.length} materialized=${linked.materialized} fellThrough=${linked.fellThrough} expired=${linked.expired} ledgerThrough=${latestLedgerDate}`
     );
   }
 
@@ -160,6 +162,7 @@ export async function buildMovementSnapshot(
     resolutionCount: linked.resolutions.length,
     storyCount: news.clusters.length,
     materialized: linked.materialized,
+    fellThrough: linked.fellThrough,
     expired: linked.expired,
     outputPath: SNAPSHOT_PATH,
   };

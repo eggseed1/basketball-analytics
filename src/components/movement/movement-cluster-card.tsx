@@ -6,7 +6,10 @@ import {
 } from "@/components/movement/movement-evidence-badge";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { AppLink } from "@/components/ui/app-link";
-import { isResolvedMovementState } from "@/movement-center/cluster-state";
+import {
+  isFellThroughMovementState,
+  isResolvedMovementState,
+} from "@/movement-center/cluster-state";
 import {
   movementClaimOpensNewTab,
   resolveMovementClaimHref,
@@ -124,7 +127,7 @@ function UnconfirmedNotes({
             key={`${group[0]!.claimedByTeamId}>${group[0]!.toTeamId}`}
             className={cn(type.caption, "text-muted-foreground")}
           >
-            The {possessive(claimant)} ESPN entry says they also sent{" "}
+            The {possessive(claimant)} log entry says they also sent{" "}
             {joinLabels(group.map((g) => g.label))} to the {receiver}. The {possessive(receiver)} entry
             doesn&apos;t list {pronoun}, so we can&apos;t confirm that part of the deal.
           </p>
@@ -193,7 +196,7 @@ export function DealSides({ deal, compact }: { deal: MovementDeal; compact: bool
             </ul>
           ) : (
             <p className={cn(type.caption, "text-muted-foreground")}>
-              Not listed in the ESPN log
+              Not listed in the transaction log
             </p>
           )}
         </section>
@@ -225,8 +228,9 @@ export function MovementClusterCard({
   const primary =
     claims.find((c) => c.id === cluster.primaryClaimId) ?? claims[0];
   const resolved = isResolvedMovementState(cluster.state);
+  const fellThrough = isFellThroughMovementState(cluster.state);
   const completionClaim =
-    resolved
+    resolved && !fellThrough
       ? claims.find((c) => c.provenanceKind === "completed_transaction") ??
         primary
       : null;
@@ -241,7 +245,20 @@ export function MovementClusterCard({
       : timeline;
 
   const clusterLinkClass = href ? "block hover:opacity-95" : undefined;
-  const clusterSummary = resolved && completionClaim ? (
+  const fellThroughNote =
+    fellThrough && cluster.resolutionNote ? (
+      <p
+        className={cn(
+          type.caption,
+          "rounded-md border border-border/70 bg-muted/40 px-2 py-1.5 text-foreground"
+        )}
+      >
+        {cluster.resolutionNote}
+      </p>
+    ) : null;
+  const clusterSummary = fellThroughNote ? (
+    fellThroughNote
+  ) : resolved && completionClaim ? (
     <p
       className={cn(
         type.caption,
@@ -259,9 +276,11 @@ export function MovementClusterCard({
       className={cn(
         "flex flex-col gap-2 rounded-md border frost-surface-soft",
         compact ? "px-2.5 py-2" : "px-3 py-3",
-        resolved
-          ? "border-sky-500/35 bg-sky-500/[0.06]"
-          : "border-border/70"
+        fellThrough
+          ? "border-border/70 bg-muted/20"
+          : resolved
+            ? "border-sky-500/35 bg-sky-500/[0.06]"
+            : "border-border/70"
       )}
     >
       <div className="flex flex-wrap items-center gap-2">
@@ -272,7 +291,13 @@ export function MovementClusterCard({
             Evidence {score.total}/100
           </span>
         ) : (
-          <span className={cn(type.caption, "ml-auto font-semibold text-sky-800 dark:text-sky-200")}>
+          <span
+            className={cn(
+              type.caption,
+              "ml-auto font-semibold",
+              fellThrough ? "text-muted-foreground" : "text-sky-800 dark:text-sky-200"
+            )}
+          >
             Resolved
           </span>
         )}
@@ -290,6 +315,7 @@ export function MovementClusterCard({
               {cluster.headline}
             </h3>
           )}
+          {fellThroughNote}
           <DealSides deal={deal} compact={compact} />
         </>
       ) : href ? (
@@ -330,9 +356,10 @@ export function MovementClusterCard({
           <>
             Trade logged {formatDealDate(deal.date)} in the{" "}
             <Link href="/offseason" className="font-semibold underline-offset-2 hover:underline">
-              ESPN transaction log
+              transaction log
             </Link>
             . Each side lists only what the log names.
+            {fellThrough ? " Reporting can fall through and still have been accurate when it ran." : null}
             {tradeTrailHref ? (
               <>
                 {" "}
@@ -342,8 +369,10 @@ export function MovementClusterCard({
               </>
             ) : null}
           </>
+        ) : fellThrough ? (
+          "Resolved from the transaction log. Reporting can fall through and still have been accurate when it ran."
         ) : resolved ? (
-          "Completed move, confirmed by the ESPN transaction log."
+          "Completed move, confirmed by the transaction log."
         ) : (
           "Evidence rates the reporting, not the odds of a move."
         )}

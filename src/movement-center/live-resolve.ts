@@ -3,8 +3,9 @@
  *
  * The snapshot is built at deploy or by the daily sync, but ESPN posts
  * signings and trades in between. This applies the build's own matching
- * rule (`linkLedger`) to the stories that were still open, so a story
- * moves to completed as soon as its transaction shows up on /offseason.
+ * rules (`linkLedger`) to the stories that were still open, so a story
+ * completes or falls through as soon as its transaction shows up on
+ * /offseason.
  *
  * Pure: callers pass ledger rows and a player name lookup.
  */
@@ -29,7 +30,7 @@ export function resolveOpenStoriesWithLedger(
 ): MovementCuratedSnapshot {
   const families = new Map<string, MovementFamily>();
   const open = snapshot.clusters
-    .filter((c) => c.state === "unresolved")
+    .filter((c) => c.state === "unresolved" || c.state === "denied")
     .flatMap((c) => {
       const family = familyOf(c.id);
       if (!family) return [];
@@ -46,10 +47,11 @@ export function resolveOpenStoriesWithLedger(
     const name = playerName(playerId);
     return name ? [{ playerId, name }] : [];
   });
+  const openIds = new Set(open.map((c) => c.id));
   const linked = linkLedger(
     {
       newsClusters: open,
-      newsClaims: [],
+      newsClaims: snapshot.claims.filter((c) => openIds.has(c.clusterId)),
       families,
       ledger: fresh,
       tradeWindowStart: NO_STANDALONE_TRADES,
@@ -61,7 +63,7 @@ export function resolveOpenStoriesWithLedger(
       teamName: (id) => ESPN_TEAM_NICKNAMES[id]?.[0],
     }
   );
-  if (!linked.materialized && !linked.expired) return snapshot;
+  if (!linked.materialized && !linked.fellThrough && !linked.expired) return snapshot;
 
   const updated = new Map(linked.clusters.map((c) => [c.id, c]));
   const latestRow = fresh.map((row) => row.date).sort().at(-1) ?? null;
@@ -71,7 +73,7 @@ export function resolveOpenStoriesWithLedger(
     meta: { ...snapshot.meta, latestTransactionDate: latest },
     sources: { ...snapshot.sources, ...linked.sources },
     clusters: snapshot.clusters.map((c) => updated.get(c.id) ?? c),
-    claims: [...snapshot.claims, ...linked.claims],
+    claims: [...snapshot.claims, ...linked.claims.filter((c) => !usedClaimIds.has(c.id))],
     resolutions: [...(snapshot.resolutions ?? []), ...linked.resolutions],
   };
 }
