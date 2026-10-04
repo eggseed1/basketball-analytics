@@ -2,8 +2,10 @@
  * Headline tone scorer (rss_headline_lexicon_v1).
  *
  * AFINN-165 word valences plus basketball overrides, with simple negation.
- * Unevaluated against the S0 gates (500 labeled mentions, F1 ≥ 0.75), so
- * every surface that shows these scores must say so.
+ * Against 127 labeled headlines (data/sentiment/eval/v1, scripts/sentiment-eval-media.ts)
+ * it agrees with the label about half the time, well short of the S0 gates
+ * (500 labeled mentions, F1 ≥ 0.75), so every surface that shows these scores
+ * must say so. Player headline lanes prefer src/sentiment/headline-model.ts.
  */
 
 import { afinn165 } from "afinn-165";

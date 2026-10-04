@@ -84,6 +84,7 @@
     "sentiment:ingest:fan-blogs": "tsx scripts/sentiment-ingest-news.ts --feeds fan-blogs --store fanblogs",
     "sentiment:ingest:bluesky": "tsx scripts/sentiment-ingest-bluesky.ts",
     "sentiment:ingest:youtube": "tsx scripts/sentiment-ingest-youtube.ts",
+    "sentiment:rate:headlines": "tsx scripts/sentiment-rate-headlines.ts",
     "sentiment:ingest:fans": "npm run -s sentiment:ingest:reddit; npm run -s sentiment:ingest:fan-blogs; npm run -s sentiment:ingest:bluesky; npm run -s sentiment:ingest:youtube",
     "sentiment:refresh": "npm run -s sentiment:ingest:news && npm run -s sentiment:ingest:fans; npm run -s sentiment:build",
     "test:sentiment-ingest": "tsx scripts/test-sentiment-ingest.ts",

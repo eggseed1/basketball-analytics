@@ -118,6 +118,7 @@ const ORG_STEPS = [
   },
   { label: "bluesky-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-bluesky.ts"] },
   { label: "youtube-ingest", cmd: "npx", args: ["tsx", "scripts/sentiment-ingest-youtube.ts"] },
+  { label: "headline-ratings", cmd: "npx", args: ["tsx", "scripts/sentiment-rate-headlines.ts"] },
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },

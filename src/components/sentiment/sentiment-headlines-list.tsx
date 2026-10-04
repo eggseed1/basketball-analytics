@@ -1,7 +1,11 @@
 import Link from "next/link";
 
 import { TeamLogo } from "@/components/brand/team-logo";
-import { formatSentimentDate, sentimentPct } from "@/components/sentiment/sentiment-source";
+import {
+  formatSentimentDate,
+  ratingLabel,
+  sentimentPct,
+} from "@/components/sentiment/sentiment-source";
 import { MoreInfo } from "@/components/ui/more-info";
 import type { LeagueSentimentSnapshot, SentimentSourceSummary } from "@/sentiment/curated-types";
 import { resolveTeamBrand } from "@/lib/nba-brand";
@@ -32,9 +36,9 @@ export function SentimentHeadlinesList({
         </p>
         <MoreInfo>
           <p>
-            Tone is scored from the headline and the first lines of the summary using a word list
-            tuned for basketball (so &quot;waived&quot; reads negative and &quot;extension&quot;
-            positive). It hasn&apos;t been checked against hand labels yet.
+            {info?.toneModel
+              ? "When a headline names one player, the label is a language model's rating of its tone toward that player. Other headlines show a word-list score from the headline and the first lines of the summary, where 50% is neutral."
+              : "Tone is scored from the headline and the first lines of the summary using a word list tuned for basketball (so \"waived\" reads negative and \"extension\" positive). Checked against 127 labeled headlines, it matched the label about half the time."}
             {info?.itemCount
               ? ` ${info.itemCount.toLocaleString()} headlines stored since ${formatSentimentDate(info.firstDate, true)}.`
               : ""}
@@ -47,12 +51,16 @@ export function SentimentHeadlinesList({
             <li key={row.url} className="flex flex-col gap-1.5 px-4 py-3 sm:flex-row sm:items-start sm:gap-3">
               <span
                 className={cn(
-                  "inline-flex w-14 shrink-0 justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold tabular-nums",
-                  toneClass(row.score)
+                  "inline-flex w-16 shrink-0 justify-center rounded-full border px-1.5 py-0.5 text-[11px] font-semibold tabular-nums",
+                  toneClass(row.rating ?? row.score)
                 )}
-                title="Headline tone, 50% is neutral"
+                title={
+                  row.rating !== undefined
+                    ? `Language model rating of this headline toward ${row.players[0]?.name ?? "the player"}`
+                    : "Word-list tone of the headline and summary, 50% is neutral"
+                }
               >
-                {sentimentPct(row.score)}
+                {row.rating !== undefined ? ratingLabel(row.rating) : sentimentPct(row.score)}
               </span>
               <div className="flex min-w-0 flex-1 flex-col gap-1">
                 <a

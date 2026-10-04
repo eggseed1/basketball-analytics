@@ -27,7 +27,8 @@ export type SentimentSeriesPoint = {
 /**
  * Where a lane's numbers come from.
  * curated: hand-written prototype values (illustrative, not measured).
- * headlines: publisher RSS headline tone (automated, lexicon v1).
+ * headlines: publisher RSS headline tone (automated; Workers AI model rating per
+ *   player where available, word list otherwise).
  * reddit: approved-subreddit post-title tone via the official API (older snapshots).
  * fans: fan blogs, Bluesky posts, YouTube comments and Reddit titles blended;
  *   platformBreakdown says how much each contributed.
@@ -62,6 +63,8 @@ export type SentimentHeadlineExemplar = {
   outlet: string;
   publishedAt: string;
   score: number;
+  /** Model rating toward the player (player pages) or the one player named (league list). */
+  rating?: -1 | 0 | 1;
 };
 
 export type SentimentProfileProvenance =
@@ -164,6 +167,10 @@ export type SentimentSourceSummary = {
     modelVersion: string;
     floor: number;
     laneCount: number;
+    /** Set once any player mention in the window has a model rating. */
+    toneModel?: string;
+    /** Share of this week's headline player mentions rated by the model (0..1). */
+    ratedShare?: number;
   };
   reddit: {
     configured: boolean;

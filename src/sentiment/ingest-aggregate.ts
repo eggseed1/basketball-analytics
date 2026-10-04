@@ -25,6 +25,8 @@ export type ScoredIngestItem = {
    * Unset means the item is its own conversation.
    */
   conversation?: string;
+  /** Model tone toward each player the headline names; replaces `score` in that player's lane. */
+  playerScores?: Record<string, number>;
 };
 
 export type LaneBuildOptions = {
@@ -177,7 +179,8 @@ export function groupByEntity(
   for (const item of items) {
     for (const id of item[key]) {
       const list = out.get(id) ?? [];
-      list.push(item);
+      const own = key === "playerIds" ? item.playerScores?.[id] : undefined;
+      list.push(own === undefined ? item : { ...item, score: own });
       out.set(id, list);
     }
   }

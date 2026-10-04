@@ -13,6 +13,7 @@ import {
   formatSentimentDate,
   LaneOriginTag,
   laneOriginLabel,
+  ratingLabel,
   sentimentPct,
 } from "@/components/sentiment/sentiment-source";
 import { SentimentTrendChartLazy as SentimentTrendChart } from "@/components/charts/recharts-lazy";
@@ -137,15 +138,22 @@ export function PlayerSentimentView({
                         <span
                           className={cn(
                             type.caption,
-                            "w-10 shrink-0 text-right font-semibold tabular-nums",
-                            headline.score >= 0.2
+                            "w-16 shrink-0 text-right font-semibold tabular-nums",
+                            (headline.rating ?? headline.score) >= 0.2
                               ? "text-delta-up"
-                              : headline.score <= -0.2
+                              : (headline.rating ?? headline.score) <= -0.2
                                 ? "text-delta-down"
                                 : "text-muted-foreground"
                           )}
+                          title={
+                            headline.rating !== undefined
+                              ? `Language model rating of this headline toward ${playerName}`
+                              : "Word-list tone of the headline and summary, 50% is neutral"
+                          }
                         >
-                          {sentimentPct(headline.score)}
+                          {headline.rating !== undefined
+                            ? ratingLabel(headline.rating)
+                            : sentimentPct(headline.score)}
                         </span>
                         <a
                           href={headline.url}

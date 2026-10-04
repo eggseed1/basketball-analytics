@@ -34,6 +34,7 @@ import type {
   TeamSentimentProfile,
 } from "@/sentiment/curated-types";
 import { FAN_LEXICON_VERSION, HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
+import { HEADLINE_MODEL_VERSION } from "@/sentiment/headline-model";
 import type { SentimentHistoryFile } from "@/sentiment/game-reaction";
 import {
   buildIngestLane,
@@ -47,6 +48,7 @@ import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import {
   readIngestItems,
   type FanPostIngestItem,
+  type HeadlineToneItem,
   type NewsIngestItem,
   type RedditDailyItem,
 } from "@/sentiment/ingest-store";
@@ -318,16 +320,79 @@ function attachPerformance(
   });
 }
 
-function newsToScored(rows: NewsIngestItem[], platform?: SentimentPlatform): ScoredIngestItem[] {
-  return rows.map((row) => ({
-    id: row.id,
-    date: row.publishedAt,
-    score: row.score,
-    topics: row.topics,
-    playerIds: row.playerIds,
-    teamIds: row.teamIds,
-    ...(platform ? { platform } : {}),
-  }));
+/** Model ratings keyed by `${store}:${rowId}`, then player id. */
+type HeadlineTones = Map<string, Record<string, -1 | 0 | 1>>;
+
+function loadHeadlineTones(): HeadlineTones {
+  const out: HeadlineTones = new Map();
+  for (const row of readIngestItems<HeadlineToneItem>("headline-tones")) {
+    const key = `${row.store}:${row.rowId}`;
+    out.set(key, { ...out.get(key), [row.playerId]: row.tone });
+  }
+  return out;
+}
+
+function newsToScored(
+  rows: NewsIngestItem[],
+  store: "news" | "fanblogs",
+  tones: HeadlineTones,
+  platform?: SentimentPlatform
+): ScoredIngestItem[] {
+  return rows.map((row) => {
+    const playerScores = tones.get(`${store}:${row.id}`);
+    return {
+      id: row.id,
+      date: row.publishedAt,
+      score: row.score,
+      topics: row.topics,
+      playerIds: row.playerIds,
+      teamIds: row.teamIds,
+      ...(platform ? { platform } : {}),
+      ...(playerScores ? { playerScores } : {}),
+    };
+  });
+}
+
+function headlineRatingSummary(
+  items: ScoredIngestItem[],
+  now: Date,
+  windowDays: number
+): { toneModel?: string; ratedShare?: number } {
+  const since = now.getTime() - windowDays * 86_400_000;
+  let mentions = 0;
+  let rated = 0;
+  for (const item of items) {
+    if (Date.parse(item.date) <= since) continue;
+    mentions += item.playerIds.length;
+    rated += item.playerIds.filter((id) => item.playerScores?.[id] !== undefined).length;
+  }
+  if (!rated) return {};
+  return { toneModel: HEADLINE_MODEL_VERSION, ratedShare: Math.round((rated / mentions) * 100) / 100 };
+}
+
+/** The model rating for a news headline that names exactly one player. */
+function singlePlayerRating(
+  row: NewsIngestItem,
+  tones: HeadlineTones
+): { rating?: -1 | 0 | 1 } {
+  if (row.playerIds.length !== 1) return {};
+  const rating = tones.get(`news:${row.id}`)?.[row.playerIds[0]!];
+  return rating !== undefined ? { rating } : {};
+}
+
+/** Which scorer produced a player's headline lane over the current window. */
+function playerHeadlineModelVersion(
+  items: ScoredIngestItem[],
+  playerId: string,
+  now: Date,
+  windowDays: number
+): string {
+  const since = now.getTime() - windowDays * 86_400_000;
+  const current = items.filter((item) => Date.parse(item.date) > since);
+  const rated = current.filter((item) => item.playerScores?.[playerId] !== undefined).length;
+  if (!rated) return HEADLINE_LEXICON_VERSION;
+  if (rated === current.length) return HEADLINE_MODEL_VERSION;
+  return `${HEADLINE_MODEL_VERSION}+${HEADLINE_LEXICON_VERSION}`;
 }
 
 /**
@@ -375,18 +440,27 @@ function fanPostsToScored(
   }));
 }
 
-function headlineExemplars(ids: string[], byId: Map<string, NewsIngestItem>, limit: number) {
+function headlineExemplars(
+  ids: string[],
+  byId: Map<string, NewsIngestItem>,
+  limit: number,
+  ratingFor?: (rowId: string) => -1 | 0 | 1 | undefined
+) {
   return latestExemplars(
     ids
       .map((id) => byId.get(id))
       .filter((row): row is NewsIngestItem => Boolean(row))
-      .map((row) => ({
-        title: row.title,
-        url: row.url,
-        outlet: row.outlet,
-        publishedAt: row.publishedAt,
-        score: row.score,
-      })),
+      .map((row) => {
+        const rating = ratingFor?.(row.id);
+        return {
+          title: row.title,
+          url: row.url,
+          outlet: row.outlet,
+          publishedAt: row.publishedAt,
+          score: row.score,
+          ...(rating !== undefined ? { rating } : {}),
+        };
+      }),
     limit
   );
 }
@@ -612,9 +686,10 @@ export async function buildSentimentSnapshot(
   const blueskyRows = readIngestItems<FanPostIngestItem>("bluesky");
   const youtubeRows = readIngestItems<FanPostIngestItem>("youtube");
   const newsById = new Map(newsRows.map((row) => [row.id, row]));
-  const newsScored = newsToScored(newsRows);
+  const headlineTones = loadHeadlineTones();
+  const newsScored = newsToScored(newsRows, "news", headlineTones);
   const fanPostScored = [
-    ...newsToScored(fanBlogRows, "fan_blog"),
+    ...newsToScored(fanBlogRows, "fanblogs", headlineTones, "fan_blog"),
     ...fanPostsToScored(blueskyRows, "bluesky"),
     ...fanPostsToScored(youtubeRows, "youtube"),
   ];
@@ -668,7 +743,10 @@ export async function buildSentimentSnapshot(
   const fanByPlayer = groupByEntity(fanScored, "playerIds");
   let headlineLaneCount = 0;
   for (const [playerId, items] of newsByPlayer) {
-    const built = buildIngestLane(items, headlineOpts);
+    const built = buildIngestLane(items, {
+      ...headlineOpts,
+      modelVersion: playerHeadlineModelVersion(items, playerId, now, ingestConfig.windowDays),
+    });
     if (!built) continue;
     headlineLaneCount += 1;
     upsertPlayer(playerId, (profile) => ({
@@ -678,7 +756,8 @@ export async function buildSentimentSnapshot(
       headlines: headlineExemplars(
         items.map((item) => item.id),
         newsById,
-        ingestConfig.profileHeadlineLimit
+        ingestConfig.profileHeadlineLimit,
+        (rowId) => headlineTones.get(`news:${rowId}`)?.[playerId]
       ),
     }));
   }
@@ -839,6 +918,7 @@ export async function buildSentimentSnapshot(
       outlet: row.outlet,
       publishedAt: row.publishedAt,
       score: row.score,
+      ...singlePlayerRating(row, headlineTones),
       players: row.playerIds.map((id) => ({
         id,
         name:
@@ -875,6 +955,7 @@ export async function buildSentimentSnapshot(
       modelVersion: HEADLINE_LEXICON_VERSION,
       floor: ingestConfig.headlineFloor,
       laneCount: headlineLaneCount,
+      ...headlineRatingSummary(newsScored, now, ingestConfig.windowDays),
     },
     reddit: {
       configured: redditPostCount > 0,

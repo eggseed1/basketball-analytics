@@ -23,6 +23,8 @@ name: Daily player-viz runtime refresh
 #   vars.REDDIT_USER_AGENT                  — repo variable, not a secret
 #   YOUTUBE_API_KEY                         — Google Cloud key with YouTube Data API v3
 #   vars.BLUESKY_HANDLE, BLUESKY_APP_PASSWORD — only if logged-out Bluesky search stops working
+#   CLOUDFLARE_AI_TOKEN                     — token with only Workers AI permission; rates headline
+#                                             tone per player (word-list scores are used without it)
 # Fan blogs need nothing.
 
 on:
@@ -108,6 +110,8 @@ jobs:
           YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
           BLUESKY_HANDLE: ${{ vars.BLUESKY_HANDLE }}
           BLUESKY_APP_PASSWORD: ${{ secrets.BLUESKY_APP_PASSWORD }}
+          CLOUDFLARE_AI_TOKEN: ${{ secrets.CLOUDFLARE_AI_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         run: node scripts/daily-runtime-sync.mjs
 
       - name: Commit refreshed data

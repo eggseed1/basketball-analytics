@@ -52,8 +52,11 @@ export default function PrivacyPage() {
         <p>
           The <Link href="/sentiment" className="underline underline-offset-2">sentiment pages</Link>{" "}
           score the tone of public fan writing about players and teams. A word list scores each item
-          when it is fetched, and nothing is used to profile, contact or identify anyone. What we
-          keep depends on the source:
+          when it is fetched. Headlines from news outlets and fan blogs are also sent, with the name
+          of a player they mention, to a language model that Cloudflare runs for us (Workers AI),
+          which rates the headline&apos;s tone toward that player. Fan posts and comments are not
+          sent. Nothing is used to profile, contact or identify anyone. What we keep depends on the
+          source:
         </p>
         <ul className="flex list-disc flex-col gap-1 pl-5">
           <li>

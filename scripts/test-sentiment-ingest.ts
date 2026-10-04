@@ -9,7 +9,12 @@ import path from "node:path";
 
 import { createHeadlineEntityResolver } from "../src/sentiment/headline-entities";
 import { isNbaHeadline, scoreHeadline, tagHeadlineTopics } from "../src/sentiment/headline-lexicon";
-import { buildIngestLane, type ScoredIngestItem } from "../src/sentiment/ingest-aggregate";
+import { parseHeadlineTone } from "../src/sentiment/headline-model";
+import {
+  buildIngestLane,
+  groupByEntity,
+  type ScoredIngestItem,
+} from "../src/sentiment/ingest-aggregate";
 import { parseRss } from "../src/sentiment/rss";
 import type { SentimentCuratedSnapshot } from "../src/sentiment/curated-types";
 
@@ -123,6 +128,27 @@ function testLanes() {
   assert.equal(rising.lane.direction, "rising");
   assert.equal(rising.series.length, 6);
   assert.ok(rising.series.every((p) => p.count === 1));
+
+  // A model rating replaces the headline score only in that player's lane.
+  const shared: ScoredIngestItem = {
+    ...item(1, 0.4),
+    playerIds: ["1", "2"],
+    teamIds: ["13"],
+    playerScores: { "1": -1 },
+  };
+  const byPlayer = groupByEntity([shared], "playerIds");
+  assert.equal(byPlayer.get("1")![0]!.score, -1);
+  assert.equal(byPlayer.get("2")![0]!.score, 0.4);
+  assert.equal(groupByEntity([shared], "teamIds").get("13")![0]!.score, 0.4);
+}
+
+function testHeadlineModel() {
+  assert.equal(parseHeadlineTone("1"), 1);
+  assert.equal(parseHeadlineTone(" -1\n"), -1);
+  assert.equal(parseHeadlineTone("0\n\nDeni Avdija is mentioned"), 0);
+  assert.equal(parseHeadlineTone("10"), null);
+  assert.equal(parseHeadlineTone("0.5"), null);
+  assert.equal(parseHeadlineTone(""), null);
 }
 
 function testSnapshot() {
@@ -161,5 +187,6 @@ testLexicon();
 testEntities();
 testRss();
 testLanes();
+testHeadlineModel();
 testSnapshot();
 console.log("test-sentiment-ingest: ok");

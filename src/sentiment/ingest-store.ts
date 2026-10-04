@@ -73,8 +73,33 @@ export type FanPostIngestItem = {
   modelVersion: string;
 };
 
-/** news: national outlets. fanblogs: team fan blogs (same row shape as news). */
-export type IngestSource = "news" | "reddit" | "fanblogs" | "bluesky" | "youtube";
+/**
+ * A language model's rating of one stored headline's tone toward one player it
+ * names. Kept apart from the headline rows so older headlines can be rated later.
+ */
+export type HeadlineToneItem = {
+  /** `${store}:${rowId}:${playerId}` */
+  id: string;
+  store: "news" | "fanblogs";
+  rowId: string;
+  playerId: string;
+  publishedAt: string;
+  tone: -1 | 0 | 1;
+  modelVersion: string;
+  ratedAt: string;
+};
+
+/**
+ * news: national outlets. fanblogs: team fan blogs (same row shape as news).
+ * headline-tones: model ratings for rows in those two stores.
+ */
+export type IngestSource =
+  | "news"
+  | "reddit"
+  | "fanblogs"
+  | "bluesky"
+  | "youtube"
+  | "headline-tones";
 
 function sourceDir(source: IngestSource): string {
   return path.join(INGEST_ROOT, source);

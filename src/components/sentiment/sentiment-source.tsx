@@ -13,6 +13,13 @@ export function sentimentPct(score: number): string {
   return `${Math.round(((score + 1) / 2) * 100)}%`;
 }
 
+const RATING_LABEL = { 1: "Positive", 0: "Neutral", [-1]: "Negative" } as const;
+
+/** A model rating of one headline toward one player. */
+export function ratingLabel(rating: -1 | 0 | 1): string {
+  return RATING_LABEL[rating];
+}
+
 export function formatSentimentDate(iso?: string | null, withYear = false): string {
   if (!iso) return "—";
   const d = new Date(`${iso.slice(0, 10)}T12:00:00Z`);
@@ -131,7 +138,11 @@ export function SentimentSourcesStrip({
           prototype values, not measured
         </span>
       </p>
-      <p>Tone comes from a word list, so read scores as rough.</p>
+      <p>
+        {headlines?.toneModel
+          ? "A language model rates each headline's tone toward the players it names. Fan comments and posts are scored with a word list, so read fan scores as rough."
+          : "Tone comes from a word list, so read scores as rough."}
+      </p>
       <MoreInfo summary="Sources and method">
       <ul className="flex flex-col gap-1">
         <li className="flex flex-wrap items-baseline gap-1.5">
@@ -141,8 +152,22 @@ export function SentimentSourcesStrip({
               Media lanes. {headlines.itemCount.toLocaleString()} NBA headlines from{" "}
               {headlines.outlets.join(", ")}, {formatSentimentDate(headlines.firstDate)} to{" "}
               {formatSentimentDate(headlines.asOf)}. A player needs {headlines.floor} headlines in
-              the last 7 days to get a score. Tone comes from a word list that hasn&apos;t been
-              checked against hand labels yet, so read it as rough.
+              the last 7 days to get a score.{" "}
+              {headlines.toneModel ? (
+                <>
+                  A language model (Llama 3.3 70B, run on Cloudflare) rates each headline as
+                  positive, neutral or negative toward each player it names. Checked against 127
+                  labeled headlines, it matched the label about 7 times in 10 and never rated one
+                  the opposite way. Players named only in the summary, and team scores, still use
+                  a word list. {Math.round((headlines.ratedShare ?? 0) * 100)}% of this
+                  week&apos;s player mentions have a model rating.
+                </>
+              ) : (
+                <>
+                  Tone comes from a word list. Checked against 127 labeled headlines, it matched
+                  the label about half the time, so read it as rough.
+                </>
+              )}
             </span>
           ) : (
             <span>No headlines ingested yet.</span>
@@ -162,9 +187,10 @@ export function SentimentSourcesStrip({
                   {fans.platforms.reddit ? "" : " Reddit isn't connected yet."} A player or team needs{" "}
                   {fans.floor} posts in the last 7 days to get a score. Comments under the same
                   video share weight, so 100 comments on one video count for less than 100 posts
-                  spread across many places. Tone comes from a word list
-                  with extra fan slang that hasn&apos;t been checked against hand labels, so read it
-                  as rough.
+                  spread across many places.{" "}
+                  {headlines?.toneModel
+                    ? "Fan blog headlines get the same model rating as news headlines. Comments and posts are scored with a word list plus fan slang that hasn't been checked against labels, so read it as rough."
+                    : "Tone comes from a word list with extra fan slang that hasn't been checked against labels, so read it as rough."}
                 </span>
               ) : (
                 <span>No fan posts collected yet. Fan lanes below use curated values until they are.</span>
