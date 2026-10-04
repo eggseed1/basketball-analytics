@@ -1,9 +1,70 @@
 {
   "note": "Publisher RSS feeds. Headline + lede tone only (S0 news policy). Headlines are shown with a link back to the outlet.",
   "feeds": [
-    { "id": "espn", "outlet": "ESPN", "url": "https://www.espn.com/espn/rss/nba/news" },
-    { "id": "cbs", "outlet": "CBS Sports", "url": "https://www.cbssports.com/rss/headlines/nba/" },
-    { "id": "yahoo", "outlet": "Yahoo Sports", "url": "https://sports.yahoo.com/nba/rss.xml" },
-    { "id": "realgm", "outlet": "RealGM", "url": "https://basketball.realgm.com/rss/wiretap/0/0.xml" }
+    {
+      "id": "espn",
+      "outlet": "ESPN",
+      "url": "https://www.espn.com/espn/rss/nba/news"
+    },
+    {
+      "id": "cbs",
+      "outlet": "CBS Sports",
+      "url": "https://www.cbssports.com/rss/headlines/nba/"
+    },
+    {
+      "id": "yahoo",
+      "outlet": "Yahoo Sports",
+      "url": "https://sports.yahoo.com/nba/rss.xml"
+    },
+    {
+      "id": "realgm",
+      "outlet": "RealGM",
+      "url": "https://basketball.realgm.com/rss/wiretap/0/0.xml"
+    },
+    {
+      "id": "athletic",
+      "outlet": "The Athletic",
+      "url": "https://www.nytimes.com/athletic/rss/nba/"
+    },
+    {
+      "id": "clutchpoints",
+      "outlet": "ClutchPoints",
+      "url": "https://clutchpoints.com/nba/feed"
+    },
+    {
+      "id": "hoopsrumors",
+      "outlet": "Hoops Rumors",
+      "url": "https://www.hoopsrumors.com/feed"
+    },
+    {
+      "id": "sportingnews",
+      "outlet": "Sporting News",
+      "url": "https://www.sportingnews.com/us/rss/nba"
+    },
+    {
+      "id": "nypost",
+      "outlet": "New York Post",
+      "url": "https://nypost.com/nba/feed/"
+    },
+    {
+      "id": "basketballnews",
+      "outlet": "Basketball News",
+      "url": "https://www.basketballnews.com/feed"
+    },
+    {
+      "id": "larrybrown",
+      "outlet": "Larry Brown Sports",
+      "url": "https://larrybrownsports.com/category/basketball/feed"
+    },
+    {
+      "id": "talkbasket",
+      "outlet": "TalkBasket",
+      "url": "https://www.talkbasket.net/feed"
+    },
+    {
+      "id": "guardian",
+      "outlet": "The Guardian",
+      "url": "https://www.theguardian.com/sport/nba/rss"
+    }
   ]
 }

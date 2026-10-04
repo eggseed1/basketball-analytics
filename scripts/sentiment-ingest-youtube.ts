@@ -7,7 +7,7 @@
  *   YOUTUBE_API_KEY=... npm run sentiment:ingest:youtube
  *
  * One quota unit per uploads list and per comment page: at most 21 per team
- * channel and 76 per league channel, about 4,600 of the free 10,000 daily
+ * channel and 76 per league channel, about 4,100 of the free 10,000 daily
  * units if every video has that many comments (most don't). Without a key
  * the script prints a notice and exits 0.
  */
