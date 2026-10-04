@@ -198,13 +198,20 @@ export function dedupeCareerSeasons(career: PlayerSeason[]): PlayerSeason[] {
   }
   const out: PlayerSeason[] = [];
   for (const [, rows] of bySeason) {
-    const aggregate = rows.find(
-      (row) =>
-        row.teamId === "TOT" ||
-        ["TOT", "2TM", "3TM", "4TM"].includes(
-          (row.teamAbbreviation ?? "").toUpperCase()
-        )
-    );
+    // Largest aggregate: a stint can carry a stray 2TM tag.
+    const aggregate = rows
+      .filter(
+        (row) =>
+          row.teamId === "TOT" ||
+          ["TOT", "2TM", "3TM", "4TM"].includes(
+            (row.teamAbbreviation ?? "").toUpperCase()
+          )
+      )
+      .reduce<PlayerSeason | undefined>(
+        (best, row) =>
+          !best || row.gamesPlayed > best.gamesPlayed ? row : best,
+        undefined
+      );
     if (aggregate) {
       out.push(aggregate);
       continue;

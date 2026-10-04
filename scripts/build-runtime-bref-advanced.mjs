@@ -114,7 +114,15 @@ function collapseToSeasonGrain(rows) {
   for (const list of groups.values()) {
     const combined = list.find((r) => isCombined(String(r.t ?? "").toUpperCase()));
     if (combined) {
-      out.push(combined);
+      // BRef lists stints in the order played; keep them so "2TM" can name teams.
+      const stints = [
+        ...new Set(
+          list
+            .map((r) => String(r.t ?? "").toUpperCase().trim())
+            .filter((t) => t && !isCombined(t))
+        ),
+      ];
+      out.push(stints.length > 1 ? { ...combined, tm: stints } : combined);
       continue;
     }
     // No TOT in source: keep the heaviest stint (last resort).
@@ -152,6 +160,19 @@ function hasMultiTeamDuplicates(rows) {
     if (teams.size > 1) return true;
   }
   return false;
+}
+
+function foldName(name) {
+  return String(name ?? "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
+function combinedMissingStints(rows) {
+  return (rows ?? []).some(
+    (row) => isCombined(String(row.t ?? "").toUpperCase()) && !row.tm?.length
+  );
 }
 
 function parseTable(html, mapRow, { includeCombined = false } = {}) {
@@ -343,7 +364,13 @@ for (const start of ADV_START_YEARS) {
   const canonical = canonicalSeason(start);
   const existing = seasons[canonical]?.advanced;
   const staleSplits = hasMultiTeamDuplicates(existing);
-  if (existing?.length && !advancedNeedsRates(existing) && !staleSplits) {
+  const missingStints = combinedMissingStints(existing);
+  if (
+    existing?.length &&
+    !advancedNeedsRates(existing) &&
+    !staleSplits &&
+    !missingStints
+  ) {
     console.log(
       `[bref-snapshot] ${canonical} advanced cached (${existing.length})`
     );
@@ -351,7 +378,7 @@ for (const start of ADV_START_YEARS) {
   }
   const year = brefYear(canonical);
   process.stdout.write(
-    `[bref-snapshot] ${canonical} advanced${staleSplits ? " (collapse TOT)" : ""}… `
+    `[bref-snapshot] ${canonical} advanced${staleSplits ? " (collapse TOT)" : missingStints ? " (stint teams)" : ""}… `
   );
   try {
     const html = await fetchHtml(
@@ -362,18 +389,20 @@ for (const start of ADV_START_YEARS) {
     );
     // Preserve ortg/drtg / espn ids if we already merged them.
     const prevByKey = new Map(
-      (existing ?? []).map((r) => [`${r.n.toLowerCase()}|${r.t}`, r])
+      (existing ?? []).map((r) => [`${foldName(r.n)}|${r.t}`, r])
     );
     const prevByName = new Map(
-      (existing ?? []).map((r) => [String(r.n).toLowerCase(), r])
+      (existing ?? []).map((r) => [foldName(r.n), r])
     );
     const merged = advanced.map((row) => {
       const prev =
-        prevByKey.get(`${row.n.toLowerCase()}|${row.t}`) ??
-        prevByName.get(row.n.toLowerCase());
+        prevByKey.get(`${foldName(row.n)}|${row.t}`) ??
+        prevByName.get(foldName(row.n));
       if (!prev) return row;
       return {
         ...row,
+        // Per-game rows join on the baked name; BRef sometimes adds accents later.
+        n: prev.n,
         ...(prev.ortg != null ? { ortg: prev.ortg } : {}),
         ...(prev.drtg != null ? { drtg: prev.drtg } : {}),
         ...(prev.e ? { e: prev.e } : {}),

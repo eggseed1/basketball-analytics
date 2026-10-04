@@ -19,6 +19,11 @@ export interface PlayerSeason {
   teamName: string;
   teamAbbreviation?: string;
   /**
+   * Multi-team aggregate rows only: canonical team ids for each stint, in the
+   * order played (BRef source order).
+   */
+  stintTeamIds?: string[];
+  /**
    * Provider namespace for `providerTeamId` when retained for provenance.
    * Product UI must not render providerTeamId as the team label.
    */

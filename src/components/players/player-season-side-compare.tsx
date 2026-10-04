@@ -17,7 +17,7 @@ import { useChartTheme } from "@/lib/chart-theme";
 import { teamChartColor } from "@/lib/nba-brand";
 import {
   isMultiTeamSeasonRow,
-  multiTeamDisplayLabel,
+  multiTeamSeasonLabel,
 } from "@/lib/player-team-context";
 import { cn } from "@/lib/utils";
 
@@ -146,8 +146,8 @@ function formatValue(value: number | null, def: MetricDef): string {
   return formatNumber(value, def.digits ?? 1);
 }
 
-function teamLabel(row: PlayerSeason): string {
-  if (isMultiTeamSeasonRow(row)) return multiTeamDisplayLabel(row);
+function teamLabel(row: PlayerSeason, seasons: PlayerSeason[]): string {
+  if (isMultiTeamSeasonRow(row)) return multiTeamSeasonLabel(row, seasons);
   return row.teamAbbreviation ?? teamChartColor(row.teamId).abbr;
 }
 
@@ -377,12 +377,12 @@ export function PlayerSeasonSideCompare({
         >
           <span>
             {rowA
-              ? `${rowA.season} · ${teamLabel(rowA)} · ${rowA.gamesPlayed} GP`
+              ? `${rowA.season} · ${teamLabel(rowA, seasons)} · ${rowA.gamesPlayed} GP`
               : "—"}
           </span>
           <span className="text-right">
             {rowB
-              ? `${rowB.season} · ${teamLabel(rowB)} · ${rowB.gamesPlayed} GP`
+              ? `${rowB.season} · ${teamLabel(rowB, seasons)} · ${rowB.gamesPlayed} GP`
               : "—"}
           </span>
         </div>

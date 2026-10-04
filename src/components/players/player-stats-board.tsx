@@ -21,7 +21,7 @@ import {
 import {
   cardStintsForSeason,
   isMultiTeamSeasonRow,
-  multiTeamDisplayLabel,
+  multiTeamSeasonLabel,
 } from "@/lib/player-team-context";
 import { teamSeasonIsMulti } from "@/lib/team-season-colors";
 import type { ThemeMode } from "@/themes/era-theme";
@@ -343,7 +343,7 @@ export function PlayerStatsBoard({
                     const active = row.season === highlightSeason;
                     const multiTeam = isMultiTeamSeasonRow(row);
                     const tm = multiTeam
-                      ? multiTeamDisplayLabel(row)
+                      ? multiTeamSeasonLabel(row, rows)
                       : row.teamAbbreviation ?? "-";
                     const tmKeys = multiTeam
                       ? cardStintsForSeason(rows, row.season).map(

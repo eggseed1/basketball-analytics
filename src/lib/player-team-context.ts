@@ -11,6 +11,7 @@ import {
   canonicalSeasonFromStartYear,
   startYearFromCanonicalSeason,
 } from "@/data/providers/historical/season-range";
+import { resolveHistoricalTeamBrand } from "@/lib/historical-team-brand";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
 export type PlayerTeamContextKind =
@@ -32,12 +33,45 @@ export function isMultiTeamSeasonRow(
   return row.teamId === "TOT" || MULTI_TEAM_ABBR.has(abbr);
 }
 
+/** Season total among multi-team rows (a stint can carry a stray 2TM tag). */
+export function largestMultiTeamRow<T extends PlayerSeason>(
+  rows: T[]
+): T | undefined {
+  let best: T | undefined;
+  for (const row of rows) {
+    if (!isMultiTeamSeasonRow(row)) continue;
+    if (!best || row.gamesPlayed > best.gamesPlayed) best = row;
+  }
+  return best;
+}
+
 export function multiTeamDisplayLabel(
   row: Pick<PlayerSeason, "teamAbbreviation"> | null | undefined
 ): "TOT" | "Multiple" {
   const abbr = (row?.teamAbbreviation ?? "TOT").toUpperCase();
   if (abbr === "2TM" || abbr === "3TM" || abbr === "4TM") return "Multiple";
   return "TOT";
+}
+
+/**
+ * Multi-team season label that names the teams ("DAL/WAS") when the stints
+ * are known; falls back to TOT / Multiple.
+ */
+export function multiTeamSeasonLabel(
+  row: Pick<PlayerSeason, "season" | "teamAbbreviation">,
+  career: PlayerSeason[]
+): string {
+  const stints = cardStintsForSeason(career, row.season);
+  if (stints.length > 1) {
+    return stints
+      .map(
+        (stint) =>
+          resolveHistoricalTeamBrand(stint.teamKey, row.season, "era")
+            ?.abbreviation ?? stint.teamLabel
+      )
+      .join("/");
+  }
+  return multiTeamDisplayLabel(row);
 }
 
 /**
@@ -71,7 +105,7 @@ export function primaryTeamForSeason(
 ): PlayerSeason | null {
   const rows = career.filter((row) => row.season === season);
   if (!rows.length) return null;
-  const aggregate = rows.find((row) => isMultiTeamSeasonRow(row));
+  const aggregate = largestMultiTeamRow(rows);
   if (aggregate) return aggregate;
   return rows.reduce((best, row) =>
     row.gamesPlayed > best.gamesPlayed ? row : best
@@ -104,8 +138,14 @@ export function cardStintsForSeason(
   career: PlayerSeason[],
   season: string
 ): PlayerCardStint[] {
-  const seen = new Set<string>();
-  const out: PlayerCardStint[] = [];
+  const ordered = career.find(
+    (row) =>
+      row.season === season &&
+      isMultiTeamSeasonRow(row) &&
+      (row.stintTeamIds?.length ?? 0) > 1
+  )?.stintTeamIds;
+  const out: PlayerCardStint[] = cardStintsFromTeamKeys(ordered);
+  const seen = new Set(out.map((stint) => stint.teamKey));
   for (const row of seasonFranchiseStints(career, season)) {
     const key = brandableTeamKeyFromRow(row);
     if (!key || seen.has(key)) continue;
@@ -332,7 +372,7 @@ export function pickPlayerSeasonBoardRow(
 ): PlayerSeason | null {
   const matches = rows.filter((row) => row.playerId === playerId);
   if (!matches.length) return null;
-  const aggregate = matches.find((row) => isMultiTeamSeasonRow(row));
+  const aggregate = largestMultiTeamRow(matches);
   if (aggregate) return aggregate;
   return matches.reduce((best, row) =>
     row.gamesPlayed > best.gamesPlayed ? row : best

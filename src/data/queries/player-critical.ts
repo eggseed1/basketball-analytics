@@ -33,6 +33,11 @@ import {
 import { withPlayerSeasonDefaults } from "@/data/transformers/player-season-defaults";
 import type { Player, PlayerSeason } from "@/data/types";
 import {
+  brandableTeamKey,
+  isMultiTeamSeasonRow,
+  largestMultiTeamRow,
+} from "@/lib/player-team-context";
+import {
   firstUsablePlayerDisplayName,
   isSyntheticPlayerDisplayName,
 } from "@/lib/player-display-name";
@@ -133,6 +138,39 @@ function historyCareerFallback(
  * Keep preferred season rows; for overlapping seasons, fill missing / zeroed
  * advanced fields from fallback (BRef bundle). Append seasons only in fallback.
  */
+function careerRowTeamKey(row: PlayerSeason): string | undefined {
+  if (isMultiTeamSeasonRow(row)) return undefined;
+  return brandableTeamKey(row.teamId) ?? brandableTeamKey(row.teamAbbreviation);
+}
+
+/**
+ * Same-season row to fill gaps from. A stint must never borrow from the
+ * multi-team total (or another stint), or it inherits that team and label.
+ */
+function pickCareerDonor(
+  row: PlayerSeason,
+  donors: PlayerSeason[]
+): PlayerSeason | undefined {
+  if (!donors.length) return undefined;
+  const aggregate = largestMultiTeamRow(donors);
+  if (isMultiTeamSeasonRow(row)) return aggregate;
+
+  const key = careerRowTeamKey(row);
+  if (key) {
+    const sameTeam = donors.find((d) => careerRowTeamKey(d) === key);
+    if (sameTeam) return sameTeam;
+  }
+  if (aggregate) {
+    // Teamless rows (ESPN "Unknown") that match the season total are the total.
+    return !key && row.gamesPlayed === aggregate.gamesPlayed
+      ? aggregate
+      : undefined;
+  }
+  const best = donors.reduce((a, b) => (b.gamesPlayed > a.gamesPlayed ? b : a));
+  const bestKey = careerRowTeamKey(best);
+  return key && bestKey && key !== bestKey ? undefined : best;
+}
+
 function unionCareerBySeason(
   preferred: PlayerSeason[],
   fallback: PlayerSeason[]
@@ -150,18 +188,8 @@ function unionCareerBySeason(
   const covered = new Set<string>();
   const out: PlayerSeason[] = preferred.map((row) => {
     covered.add(row.season);
-    const donors = fallbackBySeason.get(row.season) ?? [];
-    if (!donors.length) return row;
-    // Prefer same-team donor when possible, else highest-GP donor.
-    const donor =
-      donors.find(
-        (d) =>
-          d.teamAbbreviation &&
-          row.teamAbbreviation &&
-          d.teamAbbreviation === row.teamAbbreviation
-      ) ??
-      donors.slice().sort((a, b) => b.gamesPlayed - a.gamesPlayed)[0];
-    return mergeCareerSeasonFields(row, donor);
+    const donor = pickCareerDonor(row, fallbackBySeason.get(row.season) ?? []);
+    return donor ? mergeCareerSeasonFields(row, donor) : row;
   });
 
   for (const row of fallback) {

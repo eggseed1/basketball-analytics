@@ -48,7 +48,7 @@ import {
   brandableTeamKeyFromRow,
   cardStintsForSeason,
   isMultiTeamSeasonRow,
-  multiTeamDisplayLabel,
+  multiTeamSeasonLabel,
 } from "@/lib/player-team-context";
 import { shiftCanonicalSeason, findSimilarProfile } from "@/lib/player-stat-comps";
 import { cn } from "@/lib/utils";
@@ -310,7 +310,7 @@ export async function PlayerCoreIsland({
   const identitySeasonLabel = (() => {
     if (!seasonStats) return season;
     if (isMultiTeamSeasonRow(seasonStats)) {
-      return `${season} · ${multiTeamDisplayLabel(seasonStats)}`;
+      return `${season} · ${multiTeamSeasonLabel(seasonStats, career)}`;
     }
     const key = brandableTeamKeyFromRow(seasonStats);
     const abbr =
@@ -339,7 +339,7 @@ export async function PlayerCoreIsland({
   };
 
   const rowTeamLabel = (row: PlayerSeason) => {
-    if (isMultiTeamSeasonRow(row)) return multiTeamDisplayLabel(row);
+    if (isMultiTeamSeasonRow(row)) return multiTeamSeasonLabel(row, career);
     if (useHistoricalBranding) {
       const era = resolveHistoricalTeamBrand(row.teamId, row.season, "era");
       if (era) return era.abbreviation;

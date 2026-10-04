@@ -42,6 +42,8 @@ type SlimAdvanced = {
   tovPct?: number;
   ortg?: number;
   drtg?: number;
+  /** Stint team abbreviations on combined (2TM/TOT) rows, in order played. */
+  tm?: string[];
 };
 
 type SlimPerGame = {
@@ -367,12 +369,19 @@ function toPeerSeasonRow(
       : adv.t;
   const teamAbbreviation =
     resolvedTeam.status === "resolved" ? resolvedTeam.team.abbr : adv.t;
+  const stintTeamIds = adv.tm?.length
+    ? adv.tm.map((abbr) => {
+        const stint = resolveCanonicalTeam(abbr);
+        return stint.status === "resolved" ? stint.team.canonicalTeamId : abbr;
+      })
+    : undefined;
 
   return {
     playerId: espnId ?? `bref:${key}:${canonicalSeason}`,
     playerName: adv.n,
     teamId,
     teamAbbreviation,
+    ...(stintTeamIds ? { stintTeamIds } : {}),
     season: canonicalSeason,
     age: pg?.age,
     position: pg?.pos,

@@ -77,7 +77,7 @@ import {
   isRetiredPlayerCareer,
   lastCardStint,
   mergeCardStints,
-  multiTeamDisplayLabel,
+  multiTeamSeasonLabel,
   resolvePlayerScheduleTeamKey,
   resolveSelectedSeasonTeamContext,
 } from "@/lib/player-team-context";
@@ -344,8 +344,8 @@ export default async function PlayerPage({
         seasonTeamCtx.displayLabel
       : lastStint
         ? lastStint.teamLabel
-        : isMultiTeamRow
-          ? multiTeamDisplayLabel(primaryTeam)
+        : isMultiTeamRow && primaryTeam
+          ? multiTeamSeasonLabel(primaryTeam, career)
           : seasonTeamCtx.displayLabel ??
             (primaryTeam && !brandableTeamKey(primaryTeam.teamId)
               ? "Team unavailable"

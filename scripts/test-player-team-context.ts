@@ -10,7 +10,9 @@ import {
   brandableTeamKey,
   enrichCareerRowKeepTeam,
   isMultiTeamSeasonRow,
+  largestMultiTeamRow,
   multiTeamDisplayLabel,
+  multiTeamSeasonLabel,
   pickPlayerSeasonBoardRow,
   primaryTeamForSeason,
   resolveCurrentTeamId,
@@ -230,6 +232,37 @@ console.log("brandable + current team precedence…");
   });
   assert.ok(cur.teamId);
   assert.equal(cur.source, "CURRENT_SEASON_PLAYER_ROW");
+}
+
+console.log("multi-team season names its teams…");
+{
+  // Porziņģis 2021-22: a stint carrying a stray 2TM tag must not win.
+  const career = [
+    row({ playerId: "kp", teamId: "27", teamAbbreviation: "2TM", season: "2021-22", gamesPlayed: 17 }),
+    row({ playerId: "kp", teamId: "2TM", teamAbbreviation: "2TM", season: "2021-22", gamesPlayed: 51, stintTeamIds: ["6", "27"] }),
+  ];
+  assert.equal(dedupeCareerSeasons(career)[0]!.gamesPlayed, 51);
+  assert.equal(primaryTeamForSeason(career, "2021-22")!.gamesPlayed, 51);
+  assert.equal(largestMultiTeamRow(career)!.gamesPlayed, 51);
+  assert.equal(multiTeamSeasonLabel(career[1]!, career), "DAL/WAS");
+
+  // Without stintTeamIds, franchise rows still name the teams.
+  const fromRows = [
+    row({ playerId: "kp", teamId: "TOT", teamAbbreviation: "TOT", season: "2021-22", gamesPlayed: 51 }),
+    row({ playerId: "kp", teamId: "6", teamAbbreviation: "DAL", season: "2021-22", gamesPlayed: 34 }),
+    row({ playerId: "kp", teamId: "27", teamAbbreviation: "WAS", season: "2021-22", gamesPlayed: 17 }),
+  ];
+  assert.equal(multiTeamSeasonLabel(fromRows[0]!, fromRows), "DAL/WAS");
+
+  // Era abbreviations, and the honest fallback when stints are unknown.
+  const sonics = [
+    row({ playerId: "x", teamId: "2TM", teamAbbreviation: "2TM", season: "2007-08", gamesPlayed: 60, stintTeamIds: ["25", "2"] }),
+  ];
+  assert.equal(multiTeamSeasonLabel(sonics[0]!, sonics), "SEA/BOS");
+  const unknown = [
+    row({ playerId: "y", teamId: "2TM", teamAbbreviation: "2TM", season: "2021-22", gamesPlayed: 40 }),
+  ];
+  assert.equal(multiTeamSeasonLabel(unknown[0]!, unknown), "Multiple");
 }
 
 console.log("OK — player-team-context (P17.3)");

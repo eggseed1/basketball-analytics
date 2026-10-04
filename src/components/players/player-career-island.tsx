@@ -9,6 +9,10 @@ import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import type { PlayerSeason } from "@/data/types";
 import { type PlayerSeasonKind } from "@/lib/player-destination";
 import {
+  isMultiTeamSeasonRow,
+  multiTeamSeasonLabel,
+} from "@/lib/player-team-context";
+import {
   darkoDefense,
   darkoOffense,
   darkoTotal,
@@ -34,7 +38,9 @@ function toBoardRows(career: PlayerSeason[]): CareerBoardRow[] {
     return {
       season: row.season,
       teamId: row.teamId,
-      teamAbbr: row.teamAbbreviation ?? "",
+      teamAbbr: isMultiTeamSeasonRow(row)
+        ? multiTeamSeasonLabel(row, career)
+        : (row.teamAbbreviation ?? ""),
       gamesPlayed: gp,
       mpg: gp > 0 ? perGame(row.minutes, gp) : null,
       ppg: perGame(row.points, gp),
