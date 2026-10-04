@@ -17,7 +17,7 @@ import type {
 } from "@/movement-center/types";
 import type { ReporterMention } from "@/movement-center/reporters";
 
-export const MOVEMENT_RULES_VERSION = "movement-rules-v1";
+export const MOVEMENT_RULES_VERSION = "movement-rules-v2";
 
 export type MovementFamily = "trade" | "contract";
 
@@ -29,6 +29,8 @@ export type MovementHeadlineClass = {
   negotiationSpecificity?: MovementClaim["negotiationSpecificity"];
   denial: boolean;
   agreement: boolean;
+  /** Only a loose cue ("interest in", "linked to", "visit") made this a movement story; it needs a named team. */
+  needsTeam: boolean;
 };
 
 export type MovementHeadlineInput = {
@@ -38,13 +40,18 @@ export type MovementHeadlineInput = {
 };
 
 const RETROSPECTIVE =
-  /\b(post|following|after|since)\b[^:]{0,40}\btrade\b|\b(made (the )?most sense|had options|why (he|i) (chose|signed|picked))\b/i;
+  /\b(post|following|after|since)\b[^:]{0,40}\btrade[sd]?\b|\b(made (the )?most sense|had options|why (he|i) (chose|signed|picked))\b|\b(being|was|were|got|getting) traded\b|\breact(s|ed|ion)?\b[^:]{0,40}\btrade[sd]?\b/i;
 const ANALYSIS =
   /\b(grades?|grading|ranked|rankings?|winners and losers|takeaways|what we learned|mock|re-?draft|best and worst|biggest questions?|breakdown|explained|explainer)\b/i;
 const MINOR_MOVE =
   /\b(exhibit 10|two-way|camp (deals?|contracts?)|10-day|summer league|waives?|waived|releases?|released|buyout)\b/i;
 const OFF_COURT =
-  /\b(endorsement|polymarket|sneaker|shoe deal|jersey|governor|ownership|owners?|expansion|media rights|suspension|suspended|fined|lawsuit|investigation|auction|stock|cards?|memorabilia|sells for|sold for)\b/i;
+  /\b(endorsement|sponsor\w*|ambassador|apparel|adidas|nike|jordan brand|puma|under armour|anta|li-ning|new balance|converse|signature shoe|polymarket|sneaker|shoe deal|jersey|governor|ownership|owners?|expansion|media rights|suspension|suspended|fined|lawsuit|investigation|auction|stock|cards?|memorabilia|sells for|sold for)\b/i;
+/** Reactions, roasts and viral clips about a player, not reporting on a move. */
+const COMMENTARY =
+  /\b(roast\w*|troll\w*|mocked|mocks|memes?|viral|video shows|reacts?|reaction|rips|slams|claps back|fires back)\b/i;
+/** "Has no interest in the LeBron approach": an opinion, unless it's about trading (a denial). */
+const NEGATED_INTEREST = /\b(no|zero|little) interest in\b/i;
 const OTHER_LEAGUE =
   /\b(CBA|EuroLeague|Chinese Basketball|overseas|G League|WNBA|Sharks|Real Madrid|Fenerbahce)\b/;
 const SPECULATION =
@@ -53,21 +60,27 @@ const SPECULATION =
 const TRADE_REQUEST = /\b(requests?|requested|demands?|wants?)\s+(a\s+)?trade\b|\bwants out\b/i;
 const EXTENSION =
   /\bextensions?\b|\bextend(s|ed|ing)?\b|\bre-sign\w*\b|\blong-term (contract|deal)\b|\b(contract|deal) (talks|negotiations?|standoff|stalemate|dispute)\b|\bcontract (stalemate|standoff)\b/i;
-const TRADE =
-  /\btrade[sd]?\b|\btrading\b|\bdeal for\b|\bacquir(e|es|ed|ing)\b|\bswap\b|\bshop(ping)?\b|\bon the (trade )?market\b|\bavailable\b|\bpursu(e|es|ing|it)\b|\btarget(s|ing)?\b|\binterest(ed)? in\b|\blinked to\b/i;
-const FREE_AGENCY =
-  /\bfree agen(t|cy)\b|\bmeet(s|ing)? with\b|\bvisit(s|ing)?\b|\bhas interest\b|\binterest from\b/i;
+const TRADE_STRONG =
+  /\btrade[sd]?\b|\btrading\b|\bdeal for\b|\bacquir(e|es|ed|ing)\b|\bswap\b|\bshop(ping)?\b|\bon the (trade )?market\b/i;
+const TRADE_LOOSE =
+  /\bavailable\b|\bpursu(e|es|ing|it)\b|\btarget(s|ing)?\b|\binterest(ed)? in\b|\blinked to\b/i;
+const FREE_AGENCY_STRONG = /\bfree agen(t|cy)\b|\bmeet(s|ing)? with\b/i;
+const FREE_AGENCY_LOOSE = /\bvisit(s|ing)?\b|\bhas interest\b|\binterest from\b/i;
 const CONTRACT = /\bcontract\b|\boffer\b/i;
 const DONE_SIGNING = /\bsigns?\b|\bsigned\b/i;
 
 const REPORTING_CUE =
   /^sources?:|\bsources?\b|\breported(ly)?\b|\breports?\b|\bper\b|\baccording to\b|\bexpected to\b|\bagree(s|d)?\b|\bintends?\b|\bplans? to\b/i;
-const ON_RECORD =
-  /['‘’"“”]|\b(says|said|explains|admits|calls|declares|confirms|announces?|tells|leaves no doubt)\b/i;
+/** A quotation, not a possessive or contraction apostrophe. */
+const QUOTED = /["“”]|(?:^|[\s:(])['‘][^'‘’]{2,}['’](?=$|[\s,.:;!?)])/;
+const ON_RECORD_VERB =
+  /\b(says|said|explains|admits|calls|declares|confirms|announces?|tells|leaves no doubt)\b/i;
+/** "Executive says", "per a rival scout": attributed but anonymous, so not on the record. */
+const ANONYMOUS_SPEAKER = /\b(exec(utive)?s?|scouts?|GMs?|insiders?|rival)\b/i;
 const RUMOR_CUE = /\brumou?rs?\b|\binterest(ed)?\b|\bmonitor\w*\b|\blinked\b|\bexplor\w*\b|\bgaug\w*\b|\bhoping\b/i;
 
 const DENIAL =
-  /\b(den(y|ies|ied)|no truth|not (trading|shopping|interested)|won'?t (trade|be traded)|shoots? down|refutes?|no plans to (trade|move))\b/i;
+  /\b(den(y|ies|ied)|no truth|not (trading|shopping|interested)|no interest in trad\w*|won'?t (trade|be traded)|shoots? down|refutes?|no plans to (trade|move))\b/i;
 const AGREEMENT = /\bagree(s|d)?\b|\bagreement\b|\bfinaliz\w*\b|\bdeal (is )?done\b/i;
 const NO_TALKS =
   /\b(haven'?t|hasn'?t|no|not|wait\w*|won'?t|until)\b[^.]{0,40}\b(talks|engaged|negotiat\w*)\b/i;
@@ -86,12 +99,14 @@ function negotiationLevel(title: string, agreement: boolean): MovementHeadlineCl
   return undefined;
 }
 
-function claimTypeFor(title: string): MovementClaimType | null {
-  if (TRADE_REQUEST.test(title)) return "trade_request";
-  if (EXTENSION.test(title)) return "extension_talks";
-  if (TRADE.test(title)) return "trade_interest";
-  if (FREE_AGENCY.test(title)) return "free_agent_interest";
-  if (CONTRACT.test(title)) return "contract_movement";
+function claimTypeFor(title: string): { type: MovementClaimType; loose: boolean } | null {
+  if (TRADE_REQUEST.test(title)) return { type: "trade_request", loose: false };
+  if (EXTENSION.test(title)) return { type: "extension_talks", loose: false };
+  if (TRADE_STRONG.test(title)) return { type: "trade_interest", loose: false };
+  if (FREE_AGENCY_STRONG.test(title)) return { type: "free_agent_interest", loose: false };
+  if (TRADE_LOOSE.test(title)) return { type: "trade_interest", loose: true };
+  if (FREE_AGENCY_LOOSE.test(title)) return { type: "free_agent_interest", loose: true };
+  if (CONTRACT.test(title)) return { type: "contract_movement", loose: false };
   return null;
 }
 
@@ -121,18 +136,22 @@ export function classifyMovementHeadline(
   const title = input.title.trim();
   if (!title) return null;
   if (RETROSPECTIVE.test(title) || ANALYSIS.test(title)) return null;
-  if (OFF_COURT.test(title) || OTHER_LEAGUE.test(title)) return null;
+  if (OFF_COURT.test(title) || OTHER_LEAGUE.test(title) || COMMENTARY.test(title)) return null;
+  if (NEGATED_INTEREST.test(title) && !DENIAL.test(title)) return null;
   if (MINOR_MOVE.test(title) && !/\b(extension|trade)\b/i.test(title)) return null;
 
-  const claimType = claimTypeFor(title);
-  if (!claimType) return null;
+  const matched = claimTypeFor(title);
+  if (!matched) return null;
+  const claimType = matched.type;
   if (claimType === "contract_movement" && DONE_SIGNING.test(title) && !AGREEMENT.test(title)) {
     return null;
   }
 
   const hasReporters = (input.reporters ?? []).length > 0;
   const reported = REPORTING_CUE.test(title) || hasReporters;
-  const onRecord = ON_RECORD.test(title) || DENIAL.test(title);
+  const onRecord =
+    ((QUOTED.test(title) || ON_RECORD_VERB.test(title)) && !ANONYMOUS_SPEAKER.test(title)) ||
+    DENIAL.test(title);
   if (SPECULATION.test(title) && !reported) return null;
 
   let evidenceClass: MovementHeadlineClass["evidenceClass"];
@@ -149,5 +168,6 @@ export function classifyMovementHeadline(
     negotiationSpecificity: negotiationLevel(title, agreement),
     denial: DENIAL.test(title),
     agreement,
+    needsTeam: matched.loose,
   };
 }

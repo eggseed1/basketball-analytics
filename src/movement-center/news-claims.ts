@@ -175,6 +175,10 @@ export function buildNewsClusters(
       skipped += 1;
       continue;
     }
+    if (verdict.needsTeam && !entities.teamIds.length) {
+      skipped += 1;
+      continue;
+    }
 
     const source = sourceFor(row, verdict.provenanceKind);
     sources[source.id] = source.tier;

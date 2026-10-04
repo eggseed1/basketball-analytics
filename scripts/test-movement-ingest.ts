@@ -69,9 +69,40 @@ function testClassifier() {
     "Who will be next member from 2023 NBA Draft class to sign a big-money extension?",
     "D'Angelo Russell Signs With Shanghai Sharks Of CBA",
     "Kawhi Leonard contract breakdown: What $115 million extension means",
+    "Donovan Mitchell Signs Multi-Year Extension With Adidas",
+    "Video shows Ja Morant’s 7-word reaction to being traded by the Grizzlies",
+    "Jalen Duren gets roasted after Pistons give big contract to Ausar Thompson",
+    "Steph Curry has no interest in the LeBron James approach to free agency",
+    "Paul George’s contract is valuable, executive says",
   ]) {
     assert.equal(classify(title), null, title);
   }
+
+  // Possessive apostrophes are not quotes, and an anonymous exec is not on the record.
+  assert.equal(classify("Knicks have reportedly made Deuce McBride’s future a trade talking point")?.provenanceKind, "cites_report");
+  assert.notEqual(classify("NBA rumors: Warriors rival exec’s Spidey Sense tingling for Kristaps Porzingis trade")?.provenanceKind, "official_statement");
+  assert.equal(classify("KAT itching for Knicks extension: 'I want to play here'", "ESPN")?.provenanceKind, "official_statement");
+  assert.equal(classify("Lakers have no interest in trading Austin Reaves")?.denial, true);
+  // "Interest in" alone needs a named team before it counts.
+  assert.equal(classify("Bulls had interest in Jonathan Kuminga with one notable caveat")?.needsTeam, true);
+  assert.equal(classify("Kyrie Irving is being linked to 2 teams in trade rumors")?.needsTeam, false);
+}
+
+/** A capitalized first name before a surname belongs to someone else. */
+function testSurnameGuard() {
+  const r = createHeadlineEntityResolver([
+    { playerId: "ks", name: "Kobe Sanders" },
+    { playerId: "kmid", name: "Khris Middleton" },
+    { playerId: "sp", name: "Scotty Pippen Jr." },
+  ]);
+  assert.deepEqual(r("Deion Sanders tells incredible basketball story during Nuggets visit").playerIds, []);
+  assert.deepEqual(r("John Middleton says something about the city").playerIds, []);
+  assert.deepEqual(r("Scottie Pippen rips Michael Jordan again").playerIds, []);
+  assert.deepEqual(r("Nuggets' Sanders impresses in preseason").playerIds, ["ks"]);
+  assert.deepEqual(r("Rookie Sanders impresses in preseason").playerIds, ["ks"]);
+  assert.deepEqual(r("Middleton returns for the Wizards").playerIds, ["kmid"]);
+  // Title case capitalizes every word, so the guard stays off.
+  assert.deepEqual(r("Nuggets Sign Guard Sanders To Two-Way Deal").playerIds, ["ks"]);
 }
 
 function testReporters() {
@@ -367,6 +398,7 @@ function testLiveResolve() {
 }
 
 testClassifier();
+testSurnameGuard();
 testReporters();
 testDealSides();
 testClustering();

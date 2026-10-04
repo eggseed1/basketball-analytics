@@ -3,8 +3,10 @@
  *
  * Full names always match. A surname alone matches only when exactly one
  * rostered player carries it and it is not an ordinary English word, so
- * "Green" or "Young" never resolve on their own. Team nicknames resolve to
- * ESPN team ids.
+ * "Green" or "Young" never resolve on their own. In sentence-case text a
+ * surname right after some other capitalized first name ("Deion Sanders",
+ * "Scottie Pippen") is someone else and doesn't match. Team nicknames resolve
+ * to ESPN team ids.
  */
 
 export type HeadlineRosterPlayer = {
@@ -131,7 +133,54 @@ const TEAM_NAME_EXCLUSIONS: Record<string, RegExp> = {
 
 export type HeadlineEntityResolver = (text: string) => HeadlineEntities;
 
-type NamePattern = { pattern: RegExp; playerId: string; hyphenated?: boolean };
+type NamePattern = {
+  pattern: RegExp;
+  playerId: string;
+  hyphenated?: boolean;
+  /** Folded, lowercased first name; set for surname-only patterns. */
+  firstName?: string;
+};
+
+/** Capitalized words that can sit right before a surname without being a first name. */
+const LEAD_WORDS = new Set(
+  [
+    "rookie", "star", "superstar", "guard", "forward", "center", "wing", "big", "coach",
+    "veteran", "former", "ex", "new", "young", "sophomore", "why", "how", "what", "when",
+    "where", "will", "can", "could", "should", "would", "is", "are", "was", "does", "did",
+    "inside", "watch", "video", "breaking", "report", "sources", "source", "nba", "the",
+    "and", "but", "after", "before", "with", "for", "as", "if", "while", "per", "via",
+  ]
+);
+
+const TEAM_WORDS = new Set(
+  Object.values(ESPN_TEAM_NICKNAMES)
+    .flat()
+    .flatMap((name) => name.toLowerCase().split(" "))
+);
+
+/** Title-case headlines capitalize every word, so a capital tells us nothing there. */
+function isTitleCase(text: string): boolean {
+  const words = text.match(/[A-Za-z][A-Za-z'-]{3,}/g) ?? [];
+  if (words.length < 4) return false;
+  return words.filter((w) => /^[A-Z]/.test(w)).length / words.length >= 0.75;
+}
+
+/** True when the surname at `index` follows a different person's first name. */
+function followsOtherFirstName(text: string, index: number, firstName: string): boolean {
+  const before = text.slice(0, index).match(/([A-Z][a-z][A-Za-z'.-]*)\s+$/);
+  if (!before) return false;
+  const word = before[1]!.replace(/'s?$/, "").replace(/\.$/, "").toLowerCase();
+  return word !== firstName && !LEAD_WORDS.has(word) && !TEAM_WORDS.has(word);
+}
+
+function surnameMatches(entry: NamePattern, text: string, checkFirstName: boolean): boolean {
+  if (!checkFirstName || !entry.firstName) return entry.pattern.test(text);
+  const global = new RegExp(entry.pattern.source, "g");
+  for (const match of text.matchAll(global)) {
+    if (!followsOtherFirstName(text, match.index ?? 0, entry.firstName)) return true;
+  }
+  return false;
+}
 
 export function createHeadlineEntityResolver(
   roster: HeadlineRosterPlayer[],
@@ -162,6 +211,7 @@ export function createHeadlineEntityResolver(
       pattern: wordPattern(display),
       playerId: owner.playerId,
       hyphenated: display.includes("-"),
+      firstName: normalizeForMatch(owner.name).split(" ")[0],
     });
   }
 
@@ -203,8 +253,11 @@ export function createHeadlineEntityResolver(
     }
     if (!options.fullNamesOnly) {
       const masked = hyphenatedNames ? folded.replace(hyphenatedNames, " ") : folded;
+      const checkFirstName = !isTitleCase(folded);
       for (const entry of [...surnames, ...nicknames]) {
-        if (entry.pattern.test(entry.hyphenated ? folded : masked)) playerIds.add(entry.playerId);
+        if (surnameMatches(entry, entry.hyphenated ? folded : masked, checkFirstName)) {
+          playerIds.add(entry.playerId);
+        }
       }
     }
     const teamIds = new Set<string>();
