@@ -53,7 +53,10 @@ export type NbaTransactionEvent = {
   season: string;
   teamId: string;
   teamAbbr?: string;
-  /** Raw ESPN description — never rewritten into fake structure. */
+  /**
+   * Source description, never rewritten into fake structure. ESPN rows are
+   * verbatim; NBA.com rows join one team's per-player lines for a deal.
+   */
   description: string;
   /**
    * Keyword classification of the description.

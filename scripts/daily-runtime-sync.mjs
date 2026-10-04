@@ -158,6 +158,13 @@ const TRANSACTION_STEPS = [
     ],
   },
   {
+    // Gap filler; on failure the previous file stays and the snapshot still rebuilds.
+    label: "nba-player-movement",
+    cmd: "npx",
+    args: ["tsx", "--conditions=react-server", "scripts/ingest-nba-player-movement.ts"],
+    optional: true,
+  },
+  {
     label: "transactions-snapshot",
     cmd: "node",
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
@@ -166,15 +173,17 @@ const TRANSACTION_STEPS = [
 const SOFT_FAIL = new Set(["drbl-recompute", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
+  const failed = [];
   for (const step of TRANSACTION_STEPS) {
     try {
       await run(step.cmd, step.args);
     } catch (error) {
       log(`soft-fail ${step.label}: ${error instanceof Error ? error.message : String(error)}`);
-      return step.label;
+      failed.push(step.label);
+      if (!step.optional) break;
     }
   }
-  return null;
+  return failed.length ? failed.join(", ") : null;
 }
 
 async function main() {

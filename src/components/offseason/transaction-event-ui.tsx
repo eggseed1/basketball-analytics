@@ -12,7 +12,7 @@ import {
   presentationForRelatedCluster,
   presentationForSourceEvent,
 } from "@/lib/transaction-event-presentation";
-import { sourceTextCategoryLabel } from "@/offseason";
+import { sourceTextCategoryLabel, transactionSourceName } from "@/offseason";
 import { TeamLogo } from "@/components/brand/team-logo";
 import { useQueryNav } from "@/components/continuity/query-nav";
 import { TradeAcquireBoxes } from "@/components/offseason/trade-acquire-boxes";
@@ -29,6 +29,11 @@ import { monthLabel } from "@/data/providers/transactions/offseason-window";
 import { cn } from "@/lib/utils";
 
 export { sourceTextCategoryLabel };
+
+function sourceNames(events: NbaTransactionEvent[]): string {
+  const names = [...new Set(events.map((e) => transactionSourceName(e.source)))];
+  return names.length > 1 ? `${names.slice(0, -1).join(", ")} and ${names.at(-1)}` : (names[0] ?? "ESPN");
+}
 
 function teamAbbr(event: NbaTransactionEvent): string {
   const brand =
@@ -51,6 +56,7 @@ export function TransactionEventRow({
   sourceTextOnly?: boolean;
 }) {
   const abbr = teamAbbr(event);
+  const sourceName = transactionSourceName(event.source);
   const presentation = presentationForSourceEvent(event);
   const isTradeRelated = presentation.kind === "trade_related_transaction";
   const tradeAcquire =
@@ -104,8 +110,8 @@ export function TransactionEventRow({
         <p className="mt-1 text-[12px] font-semibold text-muted-foreground">
           {presentation.sourceCountLabel}
           {isTradeRelated
-            ? " · ESPN transaction archive"
-            : " · ESPN transaction note"}
+            ? ` · ${sourceName} transaction archive`
+            : ` · ${sourceName} transaction note`}
         </p>
         {tradeAcquire ? (
           <TradeAcquireBoxes
@@ -122,7 +128,7 @@ export function TransactionEventRow({
         )}
         <p className="mt-1 text-[12px] text-muted-foreground">
           Season {event.season}
-          {!isTradeRelated ? " · ESPN transaction archive" : ""}
+          {!isTradeRelated ? ` · ${sourceName} transaction archive` : ""}
           {!hideClusterHint && event.relatedClusterId
             ? " · part of a related-event cluster"
             : ""}{" "}
@@ -133,7 +139,7 @@ export function TransactionEventRow({
           {event.sourceUrl ? (
             <>
               {" · "}
-              <TextLink href={event.sourceUrl}>ESPN source</TextLink>
+              <TextLink href={event.sourceUrl}>{sourceName} source</TextLink>
             </>
           ) : null}
         </p>
@@ -191,7 +197,7 @@ export function RelatedEventClusterCard({
           <p className="mt-1 text-[14px] text-muted-foreground">
             {presentation.sourceCountLabel}
             {isTradeRelated
-              ? ". Source evidence from the ESPN transaction archive, not a verified structured trade ledger."
+              ? `. Source evidence from ${sourceNames(events)} transaction records, not a verified structured trade ledger.`
               : ". Assembled from source events, not a verified structured trade ledger."}
           </p>
           {tradeAcquire ? (
@@ -408,7 +414,7 @@ export function OffseasonFilters({
       </div>
       <MoreInfo summary="How search works">
         <p>
-          Search matches the free text of ESPN descriptions, not player identities. Same-day
+          Search matches the text of ESPN and NBA.com descriptions, not player identities. Same-day
           activity stays separate unless reciprocal evidence shows one underlying transaction.
         </p>
       </MoreInfo>
@@ -525,6 +531,8 @@ export function TransactionEventDetail({
     tradeAcquire?.sides.map((s) => s.teamAbbr) ??
     clusterAbbrs ??
     [abbr];
+  const sourceName = transactionSourceName(event.source);
+  const fromNbaCom = event.source === "nba-player-movement";
 
   return (
     <div className="sports-card flex flex-col gap-3 px-4 py-4 sm:px-5">
@@ -574,7 +582,7 @@ export function TransactionEventDetail({
 
       <div>
         <p className="text-[12px] font-semibold text-muted-foreground">
-          ESPN transaction note
+          {sourceName} transaction note
         </p>
         <TransactionDescription
           description={event.description}
@@ -589,7 +597,7 @@ export function TransactionEventDetail({
             {clusterAbbrs?.join(" ↔ ") ?? "Related teams"}
           </p>
           <p className="mt-1 text-[12px] text-muted-foreground">
-            Related ESPN transaction events
+            Related transaction events
           </p>
           <ul className="mt-3 flex flex-col gap-3">
             {[event, ...related].map((e) => (
@@ -631,17 +639,16 @@ export function TransactionEventDetail({
         </div>
       ) : (
         <p className="text-[12px] text-muted-foreground">
-          This is a single-team ESPN source event. One-sided wording (for
-          example “acquired X for draft considerations”) is shown exactly as
-          recorded. DRBL does not invent the other side of the deal from free
-          text.
+          {fromNbaCom
+            ? "This is a single-team NBA.com source event. NBA.com lists each player or pick a team received on its own line, and DRBL joins one team's lines for a deal into this sentence without adding anything."
+            : "This is a single-team ESPN source event. One-sided wording (for example “acquired X for draft considerations”) is shown exactly as recorded. DRBL does not invent the other side of the deal from free text."}
         </p>
       )}
 
       <dl className="grid gap-2 text-[12px] text-muted-foreground sm:grid-cols-2">
         <div>
           <dt className="font-semibold text-foreground">Source</dt>
-          <dd>ESPN transaction archive</dd>
+          <dd>{fromNbaCom ? "NBA.com player movement, filling a gap in ESPN's feed" : `${sourceName} transaction archive`}</dd>
         </div>
         <div>
           <dt className="font-semibold text-foreground">
@@ -664,8 +671,8 @@ export function TransactionEventDetail({
         </div>
       </dl>
       <p className="text-[12px] text-muted-foreground">
-        This record is ESPN&apos;s free text. Players and picks are read from
-        it, not from a structured ownership ledger.
+        {fromNbaCom ? "This record is built from NBA.com's lines." : `This record is ${sourceName}'s free text.`}{" "}
+        Players and picks are read from it, not from a structured ownership ledger.
       </p>
     </div>
   );

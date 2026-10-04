@@ -128,6 +128,7 @@ jobs:
             data/movement-center/v1/snapshot.json \
             src/data/runtime/movement-snapshot.json \
             data/transactions/espn-site-v2/v1 \
+            data/transactions/nba-player-movement/v1 \
             src/data/runtime/transactions-snapshot.json \
             src/data/runtime/bref-team-contracts-snapshot.json \
             data/front-office/v1 \

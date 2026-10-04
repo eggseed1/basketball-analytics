@@ -1,0 +1,13 @@
+{
+  "source": "nba-player-movement",
+  "datasetVersion": "1.0",
+  "sourceUrl": "https://www.nba.com/players/transactions",
+  "builtAt": "2026-10-04T02:44:55.940Z",
+  "sourceRowCount": 9927,
+  "eventCount": 9129,
+  "alreadyCoveredCount": 4581,
+  "transactionCount": 4548,
+  "earliestDate": "2015-07-01",
+  "latestDate": "2026-09-30",
+  "note": "NBA.com moves (July 2015 on) that no ESPN or curated row covers. Covered means a row for the same team names one of the players within 7 days (10 for trades), or within 30 days with the same kind of verb."
+}

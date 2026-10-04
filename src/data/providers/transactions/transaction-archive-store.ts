@@ -37,6 +37,15 @@ export const CURATED_TRANSACTIONS_RELATIVE = path.join(
   "transactions.jsonl"
 );
 
+/** NBA.com moves missing from ESPN (scripts/ingest-nba-player-movement.ts). */
+export const NBA_MOVEMENT_TRANSACTIONS_RELATIVE = path.join(
+  "data",
+  "transactions",
+  "nba-player-movement",
+  "v1",
+  "transactions.jsonl"
+);
+
 export type TransactionArchiveManifest = {
   source: string;
   datasetVersion: string;
@@ -174,16 +183,17 @@ export async function loadTransactionArchive(
     const transactions = parseJsonl<CanonicalTransaction>(
       await readFile(path.join(root, "transactions.jsonl"), "utf8")
     );
-    let curated: CanonicalTransaction[] = [];
-    try {
-      curated = parseJsonl<CanonicalTransaction>(
-        await readFile(path.join(cwd, CURATED_TRANSACTIONS_RELATIVE), "utf8")
-      );
-    } catch {
-      curated = [];
-    }
+    const readOptional = async (relative: string) => {
+      try {
+        return parseJsonl<CanonicalTransaction>(await readFile(path.join(cwd, relative), "utf8"));
+      } catch {
+        return [];
+      }
+    };
+    const curated = await readOptional(CURATED_TRANSACTIONS_RELATIVE);
+    const nbaMovement = await readOptional(NBA_MOVEMENT_TRANSACTIONS_RELATIVE);
     const mergedById = new Map(transactions.map((tx) => [tx.id, tx]));
-    for (const tx of curated) mergedById.set(tx.id, tx);
+    for (const tx of [...curated, ...nbaMovement]) mergedById.set(tx.id, tx);
     const mergedTransactions = [...mergedById.values()].sort((a, b) =>
       a.date.localeCompare(b.date)
     );
