@@ -14,6 +14,23 @@ const nextConfig: NextConfig = {
     FULL_EDGE_PRODUCT: process.env.FULL_EDGE_PRODUCT ?? "1",
     DATA_PROVIDER: process.env.DATA_PROVIDER ?? "nba",
   },
+  poweredByHeader: false,
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          { key: "Strict-Transport-Security", value: "max-age=31536000; includeSubDomains" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+          // frame-ancestors only; a script/style policy needs the inline theme boot script hashed first.
+          { key: "Content-Security-Policy", value: "frame-ancestors 'self'" },
+          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=(), payment=(), usb=()" },
+        ],
+      },
+    ];
+  },
   async redirects() {
     return [
       {
