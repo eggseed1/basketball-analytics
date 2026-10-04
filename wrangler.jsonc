@@ -1,6 +1,7 @@
 {
 	"$schema": "node_modules/wrangler/config-schema.json",
-	"main": ".open-next/worker.js",
+	// Wraps the generated .open-next/worker.js to rate limit /api/* before Next runs.
+	"main": "worker.ts",
 	"name": "basketball-analytics",
 	"compatibility_date": "2026-08-24",
 	"compatibility_flags": [
@@ -26,6 +27,20 @@
 		// see https://opennext.js.org/cloudflare/howtos/image
 		"binding": "IMAGES"
 	},
+	"ratelimits": [
+		{
+			// Per client IP, per Cloudflare location, and counted loosely across machines,
+			// so the real ceiling is a few times this. Live pages poll a few times a minute.
+			// Newly picked namespace IDs never denied in testing; 1001 does (workers-sdk#15417).
+			// Keys are prefixed "api:" because counters are shared account-wide per namespace.
+			"name": "API_RATE_LIMITER",
+			"namespace_id": "1001",
+			"simple": {
+				"limit": 60,
+				"period": 60
+			}
+		}
+	],
 	"vars": {
 		"DATA_PROVIDER": "nba",
 		// Workers Paid: restore full product (no free-tier UI/data stripping).
