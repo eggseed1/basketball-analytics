@@ -1,0 +1,54 @@
+# Pulls a YouTube comment sample for the fan-tone eval set using the
+# YOUTUBE_API_KEY secret. The repo is public, so the sample (third-party
+# comment text) is encrypted to the caller's RSA public key before upload and
+# the artifact expires after a day. Logs only show channel names and counts.
+#
+#   openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:3072 -out /tmp/fan-eval.key
+#   gh workflow run fan-eval-sample.yml -f public_key="$(openssl pkey -in /tmp/fan-eval.key -pubout | base64 | tr -d '\n')"
+name: Fan eval sample
+
+on:
+  workflow_dispatch:
+    inputs:
+      public_key:
+        description: "Base64 RSA public key (PEM) to encrypt the sample to"
+        required: true
+      channels:
+        description: "Evenly spaced channels to sample"
+        default: "12"
+
+permissions:
+  contents: read
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Sample YouTube comments
+        env:
+          YOUTUBE_API_KEY: ${{ secrets.YOUTUBE_API_KEY }}
+          CHANNELS: ${{ inputs.channels }}
+        run: npx tsx --conditions=react-server scripts/sentiment-ingest-youtube.ts --sample "$RUNNER_TEMP/sample.jsonl" --sample-channels "$CHANNELS"
+      - name: Encrypt sample
+        env:
+          PUBLIC_KEY: ${{ inputs.public_key }}
+        run: |
+          set -euo pipefail
+          out="$RUNNER_TEMP/out" && mkdir -p "$out"
+          echo "$PUBLIC_KEY" | base64 -d > "$RUNNER_TEMP/pub.pem"
+          openssl rand -hex 32 > "$RUNNER_TEMP/pass"
+          openssl enc -aes-256-cbc -pbkdf2 -salt -pass "file:$RUNNER_TEMP/pass" -in "$RUNNER_TEMP/sample.jsonl" -out "$out/sample.enc"
+          openssl pkeyutl -encrypt -pubin -inkey "$RUNNER_TEMP/pub.pem" -pkeyopt rsa_padding_mode:oaep -in "$RUNNER_TEMP/pass" -out "$out/pass.enc"
+          rm "$RUNNER_TEMP/sample.jsonl" "$RUNNER_TEMP/pass"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: fan-eval-sample
+          path: ${{ runner.temp }}/out
+          retention-days: 1
