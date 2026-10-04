@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-03",
-    "retrievedAt": "2026-10-03T20:57:17.899Z",
+    "snapshotDate": "2026-10-04",
+    "retrievedAt": "2026-10-04T01:54:01.414Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
+    "sourceHash": "e6fd819efcd86be015777cf03ea16143442c26f730be7e6629dd409f6a98145a",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -349,6 +349,29 @@
           "href": "/players/4432737"
         },
         {
+          "playerId": "4433138",
+          "playerName": "Nimari Burnett",
+          "age": null,
+          "contractId": "cy-4433138-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4433138-2026",
+              "playerId": "4433138",
+              "franchiseId": "28",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4433138"
+        },
+        {
           "playerId": "5149115",
           "playerName": "Allen Graves",
           "age": null,
@@ -519,7 +542,7 @@
       ],
       "playerSalaryCommitments": 156022890,
       "playersWithSalary": 11,
-      "playersWithoutSalary": 9
+      "playersWithoutSalary": 10
     },
     "draftAssets": {
       "franchiseId": "28",

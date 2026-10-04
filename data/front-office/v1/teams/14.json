@@ -1,14 +1,14 @@
 {
   "meta": {
     "methodologyVersion": "p18c2-1.0",
-    "snapshotDate": "2026-10-03",
-    "retrievedAt": "2026-10-03T20:57:17.899Z",
+    "snapshotDate": "2026-10-04",
+    "retrievedAt": "2026-10-04T01:54:01.414Z",
     "sourceSet": [
       "espn-site-roster-live",
       "data/salaries/player-salaries-2000-2025.csv",
       "data/cba/league-cap-seasons.json"
     ],
-    "sourceHash": "cc0f7f71a485537f57f5e203fbc261335481f971bc53963eec13e47c64c89b98",
+    "sourceHash": "e6fd819efcd86be015777cf03ea16143442c26f730be7e6629dd409f6a98145a",
     "status": "VALIDATED",
     "season": "2026-27",
     "seasonStartYear": 2026
@@ -487,6 +487,29 @@
           "href": "/players/1631311"
         },
         {
+          "playerId": "4693954",
+          "playerName": "Ian Schieffelin",
+          "age": null,
+          "contractId": "cy-4693954-2026",
+          "contractType": "UNKNOWN",
+          "years": [
+            {
+              "contractId": "cy-4693954-2026",
+              "playerId": "4693954",
+              "franchiseId": "14",
+              "season": "2026-27",
+              "salary": null,
+              "capHit": null,
+              "guaranteedAmount": null,
+              "guaranteeStatus": "UNKNOWN",
+              "optionType": "UNKNOWN",
+              "source": "espn-roster-no-salary"
+            }
+          ],
+          "guaranteedTotal": null,
+          "href": "/players/4693954"
+        },
+        {
           "playerId": "1630696",
           "playerName": "Dru Smith",
           "age": null,
@@ -519,7 +542,7 @@
       ],
       "playerSalaryCommitments": 178046908,
       "playersWithSalary": 12,
-      "playersWithoutSalary": 8
+      "playersWithoutSalary": 9
     },
     "draftAssets": {
       "franchiseId": "14",
