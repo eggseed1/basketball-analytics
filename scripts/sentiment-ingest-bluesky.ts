@@ -23,6 +23,8 @@ import {
 import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
+import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+
 type BlueskyConfig = {
   limit: number;
   maxPages?: number;
@@ -141,7 +143,9 @@ async function main() {
   const fetchedAt = new Date().toISOString();
   const since = new Date(Date.now() - config.lookbackHours * 3_600_000).toISOString();
   const rows = new Map<string, FanPostIngestItem>();
-  const dryRun = process.argv.includes("--dry-run");
+  const samplePath = sampleOutputPath();
+  const sampleText = new Map<string, string>();
+  const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
   let failures = 0;
 
   for (const query of config.queries) {
@@ -179,7 +183,8 @@ async function main() {
           modelVersion: FAN_LEXICON_VERSION,
         });
         kept += 1;
-        if (dryRun && kept <= 3) {
+        if (samplePath) sampleText.set(id, text);
+        if (dryRun && !samplePath && kept <= 3) {
           console.log(`    ${tone.score.toFixed(2).padStart(5)} ${text.replace(/\s+/g, " ").slice(0, 110)}`);
         }
       }
@@ -193,6 +198,7 @@ async function main() {
 
   if (failures === config.queries.length) throw new Error("every Bluesky query failed");
   const all = [...rows.values()];
+  if (samplePath) writeSample(samplePath, all, sampleText, nameById);
   if (dryRun) {
     console.log(`sentiment:ingest:bluesky dry run kept=${all.length}`);
     return;

@@ -25,6 +25,8 @@ import {
 import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
+import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+
 type YoutubeConfig = {
   videosPerChannel: number;
   maxVideoAgeDays: number;
@@ -113,9 +115,11 @@ async function main() {
   const fetchedAt = new Date().toISOString();
   const oldestVideoMs = Date.now() - config.maxVideoAgeDays * 86_400_000;
   const rows = new Map<string, FanPostIngestItem>();
-  const dryRun = process.argv.includes("--dry-run");
+  const samplePath = sampleOutputPath();
+  const sampleText = new Map<string, string>();
+  const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
   let failures = 0;
-  const plans: ChannelPlan[] = [
+  const allPlans: ChannelPlan[] = [
     ...config.channels.map((c) => ({
       channelId: c.channelId,
       name: c.name,
@@ -141,6 +145,11 @@ async function main() {
       multiSport: Boolean(c.multiSport),
     })),
   ];
+  const channelCap = Number(process.argv[process.argv.indexOf("--sample-channels") + 1]);
+  const plans =
+    samplePath && process.argv.includes("--sample-channels") && channelCap > 0
+      ? allPlans.filter((_, i) => i % Math.ceil(allPlans.length / channelCap) === 0)
+      : allPlans;
 
   for (const channel of plans) {
     let kept = 0;
@@ -216,7 +225,8 @@ async function main() {
             modelVersion: FAN_LEXICON_VERSION,
           });
           kept += 1;
-          if (dryRun && kept <= 2) {
+          if (samplePath) sampleText.set(id, text);
+          if (dryRun && !samplePath && kept <= 2) {
             console.log(`    ${tone.score.toFixed(2).padStart(5)} ${text.replace(/\s+/g, " ").slice(0, 110)}`);
           }
         }
@@ -231,6 +241,7 @@ async function main() {
 
   if (failures && !rows.size) throw new Error("YouTube ingest kept no comments");
   const all = [...rows.values()];
+  if (samplePath) writeSample(samplePath, all, sampleText, nameById);
   if (dryRun) {
     console.log(`sentiment:ingest:youtube dry run kept=${all.length}`);
     return;

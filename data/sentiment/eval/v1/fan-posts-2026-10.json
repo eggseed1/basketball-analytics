@@ -1,0 +1,682 @@
+{
+ "description": "Tone toward one named player for fan posts that passed the nightly ingest filters, sampled Oct 3, 2026 (Bluesky logged-out search; YouTube comments from 12 evenly spaced configured channels). Labeled -1, 0 or +1 by the coding agent (not a human panel) from the post text alone; wrong_player means the name refers to someone else. Lists, injury and lineup reports and satire are 0. Post text was not kept. key is postId:playerId with the same hashed post id as the ingest store.",
+ "labeler": "coding agent, single pass, scores hidden while labeling",
+ "lexicon": "fan-lexicon-v1.2",
+ "items": [
+  {
+   "key": "035c23f1295358aa:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.94
+  },
+  {
+   "key": "919c28bdb28796a2:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.96
+  },
+  {
+   "key": "806578fb3bb33610:4066261",
+   "platform": "bluesky",
+   "playerId": "4066261",
+   "playerName": "Bam Adebayo",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": -0.24
+  },
+  {
+   "key": "b48a84248b7954c0:4684742",
+   "platform": "bluesky",
+   "playerId": "4684742",
+   "playerName": "Ausar Thompson",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.91
+  },
+  {
+   "key": "0e869b0babce3bbf:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "01bb63d0797e4140:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "aaf7635fb6deb349:4431684",
+   "platform": "bluesky",
+   "playerId": "4431684",
+   "playerName": "Trayce Jackson-Davis",
+   "otherPlayerCount": 4,
+   "label": 0,
+   "score": 0.96
+  },
+  {
+   "key": "efb73c08f470bb17:3112335",
+   "platform": "bluesky",
+   "playerId": "3112335",
+   "playerName": "Nikola Jokić",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.24
+  },
+  {
+   "key": "b858952c5d5610a5:3992",
+   "platform": "bluesky",
+   "playerId": "3992",
+   "playerName": "James Harden",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "2e523c2eb5ec0b7c:4431678",
+   "platform": "bluesky",
+   "playerId": "4431678",
+   "playerName": "Tyrese Maxey",
+   "otherPlayerCount": 2,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "760f17f8051b5232:3917376",
+   "platform": "bluesky",
+   "playerId": "3917376",
+   "playerName": "Jaylen Brown",
+   "otherPlayerCount": 4,
+   "label": 0,
+   "score": 0.91
+  },
+  {
+   "key": "ae4a6e6a9788440e:4594268",
+   "platform": "bluesky",
+   "playerId": "4594268",
+   "playerName": "Anthony Edwards",
+   "otherPlayerCount": 0,
+   "label": "wrong_player",
+   "score": -0.24
+  },
+  {
+   "key": "ce3ccac8daf9c837:4432241",
+   "platform": "bluesky",
+   "playerId": "4432241",
+   "playerName": "Jamal Shead",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 0.85
+  },
+  {
+   "key": "699df72098c9c7ad:4684272",
+   "platform": "bluesky",
+   "playerId": "4684272",
+   "playerName": "Ja'Kobe Walter",
+   "otherPlayerCount": 4,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "c802d61888c7053d:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.76
+  },
+  {
+   "key": "97e2d76b6a36a8f7:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.76
+  },
+  {
+   "key": "ab8338d302a5a945:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "ef1fc1bd179db2fa:3059318",
+   "platform": "bluesky",
+   "playerId": "3059318",
+   "playerName": "Joel Embiid",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.24
+  },
+  {
+   "key": "3c954f844d62ec10:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 5,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "83ee99401a3f0e10:3112335",
+   "platform": "bluesky",
+   "playerId": "3112335",
+   "playerName": "Nikola Jokić",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.46
+  },
+  {
+   "key": "e6b5a090ad82f3ef:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0
+  },
+  {
+   "key": "bc3d76c4d8a61321:6609",
+   "platform": "bluesky",
+   "playerId": "6609",
+   "playerName": "Khris Middleton",
+   "otherPlayerCount": 0,
+   "label": "wrong_player",
+   "score": 0.99
+  },
+  {
+   "key": "16580824447112e6:4683774",
+   "platform": "bluesky",
+   "playerId": "4683774",
+   "playerName": "Bronny James",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "c89d4fe868f5a544:4431684",
+   "platform": "bluesky",
+   "playerId": "4431684",
+   "playerName": "Trayce Jackson-Davis",
+   "otherPlayerCount": 3,
+   "label": 0,
+   "score": -0.24
+  },
+  {
+   "key": "2539ba302161dcd2:4065804",
+   "platform": "bluesky",
+   "playerId": "4065804",
+   "playerName": "Sam Hauser",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "8cebcf5b3c4d921d:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "b9ee326b6eb1ade7:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "3377ec877d020d6a:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "4379292723c091f6:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "cb1207ad46ba67f8:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": -0.76
+  },
+  {
+   "key": "65dd82a2b5677152:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "fe9844fb2756196f:4711297",
+   "platform": "bluesky",
+   "playerId": "4711297",
+   "playerName": "Justin Edwards",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0.76
+  },
+  {
+   "key": "c4b808b27f3ef1b8:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "9a0910ac03d2158f:4433621",
+   "platform": "bluesky",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0.64
+  },
+  {
+   "key": "afea4da580176e02:3134908",
+   "platform": "bluesky",
+   "playerId": "3134908",
+   "playerName": "Jakob Poeltl",
+   "otherPlayerCount": 9,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "2ecd10d50b31ebcd:4433134",
+   "platform": "bluesky",
+   "playerId": "4433134",
+   "playerName": "Scottie Barnes",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "e3f1116bcd14ab6c:3202",
+   "platform": "bluesky",
+   "playerId": "3202",
+   "playerName": "Kevin Durant",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": 0
+  },
+  {
+   "key": "e70681c61b255566:4433621",
+   "platform": "bluesky",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0.94
+  },
+  {
+   "key": "e83cd0383ede6751:4432166",
+   "platform": "bluesky",
+   "playerId": "4432166",
+   "playerName": "Cade Cunningham",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.24
+  },
+  {
+   "key": "45fb2f33196e1d50:4594268",
+   "platform": "bluesky",
+   "playerId": "4594268",
+   "playerName": "Anthony Edwards",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "b353e68b621524d4:2993874",
+   "platform": "bluesky",
+   "playerId": "2993874",
+   "playerName": "Kyle Anderson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.85
+  },
+  {
+   "key": "d3bd7f98452d6581:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.76
+  },
+  {
+   "key": "a7e24e7483d226ed:4431678",
+   "platform": "bluesky",
+   "playerId": "4431678",
+   "playerName": "Tyrese Maxey",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 0.64
+  },
+  {
+   "key": "d03c382f344c77e9:3975",
+   "platform": "bluesky",
+   "playerId": "3975",
+   "playerName": "Stephen Curry",
+   "otherPlayerCount": 2,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "ae5f45914fc72d98:3202",
+   "platform": "bluesky",
+   "playerId": "3202",
+   "playerName": "Kevin Durant",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 1
+  },
+  {
+   "key": "837324a5a49f6378:4432816",
+   "platform": "bluesky",
+   "playerId": "4432816",
+   "playerName": "LaMelo Ball",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.94
+  },
+  {
+   "key": "4de66bbe844dbd2b:4433255",
+   "platform": "bluesky",
+   "playerId": "4433255",
+   "playerName": "Chet Holmgren",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "2f92a3caae8d7f2a:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "0ecce0de0f53bf8e:3992",
+   "platform": "bluesky",
+   "playerId": "3992",
+   "playerName": "James Harden",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "1c53d7c8765091fc:3155942",
+   "platform": "bluesky",
+   "playerId": "3155942",
+   "playerName": "Domantas Sabonis",
+   "otherPlayerCount": 1,
+   "label": -1,
+   "score": -0.24
+  },
+  {
+   "key": "d0d36a58faf5e3a4:4433621",
+   "platform": "bluesky",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.24
+  },
+  {
+   "key": "4d435eb366ad9332:4711297",
+   "platform": "bluesky",
+   "playerId": "4711297",
+   "playerName": "Justin Edwards",
+   "otherPlayerCount": 5,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "0fa3f35ae3c17ba4:5104157",
+   "platform": "bluesky",
+   "playerId": "5104157",
+   "playerName": "Victor Wembanyama",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0.24
+  },
+  {
+   "key": "570ff452a2a2fa8e:6606",
+   "platform": "bluesky",
+   "playerId": "6606",
+   "playerName": "Damian Lillard",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": -0.24
+  },
+  {
+   "key": "5651b164500561bd:3059318",
+   "platform": "bluesky",
+   "playerId": "3059318",
+   "playerName": "Joel Embiid",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.94
+  },
+  {
+   "key": "4ff5efeb3fde2505:4395724",
+   "platform": "bluesky",
+   "playerId": "4395724",
+   "playerName": "Immanuel Quickley",
+   "otherPlayerCount": 5,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "ff661f0fa9928159:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.24
+  },
+  {
+   "key": "429fe14317b5c0be:5144091",
+   "platform": "bluesky",
+   "playerId": "5144091",
+   "playerName": "Jeremiah Fears",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0.91
+  },
+  {
+   "key": "ae2a11cfbb1a8cc0:4395628",
+   "platform": "bluesky",
+   "playerId": "4395628",
+   "playerName": "Zion Williamson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.46
+  },
+  {
+   "key": "a65857811683c942:4914336",
+   "platform": "bluesky",
+   "playerId": "4914336",
+   "playerName": "Shaedon Sharpe",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "1c599a0eac85eedd:4433621",
+   "platform": "bluesky",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.64
+  },
+  {
+   "key": "b9cf0c356739f79a:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 1,
+   "label": -1,
+   "score": -0.64
+  },
+  {
+   "key": "4d91d4546bc9a79a:4433621",
+   "platform": "bluesky",
+   "playerId": "4433621",
+   "playerName": "Jalen Duren",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "99f739cb40c7ae47:4997536",
+   "platform": "bluesky",
+   "playerId": "4997536",
+   "playerName": "Gui Santos",
+   "otherPlayerCount": 0,
+   "label": "wrong_player",
+   "score": -0.64
+  },
+  {
+   "key": "3a17aac0a22eeb78:4683750",
+   "platform": "bluesky",
+   "playerId": "4683750",
+   "playerName": "Jordan Hawkins",
+   "otherPlayerCount": 0,
+   "label": -1,
+   "score": -0.64
+  },
+  {
+   "key": "a9e0a42ad8672711:3202",
+   "platform": "bluesky",
+   "playerId": "3202",
+   "playerName": "Kevin Durant",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0.85
+  },
+  {
+   "key": "b610d8ab8f122bb3:6450",
+   "platform": "bluesky",
+   "playerId": "6450",
+   "playerName": "Kawhi Leonard",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "f345acd6055a77f2:4066261",
+   "platform": "bluesky",
+   "playerId": "4066261",
+   "playerName": "Bam Adebayo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "78d5c3a4cfe7060b:3934672",
+   "platform": "bluesky",
+   "playerId": "3934672",
+   "playerName": "Jalen Brunson",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": -0.46
+  },
+  {
+   "key": "efb67e8a681c3d0a:1966",
+   "platform": "bluesky",
+   "playerId": "1966",
+   "playerName": "LeBron James",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "4b78e33f3143933b:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 1,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "51497d3e36a02346:3032977",
+   "platform": "bluesky",
+   "playerId": "3032977",
+   "playerName": "Giannis Antetokounmpo",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "66fbb3ce469eaa56:4432816",
+   "platform": "bluesky",
+   "playerId": "4432816",
+   "playerName": "LaMelo Ball",
+   "otherPlayerCount": 0,
+   "label": 0,
+   "score": 0
+  },
+  {
+   "key": "bb735413e322cc90:3917376",
+   "platform": "bluesky",
+   "playerId": "3917376",
+   "playerName": "Jaylen Brown",
+   "otherPlayerCount": 0,
+   "label": 1,
+   "score": 0
+  },
+  {
+   "key": "dd89c3d3393d7941:5289900",
+   "platform": "bluesky",
+   "playerId": "5289900",
+   "playerName": "Mohamed Diawara",
+   "otherPlayerCount": 1,
+   "label": 1,
+   "score": 0.76
+  }
+ ]
+}
