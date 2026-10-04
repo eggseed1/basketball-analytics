@@ -125,9 +125,9 @@ function main() {
     "utf8"
   );
   assert.ok(page.includes("TeamPrimaryNav"));
-  assert.ok(page.includes("TeamOverviewBoard"));
-  assert.ok(page.includes("TeamOverviewExploreRail"));
-  assert.ok(page.includes("TeamOverviewIdentityBand"));
+  assert.ok(page.includes("TeamOverviewVisuals"));
+  assert.ok(page.includes("TeamOpeningNight"));
+  assert.ok(page.includes("TeamSeasonRecapIsland"));
   assert.ok(page.includes('tab === "stats"'));
 
   console.log("test-team-page-tabs: ok");

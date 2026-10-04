@@ -24,9 +24,9 @@ import { TeamFranchiseHistoryIsland } from "@/components/teams/team-franchise-hi
 import { TeamMatchupPreview } from "@/components/teams/team-matchup-preview";
 import { TeamMovementIsland } from "@/components/teams/team-movement-island";
 import { TeamSentimentIsland } from "@/components/teams/team-sentiment-island";
-import { TeamPreseasonOverview } from "@/components/teams/team-preseason-overview";
-import { TeamOverviewBoard } from "@/components/teams/team-overview-board";
-import { TeamOverviewIdentityBand } from "@/components/teams/team-overview-identity-band";
+import { TeamOpeningNight } from "@/components/teams/overview/team-opening-night";
+import { TeamOverviewVisuals } from "@/components/teams/overview/team-overview-visuals";
+import { TeamSeasonRecapIsland } from "@/components/teams/overview/team-season-recap-island";
 import { TeamAllStatsRankStrip } from "@/components/teams/team-all-stats-rank-strip";
 import { TeamOrganizationHub } from "@/components/teams/team-organization-hub";
 import { TeamPrimaryNav } from "@/components/teams/team-primary-nav";
@@ -57,9 +57,9 @@ import {
   type TeamPageHrefOpts,
 } from "@/lib/team-destination";
 import { buildTeamRankedMetrics } from "@/lib/team-page-metrics";
+import { nbaTodayIso } from "@/lib/nba-calendar-date";
+import { buildScheduleFacts } from "@/lib/team-overview-data";
 import {
-  assessTeamCoverage,
-  buildTeamIdentityStatements,
   enrichTraitsWithPrior,
   formatTraitPriorDelta,
   groupTraitsForPerformance,
@@ -262,13 +262,6 @@ export default async function TeamProfilePage({
   const offenseMetrics = ranked.filter((m) => m.group === "offense");
   const defenseMetrics = ranked.filter((m) => m.group === "defense");
   const factorMetrics = ranked.filter((m) => m.group === "factors");
-  const strengths = [...traits]
-    .filter((t) => t.percentile >= 67)
-    .slice(0, 3);
-  const weaknesses = [...traits]
-    .filter((t) => t.percentile <= 33)
-    .sort((a, b) => a.percentile - b.percentile)
-    .slice(0, 3);
   const hrefOpts: TeamPageHrefOpts = {
     season,
     tab,
@@ -364,34 +357,29 @@ export default async function TeamProfilePage({
         <TeamContextBar teamId={teamId} tab={tab} hrefOpts={hrefOpts} />
 
         {tab === "overview" ? (
-          seasonAwaitingGames && boardAvailable ? (
-            <TeamPreseasonOverview season={season} teamName={displayName} teamId={teamId} />
-          ) : boardAvailable && analysis ? (
+          seasonAwaitingGames ? (
             <div className="flex flex-col gap-4">
-              <TeamOverviewIdentityBand
-                statements={buildTeamIdentityStatements(traits)}
-                coverageLines={assessTeamCoverage({
-                  hasTeamBoard: true,
-                  traitCount: traits.length,
-                  rosterCount: 0,
-                  gameCount: 0,
-                  transactionCount: 0,
-                }).lines.filter(
-                  (line) =>
-                    line.label === "Current season board" ||
-                    line.label === "League-context traits" ||
-                    line.label === "PBP / five-man lineup nets"
-                )}
+              <TeamOpeningNight
+                facts={buildScheduleFacts(resolvedTeamId, season, nbaTodayIso())}
+                season={season}
+                teamId={teamId}
+                teamName={displayName}
               />
-              <TeamOverviewBoard
-                offense={offenseMetrics}
-                defense={defenseMetrics}
-                factors={factorMetrics}
-                strengths={strengths}
-                weaknesses={weaknesses}
-                howTheyWin={analysis.howTheyWin}
-              />
+              <Suspense
+                fallback={<DestinationSectionSkeleton label={`Loading ${priorSeason} review…`} />}
+              >
+                <TeamSeasonRecapIsland routeTeamId={teamId} season={priorSeason} />
+              </Suspense>
             </div>
+          ) : boardAvailable && analysis ? (
+            <TeamOverviewVisuals
+              team={boardTeam!}
+              league={league}
+              ranked={ranked}
+              traits={traits}
+              howTheyWin={analysis.howTheyWin}
+              season={season}
+            />
           ) : (
             <section
               id="performance"
