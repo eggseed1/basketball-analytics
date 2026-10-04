@@ -10,7 +10,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.94
+   "score": 0.94,
+   "llama33_70b": 1
   },
   {
    "key": "919c28bdb28796a2:1966",
@@ -19,7 +20,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.96
+   "score": 0.96,
+   "llama33_70b": 0
   },
   {
    "key": "806578fb3bb33610:4066261",
@@ -28,7 +30,8 @@
    "playerName": "Bam Adebayo",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 0
   },
   {
    "key": "b48a84248b7954c0:4684742",
@@ -37,7 +40,8 @@
    "playerName": "Ausar Thompson",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.91
+   "score": 0.91,
+   "llama33_70b": 0
   },
   {
    "key": "0e869b0babce3bbf:1966",
@@ -46,7 +50,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "01bb63d0797e4140:3032977",
@@ -55,7 +60,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 0
   },
   {
    "key": "aaf7635fb6deb349:4431684",
@@ -64,7 +70,8 @@
    "playerName": "Trayce Jackson-Davis",
    "otherPlayerCount": 4,
    "label": 0,
-   "score": 0.96
+   "score": 0.96,
+   "llama33_70b": 0
   },
   {
    "key": "efb73c08f470bb17:3112335",
@@ -73,7 +80,8 @@
    "playerName": "Nikola Jokić",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 1
   },
   {
    "key": "b858952c5d5610a5:3992",
@@ -82,7 +90,8 @@
    "playerName": "James Harden",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2e523c2eb5ec0b7c:4431678",
@@ -91,7 +100,8 @@
    "playerName": "Tyrese Maxey",
    "otherPlayerCount": 2,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "760f17f8051b5232:3917376",
@@ -100,7 +110,8 @@
    "playerName": "Jaylen Brown",
    "otherPlayerCount": 4,
    "label": 0,
-   "score": 0.91
+   "score": 0.91,
+   "llama33_70b": 0
   },
   {
    "key": "ae4a6e6a9788440e:4594268",
@@ -109,7 +120,8 @@
    "playerName": "Anthony Edwards",
    "otherPlayerCount": 0,
    "label": "wrong_player",
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 0
   },
   {
    "key": "ce3ccac8daf9c837:4432241",
@@ -118,7 +130,8 @@
    "playerName": "Jamal Shead",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 0.85
+   "score": 0.85,
+   "llama33_70b": 1
   },
   {
    "key": "699df72098c9c7ad:4684272",
@@ -127,7 +140,8 @@
    "playerName": "Ja'Kobe Walter",
    "otherPlayerCount": 4,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 0
   },
   {
    "key": "c802d61888c7053d:3032977",
@@ -136,7 +150,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "97e2d76b6a36a8f7:1966",
@@ -145,7 +160,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "ab8338d302a5a945:3032977",
@@ -154,7 +170,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "ef1fc1bd179db2fa:3059318",
@@ -163,7 +180,8 @@
    "playerName": "Joel Embiid",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 0
   },
   {
    "key": "3c954f844d62ec10:6450",
@@ -172,7 +190,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 5,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "83ee99401a3f0e10:3112335",
@@ -181,7 +200,8 @@
    "playerName": "Nikola Jokić",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 1
   },
   {
    "key": "e6b5a090ad82f3ef:6450",
@@ -190,7 +210,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "bc3d76c4d8a61321:6609",
@@ -199,7 +220,8 @@
    "playerName": "Khris Middleton",
    "otherPlayerCount": 0,
    "label": "wrong_player",
-   "score": 0.99
+   "score": 0.99,
+   "llama33_70b": 0
   },
   {
    "key": "16580824447112e6:4683774",
@@ -208,7 +230,8 @@
    "playerName": "Bronny James",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "c89d4fe868f5a544:4431684",
@@ -217,7 +240,8 @@
    "playerName": "Trayce Jackson-Davis",
    "otherPlayerCount": 3,
    "label": 0,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 0
   },
   {
    "key": "2539ba302161dcd2:4065804",
@@ -226,7 +250,8 @@
    "playerName": "Sam Hauser",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "8cebcf5b3c4d921d:3032977",
@@ -235,7 +260,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "b9ee326b6eb1ade7:6450",
@@ -244,7 +270,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "3377ec877d020d6a:3032977",
@@ -253,7 +280,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "4379292723c091f6:3032977",
@@ -262,7 +290,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": -1
   },
   {
    "key": "cb1207ad46ba67f8:6450",
@@ -271,7 +300,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": -0.76
+   "score": -0.76,
+   "llama33_70b": 1
   },
   {
    "key": "65dd82a2b5677152:1966",
@@ -280,7 +310,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "fe9844fb2756196f:4711297",
@@ -289,7 +320,8 @@
    "playerName": "Justin Edwards",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "c4b808b27f3ef1b8:1966",
@@ -298,7 +330,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "9a0910ac03d2158f:4433621",
@@ -307,7 +340,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": -1
   },
   {
    "key": "afea4da580176e02:3134908",
@@ -316,7 +350,8 @@
    "playerName": "Jakob Poeltl",
    "otherPlayerCount": 9,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2ecd10d50b31ebcd:4433134",
@@ -325,7 +360,8 @@
    "playerName": "Scottie Barnes",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "e3f1116bcd14ab6c:3202",
@@ -334,7 +370,8 @@
    "playerName": "Kevin Durant",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "e70681c61b255566:4433621",
@@ -343,7 +380,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.94
+   "score": 0.94,
+   "llama33_70b": 1
   },
   {
    "key": "e83cd0383ede6751:4432166",
@@ -352,7 +390,8 @@
    "playerName": "Cade Cunningham",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 1
   },
   {
    "key": "45fb2f33196e1d50:4594268",
@@ -361,7 +400,8 @@
    "playerName": "Anthony Edwards",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 0
   },
   {
    "key": "b353e68b621524d4:2993874",
@@ -370,7 +410,8 @@
    "playerName": "Kyle Anderson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.85
+   "score": 0.85,
+   "llama33_70b": 0
   },
   {
    "key": "d3bd7f98452d6581:3032977",
@@ -379,7 +420,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "a7e24e7483d226ed:4431678",
@@ -388,7 +430,8 @@
    "playerName": "Tyrese Maxey",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 0
   },
   {
    "key": "d03c382f344c77e9:3975",
@@ -397,7 +440,8 @@
    "playerName": "Stephen Curry",
    "otherPlayerCount": 2,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 0
   },
   {
    "key": "ae5f45914fc72d98:3202",
@@ -406,7 +450,8 @@
    "playerName": "Kevin Durant",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 1
+   "score": 1,
+   "llama33_70b": 0
   },
   {
    "key": "837324a5a49f6378:4432816",
@@ -415,7 +460,8 @@
    "playerName": "LaMelo Ball",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.94
+   "score": -0.94,
+   "llama33_70b": -1
   },
   {
    "key": "4de66bbe844dbd2b:4433255",
@@ -424,7 +470,8 @@
    "playerName": "Chet Holmgren",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": -1
   },
   {
    "key": "2f92a3caae8d7f2a:6450",
@@ -433,7 +480,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "0ecce0de0f53bf8e:3992",
@@ -442,7 +490,8 @@
    "playerName": "James Harden",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "1c53d7c8765091fc:3155942",
@@ -451,7 +500,8 @@
    "playerName": "Domantas Sabonis",
    "otherPlayerCount": 1,
    "label": -1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 0
   },
   {
    "key": "d0d36a58faf5e3a4:4433621",
@@ -460,7 +510,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 1
   },
   {
    "key": "4d435eb366ad9332:4711297",
@@ -469,7 +520,8 @@
    "playerName": "Justin Edwards",
    "otherPlayerCount": 5,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "0fa3f35ae3c17ba4:5104157",
@@ -478,7 +530,8 @@
    "playerName": "Victor Wembanyama",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": -1
   },
   {
    "key": "570ff452a2a2fa8e:6606",
@@ -487,7 +540,8 @@
    "playerName": "Damian Lillard",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 1
   },
   {
    "key": "5651b164500561bd:3059318",
@@ -496,7 +550,8 @@
    "playerName": "Joel Embiid",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.94
+   "score": -0.94,
+   "llama33_70b": -1
   },
   {
    "key": "4ff5efeb3fde2505:4395724",
@@ -505,7 +560,8 @@
    "playerName": "Immanuel Quickley",
    "otherPlayerCount": 5,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 0
   },
   {
    "key": "ff661f0fa9928159:6450",
@@ -514,7 +570,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 0
   },
   {
    "key": "429fe14317b5c0be:5144091",
@@ -523,7 +580,8 @@
    "playerName": "Jeremiah Fears",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0.91
+   "score": 0.91,
+   "llama33_70b": 0
   },
   {
    "key": "ae2a11cfbb1a8cc0:4395628",
@@ -532,7 +590,8 @@
    "playerName": "Zion Williamson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "a65857811683c942:4914336",
@@ -541,7 +600,8 @@
    "playerName": "Shaedon Sharpe",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "1c599a0eac85eedd:4433621",
@@ -550,7 +610,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 0
   },
   {
    "key": "b9cf0c356739f79a:1966",
@@ -559,7 +620,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 1,
    "label": -1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": -1
   },
   {
    "key": "4d91d4546bc9a79a:4433621",
@@ -568,7 +630,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "99f739cb40c7ae47:4997536",
@@ -577,7 +640,8 @@
    "playerName": "Gui Santos",
    "otherPlayerCount": 0,
    "label": "wrong_player",
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": 0
   },
   {
    "key": "3a17aac0a22eeb78:4683750",
@@ -586,7 +650,8 @@
    "playerName": "Jordan Hawkins",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": -1
   },
   {
    "key": "a9e0a42ad8672711:3202",
@@ -595,7 +660,8 @@
    "playerName": "Kevin Durant",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.85
+   "score": 0.85,
+   "llama33_70b": 0
   },
   {
    "key": "b610d8ab8f122bb3:6450",
@@ -604,7 +670,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "f345acd6055a77f2:4066261",
@@ -613,7 +680,8 @@
    "playerName": "Bam Adebayo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "78d5c3a4cfe7060b:3934672",
@@ -622,7 +690,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 0
   },
   {
    "key": "efb67e8a681c3d0a:1966",
@@ -631,7 +700,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "4b78e33f3143933b:3032977",
@@ -640,7 +710,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "51497d3e36a02346:3032977",
@@ -649,7 +720,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "66fbb3ce469eaa56:4432816",
@@ -658,7 +730,8 @@
    "playerName": "LaMelo Ball",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "bb735413e322cc90:3917376",
@@ -667,7 +740,8 @@
    "playerName": "Jaylen Brown",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "dd89c3d3393d7941:5289900",
@@ -676,7 +750,8 @@
    "playerName": "Mohamed Diawara",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 1
   },
   {
    "key": "97e1d27f306b8ee9:1966",
@@ -685,7 +760,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": -1
   },
   {
    "key": "9242093555706fb6:1966",
@@ -694,7 +770,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": -1
   },
   {
    "key": "3df1905cd3b314c2:4431823",
@@ -703,7 +780,8 @@
    "playerName": "Miles McBride",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.94
+   "score": -0.94,
+   "llama33_70b": -1
   },
   {
    "key": "721cf55fe4ae53c8:6450",
@@ -712,7 +790,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "3492269c2797481e:1966",
@@ -721,7 +800,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "1979a329a83df96d:3934672",
@@ -730,7 +810,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.94
+   "score": -0.94,
+   "llama33_70b": -1
   },
   {
    "key": "2d37a9bf9beb4d91:4351852",
@@ -739,7 +820,8 @@
    "playerName": "Mitchell Robinson",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "9b901ccd72fa744b:3064514",
@@ -748,7 +830,8 @@
    "playerName": "Julius Randle",
    "otherPlayerCount": 0,
    "label": "not_about",
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "c5257dc49e58cbbb:4433621",
@@ -757,7 +840,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": -1
   },
   {
    "key": "dea79fa71e01f050:4683774",
@@ -766,7 +850,8 @@
    "playerName": "Bronny James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.94
+   "score": -0.94,
+   "llama33_70b": -1
   },
   {
    "key": "db1acd4357c58faa:5104157",
@@ -775,7 +860,8 @@
    "playerName": "Victor Wembanyama",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.94
+   "score": 0.94,
+   "llama33_70b": 0
   },
   {
    "key": "49fdefe670f6eaf4:4432816",
@@ -784,7 +870,8 @@
    "playerName": "LaMelo Ball",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": -1
   },
   {
    "key": "0fe31415b67b332e:3934672",
@@ -793,7 +880,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "45bb09a7fb6e145d:3934672",
@@ -802,7 +890,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "6abcd5ec3226ad57:4433225",
@@ -811,7 +900,8 @@
    "playerName": "Tyler Kolek",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 0
   },
   {
    "key": "119ae43c08fb26ed:1966",
@@ -820,7 +910,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "d81bfa2729b0003d:3442",
@@ -829,7 +920,8 @@
    "playerName": "DeAndre Jordan",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": 1
   },
   {
    "key": "11dfa542d24fa3c8:3975",
@@ -838,7 +930,8 @@
    "playerName": "Stephen Curry",
    "otherPlayerCount": 0,
    "label": "not_about",
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 0
   },
   {
    "key": "500455c3b3270f54:3934672",
@@ -847,7 +940,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "e372ea6017af8aa8:3112335",
@@ -856,7 +950,8 @@
    "playerName": "Nikola Jokić",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "e5a79aab8002302f:5104157",
@@ -865,7 +960,8 @@
    "playerName": "Victor Wembanyama",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.99
+   "score": -0.99,
+   "llama33_70b": -1
   },
   {
    "key": "a07c3d8159511181:4897943",
@@ -874,7 +970,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "7b68e7c0be1993a7:1966",
@@ -883,7 +980,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.85
+   "score": -0.85,
+   "llama33_70b": -1
   },
   {
    "key": "296033a4ae76a3e2:4433136",
@@ -892,7 +990,8 @@
    "playerName": "Walker Kessler",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": 1
   },
   {
    "key": "22d2747b9351bb74:4432165",
@@ -901,7 +1000,8 @@
    "playerName": "Jalen Suggs",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 1
+   "score": 1,
+   "llama33_70b": 0
   },
   {
    "key": "1e2520dcd3e4b25a:3136195",
@@ -910,7 +1010,8 @@
    "playerName": "Karl-Anthony Towns",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 0
   },
   {
    "key": "726bf3725286ee7a:6585",
@@ -919,7 +1020,8 @@
    "playerName": "Andre Drummond",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 0
   },
   {
    "key": "cfb22d13ddfc62fc:4351852",
@@ -928,7 +1030,8 @@
    "playerName": "Mitchell Robinson",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "a9bedd640e97d83a:3934672",
@@ -937,7 +1040,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 0
   },
   {
    "key": "a740ad1524da7ebb:5289900",
@@ -946,7 +1050,8 @@
    "playerName": "Mohamed Diawara",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2a0125ceb35e3a31:1966",
@@ -955,7 +1060,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": -1
   },
   {
    "key": "0abb3e565fe6e2ce:4432573",
@@ -964,7 +1070,8 @@
    "playerName": "Paolo Banchero",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "0895585f51452568:4897943",
@@ -973,7 +1080,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.85
+   "score": 0.85,
+   "llama33_70b": 1
   },
   {
    "key": "80c1519ef40a58c6:6450",
@@ -982,7 +1090,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "50bd8d0e7a1d21c5:3934719",
@@ -991,7 +1100,8 @@
    "playerName": "OG Anunoby",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "1ccfd576eccc75e1:4278077",
@@ -1000,7 +1110,8 @@
    "playerName": "Jarred Vanderbilt",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "d30a599ff53b3fef:4431785",
@@ -1009,7 +1120,8 @@
    "playerName": "Scotty Pippen Jr.",
    "otherPlayerCount": 0,
    "label": "wrong_player",
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": -1
   },
   {
    "key": "a20f972232d893a4:6450",
@@ -1018,7 +1130,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 1
   },
   {
    "key": "2f61c1c240d24409:4433621",
@@ -1027,7 +1140,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "4bad52148db6a7f1:3907387",
@@ -1036,7 +1150,8 @@
    "playerName": "Ben Simmons",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "2471635dacc0124d:4277869",
@@ -1045,7 +1160,8 @@
    "playerName": "Jose Alvarado",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 1
   },
   {
    "key": "1438abfe35c8c6fa:3032977",
@@ -1054,7 +1170,8 @@
    "playerName": "Giannis Antetokounmpo",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.64
+   "score": -0.64,
+   "llama33_70b": -1
   },
   {
    "key": "875b9ada004a1ac3:4066218",
@@ -1063,7 +1180,8 @@
    "playerName": "Grant Williams",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.96
+   "score": 0.96,
+   "llama33_70b": 1
   },
   {
    "key": "63f8690001857430:4897943",
@@ -1072,7 +1190,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 4,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "a3c0032e76a0bbb5:6450",
@@ -1081,7 +1200,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "0bd65950df2b5cf4:4277869",
@@ -1090,7 +1210,8 @@
    "playerName": "Jose Alvarado",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": 1
   },
   {
    "key": "ad61fd622be9e001:4433621",
@@ -1099,7 +1220,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": 0
   },
   {
    "key": "1903a29ee6539189:3907387",
@@ -1108,7 +1230,8 @@
    "playerName": "Ben Simmons",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "87f97cf0625de93f:4433136",
@@ -1117,7 +1240,8 @@
    "playerName": "Walker Kessler",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": -1
   },
   {
    "key": "5144de1e0b9d645c:4277869",
@@ -1126,7 +1250,8 @@
    "playerName": "Jose Alvarado",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "8e6af8778712b8cc:6450",
@@ -1135,7 +1260,8 @@
    "playerName": "Kawhi Leonard",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "e5ee796bc3e947db:4066218",
@@ -1144,7 +1270,8 @@
    "playerName": "Grant Williams",
    "otherPlayerCount": 0,
    "label": "not_about",
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "4ec7ac66c36567cb:4897943",
@@ -1153,7 +1280,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 1,
    "label": 1,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": 0
   },
   {
    "key": "50263eddacc67cc4:4433621",
@@ -1162,7 +1290,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": -1
   },
   {
    "key": "523acb2566834d25:4277869",
@@ -1171,7 +1300,8 @@
    "playerName": "Jose Alvarado",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "9c628ada00c6fbc3:3934672",
@@ -1180,7 +1310,8 @@
    "playerName": "Jalen Brunson",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "ba7fddb87141df6d:4432573",
@@ -1189,7 +1320,8 @@
    "playerName": "Paolo Banchero",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": 1
   },
   {
    "key": "41718453dedfbcd3:4433621",
@@ -1198,7 +1330,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": -1
   },
   {
    "key": "f4cb7f5549b8b1b7:4592691",
@@ -1207,7 +1340,8 @@
    "playerName": "Jake LaRavia",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": -1
   },
   {
    "key": "34d9a29420bb6c69:4278073",
@@ -1216,7 +1350,8 @@
    "playerName": "Shai Gilgeous-Alexander",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": -1
   },
   {
    "key": "2ee1602b7fcda634:4897943",
@@ -1225,7 +1360,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": -1
   },
   {
    "key": "40da005aa45e00c3:4278049",
@@ -1234,7 +1370,8 @@
    "playerName": "Daniel Gafford",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.46
+   "score": 0.46,
+   "llama33_70b": -1
   },
   {
    "key": "e3731f916e4462f2:4897943",
@@ -1243,7 +1380,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.85
+   "score": -0.85,
+   "llama33_70b": -1
   },
   {
    "key": "5b818b733e8d23d4:4432573",
@@ -1252,7 +1390,8 @@
    "playerName": "Paolo Banchero",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.76
+   "score": 0.76,
+   "llama33_70b": -1
   },
   {
    "key": "6f4eca8af9e7b252:3975",
@@ -1261,7 +1400,8 @@
    "playerName": "Stephen Curry",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.91
+   "score": -0.91,
+   "llama33_70b": -1
   },
   {
    "key": "319f719f018fceb6:5289900",
@@ -1270,7 +1410,8 @@
    "playerName": "Mohamed Diawara",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0.24
+   "score": 0.24,
+   "llama33_70b": 1
   },
   {
    "key": "3127cafb42742a63:3062679",
@@ -1279,7 +1420,8 @@
    "playerName": "Josh Hart",
    "otherPlayerCount": 2,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 1
   },
   {
    "key": "45ee25d79ca2918e:4433621",
@@ -1288,7 +1430,8 @@
    "playerName": "Jalen Duren",
    "otherPlayerCount": 1,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   },
   {
    "key": "87be0391e13a2186:1966",
@@ -1297,7 +1440,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": -1
   },
   {
    "key": "a2a329c006693ead:5104157",
@@ -1306,7 +1450,8 @@
    "playerName": "Victor Wembanyama",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": 0.64
+   "score": 0.64,
+   "llama33_70b": -1
   },
   {
    "key": "ed921b1f3e138367:1966",
@@ -1315,7 +1460,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": -0.24
+   "score": -0.24,
+   "llama33_70b": 1
   },
   {
    "key": "1c4766b9f1bfb671:3975",
@@ -1324,7 +1470,8 @@
    "playerName": "Stephen Curry",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": -1
   },
   {
    "key": "aa5ab23aedd7e181:1966",
@@ -1333,7 +1480,8 @@
    "playerName": "LeBron James",
    "otherPlayerCount": 0,
    "label": -1,
-   "score": -0.46
+   "score": -0.46,
+   "llama33_70b": -1
   },
   {
    "key": "e315593464ad1e83:4897943",
@@ -1342,7 +1490,8 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": 0,
-   "score": 0
+   "score": 0,
+   "llama33_70b": -1
   },
   {
    "key": "ebd426e99c352f59:4897943",
@@ -1351,7 +1500,9 @@
    "playerName": "Dalton Knecht",
    "otherPlayerCount": 0,
    "label": 1,
-   "score": 0
+   "score": 0,
+   "llama33_70b": 0
   }
- ]
+ ],
+ "modelPrompt": "System: You rate the tone of an NBA fan's social media post or comment toward one named player. Answer with only -1, 0 or 1. 1: the post is positive toward the player, or shares good news for them. -1: the post is negative toward the player, mocks them, or shares bad news for them. 0: neutral or mixed, a list or lineup or injury report, the player is only mentioned in passing, or the name refers to someone else. Read sarcasm and slang for what the writer means. User: Player: <name> / Post: <text>. Model @cf/meta/llama-3.3-70b-instruct-fp8-fast, temperature 0."
 }
