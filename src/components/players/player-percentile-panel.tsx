@@ -768,6 +768,8 @@ function PercentileExpandDialog({
   seasonTeamKeys,
   accent,
   busy,
+  loadFailed,
+  onRetrySeason,
   onCommitSeason,
   grouped,
   listed,
@@ -788,6 +790,8 @@ function PercentileExpandDialog({
   seasonTeamKeys?: Record<string, string[]>;
   accent: string;
   busy: boolean;
+  loadFailed: boolean;
+  onRetrySeason: () => void;
   onCommitSeason: (season: string) => void;
   grouped: Array<{
     id: PercentileCategory;
@@ -867,9 +871,19 @@ function PercentileExpandDialog({
         ) : null}
 
         {!listed.length ? (
-          <p className={cn(type.bodySm, "py-10 text-center text-muted-foreground")}>
-            Percentile rankings unavailable for this season.
-          </p>
+          busy ? (
+            <p className={cn(type.bodySm, "py-10 text-center text-muted-foreground")}>
+              Loading {viewSeason} percentiles…
+            </p>
+          ) : (
+            <SeasonUnavailable
+              season={viewSeason}
+              playerName={playerName}
+              failed={loadFailed}
+              onRetry={onRetrySeason}
+              className="py-10"
+            />
+          )
         ) : (
           <div className="grid items-start gap-5 xl:grid-cols-[minmax(14rem,1.35fr)_minmax(18rem,24rem)]">
             <div className="flex min-w-0 flex-col gap-5 overflow-hidden">
@@ -994,17 +1008,39 @@ function writeCache(
   percentileCache.set(cacheKey(playerId, season), value);
 }
 
-async function fetchPercentiles(
+/** One request per player-season-mode; slider commits reuse in-flight prefetches. */
+const inflightPercentiles = new Map<string, Promise<SeasonMetricsCache | null>>();
+
+function fetchPercentiles(
   playerId: string,
   season: string,
   mode: "fast" | "full" = "fast"
+): Promise<SeasonMetricsCache | null> {
+  const key = `${cacheKey(playerId, season)}:${mode}`;
+  const pending = inflightPercentiles.get(key);
+  if (pending) return pending;
+  const request = requestPercentiles(playerId, season, mode).finally(() => {
+    inflightPercentiles.delete(key);
+  });
+  inflightPercentiles.set(key, request);
+  return request;
+}
+
+async function requestPercentiles(
+  playerId: string,
+  season: string,
+  mode: "fast" | "full"
 ): Promise<SeasonMetricsCache | null> {
   const res = await fetch(
     `/api/players/${encodeURIComponent(playerId)}/percentiles?season=${encodeURIComponent(season)}&mode=${mode}`
   );
   if (!res.ok) return null;
   const json = (await res.json()) as SeasonMetricsCache & { season?: string };
-  if (!json.metrics) return null;
+  if (!Array.isArray(json.metrics)) return null;
+  // The API falls back to another season when it can't resolve this one.
+  if (json.season && json.season !== season) {
+    return { metrics: [], teamKey: json.teamKey, profileComps: [] };
+  }
   const payload = {
     metrics: json.metrics,
     teamKey: json.teamKey,
@@ -1012,9 +1048,44 @@ async function fetchPercentiles(
   };
   // Never cache empty payloads — historical peer boards can fail transiently.
   if (payload.metrics.length > 0) {
-    writeCache(playerId, json.season ?? season, payload);
+    writeCache(playerId, season, payload);
   }
   return payload;
+}
+
+function SeasonUnavailable({
+  season,
+  playerName,
+  failed,
+  onRetry,
+  className,
+}: {
+  season: string;
+  playerName: string;
+  failed: boolean;
+  onRetry: () => void;
+  className?: string;
+}) {
+  return (
+    <div className={cn("flex flex-col items-center gap-2 text-center", className)}>
+      <p className={cn(type.bodySm, "text-muted-foreground")}>
+        {failed
+          ? `Couldn't load ${season} percentiles.`
+          : `No ${season} percentile ranking for ${playerName}. Either he has no qualifying games that season or the league board didn't load.`}
+      </p>
+      <button
+        type="button"
+        onClick={onRetry}
+        className={cn(
+          type.caption,
+          "rounded-md border border-border/70 px-2 py-1 font-semibold text-muted-foreground",
+          "hover:border-foreground/30 hover:bg-foreground/5 hover:text-foreground"
+        )}
+      >
+        Try again
+      </button>
+    </div>
+  );
 }
 
 /** Update ?season= without triggering a full App Router RSC refetch. */
@@ -1070,6 +1141,7 @@ export function PlayerPercentilePanel({
   const [viewTeamKey, setViewTeamKey] = useState(teamKey);
   const [viewProfileComps, setViewProfileComps] = useState(profileComps);
   const [busy, setBusy] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
 
   const applyCached = useCallback(
     (nextSeason: string, next: SeasonMetricsCache) => {
@@ -1080,6 +1152,50 @@ export function PlayerPercentilePanel({
       setViewProfileComps(next.profileComps ?? []);
     },
     [playerId]
+  );
+
+  /** Show `next` from cache or the API. Never leaves another season's metrics on screen. */
+  const loadSeason = useCallback(
+    (next: string) => {
+      setLoadFailed(false);
+      const cached = readCache(playerId, next);
+      if (cached && cached.metrics.length > 0) {
+        setViewMetrics(cached.metrics);
+        setViewTeamKey(cached.teamKey);
+        setViewProfileComps(cached.profileComps ?? []);
+        setBusy(false);
+        return;
+      }
+      // Drop the previous season's numbers so they never sit under the new heading.
+      setViewMetrics([]);
+      setViewProfileComps([]);
+      setBusy(true);
+      const gen = ++fetchGen.current;
+      const current = () => gen === fetchGen.current && desiredSeason.current === next;
+      const clear = (failed: boolean) => {
+        setViewMetrics([]);
+        setViewProfileComps([]);
+        setLoadFailed(failed);
+        setBusy(false);
+      };
+      void fetchPercentiles(playerId, next, "fast")
+        .then((json) => {
+          if (!current()) return;
+          if (!json) return clear(true);
+          if (json.metrics.length === 0) return clear(false);
+          applyCached(next, json);
+          setBusy(false);
+          // Upgrade sparklines / YoY peers after paint.
+          void fetchPercentiles(playerId, next, "full").then((full) => {
+            if (!full?.metrics.length || !current()) return;
+            applyCached(next, full);
+          });
+        })
+        .catch(() => {
+          if (current()) clear(true);
+        });
+    },
+    [applyCached, playerId]
   );
 
   useEffect(() => {
@@ -1105,7 +1221,7 @@ export function PlayerPercentilePanel({
     const targetSeason = season;
     const hydrate = () => {
       void fetchPercentiles(playerId, targetSeason, "full").then((json) => {
-        if (cancelled || !json) return;
+        if (cancelled || !json?.metrics.length) return;
         if (desiredSeason.current !== targetSeason) return;
         applyCached(targetSeason, json);
       });
@@ -1130,31 +1246,8 @@ export function PlayerPercentilePanel({
     if (!urlSeason || urlSeason === desiredSeason.current) return;
     desiredSeason.current = urlSeason;
     setViewSeason(urlSeason);
-    const cached = readCache(playerId, urlSeason);
-    if (cached && cached.metrics.length > 0) {
-      setViewMetrics(cached.metrics);
-      setViewTeamKey(cached.teamKey);
-      setViewProfileComps(cached.profileComps ?? []);
-      setBusy(false);
-      return;
-    }
-    setBusy(true);
-    const gen = ++fetchGen.current;
-    void fetchPercentiles(playerId, urlSeason, "fast")
-      .then((json) => {
-        if (gen !== fetchGen.current || !json) return;
-        if (desiredSeason.current !== urlSeason) return;
-        if (json.metrics.length === 0) {
-          setBusy(false);
-          return;
-        }
-        applyCached(urlSeason, json);
-        setBusy(false);
-      })
-      .catch(() => {
-        if (gen === fetchGen.current) setBusy(false);
-      });
-  }, [applyCached, playerId, urlSeason]);
+    loadSeason(urlSeason);
+  }, [loadSeason, urlSeason]);
 
   const timeline = useMemo(
     () => [...seasons].sort((a, b) => a.localeCompare(b)),
@@ -1205,43 +1298,9 @@ export function PlayerPercentilePanel({
       // Shallow URL only — App Router replace would re-render the whole player
       // page (~10s+) while the percentile board already loads client-side.
       replaceSeasonInUrl(next);
-      const cached = readCache(playerId, next);
-      if (cached && cached.metrics.length > 0) {
-        setViewMetrics(cached.metrics);
-        setViewTeamKey(cached.teamKey);
-        setViewProfileComps(cached.profileComps ?? []);
-        setBusy(false);
-        return;
-      }
-      setBusy(true);
-      const gen = ++fetchGen.current;
-      void fetchPercentiles(playerId, next, "fast")
-        .then((json) => {
-          if (gen !== fetchGen.current || !json) return;
-          if (desiredSeason.current !== next) return;
-          if (json.metrics.length === 0) {
-            setBusy(false);
-            return;
-          }
-          applyCached(next, json);
-          setBusy(false);
-          // Upgrade sparklines / YoY peers after paint.
-          void fetchPercentiles(playerId, next, "full").then((full) => {
-            if (
-              !full ||
-              gen !== fetchGen.current ||
-              desiredSeason.current !== next
-            ) {
-              return;
-            }
-            applyCached(next, full);
-          });
-        })
-        .catch(() => {
-          if (gen === fetchGen.current) setBusy(false);
-        });
+      loadSeason(next);
     },
-    [applyCached, playerId, setViewSeasonShared, viewSeason]
+    [loadSeason, setViewSeasonShared, viewSeason]
   );
 
   const categories = useMemo(
@@ -1317,7 +1376,7 @@ export function PlayerPercentilePanel({
   useEffect(() => {
     if (!expanded) return;
     void fetchPercentiles(playerId, viewSeason, "full").then((json) => {
-      if (!json || desiredSeason.current !== viewSeason) return;
+      if (!json?.metrics.length || desiredSeason.current !== viewSeason) return;
       applyCached(viewSeason, json);
     });
   }, [applyCached, expanded, playerId, viewSeason]);
@@ -1437,9 +1496,19 @@ export function PlayerPercentilePanel({
       ) : null}
 
       {!viewMetrics.length ? (
-        <p className={cn(type.bodySm, "py-8 text-center text-muted-foreground")}>
-          Percentile rankings unavailable for this season.
-        </p>
+        busy ? (
+          <p className={cn(type.bodySm, "py-8 text-center text-muted-foreground")}>
+            Loading {viewSeason} percentiles…
+          </p>
+        ) : (
+          <SeasonUnavailable
+            season={viewSeason}
+            playerName={playerName}
+            failed={loadFailed}
+            onRetry={() => loadSeason(viewSeason)}
+            className="py-8"
+          />
+        )
       ) : grouped.length === 0 ? (
         <p
           className={cn(
@@ -1596,6 +1665,8 @@ export function PlayerPercentilePanel({
         seasonTeamKeys={seasonTeamKeys}
         accent={accent}
         busy={busy}
+        loadFailed={loadFailed}
+        onRetrySeason={() => loadSeason(viewSeason)}
         onCommitSeason={commitSeason}
         grouped={grouped}
         listed={listed}
