@@ -7,11 +7,124 @@ type RateLimitBinding = {
   limit(options: { key: string }): Promise<{ success: boolean }>;
 };
 
-type WorkerEnv = Record<string, unknown> & { API_RATE_LIMITER?: RateLimitBinding };
+type PageCacheBinding = {
+  get(key: string, type: "text"): Promise<string | null>;
+  put(key: string, value: string, options: { expirationTtl: number }): Promise<void>;
+};
+
+type WorkerEnv = Record<string, unknown> & {
+  API_RATE_LIMITER?: RateLimitBinding;
+  PAGE_CACHE?: PageCacheBinding;
+  CF_VERSION_METADATA?: { id?: string };
+};
+
+type WorkerContext = { waitUntil(promise: Promise<unknown>): void };
 
 type OpenNextHandler = {
-  fetch(request: Request, env: WorkerEnv, ctx: unknown): Promise<Response>;
+  fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response>;
 };
+
+const PAGE_CACHE_TTL_SECONDS = 15 * 60;
+const PAGE_CACHE_MAX_BYTES = 5 * 1024 * 1024;
+const CACHEABLE_PATH = /^\/(players|teams)\/[^/]+$/;
+// Every query param these routes (and their client components) read. Any other
+// param could change the HTML, so those requests skip the cache entirely.
+const CACHEABLE_PARAMS = new Set([
+  "season", "view", "seasonType", "page", "stat", "filter", "mode",
+  "tab", "rate", "arc", "gamesPage", "sort", "dir", "from", "theme",
+]);
+const REPLAYED_HEADERS = [
+  "content-type", "link", "vary", "content-security-policy", "permissions-policy",
+  "referrer-policy", "x-content-type-options", "x-frame-options",
+  "strict-transport-security",
+];
+// Streamed server errors, notFound() and redirects inside a 200 stream.
+// next/dynamic ssr:false also emits a digest, which is not an error.
+const UNCACHEABLE_MARKERS = [
+  /data-dgst="(?!BAILOUT_TO_CLIENT_SIDE_RENDERING")/,
+  /NEXT_HTTP_ERROR_FALLBACK/,
+  /NEXT_REDIRECT/,
+];
+
+function pageCacheKey(request: Request, env: WorkerEnv): string | null {
+  if (request.method !== "GET" || !env.PAGE_CACHE) return null;
+  const version = env.CF_VERSION_METADATA?.id;
+  if (!version) return null;
+  if (request.headers.has("rsc") || request.headers.has("next-router-prefetch")) return null;
+  const url = new URL(request.url);
+  if (!CACHEABLE_PATH.test(url.pathname)) return null;
+  const params = [...url.searchParams.entries()];
+  if (params.some(([k, v]) => !CACHEABLE_PARAMS.has(k) || v.length > 40)) return null;
+  params.sort(([a, av], [b, bv]) => a.localeCompare(b) || av.localeCompare(bv));
+  const query = new URLSearchParams(params).toString();
+  const key = `page:${version}:${url.pathname}${query ? `?${query}` : ""}`;
+  return key.length <= 480 ? key : null;
+}
+
+function cachedResponse(raw: string): Response | null {
+  const newline = raw.indexOf("\n");
+  if (newline < 0) return null;
+  try {
+    const meta = JSON.parse(raw.slice(0, newline)) as {
+      at: number;
+      headers: Record<string, string>;
+    };
+    const headers = new Headers(meta.headers);
+    headers.set("cache-control", "private, no-cache, no-store, max-age=0, must-revalidate");
+    headers.set("age", String(Math.max(0, Math.round((Date.now() - meta.at) / 1000))));
+    headers.set("x-page-cache", "HIT");
+    return new Response(raw.slice(newline + 1), { status: 200, headers });
+  } catch {
+    return null;
+  }
+}
+
+async function storePage(
+  env: WorkerEnv,
+  key: string,
+  headers: Headers,
+  body: ReadableStream<Uint8Array>
+): Promise<void> {
+  const html = await new Response(body).text();
+  if (html.length > PAGE_CACHE_MAX_BYTES) return;
+  if (UNCACHEABLE_MARKERS.some((marker) => marker.test(html))) return;
+  const replayed: Record<string, string> = {};
+  for (const name of REPLAYED_HEADERS) {
+    const value = headers.get(name);
+    if (value) replayed[name] = value;
+  }
+  const meta = JSON.stringify({ at: Date.now(), headers: replayed });
+  await env.PAGE_CACHE!.put(key, `${meta}\n${html}`, {
+    expirationTtl: PAGE_CACHE_TTL_SECONDS,
+  });
+}
+
+async function servePage(
+  request: Request,
+  env: WorkerEnv,
+  ctx: WorkerContext,
+  key: string
+): Promise<Response> {
+  const raw = await env.PAGE_CACHE!.get(key, "text").catch(() => null);
+  const hit = raw ? cachedResponse(raw) : null;
+  if (hit) return hit;
+
+  const response = await (handler as OpenNextHandler).fetch(request, env, ctx);
+  const type = response.headers.get("content-type") ?? "";
+  if (
+    response.status !== 200 ||
+    !response.body ||
+    !type.startsWith("text/html") ||
+    response.headers.has("set-cookie")
+  ) {
+    return response;
+  }
+  const [toClient, toCache] = response.body.tee();
+  ctx.waitUntil(storePage(env, key, response.headers, toCache).catch(() => undefined));
+  const headers = new Headers(response.headers);
+  headers.set("x-page-cache", "MISS");
+  return new Response(toClient, { status: response.status, headers });
+}
 
 const RETRY_AFTER_SECONDS = 60;
 
@@ -27,7 +140,7 @@ function tooManyRequests(): Response {
 }
 
 const worker = {
-  async fetch(request: Request, env: WorkerEnv, ctx: unknown): Promise<Response> {
+  async fetch(request: Request, env: WorkerEnv, ctx: WorkerContext): Promise<Response> {
     const { pathname } = new URL(request.url);
     // Internal subrequests (service binding, cache revalidation) carry no client IP.
     const ip = request.headers.get("cf-connecting-ip");
@@ -35,6 +148,8 @@ const worker = {
       const { success } = await env.API_RATE_LIMITER.limit({ key: `api:${ip}` });
       if (!success) return tooManyRequests();
     }
+    const cacheKey = pageCacheKey(request, env);
+    if (cacheKey) return servePage(request, env, ctx, cacheKey);
     return (handler as OpenNextHandler).fetch(request, env, ctx);
   },
 };
