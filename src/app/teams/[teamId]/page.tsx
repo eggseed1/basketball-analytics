@@ -89,11 +89,20 @@ export async function generateMetadata({ params, searchParams }: TeamPageProps) 
   const season =
     seasonParam ?? canonicalSeasonFromStartYear(currentNbaStartYear());
   const board = await getTeamSeasonBoardCached(season);
-  const fullName =
-    resolveTeamFromBoard(board.rows, teamId)?.fullName ??
-    resolveTeamIdentityFallback(teamId, season, "era")?.fullName;
+  const boardTeam = resolveTeamFromBoard(board.rows, teamId);
+  const fallback = boardTeam ? null : resolveTeamIdentityFallback(teamId, season, "era");
+  const fullName = boardTeam?.fullName ?? fallback?.fullName;
+  // Abbreviations and slugs (TOR, raptors) render the same page as the canonical id.
+  const canonicalTeamId = boardTeam?.teamId ?? fallback?.teamId ?? teamId;
+  const pastSeason =
+    seasonParam && seasonParam !== canonicalSeasonFromStartYear(currentNbaStartYear())
+      ? `?season=${encodeURIComponent(seasonParam)}`
+      : "";
   return {
     title: fullName ?? "Team",
+    alternates: {
+      canonical: `/teams/${encodeURIComponent(canonicalTeamId)}${pastSeason}`,
+    },
     description: fullName
       ? `${fullName} roster, games, transactions, and team stats.`
       : undefined,

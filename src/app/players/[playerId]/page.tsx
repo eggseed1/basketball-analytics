@@ -179,6 +179,19 @@ function resolvePublicPlayerId(raw: string): string {
   return row?.id && row.id !== id ? row.id : id;
 }
 
+/** ESPN id for a bref: route only when exactly one indexed player has that name. */
+function uniqueEspnIdForBrefName(
+  playerId: string,
+  displayName: string | null | undefined
+): string | null {
+  if (!playerId.toLowerCase().startsWith("bref:") || !displayName) return null;
+  const espnId = lookupEspnIdByPlayerName(displayName);
+  if (!espnId) return null;
+  const nameLower = displayName.toLowerCase();
+  const sameName = getPlayerSearchIndex().filter((r) => r.nameLower === nameLower);
+  return sameName.length === 1 && sameName[0]!.id === espnId ? espnId : null;
+}
+
 export async function generateMetadata({ params }: PlayerPageProps) {
   const { playerId: rawId } = await params;
   const playerId = resolvePublicPlayerId(rawId);
@@ -190,8 +203,12 @@ export async function generateMetadata({ params }: PlayerPageProps) {
     identity?.displayName,
     player?.fullName
   );
+  // NBA ids, bref: ids and name slugs all render this page; the sitemap lists ESPN ids.
+  const canonicalId =
+    identity?.espnId ?? uniqueEspnIdForBrefName(playerId, displayName) ?? playerId;
   return {
     title: displayName ?? "Player",
+    alternates: { canonical: `/players/${encodeURIComponent(canonicalId)}` },
     description: displayName
       ? `${displayName} stats, game log, shot chart, and impact metrics.`
       : undefined,
