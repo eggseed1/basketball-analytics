@@ -45,7 +45,12 @@ function testEntities() {
     { playerId: "5", name: "Trae Young", teamId: "1" },
     { playerId: "6", name: "Jaren Jackson Jr.", teamId: "29" },
     { playerId: "7", name: "Shai Gilgeous-Alexander", teamId: "25" },
+    { playerId: "8", name: "Trey Alexander", teamId: "24" },
   ]);
+  assert.deepEqual(resolve("Gilgeous-Alexander drops 40").playerIds, ["7"]);
+  assert.deepEqual(resolve("Alexander makes the roster").playerIds, ["8"]);
+  assert.deepEqual(resolve("Kessler-for-Gobert swap").playerIds, ["2"]);
+  assert.deepEqual(resolve("Knicks-Celtics rematch").teamIds.sort(), ["18", "2"]);
   assert.deepEqual(resolve("Luka Doncic drops 40").playerIds, ["1"]);
   assert.deepEqual(resolve("Luka Dončić drops 40").playerIds, ["1"]);
   assert.deepEqual(resolve("Kessler talks up Lakers defense").playerIds, ["2"]);

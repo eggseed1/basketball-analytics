@@ -5,9 +5,9 @@
     "season": "2026-27",
     "disclaimer": "Fan lanes come from team fan blogs, Bluesky and comments on NBA YouTube channels (teams, team podcasts and league shows), and media lanes from publisher headlines. Neither is a census of all fans or media.",
     "snapshotDate": "2026-10-04",
-    "builtAt": "2026-10-04T00:31:26.701Z",
+    "builtAt": "2026-10-04T00:39:09.126Z",
     "rosterPlayerCount": 605,
-    "pilotProfileCount": 184,
+    "pilotProfileCount": 183,
     "observationBatchCount": 15,
     "observationBatchIds": [
       "obs-ant-overrated-2026-08-25",
@@ -62,12 +62,12 @@
           "asOf": "2026-10-03"
         },
         {
-          "playerId": "4433268",
-          "displayName": "Trey Alexander",
-          "teamKey": "26",
-          "fanScore": 0.33,
-          "delta": 1.19,
-          "mentionVolume": 7,
+          "playerId": "4845367",
+          "displayName": "Stephon Castle",
+          "teamKey": "24",
+          "fanScore": 0.03,
+          "delta": 1.1,
+          "mentionVolume": 36,
           "origin": "fans",
           "asOf": "2026-10-02"
         }
@@ -253,7 +253,7 @@
       {
         "topic": "defense",
         "weight": 0.047,
-        "playerCount": 27,
+        "playerCount": 26,
         "mentionVolume": 30
       },
       {
@@ -271,7 +271,7 @@
       {
         "topic": "mvp_case",
         "weight": 0.031,
-        "playerCount": 19,
+        "playerCount": 18,
         "mentionVolume": 20
       }
     ],
@@ -303,7 +303,7 @@
         ],
         "modelVersion": "headline-lexicon-v1.1",
         "floor": 3,
-        "laneCount": 65
+        "laneCount": 64
       },
       "reddit": {
         "configured": false,
@@ -316,7 +316,7 @@
         "asOf": "2026-10-04",
         "firstDate": "2026-06-25",
         "itemCount": 17904,
-        "windowItemCount": 17127,
+        "windowItemCount": 17124,
         "platforms": {
           "fan_blog": 1129,
           "bluesky": 669,
@@ -324,7 +324,7 @@
         },
         "blogCount": 30,
         "floor": 5,
-        "laneCount": 172
+        "laneCount": 171
       }
     }
   },
@@ -11081,147 +11081,6 @@
     },
     {
       "playerIds": [
-        "4433268"
-      ],
-      "displayName": "Trey Alexander",
-      "teamKey": "26",
-      "window": "7d",
-      "provenance": "ingest",
-      "series": {
-        "fan": [
-          {
-            "date": "2026-09-15",
-            "score": 0.64,
-            "count": 1
-          },
-          {
-            "date": "2026-09-22",
-            "score": -0.55,
-            "count": 1
-          },
-          {
-            "date": "2026-09-26",
-            "score": 0.55,
-            "count": 1
-          },
-          {
-            "date": "2026-09-28",
-            "score": 0.88,
-            "count": 1
-          },
-          {
-            "date": "2026-09-29",
-            "score": -0.46,
-            "count": 1
-          },
-          {
-            "date": "2026-09-30",
-            "score": 0.25,
-            "count": 3
-          },
-          {
-            "date": "2026-10-01",
-            "score": 0.46,
-            "count": 1
-          },
-          {
-            "date": "2026-10-02",
-            "score": 0.64,
-            "count": 1
-          }
-        ],
-        "media": [
-          {
-            "date": "2026-10-01",
-            "score": 0.36,
-            "count": 1
-          },
-          {
-            "date": "2026-10-02",
-            "score": 0.12,
-            "count": 2
-          },
-          {
-            "date": "2026-10-03",
-            "score": 0,
-            "count": 2
-          }
-        ]
-      },
-      "media": {
-        "polarity": "mixed",
-        "score": 0.12,
-        "direction": "stable",
-        "mentionVolume": 5,
-        "coverageConfidence": 0.44,
-        "platformBreakdown": {
-          "news": 1
-        },
-        "topicBreakdown": {
-          "mvp_case": 0.2,
-          "defense": 0.2,
-          "training_camp": 0.6
-        },
-        "origin": "headlines",
-        "asOf": "2026-10-03",
-        "windowStart": "2026-10-01",
-        "modelVersion": "headline-lexicon-v1.1",
-        "priorScore": null
-      },
-      "headlines": [
-        {
-          "title": "How Jared McCain is making his case to start for Thunder",
-          "url": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-news-how-jared-mccain-making-case-start-2026-27",
-          "outlet": "ClutchPoints",
-          "publishedAt": "2026-10-03T20:59:31.000Z",
-          "score": 0
-        },
-        {
-          "title": "Jared McCain reacts to his viral training camp clip alongside Shai Gilgeous-Alexander",
-          "url": "https://www.sportingnews.com/us/nba/oklahoma-city-thunder/news/jared-mccain-reacts-viral-clip-shai-gilgeous-alexander/022b2157a611ac1ff36e4de8%3E",
-          "outlet": "Sporting News",
-          "publishedAt": "2026-10-03T19:26:10.000Z",
-          "score": 0
-        },
-        {
-          "title": "Thunder’s Jared McCain challenges viral Shai Gilgeous-Alexander training camp video: ‘It wasn’t a race’",
-          "url": "https://clutchpoints.com/nba/oklahoma-city-thunder/thunder-news-jared-mccain-challenges-shai-gilgeous-alexander-training-camp-video-race",
-          "outlet": "ClutchPoints",
-          "publishedAt": "2026-10-02T22:20:05.000Z",
-          "score": 0
-        },
-        {
-          "title": "The NBA’s new rule emphasis could hurt Shai Gilgeous-Alexander and actually give defenses a chance",
-          "url": "https://sports.yahoo.com/articles/nba-rule-emphasis-could-hurt-120000997.html",
-          "outlet": "Yahoo Sports",
-          "publishedAt": "2026-10-02T12:00:00.000Z",
-          "score": 0.24
-        }
-      ],
-      "fan": {
-        "polarity": "positive",
-        "score": 0.33,
-        "direction": "stable",
-        "mentionVolume": 7,
-        "coverageConfidence": 0.46,
-        "platformBreakdown": {
-          "fan_blog": 0.571,
-          "bluesky": 0.143,
-          "youtube": 0.286
-        },
-        "topicBreakdown": {
-          "mvp_case": 0.5,
-          "trade_rumors": 0.5
-        },
-        "origin": "fans",
-        "asOf": "2026-10-02",
-        "windowStart": "2026-09-28",
-        "modelVersion": "fan-lexicon-v1.1",
-        "priorScore": null
-      }
-    },
-    {
-      "playerIds": [
         "3912848"
       ],
       "displayName": "Dean Wade",
@@ -19944,30 +19803,30 @@
         "polarity": "positive",
         "score": 0.24,
         "direction": "stable",
-        "mentionVolume": 374,
+        "mentionVolume": 371,
         "coverageConfidence": 0.59,
         "platformBreakdown": {
           "fan_blog": 0.059,
           "bluesky": 0.005,
-          "youtube": 0.936
+          "youtube": 0.935
         },
         "topicBreakdown": {
-          "injury_return": 0.049,
-          "contract": 0.087,
-          "training_camp": 0.078,
-          "scoring": 0.165,
-          "trade_rumors": 0.214,
-          "title_odds": 0.087,
-          "role_debate": 0.126,
-          "defense": 0.136,
-          "mvp_case": 0.049,
+          "injury_return": 0.052,
+          "contract": 0.093,
+          "training_camp": 0.082,
+          "scoring": 0.155,
+          "trade_rumors": 0.196,
+          "title_odds": 0.093,
+          "role_debate": 0.134,
+          "defense": 0.134,
+          "mvp_case": 0.052,
           "availability": 0.01
         },
         "origin": "fans",
         "asOf": "2026-10-03",
         "windowStart": "2026-09-27",
         "modelVersion": "fan-lexicon-v1.1",
-        "priorScore": 0.26
+        "priorScore": 0.28
       }
     },
     {
@@ -25675,7 +25534,7 @@
         "polarity": "mixed",
         "score": 0.15,
         "direction": "stable",
-        "mentionVolume": 17126,
+        "mentionVolume": 17123,
         "coverageConfidence": 0.78,
         "platformBreakdown": {
           "fan_blog": 0.021,
@@ -25686,10 +25545,10 @@
           "training_camp": 0.06,
           "role_debate": 0.131,
           "availability": 0.064,
-          "trade_rumors": 0.115,
+          "trade_rumors": 0.114,
           "scoring": 0.143,
           "injury_return": 0.061,
-          "contract": 0.167,
+          "contract": 0.168,
           "title_odds": 0.087,
           "conduct": 0.005,
           "extension": 0.017,

@@ -131,6 +131,8 @@ const TEAM_NAME_EXCLUSIONS: Record<string, RegExp> = {
 
 export type HeadlineEntityResolver = (text: string) => HeadlineEntities;
 
+type NamePattern = { pattern: RegExp; playerId: string; hyphenated?: boolean };
+
 export function createHeadlineEntityResolver(
   roster: HeadlineRosterPlayer[],
   options: { fullNamesOnly?: boolean } = {}
@@ -151,15 +153,35 @@ export function createHeadlineEntityResolver(
     surnameOwner.set(surname, player);
   }
 
-  const surnames: { pattern: RegExp; playerId: string }[] = [];
+  const surnames: NamePattern[] = [];
   for (const [surname, count] of surnameCounts) {
     if (count !== 1 || surname.length < 5 || AMBIGUOUS_SURNAMES.has(surname)) continue;
     const owner = surnameOwner.get(surname)!;
     const display = foldName(owner.name.replace(NAME_SUFFIX, "")).split(" ").pop()!;
-    surnames.push({ pattern: wordPattern(display), playerId: owner.playerId });
+    surnames.push({
+      pattern: wordPattern(display),
+      playerId: owner.playerId,
+      hyphenated: display.includes("-"),
+    });
   }
 
-  const nicknames: { pattern: RegExp; playerId: string }[] = [];
+  // "Alexander" alone must not match inside "Gilgeous-Alexander", while
+  // "Anthony Davis-for-Jalen Duren" still names Davis.
+  const hyphenated = [
+    ...new Set(
+      roster.flatMap((player) =>
+        foldName(player.name).split(/\s+/).filter((token) => token.includes("-"))
+      )
+    ),
+  ];
+  const hyphenatedNames = hyphenated.length
+    ? new RegExp(
+        `(?<![A-Za-z0-9'])(?:${hyphenated.map(escapeRegExp).join("|")})(?![A-Za-z0-9])`,
+        "gi"
+      )
+    : null;
+
+  const nicknames: NamePattern[] = [];
   for (const [handle, fullName] of Object.entries(PLAYER_NICKNAMES)) {
     const playerId = byFoldedName.get(normalizeForMatch(fullName));
     if (playerId) nicknames.push({ pattern: wordPattern(handle), playerId });
@@ -180,8 +202,9 @@ export function createHeadlineEntityResolver(
       if (entry.pattern.test(lower)) playerIds.add(entry.playerId);
     }
     if (!options.fullNamesOnly) {
+      const masked = hyphenatedNames ? folded.replace(hyphenatedNames, " ") : folded;
       for (const entry of [...surnames, ...nicknames]) {
-        if (entry.pattern.test(folded)) playerIds.add(entry.playerId);
+        if (entry.pattern.test(entry.hyphenated ? folded : masked)) playerIds.add(entry.playerId);
       }
     }
     const teamIds = new Set<string>();
