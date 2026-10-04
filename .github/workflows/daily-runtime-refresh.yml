@@ -23,8 +23,9 @@ name: Daily player-viz runtime refresh
 #   vars.REDDIT_USER_AGENT                  — repo variable, not a secret
 #   YOUTUBE_API_KEY                         — Google Cloud key with YouTube Data API v3
 #   vars.BLUESKY_HANDLE, BLUESKY_APP_PASSWORD — only if logged-out Bluesky search stops working
-#   CLOUDFLARE_AI_TOKEN                     — token with only Workers AI permission; rates headline
-#                                             tone per player (word-list scores are used without it)
+#   CLOUDFLARE_AI_TOKEN                     — token with only Workers AI permission; rates headline,
+#                                             Bluesky and YouTube tone per player (word-list scores
+#                                             are used without it)
 # Fan blogs need nothing.
 
 on:

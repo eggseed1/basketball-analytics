@@ -139,9 +139,11 @@ export function SentimentSourcesStrip({
         </span>
       </p>
       <p>
-        {headlines?.toneModel
-          ? "A language model rates each headline's tone toward the players it names. Fan comments and posts are scored with a word list, so read fan scores as rough."
-          : "Tone comes from a word list, so read scores as rough."}
+        {fans?.toneModel
+          ? "A language model rates the tone of headlines, fan posts and comments toward the players they name. Team scores and fan posts from before the model still use a word list, so read those as rough."
+          : headlines?.toneModel
+            ? "A language model rates each headline's tone toward the players it names. Fan comments and posts are scored with a word list, so read fan scores as rough."
+            : "Tone comes from a word list, so read scores as rough."}
       </p>
       <MoreInfo summary="Sources and method">
       <ul className="flex flex-col gap-1">
@@ -188,9 +190,22 @@ export function SentimentSourcesStrip({
                   {fans.floor} posts in the last 7 days to get a score. Comments under the same
                   video share weight, so 100 comments on one video count for less than 100 posts
                   spread across many places.{" "}
-                  {headlines?.toneModel
-                    ? "Fan blog headlines get the same model rating as news headlines. Comments and posts are scored with a word list plus fan slang that hasn't been checked against labels, so read it as rough."
-                    : "Tone comes from a word list with extra fan slang that hasn't been checked against labels, so read it as rough."}
+                  {fans.toneModel ? (
+                    <>
+                      Fan blog headlines get the same model rating as news headlines. Bluesky posts
+                      and YouTube comments that name a player are rated by the same model when they
+                      are collected, up to a nightly limit. Checked against 143 labeled fan posts, it
+                      matched the label about 3 times in 4 and rated 2 the opposite way. The word
+                      list matched about half and rated 18 the opposite way. Older posts, posts past
+                      the nightly limit and team scores keep the word list.{" "}
+                      {Math.round((fans.ratedShare ?? 0) * 100)}% of this week&apos;s player
+                      mentions in posts and comments have a model rating.
+                    </>
+                  ) : headlines?.toneModel ? (
+                    "Fan blog headlines get the same model rating as news headlines. Comments and posts are scored with a word list that matched hand labels about half the time, so read it as rough."
+                  ) : (
+                    "Tone comes from a word list that matched hand labels about half the time, so read it as rough."
+                  )}
                 </span>
               ) : (
                 <span>No fan posts collected yet. Fan lanes below use curated values until they are.</span>

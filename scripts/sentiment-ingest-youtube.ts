@@ -9,7 +9,9 @@
  * One quota unit per uploads list and per comment page: at most 21 per team
  * channel and 76 per league channel, about 4,100 of the free 10,000 daily
  * units if every video has that many comments (most don't). Without a key
- * the script prints a notice and exits 0.
+ * the script prints a notice and exits 0. With CLOUDFLARE_AI_TOKEN and
+ * CLOUDFLARE_ACCOUNT_ID set, up to modelPairsPerRun new comment-player pairs
+ * also get a tone model rating (scripts/lib/fan-tone.ts) before the text is dropped.
  */
 
 import { createHash } from "node:crypto";
@@ -26,6 +28,7 @@ import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
 import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+import { rateNewFanPosts } from "./lib/fan-tone";
 
 type YoutubeConfig = {
   videosPerChannel: number;
@@ -36,6 +39,8 @@ type YoutubeConfig = {
   teamFanCommentPagesPerVideo?: number;
   leagueVideosPerChannel: number;
   leagueCommentPagesPerVideo: number;
+  /** Most new comment-player pairs sent to the tone model per run; the rest keep the word-list score. */
+  modelPairsPerRun?: number;
   channels: { teamId: string; channelId: string; name: string }[];
   teamFanChannels: { teamId: string; channelId: string; name: string }[];
   leagueChannels: { channelId: string; name: string; multiSport?: boolean }[];
@@ -116,7 +121,7 @@ async function main() {
   const oldestVideoMs = Date.now() - config.maxVideoAgeDays * 86_400_000;
   const rows = new Map<string, FanPostIngestItem>();
   const samplePath = sampleOutputPath();
-  const sampleText = new Map<string, string>();
+  const textById = new Map<string, string>();
   const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
   let failures = 0;
   const allPlans: ChannelPlan[] = [
@@ -225,7 +230,7 @@ async function main() {
             modelVersion: FAN_LEXICON_VERSION,
           });
           kept += 1;
-          if (samplePath) sampleText.set(id, text);
+          textById.set(id, text);
           if (dryRun && !samplePath && kept <= 2) {
             console.log(`    ${tone.score.toFixed(2).padStart(5)} ${text.replace(/\s+/g, " ").slice(0, 110)}`);
           }
@@ -241,11 +246,18 @@ async function main() {
 
   if (failures && !rows.size) throw new Error("YouTube ingest kept no comments");
   const all = [...rows.values()];
-  if (samplePath) writeSample(samplePath, all, sampleText, nameById);
+  if (samplePath) writeSample(samplePath, all, textById, nameById);
   if (dryRun) {
     console.log(`sentiment:ingest:youtube dry run kept=${all.length}`);
     return;
   }
+  await rateNewFanPosts({
+    source: "youtube",
+    rows: all,
+    textById,
+    nameById,
+    maxPairs: config.modelPairsPerRun ?? 0,
+  });
   const added = appendIngestItems("youtube", all, (row) => row.createdAt);
   console.log(
     `sentiment:ingest:youtube kept=${all.length} new=${added} mentioningPlayers=${all.filter((r) => r.playerIds.length).length}`

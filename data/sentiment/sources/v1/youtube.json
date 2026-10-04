@@ -8,6 +8,7 @@
   "teamFanCommentPagesPerVideo": 2,
   "leagueVideosPerChannel": 25,
   "leagueCommentPagesPerVideo": 3,
+  "modelPairsPerRun": 900,
   "teamFanChannels": [
     { "teamId": "1", "channelId": "UCizhvgN6Nbkx4WaNfzG2DPQ", "name": "Locked On Hawks" },
     { "teamId": "2", "channelId": "UCdzXhaRoBc1sCYwS6f1EFOw", "name": "Locked On Celtics" },

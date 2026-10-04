@@ -31,7 +31,8 @@ export type SentimentSeriesPoint = {
  *   player where available, word list otherwise).
  * reddit: approved-subreddit post-title tone via the official API (older snapshots).
  * fans: fan blogs, Bluesky posts, YouTube comments and Reddit titles blended;
- *   platformBreakdown says how much each contributed.
+ *   platformBreakdown says how much each contributed. Player lanes use the
+ *   Workers AI model rating where one was made at ingest, word list otherwise.
  */
 export type SentimentLaneOrigin = "curated" | "headlines" | "reddit" | "fans";
 
@@ -190,6 +191,10 @@ export type SentimentSourceSummary = {
     blogCount: number;
     floor: number;
     laneCount: number;
+    /** Set once any Bluesky post or YouTube comment has a model rating. */
+    toneModel?: string;
+    /** Share of this week's Bluesky and YouTube player mentions rated by the model (0..1). */
+    ratedShare?: number;
   };
 };
 

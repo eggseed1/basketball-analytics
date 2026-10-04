@@ -7,6 +7,9 @@
  *
  * Logged-out search works today. Set BLUESKY_HANDLE and BLUESKY_APP_PASSWORD
  * (an app password from Bluesky settings) to search as an account instead.
+ * With CLOUDFLARE_AI_TOKEN and CLOUDFLARE_ACCOUNT_ID set, up to
+ * modelPairsPerRun new post-player pairs also get a tone model rating
+ * (scripts/lib/fan-tone.ts) before the text is dropped.
  */
 
 import { createHash } from "node:crypto";
@@ -24,12 +27,15 @@ import { loadIngestRoster } from "@/sentiment/ingest-roster";
 import { appendIngestItems, type FanPostIngestItem } from "@/sentiment/ingest-store";
 
 import { sampleOutputPath, writeSample } from "./lib/fan-eval-sample";
+import { rateNewFanPosts } from "./lib/fan-tone";
 
 type BlueskyConfig = {
   limit: number;
   maxPages?: number;
   lookbackHours: number;
   maxHashtags: number;
+  /** Most new post-player pairs sent to the tone model per run; the rest keep the word-list score. */
+  modelPairsPerRun?: number;
   queries: { id: string; q: string; teamId?: string; strict?: boolean; exclude?: string[] }[];
 };
 
@@ -144,7 +150,7 @@ async function main() {
   const since = new Date(Date.now() - config.lookbackHours * 3_600_000).toISOString();
   const rows = new Map<string, FanPostIngestItem>();
   const samplePath = sampleOutputPath();
-  const sampleText = new Map<string, string>();
+  const textById = new Map<string, string>();
   const dryRun = process.argv.includes("--dry-run") || samplePath !== null;
   let failures = 0;
 
@@ -183,7 +189,7 @@ async function main() {
           modelVersion: FAN_LEXICON_VERSION,
         });
         kept += 1;
-        if (samplePath) sampleText.set(id, text);
+        textById.set(id, text);
         if (dryRun && !samplePath && kept <= 3) {
           console.log(`    ${tone.score.toFixed(2).padStart(5)} ${text.replace(/\s+/g, " ").slice(0, 110)}`);
         }
@@ -198,11 +204,18 @@ async function main() {
 
   if (failures === config.queries.length) throw new Error("every Bluesky query failed");
   const all = [...rows.values()];
-  if (samplePath) writeSample(samplePath, all, sampleText, nameById);
+  if (samplePath) writeSample(samplePath, all, textById, nameById);
   if (dryRun) {
     console.log(`sentiment:ingest:bluesky dry run kept=${all.length}`);
     return;
   }
+  await rateNewFanPosts({
+    source: "bluesky",
+    rows: all,
+    textById,
+    nameById,
+    maxPairs: config.modelPairsPerRun ?? 0,
+  });
   const added = appendIngestItems("bluesky", all, (row) => row.createdAt);
   console.log(
     `sentiment:ingest:bluesky kept=${all.length} new=${added} mentioningPlayers=${all.filter((r) => r.playerIds.length).length}`

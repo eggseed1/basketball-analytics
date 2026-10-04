@@ -38,25 +38,52 @@ export class HeadlineModelError extends Error {
   }
 }
 
+/**
+ * Fan post tone toward one named player, same model. Checked against 143
+ * labeled Bluesky posts and YouTube comments in
+ * data/sentiment/eval/v1/fan-posts-2026-10.json: 76% and 72% agreement, 2
+ * opposite-sign ratings, against 44% and 54% (18 opposite) for the fan word
+ * list. Same caveat on labels; changing this prompt means re-running that check.
+ */
+export const FAN_MODEL_VERSION = "fan-llama33-70b-v1";
+
+export const FAN_MODEL_SYSTEM = [
+  "You rate the tone of an NBA fan's social media post or comment toward one named player. Answer with only -1, 0 or 1.",
+  "1: the post is positive toward the player, or shares good news for them.",
+  "-1: the post is negative toward the player, mocks them, or shares bad news for them.",
+  "0: neutral or mixed, a list or lineup or injury report, the player is only mentioned in passing, or the name refers to someone else.",
+  "Read sarcasm and slang for what the writer means.",
+].join("\n");
+
+type ModelAuth = { accountId: string; token: string };
+
 /** One rating. Throws HeadlineModelError on HTTP failure; null when the answer isn't -1, 0 or 1. */
-export async function rateHeadlineTone(options: {
-  accountId: string;
-  token: string;
-  playerName: string;
-  title: string;
-}): Promise<HeadlineTone | null> {
+export function rateHeadlineTone(
+  options: ModelAuth & { playerName: string; title: string }
+): Promise<HeadlineTone | null> {
+  return rateTone(options, HEADLINE_MODEL_SYSTEM, `Player: ${options.playerName}\nHeadline: ${options.title}`);
+}
+
+/** Same contract as rateHeadlineTone, for a fan post or comment. */
+export function rateFanTone(
+  options: ModelAuth & { playerName: string; text: string }
+): Promise<HeadlineTone | null> {
+  return rateTone(options, FAN_MODEL_SYSTEM, `Player: ${options.playerName}\nPost: ${options.text}`);
+}
+
+async function rateTone(auth: ModelAuth, system: string, user: string): Promise<HeadlineTone | null> {
   const response = await fetch(
-    `https://api.cloudflare.com/client/v4/accounts/${options.accountId}/ai/run/${HEADLINE_MODEL}`,
+    `https://api.cloudflare.com/client/v4/accounts/${auth.accountId}/ai/run/${HEADLINE_MODEL}`,
     {
       method: "POST",
       headers: {
-        authorization: `Bearer ${options.token}`,
+        authorization: `Bearer ${auth.token}`,
         "content-type": "application/json",
       },
       body: JSON.stringify({
         messages: [
-          { role: "system", content: HEADLINE_MODEL_SYSTEM },
-          { role: "user", content: `Player: ${options.playerName}\nHeadline: ${options.title}` },
+          { role: "system", content: system },
+          { role: "user", content: user },
         ],
         max_tokens: 8,
         temperature: 0,

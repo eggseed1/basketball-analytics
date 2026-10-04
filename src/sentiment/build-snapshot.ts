@@ -34,7 +34,7 @@ import type {
   TeamSentimentProfile,
 } from "@/sentiment/curated-types";
 import { FAN_LEXICON_VERSION, HEADLINE_LEXICON_VERSION } from "@/sentiment/headline-lexicon";
-import { HEADLINE_MODEL_VERSION } from "@/sentiment/headline-model";
+import { FAN_MODEL_VERSION, HEADLINE_MODEL_VERSION } from "@/sentiment/headline-model";
 import type { SentimentHistoryFile } from "@/sentiment/game-reaction";
 import {
   buildIngestLane,
@@ -353,10 +353,11 @@ function newsToScored(
   });
 }
 
-function headlineRatingSummary(
+function ratingSummary(
   items: ScoredIngestItem[],
   now: Date,
-  windowDays: number
+  windowDays: number,
+  toneModel: string
 ): { toneModel?: string; ratedShare?: number } {
   const since = now.getTime() - windowDays * 86_400_000;
   let mentions = 0;
@@ -367,7 +368,7 @@ function headlineRatingSummary(
     rated += item.playerIds.filter((id) => item.playerScores?.[id] !== undefined).length;
   }
   if (!rated) return {};
-  return { toneModel: HEADLINE_MODEL_VERSION, ratedShare: Math.round((rated / mentions) * 100) / 100 };
+  return { toneModel, ratedShare: Math.round((rated / mentions) * 100) / 100 };
 }
 
 /** The model rating for a news headline that names exactly one player. */
@@ -380,19 +381,21 @@ function singlePlayerRating(
   return rating !== undefined ? { rating } : {};
 }
 
-/** Which scorer produced a player's headline lane over the current window. */
-function playerHeadlineModelVersion(
+/** Which scorer produced a player's lane over the current window. */
+function playerLaneModelVersion(
   items: ScoredIngestItem[],
   playerId: string,
   now: Date,
-  windowDays: number
+  windowDays: number,
+  model: string,
+  lexicon: string
 ): string {
   const since = now.getTime() - windowDays * 86_400_000;
   const current = items.filter((item) => Date.parse(item.date) > since);
   const rated = current.filter((item) => item.playerScores?.[playerId] !== undefined).length;
-  if (!rated) return HEADLINE_LEXICON_VERSION;
-  if (rated === current.length) return HEADLINE_MODEL_VERSION;
-  return `${HEADLINE_MODEL_VERSION}+${HEADLINE_LEXICON_VERSION}`;
+  if (!rated) return lexicon;
+  if (rated === current.length) return model;
+  return `${model}+${lexicon}`;
 }
 
 /**
@@ -433,6 +436,7 @@ function fanPostsToScored(
     playerIds: row.playerIds,
     teamIds: row.teamIds,
     platform,
+    ...(row.playerTones ? { playerScores: row.playerTones } : {}),
     // Rows from before video ids were kept fall back to channel + day.
     ...(row.platform === "youtube"
       ? { conversation: row.thread ?? `${row.source}|${row.createdAt.slice(0, 10)}` }
@@ -745,7 +749,14 @@ export async function buildSentimentSnapshot(
   for (const [playerId, items] of newsByPlayer) {
     const built = buildIngestLane(items, {
       ...headlineOpts,
-      modelVersion: playerHeadlineModelVersion(items, playerId, now, ingestConfig.windowDays),
+      modelVersion: playerLaneModelVersion(
+        items,
+        playerId,
+        now,
+        ingestConfig.windowDays,
+        HEADLINE_MODEL_VERSION,
+        HEADLINE_LEXICON_VERSION
+      ),
     });
     if (!built) continue;
     headlineLaneCount += 1;
@@ -763,7 +774,17 @@ export async function buildSentimentSnapshot(
   }
   let fanLaneCount = 0;
   for (const [playerId, items] of fanByPlayer) {
-    const built = buildIngestLane(items, fanOpts);
+    const built = buildIngestLane(items, {
+      ...fanOpts,
+      modelVersion: playerLaneModelVersion(
+        items,
+        playerId,
+        now,
+        ingestConfig.windowDays,
+        FAN_MODEL_VERSION,
+        FAN_LEXICON_VERSION
+      ),
+    });
     if (!built) continue;
     fanLaneCount += 1;
     upsertPlayer(playerId, (profile) => ({
@@ -955,7 +976,7 @@ export async function buildSentimentSnapshot(
       modelVersion: HEADLINE_LEXICON_VERSION,
       floor: ingestConfig.headlineFloor,
       laneCount: headlineLaneCount,
-      ...headlineRatingSummary(newsScored, now, ingestConfig.windowDays),
+      ...ratingSummary(newsScored, now, ingestConfig.windowDays, HEADLINE_MODEL_VERSION),
     },
     reddit: {
       configured: redditPostCount > 0,
@@ -975,6 +996,12 @@ export async function buildSentimentSnapshot(
       blogCount: new Set(fanBlogRows.map((row) => row.feedId)).size,
       floor: fanFloor,
       laneCount: fanLaneCount,
+      ...ratingSummary(
+        fanPostScored.filter((item) => item.platform !== "fan_blog"),
+        now,
+        ingestConfig.windowDays,
+        FAN_MODEL_VERSION
+      ),
     },
   };
 

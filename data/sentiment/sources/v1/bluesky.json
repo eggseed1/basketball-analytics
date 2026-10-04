@@ -4,6 +4,7 @@
   "maxPages": 3,
   "lookbackHours": 48,
   "maxHashtags": 4,
+  "modelPairsPerRun": 300,
   "queries": [
     { "id": "nba", "q": "NBA" },
     { "id": "hawks", "q": "\"Atlanta Hawks\"", "teamId": "1", "strict": true },

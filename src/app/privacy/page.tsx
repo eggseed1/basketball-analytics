@@ -52,19 +52,21 @@ export default function PrivacyPage() {
         <p>
           The <Link href="/sentiment" className="underline underline-offset-2">sentiment pages</Link>{" "}
           score the tone of public fan writing about players and teams. A word list scores each item
-          when it is fetched. Headlines from news outlets and fan blogs are also sent, with the name
-          of a player they mention, to a language model that Cloudflare runs for us (Workers AI),
-          which rates the headline&apos;s tone toward that player. Fan posts and comments are not
-          sent. Nothing is used to profile, contact or identify anyone. What we keep depends on the
-          source:
+          when it is fetched. Headlines from news outlets and fan blogs, and the text of Bluesky
+          posts and YouTube comments that name a player, are also sent with that player&apos;s name
+          to a language model that Cloudflare runs for us (Workers AI), which rates the tone toward
+          that player. Only the text and the player name are sent, never the author or handle, and
+          the model&apos;s answer is a single positive, neutral or negative rating. Reddit titles are
+          not sent. Nothing is used to profile, contact or identify anyone. What we keep depends on
+          the source:
         </p>
         <ul className="flex list-disc flex-col gap-1 pl-5">
           <li>
             Team fan blogs and news outlets: the headline and link, so a reader can open the source.
           </li>
           <li>
-            Bluesky posts and YouTube comments: a scrambled id, the date and the tone score, plus
-            the like count for Bluesky. The text, author and handle are not kept.
+            Bluesky posts and YouTube comments: a scrambled id, the date, the tone score and any
+            model rating, plus the like count for Bluesky. The text, author and handle are not kept.
           </li>
           <li>
             Reddit, if connected: only post titles from the last 24 hours are read, through

@@ -71,6 +71,9 @@ export type FanPostIngestItem = {
   playerIds: string[];
   teamIds: string[];
   modelVersion: string;
+  /** Model tone toward each named player, rated at ingest; players left out keep `score`. */
+  playerTones?: Record<string, -1 | 0 | 1>;
+  toneModelVersion?: string;
 };
 
 /**
