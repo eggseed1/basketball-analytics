@@ -9,6 +9,7 @@ import {
   GameWinProbabilityChart,
 } from "@/components/games/game-flow-charts";
 import { GameRosterBoard } from "@/components/games/game-roster-board";
+import { GameShotChart } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
 import { GameTopPerformers } from "@/components/games/game-top-performers";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
@@ -231,6 +232,32 @@ export function GameLabView({
           </p>
         )}
       </MatchupWashCard>
+
+      {events.some((e) => e.isFieldGoal) ? (
+        <MatchupWashCard
+          awayTeamKey={awayKey}
+          homeTeamKey={homeKey}
+          intensity="subtle"
+          className="flex flex-col gap-4 p-4 sm:p-5"
+        >
+          <div>
+            <h2 className={type.heading}>Shot chart</h2>
+            <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
+              Every field goal attempt, filling in as the game goes. {outcome.awayLabel} shoots
+              at the left basket and {outcome.homeLabel} at the right.
+            </p>
+          </div>
+          <GameShotChart
+            gameId={analysis.gameId}
+            status={analysis.status}
+            events={events}
+            homeLabel={outcome.homeLabel}
+            awayLabel={outcome.awayLabel}
+            homeColor={homeColor}
+            awayColor={awayColor}
+          />
+        </MatchupWashCard>
+      ) : null}
 
       <MatchupWashCard
         awayTeamKey={awayKey}

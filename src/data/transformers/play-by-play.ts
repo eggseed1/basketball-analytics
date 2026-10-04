@@ -2,6 +2,7 @@ import type {
   GamePlayByPlay,
   PlayByPlayEvent,
 } from "@/data/types/play-by-play";
+import { normalizeNbaLegacyCoords } from "@/lib/shots/court-geometry";
 
 function asString(value: unknown): string {
   if (value == null) return "";
@@ -31,6 +32,25 @@ export function formatPlayClock(clockSeconds: number): string {
   const minutes = Math.floor(total / 60);
   const seconds = total % 60;
   return `${minutes}:${String(seconds).padStart(2, "0")}`;
+}
+
+function finiteOrNull(value: unknown): number | null {
+  if (value == null || value === "") return null;
+  const n = Number(value);
+  return Number.isFinite(n) ? n : null;
+}
+
+/** Feet from the rim; ESPN adapter emits feet, NBA feeds tenths of a foot. */
+function shotSpot(
+  action: Record<string, unknown>,
+  isFieldGoal: boolean
+): { shotX: number | null; shotY: number | null } {
+  if (!isFieldGoal) return { shotX: null, shotY: null };
+  const fx = finiteOrNull(action.shotX);
+  const fy = finiteOrNull(action.shotY);
+  if (fx != null && fy != null) return { shotX: fx, shotY: fy };
+  const legacy = normalizeNbaLegacyCoords(action.xLegacy, action.yLegacy);
+  return { shotX: legacy?.x ?? null, shotY: legacy?.y ?? null };
 }
 
 function pointsFromAction(
@@ -75,6 +95,7 @@ export function transformNbaPlayByPlay(
       const clockRaw = asString(action.clock);
       const clockSeconds = parsePlayClockToSeconds(clockRaw);
       const actionNumber = asNumber(action.actionNumber);
+      const isFieldGoal = asNumber(action.isFieldGoal) === 1;
 
       return {
         id: `${gameId}-${actionNumber}`,
@@ -98,9 +119,10 @@ export function transformNbaPlayByPlay(
         scoreHome: asNumber(action.scoreHome),
         scoreAway: asNumber(action.scoreAway),
         shotResult,
-        isFieldGoal: asNumber(action.isFieldGoal) === 1,
+        isFieldGoal,
         points:
           asNumber(action.points) || pointsFromAction(actionType, shotResult),
+        ...shotSpot(action, isFieldGoal),
       } satisfies PlayByPlayEvent;
     })
     .filter((e) => e.description.trim().length > 0 || e.actionType === "period")

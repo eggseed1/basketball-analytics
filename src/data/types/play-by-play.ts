@@ -27,6 +27,12 @@ export interface PlayByPlayEvent {
   isFieldGoal: boolean;
   /** Points scored on this action (0 if none). */
   points: number;
+  /**
+   * Field goal location in feet from the rim (x across, y toward half court).
+   * Null when the source has no coordinate; never estimated.
+   */
+  shotX?: number | null;
+  shotY?: number | null;
 }
 
 export interface GamePlayByPlay {

@@ -152,6 +152,9 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       awayScore?: number | string;
       period?: { number?: number | string };
       clock?: { displayValue?: string };
+      shootingPlay?: boolean;
+      pointsAttempted?: number | string;
+      coordinate?: { x?: number; y?: number };
       team?: { id?: string | number; abbreviation?: string };
       participants?: Array<{
         athlete?: {
@@ -165,13 +168,34 @@ export function normalizeEspnSummary(raw: unknown): unknown {
   const plays = Array.isArray(root.plays) ? root.plays : [];
   const actions = plays.map((play, index) => {
     const text = String(play.text ?? "");
-    const actionType = inferEspnAction(text, play.scoreValue);
+    const attempted = Number(play.pointsAttempted ?? 0);
+    const actionType =
+      play.shootingPlay && attempted >= 1 && attempted <= 3
+        ? (["freethrow", "2pt", "3pt"] as const)[attempted - 1]!
+        : inferEspnAction(text, play.scoreValue);
     const isShot =
       actionType === "2pt" || actionType === "3pt" || actionType === "freethrow";
     const made =
       isShot &&
       (Boolean(play.scoringPlay) || Number(play.scoreValue ?? 0) > 0);
-    const participant = play.participants?.[0]?.athlete;
+    // "X blocks Y's shot" lists the blocker first; the shooter is second.
+    const participant =
+      isShot && /\bblocks\b/i.test(text) && play.participants?.[1]?.athlete
+        ? play.participants[1].athlete
+        : play.participants?.[0]?.athlete;
+    const cx = Number(play.coordinate?.x);
+    const cy = Number(play.coordinate?.y);
+    // ESPN court grid: x 0-50 ft across with the rim at 25, y ft from the rim.
+    // Free throws carry a huge negative sentinel instead of a location.
+    const hasSpot =
+      isShot &&
+      actionType !== "freethrow" &&
+      Number.isFinite(cx) &&
+      Number.isFinite(cy) &&
+      cx >= -5 &&
+      cx <= 55 &&
+      cy >= -10 &&
+      cy <= 94;
     const actionNumber =
       Number(play.sequenceNumber ?? play.id ?? index + 1) || index + 1;
     return {
@@ -191,6 +215,8 @@ export function normalizeEspnSummary(raw: unknown): unknown {
       shotResult: isShot ? (made ? "Made" : "Missed") : "",
       isFieldGoal: actionType === "2pt" || actionType === "3pt" ? 1 : 0,
       points: Number(play.scoreValue ?? 0) || 0,
+      shotX: hasSpot ? cx - 25 : null,
+      shotY: hasSpot ? cy : null,
     };
   });
   return { game: { actions } };
