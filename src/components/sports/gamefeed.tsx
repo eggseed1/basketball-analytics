@@ -24,7 +24,7 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 import { cn } from "@/lib/utils";
 
-export type GamefeedView = "week" | "month" | "list";
+export type GamefeedView = "day" | "week" | "month" | "list";
 
 const WEEKDAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 
@@ -257,6 +257,7 @@ function scoresHref(params: {
   month?: string;
   week?: string;
 }) {
+  if (params.view === "day") return "/scores";
   const sp = new URLSearchParams();
   sp.set("view", params.view);
   if (params.view === "month" && params.month) sp.set("month", params.month);
@@ -274,19 +275,20 @@ function ViewTabs({
   weekStart: string;
 }) {
   const tabs: { id: GamefeedView; label: string; href: string }[] = [
+    { id: "day", label: "Day", href: scoresHref({ view: "day" }) },
     {
       id: "week",
-      label: "Weekly",
+      label: "Week",
       href: scoresHref({ view: "week", week: weekStart }),
     },
     {
       id: "month",
-      label: "Monthly",
+      label: "Month",
       href: scoresHref({ view: "month", month: monthKey }),
     },
     {
       id: "list",
-      label: "List",
+      label: "Upcoming",
       href: scoresHref({ view: "list" }),
     },
   ];
@@ -298,8 +300,9 @@ function ViewTabs({
           key={tab.id}
           href={tab.href}
           scroll={false}
+          aria-current={view === tab.id ? "page" : undefined}
           className={cn(
-            "rounded-sm px-3 py-1.5 text-[14px] font-semibold transition-colors",
+            "rounded-sm px-2.5 py-1.5 text-[14px] font-semibold transition-colors sm:px-3",
             view === tab.id
               ? "bg-card text-foreground shadow-sm"
               : "text-muted-foreground hover:text-foreground"
@@ -361,14 +364,18 @@ function MonthGrid({
                 isToday && "border-foreground/40 ring-1 ring-foreground/20"
               )}
             >
-              <p
+              <TransitionLink
+                href={
+                  isToday ? "/scores" : `/scores?view=day&date=${cell.iso}`
+                }
                 className={cn(
-                  "px-0.5 text-[12px] font-bold tabular-nums",
+                  "self-start rounded-sm px-0.5 text-[12px] font-bold tabular-nums hover:underline",
                   isToday ? "text-foreground" : "text-muted-foreground"
                 )}
+                aria-label={`Scores for ${cell.iso}`}
               >
                 {cell.day}
-              </p>
+              </TransitionLink>
               <div className="flex flex-col gap-0.5">
                 {dayGames.slice(0, 4).map((g) => {
                   const away = abbr(g, "away");
@@ -491,7 +498,10 @@ export function Gamefeed({
   upcomingGames,
   upcomingHasMore = false,
   feedSource,
+  children,
 }: {
+  /** Day view body, rendered server-side by the page. */
+  children?: ReactNode;
   view: GamefeedView;
   season: string;
   monthKey: string;
@@ -511,7 +521,9 @@ export function Gamefeed({
   const weekMonthKey = weekStart.slice(0, 7);
 
   const subtitle =
-    view === "list"
+    view === "day"
+      ? `Live games, results and tip-off times · ${season}`
+      : view === "list"
       ? `Upcoming tip-offs from ESPN · ${season}`
       : view === "week"
         ? `Weekly slate · ${season}`
@@ -585,6 +597,8 @@ export function Gamefeed({
         </GlassSurface>
 
         <div className="query-updating-content flex flex-col gap-4">
+          {view === "day" ? children : null}
+
           {view === "month" ? (
             <>
               <MonthGrid monthKey={monthKey} games={monthGames} />

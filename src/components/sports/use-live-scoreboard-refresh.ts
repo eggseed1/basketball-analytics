@@ -39,6 +39,8 @@ function mergeById(
       retrievedAt: next.retrievedAt ?? g.retrievedAt,
       awayRecord: next.awayRecord ?? g.awayRecord,
       homeRecord: next.homeRecord ?? g.homeRecord,
+      awayPeriodScores: next.awayPeriodScores ?? g.awayPeriodScores,
+      homePeriodScores: next.homePeriodScores ?? g.homePeriodScores,
     };
   });
 }

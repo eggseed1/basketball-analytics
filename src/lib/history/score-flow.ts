@@ -407,19 +407,33 @@ export function findStrictRuns(
 ): StrictScoringRun[] {
   const runs: StrictScoringRun[] = [];
   let current: StrictScoringRun | null = null;
+  let prevHome = 0;
+  let prevAway = 0;
 
   for (const p of timeline) {
-    const teamId = p.scoringTeamId;
+    // Score deltas are authoritative; some PBP feeds omit or mislabel the team id.
+    const homeDelta = p.homeScore - prevHome;
+    const awayDelta = p.awayScore - prevAway;
+    prevHome = p.homeScore;
+    prevAway = p.awayScore;
+    if (homeDelta <= 0 && awayDelta <= 0) continue;
+    const teamId =
+      homeDelta > 0 && awayDelta <= 0
+        ? opts.homeTeamId
+        : awayDelta > 0 && homeDelta <= 0
+          ? opts.awayTeamId
+          : p.scoringTeamId;
     if (!teamId) continue;
+    const points = teamId === opts.homeTeamId ? homeDelta : awayDelta;
     if (!current || current.teamId !== teamId) {
       if (current) runs.push(current);
       const beforeHome: number =
-        p.homeScore - (teamId === opts.homeTeamId ? p.points : 0);
+        p.homeScore - (teamId === opts.homeTeamId ? points : 0);
       const beforeAway: number =
-        p.awayScore - (teamId === opts.awayTeamId ? p.points : 0);
+        p.awayScore - (teamId === opts.awayTeamId ? points : 0);
       current = {
         teamId,
-        points: p.points,
+        points,
         startEventIndex: p.eventIndex,
         endEventIndex: p.eventIndex,
         startPeriod: p.period,
@@ -431,7 +445,7 @@ export function findStrictRuns(
         scorerIds: p.scorerId ? [p.scorerId] : [],
       };
     } else {
-      current.points += p.points;
+      current.points += points;
       current.endEventIndex = p.eventIndex;
       current.endPeriod = p.period;
       current.endClock = p.clock;

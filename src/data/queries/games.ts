@@ -265,6 +265,25 @@ function shellFromGame(
   };
 }
 
+/** ESPN box payloads can omit the date, tip time and records the schedule snapshot has. */
+function withSnapshotFacts(shell: GameShell, snap: Game | null): GameShell {
+  if (!snap) return shell;
+  const g = shell.game;
+  const sameSides =
+    snap.homeTeamId === g.homeTeamId && snap.awayTeamId === g.awayTeamId;
+  return {
+    ...shell,
+    game: {
+      ...g,
+      gameDate: g.gameDate || snap.gameDate,
+      tipOffAt: g.tipOffAt ?? snap.tipOffAt,
+      homeRecord: g.homeRecord ?? (sameSides ? snap.homeRecord : undefined),
+      awayRecord: g.awayRecord ?? (sameSides ? snap.awayRecord : undefined),
+      broadcasts: g.broadcasts?.length ? g.broadcasts : snap.broadcasts,
+    },
+  };
+}
+
 function acceptShell(shell: GameShell | null): GameShell | null {
   if (!shell?.game) return null;
   if (isMalformedEmptyFinalShell(shell.game)) return null;
@@ -304,7 +323,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
       );
       const box = await fetchEspnCdnGameBoxScore(id);
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) return shell;
+      if (shell?.hasBoxScore) return withSnapshotFacts(shell, fromSnapshot);
       if (shell && !fromSnapshot) return shell;
     } catch {
       // soft-fail
@@ -316,7 +335,7 @@ export async function getGameShell(gameId: string): Promise<GameShell | null> {
         retries: 1,
       });
       const shell = box?.game ? acceptShell(shellFromBox(box)) : null;
-      if (shell?.hasBoxScore) return shell;
+      if (shell?.hasBoxScore) return withSnapshotFacts(shell, fromSnapshot);
       if (shell && !fromSnapshot) return shell;
     } catch {
       // soft-fail to snapshot / provider

@@ -9,12 +9,14 @@ import {
   GameWinProbabilityChart,
 } from "@/components/games/game-flow-charts";
 import { GameRosterBoard } from "@/components/games/game-roster-board";
-import { GameWhatDecided } from "@/components/games/game-what-decided";
+import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
+import { GameTopPerformers } from "@/components/games/game-top-performers";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { useChartTheme } from "@/lib/chart-theme";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
+import { distinctTeamColors } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
 
 type FlowTab = "margin" | "winprob";
@@ -52,22 +54,27 @@ export function GameLabView({
   players,
   events = [],
   pbpSource,
-  omitHero = false,
+  hidePeriodTable = false,
 }: {
   analysis: GameAnalysisSummary;
   players: PlayerGame[];
   events?: PlayByPlayEvent[];
   pbpSource?: string;
-  /** Parent renders GameIdentityShell — lab must not remount a second hero. */
+  /** Parent renders GameIdentityShell, so the lab never renders a hero. */
   omitHero?: boolean;
+  /** The hero already shows the line score. */
+  hidePeriodTable?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const { outcome, flow } = analysis;
   const awayKey = outcome.awayTeamId;
   const homeKey = outcome.homeTeamId;
   const matchup = buildGameMatchupTheme(awayKey, homeKey);
-  const awayColor = chartTheme.teamBarColor(awayKey) || matchup.awayWash;
-  const homeColor = chartTheme.teamBarColor(homeKey) || matchup.homeWash;
+  const palette = distinctTeamColors([homeKey, awayKey], chartTheme.surface);
+  const awayColor =
+    palette.get(awayKey) || chartTheme.teamBarColor(awayKey) || matchup.awayWash;
+  const homeColor =
+    palette.get(homeKey) || chartTheme.teamBarColor(homeKey) || matchup.homeWash;
   const [flowTab, setFlowTab] = useState<FlowTab>("margin");
 
   const homePlayers = players
@@ -81,10 +88,30 @@ export function GameLabView({
   const awayIds = new Set(awayPlayers.map((p) => p.playerId));
   const homeOnly = homePlayers.filter((p) => !awayIds.has(p.playerId));
 
+  const colors = { away: awayColor, home: homeColor };
+  const rosterHome = homeOnly.length ? homeOnly : homePlayers;
+
   return (
     <div className="flex flex-col gap-5">
-      {!omitHero ? null : null}
-      <GameWhatDecided analysis={analysis} />
+      <GameStoryStrip analysis={analysis} colors={colors} />
+      <div className="grid gap-5 lg:grid-cols-5">
+        <div className={players.length ? "lg:col-span-3" : "lg:col-span-5"}>
+          <GameTeamComparison analysis={analysis} colors={colors} />
+        </div>
+        {players.length ? (
+          <div className="lg:col-span-2">
+            <GameTopPerformers
+              awayLabel={outcome.awayLabel}
+              homeLabel={outcome.homeLabel}
+              awayTeamKey={awayKey}
+              homeTeamKey={homeKey}
+              awayPlayers={awayPlayers}
+              homePlayers={rosterHome}
+              colors={colors}
+            />
+          </div>
+        ) : null}
+      </div>
       <MatchupWashCard
         awayTeamKey={awayKey}
         homeTeamKey={homeKey}
@@ -147,7 +174,7 @@ export function GameLabView({
               />
             )}
 
-            {flow.periods.length > 0 ? (
+            {flow.periods.length > 0 && !hidePeriodTable ? (
               <div className="board-scroll-host overflow-x-auto rounded-md">
                 <table className="w-full min-w-[20rem] text-left">
                   <thead
@@ -212,7 +239,7 @@ export function GameLabView({
         className="flex flex-col gap-4 p-4 sm:p-5"
       >
         <div>
-          <h2 className={type.heading}>Rosters</h2>
+          <h2 className={type.heading}>Box score</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
             Injured or inactive players are marked OUT.
           </p>
@@ -226,7 +253,7 @@ export function GameLabView({
             awayLabel={outcome.awayLabel}
             homeLabel={outcome.homeLabel}
             awayPlayers={awayPlayers}
-            homePlayers={homeOnly.length ? homeOnly : homePlayers}
+            homePlayers={rosterHome}
           />
         )}
       </MatchupWashCard>

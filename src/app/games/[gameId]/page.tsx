@@ -18,10 +18,10 @@ import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy"
 import { parseThemeMode, resolveActiveEraTheme } from "@/themes/era-theme";
 
 interface GamePageProps { params: Promise<{ gameId: string }>; searchParams: Promise<Record<string, string | string[] | undefined>>; }
-export async function generateMetadata({ params }: GamePageProps) { const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game | Basketball Analytics" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home} | Basketball Analytics` }; }
+export async function generateMetadata({ params }: GamePageProps) { const { gameId } = await params; const shell = await getGameShellCached(gameId); if (!shell) return { title: "Game | Basketball Analytics" }; const away = shell.game.awayTeamAbbr ?? shell.game.awayTeamId; const home = shell.game.homeTeamAbbr ?? shell.game.homeTeamId; return { title: `${away} @ ${home}` }; }
 function first(value: string | string[] | undefined) { return Array.isArray(value) ? value[0] : value; }
 
-async function GameLabDeepBody({ gameId }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival> }) {
+async function GameLabDeepBody({ gameId, hidePeriodTable }: { gameId: string; arrival: ReturnType<typeof parseSeasonEvidenceArrival>; hidePeriodTable: boolean }) {
   const labBudgetMs = longUpstreamBudgetsEnabled() ? 25_000 : 10_000;
   const result = await withBudget(
     getGameAnalysis(gameId).catch(() => null),
@@ -30,7 +30,7 @@ async function GameLabDeepBody({ gameId }: { gameId: string; arrival: ReturnType
   );
   const payload = result.value;
   if (!payload) return <p className="text-[13px] text-muted-foreground">Deep Game Lab analysis is temporarily unavailable for this game.</p>;
-  return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} omitHero />;
+  return <GameLabView analysis={payload.analysis} players={payload.players} events={payload.events} pbpSource={payload.pbpSource} omitHero hidePeriodTable={hidePeriodTable} />;
 }
 
 async function HistoricalDeepBody({ gameId, seasonHint, homeLabel, awayLabel }: { gameId: string; seasonHint?: string; homeLabel: string; awayLabel: string }) {
@@ -61,11 +61,25 @@ export default async function GamePage({ params, searchParams }: GamePageProps) 
   const backHref = fromHistory ? `/history/${encodeURIComponent(seasonHint)}` : "/explore/games";
   const status = shell.game.status;
   const preTip = status === "scheduled" || status === "pregame" || status === "delayed";
-  const body = <main className="site-shell flex flex-1 flex-col gap-6 py-6 sm:py-8">
+  const heroHasLineScore = Math.min(shell.game.homePeriodScores?.length ?? 0, shell.game.awayPeriodScores?.length ?? 0) > 0;
+  const body = <main className="site-shell flex flex-1 flex-col gap-5 py-5 sm:gap-6 sm:py-7">
     <GameIdentityShell game={shell.game} brandPresentation={brandPresentation} arrivalLabel={arrival?.label} />
-    {presentation.canRenderDeepFeatures && preTip ? <p className="text-[13px] text-muted-foreground">Box score, game flow and play-by-play show up here once the game tips off.</p> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
-    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} /></Suspense>}
-    {presentation.canRenderDeepFeatures && !preTip ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense> : null}
+    {presentation.canRenderDeepFeatures && preTip ? <p className="rounded-md border border-dashed border-border px-4 py-6 text-center text-[14px] text-muted-foreground">Box score, game flow and play-by-play show up here once the game tips off.</p> : presentation.canRenderDeepFeatures ? <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Flow & shots…" />}><HistoricalDeepBody gameId={gameId} seasonHint={seasonHint} homeLabel={shell.game.homeTeamAbbr ?? "Home"} awayLabel={shell.game.awayTeamAbbr ?? "Away"} /></Suspense> : null}
+    {!presentation.canRenderDeepFeatures ? <GameUnavailablePanel gameId={gameId} backHref={backHref} /> : preTip ? null : <Suspense fallback={<DestinationSectionSkeleton label="Loading Game Lab analysis…" />}><GameLabDeepBody gameId={gameId} arrival={arrival} hidePeriodTable={heroHasLineScore} /></Suspense>}
+    {presentation.canRenderDeepFeatures && !preTip ? (
+      <details className="group sports-card overflow-hidden">
+        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 px-4 py-3.5 sm:px-5 [&::-webkit-details-marker]:hidden">
+          <span className="flex flex-col">
+            <span className="text-[17px] font-bold tracking-tight">Possession Explorer</span>
+            <span className="text-[13px] text-muted-foreground">Every possession rebuilt from play-by-play, with filters by quarter, team and result.</span>
+          </span>
+          <span aria-hidden className="text-[18px] text-muted-foreground transition-transform group-open:rotate-180">⌄</span>
+        </summary>
+        <div className="border-t border-border/60 p-3 sm:p-4">
+          <Suspense fallback={<DestinationSectionSkeleton label="Loading Possession Explorer…" />}><PossessionExplorerIsland gameId={gameId} awayTeamKey={shell.game.awayTeamId} homeTeamKey={shell.game.homeTeamId} /></Suspense>
+        </div>
+      </details>
+    ) : null}
   </main>;
   return eraTheme ? <EraThemeScope theme={eraTheme}>{body}</EraThemeScope> : body;
 }

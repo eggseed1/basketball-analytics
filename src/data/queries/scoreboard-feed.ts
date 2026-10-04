@@ -348,6 +348,29 @@ export async function getLiveScoreboardFeed(
   };
 }
 
+const dateCache = new Map<string, CacheEntry<Game[]>>();
+
+/** One ET calendar day of games (finals, live, scheduled) by `YYYY-MM-DD`. */
+export async function getScoreboardDateFeed(options: {
+  date: string;
+  season?: string;
+}): Promise<ScoreboardFeedResult<GameSummary[]>> {
+  const startYear = Number(options.date.slice(0, 4));
+  const month = Number(options.date.slice(5, 7));
+  const season =
+    options.season ??
+    canonicalSeasonFromStartYear(month >= 7 ? startYear : startYear - 1);
+  const dateKey = options.date.replace(/-/g, "");
+  const result = await softLoad({
+    key: `${season}:${dateKey}`,
+    cache: dateCache,
+    label: `day ${options.date}`,
+    empty: [] as Game[],
+    load: () => loadDay({ dateKey, season }),
+  });
+  return { ...result, data: result.data.map(toGameSummary) };
+}
+
 export function __resetScoreboardFeedCachesForTests() {
   monthCache.clear();
   weekCache.clear();
@@ -355,6 +378,7 @@ export function __resetScoreboardFeedCachesForTests() {
   dayCache.clear();
   homeStripCache.clear();
   recentCache.clear();
+  dateCache.clear();
   monthLoaderOverride = null;
   dayLoaderOverride = null;
   sharedClearPrefix("scoreboard-soft:");

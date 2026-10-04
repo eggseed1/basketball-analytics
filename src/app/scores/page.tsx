@@ -2,7 +2,12 @@ import {
   Gamefeed,
   type GamefeedView,
 } from "@/components/sports/gamefeed";
-import { GameScoreCard } from "@/components/sports/game-score-card";
+import {
+  ScoreboardDay,
+  type ScoreboardDayData,
+} from "@/components/sports/scoreboard-day";
+import { withBudget } from "@/data/queries/budget";
+import { getScoreboardDateFeed } from "@/data/queries/scoreboard-feed";
 import {
   addDaysIso,
   defaultScoreboardMonthKey,
@@ -10,21 +15,18 @@ import {
   upcomingScheduleSeason,
 } from "@/data/queries";
 import {
-  canonicalSeasonFromStartYear,
-  currentNbaStartYear,
-} from "@/data/providers/historical/season-range";
-import {
   getRuntimeSnapshotGames,
   getRuntimeSnapshotWindow,
 } from "@/data/runtime/game-snapshot";
 import { toGameSummary } from "@/data/queries/filter-utils";
+import { canonicalSeasonFromStartYear } from "@/data/providers/historical/season-range";
 import type { Game, GameSummary } from "@/data/types";
 import { isPreTipStatus } from "@/lib/game-status";
 import { nbaTodayIso } from "@/lib/nba-calendar-date";
 
 export const metadata = {
   title: "Games",
-  description: "NBA scores, weekly and monthly schedules, and upcoming tip-offs.",
+  description: "Live NBA scores, recent results, weekly and monthly schedules, and upcoming tip-offs.",
 };
 
 const LIST_PAGE_SIZE = 60;
@@ -35,7 +37,7 @@ interface ScoresPageProps {
 
 function parseView(raw: string | undefined): GamefeedView {
   if (raw === "week" || raw === "month" || raw === "list") return raw;
-  return "list";
+  return "day";
 }
 
 function one(sp: Record<string, string | string[] | undefined>, key: string) {
@@ -60,7 +62,6 @@ function sorted(games: Game[], direction: "asc" | "desc" = "asc"): Game[] {
 
 export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const sp = await searchParams;
-  const statsSeason = canonicalSeasonFromStartYear(currentNbaStartYear() - 1);
   const scheduleSeason = upcomingScheduleSeason();
   const view = parseView(one(sp, "view"));
   const today = nbaTodayIso();
@@ -116,18 +117,14 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
   const upcomingGames =
     view === "list" ? summaries(upcomingPool.slice(0, LIST_PAGE_SIZE)) : [];
 
-  const recent = summaries(
-    sorted(
-      getRuntimeSnapshotWindow({ season: statsSeason, status: "final" }),
-      "desc"
-    ).slice(0, 6)
-  );
+  const day = view === "day" ? await loadDayView(dateParam(one(sp, "date")) ?? today, today) : null;
+  const daySeason = day ? seasonForDate(day.date) : scheduleSeason;
 
   return (
     <main className="site-shell flex flex-col gap-5 py-5 sm:gap-6 sm:py-7">
       <Gamefeed
         view={view}
-        season={scheduleSeason}
+        season={view === "day" ? daySeason : scheduleSeason}
         monthKey={monthKey}
         weekStart={weekStart}
         weekEnd={weekEnd}
@@ -135,25 +132,89 @@ export default async function ScoresPage({ searchParams }: ScoresPageProps) {
         weekGames={weekGames}
         upcomingGames={upcomingGames}
         upcomingHasMore={upcomingHasMore}
-      />
-
-      {recent.length ? (
-        <section className="flex flex-col gap-3">
-          <div>
-            <h2 className="text-[20px] font-bold tracking-tight">
-              Latest results
-            </h2>
-            <p className="text-[14px] text-muted-foreground">
-              Jump into a recent box score.
-            </p>
-          </div>
-          <div className="flex flex-col gap-1">
-            {recent.map((game) => (
-              <GameScoreCard key={game.id} game={game} />
-            ))}
-          </div>
-        </section>
-      ) : null}
+      >
+        {day ? <ScoreboardDay data={day} season={daySeason} /> : null}
+      </Gamefeed>
     </main>
   );
+}
+
+const NOT_PLAYED = new Set<Game["status"]>(["postponed", "cancelled"]);
+const PLAYABLE = { has: (status: Game["status"]) => !NOT_PLAYED.has(status) };
+/** ESPN keeps day scoreboards forever, but only recent days are worth the round trip. */
+const LIVE_FETCH_WINDOW_DAYS = 21;
+
+/** NBA seasons roll over in July (schedule data starts with Summer League). */
+function seasonForDate(date: string): string {
+  const year = Number(date.slice(0, 4));
+  return canonicalSeasonFromStartYear(Number(date.slice(5, 7)) >= 7 ? year : year - 1);
+}
+
+function dateParam(raw: string | undefined): string | null {
+  return raw && /^\d{4}-\d{2}-\d{2}$/.test(raw) && !Number.isNaN(Date.parse(raw)) ? raw : null;
+}
+
+function daysBetween(a: string, b: string): number {
+  return Math.round((Date.parse(b) - Date.parse(a)) / 86_400_000);
+}
+
+/** Snapshot games for the date, overlaid with ESPN's day scoreboard when it's recent. */
+async function gamesForDate(
+  date: string,
+  today: string
+): Promise<{ games: GameSummary[]; stale: boolean }> {
+  const snapshot = getRuntimeSnapshotWindow({ fromDate: date, toDate: date });
+  if (Math.abs(daysBetween(date, today)) > LIVE_FETCH_WINDOW_DAYS) {
+    return { games: summaries(snapshot), stale: false };
+  }
+  const { value: feed } = await withBudget(getScoreboardDateFeed({ date }), 3500, null);
+  const byId = new Map<string, GameSummary>(summaries(snapshot).map((g) => [g.id, g]));
+  for (const game of feed?.data ?? []) byId.set(game.id, game);
+  return {
+    games: [...byId.values()],
+    stale: feed == null || feed.isStale || feed.source === "unavailable",
+  };
+}
+
+async function loadDayView(date: string, today: string): Promise<ScoreboardDayData> {
+  const stripStart = addDaysIso(date, -3);
+  const stripEnd = addDaysIso(stripStart, 6);
+  const counts = new Map<string, number>();
+  for (const game of getRuntimeSnapshotWindow({ fromDate: stripStart, toDate: stripEnd })) {
+    if (PLAYABLE.has(game.status)) counts.set(game.gameDate, (counts.get(game.gameDate) ?? 0) + 1);
+  }
+
+  let recentDate: string | null = null;
+  let nextGameDate: string | null = null;
+  for (const game of getRuntimeSnapshotWindow({})) {
+    if (!PLAYABLE.has(game.status)) continue;
+    if (game.gameDate < date && (!recentDate || game.gameDate > recentDate)) recentDate = game.gameDate;
+    if (game.gameDate > date && (!nextGameDate || game.gameDate < nextGameDate)) nextGameDate = game.gameDate;
+  }
+  // Only today's slate gets the previous day's results underneath.
+  const wantRecent = date === today && recentDate != null;
+
+  const [selected, recent] = await Promise.all([
+    gamesForDate(date, today),
+    wantRecent ? gamesForDate(recentDate!, today) : Promise.resolve(null),
+  ]);
+  counts.set(date, selected.games.length);
+
+  return {
+    date,
+    today,
+    strip: Array.from({ length: 7 }, (_, i) => {
+      const d = addDaysIso(stripStart, i);
+      return { date: d, count: counts.get(d) ?? 0 };
+    }),
+    prevWeekDate: addDaysIso(date, -7),
+    nextWeekDate: addDaysIso(date, 7),
+    games: selected.games,
+    recent:
+      recent && recentDate
+        ? { date: recentDate, games: recent.games.filter((g) => PLAYABLE.has(g.status)) }
+        : null,
+    nextGameDate: selected.games.length ? null : nextGameDate,
+    stale: selected.stale,
+  };
 }

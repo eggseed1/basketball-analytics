@@ -101,7 +101,7 @@ function StaticTeamMark({
   return <HistoricalTeamMark brand={brand} size={size} priority={priority} />;
 }
 
-function sideShortName(
+export function sideShortName(
   brand: ReturnType<typeof resolveSideBrand>
 ): string {
   const nick = brand.nickname?.trim();
@@ -114,7 +114,7 @@ function sideShortName(
   return display || brand.abbreviation;
 }
 
-function formatTipClock(tipOffAt?: string | null): string | null {
+export function formatTipClock(tipOffAt?: string | null): string | null {
   const ms = parseTipOffMs(tipOffAt);
   if (ms == null) return null;
   try {
@@ -381,7 +381,7 @@ export function GameMatchupBoard({
   );
 }
 
-function resolveSideBrand(
+export function resolveSideBrand(
   game: GameSummary,
   side: "home" | "away",
   presentation: HistoricalBrandPresentation
@@ -394,9 +394,14 @@ function resolveSideBrand(
   );
   if (brand) return brand;
   const key = gameSideBrandKey(game, side);
+  const name =
+    (side === "away" ? game.awayTeamName : game.homeTeamName)?.trim() || key;
+  const abbr =
+    (side === "away" ? game.awayTeamAbbr : game.homeTeamAbbr)?.trim() ||
+    key.slice(0, 3);
   return {
-    displayName: key,
-    abbreviation: key.slice(0, 3).toUpperCase(),
+    displayName: name,
+    abbreviation: abbr.toUpperCase(),
     logoUrl: null as string | null,
     source: "text_fallback" as const,
     isHistorical: false,
@@ -407,11 +412,14 @@ function resolveSideBrand(
   };
 }
 
-function broadcastHint(game: GameSummary): string | null {
-  const names = (game.broadcasts ?? [])
-    .filter((b) => b.medium !== "radio")
-    .map((b) => b.label)
-    .slice(0, 2);
+export function broadcastHint(game: GameSummary): string | null {
+  const names = [
+    ...new Set(
+      (game.broadcasts ?? [])
+        .filter((b) => b.medium !== "radio")
+        .map((b) => b.label)
+    ),
+  ].slice(0, 2);
   if (!names.length) return null;
   return names.join(" · ");
 }
