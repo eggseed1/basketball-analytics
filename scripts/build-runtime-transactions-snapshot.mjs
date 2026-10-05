@@ -37,6 +37,14 @@ const NBA_MOVEMENT = path.join(
   "v1",
   "transactions.jsonl"
 );
+const DRAFT = path.join(
+  ROOT,
+  "data",
+  "transactions",
+  "espn-draft",
+  "v1",
+  "transactions.jsonl"
+);
 const MANIFEST = path.join(
   ROOT,
   "data",
@@ -97,10 +105,12 @@ function slim(tx) {
 const disk = await readJsonl(SRC);
 const curated = await readJsonl(CURATED);
 const nbaMovement = await readJsonl(NBA_MOVEMENT);
+const draft = await readJsonl(DRAFT);
 const byId = new Map();
 for (const tx of disk) byId.set(tx.id, tx);
 for (const tx of curated) byId.set(tx.id, tx);
 for (const tx of nbaMovement) byId.set(tx.id, tx);
+for (const tx of draft) byId.set(tx.id, tx);
 
 const events = [...byId.values()]
   .map(slim)

@@ -9,6 +9,7 @@
 import "server-only";
 
 import { getFilteredPlayerSeasons } from "@/data/queries/players";
+import { unplayedDraftees } from "@/data/runtime/draftee-search";
 import {
   descriptionLooksLikeDraftCompensation,
   extractTransactionPlayerMentions,
@@ -97,6 +98,21 @@ async function buildNameIndex(): Promise<NameIndex> {
     const list = byName.get(entry.normalizedName) ?? [];
     list.push(entry);
     byName.set(entry.normalizedName, list);
+  }
+  // Draftees from the same window who have not played; a namesake on a board keeps the name.
+  for (const pick of unplayedDraftees()) {
+    if (pick.year < start - 3 || byId.has(pick.id)) continue;
+    const normalizedName = normalizePlayerName(pick.name);
+    if (byName.has(normalizedName)) continue;
+    byName.set(normalizedName, [
+      {
+        playerId: pick.id,
+        playerName: pick.name,
+        normalizedName,
+        teamIds: new Set([resolveTeamBrand(pick.teamAbbr)?.espnTeamId ?? pick.teamAbbr]),
+        seasons: new Set(),
+      },
+    ]);
   }
   return byName;
 }

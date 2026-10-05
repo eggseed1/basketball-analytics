@@ -165,6 +165,20 @@ const TRANSACTION_STEPS = [
     optional: true,
   },
   {
+    // Draft-night rows and the searchable new class; a failed year keeps its rows.
+    label: "draft",
+    cmd: "npx",
+    args: ["tsx", "scripts/ingest-draft-transactions.ts"],
+    optional: true,
+  },
+  {
+    // NBA ids for the new class; keeps the prior bake when blocked.
+    label: "draft-history",
+    cmd: "node",
+    args: ["scripts/build-runtime-draft-history-snapshot.mjs"],
+    optional: true,
+  },
+  {
     label: "transactions-snapshot",
     cmd: "node",
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],

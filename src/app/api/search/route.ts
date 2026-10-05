@@ -5,6 +5,7 @@ import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
 import { isProductionApprovedPlayerAlias } from "@/data/providers/impact/player-id-aliases";
 import { awardWinnerSortRank } from "@/data/runtime/awards-search-boost";
 import { getPlayerSearchIndex } from "@/data/runtime/player-search-snapshot";
+import { unplayedDraftees } from "@/data/runtime/draftee-search";
 
 const SITE_WEB = "https://site.web.api.espn.com";
 
@@ -237,6 +238,28 @@ export async function GET(request: Request) {
             : row.season || "Player",
         });
         if (hits.filter((h) => h.kind === "player").length >= 12) break;
+      }
+
+      for (const pick of unplayedDraftees()) {
+        if (hits.filter((h) => h.kind === "player").length >= 12) break;
+        const nameKey = pick.name
+          .normalize("NFKD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .toLowerCase()
+          .replace(/[^a-z0-9 ]/g, " ")
+          .replace(/\s+/g, " ")
+          .trim();
+        if (!nameKey.includes(needle) && !nameKey.split(" ").some((t) => t.startsWith(needle))) continue;
+        if (seen.has(`player:${pick.id}`) || seen.has(`player:${pick.nbaId}`)) continue;
+        if (seenPlayerNames.has(nameKey) || seenPlayerNames.has(pick.name.trim().toLowerCase())) continue;
+        seen.add(`player:${pick.id}`);
+        seenPlayerNames.add(nameKey);
+        hits.push({
+          id: pick.id,
+          name: pick.name,
+          kind: "player",
+          subtitle: `Draft ${pick.year} · #${pick.overall}`,
+        });
       }
     }
 

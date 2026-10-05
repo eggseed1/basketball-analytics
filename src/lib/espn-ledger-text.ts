@@ -244,7 +244,7 @@ const DRAFT_SIGNING =
   /\btheir (?:\d{4} )?(?:first|second|1st|2nd)[- ]round (?:draft )?picks?\b|\b(?:first|second)-round picks? in the \d{4} (?:NBA )?draft\b|\brookie[- ]scale\b/i;
 const EXTENSION = /\bextension\b/i;
 const NAME_TAIL =
-  /\s+(?:to\s+(?:a|an|the|their|two|three|four|five|six|multi|rookie|veteran|contracts?|terms)\b.*|off waivers\b.*|on (?:a|an)\b.*|for the\b.*)$|,\s*their\b.*$/i;
+  /\s+(?:to\s+(?:a|an|the|their|two|three|four|five|six|multi|rookie|veteran|contracts?|terms)\b.*|off waivers\b.*|on (?:a|an)\b.*|for the\b.*|with the \d+(?:st|nd|rd|th) overall pick\b.*)$|,\s*their\b.*$/i;
 const NAME_LIKE =
   /^[A-Z][A-Za-z'’.\-]+(?:\s+[A-Z][A-Za-z'’.\-]+){0,3}(?:\s+(?:Jr\.?|Sr\.?|II|III|IV|V))?$/;
 
@@ -254,12 +254,13 @@ export function parseRosterMoves(description: string | undefined): RosterMove[] 
     for (const raw of sentence.replace(/\.$/, "").split(/;\s*/)) {
       const clause = raw.trim();
       const verb = clause.match(
-        /^(Re-signed|Resigned|Signed|Agreed to terms with|Claimed|Waived|Released)\s+(.+)$/i
+        /^(Re-signed|Resigned|Signed|Agreed to terms with|Claimed|Waived|Released|Drafted)\s+(.+)$/i
       );
       if (!verb) continue;
       const v = verb[1]!.toLowerCase();
       let kind: RosterMoveKind;
-      if (v === "claimed") kind = "claim";
+      if (v === "drafted") kind = "draft";
+      else if (v === "claimed") kind = "claim";
       else if (v === "waived" || v === "released") kind = "waive";
       else if (v === "re-signed" || v === "resigned" || EXTENSION.test(clause)) kind = "re-signing";
       else if (DRAFT_SIGNING.test(clause)) kind = "draft";

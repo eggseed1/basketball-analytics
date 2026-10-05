@@ -1,0 +1,11 @@
+{
+  "source": "espn-draft",
+  "datasetVersion": "1.0",
+  "builtAt": "2026-10-05T20:18:23.796Z",
+  "transactionCount": 119,
+  "draftYears": [
+    2025,
+    2026
+  ],
+  "note": "One row per draft selection from 2025 on. Round 1 is dated to the opening night and later rounds to the closing night, in US Eastern time. Earlier drafts have no published times and get no rows."
+}

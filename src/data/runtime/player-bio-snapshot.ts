@@ -81,6 +81,18 @@ export function bundledPlayerDraftLines(): Array<{ id: string; name: string; dra
     .map(([id, bio]) => ({ id, name: bio.fn!, draft: bio.d! }));
 }
 
+/** Every baked bio with its key, for joining rows that only carry a name. */
+export function bundledPlayerBioEntries(): Array<{
+  id: string;
+  name: string;
+  position?: string;
+  birthDate?: string;
+}> {
+  return Object.entries(players)
+    .filter(([, bio]) => bio.fn)
+    .map(([id, bio]) => ({ id, name: bio.fn!, position: bio.p, birthDate: bio.bd }));
+}
+
 export function bundledPlayerBioMeta() {
   return {
     version: data.version ?? 0,

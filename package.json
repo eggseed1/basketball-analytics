@@ -21,6 +21,7 @@
     "test:player-season-rank": "tsx scripts/test-player-season-rank.ts",
     "test:offseason-tracker": "tsx scripts/test-offseason-tracker.ts",
     "test:acquisition-paths": "tsx scripts/test-acquisition-paths.ts",
+    "test:draft-transactions": "tsx scripts/test-draft-transactions.ts",
     "test:game-lab": "tsx scripts/test-game-lab.ts",
     "test:live-insights": "tsx scripts/test-live-insights.ts",
     "test:game-season-context": "tsx scripts/test-game-season-context.ts",

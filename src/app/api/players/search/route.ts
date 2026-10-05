@@ -2,7 +2,8 @@
  * Lightweight player name search for the global header combobox.
  * GET /api/players/search?q=jokic&season=2024-25&scope=season|all
  *
- * Cloudflare path uses a ~155KB baked name index only (no live ESPN / fat BRef).
+ * Cloudflare path uses a ~155KB baked name index only (no live ESPN / fat BRef),
+ * plus baked draft picks who have not played yet.
  * Vercel can enrich with live boards + master registry + draft class.
  */
 
@@ -21,6 +22,8 @@ import {
   awardWinnerSortRank,
 } from "@/data/runtime/awards-search-boost";
 import { getBundledCurrentRosterEntry } from "@/data/runtime/current-roster-snapshot";
+import { unplayedDraftees, type UnplayedDraftee } from "@/data/runtime/draftee-search";
+import { normalizePlayerName } from "@/lib/player-name";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 
@@ -192,6 +195,35 @@ function currentTeamAbbrForSearch(playerId: string, fallback: string): string {
   return nbaTeamAbbr(hit.teamId, hit.teamAbbr || fallback);
 }
 
+function drafteeRow(pick: UnplayedDraftee, season: string): SearchRow {
+  const rosterTeam = currentTeamAbbrForSearch(pick.id, "");
+  const draftTeam = resolveTeamBrand(pick.teamAbbr)?.abbr ?? pick.teamAbbr;
+  return {
+    id: pick.id,
+    name: pick.name,
+    nameLower: pick.name.toLowerCase(),
+    team: rosterTeam,
+    position: pick.position,
+    season,
+    minutes: 0,
+    draftProspect: true,
+    careerSpan: `Draft ${pick.year} · #${pick.overall}${rosterTeam ? "" : ` by ${draftTeam}`}`,
+  };
+}
+
+/** Drafted in or after the board season's start year and still without a game. */
+function withRecentDraftees(rows: SearchRow[], season: string): SearchRow[] {
+  const start = Number.parseInt(season, 10);
+  if (!Number.isFinite(start)) return rows;
+  const seenIds = new Set(rows.map((r) => r.id));
+  const seenNames = new Set(rows.filter((r) => r.draftProspect).map((r) => normalizePlayerName(r.name)));
+  const extra = unplayedDraftees()
+    .filter((d) => d.year >= start)
+    .filter((d) => !seenIds.has(d.id) && !seenIds.has(d.nbaId) && !seenNames.has(normalizePlayerName(d.name)))
+    .map((d) => drafteeRow(d, season));
+  return extra.length ? [...rows, ...extra] : rows;
+}
+
 function bundledSeasonRows(season: string): SearchRow[] {
   let bundled = getPlayerSearchIndexForSeason(season);
   let boardSeason = season;
@@ -301,6 +333,7 @@ async function getSearchIndex(season: string): Promise<SearchRow[]> {
   if (rows.length === 0) {
     rows = bundledSeasonRows(season);
   }
+  if (rows.length > 0) rows = withRecentDraftees(rows, season);
 
   if (rows.length > 0) {
     searchIndex.set(season, { rows, freshUntil: now + INDEX_TTL_MS });
@@ -310,14 +343,17 @@ async function getSearchIndex(season: string): Promise<SearchRow[]> {
 
 function pastFromBundledIndex(
   q: string,
-  _currentSeason: string,
+  currentSeason: string,
   excludeIds: Set<string>,
   limit: number
 ): SearchResult[] {
-  void _currentSeason;
   // Search the full career index; callers dedupe by id against the season board.
   // Do not exclude `currentSeason` — that hid every active player when the board
   // merge mistakenly dropped current hits (and when the clock season is empty).
+  const start = Number.parseInt(currentSeason, 10);
+  const olderDraftees = unplayedDraftees()
+    .filter((d) => !(d.year >= start) && !excludeIds.has(d.id))
+    .map((d) => drafteeRow(d, `${d.year}-${String((d.year + 1) % 100).padStart(2, "0")}`));
   const rows: SearchRow[] = getPlayerSearchIndex()
     .filter((row) => !excludeIds.has(row.id))
     .map((row) => ({
@@ -333,16 +369,17 @@ function pastFromBundledIndex(
           ? `${row.firstSeason} → ${row.season}`
           : undefined,
     }));
-  return matchRows(rows, q)
+  return matchRows([...rows, ...olderDraftees], q)
     .slice(0, limit)
     .map((row) => ({
       id: row.id,
       name: row.name,
       team: row.team,
-      position: null,
+      position: row.position,
       season: row.season,
       careerSpan: row.careerSpan ?? `Last ${row.season}`,
       current: false,
+      ...(row.draftProspect ? { draftProspect: true } : {}),
     }));
 }
 

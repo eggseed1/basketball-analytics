@@ -143,6 +143,10 @@ export function createAcquisitionEngine(events: LedgerEvent[], deps: EngineDeps)
   for (const [key, asset] of players) {
     const draft = deps.draftOf(asset.playerId!);
     if (!draft?.teamId) continue;
+    const logged = (byKey.get(key) ?? []).some(
+      (m) => m.kind === "draft" && m.date.startsWith(`${draft.year}-06`)
+    );
+    if (logged) continue;
     byKey.set(key, [
       ...(byKey.get(key) ?? []),
       { eventId: "", date: `${draft.year}-06-26`, kind: "draft", teamId: draft.teamId, asset, synthetic: true },

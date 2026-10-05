@@ -46,6 +46,15 @@ export const NBA_MOVEMENT_TRANSACTIONS_RELATIVE = path.join(
   "transactions.jsonl"
 );
 
+/** One row per draft selection (scripts/ingest-draft-transactions.ts). */
+export const DRAFT_TRANSACTIONS_RELATIVE = path.join(
+  "data",
+  "transactions",
+  "espn-draft",
+  "v1",
+  "transactions.jsonl"
+);
+
 export type TransactionArchiveManifest = {
   source: string;
   datasetVersion: string;
@@ -192,8 +201,9 @@ export async function loadTransactionArchive(
     };
     const curated = await readOptional(CURATED_TRANSACTIONS_RELATIVE);
     const nbaMovement = await readOptional(NBA_MOVEMENT_TRANSACTIONS_RELATIVE);
+    const draft = await readOptional(DRAFT_TRANSACTIONS_RELATIVE);
     const mergedById = new Map(transactions.map((tx) => [tx.id, tx]));
-    for (const tx of [...curated, ...nbaMovement]) mergedById.set(tx.id, tx);
+    for (const tx of [...curated, ...nbaMovement, ...draft]) mergedById.set(tx.id, tx);
     const mergedTransactions = [...mergedById.values()].sort((a, b) =>
       a.date.localeCompare(b.date)
     );
