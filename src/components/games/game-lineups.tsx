@@ -110,45 +110,35 @@ function PlayerRow({
   troubleAt: number | null;
 }) {
   return (
-    <ul className="grid grid-cols-5 gap-1.5 sm:gap-3">
+    <ul className="flex gap-1">
       {byPosition(players).map((p) => {
         const meta = [p.position, p.jersey ? `#${p.jersey}` : null].filter(Boolean).join(" · ");
         const trouble = troubleAt != null && p.fouls != null && p.fouls >= troubleAt;
         return (
-          <li key={p.playerId} className="min-w-0">
+          <li key={p.playerId} className="w-[3.75rem] min-w-0 shrink">
             <Link
               href={`/players/${encodeURIComponent(p.playerId)}`}
-              title={p.name}
-              className="group flex flex-col items-center gap-1 text-center"
+              title={meta ? `${p.name} · ${meta}` : p.name}
+              className="group flex flex-col items-center gap-0.5 text-center"
             >
               <PlayerHeadshot
                 playerId={p.playerId}
                 name={p.name}
                 teamKey={teamKey}
-                size="md"
-                className="h-11 w-11 sm:h-14 sm:w-14"
+                size="sm"
+                className="h-7 w-7 opacity-90 transition-opacity group-hover:opacity-100 sm:h-8 sm:w-8"
               />
-              <span
-                className={cn(
-                  type.caption,
-                  "w-full truncate font-semibold text-foreground group-hover:underline"
-                )}
-              >
+              <span className="w-full truncate text-[11px] leading-tight text-muted-foreground group-hover:text-foreground">
                 {shortName(p.name)}
               </span>
-              {meta ? (
-                <span className="w-full truncate text-[10px] leading-none text-muted-foreground">
-                  {meta}
-                </span>
-              ) : null}
               {troubleAt != null && p.points != null && p.fouls != null ? (
-                <span className="flex flex-wrap justify-center gap-x-1 text-[10px] leading-tight tabular-nums text-muted-foreground">
-                  <span>{p.points} PTS</span>
+                <span className="w-full truncate text-[10px] leading-none tabular-nums text-muted-foreground/80">
+                  {p.points} pts ·{" "}
                   <span
                     className={cn(trouble && "font-semibold text-destructive")}
                     title={trouble ? "Foul trouble" : undefined}
                   >
-                    {p.fouls} PF
+                    {p.fouls} pf
                   </span>
                 </span>
               ) : null}
@@ -170,7 +160,7 @@ function FloorState({ state, showFouls }: { state: TeamFloorState; showFouls: bo
   }
   if (!parts.length && !(showFouls && state.inBonus)) return null;
   return (
-    <p className={cn(type.caption, "mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground")}>
+    <p className={cn(type.micro, "flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground")}>
       <span className="tabular-nums">{parts.join(" · ")}</span>
       {showFouls && state.inBonus ? (
         <span className="rounded-md bg-foreground/[0.07] px-1.5 py-0.5 font-semibold text-foreground">
@@ -229,19 +219,19 @@ export function GameLineupsPanel({
   }
 
   return (
-    <section aria-label={heading} className="flex flex-col gap-3 border-t border-border/50 pt-4">
+    <section aria-label={heading} className="flex flex-col gap-2 border-t border-border/50 pt-3">
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-8">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 sm:gap-8">
         {(
           [
             ["away", awayLabel, away, awayTeamKey],
             ["home", homeLabel, home, homeTeamKey],
           ] as const
         ).map(([side, label, players, teamKey]) => (
-          <div key={side} className="flex min-w-0 flex-col gap-2">
-            <p className={cn(type.caption, "font-semibold text-foreground")}>{label}</p>
+          <div key={side} className="flex min-w-0 flex-col gap-1.5">
+            <p className={cn(type.micro, "font-semibold text-muted-foreground")}>{label}</p>
             {players ? (
               <PlayerRow
                 players={players}
