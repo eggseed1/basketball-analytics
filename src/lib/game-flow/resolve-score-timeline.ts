@@ -128,31 +128,23 @@ export function timelineFromPlayByPlayEvents(
   });
 
   const points: ScoreTimelinePoint[] = [];
+  // High-water marks. Feeds append late-logged plays carrying the score from
+  // when they happened; resetting to those stale scores would count the
+  // points between twice, so anything below the mark is skipped.
   let prevH = 0;
   let prevA = 0;
+  let lastElapsed = 0;
 
   for (let i = 0; i < sorted.length; i++) {
     const e = sorted[i]!;
     const homeScore = e.scoreHome;
     const awayScore = e.scoreAway;
+    if (homeScore < prevH || awayScore < prevA) continue;
     const dh = homeScore - prevH;
     const da = awayScore - prevA;
-
-    // Sync corrections that rewind score without emitting a scoring point.
     if (dh === 0 && da === 0) continue;
 
-    const scoredPoints =
-      e.points > 0 ? e.points : Math.max(0, dh) + Math.max(0, da);
-
-    // Pure rewinds (negative only) update baseline without a timeline row.
-    if (scoredPoints <= 0 && dh <= 0 && da <= 0) {
-      prevH = homeScore;
-      prevA = awayScore;
-      continue;
-    }
-
-    // Net scoring progress (including same-clock multi-events).
-    if (homeScore === prevH && awayScore === prevA) continue;
+    const scoredPoints = e.points > 0 ? e.points : dh + da;
 
     const scoringTeamId =
       dh > 0
@@ -161,17 +153,18 @@ export function timelineFromPlayByPlayEvents(
           ? opts.awayTeamId
           : e.teamId ?? "";
 
+    lastElapsed = Math.max(lastElapsed, elapsedGameTimeSeconds(e.period || 1, e.clockSeconds));
     points.push({
       period: e.period || 1,
       clock: e.clock,
-      elapsedGameTime: elapsedGameTimeSeconds(e.period || 1, e.clockSeconds),
+      elapsedGameTime: lastElapsed,
       homeScore,
       awayScore,
       margin: homeScore - awayScore,
       scoringTeamId,
       scorerId: e.playerId,
       scorerName: e.playerName,
-      points: scoredPoints > 0 ? scoredPoints : Math.abs(dh) + Math.abs(da),
+      points: scoredPoints,
       eventIndex: i,
     });
 

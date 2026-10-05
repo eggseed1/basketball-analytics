@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type ReactNode, type SVGProps } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 
 import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import { TransitionLink } from "@/components/continuity/query-nav";
@@ -46,6 +46,8 @@ const LAYERS: { id: Layer; label: string }[] = [
   { id: "turnovers", label: "Turnovers" },
   { id: "fouls", label: "Fouls" },
 ];
+/** Assists and rebounds ride on a shot's spot, so they start hidden to keep the court readable. */
+const DEFAULT_LAYERS: Layer[] = ["makes", "misses", "blocks", "steals", "turnovers", "fouls"];
 
 const STAT_COLUMNS: { label: string; title: string; value: (t: SideTally) => string }[] = [
   { label: "FG", title: "Field goals", value: (t) => `${t.fgm}-${t.fga}` },
@@ -86,72 +88,83 @@ function CourtEnd() {
   );
 }
 
-function Diamond({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
-  return <path d={`M ${cx} ${cy - r} L ${cx + r} ${cy} L ${cx} ${cy + r} L ${cx - r} ${cy} Z`} {...rest} />;
-}
+type BadgeLayer = Exclude<Layer, "makes" | "misses">;
 
-function Triangle({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
+const BADGE_LETTER: Record<BadgeLayer, string> = {
+  assists: "A",
+  rebounds: "R",
+  blocks: "B",
+  steals: "S",
+  turnovers: "TO",
+  fouls: "F",
+};
+/** Badge radius in court feet at desktop width; scaled up on narrow screens. */
+const BADGE_R = 1;
+/** Smallest on-screen badge radius in pixels, so letters stay legible on phones. */
+const BADGE_MIN_PX = 6.5;
+const BADGE_MAX_SCALE = 1.8;
+
+function Badge({
+  x,
+  y,
+  k,
+  letter,
+  color,
+  faded,
+}: {
+  x: number;
+  y: number;
+  k: number;
+  letter: string;
+  color: string;
+  faded?: boolean;
+}) {
   return (
-    <path
-      d={`M ${cx - r} ${cy - r * 0.7} L ${cx + r} ${cy - r * 0.7} L ${cx} ${cy + r} Z`}
-      strokeLinejoin="round"
-      {...rest}
-    />
+    <g opacity={faded ? 0.4 : 1}>
+      <circle cx={x} cy={y} r={BADGE_R * k} fill={color} stroke="var(--background)" strokeWidth={0.18 * k} />
+      <text
+        x={x}
+        y={y}
+        dy="0.36em"
+        textAnchor="middle"
+        fontSize={(letter.length > 1 ? 0.9 : 1.2) * k}
+        fontWeight={800}
+        fill="var(--background)"
+        className="pointer-events-none select-none"
+      >
+        {letter}
+      </text>
+    </g>
   );
 }
 
-function Cross({ cx, cy, r, ...rest }: { cx: number; cy: number; r: number } & SVGProps<SVGPathElement>) {
-  return (
-    <path
-      d={`M ${cx - r} ${cy - r} L ${cx + r} ${cy + r} M ${cx + r} ${cy - r} L ${cx - r} ${cy + r}`}
-      strokeLinecap="round"
-      {...rest}
-    />
-  );
-}
-
-/** Legend glyph for a layer chip, drawn in currentColor. */
+/** Legend glyph for a layer chip, drawn in currentColor so it matches the marker on the court. */
 function LayerGlyph({ layer }: { layer: Layer }) {
   const c = "currentColor";
   let glyph: ReactNode;
-  switch (layer) {
-    case "makes":
-      glyph = <circle cx={6} cy={6} r={4} fill={c} />;
-      break;
-    case "misses":
-      glyph = <circle cx={6} cy={6} r={3.6} fill="none" stroke={c} strokeWidth={1.5} />;
-      break;
-    case "assists":
-      glyph = (
-        <>
-          <circle cx={6} cy={6} r={2.6} fill={c} />
-          <circle cx={6} cy={6} r={5} fill="none" stroke={c} strokeWidth={1} />
-        </>
-      );
-      break;
-    case "rebounds":
-      glyph = (
-        <>
-          <circle cx={6} cy={6} r={4} fill="none" stroke={c} strokeWidth={1.2} strokeOpacity={0.5} />
-          <circle cx={6} cy={6} r={1.8} fill={c} />
-        </>
-      );
-      break;
-    case "blocks":
-      glyph = <Cross cx={6} cy={6} r={3.6} fill="none" stroke={c} strokeWidth={1.6} />;
-      break;
-    case "steals":
-      glyph = <Diamond cx={6} cy={6} r={4.6} fill={c} />;
-      break;
-    case "turnovers":
-      glyph = <Triangle cx={6} cy={6} r={4.4} fill="none" stroke={c} strokeWidth={1.4} />;
-      break;
-    case "fouls":
-      glyph = <rect x={2.2} y={2.2} width={7.6} height={7.6} fill="none" stroke={c} strokeWidth={1.4} />;
-      break;
+  if (layer === "makes") glyph = <circle cx={7} cy={7} r={4.5} fill={c} />;
+  else if (layer === "misses") glyph = <circle cx={7} cy={7} r={4} fill="none" stroke={c} strokeWidth={1.6} />;
+  else {
+    const letter = BADGE_LETTER[layer];
+    glyph = (
+      <>
+        <circle cx={7} cy={7} r={7} fill={c} />
+        <text
+          x={7}
+          y={7}
+          dy="0.36em"
+          textAnchor="middle"
+          fontSize={letter.length > 1 ? 6.4 : 8.6}
+          fontWeight={800}
+          fill="var(--background)"
+        >
+          {letter}
+        </text>
+      </>
+    );
   }
   return (
-    <svg viewBox="0 0 12 12" className="size-3 shrink-0" aria-hidden>
+    <svg viewBox="0 0 14 14" className="size-3.5 shrink-0" aria-hidden>
       {glyph}
     </svg>
   );
@@ -243,6 +256,7 @@ export function GameShotChart({
     [events, homeLabel, awayLabel]
   );
   const located = court.filter((c) => c.kind === "make" || c.kind === "miss").length;
+  const hasCourt = located > 0;
   const maxPeriod = Math.max(4, ...marks.map((m) => m.period));
   const endT = Math.max(periodStart(maxPeriod + 1), ...marks.map((m) => m.t));
   /** Live games stop at the latest play; the rest of the track hasn't happened. */
@@ -251,7 +265,7 @@ export function GameShotChart({
     : endT;
 
   const [mode, setMode] = useState<Mode>("shots");
-  const [layers, setLayers] = useState<Set<Layer>>(() => new Set(LAYERS.map((l) => l.id)));
+  const [layers, setLayers] = useState<Set<Layer>>(() => new Set(DEFAULT_LAYERS));
   // null = everything so far. Final games start empty and replay on view.
   const [cutoff, setCutoff] = useState<number | null>(live ? null : 0);
   const [playing, setPlaying] = useState(false);
@@ -263,8 +277,23 @@ export function GameShotChart({
   const [player, setPlayer] = useState<string | null>(null);
   const [zone, setZone] = useState<ShotZone | null>(null);
   const rootRef = useRef<HTMLDivElement>(null);
+  const courtRef = useRef<HTMLDivElement>(null);
+  const [badgeScale, setBadgeScale] = useState(1);
   const introDone = useRef(live);
   const playhead = useRef(0);
+
+  useEffect(() => {
+    const el = courtRef.current;
+    if (!el) return;
+    const ro = new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width ?? 0;
+      if (width <= 0) return;
+      const pxPerFoot = width / (COURT_W + 2);
+      setBadgeScale(Math.min(BADGE_MAX_SCALE, Math.max(1, BADGE_MIN_PX / (BADGE_R * pxPerFoot))));
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [hasCourt]);
 
   const seek = (t: number | null) => {
     playhead.current = t ?? 0;
@@ -474,9 +503,11 @@ export function GameShotChart({
     setPlayer(id);
     setSide(null);
     setPinned(null);
+    setLayers(new Set(id ? LAYERS.map((l) => l.id) : DEFAULT_LAYERS));
   };
 
   const clearFilters = () => {
+    if (player) setLayers(new Set(DEFAULT_LAYERS));
     setQuarter(null);
     setPlayer(null);
     setSide(null);
@@ -538,78 +569,73 @@ export function GameShotChart({
     const { cx, cy } = toCourt(c);
     const color = colorOf(c.side);
     const isFocus = focus?.id === c.id;
-    const grow = isFocus ? 1.5 : 1;
-    const bg = "var(--background)";
+    const grow = (isFocus ? 1.5 : 1) * (1 + (badgeScale - 1) * 0.6);
+    const k = badgeScale * (isFocus ? 1.25 : 1);
     const own = mode === "game" ? new Set(layersOf(c).filter((l) => layers.has(l))) : null;
     let body: ReactNode;
-    if (c.kind === "make") {
-      const full = !own || own.has("makes");
-      const ring = own != null && layers.has("assists") && c.assisted;
+    if (c.kind === "make" || c.kind === "miss") {
+      const shotOwn = !own || own.has(c.kind === "make" ? "makes" : "misses");
+      const tags: { layer: BadgeLayer; color: string }[] = [];
+      if (own) {
+        if (c.kind === "make" && c.assisted && layers.has("assists")) tags.push({ layer: "assists", color });
+        if (c.kind === "miss" && c.blockedBy && layers.has("blocks"))
+          tags.push({ layer: "blocks", color: colorOf(c.blockedBy) });
+        if (c.kind === "miss" && c.rebound && layers.has("rebounds"))
+          tags.push({ layer: "rebounds", color: colorOf(c.rebound.side) });
+      }
+      const tagK = k * 0.8;
+      const offset = (BADGE_R + 0.15) * tagK;
       body = (
         <>
-          <circle cx={cx} cy={cy} r={0.8} fill={color} className="shot-ripple" />
-          {ring ? (
+          {c.kind === "make" ? (
+            <>
+              <circle cx={cx} cy={cy} r={0.8} fill={color} className="shot-ripple" />
+              <circle
+                cx={cx}
+                cy={cy}
+                r={0.8 * grow}
+                fill={color}
+                stroke="var(--background)"
+                strokeWidth={0.22}
+                opacity={shotOwn ? 1 : 0.35}
+                className="shot-make"
+              />
+            </>
+          ) : (
             <circle
               cx={cx}
               cy={cy}
-              r={1.35 * grow}
+              r={0.65 * grow}
               fill="none"
               stroke={color}
-              strokeWidth={own?.has("assists") ? 0.3 : 0.2}
+              strokeWidth={0.26}
+              strokeOpacity={isFocus ? 1 : shotOwn ? 0.75 : 0.3}
               className="shot-miss"
             />
+          )}
+          {tags.length ? (
+            <g className="shot-miss">
+              {tags.map((t, i) => (
+                <Badge
+                  key={t.layer}
+                  x={cx + (i === 0 ? offset : -offset)}
+                  y={cy - offset}
+                  k={tagK}
+                  letter={BADGE_LETTER[t.layer]}
+                  color={t.color}
+                  faded={!own?.has(t.layer)}
+                />
+              ))}
+            </g>
           ) : null}
-          <circle
-            cx={cx}
-            cy={cy}
-            r={(full ? 0.8 : 0.5) * grow}
-            fill={color}
-            stroke={bg}
-            strokeWidth={0.22}
-            className="shot-make"
-          />
         </>
       );
-    } else if (c.kind === "miss") {
-      const strong = !own || own.has("misses");
-      const rebound = own && layers.has("rebounds") ? c.rebound : null;
-      const blocked = own && layers.has("blocks") ? c.blockedBy : null;
+    } else {
+      const layer: BadgeLayer = c.kind === "steal" ? "steals" : c.kind === "turnover" ? "turnovers" : "fouls";
       body = (
         <g className="shot-miss">
-          <circle
-            cx={cx}
-            cy={cy}
-            r={0.65 * grow}
-            fill="none"
-            stroke={color}
-            strokeWidth={0.26}
-            strokeOpacity={isFocus ? 1 : strong ? 0.6 : 0.3}
-          />
-          {rebound ? (
-            <circle cx={cx} cy={cy} r={(own?.has("rebounds") ? 0.38 : 0.3) * grow} fill={colorOf(rebound.side)} />
-          ) : null}
-          {blocked ? (
-            <Cross cx={cx} cy={cy} r={0.75 * grow} fill="none" stroke={colorOf(blocked)} strokeWidth={0.3} />
-          ) : null}
+          <Badge x={cx} y={cy} k={k} letter={BADGE_LETTER[layer]} color={color} />
         </g>
-      );
-    } else if (c.kind === "steal") {
-      body = <Diamond cx={cx} cy={cy} r={0.95 * grow} fill={color} stroke={bg} strokeWidth={0.2} className="shot-miss" />;
-    } else if (c.kind === "turnover") {
-      body = <Triangle cx={cx} cy={cy} r={0.85 * grow} fill="none" stroke={color} strokeWidth={0.26} className="shot-miss" />;
-    } else {
-      const s = 1.4 * grow;
-      body = (
-        <rect
-          x={cx - s / 2}
-          y={cy - s / 2}
-          width={s}
-          height={s}
-          fill="none"
-          stroke={color}
-          strokeWidth={0.26}
-          className="shot-miss"
-        />
       );
     }
     return (
@@ -623,7 +649,7 @@ export function GameShotChart({
         }}
       >
         {body}
-        <circle cx={cx} cy={cy} r={1.8} fill="transparent" />
+        <circle cx={cx} cy={cy} r={Math.max(1.8, 1.4 * badgeScale)} fill="transparent" />
       </g>
     );
   };
@@ -812,7 +838,7 @@ export function GameShotChart({
         </div>
       ) : null}
 
-      <div className="relative">
+      <div ref={courtRef} className="relative">
         <svg
           viewBox={`-1 -1 ${COURT_W + 2} ${COURT_H + 2}`}
           className="block h-auto w-full select-none"
@@ -908,7 +934,7 @@ export function GameShotChart({
         ) : mode === "shots" ? (
           "Filled dots are makes, rings are misses. Tap a dot to pin it, or a team to isolate its shots."
         ) : (
-          "Markers take the color of the team credited with the play. Tap a marker to pin it, or a team to isolate it."
+          "Dots are makes, rings are misses, letters are other plays. Color shows the team credited."
         )}
       </p>
 
@@ -1064,7 +1090,7 @@ export function GameShotChart({
 
       <p className={cn(type.micro, "text-muted-foreground")}>
         {mode === "game"
-          ? "Spots are ESPN's, logged on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
+          ? "Spots are ESPN's, logged on a half court from the basket being attacked. Assists, blocks and rebounds have no spot of their own, so their letters sit on the shot they belong to, colored by the team that got credit. Free throws have no spot and only show at each line as a running count. "
           : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone to show just those shots. `}
         Counts come from play-by-play and can differ slightly from the official box score, for example on heaves or stat corrections made after the game.
       </p>

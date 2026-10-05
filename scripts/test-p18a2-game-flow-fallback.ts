@@ -215,6 +215,28 @@ function pbp(events: PlayByPlayEvent[]): GamePlayByPlay {
   assert.equal(tl.at(-1)?.homeScore, 2);
 }
 
+// 6b. late-logged play carrying an older score must not double count the points after it
+{
+  const tl = timelineFromPlayByPlayEvents(
+    [
+      ev({ actionNumber: 1, period: 1, clockSeconds: 600, scoreHome: 2, scoreAway: 0, points: 2 }),
+      ev({ actionNumber: 2, period: 1, clockSeconds: 500, scoreHome: 4, scoreAway: 0, points: 2 }),
+      ev({ actionNumber: 3, period: 1, clockSeconds: 650, scoreHome: 2, scoreAway: 0, points: 2 }),
+      ev({ actionNumber: 4, period: 1, clockSeconds: 400, scoreHome: 6, scoreAway: 0, points: 2 }),
+    ],
+    { homeTeamId: "HOME", awayTeamId: "AWAY" }
+  );
+  assert.deepEqual(
+    tl.map((p) => p.homeScore),
+    [2, 4, 6]
+  );
+  assert.equal(
+    tl.reduce((s, p) => s + p.points, 0),
+    6
+  );
+  for (let i = 1; i < tl.length; i++) assert.ok(tl[i]!.elapsedGameTime >= tl[i - 1]!.elapsedGameTime);
+}
+
 // 7. same-clock scoring events
 {
   const tl = timelineFromPlayByPlayEvents(
