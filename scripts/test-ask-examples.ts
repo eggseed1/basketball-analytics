@@ -38,6 +38,7 @@ const CLASS_TO_OPS: Record<string, string[]> = {
   game: ["game_lab"],
   evidence: ["team_season_game_evidence"],
   offseason: ["offseason_summary"],
+  on_off: ["player_on_off"],
 };
 
 // --- Pool size ---

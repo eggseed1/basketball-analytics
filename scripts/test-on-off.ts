@@ -7,7 +7,14 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
-import { lineupRows, playerDetail, teamPlayerRows, wowy } from "../src/lib/on-off/derive";
+import {
+  lineupRows,
+  onOffTrend,
+  playerDetail,
+  replacements,
+  teamPlayerRows,
+  wowy,
+} from "../src/lib/on-off/derive";
 import {
   K,
   ON_OFF_VIEWS,
@@ -21,7 +28,15 @@ import {
   type OnOffSplit,
   type OnOffVec,
 } from "../src/lib/on-off/metrics";
-import type { LeagueOnOffFile, OnOffManifest, TeamOnOffFile } from "../src/lib/on-off/types";
+import {
+  GAME_LOG_VIEWS,
+  ON_OFF_FILE_VERSION,
+  onOffDir,
+  type LeagueOnOffFile,
+  type OnOffManifest,
+  type OnOffPhase,
+  type TeamOnOffFile,
+} from "../src/lib/on-off/types";
 
 const close = (a: number | null, b: number, eps = 1e-9) => {
   assert.ok(a != null && Math.abs(a - b) < eps, `${a} != ${b}`);
@@ -95,18 +110,22 @@ function syntheticFile(): TeamOnOffFile {
     all: s(poss, pts, dpts),
     clutch: s(poss / 10, pts / 10, dpts / 10),
   });
+  const noLog = { clean: [], all: [] };
   return {
     version: 1,
     season: "test",
+    phase: "regular",
     teamId: "1",
     teamAbbr: "TST",
     generatedAt: "",
     games: 1,
     keys: [],
+    schedule: [],
     team: views(1000, 1150, 1100),
+    teamLog: noLog,
     players: [
-      { id: "a", name: "Alpha One", gp: 1, starts: 1, rating: null, ...views(700, 840, 735) },
-      { id: "b", name: "Beta Two", gp: 1, starts: 1, rating: null, ...views(600, 690, 660) },
+      { id: "a", name: "Alpha One", gp: 1, starts: 1, rating: null, log: noLog, ...views(700, 840, 735) },
+      { id: "b", name: "Beta Two", gp: 1, starts: 1, rating: null, log: noLog, ...views(600, 690, 660) },
     ],
     pairs: [{ a: "a", b: "b", ...views(450, 540, 470) }],
     lineups: [{ ids: ["a", "b", "c", "d", "e"], ...views(120, 140, 120) }],
@@ -164,31 +183,89 @@ function testQualityContext() {
   assert.equal(unrated.quality.opponentsOn, null);
 }
 
+function testReplacementsAndTrend() {
+  const file = syntheticFile();
+  // a on 700 of 1000; b plays 450 with a (64% of a's 700) and 150 of the 300 without (50%).
+  assert.equal(replacements(file, "a", "all").length, 0, "b plays less when a sits");
+  // b on 600; a plays 450 with b (75%) and 250 of the 400 without (62.5%).
+  assert.equal(replacements(file, "b", "all").length, 0);
+  file.pairs[0] = { ...file.pairs[0]!, all: { o: vec({ poss: 300 }), d: vec({ poss: 300 }) } };
+  const r = replacements(file, "b", "all");
+  assert.equal(r.length, 1);
+  close(r[0]!.shareWith, 0.5);
+  close(r[0]!.shareWithout, 1);
+  assert.equal(r[0]!.possWithout, 800);
+
+  // Two games: a plays only game 0. Season-to-date swing must match the season comparison.
+  const t = syntheticFile();
+  t.schedule = [
+    { id: "g0", date: "2025-10-22", opp: "AAA", home: true },
+    { id: "g1", date: "2025-10-24", opp: "BBB", home: false },
+  ];
+  t.teamLog = { clean: [], all: [[0, 300, 330, 300, 300], [1, 300, 320, 300, 310]] };
+  t.players[0]!.log = { clean: [], all: [[0, 260, 290, 260, 250]] };
+  const trend = onOffTrend(t, "a", "all");
+  assert.equal(trend.length, 2);
+  assert.equal(trend[0]!.swing, null, "under 250 possessions off, the line waits");
+  assert.equal(trend[1]!.played, false);
+  const onNet = (100 * 290) / 260 - (100 * 250) / 260;
+  const offNet = (100 * (650 - 290)) / (600 - 260) - (100 * (610 - 250)) / (600 - 260);
+  close(trend[1]!.swing, onNet - offNet);
+  assert.equal(onOffTrend(t, "a", "clutch").length, 0);
+}
+
 function testCommittedFiles() {
   const root = path.join(process.cwd(), "public/runtime/on-off");
   const manifestPath = path.join(root, "manifest.json");
   if (!fs.existsSync(manifestPath)) return;
   const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf8")) as OnOffManifest;
   assert.ok(manifest.seasons.length > 0);
-  for (const { season, teams } of manifest.seasons) {
-    const league = JSON.parse(fs.readFileSync(path.join(root, season, "league.json"), "utf8")) as LeagueOnOffFile;
-    assert.equal(league.season, season);
-    for (const teamId of teams) {
-      const file = JSON.parse(fs.readFileSync(path.join(root, season, `${teamId}.json`), "utf8")) as TeamOnOffFile;
-      assert.equal(file.teamId, teamId);
-      assert.ok(file.games >= 1 && file.games <= 82, `${season} ${teamId} games ${file.games}`);
-      for (const view of ON_OFF_VIEWS) {
-        for (const side of ["o", "d"] as const) {
-          const teamPoss = file.team[view][side][K.poss]!;
-          const credited = file.players.reduce((sum, p) => sum + p[view][side][K.poss]!, 0);
-          assert.equal(credited, teamPoss * 5, `${season} ${file.teamAbbr} ${view}.${side}: five players per possession`);
-        }
+  for (const entry of manifest.seasons) {
+    checkSeason(root, entry.season, "regular", entry.teams);
+    if (entry.playoffs) checkSeason(root, entry.season, "playoffs", entry.playoffs.teams);
+  }
+}
+
+function checkSeason(root: string, season: string, phase: OnOffPhase, teams: string[]) {
+  const dir = path.join(root, onOffDir(season, phase));
+  const league = JSON.parse(fs.readFileSync(path.join(dir, "league.json"), "utf8")) as LeagueOnOffFile;
+  assert.equal(league.season, season);
+  assert.equal(league.phase, phase);
+  assert.equal(league.version, ON_OFF_FILE_VERSION);
+  for (const teamId of teams) {
+    const file = JSON.parse(fs.readFileSync(path.join(dir, `${teamId}.json`), "utf8")) as TeamOnOffFile;
+    const label = `${season} ${phase} ${file.teamAbbr}`;
+    assert.equal(file.teamId, teamId);
+    assert.equal(file.phase, phase);
+    const maxGames = phase === "playoffs" ? 28 : 82;
+    assert.ok(file.games >= 1 && file.games <= maxGames, `${label} games ${file.games}`);
+    assert.equal(file.schedule.length, file.games, `${label}: one schedule row per game`);
+    assert.equal(file.teamLog.all.length, file.games, `${label}: team log covers every game`);
+    for (const view of GAME_LOG_VIEWS) {
+      const logPoss = file.teamLog[view].reduce((sum, r) => sum + r[1], 0);
+      assert.equal(logPoss, file.team[view].o[K.poss], `${label} ${view} log sums to the season`);
+    }
+    const star = file.players[0]!;
+    const last = onOffTrend(file, star.id, "all").at(-1);
+    const cmp = compareOnOff(file.team.all, star.all, LEAGUE);
+    if (last?.swing != null && cmp.netDiff != null) close(last.swing, cmp.netDiff, 0.05);
+
+    for (const view of ON_OFF_VIEWS) {
+      for (const side of ["o", "d"] as const) {
+        const teamPoss = file.team[view][side][K.poss]!;
+        const credited = file.players.reduce((sum, p) => sum + p[view][side][K.poss]!, 0);
+        assert.equal(credited, teamPoss * 5, `${label} ${view}.${side}: five players per possession`);
       }
-      assert.ok(file.team.clean.o[K.poss]! <= file.team.all.o[K.poss]!, "filtered is a subset of all");
-      assert.ok(file.team.clutch.o[K.poss]! > 0, `${season} ${file.teamAbbr} has clutch possessions`);
-      assert.ok(file.team.clutch.o[K.poss]! < file.team.all.o[K.poss]! * 0.15, "clutch is a small slice");
-      const rated = file.team.all.o[K.ownQN]! / (file.team.all.o[K.poss]! * 5);
-      assert.ok(rated > 0.95, `${season} ${file.teamAbbr} rated coverage ${rated.toFixed(3)}`);
+    }
+    assert.ok(file.team.clean.o[K.poss]! <= file.team.all.o[K.poss]!, "filtered is a subset of all");
+    assert.ok(file.team.clutch.o[K.poss]! < file.team.all.o[K.poss]! * 0.15, "clutch is a small slice");
+    const rated = file.team.all.o[K.ownQN]! / (file.team.all.o[K.poss]! * 5);
+    assert.ok(rated > 0.95, `${label} rated coverage ${rated.toFixed(3)}`);
+    if (phase === "playoffs") {
+      const ranked = teamPlayerRows(file, league, "all").some((r) => r.netDiffPercentile != null);
+      assert.equal(ranked, false, "playoff splits carry no league rank");
+    } else {
+      assert.ok(file.team.clutch.o[K.poss]! > 0, `${label} has clutch possessions`);
     }
   }
 }
@@ -198,5 +275,6 @@ testFactorsAndRatings();
 testOffIsTeamMinusOn();
 testWowyPartitions();
 testQualityContext();
+testReplacementsAndTrend();
 testCommittedFiles();
 console.log("on-off: ok");

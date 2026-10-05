@@ -42,6 +42,9 @@ export const PLAYER_ALIASES: Record<string, { id: string; name: string }> = {
   "jayson tatum": { id: "4065648", name: "Jayson Tatum" },
   "trey murphy": { id: "4395725", name: "Trey Murphy III" },
   "trey murphy iii": { id: "4395725", name: "Trey Murphy III" },
+  sga: { id: "4278073", name: "Shai Gilgeous-Alexander" },
+  "shai gilgeous-alexander": { id: "4278073", name: "Shai Gilgeous-Alexander" },
+  "gilgeous-alexander": { id: "4278073", name: "Shai Gilgeous-Alexander" },
 };
 
 export function resolveTeamFromText(text: string): EntityHit | null {

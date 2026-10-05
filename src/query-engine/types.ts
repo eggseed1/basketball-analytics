@@ -84,7 +84,8 @@ export type QueryOperation =
   | "career_resume"
   | "game_lab"
   | "box_score_context"
-  | "offseason_summary";
+  | "offseason_summary"
+  | "player_on_off";
 
 export type AskMetricId =
   | "ppg"
@@ -149,6 +150,8 @@ export type BasketballQueryAst = {
   event?: QueryEvent;
   /** Canonical ASK metric when the operation needs one. */
   metricId?: AskMetricId;
+  /** Possession filter and phase for player_on_off. */
+  onOff?: { view: "clean" | "all" | "clutch"; phase: "regular" | "playoffs" };
   /** Legacy stub field — kept for compatibility; prefer metricId. */
   metric?: QueryMetric;
   /** Human-readable interpretation shown with the result. */

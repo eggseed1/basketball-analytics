@@ -4,8 +4,10 @@ import { useMemo, useState } from "react";
 
 import {
   OnOffMethodNote,
+  OnOffPhaseToggle,
   OnOffViewToggle,
   SmallSampleTag,
+  phaseLabel,
   fmtCount,
   fmtPct,
   fmtRating,
@@ -19,6 +21,7 @@ import { PlayerIdentity } from "@/components/players/player-identity";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { Z95, type LineupRow, type OnOffPlayerRow, type WowyStates } from "@/lib/on-off/derive";
 import type { OnOffView, Ratings } from "@/lib/on-off/metrics";
+import type { OnOffPhase } from "@/lib/on-off/types";
 import { type } from "@/lib/design-system";
 import { playerHref } from "@/lib/player-page-contract";
 import { cn } from "@/lib/utils";
@@ -340,20 +343,26 @@ function LineupTable({ lineups, view }: { lineups: LineupRow[]; view: OnOffView 
   );
 }
 
-export function TeamOnOffPanel({
-  season,
-  teamAbbr,
-  games,
-  pairPlayerIds,
-  views,
-}: {
-  season: string;
-  teamAbbr: string;
+export type TeamOnOffPhaseData = {
   games: number;
   pairPlayerIds: string[];
   views: Record<OnOffView, TeamOnOffViewData>;
+};
+
+export function TeamOnOffPanel({
+  season,
+  teamAbbr,
+  phases,
+}: {
+  season: string;
+  teamAbbr: string;
+  phases: { regular: TeamOnOffPhaseData; playoffs?: TeamOnOffPhaseData };
 }) {
   const [view, setView] = useState<OnOffView>("clean");
+  const [phase, setPhase] = useState<OnOffPhase>("regular");
+  const current = (phase === "playoffs" && phases.playoffs) || phases.regular;
+  const activePhase: OnOffPhase = current === phases.regular ? "regular" : "playoffs";
+  const { games, pairPlayerIds, views } = current;
   const data = views[view];
   const pairPlayers = useMemo(() => {
     const ids = new Set(pairPlayerIds);
@@ -369,10 +378,13 @@ export function TeamOnOffPanel({
           </h2>
           <p className={cn(type.bodySm, "mt-1 max-w-prose text-muted-foreground")}>
             How {teamAbbr} played per 100 possessions with each player on the floor and off
-            it. {season} regular season, {games} games.
+            it. {season} {phaseLabel(activePhase)}, {games} games.
           </p>
         </div>
-        <OnOffViewToggle value={view} onChange={setView} />
+        <div className="flex flex-wrap gap-2">
+          {phases.playoffs ? <OnOffPhaseToggle value={activePhase} onChange={setPhase} /> : null}
+          <OnOffViewToggle value={view} onChange={setView} />
+        </div>
       </div>
 
       <div className="flex flex-col gap-3">
@@ -381,8 +393,9 @@ export function TeamOnOffPanel({
         <p className={cn(type.caption, "text-muted-foreground")}>
           Swing is on net minus off net. The ± figure is the 95% range from sampling noise, so a
           +4 swing with ±8 could easily be zero. Small sample marks fewer than 1,000 possessions
-          on or off, which covers every clutch split. Teammates and opponents are average season
-          DRBL/100 ratings of the players on the floor with him.
+          on or off, which covers every clutch split
+          {activePhase === "playoffs" ? " and most playoff ones" : ""}. Teammates and opponents
+          are average regular-season DRBL/100 ratings of the players on the floor with him.
         </p>
       </div>
 
@@ -391,7 +404,7 @@ export function TeamOnOffPanel({
         <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
           Pick two regulars to split the season into the four ways they shared the floor.
         </p>
-        <WowyExplorer players={pairPlayers} pairs={data.pairs} />
+        <WowyExplorer key={activePhase} players={pairPlayers} pairs={data.pairs} />
       </div>
 
       <div className="flex flex-col gap-3">

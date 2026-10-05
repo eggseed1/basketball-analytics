@@ -201,7 +201,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
   },
   {
     id: "on_off",
-    aliases: ["on-off", "onoff", "on/off", "on_off_swing", "wowy", "with_without"],
+    aliases: ["on-off", "onoff", "on/off", "on_off_swing", "wowy", "with_without", "player_on_off"],
     label: "On/off",
     shortName: "On/off",
     category: "team",

@@ -93,6 +93,8 @@ function operationLabel(op: QueryOperation): string {
       return "Box-score context";
     case "offseason_summary":
       return "Offseason transaction events";
+    case "player_on_off":
+      return "Player on/off (possession-level)";
     default:
       return op;
   }
@@ -117,6 +119,8 @@ function populationFor(op: QueryOperation): string {
       return "Game box score + team totals";
     case "offseason_summary":
       return "ESPN transaction event archive";
+    case "player_on_off":
+      return "Every possession, tagged by the ten players on the floor";
     default:
       return "Existing DRBL analytical systems";
   }

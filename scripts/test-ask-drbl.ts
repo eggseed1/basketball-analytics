@@ -515,4 +515,38 @@ function assertJsonSafe(value: unknown) {
   );
 }
 
+// --- Player on/off ---
+{
+  const basic = interpretAskQuery("What was Jokic's on/off in 2024-25?");
+  assert.equal(basic.operation, "player_on_off");
+  assert.equal(basic.entities[0]?.kind, "player");
+  assert.deepEqual(basic.onOff, { view: "clean", phase: "regular" });
+  assert.deepEqual(basic.when?.seasons, ["2024-25"]);
+  assert.ok(validateBasketballQuery({ ...basic, entities: [{ kind: "player", id: "3112335" }] }).ok);
+
+  assert.deepEqual(interpretAskQuery("Tatum clutch on/off in 2024-25").onOff, {
+    view: "clutch",
+    phase: "regular",
+  });
+  assert.deepEqual(interpretAskQuery("SGA playoff on/off 2024-25").onOff, {
+    view: "clean",
+    phase: "playoffs",
+  });
+  assert.equal(
+    interpretAskQuery("on/off for Jokic all possessions").onOff?.view,
+    "all"
+  );
+  assert.equal(
+    interpretAskQuery("How did Denver play with Jokic on and off the floor?").operation,
+    "player_on_off"
+  );
+
+  // Other unsupported clauses still refuse, and on/off with no player stays unsupported.
+  const pnr = interpretAskQuery("Jokic pick and roll on/off");
+  assert.notEqual(pnr.operation, "player_on_off");
+  assert.ok(pnr.unsupported?.length);
+  assert.ok(interpretAskQuery("lineup net rating for Boston").unsupported?.length);
+  assert.ok(interpretAskQuery("what is on/off").unsupported?.length);
+}
+
 console.log("test-ask-drbl: all assertions passed");

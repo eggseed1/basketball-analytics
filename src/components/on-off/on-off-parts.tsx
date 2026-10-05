@@ -1,6 +1,7 @@
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { OnOffView } from "@/lib/on-off/metrics";
 import { Z95 } from "@/lib/on-off/derive";
+import type { OnOffPhase } from "@/lib/on-off/types";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
@@ -18,6 +19,25 @@ export function OnOffViewToggle({
   onChange: (v: OnOffView) => void;
 }) {
   return <SegmentedControl size="sm" value={value} options={VIEW_OPTIONS} onChange={onChange} />;
+}
+
+const PHASE_OPTIONS: Array<{ id: OnOffPhase; label: string }> = [
+  { id: "regular", label: "Regular season" },
+  { id: "playoffs", label: "Playoffs" },
+];
+
+export function OnOffPhaseToggle({
+  value,
+  onChange,
+}: {
+  value: OnOffPhase;
+  onChange: (v: OnOffPhase) => void;
+}) {
+  return <SegmentedControl size="sm" value={value} options={PHASE_OPTIONS} onChange={onChange} />;
+}
+
+export function phaseLabel(phase: OnOffPhase): string {
+  return phase === "playoffs" ? "playoffs" : "regular season";
 }
 
 const MINUS = "\u2212";
@@ -127,6 +147,8 @@ export function OnOffMethodNote({ className }: { className?: string }) {
         Teammate and opponent quality average each player&apos;s season DRBL/100 over the
         possessions they played. It shows whether someone&apos;s minutes came with stronger
         lineups or against them. Players without a DRBL rating are left out of the average.
+        Playoff splits use the same regular-season ratings and have no league rank, since
+        playoff teams play anywhere from 4 to 28 games.
       </p>
       <p>
         Luck-adjusted sets opponents&apos; 3-point and free-throw percentages to league average,

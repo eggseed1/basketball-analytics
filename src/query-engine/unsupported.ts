@@ -37,7 +37,7 @@ const PATTERNS: Array<{ re: RegExp; clause: string; reason: string }> = [
     re: /\b(lineup|five[- ]?man|on[\s/-]?off|plus[- ]?minus\s+lineup|net\s+rating\s+lineup)\b/i,
     clause: "lineup combination",
     reason:
-      "Lineup nets require lineup-tagged play-by-play that ASK DRBL does not currently have.",
+      "ASK DRBL answers on/off for one player at a time, like “Jokic on/off in 2024-25”. Five-man lineups and with/without pairs are on each team's On/Off tab.",
   },
   {
     re: /\b(defender|matchup|guarded\s+by|vs\.?\s+defense)\b/i,

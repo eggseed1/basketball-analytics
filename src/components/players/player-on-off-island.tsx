@@ -1,22 +1,13 @@
 import { PlayerOnOffPanel, type PlayerOnOffStint } from "@/components/players/player-on-off-panel";
 import { teamColorAuto } from "@/components/players/player-play-types";
-import { getOnOffSeasons, getPlayerOnOffData } from "@/data/queries/on-off";
+import { getOnOffSeasons, getPlayerOnOffData, type PlayerOnOffStintData } from "@/data/queries/on-off";
 import { playerDetail } from "@/lib/on-off/derive";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
 
 const DETAIL_OPTIONS = { teammates: 10, lineups: 8 };
 
-export async function PlayerOnOffIsland({
-  nbaIds,
-  season,
-  playerName,
-}: {
-  nbaIds: Array<string | null | undefined>;
-  season: string;
-  playerName: string;
-}) {
-  const data = await getPlayerOnOffData(nbaIds, season);
+function toStints(data: PlayerOnOffStintData[]): PlayerOnOffStint[] {
   const stints: PlayerOnOffStint[] = [];
   for (const { file, league, playerId } of data) {
     const all = playerDetail(file, league, playerId, "all", DETAIL_OPTIONS);
@@ -32,8 +23,26 @@ export async function PlayerOnOffIsland({
       },
     });
   }
+  return stints;
+}
 
-  if (!stints.length) {
+export async function PlayerOnOffIsland({
+  nbaIds,
+  season,
+  playerName,
+}: {
+  nbaIds: Array<string | null | undefined>;
+  season: string;
+  playerName: string;
+}) {
+  const [regularData, playoffData] = await Promise.all([
+    getPlayerOnOffData(nbaIds, season),
+    getPlayerOnOffData(nbaIds, season, "playoffs"),
+  ]);
+  const regular = toStints(regularData);
+  const playoffs = toStints(playoffData);
+
+  if (!regular.length) {
     const seasons = await getOnOffSeasons();
     return (
       <section id="onoff" className="scroll-mt-16 flex flex-col gap-2" aria-label="On/off">
@@ -49,5 +58,11 @@ export async function PlayerOnOffIsland({
     );
   }
 
-  return <PlayerOnOffPanel playerName={playerName} season={season} stints={stints} />;
+  return (
+    <PlayerOnOffPanel
+      playerName={playerName}
+      season={season}
+      phases={{ regular, ...(playoffs.length ? { playoffs } : {}) }}
+    />
+  );
 }

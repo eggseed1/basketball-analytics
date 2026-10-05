@@ -6,8 +6,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 
-import type { LeagueOnOffFile, OnOffManifest, TeamOnOffFile } from "@/lib/on-off/types";
-import { ON_OFF_FILE_VERSION } from "@/lib/on-off/types";
+import type { LeagueOnOffFile, OnOffManifest, OnOffPhase, TeamOnOffFile } from "@/lib/on-off/types";
+import { ON_OFF_FILE_VERSION, onOffDir } from "@/lib/on-off/types";
 
 type AssetsFetcher = {
   fetch: (input: RequestInfo | URL, init?: RequestInit) => Promise<Response>;
@@ -65,14 +65,21 @@ export async function getOnOffManifest(): Promise<OnOffManifest | null> {
   return cached<OnOffManifest>("manifest.json");
 }
 
-export async function getTeamOnOff(season: string, nbaTeamId: string): Promise<TeamOnOffFile | null> {
+export async function getTeamOnOff(
+  season: string,
+  nbaTeamId: string,
+  phase: OnOffPhase = "regular"
+): Promise<TeamOnOffFile | null> {
   if (!validSeason(season) || !/^\d+$/.test(nbaTeamId)) return null;
-  const file = await cached<TeamOnOffFile>(`${season}/${nbaTeamId}.json`);
+  const file = await cached<TeamOnOffFile>(`${onOffDir(season, phase)}/${nbaTeamId}.json`);
   return file?.version === ON_OFF_FILE_VERSION ? file : null;
 }
 
-export async function getLeagueOnOff(season: string): Promise<LeagueOnOffFile | null> {
+export async function getLeagueOnOff(
+  season: string,
+  phase: OnOffPhase = "regular"
+): Promise<LeagueOnOffFile | null> {
   if (!validSeason(season)) return null;
-  const file = await cached<LeagueOnOffFile>(`${season}/league.json`);
+  const file = await cached<LeagueOnOffFile>(`${onOffDir(season, phase)}/league.json`);
   return file?.version === ON_OFF_FILE_VERSION ? file : null;
 }

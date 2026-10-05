@@ -6,8 +6,10 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import {
   Dumbbell,
   OnOffMethodNote,
+  OnOffPhaseToggle,
   OnOffViewToggle,
   SmallSampleTag,
+  phaseLabel,
   fmtCount,
   fmtPct,
   fmtRating,
@@ -18,10 +20,12 @@ import {
   rangeLabel,
   toneClass,
 } from "@/components/on-off/on-off-parts";
+import { OnOffTrendChart } from "@/components/on-off/on-off-trend";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { PlayerOnOffDetail, SideDetail } from "@/lib/on-off/derive";
 import type { FourFactors, OnOffView } from "@/lib/on-off/metrics";
+import { PAIR_MIN_POSS, type OnOffPhase } from "@/lib/on-off/types";
 import { type } from "@/lib/design-system";
 import { playerHref } from "@/lib/player-page-contract";
 import { cn } from "@/lib/utils";
@@ -44,7 +48,17 @@ function scale(values: Array<number | null>, pad: number): [number, number] {
   return hi - lo < 1 ? [lo - 0.5, hi + 0.5] : [lo, hi];
 }
 
-function Summary({ d, playerName, view }: { d: PlayerOnOffDetail; playerName: string; view: OnOffView }) {
+function Summary({
+  d,
+  playerName,
+  view,
+  phase,
+}: {
+  d: PlayerOnOffDetail;
+  playerName: string;
+  view: OnOffView;
+  phase: OnOffPhase;
+}) {
   const { row } = d;
   const { cmp } = row;
   const range = rangeLabel(cmp.netDiff, cmp.netDiffSe);
@@ -72,9 +86,11 @@ function Summary({ d, playerName, view }: { d: PlayerOnOffDetail; playerName: st
             </span>
           ) : (
             <span className={cn(type.caption, "text-muted-foreground")}>
-              {view === "clutch"
-                ? "No league rank for clutch samples"
-                : "League rank needs 2,000 possessions"}
+              {phase === "playoffs"
+                ? "No league rank for playoff samples"
+                : view === "clutch"
+                  ? "No league rank for clutch samples"
+                  : "League rank needs 2,000 possessions"}
             </span>
           )}
           {row.smallSample ? <SmallSampleTag /> : null}
@@ -278,11 +294,21 @@ function ShotTable({ title, side }: { title: string; side: SideDetail }) {
   );
 }
 
-function Teammates({ d, playerName, season }: { d: PlayerOnOffDetail; playerName: string; season: string }) {
+function Teammates({
+  d,
+  playerName,
+  season,
+  pairMin,
+}: {
+  d: PlayerOnOffDetail;
+  playerName: string;
+  season: string;
+  pairMin: number;
+}) {
   if (!d.teammates.length) {
     return (
       <p className={cn(type.bodySm, "text-muted-foreground")}>
-        Teammate splits start once both players pass 400 possessions.
+        Teammate splits start once both players pass {fmtCount(pairMin)} possessions.
       </p>
     );
   }
@@ -330,6 +356,58 @@ function Teammates({ d, playerName, season }: { d: PlayerOnOffDetail; playerName
   );
 }
 
+function Replacements({ d, playerName, season }: { d: PlayerOnOffDetail; playerName: string; season: string }) {
+  if (!d.replacements.length) {
+    return (
+      <p className={cn(type.bodySm, "text-muted-foreground")}>
+        No regular teammate plays a bigger share when he sits.
+      </p>
+    );
+  }
+  const me = shortName(playerName);
+  return (
+    <div className="touch-scroll-x overflow-x-auto">
+      <table className="w-full min-w-[30rem] text-[13px]">
+        <thead>
+          <tr className="border-b border-border">
+            <th className={cn(th, "text-left")}>Teammate</th>
+            <th className={th} title={`Share of team possessions he played while ${me} was on`}>
+              With {me}
+            </th>
+            <th className={th} title={`Share of team possessions he played while ${me} sat`}>
+              Without
+            </th>
+            <th className={th} title="Change in his share, in percentage points">
+              Change
+            </th>
+            <th className={th} title={`Possessions he played while ${me} sat`}>
+              Poss
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {d.replacements.map((r) => (
+            <tr key={r.id} className="border-b border-border/60 last:border-0">
+              <td className={cn(td, "max-w-[12rem] text-left")}>
+                <TransitionLink
+                  href={playerHref({ playerId: r.id, season, view: "onoff" })}
+                  className="block truncate font-medium"
+                >
+                  {r.name}
+                </TransitionLink>
+              </td>
+              <td className={td}>{fmtPct(r.shareWith, 0)}</td>
+              <td className={cn(td, "font-semibold")}>{fmtPct(r.shareWithout, 0)}</td>
+              <td className={td}>{fmtSignedPts(r.shareWithout - r.shareWith, 0)}</td>
+              <td className={cn(td, "text-muted-foreground")}>{fmtCount(r.possWithout)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
 function Lineups({ d }: { d: PlayerOnOffDetail }) {
   if (!d.lineups.length) {
     return <p className={cn(type.bodySm, "text-muted-foreground")}>No five-man group with him has 40 possessions yet.</p>;
@@ -369,18 +447,26 @@ function Lineups({ d }: { d: PlayerOnOffDetail }) {
 export function PlayerOnOffPanel({
   playerName,
   season,
-  stints,
+  phases,
 }: {
   playerName: string;
   season: string;
-  stints: PlayerOnOffStint[];
+  phases: { regular: PlayerOnOffStint[]; playoffs?: PlayerOnOffStint[] };
 }) {
   const [view, setView] = useState<OnOffView>("clean");
+  const [phase, setPhase] = useState<OnOffPhase>("regular");
   const [stintIndex, setStintIndex] = useState("0");
+  const hasPlayoffs = Boolean(phases.playoffs?.length);
+  const activePhase: OnOffPhase = phase === "playoffs" && hasPlayoffs ? "playoffs" : "regular";
+  const stints = activePhase === "playoffs" ? phases.playoffs! : phases.regular;
   const stint = stints[Number(stintIndex)] ?? stints[0]!;
   const d = stint.views[view] ?? stint.views.all;
   if (!d) return null;
   const usingFallback = stint.views[view] == null;
+  const choosePhase = (next: OnOffPhase) => {
+    setPhase(next);
+    setStintIndex("0");
+  };
 
   return (
     <section id="onoff" className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
@@ -391,10 +477,11 @@ export function PlayerOnOffPanel({
           </h2>
           <p className={cn(type.bodySm, "mt-1 max-w-prose text-muted-foreground")}>
             How {stint.teamAbbr} played per 100 possessions with {playerName} on the floor and
-            off it. {season} regular season, {d.row.gp} games played.
+            off it. {season} {phaseLabel(activePhase)}, {d.row.gp} games played.
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
+          {hasPlayoffs ? <OnOffPhaseToggle value={activePhase} onChange={choosePhase} /> : null}
           {stints.length > 1 ? (
             <SegmentedControl
               size="sm"
@@ -415,11 +502,27 @@ export function PlayerOnOffPanel({
         </p>
       ) : null}
 
-      <Summary d={d} playerName={playerName} view={view} />
+      <Summary d={d} playerName={playerName} view={view} phase={activePhase} />
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Ratings on and off</h3>
         <RatingRows d={d} color={stint.color} />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h3 className={type.heading}>Swing over the {activePhase === "playoffs" ? "playoffs" : "season"}</h3>
+        {view === "clutch" || usingFallback ? (
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            No game-by-game line for clutch, since most games have a few clutch possessions or
+            none.
+          </p>
+        ) : d.trend.some((p) => p.swing != null) ? (
+          <OnOffTrendChart points={d.trend} color={stint.color} />
+        ) : (
+          <p className={cn(type.bodySm, "text-muted-foreground")}>
+            The line needs 250 possessions with him on the floor and 250 without.
+          </p>
+        )}
       </div>
 
       <div className="flex flex-col gap-3">
@@ -452,7 +555,16 @@ export function PlayerOnOffPanel({
           Team net rating in each combination, with possessions beside it. The teammates he shared
           the most time with come first.
         </p>
-        <Teammates d={d} playerName={playerName} season={season} />
+        <Teammates d={d} playerName={playerName} season={season} pairMin={PAIR_MIN_POSS[activePhase]} />
+      </div>
+
+      <div className="flex flex-col gap-3">
+        <h3 className={type.heading}>Who takes his minutes</h3>
+        <p className={cn(type.bodySm, "max-w-prose text-muted-foreground")}>
+          Teammates who play a bigger share of the floor when {shortName(playerName)} sits. Their
+          play shapes his off number, so a strong backup shrinks his swing.
+        </p>
+        <Replacements d={d} playerName={playerName} season={season} />
       </div>
 
       <div className="flex flex-col gap-3">

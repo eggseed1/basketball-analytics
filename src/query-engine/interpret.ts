@@ -8,6 +8,7 @@ import {
   possessivePlayerHintFromText,
 } from "./interpret-helpers";
 import { matchDrblGlossaryQuery } from "./drbl-vocabulary";
+import { matchOnOffQuery, onOffViewLabel } from "./on-off-intent";
 import type { BasketballQueryAst, QueryOperation } from "./types";
 
 function possessivePlayerHint(text: string): string | null {
@@ -56,6 +57,28 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
       ],
       when: seasons.length ? { seasons } : undefined,
     };
+  }
+
+  // Player on/off from the possession-level build. Other unsupported clauses still refuse.
+  const onOff = matchOnOffQuery(text);
+  if (onOff && !detectUnsupportedClauses(onOff.residual).length) {
+    const playerHint =
+      possessivePlayerHint(onOff.residual) ?? extractPlayerNameLoose(onOff.residual);
+    if (playerHint) {
+      const season = seasons[0];
+      return {
+        ...base,
+        operation: "player_on_off",
+        entities: [{ kind: "player", id: "", name: playerHint }],
+        when: season ? { seasons: [season] } : undefined,
+        onOff: { view: onOff.view, phase: onOff.phase },
+        interpretation: [
+          playerHint,
+          season ?? "Latest season with on/off",
+          `${onOffViewLabel(onOff.view)} · ${onOff.phase === "playoffs" ? "Playoffs" : "Regular season"}`,
+        ],
+      };
+    }
   }
 
   // Vague competitive language without a documented methodology.

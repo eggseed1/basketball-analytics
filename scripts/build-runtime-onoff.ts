@@ -32,8 +32,13 @@ import {
 } from "../src/lib/on-off/metrics";
 import {
   ON_OFF_FILE_VERSION,
+  PAIR_MIN_POSS,
+  onOffDir,
   type LeagueOnOffFile,
+  type OnOffGameLog,
+  type OnOffGameRow,
   type OnOffManifest,
+  type OnOffPhase,
   type OnOffViews,
   type TeamOnOffFile,
 } from "../src/lib/on-off/types";
@@ -41,8 +46,6 @@ import {
 const ROOT = process.cwd();
 const OUT_ROOT = path.join(ROOT, "public", "runtime", "on-off");
 const DELAY_MS = Number(process.env.ONOFF_DELAY_MS ?? "0");
-/** Pairs need both players to clear this many on-court possessions (offense + defense). */
-const PAIR_MIN_POSS = 400;
 const LINEUPS_PER_TEAM = 30;
 const LINEUP_MIN_POSS = 40;
 
@@ -86,14 +89,53 @@ function qualitySums(ids: readonly string[], ratings: Ratings): [number, number]
   return [sum, n];
 }
 
-type PlayerAcc = { name: string; games: Set<string>; starts: number; views: Views };
+/** Per game: [offense poss, points scored, defense poss, points allowed] for clean and all. */
+type GameTotals = { clean: number[]; all: number[] };
+type GameLogAcc = Map<string, GameTotals>;
+
+type PlayerAcc = { name: string; games: Set<string>; starts: number; views: Views; log: GameLogAcc };
 type TeamAcc = {
   games: Set<string>;
   views: Views;
+  log: GameLogAcc;
   players: Map<string, PlayerAcc>;
   pairs: Map<string, Views>;
   lineups: Map<string, Views>;
 };
+
+type ScheduleAcc = Map<string, { date: string; home: string; away: string }>;
+
+const newPlayer = (name: string, starts: number): PlayerAcc => ({
+  name,
+  games: new Set(),
+  starts,
+  views: emptyViews(),
+  log: new Map(),
+});
+
+function addToLog(log: GameLogAcc, gameId: string, side: "o" | "d", v: OnOffVec, ctx: PossessionContext) {
+  let row = log.get(gameId);
+  if (!row) {
+    row = { clean: [0, 0, 0, 0], all: [0, 0, 0, 0] };
+    log.set(gameId, row);
+  }
+  const at = side === "o" ? 0 : 2;
+  for (const view of ctx.clean ? (["all", "clean"] as const) : (["all"] as const)) {
+    row[view][at]! += v[K.poss]!;
+    row[view][at + 1]! += v[K.pts]!;
+  }
+}
+
+function finishLog(log: GameLogAcc, index: Map<string, number>): OnOffGameLog {
+  const rows = [...log.entries()]
+    .filter(([id]) => index.has(id))
+    .sort((a, b) => index.get(a[0])! - index.get(b[0])!);
+  const pick = (view: "clean" | "all"): OnOffGameRow[] =>
+    rows
+      .filter(([, t]) => t[view][0]! + t[view][2]! > 0)
+      .map(([id, t]) => [index.get(id)!, ...t[view]] as OnOffGameRow);
+  return { clean: pick("clean"), all: pick("all") };
+}
 
 function log(message: string) {
   console.log(`[on-off] ${message}`);
@@ -102,7 +144,14 @@ function log(message: string) {
 function teamAcc(map: Map<string, TeamAcc>, teamId: string): TeamAcc {
   let t = map.get(teamId);
   if (!t) {
-    t = { games: new Set(), views: emptyViews(), players: new Map(), pairs: new Map(), lineups: new Map() };
+    t = {
+      games: new Set(),
+      views: emptyViews(),
+      log: new Map(),
+      players: new Map(),
+      pairs: new Map(),
+      lineups: new Map(),
+    };
     map.set(teamId, t);
   }
   return t;
@@ -256,10 +305,16 @@ function addToViews(views: Views, side: "o" | "d", v: OnOffVec, ctx: PossessionC
   if (ctx.clutch) addVec(views.clutch[side], v);
 }
 
-function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>, ratings: Ratings) {
+function accumulateGame(
+  g: DrblProcessedGame,
+  teams: Map<string, TeamAcc>,
+  ratings: Ratings,
+  schedule: ScheduleAcc
+) {
   const events = new Map(g.events.map((e) => [e.actionNumber, e]));
   const names = new Map(g.box.players.map((p) => [p.playerId, p.playerName]));
   const starters = new Set(g.box.players.filter((p) => p.starter).map((p) => p.playerId));
+  schedule.set(g.meta.gameId, { date: g.meta.gameDate, home: g.box.homeTeamId, away: g.box.awayTeamId });
 
   for (const teamId of [g.box.homeTeamId, g.box.awayTeamId]) {
     const t = teamAcc(teams, teamId);
@@ -268,7 +323,7 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>, ratin
       if (p.teamId !== teamId || !p.starter) continue;
       const acc = t.players.get(p.playerId);
       if (acc) acc.starts += 1;
-      else t.players.set(p.playerId, { name: p.playerName, games: new Set(), starts: 1, views: emptyViews() });
+      else t.players.set(p.playerId, newPlayer(p.playerName, 1));
     }
   }
 
@@ -297,15 +352,17 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>, ratin
     ] as const) {
       const t = teamAcc(teams, teamId);
       addToViews(t.views, side, vec, ctx);
+      addToLog(t.log, poss.gameId, side, vec, ctx);
       const sorted = [...ids].sort();
       for (const id of sorted) {
         let acc = t.players.get(id);
         if (!acc) {
-          acc = { name: names.get(id) ?? id, games: new Set(), starts: 0, views: emptyViews() };
+          acc = newPlayer(names.get(id) ?? id, 0);
           t.players.set(id, acc);
         }
         acc.games.add(poss.gameId);
         addToViews(acc.views, side, vec, ctx);
+        addToLog(acc.log, poss.gameId, side, vec, ctx);
       }
       for (let i = 0; i < sorted.length; i++) {
         for (let j = i + 1; j < sorted.length; j++) {
@@ -354,11 +411,15 @@ async function writeJson(file: string, data: unknown) {
   await writeFile(file, JSON.stringify(data));
 }
 
-async function buildSeason(season: string) {
-  const games = await listSeasonGames(season);
+async function buildSeason(season: string, phase: OnOffPhase) {
+  const label = phase === "playoffs" ? `${season} playoffs` : season;
+  const games = await listSeasonGames(season, {
+    seasonType: phase === "playoffs" ? "Playoffs" : "Regular Season",
+  });
   const ratings = await loadRatings(season);
-  log(`${season}: ${games.length} games listed, ${ratings.size} rated players`);
+  log(`${label}: ${games.length} games listed, ${ratings.size} rated players`);
   const teams = new Map<string, TeamAcc>();
+  const schedule: ScheduleAcc = new Map();
   let processed = 0;
   let quarantined = 0;
   let failed = 0;
@@ -372,7 +433,7 @@ async function buildSeason(season: string) {
         quarantined += 1;
         continue;
       }
-      accumulateGame(g, teams, ratings);
+      accumulateGame(g, teams, ratings, schedule);
       processed += 1;
       for (const d of g.reconcile.lineup?.playerMinuteDiffs ?? []) {
         minuteErr += Math.abs(d.delta);
@@ -382,14 +443,15 @@ async function buildSeason(season: string) {
       failed += 1;
     }
     if (DELAY_MS) await new Promise((r) => setTimeout(r, DELAY_MS));
-    if ((i + 1) % 200 === 0) log(`${season}: ${i + 1}/${games.length}`);
+    if ((i + 1) % 200 === 0) log(`${label}: ${i + 1}/${games.length}`);
   }
   log(
-    `${season}: processed=${processed} quarantined=${quarantined} failed=${failed}` +
+    `${label}: processed=${processed} quarantined=${quarantined} failed=${failed}` +
       (minuteRows ? ` lineupMinuteMAE=${(minuteErr / minuteRows).toFixed(2)}` : "")
   );
   if (!processed) return null;
 
+  const dir = path.join(OUT_ROOT, onOffDir(season, phase));
   const generatedAt = new Date().toISOString();
   const rates = Object.fromEntries(
     ON_OFF_VIEWS.map((view) => [view, leagueRates(teams, view)])
@@ -404,24 +466,42 @@ async function buildSeason(season: string) {
     const players = [...t.players.entries()]
       .filter(([, p]) => totalPoss(p.views) > 0)
       .sort((a, b) => totalPoss(b[1].views) - totalPoss(a[1].views));
+    const pairMin = PAIR_MIN_POSS[phase];
     const pairEligible = new Set(
-      players.filter(([, p]) => totalPoss(p.views) >= PAIR_MIN_POSS).map(([id]) => id)
+      players.filter(([, p]) => totalPoss(p.views) >= pairMin).map(([id]) => id)
     );
+    const teamSchedule = [...t.games]
+      .map((id) => ({ id, ...schedule.get(id)! }))
+      .filter((s) => s.date)
+      .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id));
+    const index = new Map(teamSchedule.map((s, i) => [s.id, i]));
     const file: TeamOnOffFile = {
       version: ON_OFF_FILE_VERSION,
       season,
+      phase,
       teamId,
       teamAbbr: meta.abbreviation,
       generatedAt,
       games: t.games.size,
       keys: ON_OFF_KEYS,
+      schedule: teamSchedule.map((s) => {
+        const home = s.home === teamId;
+        return {
+          id: s.id,
+          date: s.date,
+          opp: NBA_TEAM_META[home ? s.away : s.home]?.abbreviation ?? "",
+          home,
+        };
+      }),
       team: roundViews(t.views),
+      teamLog: finishLog(t.log, index),
       players: players.map(([id, p]) => ({
         id,
         name: p.name,
         gp: p.games.size,
         starts: p.starts,
         rating: ratings.get(id) ?? null,
+        log: finishLog(p.log, index),
         ...roundViews(p.views),
       })),
       pairs: [...t.pairs.entries()]
@@ -439,7 +519,7 @@ async function buildSeason(season: string) {
         .slice(0, LINEUPS_PER_TEAM)
         .map(([key, views]) => ({ ids: key.split("|"), ...roundViews(views) })),
     };
-    await writeJson(path.join(OUT_ROOT, season, `${teamId}.json`), file);
+    await writeJson(path.join(dir, `${teamId}.json`), file);
 
     for (const [id, p] of players) {
       const cmp = ON_OFF_VIEWS.map((view) => compareOnOff(t.views[view], p.views[view], rates[view]));
@@ -464,20 +544,24 @@ async function buildSeason(season: string) {
   const league: LeagueOnOffFile = {
     version: ON_OFF_FILE_VERSION,
     season,
+    phase,
     generatedAt,
     games: processed,
     gamesQuarantined: quarantined + failed,
     rates,
     players: leaguePlayers,
   };
-  await writeJson(path.join(OUT_ROOT, season, "league.json"), league);
-  log(`${season}: wrote ${teamIds.length} team files, ${leaguePlayers.length} player rows`);
-  return { season, games: processed, teams: teamIds.sort() };
+  await writeJson(path.join(dir, "league.json"), league);
+  log(`${label}: wrote ${teamIds.length} team files, ${leaguePlayers.length} player rows`);
+  return { games: processed, teams: teamIds.sort() };
 }
 
 async function main() {
   const seasons = process.argv.slice(2).filter((a) => /^\d{4}-\d{2}$/.test(a));
-  if (!seasons.length) throw new Error("usage: build-runtime-onoff.ts <season> [season ...]");
+  if (!seasons.length) {
+    throw new Error("usage: build-runtime-onoff.ts <season> [season ...] [--playoffs]");
+  }
+  const phase: OnOffPhase = process.argv.includes("--playoffs") ? "playoffs" : "regular";
 
   const manifestPath = path.join(OUT_ROOT, "manifest.json");
   let manifest: OnOffManifest = { version: ON_OFF_FILE_VERSION, generatedAt: "", seasons: [] };
@@ -489,17 +573,28 @@ async function main() {
 
   let changed = false;
   for (const season of seasons) {
-    const built = await buildSeason(season);
+    const built = await buildSeason(season, phase);
     if (!built) {
-      log(`${season}: nothing processed, manifest unchanged`);
+      log(`${season} ${phase}: nothing processed, manifest unchanged`);
+      continue;
+    }
+    const prior = manifest.seasons.find((s) => s.season === season);
+    if (phase === "regular") {
+      manifest.seasons = [
+        ...manifest.seasons.filter((s) => s.season !== season),
+        { season, ...built, ...(prior?.playoffs ? { playoffs: prior.playoffs } : {}) },
+      ];
+    } else if (prior) {
+      prior.playoffs = built;
+    } else {
+      log(`${season}: playoffs built before the regular season, not listed in the manifest`);
       continue;
     }
     changed = true;
-    manifest.seasons = [...manifest.seasons.filter((s) => s.season !== season), built].sort((a, b) =>
-      b.season.localeCompare(a.season)
-    );
+    manifest.seasons.sort((a, b) => b.season.localeCompare(a.season));
   }
   if (!changed) return;
+  manifest.version = ON_OFF_FILE_VERSION;
   manifest.generatedAt = new Date().toISOString();
   await writeJson(manifestPath, manifest);
 }

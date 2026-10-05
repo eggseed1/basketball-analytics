@@ -82,6 +82,8 @@ function percentileOf(
   poss: number
 ): number | null {
   if (!league || value == null || poss < PERCENTILE_MIN_POSS) return null;
+  // Playoff teams play 4 to 28 games, so a league pool would compare unlike samples.
+  if (league.phase === "playoffs") return null;
   const i = VIEW_INDEX[view];
   const pool = league.players
     .filter((p) => p.poss[i] >= PERCENTILE_MIN_POSS && p.netDiff[i] != null)
@@ -226,12 +228,122 @@ export function lineupRows(
     .sort((a, b) => b.poss - a.poss);
 }
 
+/** A teammate whose share of the floor changes when the player sits. */
+export type ReplacementRow = {
+  id: string;
+  name: string;
+  /** Share of team possessions he played while the player was on. */
+  shareWith: number;
+  /** Share of team possessions he played while the player sat. */
+  shareWithout: number;
+  /** Possessions he played while the player sat. */
+  possWithout: number;
+};
+
+/**
+ * Who plays more when he sits, from exact pair counts. Only teammates with a
+ * pair row (both above the pair minimum) can appear.
+ */
+export function replacements(
+  file: TeamOnOffFile,
+  playerId: string,
+  view: OnOffView,
+  limit = 5
+): ReplacementRow[] {
+  const player = file.players.find((p) => p.id === playerId);
+  if (!player) return [];
+  const onPoss = possOf(player[view]);
+  const offPoss = possOf(file.team[view]) - onPoss;
+  if (onPoss <= 0 || offPoss <= 0) return [];
+  const byId = new Map(file.players.map((p) => [p.id, p]));
+  return file.pairs
+    .filter((p) => p.a === playerId || p.b === playerId)
+    .map((pair) => {
+      const mate = byId.get(pair.a === playerId ? pair.b : pair.a);
+      if (!mate) return null;
+      const together = possOf(pair[view]);
+      const without = possOf(mate[view]) - together;
+      return {
+        id: mate.id,
+        name: mate.name,
+        shareWith: together / onPoss,
+        shareWithout: without / offPoss,
+        possWithout: without,
+      };
+    })
+    .filter((r): r is ReplacementRow => r != null && r.shareWithout > r.shareWith)
+    .sort((a, b) => b.shareWithout - b.shareWith - (a.shareWithout - a.shareWith))
+    .slice(0, limit);
+}
+
+export type TrendPoint = {
+  /** Game number in the team's schedule, from 1. */
+  game: number;
+  date: string;
+  opp: string;
+  home: boolean;
+  played: boolean;
+  /** Season-to-date on net minus off net, once both sides have possessions. */
+  swing: number | null;
+  onPoss: number;
+  offPoss: number;
+};
+
+/** The season-to-date line starts once both sides pass this; earlier values swing wildly. */
+export const TREND_MIN_POSS = 250;
+
+const net100 = (oPoss: number, oPts: number, dPoss: number, dPts: number) =>
+  oPoss > 0 && dPoss > 0 ? (100 * oPts) / oPoss - (100 * dPts) / dPoss : null;
+
+/** Season-to-date swing after each team game. Clutch has no game log. */
+export function onOffTrend(
+  file: TeamOnOffFile,
+  playerId: string,
+  view: OnOffView
+): TrendPoint[] {
+  if (view === "clutch") return [];
+  const player = file.players.find((p) => p.id === playerId);
+  if (!player) return [];
+  const mine = new Map(player.log[view].map((r) => [r[0], r]));
+  const on = [0, 0, 0, 0];
+  const team = [0, 0, 0, 0];
+  const out: TrendPoint[] = [];
+  for (const row of file.teamLog[view]) {
+    const game = file.schedule[row[0]];
+    if (!game) continue;
+    const p = mine.get(row[0]);
+    for (let k = 0; k < 4; k++) {
+      team[k]! += row[k + 1]!;
+      if (p) on[k]! += p[k + 1]!;
+    }
+    const off = team.map((x, k) => x - on[k]!);
+    const onPoss = on[0]! + on[2]!;
+    const offPoss = off[0]! + off[2]!;
+    const onNet = net100(on[0]!, on[1]!, on[2]!, on[3]!);
+    const offNet = net100(off[0]!, off[1]!, off[2]!, off[3]!);
+    const enough = onPoss >= TREND_MIN_POSS && offPoss >= TREND_MIN_POSS;
+    out.push({
+      game: out.length + 1,
+      date: game.date,
+      opp: game.opp,
+      home: game.home,
+      played: p != null,
+      swing: enough && onNet != null && offNet != null ? onNet - offNet : null,
+      onPoss,
+      offPoss,
+    });
+  }
+  return out;
+}
+
 export type PlayerOnOffDetail = {
   row: OnOffPlayerRow;
   offense: SideDetail;
   defense: SideDetail;
   teammates: TeammateRow[];
   lineups: LineupRow[];
+  replacements: ReplacementRow[];
+  trend: TrendPoint[];
 };
 
 export function playerDetail(
@@ -268,5 +380,7 @@ export function playerDetail(
     lineups: lineupRows(file, league, view)
       .filter((l) => l.ids.includes(playerId))
       .slice(0, options.lineups ?? 5),
+    replacements: replacements(file, playerId, view),
+    trend: onOffTrend(file, playerId, view),
   };
 }

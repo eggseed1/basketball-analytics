@@ -1,4 +1,8 @@
-import { TeamOnOffPanel, type TeamOnOffViewData } from "@/components/teams/team-on-off-panel";
+import {
+  TeamOnOffPanel,
+  type TeamOnOffPhaseData,
+  type TeamOnOffViewData,
+} from "@/components/teams/team-on-off-panel";
 import { TransitionLink } from "@/components/continuity/query-nav";
 import { getOnOffSeasons, getTeamOnOffData, type TeamOnOffData } from "@/data/queries/on-off";
 import { lineupRows, teamPlayerRows, wowy, type WowyStates } from "@/lib/on-off/derive";
@@ -17,6 +21,14 @@ function viewData({ file, league }: TeamOnOffData, view: OnOffView): TeamOnOffVi
     if (states) pairs[`${p.a}|${p.b}`] = states;
   }
   return { rows, lineups: lineupRows(file, league, view).slice(0, LINEUP_LIMIT), pairs };
+}
+
+function phaseData(data: TeamOnOffData): TeamOnOffPhaseData {
+  return {
+    games: data.file.games,
+    pairPlayerIds: [...new Set(data.file.pairs.flatMap((p) => [p.a, p.b]))],
+    views: { clean: viewData(data, "clean"), all: viewData(data, "all"), clutch: viewData(data, "clutch") },
+  };
 }
 
 export async function TeamOnOffIsland({
@@ -52,14 +64,12 @@ export async function TeamOnOffIsland({
     );
   }
 
-  const pairPlayerIds = new Set(data.file.pairs.flatMap((p) => [p.a, p.b]));
+  const playoffs = await getTeamOnOffData(teamKey, season, "playoffs");
   return (
     <TeamOnOffPanel
       season={season}
       teamAbbr={data.file.teamAbbr}
-      games={data.file.games}
-      pairPlayerIds={[...pairPlayerIds]}
-      views={{ clean: viewData(data, "clean"), all: viewData(data, "all"), clutch: viewData(data, "clutch") }}
+      phases={{ regular: phaseData(data), ...(playoffs ? { playoffs: phaseData(playoffs) } : {}) }}
     />
   );
 }

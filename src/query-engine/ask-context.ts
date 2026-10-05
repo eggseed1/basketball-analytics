@@ -31,6 +31,7 @@ const SEASON_INHERIT_OPS = new Set<QueryOperation>([
   "leaderboard",
   "team_season_compare",
   "team_season_game_evidence",
+  "player_on_off",
 ]);
 
 /** Ops where inheriting a historical season would be semantically wrong. */

@@ -55,6 +55,7 @@ import { buildQueryPlan } from "./followups";
 import { glossaryForMetricId } from "./drbl-vocabulary";
 import { hasValidDrblEstimate } from "@/data/queries/percentiles";
 import { resolveNbaIdForDrbl } from "@/data/identity/player-identity";
+import { execPlayerOnOff } from "./on-off-exec";
 import type {
   AskDrblResult,
   AskMetricId,
@@ -232,6 +233,8 @@ export async function executeBasketballQuery(
       return execGameLab(ast); // best-effort via game lab + scoring note
     case "offseason_summary":
       return execOffseason(ast);
+    case "player_on_off":
+      return execPlayerOnOff(ast);
     default:
       return emptyResult(ast, "invalid", ["Unknown operation."]);
   }

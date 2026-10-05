@@ -14,7 +14,8 @@ export type AskExampleClass =
   | "team_rank"
   | "game"
   | "evidence"
-  | "offseason";
+  | "offseason"
+  | "on_off";
 
 export type AskExampleEra = "current" | "recent" | "2010s" | "2000s" | "older";
 
@@ -35,6 +36,36 @@ export type AskExample = {
  * Prefer players/teams the interpreter already recognizes.
  */
 export const ASK_EXAMPLE_POOL: readonly AskExample[] = [
+  // Player on/off from the possession-level build
+  {
+    id: "oo-jokic-2425",
+    prompt: "What was Jokic's on/off in 2024-25?",
+    class: "on_off",
+    players: ["jokic"],
+    era: "recent",
+  },
+  {
+    id: "oo-tatum-clutch-2425",
+    prompt: "Tatum clutch on/off in 2024-25",
+    class: "on_off",
+    players: ["tatum"],
+    era: "recent",
+  },
+  {
+    id: "oo-giannis-floor-2526",
+    prompt: "How did Milwaukee play with Giannis on and off the floor in 2025-26?",
+    class: "on_off",
+    players: ["giannis"],
+    teams: ["mil"],
+    era: "current",
+  },
+  {
+    id: "oo-curry-2526",
+    prompt: "Curry's on/off numbers in 2025-26",
+    class: "on_off",
+    players: ["curry"],
+    era: "current",
+  },
   // Player season stats — diverse players / eras / metrics
   {
     id: "ps-jokic-drbl-2425",
