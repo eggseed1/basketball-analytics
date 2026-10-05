@@ -6,9 +6,15 @@ import {
   PlayerShotDietLazy,
   PlayerUsageEfficiencyLazy,
 } from "@/components/charts/recharts-lazy";
+import { PlayerOnOffCard } from "@/components/players/player-on-off";
+import { PlayerPlayTypesCard } from "@/components/players/player-play-types";
 import { PlayerShotMapView } from "@/components/players/player-shot-map";
+import { getPlayerOnOff } from "@/data/runtime/on-off-snapshot";
+import {
+  getLeagueShotZones,
+  getPlayerPlayTypes,
+} from "@/data/runtime/play-type-snapshot";
 import { type } from "@/lib/design-system";
-import { brandAtmosphereColors } from "@/lib/game-matchup-theme";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { resolvePlayerSeasonShotIndex } from "@/data/runtime/player-shots-store";
 import { getPlayerSeasonShotMap } from "@/data/queries/player-shots";
@@ -30,53 +36,49 @@ import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cac
 import { getCompactPlayerGameLogAsync } from "@/data/history/player-game-log";
 import { cn } from "@/lib/utils";
 
-const PLANNED = [
-  {
-    title: "Play types",
-    detail:
-      "Isolation, pick-and-roll, spot-up, putbacks, and transition frequency plus efficiency when the tracking feed covers the season.",
-  },
-  {
-    title: "On/off",
-    detail:
-      "Team scoring and allowed points with the player on the floor vs off, with lineup size disclosed so tiny samples stay honest.",
-  },
-] as const;
-
-export function PlayerPlannedVisualizations({
+async function PlayTypesBlock({
+  playerId,
+  nbaId,
+  season,
   teamKey,
 }: {
+  playerId: string;
+  nbaId?: string | null;
+  season: string;
   teamKey?: string | null;
 }) {
-  const wash = brandAtmosphereColors(
-    resolveTeamBrand(teamKey)?.primary,
-    resolveTeamBrand(teamKey)?.secondary
-  );
+  const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  const data = getPlayerPlayTypes(season, [identity?.nbaId, nbaId, playerId]);
+  if (!data) return null;
   return (
-    <GlassSurface
-      effect="css"
-      accentColor={wash?.colorA}
-      accentColorB={wash?.colorB}
-      className="flex flex-col gap-3 p-4 sm:p-5"
-    >
-      <div>
-        <h2 className={type.heading}>Planned visualizations</h2>
-        <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
-          Shot maps, usage, diet, creation, rolling form, and availability ship
-          here. Play types and on/off wait on tracking feeds.
-        </p>
-      </div>
-      <ul className="flex flex-col gap-3">
-        {PLANNED.map((item) => (
-          <li key={item.title}>
-            <p className={cn(type.bodySm, "font-semibold")}>{item.title}</p>
-            <p className={cn(type.caption, "mt-0.5 text-muted-foreground")}>
-              {item.detail}
-            </p>
-          </li>
-        ))}
-      </ul>
-    </GlassSurface>
+    <PlayerPlayTypesCard
+      data={data}
+      playerName={identity?.displayName ?? "This player"}
+      teamKey={teamKey}
+    />
+  );
+}
+
+async function OnOffBlock({
+  playerId,
+  nbaId,
+  season,
+  teamKey,
+}: {
+  playerId: string;
+  nbaId?: string | null;
+  season: string;
+  teamKey?: string | null;
+}) {
+  const identity = await resolvePlayerIdentityCached(playerId).catch(() => null);
+  const stints = getPlayerOnOff(season, [identity?.nbaId, nbaId, playerId]);
+  if (!stints.length) return null;
+  return (
+    <PlayerOnOffCard
+      stints={stints}
+      playerName={identity?.displayName ?? "this player"}
+      teamKey={teamKey}
+    />
   );
 }
 
@@ -110,6 +112,7 @@ async function UsageEfficiencyBlock({
       playerName={playerName}
       season={season}
       accentColor={brand?.primary}
+      teamKey={teamKey}
       seasons={seasons}
     />
   );
@@ -118,9 +121,11 @@ async function UsageEfficiencyBlock({
 async function ShotDietBlock({
   playerId,
   season,
+  teamKey,
 }: {
   playerId: string;
   season: string;
+  teamKey?: string | null;
 }) {
   const [peers, identity] = await Promise.all([
     getFilteredPlayerSeasonsCached(season, 1).catch(() => []),
@@ -133,7 +138,28 @@ async function ShotDietBlock({
   if (!row) return null;
   const slices = buildShotDiet(row);
   if (!slices.some((s) => s.attempts > 0)) return null;
-  return <PlayerShotDietLazy slices={slices} />;
+  const league = peers.reduce(
+    (acc, p) => {
+      acc["2pa"] += Math.max(0, p.fieldGoalsAttempted - p.threePointersAttempted);
+      acc["3pa"] += Math.max(0, p.threePointersAttempted);
+      acc.fta += Math.max(0, p.freeThrowsAttempted);
+      return acc;
+    },
+    { "2pa": 0, "3pa": 0, fta: 0 } as Record<string, number>
+  );
+  const leagueTotal = league["2pa"]! + league["3pa"]! + league.fta!;
+  const leagueShares =
+    peers.length >= 100 && leagueTotal > 0
+      ? Object.fromEntries(Object.entries(league).map(([k, v]) => [k, v / leagueTotal]))
+      : null;
+  return (
+    <PlayerShotDietLazy
+      slices={slices}
+      teamKey={teamKey}
+      season={season}
+      leagueShares={leagueShares}
+    />
+  );
 }
 
 async function CreationBlock({
@@ -258,7 +284,6 @@ export async function PlayerVisualizationsIsland({
       teamKey={teamKey}
     />
   );
-  const shotDiet = <ShotDietBlock playerId={playerId} season={season} />;
   const creation = (
     <CreationBlock playerId={playerId} season={season} teamKey={teamKey} />
   );
@@ -268,11 +293,14 @@ export async function PlayerVisualizationsIsland({
 
   const extras = (
     <>
-      {shotDiet}
+      <div className="grid gap-4 lg:grid-cols-2 [&>*:only-child]:lg:col-span-2">
+        <ShotDietBlock playerId={playerId} season={season} teamKey={teamKey} />
+        <OnOffBlock playerId={playerId} nbaId={nbaId} season={season} teamKey={teamKey} />
+      </div>
+      <PlayTypesBlock playerId={playerId} nbaId={nbaId} season={season} teamKey={teamKey} />
       {creation}
       {rolling}
       {availability}
-      <PlayerPlannedVisualizations teamKey={teamKey} />
     </>
   );
 
@@ -312,10 +340,10 @@ export async function PlayerVisualizationsIsland({
     });
     const label = teamLabel || teamKey || "NBA";
     const coverageLabel =
-      index && index.coordinateShots > 0
-        ? `Coordinate-covered FGA: ${index.coordinateShots} of ${index.boxFga} box FGA (${(
-            index.coverage * 100
-          ).toFixed(1)}%)`
+      index && index.coordinateShots > 0 && index.coverage < 0.99
+        ? `The map shows ${index.coordinateShots.toLocaleString("en-US")} of ${index.boxFga.toLocaleString(
+            "en-US"
+          )} field goal attempts (${(index.coverage * 100).toFixed(0)}%). The rest have no court location.`
         : null;
 
     let map: PlayerShotMap;
@@ -353,11 +381,15 @@ export async function PlayerVisualizationsIsland({
             </p>
           </GlassSurface>
         ) : null}
-        <PlayerShotMapView map={map} seasons={seasons} />
+        <PlayerShotMapView
+          map={map}
+          seasons={seasons}
+          leagueZones={getLeagueShotZones(map.season)}
+        />
         <UsageEfficiencyBlock
           playerId={playerId}
           season={season}
-          seasons={seasons}
+          seasons={[]}
           teamKey={teamKey}
         />
         {extras}

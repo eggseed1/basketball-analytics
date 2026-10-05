@@ -5,14 +5,16 @@ import { useMemo, useState } from "react";
 import { NbaHalfCourtLines } from "@/components/charts/nba-half-court-lines";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { useQueryNavOptional } from "@/components/continuity/query-nav";
+import { useChartTheme } from "@/lib/chart-theme";
 import { type } from "@/lib/design-system";
 import { formatNumber, formatPct } from "@/lib/format";
 import { COURT_SVG, courtX, courtY } from "@/lib/nba-court";
-import { percentileSavantColor } from "@/lib/player-grade";
+import { GRADE_BAND_GRADIENT, percentileSavantColor } from "@/lib/player-grade";
 import { cn } from "@/lib/utils";
 import {
+  leagueZoneKey,
+  type LeagueShotZones,
   type PlayerShotMap,
-  type PlayerShotZoneRow,
 } from "@/lib/player-shot-map";
 
 export type {
@@ -21,14 +23,13 @@ export type {
   PlayerShotZoneRow,
 } from "@/lib/player-shot-map";
 
-type ShotFilter = "ALL" | "MADE" | "MISS" | "2PT" | "3PT";
-type MapMode = "dots" | "frequency" | "efficiency";
-type ZoneSort = keyof Pick<
-  PlayerShotZoneRow,
-  "zone" | "fga" | "fgm" | "fgPct" | "frequency"
->;
+type KindFilter = "ALL" | "2PT" | "3PT";
+type MapMode = "shots" | "heat";
 
-const BIN_FT = 1.75;
+const BIN_FT = 3;
+const MIN_BIN_FGA = 3;
+/** FG% gap from league average that maps to the ends of the color scale. */
+const FULL_SCALE_GAP = 0.15;
 
 function shortSeason(season: string) {
   const m = /^(\d{4})-(\d{2})$/.exec(season);
@@ -40,10 +41,12 @@ function Chip({
   active,
   onClick,
   children,
+  className,
 }: {
   active: boolean;
   onClick: () => void;
-  children: string;
+  children: React.ReactNode;
+  className?: string;
 }) {
   return (
     <button
@@ -52,10 +55,9 @@ function Chip({
       onClick={onClick}
       className={cn(
         type.caption,
-        "rounded-md px-2.5 py-1 font-semibold",
-        active
-          ? "bg-foreground text-background"
-          : "bg-secondary/70 text-muted-foreground hover:text-foreground"
+        "glass-pill inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 font-semibold tabular-nums transition-colors",
+        active ? "glass-pill-active" : "text-muted-foreground hover:text-foreground",
+        className
       )}
     >
       {children}
@@ -63,300 +65,376 @@ function Chip({
   );
 }
 
-function fgFill(fgPct: number) {
-  const t = (fgPct - 0.25) / 0.4;
-  return percentileSavantColor(Math.max(0, Math.min(100, t * 100)));
+function Segmented<T extends string>({
+  value,
+  options,
+  onChange,
+  label,
+}: {
+  value: T;
+  options: ReadonlyArray<readonly [T, string]>;
+  onChange: (next: T) => void;
+  label: string;
+}) {
+  return (
+    <div
+      role="group"
+      aria-label={label}
+      className="inline-flex rounded-lg bg-foreground/[0.06] p-0.5"
+    >
+      {options.map(([id, text]) => (
+        <button
+          key={id}
+          type="button"
+          aria-pressed={value === id}
+          onClick={() => onChange(id)}
+          className={cn(
+            type.caption,
+            "rounded-md px-3 py-1 font-semibold transition-colors",
+            value === id
+              ? "bg-background text-foreground shadow-sm"
+              : "text-muted-foreground hover:text-foreground"
+          )}
+        >
+          {text}
+        </button>
+      ))}
+    </div>
+  );
+}
+
+/** Savant scale position for a FG% gap vs league: 50 = league average. */
+function gapPercentile(gap: number) {
+  return Math.max(0, Math.min(100, 50 + (gap / FULL_SCALE_GAP) * 50));
+}
+
+/** Absolute FG% fallback when league zone averages are missing. */
+function absolutePercentile(fgPct: number) {
+  return Math.max(0, Math.min(100, ((fgPct - 0.25) / 0.4) * 100));
 }
 
 export function PlayerShotMapView({
   map,
   seasons = [],
+  leagueZones = null,
 }: {
   map: PlayerShotMap;
   seasons?: string[];
+  /** League FGM/FGA by NBA zone for this season, when baked. */
+  leagueZones?: LeagueShotZones | null;
 }) {
   const queryNav = useQueryNavOptional();
-  const [filter, setFilter] = useState<ShotFilter>("ALL");
-  const [mode, setMode] = useState<MapMode>("frequency");
-  const [sortKey, setSortKey] = useState<ZoneSort>("fga");
-  const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
+  const { surface } = useChartTheme();
+  const [kind, setKind] = useState<KindFilter>("ALL");
+  const [showMakes, setShowMakes] = useState(true);
+  const [showMisses, setShowMisses] = useState(true);
+  const [mode, setMode] = useState<MapMode>("shots");
 
-  const filtered = useMemo(() => {
-    return map.shots.filter((shot) => {
-      if (filter === "MADE") return shot.made;
-      if (filter === "MISS") return !shot.made;
-      if (filter === "2PT") return shot.kind === "2PT";
-      if (filter === "3PT") return shot.kind === "3PT";
-      return true;
-    });
-  }, [filter, map.shots]);
+  const makeColor = percentileSavantColor(90, surface);
+  const missColor = percentileSavantColor(10, surface);
+
+  const leagueFg = useMemo(() => {
+    const out = new Map<string, number>();
+    for (const [zone, [fgm, fga]] of Object.entries(leagueZones ?? {})) {
+      if (fga > 0) out.set(zone, fgm / fga);
+    }
+    return out;
+  }, [leagueZones]);
+  const leagueFor = (zone: string) => {
+    const key = leagueZoneKey(zone);
+    return key ? (leagueFg.get(key) ?? null) : null;
+  };
+
+  const byKind = useMemo(
+    () => map.shots.filter((s) => kind === "ALL" || s.kind === kind),
+    [kind, map.shots]
+  );
+  const visible = useMemo(
+    () => byKind.filter((s) => (s.made ? showMakes : showMisses)),
+    [byKind, showMakes, showMisses]
+  );
+  const makes = byKind.filter((s) => s.made).length;
+  const misses = byKind.length - makes;
+  const fg = byKind.length ? makes / byKind.length : null;
 
   const bins = useMemo(() => {
     const groups = new Map<
       string,
-      { x: number; y: number; fga: number; fgm: number }
+      { x: number; y: number; fga: number; fgm: number; zones: Map<string, number> }
     >();
-    for (const shot of filtered) {
+    for (const shot of byKind) {
       const cx = Math.round(shot.x / BIN_FT) * BIN_FT;
       const cy = Math.round(shot.y / BIN_FT) * BIN_FT;
       const key = `${cx},${cy}`;
-      const cur = groups.get(key) ?? { x: cx, y: cy, fga: 0, fgm: 0 };
+      const cur = groups.get(key) ?? { x: cx, y: cy, fga: 0, fgm: 0, zones: new Map() };
       cur.fga += 1;
       if (shot.made) cur.fgm += 1;
+      cur.zones.set(shot.zone, (cur.zones.get(shot.zone) ?? 0) + 1);
       groups.set(key, cur);
     }
     const list = [...groups.values()];
     const max = Math.max(1, ...list.map((b) => b.fga));
-    return list.map((b) => ({ ...b, max }));
-  }, [filtered]);
+    return list
+      .map((b) => {
+        const zone = [...b.zones.entries()].sort((p, q) => q[1] - p[1])[0]?.[0] ?? "";
+        return { ...b, zone, max };
+      })
+      .sort((a, b) => a.fga - b.fga);
+  }, [byKind]);
 
   const zoneRows = useMemo(() => {
-    const copy = [...map.zones];
-    copy.sort((a, b) => {
-      const av = a[sortKey];
-      const bv = b[sortKey];
-      if (typeof av === "string" || typeof bv === "string") {
-        return sortDir === "asc"
-          ? String(av).localeCompare(String(bv))
-          : String(bv).localeCompare(String(av));
-      }
-      const an = av ?? -1;
-      const bn = bv ?? -1;
-      return sortDir === "asc" ? an - bn : bn - an;
-    });
-    return copy;
-  }, [map.zones, sortDir, sortKey]);
+    const groups = new Map<string, { fga: number; fgm: number }>();
+    for (const shot of byKind) {
+      const cur = groups.get(shot.zone) ?? { fga: 0, fgm: 0 };
+      cur.fga += 1;
+      if (shot.made) cur.fgm += 1;
+      groups.set(shot.zone, cur);
+    }
+    const total = byKind.length || 1;
+    return [...groups.entries()]
+      .map(([zone, v]) => ({ zone, ...v, fgPct: v.fga ? v.fgm / v.fga : null, frequency: v.fga / total }))
+      .sort((a, b) => b.fga - a.fga);
+  }, [byKind]);
 
-  const made = filtered.filter((s) => s.made).length;
-  const fg = filtered.length ? made / filtered.length : 0;
-
-  function setSeason(next: string) {
-    queryNav?.replaceParams({ season: next });
+  function heatFill(fgm: number, fga: number, zone: string) {
+    const pct = fgm / fga;
+    const league = leagueFor(zone);
+    return percentileSavantColor(
+      league == null ? absolutePercentile(pct) : gapPercentile(pct - league),
+      surface
+    );
   }
 
   const seasonChips =
     seasons.length > 1 ? (
-      <div className="flex flex-wrap items-center gap-x-1.5 gap-y-1">
-        <p
-          className={cn(
-            type.caption,
-            "shrink-0 font-semibold uppercase tracking-wide text-muted-foreground"
-          )}
-        >
-          Season
-        </p>
-        <div className="flex flex-wrap gap-1">
-          {[...seasons]
-            .sort((a, b) => a.localeCompare(b))
-            .map((option) => (
-              <Chip
-                key={option}
-                active={option === map.season}
-                onClick={() => setSeason(option)}
-              >
-                {shortSeason(option)}
-              </Chip>
-            ))}
-        </div>
+      <div className="flex flex-wrap gap-1" role="group" aria-label="Shot map season">
+        {[...seasons]
+          .sort((a, b) => b.localeCompare(a))
+          .map((option) => (
+            <Chip
+              key={option}
+              active={option === map.season}
+              onClick={() => queryNav?.replaceParams({ season: option })}
+            >
+              {shortSeason(option)}
+            </Chip>
+          ))}
       </div>
     ) : null;
 
-  function sortBy(key: ZoneSort) {
-    if (sortKey === key) setSortDir((d) => (d === "asc" ? "desc" : "asc"));
-    else {
-      setSortKey(key);
-      setSortDir(key === "zone" ? "asc" : "desc");
-    }
-  }
-
-  function head(
-    key: ZoneSort,
-    label: string,
-    align: "left" | "right" = "right"
-  ) {
-    return (
-      <th
-        className={cn(
-          "px-2 py-2 font-semibold",
-          align === "left" ? "text-left" : "text-right"
-        )}
-      >
-        <button type="button" className="tabular-nums" onClick={() => sortBy(key)}>
-          {label}
-          {sortKey === key ? (sortDir === "asc" ? " ↑" : " ↓") : ""}
-        </button>
-      </th>
-    );
-  }
-
   if (map.emptyReason) {
     return (
-      <GlassSurface effect="css" className="p-4">
-        <h2 className={type.title}>Shot map</h2>
-        <p className={cn(type.bodySm, "mt-2 text-muted-foreground")}>
-          {map.emptyReason}
+      <GlassSurface effect="css" className="flex flex-col gap-2 p-4 sm:p-5">
+        <h2 className={type.heading}>Shot map</h2>
+        <p className={cn(type.bodySm, "text-muted-foreground")}>{map.emptyReason}</p>
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Source: {map.source}. Pick another season, or switch between Regular and Playoffs above.
         </p>
-        <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
-          Source: {map.source}. Pick a season below, or Regular / Playoffs
-          above.
-        </p>
-        {seasonChips ? <div className="mt-3">{seasonChips}</div> : null}
+        {seasonChips ? <div className="mt-1">{seasonChips}</div> : null}
       </GlassSurface>
     );
   }
 
+  const hasLeague = leagueFg.size > 0;
+
   return (
-    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(16rem,20rem)]">
-      <GlassSurface effect="css" className="p-4">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <h2 className={type.title}>Shot map</h2>
+    <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(17rem,21rem)]">
+      <GlassSurface effect="css" className="flex flex-col gap-4 p-4 sm:p-5">
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className={type.heading}>Shot map</h2>
             <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-              {map.season} ·{" "}
-              {map.seasonType === "playoffs" ? "Playoffs" : "Regular season"} ·{" "}
-              {map.team}. Filled = make, hollow = miss.
+              {map.season} · {map.seasonType === "playoffs" ? "Playoffs" : "Regular season"} ·{" "}
+              {map.team}
             </p>
           </div>
-          <p className={cn(type.caption, "tabular-nums text-muted-foreground")}>
-            {filtered.length} FGA · {formatPct(fg)} make
-          </p>
+          <dl className="flex gap-4 sm:text-right">
+            <div>
+              <dt className={cn(type.micro, "uppercase tracking-[0.1em] text-muted-foreground")}>FGA</dt>
+              <dd className="text-lg font-bold tabular-nums">{formatNumber(byKind.length, 0)}</dd>
+            </div>
+            <div>
+              <dt className={cn(type.micro, "uppercase tracking-[0.1em] text-muted-foreground")}>FG%</dt>
+              <dd className="text-lg font-bold tabular-nums">{fg == null ? "—" : formatPct(fg)}</dd>
+            </div>
+          </dl>
         </div>
 
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
-          {seasonChips}
-          <div className="flex flex-wrap gap-1">
-            {(
-              [
-                ["ALL", "All"],
-                ["MADE", "Makes"],
-                ["MISS", "Misses"],
-                ["2PT", "2PT"],
-                ["3PT", "3PT"],
-              ] as const
-            ).map(([id, label]) => (
-              <Chip key={id} active={filter === id} onClick={() => setFilter(id)}>
-                {label}
+        <div className="flex flex-wrap items-center gap-2">
+          <Segmented
+            label="Map view"
+            value={mode}
+            onChange={setMode}
+            options={[
+              ["shots", "Shots"],
+              ["heat", "Hot zones"],
+            ]}
+          />
+          <Segmented
+            label="Shot type"
+            value={kind}
+            onChange={setKind}
+            options={[
+              ["ALL", "All"],
+              ["2PT", "2PT"],
+              ["3PT", "3PT"],
+            ]}
+          />
+          {mode === "shots" ? (
+            <div className="flex gap-1" role="group" aria-label="Show makes or misses">
+              <Chip active={showMakes} onClick={() => setShowMakes((v) => !v || !showMisses)}>
+                <span
+                  aria-hidden
+                  className="size-2.5 rounded-full"
+                  style={{ background: makeColor }}
+                />
+                Makes {formatNumber(makes, 0)}
               </Chip>
-            ))}
-          </div>
-        </div>
-        <div className="mt-2 flex flex-wrap gap-1">
-          {(
-            [
-              ["dots", "Dots"],
-              ["frequency", "Frequency"],
-              ["efficiency", "Efficiency"],
-            ] as const
-          ).map(([id, label]) => (
-            <Chip key={id} active={mode === id} onClick={() => setMode(id)}>
-              {label}
-            </Chip>
-          ))}
+              <Chip active={showMisses} onClick={() => setShowMisses((v) => !v || !showMakes)}>
+                <span
+                  aria-hidden
+                  className="size-2.5 rounded-full border-2"
+                  style={{ borderColor: missColor }}
+                />
+                Misses {formatNumber(misses, 0)}
+              </Chip>
+            </div>
+          ) : null}
         </div>
 
-        <div className="mx-auto mt-3 w-full max-w-md">
+        <div className="mx-auto w-full max-w-lg">
           <svg
             viewBox={`0 0 ${COURT_SVG.width} ${COURT_SVG.height}`}
-            className="h-auto w-full rounded-md bg-foreground/[0.04]"
+            className="h-auto w-full rounded-xl bg-foreground/[0.035] text-foreground ring-1 ring-border/50"
             role="img"
-            aria-label={`Shot map, ${made} makes of ${filtered.length} attempts`}
+            aria-label={`Shot map, ${makes} makes of ${byKind.length} attempts`}
           >
             <NbaHalfCourtLines />
-            {mode === "dots"
-              ? filtered.map((shot, i) => (
-                  <circle
-                    key={`${shot.x}-${shot.y}-${i}`}
-                    cx={courtX(shot.x)}
-                    cy={courtY(shot.y)}
-                    r={shot.kind === "3PT" ? 5 : 4}
-                    fill={shot.made ? "currentColor" : "none"}
-                    stroke="currentColor"
-                    strokeWidth="1.5"
-                    opacity={0.8}
-                  >
-                    <title>
-                      {`${shot.made ? "Make" : "Miss"} ${shot.kind} · ${shot.dist.toFixed(0)} ft · ${shot.zone}`}
-                    </title>
-                  </circle>
-                ))
+            {mode === "shots"
+              ? [...visible]
+                  .sort((a, b) => Number(a.made) - Number(b.made))
+                  .map((shot, i) => (
+                    <circle
+                      key={`${shot.x}-${shot.y}-${i}`}
+                      cx={courtX(shot.x)}
+                      cy={courtY(shot.y)}
+                      r={shot.made ? 4.2 : 3.6}
+                      fill={shot.made ? makeColor : "none"}
+                      fillOpacity={0.85}
+                      stroke={shot.made ? "var(--background)" : missColor}
+                      strokeWidth={shot.made ? 0.8 : 1.5}
+                      strokeOpacity={shot.made ? 0.7 : 0.75}
+                    >
+                      <title>
+                        {`${shot.made ? "Make" : "Miss"} · ${shot.kind} · ${shot.dist.toFixed(0)} ft · ${shot.zone}`}
+                      </title>
+                    </circle>
+                  ))
               : bins.map((bin) => {
-                  const r = 4 + 10 * Math.sqrt(bin.fga / bin.max);
-                  const fgPct = bin.fgm / bin.fga;
-                  const fill =
-                    mode === "efficiency"
-                      ? bin.fga >= 3
-                        ? fgFill(fgPct)
-                        : "transparent"
-                      : "currentColor";
-                  const opacity =
-                    mode === "frequency"
-                      ? 0.25 + 0.7 * (bin.fga / bin.max)
-                      : 0.9;
+                  const r = 4 + 13 * Math.sqrt(bin.fga / bin.max);
+                  const small = bin.fga < MIN_BIN_FGA;
+                  const pct = bin.fgm / bin.fga;
+                  const league = leagueFor(bin.zone);
                   return (
                     <circle
                       key={`${bin.x}-${bin.y}`}
                       cx={courtX(bin.x)}
                       cy={courtY(bin.y)}
                       r={r}
-                      fill={fill}
-                      stroke="currentColor"
-                      strokeWidth={mode === "efficiency" && bin.fga < 3 ? 1 : 0}
-                      strokeDasharray={
-                        bin.fga < 3 && mode === "efficiency" ? "2 2" : undefined
-                      }
-                      opacity={opacity}
+                      fill={small ? "currentColor" : heatFill(bin.fgm, bin.fga, bin.zone)}
+                      fillOpacity={small ? 0.07 : 0.88}
+                      stroke="var(--background)"
+                      strokeWidth={small ? 0 : 0.8}
                     >
                       <title>
-                        {`${bin.fgm}/${bin.fga} · ${formatPct(fgPct)}${bin.fga < 3 ? " · small sample" : ""}`}
+                        {`${bin.fgm} of ${bin.fga} · ${formatPct(pct)}${
+                          league != null ? ` · league ${formatPct(league)} in ${bin.zone}` : ""
+                        }${small ? " · small sample" : ""}`}
                       </title>
                     </circle>
                   );
                 })}
           </svg>
         </div>
-        <p className={cn(type.caption, "mt-2 text-muted-foreground")}>
-          Source: {map.source}. Efficiency bins with fewer
-          than 3 attempts are outlined, not colored.
+
+        {mode === "heat" ? (
+          <div className="flex flex-col gap-1.5">
+            <div className="h-2 w-full rounded-full" style={{ background: GRADE_BAND_GRADIENT }} />
+            <div className={cn(type.caption, "flex justify-between text-muted-foreground")}>
+              <span>Colder</span>
+              <span>{hasLeague ? "League average for the zone" : "45% FG"}</span>
+              <span>Hotter</span>
+            </div>
+            <p className={cn(type.caption, "text-muted-foreground")}>
+              Bigger circles mean more attempts from that spot. Spots with fewer than {MIN_BIN_FGA}{" "}
+              attempts stay grey.
+            </p>
+          </div>
+        ) : null}
+
+        <p className={cn(type.caption, "text-muted-foreground")}>
+          Source: {map.source}.
+          {hasLeague ? " League averages come from NBA Stats for the same season." : ""}
         </p>
+        {seasonChips}
       </GlassSurface>
 
-      <GlassSurface effect="css" className="p-4">
-        <h2 className={type.title}>Shot zones</h2>
-        <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
-          Sort any column. Frequency is share of this map’s attempts.
-        </p>
-        <div className="mt-3 overflow-x-auto">
-          <table className={cn(type.caption, "w-full")}>
-            <thead>
-              <tr>
-                {head("zone", "Zone", "left")}
-                {head("fga", "FGA")}
-                {head("fgm", "FGM")}
-                {head("fgPct", "FG%")}
-                {head("frequency", "Freq")}
-              </tr>
-            </thead>
-            <tbody>
-              {zoneRows.map((row) => (
-                <tr key={row.zone} className="border-t border-border/70">
-                  <td className="px-2 py-1.5">{row.zone}</td>
-                  <td className="px-2 py-1.5 text-right tabular-nums">
-                    {formatNumber(row.fga, 0)}
-                  </td>
-                  <td className="px-2 py-1.5 text-right tabular-nums">
-                    {formatNumber(row.fgm, 0)}
-                  </td>
-                  <td className="px-2 py-1.5 text-right tabular-nums">
-                    {row.fgPct == null ? "-" : formatPct(row.fgPct)}
-                  </td>
-                  <td className="px-2 py-1.5 text-right tabular-nums">
-                    {formatPct(row.frequency, 0)}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+      <GlassSurface effect="css" className="flex flex-col gap-3 p-4 sm:p-5">
+        <div>
+          <h2 className={type.heading}>Shot zones</h2>
+          <p className={cn(type.caption, "mt-1 text-muted-foreground")}>
+            Bars show the share of attempts.
+            {hasLeague ? " FG% is colored against the league average in that zone." : ""}
+          </p>
         </div>
+        <ul className="flex flex-col gap-3">
+          {zoneRows.map((row) => {
+            const league = leagueFor(row.zone);
+            const pill =
+              row.fgPct == null || row.fga < MIN_BIN_FGA
+                ? null
+                : percentileSavantColor(
+                    league == null ? absolutePercentile(row.fgPct) : gapPercentile(row.fgPct - league),
+                    surface
+                  );
+            return (
+              <li key={row.zone} className="flex flex-col gap-1.5">
+                <div className="flex items-baseline justify-between gap-2">
+                  <span className={cn(type.bodySm, "font-semibold")}>{row.zone}</span>
+                  <span className={cn(type.caption, "flex items-center gap-2 tabular-nums text-muted-foreground")}>
+                    {row.fgm}-{row.fga}
+                    <span
+                      className="min-w-[3.25rem] rounded-md px-1.5 py-0.5 text-center font-semibold"
+                      style={
+                        pill
+                          ? { background: `color-mix(in oklab, ${pill} 22%, transparent)`, color: "var(--foreground)", boxShadow: `inset 0 0 0 1px color-mix(in oklab, ${pill} 55%, transparent)` }
+                          : undefined
+                      }
+                    >
+                      {row.fgPct == null ? "—" : formatPct(row.fgPct)}
+                    </span>
+                  </span>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-foreground/[0.07]">
+                    <div
+                      className="h-full rounded-full bg-foreground/55"
+                      style={{ width: `${Math.max(2, row.frequency * 100)}%` }}
+                    />
+                  </div>
+                  <span className={cn(type.caption, "w-9 text-right tabular-nums text-muted-foreground")}>
+                    {formatPct(row.frequency, 0)}
+                  </span>
+                </div>
+                {league != null ? (
+                  <p className={cn(type.caption, "text-muted-foreground")}>
+                    League {formatPct(league)}
+                  </p>
+                ) : null}
+              </li>
+            );
+          })}
+        </ul>
       </GlassSurface>
     </div>
   );

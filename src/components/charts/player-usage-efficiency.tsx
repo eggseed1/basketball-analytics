@@ -43,30 +43,63 @@ type ScatterShapeProps = {
   payload?: ChartPoint;
 };
 
-function PeerDot({ cx = 0, cy = 0, size = 36, payload }: ScatterShapeProps) {
-  const r = Math.max(3, Math.sqrt(size) / 2);
+function PeerDot({ cx = 0, cy = 0, payload }: ScatterShapeProps) {
   return (
     <circle
       cx={cx}
       cy={cy}
-      r={r}
+      r={3.4}
       fill={payload?.fill ?? "currentColor"}
-      fillOpacity={0.72}
+      fillOpacity={0.38}
     />
   );
 }
 
-function PinDot({ cx = 0, cy = 0, size = 140, payload }: ScatterShapeProps) {
-  const r = Math.max(5, Math.sqrt(size) / 2);
+/** Highlighted player: halo, solid dot and a name tag that flips toward the open side. */
+function makePinDot(labelSide: (p: ChartPoint) => "left" | "right", showLabel: boolean) {
+  return function PinDot({ cx = 0, cy = 0, payload }: ScatterShapeProps) {
+    const fill = payload?.fill ?? "currentColor";
+    const name = payload?.playerName ?? "";
+    const side = payload ? labelSide(payload) : "right";
+    const width = Math.max(40, name.length * 6.6 + 16);
+    const x = side === "right" ? cx + 14 : cx - 14 - width;
+    return (
+      <g>
+        <circle cx={cx} cy={cy} r={16} fill={fill} fillOpacity={0.14} />
+        <circle cx={cx} cy={cy} r={11} fill="none" stroke={fill} strokeOpacity={0.45} strokeWidth={1.5} />
+        <circle cx={cx} cy={cy} r={6.5} fill={fill} stroke="var(--background)" strokeWidth={2.5} />
+        {showLabel && name ? (
+          <g pointerEvents="none">
+            <rect x={x} y={cy - 11} width={width} height={22} rx={11} fill={fill} />
+            <text
+              x={x + width / 2}
+              y={cy + 4}
+              textAnchor="middle"
+              fontSize={11.5}
+              fontWeight={700}
+              fill="#fff"
+            >
+              {name}
+            </text>
+          </g>
+        ) : null}
+      </g>
+    );
+  };
+}
+
+function QuadrantLabels() {
+  const label = cn(
+    type.micro,
+    "pointer-events-none absolute z-[1] font-semibold uppercase tracking-[0.08em] text-muted-foreground/70"
+  );
   return (
-    <circle
-      cx={cx}
-      cy={cy}
-      r={r}
-      fill={payload?.fill ?? "currentColor"}
-      stroke="var(--background)"
-      strokeWidth={2}
-    />
+    <>
+      <span className={cn(label, "left-[4.5rem] top-5")}>Efficient · lighter load</span>
+      <span className={cn(label, "right-9 top-5 text-right")}>Efficient · heavy load</span>
+      <span className={cn(label, "bottom-[3.9rem] left-[4.5rem]")}>Less efficient · lighter load</span>
+      <span className={cn(label, "bottom-[3.9rem] right-9 text-right")}>Less efficient · heavy load</span>
+    </>
   );
 }
 
@@ -75,6 +108,7 @@ export function PlayerUsageEfficiencyChart({
   playerName,
   season,
   accentColor,
+  teamKey,
   seasons = [],
   highlightLabel = "you",
 }: {
@@ -82,6 +116,8 @@ export function PlayerUsageEfficiencyChart({
   playerName?: string;
   season: string;
   accentColor?: string;
+  /** Preferred over accentColor: picks a team color that reads in both themes. */
+  teamKey?: string | null;
   /** When set, shows season chips that update the page `season` query. */
   seasons?: string[];
   /** Tooltip/caption tag for highlighted points (player page vs league pin). */
@@ -94,6 +130,9 @@ export function PlayerUsageEfficiencyChart({
   const focalName = playerName?.trim() ?? "";
   const deferredPoints = useDeferredValue(points);
 
+  const focalColor = teamKey
+    ? chartTheme.teamColor(teamKey).color
+    : accentColor?.trim() || null;
   const data = useMemo<ChartPoint[]>(
     () =>
       deferredPoints.map((p) => {
@@ -103,13 +142,10 @@ export function PlayerUsageEfficiencyChart({
           usageDisplay: p.usagePct * 100,
           tsDisplay: p.trueShootingPct * 100,
           z: p.isSelf ? 140 : 36,
-          fill:
-            p.isSelf && accentColor?.trim()
-              ? accentColor.trim()
-              : teamFill,
+          fill: p.isSelf && focalColor ? focalColor : teamFill,
         };
       }),
-    [accentColor, chartTheme, deferredPoints]
+    [chartTheme, deferredPoints, focalColor]
   );
   const peers = useMemo(() => data.filter((p) => !p.isSelf), [data]);
   const pinned = useMemo(() => data.filter((p) => p.isSelf), [data]);
@@ -134,6 +170,11 @@ export function PlayerUsageEfficiencyChart({
       { padAbsolute: 1.5, padRatio: 0.14, minSpan: 4 }
     );
   }, [data]);
+
+  const pinShape = useMemo(() => {
+    const mid = (domainX[0] + domainX[1]) / 2;
+    return makePinDot((p) => (p.usageDisplay > mid ? "left" : "right"), pinned.length <= 3);
+  }, [domainX, pinned.length]);
 
   const quadrant =
     self && medians.usage != null && medians.ts != null
@@ -202,6 +243,23 @@ export function PlayerUsageEfficiencyChart({
         {seasonChips}
       </div>
 
+      {pinned.length ? (
+        <div className={cn(type.caption, "flex flex-wrap items-center gap-x-4 gap-y-1 text-muted-foreground")}>
+          <span className="inline-flex items-center gap-1.5 font-semibold text-foreground">
+            <span
+              aria-hidden
+              className="size-3 rounded-full ring-2 ring-background"
+              style={{ background: pinned[0]!.fill, boxShadow: `0 0 0 4px color-mix(in oklab, ${pinned[0]!.fill} 22%, transparent)` }}
+            />
+            {pinned.length === 1 ? focalName || pinned[0]!.playerName : `${pinned.length} pinned players`}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span aria-hidden className="size-2 rounded-full bg-muted-foreground/45" />
+            Other qualified players, in team colors
+          </span>
+        </div>
+      ) : null}
+
       {data.length < 8 ? (
         <p
           className={cn(
@@ -212,7 +270,8 @@ export function PlayerUsageEfficiencyChart({
           Not enough qualified peers with usage and true shooting for {season}.
         </p>
       ) : (
-        <div className="h-[300px] w-full sm:h-[360px]">
+        <div className="relative h-[320px] w-full sm:h-[380px]">
+          <QuadrantLabels />
           <ResponsiveContainer width="100%" height="100%">
             <ScatterChart margin={{ top: 18, right: 28, bottom: 28, left: 12 }}>
               <CartesianGrid
@@ -269,6 +328,30 @@ export function PlayerUsageEfficiencyChart({
                   strokeDasharray="4 4"
                 />
               ) : null}
+              {pinned.length === 1 && self ? (
+                <ReferenceLine
+                  segment={[
+                    { x: self.usageDisplay, y: domainY[0] },
+                    { x: self.usageDisplay, y: self.tsDisplay },
+                  ]}
+                  stroke={self.fill}
+                  strokeOpacity={0.6}
+                  strokeDasharray="3 3"
+                  ifOverflow="hidden"
+                />
+              ) : null}
+              {pinned.length === 1 && self ? (
+                <ReferenceLine
+                  segment={[
+                    { x: domainX[0], y: self.tsDisplay },
+                    { x: self.usageDisplay, y: self.tsDisplay },
+                  ]}
+                  stroke={self.fill}
+                  strokeOpacity={0.6}
+                  strokeDasharray="3 3"
+                  ifOverflow="hidden"
+                />
+              ) : null}
               <Tooltip
                 cursor={false}
                 isAnimationActive={false}
@@ -309,7 +392,7 @@ export function PlayerUsageEfficiencyChart({
                   name={focalName || "Pinned"}
                   cursor="pointer"
                   isAnimationActive={false}
-                  shape={PinDot}
+                  shape={pinShape}
                   onClick={(point) => {
                     const p = point as unknown as ChartPoint;
                     if (p?.playerId) router.push(`/players/${p.playerId}`);
@@ -322,8 +405,8 @@ export function PlayerUsageEfficiencyChart({
       )}
 
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Dashed lines = peer median. Click a point to open that player. Points
-        use team colors.
+        The grey dashed lines mark the median player, which splits the chart into four corners. Click
+        any dot to open that player.
         {pinned.length === 1 && self
           ? ` ${focalName || self.playerName}: ${formatPct(self.usagePct)} USG · ${formatPct(self.trueShootingPct)} TS.`
           : pinned.length > 1

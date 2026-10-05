@@ -28,6 +28,28 @@ export type PlayerShotMap = {
   emptyReason: string | null;
 };
 
+/** League totals by NBA `SHOT_ZONE_BASIC`: zone → [FGM, FGA]. */
+export type LeagueShotZones = Record<string, [number, number]>;
+
+const LEAGUE_ZONE_BY_LABEL: Record<string, string> = {
+  rim: "Restricted Area",
+  "restricted area": "Restricted Area",
+  "paint (non-rim)": "In The Paint (Non-RA)",
+  "in the paint (non-ra)": "In The Paint (Non-RA)",
+  "short midrange": "Mid-Range",
+  "long midrange": "Mid-Range",
+  "mid-range": "Mid-Range",
+  "left corner 3": "Left Corner 3",
+  "right corner 3": "Right Corner 3",
+  "above-break 3": "Above the Break 3",
+  "above the break 3": "Above the Break 3",
+};
+
+/** NBA zone that a shot map zone label is compared against; heaves have none. */
+export function leagueZoneKey(zone: string): string | null {
+  return LEAGUE_ZONE_BY_LABEL[zone.trim().toLowerCase()] ?? null;
+}
+
 function zoneRowsFromDots(shots: PlayerShotDot[]): PlayerShotZoneRow[] {
   const groups = new Map<string, { fga: number; fgm: number }>();
   for (const shot of shots) {
@@ -68,7 +90,7 @@ export function buildPlayerShotMap(options: {
     season: options.season,
     seasonType: options.seasonType,
     team: options.team,
-    source: "NBA Stats shotchartdetail",
+    source: "NBA Stats shot locations",
     shots: dots,
     zones: zoneRowsFromDots(dots),
     emptyReason:

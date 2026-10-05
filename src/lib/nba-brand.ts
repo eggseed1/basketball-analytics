@@ -628,6 +628,40 @@ export function teamChartColor(
   };
 }
 
+/**
+ * `count` separable colors from one franchise, for a chart split into parts
+ * (shot diet, play types). Primary first, then the secondary when it reads on
+ * `surface` and differs enough, then lighter and deeper steps of the primary.
+ */
+export function teamChartPalette(
+  teamId: string | null | undefined,
+  count: number,
+  options?: { surface?: ChartSurface }
+): string[] {
+  const surface = options?.surface ?? "light";
+  const brand = resolveTeamBrand(teamId);
+  const base = brand
+    ? brandColorCandidates(brand, surface)
+    : [surface === "dark" ? "#7aa7ff" : "#2f5fd0"];
+  const out: string[] = [];
+  const add = (color: string) => {
+    if (out.length < count && out.every((c) => oklabDistance(c, color) >= DISTINCT_TEAM_MIN_DELTA)) {
+      out.push(color);
+    }
+  };
+  for (const color of base) add(color);
+  const anchor = hexToOklch(out[0] ?? base[0]!);
+  if (anchor) {
+    const steps = surface === "dark" ? [-0.18, 0.14, -0.3, 0.24] : [0.2, -0.14, 0.32, 0.1];
+    for (const delta of steps) {
+      const l = Math.max(0.28, Math.min(0.92, anchor.l + delta));
+      add(oklchToHex({ ...anchor, l }));
+    }
+  }
+  while (out.length < count) out.push(out[out.length - 1] ?? neutralChartColor(surface));
+  return out;
+}
+
 function oklabDistance(a: string, b: string): number {
   const x = hexToOklch(a);
   const y = hexToOklch(b);

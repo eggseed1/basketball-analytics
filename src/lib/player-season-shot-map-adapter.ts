@@ -49,14 +49,14 @@ export function playerSeasonShotIndexToMap(options: {
       season,
       seasonType,
       team: teamLabel,
-      source: "P18 player-season shot index",
+      source: "NBA Stats shot locations",
       shots: [],
       zones: [],
       emptyReason:
         options.emptyReason ??
         (index
-          ? "Index present but zero coordinate shots for this season."
-          : "No precomputed player-season shot index for this season."),
+          ? "This season's shots have no court locations."
+          : "No shot locations are loaded for this season."),
     };
   }
 
@@ -74,7 +74,7 @@ export function playerSeasonShotIndexToMap(options: {
     season,
     seasonType,
     team: teamLabel,
-    source: "P18 player-season shot index",
+    source: "NBA Stats shot locations",
     shots: dots,
     zones: zoneRowsFromDots(dots),
     emptyReason: null,

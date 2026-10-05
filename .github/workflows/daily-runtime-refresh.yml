@@ -102,6 +102,20 @@ jobs:
           restore-keys: |
             drbl-precomputed-${{ runner.os }}-${{ steps.season.outputs.season }}-
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      # stats.nba.com stalls non-browser TLS clients; curl_cffi mimics Chrome.
+      # Soft-fails so a blocked runner keeps the committed snapshot.
+      - name: Play types, on/off and league shot zones
+        continue-on-error: true
+        timeout-minutes: 20
+        run: |
+          pip install --quiet curl_cffi
+          python scripts/build-runtime-playtype-onoff-snapshot.py "${{ steps.season.outputs.season }}"
+
       - name: Daily runtime sync
         id: sync
         env:
@@ -134,7 +148,9 @@ jobs:
             data/front-office/v1 \
             src/data/runtime/front-office-snapshot.json \
             data/asset-ledger/v1 \
-            src/data/runtime/asset-ledger-snapshot.json
+            src/data/runtime/asset-ledger-snapshot.json \
+            src/data/runtime/play-type-snapshot.json \
+            src/data/runtime/on-off-snapshot.json
           if git diff --cached --quiet; then
             echo "No data changes to commit."
             exit 0
