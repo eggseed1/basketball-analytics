@@ -1,7 +1,7 @@
 import { cn } from "@/lib/utils";
 
 /**
- * Board player label — full name, nowrap.
+ * Board player label — full name, nowrap, ellipsis when the parent is narrower.
  * (Compact last-name mode was removed: it fought the freeze-column width
  * measurement and made names unreadable on desktop.)
  */
@@ -18,7 +18,7 @@ export function BoardPlayerName({
 }) {
   return (
     <span
-      className={cn("board-name whitespace-nowrap", className)}
+      className={cn("board-name block min-w-0 truncate", className)}
       title={name}
     >
       {name}

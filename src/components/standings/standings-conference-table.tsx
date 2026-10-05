@@ -33,19 +33,24 @@ export function StandingsConferenceTable({
         <table
           className={cn(
             "w-full table-fixed text-left",
-            compact ? "min-w-[20rem]" : "min-w-[42rem]"
+            compact ? "min-w-[19rem]" : "min-w-[42rem]"
           )}
         >
           <colgroup>
             <col className="w-7" />
             <col />
-            <col className="w-[52px]" />
-            <col className="w-[52px]" />
-            <col className="w-20" />
             {compact ? (
-              <col className="w-24" />
+              <>
+                <col className="w-9" />
+                <col className="w-9" />
+                <col className="w-14" />
+                <col className="w-16" />
+              </>
             ) : (
               <>
+                <col className="w-[52px]" />
+                <col className="w-[52px]" />
+                <col className="w-20" />
                 <col className="w-14" />
                 <col className="w-16" />
                 <col className="w-14" />

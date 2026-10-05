@@ -188,7 +188,7 @@ export function TeamDestinationIdentity({
         className="px-4 py-5 sm:px-5"
       >
         <div className="flex flex-wrap items-start justify-between gap-4">
-          <div className="flex min-w-0 flex-1 flex-wrap items-center gap-4">
+          <div className="flex min-w-0 flex-1 basis-[18rem] flex-wrap items-center gap-4">
             {useHistoricalMark && historicalBrand ? (
               <HistoricalTeamMark brand={historicalBrand} size="xl" priority />
             ) : (
@@ -202,7 +202,7 @@ export function TeamDestinationIdentity({
                 logoPalette={historicalBrand?.palette}
               />
             )}
-            <div className="min-w-0 flex-1">
+            <div className="min-w-0 flex-1 basis-[10rem]">
               <p
                 className={cn(
                   type.caption,

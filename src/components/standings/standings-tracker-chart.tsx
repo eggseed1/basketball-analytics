@@ -207,7 +207,7 @@ export function StandingsTrackerChart({
               tick={{ fontSize: 11, fill: "var(--muted-foreground)" }}
               axisLine={false}
               tickLine={false}
-              width={44}
+              width={54}
               tickFormatter={formatTrackerYTick}
               label={{
                 value: "Games above .500",

@@ -238,12 +238,9 @@ export function trackerYAxisTicks(domain: [number, number]): number[] {
   const [min, max] = domain;
   const step = trackerYAxisStep(max - min);
   const ticks: number[] = [];
-  for (let v = min; v <= max + 1e-9; v += step) {
+  // Anchor on multiples of the step so 0 (.500) is always a regular tick.
+  for (let v = Math.ceil(min / step) * step; v <= max + 1e-9; v += step) {
     ticks.push(Math.round(v));
-  }
-  if (!ticks.includes(0) && min < 0 && max > 0) {
-    ticks.push(0);
-    ticks.sort((a, b) => a - b);
   }
   return ticks;
 }

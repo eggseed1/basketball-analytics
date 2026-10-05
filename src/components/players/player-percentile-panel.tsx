@@ -92,7 +92,7 @@ const CATEGORY_META: Array<{
 
 /** Fixed label + value columns so every Savant track shares the same start/end. */
 const RANK_GRID =
-  "grid grid-cols-[6.75rem_minmax(0,1fr)_3.5rem] items-center gap-x-2";
+  "grid grid-cols-[5.75rem_minmax(0,1fr)_3rem] items-center gap-x-2 sm:grid-cols-[6.75rem_minmax(0,1fr)_3.5rem]";
 
 /** Track inset matches pip radius (12px) so 0 / 50 / 100 share one geometry. */
 const TRACK_INSET_PX = 12;
@@ -107,7 +107,7 @@ function ScaleLegend() {
   return (
     <div className={cn(RANK_GRID, "px-4")} aria-hidden>
       <span />
-      <span className="relative h-[22px] w-full min-w-0 overflow-hidden">
+      <span className="@container relative h-[22px] w-full min-w-0 overflow-hidden">
         {(
           [
             // Edge labels pin to track ends so Poor/Great never collide with Avg.
@@ -133,7 +133,8 @@ function ScaleLegend() {
             <span
               className={cn(
                 type.caption,
-                "font-bold uppercase leading-none tracking-wide"
+                "font-bold uppercase leading-none tracking-wide",
+                pct === 50 && "@max-[7.75rem]:hidden"
               )}
             >
               {label}
@@ -422,7 +423,7 @@ function CompRow({
           nameClassName={cn(type.bodySm, "gap-1.5")}
         >
           {row.teamKey ? <TeamLogo teamKey={row.teamKey} size="2xs" /> : null}
-          <span className={cn("min-w-0", row.isSelf && "font-bold")}>
+          <span className={cn("min-w-0 truncate", row.isSelf && "font-bold")}>
             <BoardPlayerName name={row.playerName} />
           </span>
           {row.isSelf ? (

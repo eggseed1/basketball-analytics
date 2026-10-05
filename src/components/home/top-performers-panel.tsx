@@ -566,7 +566,7 @@ export function TopPerformersPanel({
                       className={cn(
                         type.body,
                         textLinkClassName,
-                        "min-w-0 flex-1"
+                        "min-w-0 flex-1 truncate"
                       )}
                     >
                       <BoardPlayerName name={row.name} />
