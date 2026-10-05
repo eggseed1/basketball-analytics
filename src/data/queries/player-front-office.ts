@@ -2,110 +2,106 @@ import "server-only";
 
 import { cache } from "react";
 
-import { artifactNamesConflict } from "@/data/identity/artifact-join";
 import { resolvePlayerIdentityCached } from "@/data/identity/player-identity-cache";
-import { getPlayerIdAliasIndex } from "@/data/identity/player-identity";
-import { isVercelRuntime } from "@/data/providers/nba/runtime-policy";
 import {
-  loadTeamFrontOfficeSlice,
-  resolveFrontOfficeFranchiseId,
-  resolveTeamFrontOfficeSlice,
-} from "@/data/front-office/load-team-front-office";
-import type { TeamContractRow } from "@/data/types/front-office";
+  bundledContractTeamIds,
+  bundledTeamContracts,
+  type BrefContractRow,
+  type BrefTeamContracts,
+} from "@/data/runtime/bref-team-contracts";
+import { getBundledPlayerIdAliasIndex } from "@/data/runtime/player-id-aliases-snapshot";
+import { resolveTeamBrand } from "@/lib/nba-brand";
+import { normalizePlayerName } from "@/lib/player-name";
 
-export type PlayerContractSnapshot = {
-  row: TeamContractRow;
-  franchiseId: string;
-  teamAbbr: string;
-  teamDisplayName: string;
-  snapshotSeason: string;
+export type PlayerContractYearView = {
+  season: string;
+  /** Integer USD; a season with no salary is omitted, never 0. */
+  salary: number;
+  option: "player" | "team" | null;
+  notGuaranteed: boolean;
 };
 
-function uniqueIds(...values: Array<string | null | undefined>): string[] {
-  return [
-    ...new Set(
-      values
-        .map((value) => String(value ?? "").trim())
-        .filter(Boolean)
-    ),
-  ];
-}
+export type PlayerContractSnapshot = {
+  franchiseId: string;
+  teamAbbr: string;
+  capSeason: string;
+  years: PlayerContractYearView[];
+  guaranteed: number | null;
+  note: string | null;
+};
 
-function livePlayerFrontOfficeEnabled(): boolean {
-  return (
-    !isVercelRuntime() ||
-    process.env.ALLOW_LIVE_FRONT_OFFICE_ON_VERCEL === "1"
-  );
+function toSnapshot(
+  teamId: string,
+  team: BrefTeamContracts,
+  row: BrefContractRow
+): PlayerContractSnapshot | null {
+  const years: PlayerContractYearView[] = [];
+  row.years.forEach((cell, i) => {
+    const season = team.seasons[i];
+    if (!cell || !season || !Number.isFinite(cell.amount)) return;
+    years.push({
+      season,
+      salary: cell.amount,
+      option: cell.option ?? null,
+      notGuaranteed: cell.notGuaranteed === true,
+    });
+  });
+  if (!years.length) return null;
+  return {
+    franchiseId: teamId,
+    teamAbbr: resolveTeamBrand(teamId)?.abbr ?? team.code,
+    capSeason: team.capSeason ?? team.seasons[0] ?? years[0].season,
+    years,
+    guaranteed: row.guaranteed,
+    note: team.notes[row.brefId] ?? null,
+  };
 }
 
 /**
- * Player salary snapshot for the selected/current franchise.
+ * Current multi-year contract for a player from the baked team payrolls.
  *
- * Contract artifacts are keyed by NBA PERSON_ID, while public player routes are
- * commonly ESPN athlete ids. Resolve both namespaces before looking up a row.
- * Never discover a missing team by requesting every NBA roster: without a
- * verified team context the salary card simply stays unavailable.
+ * Rows are keyed by BRef id. Match on the id crosswalk across every team so a
+ * traded player still finds his deal; fall back to a name match only inside
+ * the team the page already places him on, where a namesake is unlikely.
  */
 export const getPlayerContractSnapshot = cache(
   async (
     playerId: string,
-    teamKey?: string | null
+    teamKey?: string | null,
+    playerName?: string | null
   ): Promise<PlayerContractSnapshot | null> => {
     const routeId = String(playerId ?? "").trim();
     if (!routeId) return null;
 
     const identity = await resolvePlayerIdentityCached(routeId).catch(() => null);
-    const aliases = await getPlayerIdAliasIndex().catch(() => null);
-    const alias =
-      aliases?.byEspn.get(routeId) ??
-      (identity?.espnId ? aliases?.byEspn.get(identity.espnId) : undefined);
-    const aliasNba =
-      alias?.nbaPlayerId &&
-      !artifactNamesConflict(identity?.displayName, alias.playerName)
-        ? alias.nbaPlayerId
-        : null;
     const candidateIds = new Set(
-      uniqueIds(routeId, identity?.nbaId, identity?.espnId, aliasNba)
+      [routeId, identity?.nbaId, identity?.espnId]
+        .map((v) => String(v ?? "").trim())
+        .filter(Boolean)
     );
-
-    const fromSlice = (
-      slice: ReturnType<typeof loadTeamFrontOfficeSlice>
-    ): PlayerContractSnapshot | null => {
-      if (!slice) return null;
-      const row = slice.team.payroll.contractRows.find((contract) =>
-        candidateIds.has(String(contract.playerId).trim())
+    const aliases = getBundledPlayerIdAliasIndex();
+    const matchesId = (row: BrefContractRow) => {
+      const alias = aliases.byBref?.get(row.brefId.toLowerCase());
+      return Boolean(
+        alias && (candidateIds.has(alias.espnPlayerId) || candidateIds.has(alias.nbaPlayerId))
       );
-      if (!row) return null;
-      return {
-        // Keep the validated financial row, but preserve the public route id in
-        // any player-page link emitted by the card.
-        row: {
-          ...row,
-          href: `/players/${encodeURIComponent(routeId)}`,
-        },
-        franchiseId: slice.team.franchiseId,
-        teamAbbr: slice.team.abbr,
-        teamDisplayName: slice.team.displayName,
-        snapshotSeason: slice.meta.season,
-      };
     };
 
-    const franchiseId = teamKey
-      ? resolveFrontOfficeFranchiseId(teamKey)
-      : null;
-    if (!franchiseId) return null;
+    const homeTeamId = resolveTeamBrand(teamKey)?.espnTeamId ?? null;
+    const teamIds = bundledContractTeamIds();
+    const ordered = homeTeamId
+      ? [homeTeamId, ...teamIds.filter((id) => id !== homeTeamId)]
+      : teamIds;
+    for (const teamId of ordered) {
+      const team = bundledTeamContracts(teamId);
+      const row = team?.rows.find(matchesId);
+      if (team && row) return toSnapshot(teamId, team, row);
+    }
 
-    // The committed, validated snapshot is deterministic and already contains
-    // the NBA-id row for ESPN-id routes such as 4278073 -> 1628983.
-    const cached = fromSlice(loadTeamFrontOfficeSlice(franchiseId));
-    if (cached) return cached;
-
-    // Live roster synthesis is useful locally, but an optional salary card must
-    // never put Vercel player renders behind an ESPN request. Operators may opt
-    // back in after providing durable upstream egress/cache coverage.
-    if (!livePlayerFrontOfficeEnabled()) return null;
-
-    const live = await resolveTeamFrontOfficeSlice(franchiseId).catch(() => null);
-    return fromSlice(live);
+    const name = normalizePlayerName(playerName ?? identity?.displayName ?? "");
+    if (!homeTeamId || !name) return null;
+    const home = bundledTeamContracts(homeTeamId);
+    const named = home?.rows.filter((row) => normalizePlayerName(row.name) === name) ?? [];
+    return home && named.length === 1 ? toSnapshot(homeTeamId, home, named[0]) : null;
   }
 );

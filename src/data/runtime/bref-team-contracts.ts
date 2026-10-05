@@ -49,6 +49,10 @@ type SnapshotFile = { generatedAt?: string; teams?: Record<string, BrefTeamContr
 
 const data = snapshot as unknown as SnapshotFile;
 
+export function bundledContractTeamIds(): string[] {
+  return Object.keys(data.teams ?? {});
+}
+
 export function bundledTeamContracts(teamId: string): BrefTeamContracts | null {
   const team = data.teams?.[teamId];
   if (!team?.seasons?.length) return null;

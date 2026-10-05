@@ -45,7 +45,7 @@ export async function PlayerContractTransactionsIsland({
   ];
   try {
     loaded = await Promise.all([
-      getPlayerContractSnapshot(playerId, teamKey),
+      getPlayerContractSnapshot(playerId, teamKey, playerName),
       loadArrival(teamKey, [espnId, playerId, nbaId], playerName),
     ]);
   } catch (error) {
