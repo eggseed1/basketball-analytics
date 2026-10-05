@@ -141,7 +141,7 @@ export function GameStoryStrip({
           label="Comeback"
           value={`${story.largestDeficitOvercomeByWinner} pts`}
           color={colors[side]}
-          sub={`${label(side)} came back to win`}
+          sub={`${label(side)} came back to ${analysis.status === "final" ? "win" : "lead"}`}
         />
       );
     }

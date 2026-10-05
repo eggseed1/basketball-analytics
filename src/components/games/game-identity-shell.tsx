@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
+import { GameLineupsPanel } from "@/components/games/game-lineups";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { GameCountdown } from "@/components/sports/game-countdown";
 import {
@@ -427,6 +428,12 @@ export function GameIdentityShell({
           muted={final && awayAhead}
         />
       </div>
+
+      <GameLineupsPanel
+        game={shown}
+        awayLabel={sideShortName(resolveSideBrand(shown, "away", brandPresentation))}
+        homeLabel={sideShortName(resolveSideBrand(shown, "home", brandPresentation))}
+      />
 
       {showScores ? <LineScore game={shown} brandPresentation={brandPresentation} /> : null}
     </MatchupWashCard>
