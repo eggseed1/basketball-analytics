@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
+import { PlayerHeadshot } from "@/components/brand/player-headshot";
 import type { GameSummary } from "@/data/types";
 import type {
   GameLineups,
@@ -65,45 +66,96 @@ function useGameLineups(gameId: string, mode: Mode) {
   return { data, loaded };
 }
 
-function PlayerList({
+const POSITION_ORDER: Record<string, number> = {
+  PG: 0,
+  G: 1,
+  SG: 1,
+  "G-F": 2,
+  SF: 3,
+  F: 3.5,
+  PF: 4,
+  "F-C": 4.5,
+  C: 5,
+};
+
+function positionRank(position?: string): number {
+  return POSITION_ORDER[(position ?? "").toUpperCase()] ?? 6;
+}
+
+/** Guards first, center last; ties keep ESPN's order. */
+function byPosition(players: LineupPlayer[]): LineupPlayer[] {
+  return players
+    .map((p, i) => ({ p, i }))
+    .sort((a, b) => positionRank(a.p.position) - positionRank(b.p.position) || a.i - b.i)
+    .map(({ p }) => p);
+}
+
+const SUFFIX = /^(jr\.?|sr\.?|ii|iii|iv|v)$/i;
+
+function shortName(name: string): string {
+  const parts = name.trim().split(/\s+/);
+  if (parts.length < 2) return name;
+  const last = parts[parts.length - 1]!;
+  return SUFFIX.test(last) && parts.length > 2 ? `${parts[parts.length - 2]} ${last}` : last;
+}
+
+function PlayerRow({
   players,
+  teamKey,
   troubleAt,
 }: {
   players: LineupPlayer[];
+  teamKey: string | null;
   /** Foul count that means trouble this period; null hides box lines (pregame). */
   troubleAt: number | null;
 }) {
   return (
-    <ul className="flex flex-col gap-1">
-      {players.map((p) => (
-        <li key={p.playerId} className={cn(type.bodySm, "flex items-baseline gap-2")}>
-          <span className="w-6 shrink-0 text-right tabular-nums text-muted-foreground">
-            {p.jersey ?? ""}
-          </span>
-          <Link
-            href={`/players/${encodeURIComponent(p.playerId)}`}
-            className="min-w-0 truncate font-medium text-foreground hover:underline"
-          >
-            {p.name}
-          </Link>
-          {p.position ? (
-            <span className={cn(type.caption, "shrink-0 text-muted-foreground")}>
-              {p.position}
-            </span>
-          ) : null}
-          {troubleAt != null && p.points != null && p.fouls != null ? (
-            <span className={cn(type.caption, "ml-auto shrink-0 tabular-nums text-muted-foreground")}>
-              {p.points} PTS ·{" "}
+    <ul className="grid grid-cols-5 gap-1.5 sm:gap-3">
+      {byPosition(players).map((p) => {
+        const meta = [p.position, p.jersey ? `#${p.jersey}` : null].filter(Boolean).join(" · ");
+        const trouble = troubleAt != null && p.fouls != null && p.fouls >= troubleAt;
+        return (
+          <li key={p.playerId} className="min-w-0">
+            <Link
+              href={`/players/${encodeURIComponent(p.playerId)}`}
+              title={p.name}
+              className="group flex flex-col items-center gap-1 text-center"
+            >
+              <PlayerHeadshot
+                playerId={p.playerId}
+                name={p.name}
+                teamKey={teamKey}
+                size="md"
+                className="h-11 w-11 sm:h-14 sm:w-14"
+              />
               <span
-                className={cn(p.fouls >= troubleAt && "font-semibold text-destructive")}
-                title={p.fouls >= troubleAt ? "Foul trouble" : undefined}
+                className={cn(
+                  type.caption,
+                  "w-full truncate font-semibold text-foreground group-hover:underline"
+                )}
               >
-                {p.fouls} PF
+                {shortName(p.name)}
               </span>
-            </span>
-          ) : null}
-        </li>
-      ))}
+              {meta ? (
+                <span className="w-full truncate text-[10px] leading-none text-muted-foreground">
+                  {meta}
+                </span>
+              ) : null}
+              {troubleAt != null && p.points != null && p.fouls != null ? (
+                <span className="flex flex-wrap justify-center gap-x-1 text-[10px] leading-tight tabular-nums text-muted-foreground">
+                  <span>{p.points} PTS</span>
+                  <span
+                    className={cn(trouble && "font-semibold text-destructive")}
+                    title={trouble ? "Foul trouble" : undefined}
+                  >
+                    {p.fouls} PF
+                  </span>
+                </span>
+              ) : null}
+            </Link>
+          </li>
+        );
+      })}
     </ul>
   );
 }
@@ -133,10 +185,14 @@ export function GameLineupsPanel({
   game,
   awayLabel,
   homeLabel,
+  awayTeamKey,
+  homeTeamKey,
 }: {
   game: GameSummary;
   awayLabel: string;
   homeLabel: string;
+  awayTeamKey: string | null;
+  homeTeamKey: string | null;
 }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -177,18 +233,19 @@ export function GameLineupsPanel({
       <h2 className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
         {heading}
       </h2>
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-8">
+      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-8">
         {(
           [
-            ["away", awayLabel, away],
-            ["home", homeLabel, home],
+            ["away", awayLabel, away, awayTeamKey],
+            ["home", homeLabel, home, homeTeamKey],
           ] as const
-        ).map(([side, label, players]) => (
-          <div key={side} className="flex min-w-0 flex-col gap-1.5">
+        ).map(([side, label, players, teamKey]) => (
+          <div key={side} className="flex min-w-0 flex-col gap-2">
             <p className={cn(type.caption, "font-semibold text-foreground")}>{label}</p>
             {players ? (
-              <PlayerList
+              <PlayerRow
                 players={players}
+                teamKey={teamKey}
                 troubleAt={mode === "pregame" ? null : foulTroubleThreshold(game.period ?? 1)}
               />
             ) : (

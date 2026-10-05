@@ -433,6 +433,8 @@ export function GameIdentityShell({
         game={shown}
         awayLabel={sideShortName(resolveSideBrand(shown, "away", brandPresentation))}
         homeLabel={sideShortName(resolveSideBrand(shown, "home", brandPresentation))}
+        awayTeamKey={gameSideBrandKey(shown, "away") ?? null}
+        homeTeamKey={gameSideBrandKey(shown, "home") ?? null}
       />
 
       {showScores ? <LineScore game={shown} brandPresentation={brandPresentation} /> : null}
