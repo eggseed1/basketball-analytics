@@ -12,6 +12,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit -p .",
     "test": "node scripts/run-tests.mjs",
+    "test:arcade": "tsx scripts/test-arcade.ts",
+    "arcade:build": "node scripts/build-arcade-data.mjs",
     "predeploy": "npm run typecheck && npm test",
     "test:career-resume": "tsx scripts/test-career-resume.ts",
     "test:historical-impact": "tsx scripts/test-historical-impact.ts",

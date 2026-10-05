@@ -129,7 +129,7 @@ function PrimaryLink({
     <TransitionLink
       href={tab.href}
       className={cn(
-        "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
+        "shrink-0 rounded-md px-1.5 py-1.5 text-[13px] font-semibold transition-colors lg:px-2 xl:px-3 xl:text-[14px]",
         active
           ? "glass-pill glass-pill-active text-foreground"
           : "text-muted-foreground hover:text-foreground"
@@ -225,7 +225,7 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
             <div className="hidden flex-wrap items-center gap-x-2 gap-y-2 md:flex">
               <nav
                 aria-label="Primary"
-                className="flex min-w-0 flex-1 items-center gap-1 overflow-x-auto"
+                className="flex min-w-0 flex-1 items-center gap-0.5 overflow-x-auto lg:gap-1"
               >
                 {PRIMARY_NAV.map((tab) => (
                   <PrimaryLink
@@ -235,18 +235,6 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   />
                 ))}
               </nav>
-              <TransitionLink
-                href="/gm"
-                className={cn(
-                  "shrink-0 rounded-md px-3 py-1.5 text-[14px] font-semibold transition-colors",
-                  pathname.startsWith("/gm")
-                    ? "glass-pill glass-pill-active text-foreground"
-                    : "text-muted-foreground hover:text-foreground"
-                )}
-                title="Franchise Lab: unfinished simulation scaffold"
-              >
-                GM lab
-              </TransitionLink>
             </div>
           </div>
 
@@ -304,21 +292,6 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
                   {tab.label}
                 </TransitionLink>
               ))}
-              <TransitionLink
-                href="/gm"
-                onClick={closeMenu}
-                className={cn(
-                  "mt-2 rounded-lg border-t border-border px-3 py-3.5 text-[18px] font-semibold transition-colors",
-                  pathname.startsWith("/gm")
-                    ? "bg-secondary text-foreground"
-                    : "text-muted-foreground hover:bg-secondary/70 hover:text-foreground"
-                )}
-              >
-                GM lab
-                <span className="mt-0.5 block text-[13px] font-normal text-muted-foreground">
-                  Unfinished Franchise Lab scaffold
-                </span>
-              </TransitionLink>
             </nav>
 
             <div className="site-shell flex shrink-0 items-center justify-between gap-3 border-t border-border py-4">

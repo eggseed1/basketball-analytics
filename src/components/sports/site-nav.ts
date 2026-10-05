@@ -203,6 +203,27 @@ export const PRIMARY_NAV: PrimaryNavItem[] = [
       },
     ],
   },
+  {
+    id: "arcade",
+    href: "/arcade",
+    label: "Arcade",
+    match: (p) => p.startsWith("/arcade") || p === "/gm" || p.startsWith("/gm/"),
+    subnav: [
+      { href: "/arcade", label: "All games", match: (p) => p === "/arcade" },
+      {
+        href: "/arcade/higher-or-lower",
+        label: "Higher or Lower",
+        match: (p) => p.startsWith("/arcade/higher-or-lower"),
+      },
+      { href: "/arcade/zero-82", label: "0–82", match: (p) => p.startsWith("/arcade/zero-82") },
+      {
+        href: "/arcade/teammate-chain",
+        label: "Teammate Chain",
+        match: (p) => p.startsWith("/arcade/teammate-chain"),
+      },
+      { href: "/gm", label: "GM Lab", match: (p) => p === "/gm" || p.startsWith("/gm/") },
+    ],
+  },
 ];
 
 export function activePrimaryNav(pathname: string): PrimaryNavItem | undefined {

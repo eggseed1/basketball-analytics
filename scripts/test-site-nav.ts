@@ -37,6 +37,10 @@ const cases: Array<[string, string]> = [
   ["/franchises/bos", "Teams"],
   ["/history", "History"],
   ["/history?season=1978-79", "History"],
+  ["/arcade", "Arcade"],
+  ["/arcade/zero-82", "Arcade"],
+  ["/gm", "Arcade"],
+  ["/gm/roster", "Arcade"],
 ];
 
 for (const [path, expected] of cases) {
@@ -62,6 +66,7 @@ assert.deepEqual(
     "Learn",
     "Ask DRBL",
     "History",
+    "Arcade",
   ]
 );
 
