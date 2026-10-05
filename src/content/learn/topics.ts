@@ -627,11 +627,14 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "A great backup makes a starter's off number look good, which shrinks his swing without saying anything bad about him.",
     ],
     howDrblUses: [
-      "Every possession of every regular-season game is tagged with the ten players on the floor, using the same lineup reconstruction as DRBL.",
+      "Every possession of every regular-season and playoff game from 2022-23 on is tagged with the ten players on the floor, using the same lineup reconstruction as DRBL.",
       "Filtered drops garbage time (the Cleaning the Glass definition) and possessions that start with 2 seconds or less in a period.",
       "Clutch uses the NBA definition: last five minutes of the fourth quarter or overtime, score within five.",
       "Luck-adjusted sets opponents' 3-point and free-throw percentages to league average.",
       "With/without splits a pair of teammates into both on, each alone, and both off.",
+      "Who takes his minutes lists teammates whose share of the floor rises when he sits. Their play is most of his off number.",
+      "The season line shows his swing from opening night through each game, starting once he has 250 possessions on and off.",
+      "Playoff splits get no league percentile, since playoff teams play anywhere from 4 to 28 games.",
     ],
     formula: "Swing = (ORtg − DRtg with him on) − (ORtg − DRtg with him off)",
     calculation: [

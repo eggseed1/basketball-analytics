@@ -43,7 +43,9 @@ export function phaseLabel(phase: OnOffPhase): string {
 const MINUS = "\u2212";
 
 export function fmtRating(v: number | null | undefined): string {
-  return v == null || !Number.isFinite(v) ? "—" : v.toFixed(1);
+  if (v == null || !Number.isFinite(v)) return "—";
+  const r = Number(v.toFixed(1));
+  return r < 0 ? `${MINUS}${Math.abs(r).toFixed(1)}` : Math.abs(r).toFixed(1);
 }
 
 export function fmtSigned(v: number | null | undefined, digits = 1): string {
