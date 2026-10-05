@@ -329,6 +329,31 @@ export function buildRecentInsights(
   // —— Player performances ——
   const byPts = [...lines].sort((a, b) => b.points - a.points);
   const topScorer = byPts[0];
+  if (topScorer && topScorer.points >= 18 && topScorer.points < 25) {
+    const g = gameById.get(topScorer.gameId)!;
+    const ts = tsPct(topScorer.points, topScorer.fga, topScorer.fta);
+    push({
+      id: `pts-lead-${topScorer.gameId}-${topScorer.profileId}`,
+      category: "PLAYER · SCORING",
+      headline: `${topScorer.playerName} · ${topScorer.points} PTS`,
+      description: [
+        `Led the ${formatShortDate(g.gameDate)} slate with ${topScorer.points} points`,
+        ts != null && topScorer.fga >= 8 ? `on ${formatPct(ts)} TS` : null,
+      ]
+        .filter(Boolean)
+        .join(" ") + ".",
+      context: contextFor(g),
+      gameId: g.id,
+      playerId: topScorer.profileId,
+      teamId: topScorer.teamId,
+      gameDate: g.gameDate,
+      priority: 30 + (topScorer.points - 18),
+      bucket: "player",
+      focus: "points",
+      line: statLineOf(topScorer),
+      game: gameOf(g),
+    });
+  }
   if (topScorer && topScorer.points >= 25) {
     const g = gameById.get(topScorer.gameId)!;
     const ts = tsPct(topScorer.points, topScorer.fga, topScorer.fta);

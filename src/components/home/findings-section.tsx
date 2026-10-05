@@ -23,8 +23,9 @@ import { cn } from "@/lib/utils";
 
 export { AnalyticsDesk } from "@/components/home/analytics-desk";
 
+/** Game dates are Eastern calendar days, so "today" has to be too. */
 function todayIsoDate(): string {
-  return new Date().toISOString().slice(0, 10);
+  return new Intl.DateTimeFormat("en-CA", { timeZone: "America/New_York" }).format(new Date());
 }
 
 function shortDate(iso: string): string {
@@ -33,7 +34,7 @@ function shortDate(iso: string): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 }
 
-/** Homepage Recent Insights — completed-game cards from baked slate. */
+/** Homepage Recent Insights: cards from the latest completed games. */
 export function FindingsSection({
   insights,
   seasonLabel,

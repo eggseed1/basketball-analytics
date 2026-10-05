@@ -92,7 +92,23 @@ async function HomeHotCold() {
   );
 }
 
+const LIVE_INSIGHTS_BUDGET_MS = 5000;
+
 async function HomeFindings() {
+  const { getLiveRecentInsights } = await import("@/data/queries/recent-insights-live");
+  const live = await Promise.race([
+    getLiveRecentInsights(),
+    new Promise<null>((resolve) => setTimeout(() => resolve(null), LIVE_INSIGHTS_BUDGET_MS)),
+  ]);
+  if (live) {
+    return (
+      <FindingsSection
+        insights={live.insights}
+        seasonLabel={live.preseason ? `${live.season} preseason` : live.season}
+      />
+    );
+  }
+
   const {
     getBundledRecentInsights,
     recentInsightsSnapshotMeta,
