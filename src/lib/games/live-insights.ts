@@ -6,7 +6,7 @@
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 
-import { periodName, teamSides, type Side } from "./court-events";
+import { elapsedSeconds, periodName, teamSides, type Side } from "./court-events";
 
 const other = (s: Side): Side => (s === "home" ? "away" : "home");
 
@@ -61,6 +61,68 @@ export interface PossessionBattle {
 export interface LiveInsights {
   quarters: QuarterStandouts[];
   battle: PossessionBattle | null;
+}
+
+export interface GameMoment {
+  period: number;
+  clock: string;
+}
+
+export interface RightNow {
+  /** Period of the latest logged play. */
+  period: number;
+  /** Unanswered points by one side, when at least RUN_MIN. */
+  run: { side: Side; points: number; since: GameMoment } | null;
+  /** Sides whose last made field goal came DROUGHT_MIN_SECONDS or more before the latest play. */
+  droughts: { side: Side; since: GameMoment | null }[];
+}
+
+export const RUN_MIN = 6;
+export const DROUGHT_MIN_SECONDS = 180;
+
+/** Personal fouls that mean trouble by period: 2 in Q1, 3 by half, 4 in Q3, 5 after. */
+export function foulTroubleThreshold(period: number): number {
+  return period <= 1 ? 2 : period === 2 ? 3 : period === 3 ? 4 : 5;
+}
+
+export function buildRightNow(
+  events: PlayByPlayEvent[],
+  options: { homeLabel: string; awayLabel: string }
+): RightNow | null {
+  const sides = teamSides(events, options.homeLabel, options.awayLabel);
+  let latestT = -1;
+  let period = 0;
+  let run: RightNow["run"] = null;
+  const lastFg: Record<Side, { t: number; at: GameMoment } | null> = { home: null, away: null };
+
+  for (const e of events) {
+    if (!e.period) continue;
+    const t = elapsedSeconds(e.period, e.clockSeconds);
+    if (t >= latestT) {
+      latestT = t;
+      period = e.period;
+    }
+    if (!(e.points > 0)) continue;
+    const side = sides.get(e.teamId ?? e.teamTricode ?? "");
+    if (!side) continue;
+    const at = { period: e.period, clock: e.clock };
+    if (e.isFieldGoal) lastFg[side] = { t, at };
+    if (run && run.side === side) run.points += e.points;
+    else run = { side, points: e.points, since: at };
+  }
+  if (latestT < 0) return null;
+
+  const droughts: RightNow["droughts"] = [];
+  for (const side of ["away", "home"] as const) {
+    const fg = lastFg[side];
+    const gap = latestT - (fg?.t ?? 0);
+    if (gap >= DROUGHT_MIN_SECONDS) droughts.push({ side, since: fg?.at ?? null });
+  }
+  return {
+    period,
+    run: run && run.points >= RUN_MIN ? run : null,
+    droughts,
+  };
 }
 
 const emptyLine = (playerId: string, name: string): PlayerLine => ({

@@ -5,8 +5,22 @@
 
 import type { ScoreTimelinePoint } from "@/lib/history/score-flow";
 
-const SECONDS_PER_POSSESSION = 14.4;
 const REGULATION_SECONDS = 4 * 12 * 60;
+/**
+ * Spread of the remaining margin over a full game, in points. It shrinks with
+ * the square root of time left (a 9-point halftime lead reads about 80%).
+ */
+const FULL_GAME_MARGIN_SD = 15;
+
+/** Standard normal CDF (Abramowitz & Stegun 7.1.26, error under 1.5e-7). */
+function normalCdf(z: number): number {
+  const x = Math.abs(z) / Math.SQRT2;
+  const t = 1 / (1 + 0.3275911 * x);
+  const poly =
+    t * (0.254829592 + t * (-0.284496736 + t * (1.421413741 + t * (-1.453152027 + t * 1.061405429))));
+  const erf = 1 - poly * Math.exp(-x * x);
+  return z >= 0 ? (1 + erf) / 2 : (1 - erf) / 2;
+}
 
 function remainingSeconds(period: number, clock: string): number {
   const parts = clock.split(":").map((n) => Number(n));
@@ -23,19 +37,15 @@ function remainingSeconds(period: number, clock: string): number {
   return clockSec;
 }
 
-function homeWinProbabilityAt(
+export function homeWinProbabilityAt(
   homeScore: number,
   awayScore: number,
   period: number,
   clock: string
 ): number {
   const remSec = Math.max(1, remainingSeconds(period, clock));
-  const remPoss = Math.max(0.5, remSec / SECONDS_PER_POSSESSION);
-  const scoreDiff = homeScore - awayScore;
-  const kappa = 0.35;
-  const z = (kappa * scoreDiff) / Math.sqrt(remPoss);
-  const ez = Math.exp(Math.max(-20, Math.min(20, z)));
-  return ez / (1 + ez);
+  const sd = FULL_GAME_MARGIN_SD * Math.sqrt(remSec / REGULATION_SECONDS);
+  return normalCdf((homeScore - awayScore) / sd);
 }
 
 export type WinProbPoint = {
@@ -105,6 +115,5 @@ export function buildWinProbabilitySeries(
     });
   }
 
-  void REGULATION_SECONDS;
   return points;
 }

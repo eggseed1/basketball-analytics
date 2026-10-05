@@ -1,8 +1,8 @@
 import assert from "node:assert/strict";
 
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
-import { buildLiveInsights } from "@/lib/games/live-insights";
-import { buildWinProbabilitySeries } from "@/lib/game-win-probability";
+import { buildLiveInsights, buildRightNow, foulTroubleThreshold } from "@/lib/games/live-insights";
+import { buildWinProbabilitySeries, homeWinProbabilityAt } from "@/lib/game-win-probability";
 
 let n = 0;
 let home = 0;
@@ -104,5 +104,40 @@ const liveSeries = buildWinProbabilitySeries(timeline as never, { finalHomeScore
 assert.ok(liveSeries.every((p) => p.homeWp < 1), "live games never resolve to 100%");
 const finalSeries = buildWinProbabilitySeries(timeline as never, { finalHomeScore: 20, finalAwayScore: 10, final: true });
 assert.equal(finalSeries.at(-1)!.homeWp, 1, "final games resolve to the winner");
+
+// Right now: A has 7 unanswered points (2 + 3 + 2 below); H's last field goal was Q2 7:00.
+const tail: PlayByPlayEvent[] = [
+  ...events,
+  fg(2, 420, "H", "h2", true),
+  fg(2, 300, "A", "a1", true),
+  ev(2, 250, "A", "a1 makes free throw 1 of 2", { actionType: "freethrow", shotResult: "Made", points: 1, playerId: "a1" }),
+  ev(2, 250, "A", "a1 makes free throw 2 of 2", { actionType: "freethrow", shotResult: "Made", points: 1, playerId: "a1" }),
+  fg(2, 200, "A", "a2", true, 3),
+  fg(2, 150, "H", "h1", false),
+];
+const now = buildRightNow(tail, { homeLabel: "HOM", awayLabel: "AWY" });
+assert.ok(now);
+assert.equal(now.period, 2);
+assert.deepEqual(now.run && { side: now.run.side, points: now.run.points, at: now.run.since.clock }, {
+  side: "away",
+  points: 7,
+  at: "5:00",
+});
+assert.deepEqual(now.droughts.map((d) => [d.side, d.since?.clock]), [["home", "7:00"]], "H cold since 7:00, A just scored");
+const short = buildRightNow(tail.slice(0, -3), { homeLabel: "HOM", awayLabel: "AWY" });
+assert.equal(short?.run, null, "3 unanswered points is not a run yet");
+assert.equal(foulTroubleThreshold(1), 2);
+assert.equal(foulTroubleThreshold(2), 3);
+assert.equal(foulTroubleThreshold(3), 4);
+assert.equal(foulTroubleThreshold(5), 5);
+
+const near = (v: number, want: number, tol: number, msg: string) =>
+  assert.ok(Math.abs(v - want) <= tol, `${msg}: got ${v.toFixed(3)}`);
+near(homeWinProbabilityAt(0, 0, 1, "12:00"), 0.5, 1e-6, "tied at tip is a coin flip");
+near(homeWinProbabilityAt(59, 50, 3, "12:00"), 0.8, 0.03, "9-point halftime lead");
+near(homeWinProbabilityAt(100, 95, 4, "2:00"), 0.95, 0.03, "5-point lead, 2:00 left");
+near(homeWinProbabilityAt(95, 100, 4, "2:00"), 0.05, 0.03, "symmetric for the trailing side");
+near(homeWinProbabilityAt(100, 100, 4, "0:00"), 0.5, 1e-6, "tied at the horn");
+assert.ok(homeWinProbabilityAt(101, 100, 4, "0:01") > 0.99, "1-point lead with a second left");
 
 console.log("live insights: ok");

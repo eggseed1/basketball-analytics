@@ -22,10 +22,21 @@ export type TeamLineup = {
   starters: LineupPlayer[] | null;
 };
 
+/** Floor state for one side. Null fields mean ESPN didn't report them. */
+export type TeamFloorState = {
+  timeoutsRemaining: number | null;
+  /** Team fouls in the current period. */
+  teamFouls: number | null;
+  foulsToGive: number | null;
+  /** True when the other side has no fouls to give, so this side shoots on the next foul. */
+  inBonus: boolean | null;
+};
+
 export type GameLineups = {
   gameId: string;
   away: TeamLineup | null;
   home: TeamLineup | null;
+  state?: { away: TeamFloorState; home: TeamFloorState } | null;
   source: "espn-core" | "espn-cdn";
   retrievedAt: string;
 };
@@ -81,8 +92,43 @@ function teamLineup(espnTeamId: string, entries: RawEntry[]): TeamLineup {
   };
 }
 
+type RawSituation = {
+  homeTimeouts?: { timeoutsRemainingCurrent?: number };
+  awayTimeouts?: { timeoutsRemainingCurrent?: number };
+  homeFouls?: { teamFoulsCurrent?: number; foulsToGive?: number };
+  awayFouls?: { teamFoulsCurrent?: number; foulsToGive?: number };
+};
+
+const num = (v: unknown): number | null =>
+  typeof v === "number" && Number.isFinite(v) ? v : null;
+
+function floorState(raw: RawSituation | null): GameLineups["state"] {
+  if (!raw) return null;
+  const side = (
+    timeouts: RawSituation["homeTimeouts"],
+    fouls: RawSituation["homeFouls"],
+    other: RawSituation["homeFouls"]
+  ): TeamFloorState => {
+    const otherToGive = num(other?.foulsToGive);
+    return {
+      timeoutsRemaining: num(timeouts?.timeoutsRemainingCurrent),
+      teamFouls: num(fouls?.teamFoulsCurrent),
+      foulsToGive: num(fouls?.foulsToGive),
+      inBonus: otherToGive == null ? null : otherToGive === 0,
+    };
+  };
+  return {
+    home: side(raw.homeTimeouts, raw.homeFouls, raw.awayFouls),
+    away: side(raw.awayTimeouts, raw.awayFouls, raw.homeFouls),
+  };
+}
+
 async function fromCore(gameId: string): Promise<GameLineups | null> {
-  const base = `${CORE}/events/${gameId}/competitions/${gameId}/competitors`;
+  const competition = `${CORE}/events/${gameId}/competitions/${gameId}`;
+  const base = `${competition}/competitors`;
+  const situationRequest = getJson<RawSituation>(`${competition}/situation?lang=en`).catch(
+    () => null
+  );
   const competitors = await getJson<{
     items?: Array<{ id?: string; homeAway?: string }>;
   }>(`${base}?lang=en`);
@@ -126,6 +172,7 @@ async function fromCore(gameId: string): Promise<GameLineups | null> {
     gameId,
     away,
     home,
+    state: floorState(await situationRequest),
     source: "espn-core",
     retrievedAt: new Date().toISOString(),
   };
@@ -153,7 +200,12 @@ async function fromCdn(gameId: string): Promise<GameLineups | null> {
   const summary = (await fetchEspnCdnGameSummary(gameId)) as unknown as {
     header?: {
       competitions?: Array<{
-        competitors?: Array<{ id?: string; homeAway?: string }>;
+        competitors?: Array<{
+          id?: string;
+          homeAway?: string;
+          timeoutsRemaining?: number;
+          fouls?: { teamFoulsCurrent?: number; foulsToGive?: number };
+        }>;
       }>;
     };
     boxscore?: { players?: CdnBoxTeam[] };
@@ -187,10 +239,21 @@ async function fromCdn(gameId: string): Promise<GameLineups | null> {
     if (sideOf.get(id) === "home") home = lineup;
   }
   if (!away && !home) return null;
+  const homeComp = competitors.find((c) => c.homeAway === "home");
+  const awayComp = competitors.find((c) => c.homeAway === "away");
   return {
     gameId,
     away,
     home,
+    state:
+      homeComp && awayComp
+        ? floorState({
+            homeTimeouts: { timeoutsRemainingCurrent: homeComp.timeoutsRemaining },
+            awayTimeouts: { timeoutsRemainingCurrent: awayComp.timeoutsRemaining },
+            homeFouls: homeComp.fouls,
+            awayFouls: awayComp.fouls,
+          })
+        : null,
     source: "espn-cdn",
     retrievedAt: new Date().toISOString(),
   };

@@ -4,7 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 
 import type { GameSummary } from "@/data/types";
-import type { GameLineups, LineupPlayer } from "@/data/providers/nba/espn-lineups";
+import type {
+  GameLineups,
+  LineupPlayer,
+  TeamFloorState,
+} from "@/data/providers/nba/espn-lineups";
 import { type } from "@/lib/design-system";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import { isLiveLikeStatus, isPreTipStatus } from "@/lib/game-status";
@@ -85,6 +89,27 @@ function PlayerList({ players }: { players: LineupPlayer[] }) {
   );
 }
 
+function FloorState({ state, showFouls }: { state: TeamFloorState; showFouls: boolean }) {
+  const parts: string[] = [];
+  if (showFouls && state.teamFouls != null) {
+    parts.push(`${state.teamFouls} team foul${state.teamFouls === 1 ? "" : "s"} this quarter`);
+  }
+  if (state.timeoutsRemaining != null) {
+    parts.push(`${state.timeoutsRemaining} timeout${state.timeoutsRemaining === 1 ? "" : "s"} left`);
+  }
+  if (!parts.length && !(showFouls && state.inBonus)) return null;
+  return (
+    <p className={cn(type.caption, "mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-muted-foreground")}>
+      <span className="tabular-nums">{parts.join(" · ")}</span>
+      {showFouls && state.inBonus ? (
+        <span className="rounded-md bg-foreground/[0.07] px-1.5 py-0.5 font-semibold text-foreground">
+          In the bonus
+        </span>
+      ) : null}
+    </p>
+  );
+}
+
 export function GameLineupsPanel({
   game,
   awayLabel,
@@ -147,6 +172,9 @@ export function GameLineupsPanel({
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
             )}
+            {mode !== "pregame" && data?.state ? (
+              <FloorState state={data.state[side]} showFouls={mode === "live"} />
+            ) : null}
           </div>
         ))}
       </div>

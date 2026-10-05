@@ -1,18 +1,25 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, type ReactNode } from "react";
 
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
 import { HalfBar, SideValue, TeamDot } from "@/components/games/game-story";
 import { MoreInfo } from "@/components/ui/more-info";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
+import { periodName } from "@/lib/games/court-events";
 import {
   buildLiveInsights,
+  buildRightNow,
+  DROUGHT_MIN_SECONDS,
+  foulTroubleThreshold,
+  RUN_MIN,
+  type GameMoment,
   type PlayerLine,
   type PossessionBattle,
   type QuarterStandouts,
+  type RightNow,
 } from "@/lib/games/live-insights";
 import { cn } from "@/lib/utils";
 
@@ -253,6 +260,128 @@ function PossessionBattleCard({
   );
 }
 
+function RightNowCard({
+  now,
+  players,
+  labels,
+  colors,
+  teamKeys,
+  season,
+}: {
+  now: RightNow;
+  players: PlayerGame[];
+  labels: Labels;
+  colors: TeamColors;
+  teamKeys: { away: string; home: string };
+  season: string;
+}) {
+  const threshold = foulTroubleThreshold(now.period);
+  const trouble = players
+    .filter((p) => !p.didNotPlay && (p.personalFouls ?? 0) >= threshold)
+    .map((p) => ({
+      p,
+      side: (p.teamId === teamKeys.home || (p.isHome && p.teamId !== teamKeys.away) ? "home" : "away") as Side,
+      fouls: p.personalFouls ?? 0,
+    }))
+    .sort((a, b) => b.fouls - a.fouls);
+  const moment = (m: GameMoment | null) => (m ? `${periodName(m.period)} ${m.clock}` : null);
+
+  const items: { id: string; title: string; body: ReactNode }[] = [];
+  if (now.run) {
+    const { side, points, since } = now.run;
+    items.push({
+      id: "run",
+      title: "Run",
+      body: (
+        <p className={cn(type.bodySm, "flex items-center gap-1.5")}>
+          <TeamDot color={colors[side]} />
+          <span>
+            <span className="font-semibold">
+              {labels[side]} on a {points}-0 run
+            </span>
+            <span className="text-muted-foreground"> since {moment(since)}</span>
+          </span>
+        </p>
+      ),
+    });
+  }
+  if (now.droughts.length) {
+    items.push({
+      id: "drought",
+      title: "Cold stretch",
+      body: (
+        <ul className="flex flex-col gap-1">
+          {now.droughts.map((d) => (
+            <li key={d.side} className={cn(type.bodySm, "flex items-center gap-1.5")}>
+              <TeamDot color={colors[d.side]} />
+              <span>
+                <span className="font-semibold">{labels[d.side]}</span>
+                <span className="text-muted-foreground">
+                  {d.since ? ` no field goal since ${moment(d.since)}` : " no field goal yet"}
+                </span>
+              </span>
+            </li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+  if (trouble.length) {
+    items.push({
+      id: "fouls",
+      title: "Foul trouble",
+      body: (
+        <ul className="flex flex-col gap-1">
+          {trouble.slice(0, 4).map(({ p, side, fouls }) => (
+            <li key={p.playerId} className={cn(type.bodySm, "flex items-center gap-1.5")}>
+              <TeamDot color={colors[side]} />
+              <Link
+                href={`/players/${encodeURIComponent(p.playerId)}?season=${encodeURIComponent(season)}`}
+                className="truncate font-semibold hover:underline"
+              >
+                {p.playerName ?? p.playerId}
+              </Link>
+              <span className="shrink-0 tabular-nums text-muted-foreground">
+                {fouls >= 6 ? "fouled out" : `${fouls} fouls`}
+              </span>
+            </li>
+          ))}
+        </ul>
+      ),
+    });
+  }
+  if (!items.length) return null;
+
+  return (
+    <MatchupWashCard
+      awayTeamKey={teamKeys.away}
+      homeTeamKey={teamKeys.home}
+      intensity="subtle"
+      className="flex flex-col gap-3 p-4 sm:p-5"
+    >
+      <h2 className={type.heading}>Right now</h2>
+      <div className="grid gap-4 sm:grid-cols-[repeat(auto-fit,minmax(13rem,1fr))]">
+        {items.map((item) => (
+          <div key={item.id} className="flex min-w-0 flex-col gap-1.5">
+            <p className={cn(type.micro, "font-bold uppercase tracking-[0.1em] text-muted-foreground")}>
+              {item.title}
+            </p>
+            {item.body}
+          </div>
+        ))}
+      </div>
+      <MoreInfo>
+        <p>
+          A run counts points in a row by one side, shown from {RUN_MIN}. A cold stretch is{" "}
+          {DROUGHT_MIN_SECONDS / 60} or more minutes of game time without a made field goal, up to the
+          latest logged play. Foul trouble means {threshold} or more personal fouls in{" "}
+          {periodName(now.period)}, about where coaches start sitting players.
+        </p>
+      </MoreInfo>
+    </MatchupWashCard>
+  );
+}
+
 export function GameLiveInsights({
   events,
   players,
@@ -282,9 +411,25 @@ export function GameLiveInsights({
     });
   }, [events, players, labels.home, labels.away, final]);
 
+  const now = useMemo(
+    () => (final ? null : buildRightNow(events, { homeLabel: labels.home, awayLabel: labels.away })),
+    [events, labels.home, labels.away, final]
+  );
+
   const hasQuarters = insights.quarters.some((q) => q.home || q.away);
   if (!hasQuarters && !insights.battle) return null;
   return (
+    <div className="flex flex-col gap-5">
+    {now ? (
+      <RightNowCard
+        now={now}
+        players={players}
+        labels={labels}
+        colors={colors}
+        teamKeys={teamKeys}
+        season={season}
+      />
+    ) : null}
     <div className="grid gap-5 lg:grid-cols-2">
       {insights.battle ? (
         <PossessionBattleCard
@@ -305,6 +450,7 @@ export function GameLiveInsights({
           teamKeys={teamKeys}
         />
       ) : null}
+    </div>
     </div>
   );
 }
