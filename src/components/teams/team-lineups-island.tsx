@@ -247,7 +247,7 @@ function PositionShapeCard({
 
 /**
  * Rotation tab — box-score minutes ladder + usage/value context.
- * True five-man lineup nets need PBP; this stays honest about that.
+ * Possession-level on/off and five-man nets live on the On/Off tab.
  */
 export async function TeamLineupsIsland({
   teamId,
@@ -289,6 +289,7 @@ export async function TeamLineupsIsland({
     ladder.starters.length + ladder.bench.length + ladder.spot.length === 0;
   const playersHref = teamPageHref(teamId, { season, tab: "players" });
   const defenseHref = teamPageHref(teamId, { season, tab: "defense" });
+  const onOffHref = teamPageHref(teamId, { season, tab: "onoff" });
 
   return (
     <section
@@ -301,8 +302,7 @@ export async function TeamLineupsIsland({
           <h2 className="text-[20px] font-bold tracking-tight">Rotation</h2>
           <p className={cn(type.bodySm, "text-muted-foreground")}>
             Starter / bench ladder from box-score minutes and starts for{" "}
-            {season}. Five-man on/off nets need play-by-play, so this tab does
-            not show them.
+            {season}. Lineup and player on/off ratings are on the On/Off tab.
             {roster.omitsMidSeasonMoves ? ` ${MID_SEASON_MOVES_NOTE}` : null}
           </p>
         </div>
@@ -312,6 +312,12 @@ export async function TeamLineupsIsland({
             className={cn(type.caption, "font-semibold underline")}
           >
             Full roster →
+          </TransitionLink>
+          <TransitionLink
+            href={onOffHref}
+            className={cn(type.caption, "font-semibold underline")}
+          >
+            On/off →
           </TransitionLink>
           <TransitionLink
             href={defenseHref}

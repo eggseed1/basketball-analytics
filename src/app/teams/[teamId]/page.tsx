@@ -16,6 +16,7 @@ import { TeamFrontOfficeIsland } from "@/components/teams/team-front-office-isla
 import { TeamGamesIsland } from "@/components/teams/team-games-island";
 import { TeamHustleIsland } from "@/components/teams/team-hustle-island";
 import { TeamLineupsIsland } from "@/components/teams/team-lineups-island";
+import { TeamOnOffIsland } from "@/components/teams/team-on-off-island";
 import { TeamOffenseIsland } from "@/components/teams/team-offense-island";
 import { TeamPlayoffsIsland } from "@/components/teams/team-playoffs-island";
 import { TeamSplitsIsland } from "@/components/teams/team-splits-island";
@@ -469,6 +470,18 @@ export default async function TeamProfilePage({
             fallback={<DestinationSectionSkeleton label="Loading rotation…" />}
           >
             <TeamLineupsIsland
+              teamId={resolvedTeamId}
+              season={season}
+              teamKey={identityTeam.abbreviation}
+            />
+          </Suspense>
+        ) : null}
+
+        {tab === "onoff" ? (
+          <Suspense
+            fallback={<DestinationSectionSkeleton label="Loading on/off…" />}
+          >
+            <TeamOnOffIsland
               teamId={resolvedTeamId}
               season={season}
               teamKey={identityTeam.abbreviation}

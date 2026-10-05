@@ -65,6 +65,7 @@ export type TeamPageTab =
   | "offense"
   | "defense"
   | "lineups"
+  | "onoff"
   | "games"
   | "schedule"
   | "splits"
@@ -93,6 +94,7 @@ export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
   { id: "offense", label: "Offense" },
   { id: "defense", label: "Defense" },
   { id: "lineups", label: "Rotation" },
+  { id: "onoff", label: "On/Off" },
   { id: "games", label: "Games" },
   { id: "schedule", label: "Schedule" },
   { id: "splits", label: "Splits" },
@@ -104,6 +106,7 @@ export const TEAM_PAGE_TABS: Array<{ id: TeamPageTab; label: string }> = [
 
 export function parseTeamPageTab(raw?: string | null): TeamPageTab {
   if (raw === "rotation") return "lineups";
+  if (raw === "on-off") return "onoff";
   const hit = TEAM_PAGE_TABS.find((t) => t.id === raw);
   return hit?.id ?? "overview";
 }
@@ -147,6 +150,7 @@ export function teamContextBarVisibility(tab: TeamPageTab): {
     case "offense":
     case "defense":
     case "lineups":
+    case "onoff":
     case "splits":
     case "stats":
     case "playoffs":

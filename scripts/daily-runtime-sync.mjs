@@ -170,7 +170,7 @@ const TRANSACTION_STEPS = [
     args: ["scripts/build-runtime-transactions-snapshot.mjs"],
   },
 ];
-const SOFT_FAIL = new Set(["drbl-recompute", ...TRANSACTION_STEPS.map((s) => s.label)]);
+const SOFT_FAIL = new Set(["drbl-recompute", "on-off-pbp", ...TRANSACTION_STEPS.map((s) => s.label)]);
 
 async function runTransactionSteps() {
   const failed = [];
@@ -249,6 +249,11 @@ async function main() {
         DRBL_SEASON: info.season,
         DRBL_DELAY_MS: process.env.DRBL_DELAY_MS || "100",
       },
+    },
+    {
+      label: "on-off-pbp",
+      cmd: "npx",
+      args: ["tsx", "scripts/build-runtime-onoff.ts", info.season],
     },
     {
       label: "drbl-overlay",

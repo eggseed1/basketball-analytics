@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 
 import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { PriorSeasonStatsNotice } from "@/components/explore/season-not-started-notice";
+import { PlayerOnOffIsland } from "@/components/players/player-on-off-island";
+import { getOnOffSeasons } from "@/data/queries/on-off";
 import { GlassSurface } from "@/components/brand/glass-surface";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { HistoricalCareerSurface } from "@/components/players/historical-career-surface";
@@ -465,6 +467,7 @@ export default async function PlayerPage({
     ? resolveActiveEraTheme(season, themeMode)
     : null;
 
+  const onOffSeasons = await getOnOffSeasons();
   const caps = playerPageCapabilities({
     selectedSeason: season,
     careerFirstSeason:
@@ -472,6 +475,7 @@ export default async function PlayerPage({
       masterPlayer?.firstSeason ??
       seasonOptions.at(-1),
     showSentiment: showLiveIntelligence,
+    hasOnOff: onOffSeasons.includes(statsCtx.statsSeason),
   });
 
   // Slim edge (explicit SLIM_EDGE_PRODUCT=1 only) — paid Workers run the full page.
@@ -766,6 +770,24 @@ export default async function PlayerPage({
                 isMultiTeamRow ? "TOT" : (primaryTeam?.teamAbbreviation ?? "TOT")
               }
             />
+          </Suspense>
+        ) : null}
+
+        {view === "onoff" ? (
+          <Suspense fallback={<PlayerBoardSkeleton label="Loading on/off…" />}>
+            {statsCtx.usingPriorSeasonStats ? (
+              <PriorSeasonStatsNotice
+                requestSeason={statsCtx.requestSeason}
+                statsSeason={statsCtx.statsSeason}
+              />
+            ) : null}
+            <GlassSurface effect="css" className="p-4 sm:p-6" honor={honor}>
+              <PlayerOnOffIsland
+                nbaIds={[identity?.nbaId, /^\d+$/.test(playerId) ? playerId : null]}
+                season={statsCtx.statsSeason}
+                playerName={displayName}
+              />
+            </GlassSurface>
           </Suspense>
         ) : null}
 

@@ -64,7 +64,11 @@ export async function listSeasonGames(
             status: 3,
           });
         } else {
-          if (isHome) {
+          // Neutral-site games (international, Cup semifinals) can list both
+          // teams on the same side; the second team takes the open slot.
+          const homeOpen = !existing.homeTeamId;
+          const awayOpen = !existing.awayTeamId;
+          if ((isHome && homeOpen) || (!isHome && !awayOpen && homeOpen)) {
             existing.homeTeamId = teamId;
             existing.homeTeamTricode = nbaTeamAbbr(teamId);
             existing.homeScore = pts;

@@ -18,6 +18,7 @@ export type PlayerPageView =
   | "splits"
   | "shooting"
   | "advanced"
+  | "onoff"
   | "highs";
 
 export type PlayerStatMode = "perGame" | "totals" | "per36";
@@ -35,6 +36,8 @@ export type PlayerPageCapabilities = {
   gameHighsScopeLabel: "Career high" | "Game highs since 1996-97";
   /** Fan/media sentiment + trade track tab (active players). */
   sentiment: boolean;
+  /** Possession-level on/off files exist for the season. */
+  onOff: boolean;
 };
 
 export function parsePlayerPageView(
@@ -48,6 +51,7 @@ export function parsePlayerPageView(
     v === "splits" ||
     v === "shooting" ||
     v === "advanced" ||
+    v === "onoff" ||
     v === "highs"
   ) {
     return v;
@@ -74,6 +78,7 @@ export function playerPageCapabilities(options: {
   selectedSeason: string;
   careerFirstSeason?: string | null;
   showSentiment?: boolean;
+  hasOnOff?: boolean;
 }): PlayerPageCapabilities {
   const season = options.selectedSeason;
   const gameLogs = season >= PLAYER_GAME_LOG_SUPPORTED_START;
@@ -93,6 +98,7 @@ export function playerPageCapabilities(options: {
       ? "Career high"
       : "Game highs since 1996-97",
     sentiment: options.showSentiment ?? false,
+    onOff: options.hasOnOff ?? false,
   };
 }
 
@@ -109,6 +115,7 @@ export function playerPageNavViews(
   if (caps.splits) out.push({ id: "splits", label: "Splits" });
   out.push({ id: "shooting", label: "Shooting" });
   out.push({ id: "advanced", label: "Advanced" });
+  if (caps.onOff) out.push({ id: "onoff", label: "On/Off" });
   if (caps.gameHighs) out.push({ id: "highs", label: "Game Highs" });
   return out;
 }
