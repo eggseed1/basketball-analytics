@@ -15,6 +15,7 @@ import { TransitionLink } from "@/components/continuity/query-nav";
 import { RouteTransitionProvider } from "@/components/continuity/route-transition";
 import { ColorSchemeSwitch } from "@/components/sports/color-scheme-switch";
 import { SiteChrome } from "@/components/sports/site-chrome";
+import { SiteFooter } from "@/components/sports/site-footer";
 import { SiteSearch } from "@/components/sports/site-search";
 import { cn } from "@/lib/utils";
 import {
@@ -329,8 +330,11 @@ export function SportsShell({ children }: { children: React.ReactNode }) {
           </div>
         ) : null}
 
-        <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip pb-[env(safe-area-inset-bottom,0px)]">
+        <div className="relative z-[1] flex min-h-0 min-w-0 flex-1 flex-col overflow-x-clip">
           {children}
+        </div>
+        <div className="relative z-[1] pb-[env(safe-area-inset-bottom,0px)]">
+          <SiteFooter />
         </div>
       </div>
     </RouteTransitionProvider>

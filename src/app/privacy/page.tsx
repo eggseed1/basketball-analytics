@@ -3,14 +3,13 @@ import type { ReactNode } from "react";
 
 import { PageHeader } from "@/components/layout/page-header";
 import { type } from "@/lib/design-system";
+import { SITE_CONTACT_URL } from "@/lib/site-url";
 import { cn } from "@/lib/utils";
 
 export const metadata = {
   title: "Privacy",
   description: "What this site stores about visitors and what it keeps from public posts it reads.",
 };
-
-const CONTACT_URL = "https://github.com/eggseed1/basketball-analytics/issues";
 
 function Section({ title, children }: { title: string; children: ReactNode }) {
   return (
@@ -87,7 +86,7 @@ export default function PrivacyPage() {
       <Section title="Contact">
         <p>
           Questions or deletion requests go to the{" "}
-          <a href={CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">
+          <a href={SITE_CONTACT_URL} className="underline underline-offset-2" target="_blank" rel="noreferrer">
             project&apos;s GitHub issues
           </a>
           .

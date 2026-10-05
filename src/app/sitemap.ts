@@ -33,6 +33,7 @@ const SECTION_PATHS: Array<{ path: string; changeFrequency: MetadataRoute.Sitema
   { path: "/awards", changeFrequency: "monthly" },
   { path: "/gm", changeFrequency: "monthly" },
   { path: "/privacy", changeFrequency: "yearly" },
+  { path: "/terms", changeFrequency: "yearly" },
 ];
 
 export default function sitemap(): MetadataRoute.Sitemap {
