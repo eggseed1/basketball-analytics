@@ -105,3 +105,21 @@ export function unplayedDraftees(): UnplayedDraftee[] {
   cached = out;
   return out;
 }
+
+let byId: Map<string, UnplayedDraftee> | null = null;
+
+/** The draftee behind any of these ids (ESPN or NBA), if he has not played. */
+export function unplayedDrafteeFor(...ids: Array<string | null | undefined>): UnplayedDraftee | null {
+  if (!byId) {
+    byId = new Map();
+    for (const d of unplayedDraftees()) {
+      byId.set(d.id, d);
+      if (d.nbaId) byId.set(d.nbaId, d);
+    }
+  }
+  for (const id of ids) {
+    const hit = id ? byId.get(String(id).trim()) : undefined;
+    if (hit) return hit;
+  }
+  return null;
+}

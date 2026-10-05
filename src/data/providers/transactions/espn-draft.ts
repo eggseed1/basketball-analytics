@@ -10,6 +10,7 @@
  */
 import { getCanonicalTeamFromProvider } from "@/data/identity/team-map";
 import { canonicalSeasonFromIsoDate } from "@/data/transformers/espn-transactions";
+import { formatOrdinal as ordinal } from "@/lib/format";
 import {
   TRANSACTION_LINEAGE_METHODOLOGY_VERSION,
   type CanonicalTransaction,
@@ -65,13 +66,6 @@ export function draftRoundDate(nights: DraftNights, round: number): string | nul
   if (!open) return null;
   if (round <= 1 || !close || close < open) return open;
   return close;
-}
-
-export function ordinal(n: number): string {
-  const mod100 = n % 100;
-  if (mod100 >= 11 && mod100 <= 13) return `${n}th`;
-  const suffix = ({ 1: "st", 2: "nd", 3: "rd" } as Record<number, string>)[n % 10] ?? "th";
-  return `${n}${suffix}`;
 }
 
 export function draftDescription(sel: Pick<DraftSelection, "name" | "position" | "overall" | "year">): string {

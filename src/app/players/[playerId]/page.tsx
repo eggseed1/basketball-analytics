@@ -13,6 +13,8 @@ import { PlayerCareerDataGuardBanner } from "@/components/players/player-career-
 import { PlayerCareerIsland } from "@/components/players/player-career-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
+import { PlayerNotYetPlayed } from "@/components/players/player-not-yet-played";
+import { unplayedDrafteeFor } from "@/data/runtime/draftee-search";
 import { PlayerRoleIsland } from "@/components/players/player-role-island";
 import { PlayerSimilarIsland } from "@/components/players/player-similar-island";
 import {
@@ -300,6 +302,11 @@ export default async function PlayerPage({
     isActive: masterPlayer?.isActive,
   });
   const statsCtx = resolvePlayerStatsSeason(career, season);
+  // Baked draft list says he hasn't played, and no career row disagrees. An
+  // empty career alone could be an upstream outage, not a rookie.
+  const notYetPlayed = career.some((row) => row.gamesPlayed > 0) || historyCareer
+    ? null
+    : unplayedDrafteeFor(playerId, identity?.espnId, identity?.nbaId);
   const peakSeasonHint = (() => {
     let best: { season: string; ppg: number } | null = null;
     for (const row of career) {
@@ -575,6 +582,13 @@ export default async function PlayerPage({
             )
           }
           hero={
+            notYetPlayed ? (
+              <PlayerNotYetPlayed
+                playerName={displayName}
+                draftYear={notYetPlayed.year}
+                overall={notYetPlayed.overall}
+              />
+            ) : (
             <Suspense
               fallback={
                 <div className="col-span-1 min-h-[28rem]">
@@ -595,6 +609,7 @@ export default async function PlayerPage({
                 honor={honor}
               />
             </Suspense>
+            )
           }
         >
           <PlayerCareerDataGuardBanner guard={careerDataGuard} />
@@ -721,7 +736,7 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" && !slimWorker ? (
+        {view === "overview" && !slimWorker && !notYetPlayed ? (
           <section
             id="ask"
             className="scroll-mt-16 flex flex-col gap-3"

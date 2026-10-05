@@ -61,6 +61,8 @@ export interface EspnAthleteProfileResponse {
     weight?: number;
     position?: { abbreviation?: string };
     team?: { id?: string | number };
+    /** `type: "free-agent"` while `team` still names his last club. */
+    status?: { type?: string; name?: string };
     college?: { name?: string; shortName?: string };
   };
 }
@@ -218,7 +220,8 @@ export function transformEspnAthleteProfile(
     lastName:
       raw.lastName ?? fullName.split(" ").slice(1).join(" ") ?? fullName,
     position: mapEspnPosition(raw.position?.abbreviation),
-    currentTeamId: raw.team?.id != null ? String(raw.team.id) : undefined,
+    currentTeamId:
+      raw.team?.id != null && raw.status?.type !== "free-agent" ? String(raw.team.id) : undefined,
     birthDate: parseEspnDisplayDob(raw.displayDOB),
     birthPlace: raw.displayBirthPlace?.trim() || undefined,
     heightInches: parseEspnHeight(raw.displayHeight, raw.height),

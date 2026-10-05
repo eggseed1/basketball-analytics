@@ -255,7 +255,9 @@ export function PlayerDestinationIdentity({
                         ) : historicalBrand ? (
                           <HistoricalTeamMark brand={historicalBrand} size="sm" />
                         ) : null}
-                        {position ? <span>· {position}</span> : null}
+                        {position ? (
+                          <span>{teamKey || historicalBrand ? `· ${position}` : position}</span>
+                        ) : null}
                       </p>
                     )}
                     <PlayerIdentityVitals

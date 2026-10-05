@@ -8,15 +8,16 @@ import {
   buildDraftTransactions,
   draftRoundDate,
   easternDate,
-  ordinal,
   selectionFromTransaction,
   type DraftSelection,
 } from "../src/data/providers/transactions/espn-draft";
+import { transformEspnAthleteProfile } from "../src/data/transformers/espn-career";
 import { classifyEspnTransactionDescription } from "../src/data/transformers/espn-transactions";
 import { draftNightPicks } from "../src/data/runtime/draft-night-snapshot";
 import { unplayedDraftees } from "../src/data/runtime/draftee-search";
 import { getPlayerSearchIndex } from "../src/data/runtime/player-search-snapshot";
 import { parseRosterMoves } from "../src/lib/espn-ledger-text";
+import { formatOrdinal as ordinal } from "../src/lib/format";
 import { normalizePlayerName } from "../src/lib/player-name";
 import { createAcquisitionEngine } from "../src/trades/acquisition-engine";
 
@@ -151,8 +152,21 @@ function testSearchRows() {
   }
 }
 
+function testFreeAgentProfileHasNoTeam() {
+  // The profile keeps a free agent's last club in `team`.
+  const profile = (status: string) =>
+    transformEspnAthleteProfile(
+      { athlete: { id: "5184016", displayName: "Malique Lewis", team: { id: "15" }, status: { type: status } } },
+      "5184016"
+    );
+  assert.equal(profile("free-agent")?.currentTeamId, undefined);
+  assert.equal(profile("active")?.currentTeamId, "15");
+  assert.equal(profile("inactive")?.currentTeamId, "15");
+}
+
 testDates();
 testRows();
+testFreeAgentProfileHasNoTeam();
 testEngineUsesLoggedDraft();
 testSearchRows();
 console.log("draft transactions: ok");
