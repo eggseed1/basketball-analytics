@@ -33,7 +33,7 @@ export function StandingsConferenceTable({
         <table
           className={cn(
             "w-full table-fixed text-left",
-            compact ? "min-w-[19rem]" : "min-w-[42rem]"
+            compact ? "min-w-[19rem]" : "min-w-[47rem]"
           )}
         >
           <colgroup>
@@ -111,10 +111,11 @@ export function StandingsConferenceTable({
                     <TeamIdentity
                       teamKey={row.teamId}
                       label={compact ? row.abbreviation : row.displayName}
-                      className="max-w-none"
-                      nameClassName="flex min-w-max max-w-none items-center gap-2 whitespace-nowrap no-underline hover:no-underline"
+                      nameClassName="flex min-w-0 max-w-full items-center gap-2 whitespace-nowrap no-underline hover:no-underline"
                     >
-                      <TeamLogo teamKey={row.abbreviation} size="xs" />
+                      <span className="shrink-0">
+                        <TeamLogo teamKey={row.abbreviation} size="xs" />
+                      </span>
                       {compact ? (
                         <span className={cn(type.body, textLinkClassName)}>
                           {row.abbreviation}
@@ -134,8 +135,9 @@ export function StandingsConferenceTable({
                             className={cn(
                               type.body,
                               textLinkClassName,
-                              "hidden sm:inline"
+                              "hidden min-w-0 truncate sm:block"
                             )}
+                            title={row.displayName}
                           >
                             {row.displayName}
                           </span>

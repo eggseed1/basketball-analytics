@@ -206,7 +206,7 @@ function InsightCard({
           <span className="text-muted-foreground">{dateLabel}</span>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {isPlayer && line ? (
             <>
               <PlayerHeadshot
@@ -216,7 +216,7 @@ function InsightCard({
                 size="md"
                 className="shrink-0"
               />
-              <div className="min-w-0 flex-1">
+              <div className="min-w-[8rem] flex-1">
                 <Link
                   href={playerHref!}
                   className="block truncate text-[16px] font-bold leading-tight tracking-tight hover:underline"
@@ -238,7 +238,7 @@ function InsightCard({
                 <TeamLogo teamKey={game.away.teamId} size="md" />
                 <TeamLogo teamKey={game.home.teamId} size="md" />
               </div>
-              <div className="min-w-0 flex-1">
+              <div className="min-w-[8rem] flex-1">
                 <h3 className="text-[15px] font-bold leading-tight tracking-tight">
                   {insight.headline}
                 </h3>
@@ -248,12 +248,12 @@ function InsightCard({
               </div>
             </>
           ) : (
-            <h3 className="flex-1 text-[16px] font-bold leading-snug tracking-tight">
+            <h3 className="min-w-[8rem] flex-1 text-[16px] font-bold leading-snug tracking-tight">
               {insight.headline}
             </h3>
           )}
           {hero ? (
-            <div className="shrink-0 text-right">
+            <div className="ml-auto shrink-0 text-right">
               <p
                 className={cn(
                   "font-black leading-none tabular-nums tracking-tight",
@@ -278,15 +278,20 @@ function InsightCard({
           {insight.description}
         </p>
 
-        <div className="mt-auto flex items-end justify-between gap-3 border-t border-border/60 pt-2.5">
+        <div className="mt-auto flex flex-wrap items-end justify-between gap-3 border-t border-border/60 pt-2.5">
           {game ? (
-            <div className={cn("w-full", isPlayer ? "max-w-[9rem]" : "max-w-[16rem]")}>
+            <div
+              className={cn(
+                "flex-1",
+                isPlayer ? "min-w-[7rem] max-w-[9rem]" : "min-w-[11.5rem] max-w-[16rem]"
+              )}
+            >
               <InsightScoreboard game={game} compact={isPlayer} />
             </div>
           ) : (
             <p className="text-[12px] text-muted-foreground">{insight.context}</p>
           )}
-          <div className="flex shrink-0 flex-col items-end gap-0.5 text-[12px]">
+          <div className="ml-auto flex shrink-0 flex-col items-end gap-0.5 text-[12px]">
             {gameHref ? (
               <AppLink
                 href={gameHref}

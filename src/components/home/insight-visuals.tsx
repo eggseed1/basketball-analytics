@@ -168,9 +168,9 @@ export function InsightLeadByPeriod({
 
   return (
     <figure className="flex flex-col gap-1">
-      <figcaption className="flex items-center justify-between text-[10px] uppercase tracking-wide text-muted-foreground">
-        <span>Lead after each period</span>
-        <span className="flex items-center gap-2 normal-case tracking-normal">
+      <figcaption className="flex flex-wrap items-center justify-between gap-x-3 gap-y-1 text-[10px] uppercase tracking-wide text-muted-foreground">
+        <span className="whitespace-nowrap">Lead after each period</span>
+        <span className="flex items-center gap-2 whitespace-nowrap normal-case tracking-normal">
           <span className="inline-flex items-center gap-1">
             <span className="h-2 w-2 rounded-sm" style={{ background: colors.home }} />
             {game.home.abbr} ahead
