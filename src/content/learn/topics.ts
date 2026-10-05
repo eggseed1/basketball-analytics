@@ -1146,6 +1146,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "Better off-ball measurement is still research and isn't on any board.",
       "Do not add P + LN + B and call it DRBL/100.",
+      "The 2024-25 and 2025-26 ratings use 1,225 of the 1,230 regular-season games. Five neutral-site games per season were missing from the game list when those ratings were sealed. Refitting with them moves DRBL/100 by less than 0.01 on average and 0.21 at most, so the published ratings stand. On/off uses all 1,230.",
     ],
     relatedIds: ["drbl", "drbl_ln", "drbl_b", "r1", "drbl_validation", "drbl_historical"],
     seeInAction: [{ label: "DRBL overview", href: "/learn/drbl" }],
