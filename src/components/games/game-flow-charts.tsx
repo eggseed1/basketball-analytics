@@ -92,6 +92,7 @@ export function GameMarginFlowChart({
   homeColor,
   awayColor,
   events,
+  live = false,
 }: {
   timeline: ScoreTimelinePoint[];
   homeLabel: string;
@@ -101,6 +102,8 @@ export function GameMarginFlowChart({
   homeColor: string;
   awayColor: string;
   events?: PlayByPlayEvent[];
+  /** Stop the line at the latest play instead of carrying it to the end. */
+  live?: boolean;
 }) {
   const chartTheme = useChartTheme();
   const clipId = useId().replace(/:/g, "");
@@ -144,8 +147,9 @@ export function GameMarginFlowChart({
     line += ` L ${x} ${prevY} L ${x} ${y}`;
     prevY = y;
   }
-  line += ` L ${xOf(model.endT)} ${prevY}`;
-  const area = `${line} L ${xOf(model.endT)} ${mid} L ${xOf(0)} ${mid} Z`;
+  const lineEndT = live ? timeline[timeline.length - 1]!.elapsedGameTime : model.endT;
+  line += ` L ${xOf(lineEndT)} ${prevY}`;
+  const area = `${line} L ${xOf(lineEndT)} ${mid} L ${xOf(0)} ${mid} Z`;
   const fillOpacity = chartTheme.isDark ? 0.3 : 0.2;
 
   const periods = Array.from({ length: model.maxPeriod }, (_, i) => i + 1);
@@ -361,6 +365,7 @@ export function GameWinProbabilityChart({
   finalHomeScore,
   finalAwayScore,
   events,
+  final,
 }: {
   timeline: ScoreTimelinePoint[];
   homeLabel: string;
@@ -372,6 +377,8 @@ export function GameWinProbabilityChart({
   finalHomeScore: number;
   finalAwayScore: number;
   events?: PlayByPlayEvent[];
+  /** Only a final game resolves to 100%; live games end at the current estimate. */
+  final: boolean;
 }) {
   const chartTheme = useChartTheme();
   const [hover, setHover] = useState<number | null>(null);
@@ -380,8 +387,9 @@ export function GameWinProbabilityChart({
       buildWinProbabilitySeries(timeline, {
         finalHomeScore,
         finalAwayScore,
+        final,
       }),
-    [timeline, finalHomeScore, finalAwayScore]
+    [timeline, finalHomeScore, finalAwayScore, final]
   );
 
   const { maxT, periodMarks, areaHome, areaAway } = useMemo(() => {
@@ -393,8 +401,11 @@ export function GameWinProbabilityChart({
         areaAway: "",
       };
     }
-    const maxT = Math.max(...series.map((p) => p.elapsedGameTime), 1);
     const maxPeriod = Math.max(...series.map((p) => p.period), 4);
+    const maxT = Math.max(
+      ...series.map((p) => p.elapsedGameTime),
+      final ? 1 : periodEndSeconds(maxPeriod)
+    );
     const w = 640;
     const h = 220;
     const mid = h / 2;
@@ -453,7 +464,7 @@ export function GameWinProbabilityChart({
       areaHome: homeParts.join(" "),
       areaAway: awayParts.join(" "),
     };
-  }, [series]);
+  }, [series, final]);
 
   if (series.length < 2) return null;
 

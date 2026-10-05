@@ -25,12 +25,21 @@ function sortRoster(rows: PlayerGame[]) {
   });
 }
 
+/** Mid-game, ESPN tags every unused bench player "coach's decision"; they can still check in. */
+function notInYet(g: PlayerGame, live: boolean): boolean {
+  if (!live || !g.didNotPlay) return false;
+  const reason = g.statusReason?.trim() ?? "";
+  return reason === "" || /coach|did not play|^dnp$/i.test(reason);
+}
+
 function RosterTable({
   label,
   players,
+  live,
 }: {
   label: string;
   players: PlayerGame[];
+  live: boolean;
 }) {
   const rows = sortRoster(players);
   if (!rows.length) {
@@ -70,6 +79,7 @@ function RosterTable({
         </thead>
         <tbody>
           {rows.map((g) => {
+            const pending = notInYet(g, live);
             const out = Boolean(g.didNotPlay);
             const reason =
               g.statusReason?.trim() ||
@@ -79,7 +89,7 @@ function RosterTable({
                 key={g.id}
                 className={cn(
                   "border-b border-border/40",
-                  out && "bg-destructive/[0.06]"
+                  out && !pending && "bg-destructive/[0.06]"
                 )}
               >
                 <td className="sticky left-0 z-10 bg-background/85 py-1.5 pr-3 backdrop-blur-sm">
@@ -104,7 +114,16 @@ function RosterTable({
                         {g.startPosition}
                       </span>
                     ) : null}
-                    {out ? (
+                    {pending ? (
+                      <span
+                        className={cn(
+                          type.caption,
+                          "rounded-md bg-foreground/[0.06] px-1.5 py-0.5 font-semibold text-muted-foreground"
+                        )}
+                      >
+                        Not in yet
+                      </span>
+                    ) : out ? (
                       <span
                         className={cn(
                           type.caption,
@@ -185,16 +204,18 @@ export function GameRosterBoard({
   homeLabel,
   awayPlayers,
   homePlayers,
+  live = false,
 }: {
   awayLabel: string;
   homeLabel: string;
   awayPlayers: PlayerGame[];
   homePlayers: PlayerGame[];
+  live?: boolean;
 }) {
   return (
     <div className="flex flex-col gap-5">
-      <RosterTable label={awayLabel} players={awayPlayers} />
-      <RosterTable label={homeLabel} players={homePlayers} />
+      <RosterTable label={awayLabel} players={awayPlayers} live={live} />
+      <RosterTable label={homeLabel} players={homePlayers} live={live} />
     </div>
   );
 }

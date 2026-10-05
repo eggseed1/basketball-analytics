@@ -8,6 +8,7 @@ import {
   GameMarginFlowChart,
   GameWinProbabilityChart,
 } from "@/components/games/game-flow-charts";
+import { GameLiveInsights } from "@/components/games/game-live-insights";
 import { GameRosterBoard } from "@/components/games/game-roster-board";
 import { GameShotChart, type ShotChartPlayer } from "@/components/games/game-shot-chart";
 import { GameStoryStrip, GameTeamComparison } from "@/components/games/game-story";
@@ -77,6 +78,7 @@ export function GameLabView({
   const homeColor =
     palette.get(homeKey) || chartTheme.teamBarColor(homeKey) || matchup.homeWash;
   const [flowTab, setFlowTab] = useState<FlowTab>("margin");
+  const final = analysis.status === "final";
 
   const homePlayers = players
     .filter((p) => p.teamId === homeKey || p.isHome)
@@ -117,6 +119,15 @@ export function GameLabView({
           </div>
         ) : null}
       </div>
+      <GameLiveInsights
+        events={events}
+        players={players}
+        labels={{ away: outcome.awayLabel, home: outcome.homeLabel }}
+        colors={colors}
+        teamKeys={{ away: awayKey, home: homeKey }}
+        season={analysis.season}
+        status={analysis.status}
+      />
       <MatchupWashCard
         awayTeamKey={awayKey}
         homeTeamKey={homeKey}
@@ -163,6 +174,7 @@ export function GameLabView({
                 homeColor={homeColor}
                 awayColor={awayColor}
                 events={events}
+                live={!final}
               />
             ) : (
               <GameWinProbabilityChart
@@ -176,6 +188,7 @@ export function GameLabView({
                 finalHomeScore={outcome.homeScore}
                 finalAwayScore={outcome.awayScore}
                 events={events}
+                final={final}
               />
             )}
 
@@ -277,6 +290,7 @@ export function GameLabView({
           <h2 className={type.heading}>Box score</h2>
           <p className={cn(type.bodySm, "mt-1 text-muted-foreground")}>
             Injured or inactive players are marked OUT.
+            {final ? "" : " Bench players who haven't checked in yet are marked Not in yet."}
           </p>
         </div>
         {players.length === 0 ? (
@@ -289,6 +303,7 @@ export function GameLabView({
             homeLabel={outcome.homeLabel}
             awayPlayers={awayPlayers}
             homePlayers={rosterHome}
+            live={!final}
           />
         )}
       </MatchupWashCard>

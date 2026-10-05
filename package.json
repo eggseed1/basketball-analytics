@@ -22,6 +22,7 @@
     "test:offseason-tracker": "tsx scripts/test-offseason-tracker.ts",
     "test:acquisition-paths": "tsx scripts/test-acquisition-paths.ts",
     "test:game-lab": "tsx scripts/test-game-lab.ts",
+    "test:live-insights": "tsx scripts/test-live-insights.ts",
     "test:game-season-context": "tsx scripts/test-game-season-context.ts",
     "test:game-matchup-theme": "tsx scripts/test-game-matchup-theme.ts",
     "test:game-shell": "tsx --require ./scripts/lib/stub-server-only.cjs scripts/test-game-shell.ts",

@@ -245,6 +245,10 @@ export function GameShotChart({
   const located = court.filter((c) => c.kind === "make" || c.kind === "miss").length;
   const maxPeriod = Math.max(4, ...marks.map((m) => m.period));
   const endT = Math.max(periodStart(maxPeriod + 1), ...marks.map((m) => m.t));
+  /** Live games stop at the latest play; the rest of the track hasn't happened. */
+  const nowT = live
+    ? Math.min(endT, Math.max(0, ...court.map((c) => c.t), ...marks.map((m) => m.t)))
+    : endT;
 
   const [mode, setMode] = useState<Mode>("shots");
   const [layers, setLayers] = useState<Set<Layer>>(() => new Set(LAYERS.map((l) => l.id)));
@@ -298,7 +302,7 @@ export function GameShotChart({
       const dt = Math.min((now - last) / 1000, 0.1);
       last = now;
       playhead.current += dt * rate;
-      if (playhead.current >= endT) {
+      if (playhead.current >= nowT) {
         setCutoff(null);
         setPlaying(false);
         return;
@@ -308,7 +312,7 @@ export function GameShotChart({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [playing, speed, endT]);
+  }, [playing, speed, nowT]);
 
   useEffect(() => {
     if (!live) return;
@@ -372,7 +376,7 @@ export function GameShotChart({
   const isShotBy = (c: CourtEvent) =>
     (c.kind === "make" || c.kind === "miss") && (player ? c.playerId === player : !side || c.side === side);
 
-  const at = cutoff ?? endT;
+  const at = cutoff ?? nowT;
   const inQuarter = (period: number) => quarter == null || period === quarter;
   const pool = court.filter((c) => (cutoff == null || c.t <= cutoff) && inQuarter(c.period));
   const shown =
@@ -394,7 +398,9 @@ export function GameShotChart({
 
   const layerCount = (layer: Layer) => pool.filter((c) => layersOf(c).includes(layer)).length;
 
-  const periods = Array.from(new Set(marks.map((m) => m.period))).sort((a, b) => a - b);
+  const periods = Array.from(
+    new Set([...court.map((c) => c.period), ...ticks.map((k) => k.period)])
+  ).sort((a, b) => a - b);
 
   /** Players with at least one play in the current mode, busiest first. */
   const playerOptions = useMemo(() => {
@@ -450,7 +456,7 @@ export function GameShotChart({
       setPlaying(false);
       return;
     }
-    if (cutoff == null || cutoff >= endT) seek(0);
+    if (cutoff == null || cutoff >= nowT) seek(0);
     setHover(null);
     setPinned(null);
     setPlaying(true);
@@ -915,6 +921,7 @@ export function GameShotChart({
           {playing ? "Pause" : cutoff == null ? "Replay" : "Play"}
         </button>
         <div className="relative min-w-0 flex-1">
+          <div className="relative">
           <input
             type="range"
             min={0}
@@ -926,11 +933,20 @@ export function GameShotChart({
               setPlaying(false);
               setHover(null);
               setPinned(null);
-              const v = Number(e.target.value);
-              seek(v >= endT ? null : v);
+              const v = Math.min(Number(e.target.value), nowT);
+              seek(v >= nowT ? null : v);
             }}
             className="w-full accent-current"
           />
+          {nowT < endT ? (
+            <span
+              aria-hidden
+              title="Not played yet"
+              className="pointer-events-none absolute top-1/2 right-0 h-1.5 -translate-y-1/2 rounded-r-full bg-[repeating-linear-gradient(135deg,var(--border)_0_3px,transparent_3px_6px)]"
+              style={{ left: `${(nowT / endT) * 100}%` }}
+            />
+          ) : null}
+          </div>
           <div className={cn(type.micro, "relative h-4 text-muted-foreground")}>
             {Array.from({ length: maxPeriod }, (_, i) => i + 1).map((p) => (
               <span

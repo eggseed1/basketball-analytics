@@ -18,7 +18,7 @@ type TeamColors = { away: string; home: string };
 /** Smaller deficits are routine back-and-forth, so they don't get a tile. */
 const COMEBACK_MIN = 6;
 
-function TeamDot({ color }: { color: string }) {
+export function TeamDot({ color }: { color: string }) {
   return (
     <span
       aria-hidden
@@ -249,7 +249,7 @@ function buildRows(away: GameTeamTotals, home: GameTeamTotals): ComparisonRow[] 
   return rows;
 }
 
-function SideValue({
+export function SideValue({
   display,
   sub,
   strong,
@@ -277,7 +277,7 @@ function SideValue({
   );
 }
 
-function HalfBar({
+export function HalfBar({
   value,
   max,
   color,

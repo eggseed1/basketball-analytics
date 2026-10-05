@@ -54,7 +54,7 @@ export type WinProbPoint = {
 
 export function buildWinProbabilitySeries(
   timeline: ScoreTimelinePoint[],
-  options?: { finalHomeScore?: number; finalAwayScore?: number }
+  options?: { finalHomeScore?: number; finalAwayScore?: number; final?: boolean }
 ): WinProbPoint[] {
   if (!timeline.length) return [];
   const points: WinProbPoint[] = timeline.map((p) => ({
@@ -75,11 +75,11 @@ export function buildWinProbabilitySeries(
     scoringTeamId: p.scoringTeamId,
   }));
 
-  // Force terminal WP to the known winner when final scores are provided.
+  // Force terminal WP to the known winner, but only once the game is over.
   const last = points[points.length - 1]!;
   const fh = options?.finalHomeScore ?? last.homeScore;
   const fa = options?.finalAwayScore ?? last.awayScore;
-  if (fh !== fa) {
+  if (options?.final !== false && fh !== fa) {
     points.push({
       ...last,
       elapsedGameTime: last.elapsedGameTime + 1,
