@@ -15,11 +15,14 @@ export function StandingsConferenceTable({
   title,
   rows,
   compact = false,
+  seedLines = false,
 }: {
   title: string;
   rows: StandingRow[];
   /** Fewer columns for homepage. */
   compact?: boolean;
+  /** Dashed rules under the last playoff seed (6) and last play-in seed (10). */
+  seedLines?: boolean;
 }) {
   return (
     <section className="sports-card overflow-hidden">
@@ -79,11 +82,17 @@ export function StandingsConferenceTable({
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
+            {rows.map((row, i) => {
+              const seed = row.rank || i + 1;
               return (
                 <tr
                   key={row.teamId}
-                  className="border-b border-border last:border-0 hover:bg-secondary/40"
+                  className={cn(
+                    "border-b border-border last:border-0 hover:bg-secondary/40",
+                    seedLines &&
+                      (seed === 6 || seed === 10) &&
+                      "border-b-2 border-dashed border-b-foreground/35"
+                  )}
                 >
                   <td
                     className={cn(

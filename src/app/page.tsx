@@ -15,6 +15,14 @@ import { FindingsSection } from "@/components/home/findings-section";
 import { HomeStandingsPanel } from "@/components/home/home-standings-panel";
 import { SentimentMoversPanel } from "@/components/home/sentiment-movers-panel";
 import { TopPerformersPanel } from "@/components/home/top-performers-panel";
+import { SeasonMomentCard, SeasonPhaseBar } from "@/components/home/season-moment";
+import { PlayoffBracket } from "@/components/explore/playoff-bracket";
+import { getHomeSeasonMoment } from "@/data/queries/home-season-moment";
+import {
+  homeLayoutForPhase,
+  type HomeModuleId,
+  type HomeSeasonMoment,
+} from "@/lib/home-season-moment";
 
 export const metadata = {
   title: "Home",
@@ -128,50 +136,104 @@ async function HomeFindings() {
   );
 }
 
-export default function HomePage() {
-  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+const BRACKET_BUDGET_MS = 2_500;
 
-  return (
-    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
-      <Suspense fallback={<BlockSkeleton className="h-52" />}>
-        <HomeCalendar season={season} />
-      </Suspense>
+async function HomeBracket({ season }: { season: string }) {
+  const { getPlayoffBracketModel } = await import("@/data/queries/playoff-bracket");
+  const { withBudget } = await import("@/data/queries/budget");
+  const { value } = await withBudget(
+    getPlayoffBracketModel(season).catch(() => null),
+    BRACKET_BUDGET_MS,
+    null
+  );
+  if (!value?.model) return null;
+  return <PlayoffBracket model={value.model} />;
+}
 
-      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-12">
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">
-          <WatchlistPanel />
-          <div className="hidden min-w-0 lg:block">
-            <Suspense fallback={<BlockSkeleton className="h-48" />}>
-              <SentimentMoversPanel />
-            </Suspense>
-          </div>
-          <Suspense fallback={<BlockSkeleton className="h-36" />}>
-            <OffseasonPulsePanel />
-          </Suspense>
-          <HomeNews />
-        </div>
-        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">
-          <Suspense fallback={<BlockSkeleton className="h-72" />}>
-            <HomeStandings season={season} />
-          </Suspense>
-          <Suspense fallback={<BlockSkeleton className="h-80" />}>
-            <HomeTopPerformers />
-          </Suspense>
-        </div>
-      </div>
-
-      <div className="min-w-0 lg:hidden">
-        <Suspense fallback={<BlockSkeleton className="h-48" />}>
+function renderModule(id: HomeModuleId, moment: HomeSeasonMoment, season: string) {
+  const offseason = moment.phase === "draft-free-agency" || moment.phase === "offseason";
+  switch (id) {
+    case "moment":
+      return <SeasonMomentCard key={id} moment={moment} />;
+    case "phase-bar":
+      return <SeasonPhaseBar key={id} moment={moment} />;
+    case "calendar":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-52" />}>
+          <HomeCalendar season={season} />
+        </Suspense>
+      );
+    case "bracket":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-72" />}>
+          <HomeBracket season={moment.season} />
+        </Suspense>
+      );
+    case "standings":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-72" />}>
+          <HomeStandings season={season} />
+        </Suspense>
+      );
+    case "standings-race":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-80" />}>
+          <HomeStandingsPanel season={season} race />
+        </Suspense>
+      );
+    case "findings":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-40" />}>
+          <HomeFindings />
+        </Suspense>
+      );
+    case "top-performers":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-80" />}>
+          <HomeTopPerformers />
+        </Suspense>
+      );
+    case "hot-cold":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-40" />}>
+          <HomeHotCold />
+        </Suspense>
+      );
+    case "transactions":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-36" />}>
+          <OffseasonPulsePanel limit={offseason ? 8 : 5} />
+        </Suspense>
+      );
+    case "watchlist":
+      return <WatchlistPanel key={id} />;
+    case "sentiment":
+      return (
+        <Suspense key={id} fallback={<BlockSkeleton className="h-48" />}>
           <SentimentMoversPanel />
         </Suspense>
+      );
+    case "news":
+      return <HomeNews key={id} />;
+  }
+}
+
+export default async function HomePage() {
+  const season = canonicalSeasonFromStartYear(currentNbaStartYear());
+  const moment = await getHomeSeasonMoment();
+  const layout = homeLayoutForPhase(moment.phase);
+  const render = (id: HomeModuleId) => renderModule(id, moment, season);
+
+  return (
+    <main className="site-shell flex flex-col gap-5 py-5 sm:py-7" data-season-phase={moment.phase}>
+      {layout.top.map(render)}
+
+      <div className="grid min-w-0 items-start gap-5 lg:grid-cols-12">
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-7">{layout.main.map(render)}</div>
+        <div className="flex min-w-0 flex-col gap-4 lg:col-span-5">{layout.side.map(render)}</div>
       </div>
 
-      <Suspense fallback={<BlockSkeleton className="h-40" />}>
-        <HomeHotCold />
-      </Suspense>
-      <Suspense fallback={<BlockSkeleton className="h-40" />}>
-        <HomeFindings />
-      </Suspense>
+      {layout.bottom.map(render)}
     </main>
   );
 }

@@ -10,10 +10,13 @@ export function HomeStandingsBoard({
   season,
   east,
   west,
+  race = false,
 }: {
   season: string;
   east: StandingRow[];
   west: StandingRow[];
+  /** Playoff race framing: seed cut lines and a play-in note. */
+  race?: boolean;
 }) {
   const [conference, setConference] = useState<"east" | "west">("west");
   const rows = conference === "west" ? west : east;
@@ -22,7 +25,14 @@ export function HomeStandingsBoard({
     <section className="sports-card flex flex-col gap-4 p-4 sm:p-5">
       <div className="flex items-start justify-between gap-3">
         <div className="flex min-w-0 flex-col gap-3">
-          <h2 className="type-heading">{season} Standings</h2>
+          <div>
+            <h2 className="type-heading">{race ? `${season} playoff race` : `${season} Standings`}</h2>
+            {race ? (
+              <p className="type-body-sm mt-1 text-muted-foreground">
+                Seeds 1 to 6 make the playoffs. Seeds 7 to 10 go to the play-in.
+              </p>
+            ) : null}
+          </div>
           <div className="flex gap-1">
             {(
               [
@@ -51,6 +61,7 @@ export function HomeStandingsBoard({
         title={conference === "west" ? "West" : "East"}
         rows={rows}
         compact
+        seedLines={race}
       />
     </section>
   );

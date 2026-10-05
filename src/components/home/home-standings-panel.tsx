@@ -3,7 +3,14 @@ import { isPreseasonRosterSeason } from "@/data/providers/nba/espn-roster-client
 import { getLeagueStandings } from "@/data/queries";
 import { shiftCanonicalSeason } from "@/lib/player-stat-comps";
 
-export async function HomeStandingsPanel({ season }: { season: string }) {
+export async function HomeStandingsPanel({
+  season,
+  race = false,
+}: {
+  season: string;
+  race?: boolean;
+}) {
+  const shown = race ? 10 : 8;
   try {
     // In the offseason, skip a guaranteed-empty current-season request and
     // load the completed standings directly.
@@ -37,8 +44,9 @@ export async function HomeStandingsPanel({ season }: { season: string }) {
     return (
       <HomeStandingsBoard
         season={displaySeason}
-        east={east.slice(0, 8)}
-        west={west.slice(0, 8)}
+        east={east.slice(0, shown)}
+        west={west.slice(0, shown)}
+        race={race && displaySeason === season}
       />
     );
   } catch {

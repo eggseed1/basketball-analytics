@@ -9,8 +9,8 @@ import { resolveTeamBrand } from "@/lib/nba-brand";
 /**
  * Compact Home module - recent ESPN archive events, same query as Transactions.
  */
-export async function OffseasonPulsePanel() {
-  const page = await listTransactionEvents({}, { page: 1, pageSize: 5 }).catch(
+export async function OffseasonPulsePanel({ limit = 5 }: { limit?: number } = {}) {
+  const page = await listTransactionEvents({}, { page: 1, pageSize: limit }).catch(
     () => null
   );
   const events = page?.events ?? [];

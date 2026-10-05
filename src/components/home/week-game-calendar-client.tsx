@@ -13,7 +13,7 @@ type StripGame = GameSummary & {
 /** Client strip - reuses the shared live scoreboard poller (no separate architecture). */
 export function WeekGameCalendarClient({
   season,
-  mode: _mode,
+  mode,
   games: initialGames,
 }: {
   season: string;
@@ -23,7 +23,9 @@ export function WeekGameCalendarClient({
   return (
     <section className="sports-card flex flex-col gap-3 p-4 sm:p-[21px]">
       <div className="flex min-w-0 items-center justify-between gap-2">
-        <h2 className="type-heading min-w-0">Upcoming Games</h2>
+        <h2 className="type-heading min-w-0">
+          {mode === "week" ? "This week's games" : "Upcoming games"}
+        </h2>
         <TextLink
           href="/scores?view=week"
           className="type-body-sm shrink-0 text-muted-foreground"

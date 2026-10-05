@@ -200,7 +200,8 @@
     "cf-typegen": "wrangler types --env-interface CloudflareEnv cloudflare-env.d.ts",
     "roster:sync": "node scripts/build-runtime-current-roster.mjs",
     "front-office:sync": "npx tsx scripts/sync-team-front-office.ts && node scripts/build-runtime-front-office-snapshot.mjs",
-    "drbl:season-readiness": "tsx scripts/drbl-season-readiness.ts"
+    "drbl:season-readiness": "tsx scripts/drbl-season-readiness.ts",
+    "test:home-season-moment": "tsx scripts/test-home-season-moment.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
