@@ -20,6 +20,7 @@ import {
   rangeLabel,
   toneClass,
 } from "@/components/on-off/on-off-parts";
+import { OnOffSeasonTable, type OnOffSeasonTableRow } from "@/components/on-off/on-off-season-table";
 import { OnOffTrendChart } from "@/components/on-off/on-off-trend";
 import { MetricHelp } from "@/components/learn/metric-help";
 import { SegmentedControl } from "@/components/ui/segmented-control";
@@ -445,13 +446,17 @@ function Lineups({ d }: { d: PlayerOnOffDetail }) {
 }
 
 export function PlayerOnOffPanel({
+  playerId,
   playerName,
   season,
   phases,
+  history,
 }: {
+  playerId: string;
   playerName: string;
   season: string;
   phases: { regular: PlayerOnOffStint[]; playoffs?: PlayerOnOffStint[] };
+  history: OnOffSeasonTableRow[];
 }) {
   const [view, setView] = useState<OnOffView>("clean");
   const [phase, setPhase] = useState<OnOffPhase>("regular");
@@ -524,6 +529,19 @@ export function PlayerOnOffPanel({
           </p>
         )}
       </div>
+
+      {history.length > 1 ? (
+        <div className="flex flex-col gap-3">
+          <h3 className={type.heading}>Season by season</h3>
+          <OnOffSeasonTable
+            rows={history}
+            view={view}
+            playerId={playerId}
+            season={season}
+            phase={activePhase}
+          />
+        </div>
+      ) : null}
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Four factors</h3>

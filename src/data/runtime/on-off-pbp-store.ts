@@ -27,6 +27,8 @@ function cloudflareAssets(): AssetsFetcher | null {
   }
 }
 
+/** Parsed team files run near 1 MB each; a Worker isolate has 128 MB in total. */
+const CACHE_MAX = 40;
 const cache = new Map<string, Promise<unknown>>();
 
 async function loadJson<T>(relative: string): Promise<T | null> {
@@ -49,12 +51,17 @@ async function loadJson<T>(relative: string): Promise<T | null> {
 
 function cached<T>(relative: string): Promise<T | null> {
   let hit = cache.get(relative) as Promise<T | null> | undefined;
-  if (!hit) {
+  if (hit) {
+    cache.delete(relative);
+  } else {
     hit = loadJson<T>(relative).then((json) => {
       if (json == null) cache.delete(relative);
       return json;
     });
-    cache.set(relative, hit);
+  }
+  cache.set(relative, hit);
+  while (cache.size > CACHE_MAX) {
+    cache.delete(cache.keys().next().value!);
   }
   return hit;
 }

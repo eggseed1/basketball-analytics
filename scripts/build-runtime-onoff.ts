@@ -14,6 +14,7 @@ import path from "node:path";
 import { listSeasonGames, processGame } from "../drbl/index";
 import type { DrblEvent, DrblPossession, DrblProcessedGame } from "../drbl/types";
 import { NBA_TEAM_META } from "../src/data/providers/nba/nba-team-meta";
+import { Z95 } from "../src/lib/on-off/derive";
 import {
   CLUTCH_MARGIN,
   CLUTCH_SECONDS,
@@ -524,16 +525,24 @@ async function buildSeason(season: string, phase: OnOffPhase) {
     for (const [id, p] of players) {
       const cmp = ON_OFF_VIEWS.map((view) => compareOnOff(t.views[view], p.views[view], rates[view]));
       const r1 = (x: number | null) => (x == null ? null : Math.round(x * 10) / 10);
+      const range = (c: (typeof cmp)[number]): [number, number] | null =>
+        c.netDiff == null || c.netDiffSe == null
+          ? null
+          : [r1(c.netDiff - Z95 * c.netDiffSe)!, r1(c.netDiff + Z95 * c.netDiffSe)!];
       const perView = <T>(f: (i: number) => T): [T, T, T] => [f(0), f(1), f(2)];
+      const possIn = (s: OnOffSplit) => s.o[K.poss]! + s.d[K.poss]!;
       leaguePlayers.push({
         id,
         teamId,
         name: p.name,
-        poss: perView((i) => {
-          const v = p.views[ON_OFF_VIEWS[i]!];
-          return v.o[K.poss]! + v.d[K.poss]!;
+        gp: p.games.size,
+        poss: perView((i) => possIn(p.views[ON_OFF_VIEWS[i]!])),
+        offPoss: perView((i) => {
+          const view = ON_OFF_VIEWS[i]!;
+          return possIn(t.views[view]) - possIn(p.views[view]);
         }),
         netDiff: perView((i) => r1(cmp[i]!.netDiff)),
+        netDiffRange: perView((i) => range(cmp[i]!)),
         netLuckAdjDiff: perView((i) => r1(cmp[i]!.netLuckAdjDiff)),
         ortgDiff: perView((i) => r1(cmp[i]!.ortgDiff)),
         drtgDiff: perView((i) => r1(cmp[i]!.drtgDiff)),

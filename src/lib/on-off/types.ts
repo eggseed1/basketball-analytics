@@ -1,6 +1,6 @@
 import type { LeagueRates, OnOffSplit, OnOffView } from "@/lib/on-off/metrics";
 
-export const ON_OFF_FILE_VERSION = 3;
+export const ON_OFF_FILE_VERSION = 4;
 
 export type OnOffPhase = "regular" | "playoffs";
 export const ON_OFF_PHASES: readonly OnOffPhase[] = ["regular", "playoffs"];
@@ -59,8 +59,13 @@ export type LeagueOnOffPlayer = {
   id: string;
   teamId: string;
   name: string;
+  gp: number;
   poss: PerView<number>;
+  /** Team possessions with him off the floor, offense plus defense. */
+  offPoss: PerView<number>;
   netDiff: PerView<number | null>;
+  /** 95% range of netDiff, from the unrounded swing and standard error. */
+  netDiffRange: PerView<[number, number] | null>;
   netLuckAdjDiff: PerView<number | null>;
   ortgDiff: PerView<number | null>;
   drtgDiff: PerView<number | null>;

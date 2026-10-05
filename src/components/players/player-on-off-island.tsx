@@ -1,6 +1,11 @@
 import { PlayerOnOffPanel, type PlayerOnOffStint } from "@/components/players/player-on-off-panel";
 import { teamColorAuto } from "@/components/players/player-play-types";
-import { getOnOffSeasons, getPlayerOnOffData, type PlayerOnOffStintData } from "@/data/queries/on-off";
+import {
+  getOnOffSeasons,
+  getPlayerOnOffData,
+  getPlayerOnOffSeasons,
+  type PlayerOnOffStintData,
+} from "@/data/queries/on-off";
 import { playerDetail } from "@/lib/on-off/derive";
 import { type } from "@/lib/design-system";
 import { cn } from "@/lib/utils";
@@ -27,17 +32,20 @@ function toStints(data: PlayerOnOffStintData[]): PlayerOnOffStint[] {
 }
 
 export async function PlayerOnOffIsland({
+  playerId,
   nbaIds,
   season,
   playerName,
 }: {
+  playerId: string;
   nbaIds: Array<string | null | undefined>;
   season: string;
   playerName: string;
 }) {
-  const [regularData, playoffData] = await Promise.all([
+  const [regularData, playoffData, history] = await Promise.all([
     getPlayerOnOffData(nbaIds, season),
     getPlayerOnOffData(nbaIds, season, "playoffs"),
+    getPlayerOnOffSeasons(nbaIds),
   ]);
   const regular = toStints(regularData);
   const playoffs = toStints(playoffData);
@@ -60,9 +68,11 @@ export async function PlayerOnOffIsland({
 
   return (
     <PlayerOnOffPanel
+      playerId={playerId}
       playerName={playerName}
       season={season}
       phases={{ regular, ...(playoffs.length ? { playoffs } : {}) }}
+      history={history}
     />
   );
 }

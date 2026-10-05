@@ -783,6 +783,7 @@ export default async function PlayerPage({
             ) : null}
             <GlassSurface effect="css" className="p-4 sm:p-6" honor={honor}>
               <PlayerOnOffIsland
+                playerId={playerId}
                 nbaIds={[identity?.nbaId, /^\d+$/.test(playerId) ? playerId : null]}
                 season={statsCtx.statsSeason}
                 playerName={displayName}

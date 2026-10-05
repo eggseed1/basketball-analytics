@@ -7,7 +7,9 @@ import assert from "node:assert/strict";
 import fs from "node:fs";
 import path from "node:path";
 
+import { fmtSigned, rangeLabel } from "../src/components/on-off/on-off-parts";
 import {
+  leagueSeasonRows,
   lineupRows,
   onOffTrend,
   playerDetail,
@@ -261,6 +263,21 @@ function checkSeason(root: string, season: string, phase: OnOffPhase, teams: str
     assert.ok(file.team.clutch.o[K.poss]! < file.team.all.o[K.poss]! * 0.15, "clutch is a small slice");
     const rated = file.team.all.o[K.ownQN]! / (file.team.all.o[K.poss]! * 5);
     assert.ok(rated > 0.95, `${label} rated coverage ${rated.toFixed(3)}`);
+    for (const view of ON_OFF_VIEWS) {
+      for (const row of teamPlayerRows(file, league, view).slice(0, 3)) {
+        const summary = leagueSeasonRows(league, new Set([row.id])).find((r) => r.teamId === teamId);
+        assert.ok(summary, `${label} ${row.name} is in the league file`);
+        const s = summary.views[view];
+        assert.equal(s.poss, row.poss, `${label} ${row.name} ${view} poss`);
+        assert.equal(s.smallSample, row.smallSample, `${label} ${row.name} ${view} small sample`);
+        assert.equal(s.percentile, row.netDiffPercentile, `${label} ${row.name} ${view} percentile`);
+        const label95 = rangeLabel(row.cmp.netDiff, row.cmp.netDiffSe);
+        if (label95) {
+          assert.equal(`${fmtSigned(s.range![0])} to ${fmtSigned(s.range![1])}`, label95, `${label} ${row.name} ${view} range`);
+        }
+        assert.equal(summary.gp, row.gp, `${label} ${row.name} gp`);
+      }
+    }
     if (phase === "playoffs") {
       const ranked = teamPlayerRows(file, league, "all").some((r) => r.netDiffPercentile != null);
       assert.equal(ranked, false, "playoff splits carry no league rank");

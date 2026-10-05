@@ -1,5 +1,10 @@
 import { resolveNbaIdForDrbl } from "@/data/identity/player-identity";
-import { getOnOffPlayoffTeams, getOnOffSeasons, getPlayerOnOffData } from "@/data/queries/on-off";
+import {
+  getOnOffPlayoffTeams,
+  getOnOffSeasons,
+  getPlayerOnOffData,
+  getPlayerOnOffSeasons,
+} from "@/data/queries/on-off";
 import { Z95, playerDetail, SMALL_SAMPLE_POSS } from "@/lib/on-off/derive";
 import { playerHref } from "@/lib/player-page-contract";
 
@@ -123,6 +128,12 @@ export async function execPlayerOnOff(ast: BasketballQueryAst): Promise<AskDrblR
     context.push(
       `${r.name} takes the most extra floor time when he sits: ${Math.round(r.shareWithout * 100)}% of possessions without him, ${Math.round(r.shareWith * 100)}% with him.`
     );
+  }
+  const yearly = (await getPlayerOnOffSeasons([nbaId, player.id]))
+    .filter((r) => r.phase === "regular" && r.views[view].poss > 0)
+    .map((r) => `${r.season} ${r.teamAbbr} ${signed(r.views[view].swing)}${r.views[view].smallSample ? " (small sample)" : ""}`);
+  if (yearly.length > 1) {
+    context.push(`Regular-season swing by year: ${yearly.join(", ")}.`);
   }
   if (stints.length > 1) {
     context.push(`He also played for ${stints.slice(1).map((s) => s.file.teamAbbr).join(", ")} that season. This answer covers ${file.teamAbbr}, where he logged the most possessions.`);

@@ -89,8 +89,10 @@ function percentileOf(
     .filter((p) => p.poss[i] >= PERCENTILE_MIN_POSS && p.netDiff[i] != null)
     .map((p) => p.netDiff[i]!);
   if (pool.length < 20) return null;
-  const below = pool.filter((x) => x < value).length;
-  const equal = pool.filter((x) => x === value).length;
+  // The pool is stored to one decimal; compare at the same precision so ties count as ties.
+  const v = Math.round(value * 10) / 10;
+  const below = pool.filter((x) => x < v).length;
+  const equal = pool.filter((x) => x === v).length;
   return Math.round(((below + equal / 2) / pool.length) * 100);
 }
 
@@ -383,4 +385,56 @@ export function playerDetail(
     replacements: replacements(file, playerId, view),
     trend: onOffTrend(file, playerId, view),
   };
+}
+
+export type OnOffSeasonView = {
+  poss: number;
+  offPoss: number;
+  swing: number | null;
+  range: [number, number] | null;
+  luckAdj: number | null;
+  percentile: number | null;
+  smallSample: boolean;
+};
+
+/** One team-season of a player's on/off, read from the league summary file. */
+export type OnOffSeasonRow = {
+  season: string;
+  phase: LeagueOnOffFile["phase"];
+  teamId: string;
+  gp: number;
+  views: Record<OnOffView, OnOffSeasonView>;
+};
+
+const VIEWS: readonly OnOffView[] = ["clean", "all", "clutch"];
+
+export function leagueSeasonRows(league: LeagueOnOffFile, ids: ReadonlySet<string>): OnOffSeasonRow[] {
+  return league.players
+    .filter((p) => ids.has(p.id))
+    .sort((a, b) => b.poss[1] - a.poss[1])
+    .map((p) => ({
+      season: league.season,
+      phase: league.phase,
+      teamId: p.teamId,
+      gp: p.gp,
+      views: Object.fromEntries(
+        VIEWS.map((view) => {
+          const i = VIEW_INDEX[view];
+          const poss = p.poss[i];
+          const offPoss = p.offPoss[i];
+          return [
+            view,
+            {
+              poss,
+              offPoss,
+              swing: p.netDiff[i],
+              range: p.netDiffRange[i],
+              luckAdj: p.netLuckAdjDiff[i],
+              percentile: percentileOf(league, view, p.netDiff[i], poss),
+              smallSample: poss < SMALL_SAMPLE_POSS || offPoss < SMALL_SAMPLE_POSS,
+            },
+          ];
+        })
+      ) as Record<OnOffView, OnOffSeasonView>,
+    }));
 }
