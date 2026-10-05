@@ -3,6 +3,7 @@
  */
 import assert from "node:assert/strict";
 
+import { espnLiveScoreboardDateKeys } from "../src/data/providers/nba/scoreboard-client";
 import type { Game } from "../src/data/types";
 import {
   __resetScoreboardFeedCachesForTests,
@@ -90,6 +91,33 @@ async function main() {
   assert.equal(day.source, "cached-espn");
   assert.equal(day.isStale, true);
   assert.equal(day.data.games.length, 1);
+
+  // Live scores must not sit behind the 10 minute catalog cache.
+  __resetScoreboardFeedCachesForTests();
+  let homeScore = 50;
+  __setScoreboardDayLoaderForTests(async () => [
+    { ...fakeGame("live1"), status: "in_progress", homeScore: homeScore++ } as Game,
+  ]);
+  const first = await getLiveScoreboardFeed({ season: "2025-26" });
+  const forced = await getLiveScoreboardFeed({ season: "2025-26", force: true });
+  assert.equal(first.data.games[0]?.homeScore, 50);
+  assert.equal(forced.data.games[0]?.homeScore, 51);
+  const cached = await getLiveScoreboardFeed({ season: "2025-26" });
+  assert.equal(cached.data.games[0]?.homeScore, 51);
+
+  // Late west coast games stay in the live feed past midnight ET.
+  assert.deepEqual(
+    espnLiveScoreboardDateKeys(new Date("2026-10-05T04:30:00Z")),
+    ["20261004", "20261005"]
+  );
+  assert.deepEqual(
+    espnLiveScoreboardDateKeys(new Date("2026-03-01T05:30:00Z")),
+    ["20260228", "20260301"]
+  );
+  assert.deepEqual(
+    espnLiveScoreboardDateKeys(new Date("2026-10-05T14:00:00Z")),
+    ["20261005"]
+  );
 
   __resetScoreboardFeedCachesForTests();
   console.log("test-scoreboard-resilience: ok");

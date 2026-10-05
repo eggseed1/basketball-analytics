@@ -1,6 +1,6 @@
 /**
  * Run every offline `test:*` package script with bounded concurrency.
- * Live-network suites (`*live*`) and composite runners are skipped.
+ * Live-network suites (`*:live-espn`) and composite runners are skipped.
  *
  *   npm test
  *   npm test -- --only=team-identity,ask-drbl
@@ -9,7 +9,7 @@ import { spawn } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 
-const SKIP = /live|identity-regressions/;
+const SKIP = /:live-espn|identity-regressions/;
 const TIMEOUT_MS = 180_000;
 const CONCURRENCY = Math.max(2, Math.min(6, os.cpus().length - 1));
 

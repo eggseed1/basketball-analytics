@@ -10,10 +10,13 @@ import {
   sharedClearPrefix,
   sharedGetOrSet,
   sharedPeek,
+  sharedRemember,
 } from "@/data/cache/shared-ttl-cache";
+import { LIVE_SCOREBOARD_TTL_MS } from "@/lib/live-refresh-policy";
 import type { Game, GameSummary } from "@/data/types";
 import {
   addDaysIso,
+  espnLiveScoreboardDateKeys,
   fetchHomeWeekStrip,
   fetchRecentScoreboardGames,
   fetchScoreboardDay,
@@ -80,24 +83,33 @@ const homeStripCache = new Map<
 >();
 const recentCache = new Map<string, CacheEntry<Game[]>>();
 
+/**
+ * Days with games in progress. The 10 minute catalog cache would freeze scores
+ * inside a warm isolate, so live days get the live TTL and no stale window.
+ */
+const LIVE_CACHE = { ttlMs: LIVE_SCOREBOARD_TTL_MS, staleMs: 0 } as const;
+
 async function softLoad<T>(options: {
   key: string;
   cache: Map<string, CacheEntry<T>>;
   load: () => Promise<T>;
   label: string;
   empty: T;
+  live?: boolean;
+  bypass?: boolean;
 }): Promise<ScoreboardFeedResult<T>> {
   const sharedKey = `scoreboard-soft:${options.key}`;
-  try {
-    const value = await sharedGetOrSet(
-      sharedKey,
-      {
+  const cacheOptions = options.live
+    ? { ...LIVE_CACHE, tags: ["scoreboard-soft", sharedKey] }
+    : {
         ttlMs: SOFT_TTL_MS,
         staleMs: SOFT_STALE_MS,
         tags: ["scoreboard-soft", sharedKey],
-      },
-      options.load
-    );
+      };
+  try {
+    const value = options.bypass
+      ? sharedRemember(sharedKey, await options.load(), cacheOptions)
+      : await sharedGetOrSet(sharedKey, cacheOptions, options.load);
     const retrievedAt = new Date().toISOString();
     options.cache.set(options.key, { value, retrievedAt });
     return {
@@ -321,6 +333,8 @@ export async function getLiveScoreboardFeed(
     cache: dayCache,
     label: "live day scoreboard",
     empty: [] as Game[],
+    live: true,
+    bypass: options.force === true,
     load: () =>
       loadDay({
         season,
@@ -366,6 +380,7 @@ export async function getScoreboardDateFeed(options: {
     cache: dateCache,
     label: `day ${options.date}`,
     empty: [] as Game[],
+    live: espnLiveScoreboardDateKeys().includes(dateKey),
     load: () => loadDay({ dateKey, season }),
   });
   return { ...result, data: result.data.map(toGameSummary) };

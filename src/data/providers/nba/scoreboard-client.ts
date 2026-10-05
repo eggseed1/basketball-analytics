@@ -663,6 +663,28 @@ export function espnScoreboardDateKey(now = new Date()): string {
 }
 
 /**
+ * ET days whose games can still be in progress. West coast tips run past
+ * midnight ET, so until 6am the previous day's slate stays in the live feed.
+ */
+export function espnLiveScoreboardDateKeys(now = new Date()): string[] {
+  const today = espnScoreboardDateKey(now);
+  const hour = Number(
+    new Intl.DateTimeFormat("en-US", {
+      timeZone: "America/New_York",
+      hour: "numeric",
+      hourCycle: "h23",
+    }).format(now)
+  );
+  if (!(hour < 6)) return [today];
+  const y = Number(today.slice(0, 4));
+  const m = Number(today.slice(4, 6));
+  const d = Number(today.slice(6, 8));
+  const prev = new Date(Date.UTC(y, m - 1, d - 1));
+  const yesterday = `${prev.getUTCFullYear()}${String(prev.getUTCMonth() + 1).padStart(2, "0")}${String(prev.getUTCDate()).padStart(2, "0")}`;
+  return [yesterday, today];
+}
+
+/**
  * Lightweight day scoreboard for live refresh — short TTL, optional bypass.
  * One ESPN request covers all games that day (batch, not N per game).
  */
@@ -675,22 +697,34 @@ export async function fetchScoreboardDay(options: {
 }): Promise<Game[]> {
   const season =
     options.season ?? canonicalSeasonFromStartYear(currentNbaStartYear());
-  const dateKey = options.dateKey ?? espnScoreboardDateKey();
-  const payload = await espnFetchJson<ScoreboardResponse>(
-    `${SITE_API}/apis/site/v2/sports/basketball/nba/scoreboard?dates=${dateKey}&limit=100`,
-    {
-      ttlMs: LIVE_SCOREBOARD_TTL_MS,
-      retries: 1,
-      bypassCache: options.force === true,
-      signal: options.signal,
-    }
+  const dateKeys = options.dateKey
+    ? [options.dateKey]
+    : espnLiveScoreboardDateKeys();
+  const fetchDay = (dateKey: string) =>
+    espnFetchJson<ScoreboardResponse>(
+      `${SITE_API}/apis/site/v2/sports/basketball/nba/scoreboard?dates=${dateKey}&limit=100`,
+      {
+        ttlMs: LIVE_SCOREBOARD_TTL_MS,
+        retries: 1,
+        bypassCache: options.force === true,
+        signal: options.signal,
+      }
+    );
+  const settled = await Promise.allSettled(dateKeys.map(fetchDay));
+  const payloads = settled.flatMap((r) =>
+    r.status === "fulfilled" ? [r.value] : []
   );
+  if (payloads.length === 0) {
+    throw (settled[0] as PromiseRejectedResult).reason;
+  }
 
   const byId = new Map<string, Game>();
-  for (const event of payload.events ?? []) {
-    const game = transformEspnScheduleEvent(event, season);
-    if (!game) continue;
-    if (!byId.has(game.id)) byId.set(game.id, game);
+  for (const payload of payloads) {
+    for (const event of payload.events ?? []) {
+      const game = transformEspnScheduleEvent(event, season);
+      if (!game) continue;
+      if (!byId.has(game.id)) byId.set(game.id, game);
+    }
   }
   return [...byId.values()];
 }

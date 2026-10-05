@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 
 import { HistoricalTeamMark } from "@/components/brand/historical-team-mark";
 import { MatchupWashCard } from "@/components/brand/team-wash-card";
@@ -276,6 +277,32 @@ function LineScore({
   );
 }
 
+const LIVE_BOX_SCORE_REFRESH_MS = 30_000;
+
+/**
+ * The header polls scores on its own; box score and team tables are server
+ * rendered, so re-render the route while the game is live and once at final.
+ */
+function useLiveBoxScoreRefresh(status: GameSummary["status"]) {
+  const router = useRouter();
+  const liveNow = isLiveLikeStatus(status);
+  const final = isFinalStatus(status);
+  const wasLive = useRef(liveNow);
+
+  useEffect(() => {
+    if (wasLive.current && final) router.refresh();
+    wasLive.current = liveNow;
+  }, [liveNow, final, router]);
+
+  useEffect(() => {
+    if (!liveNow) return;
+    const id = window.setInterval(() => {
+      if (document.visibilityState === "visible") router.refresh();
+    }, LIVE_BOX_SCORE_REFRESH_MS);
+    return () => window.clearInterval(id);
+  }, [liveNow, router]);
+}
+
 /**
  * Game hero: teams, score, status and the line score.
  * Refuses malformed empty FINAL shells (? 0-0 ?).
@@ -297,6 +324,7 @@ export function GameIdentityShell({
     enabled: needsLivePolling(game.status),
   });
   const shown = live ?? summary;
+  useLiveBoxScoreRefresh(shown.status);
   if (!validation.canRenderScoreHeader) {
     return (
       <header className="sports-card flex flex-col gap-2 p-4 sm:p-5">
