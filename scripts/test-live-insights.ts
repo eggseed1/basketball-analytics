@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import type { PlayByPlayEvent } from "@/data/types/play-by-play";
 import { buildLiveInsights, buildRightNow, foulTroubleThreshold } from "@/lib/games/live-insights";
 import { buildWinProbabilitySeries, homeWinProbabilityAt } from "@/lib/game-win-probability";
+import { parseOfficialTeamStats } from "@/lib/games/official-team-stats";
 
 let n = 0;
 let home = 0;
@@ -130,6 +131,33 @@ assert.equal(foulTroubleThreshold(1), 2);
 assert.equal(foulTroubleThreshold(2), 3);
 assert.equal(foulTroubleThreshold(3), 4);
 assert.equal(foulTroubleThreshold(5), 5);
+
+const boxTeams = [
+  {
+    team: { id: "7" },
+    statistics: [
+      { name: "pointsInPaint", displayValue: "28" },
+      { name: "fastBreakPoints", displayValue: "6" },
+      { name: "turnoverPoints", displayValue: "11" },
+    ],
+  },
+  {
+    team: { id: "26" },
+    statistics: [
+      { name: "pointsInPaint", displayValue: "18" },
+      { name: "fastBreakPoints", displayValue: "10" },
+      { name: "turnoverPoints", displayValue: "10" },
+    ],
+  },
+];
+const official = parseOfficialTeamStats(boxTeams, { homeProviderTeamId: "7", awayProviderTeamId: "26" });
+assert.deepEqual(official, {
+  home: { pointsInPaint: 28, fastBreakPoints: 6, pointsOffTurnovers: 10 },
+  away: { pointsInPaint: 18, fastBreakPoints: 10, pointsOffTurnovers: 11 },
+}, "turnoverPoints is conceded, so it belongs to the other side");
+const swapped = parseOfficialTeamStats(boxTeams, { homeProviderTeamId: "26", awayProviderTeamId: "7" });
+assert.equal(swapped?.home.pointsInPaint, 18, "sides follow team ids, not array order");
+assert.equal(parseOfficialTeamStats(boxTeams, { homeProviderTeamId: "7" }), null, "missing id means no stats");
 
 const near = (v: number, want: number, tol: number, msg: string) =>
   assert.ok(Math.abs(v - want) <= tol, `${msg}: got ${v.toFixed(3)}`);

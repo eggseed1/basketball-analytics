@@ -9,6 +9,7 @@ import { MoreInfo } from "@/components/ui/more-info";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
 import { periodName } from "@/lib/games/court-events";
+import type { OfficialTeamStats } from "@/lib/games/official-team-stats";
 import {
   buildLiveInsights,
   buildRightNow,
@@ -29,6 +30,11 @@ type Labels = { away: string; home: string };
 
 const PBP_NOTE =
   "Counts come from play-by-play and can differ slightly from the official box score.";
+
+function listJoin(items: string[]): string {
+  if (items.length <= 2) return items.join(" and ");
+  return `${items.slice(0, -1).join(", ")} and ${items.at(-1)}`;
+}
 
 function statLine(l: PlayerLine): string {
   const parts = [`${l.pts} PTS`, `${l.reb} REB`, `${l.ast} AST`];
@@ -134,14 +140,25 @@ function PossessionBattleCard({
   colors,
   live,
   teamKeys,
+  official,
 }: {
   battle: PossessionBattle;
   labels: Labels;
   colors: TeamColors;
   live: boolean;
   teamKeys: { away: string; home: string };
+  official: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
 }) {
   const leader: Side | null = battle.net > 0 ? "home" : battle.net < 0 ? "away" : null;
+  const both = (pick: (s: OfficialTeamStats) => number | null) => {
+    if (!official) return null;
+    const away = pick(official.away);
+    const home = pick(official.home);
+    return away != null && home != null ? { away, home } : null;
+  };
+  const offTurnovers = both((s) => s.pointsOffTurnovers);
+  const paint = both((s) => s.pointsInPaint);
+  const fastBreak = both((s) => s.fastBreakPoints);
   const rows: { id: string; label: string; away: number; home: number; lowerIsBetter?: boolean }[] = [
     { id: "extra", label: "Extra chances", away: battle.away.extraChances, home: battle.home.extraChances },
     { id: "oreb", label: "Offensive rebounds", away: battle.away.oreb, home: battle.home.oreb },
@@ -149,8 +166,20 @@ function PossessionBattleCard({
     { id: "fga", label: "Shot attempts", away: battle.away.fga, home: battle.home.fga },
     { id: "fta", label: "Free throw attempts", away: battle.away.fta, home: battle.home.fta },
     { id: "second", label: "Second-chance points", away: battle.away.secondChancePoints, home: battle.home.secondChancePoints },
-    { id: "offtov", label: "Points off turnovers", away: battle.away.pointsOffTurnovers, home: battle.home.pointsOffTurnovers },
+    {
+      id: "offtov",
+      label: "Points off turnovers",
+      away: offTurnovers?.away ?? battle.away.pointsOffTurnovers,
+      home: offTurnovers?.home ?? battle.home.pointsOffTurnovers,
+    },
+    ...(paint ? [{ id: "paint", label: "Points in the paint", ...paint }] : []),
+    ...(fastBreak ? [{ id: "fastbreak", label: "Fast-break points", ...fastBreak }] : []),
   ];
+  const officialRows = [
+    offTurnovers ? "points off turnovers" : null,
+    paint ? "points in the paint" : null,
+    fastBreak ? "fast-break points" : null,
+  ].filter((v): v is string => v != null);
   const sideLabel = (s: Side) => labels[s];
 
   return (
@@ -253,7 +282,10 @@ function PossessionBattleCard({
         <p>
           Second-chance points are scored after an offensive rebound, before the other team gets the
           ball. Points off turnovers are scored on the possession after the other team turns it
-          over. Team rebounds move the ball but don&apos;t count as rebounds. {PBP_NOTE}
+          over. Team rebounds move the ball but don&apos;t count as rebounds.{" "}
+          {officialRows.length
+            ? `ESPN's box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
+            : PBP_NOTE}
         </p>
       </MoreInfo>
     </MatchupWashCard>
@@ -390,6 +422,7 @@ export function GameLiveInsights({
   teamKeys,
   season,
   status,
+  official = null,
 }: {
   events: PlayByPlayEvent[];
   players: PlayerGame[];
@@ -398,6 +431,7 @@ export function GameLiveInsights({
   teamKeys: { away: string; home: string };
   season: string;
   status: string;
+  official?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
 }) {
   const final = status === "final";
   const insights = useMemo(() => {
@@ -438,6 +472,7 @@ export function GameLiveInsights({
           colors={colors}
           live={!final}
           teamKeys={teamKeys}
+          official={official}
         />
       ) : null}
       {hasQuarters ? (

@@ -14,6 +14,9 @@ export type LineupPlayer = {
   name: string;
   jersey?: string;
   position?: string;
+  /** Live box score line; absent when ESPN's box doesn't list the player yet. */
+  points?: number;
+  fouls?: number;
 };
 
 export type TeamLineup = {
@@ -259,6 +262,54 @@ async function fromCdn(gameId: string): Promise<GameLineups | null> {
   };
 }
 
+type CdnStatsTeam = {
+  statistics?: Array<{
+    keys?: string[];
+    athletes?: Array<{ athlete?: { id?: string }; stats?: string[] }>;
+  }>;
+};
+
+/** Points and fouls per player from ESPN's live box score. */
+async function liveBoxLines(gameId: string): Promise<Map<string, { points: number; fouls: number }>> {
+  const summary = (await fetchEspnCdnGameSummary(gameId)) as unknown as {
+    boxscore?: { players?: CdnStatsTeam[] };
+  } | null;
+  const out = new Map<string, { points: number; fouls: number }>();
+  for (const team of summary?.boxscore?.players ?? []) {
+    const block = team.statistics?.[0];
+    const keys = block?.keys ?? [];
+    const pi = keys.indexOf("points");
+    const fi = keys.indexOf("fouls");
+    if (pi < 0 || fi < 0) continue;
+    for (const a of block?.athletes ?? []) {
+      const id = a.athlete?.id;
+      const points = Number(a.stats?.[pi]);
+      const fouls = Number(a.stats?.[fi]);
+      if (id && Number.isFinite(points) && Number.isFinite(fouls)) {
+        out.set(String(id), { points, fouls });
+      }
+    }
+  }
+  return out;
+}
+
+async function withLiveLines(value: GameLineups | null): Promise<GameLineups | null> {
+  if (!value || ![value.away, value.home].some((s) => s?.onCourt)) return value;
+  const lines = await liveBoxLines(value.gameId).catch(() => null);
+  if (!lines?.size) return value;
+  const attach = (side: TeamLineup | null): TeamLineup | null =>
+    side?.onCourt
+      ? {
+          ...side,
+          onCourt: side.onCourt.map((p) => {
+            const line = lines.get(p.playerId);
+            return line ? { ...p, ...line } : p;
+          }),
+        }
+      : side;
+  return { ...value, away: attach(value.away), home: attach(value.home) };
+}
+
 function hasAnyLineup(value: GameLineups | null): boolean {
   if (!value) return false;
   return [value.away, value.home].some(
@@ -279,9 +330,9 @@ export async function fetchEspnGameLineups(
 
   const request = (async () => {
     const core = await fromCore(id).catch(() => null);
-    if (hasAnyLineup(core)) return core;
+    if (hasAnyLineup(core)) return withLiveLines(core);
     const cdn = await fromCdn(id).catch(() => null);
-    return hasAnyLineup(cdn) ? cdn : core;
+    return withLiveLines(hasAnyLineup(cdn) ? cdn : core);
   })()
     .then((value) => {
       cache.set(id, { at: Date.now(), value });

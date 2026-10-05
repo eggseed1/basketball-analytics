@@ -16,6 +16,7 @@ import { GameTopPerformers } from "@/components/games/game-top-performers";
 import { GamePlayByPlayPanel } from "@/components/game/game-play-by-play";
 import type { PlayByPlayEvent, PlayerGame } from "@/data/types";
 import { type } from "@/lib/design-system";
+import type { OfficialTeamStats } from "@/lib/games/official-team-stats";
 import { useChartTheme } from "@/lib/chart-theme";
 import { buildGameMatchupTheme } from "@/lib/game-matchup-theme";
 import { distinctTeamColors } from "@/lib/nba-brand";
@@ -56,12 +57,14 @@ export function GameLabView({
   players,
   events = [],
   pbpSource,
+  officialTeamStats = null,
   hidePeriodTable = false,
 }: {
   analysis: GameAnalysisSummary;
   players: PlayerGame[];
   events?: PlayByPlayEvent[];
   pbpSource?: string;
+  officialTeamStats?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
   /** Parent renders GameIdentityShell, so the lab never renders a hero. */
   omitHero?: boolean;
   /** The hero already shows the line score. */
@@ -127,6 +130,7 @@ export function GameLabView({
         teamKeys={{ away: awayKey, home: homeKey }}
         season={analysis.season}
         status={analysis.status}
+        official={officialTeamStats}
       />
       <MatchupWashCard
         awayTeamKey={awayKey}

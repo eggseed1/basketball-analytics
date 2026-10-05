@@ -12,6 +12,7 @@ import type {
 import { type } from "@/lib/design-system";
 import { parseTipOffMs } from "@/lib/game-countdown";
 import { isLiveLikeStatus, isPreTipStatus } from "@/lib/game-status";
+import { foulTroubleThreshold } from "@/lib/games/live-insights";
 import { cn } from "@/lib/utils";
 
 const LIVE_POLL_MS = 20_000;
@@ -64,7 +65,14 @@ function useGameLineups(gameId: string, mode: Mode) {
   return { data, loaded };
 }
 
-function PlayerList({ players }: { players: LineupPlayer[] }) {
+function PlayerList({
+  players,
+  troubleAt,
+}: {
+  players: LineupPlayer[];
+  /** Foul count that means trouble this period; null hides box lines (pregame). */
+  troubleAt: number | null;
+}) {
   return (
     <ul className="flex flex-col gap-1">
       {players.map((p) => (
@@ -81,6 +89,17 @@ function PlayerList({ players }: { players: LineupPlayer[] }) {
           {p.position ? (
             <span className={cn(type.caption, "shrink-0 text-muted-foreground")}>
               {p.position}
+            </span>
+          ) : null}
+          {troubleAt != null && p.points != null && p.fouls != null ? (
+            <span className={cn(type.caption, "ml-auto shrink-0 tabular-nums text-muted-foreground")}>
+              {p.points} PTS ·{" "}
+              <span
+                className={cn(p.fouls >= troubleAt && "font-semibold text-destructive")}
+                title={p.fouls >= troubleAt ? "Foul trouble" : undefined}
+              >
+                {p.fouls} PF
+              </span>
             </span>
           ) : null}
         </li>
@@ -168,7 +187,10 @@ export function GameLineupsPanel({
           <div key={side} className="flex min-w-0 flex-col gap-1.5">
             <p className={cn(type.caption, "font-semibold text-foreground")}>{label}</p>
             {players ? (
-              <PlayerList players={players} />
+              <PlayerList
+                players={players}
+                troubleAt={mode === "pregame" ? null : foulTroubleThreshold(game.period ?? 1)}
+              />
             ) : (
               <p className={cn(type.caption, "text-muted-foreground")}>{missing}</p>
             )}

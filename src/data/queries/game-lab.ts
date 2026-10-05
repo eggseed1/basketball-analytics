@@ -35,6 +35,10 @@ import { resolveCanonicalTeam } from "@/data/identity/team-map";
 import { finalizeBoxScorePlayers } from "@/data/providers/nba/enrich-box-score";
 import { looksLikeEspnEventId } from "@/data/identity/game-id";
 import { longUpstreamBudgetsEnabled } from "@/data/providers/nba/runtime-policy";
+import {
+  parseOfficialTeamStats,
+  type OfficialTeamStats,
+} from "@/lib/games/official-team-stats";
 export type { GameAnalysisSummary };
 
 export type GameAnalysisPayload = {
@@ -43,6 +47,7 @@ export type GameAnalysisPayload = {
   players: PlayerGame[];
   events: PlayByPlayEvent[];
   pbpSource?: string;
+  officialTeamStats?: { home: OfficialTeamStats; away: OfficialTeamStats } | null;
   /** Shell availability - mirrors coverage.availability. */
   availability: "full" | "partial" | "scoreboard";
 };
@@ -204,6 +209,7 @@ async function hydrateFromEspnCdn(
 ): Promise<{
   box: GameBoxScore | null;
   playByPlay: GamePlayByPlay | null;
+  boxTeams?: Parameters<typeof parseOfficialTeamStats>[0];
 }> {
   if (!looksLikeEspnEventId(gameId)) {
     return { box: null, playByPlay: null };
@@ -211,6 +217,8 @@ async function hydrateFromEspnCdn(
 
   const summary = await fetchEspnCdnGameSummary(gameId, { preferPlays: true });
   if (!summary) return { box: null, playByPlay: null };
+  const boxTeams = (summary as { boxscore?: { teams?: Parameters<typeof parseOfficialTeamStats>[0] } })
+    .boxscore?.teams;
 
   const endYear = summary.header?.season?.year;
   const season =
@@ -228,6 +236,7 @@ async function hydrateFromEspnCdn(
   return {
     box: box?.game?.id ? box : null,
     playByPlay: playByPlay.events.length > 0 ? playByPlay : null,
+    boxTeams,
   };
 }
 
@@ -390,6 +399,10 @@ export async function getGameAnalysis(
     players: alignedPlayers,
     events: playByPlay?.events ?? [],
     pbpSource: playByPlay?.source,
+    officialTeamStats: parseOfficialTeamStats(
+      "boxTeams" in hydrated.value ? hydrated.value.boxTeams : undefined,
+      orientedGame
+    ),
     availability,
   };
 }
