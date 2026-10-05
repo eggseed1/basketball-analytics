@@ -9,10 +9,12 @@ import {
   fmtCount,
   fmtPct,
   fmtRating,
+  fmtRatingDelta,
   fmtSigned,
   percentileLabel,
   toneClass,
 } from "@/components/on-off/on-off-parts";
+import { MetricHelp } from "@/components/learn/metric-help";
 import { PlayerIdentity } from "@/components/players/player-identity";
 import { SortableTableHead } from "@/components/ui/sortable-table-head";
 import { Z95, type LineupRow, type OnOffPlayerRow, type WowyStates } from "@/lib/on-off/derive";
@@ -66,7 +68,8 @@ type PlayerSortKey =
   | "netLuckAdjDiff"
   | "ortgDiff"
   | "drtgDiff"
-  | "oppStartersOn"
+  | "matesOn"
+  | "oppOn"
   | "pct";
 
 const PLAYER_SORT: Record<PlayerSortKey, (r: OnOffPlayerRow) => number | null> = {
@@ -78,7 +81,8 @@ const PLAYER_SORT: Record<PlayerSortKey, (r: OnOffPlayerRow) => number | null> =
   netLuckAdjDiff: (r) => r.cmp.netLuckAdjDiff,
   ortgDiff: (r) => r.cmp.ortgDiff,
   drtgDiff: (r) => r.cmp.drtgDiff,
-  oppStartersOn: (r) => r.oppStartersOn,
+  matesOn: (r) => r.quality.teammatesOn,
+  oppOn: (r) => r.quality.opponentsOn,
   pct: (r) => r.netDiffPercentile,
 };
 
@@ -106,7 +110,7 @@ function PlayerTable({
 
   return (
     <div className="touch-scroll-x overflow-x-auto">
-      <table className="w-full min-w-[60rem] text-[13px]">
+      <table className="w-full min-w-[64rem] text-[13px]">
         <thead>
           <tr className="border-b border-border">
             <th className={cn(stickyCell, "z-30 px-2 text-left text-[12px] font-semibold uppercase tracking-[0.06em] text-muted-foreground")}>
@@ -120,7 +124,8 @@ function PlayerTable({
             {head("netLuckAdjDiff", "Luck adj.", "Swing with opponent 3P% and FT% set to league average")}
             {head("ortgDiff", "ORtg ±", "Team offensive rating on minus off")}
             {head("drtgDiff", "DRtg ±", "Opponent points per 100 on minus off. Negative is better.", "asc")}
-            {head("oppStartersOn", "Opp starters", "Opponent starters on the floor per possession with him on")}
+            {head("matesOn", "Teammates", "Average season DRBL/100 of his teammates while he played")}
+            {head("oppOn", "Opponents", "Average season DRBL/100 of the opponents he faced")}
             {head("pct", "League pct", "Percentile of his swing among players with 2,000 or more possessions")}
           </tr>
         </thead>
@@ -156,7 +161,8 @@ function PlayerTable({
               <td className={cn(cellBase, toneClass(r.cmp.netLuckAdjDiff))}>{fmtSigned(r.cmp.netLuckAdjDiff)}</td>
               <td className={cn(cellBase, toneClass(r.cmp.ortgDiff))}>{fmtSigned(r.cmp.ortgDiff)}</td>
               <td className={cn(cellBase, toneClass(r.cmp.drtgDiff, false))}>{fmtSigned(r.cmp.drtgDiff)}</td>
-              <td className={cellBase}>{r.oppStartersOn == null ? "—" : r.oppStartersOn.toFixed(1)}</td>
+              <td className={cellBase}>{fmtRatingDelta(r.quality.teammatesOn)}</td>
+              <td className={cellBase}>{fmtRatingDelta(r.quality.opponentsOn)}</td>
               <td className={cellBase}>{percentileLabel(r.netDiffPercentile)}</td>
             </tr>
           ))}
@@ -259,7 +265,7 @@ const LINEUP_SORT: Record<LineupSortKey, (r: LineupRow) => number | null> = {
   oppEfg: (r) => r.defense.efg,
 };
 
-function LineupTable({ lineups }: { lineups: LineupRow[] }) {
+function LineupTable({ lineups, view }: { lineups: LineupRow[]; view: OnOffView }) {
   const sort = useSort<LineupSortKey>("poss");
   const sorted = useMemo(() => sortBy(lineups, LINEUP_SORT[sort.key], sort.dir), [lineups, sort.key, sort.dir]);
   const head = (key: LineupSortKey, label: string, title: string, defaultDir: Dir = "desc") => (
@@ -273,7 +279,13 @@ function LineupTable({ lineups }: { lineups: LineupRow[] }) {
     </th>
   );
   if (!lineups.length) {
-    return <p className={cn(type.bodySm, "text-muted-foreground")}>No five-man group has 40 possessions yet.</p>;
+    return (
+      <p className={cn(type.bodySm, "text-muted-foreground")}>
+        {view === "clutch"
+          ? "No five-man group has 20 clutch possessions."
+          : "No five-man group has 40 possessions yet."}
+      </p>
+    );
   }
   return (
     <div className="touch-scroll-x overflow-x-auto">
@@ -352,7 +364,9 @@ export function TeamOnOffPanel({
     <section id="onoff" className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-[20px] font-bold tracking-tight">On/off</h2>
+          <h2 className="text-[20px] font-bold tracking-tight">
+            <MetricHelp conceptId="on_off">On/off</MetricHelp>
+          </h2>
           <p className={cn(type.bodySm, "mt-1 max-w-prose text-muted-foreground")}>
             How {teamAbbr} played per 100 possessions with each player on the floor and off
             it. {season} regular season, {games} games.
@@ -367,7 +381,8 @@ export function TeamOnOffPanel({
         <p className={cn(type.caption, "text-muted-foreground")}>
           Swing is on net minus off net. The ± figure is the 95% range from sampling noise, so a
           +4 swing with ±8 could easily be zero. Small sample marks fewer than 1,000 possessions
-          on or off.
+          on or off, which covers every clutch split. Teammates and opponents are average season
+          DRBL/100 ratings of the players on the floor with him.
         </p>
       </div>
 
@@ -381,10 +396,11 @@ export function TeamOnOffPanel({
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Five-man lineups</h3>
-        <LineupTable lineups={data.lineups} />
+        <LineupTable lineups={data.lineups} view={view} />
         <p className={cn(type.caption, "text-muted-foreground")}>
-          Most-used groups with at least 40 possessions. Lineup net ratings swing a lot in a few
-          hundred possessions, so lean on the four factors as much as the net figure.
+          {view === "clutch"
+            ? "Groups with at least 20 clutch possessions. Samples this small are mostly noise, so treat them as a record of what happened."
+            : "Most-used groups with at least 40 possessions. Lineup net ratings swing a lot in a few hundred possessions, so lean on the four factors as much as the net figure."}
         </p>
       </div>
 

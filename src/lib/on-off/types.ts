@@ -1,6 +1,6 @@
 import type { LeagueRates, OnOffSplit, OnOffView } from "@/lib/on-off/metrics";
 
-export const ON_OFF_FILE_VERSION = 1;
+export const ON_OFF_FILE_VERSION = 2;
 
 export type OnOffViews = Record<OnOffView, OnOffSplit>;
 
@@ -10,6 +10,8 @@ export type TeamOnOffPlayer = {
   name: string;
   gp: number;
   starts: number;
+  /** Season DRBL/100, when the player is rated. */
+  rating: number | null;
 } & OnOffViews;
 
 /** Two teammates on the floor together. With/without splits derive from these and the solo rows. */
@@ -32,16 +34,18 @@ export type TeamOnOffFile = {
   lineups: TeamOnOffLineup[];
 };
 
-/** Per view: [clean, all]. */
+/** Indexed like ON_OFF_VIEWS: [clean, all, clutch]. */
+type PerView<T> = [T, T, T];
+
 export type LeagueOnOffPlayer = {
   id: string;
   teamId: string;
   name: string;
-  poss: [number, number];
-  netDiff: [number | null, number | null];
-  netLuckAdjDiff: [number | null, number | null];
-  ortgDiff: [number | null, number | null];
-  drtgDiff: [number | null, number | null];
+  poss: PerView<number>;
+  netDiff: PerView<number | null>;
+  netLuckAdjDiff: PerView<number | null>;
+  ortgDiff: PerView<number | null>;
+  drtgDiff: PerView<number | null>;
 };
 
 export type LeagueOnOffFile = {

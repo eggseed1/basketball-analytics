@@ -197,7 +197,19 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
       "Team scoring margin while the player is on the floor. Strongly affected by teammates and opponents.",
     showTooltip: true,
     learnSlug: "plus-minus",
-    relatedIds: ["diff", "net"],
+    relatedIds: ["diff", "net", "on_off"],
+  },
+  {
+    id: "on_off",
+    aliases: ["on-off", "onoff", "on/off", "on_off_swing", "wowy", "with_without"],
+    label: "On/off",
+    shortName: "On/off",
+    category: "team",
+    tooltip:
+      "Team net rating with a player on the floor minus with him off. It follows the whole lineup, so teammates and opponents move it.",
+    showTooltip: true,
+    learnSlug: "on-off",
+    relatedIds: ["net", "plus_minus", "drbl"],
   },
   {
     id: "pace",

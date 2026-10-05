@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 export const VIEW_OPTIONS: Array<{ id: OnOffView; label: string }> = [
   { id: "clean", label: "Filtered" },
   { id: "all", label: "All possessions" },
+  { id: "clutch", label: "Clutch" },
 ];
 
 export function OnOffViewToggle({
@@ -38,6 +39,11 @@ export function fmtPct(v: number | null | undefined, digits = 1): string {
 
 export function fmtSignedPts(v: number | null | undefined, digits = 1): string {
   return v == null || !Number.isFinite(v) ? "—" : fmtSigned(v * 100, digits);
+}
+
+/** DRBL/100 player rating, two decimals with a sign. */
+export function fmtRatingDelta(v: number | null | undefined): string {
+  return fmtSigned(v, 2);
 }
 
 export function fmtCount(v: number): string {
@@ -114,7 +120,13 @@ export function OnOffMethodNote({ className }: { className?: string }) {
         Ratings are points per 100 possessions, built from NBA play-by-play with every
         possession tagged by the ten players on the floor. Filtered leaves out garbage time,
         using the Cleaning the Glass definition, and possessions that start with 2 seconds or
-        less on the clock.
+        less on the clock. Clutch follows the NBA definition: the last five minutes of the
+        fourth quarter or overtime with the score within five.
+      </p>
+      <p>
+        Teammate and opponent quality average each player&apos;s season DRBL/100 over the
+        possessions they played. It shows whether someone&apos;s minutes came with stronger
+        lineups or against them. Players without a DRBL rating are left out of the average.
       </p>
       <p>
         Luck-adjusted sets opponents&apos; 3-point and free-throw percentages to league average,

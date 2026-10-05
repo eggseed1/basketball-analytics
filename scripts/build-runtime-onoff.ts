@@ -15,8 +15,11 @@ import { listSeasonGames, processGame } from "../drbl/index";
 import type { DrblEvent, DrblPossession, DrblProcessedGame } from "../drbl/types";
 import { NBA_TEAM_META } from "../src/data/providers/nba/nba-team-meta";
 import {
+  CLUTCH_MARGIN,
+  CLUTCH_SECONDS,
   K,
   ON_OFF_KEYS,
+  ON_OFF_VIEWS,
   addVec,
   compareOnOff,
   emptyVec,
@@ -48,9 +51,40 @@ const SHORT_MID_FEET = 14;
 /** Legacy y (tenths of a foot from the rim) where the corner-3 straightaway ends. */
 const CORNER3_MAX_Y = 87.5;
 
-type Views = { clean: OnOffSplit; all: OnOffSplit };
+type Views = Record<OnOffView, OnOffSplit>;
 const emptySplit = (): OnOffSplit => ({ o: emptyVec(), d: emptyVec() });
-const emptyViews = (): Views => ({ clean: emptySplit(), all: emptySplit() });
+const emptyViews = (): Views => ({ clean: emptySplit(), all: emptySplit(), clutch: emptySplit() });
+
+/** Season DRBL/100 by NBA person id, from the published season artifact. */
+type Ratings = Map<string, number>;
+
+async function loadRatings(season: string): Promise<Ratings> {
+  const file = path.join(ROOT, "src", "data", "drbl", "precomputed", `${season}.json`);
+  try {
+    const data = JSON.parse(await readFile(file, "utf8")) as {
+      players?: Array<{ playerId: string; drbl100: number | null }>;
+    };
+    return new Map(
+      (data.players ?? [])
+        .filter((p) => p.drbl100 != null && Number.isFinite(p.drbl100))
+        .map((p) => [String(p.playerId), p.drbl100!])
+    );
+  } catch {
+    return new Map();
+  }
+}
+
+function qualitySums(ids: readonly string[], ratings: Ratings): [number, number] {
+  let sum = 0;
+  let n = 0;
+  for (const id of ids) {
+    const r = ratings.get(id);
+    if (r == null) continue;
+    sum += r;
+    n += 1;
+  }
+  return [sum, n];
+}
 
 type PlayerAcc = { name: string; games: Set<string>; starts: number; views: Views };
 type TeamAcc = {
@@ -143,6 +177,7 @@ type PossessionContext = {
   seconds: number;
   startClock: number;
   clean: boolean;
+  clutch: boolean;
 };
 
 /**
@@ -171,13 +206,27 @@ function possessionContexts(g: DrblProcessedGame, starters: Set<string>): Posses
     let prevEnd = periodLength(period);
     list.forEach((p, i) => {
       const end = i === list.length - 1 ? 0 : Math.min(prevEnd, p.endClockSeconds);
-      out.push({ poss: p, seconds: Math.max(0, prevEnd - end), startClock: prevEnd, clean: true });
+      out.push({
+        poss: p,
+        seconds: Math.max(0, prevEnd - end),
+        startClock: prevEnd,
+        clean: true,
+        clutch: false,
+      });
       prevEnd = end;
     });
   }
 
+  const marginAt = (p: DrblPossession) => {
+    const s = scoreBefore.get(p.eventActionNumbers[0] ?? p.startActionNumber);
+    return s ? Math.abs(s.home - s.away) : null;
+  };
   for (const ctx of out) {
     if (ctx.startClock <= HEAVE_SECONDS) ctx.clean = false;
+    if (ctx.poss.period >= 4 && ctx.startClock <= CLUTCH_SECONDS) {
+      const margin = marginAt(ctx.poss);
+      ctx.clutch = margin != null && margin <= CLUTCH_MARGIN;
+    }
   }
 
   // Garbage time only exists if regulation decided the game, and only in the
@@ -189,9 +238,8 @@ function possessionContexts(g: DrblProcessedGame, starters: Set<string>): Posses
       .sort((a, b) => a.poss.startActionNumber - b.poss.startActionNumber);
     for (let i = q4.length - 1; i >= 0; i--) {
       const c = q4[i]!;
-      const s = scoreBefore.get(c.poss.eventActionNumbers[0] ?? c.poss.startActionNumber);
-      if (!s) break;
-      const margin = Math.abs(s.home - s.away);
+      const margin = marginAt(c.poss);
+      if (margin == null) break;
       const startersOn = [...c.poss.offensePlayerIds, ...c.poss.defensePlayerIds].filter((id) =>
         starters.has(id)
       ).length;
@@ -202,12 +250,13 @@ function possessionContexts(g: DrblProcessedGame, starters: Set<string>): Posses
   return out;
 }
 
-function addToViews(views: Views, side: "o" | "d", v: OnOffVec, clean: boolean) {
+function addToViews(views: Views, side: "o" | "d", v: OnOffVec, ctx: PossessionContext) {
   addVec(views.all[side], v);
-  if (clean) addVec(views.clean[side], v);
+  if (ctx.clean) addVec(views.clean[side], v);
+  if (ctx.clutch) addVec(views.clutch[side], v);
 }
 
-function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
+function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>, ratings: Ratings) {
   const events = new Map(g.events.map((e) => [e.actionNumber, e]));
   const names = new Map(g.box.players.map((p) => [p.playerId, p.playerName]));
   const starters = new Set(g.box.players.filter((p) => p.starter).map((p) => p.playerId));
@@ -229,15 +278,25 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
     const oppStartersOnD = poss.offensePlayerIds.filter((id) => starters.has(id)).length;
     const oppStartersOnO = poss.defensePlayerIds.filter((id) => starters.has(id)).length;
     const v = possessionVec(poss, events, ctx.seconds, oppStartersOnO);
+    const [offQ, offQN] = qualitySums(poss.offensePlayerIds, ratings);
+    const [defQ, defQN] = qualitySums(poss.defensePlayerIds, ratings);
+    v[K.ownQ] = offQ;
+    v[K.ownQN] = offQN;
+    v[K.oppQ] = defQ;
+    v[K.oppQN] = defQN;
     const vForDefense = [...v];
     vForDefense[K.oppStarters] = oppStartersOnD;
+    vForDefense[K.ownQ] = defQ;
+    vForDefense[K.ownQN] = defQN;
+    vForDefense[K.oppQ] = offQ;
+    vForDefense[K.oppQN] = offQN;
 
     for (const [teamId, side, ids, vec] of [
       [poss.offenseTeamId, "o", poss.offensePlayerIds, v],
       [poss.defenseTeamId, "d", poss.defensePlayerIds, vForDefense],
     ] as const) {
       const t = teamAcc(teams, teamId);
-      addToViews(t.views, side, vec, ctx.clean);
+      addToViews(t.views, side, vec, ctx);
       const sorted = [...ids].sort();
       for (const id of sorted) {
         let acc = t.players.get(id);
@@ -246,7 +305,7 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
           t.players.set(id, acc);
         }
         acc.games.add(poss.gameId);
-        addToViews(acc.views, side, vec, ctx.clean);
+        addToViews(acc.views, side, vec, ctx);
       }
       for (let i = 0; i < sorted.length; i++) {
         for (let j = i + 1; j < sorted.length; j++) {
@@ -256,7 +315,7 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
             pair = emptyViews();
             t.pairs.set(key, pair);
           }
-          addToViews(pair, side, vec, ctx.clean);
+          addToViews(pair, side, vec, ctx);
         }
       }
       const lineupKey = sorted.join("|");
@@ -265,7 +324,7 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
         lineup = emptyViews();
         t.lineups.set(lineupKey, lineup);
       }
-      addToViews(lineup, side, vec, ctx.clean);
+      addToViews(lineup, side, vec, ctx);
     }
   }
 }
@@ -273,10 +332,10 @@ function accumulateGame(g: DrblProcessedGame, teams: Map<string, TeamAcc>) {
 const totalPoss = (views: Views) => views.all.o[K.poss]! + views.all.d[K.poss]!;
 
 const round = (v: OnOffVec): OnOffVec => v.map((x) => Math.round(x * 10) / 10);
-const roundViews = (views: Views): OnOffViews => ({
-  clean: { o: round(views.clean.o), d: round(views.clean.d) },
-  all: { o: round(views.all.o), d: round(views.all.d) },
-});
+const roundViews = (views: Views): OnOffViews =>
+  Object.fromEntries(
+    ON_OFF_VIEWS.map((view) => [view, { o: round(views[view].o), d: round(views[view].d) }])
+  ) as OnOffViews;
 
 function leagueRates(teams: Map<string, TeamAcc>, view: OnOffView): LeagueRates {
   const sum = emptyVec();
@@ -297,7 +356,8 @@ async function writeJson(file: string, data: unknown) {
 
 async function buildSeason(season: string) {
   const games = await listSeasonGames(season);
-  log(`${season}: ${games.length} games listed`);
+  const ratings = await loadRatings(season);
+  log(`${season}: ${games.length} games listed, ${ratings.size} rated players`);
   const teams = new Map<string, TeamAcc>();
   let processed = 0;
   let quarantined = 0;
@@ -312,7 +372,7 @@ async function buildSeason(season: string) {
         quarantined += 1;
         continue;
       }
-      accumulateGame(g, teams);
+      accumulateGame(g, teams, ratings);
       processed += 1;
       for (const d of g.reconcile.lineup?.playerMinuteDiffs ?? []) {
         minuteErr += Math.abs(d.delta);
@@ -331,7 +391,9 @@ async function buildSeason(season: string) {
   if (!processed) return null;
 
   const generatedAt = new Date().toISOString();
-  const rates = { clean: leagueRates(teams, "clean"), all: leagueRates(teams, "all") };
+  const rates = Object.fromEntries(
+    ON_OFF_VIEWS.map((view) => [view, leagueRates(teams, view)])
+  ) as Record<OnOffView, LeagueRates>;
   const leaguePlayers: LeagueOnOffFile["players"] = [];
   const teamIds: string[] = [];
 
@@ -359,6 +421,7 @@ async function buildSeason(season: string) {
         name: p.name,
         gp: p.games.size,
         starts: p.starts,
+        rating: ratings.get(id) ?? null,
         ...roundViews(p.views),
       })),
       pairs: [...t.pairs.entries()]
@@ -379,22 +442,21 @@ async function buildSeason(season: string) {
     await writeJson(path.join(OUT_ROOT, season, `${teamId}.json`), file);
 
     for (const [id, p] of players) {
-      const cmp = (["clean", "all"] as const).map((view) =>
-        compareOnOff(t.views[view], p.views[view], rates[view])
-      );
+      const cmp = ON_OFF_VIEWS.map((view) => compareOnOff(t.views[view], p.views[view], rates[view]));
       const r1 = (x: number | null) => (x == null ? null : Math.round(x * 10) / 10);
+      const perView = <T>(f: (i: number) => T): [T, T, T] => [f(0), f(1), f(2)];
       leaguePlayers.push({
         id,
         teamId,
         name: p.name,
-        poss: [
-          p.views.clean.o[K.poss]! + p.views.clean.d[K.poss]!,
-          p.views.all.o[K.poss]! + p.views.all.d[K.poss]!,
-        ],
-        netDiff: [r1(cmp[0]!.netDiff), r1(cmp[1]!.netDiff)],
-        netLuckAdjDiff: [r1(cmp[0]!.netLuckAdjDiff), r1(cmp[1]!.netLuckAdjDiff)],
-        ortgDiff: [r1(cmp[0]!.ortgDiff), r1(cmp[1]!.ortgDiff)],
-        drtgDiff: [r1(cmp[0]!.drtgDiff), r1(cmp[1]!.drtgDiff)],
+        poss: perView((i) => {
+          const v = p.views[ON_OFF_VIEWS[i]!];
+          return v.o[K.poss]! + v.d[K.poss]!;
+        }),
+        netDiff: perView((i) => r1(cmp[i]!.netDiff)),
+        netLuckAdjDiff: perView((i) => r1(cmp[i]!.netLuckAdjDiff)),
+        ortgDiff: perView((i) => r1(cmp[i]!.ortgDiff)),
+        drtgDiff: perView((i) => r1(cmp[i]!.drtgDiff)),
       });
     }
   }

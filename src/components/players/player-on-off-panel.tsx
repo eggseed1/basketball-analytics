@@ -11,12 +11,14 @@ import {
   fmtCount,
   fmtPct,
   fmtRating,
+  fmtRatingDelta,
   fmtSigned,
   fmtSignedPts,
   percentileLabel,
   rangeLabel,
   toneClass,
 } from "@/components/on-off/on-off-parts";
+import { MetricHelp } from "@/components/learn/metric-help";
 import { SegmentedControl } from "@/components/ui/segmented-control";
 import type { PlayerOnOffDetail, SideDetail } from "@/lib/on-off/derive";
 import type { FourFactors, OnOffView } from "@/lib/on-off/metrics";
@@ -42,7 +44,7 @@ function scale(values: Array<number | null>, pad: number): [number, number] {
   return hi - lo < 1 ? [lo - 0.5, hi + 0.5] : [lo, hi];
 }
 
-function Summary({ d, playerName }: { d: PlayerOnOffDetail; playerName: string }) {
+function Summary({ d, playerName, view }: { d: PlayerOnOffDetail; playerName: string; view: OnOffView }) {
   const { row } = d;
   const { cmp } = row;
   const range = rangeLabel(cmp.netDiff, cmp.netDiffSe);
@@ -70,7 +72,9 @@ function Summary({ d, playerName }: { d: PlayerOnOffDetail; playerName: string }
             </span>
           ) : (
             <span className={cn(type.caption, "text-muted-foreground")}>
-              League rank needs 2,000 possessions
+              {view === "clutch"
+                ? "No league rank for clutch samples"
+                : "League rank needs 2,000 possessions"}
             </span>
           )}
           {row.smallSample ? <SmallSampleTag /> : null}
@@ -98,10 +102,23 @@ function Summary({ d, playerName }: { d: PlayerOnOffDetail; playerName: string }
               cmp.netDiff < 0 ? "worse" : "better"
             } with ${shortName(playerName)} on the floor. `
           : null}
-        Opponents averaged{" "}
-        {row.oppStartersOn == null ? "—" : row.oppStartersOn.toFixed(1)} starters on the floor
-        against him and {row.oppStartersOff == null ? "—" : row.oppStartersOff.toFixed(1)} while
-        he sat, so higher numbers mean his minutes came against stronger groups.
+        {row.smallSample ? "That comes from a small sample, so trust the range more than the swing. " : null}
+        {row.quality.teammatesOn != null && row.quality.opponentsOn != null ? (
+          <>
+            His teammates averaged {fmtRatingDelta(row.quality.teammatesOn)} DRBL/100 with him on
+            the floor, against {fmtRatingDelta(row.quality.teammatesOff)} for the lineups that
+            played while he sat. Opponents averaged {fmtRatingDelta(row.quality.opponentsOn)} against
+            him and {fmtRatingDelta(row.quality.opponentsOff)} otherwise. Stronger teammates lift
+            the on number and stronger opponents pull it down.
+          </>
+        ) : (
+          <>
+            Opponents averaged{" "}
+            {row.oppStartersOn == null ? "—" : row.oppStartersOn.toFixed(1)} starters on the floor
+            against him and {row.oppStartersOff == null ? "—" : row.oppStartersOff.toFixed(1)}{" "}
+            while he sat, so higher numbers mean his minutes came against stronger groups.
+          </>
+        )}
       </p>
     </div>
   );
@@ -369,7 +386,9 @@ export function PlayerOnOffPanel({
     <section id="onoff" className="scroll-mt-16 flex flex-col gap-8" aria-label="On/off">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div className="min-w-0">
-          <h2 className="text-[20px] font-bold tracking-tight">On/off</h2>
+          <h2 className="text-[20px] font-bold tracking-tight">
+            <MetricHelp conceptId="on_off">On/off</MetricHelp>
+          </h2>
           <p className={cn(type.bodySm, "mt-1 max-w-prose text-muted-foreground")}>
             How {stint.teamAbbr} played per 100 possessions with {playerName} on the floor and
             off it. {season} regular season, {d.row.gp} games played.
@@ -390,12 +409,13 @@ export function PlayerOnOffPanel({
 
       {usingFallback ? (
         <p className={cn(type.bodySm, "text-muted-foreground")}>
-          All of his possessions came in garbage time or end-of-quarter heaves, so this shows every
-          possession.
+          {view === "clutch"
+            ? `He played no clutch possessions for ${stint.teamAbbr}, so this shows every possession.`
+            : "All of his possessions came in garbage time or end-of-quarter heaves, so this shows every possession."}
         </p>
       ) : null}
 
-      <Summary d={d} playerName={playerName} />
+      <Summary d={d} playerName={playerName} view={view} />
 
       <div className="flex flex-col gap-3">
         <h3 className={type.heading}>Ratings on and off</h3>

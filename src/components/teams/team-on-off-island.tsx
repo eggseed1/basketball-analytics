@@ -59,7 +59,7 @@ export async function TeamOnOffIsland({
       teamAbbr={data.file.teamAbbr}
       games={data.file.games}
       pairPlayerIds={[...pairPlayerIds]}
-      views={{ clean: viewData(data, "clean"), all: viewData(data, "all") }}
+      views={{ clean: viewData(data, "clean"), all: viewData(data, "all"), clutch: viewData(data, "clutch") }}
     />
   );
 }

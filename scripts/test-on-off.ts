@@ -10,6 +10,7 @@ import path from "node:path";
 import { lineupRows, playerDetail, teamPlayerRows, wowy } from "../src/lib/on-off/derive";
 import {
   K,
+  ON_OFF_VIEWS,
   compareOnOff,
   emptyVec,
   fourFactors,
@@ -89,7 +90,11 @@ function syntheticFile(): TeamOnOffFile {
     o: vec({ poss, pts, pts2: pts * 2, sec: poss * 14 }),
     d: vec({ poss, pts: dpts, pts2: dpts * 2, sec: poss * 14 }),
   });
-  const views = (poss: number, pts: number, dpts: number) => ({ clean: s(poss, pts, dpts), all: s(poss, pts, dpts) });
+  const views = (poss: number, pts: number, dpts: number) => ({
+    clean: s(poss, pts, dpts),
+    all: s(poss, pts, dpts),
+    clutch: s(poss / 10, pts / 10, dpts / 10),
+  });
   return {
     version: 1,
     season: "test",
@@ -100,8 +105,8 @@ function syntheticFile(): TeamOnOffFile {
     keys: [],
     team: views(1000, 1150, 1100),
     players: [
-      { id: "a", name: "Alpha One", gp: 1, starts: 1, ...views(700, 840, 735) },
-      { id: "b", name: "Beta Two", gp: 1, starts: 1, ...views(600, 690, 660) },
+      { id: "a", name: "Alpha One", gp: 1, starts: 1, rating: null, ...views(700, 840, 735) },
+      { id: "b", name: "Beta Two", gp: 1, starts: 1, rating: null, ...views(600, 690, 660) },
     ],
     pairs: [{ a: "a", b: "b", ...views(450, 540, 470) }],
     lineups: [{ ids: ["a", "b", "c", "d", "e"], ...views(120, 140, 120) }],
@@ -136,6 +141,29 @@ function testWowyPartitions() {
   assert.equal(playerDetail(file, null, "zzz", "all"), null);
 }
 
+function testQualityContext() {
+  // Team: 100 offensive possessions. Player "a" (rated +2) played 60 of them
+  // alongside four teammates rated +1; the other 40 had five players rated 0.
+  const side = (poss: number, ownQ: number, ownQN: number, oppQ: number, oppQN: number) =>
+    vec({ poss, ownQ, ownQN, oppQ, oppQN });
+  const on = { o: side(60, 60 * (2 + 4), 300, 60 * 1.5, 300), d: emptyVec() };
+  const team = { o: side(100, 60 * 6, 500, 60 * 1.5 + 40 * 0.5, 500), d: emptyVec() };
+  const file = syntheticFile();
+  file.team.all = team;
+  file.players[0] = { ...file.players[0]!, rating: 2, all: on };
+  const row = teamPlayerRows(file, null, "all").find((r) => r.id === "a")!;
+  close(row.quality.teammatesOn, 1);
+  close(row.quality.teammatesOff, 0);
+  close(row.quality.opponentsOn, 0.3);
+  close(row.quality.opponentsOff, 0.1);
+
+  // Unrated player: his own slot is already absent from the sums.
+  file.players[0] = { ...file.players[0]!, rating: null, all: { o: side(60, 60 * 4, 240, 0, 0), d: emptyVec() } };
+  const unrated = teamPlayerRows(file, null, "all").find((r) => r.id === "a")!;
+  close(unrated.quality.teammatesOn, 1);
+  assert.equal(unrated.quality.opponentsOn, null);
+}
+
 function testCommittedFiles() {
   const root = path.join(process.cwd(), "public/runtime/on-off");
   const manifestPath = path.join(root, "manifest.json");
@@ -149,7 +177,7 @@ function testCommittedFiles() {
       const file = JSON.parse(fs.readFileSync(path.join(root, season, `${teamId}.json`), "utf8")) as TeamOnOffFile;
       assert.equal(file.teamId, teamId);
       assert.ok(file.games >= 1 && file.games <= 82, `${season} ${teamId} games ${file.games}`);
-      for (const view of ["clean", "all"] as const) {
+      for (const view of ON_OFF_VIEWS) {
         for (const side of ["o", "d"] as const) {
           const teamPoss = file.team[view][side][K.poss]!;
           const credited = file.players.reduce((sum, p) => sum + p[view][side][K.poss]!, 0);
@@ -157,6 +185,10 @@ function testCommittedFiles() {
         }
       }
       assert.ok(file.team.clean.o[K.poss]! <= file.team.all.o[K.poss]!, "filtered is a subset of all");
+      assert.ok(file.team.clutch.o[K.poss]! > 0, `${season} ${file.teamAbbr} has clutch possessions`);
+      assert.ok(file.team.clutch.o[K.poss]! < file.team.all.o[K.poss]! * 0.15, "clutch is a small slice");
+      const rated = file.team.all.o[K.ownQN]! / (file.team.all.o[K.poss]! * 5);
+      assert.ok(rated > 0.95, `${season} ${file.teamAbbr} rated coverage ${rated.toFixed(3)}`);
     }
   }
 }
@@ -165,5 +197,6 @@ testGarbageThresholds();
 testFactorsAndRatings();
 testOffIsTeamMinusOn();
 testWowyPartitions();
+testQualityContext();
 testCommittedFiles();
 console.log("on-off: ok");

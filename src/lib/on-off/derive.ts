@@ -25,7 +25,7 @@ export const SMALL_SAMPLE_POSS = 1000;
 /** Two-sided 95% range from one standard error. */
 export const Z95 = 1.96;
 
-const VIEW_INDEX: Record<OnOffView, 0 | 1> = { clean: 0, all: 1 };
+const VIEW_INDEX: Record<OnOffView, 0 | 1 | 2> = { clean: 0, all: 1, clutch: 2 };
 
 const possOf = (s: OnOffSplit) => s.o[K.poss]! + s.d[K.poss]!;
 const minutesOf = (s: OnOffSplit) => (s.o[K.sec]! + s.d[K.sec]!) / 60;
@@ -33,6 +33,29 @@ const oppStartersAvg = (s: OnOffSplit) => {
   const n = possOf(s);
   return n > 0 ? (s.o[K.oppStarters]! + s.d[K.oppStarters]!) / n : null;
 };
+const both = (s: OnOffSplit, key: keyof typeof K) => s.o[K[key]]! + s.d[K[key]]!;
+const avgOf = (sum: number, n: number) => (n >= 1 ? sum / n : null);
+
+/** Average season DRBL/100 of the players around him, and of the opponents. */
+export type QualityContext = {
+  teammatesOn: number | null;
+  teammatesOff: number | null;
+  opponentsOn: number | null;
+  opponentsOff: number | null;
+};
+
+function qualityContext(on: OnOffSplit, off: OnOffSplit, rating: number | null): QualityContext {
+  const onPoss = possOf(on);
+  const ownOn = both(on, "ownQ");
+  const ownOnN = both(on, "ownQN");
+  return {
+    teammatesOn:
+      rating == null ? avgOf(ownOn, ownOnN) : avgOf(ownOn - rating * onPoss, ownOnN - onPoss),
+    teammatesOff: avgOf(both(off, "ownQ"), both(off, "ownQN")),
+    opponentsOn: avgOf(both(on, "oppQ"), both(on, "oppQN")),
+    opponentsOff: avgOf(both(off, "oppQ"), both(off, "oppQN")),
+  };
+}
 
 export type OnOffPlayerRow = {
   id: string;
@@ -46,6 +69,7 @@ export type OnOffPlayerRow = {
   cmp: OnOffComparison;
   oppStartersOn: number | null;
   oppStartersOff: number | null;
+  quality: QualityContext;
   /** League percentile of the on-minus-off net gap, 0 to 100. */
   netDiffPercentile: number | null;
   smallSample: boolean;
@@ -95,6 +119,7 @@ export function playerRow(
     cmp,
     oppStartersOn: oppStartersAvg(on),
     oppStartersOff: oppStartersAvg(off),
+    quality: qualityContext(on, off, player.rating),
     netDiffPercentile: percentileOf(league, view, cmp.netDiff, poss),
     smallSample: poss < SMALL_SAMPLE_POSS || possOf(off) < SMALL_SAMPLE_POSS,
   };
@@ -176,6 +201,9 @@ export type LineupRow = {
   defense: FourFactors;
 };
 
+/** Clutch lineup samples are tiny; below this a lineup row is noise. */
+export const CLUTCH_LINEUP_MIN_POSS = 20;
+
 export function lineupRows(
   file: TeamOnOffFile,
   league: LeagueOnOffFile | null,
@@ -183,8 +211,9 @@ export function lineupRows(
 ): LineupRow[] {
   const names = new Map(file.players.map((p) => [p.id, p.name]));
   const rates = leagueRates(league, view);
+  const minPoss = view === "clutch" ? CLUTCH_LINEUP_MIN_POSS : 1;
   return file.lineups
-    .filter((l) => possOf(l[view]) > 0)
+    .filter((l) => possOf(l[view]) >= minPoss)
     .map((l) => ({
       ids: l.ids,
       names: l.ids.map((id) => names.get(id) ?? id),

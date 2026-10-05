@@ -32,6 +32,12 @@ export const ON_OFF_KEYS = [
   "sec",
   /** Opponent starters on the floor, summed per possession. */
   "oppStarters",
+  /** Season DRBL/100 of own players on the floor, summed over rated player-possessions. */
+  "ownQ",
+  /** Rated own player-possessions behind ownQ. */
+  "ownQN",
+  "oppQ",
+  "oppQN",
 ] as const;
 
 export type OnOffKey = (typeof ON_OFF_KEYS)[number];
@@ -52,7 +58,9 @@ export function subVec(a: OnOffVec, b: OnOffVec): OnOffVec {
 /** Offense (o) is the team with the ball; defense (d) is the opponent's offense. */
 export type OnOffSplit = { o: OnOffVec; d: OnOffVec };
 
-export type OnOffView = "clean" | "all";
+export type OnOffView = "clean" | "all" | "clutch";
+
+export const ON_OFF_VIEWS: readonly OnOffView[] = ["clean", "all", "clutch"];
 
 export type LeagueRates = {
   fg3Pct: number;
@@ -217,3 +225,7 @@ export function garbageMarginThreshold(clockSecondsLeft: number): number {
 
 /** Possessions starting with this many seconds or fewer left in a period are end-of-quarter heaves. */
 export const HEAVE_SECONDS = 2;
+
+/** NBA clutch: last five minutes of the 4th quarter or overtime, score within five. */
+export const CLUTCH_SECONDS = 300;
+export const CLUTCH_MARGIN = 5;

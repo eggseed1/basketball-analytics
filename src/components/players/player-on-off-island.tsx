@@ -25,7 +25,11 @@ export async function PlayerOnOffIsland({
       teamAbbr: file.teamAbbr,
       color: teamColorAuto(file.teamAbbr),
       games: file.games,
-      views: { all, clean: playerDetail(file, league, playerId, "clean", DETAIL_OPTIONS) },
+      views: {
+        all,
+        clean: playerDetail(file, league, playerId, "clean", DETAIL_OPTIONS),
+        clutch: playerDetail(file, league, playerId, "clutch", DETAIL_OPTIONS),
+      },
     });
   }
 
