@@ -102,11 +102,7 @@ export function TeamContractsPageView({
       </section>
 
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Salaries, options, guarantees and notes come from Basketball-Reference. A blank cell means no contract that
-        season. Payroll counts every listed salary, guaranteed or not.{" "}
-        <a href={contracts.sourceUrl} className="font-semibold underline-offset-2 hover:underline" rel="noreferrer" target="_blank">
-          Source: Basketball-Reference
-        </a>
+        A blank cell means no contract that season. Payroll counts every listed salary, guaranteed or not.
       </p>
     </div>
   );

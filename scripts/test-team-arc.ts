@@ -115,7 +115,7 @@ function team(
   assert.equal(model.rows[1]?.thin, true);
   assert.equal(model.label, "Team Arc");
   assert.ok(model.coverageNote.includes("2001-02"));
-  assert.ok(model.continuityNote.toLowerCase().includes("espn"));
+  assert.ok(!model.continuityNote.toLowerCase().includes("espn"));
   assert.equal(model.showingFull, true);
   assert.equal(model.hasMoreHistory, false);
 

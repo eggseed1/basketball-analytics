@@ -131,7 +131,7 @@ export const TEAM_SEASON_COMPARE_METHODOLOGY: TeamSeasonCompareMethodology = {
   incompleteNote:
     "Current in-progress seasons are flagged incomplete. They remain comparable as snapshots.",
   continuityNote:
-    "Sides are identified by ESPN team id + season. No franchise merges.",
+    "Sides are identified by team id + season. No franchise merges.",
 };
 
 const CATEGORY_LABELS: Record<TeamCompareCategoryId, string> = {

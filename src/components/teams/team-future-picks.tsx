@@ -100,7 +100,7 @@ export function TeamFuturePicksTable({ data, className }: { data: TeamFuturePick
                         ))}
                       </ul>
                     ) : year > lastListed(round) ? (
-                      <span className={cn(type.caption, "text-muted-foreground")}>Not listed by Spotrac yet</span>
+                      <span className={cn(type.caption, "text-muted-foreground")}>Not listed yet</span>
                     ) : (
                       <span className={cn(type.caption, "text-muted-foreground")}>—</span>
                     )}
@@ -126,13 +126,8 @@ export function FuturePicksSourceNote({ data }: { data: TeamFuturePicksView }) {
     : null;
   return (
     <p className={cn(type.caption, "text-muted-foreground")}>
-      Terms are in Spotrac&apos;s words{asOf ? `, as of ${asOf}` : ""}. Ranges like 1-8 are pick numbers; &quot;via&quot;
-      lists the teams a pick passed through. Logos show whose pick it originally was.{" "}
-      {data.sourceUrl ? (
-        <a href={data.sourceUrl} className="font-semibold underline-offset-2 hover:underline" rel="noreferrer" target="_blank">
-          Source: Spotrac
-        </a>
-      ) : null}
+      Terms are worded as reported{asOf ? `, as of ${asOf}` : ""}. Ranges like 1-8 are pick numbers; &quot;via&quot;
+      lists the teams a pick passed through. Logos show whose pick it originally was.
     </p>
   );
 }

@@ -4,17 +4,17 @@ import type { PbpProductSource } from "@/pbp/product-types";
 export function provenanceSourceLabel(source: PbpProductSource): string {
   switch (source) {
     case "nba_cdn":
-      return "NBA CDN";
+      return "Primary feed";
     case "stats_nba":
-      return "NBA Stats";
+      return "Stats feed";
     case "espn":
-      return "ESPN";
+      return "Secondary feed";
     case "disk_cache":
-      return "Cached NBA data";
+      return "Cached data";
     case "sample":
       return "Sample data";
     case "balldontlie":
-      return "BallDontLie";
+      return "Backup feed";
     default: {
       const _exhaustive: never = source;
       return String(_exhaustive);

@@ -18,11 +18,6 @@ function formatDay(iso: string | null | undefined): string | null {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
 }
 
-function listOutlets(outlets: string[]): string {
-  if (outlets.length <= 1) return outlets[0] ?? "";
-  return `${outlets.slice(0, -1).join(", ")} and ${outlets.at(-1)}`;
-}
-
 export function MovementCenterView({
   feed,
   meta,
@@ -105,11 +100,12 @@ export function MovementCenterView({
             <p>
               {meta.headlinesScanned != null && meta.feeds?.length ? (
                 <>
-                  Scanned {meta.headlinesScanned} headlines from {listOutlets(meta.feeds)}
+                  Scanned {meta.headlinesScanned} headlines from {meta.feeds.length}{" "}
+                  {meta.feeds.length === 1 ? "news feed" : "news feeds"}
                   {headlineDay ? `, newest ${headlineDay}` : ""}.{" "}
                 </>
               ) : null}
-              {ledgerDay ? <>Transaction log (ESPN and NBA.com) through {ledgerDay}.</> : null}
+              {ledgerDay ? <>Transaction log through {ledgerDay}.</> : null}
             </p>
           </MoreInfo>
         ) : null}

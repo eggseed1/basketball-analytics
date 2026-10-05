@@ -83,6 +83,21 @@ export default function PrivacyPage() {
         </p>
       </Section>
 
+      <Section title="Credits">
+        <p>
+          RAPTOR ratings are FiveThirtyEight&apos;s, published under the{" "}
+          <a
+            href="https://creativecommons.org/licenses/by/4.0/"
+            className="underline underline-offset-2"
+            target="_blank"
+            rel="noreferrer"
+          >
+            CC BY 4.0
+          </a>{" "}
+          license.
+        </p>
+      </Section>
+
       <Section title="Contact">
         <p>
           Questions or deletion requests go to the{" "}

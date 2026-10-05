@@ -41,8 +41,7 @@ export function PlayerBoardHealthBanner({
       <p className="font-bold tracking-tight">{health.label}</p>
       <p className="mt-1 text-muted-foreground">{health.message}</p>
       <p className="mt-1 text-[12px] text-muted-foreground">
-        Live ESPN/NBA board browsing is separate from the precomputed DRBL
-        overlay.
+        Live board browsing is separate from the precomputed DRBL overlay.
       </p>
       {health.historicalGamesCachePresent === true &&
       (health.status === "season_unsupported" ||

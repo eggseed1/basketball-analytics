@@ -39,7 +39,7 @@ export function AutoRefresh({
     <p
       className="text-xs text-muted-foreground"
       aria-live="polite"
-      title="Fetches fresh stats from stats.nba.com on a short interval"
+      title="Fetches fresh stats on a short interval"
     >
       {label}
       {lastRefresh

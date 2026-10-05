@@ -131,7 +131,7 @@ export function assessProductionProviderGuard(
       status: "live_provider_empty_career",
       label: "Empty career from live provider",
       message:
-        "The live NBA provider returned no career seasons for this athlete id. That can mean a bad id, a temporary ESPN gap, or a brand-new player. It does not point to a sample-dataset misconfiguration.",
+        "The live NBA provider returned no career seasons for this athlete id. That can mean a bad id, a temporary data gap, or a brand-new player. It does not point to a sample-dataset misconfiguration.",
       isSilentEmptyCareerRisk: false,
     };
   }

@@ -161,9 +161,9 @@ export function buildTeamArcModel(options: {
 
   const coverageBits = [
     earliestAvailable && latestAvailable
-      ? `Team-season board rows available ${earliestAvailable} → ${latestAvailable} for this ESPN team id.`
+      ? `Team-season board rows available ${earliestAvailable} → ${latestAvailable} for this team.`
       : `No team-season board rows in the requested window.`,
-    `Cross-season metrics limited to stable ESPN counting/efficiency fields (point differential, TS%, eFG%, PPG, opp PPG).`,
+    `Cross-season metrics limited to stable counting/efficiency fields (point differential, TS%, eFG%, PPG, opp PPG).`,
     `Arc coverage starts ${earliest} (documented team-board reliability floor). Earlier seasons are not treated as zeros.`,
   ];
   if (options.missingSeasons?.length) {
@@ -193,7 +193,7 @@ export function buildTeamArcModel(options: {
     allRows,
     transitions: buildTeamArcTransitions(allSorted, 4),
     continuityNote:
-      "Continuity follows this team's ESPN id across seasons. It is not a merged multi-franchise genealogy.",
+      "Continuity follows this team's id across seasons. It is not a merged multi-franchise genealogy.",
   };
 }
 

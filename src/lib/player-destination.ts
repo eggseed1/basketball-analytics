@@ -63,7 +63,7 @@ export function resolvePlayerSeason(
     }
   }
 
-  return latestWithGames ?? latest ?? "2024-25";
+  return latestWithGames ?? latest ?? nowSeason;
 }
 
 /**

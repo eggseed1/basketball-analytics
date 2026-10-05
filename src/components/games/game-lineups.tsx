@@ -205,7 +205,7 @@ export function GameLineupsPanel({
   const missing =
     mode === "pregame"
       ? "Not announced yet. Teams usually name starters about 30 minutes before tip."
-      : "ESPN is not listing this lineup right now.";
+      : "This lineup is not listed right now.";
 
   if (mode === "pregame" && !away && !home) {
     return (

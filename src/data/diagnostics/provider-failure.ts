@@ -24,10 +24,10 @@ export function classifyProviderFailure(error: unknown): {
   const statusMatch = /ESPN request failed \((\d+)\)/.exec(msg);
   if (statusMatch) {
     const status = Number(statusMatch[1]);
-    if (status === 403) return { kind: "http_403", label: "ESPN HTTP 403" };
-    if (status === 429) return { kind: "http_429", label: "ESPN HTTP 429" };
-    if (status >= 500) return { kind: "http_5xx", label: `ESPN HTTP ${status}` };
-    if (status >= 400) return { kind: "http_4xx", label: `ESPN HTTP ${status}` };
+    if (status === 403) return { kind: "http_403", label: "HTTP 403" };
+    if (status === 429) return { kind: "http_429", label: "HTTP 429" };
+    if (status >= 500) return { kind: "http_5xx", label: `HTTP ${status}` };
+    if (status >= 400) return { kind: "http_4xx", label: `HTTP ${status}` };
   }
   if (
     /timed out|TimeoutError|AbortError/i.test(msg) ||

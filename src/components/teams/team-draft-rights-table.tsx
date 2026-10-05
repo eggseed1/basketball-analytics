@@ -15,7 +15,7 @@ export function TeamDraftRightsTable({ data }: { data: TeamContractsView }) {
   if (!data.draftRights.length) {
     return (
       <p className={cn(type.caption, "text-muted-foreground")}>
-        No unsigned draft picks. Basketball-Reference lists no players whose rights this team holds.
+        No unsigned draft picks. No players are listed whose rights this team holds.
       </p>
     );
   }

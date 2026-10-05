@@ -898,7 +898,7 @@ export async function getUpcomingGameSummaries(
     games: slice.map(toGameSummary),
     hasMore: pool.length > limit,
     source: "cached-espn",
-    warnings: ["Showing build-time schedule snapshot; live ESPN unavailable."],
+    warnings: ["Showing build-time schedule snapshot; the live scoreboard is unavailable."],
     isStale: true,
   };
 }

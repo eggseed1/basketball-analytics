@@ -34,15 +34,15 @@ export function formatSentimentDate(iso?: string | null, withYear = false): stri
 const ORIGIN_LABEL: Record<SentimentLaneOrigin, string> = {
   curated: "Curated",
   headlines: "Headlines",
-  reddit: "Reddit",
+  reddit: "Fans",
   fans: "Fans",
 };
 
 const ORIGIN_HINT: Record<SentimentLaneOrigin, string> = {
   curated: "Hand-written prototype value, not measured.",
   headlines: "Average tone of publisher headlines that name this subject.",
-  reddit: "Average tone of post titles from approved subreddits.",
-  fans: "Average tone of team fan blog headlines, Bluesky posts and comments on NBA YouTube channels (teams, team podcasts and league shows).",
+  reddit: "Average tone of fan post titles.",
+  fans: "Average tone of team fan blog headlines, social posts and video comments.",
 };
 
 export function laneOriginLabel(origin?: SentimentLaneOrigin): string {
@@ -95,9 +95,9 @@ function fanPartsText(fans: NonNullable<SentimentSourceSummary["fans"]>): string
     n("fan_blog")
       ? `${n("fan_blog").toLocaleString()} headlines from ${fans.blogCount} team fan blogs`
       : null,
-    n("bluesky") ? `${n("bluesky").toLocaleString()} Bluesky posts` : null,
-    n("youtube") ? `${n("youtube").toLocaleString()} comments on NBA YouTube channels (teams, team podcasts and league shows)` : null,
-    n("reddit") ? `${n("reddit").toLocaleString()} Reddit post titles` : null,
+    n("bluesky") ? `${n("bluesky").toLocaleString()} social posts` : null,
+    n("youtube") ? `${n("youtube").toLocaleString()} video comments` : null,
+    n("reddit") ? `${n("reddit").toLocaleString()} forum post titles` : null,
   ].filter((part): part is string => Boolean(part));
   if (parts.length <= 1) return parts.join("");
   return `${parts.slice(0, -1).join(", ")} and ${parts[parts.length - 1]}`;
@@ -152,12 +152,12 @@ export function SentimentSourcesStrip({
           {headlines?.itemCount ? (
             <span>
               Media lanes. {headlines.itemCount.toLocaleString()} NBA headlines from{" "}
-              {headlines.outlets.join(", ")}, {formatSentimentDate(headlines.firstDate)} to{" "}
+              {headlines.outlets.length} publishers, {formatSentimentDate(headlines.firstDate)} to{" "}
               {formatSentimentDate(headlines.asOf)}. A player needs {headlines.floor} headlines in
               the last 7 days to get a score.{" "}
               {headlines.toneModel ? (
                 <>
-                  A language model (Llama 3.3 70B, run on Cloudflare) rates each headline as
+                  A language model rates each headline as
                   positive, neutral or negative toward each player it names. Checked against 127
                   labeled headlines, it matched the label about 7 times in 10 and never rated one
                   the opposite way. Players named only in the summary, and team scores, still use
@@ -186,14 +186,14 @@ export function SentimentSourcesStrip({
                 <span>
                   Fan lanes. {fans.itemCount.toLocaleString()} fan posts: {fanPartsText(fans)},{" "}
                   {formatSentimentDate(fans.firstDate)} to {formatSentimentDate(fans.asOf)}.
-                  {fans.platforms.reddit ? "" : " Reddit isn't connected yet."} A player or team needs{" "}
+                  {" "}A player or team needs{" "}
                   {fans.floor} posts in the last 7 days to get a score. Comments under the same
                   video share weight, so 100 comments on one video count for less than 100 posts
                   spread across many places.{" "}
                   {fans.toneModel ? (
                     <>
-                      Fan blog headlines get the same model rating as news headlines. Bluesky posts
-                      and YouTube comments that name a player are rated by the same model when they
+                      Fan blog headlines get the same model rating as news headlines. Social posts
+                      and video comments that name a player are rated by the same model when they
                       are collected, up to a nightly limit. Checked against 143 labeled fan posts, it
                       matched the label about 3 times in 4 and rated 2 the opposite way. The word
                       list matched about half and rated 18 the opposite way. Older posts, posts past
@@ -219,7 +219,7 @@ export function SentimentSourcesStrip({
               />
               {reddit?.itemCount ? (
                 <span>
-                  Fan lanes. {reddit.itemCount.toLocaleString()} posts from approved subreddits. A
+                  Fan lanes. {reddit.itemCount.toLocaleString()} fan forum posts. A
                   player needs {reddit.floor} posts in the last 7 days to get a score.
                 </span>
               ) : (

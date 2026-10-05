@@ -3,7 +3,7 @@
     "methodologyVersion": "sentiment-s1-0.2",
     "status": "CURATED_PLUS_HEADLINES",
     "season": "2026-27",
-    "disclaimer": "Fan lanes come from team fan blogs, Bluesky and comments on NBA YouTube channels (teams, team podcasts and league shows), and media lanes from publisher headlines. Neither is a census of all fans or media.",
+    "disclaimer": "Fan lanes come from team fan blogs, social posts and video comments, and media lanes from publisher headlines. Neither is a census of all fans or media.",
     "snapshotDate": "2026-10-04",
     "builtAt": "2026-10-04T16:32:57.698Z",
     "rosterPlayerCount": 605,

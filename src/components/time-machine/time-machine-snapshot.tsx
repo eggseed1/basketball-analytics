@@ -289,7 +289,7 @@ export function TimeMachineSnapshot({
           </ul>
         )}
         <p className="text-[12px] text-muted-foreground">
-          Factual ESPN transaction events only. No trade genealogy.
+          Factual transaction events only. No trade genealogy.
         </p>
       </Section>
 

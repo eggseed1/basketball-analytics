@@ -33,7 +33,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   DPM: {
     title: "DARKO DPM",
-    body: "Daily Player Metric from DARKO (darko.app): estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
+    body: "Daily Player Metric from DARKO: estimated points per 100 possessions vs average, blending box score and on/off. 0 is average; stars are often +3 to +6.",
   },
   "O-DPM": {
     title: "DARKO offensive DPM",
@@ -217,7 +217,7 @@ const ENTRIES: Record<string, StatGlossaryEntry> = {
   },
   RAPTOR: {
     title: "RAPTOR",
-    body: "FiveThirtyEight RAPTOR: open pts/100 impact with offense, defense, and WAR. Historical seasons only after 538 stopped publishing.",
+    body: "RAPTOR: open pts/100 impact with offense, defense, and WAR. Historical seasons only, through 2021-22.",
   },
   "O-RAPTOR": {
     title: "O-RAPTOR",

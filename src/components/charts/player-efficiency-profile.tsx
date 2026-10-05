@@ -41,7 +41,7 @@ export function PlayerEfficiencyProfile({
           Shooting efficiency
         </h2>
         <p id={`${chartId}-desc`} className="text-sm text-muted-foreground">
-          BRef FG / 2P / 3P / eFG / TS / FT. Bar length is the rate; color is
+          FG / 2P / 3P / eFG / TS / FT. Bar length is the rate; color is
           league percentile (blue poor → red elite).
         </p>
       </div>

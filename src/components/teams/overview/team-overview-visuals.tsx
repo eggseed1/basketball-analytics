@@ -69,7 +69,7 @@ export function TeamOverviewVisuals({
       <LeagueStrips strips={strips} teamKey={teamKey} season={season} />
 
       <p className={cn(type.micro, "text-muted-foreground")}>
-        Rates and ranks come from the season board (ESPN team totals). Game-by-game charts use final scores from the
+        Rates and ranks come from season team totals. Game-by-game charts use final scores from the
         schedule. Neither adjusts for opponent strength.
       </p>
     </div>

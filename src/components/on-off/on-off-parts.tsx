@@ -139,10 +139,11 @@ export function OnOffMethodNote({ className }: { className?: string }) {
   return (
     <div className={cn(type.caption, "flex flex-col gap-1.5 text-muted-foreground", className)}>
       <p>
-        Ratings are points per 100 possessions, built from NBA play-by-play with every
-        possession tagged by the ten players on the floor. Filtered leaves out garbage time,
-        using the Cleaning the Glass definition, and possessions that start with 2 seconds or
-        less on the clock. Clutch follows the NBA definition: the last five minutes of the
+        Ratings are points per 100 possessions, built from play-by-play with every possession
+        tagged by the ten players on the floor. Filtered leaves out garbage time and possessions
+        that start with 2 seconds or less on the clock. Garbage time is the closing run of a
+        fourth quarter with two or fewer starters on the floor and a lead of at least 25 with
+        more than 9 minutes left, 20 with 6 to 9 minutes left, or 10 inside 6 minutes. Clutch follows the NBA definition: the last five minutes of the
         fourth quarter or overtime with the score within five.
       </p>
       <p>

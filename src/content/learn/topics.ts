@@ -628,7 +628,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howDrblUses: [
       "Every possession of every regular-season and playoff game from 2022-23 on is tagged with the ten players on the floor, using the same lineup reconstruction as DRBL.",
-      "Filtered drops garbage time (the Cleaning the Glass definition) and possessions that start with 2 seconds or less in a period.",
+      "Filtered drops garbage time and possessions that start with 2 seconds or less in a period. Garbage time is the closing run of a fourth quarter with two or fewer starters on the floor and a lead of at least 25 with more than 9 minutes left, 20 with 6 to 9 minutes left, or 10 inside 6 minutes.",
       "Clutch uses the NBA definition: last five minutes of the fourth quarter or overtime, score within five.",
       "Luck-adjusted sets opponents' 3-point and free-throw percentages to league average.",
       "With/without splits a pair of teammates into both on, each alone, and both off.",
@@ -645,11 +645,10 @@ export const LEARN_TOPICS: LearnTopic[] = [
     caveats: [
       "On/off is not a measure of individual value. Regularized models like DRBL exist to separate a player from his lineups.",
       "Small samples swing wildly. Clutch splits are always small samples.",
-      "Our ratings run about 1.5 points per 100 higher than NBA.com because possession counting differs slightly. The swing itself lands within about 1.5 points of NBA.com on average.",
+      "Our ratings can run about 1.5 points per 100 higher than other public on/off numbers because possession counting differs slightly. The swing itself usually lands within about 1.5 points.",
     ],
     relatedIds: ["net", "plus_minus", "drbl"],
     seeInAction: [{ label: "Explore teams", href: "/explore/teams" }],
-    sources: ["Cleaning the Glass garbage-time definition", "NBA.com clutch definition"],
   },
   {
     id: "pace",
@@ -921,12 +920,12 @@ export const LEARN_TOPICS: LearnTopic[] = [
     shortName: "Transactions",
     category: "transactions",
     oneSentence:
-      "DRBL separates ESPN source events, related-event clusters, and structured transactions. Only structured transactions can feed trade genealogy.",
+      "DRBL separates source events, related-event clusters, and structured transactions. Only structured transactions can feed trade genealogy.",
     whyItMatters: [
       "Prevents free-text blurbs from being mistaken for verified asset moves.",
     ],
     howToInterpret: [
-      "Source event = verbatim ESPN report.",
+      "Source event = a transaction note kept word for word.",
       "Related cluster = safely linked reports, still not a full trade package.",
       "Structured transaction = verified assets (currently 0 in production).",
     ],
@@ -935,7 +934,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
       "Genealogy UI stays blocked until a licensed structured source exists.",
     ],
     caveats: [
-      "Do not infer picks/players from ESPN prose.",
+      "Do not infer picks/players from transaction prose.",
       "Structured-source ingestion is parked after a formal NO-GO audit.",
     ],
     relatedIds: [
@@ -970,7 +969,7 @@ export const LEARN_TOPICS: LearnTopic[] = [
     ],
     howDrblUses: [
       "Team Cap & assets shows TPE rows only when a structured ledger is ingested.",
-      "MetricHelp / Learn explain the concept; ESPN free text never invents a TPE.",
+      "MetricHelp / Learn explain the concept; transaction free text never invents a TPE.",
     ],
     caveats: [
       "Production currently has zero structured TPEs.",

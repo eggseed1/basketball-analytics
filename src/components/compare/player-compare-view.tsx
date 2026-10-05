@@ -1002,18 +1002,6 @@ function EraNote({
           didn&apos;t track these for some of those seasons.
         </p>
       ))}
-      <p>
-        League averages:{" "}
-        <a
-          href={era.source}
-          target="_blank"
-          rel="noreferrer"
-          className="underline underline-offset-2 hover:text-foreground"
-        >
-          Basketball-Reference
-        </a>
-        .
-      </p>
     </div>
   );
 }

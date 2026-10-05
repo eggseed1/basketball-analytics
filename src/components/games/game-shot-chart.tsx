@@ -1064,7 +1064,7 @@ export function GameShotChart({
 
       <p className={cn(type.micro, "text-muted-foreground")}>
         {mode === "game"
-          ? "Spots are ESPN's, logged on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
+          ? "Spots are as logged in the play-by-play, drawn on a half court from the basket being attacked. Rebounds have no spot of their own, so the dot inside each miss shows who got the ball. Free throws have no spot and only show at each line as a running count. "
           : `Zones use located attempts only${located < fga ? `, ${located} of ${fga} this game` : ""}. Tap a zone to show just those shots. `}
         Counts come from play-by-play and can differ slightly from the official box score, for example on heaves or stat corrections made after the game.
       </p>

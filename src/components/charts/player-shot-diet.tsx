@@ -146,7 +146,7 @@ export function PlayerShotDiet({
       )}
       {leagueShares ? (
         <p className={cn(type.caption, "text-muted-foreground")}>
-          The tick on each bar marks the league-wide share. Source: Basketball Reference season totals.
+          The tick on each bar marks the league-wide share, from season totals.
         </p>
       ) : null}
     </figure>

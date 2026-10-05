@@ -284,7 +284,7 @@ function PossessionBattleCard({
           ball. Points off turnovers are scored on the possession after the other team turns it
           over. Team rebounds move the ball but don&apos;t count as rebounds.{" "}
           {officialRows.length
-            ? `ESPN's box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
+            ? `The official box score supplies ${listJoin(officialRows)}. Everything else comes from play-by-play and can differ slightly from the official box score.`
             : PBP_NOTE}
         </p>
       </MoreInfo>

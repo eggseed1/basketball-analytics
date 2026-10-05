@@ -22,7 +22,6 @@ import {
 import { type } from "@/lib/design-system";
 import { resolveTeamBrand } from "@/lib/nba-brand";
 import { cn } from "@/lib/utils";
-import { teamNameAt } from "@/trades/team-era-names";
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -61,7 +60,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   }
   return {
     title: "How they got him",
-    description: "How each NBA team acquired its players, and where the trades led, from the ESPN transaction log.",
+    description: "How each NBA team acquired its players, and where the trades led, from the transaction log.",
   };
 }
 
@@ -140,7 +139,6 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
   const story = payload?.story ?? null;
   const ledgerThrough = payload?.ledgerThrough ?? null;
   const datalist = [...new Set(catalog.map((e) => e.label))].sort();
-  const brand = teamId ? resolveTeamBrand(teamId) : undefined;
 
   return (
     <main className="site-shell flex flex-col gap-6 py-6 sm:py-8">
@@ -213,7 +211,7 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
 
       {teamId && player && !story ? (
         <p className={cn(type.bodySm, "rounded-md border border-border/70 px-3 py-2 text-muted-foreground")}>
-          The ESPN log has no arrival for <span className="font-semibold text-foreground">{player}</span> with the{" "}
+          The transaction log has no arrival for <span className="font-semibold text-foreground">{player}</span> with the{" "}
           {names[teamId]}. It covers 2000 onward, so earlier moves aren&apos;t here.
         </p>
       ) : null}
@@ -295,23 +293,10 @@ export default async function AcquisitionsPage({ searchParams }: PageProps) {
       {teamId ? (
         <footer className={cn(type.caption, "flex flex-col gap-1 border-t border-border/50 pt-3 text-muted-foreground")}>
           <p>
-            Built from ESPN&apos;s transaction log
+            Built from the NBA transaction log
             {ledgerThrough ? `, 2000 through ${formatPlainDate(ledgerThrough)}` : " from 2000 on"}. Each step uses only
             what the log says. When it skips a step, we leave that step blank. Draft slots come from NBA draft history and player bios.
           </p>
-          {brand ? (
-            <p>
-              Source:{" "}
-              <a
-                href={`https://www.espn.com/nba/team/transactions/_/name/${brand.logoSlug}`}
-                target="_blank"
-                rel="noreferrer"
-                className="font-semibold underline-offset-2 hover:underline"
-              >
-                ESPN {teamNameAt(teamId, undefined, names)} transactions
-              </a>
-            </p>
-          ) : null}
         </footer>
       ) : null}
     </main>

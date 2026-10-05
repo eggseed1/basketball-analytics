@@ -21,7 +21,10 @@ import {
   slimEdgeProductEnabled,
 } from "@/data/providers/nba/runtime-policy";
 import { getBundledBrefCareerForPlayer } from "@/data/runtime/bref-advanced-snapshot";
-import { resolveBundledCurrentTeamId } from "@/data/runtime/current-roster-snapshot";
+import {
+  bundledCurrentRosterIsFresh,
+  resolveBundledCurrentTeamId,
+} from "@/data/runtime/current-roster-snapshot";
 import {
   displayNameFromBrefRouteId,
   parseBrefPlayerSlug,
@@ -304,6 +307,14 @@ function overlayProfileTeamForPreseason(
   if (
     lastPlayed &&
     lastPlayed < canonicalSeasonFromStartYear(currentNbaStartYear() - 3)
+  ) {
+    return rows;
+  }
+  // An unsigned draft pick's profile names the team holding his rights.
+  if (
+    !lastPlayed &&
+    bundledCurrentRosterIsFresh(season) &&
+    !resolveBundledCurrentTeamId(routePlayerId, player.id)
   ) {
     return rows;
   }

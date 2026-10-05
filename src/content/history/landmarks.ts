@@ -63,7 +63,7 @@ export const HISTORY_LANDMARKS: HistoryLandmark[] = [
     id: "raptor-finale-22",
     season: "2021-22",
     title: "Last RAPTOR season",
-    blurb: "FiveThirtyEight RAPTOR ends here. Use this season for RAPTOR leaderboards.",
+    blurb: "RAPTOR ends here. Use this season for RAPTOR leaderboards.",
     historyHref: "/history?season=2021-22&theme=historical",
     boardHref: "/explore/players?season=2021-22&sort=raptor&dir=desc",
     boardLabel: "2021-22 RAPTOR board",

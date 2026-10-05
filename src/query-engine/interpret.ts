@@ -347,7 +347,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
         : [{ kind: "team", id: "", name: "league" }],
       interpretation: [
         team ? team.name : "Transaction question",
-        "Related ESPN source events may exist, but there is no verified structured trade ledger",
+        "Related transaction notes may exist, but there is no verified structured trade ledger",
       ],
     };
   }
@@ -363,7 +363,7 @@ export function interpretAskQuery(raw: string): BasketballQueryAst {
         : [{ kind: "team", id: "", name: "league" }],
       interpretation: [
         team ? `${team.name} offseason` : "League offseason",
-        "Factual ESPN transaction events only",
+        "Factual transaction events only",
       ],
     };
   }

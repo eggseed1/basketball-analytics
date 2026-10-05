@@ -59,13 +59,6 @@ export type TransactionEvent = {
   whyItMatters?: string;
 };
 
-/** Short publisher name for a transaction row's `source`. */
-export function transactionSourceName(source?: string | null): string {
-  if (source === "nba-player-movement") return "NBA.com";
-  if (source === "curated-gap-fill") return "Curated";
-  return "ESPN";
-}
-
 export function statusLabel(status: TransactionStatus): string {
   switch (status) {
     case "real":

@@ -85,7 +85,7 @@ export async function TeamRosterIsland({
             </h2>
             <p className={cn(type.bodySm, "text-muted-foreground")}>
               {preseason
-                ? `${season} roster as ESPN lists it today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
+                ? `${season} roster as listed today. Players who changed teams this offseason show up with their new team. Stats stay blank until games are played.`
                 : `${season} roster with the same columns as Explore Players, scoped to this team.`}
               {!preseason && roster.omitsMidSeasonMoves
                 ? ` ${MID_SEASON_MOVES_NOTE}`

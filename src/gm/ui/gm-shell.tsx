@@ -80,7 +80,7 @@ export function GmShell({ children }: { children: ReactNode }) {
             My Teams
           </h1>
           <p className="mt-1 max-w-2xl text-[15px] text-muted-foreground">
-            Real NBA rosters (ESPN + DARKO/RAPTOR) from{" "}
+            Real NBA rosters (with DARKO/RAPTOR) from{" "}
             {ESPN_PLAYER_SEASON_HORIZON_START} onward, with era CBA caps. RAPTOR
             only exists through 2021-22.
           </p>

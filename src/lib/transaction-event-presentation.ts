@@ -19,7 +19,7 @@ export function isTradeRelatedSourceCategory(
 
 export function espnSourceEventCountLabel(count: number): string {
   const n = Math.max(0, Math.floor(count));
-  return n === 1 ? "1 ESPN source event" : `${n} ESPN source events`;
+  return n === 1 ? "1 source event" : `${n} source events`;
 }
 
 export const TRADE_RELATED_TRANSACTION_TITLE = "Trade-related transaction";

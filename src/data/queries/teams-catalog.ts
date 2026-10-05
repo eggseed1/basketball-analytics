@@ -33,7 +33,7 @@ const FALLBACK_WARNING =
   "Live team metadata temporarily unavailable; using verified team identities.";
 
 const CACHED_WARNING =
-  "Live team metadata temporarily unavailable; using recently cached ESPN teams.";
+  "Live team metadata temporarily unavailable; using recently cached teams.";
 
 /** Process-local last successful live catalog (survives within a warm instance). */
 let lastSuccessfulLiveTeams: Team[] | null = null;
@@ -115,7 +115,7 @@ function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T> {
 function classifyProviderError(error: unknown): string {
   if (!(error instanceof Error)) return "unknown provider error";
   const status = /ESPN request failed \((\d+)\)/.exec(error.message)?.[1];
-  if (status) return `ESPN HTTP ${status}`;
+  if (status) return `HTTP ${status}`;
   if (/timed out/i.test(error.message)) return "timeout";
   return error.message.slice(0, 160);
 }

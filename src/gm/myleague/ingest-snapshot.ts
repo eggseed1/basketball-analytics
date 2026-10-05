@@ -19,7 +19,7 @@ export async function ingestHistoricalSeasonSnapshot(
   const startYear = seasonEndYear - 1;
   if (startYear < ESPN_PLAYER_SEASON_HORIZON_START) {
     throw new Error(
-      `Player-season ingest via ESPN starts at ${ESPN_PLAYER_SEASON_HORIZON_START}. ` +
+      `Player-season ingest starts at ${ESPN_PLAYER_SEASON_HORIZON_START}. ` +
         `Requested ${seasonEndToCanonical(seasonEndYear)}.`
     );
   }

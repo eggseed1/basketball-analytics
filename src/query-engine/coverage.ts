@@ -43,7 +43,7 @@ export function getAskMetricCoverageAudit(
       label: "PPG",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "Career counting rows (ESPN / historical)",
+      playerCoverage: "Career counting rows",
       reliable: true,
       sourceLabel: "Player-season board (counting)",
       notes: "Totals ÷ GP. Available wherever season counting stats exist.",
@@ -123,11 +123,11 @@ export function getAskMetricCoverageAudit(
       label: "USG%",
       earliestSeason: "2000-01",
       latestSeason: current,
-      playerCoverage: "Modern ESPN season boards; career rows often lack USG",
+      playerCoverage: "Modern season boards; career rows often lack USG",
       reliable: false,
       sourceLabel: "Modern player-season board (when present)",
       notes:
-        "ESPN career transform currently stamps usagePct=0. Prefer season board rows; refuse when missing rather than inventing.",
+        "Career rows carry no usage rate. Prefer season board rows; refuse when missing rather than inventing.",
     },
     {
       metricId: "darko",
@@ -146,7 +146,7 @@ export function getAskMetricCoverageAudit(
       earliestSeason: listBundledRaptorSeasons()[0] ?? "1976-77",
       latestSeason: listBundledRaptorSeasons().at(-1) ?? "2021-22",
       playerCoverage:
-        "FiveThirtyEight open RAPTOR through 2021-22; blank afterward",
+        "Open RAPTOR through 2021-22; blank afterward",
       reliable: true,
       sourceLabel: "Verified historical impact (RAPTOR season-keyed)",
       notes:
@@ -157,11 +157,11 @@ export function getAskMetricCoverageAudit(
       label: "BPM",
       earliestSeason: "1996-97",
       latestSeason: current,
-      playerCoverage: "BRef advanced overlay when baked for the asked season",
+      playerCoverage: "Advanced overlay when baked for the asked season",
       reliable: true,
-      sourceLabel: "Basketball-Reference advanced (BPM)",
+      sourceLabel: "Advanced season board (BPM)",
       notes:
-        "Season-true when the BRef advanced bake includes the season. Missing BPM stays unavailable. DRBL never fills it with 0.",
+        "Season-true when the advanced bake includes the season. Missing BPM stays unavailable. DRBL never fills it with 0.",
     },
     {
       metricId: "drbl100",
@@ -169,7 +169,7 @@ export function getAskMetricCoverageAudit(
       earliestSeason: listDrblSeasons()[0] ?? "2020-21",
       latestSeason: listDrblSeasons().at(-1) ?? current,
       playerCoverage:
-        "Precomputed DRBL overlay via production-approved ESPN↔NBA identity",
+        "Precomputed DRBL overlay via a verified player identity join",
       reliable: true,
       sourceLabel: "DRBL season overlay (validated ability)",
       notes:
@@ -262,10 +262,10 @@ export function getAskMetricCoverageAudit(
       label: "Team point differential",
       earliestSeason: "2001-02",
       latestSeason: current,
-      playerCoverage: "Team-season ESPN boards",
+      playerCoverage: "Team-season boards",
       reliable: true,
       sourceLabel: "Team-season board",
-      notes: "Team averages from ESPN by-team totals.",
+      notes: "Team averages from by-team season totals.",
     },
     {
       metricId: "team_ts",
@@ -305,19 +305,19 @@ export function getAskCoverageGaps(now = new Date()): Array<{
       label: "ORtg (player)",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "ESPN approx from counting; definitions vary",
+      playerCoverage: "Approximate from counting stats; definitions vary",
       reliable: false,
       notes:
-        "Not exposed in ASK DRBL yet. ESPN-derived individual ORtg is approximate and not methodology-frozen.",
+        "Not exposed in ASK DRBL yet. Individual ORtg here is approximate and not methodology-frozen.",
     },
     {
       label: "DRtg (player)",
       earliestSeason: null,
       latestSeason: current,
-      playerCoverage: "Unavailable on ESPN athlete season boards",
+      playerCoverage: "Unavailable on athlete season boards",
       reliable: false,
       notes:
-        "Not exposed. ESPN does not publish individual DRtg; DRBL keeps the field missing (never fabricates 0).",
+        "Not exposed. Season boards carry no individual DRtg, so DRBL keeps the field missing (never fabricates 0).",
     },
     {
       label: "Net rating (player)",

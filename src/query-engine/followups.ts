@@ -118,7 +118,7 @@ function populationFor(op: QueryOperation): string {
     case "game_lab":
       return "Game box score + team totals";
     case "offseason_summary":
-      return "ESPN transaction event archive";
+      return "Transaction event archive";
     case "player_on_off":
       return "Every possession, tagged by the ten players on the floor";
     default:

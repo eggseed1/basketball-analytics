@@ -18,6 +18,7 @@ import { unplayedDraftees } from "../src/data/runtime/draftee-search";
 import { getPlayerSearchIndex } from "../src/data/runtime/player-search-snapshot";
 import { parseRosterMoves } from "../src/lib/espn-ledger-text";
 import { formatOrdinal as ordinal } from "../src/lib/format";
+import { resolvePlayerSeason } from "../src/lib/player-destination";
 import { normalizePlayerName } from "../src/lib/player-name";
 import { createAcquisitionEngine } from "../src/trades/acquisition-engine";
 
@@ -164,9 +165,15 @@ function testFreeAgentProfileHasNoTeam() {
   assert.equal(profile("inactive")?.currentTeamId, "15");
 }
 
+function testEmptyCareerDefaultsToCurrentSeason() {
+  // A pick with no rows yet should read his age and stats for this season.
+  assert.equal(resolvePlayerSeason([], null, [], { nowSeason: "2026-27" }), "2026-27");
+}
+
 testDates();
 testRows();
 testFreeAgentProfileHasNoTeam();
+testEmptyCareerDefaultsToCurrentSeason();
 testEngineUsesLoggedDraft();
 testSearchRows();
 console.log("draft transactions: ok");

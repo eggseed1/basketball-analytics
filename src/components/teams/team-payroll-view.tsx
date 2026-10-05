@@ -62,10 +62,7 @@ export function TeamPayrollView({ data }: { data: TeamPayrollPresentation }) {
           ))}
         </dl>
         <p className="text-xs text-muted-foreground">
-          Source: {data.capContext.source}
-          {data.capContext.sourceDate
-            ? ` · ${data.capContext.sourceDate}`
-            : ""}
+          {data.capContext.sourceDate ? `As of ${data.capContext.sourceDate}` : null}
         </p>
       </section>
 

@@ -121,7 +121,6 @@ export function GamePlayByPlayPanel({
   events: initialEvents,
   awayTricode,
   homeTricode,
-  source,
   gameId,
   status,
 }: {
@@ -135,7 +134,6 @@ export function GamePlayByPlayPanel({
   const live = isLiveLikeStatus(status as GameStatusKind | undefined);
   const polled = useLivePlays(gameId, initialEvents, live);
   const events = polled.events;
-  const liveSource = polled.source ?? source;
   const periods = useMemo(() => {
     const set = new Set(events.map((e) => e.period));
     return [...set].sort((a, b) => a - b);
@@ -172,7 +170,6 @@ export function GamePlayByPlayPanel({
           <p className="text-sm text-muted-foreground">
             {events.length.toLocaleString()} events
             {live ? " · live" : null}
-            {liveSource ? ` · ${liveSource}` : null}
           </p>
         </div>
         <div

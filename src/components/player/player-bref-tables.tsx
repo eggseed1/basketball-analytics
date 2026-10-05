@@ -52,8 +52,8 @@ export function PlayerBrefTables({
             Season statistics
           </h2>
           <p className="text-sm text-muted-foreground">
-            Full Basketball-Reference column set we can derive from live
-            counting stats (Per Game, Totals, Per 36, Advanced).
+            Every column we can derive from live counting stats (Per Game,
+            Totals, Per 36, Advanced).
           </p>
         </div>
         <div

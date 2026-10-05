@@ -78,7 +78,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Regression pulls extreme small-sample marks toward a prior, so early-season spikes dampen.",
         "O-DPM and D-DPM are estimated separately, then combined into total DPM.",
         "Leaderboards also expose box and on/off flavors of DPM; treat those as diagnostic slices, not replacements for total DPM.",
-        "This site mirrors the public darko.app board; we do not re-derive proprietary weights.",
+        "This site shows the published DARKO numbers; we do not re-derive proprietary weights.",
       ],
       teaches: [
         "Expected marginal point value on a per-possession scale.",
@@ -106,7 +106,6 @@ export const STAT_GUIDES: StatGuide[] = [
         "When DPM and eye test diverge, check role change, injury return, or tiny sample.",
         "Never stack DARKO with another all-in-one impact metric as if independent; they share information.",
       ],
-      sources: ["darko.app public leaderboard", "Published DARKO methodology notes"],
     },
   },
   {
@@ -116,7 +115,7 @@ export const STAT_GUIDES: StatGuide[] = [
     shortName: "RAPTOR",
     category: "impact",
     blurb:
-      "FiveThirtyEight’s open impact metric in points per 100, with offense, defense, and WAR.",
+      "An open impact metric in points per 100, with offense, defense, and WAR.",
     plain: {
       teaches: [
         "How valuable a player was on a points-per-100 scale for that season.",
@@ -124,35 +123,35 @@ export const STAT_GUIDES: StatGuide[] = [
         "WAR: RAPTOR impact scaled by minutes into wins above replacement.",
       ],
       doesnt: [
-        "Seasons after FiveThirtyEight stopped publishing RAPTOR (roughly post-2021-22).",
+        "Seasons after RAPTOR stopped being published (roughly post-2021-22).",
         "A clean forecast of next season the way DARKO aims to.",
         "Basketball Index LEBRON, which is proprietary and not on this site.",
       ],
       upsides: [
-        "Open, documented, and free (538 GitHub, CC BY 4.0).",
+        "Open, documented, and free (CC BY 4.0).",
         "Blends box and on/off signals into one total with O/D splits.",
-        "Sits next to DARKO and BRef BPM for cross-checking eras.",
+        "Sits next to DARKO and BPM for cross-checking eras.",
       ],
       downsides: [
-        "No new seasons after 538 ended the project; use BPM / VORP / DARKO for recent years.",
+        "No new seasons after the project ended; use BPM / VORP / DARKO for recent years.",
         "Defense remains noisier than offense.",
         "Will not match proprietary boards like LEBRON.",
       ],
       apply: [
         "Use RAPTOR for historical “what were they?” boards through the late 2010s / early 2020s.",
-        "For current seasons, prefer DARKO and BRef BPM columns already on the site.",
+        "For current seasons, prefer DARKO and BPM columns already on the site.",
         "Pair with DARKO when the question flips to “who should we expect next?”",
       ],
     },
     deep: {
       definition:
-        "RAPTOR (Robust Algorithm using Player Tracking and On/Off Ratings) is FiveThirtyEight’s public plus-minus-style impact metric in points per 100 possessions, with offensive and defensive components and WAR (wins above replacement).",
+        "RAPTOR (Robust Algorithm using Player Tracking and On/Off Ratings) is a public plus-minus-style impact metric in points per 100 possessions, with offensive and defensive components and WAR (wins above replacement).",
       formula:
         "RAPTOR ≈ O-RAPTOR + D-RAPTOR;  WAR scales impact × playing time toward wins above replacement",
       calculation: [
         "Box-score features enter a regularized model of player contribution.",
         "On/off lineup contexts adjust credit for teammates and opponents.",
-        "Tracking inputs (where available in the 538 era) enrich the estimate.",
+        "Tracking inputs (where available) enrich the estimate.",
         "Offense and defense are estimated separately, then summed into total RAPTOR.",
         "WAR converts stabilized impact and minutes into an approximate wins total.",
       ],
@@ -163,7 +162,7 @@ export const STAT_GUIDES: StatGuide[] = [
       ],
       doesnt: [
         "A pure forecast of next season.",
-        "Coverage of the latest NBA seasons after 538 stopped updates.",
+        "Coverage of the latest NBA seasons after updates stopped.",
         "Identical rankings to DARKO, BPM, or proprietary models.",
       ],
       upsides: [
@@ -172,7 +171,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "O/D splits help role and fit conversations.",
       ],
       downsides: [
-        "Frozen history with no live continuation from 538.",
+        "Frozen history with no live continuation.",
         "Defensive signal remains noisier than offensive.",
         "Cross-era comparisons still need care.",
       ],
@@ -180,9 +179,6 @@ export const STAT_GUIDES: StatGuide[] = [
         "Use RAPTOR for “what have they been?” in covered seasons; DARKO for “what should we expect?”",
         "When RAPTOR is blank for a recent year, read BPM / VORP on the same board.",
         "Investigate large O vs D imbalances before labeling someone “two-way.”",
-      ],
-      sources: [
-        "FiveThirtyEight RAPTOR (GitHub: fivethirtyeight/data/nba-raptor, CC BY 4.0)",
       ],
     },
   },
@@ -417,7 +413,7 @@ export const STAT_GUIDES: StatGuide[] = [
         "Net rating is offensive rating minus defensive rating: points scored per 100 possessions minus points allowed per 100.",
       formula: "NET = ORtg − DRtg",
       calculation: [
-        "Compute team (or lineup) possessions. Methods vary (NBA, Basketball-Reference, etc.).",
+        "Compute team (or lineup) possessions. Methods vary between stat sites.",
         "ORtg = 100 × points / possessions.",
         "DRtg = 100 × points allowed / possessions.",
         "Subtract. Example: ORtg 118, DRtg 110 → NET +8.",

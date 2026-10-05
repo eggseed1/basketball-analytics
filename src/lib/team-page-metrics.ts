@@ -99,7 +99,7 @@ export function buildTeamRankedMetrics(options: {
 }): RankedMetric[] {
   const { team, league, prior, standing, traits } = options;
   const n = league.length;
-  const source = "Season board · ESPN by-team totals";
+  const source = "Season board · by-team totals";
   const notOnBoard =
     "Not on the season board. Missing, not zero. No ORtg/DRtg/Pace/SRS feed here.";
 

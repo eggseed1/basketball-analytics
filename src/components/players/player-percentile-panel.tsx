@@ -1352,7 +1352,7 @@ export function PlayerPercentilePanel({
     if (isHustleStatsSeason(viewSeason)) {
       return "No hustle tracking for this player-season (or peers lacked hustle rates).";
     }
-    return "NBA.com hustle tracking starts in 2015-16. Earlier seasons have no hustle percentiles.";
+    return "Hustle tracking starts in 2015-16. Earlier seasons have no hustle percentiles.";
   }, [viewSeason]);
 
   const [activeId, setActiveId] = useState(() =>

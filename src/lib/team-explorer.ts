@@ -577,7 +577,7 @@ export function buildTeamAskLinks(
     {
       label: `${teamName} offseason`,
       href: askDrblTeamHref(`${teamName} offseason`, teamId),
-      hint: "ESPN transaction events",
+      hint: "Transaction events",
     },
   ];
   if (priorSeason && priorSeason !== season) {

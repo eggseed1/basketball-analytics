@@ -42,7 +42,7 @@ export const GAME_SEASON_CONTEXT_METHODOLOGY = {
   version: GAME_SEASON_CONTEXT_VERSION,
   scope:
     "Final games with same-season team boards (games gamesPlayed ≥ minimum).",
-  baselineRule: `Season baseline = that team's ESPN board averages for the game's season when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
+  baselineRule: `Season baseline = that team's season board averages for the game's season when gamesPlayed ≥ ${BOX_SCORE_MIN_SEASON_GAMES}. Wrong-season boards are never used.`,
   pointsRule:
     "Team points and opponent points come from the official scoreboard scores on the Game row, not summed player lines.",
   boxRule:

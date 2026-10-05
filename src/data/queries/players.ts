@@ -112,7 +112,7 @@ function classifyRosterError(error: unknown): string {
     return error.message;
   }
   const status = /ESPN request failed \((\d+)\)/.exec(error.message)?.[1];
-  if (status) return `ESPN HTTP ${status}`;
+  if (status) return `HTTP ${status}`;
   if (/timed out|aborted|timeout_after_/i.test(error.message)) return "timeout";
   return error.message.slice(0, 160);
 }

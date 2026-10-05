@@ -41,9 +41,9 @@ function base(ast: BasketballQueryAst, status: AskDrblResult["status"]): AskDrbl
 }
 
 const METHODOLOGY = [
-  "Every possession of every game is tagged with the ten players on the floor, rebuilt from NBA play-by-play.",
+  "Every possession of every game is tagged with the ten players on the floor, rebuilt from play-by-play.",
   "Swing is the team's net rating with him on the floor minus its net rating with him off it, per 100 possessions.",
-  "Filtered leaves out garbage time (the Cleaning the Glass definition) and possessions that start with 2 seconds or less. Clutch is the last five minutes of the fourth quarter or overtime with the score within five.",
+  "Filtered leaves out garbage time (a lopsided closing run of the fourth quarter with two or fewer starters on the floor) and possessions that start with 2 seconds or less. Clutch is the last five minutes of the fourth quarter or overtime with the score within five.",
 ];
 
 const LIMITATIONS = [
@@ -152,7 +152,7 @@ export async function execPlayerOnOff(ast: BasketballQueryAst): Promise<AskDrblR
       ...METHODOLOGY,
       `Small sample marks fewer than ${SMALL_SAMPLE_POSS.toLocaleString("en-US")} possessions on or off.`,
     ],
-    source: `NBA play-by-play · DRBL on/off build · ${season} ${phaseText}`,
+    source: `Play-by-play · DRBL on/off build · ${season} ${phaseText}`,
     limitations: LIMITATIONS,
     links: [
       { label: "Open full on/off →", href: pageHref },

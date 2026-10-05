@@ -118,7 +118,7 @@ export function createMyLeagueBundle(
     simulationUniverseId: simulation.id,
     career: emptyCareer(),
     notes: opts?.snapshot
-      ? "Seeded from real NBA season data (ESPN + impact overlays)."
+      ? "Seeded from real NBA season data with impact overlays."
       : "Milestone 2 scaffold. Historical ingest lands in Milestone 3.",
   };
 

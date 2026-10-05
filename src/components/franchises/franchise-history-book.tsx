@@ -126,12 +126,11 @@ export function FranchiseHistoryBook({
             : null}
         </p>
         {f.recordsSource ? (
-          <MoreInfo summary="Sources" className="mt-1">
+          <MoreInfo summary="What counts" className="mt-1">
             <p>
-              Records, titles and leaders come from {f.recordsSource} and include every league
-              this franchise played in (NBA, ABA or BAA). Retired numbers follow Wikipedia&apos;s
-              list of NBA retired numbers and include banners for coaches and owners. Streaks and
-              lore are curated.
+              Records, titles and leaders include every league this franchise played in (NBA, ABA
+              or BAA). Retired numbers include banners for coaches and owners. Streaks and lore are
+              curated.
             </p>
           </MoreInfo>
         ) : null}
@@ -218,7 +217,7 @@ export function FranchiseHistoryBook({
               value={asOf}
               hint={
                 f.recordsSource
-                  ? `Records from ${f.recordsSource}`
+                  ? "Full franchise records"
                   : "Curated franchise book"
               }
             />

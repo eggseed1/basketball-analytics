@@ -295,7 +295,7 @@ function testOutcomes() {
   const done = run(rows.filter((r) => r.id === "f" || r.id === "g"), kawhiTrade, "2026-09-30T12:00:00Z");
   const agreed = done.clusters.find((c) => c.linkedPlayerIds.includes("6450") && c.firstSeenAt.startsWith("2026-09"))!;
   assert.equal(agreed.state, "completed");
-  assert.ok(done.claims.some((c) => c.clusterId === agreed.id && c.sourceLabel === "NBA.com player movement"));
+  assert.ok(done.claims.some((c) => c.clusterId === agreed.id && c.sourceLabel === "Player movement log"));
   assert.ok(done.sources["ledger:nba-player-movement"]);
   // The June story went quiet for 60+ days before the trade, so it expires instead.
   const june = done.clusters.find((c) => c.linkedPlayerIds.includes("6450") && c.firstSeenAt.startsWith("2026-06"))!;

@@ -578,7 +578,7 @@ async function main() {
     assert.equal(single.title, "Trade-related transaction");
     assert.equal(single.sourceCount, 1);
     assert.equal(single.hasSourceCluster, false);
-    assert.equal(single.sourceCountLabel, "1 ESPN source event");
+    assert.equal(single.sourceCountLabel, "1 source event");
 
     const bos: typeof minCha = {
       ...minCha,
@@ -599,7 +599,7 @@ async function main() {
     assert.equal(cluster.title, "Trade-related transaction");
     assert.equal(cluster.sourceCount, 2);
     assert.equal(cluster.hasSourceCluster, true);
-    assert.equal(cluster.sourceCountLabel, "2 ESPN source events");
+    assert.equal(cluster.sourceCountLabel, "2 source events");
 
     const signing: typeof minCha = {
       ...minCha,

@@ -327,7 +327,7 @@ async function execSeasonStat(ast: BasketballQueryAst): Promise<AskDrblResult> {
     if (!nbaId && !hasValidDrblEstimate(row)) {
       return {
         ...emptyResult(ast, "insufficient_data", [
-          `Player-specific ${metricById(metricId)?.label ?? "DRBL"} requires a production-approved ESPN↔NBA identity join or an NBA-id board row with a valid DRBL estimate. That join is not available for this player.`,
+          `Player-specific ${metricById(metricId)?.label ?? "DRBL"} requires a verified player identity join or a board row with a valid DRBL estimate. That join is not available for this player.`,
         ]),
         interpretation: [
           row.playerName,
@@ -1247,26 +1247,26 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       ast,
       interpretation: [
         brand?.abbr ?? team?.name ?? "Transaction",
-        "Related ESPN transaction events may exist, but there is no verified structured trade ledger",
+        "Related transaction notes may exist, but there is no verified structured trade ledger",
       ],
       headline: "No verified structured trade ledger",
       valueDisplay: "Source-event reconstruction only",
       detailLines: [
-        "DRBL has related ESPN transaction events for some moves, but does not yet have a verified structured trade ledger.",
+        "DRBL has related transaction notes for some moves, but does not yet have a verified structured trade ledger.",
         "Free-text notes are not parsed into player/pick assets.",
         ...(related?.relatedEvents ?? page.events)
           .slice(0, 3)
           .map((e) => e.description),
       ],
       methodology: [
-        "ESPN archive = source events. Related-event clusters group reciprocal blurbs by date + team mentions.",
+        "Transaction notes = source events. Related-event clusters group reciprocal blurbs by date + team mentions.",
         "Structured transactions / ownership edges remain unavailable.",
       ],
       source: "Offseason transaction event archive",
       queryPlan: buildQueryPlan(ast),
       limitations: [
-        "Do not treat one-sided ESPN wording as a complete trade package.",
-        "Pick histories come from ESPN text, not a structured ownership ledger, so they can have gaps.",
+        "Do not treat one-sided wording as a complete trade package.",
+        "Pick histories come from transaction notes, not a structured ownership ledger, so they can have gaps.",
       ],
       links: [
         {
@@ -1299,13 +1299,13 @@ async function execOffseason(ast: BasketballQueryAst): Promise<AskDrblResult> {
       ast,
       interpretation: [
         `${brand?.abbr ?? team.name} ${year} offseason`,
-        "ESPN transaction events (factual)",
+        "Transaction events (factual)",
       ],
       headline: `${brand?.abbr ?? team.name} · ${year} offseason`,
       valueDisplay: `${activity?.eventCount ?? page.total} events`,
       detailLines: page.events.slice(0, 5).map((e) => e.description),
       methodology: [
-        "Counts ESPN free-text transaction events only, not structured trades or contracts.",
+        "Counts free-text transaction events only, not structured trades or contracts.",
       ],
       source: "Offseason transaction event archive",
       queryPlan: buildQueryPlan(ast),

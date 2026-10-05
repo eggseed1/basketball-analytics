@@ -55,11 +55,8 @@ function BrefPayrollSummary({ contracts, payrollHref }: { contracts: TeamContrac
       </div>
       <BrefPayrollTable data={contracts} compact />
       <p className={cn(type.caption, "text-muted-foreground")}>
-        Payroll is every salary Basketball-Reference lists for this season, including deals that aren&apos;t fully
-        guaranteed. Cap space leaves out cap holds, dead money and exceptions.{" "}
-        <a href={contracts.sourceUrl} className="font-semibold underline-offset-2 hover:underline" rel="noreferrer" target="_blank">
-          Source: Basketball-Reference
-        </a>
+        Payroll is every listed salary for this season, including deals that aren&apos;t fully guaranteed. Cap
+        space leaves out cap holds, dead money and exceptions.
       </p>
     </section>
   );

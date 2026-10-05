@@ -343,7 +343,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "ORtg",
     category: "team",
     tooltip:
-      "Points scored per 100 possessions. On player pages, ESPN season boards may supply only an approximate individual estimate. Missing ratings stay unavailable, never fabricated.",
+      "Points scored per 100 possessions. On player pages, season boards may supply only an approximate individual estimate. Missing ratings stay unavailable, never fabricated.",
     showTooltip: true,
     learnSlug: "offensive-rating",
     relatedIds: ["drtg", "net", "ts"],
@@ -409,7 +409,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "RAPTOR",
     category: "impact",
     tooltip:
-      "FiveThirtyEight RAPTOR (pts/100). Open historical data, blank for seasons after 538 stopped publishing.",
+      "RAPTOR (pts/100). Open historical data, blank for seasons after 2021-22 when it stopped being published.",
     showTooltip: true,
     learnSlug: "raptor",
     relatedIds: ["darko", "raptor_o", "raptor_d", "wins_added", "bpm"],
@@ -1199,7 +1199,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Source event",
     category: "transactions",
     tooltip:
-      "A verbatim ESPN transaction blurb. Reporting context, not a structured asset ledger.",
+      "A transaction note kept word for word. Reporting context, not a structured asset ledger.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["related_event_cluster", "structured_transaction"],
@@ -1277,7 +1277,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Draft capital",
     category: "transactions",
     tooltip:
-      "Owned draft picks and related rights from a structured pick ledger, not inferred from ESPN free text.",
+      "Owned draft picks and related rights from a structured pick ledger, not inferred from transaction notes.",
     showTooltip: true,
     learnSlug: "transaction-layers",
     relatedIds: ["structured_transaction", "source_event"],
@@ -1291,7 +1291,7 @@ export const LEARN_CONCEPTS: LearnConcept[] = [
     shortName: "Fan",
     category: "sentiment",
     tooltip:
-      "Tone of fan discussion about a player or team, shown as 0–100% where 50% is neutral. It comes from approved subreddits once Reddit is connected, and from curated values until then.",
+      "Tone of fan discussion about a player or team, shown as 0–100% where 50% is neutral. It is measured from fan blog headlines, social posts and video comments when a subject has enough of them, and uses curated values otherwise.",
     showTooltip: true,
     learnSlug: null,
     relatedIds: ["sentiment_media_lane", "sentiment_curated", "sentiment_coverage_floor"],

@@ -25,13 +25,13 @@ export function TeamTransactionsSection({
   teamFilterId: string;
   offseasonYear: number;
   resolutionsByEventId?: Record<string, TransactionPlayerResolution[]>;
-  /** Same-day partner-team blurbs that ESPN logged as separate events. */
+  /** Same-day partner-team blurbs logged as separate events. */
   relatedByEventId?: Record<string, NbaTransactionEvent[]>;
 }) {
   return (
     <div className="flex flex-col gap-3">
       <p className="type-body-sm text-muted-foreground">
-        ESPN and NBA.com transaction <span className="font-semibold text-foreground">events</span>{" "}
+        Transaction <span className="font-semibold text-foreground">events</span>{" "}
         for this franchise: date and description only, not asset genealogy.
       </p>
       {events.length === 0 ? (

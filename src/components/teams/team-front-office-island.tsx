@@ -50,7 +50,7 @@ export async function TeamFrontOfficeIsland({
     futureSecondsControlled: held(2) ?? base.futureSecondsControlled,
     disclosures: [
       ...(contracts
-        ? [`Payroll is Basketball-Reference's ${contracts.capSeason ?? frontOfficeSeason} total, guaranteed or not.`]
+        ? [`Payroll is the listed ${contracts.capSeason ?? frontOfficeSeason} total, guaranteed or not.`]
         : base.disclosures.filter((d) => /salary/i.test(d))),
       ...(picks
         ? [

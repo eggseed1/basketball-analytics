@@ -76,7 +76,7 @@ function playerCategoryFromRosterStatus(
       count: 0,
       note:
         warning ??
-        `Historical player assets unavailable for ${season}. ESPN athlete boards are not available before ${TEAM_ROSTER_BOARD_EARLIEST_START_YEAR}.`,
+        `Historical player assets unavailable for ${season}. Athlete boards are not available before ${TEAM_ROSTER_BOARD_EARLIEST_START_YEAR}.`,
     };
   }
   if (status === "timeout") {
@@ -170,7 +170,7 @@ export async function getTeamAssets(options: {
   const minimumGames = options.minimumGames ?? 1;
 
   const notes: string[] = [
-    "ESPN free-text transaction blurbs never invent player, pick, or TPE assets.",
+    "Free-text transaction blurbs never invent player, pick, or TPE assets.",
   ];
 
   if (!season) {

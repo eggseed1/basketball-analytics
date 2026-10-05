@@ -51,7 +51,7 @@ export async function TeamTransactionsIsland({
           {offseasonYear} Offseason
         </h2>
         <p className="text-[14px] text-muted-foreground">
-          Latest transactions involving this team, from ESPN and NBA.com.
+          Latest transactions involving this team.
         </p>
       </div>
       <div className="sports-card p-4 sm:p-5">

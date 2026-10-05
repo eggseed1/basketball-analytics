@@ -352,12 +352,15 @@ export default async function PlayerPage({
     playerId,
     identity?.nbaId
   );
+  // An unsigned pick's profile still names the team holding his rights, so
+  // only a roster spot counts as a current team for him.
   const currentFranchiseId =
-    brandableTeamKey(player?.currentTeamId) ??
+    (notYetPlayed ? null : brandableTeamKey(player?.currentTeamId)) ??
     brandableTeamKey(rosterTeamId) ??
     null;
-  const teamKey =
-    !viewingHistoricalSeason && currentFranchiseId
+  const teamKey = notYetPlayed
+    ? currentFranchiseId
+    : !viewingHistoricalSeason && currentFranchiseId
       ? currentFranchiseId
       : seasonTeamKey;
   const rosterEntry =
@@ -365,7 +368,9 @@ export default async function PlayerPage({
     getBundledCurrentRosterEntry(playerId) ??
     getBundledCurrentRosterEntry(identity?.nbaId);
   const teamLabel =
-    !viewingHistoricalSeason && currentFranchiseId
+    notYetPlayed && !currentFranchiseId
+      ? null
+      : !viewingHistoricalSeason && currentFranchiseId
       ? rosterEntry?.teamName ||
         lastStint?.teamLabel ||
         seasonTeamCtx.displayLabel
@@ -452,7 +457,7 @@ export default async function PlayerPage({
     ? `${Math.floor(player.heightInches / 12)}'${player.heightInches % 12}"`
     : null;
   const weightLabel = player?.weightLbs ? `${player.weightLbs} lb` : null;
-  const recentSeasons = [...new Set(career.map((row) => row.season))]
+  const recentSeasons = [...new Set(notYetPlayed ? [] : career.map((row) => row.season))]
     .sort((a, b) => b.localeCompare(a))
     .slice(0, 5)
     .map((s) => primaryTeamForSeason(career, s))
@@ -650,7 +655,7 @@ export default async function PlayerPage({
         ) : null}
 
         {view === "overview" || view === "career" ? (
-          slimWorker && view === "overview" ? null : (
+          (slimWorker || notYetPlayed) && view === "overview" ? null : (
             <Suspense
               fallback={<PlayerBoardSkeleton label="Loading career…" />}
             >
@@ -683,7 +688,7 @@ export default async function PlayerPage({
           </Suspense>
         ) : null}
 
-        {view === "overview" ? (
+        {view === "overview" && !notYetPlayed ? (
           <Suspense
             fallback={<PlayerBoardSkeleton label="Loading statistics…" />}
           >

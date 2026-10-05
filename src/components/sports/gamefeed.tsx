@@ -524,7 +524,7 @@ export function Gamefeed({
     view === "day"
       ? `Live games, results and tip-off times · ${season}`
       : view === "list"
-      ? `Upcoming tip-offs from ESPN · ${season}`
+      ? `Upcoming tip-offs · ${season}`
       : view === "week"
         ? `Weekly slate · ${season}`
         : `Monthly calendar · ${season}`;

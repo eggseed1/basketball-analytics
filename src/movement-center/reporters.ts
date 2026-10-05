@@ -192,13 +192,13 @@ export function outletTier(outlet: string, kind: "own_sources" | "relayed"): Mov
 }
 
 export const ESPN_TRANSACTIONS_TIER: MovementSourceTier = {
-  label: "ESPN transaction log",
+  label: "Transaction log",
   credibility: 32,
 };
 
 export const NBA_MOVEMENT_SOURCE_ID = "ledger:nba-player-movement";
 
 export const NBA_MOVEMENT_TIER: MovementSourceTier = {
-  label: "NBA.com player movement",
+  label: "Player movement log",
   credibility: 32,
 };

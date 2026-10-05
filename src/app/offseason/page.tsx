@@ -36,7 +36,7 @@ import {
 export const metadata = {
   title: "Transactions",
   description:
-    "NBA transaction events from the ESPN archive, with NBA.com filling moves ESPN missed. Each has its date, team and description.",
+    "NBA transaction events, each with its date, team and description.",
 };
 
 /** Refresh live ESPN overlay at least hourly. */
@@ -182,16 +182,15 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
     <main className="site-shell flex flex-col gap-5 py-5 sm:py-7">
       <header className="flex flex-col gap-2">
         <p className="text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground">
-          Transactions · ESPN and NBA.com
+          Transactions
         </p>
         <h1 className="text-[28px] font-bold tracking-tight sm:text-[32px]">
           {offseasonYear} NBA Offseason
         </h1>
         <p className="max-w-2xl text-[16px] text-muted-foreground">
           What was recorded from {window.startDate} to {window.endDate} (into{" "}
-          {window.upcomingSeason}). These are ESPN source events, plus NBA.com
-          entries for moves ESPN&apos;s feed missed. They are not a structured
-          trade ledger.
+          {window.upcomingSeason}). These are source events as reported. They are not a
+          structured trade ledger.
         </p>
       </header>
 
@@ -374,7 +373,6 @@ export default async function OffseasonPage({ searchParams }: PageProps) {
           Archive coverage
         </h2>
         <p className="mt-2">
-          Source: {coverage.source} v{coverage.datasetVersion ?? "?"} ·{" "}
           {coverage.sourceEventCount.toLocaleString()} source events ·{" "}
           {coverage.relatedClusterCount.toLocaleString()} related clusters ·{" "}
           {coverage.structuredTransactionCount} structured transactions ·{" "}

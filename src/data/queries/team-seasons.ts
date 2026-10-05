@@ -37,7 +37,7 @@ export type TeamSeasonBoardResult = {
 function classifyBoardError(error: unknown): string {
   if (!(error instanceof Error)) return "unknown provider error";
   const status = /ESPN request failed \((\d+)\)/.exec(error.message)?.[1];
-  if (status) return `ESPN HTTP ${status}`;
+  if (status) return `HTTP ${status}`;
   if (/timed out|aborted|timeout_after_/i.test(error.message)) return "timeout";
   return error.message.slice(0, 160);
 }
@@ -82,7 +82,7 @@ export async function getTeamSeasonBoard(
     return {
       rows: [],
       status: "unsupported",
-      warning: `Historical team metrics unavailable for ${season}. ESPN by-team boards are not available before ${TEAM_SEASON_BOARD_EARLIEST_SEASON}.`,
+      warning: `Historical team metrics unavailable for ${season}. By-team boards are not available before ${TEAM_SEASON_BOARD_EARLIEST_SEASON}.`,
       error: `unsupported_before_${TEAM_SEASON_BOARD_EARLIEST_SEASON}`,
     };
   }

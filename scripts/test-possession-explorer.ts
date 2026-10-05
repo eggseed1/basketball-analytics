@@ -704,7 +704,7 @@ async function testFixtureIdentityRegression() {
       assert.equal(model.quality.officialComparison, "mismatched");
       assert.equal(model.quality.suppressAggregateMetrics, true);
       assert.equal(model.quality.lineupContextAvailable, false);
-      assert.equal(model.provenance.playByPlayLabel, "NBA Stats");
+      assert.equal(model.provenance.playByPlayLabel, "Stats feed");
     }
     if (gameId === "0021900001") {
       assert.ok(model.periodOptions.some((p) => p > 4));
@@ -713,7 +713,7 @@ async function testFixtureIdentityRegression() {
 }
 
 function testSourceInspection() {
-  assert.equal(provenanceSourceLabel("nba_cdn"), "NBA CDN");
+  assert.equal(provenanceSourceLabel("nba_cdn"), "Primary feed");
   assert.equal(
     stablePossessionRowId({
       possessionId: "",
