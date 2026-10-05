@@ -6,7 +6,7 @@ import { PageAtmosphere } from "@/components/brand/page-atmosphere";
 import { DestinationClientShell } from "@/components/continuity/destination-client-shell";
 import { DestinationSectionSkeleton } from "@/components/continuity/destination-loading-frame";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
-import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
+import { PlayerArrivalIsland } from "@/components/players/player-contract-transactions-island";
 import { PlayerDestinationIdentity } from "@/components/players/player-destination-identity";
 import { PlayerPercentileIsland } from "@/components/players/player-percentile-island";
 import { PlayerStatsIsland } from "@/components/players/player-stats-island";
@@ -160,7 +160,7 @@ export default async function HofPlayerExamplePage({ searchParams }: PageProps) 
               }
               frontOffice={
                 <Suspense fallback={null}>
-                  <PlayerContractTransactionsIsland
+                  <PlayerArrivalIsland
                     playerId={playerId}
                     playerName={displayName}
                     teamKey={teamKey}

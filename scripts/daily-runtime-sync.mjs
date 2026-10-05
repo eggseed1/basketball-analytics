@@ -122,6 +122,7 @@ const ORG_STEPS = [
   { label: "sentiment-build", cmd: "npx", args: ["tsx", "scripts/sentiment-build-snapshot.ts"] },
   { label: "sentiment-snapshot", cmd: "node", args: ["scripts/build-runtime-sentiment-snapshot.mjs"] },
   { label: "bref-team-contracts", cmd: "node", args: ["scripts/build-runtime-bref-team-contracts.mjs"] },
+  { label: "contract-value", cmd: "npx", args: ["tsx", "scripts/build-contract-value.ts"] },
   { label: "front-office", cmd: "npx", args: ["tsx", "scripts/sync-team-front-office.ts"] },
   { label: "front-office-snapshot", cmd: "node", args: ["scripts/build-runtime-front-office-snapshot.mjs"] },
   { label: "asset-ledger", cmd: "node", args: ["scripts/sync-asset-ledger.mjs"] },

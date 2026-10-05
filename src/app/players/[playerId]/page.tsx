@@ -96,7 +96,10 @@ import {
 } from "@/data/providers/historical/season-range";
 import { slimEdgeProductEnabled } from "@/data/providers/nba/runtime-policy";
 import { PlayerAccoladesIsland } from "@/components/players/player-accolades-island";
-import { PlayerContractTransactionsIsland } from "@/components/players/player-contract-transactions-island";
+import {
+  PlayerArrivalIsland,
+  PlayerContractSectionIsland,
+} from "@/components/players/player-contract-transactions-island";
 import { PlayerUpcomingGamesFromSnapshot } from "@/components/players/player-upcoming-games-island";
 
 interface PlayerPageProps {
@@ -574,7 +577,7 @@ export default async function PlayerPage({
           frontOffice={
             slimWorker ? null : (
               <Suspense fallback={<PlayerIdentitySlotSkeleton />}>
-                <PlayerContractTransactionsIsland
+                <PlayerArrivalIsland
                   playerId={playerId}
                   espnId={identity?.espnId}
                   nbaId={identity?.nbaId}
@@ -711,6 +714,16 @@ export default async function PlayerPage({
                 honor={honor}
               />
             </div>
+          </Suspense>
+        ) : null}
+
+        {view === "overview" && !slimWorker ? (
+          <Suspense fallback={null}>
+            <PlayerContractSectionIsland
+              playerId={playerId}
+              playerName={displayName}
+              teamKey={teamKey}
+            />
           </Suspense>
         ) : null}
 

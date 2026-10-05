@@ -23,6 +23,7 @@ export type PlayerContractYearView = {
 
 export type PlayerContractSnapshot = {
   franchiseId: string;
+  brefId: string;
   teamAbbr: string;
   capSeason: string;
   years: PlayerContractYearView[];
@@ -49,6 +50,7 @@ function toSnapshot(
   if (!years.length) return null;
   return {
     franchiseId: teamId,
+    brefId: row.brefId,
     teamAbbr: resolveTeamBrand(teamId)?.abbr ?? team.code,
     capSeason: team.capSeason ?? team.seasons[0] ?? years[0].season,
     years,
@@ -61,8 +63,8 @@ function toSnapshot(
  * Current multi-year contract for a player from the baked team payrolls.
  *
  * Rows are keyed by BRef id. Match on the id crosswalk across every team so a
- * traded player still finds his deal; fall back to a name match only inside
- * the team the page already places him on, where a namesake is unlikely.
+ * traded player still finds his deal; fall back to a name match when exactly
+ * one player on any payroll has that name.
  */
 export const getPlayerContractSnapshot = cache(
   async (
@@ -99,9 +101,16 @@ export const getPlayerContractSnapshot = cache(
     }
 
     const name = normalizePlayerName(playerName ?? identity?.displayName ?? "");
-    if (!homeTeamId || !name) return null;
-    const home = bundledTeamContracts(homeTeamId);
-    const named = home?.rows.filter((row) => normalizePlayerName(row.name) === name) ?? [];
-    return home && named.length === 1 ? toSnapshot(homeTeamId, home, named[0]) : null;
+    if (!name) return null;
+    const named = ordered.flatMap((teamId) => {
+      const team = bundledTeamContracts(teamId);
+      return (team?.rows ?? [])
+        .filter((row) => normalizePlayerName(row.name) === name)
+        .map((row) => ({ teamId, team: team!, row }));
+    });
+    // Only when one player in the league has the name; he may appear on two
+    // payrolls after a waiver, and the home team (listed first) wins.
+    if (!named.length || new Set(named.map((hit) => hit.row.brefId)).size !== 1) return null;
+    return toSnapshot(named[0].teamId, named[0].team, named[0].row);
   }
 );
