@@ -16,6 +16,7 @@
     "arcade:build": "node scripts/build-arcade-data.mjs",
     "test:contract-value": "tsx scripts/test-contract-value.ts",
     "bake:contract-value": "tsx scripts/build-contract-value.ts",
+    "eval:contract-value": "tsx scripts/eval-contract-value.ts",
     "predeploy": "npm run typecheck && npm test",
     "test:career-resume": "tsx scripts/test-career-resume.ts",
     "test:historical-impact": "tsx scripts/test-historical-impact.ts",
