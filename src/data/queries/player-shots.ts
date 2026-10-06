@@ -112,10 +112,16 @@ export async function getPlayerSeasonShotMap(options: {
     /* fall through to live */
   }
 
+  const { longUpstreamBudgetsEnabled, preferBundledProductDataOnEdge } = await import(
+    "@/data/providers/nba/runtime-policy"
+  );
+  // stats.nba.com does not answer Workers; waiting out its timeouts held the
+  // whole render open and pushed the isolate past its memory limit.
+  if (preferBundledProductDataOnEdge()) {
+    return empty("Shot locations for this player and season are not on the site yet.");
+  }
+
   try {
-    const { longUpstreamBudgetsEnabled } = await import(
-      "@/data/providers/nba/runtime-policy"
-    );
     const long = longUpstreamBudgetsEnabled();
     const response = await statsNbaFetch(
       "shotchartdetail",
