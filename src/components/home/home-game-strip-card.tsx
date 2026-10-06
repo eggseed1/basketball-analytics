@@ -163,6 +163,7 @@ export function HomeGameStripCard({ game }: { game: GameSummary }) {
     <GlassSurface
       as="article"
       className="relative flex w-max min-w-[168px] shrink-0 flex-col gap-2.5 rounded-[var(--card-radius)] px-4 py-3.5"
+      style={{ background: "var(--strip-card-bg)" }}
     >
       <span
         aria-hidden

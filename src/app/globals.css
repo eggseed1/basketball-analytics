@@ -1537,6 +1537,15 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   }
 }
 
+/* Score strip tiles read as near-solid white; dark keeps the frost. */
+:root {
+  --strip-card-bg: rgb(255 255 255 / 0.92);
+}
+
+.dark {
+  --strip-card-bg: var(--material-standard-bg);
+}
+
 .strip-orb {
   position: absolute;
   z-index: 0;
@@ -1545,7 +1554,7 @@ html:not([data-surface="glass"]) .color-scheme-switch {
   border-radius: 9999px;
   pointer-events: none;
   filter: blur(44px);
-  opacity: calc(var(--orb-strength, 1) * 0.13);
+  opacity: calc(var(--orb-strength, 1) * 0.07);
   will-change: transform;
   animation: strip-orb-drift 18s ease-in-out infinite alternate;
 }
